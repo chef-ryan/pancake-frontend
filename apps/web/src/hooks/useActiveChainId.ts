@@ -29,16 +29,22 @@ queryChainIdAtom.onMount = (set) => {
 
 export function useLocalNetworkChain() {
   const [queryChainId, setQueryChainId] = useAtom(queryChainIdAtom)
-  const { query } = useRouter()
-  const chainId = +(getChainId(query.chain as string) || queryChainId)
+  const { query, isReady } = useRouter()
+  const chainId = getChainId(query.chain as string)
 
   useEffect(() => {
-    if (chainId) {
-      setQueryChainId(chainId)
+    if (isReady) {
+      if (chainId) {
+        if (queryChainId !== chainId) {
+          setQueryChainId(chainId)
+        }
+      } else if (queryChainId > 0) {
+        setQueryChainId(-1)
+      }
     }
-  }, [chainId, setQueryChainId])
+  }, [chainId, isReady, queryChainId, setQueryChainId])
 
-  if (isChainSupported(chainId)) {
+  if (chainId && isChainSupported(chainId)) {
     return chainId
   }
 
