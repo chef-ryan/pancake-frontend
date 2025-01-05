@@ -54,7 +54,7 @@ const Mobile: React.FC<React.PropsWithChildren> = () => {
       <Flex mt="24px" justifyContent="center">
         <AdPanel.MobileCard />
       </Flex>
-      <Box height="100%">
+      <Box style={{ flex: 1 }}>
         {view === PageView.POSITIONS && (
           <Flex justifyContent="center" alignItems="center" flexDirection="column" minHeight="100%">
             {status === PredictionStatus.ERROR && <ErrorNotification />}
