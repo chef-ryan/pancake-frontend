@@ -4,8 +4,6 @@ import { useCallback } from 'react'
 import { Field } from 'types'
 
 export const useSwapActionHandlers = () => {
-  // const setSwapState = useSetAtom(swapStateAtom)
-
   const setInputCurrencyId = useSetAtom(currencyIdFamily(Field.INPUT))
   const setOutputCurrencyId = useSetAtom(currencyIdFamily(Field.OUTPUT))
 
@@ -23,6 +21,8 @@ export const useSwapActionHandlers = () => {
     [setInputCurrencyId, setOutputCurrencyId],
   )
 
+  const onSwitchTokens = useCallback(() => {}, [])
+
   const onUserInput = useCallback(
     (field: Field, typedValue: string) => {
       setTypedValue(typedValue)
@@ -32,7 +32,8 @@ export const useSwapActionHandlers = () => {
   )
 
   return {
-    onCurrencySelection,
     onUserInput,
+    onSwitchTokens,
+    onCurrencySelection,
   }
 }

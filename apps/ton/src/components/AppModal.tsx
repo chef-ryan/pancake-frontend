@@ -1,5 +1,5 @@
 import { Heading, ModalTitle, ModalV2, MotionModal, useMatchBreakpoints } from '@pancakeswap/uikit'
-import { appModalAtom } from 'atoms/appModalAtom'
+import { appModalAtom } from 'atoms/modals/appModalAtom'
 import { useAtom } from 'jotai'
 import { useCallback } from 'react'
 import { GrabberBar } from './GrabberBar'

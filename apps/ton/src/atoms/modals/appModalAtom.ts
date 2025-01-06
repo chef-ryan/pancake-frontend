@@ -3,7 +3,8 @@ import { ReactNode } from 'react'
 
 export interface AppModalData {
   isOpen: boolean
-  title: ReactNode | null // Pass translated values
+  /** Pass translated values */
+  title: ReactNode | null
   content: ReactNode | null
   closeable?: boolean
 }

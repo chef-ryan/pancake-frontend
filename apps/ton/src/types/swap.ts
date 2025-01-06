@@ -28,6 +28,9 @@ export interface SwapState {
   readonly [Field.OUTPUT]: {
     readonly currencyId: string | undefined
   }
+
+  // TODO: Remove below fields if not required
+
   // the typed recipient address or ENS name, or null if swap should go to sender
   readonly recipient: string | null
   readonly pairDataById: Record<number, Record<string, PairDataNormalized>> | null

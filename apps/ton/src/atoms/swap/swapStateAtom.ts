@@ -2,24 +2,10 @@ import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { Field } from 'types'
 
-// const initialState: SwapState = {
-//   independentField: Field.INPUT,
-//   typedValue: '',
-//   [Field.INPUT]: {
-//     currencyId: '',
-//   },
-//   [Field.OUTPUT]: {
-//     currencyId: '',
-//   },
-//   pairDataById: {},
-//   derivedPairDataById: {},
-//   recipient: null,
-// }
-
-// export const swapStateAtom = atom<SwapState>(initialState)
-
 export const independentFieldAtom = atom(Field.INPUT)
+
 export const typedValueAtom = atom('')
+
 export const currencyIdFamily = atomFamily((field: Field) => atom(''))
 
 const currencyFamily = atomFamily((field: Field) => {

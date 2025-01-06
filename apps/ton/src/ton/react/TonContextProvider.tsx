@@ -35,7 +35,7 @@ const Container = ({ children }: { children: React.ReactNode }) => {
         setInit(true)
       }
     }
-  }, [address, init])
+  }, [address, init, setTonState])
   if (!init) {
     return null
   }

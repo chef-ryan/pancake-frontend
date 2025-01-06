@@ -5,18 +5,17 @@ import { FlipButton } from 'components/TonSwap/FlipButton'
 import { useCallback, useState } from 'react'
 
 import { useTranslation } from '@pancakeswap/localization'
-import { appModalAtom } from 'atoms/appModalAtom'
+import { appModalAtom } from 'atoms/modals/appModalAtom'
 import { typedValueAtom } from 'atoms/swap/swapStateAtom'
 import { ApproveModal } from 'components/Modals/ApproveModal'
 import { ConfirmSwapModal } from 'components/TonSwap/ConfirmSwapModal'
 import { SwapUIV2 } from 'components/widgets/swap-v2'
 import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
 import { useAtomValue, useSetAtom } from 'jotai'
+import noop from 'lodash/noop'
 import { Field } from 'types'
 
 export const SwapForm = () => {
-  const noop = () => {}
-
   const { t } = useTranslation()
 
   const [inputAmount, setInputAmount] = useState<any>(null)
@@ -115,7 +114,7 @@ export const SwapForm = () => {
           </Column>
         </SwapUIV2.InputPanelWrapper>
       </SwapUIV2.SwapTabAndInputPanelWrapper>
-      <ButtonAndDetailsPanel swapCommitButton={<Button onClick={handleSwap}>Swap</Button>} />
+      <ButtonAndDetailsPanel swapCommitButton={<Button onClick={handleSwap}>{t('Swap')}</Button>} />
     </SwapUIV2.SwapFormWrapper>
   )
 }
