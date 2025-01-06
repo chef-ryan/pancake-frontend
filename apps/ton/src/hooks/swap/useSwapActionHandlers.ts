@@ -1,41 +1,34 @@
-import { swapStateAtom } from 'atoms/swap/swapStateAtom'
+import { currencyIdFamily, independentFieldAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
 import { useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { Field } from 'types'
 
 export const useSwapActionHandlers = () => {
-  const setSwapState = useSetAtom(swapStateAtom)
+  // const setSwapState = useSetAtom(swapStateAtom)
 
-  // WIP
+  const setInputCurrencyId = useSetAtom(currencyIdFamily(Field.INPUT))
+  const setOutputCurrencyId = useSetAtom(currencyIdFamily(Field.OUTPUT))
+
+  const setTypedValue = useSetAtom(typedValueAtom)
+  const setIndependentField = useSetAtom(independentFieldAtom)
+
   const onCurrencySelection = useCallback(
     (field: Field, currency: any) => {
-      setSwapState((prev) => {
-        return {
-          ...prev,
-          [field]: {
-            ...prev[field],
-            currencyId: currency.id,
-          },
-        }
-      })
+      if (field === Field.INPUT) {
+        setInputCurrencyId(currency.id)
+      } else {
+        setOutputCurrencyId(currency.id)
+      }
     },
-    [setSwapState],
+    [setInputCurrencyId, setOutputCurrencyId],
   )
 
   const onUserInput = useCallback(
     (field: Field, typedValue: string) => {
-      setSwapState((prev) => {
-        return {
-          ...prev,
-          typedValue,
-          [field]: {
-            ...prev[field],
-            typedValue,
-          },
-        }
-      })
+      setTypedValue(typedValue)
+      setIndependentField(field)
     },
-    [setSwapState],
+    [setTypedValue, setIndependentField],
   )
 
   return {

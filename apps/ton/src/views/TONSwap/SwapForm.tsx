@@ -6,66 +6,31 @@ import { useCallback, useState } from 'react'
 
 import { useTranslation } from '@pancakeswap/localization'
 import { appModalAtom } from 'atoms/appModalAtom'
+import { typedValueAtom } from 'atoms/swap/swapStateAtom'
 import { ApproveModal } from 'components/Modals/ApproveModal'
 import { ConfirmSwapModal } from 'components/TonSwap/ConfirmSwapModal'
 import { SwapUIV2 } from 'components/widgets/swap-v2'
-import { useSetAtom } from 'jotai'
+import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { Field } from 'types'
 
 export const SwapForm = () => {
   const noop = () => {}
 
   const { t } = useTranslation()
 
-  const [typedValue, setTypedValue] = useState('')
   const [inputAmount, setInputAmount] = useState<any>(null)
   const [outputAmount, setOutputAmount] = useState<any>(null)
   const [outputValue, setOutputValue] = useState('')
   const [isUserInsufficientBalance, setIsUserInsufficientBalance] = useState(false)
 
+  const typedValue = useAtomValue(typedValueAtom)
+  const { onUserInput } = useSwapActionHandlers()
+
   // const [onPresentConfirmModal] = useModal(<ConfirmSwapModal />, true, true, 'confirm-swap-modal')
 
   const setOpen = useSetAtom(appModalAtom)
 
-  const handleTypeInput = useCallback(
-    (value: string) => {
-      setTypedValue(value)
-    },
-    [setTypedValue],
-  )
-
-  // const handleSwapTwo = useCallback(() => {
-  //   setOpen((prev) => ({
-  //     ...prev,
-  //     isOpen: true,
-  //     title: (
-  //       <Text fontSize="20px" width="100%" textAlign="center" bold>
-  //         {t('Transaction Submitted')}
-  //       </Text>
-  //     ),
-  //     content: (
-  //       <ActionModal
-  //         type="TransactionSubmitted"
-  //         currency0="TON"
-  //         currency1="USDT"
-  //         amount0="100"
-  //         amount1="1000"
-  //         hash="0x00"
-  //       />
-  //     ),
-  //   }))
-  // }, [t, setOpen])
-  // const handleSwapTwo = useCallback(() => {
-  //   setOpen((prev) => ({
-  //     ...prev,
-  //     isOpen: true,
-  //     title: (
-  //       <Text fontSize="20px" width="100%" textAlign="center" bold>
-  //         {t('Confirm transaction')}
-  //       </Text>
-  //     ),
-  //     content: <ConfirmActionModal currency0="TON" currency1="USDT" amount0="100" amount1="1000" />,
-  //   }))
-  // }, [t, setOpen])
   const handleSwapTwo = useCallback(() => {
     setOpen((prev) => ({
       ...prev,
@@ -105,7 +70,7 @@ export const SwapForm = () => {
               maxAmount={undefined}
               showQuickInputButton
               currency={inputAmount?.currency}
-              onUserInput={handleTypeInput}
+              onUserInput={(val) => onUserInput(Field.INPUT, val)}
               onPercentInput={noop}
               onMax={noop}
               onCurrencySelect={() => {
