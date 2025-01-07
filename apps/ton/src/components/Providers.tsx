@@ -5,6 +5,7 @@ import useThemeCookie from 'hooks/useThemeCookie'
 import { ThemeProvider as NextThemeProvider, useTheme as useNextTheme } from 'next-themes'
 import { PropsWithChildren } from 'react'
 import GlobalStyle from 'styles/GlobalStyle'
+import { TonContextProvider } from 'ton/react/TonContextProvider'
 import { AppModal } from './AppModal'
 
 const queryClient = new QueryClient()
@@ -33,19 +34,21 @@ export const Providers = ({ children, dehydratedState }: ProvidersProps) => {
     <>
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary state={dehydratedState}>
-          <NextThemeProvider>
-            <StyledUIKitProvider>
-              <GlobalHooks />
-              <ResetCSS />
-              <GlobalStyle />
-              <LanguageProvider>
-                <ModalProvider>
-                  {children}
-                  <AppModal />
-                </ModalProvider>
-              </LanguageProvider>
-            </StyledUIKitProvider>
-          </NextThemeProvider>
+          <TonContextProvider>
+            <NextThemeProvider>
+              <StyledUIKitProvider>
+                <GlobalHooks />
+                <ResetCSS />
+                <GlobalStyle />
+                <LanguageProvider>
+                  <ModalProvider>
+                    {children}
+                    <AppModal />
+                  </ModalProvider>
+                </LanguageProvider>
+              </StyledUIKitProvider>
+            </NextThemeProvider>
+          </TonContextProvider>
         </HydrationBoundary>
       </QueryClientProvider>
     </>
