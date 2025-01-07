@@ -7,6 +7,9 @@ export const independentFieldAtom = atom(Field.INPUT)
 export const typedValueAtom = atom('')
 
 export const currencyIdFamily = atomFamily((field: Field) => atom(''))
+export const setCurrencyIdAtom = atom(null, (_, set, field: Field, newCurrencyId: string) => {
+  set(currencyIdFamily(field), newCurrencyId)
+})
 
 const currencyFamily = atomFamily((field: Field) => {
   const id = currencyIdFamily(field)

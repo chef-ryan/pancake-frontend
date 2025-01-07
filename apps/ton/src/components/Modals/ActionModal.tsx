@@ -10,7 +10,10 @@ const StyledFlexGap = styled(FlexGap).attrs({ flexDirection: 'column' })`
   min-height: 160px;
 `
 
-type ActionType = 'TransactionSubmitted' | 'TransactionComplete'
+export enum TransactionActionType {
+  TransactionSubmitted = 'TransactionSubmitted',
+  TransactionComplete = 'TransactionComplete',
+}
 
 interface ActionProps {
   currency0?: string
@@ -19,7 +22,7 @@ interface ActionProps {
   amount1?: string
 
   hash?: string
-  type?: ActionType
+  type?: TransactionActionType
 }
 
 export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type }: ActionProps) => {

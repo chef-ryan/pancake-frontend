@@ -5,10 +5,10 @@ import { FlipButton } from 'components/TonSwap/FlipButton'
 import { useCallback, useState } from 'react'
 
 import { useTranslation } from '@pancakeswap/localization'
-import { appModalAtom } from 'atoms/modals/appModalAtom'
+import { setApprovalModalAtom } from 'atoms/modals/approvalModalAtom'
+import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
 import { typedValueAtom } from 'atoms/swap/swapStateAtom'
-import { ApproveModal } from 'components/Modals/ApproveModal'
-import { ConfirmSwapModal } from 'components/TonSwap/ConfirmSwapModal'
+import { TransactionActionType } from 'components/Modals/ActionModal'
 import { SwapUIV2 } from 'components/widgets/swap-v2'
 import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
 import { useAtomValue, useSetAtom } from 'jotai'
@@ -23,34 +23,23 @@ export const SwapForm = () => {
   const [outputValue, setOutputValue] = useState('')
   const [isUserInsufficientBalance, setIsUserInsufficientBalance] = useState(false)
 
-  const typedValue = useAtomValue(typedValueAtom)
   const { onUserInput } = useSwapActionHandlers()
 
-  // const [onPresentConfirmModal] = useModal(<ConfirmSwapModal />, true, true, 'confirm-swap-modal')
+  const typedValue = useAtomValue(typedValueAtom)
 
-  const setOpen = useSetAtom(appModalAtom)
-
-  const handleSwapTwo = useCallback(() => {
-    setOpen((prev) => ({
-      ...prev,
-      isOpen: true,
-      title: (
-        <Text fontSize="20px" width="100%" textAlign="center" bold>
-          {t('Approve %token%', { token: 'TON' })}
-        </Text>
-      ),
-      content: <ApproveModal currency="TON" amount="1000" />,
-    }))
-  }, [t, setOpen])
+  const setApprovalModal = useSetAtom(setApprovalModalAtom)
+  const setTransactionModal = useSetAtom(setTransactionModalAtom)
 
   const handleSwap = useCallback(() => {
-    setOpen((prev) => ({
-      ...prev,
-      isOpen: true,
-      title: t('Confirm Swap'),
-      content: <ConfirmSwapModal onDismiss={() => handleSwapTwo()} />,
-    }))
-  }, [t, setOpen, handleSwapTwo])
+    // simulate modal states
+    setApprovalModal('TON', '1000')
+    setTimeout(() => {
+      setTransactionModal(TransactionActionType.TransactionSubmitted, true)
+    }, 1000)
+    setTimeout(() => {
+      setTransactionModal(TransactionActionType.TransactionComplete, true)
+    }, 3000)
+  }, [setApprovalModal, setTransactionModal])
 
   return (
     <SwapUIV2.SwapFormWrapper>

@@ -9,9 +9,11 @@ export interface AppModalData {
   closeable?: boolean
 }
 
-export const appModalAtom = atom<AppModalData>({
+export const defaultAppModalData: AppModalData = {
   isOpen: false,
   title: null,
   content: null,
   closeable: true,
-})
+}
+
+export const appModalAtom = atom<AppModalData>(defaultAppModalData)
