@@ -24,18 +24,17 @@ const Container = ({ children }: { children: React.ReactNode }) => {
           address,
         }
       })
-      if (!init) {
-        setInit(true)
-      }
     } else {
       setTonState((prev) => {
         return { ...prev, address: '' }
       })
-      if (!init) {
-        setInit(true)
-      }
+    }
+
+    if (!init) {
+      setInit(true)
     }
   }, [address, init, setTonState])
+
   if (!init) {
     return null
   }
