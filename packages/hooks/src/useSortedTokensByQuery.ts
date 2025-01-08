@@ -1,7 +1,11 @@
 import { useMemo } from 'react'
-import { Token } from '@pancakeswap/swap-sdk-core'
 
-const useSortedTokensByQuery = (tokens: Token[] | undefined, searchQuery: string): Token[] => {
+interface TokenInfo {
+  symbol: string
+  name?: string
+}
+
+const useSortedTokensByQuery = <T extends TokenInfo>(tokens: T[] | undefined, searchQuery: string): T[] => {
   return useMemo(() => {
     if (!tokens) {
       return []
@@ -15,9 +19,9 @@ const useSortedTokensByQuery = (tokens: Token[] | undefined, searchQuery: string
       return tokens
     }
 
-    const exactMatches: Token[] = []
-    const symbolSubstrings: Token[] = []
-    const rest: Token[] = []
+    const exactMatches: T[] = []
+    const symbolSubstrings: T[] = []
+    const rest: T[] = []
 
     // sort tokens by exact match -> substring on symbol match -> rest
     tokens.forEach((token) => {

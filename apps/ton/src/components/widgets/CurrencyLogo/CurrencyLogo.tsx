@@ -17,7 +17,6 @@ export function CurrencyLogo({
   currency,
   size = '24px',
   style,
-  useTrustWalletUrl,
   imageRef,
   ...props
 }: {
@@ -26,7 +25,6 @@ export function CurrencyLogo({
   }
   size?: string
   style?: React.CSSProperties
-  useTrustWalletUrl?: boolean
   imageRef?: React.RefObject<HTMLImageElement>
 } & SpaceProps) {
   const uriLocations = useHttpLocations(currency?.logoURI)

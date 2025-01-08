@@ -1,7 +1,7 @@
 import { usePreviousValue } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Token } from '@pancakeswap/sdk'
 
+import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
 import {
   Button,
   CopyButton,
@@ -61,7 +61,7 @@ export interface CurrencySearchModalProps extends InjectedModalProps {
   showCommonBases?: boolean
   commonBasesType?: string
   showSearchInput?: boolean
-  tokensToShow?: Token[]
+  tokensToShow?: Currency[]
   showCurrencyInHeader?: boolean
 }
 
@@ -90,7 +90,7 @@ export default function CurrencySearchModal({
   const prevView = usePreviousValue(modalView)
 
   // used for import token flow
-  const [importToken, setImportToken] = useState<Token | undefined>()
+  const [importToken, setImportToken] = useState<Currency | undefined>()
 
   // used for import list
   // const [importList, setImportList] = useState<TokenList | undefined>()

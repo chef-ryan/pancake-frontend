@@ -1,7 +1,7 @@
 import { useDebounce, useSortedTokensByQuery } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 /* eslint-disable no-restricted-syntax */
-import { Currency, Token } from '@pancakeswap/sdk'
+import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
 import { AutoColumn, Box, Column, Input, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FixedSizeList } from 'react-window'
@@ -13,6 +13,7 @@ import { Address } from '@ton/core'
 import Row from 'components/Layout/Row'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
 import { useToken } from 'hooks/tokens/useToken'
+import { TonNetworks } from 'ton/ton.enums'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 
@@ -24,9 +25,9 @@ interface CurrencySearchProps {
   showCommonBases?: boolean
   commonBasesType?: string
   showImportView: () => void
-  setImportToken: (token: Token) => void
+  setImportToken: (token: Currency) => void
   height?: number
-  tokensToShow?: Token[]
+  tokensToShow?: Currency[]
 }
 
 function CurrencySearch({
@@ -52,7 +53,18 @@ function CurrencySearch({
 
   const [invertSearchOrder] = useState<boolean>(false)
 
-  const allTokens = []
+  const allTokens = useMemo(
+    () => [
+      {
+        address: '0x',
+        chainId: TonNetworks.Mainnet,
+        symbol: 'NOTON',
+        name: 'NOTON',
+        decimals: 9,
+      },
+    ],
+    [],
+  )
 
   // if they input an address, use it
   const searchToken = useToken(debouncedQuery)
@@ -67,7 +79,7 @@ function CurrencySearch({
     return native && native.symbol?.toLowerCase?.()?.indexOf(s) !== -1
   }, [debouncedQuery, native, tokensToShow])
 
-  const filteredTokens: Token[] = useMemo(() => {
+  const filteredTokens: Currency[] = useMemo(() => {
     const filterToken = createFilterToken(debouncedQuery, (address) => Address.isAddress(address))
     return Object.values(tokensToShow || allTokens).filter(filterToken)
   }, [tokensToShow, allTokens, debouncedQuery])
@@ -75,7 +87,7 @@ function CurrencySearch({
   const filteredQueryTokens = useSortedTokensByQuery(filteredTokens, debouncedQuery)
   // const tokenComparator = useTokenComparator(invertSearchOrder)
 
-  const filteredSortedTokens: Token[] = useMemo(() => [...filteredQueryTokens].toSorted(), [filteredQueryTokens])
+  const filteredSortedTokens: Currency[] = useMemo(() => [...filteredQueryTokens].toSorted(), [filteredQueryTokens])
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {

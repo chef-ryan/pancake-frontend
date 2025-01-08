@@ -1,5 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Pair, Token } from '@pancakeswap/sdk'
+import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
+import { CurrencyAmount, Pair } from '@pancakeswap/sdk'
 import {
   Box,
   Button,
@@ -13,6 +14,7 @@ import {
   useMatchBreakpoints,
   useModal,
 } from '@pancakeswap/uikit'
+
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { CurrencyLogo, DoubleCurrencyLogo, SwapUIV2 } from 'components/widgets'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -165,7 +167,7 @@ interface CurrencyInputPanelProps {
   disabled?: boolean
   error?: boolean | string
   showUSDPrice?: boolean
-  tokensToShow?: Token[]
+  tokensToShow?: Currency[]
   currencyLoading?: boolean
   inputLoading?: boolean
   title?: React.ReactNode
