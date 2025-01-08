@@ -22,6 +22,7 @@ export const setCurrencyAtom = atom(null, (_, set, field: string, currency: Curr
             chainId: currency.chainId,
             logoURI: currency.logoURI,
             equals: () => false,
+            wrapped: {} as any,
           }
         : new Token(
             currency.chainId,
