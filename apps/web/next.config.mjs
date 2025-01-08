@@ -218,6 +218,21 @@ const config = {
     ]
   },
   webpack: (webpackConfig, { webpack, isServer }) => {
+    webpackConfig.module.rules = webpackConfig.module.rules.map((rule) => {
+      if (rule.test?.toString().includes('tsx|ts|js|mjs|jsx')) {
+        return {
+          ...rule,
+          use: {
+            loader: 'esbuild-loader',
+            options: {
+              loader: 'tsx',
+              target: 'es2020',
+            },
+          },
+        };
+      }
+      return rule;
+    });
     // tree shake sentry tracing
     webpackConfig.plugins.push(
       new webpack.DefinePlugin({
