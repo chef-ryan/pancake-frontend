@@ -1,7 +1,5 @@
-import type { Address } from '@ton/core'
-
 export type CurrencyInfo = {
-  address?: Address
+  address?: string
   symbol?: string
   chainId?: number
   isToken?: boolean

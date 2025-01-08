@@ -13,6 +13,11 @@ const StyledLogo = styled(TokenLogo)<{ size: string }>`
   ${space}
 `
 
+const getTrustWalletUrl = (currency: CurrencyInfo) => {
+  if (!currency.address) return ''
+  return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/assets/${currency.address}/logo.png`
+}
+
 export function CurrencyLogo({
   currency,
   size = '24px',
@@ -30,16 +35,17 @@ export function CurrencyLogo({
   const uriLocations = useHttpLocations(currency?.logoURI)
 
   const srcs: string[] = useMemo(() => {
-    if (currency?.isNative) return []
+    if (currency) {
+      if (currency?.isNative) return []
 
-    if (currency?.isToken) {
-      const logoUrls = []
+      const logoUrls = [getTrustWalletUrl(currency)]
 
       if (currency?.logoURI) {
         return [...uriLocations, ...logoUrls]
       }
       return [...logoUrls]
     }
+
     return []
   }, [currency, uriLocations])
 
@@ -47,7 +53,7 @@ export function CurrencyLogo({
     return (
       <StyledLogo
         size={size}
-        srcs={[`https://assets.pancakeswap.finance/web/native/${currency.chainId}.png`]}
+        srcs={[`https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/info/logo.png`]}
         width={size}
         imageRef={imageRef}
         style={style}

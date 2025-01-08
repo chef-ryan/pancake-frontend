@@ -1,11 +1,11 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Token } from '@pancakeswap/sdk'
-import { ArrowForwardIcon, CircleLoader, Column, QuestionHelper, Text } from '@pancakeswap/uikit'
+import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
+import { CurrencyAmount, Token } from '@pancakeswap/sdk'
+import { ArrowForwardIcon, Column, QuestionHelper, Text } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { LightGreyCard } from 'components/Card'
 import { RowBetween, RowFixed } from 'components/Layout/Row'
 import { CurrencyLogo } from 'components/widgets/CurrencyLogo'
-import { useCurrencyBalance } from 'hooks/tokens/useCurrencyBalance'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
@@ -68,7 +68,7 @@ function CurrencyRow({
   // const { t } = useTranslation()
   const key = currencyKey(currency)
 
-  const balance = useCurrencyBalance(account ?? undefined, currency)
+  // const balance = useCurrencyBalance(account ?? undefined, currency)
 
   // only show add or remove buttons if not on selected list
   return (
@@ -79,7 +79,7 @@ function CurrencyRow({
       disabled={isSelected}
       selected={otherSelected}
     >
-      <CurrencyLogo currency={currency as any} size="28px" />
+      <CurrencyLogo currency={currency} size="28px" />
 
       <Column>
         <Text bold>{currency?.symbol}</Text>
@@ -88,7 +88,8 @@ function CurrencyRow({
         </Text> */}
       </Column>
       <RowFixed style={{ justifySelf: 'flex-end' }}>
-        {balance ? <Balance balance={balance} /> : account ? <CircleLoader /> : <ArrowForwardIcon />}
+        {/* {balance ? <Balance balance={balance} /> : account ? <CircleLoader /> : <ArrowForwardIcon />} */}
+        <ArrowForwardIcon />
       </RowFixed>
     </MenuItem>
   )

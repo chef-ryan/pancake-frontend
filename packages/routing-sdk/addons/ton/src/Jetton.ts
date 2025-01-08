@@ -1,17 +1,6 @@
-import { Token } from '@pancakeswap/swap-sdk-core'
+import { AgnosticToken } from './AgnosticToken'
 
-export class Jetton extends Token {
-  public constructor(
-    chainId: number,
-    address: string,
-    decimals: number,
-    symbol: string,
-    name?: string,
-    projectLink?: string,
-  ) {
-    super(chainId, address as `0x${string}`, decimals, symbol, name, projectLink)
-  }
-
+export class Jetton extends AgnosticToken {
   public sortsBefore(other: Jetton): boolean {
     return super.sortsBefore(other)
   }

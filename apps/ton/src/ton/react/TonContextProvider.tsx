@@ -13,6 +13,7 @@ export const TonContextProvider = ({ children }: { children: React.ReactNode }) 
 
 const Container = ({ children }: { children: React.ReactNode }) => {
   const address = useTonAddress()
+
   const [init, setInit] = useState(false)
   const setTonState = useSetAtom(tonStateAtom)
 

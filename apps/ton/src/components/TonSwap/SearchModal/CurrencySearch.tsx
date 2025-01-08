@@ -10,10 +10,11 @@ import { createFilterToken } from 'utils/tokens/filterTokens'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 
 import { Address } from '@ton/core'
+import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import Row from 'components/Layout/Row'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
 import { useToken } from 'hooks/tokens/useToken'
-import { TonNetworks } from 'ton/ton.enums'
+import { useAtomValue } from 'jotai'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 
@@ -53,18 +54,11 @@ function CurrencySearch({
 
   const [invertSearchOrder] = useState<boolean>(false)
 
-  const allTokens = useMemo(
-    () => [
-      {
-        address: '0x',
-        chainId: TonNetworks.Mainnet,
-        symbol: 'NOTON',
-        name: 'NOTON',
-        decimals: 9,
-      },
-    ],
-    [],
-  )
+  // const allTokens = []
+
+  const { data: activeList } = useAtomValue(fetchListAtom)
+  const allTokens = useMemo(() => activeList?.tokens || [], [activeList])
+  console.log('tokenList', allTokens)
 
   // if they input an address, use it
   const searchToken = useToken(debouncedQuery)
