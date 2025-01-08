@@ -26,16 +26,20 @@ export class AgnosticToken extends AgnosticBaseCurrency {
 
   public readonly projectLink?: string
 
+  public readonly logoURI?: string
+
   public constructor(
     chainId: number,
     address: string,
     decimals: number,
     symbol: string,
     name?: string,
+    logoURI?: string,
     projectLink?: string,
   ) {
     super(chainId, decimals, symbol, name)
     this.address = address
+    this.logoURI = logoURI
     this.projectLink = projectLink
   }
 

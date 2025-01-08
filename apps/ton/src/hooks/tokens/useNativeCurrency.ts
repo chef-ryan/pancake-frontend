@@ -12,5 +12,6 @@ export const useNativeCurrency = () => {
     decimals: 9,
     chainId: network === TonNetworks.Mainnet ? -239 : -3, // TODO: Replace chainId itself later on, create separate an agnostic swap-sdk-core
     logoURI: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/info/logo.png',
+    equals: () => false,
   }
 }

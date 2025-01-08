@@ -7,7 +7,7 @@ import { AutoRow } from 'components/Layout/Row'
 import { styled } from 'styled-components'
 
 import replaceBrowserHistoryMultiple from '@pancakeswap/utils/replaceBrowserHistoryMultiple'
-import { currencyIdFamily } from 'atoms/swap/swapStateAtom'
+import { currencyFamily } from 'atoms/swap/swapStateAtom'
 import { SwapUIV2 } from 'components/widgets/swap-v2'
 import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
 import { useAtomValue } from 'jotai'
@@ -31,16 +31,16 @@ export const FlipButton = memo(function FlipButton() {
   //   [Field.OUTPUT]: { currencyId: outputCurrencyId },
   // } = useSwapState()
 
-  const inputCurrencyId = useAtomValue(currencyIdFamily(Field.INPUT))
-  const outputCurrencyId = useAtomValue(currencyIdFamily(Field.OUTPUT))
+  const inputCurrency = useAtomValue(currencyFamily(Field.INPUT))
+  const outputCurrency = useAtomValue(currencyFamily(Field.OUTPUT))
 
   const onFlip = useCallback(() => {
     onSwitchTokens()
     replaceBrowserHistoryMultiple({
-      inputCurrency: outputCurrencyId,
-      outputCurrency: inputCurrencyId,
+      inputCurrency: outputCurrency?.isToken ? outputCurrency.address : outputCurrency?.symbol,
+      outputCurrency: inputCurrency?.isToken ? inputCurrency.address : inputCurrency?.symbol,
     })
-  }, [onSwitchTokens, inputCurrencyId, outputCurrencyId])
+  }, [onSwitchTokens, inputCurrency, outputCurrency])
 
   return (
     <AutoColumn justify="space-between" position="relative">

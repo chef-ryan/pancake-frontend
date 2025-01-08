@@ -10,7 +10,7 @@ import { AutoRow } from 'components/Layout/Row'
 import { CommonBasesType } from './types'
 
 const SUGGESTED_BASES: { [chainId in ChainId]?: Token[] } = {
-  1: [new Token(1, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18, 'DAI', 'Dai Stablecoin')],
+  // 1: [new Token(1, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18, 'DAI', 'Dai Stablecoin')],
 }
 
 const ButtonWrapper = styled.div`

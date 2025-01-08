@@ -143,6 +143,8 @@ const useSizeAdaption = (value: string, currencySymbol?: string, otherCurrencySy
 }
 
 interface CurrencyInputPanelProps {
+  field?: string // Example: 'INPUT', 'OUTPUT'
+
   value: string | undefined
   onUserInput: (value: string) => void
   onInputBlur?: () => void
@@ -175,6 +177,7 @@ interface CurrencyInputPanelProps {
   isUserInsufficientBalance?: boolean
 }
 const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
+  field,
   value,
   onUserInput,
   onInputBlur,
@@ -222,6 +225,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
 
   const [onPresentCurrencyModal] = useModal(
     <CurrencySearchModal
+      field={field}
       onCurrencySelect={onCurrencySelect}
       selectedCurrency={currency}
       otherSelectedCurrency={otherCurrency}

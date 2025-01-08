@@ -50,7 +50,7 @@ export const ConnectWalletButton = () => {
   }
 
   return (
-    <ConnectButton onClick={handleConnect} endIcon={<WalletFilledV2Icon color="white" />}>
+    <ConnectButton onClick={handleConnect} endIcon={<WalletFilledV2Icon color="invertedContrast" />}>
       {t('Connect')}
     </ConnectButton>
   )

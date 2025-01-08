@@ -4,6 +4,7 @@
   "version": 1,
   "tokens": [
     {
+      "chainId": -289,
       "address": "0x00",
       "name": "TON Crystal",
       "symbol": "TONC",
@@ -11,6 +12,7 @@
       "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/info/logo.png"
     },
     {
+      "chainId": -289,
       "address": "0x01",
       "name": "Wrapped TON Crystal",
       "symbol": "WTONC",
@@ -18,6 +20,7 @@
       "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/info/logo.png"
     },
     {
+      "chainId": -289,
       "address": "0x02",
       "name": "Tether USD",
       "symbol": "USDT",

@@ -55,6 +55,8 @@ const StyledModalBody = styled(ModalBody)`
 `
 
 export interface CurrencySearchModalProps extends InjectedModalProps {
+  field?: string // Example: 'INPUT', 'OUTPUT'
+
   selectedCurrency?: Currency | null
   onCurrencySelect?: (currency: Currency) => void
   otherSelectedCurrency?: Currency | null
@@ -66,6 +68,7 @@ export interface CurrencySearchModalProps extends InjectedModalProps {
 }
 
 export default function CurrencySearchModal({
+  field,
   onDismiss = () => null,
   onCurrencySelect,
   selectedCurrency,
@@ -170,13 +173,13 @@ export default function CurrencySearchModal({
                     data-dd-action-name="Copy token address"
                     width="16px"
                     buttonColor="textSubtle"
-                    text={selectedCurrency.wrapped.address}
+                    text={selectedCurrency.address}
                     tooltipMessage={t('Token address copied')}
                     defaultTooltipMessage={t('Copy token address')}
                     tooltipPlacement="top"
                   />
                   <ViewOnExplorerButton
-                    address={selectedCurrency.wrapped.address}
+                    address={selectedCurrency.address}
                     chainId={selectedCurrency.chainId}
                     type="token"
                     color="textSubtle"

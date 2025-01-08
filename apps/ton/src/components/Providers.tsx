@@ -30,6 +30,7 @@ const StyledUIKitProvider: React.FC<React.PropsWithChildren> = ({ children, ...p
 }
 
 const HydrateAtoms: React.FC<PropsWithChildren> = ({ children }) => {
+  // @ts-ignore
   useHydrateAtoms([[queryClientAtom, queryClient]])
   return children
 }
