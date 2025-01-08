@@ -14,7 +14,6 @@ export const useAccountLocalEventListener = () => {
         onDisconnect() {
           if (chainId) {
             dispatch(resetUserState({ chainId }))
-            dispatch(resetUserState({ chainId }))
           }
         },
       }),
