@@ -78,7 +78,6 @@ export const SwapForm = () => {
               currencyLoading={false}
               label={t('From')}
               value={typedValue}
-              maxAmount={undefined}
               showQuickInputButton
               currency={inputCurrency}
               onUserInput={(val) => onUserInput(Field.INPUT, val)}
@@ -105,7 +104,6 @@ export const SwapForm = () => {
               currencyLoading={false}
               label={t('From')}
               value={outputValue}
-              maxAmount={undefined}
               showQuickInputButton
               currency={outputCurrency}
               onUserInput={noop}

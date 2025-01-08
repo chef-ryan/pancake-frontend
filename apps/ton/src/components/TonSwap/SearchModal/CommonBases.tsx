@@ -1,6 +1,6 @@
 import { ChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Token } from '@pancakeswap/sdk'
+import { Currency, Token } from '@pancakeswap/routing-sdk-addon-ton'
 import { AutoColumn, QuestionHelper, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from 'components/widgets'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'

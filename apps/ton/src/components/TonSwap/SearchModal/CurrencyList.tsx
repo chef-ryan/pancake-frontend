@@ -1,8 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
-import { CurrencyAmount, Token } from '@pancakeswap/sdk'
+import { Currency, Token } from '@pancakeswap/routing-sdk-addon-ton'
+
 import { ArrowForwardIcon, Column, QuestionHelper, Text } from '@pancakeswap/uikit'
-import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { LightGreyCard } from 'components/Card'
 import { RowBetween, RowFixed } from 'components/Layout/Row'
 import { CurrencyLogo } from 'components/widgets/CurrencyLogo'
@@ -32,9 +31,9 @@ const FixedContentRow = styled.div`
   align-items: center;
 `
 
-function Balance({ balance }: { balance: CurrencyAmount<Currency> }) {
-  return <StyledBalanceText title={balance.toExact()}>{formatAmount(balance, 4)}</StyledBalanceText>
-}
+// function Balance({ balance }: { balance: CurrencyAmount<Currency> }) {
+//   return <StyledBalanceText title={balance.toExact()}>{formatAmount(balance, 4)}</StyledBalanceText>
+// }
 
 const MenuItem = styled(RowBetween)<{ disabled: boolean; selected: boolean }>`
   padding: 4px 20px;
@@ -123,6 +122,7 @@ export default function CurrencyList({
   const native = useNativeCurrency()
 
   const itemData: (Currency | undefined)[] = useMemo(() => {
+    // @ts-ignore
     let formatted: (Currency | undefined)[] = showNative
       ? [native, ...currencies, ...inactiveCurrencies]
       : [...currencies, ...inactiveCurrencies]

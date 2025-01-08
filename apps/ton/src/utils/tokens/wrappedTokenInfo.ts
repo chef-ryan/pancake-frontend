@@ -1,9 +1,10 @@
-import { SerializedToken, Token } from '@pancakeswap/swap-sdk-core'
+import { Token } from '@pancakeswap/routing-sdk-addon-ton'
+import { SerializedToken } from '@pancakeswap/swap-sdk-core'
 import { TokenInfo, TokenList } from './types'
 
-export interface SerializedWrappedToken extends SerializedToken {
+export interface SerializedWrappedToken extends Omit<SerializedToken, 'address'> {
   chainId: number
-  address: `0x${string}`
+  address: string
   decimals: number
   symbol: string
   name?: string
