@@ -5,27 +5,27 @@
   "tokens": [
     {
       "chainId": -289,
-      "address": "0x00",
-      "name": "TON Crystal",
-      "symbol": "TONC",
+      "address": "kQA8oT-HRBY-9-yFymg17hD5FE07--Z1gYc_sZTbzqpOZr1t",
+      "name": "Pancake Token",
+      "symbol": "CAKE",
       "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/info/logo.png"
     },
     {
       "chainId": -289,
-      "address": "0x01",
-      "name": "Wrapped TON Crystal",
-      "symbol": "WTONC",
+      "address": "kQC5CBUFuZwAqWqK_qNQc--przIvA-rsNYIgXuKFjsxp_CJs",
+      "name": "USD Coin",
+      "symbol": "USDC",
       "decimals": 9,
-      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/info/logo.png"
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/assets/EQAAXwH0cajPsMF-nNC5kz-SaLaeaDr4M7Q1foVwP_vOW1tR/logo.png"
     },
     {
       "chainId": -289,
-      "address": "0x02",
+      "address": "kQDdLkZeRizrkprK3xJgD6QsyAQWUtKC1E38_iB5bPV_d_Ob",
       "name": "Tether USD",
       "symbol": "USDT",
-      "decimals": 6,
-      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/info/logo.png"
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/assets/EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs/logo.png"
     }
   ]
 }
