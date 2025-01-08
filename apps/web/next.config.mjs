@@ -8,6 +8,7 @@ import vercelToolbarPlugin from '@vercel/toolbar/plugins/next'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { RetryChunkLoadPlugin } from 'webpack-retry-chunk-load-plugin'
+import TerserPlugin from 'terser-webpack-plugin'
 
 const withVercelToolbar = vercelToolbarPlugin()
 
@@ -235,6 +236,16 @@ const config = {
         maxRetries: 5,
       }),
     )
+    if (!isServer) {
+      webpackConfig.optimization.minimizer = [
+        new TerserPlugin({
+          parallel: true,
+          terserOptions: {
+            compress: true,
+          },
+        }),
+      ];
+    }
     if (!isServer && webpackConfig.optimization.splitChunks) {
       // webpack doesn't understand worker deps on quote worker, so we need to manually add them
       // https://github.com/webpack/webpack/issues/16895
