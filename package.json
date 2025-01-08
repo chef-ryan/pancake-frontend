@@ -31,7 +31,7 @@
     "test:config": "pnpm turbo run test:config --filter=web...[HEAD^1]",
     "test:ci": "pnpm turbo run test --filter=[HEAD^1]",
     "lint": "turbo run lint --max-workers=8",
-    "lint:report": "turbo run lint --log-prefix=none",
+    "lint:report": "turbo run lint --log-prefix=none --max-workers=8",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json}\"",
     "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json}\"",
     "format:check:staged": "lint-staged",
