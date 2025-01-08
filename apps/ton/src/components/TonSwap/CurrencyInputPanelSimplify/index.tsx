@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
-import { CurrencyAmount, Pair } from '@pancakeswap/sdk'
+import { Pair } from '@pancakeswap/sdk'
 import {
   Box,
   Button,
@@ -152,7 +152,7 @@ interface CurrencyInputPanelProps {
   onMax?: () => void
   showQuickInputButton?: boolean
   showMaxButton: boolean
-  maxAmount?: CurrencyAmount<Currency>
+  // maxAmount?: CurrencyAmount<Currency>
   lpPercent?: string
   label?: string
   onCurrencySelect?: (currency: Currency) => void
