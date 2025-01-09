@@ -218,21 +218,6 @@ const config = {
     ]
   },
   webpack: (webpackConfig, { webpack, isServer }) => {
-    webpackConfig.module.rules = webpackConfig.module.rules.map((rule) => {
-      if (rule.test?.toString().includes('tsx|ts|js|mjs|jsx')) {
-        return {
-          ...rule,
-          use: {
-            loader: 'esbuild-loader',
-            options: {
-              loader: 'tsx',
-              target: 'es2020',
-            },
-          },
-        };
-      }
-      return rule;
-    });
     // tree shake sentry tracing
     webpackConfig.plugins.push(
       new webpack.DefinePlugin({
@@ -251,14 +236,14 @@ const config = {
         maxRetries: 5,
       }),
     )
-    webpackConfig.optimization.minimize=true
+    webpackConfig.optimization.minimize = true
     webpackConfig.optimization.minimizer = [
       new TerserPlugin({
         parallel: true,
         minify: TerserPlugin.esbuildMinify,
         terserOptions: {},
       }),
-    ];
+    ]
     if (!isServer && webpackConfig.optimization.splitChunks) {
       // webpack doesn't understand worker deps on quote worker, so we need to manually add them
       // https://github.com/webpack/webpack/issues/16895

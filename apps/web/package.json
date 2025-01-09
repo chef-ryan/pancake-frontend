@@ -10,7 +10,7 @@
     "test": "LC_ALL=\"en_US.UTF-8\" vitest --run",
     "test:watch": "LC_ALL=\"en_US.UTF-8\" vitest --watch",
     "test:config": "vitest --run --config vitest-config-test.config.ts",
-    "lint": "eslint_d --cache 'src/**/*.{js,jsx,ts,tsx}'",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:style": "npx stylelint '**/*.{ts,tsx}'",
     "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json}\"",
     "typechecks": "tsc --noEmit -p ./tsconfig.json"
@@ -175,8 +175,6 @@
     "eslint": "^8.32.0",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-lodash": "^7.4.0",
-    "esbuild-loader": "4.2.2",
-    "eslint_d": "14.3.0",
     "happy-dom": "^13.3.8",
     "lint-staged": "^12.3.4",
     "openapi-typescript": "7.0.0-rc.0",
