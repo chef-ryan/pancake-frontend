@@ -1,9 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
-import { GraphQLClient } from 'graphql-request'
 import { useMemo } from 'react'
 import { multiChainId } from 'state/info/constant'
 import { useChainNameByQuery } from 'state/info/hooks'
-import { Block } from 'state/info/types'
 
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { chainIdToExplorerInfoChainName, explorerApiClient } from 'state/info/api/client'
@@ -21,7 +19,7 @@ import { fetchSearchResults } from '../data/search'
 import { fetchTokenChartData } from '../data/token/chartData'
 import { fetchPoolsForToken } from '../data/token/poolsForToken'
 import { fetchPairPriceChartTokenData, fetchTokenPriceData } from '../data/token/priceData'
-import { fetchedTokenData, fetchedTokenDatas } from '../data/token/tokenData'
+import { fetchedTokenData } from '../data/token/tokenData'
 import { fetchTokenTransactions } from '../data/token/transactions'
 import {
   ChartDayData,
@@ -190,17 +188,6 @@ export const useTopTokensData = ():
     ...QUERY_SETTINGS_IMMUTABLE,
   })
   return data?.data
-}
-
-const graphPerPage = 50
-
-const tokenDataFetcher = (dataClient: GraphQLClient, tokenAddresses: string[], blocks?: Block[]) => {
-  const times = Math.ceil(tokenAddresses.length / graphPerPage)
-  const addressGroup: Array<string[]> = []
-  for (let i = 0; i < times; i++) {
-    addressGroup.push(tokenAddresses.slice(i * graphPerPage, (i + 1) * graphPerPage))
-  }
-  return Promise.all(addressGroup.map((d) => fetchedTokenDatas(dataClient, d, blocks)))
 }
 
 export const useTokenData = (address: string): TokenData | undefined => {

@@ -1,8 +1,4 @@
-import { GraphQLClient } from 'graphql-request'
-import { infoStableSwapClients, v2Clients } from 'utils/graphql'
-
-import { ChainId, isTestnetChainId } from '@pancakeswap/chains'
-import { STABLE_SUPPORTED_CHAIN_IDS } from '@pancakeswap/stable-swap-sdk'
+import { ChainId } from '@pancakeswap/chains'
 import { BSC_TOKEN_WHITELIST, ETH_TOKEN_BLACKLIST, ETH_TOKEN_WHITELIST, TOKEN_BLACKLIST } from 'config/constants/info'
 import mapValues from 'lodash/mapValues'
 import { arbitrum, base, bsc, linea, mainnet, opBNB, polygonZkEvm, zkSync } from 'wagmi/chains'
@@ -60,11 +56,6 @@ export const multiChainPaths = {
   [ChainId.OPBNB]: '/opbnb',
 }
 
-export const multiChainQueryStableClient = STABLE_SUPPORTED_CHAIN_IDS.reduce((acc, chainId) => {
-  if (isTestnetChainId(chainId)) return acc
-  return { ...acc, [multiChainName[chainId]]: infoStableSwapClients[chainId] }
-}, {} as Record<MultiChainName, GraphQLClient>)
-
 export const infoChainNameToExplorerChainName = {
   BSC: 'bsc',
   ETH: 'ethereum',
@@ -75,10 +66,6 @@ export const infoChainNameToExplorerChainName = {
   BASE: 'base',
   OPBNB: 'opbnb',
 } as const
-
-export const STABLESWAP_SUBGRAPHS_START_BLOCK = {
-  ARB: 169319653,
-}
 
 export const multiChainScan: Record<MultiChainName, string> = {
   BSC: bsc.blockExplorers.default.name,
@@ -126,12 +113,6 @@ export const multiChainTokenWhiteList: Record<MultiChainName, string[]> = mapVal
   },
   (val) => val.map((address) => address.toLowerCase()),
 )
-
-export const getMultiChainQueryEndPointWithStableSwap = (chainName: MultiChainNameExtend): GraphQLClient => {
-  const isStableSwap = checkIsStableSwap()
-  if (isStableSwap) return multiChainQueryStableClient[chainName]
-  return v2Clients[multiChainId[chainName]]
-}
 
 export const subgraphTokenName = {
   [ChainId.BSC]: {

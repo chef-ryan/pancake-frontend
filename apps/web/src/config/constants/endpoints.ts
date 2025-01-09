@@ -1,4 +1,4 @@
-import { BLOCKS_SUBGRAPHS, ChainId, STABLESWAP_SUBGRAPHS, V2_SUBGRAPHS, V3_SUBGRAPHS } from '@pancakeswap/chains'
+import { ChainId, V2_SUBGRAPHS, V3_SUBGRAPHS } from '@pancakeswap/chains'
 
 export const THE_GRAPH_PROXY_API = 'https://thegraph.pancakeswap.com'
 
@@ -20,15 +20,6 @@ export const NOTIFICATION_HUB_BASE_URL = 'https://notification-hub.pancakeswap.c
  * V1 will be deprecated but is still used to claim old rounds
  */
 export const GRAPH_API_PREDICTION_V1 = `${THE_GRAPH_PROXY_API}/prediction-v1-bsc`
-
-export const V3_BSC_INFO_CLIENT = `https://open-platform.nodereal.io/${
-  process.env.NEXT_PUBLIC_NODE_REAL_API_INFO || process.env.NEXT_PUBLIC_NODE_REAL_API_ETH
-}/pancakeswap-v3/graphql`
-
-const BLOCKS_SUBGRAPH_URLS = {
-  ...BLOCKS_SUBGRAPHS,
-  [ChainId.OPBNB]: `${THE_GRAPH_PROXY_API}/blocks-opbnb`,
-}
 
 export const GRAPH_API_NFTMARKET = `${THE_GRAPH_PROXY_API}/nft-marketplace-bsc`
 export const GRAPH_HEALTH = 'https://api.thegraph.com/index-node/graphql'
@@ -69,13 +60,6 @@ export const V3_SUBGRAPH_URLS = {
   [ChainId.ZKSYNC]: `${THE_GRAPH_PROXY_API}/exchange-v3-zksync`,
   [ChainId.LINEA]: `${THE_GRAPH_PROXY_API}/exchange-v3-linea`,
   [ChainId.OPBNB]: `${THE_GRAPH_PROXY_API}/exchange-v3-opbnb`,
-}
-
-export const STABLESWAP_SUBGRAPHS_URLS = {
-  ...STABLESWAP_SUBGRAPHS,
-  [ChainId.BSC]: `${THE_GRAPH_PROXY_API}/exchange-stableswap-bsc`,
-  [ChainId.ARBITRUM_ONE]: `${THE_GRAPH_PROXY_API}/exchange-stableswap-arb`,
-  [ChainId.ETHEREUM]: `${THE_GRAPH_PROXY_API}/exchange-stableswap-eth`,
 }
 
 export const TRADING_REWARD_API = 'https://trading-reward.pancakeswap.com/api/v1'

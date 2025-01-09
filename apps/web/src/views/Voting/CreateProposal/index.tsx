@@ -95,7 +95,6 @@ const CreateProposal = () => {
   const enoughVotingPower = total >= VOTE_THRESHOLD
 
   const {
-    fields: choiceFields,
     replace: replaceChoices,
     // If you want to let users add more choices, you can do:
     // append, remove, etc.
