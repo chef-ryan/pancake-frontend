@@ -1,7 +1,6 @@
 {
   "extends": "@pancakeswap/tsconfig/nextjs.json",
   "compilerOptions": {
-    "incremental": true,
     "baseUrl": "./",
     "strictNullChecks": true,
     "noImplicitAny": false,
