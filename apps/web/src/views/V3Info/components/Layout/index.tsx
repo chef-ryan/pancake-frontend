@@ -2,8 +2,9 @@ import { useTranslation } from '@pancakeswap/localization'
 import { SubMenuItems } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
-import { multiChainQueryStableClient } from 'state/info/constant'
 import { useChainNameByQuery, useMultiChainPath } from 'state/info/hooks'
+import { isStableSwapSupported } from '@pancakeswap/stable-swap-sdk'
+import { multiChainId } from 'state/info/constant'
 import { v3InfoPath } from '../../constants'
 import InfoNav from './InfoNav'
 
@@ -25,7 +26,7 @@ export const InfoPageLayout = ({ children }) => {
         href: `/info${chainPath}`,
       },
     ]
-    if (multiChainQueryStableClient[chainName])
+    if (isStableSwapSupported(multiChainId[chainName]))
       config.push({
         label: t('StableSwap'),
         href: `/info${chainPath}?type=stableSwap`,
