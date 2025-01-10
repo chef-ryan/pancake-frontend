@@ -4,7 +4,7 @@ import memoize from 'lodash/memoize'
  */
 const truncateHash = memoize(
   (address: string, startLength = 4, endLength = 4) => {
-    if (!address) return ''
+    if (typeof address !== 'string' || !address) return ''
 
     return `${address.substring(0, startLength)}...${address.substring(address.length - endLength)}`
   },
