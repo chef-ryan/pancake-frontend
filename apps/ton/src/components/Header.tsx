@@ -1,8 +1,11 @@
 // import { TonConnectButton } from '@tonconnect/ui-react'
 
-import { CogIcon, Flex, FlexGap, LinkExternal, LogoIcon, OpenNewIcon, ShareIcon, Text } from '@pancakeswap/uikit'
+import { useTranslation } from '@pancakeswap/localization'
+import { CogIcon, Flex, FlexGap, LinkExternal, LogoIcon, OpenNewIcon, ShareIcon, Tag, Text } from '@pancakeswap/uikit'
 import { bridgeLink } from 'config/constants/endpoints'
+import { useAtomValue } from 'jotai'
 import styled from 'styled-components'
+import { networkAtom } from 'ton/atom/networkAtom'
 
 const StyledHeader = styled.header`
   display: flex;
@@ -22,6 +25,9 @@ interface HeaderProps {
   showBridgeLink?: boolean
 }
 export const Header = ({ showBridgeLink }: HeaderProps) => {
+  const { t } = useTranslation()
+  const network = useAtomValue(networkAtom)
+
   return (
     <StyledHeader>
       <Flex alignItems="center">
@@ -31,6 +37,11 @@ export const Header = ({ showBridgeLink }: HeaderProps) => {
           {/* TODO: Move TON logo to assets */}
           <img src="/images/ton-logo.png" alt="TON" width={26} />
           <Text ml="8px">TON</Text>
+          {network === 'testnet' && (
+            <Tag variant="textSubtle" scale="sm" px="8px" ml="8px">
+              {t('testnet')}
+            </Tag>
+          )}
         </Flex>
       </Flex>
 
@@ -38,7 +49,7 @@ export const Header = ({ showBridgeLink }: HeaderProps) => {
         {showBridgeLink && (
           <>
             <StyledLinkExternal href={bridgeLink} showExternalIcon={false}>
-              <span>Get TON</span>
+              <span>{t('Get TON')}</span>
               <OpenNewIcon color="textSubtle" />
             </StyledLinkExternal>
           </>

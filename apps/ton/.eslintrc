@@ -39,5 +39,6 @@
     "max-classes-per-file": 0,
     "no-bitwise": 0
     // End temporary rules
-  }
+  },
+  "ignorePatterns": ["tact_*"]
 }

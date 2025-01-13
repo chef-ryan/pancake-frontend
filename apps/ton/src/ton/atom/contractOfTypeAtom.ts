@@ -11,7 +11,7 @@ interface Params<TType extends TonContractTypes> {
   type: TType
   address: string
 }
-export const contractOfTypeAtom = function contractAtom<TType extends TonContractTypes>(params: Params<TType>) {
+export const contractOfTypeAtom = function contractOfTypeAtom<TType extends TonContractTypes>(params: Params<TType>) {
   return atom<TonContractInstance<TClasses[TType]>>(() => {
     const proxy = new ContractProxy(params.type, params.address)
     return new Proxy({}, proxy) as unknown as TonContractInstance<TClasses[TType]>

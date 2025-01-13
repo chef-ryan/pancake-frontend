@@ -1,0 +1,142 @@
+import { Box, Button, FlexGap, Select, Text } from '@pancakeswap/uikit'
+import { Address, beginCell, toNano } from '@ton/core'
+import { SendTransactionRequest, useTonConnectUI, useTonWallet } from '@tonconnect/ui-react'
+import { fetchListAtom } from 'atoms/lists/fetchListAtom'
+import { Header } from 'components/Header'
+import Container from 'components/Layout/Container'
+import { useAtomValue } from 'jotai'
+import { useCallback, useState } from 'react'
+import { TonContext } from 'ton/context/TonContext'
+import { Contracts } from 'ton/def/contracts.def'
+import { TonContractNames } from 'ton/ton.enums'
+import { JettonMasterUSDT } from 'ton/wrappers/tact_JettonMasterUSDT'
+import { JettonWalletUSDT } from 'ton/wrappers/tact_JettonWalletUSDT'
+import { Router } from 'ton/wrappers/tact_Router'
+
+export default function TestMint() {
+  const { data: activeList } = useAtomValue(fetchListAtom)
+  const tokens = activeList?.tokens || []
+
+  //   const [amount, setAmount] = useState('')
+  const [selectedToken, setSelectedToken] = useState(tokens[0] || undefined)
+
+  const [resultMessage, setResultMessage] = useState('')
+
+  const wallet = useTonWallet()
+  const [tonUI] = useTonConnectUI()
+
+  const handleMint = useCallback(() => {
+    if (!selectedToken || !wallet?.account.address) throw new Error('Invalid input provided!')
+
+    const body = beginCell()
+      //   .store(
+      //     storeJettonMintMessage({
+      //       amount: toNano(amount),
+      //       to: Address.parse(wallet?.account?.address),
+      //       forwardPayload: null,
+      //       forwardTonAmount: 0n,
+      //       from: Address.parse(wallet.account.address),
+      //       queryId: 1n,
+      //       responseAddress: Address.parse(wallet.account.address),
+      //       walletForwardValue: 0n,
+      //     }),
+      //   )
+
+      .storeUint(0, 32)
+      .storeStringTail('Mint:1')
+
+      .endCell()
+
+    const txRequest: SendTransactionRequest = {
+      validUntil: Math.floor(Date.now() / 1000) + 60,
+      messages: [
+        {
+          address: selectedToken?.address,
+          amount: toNano('1').toString(),
+          payload: body.toBoc().toString('base64'),
+        },
+      ],
+    }
+
+    tonUI.sendTransaction(txRequest)
+  }, [selectedToken, tonUI, wallet?.account.address])
+
+  const estimateAddLiquidity = useCallback(async () => {
+    if (!wallet?.account.address) throw new Error('Wallet not connected')
+    const client = TonContext.instance.getClient()
+    const contractAddress = Address.parse(Contracts[TonContractNames.PCSRouter].address)
+    console.log('Router contract address', contractAddress)
+    const router = client.open(Router.fromAddress(contractAddress))
+
+    const result = await router.getEstimateAddLiquidity(1000000n)
+
+    console.log('Estimated Fee:', result)
+    setResultMessage(`Estimated Fee: ${result}`)
+  }, [wallet?.account.address])
+
+  const readJetton = useCallback(async () => {
+    if (!wallet?.account.address) throw new Error('Wallet not connected')
+
+    const client = TonContext.instance.getClient()
+    const contractAddress = Address.parse(Contracts[TonContractNames.USDC].address)
+    const jettonMaster = client.open(JettonMasterUSDT.fromAddress(contractAddress))
+    const jettonWalletAddress = await jettonMaster.getGetWalletAddress(Address.parse(wallet?.account.address))
+
+    const jettonData = await jettonMaster.getGetJettonData()
+
+    const jettonWallet = client.open(JettonWalletUSDT.fromAddress(jettonWalletAddress))
+    const result = JSON.stringify(jettonWallet.getGetWalletData())
+
+    console.log('Jetton result:', { jettonData, result })
+    setResultMessage(`Jetton result:  ${jettonWalletAddress} ${result}`)
+  }, [wallet?.account.address])
+
+  return (
+    <>
+      <Header />
+      <Container mt="40px">
+        <Text fontSize="36px" bold>
+          Mint Test Tokens
+        </Text>
+        <Text>To be minted: 100</Text>
+        <FlexGap mt="20px" flexDirection={['column', 'column', 'row']} gap="8px">
+          <Select
+            options={tokens.map((token) => ({ label: token.symbol, value: token.address }))}
+            onOptionChange={(option) => {
+              const token = tokens.find((t) => t.address === option.value)
+              if (token) setSelectedToken(token)
+            }}
+            placeHolderText="Select Token"
+          />
+          {/* <Input type="number" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} /> */}
+        </FlexGap>
+
+        <Button mt="20px" onClick={handleMint} disabled={!selectedToken || !wallet?.account.address}>
+          Mint
+        </Button>
+        <Box mt="20px">
+          {wallet?.account ? (
+            <>
+              <Text bold>Wallet Connected</Text>
+              <Text>{wallet?.account.address}</Text>
+              <Text>Chain: {wallet?.account.chain}</Text>
+            </>
+          ) : (
+            <b>Wallet not connected</b>
+          )}
+        </Box>
+
+        <Box mt="20px">
+          <Text fontSize="36px" bold>
+            Test Read Contracts
+          </Text>
+
+          <Text bold>{resultMessage}</Text>
+
+          <Button onClick={estimateAddLiquidity}>(Router) Read estimateAddLiquidity</Button>
+          <Button onClick={readJetton}>(Jetton) Read Jetton Wallet Address</Button>
+        </Box>
+      </Container>
+    </>
+  )
+}
