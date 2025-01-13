@@ -11,6 +11,7 @@ import {
 } from '@bnb-chain/canonical-bridge-widget'
 import { useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
+import { useLastUpdated } from '@pancakeswap/hooks'
 import { RefreshingIcon } from '../components/RefreshingIcon'
 import { V1BridgeLink } from '../components/V1BridgeLink'
 import { chains, env } from '../configs'
@@ -35,15 +36,17 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
   const { currentLanguage } = useTranslation()
   const theme = useTheme()
   const toast = useToast()
+  const { setLastUpdated: refresh } = useLastUpdated()
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
       const inputElement = document.querySelector('.bccb-widget-transfer-input')
       if (inputElement) {
         inputElement.setAttribute('pattern', '^[0-9]*[.,]?[0-9]*$')
+        refresh()
       }
     }
-  }, [])
+  }, [refresh])
 
   const config = useMemo<ICanonicalBridgeConfig>(
     () => ({

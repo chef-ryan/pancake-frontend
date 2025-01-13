@@ -29,7 +29,8 @@
     "@solana/wallet-adapter-react": "^0",
     "@tronweb3/tronwallet-adapter-react-hooks": "^1",
     "@pancakeswap/uikit": "workspace:*",
-    "@pancakeswap/localization": "workspace:*"
+    "@pancakeswap/localization": "workspace:*",
+    "@pancakeswap/hooks": "workspace:*"
   },
   "dependencies": {
     "@bnb-chain/canonical-bridge-widget": "0.5.15",
