@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Flex, useToast } from '@pancakeswap/uikit'
-import { useEffect, useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 
 import {
   BridgeRoutes,
