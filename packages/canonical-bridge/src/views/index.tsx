@@ -41,12 +41,27 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      const inputElement = document.querySelector('.bccb-widget-transfer-input')
+      const inputElement = document.querySelector('.bccb-widget-transfer-input') as HTMLInputElement | null
       if (inputElement) {
         inputElement.setAttribute('pattern', '^[0-9]*[.,]?[0-9]*$')
+
+        const handlePaste = (e: ClipboardEvent) => {
+          const pastedValue = e?.clipboardData?.getData('Text')
+
+          if (!pastedValue || !/^[0-9]*[.,]?[0-9]*$/.test(pastedValue)) {
+            e.preventDefault()
+          }
+        }
+
+        inputElement.addEventListener('paste', handlePaste)
         refresh()
+
+        return () => {
+          inputElement.removeEventListener('paste', handlePaste)
+        }
       }
     }
+    return undefined
   }, [refresh])
 
   const config = useMemo<ICanonicalBridgeConfig>(
