@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Flex, useToast } from '@pancakeswap/uikit'
-import { useCallback, useMemo } from 'react'
+import { useEffect, useCallback, useMemo } from 'react'
 
 import {
   BridgeRoutes,
@@ -35,6 +35,15 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
   const { currentLanguage } = useTranslation()
   const theme = useTheme()
   const toast = useToast()
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const inputElement = document.querySelector('.bccb-widget-transfer-input')
+      if (inputElement) {
+        inputElement.setAttribute('pattern', '^[0-9]*[.,]?[0-9]*$')
+      }
+    }
+  }, [])
 
   const config = useMemo<ICanonicalBridgeConfig>(
     () => ({
