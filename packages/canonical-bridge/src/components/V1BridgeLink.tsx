@@ -2,11 +2,11 @@ import { Flex, Link } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
 import { ExternalLinkIcon } from './icons/ExternalLinkIcon'
 
-export function V1BridgeLink() {
+export function V1BridgeLink({ v1LinkText }: { v1LinkText: string }) {
   return (
     <Flex marginTop="16px" alignItems="center" justifyContent="center">
       <StyledLink href="https://bridge.pancakeswap.finance/" target="_blank" rel="noopener">
-        V1 Bridge supports bridging to/from Aptos
+        {v1LinkText}
         <ExternalLinkIcon />
       </StyledLink>
     </Flex>

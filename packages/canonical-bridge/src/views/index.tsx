@@ -27,10 +27,11 @@ export interface CanonicalBridgeProps {
   connectWalletButton: CanonicalBridgeProviderProps['connectWalletButton']
   supportedChainIds: number[]
   rpcConfig: Record<number, string[]>
+  v1LinkText: string
 }
 
 export const CanonicalBridge = (props: CanonicalBridgeProps) => {
-  const { connectWalletButton, supportedChainIds } = props
+  const { connectWalletButton, supportedChainIds, v1LinkText } = props
 
   const transferConfig = useTransferConfig()
   const { currentLanguage } = useTranslation()
@@ -101,7 +102,7 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
       >
         <Flex flexDirection="column" justifyContent="center" maxWidth="480px" width="100%">
           <BridgeTransfer />
-          <V1BridgeLink />
+          <V1BridgeLink v1LinkText={v1LinkText} />
         </Flex>
         <BridgeRoutes />
       </CanonicalBridgeProvider>

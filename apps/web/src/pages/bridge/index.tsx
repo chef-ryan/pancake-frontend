@@ -1,3 +1,4 @@
+import { useTranslation } from '@pancakeswap/localization'
 import { Flex, useMatchBreakpoints } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { PUBLIC_NODES } from 'config/nodes'
@@ -11,6 +12,7 @@ const CanonicalBridge = lazy(() =>
 
 const BridgePage = () => {
   const { isMobile } = useMatchBreakpoints()
+  const { t } = useTranslation()
 
   return (
     <Page removePadding hideFooterOnDesktop={false} showExternalLink={false} showHelpLink={false} noMinHeight>
@@ -31,6 +33,7 @@ const BridgePage = () => {
             supportedChainIds={CHAIN_IDS}
             // @ts-ignore
             rpcConfig={PUBLIC_NODES}
+            v1LinkText={t('V1 Bridge supports bridging to/from Aptos')}
           />
         </Suspense>
       </Flex>
