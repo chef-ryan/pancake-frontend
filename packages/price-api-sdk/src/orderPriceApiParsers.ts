@@ -107,6 +107,7 @@ export function parseQuoteResponse<
   if (bestOrder.type === OrderType.DUTCH_LIMIT) {
     const order = ExclusiveDutchOrder.fromJSON(bestOrder.order.orderInfo, chainId)
     const otherAmmTrade = allPossibleOrders.find((o) => o.type === OrderType.PCS_CLASSIC)
+    order.info.quoteId = bestOrder.order.quoteId
 
     return {
       type: OrderType.DUTCH_LIMIT,

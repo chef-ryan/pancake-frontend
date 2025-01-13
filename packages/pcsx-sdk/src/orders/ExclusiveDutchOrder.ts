@@ -30,6 +30,7 @@ export type ExclusiveDutchOrderInfo = OrderInfo & {
   exclusivityOverrideBps: bigint
   input: DutchInput
   outputs: DutchOutput[]
+  quoteId: string
 }
 
 type ChangeBigIntToString<T extends object> = {
@@ -84,6 +85,8 @@ const EXCLUSIVE_DUTCH_ORDER_ABI = parseAbiParameters([
 
 export class ExclusiveDutchOrder extends Order {
   public permit2Address: Address | undefined
+
+  public quoteId?: string
 
   constructor(
     public readonly info: ExclusiveDutchOrderInfo,
@@ -140,6 +143,7 @@ export class ExclusiveDutchOrder extends Order {
         decayEndTime,
         exclusiveFiller,
         exclusivityOverrideBps,
+        quoteId: '',
         input: {
           token: inputToken,
           startAmount: inputStartAmount,
