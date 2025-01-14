@@ -14,7 +14,7 @@ export const Contracts = {
     type: TonContractTypes.JettonMinter,
   },
   [TonContractNames.PCSRouter]: {
-    address: 'kQDSysXTXY7_HPNaP-Rp9uNU20bFc5e0TbSA3Z77S6gLA4TD',
+    address: 'kQB-oiKteYtZu8F37inMW2NXDz0DeYNAw4tjd8wZGTUpIkJG',
     type: TonContractTypes.PCSRouter,
   },
 } as const

@@ -26,6 +26,22 @@
       "symbol": "USDT",
       "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/assets/EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs/logo.png"
+    },
+    {
+      "chainId": -3,
+      "address": "kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F",
+      "name": "Maple Syrup",
+      "symbol": "SYRUP",
+      "decimals": 9,
+      "logoURI": "https://cache.tonapi.io/imgproxy/eE6Cjl1C22U0-BSohD2No88l8tPaEwe1t_7u-7skaSo/rs:fill:200:200:1/g:no/aHR0cHM6Ly9wbmcucG5ndHJlZS5jb20vcG5nLWNsaXBhcnQvMjAyMTAzMjEvb3JpZ2luYWwvcG5ndHJlZS1jYW5hZGlhbi1tYXBsZS1mZXN0aXZhbC15ZWxsb3ctbWFwbGUtbGVhZi1ib3R0bGUtcG5nLWltYWdlXzYxMjI5NTAucG5n.webp"
+    },
+    {
+      "chainId": -3,
+      "address": "kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg",
+      "name": "Just a Pan",
+      "symbol": "PAN",
+      "decimals": 9,
+      "logoURI": "https://cache.tonapi.io/imgproxy/lDgkbWC5IEAEMkI7blExSx5wvL0-g9yrw2RwfUMKbSg/rs:fill:200:200:1/g:no/aHR0cHM6Ly93d3cucHJlbWllcmtpdGNoZW4uaW4vd3AtY29udGVudC91cGxvYWRzLzIwMjEvMDMvTlMtRnJ5cGFuLTEuanBn.webp"
     }
   ]
 }

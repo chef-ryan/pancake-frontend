@@ -1,5 +1,5 @@
 import { Box, Button, FlexGap, Select, Text } from '@pancakeswap/uikit'
-import { Address, beginCell, toNano } from '@ton/core'
+import { Address, beginCell, fromNano, toNano } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI, useTonWallet } from '@tonconnect/ui-react'
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import { Header } from 'components/Header'
@@ -65,13 +65,12 @@ export default function TestMint() {
     if (!wallet?.account.address) throw new Error('Wallet not connected')
     const client = TonContext.instance.getClient()
     const contractAddress = Address.parse(Contracts[TonContractNames.PCSRouter].address)
-    console.log('Router contract address', contractAddress)
+
     const router = client.open(Router.fromAddress(contractAddress))
 
     const result = await router.getEstimateAddLiquidity(1000000n)
 
-    console.log('Estimated Fee:', result)
-    setResultMessage(`Estimated Fee: ${result}`)
+    setResultMessage(`Estimated Fee: ${fromNano(result)}`)
   }, [wallet?.account.address])
 
   const readJetton = useCallback(async () => {
