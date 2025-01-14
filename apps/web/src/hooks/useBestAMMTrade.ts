@@ -806,6 +806,15 @@ async function fetchPoolsForApi(params: {
   return response.json()
 }
 
+const getFilter = (amount: CurrencyAmount<Currency>) => {
+  const fillers = {
+    [ChainId.ETHEREUM]: '0xf00000003d31d4ab730a8e269ae547f8f76996ba',
+    [ChainId.ARBITRUM_ONE]: '0xf00000003d31d4ab730a8e269ae547f8f76996ba',
+  }
+  const filler = fillers[1] ?? '0xf00000003d31d4ab730a8e269ae547f8f76996ba'
+  return filler as string
+}
+
 export async function fetchAndParseAMMPriceResponse(
   chainId: number,
   amount: CurrencyAmount<Currency>,
@@ -841,6 +850,7 @@ export async function fetchAndParseAMMPriceResponse(
     body,
     signal,
     trackPerf,
+    filter: getFilter(amount),
   })
 
   return parseAMMPriceResponse(chainId, responseJson)
@@ -850,11 +860,13 @@ async function fetchFromPriceApi(params: {
   body: Record<string, any>
   trackPerf?: boolean
   signal?: AbortSignal
+  filter?: string
 }): Promise<any> {
-  const { body, trackPerf, signal } = params
+  const { body, trackPerf, signal, filter } = params
   const startTime = performance.now()
 
-  const response = await fetch(NEXT_QUOTING_API, {
+  const url = filter ? `${NEXT_QUOTING_API}?filter=${filter}` : NEXT_QUOTING_API
+  const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     signal,
@@ -900,7 +912,7 @@ export async function fetchAndParseQuoteResponse(
     },
   })
 
-  const responseJson = await fetchFromPriceApi({ body, signal, trackPerf })
+  const responseJson = await fetchFromPriceApi({ body, signal, trackPerf, filter: getFilter(amount) })
 
   return parseQuoteResponse(responseJson, {
     chainId: currency.chainId,
