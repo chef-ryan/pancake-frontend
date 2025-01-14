@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency, CurrencyAmount, Percent, Token, Trade, TradeType } from '@pancakeswap/sdk'
-import { AutoColumn, BottomDrawer, Box, Button, Flex, Link, useMatchBreakpoints, useModal } from '@pancakeswap/uikit'
+import { AutoColumn, Box, Button, Flex, Link, useMatchBreakpoints, useModal } from '@pancakeswap/uikit'
 import { Swap as SwapUI } from '@pancakeswap/widgets-internal'
 
 import replaceBrowserHistoryMultiple from '@pancakeswap/utils/replaceBrowserHistoryMultiple'
@@ -19,9 +19,7 @@ import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDefaultsFromURLSearch } from 'state/limitOrders/hooks'
 import { Field } from 'state/limitOrders/types'
-import { useExchangeChartManager } from 'state/user/hooks'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
-import PriceChartContainer from 'views/Swap/components/Chart/PriceChartContainer'
 
 import { CommonBasesType } from 'components/SearchModal/types'
 import { useAllTokens, useCurrency } from 'hooks/Tokens'
@@ -43,10 +41,8 @@ const LimitOrders = () => {
   const { account, chainId } = useAccountActiveChain()
   const { t } = useTranslation()
   const router = useRouter()
-  const { isMobile, isTablet, isDesktop } = useMatchBreakpoints()
+  const { isTablet, isDesktop } = useMatchBreakpoints()
   const { theme } = useTheme()
-  const [isChartDisplayed, setIsChartDisplayed] = useExchangeChartManager(isMobile)
-  const [isChartExpanded, setIsChartExpanded] = useState(false)
 
   const loadedUrlParams = useDefaultsFromURLSearch()
   // token warning stuff
@@ -98,7 +94,6 @@ const LimitOrders = () => {
       price,
       inputError,
       wrappedCurrencies,
-      singleTokenPrice,
       currencyIds,
     },
     orderState: { independentField, basisField, rateType },
@@ -318,40 +313,16 @@ const LimitOrders = () => {
   const showApproveFlow =
     !inputError && (approvalState === ApprovalState.NOT_APPROVED || approvalState === ApprovalState.PENDING)
 
-  const isSideFooter = isChartExpanded || isChartDisplayed
+  const isSideFooter = false
 
   const isAccessTokenSupported = chainId && ACCESS_TOKEN_SUPPORT_CHAIN_IDS.includes(chainId)
 
   return (
-    <Page
-      removePadding={isChartExpanded}
-      hideFooterOnDesktop={isSideFooter}
-      noMinHeight
-      helpUrl={LIMIT_ORDERS_DOCS_URL}
-    >
+    <Page removePadding={false} hideFooterOnDesktop={isSideFooter} noMinHeight helpUrl={LIMIT_ORDERS_DOCS_URL}>
       <ClaimWarning />
-      <Flex
-        width="100%"
-        height="100%"
-        justifyContent="center"
-        position="relative"
-        mb={isSideFooter ? null : '24px'}
-        mt={isChartExpanded ? '24px' : null}
-      >
+      <Flex width="100%" height="100%" justifyContent="center" position="relative" mb={isSideFooter ? null : '24px'}>
         {isDesktop && (
-          <Flex width={isChartExpanded ? '100%' : '50%'} maxWidth="928px" flexDirection="column">
-            <PriceChartContainer
-              inputCurrencyId={currencyIds.input}
-              inputCurrency={currencies.input}
-              outputCurrencyId={currencyIds.output}
-              outputCurrency={currencies.output}
-              isChartExpanded={isChartExpanded}
-              setIsChartExpanded={setIsChartExpanded}
-              isChartDisplayed={isChartDisplayed}
-              currentSwapPrice={singleTokenPrice}
-              isFullWidthContainer
-            />
-            {isChartDisplayed && <Box mb="48px" />}
+          <Flex width="50%" maxWidth="928px" flexDirection="column">
             <Box width="100%">
               <LimitOrderTable isCompact={isTablet} />
             </Box>
@@ -361,12 +332,7 @@ const LimitOrders = () => {
           <StyledSwapContainer $isChartExpanded={false}>
             <StyledInputCurrencyWrapper>
               <AppBody>
-                <CurrencyInputHeader
-                  title={t('Limit')}
-                  subtitle={t('Place a limit order to trade at a set price')}
-                  setIsChartDisplayed={setIsChartDisplayed}
-                  isChartDisplayed={isChartDisplayed}
-                />
+                <CurrencyInputHeader title={t('Limit')} subtitle={t('Place a limit order to trade at a set price')} />
                 <Wrapper id="limit-order-page" style={{ minHeight: '412px' }}>
                   <AutoColumn gap="sm">
                     <CurrencyInputPanel
@@ -496,24 +462,6 @@ const LimitOrders = () => {
         </Flex>
       </Flex>
       {/* Fixed position, doesn't take normal DOM space */}
-      <BottomDrawer
-        content={
-          <PriceChartContainer
-            inputCurrencyId={currencyIds.input}
-            inputCurrency={currencies.input}
-            outputCurrencyId={currencyIds.output}
-            outputCurrency={currencies.output}
-            isChartExpanded={isChartExpanded}
-            setIsChartExpanded={setIsChartExpanded}
-            isChartDisplayed={isChartDisplayed}
-            currentSwapPrice={singleTokenPrice}
-            isFullWidthContainer
-            isMobile
-          />
-        }
-        isOpen={isChartDisplayed}
-        setIsOpen={setIsChartDisplayed}
-      />
     </Page>
   )
 }
