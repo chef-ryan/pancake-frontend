@@ -27,6 +27,15 @@ const initializeTradingView = (TradingViewObj: any, theme: DefaultTheme, localeC
   } catch (e) {
     // noop
   }
+
+  let locale = localeCode
+
+  if (localeCode.includes('-')) {
+    locale = localeCode.replace('-', '_').replace(/_(.*)/, (_, match) => `_${match.toUpperCase()}`)
+  } else {
+    locale = localeCode
+  }
+
   /* eslint-disable new-cap */
   /* eslint-disable no-new */
   // @ts-ignore
@@ -41,7 +50,7 @@ const initializeTradingView = (TradingViewObj: any, theme: DefaultTheme, localeC
     timezone,
     theme: theme.isDark ? 'dark' : 'light',
     style: '1',
-    locale: localeCode,
+    locale,
     toolbar_bg: '#f1f3f6',
     enable_publishing: false,
     allow_symbol_change: true,
