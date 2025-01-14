@@ -40,7 +40,7 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
   const { setLastUpdated: refresh } = useLastUpdated()
 
   useEffect(() => {
-    if (typeof document !== 'undefined') {
+    if (typeof document !== 'undefined' && document) {
       const inputElement = document.querySelector('.bccb-widget-transfer-input') as HTMLInputElement | null
       if (inputElement) {
         inputElement.setAttribute('pattern', '^[0-9]*[.,]?[0-9]*$')
