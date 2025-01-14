@@ -808,10 +808,9 @@ async function fetchPoolsForApi(params: {
 
 const getFilter = (amount: CurrencyAmount<Currency>) => {
   const fillers = {
-    [ChainId.ETHEREUM]: '0xf00000003d31d4ab730a8e269ae547f8f76996ba',
-    [ChainId.ARBITRUM_ONE]: '0xf00000003d31d4ab730a8e269ae547f8f76996ba',
+    [ChainId.ARBITRUM_ONE]: '0xba10965c42940a18a700a96d4eb2eeba476a1532',
   }
-  const filler = fillers[1] ?? '0xf00000003d31d4ab730a8e269ae547f8f76996ba'
+  const filler = fillers[1] ?? '0xba10965c42940a18a700a96d4eb2eeba476a1532'
   return filler as string
 }
 
