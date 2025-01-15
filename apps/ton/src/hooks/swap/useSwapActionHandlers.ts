@@ -1,10 +1,5 @@
-import {
-  independentFieldAtom,
-  inputCurrencyAtom,
-  outputCurrencyAtom,
-  setCurrencyAtom,
-  typedValueAtom,
-} from 'atoms/swap/swapStateAtom'
+import { setCurrencyAtom } from 'atoms/currencyAtoms'
+import { independentFieldAtom, inputCurrencyAtom, outputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { Field } from 'types'
