@@ -45,7 +45,7 @@ export const CardContent = (props: CardContentProps) => {
   const [sliderValue, setSliderValue] = useState(0)
 
   const handleSliderChange = useCallback((value: number) => {
-    setSliderValue(value)
+    setSliderValue(Math.round(value))
   }, [])
 
   const handleQuickInput = useCallback((value: number) => {
@@ -61,6 +61,7 @@ export const CardContent = (props: CardContentProps) => {
             min={0}
             max={100}
             name="remove-liquidity-slider"
+            valueLabel={`${sliderValue}%`}
             value={sliderValue}
             onValueChanged={handleSliderChange}
           />

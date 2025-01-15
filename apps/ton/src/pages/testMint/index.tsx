@@ -9,6 +9,7 @@ import { useCallback, useState } from 'react'
 import { TonContext } from 'ton/context/TonContext'
 import { Contracts } from 'ton/def/contracts.def'
 import { useAddLiquidity } from 'ton/logic/liquidity/useAddLiquidity'
+import { useSwap } from 'ton/logic/swap/useSwap'
 import { TonContractNames } from 'ton/ton.enums'
 import { JettonMasterUSDT } from 'ton/wrappers/tact_JettonMasterUSDT'
 import { JettonWalletUSDT } from 'ton/wrappers/tact_JettonWalletUSDT'
@@ -27,6 +28,7 @@ export default function TestMint() {
   const [tonUI] = useTonConnectUI()
 
   const { addLiquidity } = useAddLiquidity()
+  const { swap } = useSwap()
 
   const handleMint = useCallback(() => {
     if (!selectedToken || !wallet?.account.address) throw new Error('Invalid input provided!')
@@ -93,7 +95,7 @@ export default function TestMint() {
     setResultMessage(`Jetton result:  ${jettonWalletAddress} ${result}`)
   }, [wallet?.account.address])
 
-  const handleAddLiquidity = useCallback(async () => {
+  const handleAddLiquidity = useCallback(() => {
     if (!wallet || !wallet?.account.address) throw new Error('Wallet not connected')
 
     addLiquidity({
@@ -103,6 +105,38 @@ export default function TestMint() {
       token1Address: 'kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg', // $PAN
     })
   }, [wallet, addLiquidity])
+
+  const handleSwap = useCallback(() => {
+    if (!wallet || !wallet?.account.address) throw new Error('Wallet not connected')
+
+    swap({
+      amount0: BigInt('100'),
+      minOut: 1n,
+      token0Address: 'kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F', // $SYRUP
+      token1Address: 'kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg', // $PAN
+    })
+  }, [wallet, swap])
+
+  const getPoolAddress = useCallback(async () => {
+    const client = TonContext.instance.getClient()
+    const routerAddress = Address.parse(Contracts[TonContractNames.PCSRouter].address)
+    const router = client.open(Router.fromAddress(routerAddress))
+
+    const token0Address = Address.parse('kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F') // $SYRUP
+    const token1Address = Address.parse('kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg') // $PAN
+
+    const jetton0 = client.open(JettonMasterUSDT.fromAddress(token0Address))
+    const jetton1 = client.open(JettonMasterUSDT.fromAddress(token1Address))
+
+    const [routerJettonWallet0, routerJettonWallet1] = await Promise.all([
+      jetton0.getGetWalletAddress(routerAddress),
+      jetton1.getGetWalletAddress(routerAddress),
+    ])
+
+    const poolAddress = await router.getGetPoolAddress(routerJettonWallet0, routerJettonWallet1)
+
+    setResultMessage(`Pool Address: ${poolAddress.toString()}`)
+  }, [])
 
   return (
     <>
@@ -149,9 +183,11 @@ export default function TestMint() {
           <Text mt="16px" bold>
             Router
           </Text>
-          <FlexGap gap="8px">
+          <FlexGap gap="8px" flexWrap="wrap">
             <Button onClick={estimateAddLiquidity}>Read estimateAddLiquidity</Button>
+            <Button onClick={getPoolAddress}>Read poolAddress of $SYRUP and $PAN</Button>
             <Button onClick={handleAddLiquidity}>Write addLiquidity</Button>
+            <Button onClick={handleSwap}>Write Swap</Button>
           </FlexGap>
 
           <Text mt="16px" bold>
