@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Button, ChevronDownIcon, WalletFilledV2Icon } from '@pancakeswap/uikit'
+import { Button, ButtonProps, ChevronDownIcon, WalletFilledV2Icon } from '@pancakeswap/uikit'
 import { useTonConnectUI } from '@tonconnect/ui-react'
 import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
@@ -27,7 +27,7 @@ const WalletCirclularIcon = styled(WalletFilledV2Icon)`
   padding: 4px;
 `
 
-export const ConnectWalletButton = () => {
+export const ConnectWalletButton = (props: ButtonProps) => {
   const { t } = useTranslation()
 
   const [tonUI] = useTonConnectUI()
@@ -43,14 +43,14 @@ export const ConnectWalletButton = () => {
 
   if (isConnected) {
     return (
-      <ConnectedButton onClick={handleDisconnect} endIcon={<ChevronDownIcon color="textSubtle" />}>
+      <ConnectedButton onClick={handleDisconnect} endIcon={<ChevronDownIcon color="textSubtle" />} {...props}>
         <WalletCirclularIcon color="primary" />
       </ConnectedButton>
     )
   }
 
   return (
-    <ConnectButton onClick={handleConnect} endIcon={<WalletFilledV2Icon color="invertedContrast" />}>
+    <ConnectButton onClick={handleConnect} endIcon={<WalletFilledV2Icon color="invertedContrast" />} {...props}>
       {t('Connect')}
     </ConnectButton>
   )

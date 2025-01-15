@@ -3,7 +3,6 @@ import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
 import { Pair } from '@pancakeswap/sdk'
 import {
   Box,
-  Button,
   ChevronDownIcon,
   domAnimation,
   Flex,
@@ -15,24 +14,19 @@ import {
   useModal,
 } from '@pancakeswap/uikit'
 
-import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { CurrencyLogo, DoubleCurrencyLogo, SwapUIV2 } from 'components/widgets'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from 'styled-components'
 
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
 
-import { useCurrencyBalance } from 'hooks/wallet/useCurrencyBalance'
+import { fromNano } from '@ton/core'
+import { useAtomValue } from 'jotai'
+import { CurrencySelectButton } from 'styles/inputStyles'
+import { balanceAtom } from 'ton/logic/balanceAtom'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { FONT_SIZE, LOGO_SIZE, useFontSize } from './state'
 
-const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'sm' })`
-  padding: 24px 4px;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.invertedContrast};
-  }
-`
 const SymbolText = styled(Text)`
   font-size: ${FONT_SIZE.LARGE}px;
 `
@@ -154,7 +148,6 @@ interface CurrencyInputPanelProps {
   showMaxButton: boolean
   // maxAmount?: CurrencyAmount<Currency>
   lpPercent?: string
-  label?: string
   onCurrencySelect?: (currency: Currency) => void
   currency?: Currency | null
   disableCurrencySelect?: boolean
@@ -206,7 +199,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   // const { address: account } = useAccount()
   const account = '0x00' // dummy value
 
-  const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
+  const { data: selectedCurrencyBalance } = useAtomValue(balanceAtom(currency?.wrapped.address))
   const { t } = useTranslation()
 
   const mode = id
@@ -265,7 +258,9 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
     }
   }, [onPresentCurrencyModal, disableCurrencySelect])
 
-  const balance = !hideBalance && !!currency ? formatAmount(selectedCurrencyBalance, 6) : undefined
+  // TODO: make general util for formatting and use token decimal instead of Nano by default
+  const balance = !hideBalance && !!currency ? fromNano(selectedCurrencyBalance) : undefined
+
   return (
     <SwapUIV2.CurrencyInputPanelSimplify
       id={id}
@@ -280,7 +275,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
       wrapperRef={wrapperRef}
       top={
         <Flex justifyContent="space-between" alignItems="center" width="100%" position="relative">
-          {title}
+          {title || <>&nbsp;</>}
           <LazyAnimatePresence mode="wait" features={domAnimation}>
             {account ? (
               !isInputFocus || !onMax ? (
