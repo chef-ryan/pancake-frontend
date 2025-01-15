@@ -88,6 +88,7 @@ export const SERVER_NODES = {
 
 export const PUBLIC_NODES: Record<ChainId, string[] | readonly string[]> = {
   [ChainId.BSC]: [
+    'https://rpc.tenderly.co/fork/34de9626-e87c-41b1-a039-9f5a0e555673',
     process.env.NEXT_PUBLIC_NODE_PRODUCTION || '',
     getNodeRealUrl(ChainId.BSC, process.env.NEXT_PUBLIC_NODE_REAL_API_ETH) || '',
     process.env.NEXT_PUBLIC_NODIES_BSC || '',
