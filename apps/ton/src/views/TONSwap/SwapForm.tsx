@@ -76,7 +76,6 @@ export const SwapForm = () => {
               showCommonBases
               inputLoading={false}
               currencyLoading={false}
-              label={t('From')}
               value={typedValue}
               showQuickInputButton
               currency={inputCurrency}
@@ -102,7 +101,6 @@ export const SwapForm = () => {
               showCommonBases
               inputLoading={false}
               currencyLoading={false}
-              label={t('From')}
               value={outputValue}
               showQuickInputButton
               currency={outputCurrency}

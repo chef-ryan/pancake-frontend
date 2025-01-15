@@ -1,20 +1,21 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency, Token } from '@pancakeswap/routing-sdk-addon-ton'
 
-import { ArrowForwardIcon, Column, QuestionHelper, Text } from '@pancakeswap/uikit'
+import { ArrowForwardIcon, CircleLoader, Column, QuestionHelper, Text } from '@pancakeswap/uikit'
+import { fromNano } from '@ton/core'
 import { LightGreyCard } from 'components/Card'
 import { RowBetween, RowFixed } from 'components/Layout/Row'
 import { CurrencyLogo } from 'components/widgets/CurrencyLogo'
+import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
 import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useAtomValue } from 'jotai'
 import { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
 import { styled } from 'styled-components'
+import { balanceAtom } from 'ton/logic/balanceAtom'
+import { currencyKey } from 'ton/utils/currency'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
-
-function currencyKey(currency: Currency): string {
-  return currency?.isToken ? currency.address : currency?.isNative ? currency.symbol : ''
-}
 
 const StyledBalanceText = styled(Text)`
   white-space: nowrap;
@@ -67,7 +68,12 @@ function CurrencyRow({
   // const { t } = useTranslation()
   const key = currencyKey(currency)
 
-  // const balance = useCurrencyBalance(account ?? undefined, currency)
+  const { data: balanceRaw, isLoading: isBalanceLoading } = useAtomValue(
+    balanceAtom(currency && (currency as any)?.address),
+  )
+
+  // TODO: Better formatting of number and use token decimals
+  const balance = Number(fromNano(balanceRaw).toString())
 
   // only show add or remove buttons if not on selected list
   return (
@@ -87,8 +93,14 @@ function CurrencyRow({
         </Text> */}
       </Column>
       <RowFixed style={{ justifySelf: 'flex-end' }}>
-        {/* {balance ? <Balance balance={balance} /> : account ? <CircleLoader /> : <ArrowForwardIcon />} */}
-        <ArrowForwardIcon />
+        {balance !== undefined ? (
+          <NumberDisplay value={balance} />
+        ) : account && isBalanceLoading ? (
+          <CircleLoader />
+        ) : (
+          <ArrowForwardIcon />
+        )}
+        {/* <ArrowForwardIcon /> */}
       </RowFixed>
     </MenuItem>
   )
@@ -129,6 +141,7 @@ export default function CurrencyList({
     if (breakIndex !== undefined) {
       formatted = [...formatted.slice(0, breakIndex), undefined, ...formatted.slice(breakIndex, formatted.length)]
     }
+    console.log('formatted currencies', formatted)
     return formatted
   }, [breakIndex, currencies, inactiveCurrencies, showNative, native])
 

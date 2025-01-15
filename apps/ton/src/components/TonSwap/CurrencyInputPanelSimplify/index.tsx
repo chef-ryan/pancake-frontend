@@ -198,8 +198,8 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
 }: CurrencyInputPanelProps) {
   // const { address: account } = useAccount()
   const account = '0x00' // dummy value
-
   const { data: selectedCurrencyBalance } = useAtomValue(balanceAtom(currency?.wrapped.address))
+
   const { t } = useTranslation()
 
   const mode = id
