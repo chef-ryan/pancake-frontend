@@ -1,4 +1,5 @@
 import { Box, Button, FlexGap, Select, Text } from '@pancakeswap/uikit'
+import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
 import { Address, beginCell, fromNano, toNano } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI, useTonWallet } from '@tonconnect/ui-react'
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
@@ -8,6 +9,7 @@ import { useAtomValue } from 'jotai'
 import { useCallback, useState } from 'react'
 import { TonContext } from 'ton/context/TonContext'
 import { Contracts } from 'ton/def/contracts.def'
+import { TON_OPCODES } from 'ton/opcodes'
 import { TonContractNames } from 'ton/ton.enums'
 import { JettonMasterUSDT } from 'ton/wrappers/tact_JettonMasterUSDT'
 import { JettonWalletUSDT } from 'ton/wrappers/tact_JettonWalletUSDT'
@@ -90,6 +92,95 @@ export default function TestMint() {
     setResultMessage(`Jetton result:  ${jettonWalletAddress} ${result}`)
   }, [wallet?.account.address])
 
+  const handleAddLiquidity = useCallback(async () => {
+    if (!wallet || !wallet?.account.address) throw new Error('Wallet not connected')
+
+    // For the testnet RPC ratelimit of 1 request per second
+    const WAIT = () => new Promise((resolve) => setTimeout(resolve, 1000))
+
+    const client = TonContext.instance.getClient()
+    const routerAddress = Address.parse(Contracts[TonContractNames.PCSRouter].address)
+
+    const walletAddress = Address.parse(wallet.account.address)
+    const token0Address = Address.parse('kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F') // $SYRUP
+    const token1Address = Address.parse('kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg') // $PAN
+
+    const jettonMaster0 = client.open(JettonMasterUSDT.fromAddress(token0Address))
+    const jettonMaster1 = client.open(JettonMasterUSDT.fromAddress(token1Address))
+
+    const userJettonWallet0 = await jettonMaster0.getGetWalletAddress(walletAddress)
+
+    await WAIT()
+
+    const userJettonWallet1 = await jettonMaster1.getGetWalletAddress(walletAddress)
+
+    await WAIT()
+
+    const routerJettonWallet0 = await jettonMaster0.getGetWalletAddress(routerAddress)
+
+    await WAIT()
+
+    const routerJettonWallet1 = await jettonMaster1.getGetWalletAddress(routerAddress)
+
+    await WAIT()
+
+    const forwardPayload0 = beginCell()
+      .storeUint(TON_OPCODES.ADD_LIQUIDITY, 32)
+      .storeAddress(routerJettonWallet1)
+      .storeCoins(toNano(900))
+      .endCell()
+    const payload0 = beginCell()
+      .store(
+        storeJettonTransferMessage({
+          queryId: 1n,
+          amount: toNano(1000),
+          destination: routerAddress,
+          responseDestination: walletAddress,
+          customPayload: null,
+          forwardAmount: toNano('0.1'),
+          forwardPayload: forwardPayload0,
+        }),
+      )
+      .endCell()
+
+    const forwardPayload1 = beginCell()
+      .storeUint(TON_OPCODES.ADD_LIQUIDITY, 32)
+      .storeAddress(routerJettonWallet0)
+      .storeCoins(toNano(900))
+      .endCell()
+    const payload1 = beginCell()
+      .store(
+        storeJettonTransferMessage({
+          queryId: 2n,
+          amount: toNano(1000),
+          destination: routerAddress,
+          responseDestination: walletAddress,
+          customPayload: null,
+          forwardAmount: toNano('0.1'),
+          forwardPayload: forwardPayload1,
+        }),
+      )
+      .endCell()
+
+    const txRequest: SendTransactionRequest = {
+      validUntil: Math.floor(Date.now() / 1000) + 60 * 2,
+      messages: [
+        {
+          address: userJettonWallet0.toString(),
+          amount: toNano('0.2').toString(),
+          payload: payload0.toBoc().toString('base64'),
+        },
+        {
+          address: userJettonWallet1.toString(),
+          amount: toNano('0.2').toString(),
+          payload: payload1.toBoc().toString('base64'),
+        },
+      ],
+    }
+
+    tonUI.sendTransaction(txRequest)
+  }, [tonUI, wallet])
+
   return (
     <>
       <Header />
@@ -127,13 +218,23 @@ export default function TestMint() {
 
         <Box mt="20px">
           <Text fontSize="36px" bold>
-            Test Read Contracts
+            Test Contracts
           </Text>
 
           <Text bold>{resultMessage}</Text>
 
-          <Button onClick={estimateAddLiquidity}>(Router) Read estimateAddLiquidity</Button>
-          <Button onClick={readJetton}>(Jetton) Read Jetton Wallet Address</Button>
+          <Text mt="16px" bold>
+            Router
+          </Text>
+          <FlexGap gap="8px">
+            <Button onClick={estimateAddLiquidity}>Read estimateAddLiquidity</Button>
+            <Button onClick={handleAddLiquidity}>Write addLiquidity</Button>
+          </FlexGap>
+
+          <Text mt="16px" bold>
+            Jetton
+          </Text>
+          <Button onClick={readJetton}>Read Jetton Wallet Address</Button>
         </Box>
       </Container>
     </>
