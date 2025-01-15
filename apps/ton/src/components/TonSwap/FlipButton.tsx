@@ -7,7 +7,8 @@ import { AutoRow } from 'components/Layout/Row'
 import { styled } from 'styled-components'
 
 import replaceBrowserHistoryMultiple from '@pancakeswap/utils/replaceBrowserHistoryMultiple'
-import { currencyFamily } from 'atoms/swap/swapStateAtom'
+
+import { currencyFamily } from 'atoms/currencyAtoms'
 import { SwapUIV2 } from 'components/widgets/swap-v2'
 import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
 import { useAtomValue } from 'jotai'
