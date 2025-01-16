@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Flex, Link, Text, TwitterIcon, BunnyPlaceholderIcon } from '@pancakeswap/uikit'
+import { Flex, Link, Text, XIcon, BunnyPlaceholderIcon } from '@pancakeswap/uikit'
 
 const ComingSoon = () => {
   const { t } = useTranslation()
@@ -14,8 +14,8 @@ const ComingSoon = () => {
         {t('Currently there is no active trading reward campaign. Check back later or follow our social channels.')}
       </Text>
       <Flex pt="20px" justifyContent="center">
-        <Link href="https://twitter.com/pancakeswap" external>
-          <TwitterIcon color="primary" mr="5px" />
+        <Link href="https://x.com/pancakeswap" external>
+          <XIcon color="primary" mr="5px" />
           <Text bold color="primary" textAlign="center">
             {t('+Follow For New Updates')}
           </Text>

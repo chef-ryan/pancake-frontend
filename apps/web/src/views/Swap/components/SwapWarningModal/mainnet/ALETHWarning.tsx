@@ -15,17 +15,12 @@ const ALETHWarning = () => {
         external
         m="0 4px"
         style={{ display: 'inline' }}
-        href="https://twitter.com/CurveFinance/status/1685925429041917952"
+        href="https://x.com/CurveFinance/status/1685925429041917952"
       >
         {t('Curve exploit.')}
       </Link>
       <Text as="span">{t('For more information, please refer to Alchemix’s')}</Text>
-      <Link
-        external
-        m="0 4px"
-        style={{ display: 'inline' }}
-        href="https://twitter.com/AlchemixFi/status/1685737632133971968"
-      >
+      <Link external m="0 4px" style={{ display: 'inline' }} href="https://x.com/AlchemixFi/status/1685737632133971968">
         {t('Twitter')}
       </Link>
       <Text as="span">{t('and await further updates from the team')}</Text>

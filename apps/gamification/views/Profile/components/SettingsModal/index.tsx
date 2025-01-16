@@ -12,7 +12,7 @@ import {
   Modal,
   TelegramIcon,
   Text,
-  TwitterIcon,
+  XIcon,
 } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import useAuth from 'hooks/useAuth'
@@ -86,7 +86,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ userInfo, refresh,
             <SocialComponent
               name={t('X')}
               disabled={disabled}
-              icon={<TwitterIcon color="textSubtle" width={20} height={20} />}
+              icon={<XIcon color="textSubtle" width={20} height={20} />}
               connected={Boolean(userInfo?.socialHubToSocialUserIdMap?.Twitter)}
               connect={connectTwitter}
               disconnect={disconnectTwitter}

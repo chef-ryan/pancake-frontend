@@ -1,5 +1,5 @@
 import { styled } from 'styled-components'
-import { Flex, TwitterIcon, TelegramIcon, RedditIcon, Link, DiscordIcon } from '@pancakeswap/uikit'
+import { Flex, XIcon, TelegramIcon, RedditIcon, Link, DiscordIcon } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
 
 const StyledLink = styled(Link)`
@@ -39,8 +39,8 @@ const SocialIcon = () => {
   const router = useRouter()
   return (
     <StyledSocialIcon>
-      <StyledLink external href={`https://twitter.com/share?url=${BLOG_URL}${router.asPath}`}>
-        <TwitterIcon width={40} />
+      <StyledLink external href={`https://x.com/share?url=${BLOG_URL}${router.asPath}`}>
+        <XIcon width={40} />
       </StyledLink>
       <StyledLink external href={`https://telegram.me/share/url?url=${BLOG_URL}${router.asPath}`}>
         <TelegramIcon width={40} />

@@ -15,7 +15,7 @@ const USDPlusWarning = () => {
         external
         m="0 4px"
         style={{ display: 'inline' }}
-        href="https://twitter.com/overnight_fi/status/1797552748789195237"
+        href="https://x.com/overnight_fi/status/1797552748789195237"
       >
         {t('twitter page')}.
       </Link>

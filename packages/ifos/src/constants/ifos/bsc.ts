@@ -24,7 +24,7 @@ export const ifos: BaseIfoConfig[] = [
     articleUrl: 'https://forum.pancakeswap.finance/t/solv-ifo-discussion-thread/993',
     tokenOfferingPrice: 0.0310559006,
     version: 8,
-    twitterUrl: 'https://twitter.com/SolvProtocol/',
+    twitterUrl: 'https://x.com/SolvProtocol/',
     description:
       'Solv is a Bitcoin staking protocol that unlocks liquidity and maximizes the utility of idle Bitcoin assets',
     vestingTitle: 'SOLV is Solv Protocol’s native utility token meant for governance, staking, and fee discounts',
@@ -74,7 +74,7 @@ export const ifos: BaseIfoConfig[] = [
       'https://pancakeswap.finance/voting/proposal/0x9c54bc5c0861dc3131459c9e434a63a146200ef7fa17ac5348373bb1e03a2cee?chain=bsc',
     tokenOfferingPrice: 1.5,
     version: 7,
-    twitterUrl: 'https://twitter.com/Cakepiexyz_io',
+    twitterUrl: 'https://x.com/Cakepiexyz_io',
     description:
       'Cakepie is a veCAKE Manager that boosts rewards for CAKE stakers and PancakeSwap’s liquidity providers, as part of the wider [veCAKE Ecosystem](https://docs.pancakeswap.finance/products/vecake/vecake-managers)',
     vestingTitle:
@@ -100,7 +100,7 @@ export const ifos: BaseIfoConfig[] = [
       'https://pancakeswap.finance/voting/proposal/0x01ced179a39d30bc11436fd7f578ae45089bacaace57caa47881146fce7586ba',
     tokenOfferingPrice: 0.06,
     version: 3.2,
-    twitterUrl: 'https://twitter.com/SableFinance',
+    twitterUrl: 'https://x.com/SableFinance',
     description:
       'Sable Finance is a decentralized stablecoin protocol that allows users to draw interest-free loans, minting USDS, a USD-pegged stablecoin.',
     vestingTitle:
@@ -125,7 +125,7 @@ export const ifos: BaseIfoConfig[] = [
       'https://pancakeswap.finance/voting/proposal/0x06598b682d9f33ec5ea0c2acf8eba13dea7c63fa08dd2c4dfd7bc7af16920d51',
     tokenOfferingPrice: 0.04,
     version: 3.2,
-    twitterUrl: 'https://twitter.com/ESPL_GLOBAL',
+    twitterUrl: 'https://x.com/ESPL_GLOBAL',
     description:
       'The Esports Players League (ESPL) Arena is a platform that hosts global Esports tournaments and coordinates different aspects such as setting of tournament parameters, score-keeping, prize pool payouts via crypto and more.',
     vestingTitle: 'Use $ARENA to enjoy premium features on ESPL’s Esports tournament platform',
@@ -150,7 +150,7 @@ export const ifos: BaseIfoConfig[] = [
       'https://pancakeswap.finance/voting/proposal/0x0557149d1dc2f12f4c97b68f9d214fc52acd64aa67b29bde91e19caef30a3153',
     tokenOfferingPrice: 0.035,
     version: 3.2,
-    twitterUrl: 'https://twitter.com/Superpow_Squad',
+    twitterUrl: 'https://x.com/Superpow_Squad',
     description:
       'Superpower Squad a super-hero themed mobile shooter with 6 game play modes. It has undergone 3 years of game development from an established gaming studio with the help of crypto native partners.',
     vestingTitle: "$SQUAD - Utility token in Superpower Squad's world, lock into SuperDao to participate Governance.",
@@ -174,7 +174,7 @@ export const ifos: BaseIfoConfig[] = [
       'https://pancakeswap.finance/voting/proposal/0x5bbaee587df5b7e9b52e2b35f35f30afa08e15ab7098c73cb2503319c8d8ce44',
     tokenOfferingPrice: 0.025,
     version: 3.2,
-    twitterUrl: 'https://twitter.com/magpiexyz_io',
+    twitterUrl: 'https://x.com/magpiexyz_io',
     description:
       'Magpie is a customized fork of Convex that helps users in the Wombat ecosystem to obtain better yields and voting power',
     vestingTitle:
@@ -198,7 +198,7 @@ export const ifos: BaseIfoConfig[] = [
       'https://pancakeswap.finance/voting/proposal/0x8bef379b1f3e1f42e180d877edd3ef5b11476300f9de37196904ca4c2070b470',
     tokenOfferingPrice: 0.3,
     version: 3.2,
-    twitterUrl: 'https://twitter.com/WombexFinance',
+    twitterUrl: 'https://x.com/WombexFinance',
     description: 'Wombex is a customized fork of Convex, designed specifically for the Wombat Exchange ecosystem',
     vestingTitle: 'Earn $WMX by staking assets; Lock $WMX for Fee-Sharing and Wombat Governance',
   },
@@ -221,7 +221,7 @@ export const ifos: BaseIfoConfig[] = [
       'https://pancakeswap.finance/voting/proposal/bafkreicqqvgqpwtnhmlfdwz3ya3hnjm6nvgqbf3fpi4vbxmvqyv6yi3enu',
     tokenOfferingPrice: 0.035,
     version: 3.2,
-    twitterUrl: 'https://twitter.com/KingdomRaids',
+    twitterUrl: 'https://x.com/KingdomRaids',
     description: 'Kingdom Raids is a blockchain-based strategy role-playing game (RPG) game with a NFT metaverse',
     vestingTitle: '$KRS - utility token for Kingdom Raids, a role-playing game (RPG) game.',
   },
@@ -243,7 +243,7 @@ export const ifos: BaseIfoConfig[] = [
       'https://pancakeswap.finance/voting/proposal/bafkreiddual5o7vzfcwuazw3lgckis66hka4xytqkttqg2wjtea5pywohy',
     tokenOfferingPrice: 0.035,
     version: 3.2,
-    twitterUrl: 'https://twitter.com/Coritecom',
+    twitterUrl: 'https://x.com/Coritecom',
     description:
       'Corite is a blockchain-based music platform jointly powered by fans and artists to finance and promote music in a unique Engage-to-Earn (E2E) model.',
     vestingTitle: '$CO - utility token for the Corite Experience!',
@@ -267,7 +267,7 @@ export const ifos: BaseIfoConfig[] = [
       'https://pancakeswap.finance/voting/proposal/bafkreicsc2nevwvyp7ot5ewkmujvor3bcafh372kuxzncojqbuabnpwupe',
     tokenOfferingPrice: 0.055,
     version: 3.2,
-    twitterUrl: 'https://twitter.com/DinosChibi',
+    twitterUrl: 'https://x.com/DinosChibi',
     description: `Chibi Dinos is a basketball and dinosaur themed metaverse with games such as Primal Hoop, an arcade basketball game with an adventure role-playing game (RPG) mode and Primal Pick'em, a predictive play-to earn game (P2E).`,
     vestingTitle: '$HOOP - In-game currency for the Chibi Dinos Gaming Universe',
   },
@@ -289,7 +289,7 @@ export const ifos: BaseIfoConfig[] = [
       'https://pancakeswap.finance/voting/proposal/bafkreieqv7mbzmumyftstt6l32x6okfzq4syrea7k5zbqgohhcekcvbduu',
     tokenOfferingPrice: 0.075,
     version: 3.2,
-    twitterUrl: 'https://twitter.com/WombatExchange',
+    twitterUrl: 'https://x.com/WombatExchange',
     description: 'Wombat Exchange is a next generation multi-chain stableswap native to BNB Chain.',
     vestingTitle: 'Earn $WOM by staking stablecoins; Lock $WOM to maximize stablecoin yields',
   },
@@ -311,7 +311,7 @@ export const ifos: BaseIfoConfig[] = [
       'https://pancakeswap.finance/voting/proposal/bafkreibomj5nilvyckdro7ztmm62syt55dcfnonxs63ji6hm2ijq35lru4',
     tokenOfferingPrice: 0.04,
     version: 3.2,
-    twitterUrl: 'https://twitter.com/MetaApesGame',
+    twitterUrl: 'https://x.com/MetaApesGame',
     description:
       'Meta Apes is a free-to-play, play-and-earn massively multiplayer online (MMO) strategy game designed for mobile and the first game to launch on the BNB Sidechain with their own dedicated chain, Ape Chain.',
     vestingTitle: 'Utilize $PEEL for gas and governance in the Meta Apes ecosystem!',
@@ -335,7 +335,7 @@ export const ifos: BaseIfoConfig[] = [
     tokenOfferingPrice: 0.035,
     version: 3.2,
     telegramUrl: 'https://t.me/TriviansGlobal',
-    twitterUrl: 'https://twitter.com/PlayTrivians',
+    twitterUrl: 'https://x.com/PlayTrivians',
     description:
       'Trivian is a trivia gaming platform with different game modes such as multiplayer mode, single player mode, 1v1 games, instant play, scheduled tournaments, and live shows … all while earning TRIVIA tokens!',
     vestingTitle: 'Earn $TRIVIA For Each Question You Answer Correctly',
@@ -358,7 +358,7 @@ export const ifos: BaseIfoConfig[] = [
     tokenOfferingPrice: 0.3,
     version: 3.1,
     telegramUrl: 'https://t.me/duetprotocol',
-    twitterUrl: 'https://twitter.com/duetprotocol',
+    twitterUrl: 'https://x.com/duetprotocol',
     description:
       'DUET Protocol is a multi-chain synthetic assets ecosystem, enabling pegged assets from various markets – from individual stocks, to indexes, ETFs, and commodities.',
   },
@@ -380,7 +380,7 @@ export const ifos: BaseIfoConfig[] = [
     tokenOfferingPrice: 0.09,
     version: 3.1,
     telegramUrl: 'https://t.me/Era7_Official',
-    twitterUrl: 'https://twitter.com/Era7_official',
+    twitterUrl: 'https://x.com/Era7_official',
     description:
       'Drawing from their experience in traditional games such as Awakening of Dragon, Era7: Game of Truth combines elements of DeFi, NFTs, and Trading Cards into a play-to-earn game steeped in mythology and magic.',
   },
@@ -402,7 +402,7 @@ export const ifos: BaseIfoConfig[] = [
     tokenOfferingPrice: 0.06,
     version: 3,
     telegramUrl: 'https://t.me/froyogames',
-    twitterUrl: 'https://twitter.com/realfroyogames',
+    twitterUrl: 'https://x.com/realfroyogames',
     description: `Froyo Games is a game publisher and decentralized GameFi platform, with a NFT Marketplace that integrates NFTs with their games.\n \n FROYO tokens can be used to buy NFTs and participate in Froyo games`,
   },
   {

@@ -41,7 +41,7 @@ const handler = async (req, res) => {
       const consumerKey = TWITTER_CONSUMER_KEY[providerId as TwitterFollowersId].consumerKey as string
       const consumerSecret = TWITTER_CONSUMER_KEY[providerId as TwitterFollowersId].consumerKeySecret as string
 
-      const url = `https://api.twitter.com/2/users/${userId}/likes`
+      const url = `https://api.x.com/2/users/${userId}/likes`
       const method = 'POST'
 
       const response = await fetch(url, {

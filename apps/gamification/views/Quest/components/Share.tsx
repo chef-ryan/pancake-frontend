@@ -9,7 +9,7 @@ import {
   MoreIcon,
   TelegramIcon,
   Text,
-  TwitterIcon,
+  XIcon,
   copyText,
   useToast,
 } from '@pancakeswap/uikit'
@@ -90,10 +90,10 @@ export const Share: React.FC<ShareProps> = ({ title, contractChainId, contractAd
                 {t('Copy the link')}
               </Text>
             </Flex>
-            <Link href={`https://twitter.com/intent/post?text=${title}&url=${window?.location?.href}`} external>
+            <Link href={`https://x.com/intent/post?text=${title}&url=${window?.location?.href}`} external>
               <Flex>
                 <Flex alignSelf="flex-start">
-                  <TwitterIcon color="primary" width="20px" height="20px" />
+                  <XIcon color="primary" width="20px" height="20px" />
                 </Flex>
                 <Text ml="8px" lineHeight="20px">
                   {t('Share on X')}

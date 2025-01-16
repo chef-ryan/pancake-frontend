@@ -15,7 +15,7 @@ import {
   SvgProps,
   TelegramIcon,
   Text,
-  TwitterIcon,
+  XIcon,
 } from '@pancakeswap/uikit'
 import { BIG_TEN } from '@pancakeswap/utils/bigNumber'
 import { formatBigInt } from '@pancakeswap/utils/formatBalance'
@@ -160,7 +160,7 @@ const IfoAchievement: React.FC<React.PropsWithChildren<Props>> = ({ ifo, publicI
               </Link>
               {ifo.twitterUrl && (
                 <Link external href={ifo.twitterUrl}>
-                  <TwitterIcon color="textSubtle" />
+                  <XIcon color="textSubtle" />
                 </Link>
               )}
               {ifo.telegramUrl && (
@@ -189,7 +189,7 @@ const IfoAchievement: React.FC<React.PropsWithChildren<Props>> = ({ ifo, publicI
             </Link>
             {ifo.twitterUrl && (
               <Link external href={ifo.twitterUrl}>
-                <TwitterIcon color="textSubtle" />
+                <XIcon color="textSubtle" />
               </Link>
             )}
             {ifo.telegramUrl && (

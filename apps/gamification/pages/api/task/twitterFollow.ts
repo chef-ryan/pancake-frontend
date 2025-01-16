@@ -32,7 +32,7 @@ const handler = async (req, res) => {
       }
 
       const { account, questId, token, tokenSecret, userId, targetUserId, providerId, taskId } = req.query
-      const url = `https://api.twitter.com/2/users/${userId}/following`
+      const url = `https://api.x.com/2/users/${userId}/following`
       const method = 'POST'
       const consumerKey = TWITTER_CONSUMER_KEY[providerId as TwitterFollowersId].consumerKey as string
       const consumerSecret = TWITTER_CONSUMER_KEY[providerId as TwitterFollowersId].consumerKeySecret as string

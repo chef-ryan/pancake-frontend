@@ -1,12 +1,4 @@
-import {
-  DiscordIcon,
-  InstagramIcon,
-  Link,
-  RedditIcon,
-  TelegramIcon,
-  TwitterIcon,
-  YoutubeIcon,
-} from '@pancakeswap/uikit'
+import { DiscordIcon, InstagramIcon, Link, RedditIcon, TelegramIcon, XIcon, YoutubeIcon } from '@pancakeswap/uikit'
 import { cloneElement } from 'react'
 import { styled } from 'styled-components'
 
@@ -41,7 +33,7 @@ const CommunityTag = styled.div`
   }
 `
 const communityData = [
-  { icon: <TwitterIcon />, href: 'https://twitter.com/pancakeswap', alt: 'TwitterIcon' },
+  { icon: <XIcon />, href: 'https://x.com/pancakeswap', alt: 'XIcon' },
   { icon: <TelegramIcon />, href: 'https://t.me/pancakeswap', alt: 'TelegramIcon' },
   { icon: <DiscordIcon />, href: 'https://discord.gg/pancakeswap', alt: 'DiscordIcon' },
   { icon: <InstagramIcon />, href: 'https://www.instagram.com/pancakeswap_official/', alt: 'InstagramIcon' },

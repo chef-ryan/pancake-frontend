@@ -1,4 +1,4 @@
-import { InstagramIcon, TwitterIcon } from '@pancakeswap/uikit'
+import { InstagramIcon, XIcon } from '@pancakeswap/uikit'
 import { ContextApi } from '@pancakeswap/localization'
 
 type ArtistConfigType = {
@@ -22,10 +22,10 @@ const artistConfigBuilder = ({ t, isDark }: ArtistConfigType) => ({
   ],
   buttons: [
     {
-      to: 'https://twitter.com/cecymeade',
-      text: t('Follow on Twitter'),
+      to: 'https://x.com/cecymeade',
+      text: t('Follow on X'),
       external: true,
-      icon: <TwitterIcon color="white" />,
+      icon: <XIcon color="white" />,
     },
     {
       to: 'https://www.instagram.com/cecymeade/',

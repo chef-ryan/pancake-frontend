@@ -11,16 +11,11 @@ const METISWarning = () => {
         {t(
           'Please exercise due caution when trading / providing liquidity for the METIS token. The protocol was recently affected by the',
         )}
-        <Link
-          external
-          m="0 4px"
-          style={{ display: 'inline' }}
-          href="https://twitter.com/MetisDAO/status/1676431481621676032"
-        >
+        <Link external m="0 4px" style={{ display: 'inline' }} href="https://x.com/MetisDAO/status/1676431481621676032">
           {t('PolyNetwork Exploit.')}
         </Link>
         {t('For more information, please refer to MetisDAO’s')}
-        <Link external ml="4px" style={{ display: 'inline' }} href="https://twitter.com/MetisDAO">
+        <Link external ml="4px" style={{ display: 'inline' }} href="https://x.com/MetisDAO">
           {t('Twitter')}
         </Link>
       </Text>

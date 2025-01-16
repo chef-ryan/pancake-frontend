@@ -5,7 +5,7 @@ import {
   InstagramIcon,
   LanguageIcon,
   TelegramIcon,
-  TwitterIcon,
+  XIcon,
   YoutubeIcon,
 } from '@pancakeswap/uikit'
 import { useCallback } from 'react'
@@ -28,7 +28,7 @@ export const useTaskInfo = (primaryColor: boolean = false, iconSize: number = 20
         case TaskType.X_LIKE_POST:
         case TaskType.X_FOLLOW_ACCOUNT:
         case TaskType.X_REPOST_POST:
-          return <TwitterIcon color={color} width={size} height={size} />
+          return <XIcon color={color} width={size} height={size} />
         case TaskType.TELEGRAM_JOIN_GROUP:
           return <TelegramIcon color={color} width={size} height={size} />
         case TaskType.DISCORD_JOIN_SERVER:

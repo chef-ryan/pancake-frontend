@@ -9,7 +9,7 @@ import {
   LaurelLeftIcon,
   LaurelRightIcon,
   Text,
-  TwitterIcon,
+  XIcon,
   useModal,
 } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
@@ -211,10 +211,10 @@ const BattleCta: React.FC<React.PropsWithChildren<CompetitionProps>> = ({
                   scale="sm"
                   variant="secondary"
                   onClick={() => {
-                    window.open('https://twitter.com/pancakeswap', '_blank', 'noopener noreferrer')
+                    window.open('https://x.com/pancakeswap', '_blank', 'noopener noreferrer')
                   }}
                 >
-                  <TwitterIcon color="textSubtle" fontSize="12px" mr="5px" />
+                  <XIcon color="textSubtle" fontSize="12px" mr="5px" />
                   {t('Follow Update')}
                 </Button>
               </Text>

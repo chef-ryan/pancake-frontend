@@ -19,7 +19,7 @@ const SafemoonWarning = () => {
         {t(
           'Trading on the old address may result in the complete loss of your assets. For more information please refer to',
         )}{' '}
-        <Link style={{ display: 'inline' }} external href="https://twitter.com/safemoon/status/1477770592031887360">
+        <Link style={{ display: 'inline' }} external href="https://x.com/safemoon/status/1477770592031887360">
           {t("Safemoon's announcement")}.
         </Link>
       </Text>
