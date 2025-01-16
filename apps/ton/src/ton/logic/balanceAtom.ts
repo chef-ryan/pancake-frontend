@@ -25,7 +25,7 @@ export const balanceAtom = atomFamily((tokenAddress?: string) =>
       return walletData.balance
     },
     initialData: 0n,
-    enabled: !!tokenAddress,
+    enabled: !!get(addressAtom) && !!tokenAddress,
     staleTime: 1000 * 10, // 10 seconds
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
