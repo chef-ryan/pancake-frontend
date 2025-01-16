@@ -61,7 +61,7 @@ const Question = () => {
             <FoldableText title={t('What is the criteria to become a PancakeSwap affiliate?')} mt="24px">
               <StyledListText color="textSubtle">
                 {t(
-                  'At least 10,000 followers across social media platforms such as Twitter, Youtube, Discord, Instagram and Telegram',
+                  'At least 10,000 followers across social media platforms such as X, Youtube, Discord, Instagram and Telegram',
                 )}
               </StyledListText>
               <StyledListText color="textSubtle">

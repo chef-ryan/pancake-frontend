@@ -8,10 +8,10 @@ const NFPWarning = () => {
     <Box maxWidth="380px">
       <Text>
         {t(
-          `The NFP token has recently experienced an exploit. Please refrain from swapping NFP until further notice. More information can be found on the project's twitter page.`,
+          `The NFP token has recently experienced an exploit. Please refrain from swapping NFP until further notice. More information can be found on the project's X page.`,
         )}
       </Text>
-      <LinkExternal href="https://x.com/nfprompt/status/1768558658697433464?s=20">{t('twitter page')}</LinkExternal>
+      <LinkExternal href="https://x.com/nfprompt/status/1768558658697433464?s=20">{t('X page')}</LinkExternal>
     </Box>
   )
 }

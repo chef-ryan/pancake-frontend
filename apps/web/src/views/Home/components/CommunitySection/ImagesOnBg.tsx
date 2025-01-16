@@ -168,7 +168,7 @@ export const LeftBottomBox: React.FC = () => {
   return (
     <LeftImageWrapper>
       <Image className="discord" src={`${ASSET_CDN}/web/landing/socials/1.png`} alt="discord" />
-      <Image className="twitter" src={`${ASSET_CDN}/web/landing/socials/2.png`} alt="twitter" />
+      <Image className="x" src={`${ASSET_CDN}/web/landing/socials/2.png`} alt="x" />
       <Image className="telegram" src={`${ASSET_CDN}/web/landing/socials/3.png`} alt="telegram" />
       <Image className="instagram" src={`${ASSET_CDN}/web/landing/socials/4.png`} alt="instagram" />
     </LeftImageWrapper>

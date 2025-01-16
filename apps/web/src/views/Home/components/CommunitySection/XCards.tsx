@@ -68,14 +68,14 @@ const TweetBox = styled.div`
   line-height: 120%;
 `
 
-export const useTweetsData = () => {
+export const useXPostsData = () => {
   return useMemo(() => {
     return [
       {
-        tweet: `Get Your Uniswap Interface Fees Refunded on PancakeSwap, up to $8M!
+        post: `Get Your Uniswap Interface Fees Refunded on PancakeSwap, up to $8M!
 
 Match your Ethereum Uniswap volume 1:1 on Ethereum PancakeSwap, and we’ll refund ALL your interface fees paid.
-Trade now: https://pancakeswap.finance/swap?chain=eth&utm_source=twitter&utm_medium=Ethereum&utm_campaign=Swap&utm_id=InterfacefeeRefund
+Trade now: https://pancakeswap.finance/swap?chain=eth&utm_source=x&utm_medium=Ethereum&utm_campaign=Swap&utm_id=InterfacefeeRefund
 `,
         link: 'https://x.com/PancakeSwap/status/1791076335462314097',
         date: 'May 16',
@@ -105,15 +105,15 @@ const StyledText = styled(Text)`
   }
 `
 
-export const TwitterCards: React.FC = () => {
+export const XCards: React.FC = () => {
   const { t } = useTranslation()
-  const tweets = useTweetsData()
+  const posts = useXPostsData()
   const { theme } = useTheme()
   const { isMobile } = useMatchBreakpoints()
   return (
     <Wrapper>
       <Text bold mb="24px">
-        {t('Top Tweet of the week')}
+        {t('Top Post of the Week on X')}
       </Text>
       <LogoBox>
         <LogoIcon width={30} />
@@ -130,23 +130,23 @@ export const TwitterCards: React.FC = () => {
         </StyledText>
         <Divider />
         <Text fontSize={14} color={theme.colors.textSubtle}>
-          {tweets[0].date}
+          {posts[0].date}
         </Text>
         <Divider />
         <FavoriteBorderIcon width={isMobile ? 14 : 16} color={theme.colors.textSubtle} mr="2px" />
         <Text fontSize={14} color={theme.colors.textSubtle}>
-          {tweets[0].like}
+          {posts[0].like}
         </Text>
         <Divider />
         <BarChartIcon color={theme.colors.textSubtle} />
         <Text fontSize={14} color={theme.colors.textSubtle}>
-          {tweets[0].impression}
+          {posts[0].impression}
         </Text>
       </Flex>
       <TweetWrapper>
-        <TweetBox>{tweets[0].tweet}</TweetBox>
+        <TweetBox>{posts[0].post}</TweetBox>
       </TweetWrapper>
-      <Link external href={tweets[0].link} marginTop="5px">
+      <Link external href={posts[0].link} marginTop="5px">
         {t('Web link')} <OpenNewIcon ml="3px" color="primary" />
       </Link>
     </Wrapper>

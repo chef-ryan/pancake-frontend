@@ -16,7 +16,7 @@ const METISWarning = () => {
         </Link>
         {t('For more information, please refer to MetisDAO’s')}
         <Link external ml="4px" style={{ display: 'inline' }} href="https://x.com/MetisDAO">
-          {t('Twitter')}
+          {X}
         </Link>
       </Text>
     </Box>

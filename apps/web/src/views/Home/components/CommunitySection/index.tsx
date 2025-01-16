@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import CommunitySummary, { sharedCss } from './CommunitySummary'
 import { CommunityTags } from './CommunityTags'
 import { LeftBottomBox, RightBottomBox } from './ImagesOnBg'
-import { BlogCard, TwitterCards } from './TwitterCards'
+import { BlogCard, XCards } from './XCards'
 
 const TransparentFrame = styled.div<{ isDark: boolean }>`
   position: relative;
@@ -107,8 +107,8 @@ const CommunitySection = () => {
               loop
               pagination={{ clickable: true }}
             >
-              <SwiperSlide key="TwitterCards">
-                <TwitterCards />
+              <SwiperSlide key="XCards">
+                <XCards />
               </SwiperSlide>
               <SwiperSlide key="BlogCard">
                 <BlogCard />

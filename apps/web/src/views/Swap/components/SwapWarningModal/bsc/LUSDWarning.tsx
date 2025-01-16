@@ -16,7 +16,7 @@ const LUSDWarning = () => {
         </Link>
         {t('For more information, please refer to Linear Finance’s')}
         <Link external ml="4px" style={{ display: 'inline' }} href="https://x.com/LinearFinance">
-          {t('Twitter')}
+          {X}
         </Link>
       </Text>
     </Box>
