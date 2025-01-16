@@ -8,7 +8,7 @@ export const setCurrencyAtom = atom(null, (_, set, field: string, currency: Curr
     currencyFamily(field),
     currency &&
       (currency.isNative
-        ? {
+        ? ({
             isNative: true,
             isToken: false,
             symbol: 'TON',
@@ -17,8 +17,8 @@ export const setCurrencyAtom = atom(null, (_, set, field: string, currency: Curr
             chainId: currency.chainId,
             logoURI: currency.logoURI,
             equals: () => false,
-            wrapped: {} as any,
-          }
+            wrapped: null as any,
+          } as Currency)
         : new Token(
             currency.chainId,
             currency.address,
