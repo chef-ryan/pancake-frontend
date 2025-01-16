@@ -11,9 +11,7 @@ export abstract class AgnosticNativeCurrency extends AgnosticBaseCurrency {
 
   public readonly logoURI?: string
 
-  public readonly address = this.symbol
-
   public get wrapped(): AgnosticToken {
-    return new AgnosticToken(this.chainId, this.address, this.decimals, this.symbol, this.name, this.logoURI)
+    return new AgnosticToken(this.chainId, '', this.decimals, this.symbol, this.name, this.logoURI)
   }
 }
