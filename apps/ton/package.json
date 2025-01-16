@@ -12,6 +12,7 @@
   "dependencies": {
     "@datadog/browser-logs": "^5.8.0",
     "@datadog/browser-rum": "^5.8.0",
+    "@orbs-network/ton-access": "^2.3.3",
     "@pancakeswap/chains": "workspace:*",
     "@pancakeswap/hooks": "workspace:*",
     "@pancakeswap/localization": "workspace:*",

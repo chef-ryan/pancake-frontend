@@ -932,6 +932,9 @@ importers:
       '@datadog/browser-rum':
         specifier: ^5.8.0
         version: 5.8.0(@datadog/browser-logs@5.8.0)
+      '@orbs-network/ton-access':
+        specifier: ^2.3.3
+        version: 2.3.3
       '@pancakeswap/chains':
         specifier: workspace:*
         version: link:../../packages/chains

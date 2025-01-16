@@ -1,16 +1,20 @@
+import { getHttpEndpoint } from '@orbs-network/ton-access'
 import { TonClient } from '@ton/ton'
 import { tonState } from 'ton/atom/tonStateAtom'
-import { TonContextEvents } from 'ton/ton.enums'
+import { TonContextEvents, TonNetworks } from 'ton/ton.enums'
 import { Emiter } from 'ton/utils/Emiter'
-import { TonEndPoints } from './endpoints'
 
 export class TonContext extends Emiter<TonContextEvents> {
   private tonClient?: TonClient
 
   constructor() {
     super()
-    const network = tonState.network
-    this.tonClient = new TonClient({ endpoint: TonEndPoints[network] })
+
+    const { network } = tonState
+
+    getHttpEndpoint({ network: network === TonNetworks.Mainnet ? 'mainnet' : 'testnet' }).then((endpoint) => {
+      this.tonClient = new TonClient({ endpoint })
+    })
   }
 
   public getClient() {

@@ -72,6 +72,28 @@ export const useSwap = () => {
         )
         .endCell()
 
+      // const newPayload = beginCell()
+      //   .store(
+      //     storeSwap({
+      //       $$type: 'Swap',
+      //       queryId: 1n,
+      //       amount: toNano(amount0),
+      //       fromRealUser: walletAddress,
+      //       fromUserAddress: walletAddress,
+      //       minOut: toNano(minOut || '50'),
+      //       refAddress: null,
+      //       refMessageValue: 0n,
+      //       tokenWallet: routerJettonWallet1,
+      //       next: {
+      //         $$type: 'SwapNext',
+      //         minOut: 1n,
+      //         tokenAddress: userJettonWallet1,
+      //         next: null,
+      //       },
+      //     }),
+      //   )
+      //   .endCell()
+
       const txRequest: SendTransactionRequest = {
         validUntil: Math.floor(Date.now() / 1000) + 60,
         messages: [
@@ -79,6 +101,7 @@ export const useSwap = () => {
             address: userJettonWallet0.toString(),
             amount: toNano('1').toString(),
             payload: payload.toBoc().toString('base64'),
+            // payload: newPayload.toBoc().toString('base64'),
           },
         ],
       }
