@@ -15,6 +15,7 @@ export const Contracts = {
   },
   [TonContractNames.PCSRouter]: {
     address: 'kQB-oiKteYtZu8F37inMW2NXDz0DeYNAw4tjd8wZGTUpIkJG',
+    // address: 'kQA8fEASOX1UJ9bDwGCneGKrrOy7qIucg8G5x5me7aY5yhRi',
     type: TonContractTypes.PCSRouter,
   },
 } as const

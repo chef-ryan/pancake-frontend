@@ -7,6 +7,4 @@ export abstract class NativeCurrency extends BaseCurrency {
   public readonly isNative = true as const
 
   public readonly isToken = false as const
-
-  public readonly logoURI?: string
 }

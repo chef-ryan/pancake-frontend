@@ -3,6 +3,11 @@ export enum TonNetworks {
   Testnet = 'testnet',
 }
 
+export enum TonChainIds {
+  Mainnet = -239,
+  Testnet = -3,
+}
+
 export enum TonContextEvents {
   Connected,
   Disconnect,

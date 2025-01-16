@@ -99,7 +99,8 @@ function CurrencySearch({
 
   const handleInput = useCallback((event) => {
     const input = event.target.value
-    const checksummedInput = Address.parse(input).toString()
+    // const checksummedInput = Address.parse(input).toString()
+    const checksummedInput = input
     setSearchQuery(checksummedInput || input)
     fixedList.current?.scrollTo(0)
   }, [])

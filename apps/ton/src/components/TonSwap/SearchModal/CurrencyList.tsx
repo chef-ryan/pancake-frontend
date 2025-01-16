@@ -2,11 +2,11 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Currency, Token } from '@pancakeswap/routing-sdk-addon-ton'
 
 import { ArrowForwardIcon, CircleLoader, Column, QuestionHelper, Text } from '@pancakeswap/uikit'
+import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import { fromNano } from '@ton/core'
 import { LightGreyCard } from 'components/Card'
 import { RowBetween, RowFixed } from 'components/Layout/Row'
 import { CurrencyLogo } from 'components/widgets/CurrencyLogo'
-import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useAtomValue } from 'jotai'
@@ -94,13 +94,12 @@ function CurrencyRow({
       </Column>
       <RowFixed style={{ justifySelf: 'flex-end' }}>
         {balance !== undefined ? (
-          <NumberDisplay value={balance} />
+          formatNumber(balance, 0)
         ) : account && isBalanceLoading ? (
           <CircleLoader />
         ) : (
           <ArrowForwardIcon />
         )}
-        {/* <ArrowForwardIcon /> */}
       </RowFixed>
     </MenuItem>
   )

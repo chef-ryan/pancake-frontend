@@ -100,7 +100,7 @@ export default function TestMint() {
 
     addLiquidity({
       amount0: toNano(100),
-      amount1: toNano(200),
+      amount1: toNano(100),
       token0Address: 'kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F', // $SYRUP
       token1Address: 'kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg', // $PAN
     })
