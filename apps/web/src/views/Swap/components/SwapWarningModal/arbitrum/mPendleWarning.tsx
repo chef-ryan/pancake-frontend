@@ -17,7 +17,7 @@ const MPendleWarning = () => {
         </Link>
         . {t('For more information, please refer to Penpie’s')}{' '}
         <Link style={{ display: 'inline' }} external href="https://x.com/penpiexyz_io">
-          {X}
+          X
         </Link>
         .
         <br />

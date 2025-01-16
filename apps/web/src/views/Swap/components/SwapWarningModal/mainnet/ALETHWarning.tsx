@@ -21,7 +21,7 @@ const ALETHWarning = () => {
       </Link>
       <Text as="span">{t('For more information, please refer to Alchemix’s')}</Text>
       <Link external m="0 4px" style={{ display: 'inline' }} href="https://x.com/AlchemixFi/status/1685737632133971968">
-        {X}
+        X
       </Link>
       <Text as="span">{t('and await further updates from the team')}</Text>
     </Box>

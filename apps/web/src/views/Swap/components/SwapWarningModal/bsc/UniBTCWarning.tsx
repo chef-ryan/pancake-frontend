@@ -14,7 +14,7 @@ const LUSDWarning = () => {
 
         {t('For more information, please refer to %org%’s', { org: 'BedRock' })}
         <Link external ml="4px" style={{ display: 'inline' }} href="https://x.com/Bedrock_DeFi">
-          {X}
+          X
         </Link>
       </Text>
     </Box>
