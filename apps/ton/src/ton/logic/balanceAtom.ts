@@ -2,6 +2,7 @@ import { Address } from '@ton/ton'
 import { atomWithQuery } from 'jotai-tanstack-query'
 import { atomFamily } from 'jotai/utils'
 import { addressAtom } from 'ton/atom/addressAtom'
+import { networkAtom } from 'ton/atom/networkAtom'
 import { TonContext } from 'ton/context/TonContext'
 import { JettonMasterUSDT } from 'ton/wrappers/tact_JettonMasterUSDT'
 import { JettonWalletUSDT } from 'ton/wrappers/tact_JettonWalletUSDT'
@@ -9,7 +10,7 @@ import { JettonWalletUSDT } from 'ton/wrappers/tact_JettonWalletUSDT'
 // TODO: temporary balance atom. refactor this after new contract interface OR use balanceOfAtom.ts (preferred)
 export const balanceAtom = atomFamily((tokenAddress?: string) =>
   atomWithQuery((get) => ({
-    queryKey: ['balance', get(addressAtom), tokenAddress],
+    queryKey: ['balance', get(networkAtom), get(addressAtom), tokenAddress],
     queryFn: async () => {
       if (!tokenAddress) return 0n
       const client = TonContext.instance.getClient()

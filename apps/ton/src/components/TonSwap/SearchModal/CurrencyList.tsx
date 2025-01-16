@@ -13,6 +13,7 @@ import { useAtomValue } from 'jotai'
 import { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
 import { styled } from 'styled-components'
+import { addressAtom } from 'ton/atom/addressAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
 import { currencyKey } from 'ton/utils/currency'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
@@ -63,7 +64,7 @@ function CurrencyRow({
   otherSelected: boolean
   style: CSSProperties
 }) {
-  const account = '0x00' // dummy account value
+  const userAddress = useAtomValue(addressAtom)
 
   // const { t } = useTranslation()
   const key = currencyKey(currency)
@@ -93,9 +94,9 @@ function CurrencyRow({
         </Text> */}
       </Column>
       <RowFixed style={{ justifySelf: 'flex-end' }}>
-        {balance !== undefined ? (
+        {userAddress && balance !== undefined ? (
           formatNumber(balance, 0)
-        ) : account && isBalanceLoading ? (
+        ) : userAddress && isBalanceLoading ? (
           <CircleLoader />
         ) : (
           <ArrowForwardIcon />
