@@ -158,8 +158,8 @@ const IfoAchievement: React.FC<React.PropsWithChildren<Props>> = ({ ifo, publicI
               <Link external href={getBlockExploreLink(ifo.address, 'address', ifo.chainId)}>
                 <SmartContractIcon color="textSubtle" />
               </Link>
-              {ifo.twitterUrl && (
-                <Link external href={ifo.twitterUrl}>
+              {ifo.xUrl && (
+                <Link external href={ifo.xUrl}>
                   <XIcon color="textSubtle" />
                 </Link>
               )}
@@ -187,8 +187,8 @@ const IfoAchievement: React.FC<React.PropsWithChildren<Props>> = ({ ifo, publicI
             <Link external href={getBlockExploreLink(ifo.address, 'address', ifo.chainId)}>
               <SmartContractIcon color="textSubtle" />
             </Link>
-            {ifo.twitterUrl && (
-              <Link external href={ifo.twitterUrl}>
+            {ifo.xUrl && (
+              <Link external href={ifo.xUrl}>
                 <XIcon color="textSubtle" />
               </Link>
             )}

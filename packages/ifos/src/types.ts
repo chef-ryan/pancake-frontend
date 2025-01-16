@@ -29,7 +29,7 @@ export type BaseIfoConfig = {
   campaignId: string
   tokenOfferingPrice: number | null
   description?: string
-  twitterUrl?: string
+  xUrl?: string
   telegramUrl?: string
   version: number
   vestingTitle?: string

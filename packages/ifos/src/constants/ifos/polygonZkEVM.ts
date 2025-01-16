@@ -22,7 +22,7 @@ export const ifos: BaseIfoConfig[] = [
   //   articleUrl: 'https://pancakeswap.finance/voting/',
   //   tokenOfferingPrice: 0.5782,
   //   version: 7,
-  //   twitterUrl: 'https://x.com/pancakeswap',
+  //   xUrl: 'https://x.com/pancakeswap',
   //   description: 'Spend CAKE, buy USDT, but on vesting',
   //   vestingTitle: 'Use CAKE to buy USDT',
   // },

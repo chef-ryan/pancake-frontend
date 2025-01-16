@@ -21,7 +21,7 @@ export const ifos: Ifo[] = [
     articleUrl: 'https://medium.com/pancakeswap/bluemove-move-ifo-to-be-hosted-on-aptos-pancakeswap-25adee83d1ee',
     tokenOfferingPrice: 0.04,
     version: 3.2,
-    twitterUrl: 'https://x.com/BlueMove_OA',
+    xUrl: 'https://x.com/BlueMove_OA',
     description:
       'BlueMove is the leading multi-chain NFT Marketplace on Aptos and Sui, where creators can easily create their own NFTs, and freely list their collections for buying, selling and trading',
     vestingTitle: 'Stake $MOVE to access BlueMove Launchpad projects and earn platform fees',
