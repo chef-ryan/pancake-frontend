@@ -55,6 +55,9 @@ const config = {
   },
   experimental: {
     workerThreads: true,
+    parallelServerCompiles: true,
+    parallelServerBuildTraces: true,
+    webpackBuildWorker: true,
     scrollRestoration: true,
     fallbackNodePolyfills: false,
     outputFileTracingRoot: path.join(__dirname, '../../'),
