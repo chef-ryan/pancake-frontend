@@ -80,7 +80,8 @@ export const STABLESWAP_SUBGRAPHS_URLS = {
 
 export const TRADING_REWARD_API = 'https://trading-reward.pancakeswap.com/api/v1'
 
-export const X_API_ENDPOINT = process.env.NEXT_PUBLIC_QUOTING_API
+// export const X_API_ENDPOINT = process.env.NEXT_PUBLIC_QUOTING_API
+export const X_API_ENDPOINT = 'https://sgp1.test.x.pancakeswap.com'
 
 export const QUOTING_API_PREFIX = `${X_API_ENDPOINT}/order-price`
 
