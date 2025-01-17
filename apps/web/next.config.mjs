@@ -54,6 +54,7 @@ const config = {
     styledComponents: true,
   },
   experimental: {
+    workerThreads: true,
     scrollRestoration: true,
     fallbackNodePolyfills: false,
     outputFileTracingRoot: path.join(__dirname, '../../'),
