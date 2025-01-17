@@ -7,8 +7,6 @@
     "declarationMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "incremental": true,
-    "tsBuildInfoFile": "./.tsbuildinfo",
     "inlineSources": false,
     "isolatedModules": true,
     "moduleResolution": "node",
