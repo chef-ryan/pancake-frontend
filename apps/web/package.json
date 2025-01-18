@@ -10,7 +10,7 @@
     "test": "LC_ALL=\"en_US.UTF-8\" vitest --run",
     "test:watch": "LC_ALL=\"en_US.UTF-8\" vitest --watch",
     "test:config": "vitest --run --config vitest-config-test.config.ts",
-    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "lint": "biome lint src",
     "lint:style": "npx stylelint '**/*.{ts,tsx}'",
     "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json}\"",
     "typechecks": "tsc --noEmit -p ./tsconfig.json"
@@ -146,6 +146,7 @@
     "zod": "^3.22.3"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@next/eslint-plugin-next": "14.2.3",
     "@pancakeswap/next-config": "workspace:*",
     "@pancakeswap/tsconfig": "workspace:*",
