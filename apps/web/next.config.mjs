@@ -234,8 +234,15 @@ const config = {
         test: /\.js$/,
         include: path.resolve('src'),
         use: [
-          'thread-loader',
-          defaultLoaders.babel
+          {
+            loader: 'thread-loader',
+            options: {
+              workers: 50,
+              workerParallelJobs: 50,
+              poolParallelJobs: 50,
+            },
+          },
+          defaultLoaders.babel,
         ],
       })
       webpackConfig.plugins.push(
