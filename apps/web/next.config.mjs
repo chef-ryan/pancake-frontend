@@ -229,22 +229,15 @@ const config = {
         __SENTRY_TRACING__: false,
       }),
     )
+    webpackConfig.optimization.minimize = true
+    webpackConfig.optimization.minimizer = [
+      new TerserPlugin({
+        parallel: true,
+        minify: TerserPlugin.esbuildMinify,
+        terserOptions: {},
+      }),
+    ]
     if (!isServer) {
-      webpackConfig.module.rules.push({
-        test: /\.js$/,
-        include: path.resolve('src'),
-        use: [
-          {
-            loader: 'thread-loader',
-            options: {
-              workers: 50,
-              workerParallelJobs: 50,
-              poolParallelJobs: 50,
-            },
-          },
-          defaultLoaders.babel,
-        ],
-      })
       webpackConfig.plugins.push(
         new RetryChunkLoadPlugin({
           cacheBust: `function() {
@@ -256,14 +249,6 @@ const config = {
           maxRetries: 5,
         }),
       )
-      webpackConfig.optimization.minimize = true
-      webpackConfig.optimization.minimizer = [
-        new TerserPlugin({
-          parallel: true,
-          minify: TerserPlugin.esbuildMinify,
-          terserOptions: {},
-        }),
-      ]
       if (webpackConfig.optimization.splitChunks) {
         // webpack doesn't understand worker deps on quote worker, so we need to manually add them
         // https://github.com/webpack/webpack/issues/16895
