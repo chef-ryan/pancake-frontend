@@ -231,8 +231,6 @@ const config = {
       }),
     )
     if (!isServer) {
-      console.info(isServer)
-      console.info(nextRuntime)
       webpackConfig.optimization.minimize = true
       webpackConfig.optimization.minimizer = [
         new TerserPlugin({
