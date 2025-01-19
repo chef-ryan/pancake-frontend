@@ -10,7 +10,7 @@
     "test": "LC_ALL=\"en_US.UTF-8\" vitest --run",
     "test:watch": "LC_ALL=\"en_US.UTF-8\" vitest --watch",
     "test:config": "vitest --run --config vitest-config-test.config.ts",
-    "lint": "biome lint src",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:style": "npx stylelint '**/*.{ts,tsx}'",
     "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json}\"",
     "typechecks": "tsc --noEmit -p ./tsconfig.json"
@@ -195,6 +195,7 @@
     "tilg": "^0.1.1",
     "typescript": "5.2.2",
     "vite-tsconfig-paths": "^4.0.3",
-    "webpack-retry-chunk-load-plugin": "3.1.1"
+    "webpack-retry-chunk-load-plugin": "3.1.1",
+    "thread-loader": "4.0.4"
   }
 }

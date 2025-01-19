@@ -32,7 +32,7 @@ const sentryWebpackPluginOptions =
         validate: true,
         hideSourceMaps: false,
         tryRun: true,
-        disable: true
+        disable: true,
         // https://github.com/getsentry/sentry-webpack-plugin#options.
       }
     : {
@@ -49,11 +49,6 @@ const workerDeps = Object.keys(smartRouterPkgs.dependencies)
 const config = {
   typescript: {
     tsconfigPath: 'tsconfig.json',
-  },
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
   },
   compiler: {
     styledComponents: true,
@@ -226,7 +221,7 @@ const config = {
       },
     ]
   },
-  webpack: (webpackConfig, { webpack, isServer }) => {
+  webpack: (webpackConfig, { webpack, isServer, defaultLoaders }) => {
     // tree shake sentry tracing
     webpackConfig.plugins.push(
       new webpack.DefinePlugin({
@@ -234,38 +229,48 @@ const config = {
         __SENTRY_TRACING__: false,
       }),
     )
-    webpackConfig.plugins.push(
-      new RetryChunkLoadPlugin({
-        cacheBust: `function() {
+    if (!isServer) {
+      webpackConfig.module.rules.push({
+        test: /\.js$/,
+        include: path.resolve('src'),
+        use: [
+          'thread-loader',
+          defaultLoaders.babel
+        ],
+      })
+      webpackConfig.plugins.push(
+        new RetryChunkLoadPlugin({
+          cacheBust: `function() {
           return 'cache-bust=' + Date.now();
         }`,
-        retryDelay: `function(retryAttempt) {
+          retryDelay: `function(retryAttempt) {
           return 2 ** (retryAttempt - 1) * 500;
         }`,
-        maxRetries: 5,
-      }),
-    )
-    webpackConfig.optimization.minimize = true
-    webpackConfig.optimization.minimizer = [
-      new TerserPlugin({
-        parallel: true,
-        minify: TerserPlugin.esbuildMinify,
-        terserOptions: {},
-      }),
-    ]
-    if (!isServer && webpackConfig.optimization.splitChunks) {
-      // webpack doesn't understand worker deps on quote worker, so we need to manually add them
-      // https://github.com/webpack/webpack/issues/16895
-      // eslint-disable-next-line no-param-reassign
-      webpackConfig.optimization.splitChunks.cacheGroups.workerChunks = {
-        chunks: 'all',
-        test(module) {
-          const resource = module.nameForCondition?.() ?? ''
-          return resource ? workerDeps.some((d) => resource.includes(d)) : false
-        },
-        priority: 31,
-        name: 'worker-chunks',
-        reuseExistingChunk: true,
+          maxRetries: 5,
+        }),
+      )
+      webpackConfig.optimization.minimize = true
+      webpackConfig.optimization.minimizer = [
+        new TerserPlugin({
+          parallel: true,
+          minify: TerserPlugin.esbuildMinify,
+          terserOptions: {},
+        }),
+      ]
+      if (webpackConfig.optimization.splitChunks) {
+        // webpack doesn't understand worker deps on quote worker, so we need to manually add them
+        // https://github.com/webpack/webpack/issues/16895
+        // eslint-disable-next-line no-param-reassign
+        webpackConfig.optimization.splitChunks.cacheGroups.workerChunks = {
+          chunks: 'all',
+          test(module) {
+            const resource = module.nameForCondition?.() ?? ''
+            return resource ? workerDeps.some((d) => resource.includes(d)) : false
+          },
+          priority: 31,
+          name: 'worker-chunks',
+          reuseExistingChunk: true,
+        }
       }
     }
     return webpackConfig
