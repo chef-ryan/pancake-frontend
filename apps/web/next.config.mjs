@@ -57,9 +57,6 @@ const config = {
   experimental: {
     workerThreads: true,
     cpus: ((os.cpus() || { length: 2 }).length) - 1,
-    parallelServerCompiles: true,
-    parallelServerBuildTraces: true,
-    webpackBuildWorker: true,
     scrollRestoration: true,
     fallbackNodePolyfills: false,
     useLightningcss: true,
