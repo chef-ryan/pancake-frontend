@@ -60,7 +60,7 @@ const config = {
     webpackBuildWorker: true,
     scrollRestoration: true,
     fallbackNodePolyfills: false,
-    serverMinification: false,
+    useLightningcss: true,
     outputFileTracingRoot: path.join(__dirname, '../../'),
     outputFileTracingExcludes: {
       '*': [],
