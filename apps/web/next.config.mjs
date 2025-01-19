@@ -6,6 +6,7 @@ import { withSentryConfig } from '@sentry/nextjs'
 import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin'
 import vercelToolbarPlugin from '@vercel/toolbar/plugins/next'
 import path from 'path'
+import os from 'os'
 import { fileURLToPath } from 'url'
 import { RetryChunkLoadPlugin } from 'webpack-retry-chunk-load-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
@@ -55,6 +56,7 @@ const config = {
   },
   experimental: {
     workerThreads: true,
+    cpus: ((os.cpus() || { length: 2 }).length) - 1,
     parallelServerCompiles: true,
     parallelServerBuildTraces: true,
     webpackBuildWorker: true,
