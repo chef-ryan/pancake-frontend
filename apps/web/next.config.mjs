@@ -232,8 +232,8 @@ const config = {
     webpackConfig.optimization.minimize = true
     webpackConfig.optimization.minimizer = [
       new TerserPlugin({
-        parallel: true,
-        minify: TerserPlugin.esbuildMinify,
+        parallel: 8,
+        minify: TerserPlugin.terserMinify,
         terserOptions: {},
       }),
     ]
