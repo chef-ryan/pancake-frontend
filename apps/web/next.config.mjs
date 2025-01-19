@@ -60,6 +60,7 @@ const config = {
     webpackBuildWorker: true,
     scrollRestoration: true,
     fallbackNodePolyfills: false,
+    serverMinification: false,
     outputFileTracingRoot: path.join(__dirname, '../../'),
     outputFileTracingExcludes: {
       '*': [],
@@ -221,7 +222,7 @@ const config = {
       },
     ]
   },
-  webpack: (webpackConfig, { webpack, isServer, defaultLoaders }) => {
+  webpack: (webpackConfig, { webpack, isServer, nextRuntime, defaultLoaders }) => {
     // tree shake sentry tracing
     webpackConfig.plugins.push(
       new webpack.DefinePlugin({
@@ -229,15 +230,17 @@ const config = {
         __SENTRY_TRACING__: false,
       }),
     )
-    webpackConfig.optimization.minimize = true
-    webpackConfig.optimization.minimizer = [
-      new TerserPlugin({
-        parallel: 8,
-        minify: TerserPlugin.terserMinify,
-        terserOptions: {},
-      }),
-    ]
     if (!isServer) {
+      console.info(isServer)
+      console.info(nextRuntime)
+      webpackConfig.optimization.minimize = true
+      webpackConfig.optimization.minimizer = [
+        new TerserPlugin({
+          parallel: 8,
+          minify: TerserPlugin.terserMinify,
+          terserOptions: {},
+        }),
+      ]
       webpackConfig.plugins.push(
         new RetryChunkLoadPlugin({
           cacheBust: `function() {
