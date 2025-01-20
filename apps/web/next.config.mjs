@@ -221,7 +221,7 @@ const config = {
       },
     ]
   },
-  webpack: (webpackConfig, { webpack, isServer, nextRuntime, defaultLoaders }) => {
+  webpack: (webpackConfig, { webpack, isServer }) => {
     // tree shake sentry tracing
     webpackConfig.plugins.push(
       new webpack.DefinePlugin({
