@@ -271,7 +271,7 @@ export default function TokenTable({
                 <ArrowBackIcon color={page === 1 ? 'textDisabled' : 'primary'} />
               </Arrow>
             </Box>
-            <Text>{`Page ${page} of ${maxPage}`}</Text>
+            <Text>{t('Page %page% of %maxPage%', { page, maxPage })}</Text>
             <Box
               onClick={() => {
                 setPage(page === maxPage ? page : page + 1)
