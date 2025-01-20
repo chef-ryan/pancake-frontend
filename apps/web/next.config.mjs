@@ -56,6 +56,7 @@ const config = {
   },
   experimental: {
     workerThreads: true,
+    webpackBuildWorker: true,
     cpus: ((os.cpus() || { length: 2 }).length) - 1,
     scrollRestoration: true,
     fallbackNodePolyfills: false,
