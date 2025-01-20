@@ -9,7 +9,6 @@ import path from 'path'
 import os from 'os'
 import { fileURLToPath } from 'url'
 import { RetryChunkLoadPlugin } from 'webpack-retry-chunk-load-plugin'
-import TerserPlugin from 'terser-webpack-plugin'
 
 const withVercelToolbar = vercelToolbarPlugin()
 
@@ -56,6 +55,8 @@ const config = {
   },
   experimental: {
     workerThreads: true,
+    parallelServerCompiles: true,
+    parallelServerBuildTraces: true,
     webpackBuildWorker: true,
     cpus: ((os.cpus() || { length: 2 }).length) - 1,
     scrollRestoration: true,
@@ -78,7 +79,7 @@ const config = {
     '@pancakeswap/uikit'
   ],
   reactStrictMode: true,
-  swcMinify: false,
+  swcMinify: true,
   images: {
     contentDispositionType: 'attachment',
     remotePatterns: [
@@ -229,14 +230,6 @@ const config = {
       }),
     )
     if (!isServer) {
-      webpackConfig.optimization.minimize = true
-      webpackConfig.optimization.minimizer = [
-        new TerserPlugin({
-          parallel: ((os.cpus() || { length: 5 }).length) - 1,
-          minify: TerserPlugin.terserMinify,
-          terserOptions: {},
-        }),
-      ]
       webpackConfig.plugins.push(
         new RetryChunkLoadPlugin({
           cacheBust: `function() {
