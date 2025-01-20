@@ -65,7 +65,6 @@ const config = {
     outputFileTracingExcludes: {
       '*': [],
     },
-    turbotrace: {},
     optimizePackageImports: ['@pancakeswap/widgets-internal', '@pancakeswap/uikit'],
   },
   transpilePackages: [
