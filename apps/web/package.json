@@ -146,7 +146,6 @@
     "zod": "^3.22.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
     "@next/eslint-plugin-next": "14.2.3",
     "@pancakeswap/next-config": "workspace:*",
     "@pancakeswap/tsconfig": "workspace:*",
