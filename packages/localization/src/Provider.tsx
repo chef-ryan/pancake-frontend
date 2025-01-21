@@ -16,14 +16,17 @@ function isUndefinedOrNull(value: any): boolean {
   return value === null || value === undefined
 }
 
-const includesVariableRegex = new RegExp(/%\S+?%/, 'gm')
+const includesVariableRegex = new RegExp(/%\S+?%/, 'm')
 
 const translatedTextIncludesVariable = memoize((translatedText: string): boolean => {
-  return !!translatedText?.match(includesVariableRegex)
+  return includesVariableRegex.test(translatedText ?? '')
 })
 
 const getRegExpForDataKey = memoize((dataKey: string): RegExp => {
   return new RegExp(`%${dataKey}%`, 'g')
+})
+const getFallbackRegExpForDataKey = memoize((dataKey: string): RegExp => {
+  return new RegExp(`%${dataKey}\\s*%`, 'g')
 })
 
 // Export the translations directly
@@ -110,7 +113,12 @@ export const LanguageProvider: React.FC<React.PropsWithChildren> = ({ children }
             omitBy(data, isUndefinedOrNull),
             (result, dataValue, dataKey) => {
               if (dataValue !== undefined && dataValue !== null) {
-                return result.replace(getRegExpForDataKey(dataKey), dataValue.toString())
+                const dataKeyRegExp = getRegExpForDataKey(dataKey)
+                const replacedValue = result.replace(dataKeyRegExp, dataValue.toString())
+                if (replacedValue === result && key?.match(dataKeyRegExp)) {
+                  return result.replace(getFallbackRegExpForDataKey(dataKey), dataValue.toString())
+                }
+                return replacedValue
               }
               return result
             },
