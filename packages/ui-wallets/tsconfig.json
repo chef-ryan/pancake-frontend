@@ -6,5 +6,7 @@
       "@pancakeswap/uikit": ["../../packages/uikit/src/index.ts"],
       "@pancakeswap/uikit/*": ["../../packages/uikit/src/*"]
     }
-  }
+  },
+  "include": ["./src"],
+  "exclude": ["**/node_modules", "**/*.test.ts", "./dist/**"]
 }
