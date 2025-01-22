@@ -1,1 +1,1 @@
-export { type Currency, Token } from './constants'
+export { TON_POOL_TYPE, Token, type Currency } from './constants'

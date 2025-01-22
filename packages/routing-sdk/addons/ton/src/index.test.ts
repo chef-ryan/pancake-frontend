@@ -4,6 +4,7 @@ import * as exportedNameSpaces from './index'
 test('exports', () => {
   expect(Object.keys(exportedNameSpaces)).toMatchInlineSnapshot(`
     [
+      "TON_POOL_TYPE",
       "Token",
     ]
   `)
