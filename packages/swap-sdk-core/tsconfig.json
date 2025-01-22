@@ -1,7 +1,7 @@
 {
   "extends": "@pancakeswap/tsconfig/base",
   "include": ["src"],
-  "exclude": ["./dist/**"],
+  "exclude": ["**/*.test.ts", "./dist/**"],
   "compilerOptions": {
     "outDir": "./dist",
     "target": "es2020",
