@@ -1,6 +1,6 @@
 {
   "extends": "@pancakeswap/tsconfig/base",
-  "exclude": ["**/*.test.ts", "./dist/**"],
+  "exclude": ["**/node_modules", "**/*.test.ts", "./dist/**"],
   "include": ["src"],
   "compilerOptions": {
     "outDir": "./dist",
