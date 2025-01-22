@@ -9,7 +9,7 @@ export function getBlockExplorerLink(
       return `${blockExplorerUrl}/tx/${data}`
     }
     case 'token': {
-      return `${blockExplorerUrl}/token/${data}`
+      return `${blockExplorerUrl}/jetton/${data}`
     }
     case 'block': {
       return `${blockExplorerUrl}/block/${data}`

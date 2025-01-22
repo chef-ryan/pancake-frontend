@@ -1,3 +1,4 @@
+import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
 import { Address } from '@ton/ton'
 import { atomWithQuery } from 'jotai-tanstack-query'
 import { atomFamily } from 'jotai/utils'
@@ -8,13 +9,16 @@ import { JettonMasterUSDT } from 'ton/wrappers/tact_JettonMasterUSDT'
 import { JettonWalletUSDT } from 'ton/wrappers/tact_JettonWalletUSDT'
 
 // TODO: temporary balance atom. refactor this after new contract interface OR use balanceOfAtom.ts (preferred)
-export const balanceAtom = atomFamily((tokenAddress?: string) =>
+export const balanceAtom = atomFamily((token?: Currency | null) =>
   atomWithQuery((get) => ({
-    queryKey: ['balance', get(networkAtom), get(addressAtom), tokenAddress],
+    queryKey: ['balance', get(networkAtom), get(addressAtom), token],
     queryFn: async () => {
-      if (!tokenAddress) return 0n
+      if (!token) return 0n
       const client = TonContext.instance.getClient()
-      const jettonMasterContract = JettonMasterUSDT.fromAddress(Address.parse(tokenAddress))
+
+      if (token.isNative) return client.getBalance(Address.parse(get(addressAtom)))
+
+      const jettonMasterContract = JettonMasterUSDT.fromAddress(Address.parse(token.address))
       const jettonMaster = client.open(jettonMasterContract)
 
       const jettonWalletAddress = await jettonMaster.getGetWalletAddress(Address.parse(get(addressAtom)))
@@ -25,7 +29,7 @@ export const balanceAtom = atomFamily((tokenAddress?: string) =>
       return walletData.balance
     },
     initialData: 0n,
-    enabled: !!get(addressAtom) && !!tokenAddress,
+    enabled: !!get(addressAtom) && !!token,
     staleTime: 1000 * 10, // 10 seconds
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',

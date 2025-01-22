@@ -6,9 +6,9 @@ import { useCallback } from 'react'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { TonContext } from 'ton/context/TonContext'
 import { Contracts } from 'ton/def/contracts.def'
-import { TON_OPCODES } from 'ton/opcodes'
 import { TonContractNames } from 'ton/ton.enums'
 import { JettonMasterUSDT } from 'ton/wrappers/tact_JettonMasterUSDT'
+import { storeSwap } from 'ton/wrappers/tact_Router'
 
 interface SwapArgs {
   token0Address: string
@@ -41,24 +41,60 @@ export const useSwap = () => {
         jettonMaster1.getGetWalletAddress(routerAddress),
       ])
 
-      const forwardPayload = beginCell()
-        .storeUint(TON_OPCODES.SWAP, 32) // Opcode
-        .storeAddress(routerJettonWallet1) // tokenWallet
-        .storeCoins(toNano(minOut || '50')) // minOut. TODO: Compute this after getting Quoter
-        .storeAddress(walletAddress) // "To" Address (User's address here)
-        .storeBit(false) // hasRef
-        //   .storeAddress(Address.parse('0QC9EUyepVtLv7K3PXXNfEDIpZQZkmH2OyxzQ2k5wy8--Kz-')) // refAddress. Not needed for now.
-        .storeBit(true) // hasNext
-        .storeRef(
-          beginCell()
-            .storeAddress(userJettonWallet1)
-            .storeCoins(toNano('50'))
-            .storeRef(beginCell().endCell())
-            .endCell(),
-        ) // next (SwapNext cell)
+      // const forwardPayload = beginCell()
+      //   .storeUint(TON_OPCODES.SWAP, 32) // Opcode
+      //   .storeAddress(routerJettonWallet1) // tokenWallet
+      //   .storeCoins(toNano(minOut || '50')) // minOut. TODO: Compute this after getting Quoter
+      //   .storeAddress(walletAddress) // "To" Address (User's address here)
+      //   .storeBit(false) // hasRef
+      //   //   .storeAddress(Address.parse('0QC9EUyepVtLv7K3PXXNfEDIpZQZkmH2OyxzQ2k5wy8--Kz-')) // refAddress. Not needed for now.
+      //   .storeBit(true) // hasNext
+      //   .storeRef(
+      //     beginCell()
+      //       .storeAddress(userJettonWallet1)
+      //       .storeCoins(toNano('50'))
+      //       .storeRef(beginCell().endCell())
+      //       .endCell(),
+      //   ) // next (SwapNext cell)
+      //   .endCell()
+
+      // const payload = beginCell()
+      //   .store(
+      //     storeJettonTransferMessage({
+      //       queryId: 1n,
+      //       amount: toNano(amount0),
+      //       destination: routerAddress,
+      //       responseDestination: walletAddress,
+      //       customPayload: null,
+      //       forwardAmount: toNano('0.1'),
+      //       forwardPayload,
+      //     }),
+      //   )
+      //   .endCell()
+
+      const newForwardPayload = beginCell()
+        .store(
+          storeSwap({
+            $$type: 'Swap',
+            queryId: 1n,
+            amount: toNano(amount0),
+            fromRealUser: walletAddress,
+            fromUserAddress: walletAddress,
+            minOut: toNano(minOut || '50'),
+            refAddress: null,
+            refMessageValue: 0n,
+            tokenWallet: routerJettonWallet1,
+            next: {
+              $$type: 'SwapNext',
+              minOut: 1n,
+              tokenAddress: userJettonWallet1,
+              next: null,
+            },
+          }),
+        )
         .endCell()
 
-      const payload = beginCell()
+      const newPayload = beginCell()
         .store(
           storeJettonTransferMessage({
             queryId: 1n,
@@ -67,32 +103,10 @@ export const useSwap = () => {
             responseDestination: walletAddress,
             customPayload: null,
             forwardAmount: toNano('0.1'),
-            forwardPayload,
+            forwardPayload: newForwardPayload,
           }),
         )
         .endCell()
-
-      // const newPayload = beginCell()
-      //   .store(
-      //     storeSwap({
-      //       $$type: 'Swap',
-      //       queryId: 1n,
-      //       amount: toNano(amount0),
-      //       fromRealUser: walletAddress,
-      //       fromUserAddress: walletAddress,
-      //       minOut: toNano(minOut || '50'),
-      //       refAddress: null,
-      //       refMessageValue: 0n,
-      //       tokenWallet: routerJettonWallet1,
-      //       next: {
-      //         $$type: 'SwapNext',
-      //         minOut: 1n,
-      //         tokenAddress: userJettonWallet1,
-      //         next: null,
-      //       },
-      //     }),
-      //   )
-      //   .endCell()
 
       const txRequest: SendTransactionRequest = {
         validUntil: Math.floor(Date.now() / 1000) + 60,
@@ -100,8 +114,8 @@ export const useSwap = () => {
           {
             address: userJettonWallet0.toString(),
             amount: toNano('1').toString(),
-            payload: payload.toBoc().toString('base64'),
-            // payload: newPayload.toBoc().toString('base64'),
+            // payload: payload.toBoc().toString('base64'),
+            payload: newPayload.toBoc().toString('base64'),
           },
         ],
       }

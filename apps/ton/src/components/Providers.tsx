@@ -9,7 +9,7 @@ import { ThemeProvider as NextThemeProvider, useTheme as useNextTheme } from 'ne
 import { PropsWithChildren } from 'react'
 import GlobalStyle from 'styles/GlobalStyle'
 import { TonContextProvider } from 'ton/react/TonContextProvider'
-import { AppModal } from './AppModal'
+import { AppModal } from './Modals/AppModal'
 
 const queryClient = new QueryClient()
 

@@ -2,7 +2,7 @@ import { Heading, ModalTitle, ModalV2, MotionModal, useMatchBreakpoints } from '
 import { appModalAtom } from 'atoms/modals/appModalAtom'
 import { useAtom } from 'jotai'
 import { useCallback } from 'react'
-import { GrabberBar } from './GrabberBar'
+import { GrabberBar } from '../GrabberBar'
 
 export const AppModal = () => {
   const { isMobile, isMd } = useMatchBreakpoints()

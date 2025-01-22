@@ -1,19 +1,22 @@
-import { Button, Column, Text } from '@pancakeswap/uikit'
+import { Column, Text } from '@pancakeswap/uikit'
 import { ButtonAndDetailsPanel } from 'components/TonSwap/ButtonAndDetailsPanel'
 import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
 import { FlipButton } from 'components/TonSwap/FlipButton'
 import { useCallback, useEffect, useState } from 'react'
 
 import { useTranslation } from '@pancakeswap/localization'
+import { toNano } from '@ton/core'
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import { setApprovalModalAtom } from 'atoms/modals/approvalModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
 import { inputCurrencyAtom, outputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
 import { TransactionActionType } from 'components/Modals/ActionModal'
+import { SwapCommitButton } from 'components/TonSwap/SwapCommitButton'
 import { SwapUIV2 } from 'components/widgets/swap-v2'
 import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
 import { useAtomValue, useSetAtom } from 'jotai'
 import noop from 'lodash/noop'
+import { balanceAtom } from 'ton/logic/balanceAtom'
 import { Field } from 'types'
 
 export const SwapForm = () => {
@@ -22,7 +25,6 @@ export const SwapForm = () => {
   const [isListLoaded, setIsListLoaded] = useState(false)
 
   const [outputValue, setOutputValue] = useState('')
-  const [isUserInsufficientBalance, setIsUserInsufficientBalance] = useState(false)
 
   const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
 
@@ -30,6 +32,10 @@ export const SwapForm = () => {
   const outputCurrency = useAtomValue(outputCurrencyAtom)
 
   const typedValue = useAtomValue(typedValueAtom)
+
+  const { data: balance0 } = useAtomValue(balanceAtom(inputCurrency))
+
+  const isInsufficientBalance0 = balance0 < toNano(typedValue) // TODO: decimals
 
   const { data: activeList, isFetched } = useAtomValue(fetchListAtom)
 
@@ -90,7 +96,7 @@ export const SwapForm = () => {
                   {t('From')}
                 </Text>
               }
-              isUserInsufficientBalance={isUserInsufficientBalance}
+              isUserInsufficientBalance={isInsufficientBalance0}
             />
             <FlipButton />
             <CurrencyInputPanelSimplify
@@ -115,13 +121,13 @@ export const SwapForm = () => {
                   {t('To')}
                 </Text>
               }
-              isUserInsufficientBalance={isUserInsufficientBalance}
+              // isUserInsufficientBalance={isUserInsufficientBalance}
               disabled
             />
           </Column>
         </SwapUIV2.InputPanelWrapper>
       </SwapUIV2.SwapTabAndInputPanelWrapper>
-      <ButtonAndDetailsPanel swapCommitButton={<Button onClick={handleSwap}>{t('Swap')}</Button>} />
+      <ButtonAndDetailsPanel swapCommitButton={<SwapCommitButton onClick={handleSwap} />} />
     </SwapUIV2.SwapFormWrapper>
   )
 }

@@ -69,9 +69,7 @@ function CurrencyRow({
   // const { t } = useTranslation()
   const key = currencyKey(currency)
 
-  const { data: balanceRaw, isLoading: isBalanceLoading } = useAtomValue(
-    balanceAtom(currency && (currency as any)?.address),
-  )
+  const { data: balanceRaw, isLoading: isBalanceLoading } = useAtomValue(balanceAtom(currency))
 
   // TODO: Better formatting of number and use token decimals
   const balance = Number(fromNano(balanceRaw).toString())
@@ -95,7 +93,7 @@ function CurrencyRow({
       </Column>
       <RowFixed style={{ justifySelf: 'flex-end' }}>
         {userAddress && balance !== undefined ? (
-          formatNumber(balance, 0)
+          <Text>{formatNumber(balance, 0)}</Text>
         ) : userAddress && isBalanceLoading ? (
           <CircleLoader />
         ) : (

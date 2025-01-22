@@ -23,6 +23,7 @@ import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import { fromNano } from '@ton/core'
 import { useAtomValue } from 'jotai'
 import { CurrencySelectButton } from 'styles/inputStyles'
+import { addressAtom } from 'ton/atom/addressAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { FONT_SIZE, LOGO_SIZE, useFontSize } from './state'
@@ -197,8 +198,8 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   isUserInsufficientBalance,
 }: CurrencyInputPanelProps) {
   // const { address: account } = useAccount()
-  const account = '0x00' // dummy value
-  const { data: selectedCurrencyBalance } = useAtomValue(balanceAtom(currency?.wrapped.address))
+  const account = useAtomValue(addressAtom)
+  const { data: selectedCurrencyBalance } = useAtomValue(balanceAtom(currency))
 
   const { t } = useTranslation()
 

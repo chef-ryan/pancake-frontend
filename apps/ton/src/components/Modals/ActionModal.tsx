@@ -4,6 +4,7 @@ import { CurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import Link from 'next/link'
 import styled from 'styled-components'
+import { getBlockExplorerLink } from 'utils/getBlockExploreLink'
 
 const StyledFlexColumn = styled(FlexGap).attrs({ flexDirection: 'column' })`
   text-align: center;
@@ -81,7 +82,7 @@ export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type
 
       <Box mt="auto">
         <Text color="primary60">
-          <Link href={`GET EXPLORER LINK ${hash}`} target="_blank">
+          <Link href={getBlockExplorerLink(hash, 'transaction')} target="_blank">
             {t('View on explorer:')} {hash}
           </Link>
         </Text>
