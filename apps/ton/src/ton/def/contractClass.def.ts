@@ -1,17 +1,24 @@
 import { TonContractTypes } from 'ton/ton.enums'
-import { getBalance, getWalletAddress } from './function.def'
+import { TonContractClassDef } from 'ton/ton.types'
+import { FunctionDefs } from './function.def'
 
 export const ContractClasses = {
   [TonContractTypes.JettonMinter]: {
-    interfaces: [getWalletAddress],
+    interfaces: [FunctionDefs.getWalletAddress],
   },
   [TonContractTypes.Jetton]: {
-    interfaces: [getBalance],
+    interfaces: [FunctionDefs.getBalance],
   },
   [TonContractTypes.PCSRouter]: {
-    interfaces: [],
+    interfaces: [FunctionDefs.getPoolAddress, FunctionDefs.estimateAddLiquidity],
   },
   [TonContractTypes.NATIVE]: {
-    interfaces: [getBalance],
+    interfaces: [FunctionDefs.getBalance],
   },
-} as const
+  [TonContractTypes.Pool]: {
+    interfaces: [FunctionDefs.getLpAccountAddress],
+  },
+  [TonContractTypes.LP]: {
+    interfaces: [FunctionDefs.getLPAccountData],
+  },
+} as const satisfies Record<TonContractTypes, TonContractClassDef<unknown>>

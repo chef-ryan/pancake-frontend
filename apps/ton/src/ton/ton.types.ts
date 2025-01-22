@@ -1,3 +1,7 @@
+import type { Address } from '@ton/core'
+import type { ContractClasses } from './def/contractClass.def'
+import { TonContractTypes } from './ton.enums'
+
 export type TonFunctionDef<TDef> = {
   method: string
   inputs: readonly TonInputDef[] // Changed to readonly array
@@ -17,7 +21,7 @@ type TonOutputDef = {
 }
 
 type TypeMap = {
-  address: string
+  address: Address
   int: bigint
   bits: string
 }
@@ -36,8 +40,8 @@ type InputTypes<T extends readonly TonInputDef[]> = T extends readonly [infer Fi
 type OutputTypes<T extends readonly TonOutputDef[]> = T extends readonly [infer First, ...infer Rest]
   ? First extends TonOutputDef
     ? Rest extends readonly TonOutputDef[]
-      ? [Promise<MapType<First['type']>>, ...OutputTypes<Rest>]
-      : [Promise<MapType<First['type']>>]
+      ? [MapType<First['type']>, ...OutputTypes<Rest>]
+      : [MapType<First['type']>]
     : []
   : []
 
@@ -50,8 +54,8 @@ type OutputWrapper<T extends readonly unknown[]> = T extends readonly [infer Fir
 export type FunctionDef<TDefault, T extends TonFunctionDef<TDefault>> = (
   ...args: InputTypes<T['inputs']>
 ) => 'defaultValue' extends keyof T
-  ? OutputWrapper<OutputTypes<T['outputs']>> | TDefault
-  : OutputWrapper<OutputTypes<T['outputs']>>
+  ? Promise<OutputWrapper<OutputTypes<T['outputs']>>> | TDefault
+  : Promise<OutputWrapper<OutputTypes<T['outputs']>>>
 
 export interface TonContractClassDef<TDefault> {
   interfaces: readonly TonFunctionDef<TDefault>[]
@@ -63,3 +67,6 @@ export type TonContractInstance<TDef extends TonContractClassDef<any>> = {
     K
   >
 }
+
+type TClasses = typeof ContractClasses
+export type TonContract<TType extends TonContractTypes> = TonContractInstance<TClasses[TType]>

@@ -44,11 +44,9 @@ export class ContractProxy {
         const input = fn.inputs[i]
         switch (input.type) {
           case 'address': {
-            logger.debug('try store', args[i])
-            const address = Address.parse(args[i])
             params.push({
               type: 'slice',
-              cell: beginCell().storeAddress(address).endCell(),
+              cell: beginCell().storeAddress(args[i]).endCell(),
             })
             break
           }

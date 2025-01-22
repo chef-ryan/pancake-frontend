@@ -1,3 +1,4 @@
+import { Address } from '@ton/core'
 import { atom } from 'jotai'
 import { ContractClasses } from 'ton/def/contractClass.def'
 import { Contracts } from 'ton/def/contracts.def'
@@ -13,7 +14,7 @@ export const contractAtom = function contractAtom<TName extends TonContractNames
     const proxy = get(
       contractOfTypeAtom({
         type,
-        address,
+        address: Address.parse(address),
       }),
     )
     return proxy as unknown as TonContractInstance<TClasses[TContracts[TName]['type']]>

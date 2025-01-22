@@ -1,5 +1,5 @@
 import { TonClient } from '@ton/ton'
-import { tonState } from 'ton/atom/tonStateAtom'
+import { tonState } from 'ton/atom/context/tonStateAtom'
 import { TonContextEvents } from 'ton/ton.enums'
 import { Emiter } from 'ton/utils/Emiter'
 import { TonEndPoints } from './endpoints'

@@ -1,7 +1,8 @@
 import { useAtomValue } from 'jotai'
-import { addressAtom } from 'ton/atom/addressAtom'
-import { isConnectedAtom } from 'ton/atom/isConnectedAtom'
-import { balanceOfAtom } from 'ton/logic/balanceOfAtom'
+import { addressAtom } from 'ton/atom/context/addressAtom'
+import { isConnectedAtom } from 'ton/atom/context/isConnectedAtom'
+import { balanceOfAtom } from 'ton/atom/logic/balanceOfAtom'
+import { routerGasEstimationAtom } from 'ton/atom/logic/routerGasEstimationAtom'
 import { TonContractNames } from 'ton/ton.enums'
 
 export default () => {
@@ -9,6 +10,7 @@ export default () => {
   const address = useAtomValue(addressAtom)
   const balanceOfUSDC = useAtomValue(balanceOfAtom(TonContractNames.USDC))
   const tonBalance = useAtomValue(balanceOfAtom(TonContractNames.NATIVE))
+  const estGas = useAtomValue(routerGasEstimationAtom)
   return (
     <div
       style={{
@@ -19,6 +21,7 @@ export default () => {
       <p>Address: {address || '-'}</p>
       <p>Ton Balance: {`${tonBalance}` || '-'}</p>
       <p>USDC Balance: {`${balanceOfUSDC}` || '-'}</p>
+      <p>Est. Gas: {`${estGas}`}</p>
     </div>
   )
 }

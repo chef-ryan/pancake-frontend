@@ -13,11 +13,13 @@ export enum TonContractTypes {
   JettonMinter,
   Jetton,
   PCSRouter,
+  Pool,
+  LP,
 }
 
 export enum TonContractNames {
   NATIVE,
   USDC,
   CAKE,
-  PCSRouter,
+  Router,
 }

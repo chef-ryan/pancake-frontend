@@ -1,7 +1,7 @@
 import { Address } from '@ton/core'
 import { atom } from 'jotai'
-import { addressAtom } from 'ton/atom/addressAtom'
 import { TonContext } from 'ton/context/TonContext'
+import { addressAtom } from '../context/addressAtom'
 
 export const balanceOfNativeAtom = atom(async (get) => {
   const client = TonContext.instance.getClient()

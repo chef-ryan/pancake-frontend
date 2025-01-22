@@ -42,7 +42,9 @@
     "react-window": "^1.8.7",
     "styled-components": "6.0.7",
     "styled-system": "^5.1.5",
-    "valtio": "^2.1.2"
+    "valtio": "^2.1.2",
+    "@pancakeswap/routing-sdk-addon-ton": "workspace:*",
+    "@pancakeswap/routing-sdk": "workspace:*"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "catalog:",

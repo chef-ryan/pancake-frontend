@@ -1,4 +1,4 @@
-import { Token } from '@pancakeswap/swap-sdk-core'
+import { Currency, Token } from '@pancakeswap/swap-sdk-core'
 
 export class Jetton extends Token {
   public constructor(
@@ -16,7 +16,7 @@ export class Jetton extends Token {
     return super.sortsBefore(other)
   }
 
-  public equals(other: Jetton): boolean {
-    return this.chainId === other.chainId && this.address === other.address
+  public equals(other: Currency): boolean {
+    return this.chainId === other.chainId && this.address === other.wrapped.address
   }
 }

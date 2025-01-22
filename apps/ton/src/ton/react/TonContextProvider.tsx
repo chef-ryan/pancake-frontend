@@ -1,7 +1,7 @@
 import { TonConnectUIProvider, useTonAddress } from '@tonconnect/ui-react'
 import { useSetAtom } from 'jotai'
 import { useEffect, useState } from 'react'
-import { tonStateAtom } from 'ton/atom/tonStateAtom'
+import { tonStateAtom } from 'ton/atom/context/tonStateAtom'
 
 export const TonContextProvider = ({ children }: { children: React.ReactNode }) => {
   return (
