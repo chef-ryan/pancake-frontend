@@ -1,0 +1,55 @@
+import { AgnosticBaseCurrency } from './AgnosticBaseCurrency'
+import { AgnosticToken } from './AgnosticToken'
+import { TonChainId } from './chains'
+import { NATIVE, WNATIVE } from './nativeTokens'
+
+/**
+ * Represents the native currency of the chain on which it resides
+ */
+
+interface NativeArgs {
+  chainId: TonChainId
+  decimals: number
+  symbol: string
+  name: string
+  logoURI?: string
+}
+
+export class Native extends AgnosticBaseCurrency {
+  public readonly isNative = true as const
+
+  public readonly isToken = false as const
+
+  public readonly logoURI?: string
+
+  public override readonly chainId: TonChainId
+
+  constructor({ chainId, decimals, symbol, name, logoURI }: NativeArgs) {
+    super(chainId, decimals, symbol, name)
+    this.chainId = chainId
+    this.logoURI = logoURI
+  }
+
+  get wrapped(): AgnosticToken {
+    return WNATIVE[this.chainId]
+  }
+
+  private static cache: { [chainId: number]: Native } = {}
+
+  public static onChain(chainId: TonChainId): Native {
+    if (chainId in this.cache) {
+      return this.cache[chainId]
+    }
+    if (!NATIVE[chainId]) {
+      throw new Error('NATIVE_CURRENCY_NOT_FOUND')
+    }
+
+    const native = new Native(NATIVE[chainId])
+    this.cache[chainId] = native
+    return native
+  }
+
+  public equals(other: AgnosticBaseCurrency): boolean {
+    return other.isNative && other.chainId === this.chainId
+  }
+}

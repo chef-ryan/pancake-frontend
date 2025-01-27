@@ -1,5 +1,4 @@
-import { AgnosticNativeCurrency } from './AgnosticNativeCurrency'
-import { Jetton } from './Jetton'
+import { Native } from './Native'
+import { Token } from './Token'
 
-export class Token extends Jetton {}
-export type Currency = AgnosticNativeCurrency | Token
+export type Currency = Native | Token
