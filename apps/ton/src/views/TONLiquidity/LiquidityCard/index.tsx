@@ -36,7 +36,6 @@ export const LiquidityCard = (props: LiquidityCardProps) => {
             </FlexGap>
           </Text>
         </StyledCardHeader>
-
         <CardContent />
       </Card>
     </>

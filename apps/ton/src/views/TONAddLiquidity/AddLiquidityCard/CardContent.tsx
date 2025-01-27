@@ -73,8 +73,8 @@ export const CardContent = (props: CardContentProps) => {
     try {
       // TODO: Handle native currencies
       addLiquidity({
-        token0Address: currency0.wrapped.address,
-        token1Address: currency1.wrapped.address,
+        token0Address: currency0.isNative ? '' : currency0.wrapped.address,
+        token1Address: currency1.isNative ? '' : currency1.wrapped.address,
 
         // TODO: Instead of toNano use the token's decimals
         amount0: toNano(token0Value),
@@ -86,17 +86,7 @@ export const CardContent = (props: CardContentProps) => {
       console.error('Error adding liquidity', e)
       toastError(t('Error adding liquidity'))
     }
-  }, [
-    t,
-    addLiquidity,
-    toastSuccess,
-    toastError,
-    currency0?.wrapped.address,
-    currency1?.wrapped.address,
-    isDisabled,
-    token0Value,
-    token1Value,
-  ])
+  }, [t, addLiquidity, toastSuccess, toastError, currency0, currency1, isDisabled, token0Value, token1Value])
 
   return (
     <>

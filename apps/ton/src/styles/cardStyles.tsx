@@ -15,6 +15,5 @@ export const CardContainer = styled(Box)`
     width: fit-content;
     margin: 24px auto;
     min-width: 480px;
-    max-width: ${({ theme }) => theme.siteWidth}px;
   }
 `
