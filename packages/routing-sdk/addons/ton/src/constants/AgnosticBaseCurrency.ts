@@ -1,5 +1,5 @@
 import invariant from 'tiny-invariant'
-import type { AgnosticToken } from './AgnosticToken'
+import type { Token } from './Token'
 
 /**
  * A currency is any fungible financial instrument, including Ether, all ERC20 tokens, and other chain-native currencies
@@ -56,11 +56,11 @@ export abstract class AgnosticBaseCurrency {
    * Returns whether this currency is functionally equivalent to the other currency
    * @param other the other currency
    */
-  public abstract equals(other: AgnosticToken): boolean
+  public abstract equals(other: Token): boolean
 
   /**
    * Return the wrapped version of this currency that can be used with the PancakeSwap contracts. Currencies must
    * implement this to be used in PancakeSwap
    */
-  public abstract get wrapped(): AgnosticToken
+  public abstract get wrapped(): Token
 }

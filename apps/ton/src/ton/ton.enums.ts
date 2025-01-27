@@ -3,7 +3,7 @@ export enum TonNetworks {
   Testnet = 'testnet',
 }
 
-export enum TonChainIds {
+export enum TonChainId {
   Mainnet = -239,
   Testnet = -3,
 }

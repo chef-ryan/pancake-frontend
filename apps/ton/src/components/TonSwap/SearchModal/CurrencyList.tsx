@@ -8,7 +8,6 @@ import { LightGreyCard } from 'components/Card'
 import { RowBetween, RowFixed } from 'components/Layout/Row'
 import { CurrencyLogo } from 'components/widgets/CurrencyLogo'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
-import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useAtomValue } from 'jotai'
 import { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
@@ -16,7 +15,6 @@ import { styled } from 'styled-components'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
 import { currencyKey } from 'ton/utils/currency'
-import { wrappedCurrency } from 'utils/wrappedCurrency'
 
 const StyledBalanceText = styled(Text)`
   white-space: nowrap;
@@ -132,31 +130,28 @@ export default function CurrencyList({
   const native = useNativeCurrency()
 
   const itemData: (Currency | undefined)[] = useMemo(() => {
-    // @ts-ignore
     let formatted: (Currency | undefined)[] = showNative
       ? [native, ...currencies, ...inactiveCurrencies]
       : [...currencies, ...inactiveCurrencies]
+
     if (breakIndex !== undefined) {
       formatted = [...formatted.slice(0, breakIndex), undefined, ...formatted.slice(breakIndex, formatted.length)]
     }
-    console.log('formatted currencies', formatted)
     return formatted
   }, [breakIndex, currencies, inactiveCurrencies, showNative, native])
-
-  const { chainId } = useActiveChainId()
 
   const { t } = useTranslation()
 
   const Row = useCallback(
     ({ data, index, style }) => {
-      const currency: any = data[index]
+      const currency: Currency = data[index]
 
       const isSelected = Boolean(selectedCurrency && currency && selectedCurrency.equals(currency))
       const otherSelected = Boolean(otherCurrency && currency && otherCurrency.equals(currency))
 
       const handleSelect = () => onCurrencySelect(currency)
-      const token = wrappedCurrency(currency, chainId)
-      const showImport = index > currencies.length
+      // const token = currency.wrapped
+      // const showImport = index > currencies.length
 
       if (index === breakIndex || !data) {
         return (
@@ -198,7 +193,7 @@ export default function CurrencyList({
         />
       )
     },
-    [selectedCurrency, otherCurrency, chainId, currencies.length, breakIndex, onCurrencySelect, t],
+    [selectedCurrency, otherCurrency, currencies.length, breakIndex, onCurrencySelect, t],
   )
 
   const itemKey = useCallback((index: number, data: any) => `${currencyKey(data[index])}-${index}`, [])

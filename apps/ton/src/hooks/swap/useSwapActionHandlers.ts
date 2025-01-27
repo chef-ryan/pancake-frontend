@@ -1,3 +1,4 @@
+import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
 import { setCurrencyAtom } from 'atoms/currencyAtoms'
 import { independentFieldAtom, inputCurrencyAtom, outputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
 import { useAtomValue, useSetAtom } from 'jotai'
@@ -12,17 +13,24 @@ export const useSwapActionHandlers = () => {
   const inputCurrency = useAtomValue(inputCurrencyAtom)
   const outputCurrency = useAtomValue(outputCurrencyAtom)
 
-  const onCurrencySelection = useCallback(
-    (field: Field, currency: any) => {
-      setCurrency(field, currency)
-    },
-    [setCurrency],
-  )
-
   const onSwitchTokens = useCallback(() => {
     setCurrency(Field.INPUT, outputCurrency)
     setCurrency(Field.OUTPUT, inputCurrency)
   }, [setCurrency, inputCurrency, outputCurrency])
+
+  const onCurrencySelection = useCallback(
+    (field: Field, currency?: Currency) => {
+      if (
+        (field === Field.INPUT && currency?.equals(outputCurrency)) ||
+        (field === Field.OUTPUT && currency?.equals(inputCurrency))
+      ) {
+        onSwitchTokens()
+        return
+      }
+      setCurrency(field, currency)
+    },
+    [setCurrency, inputCurrency, outputCurrency, onSwitchTokens],
+  )
 
   const onUserInput = useCallback(
     (field: Field, typedValue: string) => {

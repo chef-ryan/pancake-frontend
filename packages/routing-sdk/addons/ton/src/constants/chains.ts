@@ -1,4 +1,9 @@
+export enum TonNetworks {
+  Mainnet = 'main',
+  Testnet = 'testnet',
+}
+
 export enum TonChainId {
-  MAINNET = -239,
-  TESTNET = -3,
+  Mainnet = -239,
+  Testnet = -3,
 }

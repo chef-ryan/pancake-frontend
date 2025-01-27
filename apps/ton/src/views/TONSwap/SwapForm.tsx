@@ -1,3 +1,4 @@
+import { Native } from '@pancakeswap/routing-sdk-addon-ton'
 import { Column, Text } from '@pancakeswap/uikit'
 import { ButtonAndDetailsPanel } from 'components/TonSwap/ButtonAndDetailsPanel'
 import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
@@ -17,6 +18,7 @@ import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
 import { useAtomValue, useSetAtom } from 'jotai'
 import noop from 'lodash/noop'
 import { balanceAtom } from 'ton/logic/balanceAtom'
+import { TonNetworks } from 'ton/ton.enums'
 import { Field } from 'types'
 
 export const SwapForm = () => {
@@ -55,14 +57,11 @@ export const SwapForm = () => {
 
   // TODO: Move to separate hook
   useEffect(() => {
-    if (!isListLoaded && !inputCurrency && !outputCurrency && isFetched && activeList && activeList.tokens.length > 1) {
-      onCurrencySelection(
-        Field.INPUT,
-        activeList?.tokens.find((token) => token.symbol === 'CAKE'),
-      )
+    if (!isListLoaded && !inputCurrency && !outputCurrency && isFetched && activeList && activeList.length > 1) {
+      onCurrencySelection(Field.INPUT, Native.onNetwork(TonNetworks.Testnet))
       onCurrencySelection(
         Field.OUTPUT,
-        activeList?.tokens.find((token) => token.symbol === 'USDT'),
+        activeList.find((item) => item.symbol === 'CAKE'),
       )
 
       setIsListLoaded(false)

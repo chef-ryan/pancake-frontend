@@ -1,6 +1,6 @@
 import { AgnosticBaseCurrency } from './AgnosticBaseCurrency'
-import { AgnosticToken } from './AgnosticToken'
-import { TonChainId } from './chains'
+import { Token } from './Token'
+import { TonChainId, TonNetworks } from './chains'
 import { NATIVE, WNATIVE } from './nativeTokens'
 
 /**
@@ -30,7 +30,7 @@ export class Native extends AgnosticBaseCurrency {
     this.logoURI = logoURI
   }
 
-  get wrapped(): AgnosticToken {
+  get wrapped(): Token {
     return WNATIVE[this.chainId]
   }
 
@@ -49,7 +49,11 @@ export class Native extends AgnosticBaseCurrency {
     return native
   }
 
-  public equals(other: AgnosticBaseCurrency): boolean {
-    return other.isNative && other.chainId === this.chainId
+  public static onNetwork(network: TonNetworks): Native {
+    return this.onChain(network === TonNetworks.Mainnet ? TonChainId.Mainnet : TonChainId.Testnet)
+  }
+
+  public equals(other?: AgnosticBaseCurrency): boolean {
+    return !!other && other.isNative && other.chainId === this.chainId
   }
 }

@@ -54,11 +54,8 @@ function CurrencySearch({
 
   const [invertSearchOrder] = useState<boolean>(false)
 
-  // const allTokens = []
-
   const { data: activeList } = useAtomValue(fetchListAtom)
-  const allTokens = useMemo(() => activeList?.tokens || [], [activeList])
-  console.log('tokenList', allTokens)
+  const allTokens = useMemo(() => activeList || [], [activeList])
 
   // if they input an address, use it
   const searchToken = useToken(debouncedQuery)
@@ -77,6 +74,8 @@ function CurrencySearch({
     const filterToken = createFilterToken(debouncedQuery, (address) => Address.isAddress(address))
     return Object.values(tokensToShow || allTokens).filter(filterToken)
   }, [tokensToShow, allTokens, debouncedQuery])
+
+  console.log('filteredTokens', filteredTokens)
 
   const filteredQueryTokens = useSortedTokensByQuery(filteredTokens, debouncedQuery)
   // const tokenComparator = useTokenComparator(invertSearchOrder)

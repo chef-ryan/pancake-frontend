@@ -1,17 +1,17 @@
-import { AgnosticToken } from './AgnosticToken'
+import { Token } from './Token'
 import { TonChainId } from './chains'
 
 export const WNATIVE = {
-  [TonChainId.MAINNET]: new AgnosticToken(
-    TonChainId.MAINNET,
+  [TonChainId.Mainnet]: new Token(
+    TonChainId.Mainnet,
     'EQBPAVa6fjMigxsnHF33UQ3auufVrg2Z8lBZTY9R-isfjIFr',
     9,
     'Wrapped TON',
     'WTON',
     'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/info/logo.png',
   ),
-  [TonChainId.TESTNET]: new AgnosticToken(
-    TonChainId.TESTNET,
+  [TonChainId.Testnet]: new Token(
+    TonChainId.Testnet,
     'EQBPAVa6fjMigxsnHF33UQ3auufVrg2Z8lBZTY9R-isfjIFr',
     9,
     'Wrapped TON',
@@ -21,15 +21,15 @@ export const WNATIVE = {
 }
 
 export const NATIVE = {
-  [TonChainId.MAINNET]: {
-    chainId: TonChainId.MAINNET,
+  [TonChainId.Mainnet]: {
+    chainId: TonChainId.Mainnet,
     decimals: 9,
     symbol: 'TON',
     name: 'TON',
     logoURI: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/info/logo.png',
   },
-  [TonChainId.TESTNET]: {
-    chainId: TonChainId.TESTNET,
+  [TonChainId.Testnet]: {
+    chainId: TonChainId.Testnet,
     decimals: 9,
     symbol: 'TON',
     name: 'TON',

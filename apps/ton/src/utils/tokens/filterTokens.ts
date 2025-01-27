@@ -1,6 +1,6 @@
-import { TokenInfo } from './types'
+import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
 
-export function createFilterToken<T extends TokenInfo>(
+export function createFilterToken<T extends Currency>(
   search: string,
   isAddress: (address: string) => boolean,
 ): (token: T) => boolean {

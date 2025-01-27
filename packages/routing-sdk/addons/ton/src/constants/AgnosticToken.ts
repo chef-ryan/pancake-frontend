@@ -47,8 +47,8 @@ export class AgnosticToken extends AgnosticBaseCurrency {
    * Returns true if the two tokens are equivalent, i.e. have the same chainId and address.
    * @param other other token to compare
    */
-  public equals(other: AgnosticToken): boolean {
-    return other.isToken && this.chainId === other.chainId && this.address === other.address
+  public equals(other?: AgnosticBaseCurrency): boolean {
+    return !!other && other.isToken && this.chainId === other.chainId && this.address === other.wrapped.address
   }
 
   /**
