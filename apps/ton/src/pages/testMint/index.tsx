@@ -17,7 +17,7 @@ import { Router } from 'ton/wrappers/tact_Router'
 
 export default function TestMint() {
   const { data: activeList } = useAtomValue(fetchListAtom)
-  const tokens = activeList?.tokens || []
+  const tokens = activeList || []
 
   //   const [amount, setAmount] = useState('')
   const [selectedToken, setSelectedToken] = useState(tokens[0] || undefined)
