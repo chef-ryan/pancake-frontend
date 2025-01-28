@@ -1,4 +1,3 @@
-import { ChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency, Token } from '@pancakeswap/routing-sdk-addon-ton'
 import { AutoColumn, QuestionHelper, Text } from '@pancakeswap/uikit'
@@ -7,11 +6,9 @@ import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
 import { styled } from 'styled-components'
 
 import { AutoRow } from 'components/Layout/Row'
+import { SUGGESTED_BASES } from 'config/constants/commonBases'
+import { TonChainId } from 'ton/ton.enums'
 import { CommonBasesType } from './types'
-
-const SUGGESTED_BASES: { [chainId in ChainId]?: Token[] } = {
-  // 1: [new Token(1, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18, 'DAI', 'Dai Stablecoin')],
-}
 
 const ButtonWrapper = styled.div`
   display: inline-block;
@@ -53,7 +50,7 @@ export default function CommonBases({
   selectedCurrency,
   commonBasesType,
 }: {
-  chainId?: ChainId
+  chainId?: TonChainId
   commonBasesType
   selectedCurrency?: Currency | null
   onSelect: (currency: Currency) => void

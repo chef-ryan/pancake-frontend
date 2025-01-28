@@ -81,6 +81,14 @@ function CurrencySearch({
   // const tokenComparator = useTokenComparator(invertSearchOrder)
 
   const filteredSortedTokens: Currency[] = useMemo(() => [...filteredQueryTokens].toSorted(), [filteredQueryTokens])
+  // const balances = useAtomValue(balanceMultipleAtom(filteredQueryTokens.toSorted()))
+  // const filteredSortedTokens: Currency[] = useMemo(
+  //   () =>
+  //     [...filteredQueryTokens]
+  //       .map((item, i) => ({ ...item, balance: balances[i] }))
+  //       .toSorted((a, b) => Number(a.balance - b.balance)),
+  //   [filteredQueryTokens, balances],
+  // )
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
