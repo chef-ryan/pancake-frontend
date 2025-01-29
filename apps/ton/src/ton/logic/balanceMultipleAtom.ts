@@ -3,6 +3,6 @@ import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { balanceAtom } from './balanceAtom'
 
-export const balanceMultipleAtom = atomFamily((tokens?: Currency[] | null) =>
-  atom((get) => (tokens ? tokens.map((token) => get(balanceAtom(token))).map((balance) => balance.data) : [])),
-)
+export const balanceMultipleAtom = atomFamily((tokens?: Currency[] | null) => {
+  return atom((get) => (tokens ? tokens.map((token) => get(balanceAtom(token))).map((balance) => balance.data) : []))
+})

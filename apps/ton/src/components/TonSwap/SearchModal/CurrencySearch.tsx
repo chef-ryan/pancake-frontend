@@ -15,6 +15,7 @@ import Row from 'components/Layout/Row'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
 import { useToken } from 'hooks/tokens/useToken'
 import { useAtomValue } from 'jotai'
+import { balanceMultipleAtom } from 'ton/logic/balanceMultipleAtom'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 
@@ -75,20 +76,16 @@ function CurrencySearch({
     return Object.values(tokensToShow || allTokens).filter(filterToken)
   }, [tokensToShow, allTokens, debouncedQuery])
 
-  console.log('filteredTokens', filteredTokens)
-
   const filteredQueryTokens = useSortedTokensByQuery(filteredTokens, debouncedQuery)
   // const tokenComparator = useTokenComparator(invertSearchOrder)
 
-  const filteredSortedTokens: Currency[] = useMemo(() => [...filteredQueryTokens].toSorted(), [filteredQueryTokens])
-  // const balances = useAtomValue(balanceMultipleAtom(filteredQueryTokens.toSorted()))
-  // const filteredSortedTokens: Currency[] = useMemo(
-  //   () =>
-  //     [...filteredQueryTokens]
-  //       .map((item, i) => ({ ...item, balance: balances[i] }))
-  //       .toSorted((a, b) => Number(a.balance - b.balance)),
-  //   [filteredQueryTokens, balances],
-  // )
+  const balances = useAtomValue(balanceMultipleAtom(filteredQueryTokens))
+  const filteredSortedTokens: Currency[] = useMemo(() => {
+    return filteredQueryTokens
+      .map((token, index) => ({ token, balance: balances[index] }))
+      .toSorted((a, b) => Number((b.balance || 0n) - (a.balance || 0n)))
+      .map(({ token }) => token)
+  }, [filteredQueryTokens, balances])
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
