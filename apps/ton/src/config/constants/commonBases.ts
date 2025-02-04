@@ -1,4 +1,4 @@
-import { Token } from '@pancakeswap/routing-sdk-addon-ton'
+import { Token } from '@pancakeswap/ton-v2-sdk'
 import { TonChainId } from 'ton/ton.enums'
 
 export const SUGGESTED_BASES: { [chainId in TonChainId]: Token[] } = {

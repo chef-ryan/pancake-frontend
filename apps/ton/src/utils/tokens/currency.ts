@@ -1,4 +1,4 @@
-import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
+import { Currency } from '@pancakeswap/ton-v2-sdk'
 
 export function currencyKey(currency?: Currency): string {
   if (!currency) return 'UNKNOWN'

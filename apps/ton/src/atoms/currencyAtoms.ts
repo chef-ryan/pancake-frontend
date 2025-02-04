@@ -1,4 +1,4 @@
-import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
+import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 

@@ -1,4 +1,4 @@
-import { Token } from '@pancakeswap/routing-sdk-addon-ton'
+import { Token } from '@pancakeswap/ton-v2-sdk'
 import { SerializedToken } from '@pancakeswap/swap-sdk-core'
 import { TokenInfo, TokenList } from './types'
 

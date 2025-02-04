@@ -1,4 +1,4 @@
-import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
+import { Currency } from '@pancakeswap/ton-v2-sdk'
 
 export function createFilterToken<T extends Currency>(
   search: string,
