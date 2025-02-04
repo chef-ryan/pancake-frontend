@@ -18,6 +18,7 @@ import {
   Text,
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
+import { GrabberBar } from 'components/GrabberBar'
 import { ViewOnExplorerButton } from 'components/ViewOnExplorerButton'
 import { CurrencyLogo } from 'components/widgets'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -134,6 +135,7 @@ export default function CurrencySearchModal({
     [CurrencyModalView.importList]: { title: t('Import List'), onBack: () => setModalView(CurrencyModalView.search) },
   }
   const { isMobile } = useMatchBreakpoints()
+
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [height, setHeight] = useState<number | undefined>(undefined)
 
@@ -157,10 +159,10 @@ export default function CurrencySearchModal({
       }}
       ref={wrapperRef}
     >
+      {isMobile && <GrabberBar mt="12px" />}
       <StyledModalHeader>
         <ModalTitle>
           {config[modalView].onBack && <ModalBackButton onBack={config[modalView].onBack} />}
-
           {showCurrencyInHeader && selectedCurrency ? (
             <>
               <CurrencyLogo currency={selectedCurrency as any} style={{ borderRadius: '50%' }} />

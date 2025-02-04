@@ -159,9 +159,10 @@ function CurrencySearch({
         />
       </Box>
     ) : (
-      <Column style={{ padding: '20px', height: '100%' }}>
-        <Text color="textSubtle" textAlign="center" mb="20px">
-          {t('No results found.')}
+      <Column mt="16px" style={{ padding: '20px', height: '100%', alignItems: 'center' }}>
+        <img src="/images/laptop-bunny.png" alt="No results" width="100px" />
+        <Text color="textSubtle" textAlign="center" mt="16px" mb="20px">
+          {t('No tokens found')}
         </Text>
       </Column>
     )
