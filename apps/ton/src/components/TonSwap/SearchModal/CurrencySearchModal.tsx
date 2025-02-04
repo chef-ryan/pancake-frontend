@@ -1,7 +1,7 @@
 import { usePreviousValue } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 
-import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
+import { Currency } from '@pancakeswap/ton-v2-sdk'
 import {
   Button,
   CopyButton,

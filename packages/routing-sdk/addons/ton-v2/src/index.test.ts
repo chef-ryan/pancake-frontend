@@ -5,7 +5,7 @@ test('exports', () => {
   expect(Object.keys(exportedNameSpaces)).toMatchInlineSnapshot(`
     [
       "TON_POOL_TYPE",
-      "Token",
+      "createTonPool",
     ]
   `)
 })

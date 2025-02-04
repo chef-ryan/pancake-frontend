@@ -1,4 +1,4 @@
-import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
+import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { setCurrencyAtom } from 'atoms/currencyAtoms'
 import { independentFieldAtom, inputCurrencyAtom, outputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
 import { useAtomValue, useSetAtom } from 'jotai'

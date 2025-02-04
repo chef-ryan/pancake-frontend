@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Token } from '@pancakeswap/routing-sdk-addon-ton'
+import { Currency, Token } from '@pancakeswap/ton-v2-sdk'
 
 import { ArrowForwardIcon, CircleLoader, Column, QuestionHelper, Text } from '@pancakeswap/uikit'
 import { formatBigInt, formatNumber } from '@pancakeswap/utils/formatBalance'

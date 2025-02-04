@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency } from '@pancakeswap/routing-sdk-addon-ton'
+import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Pair } from '@pancakeswap/sdk'
 import {
   Box,

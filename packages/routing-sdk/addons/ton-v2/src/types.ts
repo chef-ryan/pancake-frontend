@@ -1,4 +1,5 @@
 import { Address as TonAddress } from '@ton/core'
+// todo:@eric replaced to TON currency type
 import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import type { Pool } from '@pancakeswap/routing-sdk'
 import { TON_POOL_TYPE } from './constants'

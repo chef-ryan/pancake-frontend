@@ -1,5 +1,5 @@
 {
-  "name": "@pancakeswap/routing-sdk-addon-ton",
+  "name": "@pancakeswap/routing-sdk-addon-ton-v2",
   "version": "0.0.1",
   "description": "Routing sdk addon for pcs Ton",
   "repository": {
@@ -29,7 +29,7 @@
   "dependencies": {
     "@pancakeswap/chains": "workspace:*",
     "@pancakeswap/swap-sdk-core": "workspace:*",
-    "@pancakeswap/v2-sdk": "workspace:*",
+    "@pancakeswap/ton-v2-sdk": "workspace:*",
     "@ton/core": "^0.59.0",
     "lodash": "^4.17.21",
     "tiny-invariant": "^1.3.0"

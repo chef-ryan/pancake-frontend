@@ -1,4 +1,4 @@
-import { Token } from '@pancakeswap/routing-sdk-addon-ton'
+import { Token } from '@pancakeswap/ton-v2-sdk'
 import { TOKEN_LIST_URLS } from 'config/constants/lists'
 import { atomWithQuery } from 'jotai-tanstack-query'
 import { networkAtom } from 'ton/atom/networkAtom'
