@@ -33,6 +33,8 @@ class MyDocument extends Document {
     return (
       <Html translate="no">
         <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1" />
+
           {process.env.NEXT_PUBLIC_NODE_PRODUCTION && (
             <link rel="preconnect" href={process.env.NEXT_PUBLIC_NODE_PRODUCTION} />
           )}
