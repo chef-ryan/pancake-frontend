@@ -4,6 +4,7 @@ import { toNano } from '@ton/core'
 import { setCurrencyAtom } from 'atoms/currencyAtoms'
 import { currency0Atom, currency0Value, currency1Atom, currency1Value } from 'atoms/liquidity/addLiquidityStateAtom'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
+import { SlippageButton } from 'components/Buttons/SlippageButton'
 import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
@@ -132,14 +133,14 @@ export const CardContent = (props: CardContentProps) => {
             </Box>
           </Flex>
           <Flex justifyContent="space-between">
-            <Text color="textSubtle">Your share in the pair</Text>
+            <Text color="textSubtle">{t('Your share in the pair')}</Text>
 
             <Text>10%</Text>
           </Flex>
           <Flex justifyContent="space-between">
-            <Text color="textSubtle">Slippage Tolerance</Text>
+            <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
 
-            <Text>slippage btn</Text>
+            <SlippageButton />
           </Flex>
         </FlexGap>
       </ContentContainer>

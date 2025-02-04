@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Pair } from '@pancakeswap/sdk'
+import { Currency } from '@pancakeswap/ton-v2-sdk'
 import {
   Box,
   Button,
@@ -48,7 +48,7 @@ const SymbolText = styled(Text)`
 
 const FixedQuickSelectContainer = styled(Box)`
   position: fixed;
-  bottom: 0;
+  top: 0;
   left: 0;
   right: 0;
   z-index: 99;
@@ -69,25 +69,6 @@ const formatDollarAmount = (amount: number) => {
     return '<0.01'
   }
   return formatNumber(amount)
-}
-
-const useWindowHeight = () => {
-  const [height, setHeight] = useState(window ? window.innerHeight : 0)
-
-  useEffect(() => {
-    if (window && window.visualViewport) {
-      const handleResize = () => {
-        setHeight(window.innerHeight)
-      }
-
-      window.visualViewport.addEventListener('resize', handleResize)
-      // return () => (window.visualViewport ? window.visualViewport.removeEventListener('resize', handleResize) : {})
-    }
-
-    // return () => {}
-  }, [])
-
-  return height
 }
 
 const useSizeAdaption = (value: string, currencySymbol?: string, otherCurrencySymbol?: string) => {
@@ -256,12 +237,16 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
 
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
-  const windowHeight = useWindowHeight()
 
   const mode = id
   const token = pair ? pair.liquidityToken : currency?.isToken ? currency : null
 
   const [isInputFocus, setIsInputFocus] = useState(false)
+
+  const showBottomQuickInputPanel = useMemo(
+    () => isMobile && isWalletConnected && isInputFocus,
+    [isMobile, isWalletConnected, isInputFocus],
+  )
 
   // const amountInDollar = useStablecoinPriceAmount(
   //   showUSDPrice ? currency ?? undefined : undefined,
@@ -437,10 +422,8 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
         }
       />
 
-      {/* isWalletConnected */}
-      {/* {isMobile && isInputFocus && (
-        <FixedQuickSelectContainer style={{ bottom: `${windowHeight}px` }}>
-          {windowHeight}
+      {/* {showBottomQuickInputPanel && (
+        <FixedQuickSelectContainer>
           <FlexGap gap="4px" justifyContent="center">
             {PERCENT_OPTIONS.map((percent) => (
               <TertiaryButton key={percent} onClick={() => onPercentInput(percent)} scale="sm">

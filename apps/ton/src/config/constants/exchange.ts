@@ -6,9 +6,6 @@ export const BIG_INT_20 = 20n
 
 export const MIN_BNB: bigint = BIG_INT_TEN ** 15n // .001 BNB
 
-// 20 minutes, denominated in seconds
-export const DEFAULT_DEADLINE_FROM_NOW = 60 * 20
-
 // one basis point
 export const BIPS_BASE = 10000n
 export const ONE_BIPS = new Percent(1n, BIPS_BASE)
