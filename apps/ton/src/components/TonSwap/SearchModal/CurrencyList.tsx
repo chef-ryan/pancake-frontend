@@ -2,8 +2,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Currency, Token } from '@pancakeswap/routing-sdk-addon-ton'
 
 import { ArrowForwardIcon, CircleLoader, Column, QuestionHelper, Text } from '@pancakeswap/uikit'
-import { formatNumber } from '@pancakeswap/utils/formatBalance'
-import { fromNano } from '@ton/core'
+import { formatBigInt, formatNumber } from '@pancakeswap/utils/formatBalance'
 import { LightGreyCard } from 'components/Card'
 import { RowBetween, RowFixed } from 'components/Layout/Row'
 import { CurrencyLogo } from 'components/widgets/CurrencyLogo'
@@ -14,7 +13,7 @@ import { FixedSizeList } from 'react-window'
 import { styled } from 'styled-components'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
-import { currencyKey } from 'ton/utils/currency'
+import { currencyKey } from 'utils/tokens/currency'
 
 const StyledBalanceText = styled(Text)`
   white-space: nowrap;
@@ -69,8 +68,7 @@ function CurrencyRow({
 
   const { data: balanceRaw, isLoading: isBalanceLoading } = useAtomValue(balanceAtom(currency))
 
-  // TODO: Better formatting of number and use token decimals
-  const balance = Number(fromNano(balanceRaw).toString())
+  const balance = formatBigInt(balanceRaw, currency.decimals, currency.decimals)
 
   // only show add or remove buttons if not on selected list
   return (
@@ -91,7 +89,7 @@ function CurrencyRow({
       </Column>
       <RowFixed style={{ justifySelf: 'flex-end' }}>
         {userAddress && balance !== undefined ? (
-          <Text>{formatNumber(balance, 0)}</Text>
+          <StyledBalanceText title={balance}>{formatNumber(Number(balance), 0)}</StyledBalanceText>
         ) : userAddress && isBalanceLoading ? (
           <CircleLoader />
         ) : (

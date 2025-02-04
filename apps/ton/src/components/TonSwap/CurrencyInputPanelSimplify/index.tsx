@@ -20,11 +20,11 @@ import { styled } from 'styled-components'
 
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
 
-import { fromNano } from '@ton/core'
 import { useAtomValue } from 'jotai'
 import { CurrencySelectButton } from 'styles/inputStyles'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
+import { formatBalance } from 'ton/utils/formatting'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { FONT_SIZE, LOGO_SIZE, useFontSize } from './state'
 
@@ -143,8 +143,10 @@ interface CurrencyInputPanelProps {
   value: string | undefined
   onUserInput: (value: string) => void
   onInputBlur?: () => void
-  onPercentInput?: (percent: number) => void
-  onMax?: () => void
+
+  onPercentInput?: (percent: number) => void // TODO: Remove
+  onMax?: () => void // TODO: Remove
+
   showQuickInputButton?: boolean
   showMaxButton: boolean
   // maxAmount?: CurrencyAmount<Currency>
@@ -175,8 +177,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   value,
   onUserInput,
   onInputBlur,
-  onPercentInput,
-  onMax,
+
   onCurrencySelect,
   currency,
   disableCurrencySelect = false,
@@ -205,6 +206,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
 
   const mode = id
   const token = pair ? pair.liquidityToken : currency?.isToken ? currency : null
+
   const [isInputFocus, setIsInputFocus] = useState(false)
 
   // const amountInDollar = useStablecoinPriceAmount(
@@ -259,8 +261,24 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
     }
   }, [onPresentCurrencyModal, disableCurrencySelect])
 
-  // TODO: make general util for formatting and use token decimal instead of Nano by default
-  const balance = !hideBalance && !!currency ? fromNano(selectedCurrencyBalance) : undefined
+  const balance = useMemo(
+    () => (!hideBalance && !!currency ? formatBalance(selectedCurrencyBalance, currency.decimals) : undefined),
+    [selectedCurrencyBalance, currency, hideBalance],
+  )
+
+  const onMax = useCallback(() => {
+    onUserInput(formatBalance(selectedCurrencyBalance, currency?.decimals))
+  }, [selectedCurrencyBalance, , currency, onUserInput])
+
+  const onPercentInput = useCallback(
+    (percent: number) => {
+      if (selectedCurrencyBalance) {
+        const val = (selectedCurrencyBalance * BigInt(percent)) / 100n
+        onUserInput(formatBalance(val, currency?.decimals))
+      }
+    },
+    [selectedCurrencyBalance, currency, onUserInput],
+  )
 
   return (
     <SwapUIV2.CurrencyInputPanelSimplify

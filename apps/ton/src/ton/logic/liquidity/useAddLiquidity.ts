@@ -1,5 +1,5 @@
 import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
-import { Address, beginCell, toNano } from '@ton/core'
+import { beginCell, toNano } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
 import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
@@ -7,6 +7,7 @@ import { addressAtom } from 'ton/atom/addressAtom'
 import { TonContext } from 'ton/context/TonContext'
 import { Contracts } from 'ton/def/contracts.def'
 import { TonContractNames } from 'ton/ton.enums'
+import { parseAddress } from 'ton/utils/address'
 import { JettonMasterUSDT } from 'ton/wrappers/tact_JettonMasterUSDT'
 import { storeAddLiquidity } from 'ton/wrappers/tact_Router'
 
@@ -25,11 +26,11 @@ export const useAddLiquidity = () => {
   const addLiquidity = useCallback(
     async ({ token0Address: token0Addr, token1Address: token1Addr, amount0, amount1 }: AddLiquidityArgs) => {
       const client = TonContext.instance.getClient()
-      const walletAddress = Address.parse(userAddress)
-      const routerAddress = Address.parse(Contracts[TonContractNames.PCSRouter].address)
+      const walletAddress = parseAddress(userAddress)
+      const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter].address)
 
-      const token0Address = Address.parse(token0Addr)
-      const token1Address = Address.parse(token1Addr)
+      const token0Address = parseAddress(token0Addr)
+      const token1Address = parseAddress(token1Addr)
 
       const jettonMaster0 = client.open(JettonMasterUSDT.fromAddress(token0Address))
       const jettonMaster1 = client.open(JettonMasterUSDT.fromAddress(token1Address))

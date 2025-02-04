@@ -24,8 +24,6 @@ import { Field } from 'types'
 export const SwapForm = () => {
   const { t } = useTranslation()
 
-  const [isListLoaded, setIsListLoaded] = useState(false)
-
   const [outputValue, setOutputValue] = useState('')
 
   const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
@@ -55,18 +53,16 @@ export const SwapForm = () => {
     }, 3000)
   }, [setApprovalModal, setTransactionModal])
 
-  // TODO: Move to separate hook
+  // Set default currencies on load
   useEffect(() => {
-    if (!isListLoaded && !inputCurrency && !outputCurrency && isFetched && activeList && activeList.length > 1) {
+    if (isFetched && !inputCurrency && !outputCurrency && activeList && activeList.length > 1) {
       onCurrencySelection(Field.INPUT, Native.onNetwork(TonNetworks.Testnet))
       onCurrencySelection(
         Field.OUTPUT,
         activeList.find((item) => item.symbol === 'CAKE'),
       )
-
-      setIsListLoaded(false)
     }
-  }, [activeList, inputCurrency, outputCurrency, isFetched, isListLoaded, onCurrencySelection])
+  }, [activeList, inputCurrency, outputCurrency, isFetched, onCurrencySelection])
 
   return (
     <SwapUIV2.SwapFormWrapper>

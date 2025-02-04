@@ -12,7 +12,7 @@ export class ContractProxy {
 
   private findFuncDef(name: string): TonFunctionDef<any> | undefined {
     const contractDef = ContractClasses[this.type]
-    const interfaces = contractDef.interfaces
+    const { interfaces } = contractDef
     return interfaces.find((x: TonFunctionDef<any>) => x.method === name)
   }
 
