@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Heading, ModalV2, MotionModal, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
-import { GrabberBar } from 'components/GrabberBar'
+import { GrabberBar } from 'components/Misc/GrabberBar'
 import { SlippageSettings } from './SlippageSettings'
 import { TransactionDeadlineSettings } from './TransactionDeadlineSettings'
 

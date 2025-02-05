@@ -1,5 +1,5 @@
 import { Box, Button, FlexGap, Select, Text } from '@pancakeswap/uikit'
-import { Address, beginCell, fromNano, toNano } from '@ton/core'
+import { beginCell, fromNano, toNano } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI, useTonWallet } from '@tonconnect/ui-react'
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import { Header } from 'components/Header'
@@ -11,6 +11,7 @@ import { Contracts } from 'ton/def/contracts.def'
 import { useAddLiquidity } from 'ton/logic/liquidity/useAddLiquidity'
 import { useSwap } from 'ton/logic/swap/useSwap'
 import { TonContractNames } from 'ton/ton.enums'
+import { parseAddress } from 'ton/utils/address'
 import { JettonMasterUSDT } from 'ton/wrappers/tact_JettonMasterUSDT'
 import { JettonWalletUSDT } from 'ton/wrappers/tact_JettonWalletUSDT'
 import { Router } from 'ton/wrappers/tact_Router'
@@ -30,6 +31,13 @@ export default function TestMint() {
   const { addLiquidity } = useAddLiquidity()
   const { swap } = useSwap()
 
+  // useAtomValue(
+  //   poolAddressAtom({
+  //     token0Address: 'kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F', // $SYRUP
+  //     token1Address: 'kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg', // $P
+  //   }),
+  // )
+
   const handleMint = useCallback(() => {
     if (!selectedToken || !wallet?.account.address) throw new Error('Invalid input provided!')
 
@@ -37,12 +45,12 @@ export default function TestMint() {
       //   .store(
       //     storeJettonMintMessage({
       //       amount: toNano(amount),
-      //       to: Address.parse(wallet?.account?.address),
+      //       to: parseAddress(wallet?.account?.address),
       //       forwardPayload: null,
       //       forwardTonAmount: 0n,
-      //       from: Address.parse(wallet.account.address),
+      //       from: parseAddress(wallet.account.address),
       //       queryId: 1n,
-      //       responseAddress: Address.parse(wallet.account.address),
+      //       responseAddress: parseAddress(wallet.account.address),
       //       walletForwardValue: 0n,
       //     }),
       //   )
@@ -69,7 +77,7 @@ export default function TestMint() {
   const estimateAddLiquidity = useCallback(async () => {
     if (!wallet?.account.address) throw new Error('Wallet not connected')
     const client = TonContext.instance.getClient()
-    const contractAddress = Address.parse(Contracts[TonContractNames.PCSRouter].address)
+    const contractAddress = parseAddress(Contracts[TonContractNames.PCSRouter].testnet.address)
 
     const router = client.open(Router.fromAddress(contractAddress))
 
@@ -82,9 +90,9 @@ export default function TestMint() {
     if (!wallet?.account.address) throw new Error('Wallet not connected')
 
     const client = TonContext.instance.getClient()
-    const contractAddress = Address.parse(Contracts[TonContractNames.USDC].address)
+    const contractAddress = parseAddress(Contracts[TonContractNames.USDC].testnet.address)
     const jettonMaster = client.open(JettonMasterUSDT.fromAddress(contractAddress))
-    const jettonWalletAddress = await jettonMaster.getGetWalletAddress(Address.parse(wallet?.account.address))
+    const jettonWalletAddress = await jettonMaster.getGetWalletAddress(parseAddress(wallet?.account.address))
 
     const jettonData = await jettonMaster.getGetJettonData()
 
@@ -119,11 +127,11 @@ export default function TestMint() {
 
   const getPoolAddress = useCallback(async () => {
     const client = TonContext.instance.getClient()
-    const routerAddress = Address.parse(Contracts[TonContractNames.PCSRouter].address)
+    const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter].testnet.address)
     const router = client.open(Router.fromAddress(routerAddress))
 
-    const token0Address = Address.parse('kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F') // $SYRUP
-    const token1Address = Address.parse('kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg') // $PAN
+    const token0Address = parseAddress('kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F') // $SYRUP
+    const token1Address = parseAddress('kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg') // $PAN
 
     const jetton0 = client.open(JettonMasterUSDT.fromAddress(token0Address))
     const jetton1 = client.open(JettonMasterUSDT.fromAddress(token1Address))

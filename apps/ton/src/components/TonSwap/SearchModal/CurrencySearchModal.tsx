@@ -18,7 +18,7 @@ import {
   Text,
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
-import { GrabberBar } from 'components/GrabberBar'
+import { GrabberBar } from 'components/Misc/GrabberBar'
 import { ViewOnExplorerButton } from 'components/ViewOnExplorerButton'
 import { CurrencyLogo } from 'components/widgets'
 import { useCallback, useEffect, useRef, useState } from 'react'

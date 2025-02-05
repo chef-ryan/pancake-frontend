@@ -1,10 +1,11 @@
 import { atom } from 'jotai'
 import { atomFamily, atomWithStorage } from 'jotai/utils'
+import isEqual from 'lodash/isEqual'
 import { networkAtom } from 'ton/atom/networkAtom'
 import { TonNetworks } from 'ton/ton.enums'
 import { TokenList } from 'utils/tokens/types'
 
-export const listAtom = atomFamily((chain: TonNetworks) => atomWithStorage<TokenList[]>(chain, []))
+export const listAtom = atomFamily((chain: TonNetworks) => atomWithStorage<TokenList[]>(chain, []), isEqual)
 export const activeListAtom = atom((get) => get(listAtom(get(networkAtom))))
 
 export const setListAtom = atom(null, (_, set, chain: TonNetworks, lists: TokenList[]) => {

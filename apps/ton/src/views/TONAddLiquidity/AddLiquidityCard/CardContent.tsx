@@ -10,6 +10,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { addressAtom } from 'ton/atom/addressAtom'
+import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { useAddLiquidity } from 'ton/logic/liquidity/useAddLiquidity'
 import { CurrencyField } from 'types/currency'
 
@@ -42,6 +43,12 @@ export const CardContent = (props: CardContentProps) => {
   const currency1 = useAtomValue(currency1Atom)
   const [token0Value, setToken0Value] = useAtom(currency0Value)
   const [token1Value, setToken1Value] = useAtom(currency1Value)
+
+  const { data: poolData } = useAtomValue(
+    poolDataQueryAtom({ token0Address: currency0?.wrapped.address, token1Address: currency1?.wrapped.address }),
+  )
+
+  console.log('poolData', poolData)
 
   const setCurrency = useSetAtom(setCurrencyAtom)
 
@@ -137,7 +144,7 @@ export const CardContent = (props: CardContentProps) => {
 
             <Text>10%</Text>
           </Flex>
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" alignItems="center">
             <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
 
             <SlippageButton />

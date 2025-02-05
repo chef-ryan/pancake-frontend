@@ -27,7 +27,7 @@ export const useAddLiquidity = () => {
     async ({ token0Address: token0Addr, token1Address: token1Addr, amount0, amount1 }: AddLiquidityArgs) => {
       const client = TonContext.instance.getClient()
       const walletAddress = parseAddress(userAddress)
-      const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter].address)
+      const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter].testnet.address)
 
       const token0Address = parseAddress(token0Addr)
       const token1Address = parseAddress(token1Addr)

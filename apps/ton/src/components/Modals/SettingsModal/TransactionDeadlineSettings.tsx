@@ -77,7 +77,7 @@ export const TransactionDeadlineSettings = (props: BoxProps) => {
             scale="sm"
             onClick={() => {
               setDeadlineInput('')
-              parseCustomDeadline(DEFAULT_DEADLINE.toString())
+              parseCustomDeadline((DEFAULT_DEADLINE / 60).toString())
             }}
           >
             {t('Reset')}
