@@ -26,19 +26,19 @@ export const WormholeBridgeWidget = ({ isAptos }: { isAptos: boolean }) => {
     const tokens = getBridgeTokens(widgetEnv)
 
     const config: ExtendedWidgetConfig = {
-      env: enableMainnet ? 'mainnet' : 'testnet',
+      network: enableMainnet ? 'Mainnet' : 'Testnet',
       rpcs,
-      networks,
       tokens,
-      mode,
-      customTheme,
-      bridgeDefaults: {
-        fromNetwork: isAptos ? 'aptos' : enableMainnet ? 'ethereum' : 'goerli',
-        toNetwork: 'bsc',
-        token: 'ETH',
-        requiredNetwork: isAptos ? 'aptos' : undefined,
-      },
-      showHamburgerMenu: false,
+      // mode,
+      chains: networks,
+      // customTheme,
+      // bridgeDefaults: {
+      //   fromNetwork: isAptos ? 'aptos' : enableMainnet ? 'ethereum' : 'goerli',
+      //   toNetwork: 'bsc',
+      //   token: 'ETH',
+      //   requiredNetwork: isAptos ? 'aptos' : undefined,
+      // },
+      // showHamburgerMenu: false,
       partnerLogo: pcsLogo,
     }
     return config
