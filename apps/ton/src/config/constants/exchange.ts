@@ -18,3 +18,6 @@ export const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent(500n, BIPS_BASE) /
 export const PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN: Percent = new Percent(1000n, BIPS_BASE) // 10%
 // for non expert mode disable swaps above this
 export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(1500n, BIPS_BASE) // 15%
+
+// Query Stale Times
+export const QUERY_DEFAULT_STALE_TIME = 1000 * 60 // 1 minute

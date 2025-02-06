@@ -1,3 +1,4 @@
+import { QUERY_DEFAULT_STALE_TIME } from 'config/constants/exchange'
 import { atomWithQuery } from 'jotai-tanstack-query'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
@@ -20,5 +21,8 @@ export const poolDataQueryAtom = atomFamily(({ token0Address, token1Address }: P
       return pool.getGetPoolData()
     },
     enabled: !!token0Address && !!token1Address,
+    staleTime: QUERY_DEFAULT_STALE_TIME, // 1 minute
+    refetchInterval: QUERY_DEFAULT_STALE_TIME, // 1 minute
+    retry: false,
   }))
 }, isEqual)

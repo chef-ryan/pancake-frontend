@@ -5,9 +5,25 @@
   "tokens": [
     {
       "chainId": -3,
+      "address": "kQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffAw5",
+      "name": "Proxy TON",
+      "symbol": "pTON",
+      "decimals": 9,
+      "logoURI": "https://cache.tonapi.io/imgproxy/X7T-fLahBBVIxXacXAqrsCHIgFgTQE3Jt2HAdnc5_Mc/rs:fill:200:200:1/g:no/aHR0cHM6Ly9zdGF0aWMuc3Rvbi5maS9sb2dvL3Rvbl9zeW1ib2wucG5n.webp"
+    },
+    {
+      "chainId": -3,
       "address": "kQA8oT-HRBY-9-yFymg17hD5FE07--Z1gYc_sZTbzqpOZr1t",
       "name": "Pancake Token",
       "symbol": "CAKE",
+      "decimals": 9,
+      "logoURI": "https://tokens.pancakeswap.finance/images/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82.png"
+    },
+    {
+      "chainId": -3,
+      "address": "kQAaZeQEAnKF7BKNIzgMIFdvRfBNZnbZUICo7ZkNPaRsjMLr",
+      "name": "Pancake Token",
+      "symbol": "CAKE2",
       "decimals": 9,
       "logoURI": "https://tokens.pancakeswap.finance/images/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82.png"
     },
@@ -24,6 +40,14 @@
       "address": "kQDdLkZeRizrkprK3xJgD6QsyAQWUtKC1E38_iB5bPV_d_Ob",
       "name": "Tether USD",
       "symbol": "USDT",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/assets/EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs/logo.png"
+    },
+    {
+      "chainId": -3,
+      "address": "kQCHLgAWLrFnHChbETKLnUEpA_oW0_5f9SDVYc9mJtVDMXrC",
+      "name": "Tether USD 2",
+      "symbol": "USDT2",
       "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/assets/EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs/logo.png"
     },

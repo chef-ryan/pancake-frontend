@@ -12,5 +12,13 @@ export const SUGGESTED_BASES: { [chainId in TonChainId]: Token[] } = {
       'Pancake Token',
       'https://tokens.pancakeswap.finance/images/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82.png',
     ),
+    new Token(
+      TonChainId.Mainnet,
+      'kQAaZeQEAnKF7BKNIzgMIFdvRfBNZnbZUICo7ZkNPaRsjMLr',
+      9,
+      'CAKE2',
+      'Pancake Token 2',
+      'https://tokens.pancakeswap.finance/images/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82.png',
+    ),
   ],
 }

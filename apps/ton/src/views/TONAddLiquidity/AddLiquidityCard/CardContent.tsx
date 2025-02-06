@@ -1,5 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { AddIcon, Box, BoxProps, Button, Flex, FlexGap, Text, useToast } from '@pancakeswap/uikit'
+import { Currency, CurrencyAmount } from '@pancakeswap/ton-v2-sdk'
+import { AddIcon, Box, BoxProps, Button, Flex, FlexGap, Loading, Text, useToast } from '@pancakeswap/uikit'
 import { toNano } from '@ton/core'
 import { setCurrencyAtom } from 'atoms/currencyAtoms'
 import { currency0Atom, currency0Value, currency1Atom, currency1Value } from 'atoms/liquidity/addLiquidityStateAtom'
@@ -44,11 +45,25 @@ export const CardContent = (props: CardContentProps) => {
   const [token0Value, setToken0Value] = useAtom(currency0Value)
   const [token1Value, setToken1Value] = useAtom(currency1Value)
 
-  const { data: poolData } = useAtomValue(
+  const { data: poolData, isLoading: isPoolDataLoading } = useAtomValue(
     poolDataQueryAtom({ token0Address: currency0?.wrapped.address, token1Address: currency1?.wrapped.address }),
   )
 
-  console.log('poolData', poolData)
+  const rates = useMemo(() => {
+    if (!poolData || !currency0 || !currency1)
+      return {
+        currency0: '-',
+        currency1: '-',
+      }
+
+    const poolReserve0 = CurrencyAmount.fromRawAmount(currency0, poolData.reserve0)
+    const poolReserve1 = CurrencyAmount.fromRawAmount(currency1, poolData.reserve1)
+
+    return {
+      currency0: !poolReserve0.equalTo(0) ? poolReserve1.divide(poolReserve0).toSignificant(5) : 0,
+      currency1: !poolReserve1.equalTo(0) ? poolReserve0.divide(poolReserve1).toSignificant(5) : 0,
+    }
+  }, [poolData, currency0, currency1])
 
   const setCurrency = useSetAtom(setCurrencyAtom)
 
@@ -73,6 +88,20 @@ export const CardContent = (props: CardContentProps) => {
       setToken1Value(value)
     },
     [setToken1Value],
+  )
+
+  const onCurrencySelection = useCallback(
+    (field: CurrencyField, currency: Currency) => {
+      // Check if currency is same as in the other field
+      if (field === CurrencyField.ADD_LIQUIDITY_CURRENCY0 && currency.equals(currency1)) {
+        setCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY1, currency0)
+      } else if (field === CurrencyField.ADD_LIQUIDITY_CURRENCY1 && currency.equals(currency0)) {
+        setCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY0, currency1)
+      }
+
+      setCurrency(field, currency)
+    },
+    [setCurrency, currency0, currency1],
   )
 
   const handleAddLiquidity = useCallback(async () => {
@@ -104,7 +133,7 @@ export const CardContent = (props: CardContentProps) => {
           onUserInput={handleToken0Input}
           value={token0Value}
           currency={currency0}
-          onCurrencySelect={(newCurrency) => setCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY0, newCurrency)}
+          onCurrencySelect={(newCurrency) => onCurrencySelection(CurrencyField.ADD_LIQUIDITY_CURRENCY0, newCurrency)}
           showMaxButton={false}
           title={
             <Text color="textSubtle" small>
@@ -121,7 +150,7 @@ export const CardContent = (props: CardContentProps) => {
             onUserInput={handleToken1Input}
             value={token1Value}
             currency={currency1}
-            onCurrencySelect={(newCurrency) => setCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY1, newCurrency)}
+            onCurrencySelect={(newCurrency) => onCurrencySelection(CurrencyField.ADD_LIQUIDITY_CURRENCY1, newCurrency)}
             showMaxButton={false}
             showQuickInputButton={false}
           />
@@ -129,20 +158,30 @@ export const CardContent = (props: CardContentProps) => {
 
         <FlexGap flexDirection="column" mt="24px" gap="16px">
           <Flex justifyContent="space-between">
-            <Text color="textSubtle">Rates (dummy values)</Text>
-            <Box>
-              <Text>
-                1 {currency0?.symbol} ≈ 1 {currency1?.symbol}
-              </Text>
-              <Text>
-                1 {currency1?.symbol} ≈ 1 {currency0?.symbol}
-              </Text>
-            </Box>
+            <Text color="textSubtle">Rates</Text>
+            {poolData?.reserve0 && poolData.reserve1 ? (
+              <Box>
+                <Text>
+                  1 {currency0?.symbol} ≈ {rates.currency0.toString()} {currency1?.symbol}
+                </Text>
+                <Text>
+                  1 {currency1?.symbol} ≈ {rates.currency1.toString()} {currency0?.symbol}
+                </Text>
+              </Box>
+            ) : isPoolDataLoading ? (
+              <>
+                <Loading />
+              </>
+            ) : (
+              <>
+                <Text>{t('Pool does not exist')}</Text>
+              </>
+            )}
           </Flex>
           <Flex justifyContent="space-between">
             <Text color="textSubtle">{t('Your share in the pair')}</Text>
 
-            <Text>10%</Text>
+            <Text>-%</Text>
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
             <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
@@ -157,7 +196,7 @@ export const CardContent = (props: CardContentProps) => {
           <ConnectWalletButton width="100%" />
         ) : (
           <Button onClick={handleAddLiquidity} width="100%" disabled={isDisabled}>
-            Supply
+            {t('Supply')}
           </Button>
         )}
       </StyledCardFooter>
