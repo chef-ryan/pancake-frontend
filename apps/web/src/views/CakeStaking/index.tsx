@@ -126,7 +126,7 @@ const CakeStaking = () => {
               <QuestionHelper
                 size="20px"
                 text={t(
-                  'Boost your PancakeSwap farming APR by up to 2.5x. Aquire more veCAKE to receive a higher boost.',
+                  'Boost your PancakeSwap farming APR by up to 2.5x. Acquire more veCAKE to receive a higher boost.',
                 )}
                 placement="top"
                 ml="4px"
@@ -154,7 +154,7 @@ const CakeStaking = () => {
               <QuestionHelper
                 size="20px"
                 text={t(
-                  'Use your veCAKE as your IFO Public Sales commit credits. Aquire more veCAKE to commit more in the next PancakeSwap IFOs.',
+                  'Use your veCAKE as your IFO Public Sales commit credits. Acquire more veCAKE to commit more in the next PancakeSwap IFOs.',
                 )}
                 placement="top"
                 ml="4px"

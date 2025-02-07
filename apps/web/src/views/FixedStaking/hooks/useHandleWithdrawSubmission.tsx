@@ -28,7 +28,7 @@ export function useHandleWithdrawSubmission({
 
   const throwCustomError = useCallback(() => {
     toastInfo(
-      t('Withdawal approval is pending'),
+      t('Withdrawal approval is pending'),
       <>
         {t('Please come back to check later at a certain amount of time')}
         <Link

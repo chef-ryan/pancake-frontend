@@ -95,7 +95,7 @@ export const TotalApy: React.FC<React.PropsWithChildren<TotalApyProps>> = ({ veC
           🔹{t('Total APR')}
         </Text>
         <Text ml="4px" as="span">
-          {t('is the sum of veCAKE Pool APR, Revenue sharing APR and Birbes APY from Guages voting.')}
+          {t('is the sum of veCAKE Pool APR, Revenue sharing APR and Bribes APY from Gauges voting.')}
         </Text>
       </Box>
       <Link mt="8px" external href="https://docs.pancakeswap.finance/products/vecake/faq#why-there-are-multiple-aprs">

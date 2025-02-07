@@ -3,8 +3,8 @@ import { getAllGauges } from '@pancakeswap/gauges'
 import { getViemClients } from 'utils/viem'
 import { describe, it } from 'vitest'
 
-describe('get all guages', () => {
-  it('contract gaguges and cms gauges should be match', async () => {
+describe('get all gauges', () => {
+  it('contract gauges and cms gauges should be match', async () => {
     const gauges = await getAllGauges(
       getViemClients({
         chainId: ChainId.BSC,
