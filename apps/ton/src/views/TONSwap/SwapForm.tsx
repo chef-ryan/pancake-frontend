@@ -7,7 +7,8 @@ import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSim
 import { FlipButton } from 'components/TonSwap/FlipButton'
 import { useUserSlippage } from '@pancakeswap/utils/user'
 import { useTranslation } from '@pancakeswap/localization'
-import { toNano } from '@ton/core'
+import { JettonMaster } from '@ton/ton'
+import { Address, toNano } from '@ton/core'
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import { setApprovalModalAtom } from 'atoms/modals/approvalModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
@@ -18,13 +19,15 @@ import { SwapUIV2 } from 'components/widgets/swap-v2'
 import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { balanceAtom } from 'ton/logic/balanceAtom'
-import { TonNetworks } from 'ton/ton.enums'
+import { TonContractNames, TonNetworks } from 'ton/ton.enums'
 import { Field } from 'types'
 import { Percent, Rounding, _10000 } from '@pancakeswap/swap-sdk-core'
 import { formatFraction } from '@pancakeswap/utils/formatFractions'
 import { useTradeExactIn } from 'hooks/swap/useTradeExactIn'
 import { useTradeExactOut } from 'hooks/swap/useTradeExactOut'
 import { tryParseAmount } from 'utils/tryParseAmount'
+import { Contracts } from 'ton/def/contracts.def'
+import { useSwap } from 'ton/logic/swap/useSwap'
 
 const executeTransaction = (payload, cb) => {
   return Promise.resolve()
@@ -32,8 +35,6 @@ const executeTransaction = (payload, cb) => {
 
 export const SwapForm = () => {
   const { t } = useTranslation()
-
-  const [outputValue, setOutputValue] = useState('')
 
   const inputCurrency = useAtomValue(inputCurrencyAtom)
   const outputCurrency = useAtomValue(outputCurrencyAtom)
@@ -46,7 +47,6 @@ export const SwapForm = () => {
   const bestTradeExactOut = useTradeExactOut(isExactIn ? undefined : parsedAmount, inputCurrency ?? undefined)
   const trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
-  const [isListLoaded, setIsListLoaded] = useState(false)
   const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
 
   const { data: balance0 } = useAtomValue(balanceAtom(inputCurrency))
@@ -74,38 +74,30 @@ export const SwapForm = () => {
       : undefined,
   }
 
-  const doSwap = useCallback(() => {
-    if (!trade) {
-      return undefined
-    }
-    const payload = swapCallParameters(trade, {
-      allowedSlippage: new Percent(BigInt(userAllowedSlippage), _10000),
-      // todo:@eric
-      recipient: '',
-      ttl: 0,
-    })
-    if (!payload) {
-      throw new Error('Missing swap call')
-    }
-
-    return executeTransaction(payload, (error) => {
-      // cb
-    })
-  }, [trade, userAllowedSlippage])
+  const { swap } = useSwap()
 
   const handleSwap = useCallback(() => {
-    doSwap()?.then((res) => {
-      //
+    if (!inputCurrency || !outputCurrency) {
+      return
+    }
+    swap({
+      // todo:@eric
+      minOut: '0.01',
+      amount0: formattedAmounts[Field.INPUT] ?? '0',
+      token0: inputCurrency,
+      token1: outputCurrency,
+    }).then((res) => {
+      console.log('>>>', res)
     })
     // simulate modal states
-    setApprovalModal('TON', '1000')
+    /* setApprovalModal('TON', '1000')
     setTimeout(() => {
       setTransactionModal(TransactionActionType.TransactionSubmitted, true)
     }, 1000)
     setTimeout(() => {
       setTransactionModal(TransactionActionType.TransactionComplete, true)
-    }, 3000)
-  }, [doSwap, setApprovalModal, setTransactionModal])
+    }, 3000) */
+  }, [swap, inputCurrency, outputCurrency, formattedAmounts])
 
   // Set default currencies on load
   useEffect(() => {

@@ -120,8 +120,8 @@ export default function TestMint() {
     swap({
       amount0: BigInt('100'),
       minOut: 1n,
-      token0Address: 'kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F', // $SYRUP
-      token1Address: 'kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg', // $PAN
+      token0: 'kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F', // $SYRUP
+      token1: 'kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg', // $PAN
     })
   }, [wallet, swap])
 

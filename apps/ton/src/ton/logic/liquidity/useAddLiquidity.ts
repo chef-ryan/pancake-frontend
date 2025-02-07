@@ -1,5 +1,6 @@
+import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
-import { beginCell, toNano } from '@ton/core'
+import { Cell, beginCell, toNano } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
 import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
@@ -7,40 +8,31 @@ import { addressAtom } from 'ton/atom/addressAtom'
 import { TonContext } from 'ton/context/TonContext'
 import { Contracts } from 'ton/def/contracts.def'
 import { TonContractNames } from 'ton/ton.enums'
-import { parseAddress } from 'ton/utils/address'
-import { JettonMasterUSDT } from 'ton/wrappers/tact_JettonMasterUSDT'
+import { getJettonWalletAddress, parseAddress } from 'ton/utils/address'
 import { storeAddLiquidity } from 'ton/wrappers/tact_Router'
 
 interface AddLiquidityArgs {
-  token0Address: string
-  token1Address: string
+  token0: Currency
+  token1: Currency
 
   amount0: bigint
   amount1: bigint
 }
 
 export const useAddLiquidity = () => {
-  const userAddress = useAtomValue(addressAtom)
+  const userAddress_ = useAtomValue(addressAtom)
   const [tonUI] = useTonConnectUI()
 
   const addLiquidity = useCallback(
-    async ({ token0Address: token0Addr, token1Address: token1Addr, amount0, amount1 }: AddLiquidityArgs) => {
+    async ({ token0, token1, amount0, amount1 }: AddLiquidityArgs) => {
       const client = TonContext.instance.getClient()
-      const walletAddress = parseAddress(userAddress)
+      const userAddress = parseAddress(userAddress_)
       const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter].testnet.address)
 
-      const token0Address = parseAddress(token0Addr)
-      const token1Address = parseAddress(token1Addr)
-
-      const jettonMaster0 = client.open(JettonMasterUSDT.fromAddress(token0Address))
-      const jettonMaster1 = client.open(JettonMasterUSDT.fromAddress(token1Address))
-
-      const [userJettonWallet0, userJettonWallet1, routerJettonWallet0, routerJettonWallet1] = await Promise.all([
-        jettonMaster0.getGetWalletAddress(walletAddress),
-        jettonMaster1.getGetWalletAddress(walletAddress),
-        jettonMaster0.getGetWalletAddress(routerAddress),
-        jettonMaster1.getGetWalletAddress(routerAddress),
-      ])
+      const userJettonWallet0 = await getJettonWalletAddress(client, userAddress, token0)
+      const userJettonWallet1 = await getJettonWalletAddress(client, userAddress, token1)
+      const routerJettonWallet0 = await getJettonWalletAddress(client, routerAddress, token0)
+      const routerJettonWallet1 = await getJettonWalletAddress(client, routerAddress, token1)
 
       // const forwardPayload0 = beginCell()
       //   .storeUint(TON_OPCODES.ADD_LIQUIDITY, 32)
@@ -106,8 +98,7 @@ export const useAddLiquidity = () => {
             queryId: 1n,
             $$type: 'AddLiquidity',
             minLPOut: 0n,
-            newAmount0: amount0,
-            newAmount1: amount1,
+            tokenWallet: routerJettonWallet1,
           }),
         )
         .endCell()
@@ -118,9 +109,9 @@ export const useAddLiquidity = () => {
             queryId: 1n,
             amount: amount0,
             destination: routerAddress,
-            responseDestination: walletAddress,
+            responseDestination: userAddress,
             customPayload: null,
-            forwardAmount: toNano('0.1'),
+            forwardAmount: toNano('0.3'),
             forwardPayload: newForwardPayload0,
           }),
         )
@@ -132,8 +123,7 @@ export const useAddLiquidity = () => {
             queryId: 2n,
             $$type: 'AddLiquidity',
             minLPOut: 0n,
-            newAmount0: amount0,
-            newAmount1: amount1,
+            tokenWallet: routerJettonWallet0,
           }),
         )
         .endCell()
@@ -144,9 +134,9 @@ export const useAddLiquidity = () => {
             queryId: 2n,
             amount: amount1,
             destination: routerAddress,
-            responseDestination: walletAddress,
+            responseDestination: userAddress,
             customPayload: null,
-            forwardAmount: toNano('0.1'),
+            forwardAmount: toNano('0.3'),
             forwardPayload: newForwardPayload1,
           }),
         )
@@ -157,12 +147,12 @@ export const useAddLiquidity = () => {
         messages: [
           {
             address: userJettonWallet0.toString(),
-            amount: toNano('0.2').toString(),
+            amount: toNano('0.6').toString(),
             payload: payload0.toBoc().toString('base64'),
           },
           {
             address: userJettonWallet1.toString(),
-            amount: toNano('0.2').toString(),
+            amount: toNano('0.6').toString(),
             payload: payload1.toBoc().toString('base64'),
           },
         ],
@@ -170,7 +160,7 @@ export const useAddLiquidity = () => {
 
       tonUI.sendTransaction(newTxRequest)
     },
-    [tonUI, userAddress],
+    [tonUI, userAddress_],
   )
 
   return {

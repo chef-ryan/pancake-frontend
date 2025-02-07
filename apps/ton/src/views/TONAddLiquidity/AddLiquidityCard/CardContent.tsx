@@ -110,8 +110,8 @@ export const CardContent = (props: CardContentProps) => {
     try {
       // TODO: Handle native currencies
       addLiquidity({
-        token0Address: currency0.isNative ? '' : currency0.wrapped.address,
-        token1Address: currency1.isNative ? '' : currency1.wrapped.address,
+        token0: currency0,
+        token1: currency1,
 
         // TODO: Instead of toNano use the token's decimals
         amount0: toNano(token0Value),
