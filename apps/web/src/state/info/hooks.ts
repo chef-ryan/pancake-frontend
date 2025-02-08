@@ -1,20 +1,19 @@
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { STABLE_SUPPORTED_CHAIN_IDS } from '@pancakeswap/stable-swap-sdk'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
-import { fetchAllTokenDataByAddresses } from 'state/info/queries/tokens/tokenData'
-import { Block, Transaction, TransactionType, TvlChartEntry, VolumeChartEntry } from 'state/info/types'
+import { Transaction, TransactionType, TvlChartEntry, VolumeChartEntry } from 'state/info/types'
 import { getAprsForStableFarm } from 'utils/getAprsForStableFarm'
 import { getLpFeesAndApr } from 'utils/getLpFeesAndApr'
 import { getPercentChange } from 'utils/infoDataHelpers'
 import { explorerApiClient } from './api/client'
 import { useExplorerChainNameByQuery } from './api/hooks'
 import { operations } from './api/schema'
-import { checkIsStableSwap, multiChainId, MultiChainName, MultiChainNameExtend } from './constant'
+import { checkIsStableSwap, multiChainId, MultiChainName } from './constant'
 import { PoolData, PriceChartEntry, ProtocolData, TokenData } from './types'
 
 dayjs.extend(duration)
@@ -631,17 +630,6 @@ export const useAllTokenDataQuery = (): {
   return data ?? {}
 }
 
-const graphPerPage = 50
-
-const fetcher = (addresses: string[], chainName: MultiChainName, blocks: Block[]) => {
-  const times = Math.ceil(addresses.length / graphPerPage)
-  const addressGroup: Array<string[]> = []
-  for (let i = 0; i < times; i++) {
-    addressGroup.push(addresses.slice(i * graphPerPage, (i + 1) * graphPerPage))
-  }
-  return Promise.all(addressGroup.map((d) => fetchAllTokenDataByAddresses(chainName, blocks, d)))
-}
-
 export const useTokenDataQuery = (address: string | undefined): TokenData | undefined => {
   const chainName = useExplorerChainNameByQuery()
   const chainId = useChainIdByQuery()
@@ -984,23 +972,6 @@ export const useTokenTransactionsQuery = (address: string): Transaction[] | unde
     ...QUERY_SETTINGS_INTERVAL_REFETCH,
   })
   return data ?? undefined
-}
-
-export const useGetChainName = () => {
-  const { pathname, query } = useRouter()
-
-  const getChain = useCallback(() => {
-    if (pathname.includes('eth') || query.chain === 'eth') return 'ETH'
-    return 'BSC'
-  }, [pathname, query])
-  const [name, setName] = useState<MultiChainName | null>(() => getChain())
-  const result = useMemo(() => name, [name])
-
-  useEffect(() => {
-    setName(getChain())
-  }, [getChain])
-
-  return result
 }
 
 export const useChainNameByQuery = (): MultiChainName => {

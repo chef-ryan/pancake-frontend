@@ -1,10 +1,8 @@
 import { GraphQLClient } from 'graphql-request'
-import { infoStableSwapClients, v2Clients } from 'utils/graphql'
+import { infoStableSwapClients } from 'utils/graphql'
 
 import { ChainId, isTestnetChainId } from '@pancakeswap/chains'
 import { STABLE_SUPPORTED_CHAIN_IDS } from '@pancakeswap/stable-swap-sdk'
-import { BSC_TOKEN_WHITELIST, ETH_TOKEN_BLACKLIST, ETH_TOKEN_WHITELIST, TOKEN_BLACKLIST } from 'config/constants/info'
-import mapValues from 'lodash/mapValues'
 import { arbitrum, base, bsc, linea, mainnet, opBNB, polygonZkEvm, zkSync } from 'wagmi/chains'
 
 export type MultiChainName = 'BSC' | 'ETH' | 'POLYGON_ZKEVM' | 'ZKSYNC' | 'ARB' | 'LINEA' | 'BASE' | 'OPBNB'
@@ -25,17 +23,6 @@ export const multiChainName: Record<number | string, MultiChainNameExtend> = {
 
 export const multiChainShortName: Record<number, string> = {
   [ChainId.POLYGON_ZKEVM]: 'zkEVM',
-}
-
-export const multiChainQueryMainToken: Record<MultiChainName, string> = {
-  BSC: 'BNB',
-  ETH: 'ETH',
-  POLYGON_ZKEVM: 'ETH',
-  ZKSYNC: 'ETH',
-  ARB: 'ETH',
-  LINEA: 'ETH',
-  BASE: 'ETH',
-  OPBNB: 'ETH',
 }
 
 export const multiChainId: Record<MultiChainName, ChainId> = {
@@ -76,10 +63,6 @@ export const infoChainNameToExplorerChainName = {
   OPBNB: 'opbnb',
 } as const
 
-export const STABLESWAP_SUBGRAPHS_START_BLOCK = {
-  ARB: 169319653,
-}
-
 export const multiChainScan: Record<MultiChainName, string> = {
   BSC: bsc.blockExplorers.default.name,
   ETH: mainnet.blockExplorers.default.name,
@@ -97,40 +80,6 @@ export const multiChainScanName: Partial<Record<ChainId, string>> = {
   [ChainId.ZKSYNC_TESTNET]: 'ZKSync Explorer',
   [ChainId.LINEA]: 'LineaScan',
   [ChainId.LINEA_TESTNET]: 'LineaScan',
-}
-
-export const multiChainTokenBlackList: Record<MultiChainName, string[]> = mapValues(
-  {
-    BSC: TOKEN_BLACKLIST,
-    ETH: ETH_TOKEN_BLACKLIST,
-    POLYGON_ZKEVM: ['0x'],
-    ZKSYNC: ['0x'],
-    ARB: ['0x'],
-    LINEA: ['0x'],
-    BASE: ['0x'],
-    OPBNB: ['0x'],
-  },
-  (val) => val.map((address) => address.toLowerCase()),
-)
-
-export const multiChainTokenWhiteList: Record<MultiChainName, string[]> = mapValues(
-  {
-    BSC: BSC_TOKEN_WHITELIST,
-    ETH: ETH_TOKEN_WHITELIST,
-    POLYGON_ZKEVM: [],
-    ZKSYNC: [],
-    ARB: [],
-    LINEA: [],
-    BASE: [],
-    OPBNB: [],
-  },
-  (val) => val.map((address) => address.toLowerCase()),
-)
-
-export const getMultiChainQueryEndPointWithStableSwap = (chainName: MultiChainNameExtend): GraphQLClient => {
-  const isStableSwap = checkIsStableSwap()
-  if (isStableSwap) return multiChainQueryStableClient[chainName]
-  return v2Clients[multiChainId[chainName]]
 }
 
 export const subgraphTokenName = {
