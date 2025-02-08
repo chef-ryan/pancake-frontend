@@ -2,8 +2,10 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Box, FlexGap, Grid, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
+import { useAtomValue } from 'jotai'
 import Link from 'next/link'
 import styled from 'styled-components'
+import { networkAtom } from 'ton/atom/networkAtom'
 import { getBlockExplorerLink } from 'utils/getBlockExploreLink'
 
 const StyledFlexColumn = styled(FlexGap).attrs({ flexDirection: 'column' })`
@@ -33,6 +35,7 @@ interface ActionProps {
 
 export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type }: ActionProps) => {
   const { t } = useTranslation()
+  const network = useAtomValue(networkAtom)
 
   return (
     <StyledFlexColumn gap="8px">
@@ -82,7 +85,7 @@ export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type
 
       <Box mt="auto">
         <Text color="primary60">
-          <Link href={getBlockExplorerLink(hash, 'transaction')} target="_blank">
+          <Link href={getBlockExplorerLink(hash, 'transaction', network)} target="_blank">
             {t('View on explorer:')} {hash}
           </Link>
         </Text>

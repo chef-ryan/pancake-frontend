@@ -1,5 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, BoxProps, BscScanIcon, LinkExternal, TooltipOptions, useTooltip } from '@pancakeswap/uikit'
+import { useAtomValue } from 'jotai'
+import { networkAtom } from 'ton/atom/networkAtom'
 import { getBlockExplorerLink } from 'utils/getBlockExploreLink'
 
 interface ViewOnExplorerButtonProps extends BoxProps {
@@ -20,6 +22,7 @@ export const ViewOnExplorerButton = ({
   ...props
 }: ViewOnExplorerButtonProps) => {
   const { t } = useTranslation()
+  const network = useAtomValue(networkAtom)
 
   const { targetRef, tooltipVisible, tooltip } = useTooltip(t('Open on Explorer'), {
     placement: tooltipPlacement,
@@ -29,7 +32,7 @@ export const ViewOnExplorerButton = ({
     <>
       <Box ref={targetRef} {...props}>
         <LinkExternal
-          href={getBlockExplorerLink(address, type)}
+          href={getBlockExplorerLink(address, type, network)}
           target="_blank"
           rel="noopener noreferrer"
           title={t('Open on Explorer')}

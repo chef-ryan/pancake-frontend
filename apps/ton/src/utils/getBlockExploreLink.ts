@@ -1,24 +1,26 @@
-import { blockExplorerUrl } from 'config/constants/endpoints'
+import { blockExplorerUrls } from 'config/constants/endpoints'
+import { TonNetworks } from 'ton/ton.enums'
 
 export function getBlockExplorerLink(
   data: string | number | undefined | null,
   type: 'transaction' | 'token' | 'address' | 'block' | 'countdown',
+  network = TonNetworks.Mainnet,
 ): string {
   switch (type) {
     case 'transaction': {
-      return `${blockExplorerUrl}/tx/${data}`
+      return `${blockExplorerUrls[network]}/tx/${data}`
     }
     case 'token': {
-      return `${blockExplorerUrl}/jetton/${data}`
+      return `${blockExplorerUrls[network]}/jetton/${data}`
     }
     case 'block': {
-      return `${blockExplorerUrl}/block/${data}`
+      return `${blockExplorerUrls[network]}/block/${data}`
     }
     case 'countdown': {
-      return `${blockExplorerUrl}/block/countdown/${data}`
+      return `${blockExplorerUrls[network]}/block/countdown/${data}`
     }
     default: {
-      return `${blockExplorerUrl}/address/${data}`
+      return `${blockExplorerUrls[network]}/address/${data}`
     }
   }
 }

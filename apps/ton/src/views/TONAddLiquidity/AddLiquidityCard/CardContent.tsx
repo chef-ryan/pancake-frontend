@@ -7,6 +7,7 @@ import { currency0Atom, currency0Value, currency1Atom, currency1Value } from 'at
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
 import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
+import { DEFAULT_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
@@ -60,8 +61,12 @@ export const CardContent = (props: CardContentProps) => {
     const poolReserve1 = CurrencyAmount.fromRawAmount(currency1, poolData.reserve1)
 
     return {
-      currency0: !poolReserve0.equalTo(0) ? poolReserve1.divide(poolReserve0).toSignificant(5) : 0,
-      currency1: !poolReserve1.equalTo(0) ? poolReserve0.divide(poolReserve1).toSignificant(5) : 0,
+      currency0: !poolReserve0.equalTo(0)
+        ? poolReserve1.divide(poolReserve0).toSignificant(DEFAULT_SIGNIFICANT_DIGITS)
+        : 0,
+      currency1: !poolReserve1.equalTo(0)
+        ? poolReserve0.divide(poolReserve1).toSignificant(DEFAULT_SIGNIFICANT_DIGITS)
+        : 0,
     }
   }, [poolData, currency0, currency1])
 
