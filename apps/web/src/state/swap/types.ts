@@ -13,16 +13,3 @@ export type DerivedPairDataNormalized = {
   token0DerivedUSD: number
   token1DerivedUSD: number
 }[]
-
-export type PairPricesNormalized = {
-  time: Date
-  value: number
-}[]
-
-export enum TradeState {
-  INVALID,
-  LOADING,
-  NO_ROUTE_FOUND,
-  SYNCING,
-  VALID,
-}
