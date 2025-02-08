@@ -379,7 +379,9 @@ function RoutingSettings() {
             <Flex flexDirection="column">
               <Text>PancakeSwap X</Text>
               <Text fontSize="12px" color="textSubtle" maxWidth={360} mt={10}>
-                When applicable, aggregates liquidity to provide better price, more token options, and gas free swaps.
+                {t(
+                  'When applicable, aggregates liquidity to provide better price, more token options, and gas free swaps.',
+                )}
               </Text>
             </Flex>
             <PancakeToggle
