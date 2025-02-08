@@ -15,7 +15,7 @@ import { keyframes, styled } from 'styled-components'
 import { useTheme } from '@pancakeswap/hooks'
 import { SwapUIV2 } from '@pancakeswap/widgets-internal'
 import { LottieRefCurrentProps } from 'lottie-react'
-import { useAllowRecipient } from '../../Swap/V3Swap/hooks'
+import { useAllowRecipient } from 'views/Swap/hooks/useAllowRecipient'
 
 import ArrowDark from '../../../../public/images/swap/arrow_dark.json' assert { type: 'json' }
 import ArrowLight from '../../../../public/images/swap/arrow_light.json' assert { type: 'json' }

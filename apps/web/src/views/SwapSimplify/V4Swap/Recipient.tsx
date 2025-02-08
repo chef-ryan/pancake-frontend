@@ -3,7 +3,7 @@ import { memo } from 'react'
 import { useSwapState } from 'state/swap/hooks'
 import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
 
-import { useAllowRecipient } from '../../Swap/V3Swap/hooks'
+import { useAllowRecipient } from 'views/Swap/hooks/useAllowRecipient'
 import AddressInputPanel from './AddressInputPanel'
 
 export const Recipient = memo(function Recipient() {

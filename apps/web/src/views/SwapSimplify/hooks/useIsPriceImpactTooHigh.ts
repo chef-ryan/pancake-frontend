@@ -3,7 +3,7 @@ import { useMemo, useRef } from 'react'
 import { warningSeverity } from 'utils/exchange'
 import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
 
-import { computeTradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
+import { computeTradePriceBreakdown } from 'views/Swap/utils/exchange'
 
 export const useIsPriceImpactTooHigh = (bestOrder: InterfaceOrder | undefined, isLoading?: boolean) => {
   const { chainId } = useActiveChainId()

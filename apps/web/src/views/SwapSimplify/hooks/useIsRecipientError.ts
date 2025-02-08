@@ -3,7 +3,7 @@ import { useGetENSAddressByName } from 'hooks/useGetENSAddressByName'
 import { useMemo } from 'react'
 import { useSwapState } from 'state/swap/hooks'
 import { safeGetAddress } from 'utils'
-import { useAllowRecipient } from '../../Swap/V3Swap/hooks'
+import { useAllowRecipient } from 'views/Swap/hooks/useAllowRecipient'
 
 export const useIsRecipientError = () => {
   const { recipient } = useSwapState()

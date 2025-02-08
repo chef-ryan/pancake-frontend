@@ -1,25 +1,11 @@
 import { AutoColumn, ErrorIcon, Flex, Text } from '@pancakeswap/uikit'
-import { css, styled } from 'styled-components'
+import { styled } from 'styled-components'
 
 export const Wrapper = styled(Flex)`
   position: relative;
   flex-direction: column;
   justify-content: space-between;
   padding: 1rem;
-`
-
-export const ArrowWrapper = styled.div<{ clickable: boolean }>`
-  padding: 2px;
-
-  ${({ clickable }) =>
-    clickable
-      ? css`
-          &:hover {
-            cursor: pointer;
-            opacity: 0.8;
-          }
-        `
-      : null}
 `
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`

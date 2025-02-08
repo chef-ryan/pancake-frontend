@@ -22,12 +22,12 @@ import { RowBetween, RowFixed } from 'components/Layout/Row'
 import { RoutingSettingsButton } from 'components/Menu/GlobalSettings/SettingsModalV2'
 import { Field } from 'state/swap/actions'
 import { styled } from 'styled-components'
-import FormattedPriceImpact from '../../Swap/components/FormattedPriceImpact'
-import { RouterViewer } from '../../Swap/components/RouterViewer'
-import SwapRoute from '../../Swap/components/SwapRoute'
-import { useFeeSaved } from '../../Swap/hooks/useFeeSaved'
-import { SlippageButton } from '../../Swap/V3Swap/components/SlippageButton'
-import { SlippageAdjustedAmounts } from '../../Swap/V3Swap/utils/exchange'
+import { SlippageAdjustedAmounts } from 'views/Swap/utils/exchange'
+import FormattedPriceImpact from 'views/Swap/components/FormattedPriceImpact'
+import { RouterViewer } from 'views/Swap/components/RouterViewer'
+import SwapRoute from 'views/Swap/components/SwapRoute'
+import { useFeeSaved } from 'views/Swap/hooks/useFeeSaved'
+import { SlippageButton } from 'views/Swap/components/SlippageButton'
 
 const DetailsTitle = styled(Text)`
   text-decoration: underline dotted;

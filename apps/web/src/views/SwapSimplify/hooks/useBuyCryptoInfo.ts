@@ -2,7 +2,7 @@ import { PriceOrder } from '@pancakeswap/price-api-sdk'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useCanBuyCrypto } from 'hooks/useCanBuyCrypto'
 import { useMemo } from 'react'
-import { useSwapCurrency } from '../../Swap/V3Swap/hooks/useSwapCurrency'
+import { useSwapCurrency } from 'views/Swap/hooks/useSwapCurrency'
 import { useUserInsufficientBalance } from './useUserInsufficientBalance'
 
 export function useBuyCryptoInfo(order: PriceOrder | undefined): {

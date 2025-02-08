@@ -6,32 +6,36 @@ import {
   BackForwardIcon,
   Box,
   Button,
+  DottedHelpText,
   Flex,
   Link,
-  QuestionHelper,
+  QuestionHelperV2,
   Text,
   WarningIcon,
+  useMatchBreakpoints,
   useTooltip,
 } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { CurrencyLogo as CurrencyLogoWidget } from '@pancakeswap/widgets-internal'
 import { AutoRow, RowBetween, RowFixed } from 'components/Layout/Row'
 import { useGasToken } from 'hooks/useGasToken'
-import { memo, useMemo, useState } from 'react'
+import { ReactElement, memo, useMemo, useState } from 'react'
 import { Field } from 'state/swap/actions'
 import { styled } from 'styled-components'
 import { warningSeverity } from 'utils/exchange'
 
+import { PancakeSwapXTag } from 'components/PancakeSwapXTag'
 import { paymasterInfo } from 'config/paymaster'
 import { usePaymaster } from 'hooks/usePaymaster'
-import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
 import { isAddressEqual } from 'utils'
-import FormattedPriceImpact from '../../components/FormattedPriceImpact'
-import { StyledBalanceMaxMini, SwapCallbackError } from '../../components/styleds'
-import { SlippageAdjustedAmounts, formatExecutionPrice } from '../utils/exchange'
+import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
+import { SlippageAdjustedAmounts, formatExecutionPrice } from 'views/Swap/utils/exchange'
+import FormattedPriceImpact from './FormattedPriceImpact'
+import { StyledBalanceMaxMini, SwapCallbackError } from './styleds'
+import { SlippageButton } from './SlippageButton'
 
 const SwapModalFooterContainer = styled(AutoColumn)`
-  margin-top: 24px;
+  margin-top: 12px;
   padding: 16px;
   border-radius: ${({ theme }) => theme.radii.default};
   border: 1px solid ${({ theme }) => theme.colors.cardBorder};
@@ -61,13 +65,14 @@ const Badge = styled.span`
   background-color: ${({ theme }) => theme.colors.success};
 `
 
-export const SwapModalFooter = memo(function SwapModalFooter({
+export const SwapModalFooterV2 = memo(function SwapModalFooterV2({
   priceImpact: priceImpactWithoutFee,
   lpFee: realizedLPFee,
   inputAmount,
   outputAmount,
   order,
   tradeType,
+  allowedSlippage,
   slippageAdjustedAmounts,
   isEnoughInputBalance,
   onConfirm,
@@ -80,6 +85,7 @@ export const SwapModalFooter = memo(function SwapModalFooter({
   inputAmount: CurrencyAmount<Currency>
   outputAmount: CurrencyAmount<Currency>
   priceImpact?: Percent
+  allowedSlippage: number | ReactElement
   slippageAdjustedAmounts: SlippageAdjustedAmounts | undefined | null
   isEnoughInputBalance?: boolean
   swapErrorMessage?: string | undefined
@@ -88,10 +94,13 @@ export const SwapModalFooter = memo(function SwapModalFooter({
 }) {
   const { t } = useTranslation()
   const [showInverted, setShowInverted] = useState<boolean>(false)
+  const { isMobile } = useMatchBreakpoints()
 
   const [gasToken] = useGasToken()
   const { isPaymasterAvailable, isPaymasterTokenActive } = usePaymaster()
   const gasTokenInfo = paymasterInfo[gasToken.isToken ? gasToken?.wrapped.address : '']
+
+  const displayDecimals = isMobile ? 6 : 12
 
   const showSameTokenWarning = useMemo(
     () =>
@@ -123,7 +132,10 @@ export const SwapModalFooter = memo(function SwapModalFooter({
     <>
       <SwapModalFooterContainer>
         <RowBetween align="center" mb="8px">
-          <Text fontSize="14px">{t('Price')}</Text>
+          <Text color="textSubtle" fontSize="14px" ml="4px">
+            {t('Price')}
+          </Text>
+
           <Text
             fontSize="14px"
             style={{
@@ -142,43 +154,61 @@ export const SwapModalFooter = memo(function SwapModalFooter({
         </RowBetween>
         <RowBetween mb="8px">
           <RowFixed>
-            <Text fontSize="14px">
-              {tradeType === TradeType.EXACT_INPUT ? t('Minimum received') : t('Maximum sold')}
-            </Text>
-            <QuestionHelper
+            <QuestionHelperV2
+              ml="4px"
+              placement="top"
+              text={<>{t('The difference between the market price and your price due to trade size.')}</>}
+            >
+              <DottedHelpText fontSize="14px">{t('Price Impact')}</DottedHelpText>
+            </QuestionHelperV2>
+          </RowFixed>
+          <FormattedPriceImpact isX={isXOrder(order)} priceImpact={priceImpactWithoutFee} />
+        </RowBetween>
+        {!isXOrder(order) && (
+          <RowBetween mb="8px">
+            <RowFixed>
+              <QuestionHelperV2
+                ml="4px"
+                placement="top"
+                text={t(
+                  'Setting a high slippage tolerance can help transactions succeed, but you may not get such a good price. Use with caution.',
+                )}
+              >
+                <DottedHelpText fontSize="14px">{t('Slippage Tolerance')}</DottedHelpText>
+              </QuestionHelperV2>
+            </RowFixed>
+            <SlippageButton slippage={allowedSlippage} />
+          </RowBetween>
+        )}
+        <RowBetween mb="8px">
+          <RowFixed>
+            <QuestionHelperV2
               text={t(
                 'Your transaction will revert if there is a large, unfavorable price movement before it is confirmed.',
               )}
               ml="4px"
               placement="top"
-            />
+            >
+              <DottedHelpText fontSize="14px">
+                {tradeType === TradeType.EXACT_INPUT ? t('Minimum received') : t('Maximum sold')}
+              </DottedHelpText>
+            </QuestionHelperV2>
           </RowFixed>
           <RowFixed>
             <Text fontSize="14px">
               {tradeType === TradeType.EXACT_INPUT
-                ? formatAmount(slippageAdjustedAmounts?.[Field.OUTPUT], 4) ?? '-'
-                : formatAmount(slippageAdjustedAmounts?.[Field.INPUT], 4) ?? '-'}
+                ? formatAmount(slippageAdjustedAmounts?.[Field.OUTPUT], displayDecimals) ?? '-'
+                : formatAmount(slippageAdjustedAmounts?.[Field.INPUT], displayDecimals) ?? '-'}
             </Text>
             <Text fontSize="14px" marginLeft="4px">
               {tradeType === TradeType.EXACT_INPUT ? outputAmount.currency.symbol : inputAmount.currency.symbol}
             </Text>
           </RowFixed>
         </RowBetween>
-        <RowBetween mb="8px">
+
+        <RowBetween mt="2px">
           <RowFixed>
-            <Text fontSize="14px">{t('Price Impact')}</Text>
-            <QuestionHelper
-              ml="4px"
-              placement="top"
-              text={<>{t('The difference between the market price and your price due to trade size.')}</>}
-            />
-          </RowFixed>
-          <FormattedPriceImpact isX={isXOrder(order)} priceImpact={priceImpactWithoutFee} />
-        </RowBetween>
-        <RowBetween>
-          <RowFixed>
-            <Text fontSize="14px">{t('Trading Fee')}</Text>
-            <QuestionHelper
+            <QuestionHelperV2
               ml="4px"
               placement="top"
               text={
@@ -200,20 +230,23 @@ export const SwapModalFooter = memo(function SwapModalFooter({
                   </Text>
                 </>
               }
-            />
+            >
+              <DottedHelpText fontSize="14px">{t('Trading Fee')}</DottedHelpText>
+            </QuestionHelperV2>
           </RowFixed>
           {realizedLPFee || isXOrder(order) ? (
-            <Flex>
+            <Flex alignItems="center">
               {isXOrder(order) ? (
-                <Text color="primary" fontSize="14px">
-                  0 {inputAmount.currency.symbol}
+                <Text color="positive60" fontSize="16px" bold>
+                  0
                 </Text>
               ) : null}
-              {!isXOrder(order) && realizedLPFee && (
-                <Text fontSize="14px" mr="8px" strikeThrough={isXOrder(order)}>
-                  {`${formatAmount(realizedLPFee, 6)} ${inputAmount.currency.symbol}`}
-                </Text>
-              )}
+              <Text fontSize="14px" ml="8px" strikeThrough={isXOrder(order)}>
+                {formatAmount(realizedLPFee, 6)}
+              </Text>
+              <Text ml="4px" fontSize="14px">
+                {inputAmount.currency.symbol}
+              </Text>
             </Flex>
           ) : (
             <Text fontSize="14px" textAlign="right">
@@ -221,10 +254,20 @@ export const SwapModalFooter = memo(function SwapModalFooter({
             </Text>
           )}
         </RowBetween>
+        {isXOrder(order) && (
+          <RowBetween mt="8px">
+            <RowFixed>
+              <Text fontSize="14px">{t('Route')}</Text>
+            </RowFixed>
+            <PancakeSwapXTag fontSize="14px" />
+          </RowBetween>
+        )}
         {isPaymasterAvailable && isPaymasterTokenActive && (
           <RowBetween mt="8px">
             <RowFixed>
-              <Text fontSize="14px">{t('Gas Token')}</Text>
+              <Text color="textSubtle" fontSize="14px">
+                {t('Gas Token')}
+              </Text>
               {gasTokenInfo && gasTokenInfo.discount && (
                 <Badge
                   ref={targetRef}

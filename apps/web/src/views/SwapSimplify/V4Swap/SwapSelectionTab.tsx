@@ -5,9 +5,9 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { styled } from 'styled-components'
+import { SwapType } from 'views/Swap/types'
+import { isTwapSupported } from 'views/Swap/utils'
 import { SettingsMode } from '../../../components/Menu/GlobalSettings/types'
-import { SwapType } from '../../Swap/types'
-import { isTwapSupported } from '../../Swap/utils'
 
 // const ColoredIconButton = styled(IconButton)`
 //   color: ${({ theme }) => theme.colors.textSubtle};

@@ -4,7 +4,7 @@ import { Trans, useTranslation } from '@pancakeswap/localization'
 import { AutoRow, Checkbox, FlexGap, GroupsIcon, RocketIcon, Tag, Text, VoteIcon } from '@pancakeswap/uikit'
 import { FeeAmount } from '@pancakeswap/v3-sdk'
 import styled from 'styled-components'
-import { v3FeeToPercent } from 'views/Swap/V3Swap/utils/exchange'
+import { v3FeeToPercent } from 'views/Swap/utils/exchange'
 import { NetworkBadge } from '../NetworkBadge'
 import { Gauges, OptionsType } from './type'
 

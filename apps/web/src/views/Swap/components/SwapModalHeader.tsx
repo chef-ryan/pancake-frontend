@@ -8,7 +8,7 @@ import { CurrencyLogo } from 'components/Logo'
 import { ReactElement, useMemo } from 'react'
 import { Field } from 'state/swap/actions'
 import { basisPointsToPercent, warningSeverity } from 'utils/exchange'
-import { SlippageAdjustedAmounts } from '../V3Swap/utils/exchange'
+import { SlippageAdjustedAmounts } from 'views/Swap/utils/exchange'
 import { SwapShowAcceptChanges, TruncatedText } from './styleds'
 
 export default function SwapModalHeader({

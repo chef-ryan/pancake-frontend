@@ -227,15 +227,6 @@ const FlipButtonWrapper = styled.div`
   }
 `
 
-export const Line = styled.div`
-  position: absolute;
-  left: -16px;
-  right: -16px;
-  height: 1px;
-  background-color: ${({ theme }) => theme.colors.cardBorder};
-  top: calc(50% + 6px);
-`
-
 const FlipButton = memo(function FlipButton({ onClick }: { onClick: () => void }) {
   const flipButtonRef = useRef<HTMLDivElement>(null)
   const lottieRef = useRef<LottieRefCurrentProps | null>(null)

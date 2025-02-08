@@ -7,7 +7,7 @@ import { memo } from 'react'
 
 import SettingsModal from 'components/Menu/GlobalSettings/SettingsModal'
 import { SettingsMode } from 'components/Menu/GlobalSettings/types'
-import { useIsWrapping } from '../../Swap/V3Swap/hooks'
+import { useIsWrapping } from 'views/Swap/hooks/useIsWrapping'
 
 interface Props {
   showSlippage?: boolean

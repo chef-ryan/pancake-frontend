@@ -5,9 +5,9 @@ import { Field } from 'state/swap/actions'
 import { PriceOrder } from '@pancakeswap/price-api-sdk'
 import { useCurrencyBalances } from 'state/wallet/hooks'
 import { useAccount } from 'wagmi'
-import { useAllTypeBestTrade } from '../../Swap/V3Swap/hooks/useAllTypeBestTrade'
-import { useSlippageAdjustedAmounts } from '../../Swap/V3Swap/hooks/useSlippageAdjustedAmounts'
-import { useSwapCurrency } from '../../Swap/V3Swap/hooks/useSwapCurrency'
+import { useAllTypeBestTrade } from 'views/Swap/hooks/useAllTypeBestTrade'
+import { useSlippageAdjustedAmounts } from 'views/Swap/hooks/useSlippageAdjustedAmounts'
+import { useSwapCurrency } from 'views/Swap/hooks/useSwapCurrency'
 
 export function useUserInsufficientBalance(order: PriceOrder | undefined): boolean {
   const [inputCurrency, outputCurrency] = useSwapCurrency()

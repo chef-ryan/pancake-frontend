@@ -24,8 +24,8 @@ import { SwapTransactionErrorContent } from 'views/Swap/components/SwapTransacti
 
 import { Hash } from 'viem'
 import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
+import { useSlippageAdjustedAmounts } from 'views/Swap/hooks/useSlippageAdjustedAmounts'
 import { TransactionConfirmSwapContentV2 } from '../components/TransactionConfirmSwapContentV2'
-import { useSlippageAdjustedAmounts } from '../hooks'
 import { ConfirmAction } from '../hooks/useConfirmModalState'
 import { AllowedAllowanceState } from '../types'
 import { ApproveStepFlow } from './ApproveStepFlow'

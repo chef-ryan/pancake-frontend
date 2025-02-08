@@ -17,7 +17,7 @@ import { memo, useMemo } from 'react'
 
 import { RoutingSettingsButton } from 'components/Menu/GlobalSettings/SettingsModalV2'
 import { CurrencyLogoWrapper, RouterBox, RouterPoolBox, RouterTypeText } from 'views/Swap/components/RouterViewer'
-import { v3FeeToPercent } from '../utils/exchange'
+import { v3FeeToPercent } from 'views/Swap/utils/exchange'
 
 type Pair = [Currency, Currency]
 

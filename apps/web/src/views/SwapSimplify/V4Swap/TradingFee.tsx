@@ -4,8 +4,9 @@ import { FlexGap, SkeletonV2, Text } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { memo, useMemo } from 'react'
 import { isXOrder } from 'views/Swap/utils'
-import { useIsWrapping, useSlippageAdjustedAmounts } from '../../Swap/V3Swap/hooks'
-import { computeTradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
+import { computeTradePriceBreakdown } from 'views/Swap/utils/exchange'
+import { useIsWrapping } from 'views/Swap/hooks/useIsWrapping'
+import { useSlippageAdjustedAmounts } from 'views/Swap/hooks/useSlippageAdjustedAmounts'
 
 interface TradingFeeProps {
   loaded: boolean

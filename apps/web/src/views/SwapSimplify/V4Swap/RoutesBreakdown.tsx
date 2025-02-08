@@ -7,8 +7,8 @@ import { styled } from 'styled-components'
 
 import { RowBetween } from 'components/Layout/Row'
 import SwapRoute from 'views/Swap/components/SwapRoute'
-import { RouteDisplayEssentials, RouteDisplayModal } from '../../Swap/V3Swap/components/RouteDisplayModal'
-import { useWallchainStatus } from '../../Swap/V3Swap/hooks/useWallchain'
+import { RouteDisplayEssentials, RouteDisplayModal } from 'views/Swap/components/RouteDisplayModal'
+import { useWallchainStatus } from 'views/Swap/hooks/useWallchain'
 
 interface Props {
   routes?: RouteDisplayEssentials[]
