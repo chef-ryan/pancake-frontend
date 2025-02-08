@@ -16,6 +16,7 @@ import {
   TupleBuilder,
   TupleReader,
 } from '@ton/core'
+import { TON_OPCODES } from 'ton/opcodes'
 
 export type StateInit = {
   $$type: 'StateInit'
@@ -4670,19 +4671,13 @@ function dictValueParserStateInitWithAddress(): DictionaryValue<StateInitWithAdd
 export type AddLiquidity = {
   $$type: 'AddLiquidity'
   queryId: bigint
-  newAmount0: bigint
-  newAmount1: bigint
   minLPOut: bigint
+  tokenWallet: Address
 }
 
 export function storeAddLiquidity(src: AddLiquidity) {
   return (builder: Builder) => {
-    let b_0 = builder
-    b_0.storeUint(3906656429, 32)
-    b_0.storeUint(src.queryId, 64)
-    b_0.storeCoins(src.newAmount0)
-    b_0.storeCoins(src.newAmount1)
-    b_0.storeCoins(src.minLPOut)
+    builder.storeUint(TON_OPCODES.ADD_LIQUIDITY, 32).storeAddress(src.tokenWallet).storeCoins(src.minLPOut)
   }
 }
 
