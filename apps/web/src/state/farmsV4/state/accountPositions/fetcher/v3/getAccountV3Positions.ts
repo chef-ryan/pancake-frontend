@@ -99,5 +99,9 @@ export const getAccountV3Positions = async (chainId: number, account: Address): 
     positions[index].isStaked = index < farmingTokenIdsLength
   })
 
-  return positions
+  return positions.sort((a, b) => {
+    const aId = a.tokenId ?? BigInt(0)
+    const bId = b.tokenId ?? BigInt(0)
+    return aId < bId ? 1 : -1
+  })
 }
