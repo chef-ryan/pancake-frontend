@@ -17,12 +17,20 @@ export const poolDataQueryAtom = atomFamily(({ token0Address, token1Address }: P
       const poolAddress = await get(poolAddressAtom({ token0Address, token1Address }))
       if (!poolAddress) return null
 
-      const pool = get(poolContractAtom(poolAddress.toString()))
-      return pool.getGetPoolData()
+      const pool = get(poolContractAtom(poolAddress))
+
+      const result = await pool.getGetPoolData()
+
+      console.log('poolDataQueryAtom', {
+        poolAddress: poolAddress.toString(),
+        result,
+      })
+
+      return result
     },
     enabled: !!token0Address && !!token1Address,
     staleTime: QUERY_DEFAULT_STALE_TIME, // 1 minute
     refetchInterval: QUERY_DEFAULT_STALE_TIME, // 1 minute
-    retry: false,
+    retry: 1,
   }))
 }, isEqual)

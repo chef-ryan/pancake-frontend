@@ -34,8 +34,8 @@ export const Contracts = {
       address: '',
     },
     [TonNetworks.Testnet]: {
-      // address: 'kQB-oiKteYtZu8F37inMW2NXDz0DeYNAw4tjd8wZGTUpIkJG',
-      address: 'kQA8fEASOX1UJ9bDwGCneGKrrOy7qIucg8G5x5me7aY5yhRi', // OLD Router
+      address: 'kQB-oiKteYtZu8F37inMW2NXDz0DeYNAw4tjd8wZGTUpIkJG',
+      // address: 'kQA8fEASOX1UJ9bDwGCneGKrrOy7qIucg8G5x5me7aY5yhRi', // OLD Router
     },
   },
 } as const

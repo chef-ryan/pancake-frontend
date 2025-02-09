@@ -164,7 +164,7 @@ export const CardContent = (props: CardContentProps) => {
         <FlexGap flexDirection="column" mt="24px" gap="16px">
           <Flex justifyContent="space-between">
             <Text color="textSubtle">Rates</Text>
-            {poolData?.reserve0 && poolData.reserve1 ? (
+            {poolData ? (
               <Box>
                 <Text>
                   1 {currency0?.symbol} ≈ {rates.currency0.toString()} {currency1?.symbol}
