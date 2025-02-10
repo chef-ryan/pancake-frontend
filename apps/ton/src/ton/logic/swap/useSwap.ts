@@ -86,7 +86,6 @@ export const useSwap = () => {
       const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter].testnet.address)
 
       const userJettonWallet0 = await getJettonWalletAddress(client, userAddress, token0)
-      const userJettonWallet1 = await getJettonWalletAddress(client, userAddress, token1)
       const routerJettonWallet1 = await getJettonWalletAddress(client, routerAddress, token1)
 
       const forwardPayload = beginCell()

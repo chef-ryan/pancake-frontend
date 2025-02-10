@@ -4730,13 +4730,13 @@ function loadGetterTupleAddLiquidity(source: TupleReader) {
 function storeTupleAddLiquidity(source: AddLiquidity) {
   let builder = new TupleBuilder()
   builder.writeNumber(source.queryId)
-  builder.writeNumber(source.newAmount0)
-  builder.writeNumber(source.newAmount1)
+  // builder.writeNumber(source.newAmount0)
+  // builder.writeNumber(source.newAmount1)
   builder.writeNumber(source.minLPOut)
   return builder.build()
 }
 
-function dictValueParserAddLiquidity(): DictionaryValue<AddLiquidity> {
+/* function dictValueParserAddLiquidity(): DictionaryValue<AddLiquidity> {
   return {
     serialize: (src, builder) => {
       builder.storeRef(beginCell().store(storeAddLiquidity(src)).endCell())
@@ -4745,7 +4745,7 @@ function dictValueParserAddLiquidity(): DictionaryValue<AddLiquidity> {
       return loadAddLiquidity(src.loadRef().beginParse())
     },
   }
-}
+} */
 
 export type LPAccountData = {
   $$type: 'LPAccountData'
