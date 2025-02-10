@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount } from '@pancakeswap/ton-v2-sdk'
+import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { AddIcon, Box, BoxProps, Button, Flex, FlexGap, Loading, Text, useToast } from '@pancakeswap/uikit'
 import { toNano } from '@ton/core'
 import { setCurrencyAtom } from 'atoms/currencyAtoms'
@@ -8,7 +8,8 @@ import { BigNumber as BN } from 'bignumber.js'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
 import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
-import { DEFAULT_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
+import { NumberDisplay } from 'components/widgets/NumberDisplay'
+import { usePoolRates } from 'hooks/liquidity/usePoolRates'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
@@ -66,25 +67,12 @@ export const CardContent = (props: CardContentProps) => {
     return BN(lpBalance.toString()).div(BN(poolData.totalSupply.toString())).times(100).toNumber()
   }, [lpBalance, poolData?.totalSupply])
 
-  const rates = useMemo(() => {
-    if (!poolData || !currency0 || !currency1)
-      return {
-        currency0: '-',
-        currency1: '-',
-      }
-
-    const poolReserve0 = CurrencyAmount.fromRawAmount(currency0, poolData.reserve0)
-    const poolReserve1 = CurrencyAmount.fromRawAmount(currency1, poolData.reserve1)
-
-    return {
-      currency0: !poolReserve0.equalTo(0)
-        ? poolReserve1.divide(poolReserve0).toSignificant(DEFAULT_SIGNIFICANT_DIGITS)
-        : 0,
-      currency1: !poolReserve1.equalTo(0)
-        ? poolReserve0.divide(poolReserve1).toSignificant(DEFAULT_SIGNIFICANT_DIGITS)
-        : 0,
-    }
-  }, [poolData, currency0, currency1])
+  const rates = usePoolRates({
+    currency0,
+    currency1,
+    reserve0: poolData?.reserve0,
+    reserve1: poolData?.reserve1,
+  })
 
   const setCurrency = useSetAtom(setCurrencyAtom)
 
@@ -179,7 +167,7 @@ export const CardContent = (props: CardContentProps) => {
 
         <FlexGap flexDirection="column" mt="24px" gap="16px">
           <Flex justifyContent="space-between">
-            <Text color="textSubtle">Rates</Text>
+            <Text color="textSubtle">{t('Rates')}</Text>
             {poolData ? (
               <Box>
                 <Text>
@@ -202,7 +190,7 @@ export const CardContent = (props: CardContentProps) => {
           <Flex justifyContent="space-between">
             <Text color="textSubtle">{t('Your share in the pair')}</Text>
 
-            <Text>{shareInPool.toString()}%</Text>
+            <NumberDisplay value={shareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
             <Text color="textSubtle">{t('Slippage Tolerance')}</Text>

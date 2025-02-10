@@ -1,7 +1,9 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { ArrowDownIcon, Box, BoxProps, Button, Flex, FlexGap, MinusIcon, Slider, Text } from '@pancakeswap/uikit'
+import { SlippageButton } from 'components/Buttons/SlippageButton'
 import { LightGreyCard } from 'components/Card'
 import { WalletDisclaimer } from 'components/Card/WalletDisclaimer'
+import { usePoolRates } from 'hooks/liquidity/usePoolRates'
 import { useRouter } from 'next/router'
 import { useCallback, useState } from 'react'
 import styled from 'styled-components'
@@ -44,6 +46,13 @@ export const CardContent = (props: CardContentProps) => {
 
   const [sliderValue, setSliderValue] = useState(0)
 
+  const rates = usePoolRates({
+    currency0: undefined,
+    currency1: undefined,
+    reserve0: undefined,
+    reserve1: undefined,
+  })
+
   const handleSliderChange = useCallback((value: number) => {
     setSliderValue(Math.round(value))
   }, [])
@@ -73,11 +82,9 @@ export const CardContent = (props: CardContentProps) => {
             ))}
           </FlexGap>
         </LightGreyCard>
-
         <FlexGap alignItems="center" justifyContent="center" mt="12px">
           <ArrowDownIcon mt="12px" color="textSubtle" width={28} />
         </FlexGap>
-
         <Text color="textSubtle">You will receive</Text>
         <LightGreyCard mt="8px">
           <FlexGap flexDirection="column" gap="8px">
@@ -99,6 +106,35 @@ export const CardContent = (props: CardContentProps) => {
             </Flex>
           </FlexGap>
         </LightGreyCard>
+
+        <FlexGap flexDirection="column" mt="24px" gap="16px">
+          {/* <Flex justifyContent="space-between">
+            <Text color="textSubtle">Rates</Text>
+            {rates ? (
+              <Box>
+                <Text>
+                  1 {currency0?.symbol} ≈ {rates.currency0.toString()} {currency1?.symbol}
+                </Text>
+                <Text>
+                  1 {currency1?.symbol} ≈ {rates.currency1.toString()} {currency0?.symbol}
+                </Text>
+              </Box>
+            ) : isPoolDataLoading ? (
+              <>
+                <Loading />
+              </>
+            ) : (
+              <>
+                <Text>{t('Pool does not exist')}</Text>
+              </>
+            )}
+          </Flex> */}
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
+
+            <SlippageButton />
+          </Flex>
+        </FlexGap>
       </ContentContainer>
 
       {isWalletConnected && (

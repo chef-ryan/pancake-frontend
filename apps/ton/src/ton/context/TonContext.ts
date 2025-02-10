@@ -18,7 +18,7 @@ export class TonContext extends Emiter<TonContextEvents> {
   }
 
   public getClient() {
-    return this.tonClient!
+    return this.tonClient ?? ({} as unknown as TonClient)
   }
 
   public static instance = new TonContext()
