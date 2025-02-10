@@ -1,4 +1,4 @@
-import { Token } from './Token'
+import { Token } from './currency/Token'
 import { TonChainId } from './chains'
 
 export const WNATIVE = {

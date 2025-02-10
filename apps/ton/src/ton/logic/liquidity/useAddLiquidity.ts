@@ -1,4 +1,4 @@
-import { Currency } from '@pancakeswap/ton-v2-sdk'
+import { Currency, storeAddLiquidity } from '@pancakeswap/ton-v2-sdk'
 import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
 import { beginCell, toNano } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
@@ -8,7 +8,6 @@ import { addressAtom } from 'ton/atom/addressAtom'
 import { routerContractAtom } from 'ton/atom/contracts/routerContractAtom'
 import { TonContext } from 'ton/context/TonContext'
 import { getJettonWalletAddress, parseAddress } from 'ton/utils/address'
-import { storeAddLiquidity } from 'ton/wrappers/tact_Router'
 
 interface AddLiquidityArgs {
   token0: Currency

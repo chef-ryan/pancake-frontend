@@ -3,8 +3,8 @@ import invariant from 'tiny-invariant'
 import _Big from 'big.js'
 // @ts-ignore
 import toFormat from 'toformat'
-import { Currency } from './currency'
-import { Token } from './Token'
+import { Currency } from './currency/currency'
+import { Token } from './currency/Token'
 
 const Big = toFormat(_Big)
 

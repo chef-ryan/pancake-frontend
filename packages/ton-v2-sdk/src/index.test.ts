@@ -7,12 +7,15 @@ test('exports', () => {
       "Token",
       "Native",
       "CurrencyAmount",
+      "TON_OPCODES",
       "priceOf",
       "getAddress",
       "getOutputAmount",
       "getInputAmount",
       "Trade",
-      "swapCallParameters",
+      "storeSwap",
+      "storeSwapNext",
+      "storeAddLiquidity",
     ]
   `)
 })
