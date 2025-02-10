@@ -13,24 +13,9 @@ interface LiquidityListProps extends BoxProps {}
 export const LiquidityList = (props: LiquidityListProps) => {
   const list = [
     {
-      title: 'TON-USDT LP',
-      currency0: 'TON',
-      currency1: 'USDT',
-    },
-    {
-      title: 'TON-CAKE LP',
-      currency0: 'TON',
-      currency1: 'BNB',
-    },
-    {
-      title: 'TON-USDC LP',
-      currency0: 'TON',
-      currency1: 'BUSD',
-    },
-    {
-      title: 'TON-WBTC LP',
-      currency0: 'TON',
-      currency1: 'ETH',
+      title: 'SYRUP-PAN LP',
+      currency0: 'SYRUP',
+      currency1: 'PAN',
     },
   ]
 

@@ -5,9 +5,8 @@ import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
 import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
 import { addressAtom } from 'ton/atom/addressAtom'
+import { routerContractAtom } from 'ton/atom/contracts/routerContractAtom'
 import { TonContext } from 'ton/context/TonContext'
-import { Contracts } from 'ton/def/contracts.def'
-import { TonContractNames } from 'ton/ton.enums'
 import { getJettonWalletAddress, parseAddress } from 'ton/utils/address'
 import { storeAddLiquidity } from 'ton/wrappers/tact_Router'
 
@@ -20,14 +19,15 @@ interface AddLiquidityArgs {
 }
 
 export const useAddLiquidity = () => {
-  const userAddress_ = useAtomValue(addressAtom)
   const [tonUI] = useTonConnectUI()
+
+  const userAddress_ = useAtomValue(addressAtom)
+  const routerAddress = useAtomValue(routerContractAtom).address
 
   const addLiquidity = useCallback(
     async ({ token0, token1, amount0, amount1 }: AddLiquidityArgs) => {
       const client = TonContext.instance.getClient()
       const userAddress = parseAddress(userAddress_)
-      const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter].testnet.address)
 
       const userJettonWallet0 = await getJettonWalletAddress(client, userAddress, token0)
       const userJettonWallet1 = await getJettonWalletAddress(client, userAddress, token1)
@@ -39,7 +39,7 @@ export const useAddLiquidity = () => {
           storeAddLiquidity({
             queryId: 1n,
             $$type: 'AddLiquidity',
-            minLPOut: 1n,
+            minLPOut: 2n,
             tokenWallet: routerJettonWallet1,
           }),
         )
@@ -63,7 +63,7 @@ export const useAddLiquidity = () => {
           storeAddLiquidity({
             queryId: 2n,
             $$type: 'AddLiquidity',
-            minLPOut: 1n,
+            minLPOut: 2n,
             tokenWallet: routerJettonWallet0,
           }),
         )

@@ -23,7 +23,7 @@ interface CardContentProps extends BoxProps {}
 export const CardContent = (props: CardContentProps) => {
   const { t } = useTranslation()
   const isWalletConnected = useAtomValue(isConnectedAtom)
-  const liquidityLength: number = 0
+  const liquidityLength: number = 1
 
   return (
     <>

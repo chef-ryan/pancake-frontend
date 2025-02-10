@@ -1,3 +1,4 @@
+import { Address } from '@ton/core'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
@@ -9,9 +10,17 @@ interface PoolAddressAtomParams {
   token0Address?: string
   token1Address?: string
 }
+
+const poolAddressCache = new Map<string, Address>()
+
 export const poolAddressAtom = atomFamily(({ token0Address, token1Address }: PoolAddressAtomParams) => {
   return atom(async (get) => {
     if (!token0Address || !token1Address) return null
+
+    const cacheKey = `${token0Address}-${token1Address}`
+    if (poolAddressCache.has(cacheKey)) {
+      return poolAddressCache.get(cacheKey)
+    }
 
     const router = get(routerContractAtom)
     const jettonMaster0 = get(jettonMasterContractAtom(token0Address))
@@ -22,6 +31,8 @@ export const poolAddressAtom = atomFamily(({ token0Address, token1Address }: Poo
       jettonMaster1.getGetWalletAddress(parseAddress(router.address.toString())),
     ])
 
-    return router.getGetPoolAddress(jettonWalletAddress0, jettonWalletAddress1)
+    const poolAddress = await router.getGetPoolAddress(jettonWalletAddress0, jettonWalletAddress1)
+    poolAddressCache.set(cacheKey, poolAddress)
+    return poolAddress
   })
 }, isEqual)

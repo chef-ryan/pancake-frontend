@@ -4,6 +4,7 @@ import { AddIcon, Box, BoxProps, Button, Flex, FlexGap, Loading, Text, useToast 
 import { toNano } from '@ton/core'
 import { setCurrencyAtom } from 'atoms/currencyAtoms'
 import { currency0Atom, currency0Value, currency1Atom, currency1Value } from 'atoms/liquidity/addLiquidityStateAtom'
+import { BigNumber as BN } from 'bignumber.js'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
 import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
@@ -12,6 +13,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { addressAtom } from 'ton/atom/addressAtom'
+import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { useAddLiquidity } from 'ton/logic/liquidity/useAddLiquidity'
 import { CurrencyField } from 'types/currency'
@@ -49,6 +51,20 @@ export const CardContent = (props: CardContentProps) => {
   const { data: poolData, isLoading: isPoolDataLoading } = useAtomValue(
     poolDataQueryAtom({ token0Address: currency0?.wrapped.address, token1Address: currency1?.wrapped.address }),
   )
+
+  // TODO: Handle native token
+  const { data: lpBalance } = useAtomValue(
+    lpBalanceQueryAtom({
+      token0Address: currency0?.wrapped.address,
+      token1Address: currency1?.wrapped.address,
+    }),
+  )
+
+  const shareInPool = useMemo(() => {
+    if (!lpBalance || !poolData?.totalSupply) return 0n
+
+    return BN(lpBalance.toString()).div(BN(poolData.totalSupply.toString())).times(100).toNumber()
+  }, [lpBalance, poolData?.totalSupply])
 
   const rates = useMemo(() => {
     if (!poolData || !currency0 || !currency1)
@@ -186,7 +202,7 @@ export const CardContent = (props: CardContentProps) => {
           <Flex justifyContent="space-between">
             <Text color="textSubtle">{t('Your share in the pair')}</Text>
 
-            <Text>-%</Text>
+            <Text>{shareInPool.toString()}%</Text>
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
             <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
