@@ -54,7 +54,7 @@ export const CardContent = (props: CardContentProps) => {
   )
 
   // TODO: Handle native token
-  const { data: lpBalance } = useAtomValue(
+  const { data: lpBalance, isLoading: isLpBalanceLoading } = useAtomValue(
     lpBalanceQueryAtom({
       token0Address: currency0?.wrapped.address,
       token1Address: currency1?.wrapped.address,
@@ -190,7 +190,11 @@ export const CardContent = (props: CardContentProps) => {
           <Flex justifyContent="space-between">
             <Text color="textSubtle">{t('Your share in the pair')}</Text>
 
-            <NumberDisplay value={shareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
+            {isLpBalanceLoading ? (
+              <Loading />
+            ) : (
+              <NumberDisplay value={shareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
+            )}
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
             <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
