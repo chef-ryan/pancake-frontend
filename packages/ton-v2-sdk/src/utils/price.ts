@@ -1,5 +1,5 @@
 import invariant from 'tiny-invariant'
-import { Currency, CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
+import { Currency, CurrencyAmount, Price } from '../constants'
 
 export const token0Price = (
   amount0: CurrencyAmount<Currency>,

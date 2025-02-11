@@ -1,5 +1,11 @@
-import { CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
-import { getAddress, getInputAmount, getOutputAmount, priceOf } from '@pancakeswap/ton-v2-sdk'
+import {
+  getPairAddress,
+  getInputAmount,
+  getOutputAmount,
+  priceOf,
+  CurrencyAmount,
+  Price,
+} from '@pancakeswap/ton-v2-sdk'
 
 import type { TonPool, TonPoolData } from './types'
 import { TON_POOL_TYPE } from './constants'
@@ -8,7 +14,7 @@ import { BASE_SWAP_COST_TON_V2, COST_PER_EXTRA_HOP_TON_V2 } from './constants/ga
 export function createTonPool(params: TonPoolData): TonPool {
   let p = { ...params, type: TON_POOL_TYPE }
   const getPoolId = (poolData: TonPoolData) => {
-    return getAddress(poolData.reserve0.currency.wrapped, poolData.reserve1.currency.wrapped)
+    return getPairAddress(poolData.reserve0.currency.wrapped, poolData.reserve1.currency.wrapped).toString()
   }
   let address = getPoolId(p)
 

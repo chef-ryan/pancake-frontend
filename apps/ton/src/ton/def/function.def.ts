@@ -1,4 +1,4 @@
-import type { TonFunctionDef } from 'ton/ton.types'
+import { type TonFunctionDef } from '@pancakeswap/ton-v2-sdk'
 
 export const getWalletAddress = {
   method: 'getWalletAddress',

@@ -1,0 +1,39 @@
+import { QUERY_DEFAULT_STALE_TIME } from 'config/constants/exchange'
+import { atomWithQuery } from 'jotai-tanstack-query'
+import { atomFamily } from 'jotai/utils'
+import isEqual from 'lodash/isEqual'
+import { poolContractAtom } from '../contracts/poolContractAtom'
+import { networkAtom } from '../networkAtom'
+import { poolAddressAtom } from './poolAddressAtom'
+
+interface PoolDataAtomParams {
+  token0Address?: string
+  token1Address?: string
+}
+
+export const poolDataQueriesAtom = atomFamily((pairs: PoolDataAtomParams[]) => {
+  const key = pairs.map(({ token0Address, token1Address }) => `${token0Address}-${token1Address}`)
+  return atomWithQuery((get) => ({
+    queryKey: ['poolData', get(networkAtom), ...key],
+    queryFn: async () => {
+      const result = await Promise.allSettled(
+        pairs.map(async ({ token0Address, token1Address }) => {
+          const poolAddress = await get(poolAddressAtom({ token0Address, token1Address }))
+
+          if (!poolAddress) return null
+
+          const poolData = await get(poolContractAtom(poolAddress)).getGetPoolData()
+          return {
+            ...poolData,
+            poolAddress,
+          }
+        }),
+      )
+      return result.map((item) => (item.status === 'fulfilled' ? item.value : null))
+    },
+    enabled: !!key.length,
+    staleTime: QUERY_DEFAULT_STALE_TIME, // 1 minute
+    refetchInterval: QUERY_DEFAULT_STALE_TIME, // 1 minute
+    retry: 1,
+  }))
+}, isEqual)

@@ -1,8 +1,7 @@
-import { Token } from '@pancakeswap/ton-v2-sdk'
+import { Token, TonNetworks } from '@pancakeswap/ton-v2-sdk'
 import { TOKEN_LIST_URLS } from 'config/constants/lists'
 import { atomWithQuery } from 'jotai-tanstack-query'
 import { networkAtom } from 'ton/atom/networkAtom'
-import { TonNetworks } from 'ton/ton.enums'
 import { TokenList } from 'utils/tokens/types'
 
 export const fetchListAtom = atomWithQuery<Token[]>((get) => {

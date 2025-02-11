@@ -1,4 +1,4 @@
-import { TonNetworks } from 'ton/ton.enums'
+import { TonNetworks } from '@pancakeswap/ton-v2-sdk'
 
 export const TonEndPoints = {
   // [TonNetworks.Mainnet]: 'https://attentive-warmhearted-fire.ton-mainnet.quiknode.pro/9a4ad85a1139b7d19fa1dc658547bdde9184bd4d',

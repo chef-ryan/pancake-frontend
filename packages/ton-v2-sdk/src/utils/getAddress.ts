@@ -1,7 +1,7 @@
-import { Currency } from '@pancakeswap/swap-sdk-core'
-import { Address, zeroAddress } from 'viem'
+import { Address } from '@ton/core'
+import { Currency } from '../constants'
 
 // todo:@eric wait for ton's currency type implemented
-export const getAddress = (tokenA: Currency, tokenB: Currency): Address => {
-  return zeroAddress
+export const getPairAddress = (tokenA: Currency, tokenB: Currency): Address => {
+  return Address.parse(tokenA.wrapped.address)
 }

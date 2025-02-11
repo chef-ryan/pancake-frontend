@@ -1,5 +1,5 @@
 import { Token } from './currency/Token'
-import { TonChainId } from './chains'
+import { TonChainId } from './ton.enums'
 
 export const WNATIVE = {
   [TonChainId.Mainnet]: new Token(

@@ -1,4 +1,4 @@
-import { TonContractTypes } from 'ton/ton.enums'
+import { TonContractTypes } from '@pancakeswap/ton-v2-sdk'
 import { getBalance, getWalletAddress } from './function.def'
 
 export const ContractClasses = {

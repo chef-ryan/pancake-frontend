@@ -1,9 +1,9 @@
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
+import { TonContractNames, TonContractTypes } from '@pancakeswap/ton-v2-sdk'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { contractOfTypeAtom } from 'ton/atom/contractOfTypeAtom'
-import { TonContractNames, TonContractTypes } from 'ton/ton.enums'
 import { Logger } from 'ton/utils/Logger'
 import { jettonWalletOfAtom } from './jettonWalletOfAtom'
 

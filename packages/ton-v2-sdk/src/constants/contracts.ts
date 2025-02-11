@@ -1,4 +1,4 @@
-import { TonContractNames, TonContractTypes, TonNetworks } from 'ton/ton.enums'
+import { TonContractNames, TonContractTypes, TonNetworks } from './ton.enums'
 
 export const Contracts = {
   [TonContractNames.NATIVE]: {
@@ -17,6 +17,15 @@ export const Contracts = {
     },
     [TonNetworks.Testnet]: {
       address: 'kQA8oT-HRBY-9-yFymg17hD5FE07--Z1gYc_sZTbzqpOZr1t',
+    },
+  },
+  [TonContractNames.USDT]: {
+    type: TonContractTypes.JettonMinter,
+    [TonNetworks.Mainnet]: {
+      address: '',
+    },
+    [TonNetworks.Testnet]: {
+      address: 'kQCHLgAWLrFnHChbETKLnUEpA_oW0_5f9SDVYc9mJtVDMXrC',
     },
   },
   [TonContractNames.CAKE]: {

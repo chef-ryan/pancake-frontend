@@ -1,4 +1,4 @@
-import { TonNetworks } from 'ton/ton.enums'
+import { TonNetworks } from '@pancakeswap/ton-v2-sdk'
 
 export const ASSET_CDN = 'https://assets.pancakeswap.finance'
 

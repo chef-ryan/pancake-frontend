@@ -1,11 +1,11 @@
 // import testnetPools from 'public/lists/pools-testnet.json'
 
+import { TonNetworks } from '@pancakeswap/ton-v2-sdk'
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 import { lpAccountByPoolsAtom } from 'ton/atom/liquidity/lpAccountByPoolsQueryAtom'
 import { lpBalanceByPoolsQueryAtom } from 'ton/atom/liquidity/lpBalanceByPoolsQueryAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
-import { TonNetworks } from 'ton/ton.enums'
 
 const PRESET_POOLS = {
   [TonNetworks.Mainnet]: [],
