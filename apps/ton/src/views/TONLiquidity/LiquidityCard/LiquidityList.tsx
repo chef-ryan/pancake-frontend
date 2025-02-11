@@ -1,4 +1,5 @@
 import { BoxProps, FlexGap } from '@pancakeswap/uikit'
+import { useUserPools } from 'hooks/liquidity/useUserPools'
 import styled from 'styled-components'
 import { LiquidityRow } from './LiquidityRow'
 
@@ -11,19 +12,13 @@ const ScrollableList = styled(FlexGap).attrs({ flexDirection: 'column', gap: '8p
 
 interface LiquidityListProps extends BoxProps {}
 export const LiquidityList = (props: LiquidityListProps) => {
-  const list = [
-    {
-      title: 'SYRUP-PAN LP',
-      currency0: 'SYRUP',
-      currency1: 'PAN',
-    },
-  ]
+  const { data: userPools } = useUserPools()
 
   return (
     <>
       <ScrollableList {...props}>
-        {list.map((item) => (
-          <LiquidityRow key={item.title} {...item} />
+        {userPools.map((item) => (
+          <LiquidityRow key={item.poolAddress} {...item} />
         ))}
       </ScrollableList>
     </>

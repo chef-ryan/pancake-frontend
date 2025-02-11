@@ -1,6 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, Box, BoxProps, Button, FlexGap, Text } from '@pancakeswap/uikit'
 import { WalletDisclaimer } from 'components/Card/WalletDisclaimer'
+import { useUserPools } from 'hooks/liquidity/useUserPools'
 import { useAtomValue } from 'jotai'
 import Link from 'next/link'
 import styled from 'styled-components'
@@ -23,14 +24,15 @@ interface CardContentProps extends BoxProps {}
 export const CardContent = (props: CardContentProps) => {
   const { t } = useTranslation()
   const isWalletConnected = useAtomValue(isConnectedAtom)
-  const liquidityLength: number = 1
+
+  const { data: userPools } = useUserPools()
 
   return (
     <>
       <ContentContainer $isBottomRounded={!isWalletConnected} {...props}>
         {!isWalletConnected && <WalletDisclaimer p="64px" text={t('Connect wallet to view your liquidity')} />}
 
-        {isWalletConnected && liquidityLength === 0 && (
+        {isWalletConnected && userPools.length === 0 && (
           <FlexGap flexDirection="column" alignItems="center" gap="16px" p="24px">
             <img src="/images/green-box.png" alt="Empty Box" width={96} />
 
@@ -38,7 +40,7 @@ export const CardContent = (props: CardContentProps) => {
           </FlexGap>
         )}
 
-        {isWalletConnected && liquidityLength > 0 && <LiquidityList />}
+        {isWalletConnected && userPools.length > 0 && <LiquidityList />}
       </ContentContainer>
 
       {isWalletConnected && (

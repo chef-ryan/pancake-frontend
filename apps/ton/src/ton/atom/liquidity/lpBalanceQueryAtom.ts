@@ -16,7 +16,7 @@ interface LpBalanceQueryAtomProps {
 
 export const lpBalanceQueryAtom = atomFamily(({ token0Address, token1Address }: LpBalanceQueryAtomProps) => {
   return atomWithQuery((get) => ({
-    queryKey: ['lpBalance', get(networkAtom), token0Address, token1Address],
+    queryKey: ['lpBalance', get(networkAtom), token0Address, token1Address, get(addressAtom)],
     queryFn: async () => {
       const userAddress = get(addressAtom)
       if (!userAddress) return 0n

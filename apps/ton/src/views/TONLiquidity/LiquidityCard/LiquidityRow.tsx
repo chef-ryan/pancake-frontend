@@ -1,10 +1,13 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, Box, Button, Flex, FlexGap, MinusIcon, Text } from '@pancakeswap/uikit'
 import { LightCard } from 'components/Card'
+import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { Collapse } from 'components/widgets/swap-v2/Collapse'
+import { LP_TOKEN_DECIMALS } from 'config/constants/tokens'
 import Link from 'next/link'
 import { useCallback, useState } from 'react'
 import styled from 'styled-components'
+import { formatBalance } from 'ton/utils/formatting'
 
 const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
   width: 100%;
@@ -14,12 +17,14 @@ const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
 `
 
 interface LiquidityRowProps {
-  title: string
-  currency0?: string
-  currency1?: string
+  token0?: string
+  token1?: string
+  balance?: bigint
+  amount0?: bigint
+  amount1?: bigint
 }
 
-export const LiquidityRow = ({ title, currency0, currency1 }: LiquidityRowProps) => {
+export const LiquidityRow = ({ token0, token1, balance = 0n, amount0 = 0n, amount1 = 0n }: LiquidityRowProps) => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -34,32 +39,37 @@ export const LiquidityRow = ({ title, currency0, currency1 }: LiquidityRowProps)
           title={
             <FlexGap flexDirection="column" gap="2px">
               <Text>
-                {currency0}-{currency1} LP
+                {token0}-{token1} LP
               </Text>
-              <Text color="textSubtle" small bold>
-                36.1
-              </Text>
+
+              <NumberDisplay
+                value={formatBalance(balance, LP_TOKEN_DECIMALS).toString()}
+                maximumSignificantDigits={4}
+                small
+                bold
+                color="textSubtle"
+              />
             </FlexGap>
           }
           content={
             <Box mt="8px">
               <Flex mt="5px" justifyContent="space-between">
-                <Text color="textSubtle">{t('Pooled %symbol%', { symbol: currency0 })}</Text>
-                <Text>10</Text>
+                <Text color="textSubtle">{t('Pooled %symbol%', { symbol: 'token0' })}</Text>
+                <Text>{formatBalance(amount0, LP_TOKEN_DECIMALS)}</Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
-                <Text color="textSubtle">{t('Pooled %symbol%', { symbol: currency1 })}</Text>
-                <Text>50</Text>
+                <Text color="textSubtle">{t('Pooled %symbol%', { symbol: 'token1' })}</Text>
+                <Text>{formatBalance(amount1, LP_TOKEN_DECIMALS)}</Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Your share in the pool')}</Text>
-                <Text>0.0124%</Text>
+                <Text>-%</Text>
               </Flex>
               <FlexGap mt="10px" justifyContent="space-between" gap="16px">
-                <Link href={`/liquidity/add/${currency0}/${currency1}`} style={{ width: '100%' }}>
+                <Link href={`/liquidity/add/${token0}/${token1}`} style={{ width: '100%' }}>
                   <StyledButton endIcon={<AddIcon color="primary60" />}>{t('Add')}</StyledButton>
                 </Link>
-                <Link href={`/liquidity/remove/${currency0}/${currency1}`} style={{ width: '100%' }}>
+                <Link href={`/liquidity/remove/${token0}/${token1}`} style={{ width: '100%' }}>
                   <StyledButton endIcon={<MinusIcon color="primary60" />}>{t('Remove')}</StyledButton>
                 </Link>
               </FlexGap>

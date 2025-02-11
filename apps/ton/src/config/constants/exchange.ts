@@ -21,5 +21,6 @@ export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(1500n, BIPS_
 
 // Query Stale Times
 export const QUERY_DEFAULT_STALE_TIME = 1000 * 60 // 1 minute
+export const QUERY_MEDIUM_STALE_TIME = 1000 * 60 * 5 // 5 minutes
 
 export const DEFAULT_SIGNIFICANT_DIGITS = 5

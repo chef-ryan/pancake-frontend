@@ -3,19 +3,27 @@ import { writeFileSync } from 'fs'
 import path from 'path'
 import { TonEndPoints } from 'ton/context/endpoints'
 import { Contracts } from 'ton/def/contracts.def'
-import { TonChainId, TonContractNames, TonNetworks } from 'ton/ton.enums'
+import { TonContractNames, TonNetworks } from 'ton/ton.enums'
 import { parseAddress } from 'ton/utils/address'
 import { JettonMasterUSDT } from 'ton/wrappers/tact_JettonMasterUSDT'
 import { Router } from 'ton/wrappers/tact_Router'
 import mainnetList from '../../public/lists/main.json'
 import testnetList from '../../public/lists/testnet.json'
 
+const key = (token0, token1) => `${token0.address}-${token1.address}`
+
 const getTokenPairs = (tokens: any[]) => {
   const pairs: any[] = []
+  const seenPairs = new Set()
   for (let i = 0; i < tokens.length; i++) {
     for (let j = 0; j < tokens.length; j++) {
       if (i !== j) {
-        pairs.push([tokens[i], tokens[j]])
+        const pairKey = key(tokens[i], tokens[j])
+        const reversePairKey = key(tokens[j], tokens[i])
+        if (!seenPairs.has(reversePairKey)) {
+          pairs.push([tokens[i], tokens[j]])
+          seenPairs.add(pairKey)
+        }
       }
     }
   }
@@ -44,7 +52,7 @@ const sleep = (ms: number) => {
 }
 
 const generatePoolsForPairs = async (network: TonNetworks, pairs: any[]) => {
-  const pools: any[] = []
+  const pools = {}
   console.log(`[${network}] Fetching pool addresses for ${pairs.length} pairs`)
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i]
@@ -57,12 +65,7 @@ const generatePoolsForPairs = async (network: TonNetworks, pairs: any[]) => {
     console.log(`[${network}] Pool Address for ${token0.symbol}-${token1.symbol}: ${poolAddress.toString()}`)
 
     if (poolAddress) {
-      pools.push({
-        chainId: TonChainId[network === TonNetworks.Mainnet ? 'Mainnet' : 'Testnet'],
-        token0: token0.address,
-        token1: token1.address,
-        poolAddress: poolAddress.toString(),
-      })
+      pools[key(token0, token1)] = poolAddress.toString()
     }
 
     // eslint-disable-next-line no-await-in-loop
