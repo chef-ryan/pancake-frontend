@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Token } from '@pancakeswap/ton-v2-sdk'
+import { Currency, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
 import { AutoColumn, QuestionHelper, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from 'components/widgets'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
@@ -7,7 +7,6 @@ import { styled } from 'styled-components'
 
 import { AutoRow } from 'components/Layout/Row'
 import { SUGGESTED_BASES } from 'config/constants/commonBases'
-import { TonChainId } from 'ton/ton.enums'
 import { CommonBasesType } from './types'
 
 const ButtonWrapper = styled.div`

@@ -1,4 +1,4 @@
-import { Currency, storeSwap } from '@pancakeswap/ton-v2-sdk'
+import { Contracts, Currency, TonContractNames, storeSwap } from '@pancakeswap/ton-v2-sdk'
 import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
 import { beginCell, toNano } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
@@ -6,8 +6,6 @@ import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { TonContext } from 'ton/context/TonContext'
-import { Contracts } from 'ton/def/contracts.def'
-import { TonContractNames } from 'ton/ton.enums'
 import { getJettonWalletAddress, parseAddress } from 'ton/utils/address'
 
 interface SwapArgs {

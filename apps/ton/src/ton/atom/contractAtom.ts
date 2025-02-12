@@ -1,8 +1,7 @@
 import { atom } from 'jotai'
 import { ContractClasses } from 'ton/def/contractClass.def'
-import { Contracts } from 'ton/def/contracts.def'
-import { TonContractNames } from 'ton/ton.enums'
-import { TonContractInstance } from 'ton/ton.types'
+import { Contracts, TonContractNames, TonContractInstance } from '@pancakeswap/ton-v2-sdk'
+
 import { contractOfTypeAtom } from './contractOfTypeAtom'
 import { networkAtom } from './networkAtom'
 

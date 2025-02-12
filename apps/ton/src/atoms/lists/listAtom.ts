@@ -1,8 +1,8 @@
+import { TonNetworks } from '@pancakeswap/ton-v2-sdk'
 import { atom } from 'jotai'
 import { atomFamily, atomWithStorage } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
 import { networkAtom } from 'ton/atom/networkAtom'
-import { TonNetworks } from 'ton/ton.enums'
 import { TokenList } from 'utils/tokens/types'
 
 export const listAtom = atomFamily((chain: TonNetworks) => atomWithStorage<TokenList[]>(chain, []), isEqual)

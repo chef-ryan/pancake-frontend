@@ -1,4 +1,4 @@
-import { TonNetworks } from 'ton/ton.enums'
+import { TonNetworks } from '@pancakeswap/ton-v2-sdk'
 
 export const TOKEN_LIST_URLS = {
   [TonNetworks.Mainnet]: '/lists/main.json', // TESTING value

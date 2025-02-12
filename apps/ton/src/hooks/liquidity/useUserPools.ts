@@ -33,8 +33,6 @@ export const useUserPools = () => {
   const { data: poolInfos } = useAtomValue(poolDataMultipleQueryAtom(poolsWithBalance.map((pool) => pool.poolAddress)))
 
   console.log('useUserPools Precombine', {
-    pools,
-    poolsWithBalance,
     lpAccounts,
     poolInfos,
   })

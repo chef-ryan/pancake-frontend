@@ -1,8 +1,7 @@
 import { Address, beginCell, TupleItem, TupleReader } from '@ton/core'
 import snakeCase from 'lodash/snakeCase'
+import { TonContractTypes, TonFunctionDef } from '@pancakeswap/ton-v2-sdk'
 import { ContractClasses } from 'ton/def/contractClass.def'
-import { TonContractTypes } from 'ton/ton.enums'
-import { TonFunctionDef } from 'ton/ton.types'
 import { Logger } from 'ton/utils/Logger'
 import { TonContext } from './TonContext'
 

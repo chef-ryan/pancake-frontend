@@ -1,7 +1,6 @@
+import { Contracts, TonContractNames } from '@pancakeswap/ton-v2-sdk'
 import { atom } from 'jotai'
 import { TonContext } from 'ton/context/TonContext'
-import { Contracts } from 'ton/def/contracts.def'
-import { TonContractNames } from 'ton/ton.enums'
 import { parseAddress } from 'ton/utils/address'
 import { Router } from 'ton/wrappers/tact_Router'
 import { networkAtom } from '../networkAtom'

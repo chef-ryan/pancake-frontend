@@ -1,4 +1,5 @@
 import { Percent } from '@pancakeswap/sdk'
+import { TonChainId, Token, Native, NATIVE, Currency } from '@pancakeswap/ton-v2-sdk'
 
 export const BIG_INT_ZERO = 0n
 export const BIG_INT_TEN = 10n
@@ -24,3 +25,27 @@ export const QUERY_DEFAULT_STALE_TIME = 1000 * 60 // 1 minute
 export const QUERY_MEDIUM_STALE_TIME = 1000 * 60 * 5 // 5 minutes
 
 export const DEFAULT_SIGNIFICANT_DIGITS = 5
+
+export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(50n, BIPS_BASE)
+
+// max hops for swap
+export const MAX_HOPS = 3
+
+export const ADDITIONAL_BASES: { [chainId in TonChainId]?: { [tokenAddress: string]: Token[] } } = {}
+
+export const CUSTOM_BASES: { [chainId in TonChainId]?: { [tokenAddress: string]: Token[] } } = {}
+
+export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Currency[] } = {
+  [TonChainId.Testnet]: [
+    new Native(NATIVE[TonChainId.Testnet]),
+    new Token(
+      TonChainId.Testnet,
+      'kQCHLgAWLrFnHChbETKLnUEpA_oW0_5f9SDVYc9mJtVDMXrC',
+      9,
+      'USDT',
+      'USDT',
+      'https://cache.tonapi.io/imgproxy/JHJ0sotb2B_DU6JIHdIMKEz_5wmkeY4EboeQLPlpUBY/rs:fill:200:200:1/g:no/aHR0cHM6Ly90b25hcGktaW1nLWNhY2hlLmZyYTEuZGlnaXRhbG9jZWFuc3BhY2VzLmNvbS9jYThiNTk1Mzc3Nzg0OGNkNzE4YzYzZDE5OTQzZDEyOWFjOTI5OGJjYTdjZTFhZGNjMDBiMTVlYWU4M2U4NjhlLnBuZw.webp',
+    ),
+  ] satisfies Currency[],
+  [TonChainId.Mainnet]: [],
+}

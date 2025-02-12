@@ -1,9 +1,7 @@
+import { Contracts, TonContractInstance, TonContractTypes } from '@pancakeswap/ton-v2-sdk'
 import { atom } from 'jotai'
 import { ContractProxy } from 'ton/context/ContractProxy'
 import { ContractClasses } from 'ton/def/contractClass.def'
-import { Contracts } from 'ton/def/contracts.def'
-import { TonContractTypes } from 'ton/ton.enums'
-import { TonContractInstance } from 'ton/ton.types'
 
 type TClasses = typeof ContractClasses
 type TContracts = typeof Contracts

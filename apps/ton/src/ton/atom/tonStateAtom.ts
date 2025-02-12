@@ -1,5 +1,5 @@
+import { TonNetworks } from '@pancakeswap/ton-v2-sdk'
 import { atomWithProxy } from 'jotai-valtio'
-import { TonNetworks } from 'ton/ton.enums'
 import { proxy } from 'valtio'
 
 function detectNetwork() {

@@ -1,7 +1,7 @@
+import { TonContextEvents, TonNetworks } from '@pancakeswap/ton-v2-sdk'
 import { getHttpEndpoint } from '@orbs-network/ton-access'
 import { TonClient } from '@ton/ton'
 import { tonState } from 'ton/atom/tonStateAtom'
-import { TonContextEvents, TonNetworks } from 'ton/ton.enums'
 import { Emiter } from 'ton/utils/Emiter'
 import { TonEndPoints } from './endpoints'
 

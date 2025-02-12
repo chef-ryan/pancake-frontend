@@ -23,6 +23,7 @@ export enum TonContractTypes {
 export enum TonContractNames {
   NATIVE,
   USDC,
+  USDT,
   CAKE,
   PCSRouter,
 }

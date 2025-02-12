@@ -1,5 +1,5 @@
+import { TonNetworks } from '@pancakeswap/ton-v2-sdk'
 import { blockExplorerUrls } from 'config/constants/endpoints'
-import { TonNetworks } from 'ton/ton.enums'
 
 export function getBlockExplorerLink(
   data: string | number | undefined | null,

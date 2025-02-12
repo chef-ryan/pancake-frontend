@@ -1,5 +1,5 @@
-import { Native } from '@pancakeswap/ton-v2-sdk'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Native, TonNetworks } from '@pancakeswap/ton-v2-sdk'
+import { useCallback, useEffect, useMemo } from 'react'
 import noop from 'lodash/noop'
 import { Column, Text } from '@pancakeswap/uikit'
 import { ButtonAndDetailsPanel } from 'components/TonSwap/ButtonAndDetailsPanel'
@@ -18,7 +18,6 @@ import { SwapUIV2 } from 'components/widgets/swap-v2'
 import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { balanceAtom } from 'ton/logic/balanceAtom'
-import { TonNetworks } from 'ton/ton.enums'
 import { Field } from 'types'
 import { Rounding, _10000 } from '@pancakeswap/swap-sdk-core'
 import { formatFraction } from '@pancakeswap/utils/formatFractions'
@@ -43,31 +42,40 @@ export const SwapForm = () => {
 
   const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
 
-  const { data: balance0 } = useAtomValue(balanceAtom(inputCurrency))
   const { data: activeList, isFetched } = useAtomValue(fetchListAtom)
-  const isInsufficientBalance0 = useMemo(() => balance0 < toNano(typedValue), [balance0, typedValue]) // TODO: decimals
 
   const setApprovalModal = useSetAtom(setApprovalModalAtom)
   const setTransactionModal = useSetAtom(setTransactionModalAtom)
   const [userAllowedSlippage] = useUserSlippage()
 
-  const parsedAmounts = {
-    [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-    [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-  }
+  const parsedAmounts = useMemo(
+    () => ({
+      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+    }),
+    [independentField, parsedAmount, trade],
+  )
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
   const dependentFieldAmount = parsedAmounts[dependentField]
-  const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]: dependentFieldAmount
-      ? formatFraction(
-          dependentFieldAmount.asFraction.divide(10n ** BigInt(dependentFieldAmount.currency.decimals)),
-          6,
-          Rounding.ROUND_DOWN,
-        )
-      : undefined,
-  }
+  const formattedAmounts = useMemo(
+    () => ({
+      [independentField]: typedValue,
+      [dependentField]: dependentFieldAmount
+        ? formatFraction(
+            dependentFieldAmount.asFraction.divide(10n ** BigInt(dependentFieldAmount.currency.decimals)),
+            6,
+            Rounding.ROUND_DOWN,
+          )
+        : undefined,
+    }),
+    [independentField, typedValue, dependentField, dependentFieldAmount],
+  )
 
+  const { data: balance0 } = useAtomValue(balanceAtom(inputCurrency))
+  const isInsufficientBalance0 = useMemo(
+    () => balance0 < toNano(parsedAmounts[Field.INPUT]?.toFixed() ?? '0'),
+    [balance0, parsedAmounts],
+  ) // TODO: decimals
   const { swap } = useSwap()
 
   const handleSwap = useCallback(async () => {
@@ -152,8 +160,6 @@ export const SwapForm = () => {
                   {t('To')}
                 </Text>
               }
-              // isUserInsufficientBalance={isUserInsufficientBalance}
-              disabled
             />
           </Column>
         </SwapUIV2.InputPanelWrapper>

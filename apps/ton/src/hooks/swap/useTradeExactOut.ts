@@ -1,8 +1,40 @@
-import { Currency, CurrencyAmount, Trade } from '@pancakeswap/ton-v2-sdk'
+import { useMemo } from 'react'
+import { TradeType } from '@pancakeswap/swap-sdk-core'
+import { Currency, CurrencyAmount, Trade, bestTradeExactOut, isTradeBetter } from '@pancakeswap/ton-v2-sdk'
+import { useUserSingleHopOnly } from '@pancakeswap/utils/user'
+import { MAX_HOPS, BETTER_TRADE_LESS_HOPS_THRESHOLD } from 'config/constants/exchange'
 
-// todo:@eric implement
-export const useTradeExactOut = (amount?: CurrencyAmount<Currency>, currency?: Currency) => {
-  if (!amount || !currency) return undefined
-  const allPairs = []
-  return Trade.bestTradeExactOut(allPairs, currency, amount)
+import { useAllCommonPairs } from './useAllCommonPairs'
+
+/**
+ * Returns the best trade for the token in to the exact amount of token out
+ */
+export function useTradeExactOut(
+  currencyAmountOut?: CurrencyAmount<Currency>,
+  currencyIn?: Currency,
+): Trade<Currency, Currency, TradeType> | null {
+  const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
+
+  const [singleHopOnly] = useUserSingleHopOnly()
+
+  return useMemo(() => {
+    if (currencyIn && currencyAmountOut && allowedPairs.length > 0) {
+      if (singleHopOnly) {
+        return (
+          bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 1, maxNumResults: 1 })[0] ?? null
+        )
+      }
+      // search through trades with varying hops, find best trade out of them
+      let bestTradeSoFar: Trade<Currency, Currency, TradeType> | null = null
+      for (let i = 1; i <= MAX_HOPS; i++) {
+        const currentTrade =
+          bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: i, maxNumResults: 1 })[0] ?? null
+        if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
+          bestTradeSoFar = currentTrade
+        }
+      }
+      return bestTradeSoFar
+    }
+    return null
+  }, [currencyIn, currencyAmountOut, allowedPairs, singleHopOnly])
 }

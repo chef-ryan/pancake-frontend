@@ -1,5 +1,6 @@
 import { Percent } from '@pancakeswap/swap-sdk-core'
 import { Hex } from 'viem'
+import { Currency, CurrencyAmount } from './constants'
 
 export interface TradeOptions {
   /**
@@ -47,4 +48,12 @@ export interface SwapParameters {
    * The amount of wei to send in hex.
    */
   value: Hex
+}
+
+export interface Pair {
+  readonly chainId: number
+  readonly token0: Currency
+  readonly token1: Currency
+  readonly reserve0: CurrencyAmount<Currency>
+  readonly reserve1: CurrencyAmount<Currency>
 }

@@ -1,13 +1,13 @@
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { setCurrencyAtom } from 'atoms/currencyAtoms'
 import { independentFieldAtom, inputCurrencyAtom, outputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { Field } from 'types'
 
 export const useSwapActionHandlers = () => {
   const setTypedValue = useSetAtom(typedValueAtom)
-  const setIndependentField = useSetAtom(independentFieldAtom)
+  const [independentField, setIndependentField] = useAtom(independentFieldAtom)
   const setCurrency = useSetAtom(setCurrencyAtom)
 
   const inputCurrency = useAtomValue(inputCurrencyAtom)
@@ -16,7 +16,8 @@ export const useSwapActionHandlers = () => {
   const onSwitchTokens = useCallback(() => {
     setCurrency(Field.INPUT, outputCurrency)
     setCurrency(Field.OUTPUT, inputCurrency)
-  }, [setCurrency, inputCurrency, outputCurrency])
+    setIndependentField(independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT)
+  }, [setCurrency, inputCurrency, outputCurrency, independentField, setIndependentField])
 
   const onCurrencySelection = useCallback(
     (field: Field, currency?: Currency) => {

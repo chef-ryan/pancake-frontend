@@ -1,7 +1,7 @@
 import { AgnosticBaseCurrency } from './AgnosticBaseCurrency'
 import { Token } from './Token'
-import { TonChainId, TonNetworks } from '../chains'
 import { NATIVE, WNATIVE } from '../nativeTokens'
+import { TonChainId, TonNetworks } from '../ton.enums'
 
 /**
  * Represents the native currency of the chain on which it resides
