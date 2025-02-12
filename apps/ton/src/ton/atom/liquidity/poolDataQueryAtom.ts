@@ -29,7 +29,6 @@ export const poolDataQueryAtom = atomFamily(({ token0Address, token1Address }: P
       return result
     },
     enabled: !!token0Address && !!token1Address,
-    staleTime: QUERY_DEFAULT_STALE_TIME,
     refetchInterval: QUERY_DEFAULT_STALE_TIME,
     retry: 1,
   }))

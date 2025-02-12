@@ -72,7 +72,7 @@ export const CardContent = (props: CardContentProps) => {
     poolDataQueryAtom({ token0Address: currency0?.address, token1Address: currency1?.address }),
   )
 
-  const [sliderValue, setSliderValue] = useState(0)
+  const [sliderValue, setSliderValue] = useState(10)
 
   const rates = usePoolRates({
     currency0,

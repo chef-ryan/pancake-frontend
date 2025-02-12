@@ -1,7 +1,7 @@
-import { Currency } from '@pancakeswap/sdk'
 import { useMemo } from 'react'
 import { styled } from 'styled-components'
 
+import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { CurrencyLogo } from './CurrencyLogo'
 
 const Wrapper = styled.div<{ margin: boolean }>`
@@ -33,13 +33,9 @@ export function DoubleCurrencyLogo({
     <>
       <Wrapper margin={margin}>
         {currency0 && (
-          <CurrencyLogo
-            currency={currency0 as any}
-            size={`${size.toString()}px`}
-            style={{ marginRight: innerMargin }}
-          />
+          <CurrencyLogo currency={currency0} size={`${size.toString()}px`} style={{ marginRight: innerMargin }} />
         )}
-        {currency1 && <CurrencyLogo currency={currency1 as any} size={`${size.toString()}px`} />}
+        {currency1 && <CurrencyLogo currency={currency1} size={`${size.toString()}px`} />}
         {showChainLogo && currency0 ? (
           <img
             alt={`chain-${currency0.chainId}`}

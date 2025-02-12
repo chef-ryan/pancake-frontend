@@ -1,4 +1,5 @@
 import { BoxProps, FlexGap } from '@pancakeswap/uikit'
+import { DisplayLoader } from 'components/Misc/DisplayLoader'
 import { useUserPools } from 'hooks/liquidity/useUserPools'
 import styled from 'styled-components'
 import { LiquidityRow } from './LiquidityRow'
@@ -12,14 +13,16 @@ const ScrollableList = styled(FlexGap).attrs({ flexDirection: 'column', gap: '8p
 
 interface LiquidityListProps extends BoxProps {}
 export const LiquidityList = (props: LiquidityListProps) => {
-  const { data: userPools } = useUserPools()
+  const { data: userPools, isLoading } = useUserPools()
 
   return (
     <>
       <ScrollableList {...props}>
-        {userPools.map((item) => (
-          <LiquidityRow key={item.poolAddress} {...item} />
-        ))}
+        <DisplayLoader loading={isLoading}>
+          {userPools.map((item) => (
+            <LiquidityRow key={item.poolAddress} loading={isLoading} {...item} />
+          ))}
+        </DisplayLoader>
       </ScrollableList>
     </>
   )

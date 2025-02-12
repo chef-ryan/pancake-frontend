@@ -2,6 +2,8 @@ import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, Box, Button, Flex, FlexGap, MinusIcon, Text } from '@pancakeswap/uikit'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import { LightCard } from 'components/Card'
+import { DisplayLoader } from 'components/Misc/DisplayLoader'
+import { DoubleCurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { Collapse } from 'components/widgets/swap-v2/Collapse'
 import { ADDRESS_CONCAT_LENGTH, LP_TOKEN_DECIMALS } from 'config/constants/formatting'
@@ -24,9 +26,18 @@ interface LiquidityRowProps {
   balance?: bigint
   amount0?: bigint
   amount1?: bigint
+
+  loading: boolean
 }
 
-export const LiquidityRow = ({ token0, token1, balance = 0n, amount0 = 0n, amount1 = 0n }: LiquidityRowProps) => {
+export const LiquidityRow = ({
+  token0,
+  token1,
+  balance = 0n,
+  amount0 = 0n,
+  amount1 = 0n,
+  loading,
+}: LiquidityRowProps) => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -52,9 +63,12 @@ export const LiquidityRow = ({ token0, token1, balance = 0n, amount0 = 0n, amoun
         <Collapse
           title={
             <FlexGap flexDirection="column" gap="2px">
-              <Text>
-                {symbol0}-{symbol1} LP
-              </Text>
+              <FlexGap gap="8px">
+                <DoubleCurrencyLogo currency0={currency0} currency1={currency1} />
+                <Text>
+                  {symbol0}-{symbol1} LP
+                </Text>
+              </FlexGap>
 
               <NumberDisplay
                 value={formatBalance(balance, LP_TOKEN_DECIMALS).toString()}
@@ -69,11 +83,15 @@ export const LiquidityRow = ({ token0, token1, balance = 0n, amount0 = 0n, amoun
             <Box mt="8px">
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Pooled %symbol%', { symbol: symbol0 })}</Text>
-                <Text>{amount0 > 0n ? formatBalance(amount0, LP_TOKEN_DECIMALS) : '-'}</Text>
+                <DisplayLoader loading={loading}>
+                  <Text>{amount0 > 0n ? formatBalance(amount0, LP_TOKEN_DECIMALS) : '-'}</Text>
+                </DisplayLoader>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Pooled %symbol%', { symbol: symbol1 })}</Text>
-                <Text>{amount1 > 0n ? formatBalance(amount1, LP_TOKEN_DECIMALS) : '-'}</Text>
+                <DisplayLoader loading={loading}>
+                  <Text>{amount1 > 0n ? formatBalance(amount1, LP_TOKEN_DECIMALS) : '-'}</Text>
+                </DisplayLoader>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Your share in the pool')}</Text>

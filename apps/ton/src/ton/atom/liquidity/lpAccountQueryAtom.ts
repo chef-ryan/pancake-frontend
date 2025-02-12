@@ -34,7 +34,6 @@ export const lpAccountQueryAtom = atomFamily(({ token0Address, token1Address }: 
       return (await lpAccount.getGetLpAccountData()) ?? 0n
     },
     enabled: !!token0Address && !!token1Address && !!get(addressAtom),
-    staleTime: QUERY_DEFAULT_STALE_TIME,
     refetchInterval: QUERY_DEFAULT_STALE_TIME,
   }))
 }, isEqual)

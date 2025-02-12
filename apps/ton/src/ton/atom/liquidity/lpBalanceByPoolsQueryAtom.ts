@@ -10,7 +10,7 @@ import { networkAtom } from '../networkAtom'
 
 export const lpBalanceByPoolsQueryAtom = atomFamily((poolAddresses: string[]) => {
   return atomWithQuery((get) => ({
-    queryKey: ['lpBalanceByPools', get(networkAtom), poolAddresses, get(addressAtom)],
+    queryKey: ['lpBalanceByPoolsQueryAtom', get(networkAtom), poolAddresses, get(addressAtom)],
     queryFn: async () => {
       const userAddress = get(addressAtom)
 
@@ -21,15 +21,14 @@ export const lpBalanceByPoolsQueryAtom = atomFamily((poolAddresses: string[]) =>
         const lpWallet = get(lpWalletContractAtom(lpWalletAddress.toString()))
         const balance = (await lpWallet.getGetWalletData()).balance ?? 0n
 
-        console.log('Got lp balance for pool', { poolAddress, balance })
         return { poolAddress, balance }
       }
 
       return Promise.all(poolAddresses.map(getLpBalance))
     },
     enabled: !!poolAddresses && poolAddresses.length > 0 && !!get(addressAtom),
-    staleTime: QUERY_MEDIUM_STALE_TIME,
     refetchInterval: QUERY_MEDIUM_STALE_TIME,
     initialData: [],
+    retry: 3,
   }))
 }, isEqual)

@@ -16,7 +16,6 @@ export const poolDataMultipleQueryAtom = atomFamily((poolAddresses: string[]) =>
       return Promise.all(poolAddresses.map(getPoolData))
     },
     enabled: !!poolAddresses,
-    staleTime: QUERY_DEFAULT_STALE_TIME,
     refetchInterval: QUERY_DEFAULT_STALE_TIME,
     retry: 1,
     initialData: [],

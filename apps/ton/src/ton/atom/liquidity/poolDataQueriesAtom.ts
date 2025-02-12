@@ -32,8 +32,7 @@ export const poolDataQueriesAtom = atomFamily((pairs: PoolDataAtomParams[]) => {
       return result.map((item) => (item.status === 'fulfilled' ? item.value : null))
     },
     enabled: !!key.length,
-    staleTime: QUERY_DEFAULT_STALE_TIME, // 1 minute
-    refetchInterval: QUERY_DEFAULT_STALE_TIME, // 1 minute
+    refetchInterval: QUERY_DEFAULT_STALE_TIME,
     retry: 1,
   }))
 }, isEqual)

@@ -31,7 +31,6 @@ export const lpBalanceQueryAtom = atomFamily(({ token0Address, token1Address }: 
       return (await lpWallet.getGetWalletData()).balance ?? 0n
     },
     enabled: !!token0Address && !!token1Address,
-    staleTime: QUERY_DEFAULT_STALE_TIME,
     refetchInterval: QUERY_DEFAULT_STALE_TIME,
   }))
 }, isEqual)
