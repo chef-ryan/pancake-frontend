@@ -1,12 +1,28 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { ArrowDownIcon, Box, BoxProps, Button, Flex, FlexGap, MinusIcon, Slider, Text } from '@pancakeswap/uikit'
+import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
 import { LightGreyCard } from 'components/Card'
 import { WalletDisclaimer } from 'components/Card/WalletDisclaimer'
+import { DisplayLoader } from 'components/Misc/DisplayLoader'
+import { CurrencyLogo } from 'components/widgets'
+import { NumberDisplay } from 'components/widgets/NumberDisplay'
+import { PRESET_TOKENS } from 'config/constants/tokens'
 import { usePoolRates } from 'hooks/liquidity/usePoolRates'
+import { useAtomValue } from 'jotai'
 import { useRouter } from 'next/router'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
+import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
+import { networkAtom } from 'ton/atom/networkAtom'
+import { useRemoveLiquidity } from 'ton/logic/liquidity/useRemoveLiquidity'
+import { formatBalance } from 'ton/utils/formatting'
+
+const Hr = styled.hr`
+  width: 100%;
+  border-color: ${({ theme }) => theme.colors.cardBorder};
+`
 
 const ContentContainer = styled(Box)<{ $isBottomRounded?: boolean }>`
   padding: 24px;
@@ -42,15 +58,65 @@ export const CardContent = (props: CardContentProps) => {
 
   // Query params
   const router = useRouter()
-  const [currency0, currency1] = router.query?.currency ?? ['TON', 'USDT']
+  const network = useAtomValue(networkAtom)
+  const [address0, address1] = router.query?.currency ?? ['TON', PRESET_TOKENS.CAKE[network].address]
+
+  // TODO: Handle native
+  const { data: currency0 } = useAtomValue(tokenByAddressQueryAtom(address0))
+  const { data: currency1 } = useAtomValue(tokenByAddressQueryAtom(address1))
+
+  const { data: lpBalance } = useAtomValue(
+    lpBalanceQueryAtom({ token0Address: currency0?.address, token1Address: currency1?.address }),
+  )
+  const { data: poolData, isLoading: isPoolDataLoading } = useAtomValue(
+    poolDataQueryAtom({ token0Address: currency0?.address, token1Address: currency1?.address }),
+  )
 
   const [sliderValue, setSliderValue] = useState(0)
 
   const rates = usePoolRates({
-    currency0: undefined,
-    currency1: undefined,
-    reserve0: undefined,
-    reserve1: undefined,
+    currency0,
+    currency1,
+    reserve0: poolData?.reserve0 ?? 0n,
+    reserve1: poolData?.reserve1 ?? 0n,
+  })
+
+  const depositedAmounts = useMemo(() => {
+    if (!lpBalance || !poolData) {
+      return {
+        amount0: 0n,
+        amount1: 0n,
+      }
+    }
+
+    return {
+      amount0: (lpBalance * BigInt(poolData.reserve0)) / BigInt(poolData?.totalSupply ?? 1),
+      amount1: (lpBalance * BigInt(poolData.reserve1)) / BigInt(poolData?.totalSupply ?? 1),
+    }
+  }, [lpBalance, poolData])
+
+  const outputAmounts = useMemo(() => {
+    // TODO: Calculate Fee amounts
+    if (!depositedAmounts) {
+      return {
+        amount0: 0n,
+        amount1: 0n,
+      }
+    }
+
+    const amount0 = (BigInt(sliderValue) * BigInt(depositedAmounts.amount0)) / 100n
+    const amount1 = (BigInt(sliderValue) * BigInt(depositedAmounts.amount1)) / 100n
+
+    return {
+      amount0,
+      amount1,
+    }
+  }, [depositedAmounts, sliderValue])
+
+  const { removeLiquidity } = useRemoveLiquidity({
+    currency0,
+    currency1,
+    amount: lpBalance ? (lpBalance * BigInt(sliderValue)) / 100n : 0n,
   })
 
   const handleSliderChange = useCallback((value: number) => {
@@ -60,6 +126,10 @@ export const CardContent = (props: CardContentProps) => {
   const handleQuickInput = useCallback((value: number) => {
     setSliderValue(value)
   }, [])
+
+  const handleRemoveLiquidity = useCallback(() => {
+    removeLiquidity()
+  }, [removeLiquidity])
 
   return (
     <>
@@ -85,50 +155,62 @@ export const CardContent = (props: CardContentProps) => {
         <FlexGap alignItems="center" justifyContent="center" mt="12px">
           <ArrowDownIcon mt="12px" color="textSubtle" width={28} />
         </FlexGap>
-        <Text color="textSubtle">You will receive</Text>
+        <Text color="textSubtle">{t('You will receive')}</Text>
         <LightGreyCard mt="8px">
           <FlexGap flexDirection="column" gap="8px">
             <Flex justifyContent="space-between">
-              <Text color="textSubtle">Pooled {currency0}</Text>
-              <Text>5</Text>
+              <FlexGap gap="8px">
+                <CurrencyLogo currency={currency0} />
+                <Text color="textSubtle">{t('Pooled %currency%', { currency: currency0?.symbol ?? '' })}</Text>
+              </FlexGap>
+
+              <NumberDisplay value={formatBalance(outputAmounts?.amount0 ?? 0n, currency0?.decimals)} />
             </Flex>
             <Flex justifyContent="space-between">
-              <Text color="textSubtle">Pooled {currency1}</Text>
-              <Text>10</Text>
+              <FlexGap gap="8px">
+                <CurrencyLogo currency={currency1} />
+                <Text color="textSubtle">{t('Pooled %currency%', { currency: currency1?.symbol ?? '' })}</Text>
+              </FlexGap>
+
+              <NumberDisplay value={formatBalance(outputAmounts?.amount1 ?? 0n, currency1?.decimals)} />
+            </Flex>
+            <Hr />
+            <Flex justifyContent="space-between">
+              <FlexGap gap="8px">
+                <CurrencyLogo currency={currency0} />
+                <Text color="textSubtle">{t('%currency% fee earned', { currency: currency0?.symbol ?? '' })}</Text>
+              </FlexGap>
+              <Text>-</Text>
             </Flex>
             <Flex justifyContent="space-between">
-              <Text color="textSubtle">{currency0} fee earned</Text>
-              <Text>0.1</Text>
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text color="textSubtle">{currency1} fee earned</Text>
-              <Text>0.2</Text>
+              <FlexGap gap="8px">
+                <CurrencyLogo currency={currency1} />
+                <Text color="textSubtle">{t('%currency% fee earned', { currency: currency1?.symbol ?? '' })}</Text>
+              </FlexGap>
+              <Text>-</Text>
             </Flex>
           </FlexGap>
         </LightGreyCard>
-
         <FlexGap flexDirection="column" mt="24px" gap="16px">
-          {/* <Flex justifyContent="space-between">
-            <Text color="textSubtle">Rates</Text>
-            {rates ? (
-              <Box>
-                <Text>
-                  1 {currency0?.symbol} ≈ {rates.currency0.toString()} {currency1?.symbol}
-                </Text>
-                <Text>
-                  1 {currency1?.symbol} ≈ {rates.currency1.toString()} {currency0?.symbol}
-                </Text>
-              </Box>
-            ) : isPoolDataLoading ? (
-              <>
-                <Loading />
-              </>
-            ) : (
-              <>
-                <Text>{t('Pool does not exist')}</Text>
-              </>
-            )}
-          </Flex> */}
+          <Flex justifyContent="space-between">
+            <Text color="textSubtle">{t('Rates')}</Text>
+            <DisplayLoader loading={isPoolDataLoading}>
+              {rates ? (
+                <Box>
+                  <Text>
+                    1 {currency0?.symbol} ≈ {rates.currency0.toString()} {currency1?.symbol}
+                  </Text>
+                  <Text>
+                    1 {currency1?.symbol} ≈ {rates.currency1.toString()} {currency0?.symbol}
+                  </Text>
+                </Box>
+              ) : (
+                <>
+                  <Text>{t('Pool does not exist')}</Text>
+                </>
+              )}
+            </DisplayLoader>
+          </Flex>
           <Flex justifyContent="space-between" alignItems="center">
             <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
 
@@ -139,8 +221,8 @@ export const CardContent = (props: CardContentProps) => {
 
       {isWalletConnected && (
         <StyledCardFooter>
-          <Button width="100%" endIcon={<MinusIcon color="white" />}>
-            Remove
+          <Button onClick={handleRemoveLiquidity} width="100%" endIcon={<MinusIcon color="invertedContrast" />}>
+            {t('Remove')}
           </Button>
         </StyledCardFooter>
       )}

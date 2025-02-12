@@ -171,7 +171,7 @@ export const useAddLiquidity = () => {
 
       tonUI.sendTransaction(newTxRequest)
     },
-    [tonUI, userAddress_],
+    [tonUI, userAddress_, routerAddress],
   )
 
   return {

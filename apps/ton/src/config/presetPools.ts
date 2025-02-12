@@ -1,5 +1,5 @@
 // import testnetPools from 'public/lists/pools-testnet.json'
-import { TonNetworks } from 'ton/ton.enums'
+import { TonNetworks } from '@pancakeswap/ton-v2-sdk'
 
 export const PRESET_POOLS = {
   [TonNetworks.Mainnet]: [],

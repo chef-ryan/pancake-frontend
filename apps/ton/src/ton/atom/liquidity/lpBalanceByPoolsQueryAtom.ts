@@ -20,6 +20,8 @@ export const lpBalanceByPoolsQueryAtom = atomFamily((poolAddresses: string[]) =>
         const lpWalletAddress = await pool.getGetWalletAddress(parseAddress(userAddress))
         const lpWallet = get(lpWalletContractAtom(lpWalletAddress.toString()))
         const balance = (await lpWallet.getGetWalletData()).balance ?? 0n
+
+        console.log('Got lp balance for pool', { poolAddress, balance })
         return { poolAddress, balance }
       }
 

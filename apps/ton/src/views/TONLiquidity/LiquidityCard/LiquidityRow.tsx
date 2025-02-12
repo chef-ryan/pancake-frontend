@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, Box, Button, Flex, FlexGap, MinusIcon, Text } from '@pancakeswap/uikit'
-import { tokenByAddressAtom } from 'atoms/tokens/useTokenByAddress'
+import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import { LightCard } from 'components/Card'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { Collapse } from 'components/widgets/swap-v2/Collapse'
@@ -30,8 +30,8 @@ export const LiquidityRow = ({ token0, token1, balance = 0n, amount0 = 0n, amoun
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
-  const { data: currency0 } = useAtomValue(tokenByAddressAtom(token0))
-  const { data: currency1 } = useAtomValue(tokenByAddressAtom(token1))
+  const { data: currency0 } = useAtomValue(tokenByAddressQueryAtom(token0))
+  const { data: currency1 } = useAtomValue(tokenByAddressQueryAtom(token1))
 
   const handleToggle = useCallback(() => {
     setIsOpen(!isOpen)
@@ -69,11 +69,11 @@ export const LiquidityRow = ({ token0, token1, balance = 0n, amount0 = 0n, amoun
             <Box mt="8px">
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Pooled %symbol%', { symbol: symbol0 })}</Text>
-                <Text>{formatBalance(amount0, LP_TOKEN_DECIMALS)}</Text>
+                <Text>{amount0 > 0n ? formatBalance(amount0, LP_TOKEN_DECIMALS) : '-'}</Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Pooled %symbol%', { symbol: symbol1 })}</Text>
-                <Text>{formatBalance(amount1, LP_TOKEN_DECIMALS)}</Text>
+                <Text>{amount1 > 0n ? formatBalance(amount1, LP_TOKEN_DECIMALS) : '-'}</Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Your share in the pool')}</Text>

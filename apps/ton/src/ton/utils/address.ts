@@ -3,7 +3,8 @@ import { Address } from '@ton/core'
 import { JettonMaster, TonClient } from '@ton/ton'
 
 export const parseAddress = (address?: string) => {
-  if (!address) return Address.parse('')
+  // if (!address) return Address.parse('')
+  if (!address) return Address.parse('0:0000000000000000000000000000000000000000000000000000000000000000')
   return Address.parse(address)
 }
 

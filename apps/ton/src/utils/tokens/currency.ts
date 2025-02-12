@@ -1,6 +1,5 @@
-import { Currency, Token } from '@pancakeswap/ton-v2-sdk'
+import { Currency, Token, TonChainId, TonNetworks } from '@pancakeswap/ton-v2-sdk'
 import { TON_API } from 'config/constants/endpoints'
-import { TonChainId, TonNetworks } from 'ton/ton.enums'
 import { ResultJettonData } from 'types/tonapi'
 
 export function currencyKey(currency?: Currency): string {
