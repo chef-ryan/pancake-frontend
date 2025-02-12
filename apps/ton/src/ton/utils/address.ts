@@ -9,7 +9,7 @@ export const parseAddress = (address?: string) => {
 
 export const isAddress = (address?: string) => {
   if (!address) return false
-  return Address.isAddress(address) // Note: only checks Address class not validity. TODO: Update
+  return Address.isAddress(address)
 }
 
 export const getJettonWalletAddress = async (client: TonClient, userAddress: Address, currency: Currency) => {

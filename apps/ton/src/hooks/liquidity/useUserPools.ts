@@ -1,54 +1,57 @@
-// import testnetPools from 'public/lists/pools-testnet.json'
-
+import { PRESET_POOLS } from 'config/presetPools'
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 import { lpAccountByPoolsAtom } from 'ton/atom/liquidity/lpAccountByPoolsQueryAtom'
 import { lpBalanceByPoolsQueryAtom } from 'ton/atom/liquidity/lpBalanceByPoolsQueryAtom'
+import { poolDataMultipleQueryAtom } from 'ton/atom/liquidity/poolDataMultipleQueryAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
-import { TonNetworks } from 'ton/ton.enums'
-
-const PRESET_POOLS = {
-  [TonNetworks.Mainnet]: [],
-  [TonNetworks.Testnet]: {
-    // SYRUP-PAN
-    'kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F<>kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg':
-      'EQB53lcd4hlB4VuZ2mTSjcZd1JSJJ1iY-kN9SIPIL9RrQU5B',
-  },
-}
 
 export const useUserPools = () => {
   const network = useAtomValue(networkAtom)
   const { data: pools, ...rest } = useAtomValue(lpBalanceByPoolsQueryAtom(Object.values(PRESET_POOLS[network])))
-  const tokenPairs = useMemo(() => Object.keys(PRESET_POOLS[network]).map((key) => key.split('<>')), [network])
 
-  // Combine token pairs with their pool addresses considering they're in same order
-  const basicPoolsData = useMemo(
+  const tokenPairs = useMemo(() => Object.keys(PRESET_POOLS[network]).map((pool) => pool.split('<>')), [network])
+
+  const poolsWithBalance = useMemo(
     () =>
-      tokenPairs
-        .map(([token0, token1], index) => ({
-          poolAddress: PRESET_POOLS[network][`${token0}<>${token1}`],
-          token0,
-          token1,
-          balance: pools?.[index]?.balance,
+      pools
+        .map((pool, index) => ({
+          ...pool,
+          token0: tokenPairs[index][0],
+          token1: tokenPairs[index][1],
         }))
-        .filter((pool) => pool.balance && pool.balance > 0n),
-    [pools, tokenPairs, network],
+        .filter((pool) => pool.balance > 0n),
+    [pools, tokenPairs],
   )
 
-  const { data: lpAccounts } = useAtomValue(lpAccountByPoolsAtom(basicPoolsData.map((pool) => pool.poolAddress)))
+  console.log('useUserPools poolsWithBalance', { pools, poolsWithBalance, tokenPairs })
 
-  // Combine LpAccount data with poolsData
-  const poolsData = useMemo(() => {
-    if (!lpAccounts) return basicPoolsData
+  // Fetch user's deposited amount0 and amount1 from LpAccount
+  const { data: lpAccounts } = useAtomValue(lpAccountByPoolsAtom(poolsWithBalance.map((pool) => pool.poolAddress)))
 
-    return basicPoolsData.map((pool, index) => ({
+  // Fetch pool's basic info for totalSupply and reserves
+  const { data: poolInfos } = useAtomValue(poolDataMultipleQueryAtom(poolsWithBalance.map((pool) => pool.poolAddress)))
+
+  console.log('useUserPools Precombine', {
+    pools,
+    poolsWithBalance,
+    lpAccounts,
+    poolInfos,
+  })
+
+  // Combine relevant data
+  const finalPoolData = useMemo(() => {
+    return poolsWithBalance.map((pool, index) => ({
       ...pool,
-      amount0: lpAccounts[index]?.amount0,
-      amount1: lpAccounts[index]?.amount1,
+      amount0: lpAccounts ? lpAccounts[index]?.amount0 : undefined,
+      amount1: lpAccounts ? lpAccounts[index]?.amount1 : undefined,
+      totalSupply: poolInfos[index]?.totalSupply,
+      reserve0: poolInfos[index]?.reserve0,
+      reserve1: poolInfos[index]?.reserve1,
     }))
-  }, [basicPoolsData, lpAccounts])
+  }, [poolsWithBalance, lpAccounts, poolInfos])
 
-  console.log('useUserPools', poolsData)
+  console.log('useUserPools', finalPoolData)
 
-  return { data: poolsData, ...rest }
+  return { data: finalPoolData, ...rest }
 }

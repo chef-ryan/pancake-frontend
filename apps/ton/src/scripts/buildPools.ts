@@ -10,7 +10,7 @@ import { Router } from 'ton/wrappers/tact_Router'
 import mainnetList from '../../public/lists/main.json'
 import testnetList from '../../public/lists/testnet.json'
 
-const key = (token0, token1) => `${token0.address}-${token1.address}`
+const key = (token0, token1) => `${token0.address}<>${token1.address}`
 
 const getTokenPairs = (tokens: any[]) => {
   const pairs: any[] = []

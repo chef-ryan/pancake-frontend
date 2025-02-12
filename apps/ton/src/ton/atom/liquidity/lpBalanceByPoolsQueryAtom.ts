@@ -28,5 +28,6 @@ export const lpBalanceByPoolsQueryAtom = atomFamily((poolAddresses: string[]) =>
     enabled: !!poolAddresses && poolAddresses.length > 0 && !!get(addressAtom),
     staleTime: QUERY_MEDIUM_STALE_TIME,
     refetchInterval: QUERY_MEDIUM_STALE_TIME,
+    initialData: [],
   }))
 }, isEqual)

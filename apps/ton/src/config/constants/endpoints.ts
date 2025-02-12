@@ -8,6 +8,11 @@ export const blockExplorerUrls = {
   [TonNetworks.Testnet]: 'https://testnet.tonscan.org',
 }
 
+export const TON_API = {
+  [TonNetworks.Mainnet]: 'https://tonapi.io',
+  [TonNetworks.Testnet]: 'https://testnet.tonapi.io',
+}
+
 export const bridgeLink = 'https://bridge.pancakeswap.finance'
 
 // Learn More Links to Docs

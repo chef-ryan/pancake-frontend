@@ -1,9 +1,11 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, Box, Button, Flex, FlexGap, MinusIcon, Text } from '@pancakeswap/uikit'
+import { tokenByAddressAtom } from 'atoms/tokens/useTokenByAddress'
 import { LightCard } from 'components/Card'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { Collapse } from 'components/widgets/swap-v2/Collapse'
-import { LP_TOKEN_DECIMALS } from 'config/constants/tokens'
+import { ADDRESS_CONCAT_LENGTH, LP_TOKEN_DECIMALS } from 'config/constants/formatting'
+import { useAtomValue } from 'jotai'
 import Link from 'next/link'
 import { useCallback, useState } from 'react'
 import styled from 'styled-components'
@@ -17,8 +19,8 @@ const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
 `
 
 interface LiquidityRowProps {
-  token0?: string
-  token1?: string
+  token0: string
+  token1: string
   balance?: bigint
   amount0?: bigint
   amount1?: bigint
@@ -28,9 +30,21 @@ export const LiquidityRow = ({ token0, token1, balance = 0n, amount0 = 0n, amoun
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
+  const { data: currency0 } = useAtomValue(tokenByAddressAtom(token0))
+  const { data: currency1 } = useAtomValue(tokenByAddressAtom(token1))
+
   const handleToggle = useCallback(() => {
     setIsOpen(!isOpen)
   }, [isOpen, setIsOpen])
+
+  if (!token0 || !token1) {
+    return null
+  }
+
+  const symbol0 =
+    currency0?.symbol ?? `${token0.slice(0, ADDRESS_CONCAT_LENGTH)}...${token0.slice(-ADDRESS_CONCAT_LENGTH)}`
+  const symbol1 =
+    currency1?.symbol ?? `${token1.slice(0, ADDRESS_CONCAT_LENGTH)}...${token1.slice(-ADDRESS_CONCAT_LENGTH)}`
 
   return (
     <>
@@ -39,7 +53,7 @@ export const LiquidityRow = ({ token0, token1, balance = 0n, amount0 = 0n, amoun
           title={
             <FlexGap flexDirection="column" gap="2px">
               <Text>
-                {token0}-{token1} LP
+                {symbol0}-{symbol1} LP
               </Text>
 
               <NumberDisplay
@@ -54,11 +68,11 @@ export const LiquidityRow = ({ token0, token1, balance = 0n, amount0 = 0n, amoun
           content={
             <Box mt="8px">
               <Flex mt="5px" justifyContent="space-between">
-                <Text color="textSubtle">{t('Pooled %symbol%', { symbol: 'token0' })}</Text>
+                <Text color="textSubtle">{t('Pooled %symbol%', { symbol: symbol0 })}</Text>
                 <Text>{formatBalance(amount0, LP_TOKEN_DECIMALS)}</Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
-                <Text color="textSubtle">{t('Pooled %symbol%', { symbol: 'token1' })}</Text>
+                <Text color="textSubtle">{t('Pooled %symbol%', { symbol: symbol1 })}</Text>
                 <Text>{formatBalance(amount1, LP_TOKEN_DECIMALS)}</Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
