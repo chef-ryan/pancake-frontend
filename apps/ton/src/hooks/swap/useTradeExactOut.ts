@@ -12,17 +12,25 @@ import { useAllCommonPairs } from './useAllCommonPairs'
 export function useTradeExactOut(
   currencyAmountOut?: CurrencyAmount<Currency>,
   currencyIn?: Currency,
-): Trade<Currency, Currency, TradeType> | null {
-  const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
+): { isLoading: boolean; data: Trade<Currency, Currency, TradeType> | null } {
+  const { data: allowedPairs, isLoading } = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
 
   const [singleHopOnly] = useUserSingleHopOnly()
 
   return useMemo(() => {
+    if (isLoading) {
+      return {
+        isLoading,
+        data: null,
+      }
+    }
     if (currencyIn && currencyAmountOut && allowedPairs.length > 0) {
       if (singleHopOnly) {
-        return (
-          bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 1, maxNumResults: 1 })[0] ?? null
-        )
+        return {
+          isLoading: false,
+          data:
+            bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 1, maxNumResults: 1 })[0] ?? null,
+        }
       }
       // search through trades with varying hops, find best trade out of them
       let bestTradeSoFar: Trade<Currency, Currency, TradeType> | null = null
@@ -33,8 +41,14 @@ export function useTradeExactOut(
           bestTradeSoFar = currentTrade
         }
       }
-      return bestTradeSoFar
+      return {
+        isLoading: false,
+        data: bestTradeSoFar,
+      }
     }
-    return null
-  }, [currencyIn, currencyAmountOut, allowedPairs, singleHopOnly])
+    return {
+      isLoading: false,
+      data: null,
+    }
+  }, [currencyIn, currencyAmountOut, allowedPairs, singleHopOnly, isLoading])
 }

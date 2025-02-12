@@ -1,6 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Pair } from '@pancakeswap/sdk'
-import { Currency } from '@pancakeswap/ton-v2-sdk'
+import { Currency, Pair } from '@pancakeswap/ton-v2-sdk'
 import {
   Box,
   Button,
@@ -239,7 +238,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   const { isMobile } = useMatchBreakpoints()
 
   const mode = id
-  const token = pair ? pair.liquidityToken : currency?.isToken ? currency : null
+  // const token = pair ? pair.liquidityToken : currency?.isToken ? currency : null
 
   const [isInputFocus, setIsInputFocus] = useState(false)
 

@@ -20,7 +20,9 @@ export const poolDataQueriesAtom = atomFamily((pairs: PoolDataAtomParams[]) => {
         pairs.map(async ({ token0Address, token1Address }) => {
           const poolAddress = await get(poolAddressAtom({ token0Address, token1Address }))
 
-          if (!poolAddress) return null
+          if (!poolAddress) {
+            throw new Error('fetch poolAddress failed')
+          }
 
           const poolData = await get(poolContractAtom(poolAddress)).getGetPoolData()
           return {
@@ -33,6 +35,6 @@ export const poolDataQueriesAtom = atomFamily((pairs: PoolDataAtomParams[]) => {
     },
     enabled: !!key.length,
     refetchInterval: QUERY_DEFAULT_STALE_TIME,
-    retry: 1,
+    retry: 10,
   }))
 }, isEqual)

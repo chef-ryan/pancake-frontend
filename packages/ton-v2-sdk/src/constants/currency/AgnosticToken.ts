@@ -1,4 +1,5 @@
 import invariant from 'tiny-invariant'
+import { Address } from '@ton/core'
 
 import { AgnosticBaseCurrency } from './AgnosticBaseCurrency'
 
@@ -60,7 +61,7 @@ export class AgnosticToken extends AgnosticBaseCurrency {
   public sortsBefore(other: AgnosticToken): boolean {
     invariant(this.chainId === other.chainId, 'CHAIN_IDS')
     invariant(this.address !== other.address, 'ADDRESSES')
-    return this.address.toLowerCase() < other.address.toLowerCase()
+    return other.isNative ? false : Address.parse(this.address).hash < Address.parse(other.address).hash
   }
 
   /**

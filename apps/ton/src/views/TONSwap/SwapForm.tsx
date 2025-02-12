@@ -36,8 +36,14 @@ export const SwapForm = () => {
 
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
-  const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  const bestTradeExactOut = useTradeExactOut(isExactIn ? undefined : parsedAmount, inputCurrency ?? undefined)
+  const { isLoading: isTradeExactInLoading, data: bestTradeExactIn } = useTradeExactIn(
+    isExactIn ? parsedAmount : undefined,
+    outputCurrency ?? undefined,
+  )
+  const { isLoading: isTradeExactOutLoading, data: bestTradeExactOut } = useTradeExactOut(
+    isExactIn ? undefined : parsedAmount,
+    inputCurrency ?? undefined,
+  )
   const trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
   const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
@@ -119,7 +125,7 @@ export const SwapForm = () => {
               showUSDPrice
               showMaxButton
               showCommonBases
-              inputLoading={false}
+              inputLoading={isTradeExactOutLoading}
               currencyLoading={false}
               value={formattedAmounts[Field.INPUT]}
               showQuickInputButton
@@ -144,12 +150,12 @@ export const SwapForm = () => {
               showUSDPrice
               showMaxButton
               showCommonBases
-              inputLoading={false}
+              inputLoading={isTradeExactInLoading}
               currencyLoading={false}
               value={formattedAmounts[Field.OUTPUT]}
               showQuickInputButton
               currency={outputCurrency}
-              onUserInput={noop}
+              onUserInput={(val) => onUserInput(Field.OUTPUT, val)}
               onPercentInput={noop}
               onMax={noop}
               onCurrencySelect={(currency) => onCurrencySelection(Field.OUTPUT, currency)}

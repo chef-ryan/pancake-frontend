@@ -6,7 +6,7 @@ import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from 'c
 import { useAtomValue } from 'jotai'
 import { poolDataQueriesAtom } from 'ton/atom/liquidity/poolDataQueriesAtom'
 
-export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
+export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): { isLoading: boolean; data: Pair[] } {
   const chainId = currencyA?.chainId
 
   const [tokenA, tokenB] = chainId ? [currencyA?.wrapped, currencyB?.wrapped] : [undefined, undefined]
@@ -59,45 +59,71 @@ export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): P
     [tokenA, tokenB, bases, basePairs, chainId],
   )
 
-  const allPairs = usePairs(allPairCombinations)
+  const { data: allPairs, isLoading } = usePairs(allPairCombinations)
 
   // only pass along valid pairs, non-duplicated pairs
   return useMemo(
     () =>
-      uniqBy(
-        allPairs.filter((result): result is NonNullable<typeof result> => Boolean(result)),
-        (p) => p.poolAddress,
-      ),
-    [allPairs],
+      isLoading
+        ? {
+            isLoading,
+            data: [],
+          }
+        : {
+            isLoading,
+            data: allPairs
+              ? uniqBy(
+                  allPairs.filter((result): result is NonNullable<typeof result> => Boolean(result)),
+                  (p) => p.poolAddress,
+                )
+              : [],
+          },
+    [allPairs, isLoading],
   )
 }
 
 const usePairs = (pairs: [Token, Token][]) => {
   const pairsAddress = useMemo(
     () =>
-      pairs.map(([token0, token1]) => ({
-        token0Address: token0.wrapped.address,
-        token1Address: token1.wrapped.address,
-      })),
+      pairs.map(([token0, token1]) =>
+        token0.sortsBefore(token1)
+          ? {
+              token0Address: token0.wrapped.address,
+              token1Address: token1.wrapped.address,
+            }
+          : {
+              token0Address: token1.wrapped.address,
+              token1Address: token0.wrapped.address,
+            },
+      ),
     [pairs],
   )
   const result = useAtomValue(poolDataQueriesAtom(pairsAddress))
   return useMemo(() => {
     if (result.isLoading) {
-      return []
+      return {
+        isLoading: result.isLoading,
+        data: result.data,
+      }
     }
-    return pairs.map(([token0, token1], idx) => {
+    const data = pairs.map(([token0_, token1_], idx) => {
       const pool = result.data?.[idx]
-      return pool
-        ? {
-            ...pool,
-            chainId: token0.chainId,
-            token0,
-            token1,
-            reserve0: CurrencyAmount.fromRawAmount(token0, pool.reserve0),
-            reserve1: CurrencyAmount.fromRawAmount(token1, pool.reserve1),
-          }
-        : null
+      if (!pool) {
+        return null
+      }
+      const [token0, token1] = token0_.sortsBefore(token1_) ? [token0_, token1_] : [token1_, token0_]
+      return {
+        ...pool,
+        chainId: token0.chainId,
+        token0,
+        token1,
+        reserve0: CurrencyAmount.fromRawAmount(token0, pool.reserve0),
+        reserve1: CurrencyAmount.fromRawAmount(token1, pool.reserve1),
+      }
     })
+    return {
+      isLoading: false,
+      data,
+    }
   }, [pairs, result.data, result.isLoading])
 }

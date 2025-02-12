@@ -1,3 +1,4 @@
+import invariant from 'tiny-invariant'
 import { AgnosticBaseCurrency } from './AgnosticBaseCurrency'
 import { Token } from './Token'
 import { NATIVE, WNATIVE } from '../nativeTokens'
@@ -55,5 +56,16 @@ export class Native extends AgnosticBaseCurrency {
 
   public equals(other?: AgnosticBaseCurrency): boolean {
     return !!other && other.isNative && other.chainId === this.chainId
+  }
+
+  /**
+   * Returns true if the address of this token sorts before the address of the other token
+   * @param other other token to compare
+   * @throws if the tokens have the same address
+   * @throws if the tokens are on different chains
+   */
+  public sortsBefore(other: AgnosticBaseCurrency): boolean {
+    invariant(this.chainId === other.chainId, 'CHAIN_IDS')
+    return true
   }
 }

@@ -8,11 +8,9 @@ export const independentFieldAtom = atom(Field.INPUT)
 export const typedValueAtom = atom('')
 
 export const inputCurrencyAtom = atom((get) => {
-  const independentField = get(independentFieldAtom)
-  return get(currencyFamily(independentField))
+  return get(currencyFamily(Field.INPUT))
 })
 
 export const outputCurrencyAtom = atom((get) => {
-  const independentField = get(independentFieldAtom)
-  return get(currencyFamily(independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT))
+  return get(currencyFamily(Field.OUTPUT))
 })
