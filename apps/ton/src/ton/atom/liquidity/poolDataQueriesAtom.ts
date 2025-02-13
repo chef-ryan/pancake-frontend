@@ -1,3 +1,5 @@
+import { useQueryClient } from '@tanstack/react-query'
+import { useAtomValue } from 'jotai'
 import { QUERY_DEFAULT_STALE_TIME } from 'config/constants/exchange'
 import { atomWithQuery } from 'jotai-tanstack-query'
 import { atomFamily } from 'jotai/utils'
@@ -11,8 +13,12 @@ interface PoolDataAtomParams {
   token1Address?: string
 }
 
+const getKeyByPairs = (pairs: PoolDataAtomParams[]) => {
+  return pairs.map(({ token0Address, token1Address }) => `${token0Address}-${token1Address}`)
+}
+
 export const poolDataQueriesAtom = atomFamily((pairs: PoolDataAtomParams[]) => {
-  const key = pairs.map(({ token0Address, token1Address }) => `${token0Address}-${token1Address}`)
+  const key = getKeyByPairs(pairs)
   return atomWithQuery((get) => ({
     queryKey: ['poolData', get(networkAtom), ...key],
     queryFn: async () => {
@@ -38,3 +44,18 @@ export const poolDataQueriesAtom = atomFamily((pairs: PoolDataAtomParams[]) => {
     retry: 10,
   }))
 }, isEqual)
+
+export function useRefreshPoolData(pairs: PoolDataAtomParams[]) {
+  const queryClient = useQueryClient()
+  const network = useAtomValue(networkAtom)
+  const key = getKeyByPairs(pairs)
+
+  const refresh = () => {
+    // Invalidate all queries
+    queryClient.invalidateQueries({
+      queryKey: ['poolData', network, ...key],
+    })
+  }
+
+  return { refresh }
+}

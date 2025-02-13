@@ -971,6 +971,9 @@ importers:
       '@pancakeswap/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@pancakeswap/widgets-internal':
+        specifier: workspace:*
+        version: link:../../packages/widgets-internal
       '@tanstack/query-core':
         specifier: ^5.62.16
         version: 5.62.16

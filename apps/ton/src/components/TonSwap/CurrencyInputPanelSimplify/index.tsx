@@ -333,7 +333,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
         wrapperRef={wrapperRef}
         top={
           <Flex justifyContent="space-between" alignItems="center" width="100%" position="relative">
-            {title || <>&nbsp;</>}
+            {title}
             <LazyAnimatePresence mode="wait" features={domAnimation}>
               {account ? (
                 !isInputFocus || !onMax ? (

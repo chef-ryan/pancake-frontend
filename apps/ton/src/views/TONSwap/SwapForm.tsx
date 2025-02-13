@@ -1,35 +1,33 @@
-import { useTranslation } from '@pancakeswap/localization'
-import { Rounding } from '@pancakeswap/swap-sdk-core'
 import { Native, TonNetworks } from '@pancakeswap/ton-v2-sdk'
-import { Column, Text } from '@pancakeswap/uikit'
-import { formatFraction } from '@pancakeswap/utils/formatFractions'
+import { useCallback, useEffect, useMemo } from 'react'
+import noop from 'lodash/noop'
+import { Column, FlexGap, Text } from '@pancakeswap/uikit'
+import { ButtonAndDetailsPanel } from 'components/TonSwap/ButtonAndDetailsPanel'
+import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
+import { FlipButton } from 'components/TonSwap/FlipButton'
 import { useUserSlippage } from '@pancakeswap/utils/user'
-import { toNano } from '@ton/core'
+import { useTranslation } from '@pancakeswap/localization'
+import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import { setApprovalModalAtom } from 'atoms/modals/approvalModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
 import { independentFieldAtom, inputCurrencyAtom, outputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
 import { TransactionActionType } from 'components/Modals/ActionModal'
-import { ButtonAndDetailsPanel } from 'components/TonSwap/ButtonAndDetailsPanel'
-import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
-import { FlipButton } from 'components/TonSwap/FlipButton'
 import { SwapCommitButton } from 'components/TonSwap/SwapCommitButton'
 import { SwapUIV2 } from 'components/widgets/swap-v2'
-import { PRESET_TOKENS } from 'config/constants/tokens'
 import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
-import { useTradeExactIn } from 'hooks/swap/useTradeExactIn'
-import { useTradeExactOut } from 'hooks/swap/useTradeExactOut'
 import { useAtomValue, useSetAtom } from 'jotai'
-import noop from 'lodash/noop'
-import { useCallback, useEffect, useMemo } from 'react'
-import { chainIdAtom } from 'ton/atom/chainIdAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
-import { useSwap } from 'ton/logic/swap/useSwap'
 import { Field } from 'types'
+import { Rounding, _10000 } from '@pancakeswap/swap-sdk-core'
+import { formatFraction } from '@pancakeswap/utils/formatFractions'
 import { tryParseAmount } from 'utils/tryParseAmount'
+import { useSwap } from 'ton/logic/swap/useSwap'
+import { RefreshButton } from '@pancakeswap/widgets-internal'
+import { useBestTrade } from 'hooks/swap/useBestTrade'
+import { PricingAndSlippage } from 'components/TonSwap/PricingAndSlippage'
 
 export const SwapForm = () => {
   const { t } = useTranslation()
-  const chainId = useAtomValue(chainIdAtom)
 
   const inputCurrency = useAtomValue(inputCurrencyAtom)
   const outputCurrency = useAtomValue(outputCurrencyAtom)
@@ -38,17 +36,22 @@ export const SwapForm = () => {
 
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
-  const { isLoading: isTradeExactInLoading, data: bestTradeExactIn } = useTradeExactIn(
-    isExactIn ? parsedAmount : undefined,
-    outputCurrency ?? undefined,
+
+  const { isTradeExactInLoading, isTradeExactOutLoading, trade, refreshTrade } = useBestTrade({
+    isExactIn,
+    amount: parsedAmount,
+    inputCurrency,
+    outputCurrency,
+  })
+
+  const isTradeLoading = useMemo(
+    () => isTradeExactOutLoading || isTradeExactInLoading,
+    [isTradeExactOutLoading, isTradeExactInLoading],
   )
-  const { isLoading: isTradeExactOutLoading, data: bestTradeExactOut } = useTradeExactOut(
-    isExactIn ? undefined : parsedAmount,
-    inputCurrency ?? undefined,
-  )
-  const trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
   const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
+
+  const { data: activeList, isFetched } = useAtomValue(fetchListAtom)
 
   const setApprovalModal = useSetAtom(setApprovalModalAtom)
   const setTransactionModal = useSetAtom(setTransactionModalAtom)
@@ -79,9 +82,9 @@ export const SwapForm = () => {
 
   const { data: balance0 } = useAtomValue(balanceAtom(inputCurrency))
   const isInsufficientBalance0 = useMemo(
-    () => balance0 < toNano(parsedAmounts[Field.INPUT]?.toFixed() ?? '0'),
+    () => (parsedAmounts[Field.INPUT] ? parsedAmounts[Field.INPUT].greaterThan(balance0) : false),
     [balance0, parsedAmounts],
-  ) // TODO: decimals
+  )
   const { swap } = useSwap()
 
   const handleSwap = useCallback(async () => {
@@ -89,8 +92,7 @@ export const SwapForm = () => {
       return
     }
     await swap({
-      // todo:@eric
-      minOut: '0.01',
+      minOut: formattedAmounts[Field.OUTPUT] ?? '0.01',
       amount0: formattedAmounts[Field.INPUT] ?? '0',
       token0: inputCurrency,
       token1: outputCurrency,
@@ -105,11 +107,14 @@ export const SwapForm = () => {
 
   // Set default currencies on load
   useEffect(() => {
-    if (!inputCurrency && !outputCurrency) {
+    if (isFetched && !inputCurrency && !outputCurrency && activeList && activeList.length > 1) {
       onCurrencySelection(Field.INPUT, Native.onNetwork(TonNetworks.Testnet))
-      onCurrencySelection(Field.OUTPUT, PRESET_TOKENS.CAKE[chainId])
+      onCurrencySelection(
+        Field.OUTPUT,
+        activeList.find((item) => item.symbol === 'CAKE'),
+      )
     }
-  }, [inputCurrency, outputCurrency, chainId, onCurrencySelection])
+  }, [activeList, inputCurrency, outputCurrency, isFetched, onCurrencySelection])
 
   return (
     <SwapUIV2.SwapFormWrapper>
@@ -144,6 +149,7 @@ export const SwapForm = () => {
             <CurrencyInputPanelSimplify
               id="swap-currency-output"
               field={Field.OUTPUT}
+              disabled
               showUSDPrice
               showMaxButton
               showCommonBases
@@ -167,7 +173,39 @@ export const SwapForm = () => {
           </Column>
         </SwapUIV2.InputPanelWrapper>
       </SwapUIV2.SwapTabAndInputPanelWrapper>
-      <ButtonAndDetailsPanel swapCommitButton={<SwapCommitButton onClick={handleSwap} />} />
+      <ButtonAndDetailsPanel
+        shouldRenderDetails={Boolean(typedValue)}
+        swapCommitButton={<SwapCommitButton isLoading={isTradeLoading} onClick={handleSwap} />}
+        pricingAndSlippage={
+          <FlexGap
+            alignItems="center"
+            flexWrap="wrap"
+            justifyContent="space-between"
+            width="calc(100% - 20px)"
+            gap="8px"
+          >
+            <FlexGap
+              onClick={(e) => {
+                e.stopPropagation()
+              }}
+              alignItems="center"
+              flexWrap="wrap"
+            >
+              <RefreshButton
+                refreshDuration={12_000}
+                onRefresh={refreshTrade}
+                refreshDisabled={isTradeLoading}
+                loading={isTradeLoading}
+              />
+              <PricingAndSlippage
+                priceLoading={isTradeLoading}
+                price={trade?.executionPrice ?? undefined}
+                showSlippage={false}
+              />
+            </FlexGap>
+          </FlexGap>
+        }
+      />
     </SwapUIV2.SwapFormWrapper>
   )
 }

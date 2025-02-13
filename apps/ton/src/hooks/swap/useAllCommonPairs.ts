@@ -4,10 +4,16 @@ import uniqBy from 'lodash/uniqBy'
 import { Currency, Token, Pair, CurrencyAmount } from '@pancakeswap/ton-v2-sdk'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from 'config/constants/exchange'
 import { useAtomValue } from 'jotai'
-import { poolDataQueriesAtom } from 'ton/atom/liquidity/poolDataQueriesAtom'
+import { poolDataQueriesAtom, useRefreshPoolData } from 'ton/atom/liquidity/poolDataQueriesAtom'
 import { useUserAddress } from 'hooks/useUserAddress'
 
-export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): { isLoading: boolean; data: Pair[] } {
+interface UseAllCommonPairsReturnType {
+  isLoading: boolean
+  data: Pair[]
+  refresh: () => void
+}
+
+export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): UseAllCommonPairsReturnType {
   const chainId = currencyA?.chainId
 
   const [tokenA, tokenB] = chainId ? [currencyA?.wrapped, currencyB?.wrapped] : [undefined, undefined]
@@ -60,7 +66,7 @@ export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): {
     [tokenA, tokenB, bases, basePairs, chainId],
   )
 
-  const { data: allPairs, isLoading } = usePairs(allPairCombinations)
+  const { data: allPairs, isLoading, refresh } = usePairs(allPairCombinations)
 
   // only pass along valid pairs, non-duplicated pairs
   return useMemo(
@@ -69,9 +75,11 @@ export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): {
         ? {
             isLoading,
             data: [],
+            refresh,
           }
         : {
             isLoading,
+            refresh,
             data: allPairs
               ? uniqBy(
                   allPairs.filter((result): result is NonNullable<typeof result> => Boolean(result)),
@@ -79,7 +87,7 @@ export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): {
                 )
               : [],
           },
-    [allPairs, isLoading],
+    [allPairs, isLoading, refresh],
   )
 }
 
@@ -101,11 +109,17 @@ const usePairs = (pairs: [Token, Token][]) => {
     [pairs, userAddress],
   )
   const result = useAtomValue(poolDataQueriesAtom(pairsAddress))
+  const { refresh } = useRefreshPoolData(pairsAddress)
   return useMemo(() => {
+    const res = {
+      isLoading: result.isLoading,
+      data: result.data,
+      refresh,
+    }
     if (result.isLoading) {
       return {
+        ...res,
         isLoading: result.isLoading,
-        data: result.data,
       }
     }
     const data = pairs.map(([token0_, token1_], idx) => {
@@ -124,8 +138,9 @@ const usePairs = (pairs: [Token, Token][]) => {
       }
     })
     return {
+      ...res,
       isLoading: false,
       data,
     }
-  }, [pairs, result.data, result.isLoading])
+  }, [pairs, result.data, result.isLoading, refresh])
 }
