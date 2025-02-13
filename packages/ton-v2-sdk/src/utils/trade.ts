@@ -1,7 +1,9 @@
 import invariant from 'tiny-invariant'
 import {
+  Fraction,
   InsufficientInputAmountError,
   InsufficientReservesError,
+  ONE,
   Percent,
   TradeType,
   ZERO,
@@ -154,6 +156,37 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
     const quotedOutputAmount = route.midPrice.quote(this.inputAmount)
     const priceImpact = quotedOutputAmount.subtract(this.outputAmount).divide(quotedOutputAmount)
     this.priceImpact = new Percent(priceImpact.numerator, priceImpact.denominator)
+  }
+
+  /**
+   * Get the minimum amount that must be received from this trade for the given slippage tolerance
+   * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
+   */
+  public minimumAmountOut(slippageTolerance: Percent): CurrencyAmount<TOutput> {
+    invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
+    if (this.tradeType === TradeType.EXACT_OUTPUT) {
+      return this.outputAmount
+    }
+    const slippageAdjustedAmountOut = new Fraction(ONE)
+      .add(slippageTolerance)
+      .invert()
+      .multiply(this.outputAmount.quotient).quotient
+    return CurrencyAmount.fromRawAmount(this.outputAmount.currency, slippageAdjustedAmountOut)
+  }
+
+  /**
+   * Get the maximum amount in that can be spent via this trade for the given slippage tolerance
+   * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
+   */
+  public maximumAmountIn(slippageTolerance: Percent): CurrencyAmount<TInput> {
+    invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
+    if (this.tradeType === TradeType.EXACT_INPUT) {
+      return this.inputAmount
+    }
+    const slippageAdjustedAmountIn = new Fraction(ONE)
+      .add(slippageTolerance)
+      .multiply(this.inputAmount.quotient).quotient
+    return CurrencyAmount.fromRawAmount(this.inputAmount.currency, slippageAdjustedAmountIn)
   }
 }
 

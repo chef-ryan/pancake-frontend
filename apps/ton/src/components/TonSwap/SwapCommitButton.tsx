@@ -10,7 +10,7 @@ interface SwapCommitButtonProps extends ButtonProps {
   isLoading?: boolean
 }
 
-export const SwapCommitButton = ({ isLoading = false, ...props }: SwapCommitButtonProps) => {
+export const SwapCommitButton = ({ isLoading = false, disabled = false, ...props }: SwapCommitButtonProps) => {
   const { t } = useTranslation()
   const isConnected = useAtomValue(isConnectedAtom)
 
@@ -18,12 +18,13 @@ export const SwapCommitButton = ({ isLoading = false, ...props }: SwapCommitButt
 
   const typedValue = useAtomValue(typedValueAtom)
   const typedAmount = tryParseAmount(typedValue, inputCurrency)
+
   const { data: balance0 } = useAtomValue(balanceAtom(inputCurrency))
 
   const isInsufficientBalance0 = inputCurrency && typedAmount ? typedAmount.greaterThan(balance0) : false
 
   return (
-    <Button disabled={isInsufficientBalance0 || !isConnected || isLoading} {...props}>
+    <Button disabled={isInsufficientBalance0 || !isConnected || isLoading || disabled} {...props}>
       {!isConnected
         ? t('Connect Wallet')
         : !typedValue
