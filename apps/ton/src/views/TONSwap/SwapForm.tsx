@@ -92,7 +92,7 @@ export const SwapForm = () => {
       return
     }
     await swap({
-      minOut: formattedAmounts[Field.OUTPUT] ?? '0.01',
+      minOut: '0.01',
       amount0: formattedAmounts[Field.INPUT] ?? '0',
       token0: inputCurrency,
       token1: outputCurrency,

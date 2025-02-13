@@ -140,6 +140,7 @@ describe('Check translations available', () => {
   throughDirectory('../../packages/uikit/src')
   throughDirectory('../../packages/ui-wallets/src')
   throughDirectory('../../packages/widgets-internal')
+  throughDirectory('../../apps/ton')
   let match: RegExpExecArray | string | null = null
 
   const extractedKeys = new Set<string>(whitelist)
