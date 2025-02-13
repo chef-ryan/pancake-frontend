@@ -1,4 +1,4 @@
-import { Currency, Token, TonChainId, TonNetworks } from '@pancakeswap/ton-v2-sdk'
+import { Currency, Native, Token, TonChainId, TonNetworks } from '@pancakeswap/ton-v2-sdk'
 import { TON_API } from 'config/constants/endpoints'
 import { ResultJettonData } from 'types/tonapi'
 
@@ -9,7 +9,10 @@ export function currencyKey(currency?: Currency): string {
 
 // TODO (@penguin): Cache globally with either NextJS API or external API
 const tokenCache = new Map<string, Token>()
-export async function fetchTokenByAddress(address: string, network: TonNetworks): Promise<Token | undefined> {
+export async function fetchTokenByAddress(address: string, network: TonNetworks): Promise<Token | undefined | null> {
+  if (address === Native.onChain(TonChainId.Mainnet).symbol || address === Native.onChain(TonChainId.Testnet).symbol)
+    return null
+
   if (tokenCache.has(address)) return tokenCache.get(address)
 
   const result = await fetch(`${TON_API[network]}/v2/jettons/${address}`)
