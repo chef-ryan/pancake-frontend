@@ -31,7 +31,7 @@ const ClaimButton: React.FC<React.PropsWithChildren<Props>> = ({
   const { account, chain } = useWeb3React()
   const { t } = useTranslation()
   const { toastSuccess } = useToast()
-  const { address, token, chainId } = data.ifo
+  const { address, chainId } = data.ifo
   const contract = useIfoV3Contract(address)
   const { fetchWithCatchTxError, loading: isPending } = useCatchTxError()
 

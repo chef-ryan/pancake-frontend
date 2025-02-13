@@ -56,7 +56,7 @@ export const ClaimDisplay: React.FC<{
 
   const { isDark } = useTheme()
   const { address: account } = useAccount()
-  const handleConnectWallet = (e) => {
+  const handleConnectWallet = (_) => {
     logGTMIdoConnectWalletEvent(status === 'coming_soon')
   }
   return (

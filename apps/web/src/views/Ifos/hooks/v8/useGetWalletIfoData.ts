@@ -50,7 +50,7 @@ const useGetWalletIfoData = (ifo: Ifo): WalletIfoData => {
   const { chainId: currentChainId } = useActiveChainId()
   const [state, setState] = useState<WalletIfoState>(initialState)
   const dispatch = useAppDispatch()
-  const { chainId, version, address } = ifo
+  const { chainId, version } = ifo
   const creditAmount = useIfoCredit({ chainId, ifoAddress: ifo.address })
   const credit = useMemo(
     () => (creditAmount && new BigNumber(creditAmount.quotient.toString())) ?? BIG_ZERO,
@@ -122,7 +122,7 @@ const useGetWalletIfoData = (ifo: Ifo): WalletIfoData => {
       poolBasic: { ...prevState.poolBasic, ...data.basicPoolData },
       poolUnlimited: { ...prevState.poolUnlimited, ...data.unlimitedPoolData },
     }))
-  }, [account, address, dispatch, version, chainId, sourceChain])
+  }, [account, dispatch, version, ifo, chainId, sourceChain])
 
   return {
     ...state,

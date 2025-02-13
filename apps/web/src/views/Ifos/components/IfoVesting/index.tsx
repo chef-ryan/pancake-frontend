@@ -88,7 +88,7 @@ const IfoVesting: React.FC<React.PropsWithChildren<IfoVestingProps>> = ({ ifoBas
       if (!hasClaimable && !isFirstTime) return IfoVestingStatus[VestingStatus.ENDED]
     }
     return IfoVestingStatus[VestingStatus.NOT_TOKENS_CLAIM]
-  }, [data, account, isFirstTime, hasClaimable])
+  }, [account, isFirstTime, hasClaimable])
 
   const handleFetchUserVesting = useCallback(() => {
     setIsFirstTime(false)
