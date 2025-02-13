@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react'
 import { CurrencyField } from 'types/currency'
 import { useNativeCurrency } from './useNativeCurrency'
 
-export const useCurrency = (field: CurrencyField, address: string, onChange?: () => void) => {
+export const useCurrency = (field: CurrencyField, address: string) => {
   const isFetchComplete = useRef(false)
   const nativeCurrency = useNativeCurrency()
 

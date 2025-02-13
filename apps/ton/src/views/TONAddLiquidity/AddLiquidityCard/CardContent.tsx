@@ -3,6 +3,7 @@ import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { AddIcon, Box, BoxProps, Button, Flex, FlexGap, Loading, Text, useToast } from '@pancakeswap/uikit'
 import { setCurrencyAtom } from 'atoms/currencyAtoms'
 import { currency0Value, currency1Value } from 'atoms/liquidity/addLiquidityStateAtom'
+import { setAddLiquidityModalAtom } from 'atoms/modals/addLiquidityModalAtom'
 import { BigNumber as BN } from 'bignumber.js'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
@@ -53,6 +54,7 @@ export const CardContent = (props: CardContentProps) => {
   const [token1Value, setToken1Value] = useAtom(currency1Value)
 
   const setCurrency = useSetAtom(setCurrencyAtom)
+  const setAddLiquidityModal = useSetAtom(setAddLiquidityModalAtom)
 
   const { data: poolData, isLoading: isPoolDataLoading } = useAtomValue(
     poolDataQueryAtom({ token0Address: currency0?.wrapped.address, token1Address: currency1?.wrapped.address }),
@@ -61,8 +63,8 @@ export const CardContent = (props: CardContentProps) => {
   // TODO: Handle native token
   const { data: lpBalance, isLoading: isLpBalanceLoading } = useAtomValue(
     lpBalanceQueryAtom({
-      token0Address: currency0?.wrapped.address,
-      token1Address: currency1?.wrapped.address,
+      token0Address: currency0?.isNative ? address : currency0?.address,
+      token1Address: currency1?.isNative ? address : currency1?.address,
     }),
   )
 
@@ -153,6 +155,22 @@ export const CardContent = (props: CardContentProps) => {
     }
   }, [t, addLiquidity, toastSuccess, toastError, currency0, currency1, isDisabled, token0Value, token1Value])
 
+  const openConfirmationModal = useCallback(() => {
+    // TODO: Determine data directly in modal
+    setAddLiquidityModal({
+      isOpen: true,
+      currency0,
+      currency1,
+      outputAmount: '-',
+      amount0: token0Value,
+      amount1: token1Value,
+      rate0: rates.currency0.toString(),
+      rate1: rates.currency1.toString(),
+      shareInPool: shareInPool.toString(),
+      onConfirm: handleAddLiquidity,
+    })
+  }, [setAddLiquidityModal, currency0, currency1, token0Value, token1Value, rates, shareInPool, handleAddLiquidity])
+
   return (
     <>
       <ContentContainer $isBottomRounded={!isWalletConnected} {...props}>
@@ -225,7 +243,7 @@ export const CardContent = (props: CardContentProps) => {
         {!isWalletConnected ? (
           <ConnectWalletButton width="100%" />
         ) : (
-          <Button onClick={handleAddLiquidity} width="100%" disabled={isDisabled}>
+          <Button onClick={openConfirmationModal} width="100%" disabled={isDisabled}>
             {t('Supply')}
           </Button>
         )}
