@@ -1,5 +1,5 @@
-import { Currency, CurrencyAmount } from '@pancakeswap/ton-v2-sdk'
-import { DEFAULT_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
+import { Currency } from '@pancakeswap/ton-v2-sdk'
+import BN from 'bignumber.js'
 import { useMemo } from 'react'
 
 interface UsePoolRatesProps {
@@ -18,15 +18,11 @@ export const usePoolRates = ({ currency0, currency1, reserve0, reserve1 }: UsePo
 
     if (!currency0 || !currency1 || !reserve0 || !reserve1) return rates
 
-    const poolReserve0 = CurrencyAmount.fromRawAmount(currency0, reserve0)
-    const poolReserve1 = CurrencyAmount.fromRawAmount(currency1, reserve1)
+    const rateCurrency0 = BN(reserve1.toString()).div(BN(reserve0.toString()))
+    const rateCurrency1 = BN(reserve0.toString()).div(BN(reserve1.toString()))
 
-    rates.currency0 = !poolReserve0.equalTo(0)
-      ? poolReserve1.divide(poolReserve0).toSignificant(DEFAULT_SIGNIFICANT_DIGITS)
-      : '0'
-    rates.currency1 = !poolReserve1.equalTo(0)
-      ? poolReserve0.divide(poolReserve1).toSignificant(DEFAULT_SIGNIFICANT_DIGITS)
-      : '0'
+    rates.currency0 = rateCurrency0.toString()
+    rates.currency1 = rateCurrency1.toString()
 
     return rates
   }, [currency0, currency1, reserve0, reserve1])
