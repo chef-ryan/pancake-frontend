@@ -8,10 +8,10 @@ export function currencyKey(currency?: Currency): string {
 }
 
 // TODO (@penguin): Cache globally with either NextJS API or external API
-const tokenCache = new Map<string, Token>()
-export async function fetchTokenByAddress(address: string, network: TonNetworks): Promise<Token | undefined | null> {
-  if (address === Native.onChain(TonChainId.Mainnet).symbol || address === Native.onChain(TonChainId.Testnet).symbol)
-    return null
+const tokenCache = new Map<string, Currency>()
+export async function fetchTokenByAddress(address: string, network: TonNetworks): Promise<Currency | undefined> {
+  if (address === Native.onChain(TonChainId.Mainnet).symbol) return Native.onChain(TonChainId.Mainnet)
+  if (address === Native.onChain(TonChainId.Testnet).symbol) return Native.onChain(TonChainId.Testnet)
 
   if (tokenCache.has(address)) return tokenCache.get(address)
 
