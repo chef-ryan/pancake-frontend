@@ -25,7 +25,7 @@ export const CardContent = (props: CardContentProps) => {
   const { t } = useTranslation()
   const isWalletConnected = useAtomValue(isConnectedAtom)
 
-  const { data: userPools } = useUserPools()
+  const { data: userPools, isFetched } = useUserPools()
 
   return (
     <>
@@ -36,7 +36,7 @@ export const CardContent = (props: CardContentProps) => {
           <FlexGap flexDirection="column" alignItems="center" gap="16px" p="24px">
             <img src="/images/green-box.png" alt="Empty Box" width={96} />
 
-            <Text color="textSubtle">{t('No liquidity found')}</Text>
+            <Text color="textSubtle">{!isFetched ? t('Loading...') : t('No liquidity found')}</Text>
           </FlexGap>
         )}
 

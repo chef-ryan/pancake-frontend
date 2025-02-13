@@ -1,3 +1,4 @@
+// TODO: Use pools from json
 // import testnetPools from 'public/lists/pools-testnet.json'
 import { TonNetworks } from '@pancakeswap/ton-v2-sdk'
 

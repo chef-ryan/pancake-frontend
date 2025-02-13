@@ -2,14 +2,13 @@ import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, Box, Button, Flex, FlexGap, MinusIcon, Text } from '@pancakeswap/uikit'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import { LightCard } from 'components/Card'
-import { DisplayLoader } from 'components/Misc/DisplayLoader'
 import { DoubleCurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { Collapse } from 'components/widgets/swap-v2/Collapse'
 import { ADDRESS_CONCAT_LENGTH, LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 import { useAtomValue } from 'jotai'
 import Link from 'next/link'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { formatBalance } from 'ton/utils/formatting'
 
@@ -23,11 +22,10 @@ const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
 interface LiquidityRowProps {
   token0: string
   token1: string
-  balance?: bigint
   amount0?: bigint
   amount1?: bigint
-
-  loading: boolean
+  balance?: bigint
+  totalSupply?: bigint
 }
 
 export const LiquidityRow = ({
@@ -36,7 +34,8 @@ export const LiquidityRow = ({
   balance = 0n,
   amount0 = 0n,
   amount1 = 0n,
-  loading,
+
+  totalSupply,
 }: LiquidityRowProps) => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
@@ -47,6 +46,14 @@ export const LiquidityRow = ({
   const handleToggle = useCallback(() => {
     setIsOpen(!isOpen)
   }, [isOpen, setIsOpen])
+
+  const shareInPool = useMemo(() => {
+    if (balance === 0n || !totalSupply) {
+      return 0
+    }
+
+    return (balance * 100n) / totalSupply
+  }, [balance, totalSupply])
 
   if (!token0 || !token1) {
     return null
@@ -83,19 +90,17 @@ export const LiquidityRow = ({
             <Box mt="8px">
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Pooled %symbol%', { symbol: symbol0 })}</Text>
-                <DisplayLoader loading={loading}>
-                  <Text>{amount0 > 0n ? formatBalance(amount0, LP_TOKEN_DECIMALS) : '-'}</Text>
-                </DisplayLoader>
+
+                <Text>{amount0 > 0n ? formatBalance(amount0, LP_TOKEN_DECIMALS) : '-'}</Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Pooled %symbol%', { symbol: symbol1 })}</Text>
-                <DisplayLoader loading={loading}>
-                  <Text>{amount1 > 0n ? formatBalance(amount1, LP_TOKEN_DECIMALS) : '-'}</Text>
-                </DisplayLoader>
+
+                <Text>{amount1 > 0n ? formatBalance(amount1, LP_TOKEN_DECIMALS) : '-'}</Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Your share in the pool')}</Text>
-                <Text>-%</Text>
+                <NumberDisplay value={shareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
               </Flex>
               <FlexGap mt="10px" justifyContent="space-between" gap="16px">
                 <Link href={`/liquidity/add/${token0}/${token1}`} style={{ width: '100%' }}>

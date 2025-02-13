@@ -12,11 +12,9 @@ import { storeTokenBurn } from 'ton/wrappers/tact_LpWallet'
 interface RemoveLiquidityProps {
   currency0?: Currency
   currency1?: Currency
-
-  amount: bigint
 }
 
-export const useRemoveLiquidity = ({ currency0, currency1, amount }: RemoveLiquidityProps) => {
+export const useRemoveLiquidity = ({ currency0, currency1 }: RemoveLiquidityProps) => {
   const [tonUI] = useTonConnectUI()
   const userAddress_ = useAtomValue(addressAtom)
 
@@ -30,36 +28,39 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount }: RemoveLiqui
 
   const poolContract = useAtomValue(poolContractAtom(poolAddress?.toString()))
 
-  const removeLiquidity = useCallback(async () => {
-    const userAddress = parseAddress(userAddress_)
+  const removeLiquidity = useCallback(
+    async (amount: bigint) => {
+      const userAddress = parseAddress(userAddress_)
 
-    const userLpWallet = await poolContract.getGetWalletAddress(userAddress)
+      const userLpWallet = await poolContract.getGetWalletAddress(userAddress)
 
-    const payload = beginCell()
-      .store(
-        storeTokenBurn({
-          queryId: 3n,
-          $$type: 'TokenBurn',
-          amount,
-          responseDestination: userAddress,
-          customPayload: null,
-        }),
-      )
-      .endCell()
+      const payload = beginCell()
+        .store(
+          storeTokenBurn({
+            queryId: 3n,
+            $$type: 'TokenBurn',
+            amount,
+            responseDestination: userAddress,
+            customPayload: null,
+          }),
+        )
+        .endCell()
 
-    const txRequest: SendTransactionRequest = {
-      validUntil: Math.floor(Date.now() / 1000) + 60 * 2,
-      messages: [
-        {
-          address: userLpWallet.toString(),
-          amount: toNano('0.5').toString(),
-          payload: payload.toBoc().toString('base64'),
-        },
-      ],
-    }
+      const txRequest: SendTransactionRequest = {
+        validUntil: Math.floor(Date.now() / 1000) + 60 * 2,
+        messages: [
+          {
+            address: userLpWallet.toString(),
+            amount: toNano('0.5').toString(),
+            payload: payload.toBoc().toString('base64'),
+          },
+        ],
+      }
 
-    tonUI.sendTransaction(txRequest)
-  }, [tonUI, userAddress_, poolContract, amount])
+      tonUI.sendTransaction(txRequest)
+    },
+    [tonUI, userAddress_, poolContract, amount],
+  )
 
   return { removeLiquidity }
 }

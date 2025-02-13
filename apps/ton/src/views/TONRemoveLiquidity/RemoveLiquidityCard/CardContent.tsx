@@ -116,7 +116,6 @@ export const CardContent = (props: CardContentProps) => {
   const { removeLiquidity } = useRemoveLiquidity({
     currency0,
     currency1,
-    amount: lpBalance ? (lpBalance * BigInt(sliderValue)) / 100n : 0n,
   })
 
   const handleSliderChange = useCallback((value: number) => {
@@ -128,8 +127,8 @@ export const CardContent = (props: CardContentProps) => {
   }, [])
 
   const handleRemoveLiquidity = useCallback(() => {
-    removeLiquidity()
-  }, [removeLiquidity])
+    removeLiquidity(lpBalance ? (lpBalance * BigInt(sliderValue)) / 100n : 0n)
+  }, [removeLiquidity, lpBalance, sliderValue])
 
   return (
     <>

@@ -9,7 +9,7 @@ export const useUserPools = () => {
   const network = useAtomValue(networkAtom)
   const {
     data: pools,
-    isLoading: isPoolBalanceLoading,
+    isFetched: isPoolBalanceFetched,
     ...rest
   } = useAtomValue(lpBalanceByPoolsQueryAtom(Object.values(PRESET_POOLS[network])))
 
@@ -31,24 +31,25 @@ export const useUserPools = () => {
   )
 
   // Fetch pool's basic info for totalSupply and reserves
-  const { data: poolInfos, isLoading: isPoolDataLoading } = useAtomValue(
+  const { data: poolInfos, isFetched: isPoolDataFetched } = useAtomValue(
     poolDataMultipleQueryAtom(poolsWithBalance.map((pool) => pool.poolAddress)),
   )
 
   // Combine relevant data
-  const finalPoolData = useMemo(() => {
-    return poolsWithBalance.map((pool, index) => ({
-      ...pool,
-      amount0: poolInfos[index] ? (pool.balance * poolInfos[index].reserve0) / poolInfos[index].totalSupply : 0n,
-      amount1: poolInfos[index] ? (pool.balance * poolInfos[index].reserve1) / poolInfos[index].totalSupply : 0n,
-      totalSupply: poolInfos[index]?.totalSupply,
-      reserve0: poolInfos[index]?.reserve0,
-      reserve1: poolInfos[index]?.reserve1,
-    }))
-  }, [poolsWithBalance, poolInfos])
+  const finalPoolData = useMemo(
+    () =>
+      poolsWithBalance.map((pool, index) => ({
+        ...pool,
+        amount0: poolInfos[index] ? (pool.balance * poolInfos[index].reserve0) / poolInfos[index].totalSupply : 0n,
+        amount1: poolInfos[index] ? (pool.balance * poolInfos[index].reserve1) / poolInfos[index].totalSupply : 0n,
+        reserve0: poolInfos[index]?.reserve0,
+        reserve1: poolInfos[index]?.reserve1,
+        totalSupply: poolInfos[index]?.totalSupply,
+      })),
+    [poolsWithBalance, poolInfos],
+  )
 
-  // TODO: (@penguin) investigate why loading is always false
-  const isLoading = useMemo(() => isPoolBalanceLoading || isPoolDataLoading, [isPoolBalanceLoading, isPoolDataLoading])
+  const isFetched = isPoolBalanceFetched && isPoolDataFetched
 
-  return { data: finalPoolData, isLoading, isPoolBalanceLoading, isPoolDataLoading, ...rest }
+  return { ...rest, data: finalPoolData, isFetched }
 }

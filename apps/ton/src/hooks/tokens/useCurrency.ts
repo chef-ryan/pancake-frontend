@@ -1,18 +1,35 @@
-import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { currencyFamily } from 'atoms/currencyAtoms'
-import { useAtom } from 'jotai'
+import { fetchListAtom } from 'atoms/lists/fetchListAtom'
+import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
+import { useAtom, useAtomValue } from 'jotai'
+import { useEffect, useRef } from 'react'
 import { CurrencyField } from 'types/currency'
+import { useNativeCurrency } from './useNativeCurrency'
 
-const currencyCache = new Map<string, Currency>()
+export const useCurrency = (field: CurrencyField, address: string, onChange?: () => void) => {
+  const isFetchComplete = useRef(false)
+  const nativeCurrency = useNativeCurrency()
 
-export const useCurrency = (field: CurrencyField, searchParam?: string) => {
-  const currencyAtom = useAtom(currencyFamily(field))
-  // const [currency] = currencyAtom
+  const [currency, setCurrency] = useAtom(currencyFamily(field))
 
-  // const { data: list } = useAtomValue(fetchListAtom)
+  const { data: tokenByAddress, isFetched } = useAtomValue(tokenByAddressQueryAtom(address))
+  const { data: list } = useAtomValue(fetchListAtom)
 
-  // if (isAddress(searchParam)) {
-  // }
+  useEffect(() => {
+    if (!isFetchComplete.current && !currency && address) {
+      const tokenInList = list?.find((item) => item.address === address)
+      if (address === nativeCurrency.symbol) {
+        setCurrency(nativeCurrency)
+        isFetchComplete.current = true
+      } else if (tokenInList) {
+        setCurrency(tokenInList)
+        isFetchComplete.current = true
+      } else if (tokenByAddress && isFetched) {
+        setCurrency(tokenByAddress)
+        isFetchComplete.current = true
+      }
+    }
+  }, [currency, setCurrency, tokenByAddress, isFetched, list, address, nativeCurrency])
 
-  // return currencyAtom
+  return [currency, setCurrency] as const
 }

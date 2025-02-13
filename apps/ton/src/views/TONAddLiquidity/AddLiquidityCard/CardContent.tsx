@@ -1,23 +1,27 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { AddIcon, Box, BoxProps, Button, Flex, FlexGap, Loading, Text, useToast } from '@pancakeswap/uikit'
-import { toNano } from '@ton/core'
 import { setCurrencyAtom } from 'atoms/currencyAtoms'
-import { currency0Atom, currency0Value, currency1Atom, currency1Value } from 'atoms/liquidity/addLiquidityStateAtom'
+import { currency0Value, currency1Value } from 'atoms/liquidity/addLiquidityStateAtom'
 import { BigNumber as BN } from 'bignumber.js'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
+import { DisplayLoader } from 'components/Misc/DisplayLoader'
 import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { usePoolRates } from 'hooks/liquidity/usePoolRates'
+import { useCurrency } from 'hooks/tokens/useCurrency'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useMemo } from 'react'
+import { useRouter } from 'next/router'
+import { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { useAddLiquidity } from 'ton/logic/liquidity/useAddLiquidity'
+import { parseUnits } from 'ton/utils/formatting'
 import { CurrencyField } from 'types/currency'
+import { currencyKey } from 'utils/tokens/currency'
 
 const ContentContainer = styled(Box)<{ $isBottomRounded?: boolean }>`
   padding: 24px;
@@ -36,18 +40,19 @@ interface CardContentProps extends BoxProps {}
 export const CardContent = (props: CardContentProps) => {
   const { t } = useTranslation()
 
-  // TODO: Use URLs to get and set currencies
   // Query params
-  // const router = useRouter()
-  // const [currency0, currency1] = router.query?.currency ?? ['TON', 'USDT']
+  const router = useRouter()
+  const [token0Address, token1Address] = router.query?.currency ?? []
 
   const address = useAtomValue(addressAtom)
   const isWalletConnected = !!address
 
-  const currency0 = useAtomValue(currency0Atom)
-  const currency1 = useAtomValue(currency1Atom)
+  const [currency0] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY0, token0Address)
+  const [currency1] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY1, token1Address)
   const [token0Value, setToken0Value] = useAtom(currency0Value)
   const [token1Value, setToken1Value] = useAtom(currency1Value)
+
+  const setCurrency = useSetAtom(setCurrencyAtom)
 
   const { data: poolData, isLoading: isPoolDataLoading } = useAtomValue(
     poolDataQueryAtom({ token0Address: currency0?.wrapped.address, token1Address: currency1?.wrapped.address }),
@@ -74,8 +79,6 @@ export const CardContent = (props: CardContentProps) => {
     reserve1: poolData?.reserve1,
   })
 
-  const setCurrency = useSetAtom(setCurrencyAtom)
-
   const { addLiquidity } = useAddLiquidity()
 
   const { toastSuccess, toastError } = useToast()
@@ -84,6 +87,23 @@ export const CardContent = (props: CardContentProps) => {
     () => !currency0 || !currency1 || !token0Value || !token1Value,
     [currency0, currency1, token0Value, token1Value],
   )
+
+  const updateQueryParams = useCallback(() => {
+    router.replace(
+      {
+        query: {
+          currency: [currencyKey(currency0), currencyKey(currency1)],
+        },
+      },
+      undefined,
+      { shallow: true },
+    )
+  }, [router, currency0, currency1])
+
+  // TODO: Replace useEffect
+  useEffect(() => {
+    if (currency0 || currency1) updateQueryParams()
+  }, [currency0, currency1, updateQueryParams])
 
   const handleToken0Input = useCallback(
     (value: string) => {
@@ -122,9 +142,8 @@ export const CardContent = (props: CardContentProps) => {
         token0: currency0,
         token1: currency1,
 
-        // TODO: Instead of toNano use the token's decimals
-        amount0: toNano(token0Value),
-        amount1: toNano(token1Value),
+        amount0: parseUnits(token0Value, currency0.decimals),
+        amount1: parseUnits(token1Value, currency1.decimals),
       })
 
       toastSuccess(t('Liquidity added'))
@@ -190,11 +209,9 @@ export const CardContent = (props: CardContentProps) => {
           <Flex justifyContent="space-between">
             <Text color="textSubtle">{t('Your share in the pair')}</Text>
 
-            {isLpBalanceLoading ? (
-              <Loading />
-            ) : (
+            <DisplayLoader loading={isLpBalanceLoading}>
               <NumberDisplay value={shareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
-            )}
+            </DisplayLoader>
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
             <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
