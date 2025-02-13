@@ -1,33 +1,35 @@
-import { Native, TonNetworks } from '@pancakeswap/ton-v2-sdk'
-import { useCallback, useEffect, useMemo } from 'react'
-import noop from 'lodash/noop'
-import { Column, Text } from '@pancakeswap/uikit'
-import { ButtonAndDetailsPanel } from 'components/TonSwap/ButtonAndDetailsPanel'
-import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
-import { FlipButton } from 'components/TonSwap/FlipButton'
-import { useUserSlippage } from '@pancakeswap/utils/user'
 import { useTranslation } from '@pancakeswap/localization'
+import { Rounding } from '@pancakeswap/swap-sdk-core'
+import { Native, TonNetworks } from '@pancakeswap/ton-v2-sdk'
+import { Column, Text } from '@pancakeswap/uikit'
+import { formatFraction } from '@pancakeswap/utils/formatFractions'
+import { useUserSlippage } from '@pancakeswap/utils/user'
 import { toNano } from '@ton/core'
-import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import { setApprovalModalAtom } from 'atoms/modals/approvalModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
 import { independentFieldAtom, inputCurrencyAtom, outputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
 import { TransactionActionType } from 'components/Modals/ActionModal'
+import { ButtonAndDetailsPanel } from 'components/TonSwap/ButtonAndDetailsPanel'
+import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
+import { FlipButton } from 'components/TonSwap/FlipButton'
 import { SwapCommitButton } from 'components/TonSwap/SwapCommitButton'
 import { SwapUIV2 } from 'components/widgets/swap-v2'
+import { PRESET_TOKENS } from 'config/constants/tokens'
 import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { balanceAtom } from 'ton/logic/balanceAtom'
-import { Field } from 'types'
-import { Rounding, _10000 } from '@pancakeswap/swap-sdk-core'
-import { formatFraction } from '@pancakeswap/utils/formatFractions'
 import { useTradeExactIn } from 'hooks/swap/useTradeExactIn'
 import { useTradeExactOut } from 'hooks/swap/useTradeExactOut'
-import { tryParseAmount } from 'utils/tryParseAmount'
+import { useAtomValue, useSetAtom } from 'jotai'
+import noop from 'lodash/noop'
+import { useCallback, useEffect, useMemo } from 'react'
+import { chainIdAtom } from 'ton/atom/chainIdAtom'
+import { balanceAtom } from 'ton/logic/balanceAtom'
 import { useSwap } from 'ton/logic/swap/useSwap'
+import { Field } from 'types'
+import { tryParseAmount } from 'utils/tryParseAmount'
 
 export const SwapForm = () => {
   const { t } = useTranslation()
+  const chainId = useAtomValue(chainIdAtom)
 
   const inputCurrency = useAtomValue(inputCurrencyAtom)
   const outputCurrency = useAtomValue(outputCurrencyAtom)
@@ -47,8 +49,6 @@ export const SwapForm = () => {
   const trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
   const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
-
-  const { data: activeList, isFetched } = useAtomValue(fetchListAtom)
 
   const setApprovalModal = useSetAtom(setApprovalModalAtom)
   const setTransactionModal = useSetAtom(setTransactionModalAtom)
@@ -105,14 +105,11 @@ export const SwapForm = () => {
 
   // Set default currencies on load
   useEffect(() => {
-    if (isFetched && !inputCurrency && !outputCurrency && activeList && activeList.length > 1) {
+    if (!inputCurrency && !outputCurrency) {
       onCurrencySelection(Field.INPUT, Native.onNetwork(TonNetworks.Testnet))
-      onCurrencySelection(
-        Field.OUTPUT,
-        activeList.find((item) => item.symbol === 'CAKE'),
-      )
+      onCurrencySelection(Field.OUTPUT, PRESET_TOKENS.CAKE[chainId])
     }
-  }, [activeList, inputCurrency, outputCurrency, isFetched, onCurrencySelection])
+  }, [inputCurrency, outputCurrency, chainId, onCurrencySelection])
 
   return (
     <SwapUIV2.SwapFormWrapper>

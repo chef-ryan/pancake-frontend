@@ -13,6 +13,7 @@ import { useAtomValue } from 'jotai'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { addressAtom } from 'ton/atom/addressAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
@@ -54,7 +55,9 @@ const QUICK_INPUTS = [10, 20, 75, 100]
 interface CardContentProps extends BoxProps {}
 export const CardContent = (props: CardContentProps) => {
   const { t } = useTranslation()
-  const isWalletConnected = true
+
+  const userAddress = useAtomValue(addressAtom)
+  const isWalletConnected = !!userAddress
 
   // Query params
   const router = useRouter()
@@ -66,10 +69,16 @@ export const CardContent = (props: CardContentProps) => {
   const { data: currency1 } = useAtomValue(tokenByAddressQueryAtom(address1))
 
   const { data: lpBalance } = useAtomValue(
-    lpBalanceQueryAtom({ token0Address: currency0?.address, token1Address: currency1?.address }),
+    lpBalanceQueryAtom({
+      token0Address: currency0?.isNative ? userAddress : currency0?.address,
+      token1Address: currency1?.isNative ? userAddress : currency1?.address,
+    }),
   )
   const { data: poolData, isLoading: isPoolDataLoading } = useAtomValue(
-    poolDataQueryAtom({ token0Address: currency0?.address, token1Address: currency1?.address }),
+    poolDataQueryAtom({
+      token0Address: currency0?.isNative ? userAddress : currency0?.address,
+      token1Address: currency1?.isNative ? userAddress : currency1?.address,
+    }),
   )
 
   const [sliderValue, setSliderValue] = useState(10)

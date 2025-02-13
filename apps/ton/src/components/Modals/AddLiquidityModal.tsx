@@ -94,7 +94,7 @@ export const AddLiquidityModal = ({
 
       <Flex justifyContent="space-between" alignItems="center">
         <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
-        <Text>{slippage}%</Text>
+        <Text>{slippage / 100}%</Text>
       </Flex>
 
       <Button mt="8px" onClick={onConfirm}>

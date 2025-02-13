@@ -2,7 +2,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { AddIcon, Box, BoxProps, Button, Flex, FlexGap, Loading, Text, useToast } from '@pancakeswap/uikit'
 import { setCurrencyAtom } from 'atoms/currencyAtoms'
-import { currency0Value, currency1Value } from 'atoms/liquidity/addLiquidityStateAtom'
+import { currency0Value, currency1Value, liquidityIndependentFieldAtom } from 'atoms/liquidity/addLiquidityStateAtom'
 import { setAddLiquidityModalAtom } from 'atoms/modals/addLiquidityModalAtom'
 import { BigNumber as BN } from 'bignumber.js'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
@@ -52,6 +52,7 @@ export const CardContent = (props: CardContentProps) => {
   const [currency1] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY1, token1Address)
   const [token0Value, setToken0Value] = useAtom(currency0Value)
   const [token1Value, setToken1Value] = useAtom(currency1Value)
+  const [independentField, setIndependentField] = useAtom(liquidityIndependentFieldAtom)
 
   const setCurrency = useSetAtom(setCurrencyAtom)
   const setAddLiquidityModal = useSetAtom(setAddLiquidityModalAtom)
@@ -107,18 +108,49 @@ export const CardContent = (props: CardContentProps) => {
     if (currency0 || currency1) updateQueryParams()
   }, [currency0, currency1, updateQueryParams])
 
+  // const calculateOutputAmount = useCallback(() => {
+  //   if (rates.currency0 && rates.currency1 && currency0 && currency1) {
+  //     const amount0 = BN(token0Value)
+  //     const amount1 = BN(token1Value)
+
+  //     if (independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY0) {
+  //       if (amount0.isZero()) setToken1Value('0')
+  //       setToken1Value(amount0.times(rates.currency0).toString())
+  //     } else if (independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY1) {
+  //       if (amount1.isZero()) setToken0Value('0')
+  //       setToken0Value(amount1.times(rates.currency1).toString())
+  //     }
+  //   }
+  // }, [
+  //   rates.currency0,
+  //   rates.currency1,
+  //   currency0,
+  //   currency1,
+  //   token0Value,
+  //   token1Value,
+  //   independentField,
+  //   setToken0Value,
+  //   setToken1Value,
+  // ])
+
   const handleToken0Input = useCallback(
     (value: string) => {
       setToken0Value(value)
+      setIndependentField(CurrencyField.ADD_LIQUIDITY_CURRENCY0)
+
+      // calculateOutputAmount()
     },
-    [setToken0Value],
+    [setToken0Value, setIndependentField],
   )
 
   const handleToken1Input = useCallback(
     (value: string) => {
       setToken1Value(value)
+      setIndependentField(CurrencyField.ADD_LIQUIDITY_CURRENCY1)
+
+      // calculateOutputAmount()
     },
-    [setToken1Value],
+    [setToken1Value, setIndependentField],
   )
 
   const onCurrencySelection = useCallback(
