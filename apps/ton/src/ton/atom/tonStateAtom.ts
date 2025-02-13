@@ -3,8 +3,9 @@ import { atomWithProxy } from 'jotai-valtio'
 import { proxy } from 'valtio'
 
 function detectNetwork() {
-  const isProd = process.env.NODE_ENV === 'production'
-  const guess = isProd ? TonNetworks.Mainnet : TonNetworks.Testnet
+  // const isProd = process.env.NODE_ENV === 'production'
+  // const guess = isProd ? TonNetworks.Mainnet : TonNetworks.Testnet
+  const guess = TonNetworks.Testnet
   if (typeof window === 'undefined') {
     return guess
   }
