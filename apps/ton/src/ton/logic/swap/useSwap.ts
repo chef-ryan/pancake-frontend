@@ -2,9 +2,8 @@ import { Contracts, Currency, TonContractNames, storeSwap } from '@pancakeswap/t
 import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
 import { beginCell, toNano } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
-import { useAtomValue } from 'jotai'
+import { useUserAddress } from 'hooks/useUserAddress'
 import { useCallback } from 'react'
-import { addressAtom } from 'ton/atom/addressAtom'
 import { TonContext } from 'ton/context/TonContext'
 import { getJettonWalletAddress, parseAddress } from 'ton/utils/address'
 
@@ -16,13 +15,12 @@ interface SwapArgs {
 }
 
 export const useSwap = () => {
-  const userAddress_ = useAtomValue(addressAtom)
   const [tonUI] = useTonConnectUI()
+  const userAddress = useUserAddress()
 
   const swap = useCallback(
     async ({ amount0, minOut, token0, token1 }: SwapArgs) => {
       const client = TonContext.instance.getClient()
-      const userAddress = parseAddress(userAddress_)
       const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter].testnet.address)
 
       const userJettonWallet0 = await getJettonWalletAddress(client, userAddress, token0)
@@ -73,7 +71,7 @@ export const useSwap = () => {
 
       tonUI.sendTransaction(txRequest)
     },
-    [userAddress_, tonUI],
+    [userAddress, tonUI],
   )
 
   return {
