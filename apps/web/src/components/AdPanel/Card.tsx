@@ -1,6 +1,6 @@
 import { Box, BoxProps, CloseIcon, IconButton, useMatchBreakpoints } from '@pancakeswap/uikit'
 import isUndefinedOrNull from '@pancakeswap/utils/isUndefinedOrNull'
-import { forwardRef, useEffect, useRef, useState } from 'react'
+import { forwardRef, Suspense, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { useShowAdPanel } from './useShowAdPanel'
 

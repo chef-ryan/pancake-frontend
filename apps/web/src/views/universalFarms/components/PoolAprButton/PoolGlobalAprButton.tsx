@@ -14,6 +14,7 @@ type PoolGlobalAprButtonProps = {
 export const PoolGlobalAprButton: React.FC<PoolGlobalAprButtonProps> = ({ pool, detailMode }) => {
   const key = useMemo(() => `${pool.chainId}:${pool.lpAddress}` as const, [pool.chainId, pool.lpAddress])
   const { lpApr, cakeApr, merklApr } = usePoolApr(key, pool)
+  console.log({ lpApr, cakeApr })
   const numerator = useMemo(() => {
     const lpAprNumerator = new BigNumber(lpApr).times(cakeApr?.userTvlUsd ?? BIG_ZERO)
     return lpAprNumerator
@@ -21,6 +22,7 @@ export const PoolGlobalAprButton: React.FC<PoolGlobalAprButtonProps> = ({ pool, 
   const denominator = useMemo(() => {
     return cakeApr?.userTvlUsd ?? BIG_ZERO
   }, [cakeApr?.userTvlUsd])
+  console.log({ numerator, denominator })
 
   const { updateTotalApr } = useMyPositions()
 

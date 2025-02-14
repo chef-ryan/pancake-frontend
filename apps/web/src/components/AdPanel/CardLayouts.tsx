@@ -1,6 +1,6 @@
 import { Box, BoxProps, getPortalRoot, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
-import { cloneElement, memo, RefObject, useCallback, useEffect, useRef } from 'react'
+import { cloneElement, memo, RefObject, Suspense, useCallback, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import styled from 'styled-components'
 import { Autoplay, EffectFade, Pagination } from 'swiper/modules'
@@ -79,27 +79,29 @@ const AdSlides = memo(({ forceMobile, isDismissible = true }: AdPlayerProps) => 
   }, [isAnySlideExpanded, pauseAni, resumeAni])
 
   return (
-    <StyledSwiper
-      ref={swiperRef}
-      effect="fade"
-      spaceBetween={50}
-      slidesPerView={1}
-      speed={500}
-      fadeEffect={{ crossFade: true }}
-      autoplay={{ delay: 5000, pauseOnMouseEnter: true, disableOnInteraction: false }}
-      pagination={{ clickable: true, enabled: !isAnySlideExpanded }}
-      $showPagination={!isAnySlideExpanded}
-      modules={[Autoplay, Pagination, EffectFade]}
-      onAutoplayPause={pauseAni}
-      onAutoplayResume={handleResume}
-      loop
-      observer
-      id="test-swiper"
-    >
-      {adList.map((ad) => (
-        <SwiperSlide key={ad.id}>{cloneElement(ad.component, { isDismissible, forceMobile })}</SwiperSlide>
-      ))}
-    </StyledSwiper>
+    <Suspense>
+      <StyledSwiper
+        ref={swiperRef}
+        effect="fade"
+        spaceBetween={50}
+        slidesPerView={1}
+        speed={500}
+        fadeEffect={{ crossFade: true }}
+        autoplay={{ delay: 5000, pauseOnMouseEnter: true, disableOnInteraction: false }}
+        pagination={{ clickable: true, enabled: !isAnySlideExpanded }}
+        $showPagination={!isAnySlideExpanded}
+        modules={[Autoplay, Pagination, EffectFade]}
+        onAutoplayPause={pauseAni}
+        onAutoplayResume={handleResume}
+        loop
+        observer
+        id="test-swiper"
+      >
+        {adList.map((ad) => (
+          <SwiperSlide key={ad.id}>{cloneElement(ad.component, { isDismissible, forceMobile })}</SwiperSlide>
+        ))}
+      </StyledSwiper>
+    </Suspense>
   )
 })
 

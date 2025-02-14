@@ -1,12 +1,12 @@
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { useQuery } from '@tanstack/react-query'
 import { SLOW_INTERVAL } from 'config/constants'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { useCallback } from 'react'
 import sha256 from 'crypto-js/sha256'
-import memoize from 'lodash/memoize'
-import { extendPoolsAtom } from 'state/farmsV4/state/extendPools/atom'
 import { useCakePrice } from 'hooks/useCakePrice'
-import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import memoize from 'lodash/memoize'
+import { useCallback } from 'react'
+import { extendPoolsAtom } from 'state/farmsV4/state/extendPools/atom'
 import { ChainIdAddressKey, PoolInfo } from '../type'
 import { CakeApr, cakeAprSetterAtom, emptyCakeAprPoolsAtom, merklAprAtom, poolAprAtom } from './atom'
 import { getAllNetworkMerklApr, getCakeApr, getLpApr } from './fetcher'
@@ -50,6 +50,7 @@ export const usePoolApr = (
       }
       const [cakeApr, lpApr, merklApr] = await Promise.all([
         getCakeApr(pool, cakePrice).then((apr) => {
+          console.log('result cakeApr', apr)
           updateCakeApr(apr)
           return apr
         }),
@@ -100,6 +101,7 @@ export const usePoolApr = (
     refetchOnReconnect: false,
   })
 
+  console.log('updated poolApr-2', poolApr?.cakeApr)
   return {
     lpApr: poolApr?.lpApr ?? '0',
     cakeApr: poolApr?.cakeApr ?? { value: '0' },

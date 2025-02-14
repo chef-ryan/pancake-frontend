@@ -1,11 +1,6 @@
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useMemo } from 'react'
-import { AdCakeStaking } from './Ads/AdCakeStaking'
-import { AdPCSX } from './Ads/AdPCSX'
-import { AdIfo } from './Ads/AdIfo'
-import { AdSpringboard } from './Ads/AdSpringboard'
-import { AdTradingCompetitionVinu } from './Ads/AdTradingCompetition'
-import { ExpandableAd } from './Expandable/ExpandableAd'
+import { AdPool } from './Ads/AdPool'
 import { shouldRenderOnPages } from './renderConditions'
 import { useShouldRenderAdIfo } from './useShouldRenderAdIfo'
 
@@ -32,32 +27,37 @@ export const useAdConfig = () => {
   }> = useMemo(
     () => [
       {
-        id: 'expandable-ad',
-        component: <ExpandableAd />,
+        id: 'pool-pick',
+        component: <AdPool />,
         priority: Priority.FIRST_AD,
-        shouldRender: [shouldRenderOnPage],
       },
-      {
-        id: 'ad-springboard',
-        component: <AdSpringboard />,
-      },
-      {
-        id: 'ad-vinu-tc',
-        component: <AdTradingCompetitionVinu />,
-      },
-      {
-        id: 'ad-ifo',
-        component: <AdIfo />,
-        shouldRender: [shouldRenderAdIfo],
-      },
-      {
-        id: 'pcsx',
-        component: <AdPCSX />,
-      },
-      {
-        id: 'cake-staking',
-        component: <AdCakeStaking />,
-      },
+      // {
+      //   id: 'expandable-ad',
+      //   component: <ExpandableAd />,
+      //   priority: Priority.FIRST_AD,
+      //   shouldRender: [shouldRenderOnPage],
+      // },
+      // {
+      //   id: 'ad-springboard',
+      //   component: <AdSpringboard />,
+      // },
+      // {
+      //   id: 'ad-vinu-tc',
+      //   component: <AdTradingCompetitionVinu />,
+      // },
+      // {
+      //   id: 'ad-ifo',
+      //   component: <AdIfo />,
+      //   shouldRender: [shouldRenderAdIfo],
+      // },
+      // {
+      //   id: 'pcsx',
+      //   component: <AdPCSX />,
+      // },
+      // {
+      //   id: 'cake-staking',
+      //   component: <AdCakeStaking />,
+      // },
     ],
     [shouldRenderOnPage, shouldRenderAdIfo],
   )

@@ -91,6 +91,11 @@ export const getPoolAddressByToken = memoize(
     `${chainId}#${token0Address}#${token1Address}#${fee}`,
 )
 
+interface PoolInfoParams {
+  chainId: number
+  poolAddress: Address | string
+}
+
 export const usePoolInfo = <TPoolType extends PoolInfo>({
   poolAddress,
   chainId,
