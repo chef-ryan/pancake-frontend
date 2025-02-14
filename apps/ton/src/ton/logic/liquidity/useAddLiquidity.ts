@@ -2,13 +2,17 @@ import { Currency, storeAddLiquidity } from '@pancakeswap/ton-v2-sdk'
 import { JETTON_TRANSFER_NOTIFICATION_OPCODE, storeJettonTransferMessage } from '@ton-community/assets-sdk'
 import { beginCell, toNano } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
+import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
+import { ActionType } from 'components/Modals/ActionModal'
 import { useUserAddress } from 'hooks/useUserAddress'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { routerContractAtom } from 'ton/atom/contracts/routerContractAtom'
 import { TonContext } from 'ton/context/TonContext'
 import { generateQueryId } from 'ton/generateQueryId'
 import { getJettonWalletAddress } from 'ton/utils/address'
+import { formatBalance } from 'ton/utils/formatting'
+import { getTransactionByBOC } from 'ton/utils/transaction'
 
 interface AddLiquidityArgs {
   token0: Currency
@@ -23,6 +27,8 @@ export const useAddLiquidity = () => {
 
   const userAddress = useUserAddress()
   const routerAddress = useAtomValue(routerContractAtom).address
+
+  const setTxnModal = useSetAtom(setTransactionModalAtom)
 
   const addLiquidity = useCallback(
     async ({ token0, token1, amount0, amount1 }: AddLiquidityArgs) => {
@@ -119,9 +125,31 @@ export const useAddLiquidity = () => {
         ],
       }
 
-      tonUI.sendTransaction(txRequest)
+      const { boc } = await tonUI.sendTransaction(txRequest)
+      if (boc) {
+        setTxnModal({
+          type: ActionType.TransactionSubmitted,
+          isOpen: true,
+          currency0: token0,
+          currency1: token1,
+          amount0: formatBalance(amount0, token0.decimals),
+          amount1: formatBalance(amount1, token1.decimals),
+        })
+      }
+      const hash = await getTransactionByBOC(userAddress, boc)
+      if (hash) {
+        setTxnModal({
+          type: ActionType.TransactionComplete,
+          isOpen: true,
+          currency0: token0,
+          currency1: token1,
+          amount0: formatBalance(amount0, token0.decimals),
+          amount1: formatBalance(amount1, token1.decimals),
+          hash,
+        })
+      }
     },
-    [tonUI, userAddress, routerAddress],
+    [tonUI, userAddress, routerAddress, setTxnModal],
   )
 
   return {

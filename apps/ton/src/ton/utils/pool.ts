@@ -1,5 +1,6 @@
 import { BigintIsh } from '@pancakeswap/swap-sdk-core'
 import BN from 'bignumber.js'
+import { REQUIRED_MIN_LIQUIDITY } from 'config/constants/exchange'
 
 interface GetExpectedLpTokensArgs {
   amount0: BigintIsh
@@ -16,8 +17,12 @@ export function getExpectedPoolTokens({ amount0, amount1, reserve0, reserve1, to
   const supply = BN(totalSupply.toString())
 
   if (supply.isZero()) {
-    return a0.multipliedBy(a1).sqrt().minus(BN('1000'))
+    return a0.multipliedBy(a1).sqrt().minus(BN(REQUIRED_MIN_LIQUIDITY))
   }
 
   return BN.min(a0.multipliedBy(supply).div(r0), a1.multipliedBy(supply).div(r1))
+}
+
+export function isEnoughLiquidity(amount0: BigintIsh, amount1: BigintIsh) {
+  return BN(amount0.toString()).multipliedBy(amount1.toString()).sqrt().gt(REQUIRED_MIN_LIQUIDITY)
 }

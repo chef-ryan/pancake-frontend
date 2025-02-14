@@ -1,30 +1,30 @@
-import { Native, TonNetworks } from '@pancakeswap/ton-v2-sdk'
-import { useCallback, useEffect, useMemo } from 'react'
-import noop from 'lodash/noop'
-import { Column, FlexGap, Text } from '@pancakeswap/uikit'
-import { ButtonAndDetailsPanel } from 'components/TonSwap/ButtonAndDetailsPanel'
-import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
-import { FlipButton } from 'components/TonSwap/FlipButton'
-import { useUserSlippage } from '@pancakeswap/utils/user'
 import { useTranslation } from '@pancakeswap/localization'
+import { Rounding } from '@pancakeswap/swap-sdk-core'
+import { Native, TonNetworks } from '@pancakeswap/ton-v2-sdk'
+import { Column, FlexGap, Text } from '@pancakeswap/uikit'
+import { formatFraction } from '@pancakeswap/utils/formatFractions'
+import { useUserSlippage } from '@pancakeswap/utils/user'
+import { RefreshButton } from '@pancakeswap/widgets-internal'
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import { setApprovalModalAtom } from 'atoms/modals/approvalModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
 import { independentFieldAtom, inputCurrencyAtom, outputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
-import { TransactionActionType } from 'components/Modals/ActionModal'
+import { ActionType } from 'components/Modals/ActionModal'
+import { ButtonAndDetailsPanel } from 'components/TonSwap/ButtonAndDetailsPanel'
+import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
+import { FlipButton } from 'components/TonSwap/FlipButton'
+import { PricingAndSlippage } from 'components/TonSwap/PricingAndSlippage'
 import { SwapCommitButton } from 'components/TonSwap/SwapCommitButton'
 import { SwapUIV2 } from 'components/widgets/swap-v2'
-import { PricingAndSlippage } from 'components/TonSwap/PricingAndSlippage'
+import { useBestTrade } from 'hooks/swap/useBestTrade'
 import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
 import { useAtomValue, useSetAtom } from 'jotai'
+import noop from 'lodash/noop'
+import { useCallback, useEffect, useMemo } from 'react'
 import { balanceAtom } from 'ton/logic/balanceAtom'
-import { Field } from 'types'
-import { Rounding, _10000 } from '@pancakeswap/swap-sdk-core'
-import { formatFraction } from '@pancakeswap/utils/formatFractions'
-import { tryParseAmount } from 'utils/tryParseAmount'
 import { useSwap } from 'ton/logic/swap/useSwap'
-import { RefreshButton } from '@pancakeswap/widgets-internal'
-import { useBestTrade } from 'hooks/swap/useBestTrade'
+import { Field } from 'types'
+import { tryParseAmount } from 'utils/tryParseAmount'
 import { AdvancedSwapDetailsDropdown } from './AdvancedSwapDetailsDropdown'
 
 export const SwapForm = () => {
@@ -100,9 +100,9 @@ export const SwapForm = () => {
     })
     // simulate modal states
     // setApprovalModal('TON', '1000')
-    setTransactionModal(TransactionActionType.TransactionSubmitted, true)
+    setTransactionModal(ActionType.TransactionSubmitted, true)
     /* setTimeout(() => {
-      setTransactionModal(TransactionActionType.TransactionComplete, true)
+      setTransactionModal(ActionType.TransactionComplete, true)
     }, 3000) */
   }, [swap, inputCurrency, outputCurrency, formattedAmounts, setTransactionModal])
 

@@ -1,5 +1,5 @@
 import { ONE_HUNDRED_PERCENT, Percent } from '@pancakeswap/sdk'
-import { TonChainId, Token, Native, NATIVE, Currency } from '@pancakeswap/ton-v2-sdk'
+import { Currency, Native, NATIVE, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
 
 export const BIG_INT_ZERO = 0n
 export const BIG_INT_TEN = 10n
@@ -25,6 +25,9 @@ export const QUERY_DEFAULT_STALE_TIME = 1000 * 60 // 1 minute
 export const QUERY_MEDIUM_STALE_TIME = 1000 * 60 * 5 // 5 minutes
 
 export const DEFAULT_SIGNIFICANT_DIGITS = 5
+
+// Minimum liquidity for adding to a new pool, defined in smart contract
+export const REQUIRED_MIN_LIQUIDITY = 1000
 
 export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(50n, BIPS_BASE)
 

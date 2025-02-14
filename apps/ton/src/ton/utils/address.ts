@@ -8,7 +8,7 @@ export const parseAddress = (address?: string) => {
   return Address.parse(address)
 }
 
-export const isAddress = (address?: string) => {
+export const isAddress = (address?: any) => {
   if (!address) return false
   return Address.isAddress(address)
 }

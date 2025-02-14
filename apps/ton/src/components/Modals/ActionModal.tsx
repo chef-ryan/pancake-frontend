@@ -1,4 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
+import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Box, FlexGap, Grid, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
@@ -6,11 +7,11 @@ import { useAtomValue } from 'jotai'
 import Link from 'next/link'
 import styled from 'styled-components'
 import { networkAtom } from 'ton/atom/networkAtom'
+import { truncateHash } from 'utils'
 import { getBlockExplorerLink } from 'utils/getBlockExploreLink'
 
 const StyledFlexColumn = styled(FlexGap).attrs({ flexDirection: 'column' })`
   text-align: center;
-  min-height: 160px;
 `
 
 const GridColumn = styled(FlexGap)`
@@ -18,19 +19,31 @@ const GridColumn = styled(FlexGap)`
   justify-content: center;
 `
 
-export enum TransactionActionType {
+export enum ActionType {
   TransactionSubmitted = 'TransactionSubmitted',
   TransactionComplete = 'TransactionComplete',
+  ConfirmSupply = 'ConfirmSupply',
+}
+
+const iconByActionType = {
+  [ActionType.TransactionSubmitted]: {
+    src: '/images/up-arrow-animated.gif',
+    alt: 'Up Arrow',
+  },
+  [ActionType.TransactionComplete]: {
+    src: '/images/green-tick-animated.gif',
+    alt: 'Green Tick',
+  },
 }
 
 interface ActionProps {
-  currency0?: string
-  currency1?: string
+  currency0?: Currency
+  currency1?: Currency
   amount0?: string
   amount1?: string
 
   hash?: string
-  type?: TransactionActionType
+  type?: ActionType
 }
 
 export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type }: ActionProps) => {
@@ -42,54 +55,44 @@ export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type
       <Grid gridTemplateColumns={['1fr 1fr 1fr']}>
         <GridColumn>
           <Box>
-            <CurrencyLogo
-              currency={{
-                logoURI: '',
-              }}
-              size="40px"
-            />
+            <CurrencyLogo currency={currency0} size="40px" />
             <FlexGap justifyContent="center" alignItems="center" gap="4px">
               <NumberDisplay value={amount0} fontSize="24px" bold />
               <Text fontSize="24px" bold>
-                {currency0}
+                {currency0?.symbol}
               </Text>
             </FlexGap>
           </Box>
         </GridColumn>
+        {type && (
+          <GridColumn>
+            <Box>
+              <img src={iconByActionType[type].src} alt={iconByActionType[type].alt} width="80px" />
+            </Box>
+          </GridColumn>
+        )}
         <GridColumn>
           <Box>
-            {type === TransactionActionType.TransactionSubmitted ? (
-              <img src="/images/up-arrow-animated.gif" alt="Up Arrow" width="80px" />
-            ) : (
-              <img src="/images/green-tick-animated.gif" alt="Green Tick" width="80px" />
-            )}
-          </Box>
-        </GridColumn>
-        <GridColumn>
-          <Box>
-            <CurrencyLogo
-              currency={{
-                logoURI: '',
-              }}
-              size="40px"
-            />
+            <CurrencyLogo currency={currency1} size="40px" />
             <FlexGap justifyContent="center" alignItems="center" gap="4px">
               <NumberDisplay value={amount1} fontSize="24px" bold />
               <Text fontSize="24px" bold>
-                {currency1}
+                {currency1?.symbol}
               </Text>
             </FlexGap>
           </Box>
         </GridColumn>
       </Grid>
 
-      <Box mt="auto">
-        <Text color="primary60">
-          <Link href={getBlockExplorerLink(hash, 'transaction', network)} target="_blank">
-            {t('View on explorer:')} {hash}
-          </Link>
-        </Text>
-      </Box>
+      {hash && (
+        <Box m="24px 0 4px">
+          <Text color="primary60">
+            <Link href={getBlockExplorerLink(hash, 'transaction', network)} target="_blank">
+              {t('View on explorer:')} {truncateHash(hash)}
+            </Link>
+          </Text>
+        </Box>
+      )}
     </StyledFlexColumn>
   )
 }
