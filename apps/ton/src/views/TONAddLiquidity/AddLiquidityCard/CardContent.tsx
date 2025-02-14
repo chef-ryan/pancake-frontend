@@ -21,6 +21,7 @@ import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { useAddLiquidity } from 'ton/logic/liquidity/useAddLiquidity'
 import { parseUnits } from 'ton/utils/formatting'
+import { getExpectedPoolTokens } from 'ton/utils/pool'
 import { CurrencyField } from 'types/currency'
 import { currencyKey } from 'utils/tokens/currency'
 
@@ -193,7 +194,13 @@ export const CardContent = (props: CardContentProps) => {
       isOpen: true,
       currency0,
       currency1,
-      outputAmount: '-',
+      outputAmount: getExpectedPoolTokens({
+        amount0: token0Value,
+        amount1: token1Value,
+        reserve0: poolData?.reserve0 || 0n,
+        reserve1: poolData?.reserve1 || 0n,
+        totalSupply: poolData?.totalSupply || 0n,
+      }).toString(),
       amount0: token0Value,
       amount1: token1Value,
       rate0: rates.currency0.toString(),
@@ -201,7 +208,19 @@ export const CardContent = (props: CardContentProps) => {
       shareInPool: shareInPool.toString(),
       onConfirm: handleAddLiquidity,
     })
-  }, [setAddLiquidityModal, currency0, currency1, token0Value, token1Value, rates, shareInPool, handleAddLiquidity])
+  }, [
+    currency0,
+    currency1,
+    token0Value,
+    token1Value,
+    rates,
+    shareInPool,
+    poolData?.reserve0,
+    poolData?.reserve1,
+    poolData?.totalSupply,
+    setAddLiquidityModal,
+    handleAddLiquidity,
+  ])
 
   return (
     <>
