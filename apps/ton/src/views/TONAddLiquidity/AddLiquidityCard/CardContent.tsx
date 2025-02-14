@@ -2,7 +2,11 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { AddIcon, Box, BoxProps, Button, Flex, FlexGap, Loading, Text, useToast } from '@pancakeswap/uikit'
 import { setCurrencyAtom } from 'atoms/currencyAtoms'
-import { currency0Value, currency1Value, liquidityIndependentFieldAtom } from 'atoms/liquidity/addLiquidityStateAtom'
+import {
+  currency0TypedValue,
+  currency1TypedValue,
+  liquidityIndependentFieldAtom,
+} from 'atoms/liquidity/addLiquidityStateAtom'
 import { setAddLiquidityModalAtom } from 'atoms/modals/addLiquidityModalAtom'
 import { BigNumber as BN } from 'bignumber.js'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
@@ -51,8 +55,7 @@ export const CardContent = (props: CardContentProps) => {
 
   const [currency0] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY0, token0Address)
   const [currency1] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY1, token1Address)
-  const [token0Value, setToken0Value] = useAtom(currency0Value)
-  const [token1Value, setToken1Value] = useAtom(currency1Value)
+
   const [independentField, setIndependentField] = useAtom(liquidityIndependentFieldAtom)
 
   const setCurrency = useSetAtom(setCurrencyAtom)
@@ -82,6 +85,9 @@ export const CardContent = (props: CardContentProps) => {
     reserve0: poolData?.reserve0,
     reserve1: poolData?.reserve1,
   })
+
+  const [token0Value, setToken0Value] = useAtom(currency0TypedValue)
+  const [token1Value, setToken1Value] = useAtom(currency1TypedValue)
 
   const { addLiquidity } = useAddLiquidity()
 

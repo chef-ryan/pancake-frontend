@@ -7,6 +7,7 @@ import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { useAtomValue } from 'jotai'
 import Link from 'next/link'
 import styled from 'styled-components'
+import { addressAtom } from 'ton/atom/addressAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
 import { truncateHash } from 'utils'
 import { getBlockExplorerLink } from 'utils/getBlockExploreLink'
@@ -24,10 +25,11 @@ export enum ActionType {
   TransactionSubmitted = 'TransactionSubmitted',
   TransactionComplete = 'TransactionComplete',
   ConfirmSupply = 'ConfirmSupply',
+  ConfirmRemoval = 'ConfirmRemoval',
 }
 
 const iconByActionType: {
-  [key in ActionType]: { icon: string | JSX.Element; alt: string }
+  [key in ActionType]: { icon: string | JSX.Element; alt?: string }
 } = {
   [ActionType.TransactionSubmitted]: {
     icon: '/images/up-arrow-animated.gif',
@@ -39,7 +41,9 @@ const iconByActionType: {
   },
   [ActionType.ConfirmSupply]: {
     icon: <AddCircleLoading />,
-    alt: 'Confirm Supply',
+  },
+  [ActionType.ConfirmRemoval]: {
+    icon: <AddCircleLoading />,
   },
 }
 
@@ -56,6 +60,7 @@ interface ActionProps {
 export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type }: ActionProps) => {
   const { t } = useTranslation()
   const network = useAtomValue(networkAtom)
+  const userAddress = useAtomValue(addressAtom)
 
   return (
     <StyledFlexColumn gap="8px">
@@ -64,7 +69,7 @@ export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type
           <Box>
             <CurrencyLogo currency={currency0} size="40px" />
             <FlexGap justifyContent="center" alignItems="center" gap="4px">
-              <NumberDisplay value={amount0} fontSize="24px" bold />
+              <NumberDisplay value={amount0} maximumSignificantDigits={6} fontSize="24px" bold />
               <Text fontSize="24px" bold>
                 {currency0?.symbol}
               </Text>
@@ -86,7 +91,7 @@ export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type
           <Box>
             <CurrencyLogo currency={currency1} size="40px" />
             <FlexGap justifyContent="center" alignItems="center" gap="4px">
-              <NumberDisplay value={amount1} fontSize="24px" bold />
+              <NumberDisplay value={amount1} maximumSignificantDigits={6} fontSize="24px" bold />
               <Text fontSize="24px" bold>
                 {currency1?.symbol}
               </Text>
@@ -95,7 +100,7 @@ export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type
         </GridColumn>
       </Grid>
 
-      {hash && (
+      {hash ? (
         <Box m="24px 0 4px">
           <Text color="primary60">
             <Link href={getBlockExplorerLink(hash, 'transaction', network)} target="_blank">
@@ -103,6 +108,14 @@ export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type
             </Link>
           </Text>
         </Box>
+      ) : type === ActionType.ConfirmSupply || type === ActionType.ConfirmRemoval ? (
+        <Box m="24px 0 4px">
+          <Text color="textSubtle">
+            {t('Please approve this in your wallet %address%', { address: truncateHash(userAddress, 4) })}
+          </Text>
+        </Box>
+      ) : (
+        <></>
       )}
     </StyledFlexColumn>
   )

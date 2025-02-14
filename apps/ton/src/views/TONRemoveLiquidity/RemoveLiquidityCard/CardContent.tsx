@@ -7,7 +7,6 @@ import { WalletDisclaimer } from 'components/Card/WalletDisclaimer'
 import { DisplayLoader } from 'components/Misc/DisplayLoader'
 import { CurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
-import { PRESET_TOKENS } from 'config/constants/tokens'
 import { usePoolRates } from 'hooks/liquidity/usePoolRates'
 import { useAtomValue } from 'jotai'
 import { useRouter } from 'next/router'
@@ -16,7 +15,6 @@ import styled from 'styled-components'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
-import { networkAtom } from 'ton/atom/networkAtom'
 import { useRemoveLiquidity } from 'ton/logic/liquidity/useRemoveLiquidity'
 import { formatBalance } from 'ton/utils/formatting'
 
@@ -42,12 +40,16 @@ const StyledButton = styled(Button).attrs({
   scale: 'sm',
   variant: 'tertiary',
 })`
-  width: 100%;
+  width: fit-content;
   height: 28px;
   border-radius: 8px;
   border: 2px solid ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.primary60};
   font-size: 14px;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 100%;
+  }
 `
 
 const QUICK_INPUTS = [10, 20, 75, 100]
@@ -61,8 +63,8 @@ export const CardContent = (props: CardContentProps) => {
 
   // Query params
   const router = useRouter()
-  const network = useAtomValue(networkAtom)
-  const [address0, address1] = router.query?.currency ?? ['TON', PRESET_TOKENS.CAKE[network].address]
+
+  const [address0, address1] = router.query?.currency ?? []
 
   // TODO: Handle native
   const { data: currency0 } = useAtomValue(tokenByAddressQueryAtom(address0))
@@ -125,6 +127,8 @@ export const CardContent = (props: CardContentProps) => {
   const { removeLiquidity } = useRemoveLiquidity({
     currency0,
     currency1,
+    amount0ToBurn: formatBalance(outputAmounts?.amount0 ?? 0n, currency0?.decimals),
+    amount1ToBurn: formatBalance(outputAmounts?.amount1 ?? 0n, currency1?.decimals),
   })
 
   const handleSliderChange = useCallback((value: number) => {
@@ -152,7 +156,7 @@ export const CardContent = (props: CardContentProps) => {
             value={sliderValue}
             onValueChanged={handleSliderChange}
           />
-          <FlexGap mt="12px" gap="16px">
+          <FlexGap mt="12px" gap="16px" flexWrap={['wrap', 'nowrap']}>
             {QUICK_INPUTS.map((value) => (
               <StyledButton key={value} onClick={() => handleQuickInput(value)}>
                 {value === 100 ? 'MAX' : `${value}%`}

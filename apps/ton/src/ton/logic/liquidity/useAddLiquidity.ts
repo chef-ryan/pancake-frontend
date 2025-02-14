@@ -35,12 +35,14 @@ export const useAddLiquidity = () => {
   const addLiquidity = useCallback(
     async ({ token0, token1, amount0, amount1 }: AddLiquidityArgs) => {
       try {
+        const formattedAmount0 = formatBalance(amount0, token0.decimals)
+        const formattedAmount1 = formatBalance(amount1, token1.decimals)
         setTxnModal({
           type: ActionType.ConfirmSupply,
           currency0: token0,
           currency1: token1,
-          amount0: formatBalance(amount0, token0.decimals),
-          amount1: formatBalance(amount1, token1.decimals),
+          amount0: formattedAmount0,
+          amount1: formattedAmount1,
           isOpen: true,
         })
 
@@ -143,8 +145,8 @@ export const useAddLiquidity = () => {
             type: ActionType.TransactionSubmitted,
             currency0: token0,
             currency1: token1,
-            amount0: formatBalance(amount0, token0.decimals),
-            amount1: formatBalance(amount1, token1.decimals),
+            amount0: formattedAmount0,
+            amount1: formattedAmount1,
           })
         }
         const hash = await getTransactionByBOC(userAddress, boc)
@@ -153,8 +155,8 @@ export const useAddLiquidity = () => {
             type: ActionType.TransactionComplete,
             currency0: token0,
             currency1: token1,
-            amount0: formatBalance(amount0, token0.decimals),
-            amount1: formatBalance(amount1, token1.decimals),
+            amount0: formattedAmount0,
+            amount1: formattedAmount1,
             hash,
           })
         }
