@@ -17,3 +17,6 @@ export const defaultAppModalData: AppModalData = {
 }
 
 export const appModalAtom = atom<AppModalData>(defaultAppModalData)
+export const resetAppModalAtom = atom(null, (_, set) => {
+  set(appModalAtom, defaultAppModalData)
+})

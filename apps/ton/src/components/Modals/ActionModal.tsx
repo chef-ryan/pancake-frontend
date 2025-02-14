@@ -1,6 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Box, FlexGap, Grid, Text } from '@pancakeswap/uikit'
+import { AddCircleLoading } from 'components/Misc/AddCircleLoading'
 import { CurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { useAtomValue } from 'jotai'
@@ -25,14 +26,20 @@ export enum ActionType {
   ConfirmSupply = 'ConfirmSupply',
 }
 
-const iconByActionType = {
+const iconByActionType: {
+  [key in ActionType]: { icon: string | JSX.Element; alt: string }
+} = {
   [ActionType.TransactionSubmitted]: {
-    src: '/images/up-arrow-animated.gif',
+    icon: '/images/up-arrow-animated.gif',
     alt: 'Up Arrow',
   },
   [ActionType.TransactionComplete]: {
-    src: '/images/green-tick-animated.gif',
+    icon: '/images/green-tick-animated.gif',
     alt: 'Green Tick',
+  },
+  [ActionType.ConfirmSupply]: {
+    icon: <AddCircleLoading />,
+    alt: 'Confirm Supply',
   },
 }
 
@@ -67,7 +74,11 @@ export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type
         {type && (
           <GridColumn>
             <Box>
-              <img src={iconByActionType[type].src} alt={iconByActionType[type].alt} width="80px" />
+              {typeof iconByActionType[type].icon === 'string' ? (
+                <img src={iconByActionType[type].icon} alt={iconByActionType[type].alt} width="80px" />
+              ) : (
+                iconByActionType[type].icon
+              )}
             </Box>
           </GridColumn>
         )}

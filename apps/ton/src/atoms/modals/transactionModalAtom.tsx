@@ -26,18 +26,21 @@ const Title = ({ type }: TitleProps) => {
 
 interface SetTransactionModalArgs {
   type: ActionType
-  isOpen: boolean
+  isOpen?: boolean
   currency0?: Currency
   currency1?: Currency
   amount0?: string
   amount1?: string
   hash?: string
 }
-export const setTransactionModalAtom = atom(null, (_, set, { type, isOpen, ...props }: SetTransactionModalArgs) => {
-  set(appModalAtom, {
-    title: <Title type={type} />,
-    content: <ActionModal type={type} {...props} />,
-    closeable: true,
-    isOpen,
-  })
-})
+export const setTransactionModalAtom = atom(
+  null,
+  (_, set, { type, isOpen = true, ...props }: SetTransactionModalArgs) => {
+    set(appModalAtom, {
+      title: <Title type={type} />,
+      content: <ActionModal type={type} {...props} />,
+      closeable: true,
+      isOpen,
+    })
+  },
+)

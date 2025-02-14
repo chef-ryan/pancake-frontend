@@ -100,7 +100,10 @@ export const SwapForm = () => {
     })
     // simulate modal states
     // setApprovalModal('TON', '1000')
-    setTransactionModal(ActionType.TransactionSubmitted, true)
+    setTransactionModal({
+      type: ActionType.TransactionSubmitted,
+      isOpen: true,
+    })
     /* setTimeout(() => {
       setTransactionModal(ActionType.TransactionComplete, true)
     }, 3000) */
