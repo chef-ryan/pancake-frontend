@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { styled } from 'styled-components'
 import { usePreviousValue } from '@pancakeswap/hooks'
 import { AdvancedSwapDetails, AdvancedSwapDetailsProps } from './AdvancedSwapDetails'
@@ -9,7 +10,7 @@ const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
   background-color: ${({ theme }) => theme.colors.invertedContrast};
 `
 
-export const AdvancedSwapDetailsDropdown = ({ trade, ...rest }: AdvancedSwapDetailsProps) => {
+export const AdvancedSwapDetailsDropdown = memo(({ trade, ...rest }: AdvancedSwapDetailsProps) => {
   const lastTrade = usePreviousValue(trade)
 
   return (
@@ -17,4 +18,4 @@ export const AdvancedSwapDetailsDropdown = ({ trade, ...rest }: AdvancedSwapDeta
       <AdvancedSwapDetails {...rest} trade={trade ?? lastTrade ?? undefined} />
     </AdvancedDetailsFooter>
   )
-}
+})

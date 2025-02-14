@@ -1,5 +1,5 @@
 import { SwapUIV2 } from 'components/widgets/swap-v2'
-import { useState } from 'react'
+import { useIsSwapDetailPanelOpen } from 'hooks/swap/useIsSwapDetailPanelOpen'
 import { styled } from 'styled-components'
 
 export const PanelWrapper = styled.div`
@@ -25,7 +25,7 @@ export const ButtonAndDetailsPanel: React.FC<ButtonAndDetailsPanelProps> = ({
   tradeDetails,
   shouldRenderDetails,
 }) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useIsSwapDetailPanelOpen()
   return (
     <PanelWrapper>
       {swapCommitButton}
