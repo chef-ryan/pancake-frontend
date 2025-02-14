@@ -14,18 +14,18 @@ import { independentFieldAtom, inputCurrencyAtom, outputCurrencyAtom, typedValue
 import { TransactionActionType } from 'components/Modals/ActionModal'
 import { SwapCommitButton } from 'components/TonSwap/SwapCommitButton'
 import { SwapUIV2 } from 'components/widgets/swap-v2'
+import { PricingAndSlippage } from 'components/TonSwap/PricingAndSlippage'
 import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { balanceAtom } from 'ton/logic/balanceAtom'
 import { Field } from 'types'
 import { Rounding, _10000 } from '@pancakeswap/swap-sdk-core'
-import { formatAmount, formatFraction } from '@pancakeswap/utils/formatFractions'
+import { formatFraction } from '@pancakeswap/utils/formatFractions'
 import { tryParseAmount } from 'utils/tryParseAmount'
 import { useSwap } from 'ton/logic/swap/useSwap'
 import { RefreshButton } from '@pancakeswap/widgets-internal'
 import { useBestTrade } from 'hooks/swap/useBestTrade'
-import { PricingAndSlippage } from 'components/TonSwap/PricingAndSlippage'
-import AdvancedSwapDetailsDropdown from './AdvancedSwapDetailsDropdown'
+import { AdvancedSwapDetailsDropdown } from './AdvancedSwapDetailsDropdown'
 
 export const SwapForm = () => {
   const { t } = useTranslation()
