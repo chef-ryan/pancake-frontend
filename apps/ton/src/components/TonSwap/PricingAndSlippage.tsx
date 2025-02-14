@@ -18,11 +18,7 @@ export const PricingAndSlippage = ({ priceLoading, price, showSlippage = true }:
     return null
   }
 
-  const priceNode = price ? (
-    <>
-      <SwapUIV2.TradePrice price={price as any} loading={priceLoading} />
-    </>
-  ) : null
+  const priceNode = price ? <SwapUIV2.TradePrice price={price as any} loading={priceLoading} /> : null
 
   return (
     <SwapUIV2.SwapInfo

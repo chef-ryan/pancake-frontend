@@ -1,4 +1,4 @@
-import { Percent } from '@pancakeswap/sdk'
+import { ONE_HUNDRED_PERCENT, Percent } from '@pancakeswap/sdk'
 import { TonChainId, Token, Native, NATIVE, Currency } from '@pancakeswap/ton-v2-sdk'
 
 export const BIG_INT_ZERO = 0n
@@ -49,3 +49,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Currency[] } = 
   ] satisfies Currency[],
   [TonChainId.Mainnet]: [],
 }
+
+export const TOTAL_FEE = 0.0025
+export const LP_HOLDERS_FEE = 0.0017
+export const TREASURY_FEE = 0.000225
+export const BUYBACK_FEE = 0.000575
+export const BASE_FEE = new Percent(25n, BIPS_BASE)
+export const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(BASE_FEE)

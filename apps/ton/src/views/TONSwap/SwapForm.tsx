@@ -19,12 +19,13 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { balanceAtom } from 'ton/logic/balanceAtom'
 import { Field } from 'types'
 import { Rounding, _10000 } from '@pancakeswap/swap-sdk-core'
-import { formatFraction } from '@pancakeswap/utils/formatFractions'
+import { formatAmount, formatFraction } from '@pancakeswap/utils/formatFractions'
 import { tryParseAmount } from 'utils/tryParseAmount'
 import { useSwap } from 'ton/logic/swap/useSwap'
 import { RefreshButton } from '@pancakeswap/widgets-internal'
 import { useBestTrade } from 'hooks/swap/useBestTrade'
 import { PricingAndSlippage } from 'components/TonSwap/PricingAndSlippage'
+import AdvancedSwapDetailsDropdown from './AdvancedSwapDetailsDropdown'
 
 export const SwapForm = () => {
   const { t } = useTranslation()
@@ -175,7 +176,7 @@ export const SwapForm = () => {
       </SwapUIV2.SwapTabAndInputPanelWrapper>
       <ButtonAndDetailsPanel
         shouldRenderDetails={Boolean(typedValue)}
-        swapCommitButton={<SwapCommitButton isLoading={isTradeLoading} onClick={handleSwap} />}
+        swapCommitButton={<SwapCommitButton disabled={!trade} isLoading={isTradeLoading} onClick={handleSwap} />}
         pricingAndSlippage={
           <FlexGap
             alignItems="center"
@@ -183,6 +184,7 @@ export const SwapForm = () => {
             justifyContent="space-between"
             width="calc(100% - 20px)"
             gap="8px"
+            marginLeft="-8px"
           >
             <FlexGap
               onClick={(e) => {
@@ -205,6 +207,7 @@ export const SwapForm = () => {
             </FlexGap>
           </FlexGap>
         }
+        tradeDetails={<AdvancedSwapDetailsDropdown trade={trade} />}
       />
     </SwapUIV2.SwapFormWrapper>
   )

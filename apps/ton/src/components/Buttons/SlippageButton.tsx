@@ -18,9 +18,9 @@ import { useAtomValue } from 'jotai'
 import styled from 'styled-components'
 import { basisPointsToPercent } from 'utils/exchange'
 
-const TertiaryButton = styled(Button).attrs({ variant: 'tertiary' })<{ $color: string }>`
+const TertiaryButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })<{ $color: string }>`
   height: unset;
-  padding: 7px 8px;
+  padding: 5px 8px;
   font-size: 14px;
   border-radius: 12px;
   border-bottom: 2px solid rgba(0, 0, 0, 0.1);
