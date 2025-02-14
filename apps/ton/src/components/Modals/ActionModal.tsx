@@ -75,7 +75,7 @@ export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type
           <GridColumn>
             <Box>
               {typeof iconByActionType[type].icon === 'string' ? (
-                <img src={iconByActionType[type].icon} alt={iconByActionType[type].alt} width="80px" />
+                <img src={iconByActionType[type].icon as string} alt={iconByActionType[type].alt} width="80px" />
               ) : (
                 iconByActionType[type].icon
               )}
