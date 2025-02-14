@@ -5,13 +5,12 @@ import { retry } from './helpers'
 export async function getTransactionByBOC(userAddress: string | Address, boc: string): Promise<string> {
   const client = TonContext.instance.getClient()
 
-  // Address to fetch transactions from
   const address = typeof userAddress === 'string' ? Address.parse(userAddress) : userAddress
 
   return retry(
     async () => {
       const transactions = await client.getTransactions(address, {
-        limit: 5,
+        limit: 3,
       })
       for (const tx of transactions) {
         const inMsg = tx.inMessage

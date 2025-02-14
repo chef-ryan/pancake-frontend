@@ -1,5 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { ArrowDownIcon, Box, BoxProps, Button, Flex, FlexGap, MinusIcon, Slider, Text } from '@pancakeswap/uikit'
+import { setRemoveLiquidityModalAtom } from 'atoms/modals/removeLiquidityModalAtom'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
 import { LightGreyCard } from 'components/Card'
@@ -7,21 +8,18 @@ import { WalletDisclaimer } from 'components/Card/WalletDisclaimer'
 import { DisplayLoader } from 'components/Misc/DisplayLoader'
 import { CurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
+import { LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 import { usePoolRates } from 'hooks/liquidity/usePoolRates'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { Hr } from 'styles'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { useRemoveLiquidity } from 'ton/logic/liquidity/useRemoveLiquidity'
 import { formatBalance } from 'ton/utils/formatting'
-
-const Hr = styled.hr`
-  width: 100%;
-  border-color: ${({ theme }) => theme.colors.cardBorder};
-`
 
 const ContentContainer = styled(Box)<{ $isBottomRounded?: boolean }>`
   padding: 24px;
@@ -60,6 +58,8 @@ export const CardContent = (props: CardContentProps) => {
 
   const userAddress = useAtomValue(addressAtom)
   const isWalletConnected = !!userAddress
+
+  const setRemoveLiquidityModal = useSetAtom(setRemoveLiquidityModalAtom)
 
   // Query params
   const router = useRouter()
@@ -124,6 +124,11 @@ export const CardContent = (props: CardContentProps) => {
     }
   }, [depositedAmounts, sliderValue])
 
+  const lpTokensToBurn = useMemo(
+    () => (lpBalance ? (lpBalance * BigInt(sliderValue)) / 100n : 0n),
+    [lpBalance, sliderValue],
+  )
+
   const { removeLiquidity } = useRemoveLiquidity({
     currency0,
     currency1,
@@ -140,9 +145,27 @@ export const CardContent = (props: CardContentProps) => {
   }, [])
 
   const handleRemoveLiquidity = useCallback(() => {
-    // TODO: Intermediate confirmation modal
-    removeLiquidity(lpBalance ? (lpBalance * BigInt(sliderValue)) / 100n : 0n)
-  }, [removeLiquidity, lpBalance, sliderValue])
+    removeLiquidity(lpTokensToBurn)
+  }, [removeLiquidity, lpTokensToBurn])
+
+  const openConfirmationModal = useCallback(() => {
+    setRemoveLiquidityModal({
+      amount0: formatBalance(outputAmounts?.amount0 ?? 0n, currency0?.decimals),
+      amount1: formatBalance(outputAmounts?.amount1 ?? 0n, currency1?.decimals),
+      currency0,
+      currency1,
+      tokenBurnAmount: formatBalance(lpTokensToBurn, LP_TOKEN_DECIMALS),
+      onConfirm: handleRemoveLiquidity,
+    })
+  }, [
+    setRemoveLiquidityModal,
+    outputAmounts?.amount0,
+    outputAmounts?.amount1,
+    currency0,
+    currency1,
+    lpTokensToBurn,
+    handleRemoveLiquidity,
+  ])
 
   return (
     <>
@@ -234,7 +257,7 @@ export const CardContent = (props: CardContentProps) => {
 
       {isWalletConnected && (
         <StyledCardFooter>
-          <Button onClick={handleRemoveLiquidity} width="100%" endIcon={<MinusIcon color="invertedContrast" />}>
+          <Button onClick={openConfirmationModal} width="100%" endIcon={<MinusIcon color="invertedContrast" />}>
             {t('Remove')}
           </Button>
         </StyledCardFooter>

@@ -21,7 +21,7 @@ export const RemoveLiquidityCard = (props: LiquidityCardProps) => {
 
   return (
     <>
-      <Card {...props}>
+      <Card mb="64px" {...props}>
         <StyledCardHeader>
           <Flex justifyContent="space-between" alignItems="center">
             <Link href="/liquidity">
