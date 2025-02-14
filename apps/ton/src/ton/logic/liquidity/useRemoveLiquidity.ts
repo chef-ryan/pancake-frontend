@@ -41,7 +41,7 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount
     async (amount: bigint) => {
       try {
         setTxnModal({
-          type: ActionType.ConfirmSupply,
+          type: ActionType.ConfirmRemoval,
           currency0,
           currency1,
           amount0: amount0ToBurn,

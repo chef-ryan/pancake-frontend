@@ -140,6 +140,7 @@ export const CardContent = (props: CardContentProps) => {
   }, [])
 
   const handleRemoveLiquidity = useCallback(() => {
+    // TODO: Intermediate confirmation modal
     removeLiquidity(lpBalance ? (lpBalance * BigInt(sliderValue)) / 100n : 0n)
   }, [removeLiquidity, lpBalance, sliderValue])
 
