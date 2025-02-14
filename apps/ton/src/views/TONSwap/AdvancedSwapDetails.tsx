@@ -58,7 +58,14 @@ function TradeSummary({
 
       <RowBetween>
         <RowFixed>
-          <DetailsTitle>{t('Slippage Tolerance')}</DetailsTitle>
+          <QuestionHelperV2
+            text={t(
+              'Setting a high slippage tolerance can help transactions succeed, but you may not get such a good price. Use with caution.',
+            )}
+            placement="top"
+          >
+            <DetailsTitle>{t('Slippage Tolerance')}</DetailsTitle>
+          </QuestionHelperV2>
         </RowFixed>
         <SlippageButton />
       </RowBetween>

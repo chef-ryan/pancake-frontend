@@ -2,6 +2,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Button, ButtonProps } from '@pancakeswap/uikit'
 import { inputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
 import { useAtomValue } from 'jotai'
+import { memo } from 'react'
 import { isConnectedAtom } from 'ton/atom/isConnectedAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
 import { tryParseAmount } from 'utils/tryParseAmount'
@@ -10,7 +11,7 @@ interface SwapCommitButtonProps extends ButtonProps {
   isLoading?: boolean
 }
 
-export const SwapCommitButton = ({ isLoading = false, disabled = false, ...props }: SwapCommitButtonProps) => {
+export const SwapCommitButton = memo(({ isLoading = false, disabled = false, ...props }: SwapCommitButtonProps) => {
   const { t } = useTranslation()
   const isConnected = useAtomValue(isConnectedAtom)
 
@@ -36,4 +37,4 @@ export const SwapCommitButton = ({ isLoading = false, disabled = false, ...props
         : t('Swap')}
     </Button>
   )
-}
+})

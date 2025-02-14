@@ -1,10 +1,9 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Rounding } from '@pancakeswap/swap-sdk-core'
 import { Native, TonNetworks } from '@pancakeswap/ton-v2-sdk'
-import { Column, FlexGap, Text } from '@pancakeswap/uikit'
+import { Column, Text } from '@pancakeswap/uikit'
 import { formatFraction } from '@pancakeswap/utils/formatFractions'
 import { useUserSlippage } from '@pancakeswap/utils/user'
-import { RefreshButton } from '@pancakeswap/widgets-internal'
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import { setApprovalModalAtom } from 'atoms/modals/approvalModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
@@ -25,6 +24,9 @@ import { balanceAtom } from 'ton/logic/balanceAtom'
 import { useSwap } from 'ton/logic/swap/useSwap'
 import { Field } from 'types'
 import { tryParseAmount } from 'utils/tryParseAmount'
+import { useIsSwapDetailPanelOpen } from 'hooks/swap/useIsSwapDetailPanelOpen'
+import { computeTradePriceBreakdown } from 'utils/exchange'
+
 import { AdvancedSwapDetailsDropdown } from './AdvancedSwapDetailsDropdown'
 
 export const SwapForm = () => {
@@ -86,6 +88,10 @@ export const SwapForm = () => {
     () => (parsedAmounts[Field.INPUT] ? parsedAmounts[Field.INPUT].greaterThan(balance0) : false),
     [balance0, parsedAmounts],
   )
+
+  const [isSwapDetailPanelOpen] = useIsSwapDetailPanelOpen()
+  const { realizedLPFee } = computeTradePriceBreakdown(trade)
+
   const { swap } = useSwap()
 
   const handleSwap = useCallback(async () => {
@@ -181,34 +187,14 @@ export const SwapForm = () => {
         shouldRenderDetails={Boolean(typedValue)}
         swapCommitButton={<SwapCommitButton disabled={!trade} isLoading={isTradeLoading} onClick={handleSwap} />}
         pricingAndSlippage={
-          <FlexGap
-            alignItems="center"
-            flexWrap="wrap"
-            justifyContent="space-between"
-            width="calc(100% - 20px)"
-            gap="8px"
-            marginLeft="-8px"
-          >
-            <FlexGap
-              onClick={(e) => {
-                e.stopPropagation()
-              }}
-              alignItems="center"
-              flexWrap="wrap"
-            >
-              <RefreshButton
-                refreshDuration={12_000}
-                onRefresh={refreshTrade}
-                refreshDisabled={isTradeLoading}
-                loading={isTradeLoading}
-              />
-              <PricingAndSlippage
-                priceLoading={isTradeLoading}
-                price={trade?.executionPrice ?? undefined}
-                showSlippage={false}
-              />
-            </FlexGap>
-          </FlexGap>
+          <PricingAndSlippage
+            isLoading={isTradeLoading}
+            price={trade?.executionPrice}
+            showSlippage={false}
+            showFee={Boolean(trade && !isSwapDetailPanelOpen)}
+            fee={realizedLPFee}
+            onRefresh={refreshTrade}
+          />
         }
         tradeDetails={<AdvancedSwapDetailsDropdown trade={trade} />}
       />
