@@ -6,17 +6,19 @@ import { useState } from "react";
 interface TradePriceProps {
   price?: Price<Currency, Currency>;
   loading?: boolean;
+  show?: boolean;
+  iconColor?: string;
 }
 
-export function TradePrice({ price, loading }: TradePriceProps) {
+export function TradePrice({ price, loading, show, iconColor = "primary" }: TradePriceProps) {
   const [showInverted, setShowInverted] = useState<boolean>(false);
 
   const formattedPrice = showInverted ? formatPrice(price, 6) : formatPrice(price?.invert(), 6);
-  const show = Boolean(price?.baseCurrency && price?.quoteCurrency);
+  const shouldShow = show ?? Boolean(price?.baseCurrency && price?.quoteCurrency);
 
   return (
     <FlexGap justifyContent="center" alignItems="center">
-      {show ? (
+      {shouldShow ? (
         <>
           <SkeletonV2 width="50px" height="18px" borderRadius="8px" minHeight="auto" isDataReady={!loading}>
             <Text fontSize="14px">
@@ -27,7 +29,7 @@ export function TradePrice({ price, loading }: TradePriceProps) {
             onClick={() => setShowInverted(!showInverted)}
             width="18px"
             height="18px"
-            color="primary"
+            color={iconColor}
             ml="4px"
             mr="4px"
           />

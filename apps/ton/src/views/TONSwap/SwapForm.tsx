@@ -8,11 +8,9 @@ import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import { setApprovalModalAtom } from 'atoms/modals/approvalModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
 import { independentFieldAtom, inputCurrencyAtom, outputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
-import { ActionType } from 'components/Modals/ActionModal'
 import { ButtonAndDetailsPanel } from 'components/TonSwap/ButtonAndDetailsPanel'
 import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
 import { FlipButton } from 'components/TonSwap/FlipButton'
-import { PricingAndSlippage } from 'components/TonSwap/PricingAndSlippage'
 import { SwapCommitButton } from 'components/TonSwap/SwapCommitButton'
 import { SwapUIV2 } from 'components/widgets/swap-v2'
 import { useBestTrade } from 'hooks/swap/useBestTrade'
@@ -26,8 +24,10 @@ import { Field } from 'types'
 import { tryParseAmount } from 'utils/tryParseAmount'
 import { useIsSwapDetailPanelOpen } from 'hooks/swap/useIsSwapDetailPanelOpen'
 import { computeTradePriceBreakdown } from 'utils/exchange'
-
-import { AdvancedSwapDetailsDropdown } from './AdvancedSwapDetailsDropdown'
+import { setConfirmSwapModalAtom } from 'atoms/modals/confirmSwapModalAtom'
+import { PricingAndSlippage } from 'components/TonSwap/SwapDetails/PricingAndSlippage'
+import { AdvancedSwapDetailsDropdown } from 'components/TonSwap/SwapDetails/AdvancedSwapDetailsDropdown'
+import { ActionType } from 'components/Modals/ActionModal'
 
 export const SwapForm = () => {
   const { t } = useTranslation()
@@ -57,8 +57,8 @@ export const SwapForm = () => {
   const { data: activeList, isFetched } = useAtomValue(fetchListAtom)
 
   const setApprovalModal = useSetAtom(setApprovalModalAtom)
+  const setSwapConfirmModal = useSetAtom(setConfirmSwapModalAtom)
   const setTransactionModal = useSetAtom(setTransactionModalAtom)
-  const [userAllowedSlippage] = useUserSlippage()
 
   const parsedAmounts = useMemo(
     () => ({
@@ -98,22 +98,27 @@ export const SwapForm = () => {
     if (!inputCurrency || !outputCurrency) {
       return
     }
-    await swap({
+    swap({
       minOut: '0.01',
       amount0: formattedAmounts[Field.INPUT] ?? '0',
       token0: inputCurrency,
       token1: outputCurrency,
     })
-    // simulate modal states
-    // setApprovalModal('TON', '1000')
-    setTransactionModal({
-      type: ActionType.TransactionSubmitted,
+  }, [formattedAmounts, swap, inputCurrency, outputCurrency])
+
+  const confirmSwap = useCallback(() => {
+    if (!inputCurrency || !outputCurrency) {
+      return
+    }
+    setSwapConfirmModal({
       isOpen: true,
+      inputCurrency,
+      outputCurrency,
+      trade,
+      refreshTrade,
+      onConfirm: handleSwap,
     })
-    /* setTimeout(() => {
-      setTransactionModal(ActionType.TransactionComplete, true)
-    }, 3000) */
-  }, [swap, inputCurrency, outputCurrency, formattedAmounts, setTransactionModal])
+  }, [inputCurrency, outputCurrency, setSwapConfirmModal, trade, refreshTrade, handleSwap])
 
   // Set default currencies on load
   useEffect(() => {
@@ -185,7 +190,7 @@ export const SwapForm = () => {
       </SwapUIV2.SwapTabAndInputPanelWrapper>
       <ButtonAndDetailsPanel
         shouldRenderDetails={Boolean(typedValue)}
-        swapCommitButton={<SwapCommitButton disabled={!trade} isLoading={isTradeLoading} onClick={handleSwap} />}
+        swapCommitButton={<SwapCommitButton disabled={!trade} isLoading={isTradeLoading} onClick={confirmSwap} />}
         pricingAndSlippage={
           <PricingAndSlippage
             isLoading={isTradeLoading}
@@ -196,7 +201,7 @@ export const SwapForm = () => {
             onRefresh={refreshTrade}
           />
         }
-        tradeDetails={<AdvancedSwapDetailsDropdown trade={trade} />}
+        tradeDetails={<AdvancedSwapDetailsDropdown isLoading={isTradeLoading} trade={trade} />}
       />
     </SwapUIV2.SwapFormWrapper>
   )

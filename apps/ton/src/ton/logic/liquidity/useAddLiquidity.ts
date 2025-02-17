@@ -38,7 +38,7 @@ export const useAddLiquidity = () => {
         const formattedAmount0 = formatBalance(amount0, token0.decimals)
         const formattedAmount1 = formatBalance(amount1, token1.decimals)
         setTxnModal({
-          type: ActionType.ConfirmSupply,
+          type: ActionType.ConfirmLiquiditySupply,
           currency0: token0,
           currency1: token1,
           amount0: formattedAmount0,
@@ -142,7 +142,7 @@ export const useAddLiquidity = () => {
         const { boc } = await tonUI.sendTransaction(txRequest)
         if (boc) {
           setTxnModal({
-            type: ActionType.TransactionSubmitted,
+            type: ActionType.AddLiquiditySubmitted,
             currency0: token0,
             currency1: token1,
             amount0: formattedAmount0,
@@ -152,7 +152,7 @@ export const useAddLiquidity = () => {
         const hash = await getTransactionByBOC(userAddress, boc)
         if (hash) {
           setTxnModal({
-            type: ActionType.TransactionComplete,
+            type: ActionType.AddLiquidityComplete,
             currency0: token0,
             currency1: token1,
             amount0: formattedAmount0,

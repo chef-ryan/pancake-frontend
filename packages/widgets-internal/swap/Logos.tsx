@@ -102,12 +102,12 @@ export function FadePresence({
   );
 }
 
-export const Spinner: React.FC<React.PropsWithChildren<SpinnerProps>> = () => {
+export const Spinner: React.FC<React.PropsWithChildren<SpinnerProps>> = ({ size }) => {
   const ref = useRef<HTMLDivElement>(null);
   useUnmountingAnimation(ref, () => AnimationType.EXITING);
   return (
     <FadePresence $scale>
-      <Sp />
+      <Sp size={size} />
     </FadePresence>
   );
 };
@@ -142,7 +142,7 @@ export const PendingSwapConfirmationIcon = ({ size = 128 }: { size?: number }) =
   return (
     <AllowanceIconCircle width={size} height={size * 1.197} showSpinner>
       <Box marginBottom="44px">
-        <Spinner />
+        <Spinner size={size} />
       </Box>
     </AllowanceIconCircle>
   );

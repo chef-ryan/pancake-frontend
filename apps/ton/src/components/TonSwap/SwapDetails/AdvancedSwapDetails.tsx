@@ -1,15 +1,14 @@
 import { styled } from 'styled-components'
 import { useTranslation } from '@pancakeswap/localization'
-import { Text, RowBetween, RowFixed, AutoColumn, Flex, QuestionHelperV2 } from '@pancakeswap/uikit'
+import { Text, RowBetween, RowFixed, AutoColumn, Flex, QuestionHelperV2, SkeletonV2 } from '@pancakeswap/uikit'
 import { useUserSlippage } from '@pancakeswap/utils/user'
-import { Currency, Trade } from '@pancakeswap/ton-v2-sdk'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { Field } from 'types'
 import { BUYBACK_FEE, LP_HOLDERS_FEE, TOTAL_FEE, TREASURY_FEE } from 'config/constants/exchange'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from 'utils/exchange'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
-import FormattedPriceImpact from './FormattedPriceImpact'
-import SwapRoute from './SwapRoute'
+import SwapRoute, { AdvancedSwapDetailsProps } from './SwapRoute'
+import FormattedPriceImpact from '../FormattedPriceImpact'
 
 const DetailsTitle = styled(Text)`
   text-decoration: underline dotted;
@@ -28,14 +27,14 @@ const DetailsContent = styled(Text)`
 function TradeSummary({
   trade,
   allowedSlippage,
-}: {
-  trade: Trade<Currency, Currency, TradeType>
+  isLoading,
+}: AdvancedSwapDetailsProps & {
   allowedSlippage: number
 }) {
   const { t } = useTranslation()
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade)
-  const isExactIn = trade.tradeType === TradeType.EXACT_INPUT
-  const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, allowedSlippage)
+  const isExactIn = trade ? trade.tradeType === TradeType.EXACT_INPUT : true
+  const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade ?? undefined, allowedSlippage)
 
   const totalFeePercent = `${(TOTAL_FEE * 100).toFixed(2)}%`
   const lpHoldersFeePercent = `${(LP_HOLDERS_FEE * 100).toFixed(2)}%`
@@ -53,7 +52,9 @@ function TradeSummary({
             <DetailsTitle>{t('Price Impact')}</DetailsTitle>
           </QuestionHelperV2>
         </RowFixed>
-        <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
+        <SkeletonV2 width="50px" height="18px" borderRadius="8px" minHeight="auto" isDataReady={!isLoading}>
+          <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
+        </SkeletonV2>
       </RowBetween>
 
       <RowBetween>
@@ -82,14 +83,19 @@ function TradeSummary({
           </QuestionHelperV2>
         </RowFixed>
 
-        <RowFixed>
-          <DetailsContent>
-            {isExactIn
-              ? `${slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4)} ${trade.outputAmount.currency.symbol}` ??
-                '-'
-              : `${slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4)} ${trade.inputAmount.currency.symbol}` ?? '-'}
-          </DetailsContent>
-        </RowFixed>
+        <SkeletonV2 width="50px" height="18px" borderRadius="8px" minHeight="auto" isDataReady={!isLoading}>
+          <RowFixed>
+            <DetailsContent>
+              {!trade
+                ? '-'
+                : isExactIn
+                ? `${slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4)} ${trade.outputAmount.currency.symbol}` ??
+                  '-'
+                : `${slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4)} ${trade.inputAmount.currency.symbol}` ??
+                  '-'}
+            </DetailsContent>
+          </RowFixed>
+        </SkeletonV2>
       </RowBetween>
       <RowBetween>
         <RowFixed>
@@ -107,27 +113,25 @@ function TradeSummary({
             <DetailsTitle>{t('Trading Fee')}</DetailsTitle>
           </QuestionHelperV2>
         </RowFixed>
-        <DetailsContent>
-          {realizedLPFee ? `${realizedLPFee.toSignificant(4)} ${trade.inputAmount.currency.symbol}` : '-'}
-        </DetailsContent>
+        <SkeletonV2 width="50px" height="18px" borderRadius="8px" minHeight="auto" isDataReady={!isLoading}>
+          <DetailsContent>
+            {realizedLPFee && trade ? `${realizedLPFee.toSignificant(4)} ${trade.inputAmount.currency.symbol}` : '-'}
+          </DetailsContent>
+        </SkeletonV2>
       </RowBetween>
     </>
   )
 }
 
-export interface AdvancedSwapDetailsProps {
-  trade?: Trade<Currency, Currency, TradeType> | null
-}
-
-export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
+export function AdvancedSwapDetails(props: AdvancedSwapDetailsProps) {
   const { t } = useTranslation()
   const [allowedSlippage] = useUserSlippage()
 
-  const showRoute = Boolean(trade && trade.route.path.length > 1)
+  const showRoute = Boolean(props.trade && props.trade.route.path.length > 1)
 
-  return trade ? (
+  return (
     <AutoColumn gap="8px">
-      <TradeSummary trade={trade} allowedSlippage={allowedSlippage} />
+      <TradeSummary {...props} allowedSlippage={allowedSlippage} />
       {showRoute && (
         <RowBetween>
           <RowFixed>
@@ -141,10 +145,12 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
             </Flex>
           </RowFixed>
           <RowFixed>
-            <SwapRoute trade={trade} />
+            <SkeletonV2 width="50px" height="18px" borderRadius="8px" minHeight="auto" isDataReady={!props.isLoading}>
+              <SwapRoute {...props} />
+            </SkeletonV2>
           </RowFixed>
         </RowBetween>
       )}
     </AutoColumn>
-  ) : null
+  )
 }

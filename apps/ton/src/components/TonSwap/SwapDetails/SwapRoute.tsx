@@ -3,8 +3,13 @@ import { Currency, Trade } from '@pancakeswap/ton-v2-sdk'
 import { ChevronRightIcon, Flex, Text } from '@pancakeswap/uikit'
 import { Fragment, memo } from 'react'
 
-export default memo(function SwapRoute({ trade }: { trade: Trade<Currency, Currency, TradeType> }) {
-  return (
+export interface AdvancedSwapDetailsProps {
+  trade?: Trade<Currency, Currency, TradeType> | null
+  isLoading?: boolean
+}
+
+export default memo(function SwapRoute({ trade }: AdvancedSwapDetailsProps) {
+  return trade ? (
     <Flex flexWrap="wrap" width="100%" justifyContent="flex-end" alignItems="center">
       {trade.route.path.map((token, i, path) => {
         const isLastItem: boolean = i === path.length - 1
@@ -21,5 +26,5 @@ export default memo(function SwapRoute({ trade }: { trade: Trade<Currency, Curre
         )
       })}
     </Flex>
-  )
+  ) : null
 })

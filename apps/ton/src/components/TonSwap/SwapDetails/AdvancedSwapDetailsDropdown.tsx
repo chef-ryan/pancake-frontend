@@ -1,20 +1,20 @@
 import { memo } from 'react'
 import { styled } from 'styled-components'
 import { usePreviousValue } from '@pancakeswap/hooks'
-import { AdvancedSwapDetails, AdvancedSwapDetailsProps } from './AdvancedSwapDetails'
+import { AdvancedSwapDetails } from './AdvancedSwapDetails'
+import { AdvancedSwapDetailsProps } from './SwapRoute'
 
-const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
-  margin-top: ${({ show }) => (show ? '16px' : 0)};
+const AdvancedDetailsFooter = styled.div`
+  margin-top: 8px;
   width: 100%;
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.colors.invertedContrast};
 `
 
 export const AdvancedSwapDetailsDropdown = memo(({ trade, ...rest }: AdvancedSwapDetailsProps) => {
   const lastTrade = usePreviousValue(trade)
 
   return (
-    <AdvancedDetailsFooter show={Boolean(trade)}>
+    <AdvancedDetailsFooter>
       <AdvancedSwapDetails {...rest} trade={trade ?? lastTrade ?? undefined} />
     </AdvancedDetailsFooter>
   )

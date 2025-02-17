@@ -1,17 +1,13 @@
-import { Currency } from "@pancakeswap/sdk";
 import { ArrowUpIcon, AutoColumn, Box, ColumnCenter, Spinner, Text } from "@pancakeswap/uikit";
 import { ReactNode } from "react";
-import TokenTransferInfo from "./TokenTransferInfo";
+import TokenTransferInfo, { TokenTransferInfoProps } from "./TokenTransferInfo";
 
-interface SwapPendingModalContentProps {
+type SwapPendingModalContentProps = {
   title: string;
   showIcon?: boolean;
-  currencyA?: Currency;
-  currencyB?: Currency;
-  amountA: string;
-  amountB: string;
   children?: ReactNode;
-}
+  spinnerSize?: number;
+} & Omit<TokenTransferInfoProps, "symbolA" | "symbolB">;
 
 export const SwapPendingModalContentV1: React.FC<SwapPendingModalContentProps> = ({
   title,
@@ -21,6 +17,9 @@ export const SwapPendingModalContentV1: React.FC<SwapPendingModalContentProps> =
   amountA,
   amountB,
   children,
+  invert = false,
+  size,
+  spinnerSize,
 }) => {
   const symbolA = currencyA?.symbol;
   const symbolB = currencyB?.symbol;
@@ -34,7 +33,7 @@ export const SwapPendingModalContentV1: React.FC<SwapPendingModalContentProps> =
       ) : (
         <Box mb="16px">
           <ColumnCenter>
-            <Spinner />
+            <Spinner size={spinnerSize} />
           </ColumnCenter>
         </Box>
       )}
@@ -43,12 +42,14 @@ export const SwapPendingModalContentV1: React.FC<SwapPendingModalContentProps> =
           {title}
         </Text>
         <TokenTransferInfo
+          size={size}
           symbolA={symbolA}
           symbolB={symbolB}
           amountA={amountA}
           amountB={amountB}
           currencyA={currencyA}
           currencyB={currencyB}
+          invert={invert}
         />
         {children}
       </AutoColumn>

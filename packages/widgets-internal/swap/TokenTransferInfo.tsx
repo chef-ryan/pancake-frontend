@@ -2,14 +2,47 @@ import { Currency } from "@pancakeswap/sdk";
 import { Text, Box, Flex, ArrowForwardIcon } from "@pancakeswap/uikit";
 import { CurrencyLogo } from "../components/CurrencyLogo";
 
-interface TokenTransferInfoProps {
+type CurrencyInfoProps = {
+  amount: string;
+  symbol?: string;
+  currency?: Currency;
+  invert?: boolean;
+  size?: "sm" | "md";
+};
+
+export type TokenTransferInfoProps = {
   symbolA?: string;
   symbolB?: string;
   amountA: string;
   amountB: string;
   currencyA?: Currency;
   currencyB?: Currency;
-}
+} & Pick<CurrencyInfoProps, "invert" | "size">;
+
+const sizeMap = {
+  sm: {
+    logoSize: "20px",
+    fontSize: "14px",
+  },
+  md: {
+    logoSize: "24px",
+    fontSize: "16px",
+  },
+};
+
+const CurrencyInfo = ({ amount, symbol, currency, invert, size = "sm" }: CurrencyInfoProps) => {
+  return invert ? (
+    <>
+      <CurrencyLogo mr="4px" size={sizeMap[size].logoSize} currency={currency} />
+      <Text fontSize={sizeMap[size].fontSize}>{`${amount} ${symbol}`}</Text>
+    </>
+  ) : (
+    <>
+      <Text mr="4px" fontSize={sizeMap[size].fontSize}>{`${amount} ${symbol}`}</Text>
+      <CurrencyLogo size={sizeMap[size].logoSize} currency={currency} />,
+    </>
+  );
+};
 
 const TokenTransferInfo: React.FC<TokenTransferInfoProps> = ({
   symbolA,
@@ -18,19 +51,19 @@ const TokenTransferInfo: React.FC<TokenTransferInfoProps> = ({
   amountB,
   currencyA,
   currencyB,
+  invert,
+  size,
 }) => {
   return (
     <Flex>
       <Flex>
-        <Text mr="4px" fontSize="14px">{`${amountA} ${symbolA}`}</Text>
-        <CurrencyLogo size="20px" currency={currencyA} />
+        <CurrencyInfo size={size} currency={currencyA} symbol={symbolA} amount={amountA} invert={invert} />
       </Flex>
       <Box m="0 8px">
         <ArrowForwardIcon color="textSubtle" />
       </Box>
       <Flex>
-        <Text mr="4px" fontSize="14px">{`${amountB} ${symbolB}`}</Text>
-        <CurrencyLogo size="20px" currency={currencyB} />
+        <CurrencyInfo size={size} currency={currencyB} symbol={symbolB} amount={amountB} invert={invert} />
       </Flex>
     </Flex>
   );

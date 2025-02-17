@@ -3613,5 +3613,11 @@
   "Pooled %currency%": "Pooled %currency%",
   "%currency% fee earned": "%currency% fee earned",
   "Bridge Assets to TON Chain": "Bridge Assets to TON Chain",
-  "When you add liquidity, you'll receive pool tokens that represent your position. These tokens earn fees automatically, proportional to your share of the pool.": "When you add liquidity, you'll receive pool tokens that represent your position. These tokens earn fees automatically, proportional to your share of the pool."
+  "When you add liquidity, you'll receive pool tokens that represent your position. These tokens earn fees automatically, proportional to your share of the pool.": "When you add liquidity, you'll receive pool tokens that represent your position. These tokens earn fees automatically, proportional to your share of the pool.",
+  "Transaction Successful": "Transaction Successful",
+  "Transaction Complete": "Transaction Complete",
+  "Confirm LP Removal": "Confirm LP Removal",
+  "Please approve this in your wallet %address%": "Please approve this in your wallet %address%",
+  "Please approve it in your wallet: %address%": "Please approve it in your wallet: %address%",
+  "%currency0%/%currency1% Burned": "%currency0%/%currency1% Burned"
 }

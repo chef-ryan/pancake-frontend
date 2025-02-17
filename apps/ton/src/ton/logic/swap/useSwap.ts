@@ -2,10 +2,14 @@ import { Contracts, Currency, TonContractNames, storeSwap } from '@pancakeswap/t
 import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
 import { beginCell, toNano } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
+import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
+import { ActionType } from 'components/Modals/ActionModal'
 import { useUserAddress } from 'hooks/useUserAddress'
+import { useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { TonContext } from 'ton/context/TonContext'
 import { getJettonWalletAddress, parseAddress } from 'ton/utils/address'
+import { getTransactionByBOC } from 'ton/utils/transaction'
 
 interface SwapArgs {
   token0: Currency
@@ -17,9 +21,10 @@ interface SwapArgs {
 export const useSwap = () => {
   const [tonUI] = useTonConnectUI()
   const userAddress = useUserAddress()
+  const setTransactionModal = useSetAtom(setTransactionModalAtom)
 
-  const swap = useCallback(
-    async ({ amount0, minOut, token0, token1 }: SwapArgs) => {
+  const getTxRequest = useCallback(
+    async ({ amount0, minOut, token0, token1 }) => {
       const client = TonContext.instance.getClient()
       const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter].testnet.address)
 
@@ -56,7 +61,7 @@ export const useSwap = () => {
         )
         .endCell()
 
-      const txRequest: SendTransactionRequest = {
+      return {
         validUntil: Math.floor(Date.now() / 1000) + 60,
         messages: [
           {
@@ -68,10 +73,48 @@ export const useSwap = () => {
           },
         ],
       }
-
-      tonUI.sendTransaction(txRequest)
     },
-    [userAddress, tonUI],
+    [userAddress],
+  )
+
+  const swap = useCallback(
+    async ({ amount0, minOut, token0, token1 }: SwapArgs) => {
+      setTransactionModal({
+        type: ActionType.ConfirmSwap,
+        isOpen: true,
+        currency0: token0,
+        currency1: token1,
+        amount0,
+        amount1: minOut,
+      })
+
+      const txRequest: SendTransactionRequest = await getTxRequest({ amount0, minOut, token0, token1 })
+      const { boc } = await tonUI.sendTransaction(txRequest)
+
+      if (boc) {
+        setTransactionModal({
+          type: ActionType.SwapSubmitted,
+          isOpen: true,
+          currency0: token0,
+          currency1: token1,
+          amount0,
+          amount1: minOut,
+        })
+      }
+
+      const hash = await getTransactionByBOC(userAddress, boc)
+      if (hash) {
+        setTransactionModal({
+          type: ActionType.SwapCompleted,
+          currency0: token0,
+          currency1: token1,
+          amount0,
+          amount1: minOut,
+          hash,
+        })
+      }
+    },
+    [userAddress, tonUI, getTxRequest, setTransactionModal],
   )
 
   return {

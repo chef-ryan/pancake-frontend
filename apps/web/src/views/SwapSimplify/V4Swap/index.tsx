@@ -2,7 +2,7 @@ import { OrderType } from '@pancakeswap/price-api-sdk'
 import { SmartRouter } from '@pancakeswap/smart-router/evm'
 import { FlexGap } from '@pancakeswap/uikit'
 import { useUserSlippage } from '@pancakeswap/utils/user'
-import { RefreshButton, SwapUIV2 } from '@pancakeswap/widgets-internal'
+import { SwapUIV2 } from '@pancakeswap/widgets-internal'
 import { useTokenRisk } from 'components/AccessRisk'
 import { RiskDetailsPanel, useShouldRiskPanelDisplay } from 'components/AccessRisk/SwapRevampRiskDisplay'
 import { useCurrency } from 'hooks/Tokens'
@@ -164,7 +164,7 @@ export function V4SwapForm() {
               alignItems="center"
               flexWrap="wrap"
             >
-              <RefreshButton
+              <SwapUIV2.RefreshButton
                 onRefresh={refreshOrder}
                 refreshDisabled={refreshDisabled}
                 refreshDuration={activeChianId ? CHAIN_REFRESH_TIME[activeChianId] : undefined}

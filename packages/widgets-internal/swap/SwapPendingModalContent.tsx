@@ -1,32 +1,29 @@
-import { Currency } from "@pancakeswap/sdk";
-import { ArrowUpIcon, AutoColumn, Box, ColumnCenter, Text } from "@pancakeswap/uikit";
+import { ArrowUpIcon, AutoColumn, Box, CheckmarkCircleIcon, ColumnCenter, Text } from "@pancakeswap/uikit";
 import { ReactNode, useRef } from "react";
 import { ConfirmModalState, StepTitleAnimationContainer } from "./ApproveModalContent";
 import { FadePresence, PendingSwapConfirmationIcon } from "./Logos";
-import TokenTransferInfo from "./TokenTransferInfo";
+import TokenTransferInfo, { TokenTransferInfoProps } from "./TokenTransferInfo";
 import { AnimationType } from "./styles";
 import { useUnmountingAnimation } from "./useUnmountingAnimation";
 
-interface SwapPendingModalContentProps {
+type SwapPendingModalContentProps = {
   title: string;
-  showIcon?: boolean;
-  currencyA: Currency | undefined;
-  currencyB: Currency | undefined;
-  amountA: string;
-  amountB: string;
   currentStep: ConfirmModalState;
   children?: ReactNode;
-}
+  spinnerSize?: number;
+} & Omit<TokenTransferInfoProps, "symbolA" | "symbolB">;
 
 export const SwapPendingModalContent: React.FC<SwapPendingModalContentProps> = ({
   title,
-  showIcon,
   currencyA,
   currencyB,
   amountA,
   amountB,
   currentStep,
   children,
+  spinnerSize,
+  invert = false,
+  size,
 }) => {
   const symbolA = currencyA?.symbol;
   const symbolB = currencyB?.symbol;
@@ -36,16 +33,22 @@ export const SwapPendingModalContent: React.FC<SwapPendingModalContentProps> = (
 
   return (
     <Box width="100%">
-      {showIcon ? (
+      {currentStep === ConfirmModalState.SUBMITTED ? (
         <FadePresence $scale>
           <Box margin="auto auto 22px auto" width="fit-content">
             <ArrowUpIcon color="success" width={80} height={80} />
           </Box>
         </FadePresence>
+      ) : currentStep === ConfirmModalState.COMPLETED ? (
+        <FadePresence>
+          <Box margin="auto auto 22px auto" width="fit-content">
+            <CheckmarkCircleIcon color="success" width={80} height={80} />
+          </Box>
+        </FadePresence>
       ) : (
         <Box mb="16px">
           <ColumnCenter>
-            <PendingSwapConfirmationIcon />
+            <PendingSwapConfirmationIcon size={spinnerSize} />
           </ColumnCenter>
         </Box>
       )}
@@ -63,6 +66,8 @@ export const SwapPendingModalContent: React.FC<SwapPendingModalContentProps> = (
             amountB={amountB}
             currencyA={currencyA}
             currencyB={currencyB}
+            invert={invert}
+            size={size}
           />
           {children}
         </StepTitleAnimationContainer>

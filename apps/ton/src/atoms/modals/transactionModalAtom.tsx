@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react'
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Text } from '@pancakeswap/uikit'
@@ -8,22 +9,28 @@ import { appModalAtom } from './appModalAtom'
 interface TitleProps {
   type: ActionType
 }
-const Title = ({ type }: TitleProps) => {
+const Title = memo(({ type }: TitleProps) => {
   const { t } = useTranslation()
 
-  const titleByAction = {
-    [ActionType.TransactionSubmitted]: t('Transaction Submitted'),
-    [ActionType.TransactionComplete]: t('Transaction Complete'),
-    [ActionType.ConfirmSupply]: t('Confirm Supply'),
-    [ActionType.ConfirmRemoval]: t('Confirm LP Removal'),
-  }
+  const titleByAction: { [type in ActionType]: string } = useMemo(
+    () => ({
+      [ActionType.AddLiquiditySubmitted]: t('Transaction Submitted'),
+      [ActionType.AddLiquidityComplete]: t('Transaction Complete'),
+      [ActionType.ConfirmLiquiditySupply]: t('Confirm Supply'),
+      [ActionType.ConfirmLiquidityRemoval]: t('Confirm LP Removal'),
+      [ActionType.ConfirmSwap]: t('Confirm Swap'),
+      [ActionType.SwapSubmitted]: t('Transaction Submitted'),
+      [ActionType.SwapCompleted]: t('Transaction Successful'),
+    }),
+    [t],
+  )
 
   return (
     <Text fontSize="20px" width="100%" textAlign="center" bold>
       {titleByAction[type]}
     </Text>
   )
-}
+})
 
 interface SetTransactionModalArgs {
   type: ActionType

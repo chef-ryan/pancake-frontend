@@ -14,11 +14,10 @@ import {
   useTooltip,
 } from '@pancakeswap/uikit'
 import { useExpertMode } from '@pancakeswap/utils/user'
-import { Swap } from '@pancakeswap/widgets-internal'
+import { Swap, SwapUIV2 } from '@pancakeswap/widgets-internal'
 import TransactionsModal from 'components/App/Transactions/TransactionsModal'
 import InternalLink from 'components/Links'
 import GlobalSettings from 'components/Menu/GlobalSettings'
-import RefreshIcon from 'components/Svg/RefreshIcon'
 import { CHAIN_REFRESH_TIME } from 'config/constants/exchange'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useSwapHotTokenDisplay } from 'hooks/useSwapHotTokenDisplay'
@@ -190,7 +189,7 @@ const CurrencyInputHeader: React.FC<React.PropsWithChildren<Props>> = memo(
             <HistoryIcon color="textSubtle" width="24px" />
           </IconButton>
           <IconButton variant="text" scale="sm" onClick={onRefreshPrice} data-dd-action-name="Swap refresh button">
-            <RefreshIcon
+            <SwapUIV2.RefreshIcon
               disabled={!hasAmount}
               color="textSubtle"
               width="27px"

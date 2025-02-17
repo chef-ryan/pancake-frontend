@@ -1,6 +1,8 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
-import { Box, FlexGap, Grid, Text } from '@pancakeswap/uikit'
+import { Currency as EVMCurrency } from '@pancakeswap/swap-sdk-core'
+import { Box, Column, FlexGap, Grid, Row, Text } from '@pancakeswap/uikit'
+import { ConfirmModalState, SwapPendingModalContent } from '@pancakeswap/widgets-internal'
 import { AddCircleLoading } from 'components/Misc/AddCircleLoading'
 import { CurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
@@ -11,6 +13,7 @@ import { addressAtom } from 'ton/atom/addressAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
 import { truncateHash } from 'utils'
 import { getBlockExplorerLink } from 'utils/getBlockExploreLink'
+import { memo, useMemo } from 'react'
 
 const StyledFlexColumn = styled(FlexGap).attrs({ flexDirection: 'column' })`
   text-align: center;
@@ -22,30 +25,47 @@ const GridColumn = styled(FlexGap)`
 `
 
 export enum ActionType {
-  TransactionSubmitted = 'TransactionSubmitted',
-  TransactionComplete = 'TransactionComplete',
-  ConfirmSupply = 'ConfirmSupply',
-  ConfirmRemoval = 'ConfirmRemoval',
+  AddLiquiditySubmitted = 'TransactionSubmitted',
+  AddLiquidityComplete = 'TransactionComplete',
+  ConfirmLiquiditySupply = 'ConfirmSupply',
+  ConfirmLiquidityRemoval = 'ConfirmRemoval',
+  ConfirmSwap = 'ConfirmSwap',
+  SwapSubmitted = 'SwapSubmitted',
+  SwapCompleted = 'SwapCompleted',
 }
 
 const iconByActionType: {
   [key in ActionType]: { icon: string | JSX.Element; alt?: string }
 } = {
-  [ActionType.TransactionSubmitted]: {
+  [ActionType.AddLiquiditySubmitted]: {
     icon: '/images/up-arrow-animated.gif',
     alt: 'Up Arrow',
   },
-  [ActionType.TransactionComplete]: {
+  [ActionType.AddLiquidityComplete]: {
     icon: '/images/green-tick-animated.gif',
     alt: 'Green Tick',
   },
-  [ActionType.ConfirmSupply]: {
+  [ActionType.ConfirmLiquiditySupply]: {
     icon: <AddCircleLoading />,
   },
-  [ActionType.ConfirmRemoval]: {
+  [ActionType.ConfirmLiquidityRemoval]: {
     icon: <AddCircleLoading />,
+  },
+  [ActionType.ConfirmSwap]: {
+    icon: '/images/bunny-Illustration.png',
+    alt: 'Confirm Swap',
+  },
+  [ActionType.SwapSubmitted]: {
+    icon: '/images/bunny-Illustration.png',
+    alt: 'Confirm Swap',
+  },
+  [ActionType.SwapCompleted]: {
+    icon: '/images/bunny-Illustration.png',
+    alt: 'Confirm Swap',
   },
 }
+
+const SWAP_TYPES = [ActionType.ConfirmSwap, ActionType.SwapSubmitted, ActionType.SwapCompleted]
 
 interface ActionProps {
   currency0?: Currency
@@ -57,7 +77,13 @@ interface ActionProps {
   type?: ActionType
 }
 
-export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type }: ActionProps) => {
+export const ActionModal = memo((props: ActionProps) => {
+  const { type } = props
+
+  return type && SWAP_TYPES.includes(type) ? <SwapConfirmModal {...props} /> : <LiquidityConfirmModal {...props} />
+})
+
+const LiquidityConfirmModal = ({ currency0, currency1, amount0, amount1, hash, type }: ActionProps) => {
   const { t } = useTranslation()
   const network = useAtomValue(networkAtom)
   const userAddress = useAtomValue(addressAtom)
@@ -108,7 +134,7 @@ export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type
             </Link>
           </Text>
         </Box>
-      ) : type === ActionType.ConfirmSupply || type === ActionType.ConfirmRemoval ? (
+      ) : type === ActionType.ConfirmLiquiditySupply || type === ActionType.ConfirmLiquidityRemoval ? (
         <Box m="24px 0 4px">
           <Text color="textSubtle">
             {t('Please approve this in your wallet %address%', { address: truncateHash(userAddress, 4) })}
@@ -118,5 +144,62 @@ export const ActionModal = ({ currency0, currency1, amount0, amount1, hash, type
         <></>
       )}
     </StyledFlexColumn>
+  )
+}
+
+type swapConfirmModalProps = ActionProps
+
+export const SwapConfirmModal = ({ currency0, currency1, amount0, amount1, type, hash }: swapConfirmModalProps) => {
+  const { t } = useTranslation()
+  const userAddress = useAtomValue(addressAtom)
+  const network = useAtomValue(networkAtom)
+
+  const currentStep = useMemo(() => {
+    switch (type) {
+      case ActionType.SwapSubmitted:
+        return ConfirmModalState.SUBMITTED
+      case ActionType.SwapCompleted:
+        return ConfirmModalState.COMPLETED
+      default:
+        return ConfirmModalState.PENDING_CONFIRMATION
+    }
+  }, [type])
+
+  if (!currency0 || !currency1 || !amount0 || !amount1) {
+    return null
+  }
+
+  return (
+    <Column gap="20px" pb="32px">
+      <Row>
+        <SwapPendingModalContent
+          currentStep={currentStep}
+          title=""
+          currencyA={currency0 as unknown as EVMCurrency}
+          currencyB={currency1 as unknown as EVMCurrency}
+          amountA={amount0}
+          amountB={amount1}
+          invert
+          size="md"
+          spinnerSize={84}
+        />
+      </Row>
+      {type === ActionType.ConfirmSwap && (
+        <Row justifyContent="center">
+          <Text color="textSubtle" fontSize="14px" textAlign="center">
+            {t('Please approve it in your wallet: %address%', { address: truncateHash(userAddress, 4) })}
+          </Text>
+        </Row>
+      )}
+      {hash ? (
+        <Box m="24px 0 4px">
+          <Text color="primary60">
+            <Link href={getBlockExplorerLink(hash, 'transaction', network)} target="_blank">
+              {t('View on explorer:')} {truncateHash(hash)}
+            </Link>
+          </Text>
+        </Box>
+      ) : null}
+    </Column>
   )
 }
