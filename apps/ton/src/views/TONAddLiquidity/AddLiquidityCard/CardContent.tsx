@@ -23,8 +23,9 @@ import styled from 'styled-components'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
+import { balanceAtom } from 'ton/logic/balanceAtom'
 import { useAddLiquidity } from 'ton/logic/liquidity/useAddLiquidity'
-import { parseUnits } from 'ton/utils/formatting'
+import { formatBalance, parseUnits } from 'ton/utils/formatting'
 import { getExpectedPoolTokens } from 'ton/utils/pool'
 import { CurrencyField } from 'types/currency'
 import { currencyKey } from 'utils/tokens/currency'
@@ -63,6 +64,9 @@ export const CardContent = (props: CardContentProps) => {
   const [token1Value, setToken1Value] = useAtom(currency1TypedValue)
 
   const [independentField, setIndependentField] = useAtom(liquidityIndependentFieldAtom)
+
+  const { data: balance0 } = useAtomValue(balanceAtom(currency0))
+  const { data: balance1 } = useAtomValue(balanceAtom(currency1))
 
   const setCurrency = useSetAtom(setCurrencyAtom)
   const setAddLiquidityModal = useSetAtom(setAddLiquidityModalAtom)
@@ -114,8 +118,10 @@ export const CardContent = (props: CardContentProps) => {
       !currency0 ||
       !currency1 ||
       !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0] ||
-      !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1],
-    [currency0, currency1, currencyAmounts],
+      !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1] ||
+      BN(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]).gt(BN(formatBalance(balance0, currency0.decimals))) ||
+      BN(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]).gt(BN(formatBalance(balance1, currency1.decimals))),
+    [currency0, currency1, currencyAmounts, balance0, balance1],
   )
 
   const updateQueryParams = useCallback(() => {
