@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
+import { Currency, Token } from '@pancakeswap/ton-v2-sdk'
 import { AutoColumn, QuestionHelper, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from 'components/widgets'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
@@ -7,6 +7,8 @@ import { styled } from 'styled-components'
 
 import { AutoRow } from 'components/Layout/Row'
 import { SUGGESTED_BASES } from 'config/constants/commonBases'
+import { useAtomValue } from 'jotai'
+import { chainIdAtom } from 'ton/atom/chainIdAtom'
 import { CommonBasesType } from './types'
 
 const ButtonWrapper = styled.div`
@@ -44,17 +46,16 @@ const RowWrapper = styled.div`
 `
 
 export default function CommonBases({
-  chainId,
   onSelect,
   selectedCurrency,
   commonBasesType,
 }: {
-  chainId?: TonChainId
   commonBasesType
   selectedCurrency?: Currency | null
   onSelect: (currency: Currency) => void
 }) {
   const native: any = useNativeCurrency()
+  const chainId = useAtomValue(chainIdAtom)
   const { t } = useTranslation()
   const pinTokenDescText = commonBasesType === CommonBasesType.SWAP_LIMITORDER ? t('Select token') : t('Common bases')
 

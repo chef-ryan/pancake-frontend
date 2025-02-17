@@ -46,6 +46,9 @@ interface CardContentProps extends BoxProps {}
 export const CardContent = (props: CardContentProps) => {
   const { t } = useTranslation()
 
+  const { addLiquidity } = useAddLiquidity()
+  const { toastSuccess, toastError } = useToast()
+
   // Query params
   const router = useRouter()
   const [token0Address, token1Address] = router.query?.currency ?? []
@@ -55,6 +58,9 @@ export const CardContent = (props: CardContentProps) => {
 
   const [currency0] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY0, token0Address)
   const [currency1] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY1, token1Address)
+
+  const [token0Value, setToken0Value] = useAtom(currency0TypedValue)
+  const [token1Value, setToken1Value] = useAtom(currency1TypedValue)
 
   const [independentField, setIndependentField] = useAtom(liquidityIndependentFieldAtom)
 
@@ -86,16 +92,30 @@ export const CardContent = (props: CardContentProps) => {
     reserve1: poolData?.reserve1,
   })
 
-  const [token0Value, setToken0Value] = useAtom(currency0TypedValue)
-  const [token1Value, setToken1Value] = useAtom(currency1TypedValue)
-
-  const { addLiquidity } = useAddLiquidity()
-
-  const { toastSuccess, toastError } = useToast()
+  const currencyAmounts = useMemo(() => {
+    return {
+      [CurrencyField.ADD_LIQUIDITY_CURRENCY0]:
+        independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY0
+          ? token0Value
+          : token1Value
+          ? BN(token1Value).times(rates.currency1).toString()
+          : '',
+      [CurrencyField.ADD_LIQUIDITY_CURRENCY1]:
+        independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY0
+          ? token0Value
+            ? BN(token0Value).times(rates.currency0).toString()
+            : ''
+          : token1Value,
+    }
+  }, [independentField, token0Value, token1Value, rates.currency0, rates.currency1])
 
   const isDisabled = useMemo(
-    () => !currency0 || !currency1 || !token0Value || !token1Value,
-    [currency0, currency1, token0Value, token1Value],
+    () =>
+      !currency0 ||
+      !currency1 ||
+      !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0] ||
+      !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1],
+    [currency0, currency1, currencyAmounts],
   )
 
   const updateQueryParams = useCallback(() => {
@@ -115,37 +135,10 @@ export const CardContent = (props: CardContentProps) => {
     if (currency0 || currency1) updateQueryParams()
   }, [currency0, currency1, updateQueryParams])
 
-  // const calculateOutputAmount = useCallback(() => {
-  //   if (rates.currency0 && rates.currency1 && currency0 && currency1) {
-  //     const amount0 = BN(token0Value)
-  //     const amount1 = BN(token1Value)
-
-  //     if (independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY0) {
-  //       if (amount0.isZero()) setToken1Value('0')
-  //       setToken1Value(amount0.times(rates.currency0).toString())
-  //     } else if (independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY1) {
-  //       if (amount1.isZero()) setToken0Value('0')
-  //       setToken0Value(amount1.times(rates.currency1).toString())
-  //     }
-  //   }
-  // }, [
-  //   rates.currency0,
-  //   rates.currency1,
-  //   currency0,
-  //   currency1,
-  //   token0Value,
-  //   token1Value,
-  //   independentField,
-  //   setToken0Value,
-  //   setToken1Value,
-  // ])
-
   const handleToken0Input = useCallback(
     (value: string) => {
       setToken0Value(value)
       setIndependentField(CurrencyField.ADD_LIQUIDITY_CURRENCY0)
-
-      // calculateOutputAmount()
     },
     [setToken0Value, setIndependentField],
   )
@@ -154,8 +147,6 @@ export const CardContent = (props: CardContentProps) => {
     (value: string) => {
       setToken1Value(value)
       setIndependentField(CurrencyField.ADD_LIQUIDITY_CURRENCY1)
-
-      // calculateOutputAmount()
     },
     [setToken1Value, setIndependentField],
   )
@@ -183,8 +174,8 @@ export const CardContent = (props: CardContentProps) => {
         token0: currency0,
         token1: currency1,
 
-        amount0: parseUnits(token0Value, currency0.decimals),
-        amount1: parseUnits(token1Value, currency1.decimals),
+        amount0: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals),
+        amount1: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals),
       })
 
       toastSuccess(t('Liquidity added'))
@@ -192,7 +183,7 @@ export const CardContent = (props: CardContentProps) => {
       console.error('Error adding liquidity', e)
       toastError(t('Error adding liquidity'))
     }
-  }, [t, addLiquidity, toastSuccess, toastError, currency0, currency1, isDisabled, token0Value, token1Value])
+  }, [t, addLiquidity, toastSuccess, toastError, currency0, currency1, isDisabled, currencyAmounts])
 
   const openConfirmationModal = useCallback(() => {
     // TODO: Determine data directly in modal
@@ -201,14 +192,14 @@ export const CardContent = (props: CardContentProps) => {
       currency0,
       currency1,
       outputAmount: getExpectedPoolTokens({
-        amount0: token0Value,
-        amount1: token1Value,
+        amount0: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0],
+        amount1: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1],
         reserve0: poolData?.reserve0 || 0n,
         reserve1: poolData?.reserve1 || 0n,
         totalSupply: poolData?.totalSupply || 0n,
       }).toString(),
-      amount0: token0Value,
-      amount1: token1Value,
+      amount0: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0],
+      amount1: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1],
       rate0: rates.currency0.toString(),
       rate1: rates.currency1.toString(),
       shareInPool: shareInPool.toString(),
@@ -217,8 +208,7 @@ export const CardContent = (props: CardContentProps) => {
   }, [
     currency0,
     currency1,
-    token0Value,
-    token1Value,
+    currencyAmounts,
     rates,
     shareInPool,
     poolData?.reserve0,
@@ -234,7 +224,7 @@ export const CardContent = (props: CardContentProps) => {
         <CurrencyInputPanelSimplify
           id="add-liquidity-panel-token0"
           onUserInput={handleToken0Input}
-          value={token0Value}
+          value={currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]}
           currency={currency0}
           onCurrencySelect={(newCurrency) => onCurrencySelection(CurrencyField.ADD_LIQUIDITY_CURRENCY0, newCurrency)}
           showMaxButton={false}
@@ -251,7 +241,7 @@ export const CardContent = (props: CardContentProps) => {
           <CurrencyInputPanelSimplify
             id="add-liquidity-panel-token1"
             onUserInput={handleToken1Input}
-            value={token1Value}
+            value={currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]}
             currency={currency1}
             onCurrencySelect={(newCurrency) => onCurrencySelection(CurrencyField.ADD_LIQUIDITY_CURRENCY1, newCurrency)}
             showMaxButton={false}

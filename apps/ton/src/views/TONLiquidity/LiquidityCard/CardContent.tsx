@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { AddIcon, Box, BoxProps, Button, FlexGap, Text } from '@pancakeswap/uikit'
+import { AddIcon, Box, BoxProps, Button, FlexGap, LoadingDot, Text } from '@pancakeswap/uikit'
 import { WalletDisclaimer } from 'components/Card/WalletDisclaimer'
 import { useUserPools } from 'hooks/liquidity/useUserPools'
 import { useAtomValue } from 'jotai'
@@ -36,7 +36,7 @@ export const CardContent = (props: CardContentProps) => {
           <FlexGap flexDirection="column" alignItems="center" gap="16px" p="24px">
             <img src="/images/green-box.png" alt="Empty Box" width={96} />
 
-            <Text color="textSubtle">{!isFetched ? t('Loading...') : t('No liquidity found')}</Text>
+            <Text color="textSubtle">{!isFetched ? <LoadingDot /> : t('No liquidity found')}</Text>
           </FlexGap>
         )}
 
