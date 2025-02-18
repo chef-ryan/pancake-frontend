@@ -25,7 +25,10 @@ export const lpBalanceByPoolsQueryAtom = atomFamily((poolAddresses: string[]) =>
       }
 
       return (await Promise.allSettled(poolAddresses.map(getLpBalance)))
-        .filter((result) => result.status === 'fulfilled')
+        .filter(
+          (result): result is PromiseFulfilledResult<{ poolAddress: string; balance: bigint }> =>
+            result.status === 'fulfilled',
+        )
         .map((result) => result.value)
     },
     enabled: !!poolAddresses && poolAddresses.length > 0 && !!get(addressAtom),

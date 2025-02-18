@@ -55,6 +55,7 @@ export const useSwap = () => {
       const forwardPayload = beginCell()
         .store(
           storeSwap({
+            $$type: 'Swap',
             fromRealUser: userAddress,
             fromUserAddress: userAddress,
             minOut: toNano(minOut),
