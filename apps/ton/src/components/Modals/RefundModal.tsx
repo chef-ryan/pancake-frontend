@@ -57,7 +57,7 @@ const PoolRefundRow = ({ token0, token1, refund0, refund1, lpAccountAddress }: P
   const { data: currency0 } = useAtomValue(tokenByAddressQueryAtom(token0))
   const { data: currency1 } = useAtomValue(tokenByAddressQueryAtom(token1))
 
-  const { refund } = useLiquidityRefund({ lpAccountAddress })
+  const { refund } = useLiquidityRefund({ lpAccountAddress, currency0, currency1 })
 
   const handleRefund = useCallback(() => {
     refund()

@@ -5,8 +5,8 @@ import { useCallback } from 'react'
 import { storeRefundMe } from 'ton/wrappers/tact_LpAccount'
 
 interface LiquidityRefundProps {
-  currency0: Currency
-  currency1: Currency
+  currency0?: Currency
+  currency1?: Currency
   lpAccountAddress: string
 }
 export const useLiquidityRefund = ({ lpAccountAddress }: LiquidityRefundProps) => {
