@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Currency as EVMCurrency } from '@pancakeswap/swap-sdk-core'
+import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Box, Column, FlexGap, Grid, Row, Text } from '@pancakeswap/uikit'
 import { ConfirmModalState, SwapPendingModalContent } from '@pancakeswap/widgets-internal'
 import { AddCircleLoading } from 'components/Misc/AddCircleLoading'
@@ -8,12 +8,12 @@ import { CurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { useAtomValue } from 'jotai'
 import Link from 'next/link'
+import { memo, useMemo } from 'react'
 import styled from 'styled-components'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
 import { truncateHash } from 'utils'
 import { getBlockExplorerLink } from 'utils/getBlockExploreLink'
-import { memo, useMemo } from 'react'
 
 const StyledFlexColumn = styled(FlexGap).attrs({ flexDirection: 'column' })`
   text-align: center;
@@ -25,8 +25,11 @@ const GridColumn = styled(FlexGap)`
 `
 
 export enum ActionType {
-  AddLiquiditySubmitted = 'TransactionSubmitted',
-  AddLiquidityComplete = 'TransactionComplete',
+  ConfirmTransaction = 'ConfirmTransaction',
+  TransactionSubmitted = 'TransactionSubmitted',
+  TransactionCompleted = 'TransactionCompleted',
+  AddLiquiditySubmitted = 'AddLiquiditySubmitted',
+  AddLiquidityComplete = 'AddLiquidityComplete',
   ConfirmLiquiditySupply = 'ConfirmSupply',
   ConfirmLiquidityRemoval = 'ConfirmRemoval',
   ConfirmSwap = 'ConfirmSwap',
@@ -34,16 +37,27 @@ export enum ActionType {
   SwapCompleted = 'SwapCompleted',
 }
 
-const iconByActionType: {
-  [key in ActionType]: { icon: string | JSX.Element; alt?: string }
-} = {
+const iconByActionType: (t) => {
+  [key in ActionType]?: { icon: string | JSX.Element; alt?: string }
+} = (t) => ({
+  [ActionType.ConfirmTransaction]: {
+    icon: <AddCircleLoading />,
+  },
+  [ActionType.TransactionSubmitted]: {
+    icon: '/images/up-arrow-animated.gif',
+    alt: t('Up Arrow'),
+  },
+  [ActionType.TransactionCompleted]: {
+    icon: '/images/green-tick-animated.gif',
+    alt: t('Green Tick'),
+  },
   [ActionType.AddLiquiditySubmitted]: {
     icon: '/images/up-arrow-animated.gif',
-    alt: 'Up Arrow',
+    alt: t('Up Arrow'),
   },
   [ActionType.AddLiquidityComplete]: {
     icon: '/images/green-tick-animated.gif',
-    alt: 'Green Tick',
+    alt: t('Green Tick'),
   },
   [ActionType.ConfirmLiquiditySupply]: {
     icon: <AddCircleLoading />,
@@ -53,17 +67,17 @@ const iconByActionType: {
   },
   [ActionType.ConfirmSwap]: {
     icon: '/images/bunny-Illustration.png',
-    alt: 'Confirm Swap',
+    alt: t('Confirm Swap'),
   },
   [ActionType.SwapSubmitted]: {
     icon: '/images/bunny-Illustration.png',
-    alt: 'Confirm Swap',
+    alt: t('Confirm Swap'),
   },
   [ActionType.SwapCompleted]: {
     icon: '/images/bunny-Illustration.png',
-    alt: 'Confirm Swap',
+    alt: t('Confirm Swap'),
   },
-}
+})
 
 const SWAP_TYPES = [ActionType.ConfirmSwap, ActionType.SwapSubmitted, ActionType.SwapCompleted]
 
@@ -88,39 +102,45 @@ const LiquidityConfirmModal = ({ currency0, currency1, amount0, amount1, hash, t
   const network = useAtomValue(networkAtom)
   const userAddress = useAtomValue(addressAtom)
 
+  const actionIcon = type ? iconByActionType(t)[type] : null
+
   return (
     <StyledFlexColumn gap="8px">
       <Grid gridTemplateColumns={['1fr 1fr 1fr']}>
         <GridColumn>
           <Box>
-            <CurrencyLogo currency={currency0} size="40px" />
+            {currency0 && <CurrencyLogo currency={currency0} size="40px" />}
             <FlexGap justifyContent="center" alignItems="center" gap="4px">
-              <NumberDisplay value={amount0} maximumSignificantDigits={6} fontSize="24px" bold />
-              <Text fontSize="24px" bold>
-                {currency0?.symbol}
-              </Text>
+              {amount0 && <NumberDisplay value={amount0} maximumSignificantDigits={6} fontSize="24px" bold />}
+              {currency0 && (
+                <Text fontSize="24px" bold>
+                  {currency0?.symbol}
+                </Text>
+              )}
             </FlexGap>
           </Box>
         </GridColumn>
-        {type && (
+        {actionIcon && (
           <GridColumn>
             <Box>
-              {typeof iconByActionType[type].icon === 'string' ? (
-                <img src={iconByActionType[type].icon as string} alt={iconByActionType[type].alt} width="80px" />
+              {typeof actionIcon.icon === 'string' ? (
+                <img src={actionIcon.icon as string} alt={actionIcon.alt} width="80px" />
               ) : (
-                iconByActionType[type].icon
+                actionIcon.icon
               )}
             </Box>
           </GridColumn>
         )}
         <GridColumn>
           <Box>
-            <CurrencyLogo currency={currency1} size="40px" />
+            {currency1 && <CurrencyLogo currency={currency1} size="40px" />}
             <FlexGap justifyContent="center" alignItems="center" gap="4px">
-              <NumberDisplay value={amount1} maximumSignificantDigits={6} fontSize="24px" bold />
-              <Text fontSize="24px" bold>
-                {currency1?.symbol}
-              </Text>
+              {amount1 && <NumberDisplay value={amount1} maximumSignificantDigits={6} fontSize="24px" bold />}
+              {currency1 && (
+                <Text fontSize="24px" bold>
+                  {currency1?.symbol}
+                </Text>
+              )}
             </FlexGap>
           </Box>
         </GridColumn>

@@ -1,9 +1,9 @@
-import { memo, useMemo } from 'react'
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Text } from '@pancakeswap/uikit'
 import { ActionModal, ActionType } from 'components/Modals/ActionModal'
 import { atom } from 'jotai'
+import { memo, useMemo } from 'react'
 import { appModalAtom } from './appModalAtom'
 
 interface TitleProps {
@@ -14,10 +14,15 @@ const Title = memo(({ type }: TitleProps) => {
 
   const titleByAction: { [type in ActionType]: string } = useMemo(
     () => ({
+      [ActionType.ConfirmTransaction]: t('Confirm Transaction'),
+      [ActionType.TransactionSubmitted]: t('Transaction Submitted'),
+      [ActionType.TransactionCompleted]: t('Transaction Complete'),
+
       [ActionType.AddLiquiditySubmitted]: t('Transaction Submitted'),
       [ActionType.AddLiquidityComplete]: t('Transaction Complete'),
       [ActionType.ConfirmLiquiditySupply]: t('Confirm Supply'),
       [ActionType.ConfirmLiquidityRemoval]: t('Confirm LP Removal'),
+
       [ActionType.ConfirmSwap]: t('Confirm Swap'),
       [ActionType.SwapSubmitted]: t('Transaction Submitted'),
       [ActionType.SwapCompleted]: t('Transaction Successful'),

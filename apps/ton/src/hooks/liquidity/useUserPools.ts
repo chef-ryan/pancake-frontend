@@ -1,65 +1,74 @@
 import { PRESET_POOLS } from 'config/presetPools'
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
-import { lpAccountMultipleQueryAtom } from 'ton/atom/liquidity/lpAccountMultipleQueryAtom'
 import { lpBalanceByPoolsQueryAtom } from 'ton/atom/liquidity/lpBalanceByPoolsQueryAtom'
 import { poolDataMultipleQueryAtom } from 'ton/atom/liquidity/poolDataMultipleQueryAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
 
+interface RawPoolData {
+  balance: bigint
+  poolAddress: string
+}
+
+interface InitialPoolData extends RawPoolData {
+  token0: string
+  token1: string
+}
+
+interface CombinedPoolData extends InitialPoolData {
+  amount0: bigint
+  amount1: bigint
+  reserve0: bigint
+  reserve1: bigint
+  totalSupply: bigint
+}
+
+interface PoolInfo {
+  reserve0: bigint
+  reserve1: bigint
+  totalSupply: bigint
+}
+
+const getTokenPairs = (network: string): string[][] =>
+  Object.keys(PRESET_POOLS[network]).map((tokenPair) => tokenPair.split('<>'))
+
+const getPoolsWithBalance = (pools: RawPoolData[], tokenPairs: string[][]): InitialPoolData[] =>
+  pools
+    .map((pool, index) => ({
+      ...pool,
+      token0: tokenPairs[index][0],
+      token1: tokenPairs[index][1],
+    }))
+    .filter((pool) => pool.balance > 0n)
+
+const combinePoolData = (poolsWithBalance: InitialPoolData[], poolInfos: PoolInfo[]): CombinedPoolData[] =>
+  poolsWithBalance.map((pool, index) => ({
+    ...pool,
+    amount0: poolInfos[index] ? (pool.balance * poolInfos[index].reserve0) / poolInfos[index].totalSupply : 0n,
+    amount1: poolInfos[index] ? (pool.balance * poolInfos[index].reserve1) / poolInfos[index].totalSupply : 0n,
+    reserve0: poolInfos[index]?.reserve0 ?? 0n,
+    reserve1: poolInfos[index]?.reserve1 ?? 0n,
+    totalSupply: poolInfos[index]?.totalSupply ?? 0n,
+  }))
+
 export const useUserPools = () => {
   const network = useAtomValue(networkAtom)
+  const tokenPairs = useMemo(() => getTokenPairs(network), [network])
+
   const {
     data: pools,
     isFetched: isPoolBalanceFetched,
     ...rest
   } = useAtomValue(lpBalanceByPoolsQueryAtom(Object.values(PRESET_POOLS[network])))
 
-  const tokenPairs = useMemo(
-    () => Object.keys(PRESET_POOLS[network]).map((tokenPair) => tokenPair.split('<>')),
-    [network],
-  )
+  const poolsWithBalance = useMemo(() => getPoolsWithBalance(pools, tokenPairs), [pools, tokenPairs])
 
-  const poolsWithBalance = useMemo(
-    () =>
-      pools
-        .map((pool, index) => ({
-          ...pool,
-          token0: tokenPairs[index][0],
-          token1: tokenPairs[index][1],
-        }))
-        .filter((pool) => pool.balance > 0n),
-    [pools, tokenPairs],
-  )
-
-  // Fetch pool's basic info for totalSupply and reserves
+  // Liquidity Pool Information
   const { data: poolInfos, isFetched: isPoolDataFetched } = useAtomValue(
     poolDataMultipleQueryAtom(poolsWithBalance.map((pool) => pool.poolAddress)),
   )
 
-  // Fetch refund amounts (Don't need to wait for this to load)
-  const { data: lpAccounts } = useAtomValue(
-    lpAccountMultipleQueryAtom(poolsWithBalance.map((pool) => pool.poolAddress)),
-  )
-
-  // Combine relevant data
-  const finalPoolData = useMemo(
-    () =>
-      poolsWithBalance.map((pool, index) => ({
-        ...pool,
-        amount0: poolInfos[index] ? (pool.balance * poolInfos[index].reserve0) / poolInfos[index].totalSupply : 0n,
-        amount1: poolInfos[index] ? (pool.balance * poolInfos[index].reserve1) / poolInfos[index].totalSupply : 0n,
-        reserve0: poolInfos[index]?.reserve0,
-        reserve1: poolInfos[index]?.reserve1,
-        totalSupply: poolInfos[index]?.totalSupply,
-
-        // Refunds from LpAccount
-        refund0: lpAccounts[index]?.amount0,
-        refund1: lpAccounts[index]?.amount1,
-        isEligibleForRefund: lpAccounts[index]?.amount0 > 0n || lpAccounts[index]?.amount1 > 0n,
-        lpAccountAddress: lpAccounts[index]?.lpAccountAddress,
-      })),
-    [poolsWithBalance, poolInfos, lpAccounts],
-  )
+  const finalPoolData = useMemo(() => combinePoolData(poolsWithBalance, poolInfos), [poolsWithBalance, poolInfos])
 
   const isFetched = isPoolBalanceFetched && isPoolDataFetched
 
@@ -67,6 +76,5 @@ export const useUserPools = () => {
     ...rest,
     data: finalPoolData,
     isFetched,
-    hasClaimableRefunds: finalPoolData.some((pool) => pool.isEligibleForRefund),
   }
 }

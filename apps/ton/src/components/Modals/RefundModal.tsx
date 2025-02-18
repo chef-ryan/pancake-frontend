@@ -3,17 +3,15 @@ import { Button, Flex, FlexGap, Text } from '@pancakeswap/uikit'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import { Card } from 'components/Card'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/widgets'
-import { useUserPools } from 'hooks/liquidity/useUserPools'
+import { useUserRefundPools } from 'hooks/liquidity/useUserRefundPools'
 import { useAtomValue } from 'jotai'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { useLiquidityRefund } from 'ton/logic/liquidity/useLiquidityRefund'
 import { formatBalance } from 'ton/utils/formatting'
 
 export const RefundModal = () => {
   const { t } = useTranslation()
-  const { data: userPools } = useUserPools()
-
-  const poolsWithRefunds = useMemo(() => userPools.filter((pool) => pool.isEligibleForRefund), [userPools])
+  const { poolsWithRefunds } = useUserRefundPools()
 
   return (
     <FlexGap gap="8px" flexDirection="column">
@@ -33,8 +31,8 @@ export const RefundModal = () => {
               key={pool.poolAddress}
               token0={pool.token0}
               token1={pool.token1}
-              refund0={pool.refund0}
-              refund1={pool.refund1}
+              refundAmount0={pool.refundAmount0}
+              refundAmount1={pool.refundAmount1}
               lpAccountAddress={pool.lpAccountAddress}
             />
           ))}
@@ -47,11 +45,11 @@ export const RefundModal = () => {
 interface PoolRefundRowProps {
   token0: string
   token1: string
-  refund0: bigint
-  refund1: bigint
+  refundAmount0: bigint
+  refundAmount1: bigint
   lpAccountAddress: string
 }
-const PoolRefundRow = ({ token0, token1, refund0, refund1, lpAccountAddress }: PoolRefundRowProps) => {
+const PoolRefundRow = ({ token0, token1, refundAmount0, refundAmount1, lpAccountAddress }: PoolRefundRowProps) => {
   const { t } = useTranslation()
 
   const { data: currency0 } = useAtomValue(tokenByAddressQueryAtom(token0))
@@ -81,14 +79,14 @@ const PoolRefundRow = ({ token0, token1, refund0, refund1, lpAccountAddress }: P
             <CurrencyLogo currency={currency0} />
             <Text>{currency0?.symbol}</Text>
           </FlexGap>
-          <Text>{formatBalance(refund0, currency0?.decimals)}</Text>
+          <Text>{formatBalance(refundAmount0, currency0?.decimals)}</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <FlexGap gap="8px">
             <CurrencyLogo currency={currency1} />
             <Text>{currency1?.symbol}</Text>
           </FlexGap>
-          <Text>{formatBalance(refund1, currency1?.decimals)}</Text>
+          <Text>{formatBalance(refundAmount1, currency1?.decimals)}</Text>
         </Flex>
 
         <Button onClick={handleRefund}>{t('Refund')}</Button>

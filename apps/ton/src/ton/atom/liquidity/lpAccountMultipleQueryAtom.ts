@@ -32,13 +32,13 @@ export const lpAccountMultipleQueryAtom = atomFamily((poolAddresses: string[]) =
           lpAccountAddress: lpAccountAddress.toString(),
           amount0: data.amount0 ?? 0n,
           amount1: data.amount1 ?? 0n,
-          poolAddress: data.poolAddress,
-          userAddress: data.userAddress,
+          poolAddress: data.poolAddress.toString(),
+          userAddress: data.userAddress.toString(),
         }
       }
       return Promise.all(poolAddresses.map(getLpAccountData))
     },
-    enabled: !!poolAddresses && !!get(addressAtom),
+    enabled: !!poolAddresses.length && !!get(addressAtom),
     refetchInterval: QUERY_MEDIUM_STALE_TIME,
     retry: 1,
     retryDelay: QUERY_RETRY_DELAY,

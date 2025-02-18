@@ -53,12 +53,10 @@ export const useAddLiquidity = () => {
         const routerJettonWallet0 = await getJettonWalletAddress(client, routerAddress, token0)
         const routerJettonWallet1 = await getJettonWalletAddress(client, routerAddress, token1)
 
-        const queryId = generateQueryId()
-
         const forwardPayload0 = beginCell()
           .store(
             storeAddLiquidity({
-              queryId,
+              queryId: generateQueryId(),
               $$type: 'AddLiquidity',
               minLPOut: 2n,
               tokenWallet: routerJettonWallet1,
@@ -68,7 +66,7 @@ export const useAddLiquidity = () => {
         const payload0 = beginCell()
           .store(
             storeJettonTransferMessage({
-              queryId,
+              queryId: generateQueryId(),
               amount: amount0,
               destination: routerAddress,
               responseDestination: userAddress,
@@ -82,7 +80,7 @@ export const useAddLiquidity = () => {
         const forwardPayload1 = beginCell()
           .store(
             storeAddLiquidity({
-              queryId,
+              queryId: generateQueryId(),
               $$type: 'AddLiquidity',
               minLPOut: 2n,
               tokenWallet: routerJettonWallet0,
@@ -92,7 +90,7 @@ export const useAddLiquidity = () => {
         const payload1 = beginCell()
           .store(
             storeJettonTransferMessage({
-              queryId,
+              queryId: generateQueryId(),
               amount: amount1,
               destination: routerAddress,
               responseDestination: userAddress,
@@ -112,7 +110,7 @@ export const useAddLiquidity = () => {
                   amount: (BigInt(amount0) + toNano('0.3')).toString(), // TON amount + gas
                   payload: beginCell()
                     .storeUint(JETTON_TRANSFER_NOTIFICATION_OPCODE, 32)
-                    .storeUint(queryId, 64)
+                    .storeUint(generateQueryId(), 64)
                     .storeCoins(amount0)
                     .storeAddress(userAddress)
                     .storeMaybeRef(forwardPayload0)
