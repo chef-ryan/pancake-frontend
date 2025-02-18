@@ -116,10 +116,11 @@ const usePairs = (pairs: [Token, Token][]) => {
       data: result.data,
       refresh,
     }
-    if (result.isLoading) {
+    if (result.isLoading || result.isFetching) {
       return {
         ...res,
-        isLoading: result.isLoading,
+        data: [],
+        isLoading: true,
       }
     }
     const data = pairs.map(([token0_, token1_], idx) => {
@@ -142,5 +143,5 @@ const usePairs = (pairs: [Token, Token][]) => {
       isLoading: false,
       data,
     }
-  }, [pairs, result.data, result.isLoading, refresh])
+  }, [pairs, result.isFetching, result.data, result.isLoading, refresh])
 }
