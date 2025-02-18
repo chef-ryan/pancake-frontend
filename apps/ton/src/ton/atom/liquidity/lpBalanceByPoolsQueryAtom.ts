@@ -24,7 +24,9 @@ export const lpBalanceByPoolsQueryAtom = atomFamily((poolAddresses: string[]) =>
         return { poolAddress, balance }
       }
 
-      return Promise.all(poolAddresses.map(getLpBalance))
+      return (await Promise.allSettled(poolAddresses.map(getLpBalance)))
+        .filter((result) => result.status === 'fulfilled')
+        .map((result) => result.value)
     },
     enabled: !!poolAddresses && poolAddresses.length > 0 && !!get(addressAtom),
     refetchInterval: QUERY_MEDIUM_STALE_TIME,

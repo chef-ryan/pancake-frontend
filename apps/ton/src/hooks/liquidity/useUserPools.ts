@@ -70,6 +70,13 @@ export const useUserPools = () => {
 
   const finalPoolData = useMemo(() => combinePoolData(poolsWithBalance, poolInfos), [poolsWithBalance, poolInfos])
 
+  console.log('useUserPools', {
+    finalPoolData,
+    poolsWithBalance,
+    pools,
+    presetPools: Object.values(PRESET_POOLS[network]),
+  })
+
   const isFetched = isPoolBalanceFetched && isPoolDataFetched
 
   return {
