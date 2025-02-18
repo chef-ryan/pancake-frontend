@@ -194,6 +194,7 @@ interface CurrencyInputPanelProps {
   showSearchInput?: boolean
   beforeButton?: React.ReactNode
   disabled?: boolean
+  disabledToolTips?: string
   error?: boolean | string
   showUSDPrice?: boolean
   tokensToShow?: Currency[]
@@ -221,6 +222,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   commonBasesType,
   showSearchInput,
   disabled,
+  disabledToolTips,
   error,
   showUSDPrice,
   tokensToShow,
@@ -319,120 +321,107 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   )
 
   return (
-    <>
-      <SwapUIV2.CurrencyInputPanelSimplify
-        id={id}
-        disabled={disabled}
-        error={error as boolean}
-        value={value}
-        onInputBlur={handleUserInputBlur}
-        onInputFocus={handleUserInputFocus}
-        onUserInput={handleUserInput}
-        loading={inputLoading}
-        inputRef={inputRef}
-        wrapperRef={wrapperRef}
-        top={
-          <Flex justifyContent="space-between" alignItems="center" width="100%" position="relative">
-            {title || <>&nbsp;</>}
-            <LazyAnimatePresence mode="wait" features={domAnimation}>
-              {account ? (
-                !isInputFocus || !onMax ? (
-                  <SwapUIV2.WalletAssetDisplay
-                    isUserInsufficientBalance={isUserInsufficientBalance}
-                    balance={balance}
-                    onMax={onMax}
-                  />
-                ) : (
-                  <SwapUIV2.AssetSettingButtonList onPercentInput={onPercentInput} />
-                )
-              ) : null}
-            </LazyAnimatePresence>
-          </Flex>
-        }
-        inputLeft={
-          <>
-            <Flex alignItems="center">
-              {beforeButton}
-              <CurrencySelectButton
-                className="open-currency-select-button"
-                data-dd-action-name="Select currency"
-                selected={!!currency}
-                onClick={onCurrencySelectClick}
-              >
-                <Flex alignItems="center" justifyContent="space-between">
-                  {pair ? (
-                    <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={16} margin />
-                  ) : currency ? (
-                    id === 'onramp-input' ? (
-                      <></>
-                    ) : (
-                      <CurrencyLogo
-                        imageRef={tokenImageRef}
-                        currency={currency as any}
-                        size={`${LOGO_SIZE.MAX}px`}
-                        style={{
-                          marginRight: '8px',
-                        }}
-                      />
-                    )
-                  ) : currencyLoading ? (
-                    <Skeleton width="40px" height="40px" variant="circle" />
-                  ) : null}
-                  {currencyLoading ? null : pair ? (
-                    <Text id="pair" bold fontSize="24px">
-                      {pair?.token0.symbol}:{pair?.token1.symbol}
-                    </Text>
+    <SwapUIV2.CurrencyInputPanelSimplify
+      id={id}
+      disabled={disabled}
+      disabledToolTips={disabledToolTips}
+      error={error as boolean}
+      value={value}
+      onInputBlur={handleUserInputBlur}
+      onInputFocus={handleUserInputFocus}
+      onUserInput={handleUserInput}
+      loading={inputLoading}
+      inputRef={inputRef}
+      wrapperRef={wrapperRef}
+      top={
+        <Flex justifyContent="space-between" alignItems="center" width="100%" position="relative">
+          {title || <>&nbsp;</>}
+          <LazyAnimatePresence mode="wait" features={domAnimation}>
+            {account ? (
+              !isInputFocus || !onMax ? (
+                <SwapUIV2.WalletAssetDisplay
+                  isUserInsufficientBalance={isUserInsufficientBalance}
+                  balance={balance}
+                  onMax={onMax}
+                />
+              ) : (
+                <SwapUIV2.AssetSettingButtonList onPercentInput={onPercentInput} />
+              )
+            ) : null}
+          </LazyAnimatePresence>
+        </Flex>
+      }
+      inputLeft={
+        <>
+          <Flex alignItems="center">
+            {beforeButton}
+            <CurrencySelectButton
+              className="open-currency-select-button"
+              data-dd-action-name="Select currency"
+              selected={!!currency}
+              onClick={onCurrencySelectClick}
+            >
+              <Flex alignItems="center" justifyContent="space-between">
+                {pair ? (
+                  <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={16} margin />
+                ) : currency ? (
+                  id === 'onramp-input' ? (
+                    <></>
                   ) : (
-                    <Flex alignItems="start" flexDirection="column">
-                      <Flex alignItems="center" justifyContent="space-between">
-                        <SymbolText id="pair" bold ref={symbolRef}>
-                          {(currency && currency.symbol && shortedSymbol) || t('Select a currency')}
-                        </SymbolText>
-                        {!currencyLoading && !disableCurrencySelect && <ChevronDownIcon />}
-                      </Flex>
+                    <CurrencyLogo
+                      imageRef={tokenImageRef}
+                      currency={currency as any}
+                      size={`${LOGO_SIZE.MAX}px`}
+                      style={{
+                        marginRight: '8px',
+                      }}
+                    />
+                  )
+                ) : currencyLoading ? (
+                  <Skeleton width="40px" height="40px" variant="circle" />
+                ) : null}
+                {currencyLoading ? null : pair ? (
+                  <Text id="pair" bold fontSize="24px">
+                    {pair?.token0.symbol}:{pair?.token1.symbol}
+                  </Text>
+                ) : (
+                  <Flex alignItems="start" flexDirection="column">
+                    <Flex alignItems="center" justifyContent="space-between">
+                      <SymbolText id="pair" bold ref={symbolRef}>
+                        {(currency && currency.symbol && shortedSymbol) || t('Select a currency')}
+                      </SymbolText>
+                      {!currencyLoading && !disableCurrencySelect && <ChevronDownIcon />}
                     </Flex>
-                  )}
-                </Flex>
-              </CurrencySelectButton>
-            </Flex>
-          </>
-        }
-        bottom={
-          inputLoading || (showUSDPrice && Number.isFinite(amountInDollar)) ? (
-            <Box position="absolute" bottom="12px" right="0px">
-              <Flex justifyContent="flex-end" mr="1rem">
-                <Flex maxWidth={['120px', '160px', '200px', '240px']}>
-                  {inputLoading ? (
-                    <Loading width="14px" height="14px" />
-                  ) : showUSDPrice && Number.isFinite(amountInDollar) ? (
-                    <>
-                      <Text fontSize="14px" color="textSubtle" ellipsis>
-                        {`~${amountInDollar && formatDollarAmount(amountInDollar)}`}
-                      </Text>
-                      <Text ml="4px" fontSize="14px" color="textSubtle">
-                        USD
-                      </Text>
-                    </>
-                  ) : null}
-                </Flex>
+                  </Flex>
+                )}
               </Flex>
-            </Box>
-          ) : null
-        }
-      />
-
-      {/* {showBottomQuickInputPanel && (
-        <FixedQuickSelectContainer>
-          <FlexGap gap="4px" justifyContent="center">
-            {PERCENT_OPTIONS.map((percent) => (
-              <TertiaryButton key={percent} onClick={() => onPercentInput(percent)} scale="sm">
-                {percent === 100 ? t('Use max balance') : `${percent}%`}
-              </TertiaryButton>
-            ))}
-          </FlexGap>
-        </FixedQuickSelectContainer>
-      )} */}
-    </>
+            </CurrencySelectButton>
+          </Flex>
+        </>
+      }
+      bottom={
+        inputLoading || (showUSDPrice && Number.isFinite(amountInDollar)) ? (
+          <Box position="absolute" bottom="12px" right="0px">
+            <Flex justifyContent="flex-end" mr="1rem">
+              <Flex maxWidth={['120px', '160px', '200px', '240px']}>
+                {inputLoading ? (
+                  <Loading width="14px" height="14px" />
+                ) : showUSDPrice && Number.isFinite(amountInDollar) ? (
+                  <>
+                    <Text fontSize="14px" color="textSubtle" ellipsis>
+                      {`~${amountInDollar && formatDollarAmount(amountInDollar)}`}
+                    </Text>
+                    <Text ml="4px" fontSize="14px" color="textSubtle">
+                      USD
+                    </Text>
+                  </>
+                ) : null}
+              </Flex>
+            </Flex>
+          </Box>
+        ) : null
+      }
+    />
   )
 })
 

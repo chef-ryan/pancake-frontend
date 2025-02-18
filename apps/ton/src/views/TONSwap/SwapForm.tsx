@@ -3,10 +3,7 @@ import { Rounding } from '@pancakeswap/swap-sdk-core'
 import { Native, TonNetworks } from '@pancakeswap/ton-v2-sdk'
 import { Column, Text } from '@pancakeswap/uikit'
 import { formatFraction } from '@pancakeswap/utils/formatFractions'
-import { useUserSlippage } from '@pancakeswap/utils/user'
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
-import { setApprovalModalAtom } from 'atoms/modals/approvalModalAtom'
-import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
 import { independentFieldAtom, inputCurrencyAtom, outputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
 import { ButtonAndDetailsPanel } from 'components/TonSwap/ButtonAndDetailsPanel'
 import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
@@ -27,7 +24,7 @@ import { computeTradePriceBreakdown } from 'utils/exchange'
 import { setConfirmSwapModalAtom } from 'atoms/modals/confirmSwapModalAtom'
 import { PricingAndSlippage } from 'components/TonSwap/SwapDetails/PricingAndSlippage'
 import { AdvancedSwapDetailsDropdown } from 'components/TonSwap/SwapDetails/AdvancedSwapDetailsDropdown'
-import { ActionType } from 'components/Modals/ActionModal'
+import { useUserSlippagePercent } from '@pancakeswap/utils/user'
 
 export const SwapForm = () => {
   const { t } = useTranslation()
@@ -39,27 +36,16 @@ export const SwapForm = () => {
 
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
-
   const { isTradeExactInLoading, isTradeExactOutLoading, trade, refreshTrade } = useBestTrade({
     isExactIn,
     amount: parsedAmount,
     inputCurrency,
     outputCurrency,
   })
-
   const isTradeLoading = useMemo(
     () => isTradeExactOutLoading || isTradeExactInLoading,
     [isTradeExactOutLoading, isTradeExactInLoading],
   )
-
-  const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
-
-  const { data: activeList, isFetched } = useAtomValue(fetchListAtom)
-
-  const setApprovalModal = useSetAtom(setApprovalModalAtom)
-  const setSwapConfirmModal = useSetAtom(setConfirmSwapModalAtom)
-  const setTransactionModal = useSetAtom(setTransactionModalAtom)
-
   const parsedAmounts = useMemo(
     () => ({
       [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
@@ -84,28 +70,33 @@ export const SwapForm = () => {
   )
 
   const { data: balance0 } = useAtomValue(balanceAtom(inputCurrency))
+  const [allowedSlippage] = useUserSlippagePercent()
+  const [isSwapDetailPanelOpen] = useIsSwapDetailPanelOpen()
+  const { realizedLPFee } = computeTradePriceBreakdown(trade)
+  const { swap } = useSwap()
+  const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
+  const { data: activeList, isFetched } = useAtomValue(fetchListAtom)
+
   const isInsufficientBalance0 = useMemo(
     () => (parsedAmounts[Field.INPUT] ? parsedAmounts[Field.INPUT].greaterThan(balance0) : false),
     [balance0, parsedAmounts],
   )
 
-  const [isSwapDetailPanelOpen] = useIsSwapDetailPanelOpen()
-  const { realizedLPFee } = computeTradePriceBreakdown(trade)
-
-  const { swap } = useSwap()
-
   const handleSwap = useCallback(async () => {
-    if (!inputCurrency || !outputCurrency) {
+    if (!inputCurrency || !outputCurrency || !trade) {
       return
     }
     swap({
-      minOut: '0.01',
+      minOut: isExactIn
+        ? trade.minimumAmountOut(allowedSlippage).toExact()
+        : trade.maximumAmountIn(allowedSlippage).toExact(),
       amount0: formattedAmounts[Field.INPUT] ?? '0',
       token0: inputCurrency,
       token1: outputCurrency,
     })
-  }, [formattedAmounts, swap, inputCurrency, outputCurrency])
+  }, [allowedSlippage, isExactIn, trade, formattedAmounts, swap, inputCurrency, outputCurrency])
 
+  const setSwapConfirmModal = useSetAtom(setConfirmSwapModalAtom)
   const confirmSwap = useCallback(() => {
     if (!inputCurrency || !outputCurrency) {
       return
@@ -131,6 +122,18 @@ export const SwapForm = () => {
     }
   }, [activeList, inputCurrency, outputCurrency, isFetched, onCurrencySelection])
 
+  const [inputTitle, outputTitle] = useMemo(
+    () => [
+      <Text color="textSubtle" fontSize={12} bold>
+        {t('From')}
+      </Text>,
+      <Text color="textSubtle" fontSize={12} bold>
+        {t('To')}
+      </Text>,
+    ],
+    [t],
+  )
+
   return (
     <SwapUIV2.SwapFormWrapper>
       <SwapUIV2.SwapTabAndInputPanelWrapper>
@@ -139,6 +142,7 @@ export const SwapForm = () => {
             <CurrencyInputPanelSimplify
               id="swap-currency-input"
               field={Field.INPUT}
+              title={inputTitle}
               showUSDPrice
               showMaxButton
               showCommonBases
@@ -147,24 +151,21 @@ export const SwapForm = () => {
               value={formattedAmounts[Field.INPUT]}
               showQuickInputButton
               currency={inputCurrency}
+              otherCurrency={outputCurrency}
+              commonBasesType={undefined}
+              isUserInsufficientBalance={isInsufficientBalance0}
               onUserInput={(val) => onUserInput(Field.INPUT, val)}
               onPercentInput={noop}
               onMax={noop}
               onCurrencySelect={(currency) => onCurrencySelection(Field.INPUT, currency)}
-              otherCurrency={outputCurrency}
-              commonBasesType={undefined}
-              title={
-                <Text color="textSubtle" fontSize={12} bold>
-                  {t('From')}
-                </Text>
-              }
-              isUserInsufficientBalance={isInsufficientBalance0}
             />
             <FlipButton />
             <CurrencyInputPanelSimplify
               id="swap-currency-output"
               field={Field.OUTPUT}
+              title={outputTitle}
               disabled
+              disabledToolTips={t('Editing output amount is currently not available.')}
               showUSDPrice
               showMaxButton
               showCommonBases
@@ -173,17 +174,12 @@ export const SwapForm = () => {
               value={formattedAmounts[Field.OUTPUT]}
               showQuickInputButton
               currency={outputCurrency}
+              otherCurrency={inputCurrency}
+              commonBasesType={undefined}
               onUserInput={(val) => onUserInput(Field.OUTPUT, val)}
               onPercentInput={noop}
               onMax={noop}
               onCurrencySelect={(currency) => onCurrencySelection(Field.OUTPUT, currency)}
-              otherCurrency={inputCurrency}
-              commonBasesType={undefined}
-              title={
-                <Text color="textSubtle" fontSize={12} bold>
-                  {t('To')}
-                </Text>
-              }
             />
           </Column>
         </SwapUIV2.InputPanelWrapper>

@@ -192,13 +192,13 @@ export const SwapConfirmModal = ({ currency0, currency1, amount0, amount1, type,
         </Row>
       )}
       {hash ? (
-        <Box m="24px 0 4px">
-          <Text color="primary60">
+        <Row justifyContent="center">
+          <Text color="primary60" fontSize="14px" bold>
             <Link href={getBlockExplorerLink(hash, 'transaction', network)} target="_blank">
               {t('View on explorer:')} {truncateHash(hash)}
             </Link>
           </Text>
-        </Box>
+        </Row>
       ) : null}
     </Column>
   )

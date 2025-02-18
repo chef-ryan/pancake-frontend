@@ -3588,7 +3588,6 @@
   "for accurate values": "for accurate values",
   "Updating the quote": "Updating the quote",
   "Approve %token%": "Approve %token%",
-  "Transaction %postfix%": "Transaction %postfix%",
   "testnet": "testnet",
   "Get TON": "Get TON",
   "Need Help?": "Need Help?",
@@ -3619,5 +3618,6 @@
   "Confirm LP Removal": "Confirm LP Removal",
   "Please approve this in your wallet %address%": "Please approve this in your wallet %address%",
   "Please approve it in your wallet: %address%": "Please approve it in your wallet: %address%",
-  "%currency0%/%currency1% Burned": "%currency0%/%currency1% Burned"
+  "%currency0%/%currency1% Burned": "%currency0%/%currency1% Burned",
+  "Editing output amount is currently not available.": "Editing output amount is currently not available."
 }

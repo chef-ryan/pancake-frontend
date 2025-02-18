@@ -1,6 +1,20 @@
-import { AtomBox, SwapCSS } from '@pancakeswap/uikit'
+import React from 'react'
+import { AtomBox, QuestionHelperV2, SwapCSS } from '@pancakeswap/uikit'
 
 import { NumericalInput, NumericalInputProps } from './NumericalInput'
+
+const WithQuestionHelper: React.FC<React.PropsWithChildren<{ show?: boolean; tooltipText?: string }>> = ({
+  show = false,
+  tooltipText,
+  children,
+}) =>
+  show ? (
+    <QuestionHelperV2 text={tooltipText} placement="top" style={{ flex: '1 1 auto' }}>
+      {children}
+    </QuestionHelperV2>
+  ) : (
+    children
+  )
 
 interface CurrencyInputPanelProps extends Omit<NumericalInputProps, 'onBlur' | 'OnFocus'> {
   onInputBlur?: () => void
@@ -13,6 +27,7 @@ interface CurrencyInputPanelProps extends Omit<NumericalInputProps, 'onBlur' | '
   inputFontSize?: string
   wrapperRef?: React.RefObject<HTMLDivElement>
   inputRef?: React.RefObject<HTMLInputElement>
+  disabledToolTips?: string
 }
 export function CurrencyInputPanelSimplify({
   value,
@@ -30,6 +45,7 @@ export function CurrencyInputPanelSimplify({
   inputFontSize,
   wrapperRef,
   inputRef,
+  disabledToolTips,
 }: CurrencyInputPanelProps) {
   return (
     <AtomBox position="relative" id={id} display="grid" gap="4px">
@@ -58,21 +74,23 @@ export function CurrencyInputPanelSimplify({
             position="relative"
             style={{ height: 80 }}
           >
-            <NumericalInput
-              error={Boolean(error)}
-              disabled={disabled}
-              loading={loading}
-              inputRef={inputRef}
-              className="token-amount-input"
-              value={value}
-              onBlur={onInputBlur}
-              onFocus={onInputFocus}
-              onUserInput={(val) => {
-                onUserInput(val)
-              }}
-              fontSize={inputFontSize}
-              padding={bottom ? '0 0 16px' : undefined}
-            />
+            <WithQuestionHelper show={Boolean(disabled && disabledToolTips)} tooltipText={disabledToolTips}>
+              <NumericalInput
+                error={Boolean(error)}
+                disabled={disabled}
+                loading={loading}
+                inputRef={inputRef}
+                className="token-amount-input"
+                value={value}
+                onBlur={onInputBlur}
+                onFocus={onInputFocus}
+                onUserInput={(val) => {
+                  onUserInput(val)
+                }}
+                fontSize={inputFontSize}
+                padding={bottom ? '0 0 16px' : undefined}
+              />
+            </WithQuestionHelper>
             {inputLeft}
           </AtomBox>
           {bottom}
