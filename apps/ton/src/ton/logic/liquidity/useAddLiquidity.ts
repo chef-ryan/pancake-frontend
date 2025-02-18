@@ -10,9 +10,9 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { routerContractAtom } from 'ton/atom/contracts/routerContractAtom'
 import { TonContext } from 'ton/context/TonContext'
-import { generateQueryId } from 'ton/generateQueryId'
 import { getJettonWalletAddress } from 'ton/utils/address'
 import { formatBalance } from 'ton/utils/formatting'
+import { generateQueryId } from 'ton/utils/generateQueryId'
 import { getTransactionByBOC } from 'ton/utils/transaction'
 
 interface AddLiquidityArgs {

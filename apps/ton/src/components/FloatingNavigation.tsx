@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Box, SortArrowIcon, Text } from '@pancakeswap/uikit'
+import { Box, SortArrowIcon, Text, Cards } from '@pancakeswap/uikit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
@@ -62,7 +62,7 @@ export const FloatingNavigation = () => {
             </StyledText>
           </StyledLink>
           <StyledLink href="/liquidity">
-            <SortArrowIcon color={getItemColor('/liquidity')} width={24} style={{ transform: 'rotate(90deg)' }} />
+            <Cards color={getItemColor('/liquidity')} width={24} />
             <StyledText color={getItemColor('/liquidity')} bold={isActive('/liquidity')}>
               {t('Liquidity')}
             </StyledText>
