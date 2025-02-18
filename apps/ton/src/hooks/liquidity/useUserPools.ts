@@ -1,6 +1,7 @@
 import { PRESET_POOLS } from 'config/presetPools'
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
+import { lpAccountMultipleQueryAtom } from 'ton/atom/liquidity/lpAccountMultipleQueryAtom'
 import { lpBalanceByPoolsQueryAtom } from 'ton/atom/liquidity/lpBalanceByPoolsQueryAtom'
 import { poolDataMultipleQueryAtom } from 'ton/atom/liquidity/poolDataMultipleQueryAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
@@ -35,6 +36,11 @@ export const useUserPools = () => {
     poolDataMultipleQueryAtom(poolsWithBalance.map((pool) => pool.poolAddress)),
   )
 
+  // Fetch refund amounts (Don't need to wait for this to load)
+  const { data: lpAccounts } = useAtomValue(
+    lpAccountMultipleQueryAtom(poolsWithBalance.map((pool) => pool.poolAddress)),
+  )
+
   // Combine relevant data
   const finalPoolData = useMemo(
     () =>
@@ -45,11 +51,22 @@ export const useUserPools = () => {
         reserve0: poolInfos[index]?.reserve0,
         reserve1: poolInfos[index]?.reserve1,
         totalSupply: poolInfos[index]?.totalSupply,
+
+        // Refunds from LpAccount
+        refund0: lpAccounts[index]?.amount0,
+        refund1: lpAccounts[index]?.amount1,
+        isEligibleForRefund: lpAccounts[index]?.amount0 > 0n || lpAccounts[index]?.amount1 > 0n,
+        lpAccountAddress: lpAccounts[index]?.lpAccountAddress,
       })),
-    [poolsWithBalance, poolInfos],
+    [poolsWithBalance, poolInfos, lpAccounts],
   )
 
   const isFetched = isPoolBalanceFetched && isPoolDataFetched
 
-  return { ...rest, data: finalPoolData, isFetched }
+  return {
+    ...rest,
+    data: finalPoolData,
+    isFetched,
+    hasClaimableRefunds: finalPoolData.some((pool) => pool.isEligibleForRefund),
+  }
 }

@@ -1,7 +1,9 @@
 import { CheckmarkCircleFillIcon, Flex, FlexGap, Text } from '@pancakeswap/uikit'
 import { AVAILABLE_NETWORKS } from 'config/constants/networks'
+import { useAtomValue } from 'jotai'
 import Link from 'next/link'
 import styled from 'styled-components'
+import { chainIdAtom } from 'ton/atom/chainIdAtom'
 
 const NetworkRow = styled(Flex)`
   justify-content: space-between;
@@ -14,8 +16,7 @@ const NetworkRow = styled(Flex)`
 `
 
 export const NetworkSelectModal = () => {
-  //   const currentChainId = useAtomValue(chainIdAtom)
-  const currentChainId = -239
+  const currentChainId = useAtomValue(chainIdAtom)
 
   return (
     <FlexGap gap="8px" flexDirection="column">

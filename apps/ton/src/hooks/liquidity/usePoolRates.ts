@@ -12,8 +12,8 @@ interface UsePoolRatesProps {
 export const usePoolRates = ({ currency0, currency1, reserve0, reserve1 }: UsePoolRatesProps) => {
   return useMemo(() => {
     const rates = {
-      currency0: '-',
-      currency1: '-',
+      currency0: '',
+      currency1: '',
     }
 
     if (!currency0 || !currency1 || !reserve0 || !reserve1) return rates

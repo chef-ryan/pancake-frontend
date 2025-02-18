@@ -96,7 +96,6 @@ export const CardContent = (props: CardContentProps) => {
     reserve1: poolData?.reserve1,
   })
 
-  // TO CHECK: If no rates, allow independent inputs
   const currencyAmounts = useMemo(() => {
     return {
       [CurrencyField.ADD_LIQUIDITY_CURRENCY0]:
@@ -114,15 +113,39 @@ export const CardContent = (props: CardContentProps) => {
     }
   }, [independentField, token0Value, token1Value, rates.currency0, rates.currency1])
 
+  const isInsufficientBalance0 = useMemo(() => {
+    if (!currency0) return false
+    return BN(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]).gt(
+      BN(formatBalance(balance0, currency0.decimals)),
+    )
+  }, [currencyAmounts, balance0, currency0])
+
+  const isInsufficientBalance1 = useMemo(() => {
+    if (!currency1) return false
+    return BN(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]).gt(
+      BN(formatBalance(balance1, currency1.decimals)),
+    )
+  }, [currencyAmounts, balance1, currency1])
+
   const isDisabled = useMemo(
     () =>
       !currency0 ||
       !currency1 ||
       !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0] ||
       !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1] ||
-      BN(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]).gt(BN(formatBalance(balance0, currency0.decimals))) ||
-      BN(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]).gt(BN(formatBalance(balance1, currency1.decimals))),
-    [currency0, currency1, currencyAmounts, balance0, balance1],
+      isInsufficientBalance0 ||
+      isInsufficientBalance1 ||
+      isPoolDataLoading ||
+      isLpBalanceLoading,
+    [
+      currency0,
+      currency1,
+      currencyAmounts,
+      isInsufficientBalance0,
+      isInsufficientBalance1,
+      isPoolDataLoading,
+      isLpBalanceLoading,
+    ],
   )
 
   const updateQueryParams = useCallback(() => {
@@ -240,6 +263,7 @@ export const CardContent = (props: CardContentProps) => {
               {t('Choose a valid trading pair')}
             </Text>
           }
+          disabled={isPoolDataLoading}
         />
 
         <AddIcon mt="12px" width={28} />
@@ -253,6 +277,7 @@ export const CardContent = (props: CardContentProps) => {
             onCurrencySelect={(newCurrency) => onCurrencySelection(CurrencyField.ADD_LIQUIDITY_CURRENCY1, newCurrency)}
             showMaxButton={false}
             showQuickInputButton={false}
+            disabled={isPoolDataLoading}
           />
         </Box>
 
@@ -262,10 +287,10 @@ export const CardContent = (props: CardContentProps) => {
             {poolData ? (
               <Box>
                 <Text>
-                  1 {currency0?.symbol} ≈ {rates.currency0.toString()} {currency1?.symbol}
+                  1 {currency0?.symbol} ≈ {rates.currency0.toString() || '-'} {currency1?.symbol}
                 </Text>
                 <Text>
-                  1 {currency1?.symbol} ≈ {rates.currency1.toString()} {currency0?.symbol}
+                  1 {currency1?.symbol} ≈ {rates.currency1.toString() || '-'} {currency0?.symbol}
                 </Text>
               </Box>
             ) : isPoolDataLoading ? (
@@ -298,7 +323,22 @@ export const CardContent = (props: CardContentProps) => {
           <ConnectWalletButton width="100%" />
         ) : (
           <Button onClick={openConfirmationModal} width="100%" disabled={isDisabled}>
-            {t('Supply')}
+            {isPoolDataLoading ? (
+              <>
+                {t('Updating')} <Loading ml="8px" size="14px" />{' '}
+              </>
+            ) : isInsufficientBalance0 || isInsufficientBalance1 ? (
+              t('Insufficient %tokens% Balance', {
+                tokens:
+                  isInsufficientBalance0 && !isInsufficientBalance1
+                    ? currency0?.symbol
+                    : !isInsufficientBalance0 && isInsufficientBalance1
+                    ? currency1?.symbol
+                    : `${currency0?.symbol} & ${currency1?.symbol}`,
+              })
+            ) : (
+              t('Supply')
+            )}
           </Button>
         )}
       </StyledCardFooter>
