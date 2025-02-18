@@ -55,6 +55,7 @@ describe('getFarmApr', () => {
     expect(cakeRewardsApr).toEqual(4204800)
     expect(lpRewardsApr).toEqual(0)
   })
+  /* eslint-disable address/addr-type */
   it(`get the correct pool APR combined with LP APR`, () => {
     const { cakeRewardsApr, lpRewardsApr } = getFarmApr(
       ChainId.BSC,
@@ -67,4 +68,5 @@ describe('getFarmApr', () => {
     expect(cakeRewardsApr).toEqual(4204800)
     expect(lpRewardsApr).toEqual(lpAprs['0x0ed7e52944161450477ee417de9cd3a859b14fd0'])
   })
+  /* eslint-enable address/addr-type */
 })
