@@ -1,5 +1,14 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Button, ChevronRightIcon, Heading, ModalV2, MotionModal, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import {
+  Button,
+  ChevronRightIcon,
+  Heading,
+  ModalV2,
+  MotionModal,
+  PreTitle,
+  Text,
+  useMatchBreakpoints,
+} from '@pancakeswap/uikit'
 import { setRefundModalAtom } from 'atoms/modals/refundModalAtom'
 import { LightGreyCard } from 'components/Card'
 import { GrabberBar } from 'components/Misc/GrabberBar'
@@ -8,6 +17,7 @@ import { useCallback } from 'react'
 import styled from 'styled-components'
 import { SlippageSettings } from './SlippageSettings'
 import { TransactionDeadlineSettings } from './TransactionDeadlineSettings'
+import { RoutingPreference } from './RoutingPreference'
 
 const TextButton = styled(Button).attrs({ variant: 'text', scale: 'sm' })`
   padding: 0;
@@ -45,19 +55,16 @@ export const SettingsModal = ({ isOpen, onDismiss }: SettingsModalProps) => {
       >
         {isSmallScreen && <Heading mb="24px">{t('Settings')}</Heading>}
 
-        <Text color="secondary" fontSize="12px" textTransform="uppercase" bold>
-          {t('Slippage and Deadline')}
-        </Text>
+        <PreTitle>{t('Slippage and Deadline')}</PreTitle>
 
         <SlippageSettings mt="8px" />
         <TransactionDeadlineSettings mt="16px" />
+        <RoutingPreference mt="16px" />
 
         <LightGreyCard mt="24px">
-          <Text textTransform="uppercase" color="secondary" small bold>
-            {t('Failed Transactions Refund')}
-          </Text>
+          <PreTitle>{t('Failed Transactions Refund')}</PreTitle>
 
-          <Text mt="12px">
+          <Text mt="12px" fontSize="14px">
             {t(
               'Failed “Add Liquidity” transactions may introduce leftover tokens in the pool contract. To check and claim those tokens, enter the token pairs within the following page.',
             )}

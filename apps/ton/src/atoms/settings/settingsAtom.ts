@@ -3,11 +3,10 @@ import { atomWithStorage } from 'jotai/utils'
 
 export const settingsAtom = atomWithStorage('pcs:settings', {
   slippage: Slippage.DEFAULT,
-
   /**
    * Transaction Deadline in Minutes
    */
   transactionDeadline: DEFAULT_DEADLINE,
 
-  allowMultihop: DEFAULT_MULTIHOP_ENABLED,
+  allowMultihops: DEFAULT_MULTIHOP_ENABLED,
 })

@@ -9,6 +9,7 @@ import { useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { TonContext } from 'ton/context/TonContext'
 import { getJettonWalletAddress, parseAddress } from 'ton/utils/address'
+import { generateQueryId } from 'ton/utils/generateQueryId'
 import { getTransactionByBOC } from 'ton/utils/transaction'
 
 interface SwapArgs {
@@ -25,6 +26,7 @@ export const useSwap = () => {
 
   const getTxRequest = useCallback(
     async ({ amount0, minOut, token0, token1 }) => {
+      const queryId = generateQueryId()
       const client = TonContext.instance.getClient()
       const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter].testnet.address)
 
@@ -49,7 +51,7 @@ export const useSwap = () => {
       const payload = beginCell()
         .store(
           storeJettonTransferMessage({
-            queryId: 1n,
+            queryId,
             // input amount
             amount: toNano(amount0),
             destination: routerAddress,

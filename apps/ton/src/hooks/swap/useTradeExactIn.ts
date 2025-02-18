@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { Currency, CurrencyAmount, Trade, bestTradeExactIn, isTradeBetter } from '@pancakeswap/ton-v2-sdk'
-import { useUserSingleHopOnly } from '@pancakeswap/utils/user'
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } from 'config/constants/exchange'
+import { useAtomValue } from 'jotai'
+import { settingsAtom } from 'atoms/settings/settingsAtom'
 
 import { useAllCommonPairs } from './useAllCommonPairs'
 
@@ -14,8 +15,7 @@ export function useTradeExactIn(
   currencyOut?: Currency,
 ): { isLoading: boolean; data: Trade<Currency, Currency, TradeType> | null; refresh: () => void } {
   const { data: allowedPairs, isLoading, refresh } = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
-
-  const [singleHopOnly] = useUserSingleHopOnly()
+  const { allowMultihops } = useAtomValue(settingsAtom)
 
   return useMemo(() => {
     const res = {
@@ -27,7 +27,7 @@ export function useTradeExactIn(
       return res
     }
     if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
-      if (singleHopOnly) {
+      if (!allowMultihops) {
         return {
           ...res,
           isLoading: false,
@@ -53,5 +53,5 @@ export function useTradeExactIn(
       isLoading: false,
       data: null,
     }
-  }, [refresh, allowedPairs, currencyAmountIn, currencyOut, singleHopOnly, isLoading])
+  }, [refresh, allowedPairs, currencyAmountIn, currencyOut, allowMultihops, isLoading])
 }
