@@ -77,9 +77,12 @@ export const SwapForm = () => {
   const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
   const { data: activeList, isFetched } = useAtomValue(fetchListAtom)
 
-  const isInsufficientBalance0 = useMemo(
-    () => (parsedAmounts[Field.INPUT] ? parsedAmounts[Field.INPUT].greaterThan(balance0) : false),
-    [balance0, parsedAmounts],
+  const [isInsufficientBalance0, isInsufficientLiquidity] = useMemo(
+    () => [
+      parsedAmounts[Field.INPUT] ? parsedAmounts[Field.INPUT].greaterThan(balance0) : false,
+      !trade?.route.path.length && !isTradeLoading,
+    ],
+    [balance0, parsedAmounts, isTradeLoading, trade?.route.path.length],
   )
 
   const handleSwap = useCallback(async () => {
@@ -87,6 +90,7 @@ export const SwapForm = () => {
       return
     }
     swap({
+      trade,
       minOut: isExactIn
         ? trade.minimumAmountOut(allowedSlippage).toExact()
         : trade.maximumAmountIn(allowedSlippage).toExact(),
@@ -185,8 +189,8 @@ export const SwapForm = () => {
         </SwapUIV2.InputPanelWrapper>
       </SwapUIV2.SwapTabAndInputPanelWrapper>
       <ButtonAndDetailsPanel
-        shouldRenderDetails={Boolean(typedValue)}
-        swapCommitButton={<SwapCommitButton disabled={!trade} isLoading={isTradeLoading} onClick={confirmSwap} />}
+        shouldRenderDetails={Boolean(typedValue) && !isInsufficientLiquidity}
+        swapCommitButton={<SwapCommitButton trade={trade} isLoading={isTradeLoading} onClick={confirmSwap} />}
         pricingAndSlippage={
           <PricingAndSlippage
             isLoading={isTradeLoading}
