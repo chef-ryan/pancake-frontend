@@ -42,9 +42,9 @@ export const GreyCard = styled(Card)`
   background-color: ${({ theme }) => theme.colors.dropdown};
 `
 
-export const LightTertiaryCard = styled(Card)<{ active: boolean }>`
-  border: 1px solid ${({ theme, active }) => (active ? 'none' : theme.colors.cardBorder)};
+export const LightTertiaryCard = styled(Card)<{ active?: boolean }>`
   background-color: ${({ theme }) => theme.colors.tertiary};
+  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
 `
 
 export const DisableCard = styled(Card)`

@@ -1,7 +1,8 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Button, ButtonProps, ChevronDownIcon, WalletFilledV2Icon } from '@pancakeswap/uikit'
 import { useTonConnectUI } from '@tonconnect/ui-react'
-import { useAtomValue } from 'jotai'
+import { setWalletModalAtom } from 'atoms/modals/walletModalAtom'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import styled from 'styled-components'
 import { isConnectedAtom } from 'ton/atom/isConnectedAtom'
@@ -32,18 +33,19 @@ export const ConnectWalletButton = (props: ButtonProps) => {
 
   const [tonUI] = useTonConnectUI()
   const isConnected = useAtomValue(isConnectedAtom)
+  const setWalletModal = useSetAtom(setWalletModalAtom)
 
   const handleConnect = useCallback(() => {
     tonUI.openModal()
   }, [tonUI])
 
-  const handleDisconnect = useCallback(() => {
-    tonUI.disconnect()
-  }, [tonUI])
+  const openWalletModal = useCallback(() => {
+    setWalletModal()
+  }, [setWalletModal])
 
   if (isConnected) {
     return (
-      <ConnectedButton onClick={handleDisconnect} endIcon={<ChevronDownIcon color="textSubtle" />} {...props}>
+      <ConnectedButton onClick={openWalletModal} endIcon={<ChevronDownIcon color="textSubtle" />} {...props}>
         <WalletCirclularIcon color="primary" />
       </ConnectedButton>
     )

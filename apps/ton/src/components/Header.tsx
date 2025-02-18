@@ -16,6 +16,7 @@ import { bridgeLink } from 'config/constants/endpoints'
 import { useAtomValue } from 'jotai'
 import styled from 'styled-components'
 import { networkAtom } from 'ton/atom/networkAtom'
+import { Logo } from './Logo'
 import { SettingsModal } from './Modals/SettingsModal'
 
 const StyledHeader = styled.header`
@@ -47,8 +48,7 @@ export const Header = ({ showBridgeLink }: HeaderProps) => {
         <LogoIcon width={24} />
 
         <Flex ml="-4px" alignItems="center">
-          {/* TODO: Move images to assets */}
-          <img src="/images/ton-logo.png" alt="TON" width={26} />
+          <Logo />
           <Text ml="8px">TON</Text>
           {network === 'testnet' && (
             <Tag variant="textSubtle" scale="sm" px="8px" ml="8px">
