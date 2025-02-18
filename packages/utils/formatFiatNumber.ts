@@ -20,7 +20,7 @@ export function formatFiatNumber(
     return valueWithSymbol(0, fiatSymbol)
   }
   const maximum = BIG_TEN.exponentiatedBy(maximumSignificantDigits).minus(1)
-  const minimum = BIG_ONE.div(new BigNumber(10).exponentiatedBy(maximumSignificantDigits - 1))
+  const minimum = BIG_ONE.div(BIG_TEN.exponentiatedBy(maximumSignificantDigits - 1))
   // If less than minimum, just display <0.01
   if (bnValue.lt(minimum)) {
     return `<${valueWithSymbol('0.01', fiatSymbol)}`

@@ -14,6 +14,7 @@ import { useAccount } from 'wagmi'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useReadContract } from '@pancakeswap/wagmi'
 import { safeGetAddress } from 'utils'
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { DISABLED_POOLS } from '../constant'
 import { FixedStakingPool, StakedPosition } from '../type'
 
@@ -63,7 +64,7 @@ export function useIfUserLocked() {
     if (!Array.isArray(data))
       return {
         locked: false,
-        amount: getBalanceAmount(new BigNumber(0)),
+        amount: getBalanceAmount(BIG_ZERO),
       }
 
     const [userShares, , , , , lockEndTime, , locked, lockedAmount] = data

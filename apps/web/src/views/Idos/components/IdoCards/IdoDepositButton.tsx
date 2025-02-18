@@ -37,6 +37,7 @@ import { useIDOConfig } from 'views/Idos/hooks/ido/useIDOConfig'
 import { useIDODuration } from 'views/Idos/hooks/ido/useIDODuration'
 import type { IDOUserStatus } from 'views/Idos/hooks/ido/useIDOUserStatus'
 import { VerifyStatus, useW3WAccountVerify } from 'views/Idos/hooks/w3w/useW3WAccountVerify'
+import { BIG_TEN } from '@pancakeswap/utils/bigNumber'
 import { useIDODepositCallback } from '../../hooks/ido/useIDODepositCallback'
 
 export const formatDollarAmount = (amount: number) => {
@@ -104,10 +105,7 @@ export const IdoDepositButton: React.FC<{
       setValue(maxAmountInput.toExact())
     }
   }, [maxAmountInput])
-  const tokenBalanceMultiplier = useMemo(
-    () => new BigNumber(10).pow(stakeCurrency?.decimals ?? 18),
-    [stakeCurrency?.decimals],
-  )
+  const tokenBalanceMultiplier = useMemo(() => BIG_TEN.pow(stakeCurrency?.decimals ?? 18), [stakeCurrency?.decimals])
   const depositAmount =
     stakeCurrency && value !== ''
       ? CurrencyAmount.fromRawAmount(stakeCurrency, new BigNumber(value ?? 0).times(tokenBalanceMultiplier).toFixed(0))

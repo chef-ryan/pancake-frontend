@@ -9,6 +9,7 @@ import { useGetPublicIfoData } from 'views/Ifos/hooks/v3/useGetPublicIfoData'
 import type { VestingData } from 'views/Ifos/hooks/vesting/useFetchUserWalletIfoData'
 import dayjs from 'dayjs'
 import useLedgerTimestamp from 'hooks/useLedgerTimestamp'
+import { BIG_ONE } from '@pancakeswap/utils/bigNumber'
 import Claim from './Claim'
 
 const WhiteCard = styled.div`
@@ -61,7 +62,7 @@ const Info: React.FC<React.PropsWithChildren<InfoProps>> = ({ poolId, data, fetc
   }, [offeringAmountInToken, vestingAmountTotal, vestingPercentage])
 
   const releasedAtSaleEnd = useMemo(() => {
-    return totalPurchased.times(new BigNumber(1).minus(vestingPercentage))
+    return totalPurchased.times(BIG_ONE.minus(vestingPercentage))
   }, [totalPurchased, vestingPercentage])
 
   const received = useMemo(() => {

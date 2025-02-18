@@ -114,8 +114,8 @@ const Staked: React.FunctionComponent<React.PropsWithChildren<StackedActionProps
 
   const vaultData = useVaultPoolByKey(vaultKey) as DeserializedLockedCakeVault
 
-  const userShares = vaultData.userData?.userShares ?? new BigNumber(0)
-  const cakeAsBigNumber = vaultData.userData?.balance?.cakeAsBigNumber ?? new BigNumber(0)
+  const userShares = vaultData.userData?.userShares ?? BIG_ZERO
+  const cakeAsBigNumber = vaultData.userData?.balance?.cakeAsBigNumber ?? BIG_ZERO
   const cakeAsNumberBalance = vaultData.userData?.balance?.cakeAsNumberBalance ?? 0
 
   const { lockEndDate, remainingTime, burnStartTime } = useUserDataInVaultPresenter({
@@ -438,7 +438,7 @@ const Staked: React.FunctionComponent<React.PropsWithChildren<StackedActionProps
                       '-'
                     ) : (
                       t('%amount% Burned', {
-                        amount: getFullDisplayBalance(vaultData.userData?.currentOverdueFee ?? new BigNumber(0), 18, 5),
+                        amount: getFullDisplayBalance(vaultData.userData?.currentOverdueFee ?? BIG_ZERO, 18, 5),
                       })
                     )
                   ) : vaultData.userData?.lockEndTime ? (
@@ -461,7 +461,7 @@ const Staked: React.FunctionComponent<React.PropsWithChildren<StackedActionProps
                   '-'
                 ) : (
                   t('%amount% Burned', {
-                    amount: getFullDisplayBalance(vaultData.userData?.currentOverdueFee ?? new BigNumber(0), 18, 5),
+                    amount: getFullDisplayBalance(vaultData.userData?.currentOverdueFee ?? BIG_ZERO, 18, 5),
                   })
                 )
               ) : vaultData.userData?.lockEndTime ? (

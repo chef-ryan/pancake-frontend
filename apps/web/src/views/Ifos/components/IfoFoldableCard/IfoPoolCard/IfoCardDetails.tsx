@@ -2,18 +2,14 @@ import { Ifo, PoolIds } from '@pancakeswap/ifos'
 import { useTranslation } from '@pancakeswap/localization'
 import { CAKE } from '@pancakeswap/tokens'
 import { Box, Flex, IfoSkeletonCardDetails, Skeleton, Text, TooltipText, useTooltip } from '@pancakeswap/uikit'
-import { BIG_ONE_HUNDRED } from '@pancakeswap/utils/bigNumber'
+import { BIG_ONE, BIG_ONE_HUNDRED, BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { formatNumber, getBalanceNumber } from '@pancakeswap/utils/formatBalance'
-import BigNumber from 'bignumber.js'
 import { useStablecoinPrice } from 'hooks/useStablecoinPrice'
 import { ReactNode, useMemo } from 'react'
 import { styled } from 'styled-components'
 import { multiplyPriceByAmount } from 'utils/prices'
 import { isBasicSale } from 'views/Ifos/hooks/v7/helpers'
 import { PublicIfoData, WalletIfoData } from 'views/Ifos/types'
-
-const ZERO = new BigNumber(0)
-const ONE = new BigNumber(1)
 
 export interface IfoCardDetailsProps {
   poolId: PoolIds
@@ -173,9 +169,10 @@ const IfoCardDetails: React.FC<React.PropsWithChildren<IfoCardDetailsProps>> = (
   let version3MaxTokens = walletIfoData.ifoCredit?.creditLeft
     ? // if creditLeft > limit show limit else show creditLeft
       walletIfoData.ifoCredit.creditLeft.gt(
-        poolCharacteristic?.limitPerUserInLP.minus(walletCharacteristic?.amountTokenCommittedInLP || ZERO) || ZERO,
+        poolCharacteristic?.limitPerUserInLP.minus(walletCharacteristic?.amountTokenCommittedInLP || BIG_ZERO) ||
+          BIG_ZERO,
       )
-      ? poolCharacteristic?.limitPerUserInLP.minus(walletCharacteristic?.amountTokenCommittedInLP || ZERO)
+      ? poolCharacteristic?.limitPerUserInLP.minus(walletCharacteristic?.amountTokenCommittedInLP || BIG_ZERO)
       : walletIfoData.ifoCredit.creditLeft
     : null
 
@@ -188,14 +185,14 @@ const IfoCardDetails: React.FC<React.PropsWithChildren<IfoCardDetailsProps>> = (
       ? version3MaxTokens
         ? getBalanceNumber(version3MaxTokens, ifo.currency.decimals)
         : 0
-      : getBalanceNumber(poolCharacteristic?.limitPerUserInLP || ZERO, ifo.currency.decimals)
+      : getBalanceNumber(poolCharacteristic?.limitPerUserInLP || BIG_ZERO, ifo.currency.decimals)
   const taxRate = `${poolCharacteristic?.taxRate || 0}%`
 
   const totalCommittedPercent = poolCharacteristic?.totalAmountPool
     .div(poolCharacteristic?.raisingAmountPool)
     .times(100)
     .toFixed(2)
-  const totalLPCommitted = getBalanceNumber(poolCharacteristic?.totalAmountPool || ZERO, ifo.currency.decimals)
+  const totalLPCommitted = getBalanceNumber(poolCharacteristic?.totalAmountPool || BIG_ZERO, ifo.currency.decimals)
   const totalLPCommittedInUSD = currencyPriceInUSD.times(totalLPCommitted)
   const totalCommitted = `~$${formatNumber(totalLPCommittedInUSD.toNumber(), 0, 0)} (${totalCommittedPercent}%)`
 
@@ -203,13 +200,13 @@ const IfoCardDetails: React.FC<React.PropsWithChildren<IfoCardDetailsProps>> = (
     .minus(poolCharacteristic.raisingAmountPool)
     .times(poolCharacteristic.taxRate)
     .times(0.01)
-  const sumTaxesOverflowInUSD = currencyPriceInUSD.times(sumTaxesOverflow || ZERO)
+  const sumTaxesOverflowInUSD = currencyPriceInUSD.times(sumTaxesOverflow || BIG_ZERO)
   const pricePerTokenWithFeeToOriginalRatio = sumTaxesOverflow
-    ?.plus(poolCharacteristic?.raisingAmountPool || ZERO)
-    .div(poolCharacteristic?.offeringAmountPool || ONE)
-    .div(poolCharacteristic?.raisingAmountPool.div(poolCharacteristic.offeringAmountPool) || ONE)
+    ?.plus(poolCharacteristic?.raisingAmountPool || BIG_ZERO)
+    .div(poolCharacteristic?.offeringAmountPool || BIG_ONE)
+    .div(poolCharacteristic?.raisingAmountPool.div(poolCharacteristic.offeringAmountPool) || BIG_ONE)
   const pricePerTokenWithFeeNumber = pricePerTokenWithFeeToOriginalRatio
-    ?.times(ifo.tokenOfferingPrice || ONE)
+    ?.times(ifo.tokenOfferingPrice || BIG_ONE)
     .toNumber()
   const maxPrecision = ifo.tokenOfferingPrice && ifo.tokenOfferingPrice < 1 ? 4 : 2
 
@@ -217,7 +214,7 @@ const IfoCardDetails: React.FC<React.PropsWithChildren<IfoCardDetailsProps>> = (
   const raisingTokenToBurn =
     ifo[poolId]?.cakeToBurn ||
     (sumTaxesOverflowInUSD.gt(0) &&
-      `${formatNumber(getBalanceNumber(sumTaxesOverflow || ZERO), 0, 2)} (~$${formatNumber(
+      `${formatNumber(getBalanceNumber(sumTaxesOverflow || BIG_ZERO), 0, 2)} (~$${formatNumber(
         getBalanceNumber(sumTaxesOverflowInUSD),
         0,
         2,

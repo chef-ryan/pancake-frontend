@@ -1,4 +1,5 @@
 import { STABLE_SUPPORTED_CHAIN_IDS } from '@pancakeswap/stable-swap-sdk'
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import BigNumber from 'bignumber.js'
 import { chainIdToExplorerInfoChainName, explorerApiClient } from 'state/info/api/client'
 import { operations } from 'state/info/api/schema'
@@ -21,15 +22,15 @@ export const getAprsForStableFarm = async (stableSwapAddress?: string, chainId?:
         .then((res) => res.data)
 
       if (!data) {
-        return new BigNumber(0)
+        return BIG_ZERO
       }
 
       return new BigNumber(data.apr7d).multipliedBy(100)
     }
-    return new BigNumber(0)
+    return BIG_ZERO
   } catch (error) {
     console.error(error, '[LP APR Update] getAprsForStableFarm error')
   }
 
-  return new BigNumber('0')
+  return BIG_ZERO
 }

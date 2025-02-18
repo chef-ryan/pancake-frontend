@@ -15,6 +15,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Box, Flex, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { BIG_TEN } from '@pancakeswap/utils/bigNumber'
 import { useIsWrapperWhiteList } from '../../hooks/useWrapperBooster'
 import { ActionPanel } from './ActionPanel'
 
@@ -100,8 +101,8 @@ export const TableRow: React.FC<Props> = ({ config, farmsV3, aprDataList, update
     queryFn: async () => {
       const result = await adapterContract.read.tokenPerShare()
       return new BigNumber(result[0].toString())
-        .div(new BigNumber(10).pow(currencyA.decimals))
-        .div(new BigNumber(result[1].toString()).div(new BigNumber(10).pow(currencyB.decimals)))
+        .div(BIG_TEN.pow(currencyA.decimals))
+        .div(new BigNumber(result[1].toString()).div(BIG_TEN.pow(currencyB.decimals)))
         .toNumber()
     },
 

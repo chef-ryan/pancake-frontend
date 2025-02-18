@@ -11,6 +11,7 @@ import { useMemo, useState } from 'react'
 import { Address } from 'viem'
 
 import { isAddressEqual } from 'utils'
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { FixedStakingCard } from './components/FixedStakingCard'
 import FixedStakingRow from './components/FixedStakingRow'
 import { useStakedPools, useStakedPositionsByUser } from './hooks/useStakedPools'
@@ -51,7 +52,7 @@ const FixedStaking = () => {
       const minLockDayPercent = min(pools.map((p) => p.lockDayPercent || p.boostDayPercent))
       const maxLockDayPercent = max(pools.map((p) => p.boostDayPercent || p.lockDayPercent))
 
-      const totalDeposited = pools.reduce((sum, p) => sum.plus(p.totalDeposited), new BigNumber(0))
+      const totalDeposited = pools.reduce((sum, p) => sum.plus(p.totalDeposited), BIG_ZERO)
 
       return {
         [key]: {

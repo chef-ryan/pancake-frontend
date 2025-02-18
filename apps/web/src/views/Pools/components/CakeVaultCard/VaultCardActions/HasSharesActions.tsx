@@ -23,6 +23,7 @@ import { useCakePrice } from 'hooks/useCakePrice'
 import { useVaultPoolByKey } from 'state/pools/hooks'
 import { VaultKey } from 'state/types'
 import { getVaultPosition, VaultPosition } from 'utils/cakePool'
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import NotEnoughTokensModal from '../../Modals/NotEnoughTokensModal'
 import VaultStakeModal from '../VaultStakeModal'
 
@@ -59,7 +60,7 @@ const HasSharesActions: React.FC<React.PropsWithChildren<HasStakeActionProps>> =
     <VaultStakeModal stakingMax={stakingTokenBalance} performanceFee={performanceFee} pool={pool} />,
   )
   const [onPresentUnstake] = useModal(
-    <VaultStakeModal stakingMax={cakeAsBigNumber ?? new BigNumber(0)} pool={pool} isRemovingStake />,
+    <VaultStakeModal stakingMax={cakeAsBigNumber ?? BIG_ZERO} pool={pool} isRemovingStake />,
     true,
     true,
     `withdraw-vault-${pool.sousId}-${pool.vaultKey}`,

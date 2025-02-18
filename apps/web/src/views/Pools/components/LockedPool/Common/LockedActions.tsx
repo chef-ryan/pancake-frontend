@@ -47,10 +47,10 @@ const LockedActions: React.FC<React.PropsWithChildren<LockedActionsPropsType & B
             variant={variant || 'primary'}
             lockEndTime={lockEndTime ?? ''}
             lockStartTime={lockStartTime}
-            currentLockedAmount={lockedAmount ?? new BigNumber(0)}
+            currentLockedAmount={lockedAmount ?? BIG_ZERO}
             stakingToken={stakingToken}
             currentBalance={currentBalance}
-            stakingTokenBalance={stakingTokenBalance ?? new BigNumber(0)}
+            stakingTokenBalance={stakingTokenBalance ?? BIG_ZERO}
             stakingTokenPrice={stakingTokenPrice}
           />
         </Box>

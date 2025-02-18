@@ -1,5 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { PairDataTimeWindowEnum, UseModalV2Props } from '@pancakeswap/uikit'
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { encodeSqrtRatioX96, parseProtocolFees, TickMath } from '@pancakeswap/v3-sdk'
 import { RoiCalculatorModalV2 } from '@pancakeswap/widgets-internal/roi'
 import BigNumber from 'bignumber.js'
@@ -77,7 +78,7 @@ const AprModal: React.FC<V3PoolAprModalProps> = ({ modal, poolInfo, userPosition
   )
   const lmPoolLiquidity = useLmPoolLiquidity(poolInfo.lpAddress, poolInfo.chainId)
   const cakeAprFactor = useMemo(() => {
-    if (!cakeApr?.poolWeight || !cakeApr?.cakePerYear) return new BigNumber(0)
+    if (!cakeApr?.poolWeight || !cakeApr?.cakePerYear) return BIG_ZERO
 
     return new BigNumber(cakeApr.poolWeight)
       .times(cakeApr?.cakePerYear)

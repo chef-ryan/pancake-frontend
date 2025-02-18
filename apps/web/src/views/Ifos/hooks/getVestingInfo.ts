@@ -1,6 +1,7 @@
 import { PoolIds } from '@pancakeswap/ifos'
 import { getFullDisplayBalance } from '@pancakeswap/utils/formatBalance'
 import BigNumber from 'bignumber.js'
+import { BIG_ONE } from '@pancakeswap/utils/bigNumber'
 import { VestingData } from './vesting/fetchUserWalletIfoData'
 
 export const getVestingInfo = (poolId: PoolIds, data: VestingData) => {
@@ -21,7 +22,7 @@ export const getVestingInfo = (poolId: PoolIds, data: VestingData) => {
 
   const vestingPercentage = new BigNumber(vestingInformationPercentage).times(0.01)
 
-  const releasedAtSaleEnd = new BigNumber(offeringAmountInToken).times(new BigNumber(1).minus(vestingPercentage))
+  const releasedAtSaleEnd = new BigNumber(offeringAmountInToken).times(BIG_ONE.minus(vestingPercentage))
 
   const amountReleased = new BigNumber(releasedAtSaleEnd).plus(vestingReleased).plus(vestingComputeReleasableAmount)
 

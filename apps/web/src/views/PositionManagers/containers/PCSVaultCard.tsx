@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js'
 import { usePositionManagerAdapterContract } from 'hooks/useContract'
 import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
 import { memo, useEffect, useMemo } from 'react'
+import { BIG_TEN } from '@pancakeswap/utils/bigNumber'
 import { DuoTokenVaultCard } from '../components'
 import {
   AprData,
@@ -65,8 +66,8 @@ export const ThirdPartyVaultCard = memo(function PCSVaultCard({
     queryFn: async () => {
       const result = await adapterContract.read.tokenPerShare()
       return new BigNumber(result[0].toString())
-        .div(new BigNumber(10).pow(currencyA.decimals))
-        .div(new BigNumber(result[1].toString()).div(new BigNumber(10).pow(currencyB.decimals)))
+        .div(BIG_TEN.pow(currencyA.decimals))
+        .div(new BigNumber(result[1].toString()).div(BIG_TEN.pow(currencyB.decimals)))
         .toNumber()
     },
 

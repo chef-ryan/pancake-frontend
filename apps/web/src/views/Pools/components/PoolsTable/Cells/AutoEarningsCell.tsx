@@ -4,10 +4,10 @@ import { styled } from 'styled-components'
 
 import { useTranslation } from '@pancakeswap/localization'
 import { Token } from '@pancakeswap/sdk'
-import BigNumber from 'bignumber.js'
 import { useVaultPoolByKey } from 'state/pools/hooks'
 import { VaultKey } from 'state/types'
 import { getCakeVaultEarnings } from 'views/Pools/helpers'
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import AutoEarningsBreakdown from '../../AutoEarningsBreakdown'
 
 interface AutoEarningsCellProps {
@@ -37,9 +37,9 @@ const AutoEarningsCell: React.FC<React.PropsWithChildren<AutoEarningsCellProps>>
     userShares,
     cakeAtLastUserAction,
     isLoading,
-    currentOverdueFee = new BigNumber(0),
-    userBoostedShare = new BigNumber(0),
-    currentPerformanceFee = new BigNumber(0),
+    currentOverdueFee = BIG_ZERO,
+    userBoostedShare = BIG_ZERO,
+    currentPerformanceFee = BIG_ZERO,
   } = userData
   const { hasAutoEarnings, autoCakeToDisplay, autoUsdToDisplay } = getCakeVaultEarnings(
     account,
@@ -47,9 +47,7 @@ const AutoEarningsCell: React.FC<React.PropsWithChildren<AutoEarningsCellProps>>
     userShares,
     pricePerFullShare,
     earningTokenPrice,
-    vaultKey === VaultKey.CakeVault
-      ? currentPerformanceFee.plus(currentOverdueFee).plus(userBoostedShare)
-      : new BigNumber(0),
+    vaultKey === VaultKey.CakeVault ? currentPerformanceFee.plus(currentOverdueFee).plus(userBoostedShare) : BIG_ZERO,
   )
 
   const labelText = t('Recent CAKE profit')

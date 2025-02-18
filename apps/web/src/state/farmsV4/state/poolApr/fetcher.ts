@@ -360,7 +360,7 @@ const calcV2PoolApr = ({
   if (cakePerSecond === 0n) {
     return {
       value: '0',
-      cakePerYear: new BigNumber(0),
+      cakePerYear: BIG_ZERO,
     }
   }
   const cakePerYear = new BigNumber(SECONDS_PER_YEAR).times(cakePerSecond.toString()).dividedBy(1e18)

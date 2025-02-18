@@ -17,6 +17,7 @@ import {
   useToast,
   useTooltip,
 } from '@pancakeswap/uikit'
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { formatNumber, getBalanceAmount } from '@pancakeswap/utils/formatBalance'
 import { getFullDecimalMultiplier } from '@pancakeswap/utils/getFullDecimalMultiplier'
 import BigNumber from 'bignumber.js'
@@ -102,11 +103,11 @@ const ContributeModal: React.FC<React.PropsWithChildren<Props>> = ({
       // limit of 0 in Basic Sale means Unlimited
       if (limitPerUserInLP?.isEqualTo(0)) return BigNumber(MaxUint256.toString())
 
-      return limitPerUserInLP?.minus(amountTokenCommittedInLP || new BigNumber(0))
+      return limitPerUserInLP?.minus(amountTokenCommittedInLP || BIG_ZERO)
     }
     if (limitPerUserInLP?.isGreaterThan(0)) {
-      return limitPerUserInLP.minus(amountTokenCommittedInLP || new BigNumber(0)).isLessThanOrEqualTo(creditLeft)
-        ? limitPerUserInLP.minus(amountTokenCommittedInLP || new BigNumber(0))
+      return limitPerUserInLP.minus(amountTokenCommittedInLP || BIG_ZERO).isLessThanOrEqualTo(creditLeft)
+        ? limitPerUserInLP.minus(amountTokenCommittedInLP || BIG_ZERO)
         : creditLeft
     }
     return creditLeft
@@ -145,7 +146,7 @@ const ContributeModal: React.FC<React.PropsWithChildren<Props>> = ({
 
   const isWarning =
     valueWithTokenDecimals.isGreaterThan(userCurrencyBalance) ||
-    valueWithTokenDecimals.isGreaterThan(maximumTokenEntry || new BigNumber(0))
+    valueWithTokenDecimals.isGreaterThan(maximumTokenEntry || BIG_ZERO)
 
   return (
     <Modal title={t('Contribute %symbol%', { symbol: currency.symbol })} onDismiss={onDismiss}>
@@ -158,7 +159,7 @@ const ContributeModal: React.FC<React.PropsWithChildren<Props>> = ({
               {limitPerUserInLP?.isEqualTo(0) && poolId === PoolIds.poolBasic
                 ? t('No limit')
                 : `${formatNumber(
-                    getBalanceAmount(maximumTokenEntry || new BigNumber(0), currency.decimals).toNumber(),
+                    getBalanceAmount(maximumTokenEntry || BIG_ZERO, currency.decimals).toNumber(),
                     3,
                     3,
                   )} ${ifo.currency.symbol}`}

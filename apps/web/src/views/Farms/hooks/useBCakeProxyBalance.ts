@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useBCakeProxyContract, useCake } from 'hooks/useContract'
 import { useMemo } from 'react'
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { useBCakeProxyContractAddress } from '../../../hooks/useBCakeProxyContractAddress'
 
 const SMALL_AMOUNT_THRESHOLD = new BigNumber(0.001)
@@ -20,7 +21,7 @@ const useBCakeProxyBalance = () => {
 
     queryFn: async () => {
       const rawBalance = await cakeContract?.read.balanceOf([bCakeProxy!.address])
-      return rawBalance ? new BigNumber(rawBalance.toString()) : new BigNumber(0)
+      return rawBalance ? new BigNumber(rawBalance.toString()) : BIG_ZERO
     },
 
     enabled: Boolean(account && bCakeProxy && !isProxyContractAddressLoading),

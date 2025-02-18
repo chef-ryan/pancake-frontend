@@ -1,4 +1,5 @@
 import { bscTokens } from '@pancakeswap/tokens'
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { getBalanceNumber } from '@pancakeswap/utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { easterPrizes, PrizesConfig } from 'config/constants/trading-competition/prizes'
@@ -69,8 +70,8 @@ export const useMoboxCompetitionRewards = ({
   userMoboxRewards?: string | number
 }) => {
   const moboxPriceBUSD = useStablecoinPrice(bscTokens.mbox)
-  const cakeAsBigNumber = userCakeRewards ? new BigNumber(userCakeRewards) : new BigNumber(0)
-  const moboxAsBigNumber = userMoboxRewards ? new BigNumber(userMoboxRewards) : new BigNumber(0)
+  const cakeAsBigNumber = userCakeRewards ? new BigNumber(userCakeRewards) : BIG_ZERO
+  const moboxAsBigNumber = userMoboxRewards ? new BigNumber(userMoboxRewards) : BIG_ZERO
   const cakeBalance = getBalanceNumber(cakeAsBigNumber)
   const moboxBalance = getBalanceNumber(moboxAsBigNumber)
   const cakePrice = useCakePrice()
@@ -95,8 +96,8 @@ export const useModCompetitionRewards = ({
   userDarRewards?: string | number
 }) => {
   const darPriceBUSD = useStablecoinPrice(bscTokens.dar)
-  const cakeAsBigNumber = userCakeRewards ? new BigNumber(userCakeRewards) : new BigNumber(0)
-  const darAsBigNumber = userDarRewards ? new BigNumber(userDarRewards) : new BigNumber(0)
+  const cakeAsBigNumber = userCakeRewards ? new BigNumber(userCakeRewards) : BIG_ZERO
+  const darAsBigNumber = userDarRewards ? new BigNumber(userDarRewards) : BIG_ZERO
   const cakeBalance = getBalanceNumber(cakeAsBigNumber)
   const darBalance = getBalanceNumber(darAsBigNumber, bscTokens.dar.decimals)
   const cakePrice = useCakePrice()

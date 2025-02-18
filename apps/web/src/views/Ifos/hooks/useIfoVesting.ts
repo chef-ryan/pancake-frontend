@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import BigNumber from 'bignumber.js'
 import { PoolIds } from '@pancakeswap/ifos'
 import { PublicIfoData, WalletIfoData } from 'views/Ifos/types'
-import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
+import { BIG_ONE, BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 
 interface UseIfoVestingProps {
   poolId: PoolIds
@@ -29,7 +29,7 @@ const useIfoVesting = ({ poolId, publicIfoData, walletIfoData }: UseIfoVestingPr
   )
 
   const releasedAtSaleEnd = useMemo(() => {
-    return new BigNumber(userPool?.offeringAmountInToken ?? 0).times(new BigNumber(1).minus(vestingPercentage))
+    return new BigNumber(userPool?.offeringAmountInToken ?? 0).times(BIG_ONE.minus(vestingPercentage))
   }, [userPool, vestingPercentage])
 
   const amountReleased = useMemo(() => {

@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useIfoCeiling } from 'state/pools/hooks'
 import { VaultKey } from 'state/types'
 
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { LockedModalBodyPropsType, ModalValidator } from '../types'
 
 import { ENABLE_EXTEND_LOCK_AMOUNT } from '../../../helpers'
@@ -59,7 +60,7 @@ const LockedModalBody: React.FC<React.PropsWithChildren<LockedModalBodyPropsType
           isValidAmount:
             (lockedAmount?.toNumber() ?? 0) > 0 &&
             Boolean(currentBalance?.toNumber()) &&
-            getBalanceAmount(currentBalance ?? new BigNumber(0)).gte(lockedAmount),
+            getBalanceAmount(currentBalance ?? BIG_ZERO).gte(lockedAmount),
           isValidDuration: duration > 0 && duration <= MAX_LOCK_DURATION,
           isOverMax: duration > MAX_LOCK_DURATION,
         }

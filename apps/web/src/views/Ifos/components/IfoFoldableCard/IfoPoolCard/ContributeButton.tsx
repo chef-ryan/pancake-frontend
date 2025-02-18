@@ -12,6 +12,7 @@ import { PublicIfoData, WalletIfoData } from 'views/Ifos/types'
 
 import { useUserVeCakeStatus } from 'components/CrossChainVeCakeModal/hooks/useUserVeCakeStatus'
 import { logGTMIfoCommitEvent } from 'utils/customGTMEventTracking'
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import ContributeModal from './ContributeModal'
 
 interface Props {
@@ -55,7 +56,7 @@ const ContributeButton: React.FC<React.PropsWithChildren<Props>> = ({ poolId, if
   const [onPresentContributeModal] = useModal(
     <ContributeModal
       poolId={poolId}
-      creditLeft={walletIfoData.ifoCredit?.creditLeft || new BigNumber(0)}
+      creditLeft={walletIfoData.ifoCredit?.creditLeft || BIG_ZERO}
       ifo={ifo}
       publicIfoData={publicIfoData}
       walletIfoData={walletIfoData}

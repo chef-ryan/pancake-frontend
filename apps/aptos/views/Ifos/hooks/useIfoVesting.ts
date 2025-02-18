@@ -1,4 +1,4 @@
-import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
+import { BIG_ONE, BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import BigNumber from 'bignumber.js'
 import { PoolIds } from 'config/constants/types'
 import { useMemo } from 'react'
@@ -26,7 +26,7 @@ const useIfoVesting = ({ poolId, publicIfoData, walletIfoData }: UseIfoVestingPr
   }, [userPool.offeringAmountInToken, userPool.vestingAmountTotal, vestingPercentage])
 
   const releasedAtSaleEnd = useMemo(() => {
-    return totalPurchased.times(new BigNumber(1).minus(vestingPercentage))
+    return totalPurchased.times(BIG_ONE.minus(vestingPercentage))
   }, [totalPurchased, vestingPercentage])
 
   const amountReleased = useMemo(() => {

@@ -141,7 +141,7 @@ const ActionPanel: React.FC<React.PropsWithChildren<ActionPanelProps>> = ({ acco
   const { isMobile } = useMatchBreakpoints()
 
   const vaultData = useVaultPoolByKey(vaultKey as Pool.VaultKey) as DeserializedLockedCakeVault
-  const cakeAsBigNumber = vaultData.userData?.balance?.cakeAsBigNumber ?? new BigNumber(0)
+  const cakeAsBigNumber = vaultData.userData?.balance?.cakeAsBigNumber ?? BIG_ZERO
   const vaultPosition = getVaultPosition(vaultData.userData)
 
   const isLocked = vaultData.userData?.locked

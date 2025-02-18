@@ -5,20 +5,18 @@ import { useCakeVault } from 'state/pools/hooks'
 import { getFullDecimalMultiplier } from '@pancakeswap/utils/getFullDecimalMultiplier'
 
 import { DEFAULT_TOKEN_DECIMAL } from 'config'
+import { BIG_ZERO, BIG_ONE } from '@pancakeswap/utils/bigNumber'
 import formatSecondsToWeeks, { secondsToWeeks } from '../../utils/formatSecondsToWeeks'
-
-const ZERO = new BigNumber(0)
-const ONE = new BigNumber(1)
 
 export default function useAvgLockDuration() {
   const { totalLockedAmount, totalShares, totalCakeInVault, pricePerFullShare } = useCakeVault()
 
   const avgLockDurationsInSeconds = useMemo(() => {
-    const flexibleCakeAmount = totalCakeInVault?.minus(totalLockedAmount || ZERO)
-    const flexibleCakeShares = flexibleCakeAmount?.div(pricePerFullShare || ONE).times(DEFAULT_TOKEN_DECIMAL)
-    const lockedCakeBoostedShares = totalShares?.minus(flexibleCakeShares || ZERO)
-    const lockedCakeOriginalShares = totalLockedAmount?.div(pricePerFullShare || ONE).times(DEFAULT_TOKEN_DECIMAL)
-    const avgBoostRatio = lockedCakeBoostedShares?.div(lockedCakeOriginalShares || ONE)
+    const flexibleCakeAmount = totalCakeInVault?.minus(totalLockedAmount || BIG_ZERO)
+    const flexibleCakeShares = flexibleCakeAmount?.div(pricePerFullShare || BIG_ONE).times(DEFAULT_TOKEN_DECIMAL)
+    const lockedCakeBoostedShares = totalShares?.minus(flexibleCakeShares || BIG_ZERO)
+    const lockedCakeOriginalShares = totalLockedAmount?.div(pricePerFullShare || BIG_ONE).times(DEFAULT_TOKEN_DECIMAL)
+    const avgBoostRatio = lockedCakeBoostedShares?.div(lockedCakeOriginalShares || BIG_ONE)
 
     return (
       Math.round(

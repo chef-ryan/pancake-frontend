@@ -8,10 +8,10 @@ import { Pool } from '@pancakeswap/widgets-internal'
 import { useTranslation } from '@pancakeswap/localization'
 import { Token } from '@pancakeswap/sdk'
 import { getBalanceNumber } from '@pancakeswap/utils/formatBalance'
-import { BigNumber } from 'bignumber.js'
 import { DeserializedLockedVaultUser } from 'state/types'
 import { VeCakeDelegatedCard, VeCakeMigrateCard } from 'views/CakeStaking/components/SyrupPool'
 import { useIsUserDelegated } from 'views/CakeStaking/hooks/useIsUserDelegated'
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import OriginalLockedInfo from '../OriginalLockedInfo'
 import LockedActions from './Common/LockedActions'
 import useUserDataInVaultPresenter from './hooks/useUserDataInVaultPresenter'
@@ -144,9 +144,9 @@ const LockedStaking: React.FC<React.PropsWithChildren<LockedStakingProps>> = ({ 
             lockEndTime={userData?.lockEndTime}
             lockStartTime={userData?.lockStartTime ?? ''}
             stakingToken={stakingToken}
-            stakingTokenBalance={stakingTokenBalance ?? new BigNumber(0)}
+            stakingTokenBalance={stakingTokenBalance ?? BIG_ZERO}
             stakingTokenPrice={pool?.stakingTokenPrice ?? 0}
-            lockedAmount={currentLockedAmountAsBigNumber ?? new BigNumber(0)}
+            lockedAmount={currentLockedAmountAsBigNumber ?? BIG_ZERO}
             variant={buttonVariant}
           />
         )}

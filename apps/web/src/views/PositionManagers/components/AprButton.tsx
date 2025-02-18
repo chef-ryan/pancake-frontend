@@ -16,6 +16,7 @@ import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
 import { memo, useMemo } from 'react'
 import { styled } from 'styled-components'
 import { useAccount } from 'wagmi'
+import { BIG_TEN } from '@pancakeswap/utils/bigNumber'
 import { AprResult } from '../hooks'
 
 interface Props {
@@ -59,7 +60,7 @@ export const AprButton = memo(function YieldInfo({
   const { t } = useTranslation()
   const { address: account } = useAccount()
   const { data: rewardUsdPrice } = useCurrencyUsdPrice(rewardToken)
-  const tokenBalanceMultiplier = useMemo(() => new BigNumber(10).pow(lpTokenDecimals), [lpTokenDecimals])
+  const tokenBalanceMultiplier = useMemo(() => BIG_TEN.pow(lpTokenDecimals), [lpTokenDecimals])
   const tokenBalance = useMemo(
     () =>
       new BigNumber(Number(((userLpAmounts ?? 0n) * 10000n) / (precision ?? 1n)) / 10000).times(tokenBalanceMultiplier),
