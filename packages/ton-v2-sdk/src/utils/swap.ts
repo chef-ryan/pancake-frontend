@@ -1,15 +1,13 @@
-import { Address, Builder, Cell } from '@ton/core'
+import { Address, Builder, beginCell } from '@ton/core'
 import { TON_OPCODES } from '../constants/opcodes'
 
 type SwapNext = {
-  $$type: 'SwapNext'
   tokenAddress: Address
   minOut: bigint
-  next: Cell | null
+  next: SwapNext | null
 }
 
 type Swap = {
-  $$type: 'Swap'
   fromUserAddress: Address
   tokenWallet: Address
   minOut: bigint
@@ -33,27 +31,14 @@ export function storeSwap(src: Swap) {
     }
     b0.storeCoins(src.refMessageValue)
 
-    const b1 = new Builder()
-    if (src.next !== null && src.next !== undefined) {
-      b0.storeBit(true)
-      b1.store(storeSwapNext(src.next))
-    } else {
-      b0.storeBit(false)
-    }
-
-    b0.storeRef(b1.endCell())
+    b0.storeMaybeRef(src.next ? storeSwapNext(src.next).endCell() : null)
   }
 }
 
 export function storeSwapNext(src: SwapNext) {
-  return (builder: Builder) => {
-    const b0 = builder
-    b0.storeAddress(src.tokenAddress)
-    b0.storeCoins(src.minOut)
-    if (src.next !== null && src.next !== undefined) {
-      b0.storeBit(true).storeRef(src.next)
-    } else {
-      b0.storeBit(false)
-    }
-  }
+  const b0 = beginCell()
+  b0.storeAddress(src.tokenAddress)
+  b0.storeCoins(src.minOut)
+  b0.storeMaybeRef(src.next ? storeSwapNext(src.next).endCell() : null)
+  return b0
 }

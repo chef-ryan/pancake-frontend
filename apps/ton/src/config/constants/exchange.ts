@@ -1,11 +1,8 @@
 import { ONE_HUNDRED_PERCENT, Percent } from '@pancakeswap/sdk'
 import { Currency, Native, NATIVE, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
+import tokenList from 'public/lists/testnet.json'
 
 export const BIG_INT_ZERO = 0n
-export const BIG_INT_TEN = 10n
-export const BIG_INT_20 = 20n
-
-export const MIN_BNB: bigint = BIG_INT_TEN ** 15n // .001 BNB
 
 // one basis point
 export const BIPS_BASE = 10000n
@@ -39,9 +36,12 @@ export const ADDITIONAL_BASES: { [chainId in TonChainId]?: { [tokenAddress: stri
 
 export const CUSTOM_BASES: { [chainId in TonChainId]?: { [tokenAddress: string]: Token[] } } = {}
 
+// todo:@eric mock bases to test multihops
+const wBTC = tokenList.tokens.find((t) => t.symbol === 'wBTC')!
+const CLAUDE = tokenList.tokens.find((t) => t.symbol === 'CLAUDE')!
 export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Currency[] } = {
   [TonChainId.Testnet]: [
-    new Native(NATIVE[TonChainId.Testnet]),
+    /* new Native(NATIVE[TonChainId.Testnet]),
     new Token(
       TonChainId.Testnet,
       'kQCHLgAWLrFnHChbETKLnUEpA_oW0_5f9SDVYc9mJtVDMXrC',
@@ -49,7 +49,9 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Currency[] } = 
       'USDT',
       'USDT',
       'https://cache.tonapi.io/imgproxy/JHJ0sotb2B_DU6JIHdIMKEz_5wmkeY4EboeQLPlpUBY/rs:fill:200:200:1/g:no/aHR0cHM6Ly90b25hcGktaW1nLWNhY2hlLmZyYTEuZGlnaXRhbG9jZWFuc3BhY2VzLmNvbS9jYThiNTk1Mzc3Nzg0OGNkNzE4YzYzZDE5OTQzZDEyOWFjOTI5OGJjYTdjZTFhZGNjMDBiMTVlYWU4M2U4NjhlLnBuZw.webp',
-    ),
+    ), */
+    new Token(wBTC.chainId, wBTC.address, wBTC.decimals, wBTC.name, wBTC.symbol, wBTC.logoURI),
+    new Token(CLAUDE.chainId, CLAUDE.address, CLAUDE.decimals, CLAUDE.name, CLAUDE.symbol, CLAUDE.logoURI),
   ] satisfies Currency[],
   [TonChainId.Mainnet]: [],
 }
