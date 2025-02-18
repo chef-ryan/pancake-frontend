@@ -96,20 +96,21 @@ export const CardContent = (props: CardContentProps) => {
     reserve1: poolData?.reserve1,
   })
 
+  // TO CHECK: If no rates, allow independent inputs
   const currencyAmounts = useMemo(() => {
     return {
       [CurrencyField.ADD_LIQUIDITY_CURRENCY0]:
-        independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY0
+        independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY0 || !rates.currency1 || !rates.currency0
           ? token0Value
           : token1Value
           ? BN(token1Value).times(rates.currency1).toString()
           : '',
       [CurrencyField.ADD_LIQUIDITY_CURRENCY1]:
-        independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY0
-          ? token0Value
-            ? BN(token0Value).times(rates.currency0).toString()
-            : ''
-          : token1Value,
+        independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY1 || !rates.currency0 || !rates.currency1
+          ? token1Value
+          : token0Value
+          ? BN(token0Value).times(rates.currency0).toString()
+          : '',
     }
   }, [independentField, token0Value, token1Value, rates.currency0, rates.currency1])
 

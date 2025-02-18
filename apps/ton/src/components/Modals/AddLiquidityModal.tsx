@@ -2,6 +2,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Button, Flex, FlexGap, Text } from '@pancakeswap/uikit'
 import { settingsAtom } from 'atoms/settings/settingsAtom'
+import { TransactionAnimation } from 'components/Animations/TransactionAnimation'
 import { LightGreyCard } from 'components/Card'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
@@ -96,6 +97,8 @@ export const AddLiquidityModal = ({
         <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
         <Text>{slippage / 100}%</Text>
       </Flex>
+
+      <TransactionAnimation type="submit" width="50px" />
 
       <Button mt="8px" onClick={onConfirm}>
         {t('Confirm Supply')}
