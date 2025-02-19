@@ -28,7 +28,6 @@ export class Price<TBase extends Currency, TQuote extends Currency> extends Frac
     let numerator: BigintIsh
 
     if (args.length === 4) {
-      // eslint-disable-next-line @typescript-eslint/no-extra-semi
       ;[baseCurrency, quoteCurrency, denominator, numerator] = args
     } else {
       const result = args[0].quoteAmount.divide(args[0].baseAmount)

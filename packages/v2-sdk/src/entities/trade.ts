@@ -256,7 +256,6 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
 
       let amountOut: CurrencyAmount<Token>
       try {
-        // eslint-disable-next-line @typescript-eslint/no-extra-semi
         ;[amountOut] = pair.getOutputAmount(amountIn)
       } catch (error) {
         // input too low
@@ -354,7 +353,6 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
 
       let amountIn: CurrencyAmount<Token>
       try {
-        // eslint-disable-next-line @typescript-eslint/no-extra-semi
         ;[amountIn] = pair.getInputAmount(amountOut)
       } catch (error) {
         // not enough liquidity in this pair
