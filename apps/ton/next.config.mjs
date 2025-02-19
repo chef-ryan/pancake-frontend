@@ -29,7 +29,17 @@ const nextConfig = {
   basePath: '',
 
   // Need assetPrefix for static assets
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/ton-assets' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/static' : '',
+
+  redirects: async () => {
+    return [
+      {
+        source: '/static',
+        destination: '/',
+        permanent: false,
+      },
+    ]
+  },
 
   // Adjust build output directory (default is `.next`)
   distDir: '.next',
