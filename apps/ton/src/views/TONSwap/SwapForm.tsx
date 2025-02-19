@@ -163,7 +163,7 @@ export const SwapForm = () => {
               onMax={noop}
               onCurrencySelect={(currency) => onCurrencySelection(Field.INPUT, currency)}
             />
-            <FlipButton />
+            <FlipButton typedValue={formattedAmounts[Field.OUTPUT]} />
             <CurrencyInputPanelSimplify
               id="swap-currency-output"
               field={Field.OUTPUT}

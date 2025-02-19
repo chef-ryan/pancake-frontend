@@ -16,8 +16,8 @@ export const useSwapActionHandlers = () => {
   const onSwitchTokens = useCallback(() => {
     setCurrency(Field.INPUT, outputCurrency)
     setCurrency(Field.OUTPUT, inputCurrency)
-    setIndependentField(independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT)
-  }, [setCurrency, inputCurrency, outputCurrency, independentField, setIndependentField])
+    // setIndependentField(independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT)
+  }, [setCurrency, inputCurrency, outputCurrency])
 
   const onCurrencySelection = useCallback(
     (field: Field, currency?: Currency) => {
