@@ -69,7 +69,7 @@ export const CardContent = (props: CardContentProps) => {
   const { data: currency0 } = useAtomValue(tokenByAddressQueryAtom(address0))
   const { data: currency1 } = useAtomValue(tokenByAddressQueryAtom(address1))
 
-  const { data: lpBalance } = useAtomValue(
+  const { data: lpBalance, isLoading: isLpBalanceLoading } = useAtomValue(
     lpBalanceQueryAtom({
       token0Address: currency0?.isNative ? userAddress : currency0?.address,
       token1Address: currency1?.isNative ? userAddress : currency1?.address,
@@ -133,6 +133,19 @@ export const CardContent = (props: CardContentProps) => {
     amount0ToBurn: formatBalance(outputAmounts?.amount0 ?? 0n, currency0?.decimals),
     amount1ToBurn: formatBalance(outputAmounts?.amount1 ?? 0n, currency1?.decimals),
   })
+
+  const isDisabled = useMemo(() => {
+    return (
+      !lpBalance ||
+      (!outputAmounts.amount0 && !outputAmounts.amount1) ||
+      !currency0 ||
+      !currency1 ||
+      !rates.currency0 ||
+      !rates.currency1 ||
+      isLpBalanceLoading ||
+      isPoolDataLoading
+    )
+  }, [lpBalance, outputAmounts, currency0, currency1, rates, isLpBalanceLoading, isPoolDataLoading])
 
   const handleSliderChange = useCallback((value: number) => {
     setSliderValue(Math.round(value))
@@ -246,7 +259,12 @@ export const CardContent = (props: CardContentProps) => {
 
       {isWalletConnected && (
         <StyledCardFooter>
-          <Button onClick={openConfirmationModal} width="100%" endIcon={<MinusIcon color="invertedContrast" />}>
+          <Button
+            onClick={openConfirmationModal}
+            width="100%"
+            endIcon={<MinusIcon color="invertedContrast" />}
+            disabled={isDisabled}
+          >
             {t('Remove')}
           </Button>
         </StyledCardFooter>
