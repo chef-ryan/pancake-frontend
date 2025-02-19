@@ -18,19 +18,20 @@ export const Line = styled.div`
   top: calc(50% + 6px);
 `
 
-export const FlipButton = memo(function FlipButton() {
-  const { onSwitchTokens } = useSwapActionHandlers()
+export const FlipButton = memo(function FlipButton({ typedValue = '' }: { typedValue?: string }) {
+  const { onSwitchTokens, onUserInput } = useSwapActionHandlers()
 
   const inputCurrency = useAtomValue(currencyFamily(Field.INPUT))
   const outputCurrency = useAtomValue(currencyFamily(Field.OUTPUT))
 
   const onFlip = useCallback(() => {
     onSwitchTokens()
+    onUserInput(Field.INPUT, typedValue)
     replaceBrowserHistoryMultiple({
       inputCurrency: outputCurrency?.isToken ? outputCurrency.address : outputCurrency?.symbol,
       outputCurrency: inputCurrency?.isToken ? inputCurrency.address : inputCurrency?.symbol,
     })
-  }, [onSwitchTokens, inputCurrency, outputCurrency])
+  }, [onUserInput, typedValue, onSwitchTokens, inputCurrency, outputCurrency])
 
   return (
     <AutoColumn justify="space-between" position="relative">
