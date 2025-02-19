@@ -37,8 +37,8 @@ export const ADDITIONAL_BASES: { [chainId in TonChainId]?: { [tokenAddress: stri
 export const CUSTOM_BASES: { [chainId in TonChainId]?: { [tokenAddress: string]: Token[] } } = {}
 
 // todo:@eric mock bases to test multihops
-const wBTC = tokenList.tokens.find((t) => t.symbol === 'wBTC')!
-const CLAUDE = tokenList.tokens.find((t) => t.symbol === 'CLAUDE')!
+const USDC = tokenList.tokens.find((t) => t.symbol === 'USDC')!
+const tTON = tokenList.tokens.find((t) => t.symbol === 'tTON')!
 export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Currency[] } = {
   [TonChainId.Testnet]: [
     /* new Native(NATIVE[TonChainId.Testnet]),
@@ -50,8 +50,8 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Currency[] } = 
       'USDT',
       'https://cache.tonapi.io/imgproxy/JHJ0sotb2B_DU6JIHdIMKEz_5wmkeY4EboeQLPlpUBY/rs:fill:200:200:1/g:no/aHR0cHM6Ly90b25hcGktaW1nLWNhY2hlLmZyYTEuZGlnaXRhbG9jZWFuc3BhY2VzLmNvbS9jYThiNTk1Mzc3Nzg0OGNkNzE4YzYzZDE5OTQzZDEyOWFjOTI5OGJjYTdjZTFhZGNjMDBiMTVlYWU4M2U4NjhlLnBuZw.webp',
     ), */
-    new Token(wBTC.chainId, wBTC.address, wBTC.decimals, wBTC.name, wBTC.symbol, wBTC.logoURI),
-    new Token(CLAUDE.chainId, CLAUDE.address, CLAUDE.decimals, CLAUDE.name, CLAUDE.symbol, CLAUDE.logoURI),
+    new Token(USDC.chainId, USDC.address, USDC.decimals, USDC.name, USDC.symbol, USDC.logoURI),
+    new Token(tTON.chainId, tTON.address, tTON.decimals, tTON.name, tTON.symbol, tTON.logoURI),
   ] satisfies Currency[],
   [TonChainId.Mainnet]: [],
 }
