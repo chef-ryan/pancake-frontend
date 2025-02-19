@@ -15,8 +15,6 @@ const Title = memo(({ type }: TitleProps) => {
   const titleByAction: { [type in ActionType]: string } = useMemo(
     () => ({
       [ActionType.ConfirmTransaction]: t('Confirm Transaction'),
-      [ActionType.TransactionSubmitted]: t('Transaction Submitted'),
-      [ActionType.TransactionCompleted]: t('Transaction Complete'),
 
       [ActionType.AddLiquiditySubmitted]: t('Transaction Submitted'),
       [ActionType.AddLiquidityComplete]: t('Transaction Complete'),

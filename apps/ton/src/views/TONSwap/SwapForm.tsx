@@ -64,7 +64,7 @@ export const SwapForm = () => {
             6,
             Rounding.ROUND_DOWN,
           )
-        : undefined,
+        : '',
     }),
     [independentField, typedValue, dependentField, dependentFieldAmount],
   )

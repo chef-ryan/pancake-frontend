@@ -1,8 +1,10 @@
+import { useTranslation } from '@pancakeswap/localization'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { Contracts, Currency, TonContractNames, Trade, storeSwap } from '@pancakeswap/ton-v2-sdk'
 import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
 import { beginCell, toNano } from '@ton/core'
-import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
+import { SendTransactionRequest, TonConnectUIError, UserRejectsError, useTonConnectUI } from '@tonconnect/ui-react'
+import { setErrorMsgModalAtom } from 'atoms/modals/errorMsgModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
 import { ActionType } from 'components/Modals/ActionModal'
 import { useUserAddress } from 'hooks/useUserAddress'
@@ -23,8 +25,10 @@ interface SwapArgs {
 
 export const useSwap = () => {
   const [tonUI] = useTonConnectUI()
+  const { t } = useTranslation()
   const userAddress = useUserAddress()
   const setTransactionModal = useSetAtom(setTransactionModalAtom)
+  const setErrorMsgModal = useSetAtom(setErrorMsgModalAtom)
 
   const getTxRequest = useCallback(
     async ({ amount0, minOut, token0, trade }: SwapArgs) => {
@@ -99,48 +103,59 @@ export const useSwap = () => {
 
   const swap = useCallback(
     async ({ amount0, minOut, token0, token1, trade }: SwapArgs) => {
-      setTransactionModal({
-        type: ActionType.ConfirmSwap,
-        isOpen: true,
-        currency0: token0,
-        currency1: token1,
-        amount0,
-        amount1: minOut,
-      })
-
-      const txRequest: SendTransactionRequest = await getTxRequest({
-        amount0,
-        minOut,
-        token0,
-        token1,
-        trade,
-      })
-      const { boc } = await tonUI.sendTransaction(txRequest)
-
-      if (boc) {
+      try {
         setTransactionModal({
-          type: ActionType.SwapSubmitted,
+          type: ActionType.ConfirmSwap,
           isOpen: true,
           currency0: token0,
           currency1: token1,
           amount0,
           amount1: minOut,
         })
-      }
 
-      const hash = await getTransactionByBOC(userAddress, boc)
-      if (hash) {
-        setTransactionModal({
-          type: ActionType.SwapCompleted,
-          currency0: token0,
-          currency1: token1,
+        const txRequest: SendTransactionRequest = await getTxRequest({
           amount0,
-          amount1: minOut,
-          hash,
+          minOut,
+          token0,
+          token1,
+          trade,
+        })
+        const { boc } = await tonUI.sendTransaction(txRequest)
+
+        if (boc) {
+          setTransactionModal({
+            type: ActionType.SwapSubmitted,
+            isOpen: true,
+            currency0: token0,
+            currency1: token1,
+            amount0,
+            amount1: minOut,
+          })
+        }
+
+        const hash = await getTransactionByBOC(userAddress, boc)
+        if (hash) {
+          setTransactionModal({
+            type: ActionType.SwapCompleted,
+            currency0: token0,
+            currency1: token1,
+            amount0,
+            amount1: minOut,
+            hash,
+          })
+        }
+      } catch (e) {
+        let msg = typeof e === 'string' ? e : (e as Error)?.message
+        if (e instanceof UserRejectsError || e instanceof TonConnectUIError) {
+          msg = t('Transaction rejected')
+        }
+        setErrorMsgModal({
+          isOpen: true,
+          msg,
         })
       }
     },
-    [userAddress, tonUI, getTxRequest, setTransactionModal],
+    [setErrorMsgModal, t, userAddress, tonUI, getTxRequest, setTransactionModal],
   )
 
   return {

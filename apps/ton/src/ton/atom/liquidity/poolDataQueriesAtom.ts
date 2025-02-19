@@ -32,6 +32,9 @@ export const poolDataQueriesAtom = atomFamily((pairs: PoolDataAtomParams[]) => {
           }
 
           const poolData = await get(poolContractAtom(poolAddress)).getGetPoolData()
+          if (!poolData) {
+            throw new Error('fetch poolData failed')
+          }
           return {
             ...poolData,
             poolAddress,
@@ -43,7 +46,6 @@ export const poolDataQueriesAtom = atomFamily((pairs: PoolDataAtomParams[]) => {
     enabled: !!key.length,
     refetchInterval: QUERY_DEFAULT_STALE_TIME,
     refetchOnWindowFocus: false,
-    retry: 10,
   }))
 }, isEqual)
 

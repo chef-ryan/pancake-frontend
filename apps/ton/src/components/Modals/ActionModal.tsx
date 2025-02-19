@@ -26,8 +26,6 @@ const GridColumn = styled(FlexGap)`
 
 export enum ActionType {
   ConfirmTransaction = 'ConfirmTransaction',
-  TransactionSubmitted = 'TransactionSubmitted',
-  TransactionCompleted = 'TransactionCompleted',
   AddLiquiditySubmitted = 'AddLiquiditySubmitted',
   AddLiquidityComplete = 'AddLiquidityComplete',
   ConfirmLiquiditySupply = 'ConfirmSupply',
@@ -42,14 +40,6 @@ const iconByActionType: (t) => {
 } = (t) => ({
   [ActionType.ConfirmTransaction]: {
     icon: <AddCircleLoading />,
-  },
-  [ActionType.TransactionSubmitted]: {
-    icon: '/images/up-arrow-animated.gif',
-    alt: t('Up Arrow'),
-  },
-  [ActionType.TransactionCompleted]: {
-    icon: '/images/green-tick-animated.gif',
-    alt: t('Green Tick'),
   },
   [ActionType.AddLiquiditySubmitted]: {
     icon: '/images/up-arrow-animated.gif',
