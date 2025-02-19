@@ -2,6 +2,7 @@ import { ChainId } from '@pancakeswap/chains'
 import { QuestRewardType } from 'views/DashboardQuestEdit/context/types'
 import { CompletionStatus } from 'views/DashboardQuestEdit/type'
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface CampaignRewardType extends QuestRewardType {}
 
 export interface CampaignStateType {

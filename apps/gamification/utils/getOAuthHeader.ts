@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const OAuth = require('oauth-1.0a')
 
 export const getOAuthHeader = (
