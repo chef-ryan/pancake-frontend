@@ -28,13 +28,10 @@ const nextConfig = {
   // Add basePath if the app is served under a subdirectory
   basePath: '',
 
-  // Need assetPrefix for static assets
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/static' : '',
-
   redirects: async () => {
     return [
       {
-        source: '/static',
+        source: '/ton-static',
         destination: '/',
         permanent: false,
       },
