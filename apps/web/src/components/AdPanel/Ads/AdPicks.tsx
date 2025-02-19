@@ -1,11 +1,16 @@
+import { useTranslation } from '@pancakeswap/localization'
 import { Box, Link } from '@pancakeswap/uikit'
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import BigNumber from 'bignumber.js'
 import { getChainId } from 'config/chains'
+import { atom, useAtomValue } from 'jotai'
+import { atomFamily } from 'jotai/utils'
 import { useEffect, useMemo } from 'react'
 import { usePoolApr, usePoolInfo } from 'state/farmsV4/hooks'
+import type { PoolInfo } from 'state/farmsV4/state/type'
 import { ChainIdAddressKey } from 'state/farmsV4/state/type'
 import { useMyPositions } from 'views/PoolDetail/components/MyPositionsContext'
+import { getPoolDetailPageLink } from 'views/universalFarms/components'
 import { sumApr } from 'views/universalFarms/utils/sumApr'
 import { AdTag } from '../AdTag'
 import { BodyText } from '../BodyText'
@@ -50,25 +55,43 @@ const usePicksData = (poolId: `0x{string}`, chain: string) => {
   const fee = pool.feeTier
   const tvl = pool.tvlUsd
   return {
-    apr: total,
-    fee: Number(fee) / 10000,
-    tvl,
-    token0: pool.token0,
-    token1: pool.token1,
+    pickData: {
+      apr: total,
+      fee: Number(fee) / 10000,
+      tvl,
+      token0: pool.token0,
+      token1: pool.token1,
+    },
+    pool,
   }
 }
 
+const poolLinkAtom = atomFamily(
+  (pool?: PoolInfo) => {
+    return atom(async () => {
+      if (!pool) {
+        return ''
+      }
+      return getPoolDetailPageLink(pool)
+    })
+  },
+  (a, b) => (a && b ? a.lpAddress === b.lpAddress && a.chainId === b.chainId : a === b),
+)
+
 export const AdPicks = ({ config, index }: { config: PickConfig; index: number }) => {
   const { poolId, chain, token0, token1 } = config
-  const pickData = usePicksData(poolId, chain)
-  if (!pickData) {
+  const { t } = useTranslation()
+  const data = usePicksData(poolId, chain)
+  const link = useAtomValue(poolLinkAtom(data?.pool))
+  if (!data) {
     return null
   }
 
+  const { pickData, pool } = data
   const { fee, apr, tvl } = pickData
   const texts: AdTextConfig[] = [
     {
-      text: 'Lorem ipsum dolor sit 🔥',
+      text: `${t('PANCAKE PICKS')} #${index + 1} 🔥`,
       subTitle: true,
     },
   ]
@@ -79,8 +102,22 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
         position: 'relative',
       }}
     >
-      <PickBaseCoin id={`${index}-0`} color={token0.color} top="-9px" right="61px" tokenAddress={token0.address} />
-      <PickBaseCoin id={`${index}-1`} color={token1.color} top="29px" right="9px" tokenAddress={token1.address} />
+      <PickBaseCoin
+        chain={chain}
+        id={`${index}-0`}
+        color={token0.color}
+        top="-9px"
+        right="61px"
+        tokenAddress={token0.address}
+      />
+      <PickBaseCoin
+        chain={chain}
+        id={`${index}-1`}
+        color={token1.color}
+        top="29px"
+        right="9px"
+        tokenAddress={token1.address}
+      />
       <AdCard isExpanded style={{ padding: '16px' }} isDismissible={false}>
         <BodyText mb="0">
           {texts.map((textConfig, i) => {
@@ -92,7 +129,7 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
               marginTop: '14.5px',
               color: '#02919D',
             }}
-            href="https://pancakeswap.finance"
+            href={link}
           >
             {token0.symbol}/${token1.symbol}
           </Link>

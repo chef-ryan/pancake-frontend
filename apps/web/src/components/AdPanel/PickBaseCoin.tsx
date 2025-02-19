@@ -1,4 +1,6 @@
+import { MultiChainName } from 'state/info/constant'
 import styled from 'styled-components'
+import { CurrencyLogo } from 'views/Info/components/CurrencyLogo'
 
 export const BaseCoinSvg = ({ color, index }: { color: string; index }) => (
   <svg width="83" height="88" viewBox="0 0 83 88" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -128,20 +130,32 @@ export const BaseCoinSvg = ({ color, index }: { color: string; index }) => (
   </svg>
 )
 
+const chainMap: Record<string, string> = {
+  eth: 'ETH',
+  'polygon-zkevm': 'POLYGON_ZKEVM',
+  zksync: 'ZKSYNC',
+  arb: 'ARB',
+  linea: 'LINEA',
+  base: 'BASE',
+  opbnb: 'OPBNB',
+}
+
 export const PickBaseCoin = ({
   tokenAddress,
+  chain,
   color,
   right,
   top,
   id,
 }: {
   tokenAddress: string
+  chain: string
   color: string
   right: string
   top: string
   id: string
 }) => {
-  const tokenImg = `https://tokens.pancakeswap.finance/images/${tokenAddress}.png`
+  const chainName = chainMap[chain] as MultiChainName
 
   return (
     <div
@@ -152,13 +166,15 @@ export const PickBaseCoin = ({
         top,
       }}
     >
-      <TokenImg src={tokenImg} />
+      <TokenWrapper>
+        <CurrencyLogo address={tokenAddress} chainName={chainName} size="71px" />
+      </TokenWrapper>
       <BaseCoinSvg index={id} color={color} />
     </div>
   )
 }
 
-const TokenImg = styled.img`
+const TokenWrapper = styled.div`
   position: absolute;
   z-index: 2;
   width: 71px;
