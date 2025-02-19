@@ -87,7 +87,8 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
     return null
   }
 
-  const { pickData, pool } = data
+  const { pickData } = data
+  console.log('pick data', pickData)
   const { fee, apr, tvl } = pickData
   const texts: AdTextConfig[] = [
     {
