@@ -3,7 +3,7 @@ import { Currency as EVMCurrency } from '@pancakeswap/swap-sdk-core'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Box, Column, FlexGap, Grid, Row, Text } from '@pancakeswap/uikit'
 import { ConfirmModalState, SwapPendingModalContent } from '@pancakeswap/widgets-internal'
-import { AddCircleLoading } from 'components/Misc/AddCircleLoading'
+import { TransactionAnimation } from 'components/Animations/TransactionAnimation'
 import { CurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { useAtomValue } from 'jotai'
@@ -26,8 +26,8 @@ const GridColumn = styled(FlexGap)`
 
 export enum ActionType {
   ConfirmTransaction = 'ConfirmTransaction',
-  AddLiquiditySubmitted = 'AddLiquiditySubmitted',
-  AddLiquidityComplete = 'AddLiquidityComplete',
+  TransactionSubmitted = 'TransactionSubmitted',
+  TransactionComplete = 'TransactionComplete',
   ConfirmLiquiditySupply = 'ConfirmSupply',
   ConfirmLiquidityRemoval = 'ConfirmRemoval',
   ConfirmSwap = 'ConfirmSwap',
@@ -39,21 +39,21 @@ const iconByActionType: (t) => {
   [key in ActionType]?: { icon: string | JSX.Element; alt?: string }
 } = (t) => ({
   [ActionType.ConfirmTransaction]: {
-    icon: <AddCircleLoading />,
+    icon: <TransactionAnimation type="loading" />,
   },
-  [ActionType.AddLiquiditySubmitted]: {
-    icon: '/images/up-arrow-animated.gif',
-    alt: t('Up Arrow'),
+  [ActionType.TransactionSubmitted]: {
+    icon: <TransactionAnimation type="submit" />,
   },
-  [ActionType.AddLiquidityComplete]: {
-    icon: '/images/green-tick-animated.gif',
-    alt: t('Green Tick'),
+  [ActionType.TransactionComplete]: {
+    icon: <TransactionAnimation type="longSuccess" width="96px" />,
   },
   [ActionType.ConfirmLiquiditySupply]: {
-    icon: <AddCircleLoading />,
+    // icon: <AddCircleLoading />,
+    icon: <TransactionAnimation type="loading" />,
   },
   [ActionType.ConfirmLiquidityRemoval]: {
-    icon: <AddCircleLoading />,
+    // icon: <AddCircleLoading />,
+    icon: <TransactionAnimation type="loading" />,
   },
   [ActionType.ConfirmSwap]: {
     icon: '/images/bunny-Illustration.png',

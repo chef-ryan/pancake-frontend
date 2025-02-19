@@ -16,8 +16,8 @@ const Title = memo(({ type }: TitleProps) => {
     () => ({
       [ActionType.ConfirmTransaction]: t('Confirm Transaction'),
 
-      [ActionType.AddLiquiditySubmitted]: t('Transaction Submitted'),
-      [ActionType.AddLiquidityComplete]: t('Transaction Complete'),
+      [ActionType.TransactionSubmitted]: t('Transaction Submitted'),
+      [ActionType.TransactionComplete]: t('Transaction Complete'),
       [ActionType.ConfirmLiquiditySupply]: t('Confirm Supply'),
       [ActionType.ConfirmLiquidityRemoval]: t('Confirm LP Removal'),
 

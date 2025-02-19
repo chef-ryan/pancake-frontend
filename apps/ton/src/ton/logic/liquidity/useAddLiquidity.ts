@@ -151,7 +151,7 @@ export const useAddLiquidity = () => {
         const { boc } = await tonUI.sendTransaction(txRequest)
         if (boc) {
           setTxnModal({
-            type: ActionType.AddLiquiditySubmitted,
+            type: ActionType.TransactionSubmitted,
             currency0,
             currency1,
             amount0: formattedAmount0,
@@ -161,7 +161,7 @@ export const useAddLiquidity = () => {
         const hash = await getTransactionByBOC(userAddress, boc)
         if (hash) {
           setTxnModal({
-            type: ActionType.AddLiquidityComplete,
+            type: ActionType.TransactionComplete,
             currency0,
             currency1,
             amount0: formattedAmount0,

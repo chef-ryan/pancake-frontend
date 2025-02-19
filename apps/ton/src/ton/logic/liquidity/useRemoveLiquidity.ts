@@ -77,7 +77,7 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount
         const { boc } = await tonUI.sendTransaction(txRequest)
         if (boc) {
           setTxnModal({
-            type: ActionType.AddLiquiditySubmitted,
+            type: ActionType.TransactionSubmitted,
             currency0,
             currency1,
             amount0: amount0ToBurn,
@@ -88,7 +88,7 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount
         const hash = await getTransactionByBOC(userAddress, boc)
         if (hash) {
           setTxnModal({
-            type: ActionType.AddLiquidityComplete,
+            type: ActionType.TransactionComplete,
             currency0,
             currency1,
             amount0: amount0ToBurn,
