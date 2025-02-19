@@ -1,5 +1,4 @@
-import { Currency, Native, Token, TonChainId, TonNetworks } from '@pancakeswap/ton-v2-sdk'
-import { TON_API } from 'config/constants/endpoints'
+import { Currency, Native, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
 import { ResultJettonData } from 'types/tonapi'
 
 export function currencyKey(currency?: Currency): string {
@@ -7,21 +6,20 @@ export function currencyKey(currency?: Currency): string {
   return currency.isNative ? currency.symbol : currency.address
 }
 
-// TODO (@penguin): Cache globally with either NextJS API or external API
 const tokenCache = new Map<string, Currency>()
-export async function fetchTokenByAddress(address: string, network: TonNetworks): Promise<Currency | undefined> {
+export async function fetchTokenByAddress(address: string, chainId: TonChainId): Promise<Currency | undefined> {
   if (address === Native.onChain(TonChainId.Mainnet).symbol) return Native.onChain(TonChainId.Mainnet)
   if (address === Native.onChain(TonChainId.Testnet).symbol) return Native.onChain(TonChainId.Testnet)
 
   if (tokenCache.has(address)) return tokenCache.get(address)
 
-  const result = await fetch(`${TON_API[network]}/v2/jettons/${address}`)
-  if (!result.ok) throw new Error(`Failed to fetch token data for ${address} on ${network} network`)
+  const result = await fetch(`/api/token?address=${address}&chainId=${chainId}`)
+  if (!result.ok) throw new Error(`Failed to fetch token data for ${address} on chain ${chainId}`)
 
   const data: ResultJettonData = await result.json()
 
   const token = new Token(
-    network === TonNetworks.Mainnet ? TonChainId.Mainnet : TonChainId.Testnet,
+    chainId,
     data.metadata.address,
     Number(data.metadata.decimals),
     data.metadata.symbol,

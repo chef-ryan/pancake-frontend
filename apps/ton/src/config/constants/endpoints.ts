@@ -1,4 +1,4 @@
-import { TonNetworks } from '@pancakeswap/ton-v2-sdk'
+import { TonChainId, TonNetworks } from '@pancakeswap/ton-v2-sdk'
 
 export const ASSET_CDN = 'https://assets.pancakeswap.finance'
 
@@ -9,8 +9,8 @@ export const blockExplorerUrls = {
 }
 
 export const TON_API = {
-  [TonNetworks.Mainnet]: 'https://tonapi.io',
-  [TonNetworks.Testnet]: 'https://testnet.tonapi.io',
+  [TonChainId.Mainnet]: 'https://tonapi.io',
+  [TonChainId.Testnet]: 'https://testnet.tonapi.io',
 }
 
 export const bridgeLink = 'https://bridge.pancakeswap.finance'
