@@ -41,7 +41,11 @@ function getTargetAndToggleAnimation(swiperRef: RefObject<SwiperRef>, pause: boo
 
 export const PickAdSlides = memo(({ forceMobile, isDismissible = true }: AdPlayerProps) => {
   const adList = usePicksConfig()
-  return <AdSlidesRender adList={adList} forceMobile={forceMobile} isDismissible={isDismissible} />
+  return (
+    <StaticContainer>
+      <AdSlidesRender adList={adList} forceMobile={forceMobile} isDismissible={isDismissible} />
+    </StaticContainer>
+  )
 })
 
 const AdSlidesRender = ({
