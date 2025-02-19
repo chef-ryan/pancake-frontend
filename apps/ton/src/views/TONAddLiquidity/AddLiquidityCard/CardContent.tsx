@@ -8,6 +8,7 @@ import {
   liquidityIndependentFieldAtom,
 } from 'atoms/liquidity/addLiquidityStateAtom'
 import { setAddLiquidityModalAtom } from 'atoms/modals/addLiquidityModalAtom'
+import { settingsAtom } from 'atoms/settings/settingsAtom'
 import { BigNumber as BN } from 'bignumber.js'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
@@ -56,6 +57,8 @@ export const CardContent = (props: CardContentProps) => {
 
   const address = useAtomValue(addressAtom)
   const isWalletConnected = !!address
+
+  const slippage = useAtomValue(settingsAtom).slippage
 
   const [currency0] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY0, token0Address)
   const [currency1] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY1, token1Address)
@@ -199,13 +202,24 @@ export const CardContent = (props: CardContentProps) => {
     if (isDisabled || !currency0?.wrapped.address || !currency1?.wrapped.address) return
 
     try {
-      // TODO: Handle native currencies
+      const expectedTokens = getExpectedPoolTokens({
+        amount0: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals),
+        amount1: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals),
+        reserve0: poolData?.reserve0 || 0n,
+        reserve1: poolData?.reserve1 || 0n,
+        totalSupply: poolData?.totalSupply || 0n,
+      })
+
+      // Calculate minLPOut
+      const minLpOut = expectedTokens.times(1 - slippage / 10000).toFixed(0)
+
+      // Add liquidity
       addLiquidity({
         token0: currency0,
         token1: currency1,
-
         amount0: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals),
         amount1: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals),
+        minLpOut: BigInt(minLpOut),
       })
 
       toastSuccess(t('Liquidity added'))
@@ -213,7 +227,7 @@ export const CardContent = (props: CardContentProps) => {
       console.error('Error adding liquidity', e)
       toastError(t('Error adding liquidity'))
     }
-  }, [t, addLiquidity, toastSuccess, toastError, currency0, currency1, isDisabled, currencyAmounts])
+  }, [t, addLiquidity, toastSuccess, toastError, currency0, currency1, isDisabled, currencyAmounts, slippage, poolData])
 
   const openConfirmationModal = useCallback(() => {
     // TODO: Determine data directly in modal

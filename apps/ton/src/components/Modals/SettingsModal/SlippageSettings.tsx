@@ -64,6 +64,7 @@ export const SlippageSettings = (props: BoxProps) => {
         try {
           const valueAsIntFromRoundedFloat = Number.parseInt((Number.parseFloat(value) * 100).toString())
           if (!Number.isNaN(valueAsIntFromRoundedFloat) && valueAsIntFromRoundedFloat < 5000) {
+            // Slippage example value: 0.5% => 50
             setSettings((prev) => ({ ...prev, slippage: valueAsIntFromRoundedFloat }))
           }
         } catch (error) {

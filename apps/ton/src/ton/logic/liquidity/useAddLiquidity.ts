@@ -21,6 +21,8 @@ interface AddLiquidityArgs {
 
   amount0: bigint
   amount1: bigint
+
+  minLpOut: bigint
 }
 
 export const useAddLiquidity = () => {
@@ -33,7 +35,7 @@ export const useAddLiquidity = () => {
   const resetAppModal = useSetAtom(resetAppModalAtom)
 
   const addLiquidity = useCallback(
-    async ({ token0, token1, amount0: amount0_, amount1: amount1_ }: AddLiquidityArgs) => {
+    async ({ token0, token1, minLpOut, amount0: amount0_, amount1: amount1_ }: AddLiquidityArgs) => {
       try {
         // Sort according to Native first and if both not native then use .sortsBefore
         const { currency0, currency1, isFlipped } = getCurrencyOrder(token0, token1)
@@ -67,7 +69,7 @@ export const useAddLiquidity = () => {
             storeAddLiquidity({
               queryId: generateQueryId(),
               $$type: 'AddLiquidity',
-              minLPOut: 2n,
+              minLPOut: minLpOut,
               tokenWallet: routerJettonWallet1,
             }),
           )
@@ -91,7 +93,7 @@ export const useAddLiquidity = () => {
             storeAddLiquidity({
               queryId: generateQueryId(),
               $$type: 'AddLiquidity',
-              minLPOut: 2n,
+              minLPOut: minLpOut,
               tokenWallet: routerJettonWallet0,
             }),
           )
