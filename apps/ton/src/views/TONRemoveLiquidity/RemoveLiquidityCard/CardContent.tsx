@@ -197,7 +197,6 @@ export const CardContent = (props: CardContentProps) => {
                 <CurrencyLogo currency={currency0} />
                 <Text color="textSubtle">{t('Pooled %currency%', { currency: currency0?.symbol ?? '' })}</Text>
               </FlexGap>
-
               <NumberDisplay value={formatBalance(outputAmounts?.amount0 ?? 0n, currency0?.decimals)} />
             </Flex>
             <Flex justifyContent="space-between" flexWrap="wrap">

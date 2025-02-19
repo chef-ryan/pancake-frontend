@@ -58,7 +58,7 @@ export const CardContent = (props: CardContentProps) => {
   const address = useAtomValue(addressAtom)
   const isWalletConnected = !!address
 
-  const slippage = useAtomValue(settingsAtom).slippage
+  const { slippage } = useAtomValue(settingsAtom)
 
   const [currency0] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY0, token0Address)
   const [currency1] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY1, token1Address)
@@ -138,17 +138,9 @@ export const CardContent = (props: CardContentProps) => {
       !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1] ||
       isInsufficientBalance0 ||
       isInsufficientBalance1 ||
-      isPoolDataLoading ||
-      isLpBalanceLoading,
-    [
-      currency0,
-      currency1,
-      currencyAmounts,
-      isInsufficientBalance0,
-      isInsufficientBalance1,
       isPoolDataLoading,
-      isLpBalanceLoading,
-    ],
+
+    [currency0, currency1, currencyAmounts, isInsufficientBalance0, isInsufficientBalance1, isPoolDataLoading],
   )
 
   const updateQueryParams = useCallback(() => {

@@ -76,7 +76,7 @@ export const AddLiquidityModal = ({
         </FlexGap>
       </LightGreyCard>
 
-      <Flex mt="8px" justifyContent="space-between">
+      <Flex mt="8px" justifyContent="space-between" flexWrap="wrap">
         <Text color="textSubtle">{t('Rates')}</Text>
         <Flex flexDirection="column">
           <Text>
@@ -87,12 +87,12 @@ export const AddLiquidityModal = ({
           </Text>
         </Flex>
       </Flex>
-      <Flex justifyContent="space-between">
+      <Flex justifyContent="space-between" flexWrap="wrap">
         <Text color="textSubtle">{t('Your share in the pair')}</Text>
         <NumberDisplay value={shareInPool} suffix="%" maximumSignificantDigits={6} />
       </Flex>
 
-      <Flex justifyContent="space-between" alignItems="center">
+      <Flex justifyContent="space-between" flexWrap="wrap" alignItems="center">
         <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
         <Text>{slippage / 100}%</Text>
       </Flex>

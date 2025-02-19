@@ -1,4 +1,5 @@
 import { Address } from '@ton/core'
+import { PRESET_POOLS } from 'config/presetPools'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
@@ -21,6 +22,11 @@ export const poolAddressAtom = atomFamily(({ token0Address, token1Address }: Poo
     if (poolAddressCache.has(cacheKey)) {
       return poolAddressCache.get(cacheKey)
     }
+
+    const key = `${token0Address}<>${token1Address}`
+    const keyInverted = `${token1Address}<>${token0Address}`
+    if (PRESET_POOLS[key]) return parseAddress(PRESET_POOLS[key])
+    if (PRESET_POOLS[keyInverted]) return parseAddress(PRESET_POOLS[keyInverted])
 
     const router = get(routerContractAtom)
     const jettonMaster0 = get(jettonMasterContractAtom(token0Address))

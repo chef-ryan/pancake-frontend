@@ -1,4 +1,6 @@
 import { Currency, Native, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
+import mainnetList from 'public/lists/main.json'
+import testnetList from 'public/lists/testnet.json'
 import { ResultJettonData } from 'types/tonapi'
 
 export function currencyKey(currency?: Currency): string {
@@ -12,6 +14,22 @@ export async function fetchTokenByAddress(address: string, chainId: TonChainId):
   if (address === Native.onChain(TonChainId.Testnet).symbol) return Native.onChain(TonChainId.Testnet)
 
   if (tokenCache.has(address)) return tokenCache.get(address)
+
+  // Check for token in list first
+  const tokensFromList = chainId === TonChainId.Mainnet ? mainnetList.tokens : testnetList.tokens
+  const tokenFromList = tokensFromList.find((token) => token.address.toLowerCase() === address.toLowerCase())
+  if (tokenFromList) {
+    const token = new Token(
+      chainId,
+      tokenFromList.address,
+      Number(tokenFromList.decimals),
+      tokenFromList.symbol,
+      tokenFromList.name,
+      tokenFromList.logoURI,
+    )
+    tokenCache.set(address, token)
+    return token
+  }
 
   const result = await fetch(`/api/token?address=${address}&chainId=${chainId}`)
   if (!result.ok) throw new Error(`Failed to fetch token data for ${address} on chain ${chainId}`)
