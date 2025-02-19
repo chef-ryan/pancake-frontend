@@ -28,6 +28,9 @@ const nextConfig = {
   // Add basePath if the app is served under a subdirectory
   basePath: '',
 
+  // Need assetPrefix for static assets
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/ton-assets' : '',
+
   // Adjust build output directory (default is `.next`)
   distDir: '.next',
 
