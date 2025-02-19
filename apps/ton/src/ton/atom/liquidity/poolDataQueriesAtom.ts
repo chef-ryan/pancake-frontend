@@ -32,20 +32,23 @@ export const poolDataQueriesAtom = atomFamily((pairs: PoolDataAtomParams[]) => {
           }
 
           const poolData = await get(poolContractAtom(poolAddress)).getGetPoolData()
-          if (!poolData) {
-            throw new Error('fetch poolData failed')
-          }
           return {
             ...poolData,
             poolAddress,
           }
         }),
       )
-      return result.map((item) => (item.status === 'fulfilled' ? item.value : null))
+      const processedResult = result.map((item) => (item.status === 'fulfilled' ? item.value : null))
+      if (processedResult.every((i) => i === null)) {
+        throw new Error('All pool data fetches failed')
+      }
+      return processedResult
     },
     enabled: !!key.length,
     refetchInterval: QUERY_DEFAULT_STALE_TIME,
     refetchOnWindowFocus: false,
+    retry: 10,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   }))
 }, isEqual)
 
