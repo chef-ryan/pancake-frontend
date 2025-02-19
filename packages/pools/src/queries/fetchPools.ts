@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { AVERAGE_CHAIN_BLOCK_TIMES, ChainId } from '@pancakeswap/chains'
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import BigNumber from 'bignumber.js'
 import chunk from 'lodash/chunk'
@@ -121,7 +121,10 @@ const fetchLegacyPoolsBlockLimits = async (
   }, [])
 
   const getTimestampFromBlock = (targetBlock: number) => {
-    return Number(block.timestamp) + (targetBlock - Number(block.number)) * BSC_BLOCK_TIME
+    return (
+      Number(block.timestamp) +
+      (targetBlock - Number(block.number)) * (AVERAGE_CHAIN_BLOCK_TIMES[chainId] || BSC_BLOCK_TIME)
+    )
   }
   return pools.map((cakePoolConfig, index) => {
     const [startBlock, endBlock] = startEndBlockResult[index]

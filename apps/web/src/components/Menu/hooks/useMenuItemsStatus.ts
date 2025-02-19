@@ -1,5 +1,6 @@
 import { useUserCakeLockStatus } from 'hooks/useUserCakeLockStatus'
 import { useMemo } from 'react'
+import { usePoolsStatus } from 'components/Menu/hooks/usePoolsStatus'
 import { useCompetitionStatus } from './useCompetitionStatus'
 import { useVotingStatus } from './useVotingStatus'
 import { useTradingRewardStatus } from './useTradingRewardStatus'
@@ -11,6 +12,7 @@ export const useMenuItemsStatus = (): Record<string, string> => {
   const votingStatus = useVotingStatus()
   const isUserLocked = useUserCakeLockStatus()
   const tradingRewardStatus = useTradingRewardStatus()
+  const poolsStatus = usePoolsStatus()
 
   return useMemo(() => {
     return {
@@ -19,6 +21,9 @@ export const useMenuItemsStatus = (): Record<string, string> => {
       ...(votingStatus && {
         '/voting': votingStatus,
       }),
+      ...(poolsStatus && {
+        '/pools': poolsStatus,
+      }),
       ...(isUserLocked && {
         '/pools': 'lock_end',
       }),
@@ -26,5 +31,5 @@ export const useMenuItemsStatus = (): Record<string, string> => {
         '/trading-reward': tradingRewardStatus,
       }),
     }
-  }, [competitionStatus, ifoStatus, votingStatus, isUserLocked, tradingRewardStatus])
+  }, [competitionStatus, ifoStatus, votingStatus, isUserLocked, tradingRewardStatus, poolsStatus])
 }

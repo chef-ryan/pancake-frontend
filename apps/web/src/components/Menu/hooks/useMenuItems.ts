@@ -68,6 +68,9 @@ export const useMenuItems = ({ onClick }: UseMenuItemsParams = {}): ConfigMenuIt
           case 'lock_end':
             itemMenuStatus = { text: t('Lock End'), color: 'failure' }
             break
+          case 'new_pool':
+            itemMenuStatus = { text: t('New Pool'), color: 'success' }
+            break
           default:
             itemMenuStatus = { text: t('New'), color: 'success' }
         }
