@@ -70,18 +70,18 @@
     {
       "chainId": -3,
       "address": "kQD0zbW5arqfo7uaNs7TiBckhPp0m8xZgsMs6qdBU85p9UVB",
-      "name": "claude",
-      "symbol": "CLAUDE",
+      "name": "tTON",
+      "symbol": "tTON",
       "decimals": 9,
-      "logoURI": "https://cache.tonapi.io/imgproxy/cOMlJuViiVXDCkAghnyNj7plX8pAZ9pv3WhklvebpTY/rs:fill:200:200:1/g:no/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3RvbmtlZXBlci9vcGVudG9uYXBpL21hc3Rlci9wa2cvcmVmZXJlbmNlcy9tZWRpYS90b2tlbl9wbGFjZWhvbGRlci5wbmc.webp"
+      "logoURI": "https://cache.tonapi.io/imgproxy/EJvW71I48rv9e3yerUGTUBAbq-7vAvogCr5vnHfzD3I/rs:fill:200:200:1/g:no/aHR0cHM6Ly9jYWNoZS50b25hcGkuaW8vaW1ncHJveHkvYmM3c2c2WGk0LWNmVXdLLWVyMkNSLTZDVW5NcWw5bkZRd01WVTRJZVlOQS9yczpmaWxsOjIwMDoyMDA6MS9nOm5vL2FIUjBjSE02THk5allXTm9aUzUwYjI1aGNHa3VhVzh2YVcxbmNISnZlSGt2VTBKeGIxOUpkMk4wVlVkU1NqSTRXa05JUkhrMVUyMUNjVTh5UzFSMmFFYzRWVEZTYjBrMVNWcElheTl5Y3pwbWFXeHNPakl3TURveU1EQTZNUzluT201dkwyRklVakJqU0UwMlRIazVNR0l5TkhWaU0wcHVUREpzYW1JeU5YcE1NazR4WXpOU2RtSlRPVEJpTWpWbVlrYzVibUo1Tlhwa2JXTXVkMlZpY0Eud2VicA.webp"
     },
     {
       "chainId": -3,
       "address": "kQBN6HSn7GmAB30K_YmL3vhS2ms5LMm9aPW0PGzvUZASRzng",
-      "name": "Wrap Bitcoin",
-      "symbol": "wBTC",
+      "name": "USDC",
+      "symbol": "USDC",
       "decimals": 9,
-      "logoURI": "https://cache.tonapi.io/imgproxy/i7jumPCXC__AWJcr-0PvOjsfa-dzaZpwtIHEqQioLhE/rs:fill:200:200:1/g:no/aHR0cHM6Ly9iaXRjb2luY2FzaC1leGFtcGxlLmdpdGh1Yi5pby93ZWJzaXRlL2xvZ28ucG5n.webp"
+      "logoURI": "https://cache.tonapi.io/imgproxy/Ah3zvC4pJ0jg74ymj38e_FF-2ALz-5aqRD9ZUYVAacU/rs:fill:200:200:1/g:no/aHR0cHM6Ly9icmlkZ2UudG9uLm9yZy90b2tlbi8xLzB4YTBiODY5OTFjNjIxOGIzNmMxZDE5ZDRhMmU5ZWIwY2UzNjA2ZWI0OC5wbmc.webp"
     }
   ]
 }
