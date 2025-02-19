@@ -6,9 +6,9 @@ import styled from 'styled-components'
 import { Autoplay, EffectFade, Pagination } from 'swiper/modules'
 import { SwiperRef, SwiperSlide } from 'swiper/react'
 import { StyledSwiper } from './CarrouselWithSlider'
-import { commonLayoutWhitelistedPages, useAdConfig } from './config'
+import { commonLayoutWhitelistedPages, useAdConfig, usePicksConfig } from './config'
 import { shouldRenderOnPages } from './renderConditions'
-import { AdPlayerProps } from './types'
+import { AdPlayerProps, AdSlide } from './types'
 import { useIsSlideExpanded } from './useIsSlideExpanded'
 import { useShowAdPanel } from './useShowAdPanel'
 
@@ -39,12 +39,23 @@ function getTargetAndToggleAnimation(swiperRef: RefObject<SwiperRef>, pause: boo
   target.classList.toggle('pause', pause)
 }
 
-const AdSlides = memo(({ forceMobile, isDismissible = true }: AdPlayerProps) => {
+export const PickAdSlides = memo(({ forceMobile, isDismissible = true }: AdPlayerProps) => {
+  const adList = usePicksConfig()
+  return <AdSlidesRender adList={adList} forceMobile={forceMobile} isDismissible={isDismissible} />
+})
+
+const AdSlidesRender = ({
+  adList,
+  forceMobile,
+  isDismissible,
+}: {
+  adList: AdSlide[]
+  forceMobile?: boolean
+  isDismissible: boolean
+}) => {
   const swiperRef = useRef<SwiperRef>(null)
   const pauseAni = useCallback(() => getTargetAndToggleAnimation(swiperRef), [swiperRef])
   const resumeAni = useCallback(() => getTargetAndToggleAnimation(swiperRef, false), [swiperRef])
-
-  const adList = useAdConfig()
 
   const { isAnySlideExpanded, resetAllExpanded } = useIsSlideExpanded()
 
@@ -101,6 +112,11 @@ const AdSlides = memo(({ forceMobile, isDismissible = true }: AdPlayerProps) => 
       ))}
     </StyledSwiper>
   )
+}
+
+export const AdSlides = memo(({ forceMobile, isDismissible = true }: AdPlayerProps) => {
+  const adList = useAdConfig()
+  return <AdSlidesRender adList={adList} forceMobile={forceMobile} isDismissible={isDismissible} />
 })
 
 /**
