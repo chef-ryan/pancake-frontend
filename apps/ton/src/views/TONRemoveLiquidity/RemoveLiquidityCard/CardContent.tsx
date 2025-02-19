@@ -14,7 +14,6 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { Hr } from 'styles'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
@@ -107,7 +106,6 @@ export const CardContent = (props: CardContentProps) => {
   }, [lpBalance, poolData])
 
   const outputAmounts = useMemo(() => {
-    // TODO: Calculate Fee amounts
     if (!depositedAmounts) {
       return {
         amount0: 0n,
@@ -194,7 +192,7 @@ export const CardContent = (props: CardContentProps) => {
         <Text color="textSubtle">{t('You will receive')}</Text>
         <LightGreyCard mt="8px">
           <FlexGap flexDirection="column" gap="8px">
-            <Flex justifyContent="space-between">
+            <Flex justifyContent="space-between" flexWrap="wrap">
               <FlexGap gap="8px">
                 <CurrencyLogo currency={currency0} />
                 <Text color="textSubtle">{t('Pooled %currency%', { currency: currency0?.symbol ?? '' })}</Text>
@@ -202,7 +200,7 @@ export const CardContent = (props: CardContentProps) => {
 
               <NumberDisplay value={formatBalance(outputAmounts?.amount0 ?? 0n, currency0?.decimals)} />
             </Flex>
-            <Flex justifyContent="space-between">
+            <Flex justifyContent="space-between" flexWrap="wrap">
               <FlexGap gap="8px">
                 <CurrencyLogo currency={currency1} />
                 <Text color="textSubtle">{t('Pooled %currency%', { currency: currency1?.symbol ?? '' })}</Text>
@@ -210,25 +208,10 @@ export const CardContent = (props: CardContentProps) => {
 
               <NumberDisplay value={formatBalance(outputAmounts?.amount1 ?? 0n, currency1?.decimals)} />
             </Flex>
-            <Hr />
-            <Flex justifyContent="space-between">
-              <FlexGap gap="8px">
-                <CurrencyLogo currency={currency0} />
-                <Text color="textSubtle">{t('%currency% fee earned', { currency: currency0?.symbol ?? '' })}</Text>
-              </FlexGap>
-              <Text>-</Text>
-            </Flex>
-            <Flex justifyContent="space-between">
-              <FlexGap gap="8px">
-                <CurrencyLogo currency={currency1} />
-                <Text color="textSubtle">{t('%currency% fee earned', { currency: currency1?.symbol ?? '' })}</Text>
-              </FlexGap>
-              <Text>-</Text>
-            </Flex>
           </FlexGap>
         </LightGreyCard>
         <FlexGap flexDirection="column" mt="24px" gap="16px">
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" flexWrap="wrap">
             <Text color="textSubtle">{t('Rates')}</Text>
             <DisplayLoader loading={isPoolDataLoading}>
               {rates ? (
@@ -247,7 +230,7 @@ export const CardContent = (props: CardContentProps) => {
               )}
             </DisplayLoader>
           </Flex>
-          <Flex justifyContent="space-between" alignItems="center">
+          <Flex justifyContent="space-between" flexWrap="wrap" alignItems="center">
             <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
 
             <SlippageButton />

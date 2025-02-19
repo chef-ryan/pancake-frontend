@@ -282,7 +282,7 @@ export const CardContent = (props: CardContentProps) => {
         </Box>
 
         <FlexGap flexDirection="column" mt="24px" gap="16px">
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" flexWrap="wrap">
             <Text color="textSubtle">{t('Rates')}</Text>
             {poolData ? (
               <Box>
@@ -303,14 +303,14 @@ export const CardContent = (props: CardContentProps) => {
               </>
             )}
           </Flex>
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" flexWrap="wrap">
             <Text color="textSubtle">{t('Your share in the pair')}</Text>
 
             <DisplayLoader loading={isLpBalanceLoading}>
               <NumberDisplay value={shareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
             </DisplayLoader>
           </Flex>
-          <Flex justifyContent="space-between" alignItems="center">
+          <Flex justifyContent="space-between" flexWrap="wrap" alignItems="center">
             <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
 
             <SlippageButton />
