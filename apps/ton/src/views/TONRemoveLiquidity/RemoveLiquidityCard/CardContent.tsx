@@ -165,23 +165,30 @@ export const CardContent = (props: CardContentProps) => {
     handleRemoveLiquidity,
   ])
 
+  if (!isWalletConnected) {
+    return (
+      <ContentContainer $isBottomRounded={!isWalletConnected} {...props}>
+        <WalletDisclaimer my="8px" text={t('Connect wallet to remove liquidity')} />
+      </ContentContainer>
+    )
+  }
+
   return (
     <>
       <ContentContainer $isBottomRounded={!isWalletConnected} {...props}>
-        {!isWalletConnected && <WalletDisclaimer my="8px" text={t('Connect wallet to add liquidity')} />}
         <LightGreyCard>
           <Slider
             min={0}
             max={100}
             name="remove-liquidity-slider"
-            valueLabel={`${sliderValue}%`}
+            valueLabel={t('%value%%', { value: sliderValue })}
             value={sliderValue}
             onValueChanged={handleSliderChange}
           />
           <FlexGap mt="12px" gap="16px" flexWrap={['wrap', 'nowrap']}>
             {QUICK_INPUTS.map((value) => (
               <StyledButton key={value} onClick={() => handleQuickInput(value)}>
-                {value === 100 ? 'MAX' : `${value}%`}
+                {value === 100 ? t('MAX') : t('%value%%', { value })}
               </StyledButton>
             ))}
           </FlexGap>
