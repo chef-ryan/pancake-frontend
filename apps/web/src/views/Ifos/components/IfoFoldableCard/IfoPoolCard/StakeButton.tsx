@@ -12,9 +12,7 @@ import { useChainNames } from '../../../hooks/useChainNames'
 import { ICakeLogo } from '../../Icons'
 import { NetworkSwitcherModal } from './NetworkSwitcherModal'
 
-interface StakeButtonProps extends SpaceProps {}
-
-export function StakeButton(props: StakeButtonProps) {
+export function StakeButton(props: SpaceProps) {
   const { chainId } = useActiveChainId()
   const router = useRouter()
   const cakeVaultSupported = useMemo(() => isCakeVaultSupported(chainId), [chainId])

@@ -126,7 +126,7 @@ export default function V2FormView({
         <CommitButton
           variant={buttonDisabled ? 'danger' : 'primary'}
           onClick={() => {
-            // eslint-disable-next-line no-unused-expressions
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             expertMode ? onAdd() : onPresentAddLiquidityModal()
             logGTMClickAddLiquidityEvent()
           }}

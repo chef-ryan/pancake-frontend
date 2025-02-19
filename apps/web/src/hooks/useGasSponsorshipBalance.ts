@@ -8,9 +8,7 @@ type GasSponsorshipData = {
   isEnoughGasBalance: boolean
 }
 
-interface UseGasSponsorshipProps extends Pick<UseQueryOptions<GasSponsorshipData>, 'enabled'> {}
-
-export const useGasSponsorshipBalance = ({ enabled }: UseGasSponsorshipProps = {}) => {
+export const useGasSponsorshipBalance = ({ enabled }: Pick<UseQueryOptions<GasSponsorshipData>, 'enabled'> = {}) => {
   return useQuery<GasSponsorshipData>({
     queryKey: ['gasSponsorship'],
     queryFn: getGasSponsorship,

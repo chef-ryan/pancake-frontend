@@ -459,7 +459,7 @@ export default function V3FormView({
   const addIsWarning = useIsTransactionWarning(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
 
   const handleButtonSubmit = useCallback(() => {
-    // eslint-disable-next-line no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     expertMode ? onAdd() : onPresentAddLiquidityModal()
     logGTMClickAddLiquidityEvent()
   }, [expertMode, onAdd, onPresentAddLiquidityModal])
