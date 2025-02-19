@@ -10,7 +10,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { routerContractAtom } from 'ton/atom/contracts/routerContractAtom'
 import { TonContext } from 'ton/context/TonContext'
-import { getJettonWalletAddress } from 'ton/utils/address'
+import { getCurrencyOrder, getJettonWalletAddress } from 'ton/utils/address'
 import { formatBalance } from 'ton/utils/formatting'
 import { generateQueryId } from 'ton/utils/generateQueryId'
 import { getTransactionByBOC } from 'ton/utils/transaction'
@@ -33,14 +33,23 @@ export const useAddLiquidity = () => {
   const resetAppModal = useSetAtom(resetAppModalAtom)
 
   const addLiquidity = useCallback(
-    async ({ token0, token1, amount0, amount1 }: AddLiquidityArgs) => {
+    async ({ token0, token1, amount0: amount0_, amount1: amount1_ }: AddLiquidityArgs) => {
       try {
-        const formattedAmount0 = formatBalance(amount0, token0.decimals)
-        const formattedAmount1 = formatBalance(amount1, token1.decimals)
+        // Sort according to Native first and if both not native then use .sortsBefore
+        const { currency0, currency1, isFlipped } = getCurrencyOrder(token0, token1)
+        let amount0 = amount0_
+        let amount1 = amount1_
+        if (isFlipped) {
+          amount0 = amount1_
+          amount1 = amount0_
+        }
+
+        const formattedAmount0 = formatBalance(amount0, currency0.decimals)
+        const formattedAmount1 = formatBalance(amount1, currency1.decimals)
         setTxnModal({
           type: ActionType.ConfirmLiquiditySupply,
-          currency0: token0,
-          currency1: token1,
+          currency0,
+          currency1,
           amount0: formattedAmount0,
           amount1: formattedAmount1,
           isOpen: true,
@@ -48,10 +57,10 @@ export const useAddLiquidity = () => {
 
         const client = TonContext.instance.getClient()
 
-        const userJettonWallet0 = await getJettonWalletAddress(client, userAddress, token0)
-        const userJettonWallet1 = await getJettonWalletAddress(client, userAddress, token1)
-        const routerJettonWallet0 = await getJettonWalletAddress(client, routerAddress, token0)
-        const routerJettonWallet1 = await getJettonWalletAddress(client, routerAddress, token1)
+        const userJettonWallet0 = await getJettonWalletAddress(client, userAddress, currency0)
+        const userJettonWallet1 = await getJettonWalletAddress(client, userAddress, currency1)
+        const routerJettonWallet0 = await getJettonWalletAddress(client, routerAddress, currency0)
+        const routerJettonWallet1 = await getJettonWalletAddress(client, routerAddress, currency1)
 
         const forwardPayload0 = beginCell()
           .store(
@@ -104,7 +113,7 @@ export const useAddLiquidity = () => {
         const txRequest: SendTransactionRequest = {
           validUntil: Math.floor(Date.now() / 1000) + 60 * 2,
           messages: [
-            token0.isNative
+            currency0.isNative
               ? {
                   address: routerAddress.toString(),
                   amount: (BigInt(amount0) + toNano('0.3')).toString(), // TON amount + gas
@@ -123,7 +132,7 @@ export const useAddLiquidity = () => {
                   amount: toNano('0.6').toString(),
                   payload: payload0.toBoc().toString('base64'),
                 },
-            token1.isNative
+            currency1.isNative
               ? {
                   address: routerAddress.toString(),
                   amount: (BigInt(amount1) + toNano('0.3')).toString(), // TON amount + gas
@@ -141,8 +150,8 @@ export const useAddLiquidity = () => {
         if (boc) {
           setTxnModal({
             type: ActionType.AddLiquiditySubmitted,
-            currency0: token0,
-            currency1: token1,
+            currency0,
+            currency1,
             amount0: formattedAmount0,
             amount1: formattedAmount1,
           })
@@ -151,8 +160,8 @@ export const useAddLiquidity = () => {
         if (hash) {
           setTxnModal({
             type: ActionType.AddLiquidityComplete,
-            currency0: token0,
-            currency1: token1,
+            currency0,
+            currency1,
             amount0: formattedAmount0,
             amount1: formattedAmount1,
             hash,

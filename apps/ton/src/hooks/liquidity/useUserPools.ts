@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { lpBalanceByPoolsQueryAtom } from 'ton/atom/liquidity/lpBalanceByPoolsQueryAtom'
 import { poolDataMultipleQueryAtom } from 'ton/atom/liquidity/poolDataMultipleQueryAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
+import { getTokenOrder } from 'ton/utils/address'
 
 interface RawPoolData {
   balance: bigint
@@ -34,11 +35,14 @@ const getTokenPairs = (network: string): string[][] =>
 
 const getPoolsWithBalance = (pools: RawPoolData[], tokenPairs: string[][]): InitialPoolData[] =>
   pools
-    .map((pool, index) => ({
-      ...pool,
-      token0: tokenPairs[index][0],
-      token1: tokenPairs[index][1],
-    }))
+    .map((pool, index) => {
+      const { token0, token1 } = getTokenOrder(tokenPairs[index][0], tokenPairs[index][1])
+      return {
+        ...pool,
+        token0,
+        token1,
+      }
+    })
     .filter((pool) => pool.balance > 0n)
 
 const combinePoolData = (poolsWithBalance: InitialPoolData[], poolInfos: PoolInfo[]): CombinedPoolData[] =>

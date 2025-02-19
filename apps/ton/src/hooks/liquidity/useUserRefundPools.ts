@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 import { lpAccountMultipleQueryAtom } from 'ton/atom/liquidity/lpAccountMultipleQueryAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
+import { getTokenOrder } from 'ton/utils/address'
 
 const getTokenPairs = (network: string): string[][] =>
   Object.keys(PRESET_POOLS[network]).map((tokenPair) => tokenPair.split('<>'))
@@ -25,7 +26,9 @@ export const useUserRefundPools = () => {
       .filter((lpAccount) => lpAccount.amount0 > 0n || lpAccount.amount1 > 0n)
       .map((lpAccount, index) => {
         const tokenPair = tokenPairs[index]
-        const [token0, token1] = tokenPair
+        const [token0_, token1_] = tokenPair
+
+        const { token0, token1 } = getTokenOrder(token0_, token1_)
 
         return {
           token0,
