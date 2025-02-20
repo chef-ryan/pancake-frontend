@@ -82,6 +82,14 @@
       "symbol": "USDC",
       "decimals": 9,
       "logoURI": "https://cache.tonapi.io/imgproxy/Ah3zvC4pJ0jg74ymj38e_FF-2ALz-5aqRD9ZUYVAacU/rs:fill:200:200:1/g:no/aHR0cHM6Ly9icmlkZ2UudG9uLm9yZy90b2tlbi8xLzB4YTBiODY5OTFjNjIxOGIzNmMxZDE5ZDRhMmU5ZWIwY2UzNjA2ZWI0OC5wbmc.webp"
+    },
+    {
+      "chainId": -3,
+      "address": "EQDrYGRT12rOkdJFFvtDIS5xS_tnatlTEO55hnkClQYAv_E9",
+      "name": "RUB",
+      "symbol": "Ruby Token",
+      "decimals": 9,
+      "logoURI": "https://temple-and-grace.mo.cloudinary.net/mdopt/images/prod-large/large-1-14134-white-gold.jpg"
     }
   ]
 }
