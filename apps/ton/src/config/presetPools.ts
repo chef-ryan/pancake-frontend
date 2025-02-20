@@ -23,8 +23,14 @@ export const PRESET_POOLS = {
     // SYRUP-USDC
     'kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F<>kQBN6HSn7GmAB30K_YmL3vhS2ms5LMm9aPW0PGzvUZASRzng':
       'EQAOBiyyQ66AUj3hq2Cy9RQIN-km5gdjxXz5zs_Dl0kACe8W',
-    // SYRUP-JET
+    // SYRUP-Jet
     'kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F<>kQCj6VUXJ2ydAOdxrhsiuU4pU0PPQ2nbHxhsTlBHkrOraY4z':
       'EQBTknTRiOS4mFPqpctzueEVjo2UQum0aIbsq9MEpLCZjdMX',
+    // Jet-RB4
+    'kQCj6VUXJ2ydAOdxrhsiuU4pU0PPQ2nbHxhsTlBHkrOraY4z<>kQAFlRlDdSoVFSXX9j7EcudkTedrix7JEVbjfps9oFXnIyJ9':
+      'EQBgNjuZQ-G18kDCF3VfQXZYYEUpiYh_-rDh6B3YfU5jCETm',
+    // JET-RB4
+    'EQAiihOa4xLY1gDK55C6LzSU5cRImwXJMmIKkjQ5T5e1wr85<>kQAFlRlDdSoVFSXX9j7EcudkTedrix7JEVbjfps9oFXnIyJ9':
+      'EQDE_tbygSmE01uVhPQ0nsMT1lbFftuzx4SXJ0AAIFi8TFKo',
   },
 }
