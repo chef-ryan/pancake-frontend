@@ -1,61 +1,36 @@
 import { useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useAtomValue } from 'jotai'
-import { QUERY_DEFAULT_STALE_TIME } from 'config/constants/exchange'
-import { atomWithQuery } from 'jotai-tanstack-query'
+import { atom, useAtomValue } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
-import { poolContractAtom } from '../contracts/poolContractAtom'
 import { networkAtom } from '../networkAtom'
-import { poolAddressAtom } from './poolAddressAtom'
+import { getKeyByPair, poolDataQueryAtom } from './poolDataQueryAtom'
 
 interface PoolDataAtomParams {
   token0Address?: string
   token1Address?: string
 }
 
-const getKeyByPairs = (pairs: PoolDataAtomParams[]) => {
-  return pairs.map(({ token0Address, token1Address }) => `${token0Address}-${token1Address}`)
-}
-
 export const poolDataQueriesAtom = atomFamily((pairs: PoolDataAtomParams[]) => {
-  const key = getKeyByPairs(pairs)
-  return atomWithQuery((get) => ({
-    queryKey: ['poolData', get(networkAtom), ...key],
-    queryFn: async () => {
-      const result = await Promise.allSettled(
-        pairs.map(async ({ token0Address, token1Address }) => {
-          const poolAddress = await get(poolAddressAtom({ token0Address, token1Address }))
+  const result = atom((get) => {
+    const results = pairs.map((pair) => get(poolDataQueryAtom(pair)))
 
-          if (!poolAddress) {
-            throw new Error('fetch poolAddress failed')
-          }
-
-          const poolData = await get(poolContractAtom(poolAddress)).getGetPoolData()
-          return {
-            ...poolData,
-            poolAddress,
-          }
-        }),
-      )
-      const processedResult = result.map((item) => (item.status === 'fulfilled' ? item.value : null))
-      if (processedResult.every((i) => i === null)) {
-        throw new Error('All pool data fetches failed')
-      }
-      return processedResult
-    },
-    enabled: !!key.length,
-    refetchInterval: QUERY_DEFAULT_STALE_TIME,
-    refetchOnWindowFocus: false,
-    retry: 10,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-  }))
+    return {
+      isFetching: results.some((i) => i?.isFetching),
+      isLoading: results.some((i) => i?.isLoading),
+      data: results.map((i) => i?.data),
+    }
+  })
+  return result
 }, isEqual)
 
 export function useRefreshPoolData(pairs: PoolDataAtomParams[]) {
   const queryClient = useQueryClient()
   const network = useAtomValue(networkAtom)
-  const queryKey = useMemo(() => ['poolData', network, ...getKeyByPairs(pairs)], [network, pairs])
+  const queryKey = useMemo(
+    () => pairs.map(({ token0Address, token1Address }) => getKeyByPair({ token0Address, token1Address, network })),
+    [network, pairs],
+  )
 
   const refresh = () => {
     // Invalidate all queries

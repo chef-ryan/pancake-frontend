@@ -29,14 +29,6 @@
     },
     {
       "chainId": -3,
-      "address": "kQC5CBUFuZwAqWqK_qNQc--przIvA-rsNYIgXuKFjsxp_CJs",
-      "name": "USD Coin",
-      "symbol": "USDC",
-      "decimals": 9,
-      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/assets/EQAAXwH0cajPsMF-nNC5kz-SaLaeaDr4M7Q1foVwP_vOW1tR/logo.png"
-    },
-    {
-      "chainId": -3,
       "address": "kQDdLkZeRizrkprK3xJgD6QsyAQWUtKC1E38_iB5bPV_d_Ob",
       "name": "Tether USD",
       "symbol": "USDT",
