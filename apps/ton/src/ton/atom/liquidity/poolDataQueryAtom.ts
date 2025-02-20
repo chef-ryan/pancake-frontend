@@ -21,11 +21,6 @@ export const poolDataQueryAtom = atomFamily(({ token0Address, token1Address }: P
 
       const result = await pool.getGetPoolData()
 
-      console.log('poolDataQueryAtom', {
-        poolAddress: poolAddress.toString(),
-        result,
-      })
-
       return result
     },
     enabled: !!token0Address && !!token1Address,

@@ -15,6 +15,7 @@ import { SlippageButton } from 'components/Buttons/SlippageButton'
 import { DisplayLoader } from 'components/Misc/DisplayLoader'
 import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
+import { LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 import { usePoolRates } from 'hooks/liquidity/usePoolRates'
 import { useCurrency } from 'hooks/tokens/useCurrency'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
@@ -85,9 +86,8 @@ export const CardContent = (props: CardContentProps) => {
       token1Address: currency1?.isNative ? address : currency1?.address,
     }),
   )
-
   const shareInPool = useMemo(() => {
-    if (!lpBalance || !poolData?.totalSupply) return 0n
+    if (!lpBalance || !poolData?.totalSupply) return 0
 
     return BN(lpBalance.toString()).div(BN(poolData.totalSupply.toString())).times(100).toNumber()
   }, [lpBalance, poolData?.totalSupply])
@@ -223,30 +223,53 @@ export const CardContent = (props: CardContentProps) => {
 
   const openConfirmationModal = useCallback(() => {
     // TODO: Determine data directly in modal
+    const amount0 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]
+    const amount1 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]
+
+    const parsedAmount0 = parseUnits(amount0, currency0?.decimals).toString()
+    const parsedAmount1 = parseUnits(amount1, currency1?.decimals).toString()
+
+    const expectedPoolTokens = getExpectedPoolTokens({
+      amount0,
+      amount1,
+      reserve0: poolData?.reserve0 || 0n,
+      reserve1: poolData?.reserve1 || 0n,
+      totalSupply: poolData?.totalSupply || 0n,
+    })
+    const parsedExpectedPoolTokens = parseUnits(expectedPoolTokens.toString(), LP_TOKEN_DECIMALS).toString()
+
+    // Calculate future rates & share in pool
+    const expectedReserve0 = poolData?.reserve0
+      ? BN(poolData.reserve0.toString()).plus(parsedAmount0)
+      : BN(parsedAmount0)
+    const expectedReserve1 = poolData?.reserve1
+      ? BN(poolData.reserve1.toString()).plus(parsedAmount1)
+      : BN(parsedAmount1)
+    const expectedTotalSupply = poolData?.totalSupply
+      ? BN(poolData.totalSupply.toString()).plus(parsedExpectedPoolTokens)
+      : BN(parsedExpectedPoolTokens)
+
+    const expectedRate0 = expectedReserve1.div(expectedReserve0).toString()
+    const expectedRate1 = expectedReserve0.div(expectedReserve1).toString()
+
+    const expectedShareInPool = BN(parsedExpectedPoolTokens).div(expectedTotalSupply).times(100).toString()
+
     setAddLiquidityModal({
       isOpen: true,
       currency0,
       currency1,
-      outputAmount: getExpectedPoolTokens({
-        amount0: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0],
-        amount1: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1],
-        reserve0: poolData?.reserve0 || 0n,
-        reserve1: poolData?.reserve1 || 0n,
-        totalSupply: poolData?.totalSupply || 0n,
-      }).toString(),
-      amount0: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0],
-      amount1: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1],
-      rate0: rates.currency0.toString(),
-      rate1: rates.currency1.toString(),
-      shareInPool: shareInPool.toString(),
+      outputAmount: expectedPoolTokens.toString(),
+      amount0,
+      amount1,
+      rate0: expectedRate0,
+      rate1: expectedRate1,
+      shareInPool: expectedShareInPool,
       onConfirm: handleAddLiquidity,
     })
   }, [
     currency0,
     currency1,
     currencyAmounts,
-    rates,
-    shareInPool,
     poolData?.reserve0,
     poolData?.reserve1,
     poolData?.totalSupply,
@@ -313,7 +336,11 @@ export const CardContent = (props: CardContentProps) => {
             <Text color="textSubtle">{t('Your share in the pair')}</Text>
 
             <DisplayLoader loading={isLpBalanceLoading}>
-              <NumberDisplay value={shareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
+              {shareInPool ? (
+                <NumberDisplay value={shareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
+              ) : (
+                '-'
+              )}
             </DisplayLoader>
           </Flex>
           <Flex justifyContent="space-between" flexWrap="wrap" alignItems="center">
