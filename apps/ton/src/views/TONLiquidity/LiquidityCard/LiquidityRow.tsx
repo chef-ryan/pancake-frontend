@@ -42,10 +42,10 @@ export const LiquidityRow = ({
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
-  console.log('LiquidityRow', { token0, token1, balance, totalSupply, userShare })
-
   const { data: currency0 } = useAtomValue(tokenByAddressQueryAtom(token0))
   const { data: currency1 } = useAtomValue(tokenByAddressQueryAtom(token1))
+
+  console.log('LiquidityRow', { token0: currency0?.symbol, token1: currency1?.symbol, balance, totalSupply, userShare })
 
   const handleToggle = useCallback(() => {
     setIsOpen(!isOpen)
@@ -94,7 +94,7 @@ export const LiquidityRow = ({
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Your share in the pool')}</Text>
-                <NumberDisplay value={userShare || '-'} suffix="%" maximumSignificantDigits={6} />
+                {userShare ? <NumberDisplay value={userShare} suffix="%" maximumSignificantDigits={6} /> : '-'}
               </Flex>
               <FlexGap mt="10px" justifyContent="space-between" gap="16px">
                 <Link href={`/liquidity/add/${token0}/${token1}`} style={{ width: '100%' }}>

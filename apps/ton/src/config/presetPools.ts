@@ -20,5 +20,8 @@ export const PRESET_POOLS = {
     // SYRUP-USDC
     'kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F<>kQBN6HSn7GmAB30K_YmL3vhS2ms5LMm9aPW0PGzvUZASRzng':
       'EQAOBiyyQ66AUj3hq2Cy9RQIN-km5gdjxXz5zs_Dl0kACe8W',
+    // SYRUP-JET
+    'kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F<>kQCj6VUXJ2ydAOdxrhsiuU4pU0PPQ2nbHxhsTlBHkrOraY4z':
+      'EQBTknTRiOS4mFPqpctzueEVjo2UQum0aIbsq9MEpLCZjdMX',
   },
 }

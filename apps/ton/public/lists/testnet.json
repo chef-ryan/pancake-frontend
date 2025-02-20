@@ -90,6 +90,14 @@
       "symbol": "Ruby Token",
       "decimals": 9,
       "logoURI": "https://temple-and-grace.mo.cloudinary.net/mdopt/images/prod-large/large-1-14134-white-gold.jpg"
+    },
+    {
+      "chainId": -3,
+      "address": "kQCj6VUXJ2ydAOdxrhsiuU4pU0PPQ2nbHxhsTlBHkrOraY4z",
+      "name": "Jet Aircraft",
+      "symbol": "Jet",
+      "decimals": 9,
+      "logoURI": "https://cache.tonapi.io/imgproxy/PVKw-n6M8nlb34UBBimXF1cxRdDn2WyjqR4NRkliATE/rs:fill:200:200:1/g:no/aHR0cHM6Ly9tZWRpYS5pc3RvY2twaG90by5jb20vaWQvNDk3NTQzNjQ3L3ZlY3Rvci9qZXQtZmlnaHRlci1pbi1za3kuanBnP3M9NjEyeDYxMiZ3PTAmaz0yMCZjPUREbWhxNmxCVHZrOHduaVFmWk1qbjdvWVNvY1NYNTNJaHFuTFdkRUZ4YWM9.webp"
     }
   ]
 }

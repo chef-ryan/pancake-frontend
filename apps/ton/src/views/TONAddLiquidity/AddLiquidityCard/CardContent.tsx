@@ -236,6 +236,7 @@ export const CardContent = (props: CardContentProps) => {
       reserve1: poolData?.reserve1 || 0n,
       totalSupply: poolData?.totalSupply || 0n,
     })
+
     const parsedExpectedPoolTokens = parseUnits(expectedPoolTokens.toString(), LP_TOKEN_DECIMALS).toString()
 
     // Calculate future rates & share in pool
@@ -252,7 +253,12 @@ export const CardContent = (props: CardContentProps) => {
     const expectedRate0 = expectedReserve1.div(expectedReserve0).toString()
     const expectedRate1 = expectedReserve0.div(expectedReserve1).toString()
 
-    const expectedShareInPool = BN(parsedExpectedPoolTokens).div(expectedTotalSupply).times(100).toString()
+    // Expected Share = ((Current LP Tokens + Expected LP Tokens) / Total Supply) * 100
+    const expectedShareInPool = BN(lpBalance ? lpBalance?.toString() : 0)
+      .plus(BN(parsedExpectedPoolTokens))
+      .div(expectedTotalSupply)
+      .times(100)
+      .toString()
 
     setAddLiquidityModal({
       isOpen: true,
@@ -273,6 +279,7 @@ export const CardContent = (props: CardContentProps) => {
     poolData?.reserve0,
     poolData?.reserve1,
     poolData?.totalSupply,
+    lpBalance,
     setAddLiquidityModal,
     handleAddLiquidity,
   ])
