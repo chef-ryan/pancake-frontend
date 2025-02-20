@@ -77,12 +77,14 @@ export async function farmV2FetchFarms({
     return []
   }
 
-  const stableFarms = farms.filter(isStableFarm)
+  // @ts-ignore
+  const v2Farms = farms.filter((farm) => farm.protocol === 'v2' || farm.protocol === 'stable')
+  const stableFarms = v2Farms.filter(isStableFarm)
 
   const [stableFarmsResults, poolInfos, lpDataResults] = await Promise.all([
     fetchStableFarmData(stableFarms, chainId, provider),
-    fetchMasterChefData(farms, isTestnet, provider, masterChefAddress),
-    fetchPublicFarmsData(farms, chainId, provider, masterChefAddress),
+    fetchMasterChefData(v2Farms, isTestnet, provider, masterChefAddress),
+    fetchPublicFarmsData(v2Farms, chainId, provider, masterChefAddress),
   ])
 
   const stableFarmsData = (stableFarmsResults as StableLpData[]).map(formatStableFarm)
@@ -96,7 +98,7 @@ export async function farmV2FetchFarms({
 
   const lpData = lpDataResults.map(formatClassicFarmResponse)
 
-  const farmsData = farms.map((farm, index) => {
+  const farmsData = v2Farms.map((farm, index) => {
     try {
       return {
         ...farm,

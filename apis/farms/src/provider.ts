@@ -10,7 +10,7 @@ import {
   opBNBTestnet,
   polygonZkEvm,
   zkSync,
-  zkSyncTestnet,
+  zkSyncSepoliaTestnet,
 } from 'viem/chains'
 
 const requireCheck = [
@@ -165,7 +165,7 @@ const goerliClient = createPublicClient({
 })
 
 const zksyncTestnetClient = createPublicClient({
-  chain: zkSyncTestnet as Chain,
+  chain: zkSyncSepoliaTestnet as Chain,
   transport: http(),
   batch: {
     multicall: {
