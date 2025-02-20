@@ -1,14 +1,16 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Box, Link } from '@pancakeswap/uikit'
+import { Box, Link, Text, useTooltip } from '@pancakeswap/uikit'
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import BigNumber from 'bignumber.js'
 import { getChainId } from 'config/chains'
+import { ASSET_CDN } from 'config/constants/endpoints'
 import { atom, useAtomValue } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { useEffect, useMemo } from 'react'
 import { usePoolApr, usePoolInfo } from 'state/farmsV4/hooks'
 import type { PoolInfo } from 'state/farmsV4/state/type'
 import { ChainIdAddressKey } from 'state/farmsV4/state/type'
+import styled from 'styled-components'
 import { useMyPositions } from 'views/PoolDetail/components/MyPositionsContext'
 import { getPoolDetailPageLink } from 'views/universalFarms/components'
 import { sumApr } from 'views/universalFarms/utils/sumApr'
@@ -17,7 +19,6 @@ import { BodyText } from '../BodyText'
 import { AdCard } from '../Card'
 import { PickBaseCoin } from '../PickBaseCoin'
 import { AdTextConfig, PickConfig } from '../types'
-import { AdTextRender } from './AdCommon'
 
 const usePicksData = (poolId: `0x{string}`, chain: string) => {
   const chainId = getChainId(chain)!
@@ -59,8 +60,6 @@ const usePicksData = (poolId: `0x{string}`, chain: string) => {
       apr: total,
       fee: Number(fee) / 10000,
       tvl,
-      token0: pool.token0,
-      token1: pool.token1,
     },
     pool,
   }
@@ -83,12 +82,14 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
   const { t } = useTranslation()
   const data = usePicksData(poolId, chain)
   const link = useAtomValue(poolLinkAtom(data?.pool))
+  const { tooltip, targetRef, tooltipVisible } = useTooltip(<AdPicksTooltip />)
+  const chainId = getChainId(chain)
   if (!data) {
     return null
   }
 
   const { pickData } = data
-  console.log('pick data', pickData)
+  console.log('pick data', config, token0, token1)
   const { fee, apr, tvl } = pickData
   const texts: AdTextConfig[] = [
     {
@@ -119,20 +120,30 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
         right="9px"
         tokenAddress={token1.address}
       />
+      <ChainImage src={`${ASSET_CDN}/web/chains/${chainId}.png`} />
       <AdCard isExpanded style={{ padding: '16px' }} isDismissible={false}>
         <BodyText mb="0">
-          {texts.map((textConfig, i) => {
-            const key = `${textConfig.text}-${i}`
-            return <AdTextRender key={key} config={textConfig} />
-          })}
+          <Text
+            fontSize="inherit"
+            as="span"
+            color="secondary"
+            bold
+            ref={targetRef}
+            style={{
+              cursor: 'pointer',
+            }}
+          >
+            {t('PANCAKE PICKS')} #{index + 1} 🔥
+          </Text>
+          {tooltipVisible && tooltip}
           <Link
+            color="primary60"
             style={{
               marginTop: '14.5px',
-              color: '#02919D',
             }}
             href={link}
           >
-            {token0.symbol}/${token1.symbol}
+            {token0.symbol}/{token1.symbol}
           </Link>
         </BodyText>
         <Box
@@ -150,6 +161,20 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
   )
 }
 
+const AdPicksTooltip = () => {
+  const { t } = useTranslation()
+  return (
+    <>
+      <Text>
+        {t(
+          'Pancake Picks are trending tokens from selected categories, filtered by meaningful metrics, and refreshed every weekday.',
+        )}
+      </Text>
+      <Link href="https://pancakeswap.finance">{t('More Information')}</Link>
+    </>
+  )
+}
+
 function formatCurrency(amount: number): string {
   if (amount >= 1_000_000) {
     return `${(amount / 1_000_000).toFixed(2)}M`
@@ -159,3 +184,12 @@ function formatCurrency(amount: number): string {
   }
   return amount.toString()
 }
+
+const ChainImage = styled.img`
+  position: absolute;
+  bottom: 46px;
+  right: 12px;
+  z-index: 3;
+  width: 24px;
+  height: 24px;
+`

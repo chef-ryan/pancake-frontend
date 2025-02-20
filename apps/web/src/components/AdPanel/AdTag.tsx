@@ -1,14 +1,10 @@
-import styled from 'styled-components'
+import styled, { DefaultTheme } from 'styled-components'
 
-const colors = ['#EFF4F5', '#EEEAF4']
+const colors = ['tertiary', 'input']
 export const AdTag = ({ title, value, index }: { title: string; value: string; index: number }) => {
   const color = colors[index % colors.length]
   return (
-    <TagBox
-      style={{
-        backgroundColor: color,
-      }}
-    >
+    <TagBox color={color}>
       <Title>{title}</Title>
       <Value>{value}</Value>
     </TagBox>
@@ -30,7 +26,16 @@ const Value = styled.div`
   letter-spacing: 0%;
 `
 
-const TagBox = styled.div`
+function getThemeColor({ theme, color }) {
+  return theme.colors[color]
+}
+
+interface ThemedTagBox {
+  theme: DefaultTheme
+  color: string
+}
+const TagBox = styled.div<ThemedTagBox>`
+  background-color: ${getThemeColor};
   display: flex;
   flex-direction: column;
   align-items: center;
