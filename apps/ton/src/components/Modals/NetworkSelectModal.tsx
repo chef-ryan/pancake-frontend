@@ -1,6 +1,7 @@
 import { CheckmarkCircleFillIcon, Flex, FlexGap, Text } from '@pancakeswap/uikit'
+import { resetAppModalAtom } from 'atoms/modals/appModalAtom'
 import { AVAILABLE_NETWORKS } from 'config/constants/networks'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import Link from 'next/link'
 import styled from 'styled-components'
 import { chainIdAtom } from 'ton/atom/chainIdAtom'
@@ -17,11 +18,17 @@ const NetworkRow = styled(Flex)`
 
 export const NetworkSelectModal = () => {
   const currentChainId = useAtomValue(chainIdAtom)
+  const resetAppModal = useSetAtom(resetAppModalAtom)
 
   return (
     <FlexGap gap="8px" flexDirection="column">
       {AVAILABLE_NETWORKS.map((network) => (
-        <Link href={network.url}>
+        <Link
+          href={network.url}
+          onClick={() => {
+            if (!network.isExternal) resetAppModal()
+          }}
+        >
           <NetworkRow>
             <FlexGap gap="8px">
               <img src={network.logoURL} alt={network.name} width="24px" />
