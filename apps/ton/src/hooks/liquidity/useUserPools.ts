@@ -22,6 +22,7 @@ interface CombinedPoolData extends InitialPoolData {
   reserve0: bigint
   reserve1: bigint
   totalSupply: bigint
+  userShare?: number
 }
 
 interface PoolInfo {
@@ -48,11 +49,12 @@ const getPoolsWithBalance = (pools: RawPoolData[], tokenPairs: string[][]): Init
 const combinePoolData = (poolsWithBalance: InitialPoolData[], poolInfos: PoolInfo[]): CombinedPoolData[] =>
   poolsWithBalance.map((pool, index) => ({
     ...pool,
-    amount0: poolInfos[index] ? (pool.balance * poolInfos[index].reserve0) / poolInfos[index].totalSupply : 0n,
-    amount1: poolInfos[index] ? (pool.balance * poolInfos[index].reserve1) / poolInfos[index].totalSupply : 0n,
+    amount0: poolInfos[index] ? (pool.balance * poolInfos[index].reserve0) / (poolInfos[index].totalSupply ?? 1n) : 0n,
+    amount1: poolInfos[index] ? (pool.balance * poolInfos[index].reserve1) / (poolInfos[index].totalSupply ?? 1n) : 0n,
     reserve0: poolInfos[index]?.reserve0 ?? 0n,
     reserve1: poolInfos[index]?.reserve1 ?? 0n,
     totalSupply: poolInfos[index]?.totalSupply ?? 0n,
+    userShare: poolInfos[index] ? Number((pool.balance * 100n) / (poolInfos[index].totalSupply ?? 1n)) : 0,
   }))
 
 export const useUserPools = () => {
@@ -65,6 +67,7 @@ export const useUserPools = () => {
     ...rest
   } = useAtomValue(lpBalanceByPoolsQueryAtom(Object.values(PRESET_POOLS[network])))
 
+  // Filter out pools with zero user balance
   const poolsWithBalance = useMemo(() => getPoolsWithBalance(pools, tokenPairs), [pools, tokenPairs])
 
   // Liquidity Pool Information
@@ -73,13 +76,6 @@ export const useUserPools = () => {
   )
 
   const finalPoolData = useMemo(() => combinePoolData(poolsWithBalance, poolInfos), [poolsWithBalance, poolInfos])
-
-  console.log('useUserPools', {
-    finalPoolData,
-    poolsWithBalance,
-    pools,
-    presetPools: Object.values(PRESET_POOLS[network]),
-  })
 
   const isFetched = isPoolBalanceFetched && isPoolDataFetched
 

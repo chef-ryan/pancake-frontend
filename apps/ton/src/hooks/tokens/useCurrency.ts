@@ -16,7 +16,7 @@ export const useCurrency = (field: CurrencyField, address: string) => {
   const { data: list } = useAtomValue(fetchListAtom)
 
   useEffect(() => {
-    if (!isFetchComplete.current && !currency && address) {
+    if (!isFetchComplete.current && address) {
       const tokenInList = list?.find((item) => item.address === address)
       if (address === nativeCurrency.symbol) {
         setCurrency(nativeCurrency)

@@ -19,7 +19,7 @@ import { usePoolRates } from 'hooks/liquidity/usePoolRates'
 import { useCurrency } from 'hooks/tokens/useCurrency'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
@@ -130,35 +130,17 @@ export const CardContent = (props: CardContentProps) => {
     )
   }, [currencyAmounts, balance1, currency1])
 
-  const isDisabled = useMemo(
-    () =>
+  const isDisabled = useMemo(() => {
+    return (
       !currency0 ||
       !currency1 ||
       !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0] ||
       !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1] ||
       isInsufficientBalance0 ||
       isInsufficientBalance1 ||
-      isPoolDataLoading,
-
-    [currency0, currency1, currencyAmounts, isInsufficientBalance0, isInsufficientBalance1, isPoolDataLoading],
-  )
-
-  const updateQueryParams = useCallback(() => {
-    router.replace(
-      {
-        query: {
-          currency: [currencyKey(currency0), currencyKey(currency1)],
-        },
-      },
-      undefined,
-      { shallow: true },
+      isPoolDataLoading
     )
-  }, [router, currency0, currency1])
-
-  // TODO: Replace useEffect
-  useEffect(() => {
-    if (currency0 || currency1) updateQueryParams()
-  }, [currency0, currency1, updateQueryParams])
+  }, [currency0, currency1, currencyAmounts, isInsufficientBalance0, isInsufficientBalance1, isPoolDataLoading])
 
   const handleToken0Input = useCallback(
     (value: string) => {
@@ -178,16 +160,34 @@ export const CardContent = (props: CardContentProps) => {
 
   const onCurrencySelection = useCallback(
     (field: CurrencyField, currency: Currency) => {
+      let currentCurrency0 = currency0
+      let currentCurrency1 = currency1
+
       // Check if currency is same as in the other field
       if (field === CurrencyField.ADD_LIQUIDITY_CURRENCY0 && currency.equals(currency1)) {
         setCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY1, currency0)
+        currentCurrency1 = currency0
       } else if (field === CurrencyField.ADD_LIQUIDITY_CURRENCY1 && currency.equals(currency0)) {
         setCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY0, currency1)
+        currentCurrency0 = currency1
       }
 
       setCurrency(field, currency)
+
+      // Update query parameters
+      const newCurrency0 = field === CurrencyField.ADD_LIQUIDITY_CURRENCY0 ? currency : currentCurrency0
+      const newCurrency1 = field === CurrencyField.ADD_LIQUIDITY_CURRENCY1 ? currency : currentCurrency1
+      router.replace(
+        {
+          query: {
+            currency: [currencyKey(newCurrency0), currencyKey(newCurrency1)],
+          },
+        },
+        undefined,
+        { shallow: true },
+      )
     },
-    [setCurrency, currency0, currency1],
+    [setCurrency, currency0, currency1, router],
   )
 
   const handleAddLiquidity = useCallback(async () => {

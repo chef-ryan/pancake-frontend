@@ -1,5 +1,5 @@
 import { ONE_HUNDRED_PERCENT, Percent } from '@pancakeswap/sdk'
-import { Currency, Native, NATIVE, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
+import { Currency, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
 import tokenList from 'public/lists/testnet.json'
 
 export const BIG_INT_ZERO = 0n

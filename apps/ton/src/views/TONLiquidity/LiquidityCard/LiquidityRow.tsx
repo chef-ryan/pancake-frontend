@@ -8,9 +8,10 @@ import { Collapse } from 'components/widgets/swap-v2/Collapse'
 import { ADDRESS_CONCAT_LENGTH, LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 import { useAtomValue } from 'jotai'
 import Link from 'next/link'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { formatBalance } from 'ton/utils/formatting'
+import { truncateHash } from 'utils'
 
 const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
   width: 100%;
@@ -26,19 +27,22 @@ interface LiquidityRowProps {
   amount1?: bigint
   balance?: bigint
   totalSupply?: bigint
+  userShare?: number
 }
 
 export const LiquidityRow = ({
   token0,
   token1,
+  totalSupply,
   balance = 0n,
   amount0 = 0n,
   amount1 = 0n,
-
-  totalSupply,
+  userShare = 0,
 }: LiquidityRowProps) => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
+
+  console.log('LiquidityRow', { token0, token1, balance, totalSupply, userShare })
 
   const { data: currency0 } = useAtomValue(tokenByAddressQueryAtom(token0))
   const { data: currency1 } = useAtomValue(tokenByAddressQueryAtom(token1))
@@ -47,22 +51,12 @@ export const LiquidityRow = ({
     setIsOpen(!isOpen)
   }, [isOpen, setIsOpen])
 
-  const shareInPool = useMemo(() => {
-    if (balance === 0n || !totalSupply) {
-      return 0
-    }
-
-    return (balance * 100n) / totalSupply
-  }, [balance, totalSupply])
-
   if (!token0 || !token1) {
     return null
   }
 
-  const symbol0 =
-    currency0?.symbol ?? `${token0.slice(0, ADDRESS_CONCAT_LENGTH)}...${token0.slice(-ADDRESS_CONCAT_LENGTH)}`
-  const symbol1 =
-    currency1?.symbol ?? `${token1.slice(0, ADDRESS_CONCAT_LENGTH)}...${token1.slice(-ADDRESS_CONCAT_LENGTH)}`
+  const symbol0 = currency0?.symbol ?? truncateHash(token0, ADDRESS_CONCAT_LENGTH)
+  const symbol1 = currency1?.symbol ?? truncateHash(token1, ADDRESS_CONCAT_LENGTH)
 
   return (
     <>
@@ -100,7 +94,7 @@ export const LiquidityRow = ({
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Your share in the pool')}</Text>
-                <NumberDisplay value={shareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
+                <NumberDisplay value={userShare || '-'} suffix="%" maximumSignificantDigits={6} />
               </Flex>
               <FlexGap mt="10px" justifyContent="space-between" gap="16px">
                 <Link href={`/liquidity/add/${token0}/${token1}`} style={{ width: '100%' }}>
