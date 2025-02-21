@@ -1,3 +1,4 @@
+import { Text } from '@pancakeswap/uikit'
 import styled, { DefaultTheme } from 'styled-components'
 
 const colors = ['tertiary', 'input']
@@ -11,14 +12,16 @@ export const AdTag = ({ title, value, index }: { title: string; value: string; i
   )
 }
 
-const Title = styled.div`
+const Title = styled(Text)`
+  color: ${({ theme }) => theme.colors.textSubtle};
   font-family: Kanit;
   font-weight: 500;
   font-size: 12px;
   line-height: 18px;
   letter-spacing: 2%;
 `
-const Value = styled.div`
+const Value = styled(Text)`
+  color: ${({ theme }) => theme.colors.textSubtle};
   font-family: Kanit;
   font-weight: 600;
   font-size: 14px;

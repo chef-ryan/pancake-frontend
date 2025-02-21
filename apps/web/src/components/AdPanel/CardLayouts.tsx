@@ -93,6 +93,21 @@ const AdSlidesRender = ({
     }
   }, [isAnySlideExpanded, pauseAni, resumeAni])
 
+  const handleSlideChange = useCallback((event: any) => {
+    if (swiperRef.current) {
+      const activeIndex = swiperRef.current.swiper.realIndex
+      const bullets = swiperRef.current.swiper.pagination.bullets
+
+      bullets.forEach((bullet: HTMLElement) => {
+        bullet.classList.remove('played')
+      })
+
+      bullets.slice(0, activeIndex).forEach((bullet) => {
+        bullet.classList.add('played')
+      })
+    }
+  }, [])
+
   return (
     <StyledSwiper
       ref={swiperRef}
@@ -107,6 +122,7 @@ const AdSlidesRender = ({
       modules={[Autoplay, Pagination, EffectFade]}
       onAutoplayPause={pauseAni}
       onAutoplayResume={handleResume}
+      onSlideChange={handleSlideChange}
       loop
       observer
       id="test-swiper"

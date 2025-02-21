@@ -18,7 +18,7 @@ import { AdTag } from '../AdTag'
 import { BodyText } from '../BodyText'
 import { AdCard } from '../Card'
 import { PickBaseCoin } from '../PickBaseCoin'
-import { AdTextConfig, PickConfig } from '../types'
+import { PickConfig } from '../types'
 
 const usePicksData = (poolId: `0x{string}`, chain: string) => {
   const chainId = getChainId(chain)!
@@ -88,14 +88,7 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
   }
 
   const { pickData } = data
-  console.log('pick data', config, token0, token1)
   const { fee, apr, tvl } = pickData
-  const texts: AdTextConfig[] = [
-    {
-      text: `${t('PANCAKE PICKS')} #${index + 1} 🔥`,
-      subTitle: true,
-    },
-  ]
   const tvlAmt = formatCurrency(Number(tvl || '0'))
   return (
     <div

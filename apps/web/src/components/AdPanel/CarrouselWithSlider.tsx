@@ -60,5 +60,8 @@ export const StyledSwiper = styled(Swiper)<{ $showPagination?: boolean }>`
         animation-play-state: paused;
       }
     }
+    &.played {
+      background-color: ${({ theme }) => theme.colors.secondary};
+    }
   }
 `
