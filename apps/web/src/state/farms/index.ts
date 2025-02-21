@@ -79,9 +79,10 @@ const fetchFarmPublicDataPkg = async ({
   )
 
   const farmAprs: Record<string, number> = {}
-  const results = await Promise.allSettled([fetchV2FarmsAvgInfo(chainId), fetchStableFarmsAvgInfo(chainId)])
-
-  const [v2Result, stableResult] = results
+  const [v2Result, stableResult] = await Promise.allSettled([
+    fetchV2FarmsAvgInfo(chainId),
+    fetchStableFarmsAvgInfo(chainId),
+  ])
   const farmsV2AvgInfo = v2Result.status === 'fulfilled' ? v2Result.value : {}
   const farmsStableAvgInfo = stableResult.status === 'fulfilled' ? stableResult.value : {}
 
