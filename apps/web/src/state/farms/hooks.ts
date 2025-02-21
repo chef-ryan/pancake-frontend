@@ -16,6 +16,7 @@ import { getMasterChefContract } from 'utils/contractHelpers'
 
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { V2FarmWithoutStakedValue, V3FarmWithoutStakedValue } from 'state/farms/types'
+import { FARMS_API } from 'config/constants/endpoints'
 import {
   fetchBCakeWrapperDataAsync,
   fetchBCakeWrapperUserDataAsync,
@@ -57,7 +58,7 @@ export function useFarmV2PublicAPI() {
     queryKey: ['farm-v2-pubic-api', chainId],
 
     queryFn: async () => {
-      return fetch(`https://farms-api.pancakeswap.com/${chainId}`)
+      return fetch(`${FARMS_API}/${chainId}`)
         .then((res) => res.json())
         .then((res) => res.data)
     },
