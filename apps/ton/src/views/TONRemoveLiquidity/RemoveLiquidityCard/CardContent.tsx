@@ -8,6 +8,7 @@ import { WalletDisclaimer } from 'components/Card/WalletDisclaimer'
 import { DisplayLoader } from 'components/Misc/DisplayLoader'
 import { CurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
+import { MAXIMUM_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
 import { LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 import { usePoolRates } from 'hooks/liquidity/usePoolRates'
 import { useAtomValue, useSetAtom } from 'jotai'
@@ -236,10 +237,22 @@ export const CardContent = (props: CardContentProps) => {
               {rates ? (
                 <Box>
                   <Text>
-                    1 {currency0?.symbol} ≈ {rates.currency0.toString()} {currency1?.symbol}
+                    1 {currency0?.symbol} ≈{' '}
+                    <NumberDisplay
+                      as="span"
+                      value={rates.currency0.toString()}
+                      maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS}
+                    />{' '}
+                    {currency1?.symbol}
                   </Text>
                   <Text>
-                    1 {currency1?.symbol} ≈ {rates.currency1.toString()} {currency0?.symbol}
+                    1 {currency1?.symbol} ≈{' '}
+                    <NumberDisplay
+                      as="span"
+                      value={rates.currency1.toString()}
+                      maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS}
+                    />{' '}
+                    {currency0?.symbol}
                   </Text>
                 </Box>
               ) : (
@@ -262,7 +275,7 @@ export const CardContent = (props: CardContentProps) => {
           <Button
             onClick={openConfirmationModal}
             width="100%"
-            endIcon={<MinusIcon color="invertedContrast" />}
+            endIcon={<MinusIcon color={isDisabled ? 'textDisabled' : 'invertedContrast'} />}
             disabled={isDisabled}
           >
             {t('Remove')}
