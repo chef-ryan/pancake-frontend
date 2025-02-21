@@ -86,11 +86,11 @@ export const CardContent = (props: CardContentProps) => {
       token1Address: currency1?.isNative ? address : currency1?.address,
     }),
   )
-  const shareInPool = useMemo(() => {
-    if (!lpBalance || !poolData?.totalSupply) return 0
+  // const shareInPool = useMemo(() => {
+  //   if (!lpBalance || !poolData?.totalSupply) return 0
 
-    return BN(lpBalance.toString()).div(BN(poolData.totalSupply.toString())).times(100).toNumber()
-  }, [lpBalance, poolData?.totalSupply])
+  //   return BN(lpBalance.toString()).div(BN(poolData.totalSupply.toString())).times(100).toNumber()
+  // }, [lpBalance, poolData?.totalSupply])
 
   const rates = usePoolRates({
     currency0,
@@ -141,6 +141,67 @@ export const CardContent = (props: CardContentProps) => {
       isPoolDataLoading
     )
   }, [currency0, currency1, currencyAmounts, isInsufficientBalance0, isInsufficientBalance1, isPoolDataLoading])
+
+  const expectedPoolTokens = useMemo(() => {
+    if (!currency0 || !currency1) return BN(0)
+
+    const amount0 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]
+    const amount1 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]
+
+    return getExpectedPoolTokens({
+      amount0,
+      amount1,
+      reserve0: poolData?.reserve0 || 0n,
+      reserve1: poolData?.reserve1 || 0n,
+      totalSupply: poolData?.totalSupply || 0n,
+    })
+  }, [currencyAmounts, poolData?.reserve0, poolData?.reserve1, poolData?.totalSupply, currency0, currency1])
+
+  const expectedShareInPool = useMemo(() => {
+    if (!lpBalance || !poolData?.totalSupply) return '0'
+
+    const parsedExpectedPoolTokens = expectedPoolTokens.isFinite()
+      ? parseUnits(expectedPoolTokens.toString() || 0n, LP_TOKEN_DECIMALS).toString()
+      : '0'
+
+    const expectedTotalSupply = poolData?.totalSupply
+      ? BN(poolData.totalSupply.toString()).plus(parsedExpectedPoolTokens)
+      : BN(parsedExpectedPoolTokens)
+
+    // Expected Share = ((Current LP Tokens + Expected LP Tokens) / Total Supply) * 100
+    return BN(lpBalance ? lpBalance?.toString() : 0)
+      .plus(BN(parsedExpectedPoolTokens))
+      .div(expectedTotalSupply)
+      .times(100)
+      .toString()
+  }, [lpBalance, poolData?.totalSupply, expectedPoolTokens])
+
+  const expectedRates = useMemo(() => {
+    if (!currency0 || !currency1) return { expectedRate0: '0', expectedRate1: '0', expectedPoolTokens: '0' }
+
+    const amount0 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]
+    const amount1 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]
+
+    const parsedAmount0 = parseUnits(amount0, currency0?.decimals).toString()
+    const parsedAmount1 = parseUnits(amount1, currency1?.decimals).toString()
+
+    // Calculate future rates & share in pool
+    const expectedReserve0 = poolData?.reserve0
+      ? BN(poolData.reserve0.toString()).plus(parsedAmount0)
+      : BN(parsedAmount0)
+    const expectedReserve1 = poolData?.reserve1
+      ? BN(poolData.reserve1.toString()).plus(parsedAmount1)
+      : BN(parsedAmount1)
+
+    const expectedRate0 = expectedReserve1.div(expectedReserve0).toString()
+    const expectedRate1 = expectedReserve0.div(expectedReserve1).toString()
+
+    return {
+      expectedRate0,
+      expectedRate1,
+      expectedPoolTokens,
+    }
+  }, [currencyAmounts, poolData?.reserve0, poolData?.reserve1, currency0, currency1, expectedPoolTokens])
 
   const handleToken0Input = useCallback(
     (value: string) => {
@@ -223,52 +284,16 @@ export const CardContent = (props: CardContentProps) => {
 
   const openConfirmationModal = useCallback(() => {
     // TODO: Determine data directly in modal
-    const amount0 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]
-    const amount1 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]
-
-    const parsedAmount0 = parseUnits(amount0, currency0?.decimals).toString()
-    const parsedAmount1 = parseUnits(amount1, currency1?.decimals).toString()
-
-    const expectedPoolTokens = getExpectedPoolTokens({
-      amount0,
-      amount1,
-      reserve0: poolData?.reserve0 || 0n,
-      reserve1: poolData?.reserve1 || 0n,
-      totalSupply: poolData?.totalSupply || 0n,
-    })
-
-    const parsedExpectedPoolTokens = parseUnits(expectedPoolTokens.toString(), LP_TOKEN_DECIMALS).toString()
-
-    // Calculate future rates & share in pool
-    const expectedReserve0 = poolData?.reserve0
-      ? BN(poolData.reserve0.toString()).plus(parsedAmount0)
-      : BN(parsedAmount0)
-    const expectedReserve1 = poolData?.reserve1
-      ? BN(poolData.reserve1.toString()).plus(parsedAmount1)
-      : BN(parsedAmount1)
-    const expectedTotalSupply = poolData?.totalSupply
-      ? BN(poolData.totalSupply.toString()).plus(parsedExpectedPoolTokens)
-      : BN(parsedExpectedPoolTokens)
-
-    const expectedRate0 = expectedReserve1.div(expectedReserve0).toString()
-    const expectedRate1 = expectedReserve0.div(expectedReserve1).toString()
-
-    // Expected Share = ((Current LP Tokens + Expected LP Tokens) / Total Supply) * 100
-    const expectedShareInPool = BN(lpBalance ? lpBalance?.toString() : 0)
-      .plus(BN(parsedExpectedPoolTokens))
-      .div(expectedTotalSupply)
-      .times(100)
-      .toString()
 
     setAddLiquidityModal({
       isOpen: true,
       currency0,
       currency1,
       outputAmount: expectedPoolTokens.toString(),
-      amount0,
-      amount1,
-      rate0: expectedRate0,
-      rate1: expectedRate1,
+      amount0: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0],
+      amount1: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1],
+      rate0: expectedRates.expectedRate0,
+      rate1: expectedRates.expectedRate1,
       shareInPool: expectedShareInPool,
       onConfirm: handleAddLiquidity,
     })
@@ -276,10 +301,9 @@ export const CardContent = (props: CardContentProps) => {
     currency0,
     currency1,
     currencyAmounts,
-    poolData?.reserve0,
-    poolData?.reserve1,
-    poolData?.totalSupply,
-    lpBalance,
+    expectedShareInPool,
+    expectedPoolTokens,
+    expectedRates,
     setAddLiquidityModal,
     handleAddLiquidity,
   ])
@@ -343,8 +367,8 @@ export const CardContent = (props: CardContentProps) => {
             <Text color="textSubtle">{t('Your share in the pair')}</Text>
 
             <DisplayLoader loading={isLpBalanceLoading}>
-              {shareInPool ? (
-                <NumberDisplay value={shareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
+              {expectedShareInPool ? (
+                <NumberDisplay value={expectedShareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
               ) : (
                 '-'
               )}
