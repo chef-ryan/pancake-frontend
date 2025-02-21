@@ -120,7 +120,7 @@ export async function farmV2FetchFarms({
         ...getFarmAllocation({
           allocPoint: BigInt(farm?.allocPoint ?? 0) || poolInfos[index]?.allocPoint || BigInt(0),
           isRegular: poolInfos[index]?.isRegular,
-          totalRegularAllocPoint: BigInt(2305) || totalRegularAllocPoint,
+          totalRegularAllocPoint,
           totalSpecialAllocPoint,
         }),
       }

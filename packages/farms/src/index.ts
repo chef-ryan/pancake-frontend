@@ -65,7 +65,6 @@ export function createFarmFetcher(provider: ({ chainId }: { chainId: FarmV2Suppo
       farmsWithPrice,
       poolLength: Number(poolLength),
       regularCakePerBlock: +regularCakePerBlock,
-      totalRegularAllocPoint: totalRegularAllocPoint.toString(),
     }
   }
 
