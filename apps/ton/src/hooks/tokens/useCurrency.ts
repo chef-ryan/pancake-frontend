@@ -18,7 +18,7 @@ export const useCurrency = (field: CurrencyField, address: string) => {
   useEffect(() => {
     if (!isFetchComplete.current && address) {
       const tokenInList = list?.find((item) => item.address === address)
-      if (address === nativeCurrency.symbol) {
+      if (address.toLowerCase() === nativeCurrency.symbol.toLowerCase()) {
         setCurrency(nativeCurrency)
         isFetchComplete.current = true
       } else if (tokenInList) {

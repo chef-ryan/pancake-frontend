@@ -1,10 +1,12 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, Box, BoxProps, Button, FlexGap, LoadingDot, Text } from '@pancakeswap/uikit'
 import { WalletDisclaimer } from 'components/Card/WalletDisclaimer'
+import { DEFAULT_ADD_LIQUIDITY_CURRENCIES } from 'config/constants/commonBases'
 import { useUserPools } from 'hooks/liquidity/useUserPools'
 import { useAtomValue } from 'jotai'
 import Link from 'next/link'
 import styled from 'styled-components'
+import { chainIdAtom } from 'ton/atom/chainIdAtom'
 import { isConnectedAtom } from 'ton/atom/isConnectedAtom'
 import { LiquidityList } from './LiquidityList'
 
@@ -24,6 +26,7 @@ interface CardContentProps extends BoxProps {}
 export const CardContent = (props: CardContentProps) => {
   const { t } = useTranslation()
   const isWalletConnected = useAtomValue(isConnectedAtom)
+  const chainId = useAtomValue(chainIdAtom)
 
   const { data: userPools, isFetched } = useUserPools()
 
@@ -45,7 +48,9 @@ export const CardContent = (props: CardContentProps) => {
 
       {isWalletConnected && (
         <StyledCardFooter>
-          <Link href="/liquidity/add">
+          <Link
+            href={`/liquidity/add/${DEFAULT_ADD_LIQUIDITY_CURRENCIES[chainId].currency0}/${DEFAULT_ADD_LIQUIDITY_CURRENCIES[chainId].currency1}`}
+          >
             <Button width="100%" endIcon={<AddIcon color="invertedContrast" />}>
               {t('Add Liquidity')}
             </Button>

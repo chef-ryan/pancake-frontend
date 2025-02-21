@@ -67,17 +67,17 @@ export const AddLiquidityModal = ({
               <FlexGap gap="8px" alignItems="center">
                 <Dot bg="primary" />
                 <CurrencyLogo currency={currency0} />
-                <Text bold>{currency0?.symbol}</Text>
+                <Text>{currency0?.symbol}</Text>
               </FlexGap>
-              <NumberDisplay value={amount0} maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS} bold />
+              <NumberDisplay value={amount0} maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS} />
             </FlexGap>
             <FlexGap gap="16px" justifyContent="space-between">
               <FlexGap gap="8px" alignItems="center">
                 <Dot bg="secondary" />
                 <CurrencyLogo currency={currency1} />
-                <Text bold>{currency1?.symbol}</Text>
+                <Text>{currency1?.symbol}</Text>
               </FlexGap>
-              <NumberDisplay value={amount1} maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS} bold />
+              <NumberDisplay value={amount1} maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS} />
             </FlexGap>
           </FlexGap>
         </FlexGap>
