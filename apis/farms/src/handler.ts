@@ -119,10 +119,14 @@ export async function saveFarms(chainId: number, event: ScheduledEvent | FetchEv
     if (!farmsConfig) {
       throw new Error(`Farms config not found ${chainId}`)
     }
+
     const { farmsWithPrice, poolLength, regularCakePerBlock } = await farmFetcher.fetchFarms({
       chainId,
       isTestnet,
-      farms: farmsConfig.filter((f) => f.pid !== 0).concat(lpPriceHelpers),
+      // @ts-ignore
+      farms: farmsConfig
+        .filter((f) => f.pid !== 0 && (f.protocol === 'v2' || f.protocol === 'stable'))
+        .concat(lpPriceHelpers),
     })
 
     const cakeBusdPrice = await getCakePrice(isTestnet)
