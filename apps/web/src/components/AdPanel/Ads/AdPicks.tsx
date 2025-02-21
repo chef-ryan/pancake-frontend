@@ -24,7 +24,6 @@ const usePicksData = (poolId: `0x{string}`, chain: string) => {
   const chainId = getChainId(chain)!
   const pool = usePoolInfo({ poolAddress: poolId, chainId }) || null
 
-  // Always call hooks, even if pool is null
   const key = useMemo<ChainIdAddressKey | null>(() => {
     return pool ? `${pool.chainId}:${pool.lpAddress}` : null
   }, [pool])
@@ -49,7 +48,7 @@ const usePicksData = (poolId: `0x{string}`, chain: string) => {
   }, [cakeApr, denominator, key, lpApr, merklApr, numerator, pool, updateTotalApr])
 
   if (!pool) {
-    return null // Return null after all hooks are processed
+    return null
   }
 
   const total = sumApr(lpApr, cakeApr.boost)
@@ -120,7 +119,7 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
         right="9px"
         tokenAddress={token1.address}
       />
-      <ChainImage src={`${ASSET_CDN}/web/chains/${chainId}.png`} />
+      <ChainImage src={`${ASSET_CDN}/web/chains/v2/${chainId}.png`} />
       <AdCard isExpanded style={{ padding: '16px' }} isDismissible={false}>
         <BodyText mb="0">
           <Text
