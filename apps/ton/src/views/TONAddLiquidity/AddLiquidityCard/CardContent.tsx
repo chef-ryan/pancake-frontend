@@ -86,11 +86,6 @@ export const CardContent = (props: CardContentProps) => {
       token1Address: currency1?.isNative ? address : currency1?.address,
     }),
   )
-  // const shareInPool = useMemo(() => {
-  //   if (!lpBalance || !poolData?.totalSupply) return 0
-
-  //   return BN(lpBalance.toString()).div(BN(poolData.totalSupply.toString())).times(100).toNumber()
-  // }, [lpBalance, poolData?.totalSupply])
 
   const rates = usePoolRates({
     currency0,

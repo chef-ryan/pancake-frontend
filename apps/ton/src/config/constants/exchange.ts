@@ -23,6 +23,7 @@ export const QUERY_MEDIUM_STALE_TIME = 1000 * 60 * 5 // 5 minutes
 export const QUERY_RETRY_DELAY = 1500 // 1.5 seconds
 
 export const DEFAULT_SIGNIFICANT_DIGITS = 5
+export const MAXIMUM_SIGNIFICANT_DIGITS = 9
 
 // Minimum liquidity for adding to a new pool, defined in smart contract
 export const REQUIRED_MIN_LIQUIDITY = 1000

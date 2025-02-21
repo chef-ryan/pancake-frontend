@@ -4,7 +4,13 @@ import { REQUIRED_MIN_LIQUIDITY } from 'config/constants/exchange'
 import { LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 
 interface GetExpectedLpTokensArgs {
+  /**
+   * Amount of token0 in user-friendly format (Example: 700, 50, etc.)
+   */
   amount0: BigintIsh
+  /**
+   * Amount of token1 in user-friendly format (Example: 700, 50, etc.)
+   */
   amount1: BigintIsh
   reserve0: BigintIsh
   reserve1: BigintIsh
@@ -25,8 +31,4 @@ export function getExpectedPoolTokens({ amount0, amount1, reserve0, reserve1, to
   }
 
   return BN.min(a0.multipliedBy(supply).div(r0), a1.multipliedBy(supply).div(r1))
-}
-
-export function isEnoughLiquidity(amount0: BigintIsh, amount1: BigintIsh) {
-  return BN(amount0.toString()).multipliedBy(amount1.toString()).sqrt().gt(REQUIRED_MIN_LIQUIDITY)
 }

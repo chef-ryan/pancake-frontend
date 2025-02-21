@@ -5,8 +5,10 @@ import { settingsAtom } from 'atoms/settings/settingsAtom'
 import { LightGreyCard } from 'components/Card'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
+import { MAXIMUM_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
 import { useAtomValue } from 'jotai'
 import styled from 'styled-components'
+import { CircleSvg, Dot } from 'styles'
 
 const StyledFlexGap = styled(FlexGap).attrs({ flexDirection: 'column' })`
   min-height: 160px;
@@ -58,21 +60,26 @@ export const AddLiquidityModal = ({
         {t('Your deposit')}
       </Text>
       <LightGreyCard>
-        <FlexGap flexDirection="column" gap="8px">
-          <Flex justifyContent="space-between">
-            <FlexGap gap="8px">
-              <CurrencyLogo currency={currency0} />
-              <Text bold>{currency0?.symbol}</Text>
+        <FlexGap gap="16px" alignItems="center">
+          <CircleSvg percent={0.5} />
+          <FlexGap flexDirection="column" gap="8px" width="100%">
+            <FlexGap gap="16px" justifyContent="space-between">
+              <FlexGap gap="8px" alignItems="center">
+                <Dot bg="primary" />
+                <CurrencyLogo currency={currency0} />
+                <Text bold>{currency0?.symbol}</Text>
+              </FlexGap>
+              <NumberDisplay value={amount0} maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS} bold />
             </FlexGap>
-            <NumberDisplay value={amount0} bold />
-          </Flex>
-          <Flex justifyContent="space-between">
-            <FlexGap gap="8px">
-              <CurrencyLogo currency={currency1} />
-              <Text bold>{currency1?.symbol}</Text>
+            <FlexGap gap="16px" justifyContent="space-between">
+              <FlexGap gap="8px" alignItems="center">
+                <Dot bg="secondary" />
+                <CurrencyLogo currency={currency1} />
+                <Text bold>{currency1?.symbol}</Text>
+              </FlexGap>
+              <NumberDisplay value={amount1} maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS} bold />
             </FlexGap>
-            <NumberDisplay value={amount1} bold />
-          </Flex>
+          </FlexGap>
         </FlexGap>
       </LightGreyCard>
 
@@ -80,10 +87,14 @@ export const AddLiquidityModal = ({
         <Text color="textSubtle">{t('Rates')}</Text>
         <Flex flexDirection="column">
           <Text>
-            1 {currency0?.symbol} ≈ {rate0} {currency1?.symbol}
+            1 {currency0?.symbol} ≈{' '}
+            <NumberDisplay value={rate0} as="span" maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS} />{' '}
+            {currency1?.symbol}
           </Text>
           <Text>
-            1 {currency1?.symbol} ≈ {rate1} {currency0?.symbol}
+            1 {currency1?.symbol} ≈{' '}
+            <NumberDisplay value={rate1} as="span" maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS} />{' '}
+            {currency0?.symbol}
           </Text>
         </Flex>
       </Flex>
