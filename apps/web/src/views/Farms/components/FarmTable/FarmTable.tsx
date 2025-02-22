@@ -165,13 +165,12 @@ const FarmTable: React.FC<React.PropsWithChildren<ITableProps>> = ({ farms, cake
       const initialActivity = latinise(lpLabel?.toLowerCase()) === lowercaseQuery
 
       if (farm.version === 2) {
-        const isBooster = Boolean(farm?.boosted)
+        const isBooster = Boolean(farm?.bCakeWrapperAddress)
         const row: RowProps = {
           apr: {
             value:
               getDisplayApr(
-                (isBooster && farm?.bCakePublicData?.rewardPerSecond === 0) ||
-                  (isBooster && !farm?.bCakePublicData?.isRewardInRange)
+                (isBooster && farm?.bCakePublicData?.rewardPerSecond === 0) || !farm?.bCakePublicData?.isRewardInRange
                   ? 0
                   : farm.apr,
                 farm.lpRewardsApr,
@@ -186,8 +185,7 @@ const FarmTable: React.FC<React.PropsWithChildren<ITableProps>> = ({ farms, cake
             cakePrice,
             lpRewardsApr: farm.lpRewardsApr ?? 0,
             originalValue:
-              (isBooster && farm?.bCakePublicData?.rewardPerSecond === 0) ||
-              (isBooster && !farm?.bCakePublicData?.isRewardInRange)
+              (isBooster && farm?.bCakePublicData?.rewardPerSecond === 0) || !farm?.bCakePublicData?.isRewardInRange
                 ? 0
                 : farm.apr ?? 0,
             stableSwapAddress: farm.stableSwapAddress,
