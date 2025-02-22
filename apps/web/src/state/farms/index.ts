@@ -480,8 +480,6 @@ export const farmsSlice = createSlice({
       const [farmPayload, poolLength, regularCakePerBlock, totalRegularAllocPoint, farmAprs] = action.payload
       const farmPayloadPidMap = keyBy(farmPayload, 'pid')
 
-      console.info(farmAprs)
-
       state.data = state.data.map((farm) => {
         const liveFarmData = farmPayloadPidMap[farm.pid]
         return {
