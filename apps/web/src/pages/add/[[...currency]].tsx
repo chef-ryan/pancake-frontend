@@ -21,8 +21,8 @@ const AddLiquidityPage = () => {
   const router = useRouter()
 
   // fetching farm api instead of using redux store here to avoid huge amount of actions and hooks needed
-  const { data: farmV3Public } = useFarmsV3Public()
   const { data: farmsV2Public } = useFarmV2PublicAPI()
+  const { data: farmV3Public } = useFarmsV3Public()
 
   const { currencyIdA, currencyIdB, feeAmount } = useCurrencyParams()
 
@@ -46,18 +46,16 @@ const AddLiquidityPage = () => {
       }
 
     const hasV2Farm = farmsV2Public?.find((farm) => {
-      const isFarm =
-        (isAddressEqual(farm.token0.address, currencyA.wrapped.address) &&
+      return (
+        (farm.isRewardInRange &&
+          isAddressEqual(farm.token0.address, currencyA.wrapped.address) &&
           isAddressEqual(farm.token1.address, currencyB.wrapped.address)) ||
         (isAddressEqual(farm.token0.address, currencyB.wrapped.address) &&
-          isAddressEqual(farm.token1.address, currencyA.wrapped.address))
-      return (
-        isFarm &&
-        farm.isRewardInRange &&
-        getBalanceAmount(
-          farm.rewardPerSecond ? new BigNumber(Number(farm.rewardPerSecond)) : BIG_ZERO,
-          bscTokens.cake.decimals,
-        ).toNumber() > 0
+          isAddressEqual(farm.token1.address, currencyA.wrapped.address) &&
+          getBalanceAmount(
+            farm.rewardPerSecond ? new BigNumber(Number(farm.rewardPerSecond)) : BIG_ZERO,
+            bscTokens.cake.decimals,
+          ).toNumber() > 0)
       )
     })
     return hasV2Farm
