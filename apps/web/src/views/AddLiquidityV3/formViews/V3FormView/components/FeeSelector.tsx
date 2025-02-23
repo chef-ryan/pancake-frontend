@@ -5,13 +5,13 @@ import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import { FeeAmount } from '@pancakeswap/v3-sdk'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { PairState, useV2Pair } from 'hooks/usePairs'
-import { useV3FarmAPI } from 'hooks/useV3FarmAPI'
 import { PoolState } from 'hooks/v3/types'
 import { useFeeTierDistribution } from 'hooks/v3/useFeeTierDistribution'
 import { usePools } from 'hooks/v3/usePools'
 import { useEffect, useMemo, useState } from 'react'
 import HideShowSelectorSection from 'views/AddLiquidityV3/components/HideShowSelectorSection'
 import { HandleFeePoolSelectFn, SELECTOR_TYPE } from 'views/AddLiquidityV3/types'
+import { useFarmsV3Public } from 'state/farmsV3/hooks'
 import { FeeOption } from './FeeOption'
 import { FeeTierPercentageBadge } from './FeeTierPercentageBadge'
 import { FEE_AMOUNT_DETAIL, SelectContainer } from './shared'
@@ -36,13 +36,13 @@ export default function FeeSelector({
 }) {
   const { t } = useTranslation()
   const { chainId } = useActiveChainId()
-  const { farms: farmV3Config } = useV3FarmAPI(chainId)
+  const { data: farmV3Config } = useFarmsV3Public()
 
   const farmV3 = useMemo(() => {
     if (currencyA && currencyB) {
       const [tokenA, tokenB] = [currencyA.wrapped, currencyB.wrapped]
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
-      return farmV3Config?.find((f) => f.token.equals(token0) && f.quoteToken.equals(token1))
+      return farmV3Config?.farmsWithPrice?.find((f) => f.token.equals(token0) && f.quoteToken.equals(token1))
     }
     return null
   }, [currencyA, currencyB, farmV3Config])
