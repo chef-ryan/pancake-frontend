@@ -20,11 +20,9 @@ import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 const AddLiquidityPage = () => {
   const router = useRouter()
 
-  const [fetchV2Api, setFetchV2Api] = useState(false)
-
   // fetching farm api instead of using redux store here to avoid huge amount of actions and hooks needed
-  const { data: farmV3Public, isPending: isV3Pending, isLoading: isV3Loading } = useFarmsV3Public()
-  const { data: farmsV2Public } = useFarmV2PublicAPI({ enabled: fetchV2Api })
+  const { data: farmV3Public } = useFarmsV3Public()
+  const { data: farmsV2Public } = useFarmV2PublicAPI()
 
   const { currencyIdA, currencyIdB, feeAmount } = useCurrencyParams()
 
@@ -33,7 +31,7 @@ const AddLiquidityPage = () => {
 
   // Initial prefer farm type if there is a farm for the pair
   const preferFarmType = useMemo(() => {
-    if (!currencyA || !currencyB || !router.isReady || isV3Pending || isV3Loading) return undefined
+    if (!currencyA || !currencyB || !router.isReady) return undefined
 
     const hasV3Farm = farmV3Public?.farmsWithPrice.find(
       (farm) =>
@@ -46,8 +44,6 @@ const AddLiquidityPage = () => {
         type: SELECTOR_TYPE.V3,
         feeAmount: hasV3Farm.feeAmount,
       }
-
-    setFetchV2Api(true)
 
     const hasV2Farm = farmsV2Public?.find((farm) => {
       const isActive =
@@ -69,7 +65,7 @@ const AddLiquidityPage = () => {
         ? { type: SELECTOR_TYPE.STABLE }
         : { type: SELECTOR_TYPE.V2 }
       : undefined
-  }, [farmsV2Public, farmV3Public?.farmsWithPrice, currencyA, currencyB, router, isV3Pending, isV3Loading])
+  }, [farmsV2Public, farmV3Public?.farmsWithPrice, currencyA, currencyB, router])
 
   const handleRefresh = useCallback(() => {
     router.replace(

@@ -57,7 +57,7 @@ export function useFarmsLength({ enabled = true } = {}) {
   })
 }
 
-export function useFarmV2PublicAPI({ enabled = true }: { enabled: boolean }) {
+export function useFarmV2PublicAPI() {
   const { chainId } = useActiveChainId()
   return useQuery({
     queryKey: ['farm-v2-public-api', chainId],
@@ -137,7 +137,7 @@ export function useFarmV2PublicAPI({ enabled = true }: { enabled: boolean }) {
       })
     },
 
-    enabled: Boolean(enabled && chainId && supportedChainIdV2.includes(chainId)),
+    enabled: Boolean(chainId && supportedChainIdV2.includes(chainId)),
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
