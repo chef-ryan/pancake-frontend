@@ -1,4 +1,4 @@
-import { isStableFarm } from '@pancakeswap/farms'
+import { Protocol } from '@pancakeswap/farms'
 import { useCurrency } from 'hooks/Tokens'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
@@ -43,14 +43,13 @@ const AddLiquidityPage = () => {
 
     const hasV2Farm = farmsV2Public?.find(
       (farm) =>
-        farm.multiplier !== '0X' &&
-        ((isAddressEqual(farm.token.address, currencyA.wrapped.address) &&
-          isAddressEqual(farm.quoteToken.address, currencyB.wrapped.address)) ||
-          (isAddressEqual(farm.token.address, currencyB.wrapped.address) &&
-            isAddressEqual(farm.quoteToken.address, currencyA.wrapped.address))),
+        (isAddressEqual(farm.token0.address, currencyA.wrapped.address) &&
+          isAddressEqual(farm.token1.address, currencyB.wrapped.address)) ||
+        (isAddressEqual(farm.token0.address, currencyB.wrapped.address) &&
+          isAddressEqual(farm.token1.address, currencyA.wrapped.address)),
     )
     return hasV2Farm
-      ? isStableFarm(hasV2Farm)
+      ? hasV2Farm.protocol === Protocol.STABLE
         ? { type: SELECTOR_TYPE.STABLE }
         : { type: SELECTOR_TYPE.V2 }
       : undefined

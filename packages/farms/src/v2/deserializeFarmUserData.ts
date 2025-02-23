@@ -1,4 +1,4 @@
-import { bscTestnetTokens } from '@pancakeswap/tokens'
+import { bscTokens } from '@pancakeswap/tokens'
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { getBalanceAmount } from '@pancakeswap/utils/formatBalance'
 import BigNumber from 'bignumber.js'
@@ -29,7 +29,7 @@ export const deserializeFarmBCakeUserData = (farm?: SerializedFarm): Deserialize
     boostedAmounts: farm?.bCakeUserData?.boostedAmounts ? new BigNumber(farm.bCakeUserData.boostedAmounts) : BIG_ZERO,
     boosterContractAddress: farm?.bCakeUserData?.boosterContractAddress,
     rewardPerSecond: farm?.bCakeUserData?.rewardPerSecond
-      ? getBalanceAmount(new BigNumber(farm?.bCakeUserData?.rewardPerSecond), bscTestnetTokens.cake.decimals).toNumber()
+      ? getBalanceAmount(new BigNumber(farm?.bCakeUserData?.rewardPerSecond), bscTokens.cake.decimals).toNumber()
       : 0,
     startTimestamp: farm?.bCakeUserData?.startTimestamp,
     endTimestamp: farm?.bCakeUserData?.endTimestamp,
@@ -37,7 +37,6 @@ export const deserializeFarmBCakeUserData = (farm?: SerializedFarm): Deserialize
 }
 
 export const deserializeFarmBCakePublicData = (farm?: SerializedFarm): DeserializedBCakeWrapperUserData => {
-  // const isRewardInRange = true
   const isRewardInRange =
     farm?.bCakePublicData?.startTimestamp &&
     farm?.bCakePublicData?.endTimestamp &&
@@ -55,10 +54,7 @@ export const deserializeFarmBCakePublicData = (farm?: SerializedFarm): Deseriali
     boosterContractAddress: farm?.bCakePublicData?.boosterContractAddress,
     rewardPerSecond:
       farm?.bCakePublicData?.rewardPerSecond && isRewardInRange
-        ? getBalanceAmount(
-            new BigNumber(farm?.bCakePublicData?.rewardPerSecond),
-            bscTestnetTokens.cake.decimals,
-          ).toNumber()
+        ? getBalanceAmount(new BigNumber(farm?.bCakePublicData?.rewardPerSecond), bscTokens.cake.decimals).toNumber()
         : 0,
     startTimestamp: farm?.bCakePublicData?.startTimestamp,
     endTimestamp: farm?.bCakePublicData?.endTimestamp,
