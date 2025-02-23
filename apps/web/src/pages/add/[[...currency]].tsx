@@ -1,7 +1,7 @@
 import { Protocol } from '@pancakeswap/farms'
 import { useCurrency } from 'hooks/Tokens'
 import { useRouter } from 'next/router'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useFarmV2PublicAPI } from 'state/farms/hooks'
 import { useFarmsV3Public } from 'state/farmsV3/hooks'
 import { CHAIN_IDS } from 'utils/wagmi'
@@ -12,13 +12,19 @@ import { useCurrencyParams } from 'views/AddLiquidityV3/hooks/useCurrencyParams'
 import { SELECTOR_TYPE } from 'views/AddLiquidityV3/types'
 import { PageWithoutFAQ } from 'views/Page'
 import { isAddressEqual } from 'utils'
+import BigNumber from 'bignumber.js'
+import { bscTokens } from '@pancakeswap/tokens'
+import { getBalanceAmount } from '@pancakeswap/utils/formatBalance'
+import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 
 const AddLiquidityPage = () => {
   const router = useRouter()
 
+  const [fetchV2Api, setFetchV2Api] = useState(false)
+
   // fetching farm api instead of using redux store here to avoid huge amount of actions and hooks needed
-  const { data: farmsV2Public } = useFarmV2PublicAPI()
-  const { data: farmV3Public } = useFarmsV3Public()
+  const { data: farmV3Public, isPending: isV3Pending, isLoading: isV3Loading } = useFarmsV3Public()
+  const { data: farmsV2Public } = useFarmV2PublicAPI({ enabled: fetchV2Api })
 
   const { currencyIdA, currencyIdB, feeAmount } = useCurrencyParams()
 
@@ -27,7 +33,7 @@ const AddLiquidityPage = () => {
 
   // Initial prefer farm type if there is a farm for the pair
   const preferFarmType = useMemo(() => {
-    if (!currencyA || !currencyB || !router.isReady) return undefined
+    if (!currencyA || !currencyB || !router.isReady || isV3Pending || isV3Loading) return undefined
 
     const hasV3Farm = farmV3Public?.farmsWithPrice.find(
       (farm) =>
@@ -41,19 +47,29 @@ const AddLiquidityPage = () => {
         feeAmount: hasV3Farm.feeAmount,
       }
 
-    const hasV2Farm = farmsV2Public?.find(
-      (farm) =>
-        (isAddressEqual(farm.token0.address, currencyA.wrapped.address) &&
+    setFetchV2Api(true)
+
+    const hasV2Farm = farmsV2Public?.find((farm) => {
+      const isActive =
+        farm.isRewardInRange &&
+        getBalanceAmount(
+          farm.rewardPerSecond ? new BigNumber(Number(farm.rewardPerSecond)) : BIG_ZERO,
+          bscTokens.cake.decimals,
+        ).toNumber() > 0
+      return (
+        (isActive &&
+          isAddressEqual(farm.token0.address, currencyA.wrapped.address) &&
           isAddressEqual(farm.token1.address, currencyB.wrapped.address)) ||
         (isAddressEqual(farm.token0.address, currencyB.wrapped.address) &&
-          isAddressEqual(farm.token1.address, currencyA.wrapped.address)),
-    )
+          isAddressEqual(farm.token1.address, currencyA.wrapped.address))
+      )
+    })
     return hasV2Farm
       ? hasV2Farm.protocol === Protocol.STABLE
         ? { type: SELECTOR_TYPE.STABLE }
         : { type: SELECTOR_TYPE.V2 }
       : undefined
-  }, [farmsV2Public, farmV3Public?.farmsWithPrice, currencyA, currencyB, router])
+  }, [farmsV2Public, farmV3Public?.farmsWithPrice, currencyA, currencyB, router, isV3Pending, isV3Loading])
 
   const handleRefresh = useCallback(() => {
     router.replace(

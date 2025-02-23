@@ -22,11 +22,6 @@ import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { V2FarmWithoutStakedValue, V3FarmWithoutStakedValue } from 'state/farms/types'
 import { v2BCakeWrapperABI } from 'config/abi/v2BCakeWrapper'
 import { publicClient } from 'utils/viem'
-import BigNumber from 'bignumber.js'
-import { bscTokens } from '@pancakeswap/tokens'
-import { getBalanceAmount } from '@pancakeswap/utils/formatBalance'
-import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
-import dayjs from 'dayjs'
 import {
   farmSelector,
   makeFarmFromPidSelector,
@@ -62,7 +57,7 @@ export function useFarmsLength({ enabled = true } = {}) {
   })
 }
 
-export function useFarmV2PublicAPI() {
+export function useFarmV2PublicAPI({ enabled = true }: { enabled: boolean }) {
   const { chainId } = useActiveChainId()
   return useQuery({
     queryKey: ['farm-v2-public-api', chainId],
@@ -127,31 +122,22 @@ export function useFarmV2PublicAPI() {
         }),
       ])
 
-      const now = dayjs().unix()
+      const now = Date.now() / 1000
 
-      return result
-        .map((farm, index) => ({
+      return result.map((farm, index) => {
+        const startTimestamp = Number(startTimestamps[index] || 0)
+        const endTimestamp = Number(endTimestamps[index] || 0)
+        return {
           ...farm,
           rewardPerSecond: rewardPerSecondResults[index],
-          startTimestamp: startTimestamps[index],
-          endTimestamp: endTimestamps[index],
-        }))
-        .filter((farm) => {
-          const { startTimestamp, endTimestamp, rewardPerSecond } = farm
-          return (
-            startTimestamp &&
-            endTimestamp &&
-            now >= startTimestamp &&
-            now < endTimestamp &&
-            getBalanceAmount(
-              rewardPerSecond ? new BigNumber(Number(rewardPerSecond)) : BIG_ZERO,
-              bscTokens.cake.decimals,
-            ).toNumber() > 0
-          )
-        })
+          startTimestamp,
+          endTimestamp,
+          isRewardInRange: now >= startTimestamp && now < endTimestamp,
+        }
+      })
     },
 
-    enabled: Boolean(chainId && supportedChainIdV2.includes(chainId)),
+    enabled: Boolean(enabled && chainId && supportedChainIdV2.includes(chainId)),
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
