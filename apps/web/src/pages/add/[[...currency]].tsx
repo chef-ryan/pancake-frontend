@@ -46,18 +46,18 @@ const AddLiquidityPage = () => {
       }
 
     const hasV2Farm = farmsV2Public?.find((farm) => {
-      const isActive =
+      const isFarm =
+        (isAddressEqual(farm.token0.address, currencyA.wrapped.address) &&
+          isAddressEqual(farm.token1.address, currencyB.wrapped.address)) ||
+        (isAddressEqual(farm.token0.address, currencyB.wrapped.address) &&
+          isAddressEqual(farm.token1.address, currencyA.wrapped.address))
+      return (
+        isFarm &&
         farm.isRewardInRange &&
         getBalanceAmount(
           farm.rewardPerSecond ? new BigNumber(Number(farm.rewardPerSecond)) : BIG_ZERO,
           bscTokens.cake.decimals,
         ).toNumber() > 0
-      return (
-        (isActive &&
-          isAddressEqual(farm.token0.address, currencyA.wrapped.address) &&
-          isAddressEqual(farm.token1.address, currencyB.wrapped.address)) ||
-        (isAddressEqual(farm.token0.address, currencyB.wrapped.address) &&
-          isAddressEqual(farm.token1.address, currencyA.wrapped.address))
       )
     })
     return hasV2Farm
