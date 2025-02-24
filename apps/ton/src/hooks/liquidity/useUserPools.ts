@@ -5,6 +5,7 @@ import { lpBalanceByPoolsQueryAtom } from 'ton/atom/liquidity/lpBalanceByPoolsQu
 import { poolDataMultipleQueryAtom } from 'ton/atom/liquidity/poolDataMultipleQueryAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
 import { getTokenOrder } from 'ton/utils/address'
+import { parsePresetKey } from 'utils'
 
 interface RawPoolData {
   balance: bigint
@@ -32,7 +33,7 @@ interface PoolInfo {
 }
 
 const getTokenPairs = (network: string): string[][] =>
-  Object.keys(PRESET_POOLS[network]).map((tokenPair) => tokenPair.split('<>'))
+  Object.keys(PRESET_POOLS[network]).map((tokenPair) => parsePresetKey(tokenPair))
 
 const getPoolsWithBalance = (pools: RawPoolData[], tokenPairs: string[][]): InitialPoolData[] =>
   pools

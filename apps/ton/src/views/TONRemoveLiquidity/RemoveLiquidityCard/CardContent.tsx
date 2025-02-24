@@ -218,15 +218,18 @@ export const CardContent = (props: CardContentProps) => {
                 <CurrencyLogo currency={currency0} />
                 <Text color="textSubtle">{t('Pooled %currency%', { currency: currency0?.symbol ?? '' })}</Text>
               </FlexGap>
-              <NumberDisplay value={formatBalance(outputAmounts?.amount0 ?? 0n, currency0?.decimals)} />
+              <DisplayLoader loading={isPoolDataLoading || isLpBalanceLoading}>
+                <NumberDisplay value={formatBalance(outputAmounts?.amount0 ?? 0n, currency0?.decimals)} />
+              </DisplayLoader>
             </Flex>
             <Flex justifyContent="space-between" flexWrap="wrap">
               <FlexGap gap="8px">
                 <CurrencyLogo currency={currency1} />
                 <Text color="textSubtle">{t('Pooled %currency%', { currency: currency1?.symbol ?? '' })}</Text>
               </FlexGap>
-
-              <NumberDisplay value={formatBalance(outputAmounts?.amount1 ?? 0n, currency1?.decimals)} />
+              <DisplayLoader loading={isPoolDataLoading || isLpBalanceLoading}>
+                <NumberDisplay value={formatBalance(outputAmounts?.amount1 ?? 0n, currency1?.decimals)} />
+              </DisplayLoader>
             </Flex>
           </FlexGap>
         </LightGreyCard>

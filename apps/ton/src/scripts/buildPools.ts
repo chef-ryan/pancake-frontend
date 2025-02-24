@@ -1,15 +1,27 @@
+import dotenv from 'dotenv'
+import path from 'path'
+
 import { Contracts, TonChainId, TonContractNames } from '@pancakeswap/ton-v2-sdk'
 import { TonClient } from '@ton/ton'
 import { writeFileSync } from 'fs'
-import path from 'path'
-import { TonEndPoints } from 'ton/context/endpoints'
 import { parseAddress } from 'ton/utils/address'
 import { JettonMasterUSDT } from 'ton/wrappers/tact_JettonMasterUSDT'
 import { Router } from 'ton/wrappers/tact_Router'
+import { presetKey } from 'utils'
+
+import chunk from 'lodash/chunk'
+
 import mainnetList from '../../public/lists/main.json'
 import testnetList from '../../public/lists/testnet.json'
 
-const key = (token0, token1) => `${token0.address}<>${token1.address}`
+dotenv.config({ path: path.resolve(__dirname, '../../.env.local') })
+
+const TonEndPoints = {
+  [TonChainId.Mainnet]: 'https://main.ton.dev',
+  [TonChainId.Testnet]: `https://testnet.toncenter.com/api/v2/jsonRPC?api_key=${process.env.NEXT_PUBLIC_TONCENTER_TESTNET_API_KEY}`,
+}
+
+const key = (token0, token1) => presetKey(token0.address, token1.address)
 
 const getTokenPairs = (tokens: any[]) => {
   const pairs: any[] = []
@@ -50,25 +62,31 @@ const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-const generatePoolsForPairs = async (chainId: TonChainId, pairs: any[]) => {
-  const pools = {}
+const generatePoolsForPairs = async (chainId: TonChainId, pairs: any[][]) => {
   console.log(`[${chainId}] Fetching pool addresses for ${pairs.length} pairs`)
-  for (let i = 0; i < pairs.length; i++) {
-    const pair = pairs[i]
-    const token0 = pair[0]
-    const token1 = pair[1]
+
+  const pools = {}
+  const BATCH_SIZE = 40
+
+  const chunks = chunk(pairs, BATCH_SIZE)
+
+  for (let i = 0; i < chunks.length; i++) {
+    const chunkPairs = chunks[i]
 
     // eslint-disable-next-line no-await-in-loop
-    const poolAddress = await getPoolAddress(chainId, token0.address, token1.address)
+    await Promise.all(
+      chunkPairs.map(async (pair) => {
+        const [token0, token1] = pair
+        const poolAddress = await getPoolAddress(chainId, token0.address, token1.address)
 
-    console.log(`[${chainId}] Pool Address for ${token0.symbol}-${token1.symbol}: ${poolAddress.toString()}`)
+        console.log(`[${chainId}] Pool Address for ${token0.symbol}-${token1.symbol}: ${poolAddress.toString()}`)
 
-    if (poolAddress) {
-      pools[key(token0, token1)] = poolAddress.toString()
-    }
+        if (poolAddress) pools[key(token0, token1)] = poolAddress.toString()
+      }),
+    )
 
     // eslint-disable-next-line no-await-in-loop
-    await sleep(50)
+    await sleep(100)
   }
 
   const network = chainId === TonChainId.Mainnet ? 'main' : 'testnet'

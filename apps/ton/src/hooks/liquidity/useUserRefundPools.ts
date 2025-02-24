@@ -4,9 +4,10 @@ import { useMemo } from 'react'
 import { lpAccountMultipleQueryAtom } from 'ton/atom/liquidity/lpAccountMultipleQueryAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
 import { getTokenOrder } from 'ton/utils/address'
+import { parsePresetKey } from 'utils'
 
 const getTokenPairs = (network: string): string[][] =>
-  Object.keys(PRESET_POOLS[network]).map((tokenPair) => tokenPair.split('<>'))
+  Object.keys(PRESET_POOLS[network]).map((tokenPair) => parsePresetKey(tokenPair))
 
 /**
  * Fetch pools with refunds available for the user
