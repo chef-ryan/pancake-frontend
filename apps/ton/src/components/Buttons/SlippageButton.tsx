@@ -11,9 +11,8 @@ import {
   useTooltip,
   WarningIcon,
 } from '@pancakeswap/uikit'
-import { settingsAtom } from 'atoms/settings/settingsAtom'
 import { SettingsModal } from 'components/Modals/SettingsModal'
-import { useAtomValue } from 'jotai'
+import { useUserSlippage } from 'hooks/useUserSlippage'
 
 import styled from 'styled-components'
 import { basisPointsToPercent } from 'utils/exchange'
@@ -31,7 +30,7 @@ export const SlippageButton = (props: BoxProps) => {
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
 
-  const { slippage } = useAtomValue(settingsAtom)
+  const [slippage] = useUserSlippage()
 
   const { isOpen, setIsOpen, onDismiss } = useModalV2()
 

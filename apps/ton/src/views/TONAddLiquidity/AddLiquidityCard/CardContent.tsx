@@ -8,7 +8,6 @@ import {
   liquidityIndependentFieldAtom,
 } from 'atoms/liquidity/addLiquidityStateAtom'
 import { setAddLiquidityModalAtom } from 'atoms/modals/addLiquidityModalAtom'
-import { settingsAtom } from 'atoms/settings/settingsAtom'
 import { BigNumber as BN } from 'bignumber.js'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
@@ -19,6 +18,7 @@ import { MAXIMUM_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
 import { LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 import { usePoolRates } from 'hooks/liquidity/usePoolRates'
 import { useCurrency } from 'hooks/tokens/useCurrency'
+import { useUserSlippage } from 'hooks/useUserSlippage'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
@@ -60,7 +60,7 @@ export const CardContent = (props: CardContentProps) => {
   const address = useAtomValue(addressAtom)
   const isWalletConnected = !!address
 
-  const { slippage } = useAtomValue(settingsAtom)
+  const [slippage] = useUserSlippage()
 
   const [currency0] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY0, token0Address)
   const [currency1] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY1, token1Address)

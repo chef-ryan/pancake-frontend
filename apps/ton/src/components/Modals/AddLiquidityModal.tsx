@@ -1,12 +1,11 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Button, Flex, FlexGap, Text } from '@pancakeswap/uikit'
-import { settingsAtom } from 'atoms/settings/settingsAtom'
 import { LightGreyCard } from 'components/Card'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { MAXIMUM_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
-import { useAtomValue } from 'jotai'
+import { useUserSlippage } from 'hooks/useUserSlippage'
 import styled from 'styled-components'
 import { CircleSvg, Dot } from 'styles'
 
@@ -38,8 +37,7 @@ export const AddLiquidityModal = ({
   onConfirm,
 }: AddLiquidityModalProps) => {
   const { t } = useTranslation()
-  const settings = useAtomValue(settingsAtom)
-  const { slippage } = settings
+  const [slippage] = useUserSlippage()
 
   return (
     <StyledFlexGap gap="8px">

@@ -24,7 +24,7 @@ import { computeTradePriceBreakdown } from 'utils/exchange'
 import { setConfirmSwapModalAtom } from 'atoms/modals/confirmSwapModalAtom'
 import { PricingAndSlippage } from 'components/TonSwap/SwapDetails/PricingAndSlippage'
 import { AdvancedSwapDetailsDropdown } from 'components/TonSwap/SwapDetails/AdvancedSwapDetailsDropdown'
-import { useUserSlippagePercent } from '@pancakeswap/utils/user'
+import { useUserSlippagePercent } from 'hooks/useUserSlippage'
 
 export const SwapForm = () => {
   const { t } = useTranslation()

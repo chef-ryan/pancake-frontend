@@ -1,12 +1,12 @@
 import { styled } from 'styled-components'
 import { useTranslation } from '@pancakeswap/localization'
 import { Text, RowBetween, RowFixed, AutoColumn, Flex, QuestionHelperV2, SkeletonV2 } from '@pancakeswap/uikit'
-import { useUserSlippage } from '@pancakeswap/utils/user'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { Field } from 'types'
 import { BUYBACK_FEE, LP_HOLDERS_FEE, TOTAL_FEE, TREASURY_FEE } from 'config/constants/exchange'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from 'utils/exchange'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
+import { useUserSlippage } from 'hooks/useUserSlippage'
 import SwapRoute, { AdvancedSwapDetailsProps } from './SwapRoute'
 import FormattedPriceImpact from '../FormattedPriceImpact'
 

@@ -1,11 +1,10 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { AddIcon, Button, Flex, FlexGap, Grid, Text } from '@pancakeswap/uikit'
-import { settingsAtom } from 'atoms/settings/settingsAtom'
 import { LightGreyCard } from 'components/Card'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
-import { useAtomValue } from 'jotai'
+import { useUserSlippage } from 'hooks/useUserSlippage'
 import styled from 'styled-components'
 import { Hr } from 'styles'
 
@@ -37,8 +36,7 @@ export const RemoveLiquidityModal = ({
   onConfirm,
 }: RemoveLiquidityModalProps) => {
   const { t } = useTranslation()
-  const settings = useAtomValue(settingsAtom)
-  const { slippage } = settings
+  const [slippage] = useUserSlippage()
 
   return (
     <StyledFlexGap gap="8px" maxWidth={[null, null, null, '400px']}>

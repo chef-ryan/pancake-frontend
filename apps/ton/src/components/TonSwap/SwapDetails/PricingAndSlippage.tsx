@@ -1,8 +1,8 @@
 import { Currency, CurrencyAmount, Price } from '@pancakeswap/ton-v2-sdk'
 import { FlexGap, Text, useModal } from '@pancakeswap/uikit'
-import { useUserSlippage } from '@pancakeswap/utils/user'
 import { SwapUIV2 } from '@pancakeswap/widgets-internal'
 import { SettingsModal } from 'components/Modals/SettingsModal'
+import { useUserSlippage } from 'hooks/useUserSlippage'
 import { memo, useMemo } from 'react'
 
 interface Props {
