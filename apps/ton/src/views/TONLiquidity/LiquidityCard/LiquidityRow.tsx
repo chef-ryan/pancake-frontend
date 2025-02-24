@@ -26,14 +26,12 @@ interface LiquidityRowProps {
   amount0?: bigint
   amount1?: bigint
   balance?: bigint
-  totalSupply?: bigint
   userShare?: number
 }
 
 export const LiquidityRow = ({
   token0,
   token1,
-  totalSupply,
   balance = 0n,
   amount0 = 0n,
   amount1 = 0n,
@@ -44,8 +42,6 @@ export const LiquidityRow = ({
 
   const { data: currency0 } = useAtomValue(tokenByAddressQueryAtom(token0))
   const { data: currency1 } = useAtomValue(tokenByAddressQueryAtom(token1))
-
-  console.log('LiquidityRow', { token0: currency0?.symbol, token1: currency1?.symbol, balance, totalSupply, userShare })
 
   const handleToggle = useCallback(() => {
     setIsOpen(!isOpen)

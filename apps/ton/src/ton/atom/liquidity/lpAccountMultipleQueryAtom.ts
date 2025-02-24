@@ -2,10 +2,10 @@ import { QUERY_MEDIUM_STALE_TIME, QUERY_RETRY_DELAY } from 'config/constants/exc
 import { atomWithQuery } from 'jotai-tanstack-query'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
-import { parseAddress } from 'ton/utils/address'
+import { getLpAccountAddress } from 'ton/utils/api'
 import { addressAtom } from '../addressAtom'
+import { chainIdAtom } from '../chainIdAtom'
 import { lpAccountContractAtom } from '../contracts/lpAccountContractAtom'
-import { poolContractAtom } from '../contracts/poolContractAtom'
 import { networkAtom } from '../networkAtom'
 
 export const lpAccountMultipleQueryAtom = atomFamily((poolAddresses: string[]) => {
@@ -23,9 +23,11 @@ export const lpAccountMultipleQueryAtom = atomFamily((poolAddresses: string[]) =
             lpAccountAddress: '',
           }
 
-        const pool = get(poolContractAtom(poolAddress))
+        // const pool = get(poolContractAtom(poolAddress))
+        // const lpAccountAddress = await pool.getGetLpAccountAddress(parseAddress(userAddress))
 
-        const lpAccountAddress = await pool.getGetLpAccountAddress(parseAddress(userAddress))
+        const lpAccountAddress = await getLpAccountAddress(get(chainIdAtom), userAddress, poolAddress)
+
         const lpAccount = get(lpAccountContractAtom(lpAccountAddress.toString()))
         const data = await lpAccount.getGetLpAccountData()
         return {

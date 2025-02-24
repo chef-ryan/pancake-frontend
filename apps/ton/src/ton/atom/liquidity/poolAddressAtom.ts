@@ -4,6 +4,7 @@ import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
 import { parseAddress } from 'ton/utils/address'
+import { getPoolAddress } from 'ton/utils/api'
 import { chainIdAtom } from '../chainIdAtom'
 
 interface PoolAddressAtomParams {
@@ -27,12 +28,9 @@ export const poolAddressAtom = atomFamily(({ token0Address, token1Address }: Poo
     if (PRESET_POOLS[key]) return parseAddress(PRESET_POOLS[key])
     if (PRESET_POOLS[keyInverted]) return parseAddress(PRESET_POOLS[keyInverted])
 
-    const result = await fetch(
-      `/api/poolAddress?token0=${token0Address}&token1=${token1Address}&chainId=${get(chainIdAtom)}`,
-    )
-    if (result.ok) {
-      const { data } = await result.json()
-      const poolAddress = parseAddress(data)
+    const poolAddress_ = await getPoolAddress(get(chainIdAtom), token0Address, token1Address)
+    if (poolAddress_) {
+      const poolAddress = parseAddress(poolAddress_)
       poolAddressCache.set(cacheKey, poolAddress)
 
       return poolAddress

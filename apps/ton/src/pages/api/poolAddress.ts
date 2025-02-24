@@ -23,13 +23,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Invalid query parameters' })
   }
 
+  const client = chainId === TonChainId.Mainnet ? mainnetClient : testnetClient
+
   try {
     const token0Address = parseAddress(token0 as string)
     const token1Address = parseAddress(token1 as string)
 
     const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter][chainId].address)
-
-    const client = chainId === TonChainId.Mainnet ? mainnetClient : testnetClient
 
     const [jettonWalletAddress0, jettonWalletAddress1] = await Promise.all([
       client.open(JettonMasterUSDT.fromAddress(token0Address)).getGetWalletAddress(routerAddress),

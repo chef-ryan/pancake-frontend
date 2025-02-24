@@ -2,10 +2,10 @@ import { QUERY_MEDIUM_STALE_TIME } from 'config/constants/exchange'
 import { atomWithQuery } from 'jotai-tanstack-query'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
-import { parseAddress } from 'ton/utils/address'
+import { getLpWalletAddress } from 'ton/utils/api'
 import { addressAtom } from '../addressAtom'
+import { chainIdAtom } from '../chainIdAtom'
 import { lpWalletContractAtom } from '../contracts/lpWalletContractAtom'
-import { poolContractAtom } from '../contracts/poolContractAtom'
 import { networkAtom } from '../networkAtom'
 
 export const lpBalanceByPoolsQueryAtom = atomFamily((poolAddresses: string[]) => {
@@ -15,21 +15,16 @@ export const lpBalanceByPoolsQueryAtom = atomFamily((poolAddresses: string[]) =>
       const userAddress = get(addressAtom)
 
       async function getLpBalance(poolAddress: string) {
-        const pool = get(poolContractAtom(poolAddress))
-
-        const lpWalletAddress = await pool.getGetWalletAddress(parseAddress(userAddress))
+        const lpWalletAddress = await getLpWalletAddress(get(chainIdAtom), userAddress, poolAddress)
         const lpWallet = get(lpWalletContractAtom(lpWalletAddress.toString()))
         const balance = (await lpWallet.getGetWalletData()).balance ?? 0n
 
         return { poolAddress, balance }
       }
-
-      return (await Promise.allSettled(poolAddresses.map(getLpBalance)))
-        .filter(
-          (result): result is PromiseFulfilledResult<{ poolAddress: string; balance: bigint }> =>
-            result.status === 'fulfilled',
-        )
-        .map((result) => result.value)
+      const data = await Promise.allSettled(poolAddresses.map(getLpBalance))
+      return data.map((result, index) =>
+        result.status === 'fulfilled' ? result.value : { poolAddress: poolAddresses[index], balance: 0n },
+      )
     },
     enabled: !!poolAddresses && poolAddresses.length > 0 && !!get(addressAtom),
     refetchInterval: QUERY_MEDIUM_STALE_TIME,
