@@ -21,21 +21,17 @@ const nextConfig = {
   },
 
   // Set custom environmental variables
-  env: {
-    CUSTOM_ENV_VAR: 'value', // Replace with your variables
-  },
+  env: {},
 
-  // Add basePath if the app is served under a subdirectory
-  basePath: '',
-
-  redirects: async () => {
-    return [
-      {
-        source: '/ton-static',
-        destination: '/',
-        permanent: false,
-      },
-    ]
+  rewrites: async () => {
+    return {
+      beforeFiles: [
+        {
+          source: '/tgbot/_next/:path*',
+          destination: '/_next/:path*',
+        },
+      ],
+    }
   },
 
   // Adjust build output directory (default is `.next`)

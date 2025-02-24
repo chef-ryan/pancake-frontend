@@ -19,6 +19,7 @@ import { addressAtom } from 'ton/atom/addressAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { useRemoveLiquidity } from 'ton/logic/liquidity/useRemoveLiquidity'
+import { getCurrencyOrder } from 'ton/utils/address'
 import { formatBalance } from 'ton/utils/formatting'
 
 const ContentContainer = styled(Box)<{ $isBottomRounded?: boolean }>`
@@ -64,11 +65,26 @@ export const CardContent = (props: CardContentProps) => {
   // Query params
   const router = useRouter()
 
-  const [address0, address1] = router.query?.currency ?? []
+  const [address0, address1] = useMemo(() => router.query?.currency ?? [], [router.query])
 
   // TODO: Handle native
-  const { data: currency0 } = useAtomValue(tokenByAddressQueryAtom(address0))
-  const { data: currency1 } = useAtomValue(tokenByAddressQueryAtom(address1))
+  const { data: currency0_ } = useAtomValue(tokenByAddressQueryAtom(address0))
+  const { data: currency1_ } = useAtomValue(tokenByAddressQueryAtom(address1))
+
+  const { currency0, currency1, isFlipped } =
+    currency0_ && currency1_
+      ? getCurrencyOrder(currency0_, currency1_)
+      : {
+          currency0: currency0_,
+          currency1: currency1_,
+          isFlipped: false,
+        }
+
+  console.log('RemoveLiquidity', {
+    currency0: currency0?.symbol,
+    currency1: currency1?.symbol,
+    isFlipped,
+  })
 
   const { data: lpBalance, isLoading: isLpBalanceLoading } = useAtomValue(
     lpBalanceQueryAtom({

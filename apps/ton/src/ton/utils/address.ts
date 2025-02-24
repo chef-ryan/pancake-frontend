@@ -22,6 +22,7 @@ export const getJettonWalletAddress = async (client: TonClient, userAddress: Add
 }
 
 export function getCurrencyOrder(currency0: Currency, currency1: Currency) {
+  if (!currency0 || !currency1) return { currency0, currency1, isFlipped: false }
   if (currency0.isNative) return { currency0, currency1, isFlipped: false }
   if (currency1.isNative) return { currency0: currency1, currency1: currency0, isFlipped: true }
 
