@@ -1,17 +1,17 @@
+import { Contracts, TonContractInstance, TonContractNames } from '@pancakeswap/ton-v2-sdk'
 import { atom } from 'jotai'
 import { ContractClasses } from 'ton/def/contractClass.def'
-import { Contracts, TonContractNames, TonContractInstance } from '@pancakeswap/ton-v2-sdk'
 
+import { chainIdAtom } from './chainIdAtom'
 import { contractOfTypeAtom } from './contractOfTypeAtom'
-import { networkAtom } from './networkAtom'
 
 type TClasses = typeof ContractClasses
 type TContracts = typeof Contracts
 export const contractAtom = function contractAtom<TName extends TonContractNames>(name: TName) {
   return atom<TonContractInstance<TClasses[TContracts[TName]['type']]>>((get) => {
-    const network = get(networkAtom)
+    const chainId = get(chainIdAtom)
     const { type } = Contracts[name]
-    const { address } = Contracts[name][network]
+    const { address } = Contracts[name][chainId]
 
     const proxy = get(
       contractOfTypeAtom({

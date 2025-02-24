@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     if (!chainId || !address || (chainId !== TonChainId.Mainnet && chainId !== TonChainId.Testnet)) {
-      throw new Error('Missing chainId or token address')
+      throw new Error('Invalid chainId or token address')
     }
 
     const result = await fetch(`${TON_API[chainId]}/v2/jettons/${address}`)

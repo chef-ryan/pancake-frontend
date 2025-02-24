@@ -1,4 +1,4 @@
-import { Contracts, TonContractNames, TonNetworks } from '@pancakeswap/ton-v2-sdk'
+import { Contracts, TonChainId, TonContractNames } from '@pancakeswap/ton-v2-sdk'
 import { TonClient } from '@ton/ton'
 import { writeFileSync } from 'fs'
 import path from 'path'
@@ -29,9 +29,9 @@ const getTokenPairs = (tokens: any[]) => {
   return pairs
 }
 
-const getPoolAddress = async (network: TonNetworks, token0Address: any, token1Address: any) => {
-  const client = new TonClient({ endpoint: TonEndPoints[network] })
-  const router = client.open(Router.fromAddress(parseAddress(Contracts[TonContractNames.PCSRouter][network].address)))
+const getPoolAddress = async (chainId: TonChainId, token0Address: any, token1Address: any) => {
+  const client = new TonClient({ endpoint: TonEndPoints[chainId] })
+  const router = client.open(Router.fromAddress(parseAddress(Contracts[TonContractNames.PCSRouter][chainId].address)))
 
   const jettonMaster0 = client.open(JettonMasterUSDT.fromAddress(parseAddress(token0Address)))
   const jettonMaster1 = client.open(JettonMasterUSDT.fromAddress(parseAddress(token1Address)))
@@ -50,18 +50,18 @@ const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-const generatePoolsForPairs = async (network: TonNetworks, pairs: any[]) => {
+const generatePoolsForPairs = async (chainId: TonChainId, pairs: any[]) => {
   const pools = {}
-  console.log(`[${network}] Fetching pool addresses for ${pairs.length} pairs`)
+  console.log(`[${chainId}] Fetching pool addresses for ${pairs.length} pairs`)
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i]
     const token0 = pair[0]
     const token1 = pair[1]
 
     // eslint-disable-next-line no-await-in-loop
-    const poolAddress = await getPoolAddress(network, token0.address, token1.address)
+    const poolAddress = await getPoolAddress(chainId, token0.address, token1.address)
 
-    console.log(`[${network}] Pool Address for ${token0.symbol}-${token1.symbol}: ${poolAddress.toString()}`)
+    console.log(`[${chainId}] Pool Address for ${token0.symbol}-${token1.symbol}: ${poolAddress.toString()}`)
 
     if (poolAddress) {
       pools[key(token0, token1)] = poolAddress.toString()
@@ -70,6 +70,8 @@ const generatePoolsForPairs = async (network: TonNetworks, pairs: any[]) => {
     // eslint-disable-next-line no-await-in-loop
     await sleep(50)
   }
+
+  const network = chainId === TonChainId.Mainnet ? 'main' : 'testnet'
 
   writeFileSync(path.resolve(__dirname, `../../public/lists/pools-${network}.json`), JSON.stringify(pools, null, 2), {
     flag: 'w+',
@@ -83,8 +85,8 @@ export const buildPools = async () => {
   const mainnetPairs = getTokenPairs(mainnetTokens)
   const testnetPairs = getTokenPairs(testnetTokens)
 
-  //   await generatePoolsForPairs(TonNetworks.Mainnet, mainnetPairs)
-  await generatePoolsForPairs(TonNetworks.Testnet, testnetPairs)
+  //   await generatePoolsForPairs(TonChainId.Mainnet, mainnetPairs)
+  await generatePoolsForPairs(TonChainId.Testnet, testnetPairs)
 }
 
 buildPools()

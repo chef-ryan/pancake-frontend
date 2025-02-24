@@ -1,4 +1,4 @@
-import { TonContextEvents } from '@pancakeswap/ton-v2-sdk'
+import { TonChainId, TonContextEvents, TonNetworks } from '@pancakeswap/ton-v2-sdk'
 import { TonClient } from '@ton/ton'
 import { tonState } from 'ton/atom/tonStateAtom'
 import { Emiter } from 'ton/utils/Emiter'
@@ -11,8 +11,9 @@ export class TonContext extends Emiter<TonContextEvents> {
     super()
 
     const { network } = tonState
+    const chainId = network === TonNetworks.Mainnet ? TonChainId.Mainnet : TonChainId.Testnet
 
-    this.tonClient = new TonClient({ endpoint: TonEndPoints[network] })
+    this.tonClient = new TonClient({ endpoint: TonEndPoints[chainId] })
   }
 
   public getClient() {

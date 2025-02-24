@@ -3,9 +3,8 @@ import { PRESET_POOLS } from 'config/presetPools'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
-import { routerContractAtom } from 'ton/atom/contracts/routerContractAtom'
 import { parseAddress } from 'ton/utils/address'
-import { jettonMasterContractAtom } from '../contracts/jettonMasterContractAtom'
+import { chainIdAtom } from '../chainIdAtom'
 
 interface PoolAddressAtomParams {
   token0Address?: string
@@ -28,17 +27,17 @@ export const poolAddressAtom = atomFamily(({ token0Address, token1Address }: Poo
     if (PRESET_POOLS[key]) return parseAddress(PRESET_POOLS[key])
     if (PRESET_POOLS[keyInverted]) return parseAddress(PRESET_POOLS[keyInverted])
 
-    const router = get(routerContractAtom)
-    const jettonMaster0 = get(jettonMasterContractAtom(token0Address))
-    const jettonMaster1 = get(jettonMasterContractAtom(token1Address))
+    const result = await fetch(
+      `/api/poolAddress?token0=${token0Address}&token1=${token1Address}&chainId=${get(chainIdAtom)}`,
+    )
+    if (result.ok) {
+      const { data } = await result.json()
+      const poolAddress = parseAddress(data)
+      poolAddressCache.set(cacheKey, poolAddress)
 
-    const [jettonWalletAddress0, jettonWalletAddress1] = await Promise.all([
-      jettonMaster0.getGetWalletAddress(parseAddress(router.address.toString())),
-      jettonMaster1.getGetWalletAddress(parseAddress(router.address.toString())),
-    ])
+      return poolAddress
+    }
 
-    const poolAddress = await router.getGetPoolAddress(jettonWalletAddress0, jettonWalletAddress1)
-    poolAddressCache.set(cacheKey, poolAddress)
-    return poolAddress
+    return null
   })
 }, isEqual)

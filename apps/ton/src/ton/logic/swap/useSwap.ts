@@ -8,8 +8,9 @@ import { setErrorMsgModalAtom } from 'atoms/modals/errorMsgModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
 import { ActionType } from 'components/Modals/ActionModal'
 import { useUserAddress } from 'hooks/useUserAddress'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
+import { chainIdAtom } from 'ton/atom/chainIdAtom'
 import { TonContext } from 'ton/context/TonContext'
 import { getJettonWalletAddress, parseAddress } from 'ton/utils/address'
 import { generateQueryId } from 'ton/utils/generateQueryId'
@@ -24,9 +25,13 @@ interface SwapArgs {
 }
 
 export const useSwap = () => {
-  const [tonUI] = useTonConnectUI()
   const { t } = useTranslation()
+  const [tonUI] = useTonConnectUI()
+
   const userAddress = useUserAddress()
+
+  const chainId = useAtomValue(chainIdAtom)
+
   const setTransactionModal = useSetAtom(setTransactionModalAtom)
   const setErrorMsgModal = useSetAtom(setErrorMsgModalAtom)
 
@@ -34,7 +39,7 @@ export const useSwap = () => {
     async ({ amount0, minOut, token0, trade }: SwapArgs) => {
       const queryId = generateQueryId()
       const client = TonContext.instance.getClient()
-      const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter].testnet.address)
+      const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter][chainId].address)
 
       const userJettonWallet0 = await getJettonWalletAddress(client, userAddress, token0)
       const routerJettonWallet1 = await getJettonWalletAddress(client, routerAddress, trade.route.path[1])
