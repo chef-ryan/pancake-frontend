@@ -159,12 +159,15 @@ export const CardContent = (props: CardContentProps) => {
       : '0'
 
     // If new pool being created
-    if (
-      !poolData?.totalSupply &&
-      currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0] &&
-      currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]
-    ) {
-      return getNewPoolShare(parsedExpectedPoolTokens).toString()
+    if (!poolData?.totalSupply) {
+      if (
+        currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0] &&
+        currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]
+      ) {
+        return getNewPoolShare(parsedExpectedPoolTokens).toString()
+      }
+
+      return '0'
     }
 
     const expectedTotalSupply = poolData?.totalSupply

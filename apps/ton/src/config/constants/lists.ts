@@ -1,6 +1,7 @@
 import { TonNetworks } from '@pancakeswap/ton-v2-sdk'
+import { PUBLIC_BASE_URL } from './endpoints'
 
 export const TOKEN_LIST_URLS = {
-  [TonNetworks.Mainnet]: '/lists/main.json', // TESTING value
-  [TonNetworks.Testnet]: '/lists/testnet.json', // TESTING value
+  [TonNetworks.Mainnet]: `${PUBLIC_BASE_URL}/lists/main.json`,
+  [TonNetworks.Testnet]: `${PUBLIC_BASE_URL}/lists/testnet.json`,
 }
