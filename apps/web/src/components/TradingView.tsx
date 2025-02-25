@@ -27,28 +27,34 @@ const initializeTradingView = (TradingViewObj: any, theme: DefaultTheme, localeC
   } catch (e) {
     // noop
   }
-  /* eslint-disable new-cap */
-  /* eslint-disable no-new */
-  // @ts-ignore
-  return new TradingViewObj.widget({
-    // Advanced Chart Widget uses the legacy embedding scheme,
-    // an id property should be specified in the settings object
-    id: opts.container_id,
-    autosize: true,
-    height: '100%',
-    symbol: 'BINANCE:BNBBUSD',
-    interval: '5',
-    timezone,
-    theme: theme.isDark ? 'dark' : 'light',
-    style: '1',
-    locale: localeCode,
-    toolbar_bg: '#f1f3f6',
-    enable_publishing: false,
-    allow_symbol_change: true,
-    hide_side_toolbar: false,
-    enabled_features: ['header_fullscreen_button'],
-    ...opts,
-  })
+
+  try {
+    /* eslint-disable new-cap */
+    /* eslint-disable no-new */
+    // @ts-ignore
+    return new TradingViewObj.widget({
+      // Advanced Chart Widget uses the legacy embedding scheme,
+      // an id property should be specified in the settings object
+      id: opts.container_id,
+      autosize: true,
+      height: '100%',
+      symbol: 'BINANCE:BNBBUSD',
+      interval: '5',
+      timezone,
+      theme: theme.isDark ? 'dark' : 'light',
+      style: '1',
+      locale: localeCode,
+      toolbar_bg: '#f1f3f6',
+      enable_publishing: false,
+      allow_symbol_change: true,
+      hide_side_toolbar: false,
+      enabled_features: ['header_fullscreen_button'],
+      ...opts,
+    })
+  } catch (e) {
+    console.error('Failed to initialize TradingView widget:', e)
+    return undefined
+  }
 }
 
 interface TradingViewProps {
