@@ -1,6 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, Box, Button, Flex, FlexGap, MinusIcon, Text } from '@pancakeswap/uikit'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
+import BN from 'bignumber.js'
 import { LightCard } from 'components/Card'
 import { DoubleCurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
@@ -10,7 +11,7 @@ import { useAtomValue } from 'jotai'
 import Link from 'next/link'
 import { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { formatBalance } from 'ton/utils/formatting'
+import { formatBigNumber } from 'ton/utils/formatting'
 import { truncateHash } from 'utils'
 
 const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
@@ -23,18 +24,18 @@ const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
 interface LiquidityRowProps {
   token0: string
   token1: string
-  amount0?: bigint
-  amount1?: bigint
-  balance?: bigint
+  amount0?: BN
+  amount1?: BN
+  balance?: BN
   userShare?: number
 }
 
 export const LiquidityRow = ({
   token0,
   token1,
-  balance = 0n,
-  amount0 = 0n,
-  amount1 = 0n,
+  balance = BN(0),
+  amount0 = BN(0),
+  amount1 = BN(0),
   userShare = 0,
 }: LiquidityRowProps) => {
   const { t } = useTranslation()
@@ -68,7 +69,7 @@ export const LiquidityRow = ({
               </FlexGap>
 
               <NumberDisplay
-                value={formatBalance(balance, LP_TOKEN_DECIMALS).toString()}
+                value={formatBigNumber(balance, LP_TOKEN_DECIMALS).toString()}
                 maximumSignificantDigits={4}
                 small
                 bold
@@ -81,12 +82,12 @@ export const LiquidityRow = ({
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Pooled %symbol%', { symbol: symbol0 })}</Text>
 
-                <Text>{amount0 > 0n ? formatBalance(amount0, LP_TOKEN_DECIMALS) : '-'}</Text>
+                <Text>{amount0.gt(0) ? formatBigNumber(amount0, LP_TOKEN_DECIMALS) : '-'}</Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Pooled %symbol%', { symbol: symbol1 })}</Text>
 
-                <Text>{amount1 > 0n ? formatBalance(amount1, LP_TOKEN_DECIMALS) : '-'}</Text>
+                <Text>{amount1.gt(0) ? formatBigNumber(amount1, LP_TOKEN_DECIMALS) : '-'}</Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
                 <Text color="textSubtle">{t('Your share in the pool')}</Text>

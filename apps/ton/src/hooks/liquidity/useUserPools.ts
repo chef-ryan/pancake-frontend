@@ -1,3 +1,4 @@
+import BN from 'bignumber.js'
 import { PRESET_POOLS } from 'config/presetPools'
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
@@ -17,12 +18,13 @@ interface InitialPoolData extends RawPoolData {
   token1: string
 }
 
-interface CombinedPoolData extends InitialPoolData {
-  amount0: bigint
-  amount1: bigint
-  reserve0: bigint
-  reserve1: bigint
-  totalSupply: bigint
+interface CombinedPoolData extends Omit<InitialPoolData, 'balance'> {
+  balance: BN
+  amount0: BN
+  amount1: BN
+  reserve0: BN
+  reserve1: BN
+  totalSupply: BN
   userShare?: number
 }
 
@@ -48,15 +50,25 @@ const getPoolsWithBalance = (pools: RawPoolData[], tokenPairs: string[][]): Init
     .filter((pool) => pool.balance > 0n)
 
 const combinePoolData = (poolsWithBalance: InitialPoolData[], poolInfos: PoolInfo[]): CombinedPoolData[] =>
-  poolsWithBalance.map((pool, index) => ({
-    ...pool,
-    amount0: poolInfos[index] ? (pool.balance * poolInfos[index].reserve0) / (poolInfos[index].totalSupply ?? 1n) : 0n,
-    amount1: poolInfos[index] ? (pool.balance * poolInfos[index].reserve1) / (poolInfos[index].totalSupply ?? 1n) : 0n,
-    reserve0: poolInfos[index]?.reserve0 ?? 0n,
-    reserve1: poolInfos[index]?.reserve1 ?? 0n,
-    totalSupply: poolInfos[index]?.totalSupply ?? 0n,
-    userShare: poolInfos[index] ? Number((pool.balance * 100n) / (poolInfos[index].totalSupply ?? 1n)) : 0,
-  }))
+  poolsWithBalance.map((pool, index) => {
+    const { reserve0, reserve1, totalSupply } = poolInfos[index] ?? { reserve0: 0n, reserve1: 0n, totalSupply: 0n }
+    return {
+      ...pool,
+      balance: new BN(pool.balance.toString()),
+      amount0: poolInfos[index]
+        ? new BN(pool.balance.toString()).multipliedBy(reserve0.toString()).dividedBy(totalSupply.toString())
+        : BN(0),
+      amount1: poolInfos[index]
+        ? new BN(pool.balance.toString()).multipliedBy(reserve1.toString()).dividedBy(totalSupply.toString())
+        : BN(0),
+      reserve0: new BN(poolInfos[index]?.reserve0.toString() ?? '0'),
+      reserve1: new BN(poolInfos[index]?.reserve1.toString() ?? '0'),
+      totalSupply: new BN(poolInfos[index]?.totalSupply.toString() ?? '0'),
+      userShare: poolInfos[index]
+        ? new BN(pool.balance.toString()).multipliedBy(100).dividedBy(totalSupply.toString()).toNumber()
+        : 0,
+    }
+  })
 
 export const useUserPools = () => {
   const network = useAtomValue(networkAtom)

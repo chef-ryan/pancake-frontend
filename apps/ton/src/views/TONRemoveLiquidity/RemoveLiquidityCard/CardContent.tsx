@@ -289,18 +289,16 @@ export const CardContent = (props: CardContentProps) => {
         </FlexGap>
       </ContentContainer>
 
-      {isWalletConnected && (
-        <StyledCardFooter>
-          <Button
-            onClick={openConfirmationModal}
-            width="100%"
-            endIcon={<MinusIcon color={isDisabled ? 'textDisabled' : 'invertedContrast'} />}
-            disabled={isDisabled}
-          >
-            {t('Remove')}
-          </Button>
-        </StyledCardFooter>
-      )}
+      <StyledCardFooter>
+        <Button
+          onClick={openConfirmationModal}
+          width="100%"
+          endIcon={<MinusIcon color={isDisabled ? 'textDisabled' : 'invertedContrast'} />}
+          disabled={isDisabled}
+        >
+          {t('Remove')}
+        </Button>
+      </StyledCardFooter>
     </>
   )
 }
