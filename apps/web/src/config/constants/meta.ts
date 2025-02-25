@@ -45,6 +45,12 @@ const getPathList = memoize((t: ContextApi['t']): PathList => {
         description: 'View statistics for Pancakeswap exchanges.',
         image: `${ASSET_CDN}/web/og/info.jpg`,
       },
+      '/info/v3': {
+        basePath: true,
+        title: `${t('Overview')} - ${t('Info')}`,
+        description: 'View statistics for Pancakeswap exchanges.',
+        image: `${ASSET_CDN}/web/og/info.jpg`,
+      },
       '/info/pairs': {
         title: `${t('Pairs')} - ${t('Info')}`,
         description: 'View statistics for Pancakeswap exchanges.',
