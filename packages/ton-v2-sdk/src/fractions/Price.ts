@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant'
 import { BigintIsh, Fraction, Rounding } from '@pancakeswap/swap-sdk-core'
 
-import { Currency, Token } from './currency'
+import { Currency, Token } from '../currency'
 import { CurrencyAmount } from './CurrencyAmount'
 
 export class Price<TBase extends Currency, TQuote extends Currency> extends Fraction {

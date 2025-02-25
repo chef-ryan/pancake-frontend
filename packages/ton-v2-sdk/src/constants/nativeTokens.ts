@@ -1,4 +1,4 @@
-import { Token } from './currency/Token'
+import { Token } from '../currency/Token'
 import { TonChainId } from './ton.enums'
 
 // TODO: Update Wrapped tokens to pTON or other verified token

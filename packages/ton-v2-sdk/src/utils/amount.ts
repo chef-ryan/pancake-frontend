@@ -7,7 +7,8 @@ import {
   _10000,
   _9975,
 } from '@pancakeswap/swap-sdk-core'
-import { Currency, CurrencyAmount } from '../constants'
+import { CurrencyAmount } from '../fractions/CurrencyAmount'
+import { Currency } from '../currency'
 
 interface SwapAmountParams {
   reserve0: CurrencyAmount<Currency>

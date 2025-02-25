@@ -1,8 +1,8 @@
 import invariant from 'tiny-invariant'
 import { AgnosticBaseCurrency } from './AgnosticBaseCurrency'
 import { Token } from './Token'
-import { NATIVE, WNATIVE } from '../nativeTokens'
-import { TonChainId, TonNetworks } from '../ton.enums'
+import { NATIVE, WNATIVE } from '../constants/nativeTokens'
+import { TonChainId, TonNetworks } from '../constants/ton.enums'
 
 /**
  * Represents the native currency of the chain on which it resides

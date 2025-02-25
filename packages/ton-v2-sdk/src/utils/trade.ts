@@ -10,11 +10,12 @@ import {
   sortedInsert,
 } from '@pancakeswap/swap-sdk-core'
 import { ONE_HUNDRED_PERCENT, ZERO_PERCENT } from '@pancakeswap/swap-sdk-evm'
-import { Currency, Price } from '../constants'
-import { CurrencyAmount } from '../constants/CurrencyAmount'
 import { Route } from './route'
 import { Pair } from '../types'
 import { getInputAmount, getOutputAmount } from './amount'
+import { Currency } from '../currency'
+import { CurrencyAmount } from '../fractions/CurrencyAmount'
+import { Price } from '../fractions/Price'
 
 // minimal interface so the input output comparator may be shared across types
 interface InputOutput<TInput extends Currency, TOutput extends Currency> {
