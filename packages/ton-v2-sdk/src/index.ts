@@ -1,34 +1,35 @@
 export {
-  type TonContractInstance,
-  type TonFunctionDef,
-  TON_OPCODES,
   Contracts,
-  TonNetworks,
+  NATIVE,
+  TON_OPCODES,
   TonChainId,
   TonContextEvents,
-  TonContractTypes,
   TonContractNames,
-  NATIVE,
+  TonContractTypes,
+  TonNetworks,
   WNATIVE,
+  type TonContractInstance,
+  type TonFunctionDef,
 } from './constants'
 
-export { type Currency, Token, Native } from './currency'
+export { Native, Token, type Currency } from './currency'
 
 export { Price } from './fractions/Price'
 
 export { CurrencyAmount } from './fractions/CurrencyAmount'
 
 export {
-  priceOf,
-  getOutputAmount,
-  getInputAmount,
-  Trade,
-  isTradeBetter,
-  bestTradeExactOut,
   bestTradeExactIn,
+  bestTradeExactOut,
+  getAddressCellHash,
+  getInputAmount,
+  getOutputAmount,
+  isTradeBetter,
+  priceOf,
+  storeAddLiquidity,
   storeSwap,
   storeSwapNext,
-  storeAddLiquidity,
+  Trade,
 } from './utils'
 
 export type { Pair } from './types'

@@ -1,4 +1,4 @@
-import { Currency } from '@pancakeswap/ton-v2-sdk'
+import { Currency, getAddressCellHash } from '@pancakeswap/ton-v2-sdk'
 import { Address } from '@ton/core'
 import { JettonMaster, TonClient } from '@ton/ton'
 
@@ -27,11 +27,12 @@ export function getCurrencyOrder(currency0: Currency, currency1: Currency) {
     : { currency0: currency1, currency1: currency0, isFlipped: true }
 }
 
+// TODO: Get Pool's Jetton Wallet addresses to compare
 export function getTokenOrder(token0Address: string, token1Address: string) {
-  const token0Hash = Address.parse(token0Address).hash
-  const token1Hash = Address.parse(token1Address).hash
+  const token0Hash = getAddressCellHash(token0Address)
+  const token1Hash = getAddressCellHash(token1Address)
 
-  if (token0Hash > token1Hash) {
+  if (token0Hash < token1Hash) {
     return { token0: token1Address, token1: token0Address }
   }
 
