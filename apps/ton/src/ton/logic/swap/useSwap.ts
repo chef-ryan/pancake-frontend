@@ -42,6 +42,7 @@ export const useSwap = () => {
       const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter][chainId].address)
 
       const userJettonWallet0 = await getJettonWalletAddress(client, userAddress, token0)
+      const routerJettonWallet0 = await getJettonWalletAddress(client, routerAddress, token0)
       const routerJettonWallet1 = await getJettonWalletAddress(client, routerAddress, trade.route.path[1])
 
       // multihops
@@ -94,7 +95,7 @@ export const useSwap = () => {
         validUntil: Math.floor(Date.now() / 1000) + 60,
         messages: [
           {
-            address: userJettonWallet0.toString(),
+            address: token0.isNative ? routerJettonWallet0.toString() : userJettonWallet0.toString(),
             // Attached TON for fees, not the amount of jettons to transfer!
             // todo:@eric add estimate logic
             amount: toNano('0.6').toString(),
@@ -103,7 +104,7 @@ export const useSwap = () => {
         ],
       }
     },
-    [userAddress],
+    [chainId, userAddress],
   )
 
   const swap = useCallback(

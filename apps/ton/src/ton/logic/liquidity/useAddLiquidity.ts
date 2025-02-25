@@ -1,5 +1,5 @@
 import { Currency, storeAddLiquidity } from '@pancakeswap/ton-v2-sdk'
-import { JETTON_TRANSFER_NOTIFICATION_OPCODE, storeJettonTransferMessage } from '@ton-community/assets-sdk'
+import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
 import { beginCell, toNano } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
 import { resetAppModalAtom } from 'atoms/modals/appModalAtom'
@@ -24,6 +24,8 @@ interface AddLiquidityArgs {
 
   minLpOut: bigint
 }
+
+const GAS = toNano('0.6')
 
 export const useAddLiquidity = () => {
   const [tonUI] = useTonConnectUI()
@@ -67,8 +69,6 @@ export const useAddLiquidity = () => {
         const forwardPayload0 = beginCell()
           .store(
             storeAddLiquidity({
-              queryId: generateQueryId(),
-              $$type: 'AddLiquidity',
               minLPOut: minLpOut,
               tokenWallet: routerJettonWallet1,
             }),
@@ -91,8 +91,6 @@ export const useAddLiquidity = () => {
         const forwardPayload1 = beginCell()
           .store(
             storeAddLiquidity({
-              queryId: generateQueryId(),
-              $$type: 'AddLiquidity',
               minLPOut: minLpOut,
               tokenWallet: routerJettonWallet0,
             }),
@@ -115,36 +113,16 @@ export const useAddLiquidity = () => {
         const txRequest: SendTransactionRequest = {
           validUntil: Math.floor(Date.now() / 1000) + 60 * 2,
           messages: [
-            currency0.isNative
-              ? {
-                  address: routerAddress.toString(),
-                  amount: (BigInt(amount0) + toNano('0.3')).toString(), // TON amount + gas
-                  payload: beginCell()
-                    .storeUint(JETTON_TRANSFER_NOTIFICATION_OPCODE, 32)
-                    .storeUint(generateQueryId(), 64)
-                    .storeCoins(amount0)
-                    .storeAddress(userAddress)
-                    .storeMaybeRef(forwardPayload0)
-                    .endCell()
-                    .toBoc()
-                    .toString('base64'),
-                }
-              : {
-                  address: userJettonWallet0.toString(),
-                  amount: toNano('0.6').toString(),
-                  payload: payload0.toBoc().toString('base64'),
-                },
-            currency1.isNative
-              ? {
-                  address: routerAddress.toString(),
-                  amount: (BigInt(amount1) + toNano('0.3')).toString(), // TON amount + gas
-                  payload: forwardPayload1.toBoc().toString('base64'),
-                }
-              : {
-                  address: userJettonWallet1.toString(),
-                  amount: toNano('0.6').toString(),
-                  payload: payload1.toBoc().toString('base64'),
-                },
+            {
+              address: currency0.isNative ? routerJettonWallet0.toString() : userJettonWallet0.toString(),
+              amount: (GAS + (currency0.isNative ? amount0 : 0n)).toString(),
+              payload: payload0.toBoc().toString('base64'),
+            },
+            {
+              address: userJettonWallet1.toString(),
+              amount: GAS.toString(),
+              payload: payload1.toBoc().toString('base64'),
+            },
           ],
         }
 

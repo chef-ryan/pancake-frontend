@@ -3,7 +3,6 @@ import { Address } from '@ton/core'
 import { JettonMaster, TonClient } from '@ton/ton'
 
 export const parseAddress = (address?: string) => {
-  // if (!address) return Address.parse('')
   if (!address) return Address.parse('0:0000000000000000000000000000000000000000000000000000000000000000')
   return Address.parse(address)
 }
@@ -14,11 +13,8 @@ export const isAddress = (address?: any) => {
 }
 
 export const getJettonWalletAddress = async (client: TonClient, userAddress: Address, currency: Currency) => {
-  if (currency.isNative) {
-    return userAddress
-  }
-  const jettonMaster0 = client.open(JettonMaster.create(parseAddress(currency.address)))
-  return jettonMaster0.getWalletAddress(userAddress)
+  const jettonMaster = client.open(JettonMaster.create(parseAddress(currency.wrapped.address)))
+  return jettonMaster.getWalletAddress(userAddress)
 }
 
 export function getCurrencyOrder(currency0: Currency, currency1: Currency) {

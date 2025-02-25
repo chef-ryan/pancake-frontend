@@ -5,6 +5,12 @@ export const PRESET_POOLS = {
   [TonNetworks.Mainnet]: [],
   [TonNetworks.Testnet]: {
     // ...testnetPools,
+    // TON-USDC
+    'kQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffAw5<>kQBN6HSn7GmAB30K_YmL3vhS2ms5LMm9aPW0PGzvUZASRzng':
+      'kQDINV8OA01yK-fmAECxCXwskiQI_A5GAZYRBDnPhvrmzISS',
+    // TON-SYRUP
+    'kQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffAw5<>kQArzX0-In2BjRhaq5pB2vmZH80saystVwwbPIpEyGrh723F':
+      'kQDINV8OA01yK-fmAECxCXwskiQI_A5GAZYRBDnPhvrmzISS',
     // RUBY-USDC
     'kQBN6HSn7GmAB30K_YmL3vhS2ms5LMm9aPW0PGzvUZASRzng<>kQDrYGRT12rOkdJFFvtDIS5xS_tnatlTEO55hnkClQYAv0q3':
       'kQArNuzh9UZ3zZY28m2CwHfgIfKsP900sWyZ1tYXl3Evt_Gj',

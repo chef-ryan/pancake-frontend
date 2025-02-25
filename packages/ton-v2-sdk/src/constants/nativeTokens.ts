@@ -5,19 +5,19 @@ import { TonChainId } from './ton.enums'
 export const WNATIVE = {
   [TonChainId.Mainnet]: new Token(
     TonChainId.Mainnet,
-    'EQBPAVa6fjMigxsnHF33UQ3auufVrg2Z8lBZTY9R-isfjIFr',
+    'EQBnGWMCf3-FZZq1W4IWcWiGAc3PHuZ0_H-7sad2oY00o83S',
     9,
-    'Wrapped TON',
-    'WTON',
-    'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/info/logo.png',
+    'Proxy TON',
+    'pTON',
+    'https://static.ston.fi/logo/ton_symbol.png',
   ),
   [TonChainId.Testnet]: new Token(
     TonChainId.Testnet,
-    'EQBPAVa6fjMigxsnHF33UQ3auufVrg2Z8lBZTY9R-isfjIFr',
+    'kQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffAw5',
     9,
-    'Wrapped TON',
-    'WTON',
-    'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ton/info/logo.png',
+    'Proxy TON',
+    'pTON',
+    'https://static.ston.fi/logo/ton_symbol.png',
   ),
 }
 

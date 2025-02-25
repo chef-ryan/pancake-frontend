@@ -2,8 +2,6 @@ import type { Address, Builder } from '@ton/core'
 import { TON_OPCODES } from '../constants'
 
 export type AddLiquidity = {
-  $$type: 'AddLiquidity'
-  queryId: bigint
   minLPOut: bigint
   tokenWallet: Address
 }

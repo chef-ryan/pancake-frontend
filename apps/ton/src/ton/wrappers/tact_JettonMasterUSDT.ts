@@ -565,7 +565,7 @@ function loadTupleJettonData(source: TupleReader) {
 function loadGetterTupleJettonData(source: TupleReader) {
   let _total_supply = source.readBigNumber()
   let _mintable = source.readBoolean()
-  let _admin_address = source.readAddress()
+  let _admin_address = source.readAddressOpt()
   let _jetton_content = source.readCell()
   let _jetton_wallet_code = source.readCell()
   return {
