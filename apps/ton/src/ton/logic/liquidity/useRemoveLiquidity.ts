@@ -3,12 +3,15 @@ import { beginCell, toNano } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
 import { resetAppModalAtom } from 'atoms/modals/appModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
+import BN from 'bignumber.js'
 import { ActionType } from 'components/Modals/ActionModal'
 import { useUserAddress } from 'hooks/useUserAddress'
+import { useUserSlippage } from 'hooks/useUserSlippage'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { poolContractAtom } from 'ton/atom/contracts/poolContractAtom'
 import { poolAddressAtom } from 'ton/atom/liquidity/poolAddressAtom'
+import { parseUnits } from 'ton/utils/formatting'
 import { getTransactionByBOC } from 'ton/utils/transaction'
 import { storeTokenBurn } from 'ton/wrappers/tact_LpWallet'
 
@@ -26,6 +29,8 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount
 
   const setTxnModal = useSetAtom(setTransactionModalAtom)
   const resetAppModal = useSetAtom(resetAppModalAtom)
+
+  const [slippage] = useUserSlippage()
 
   // TODO: Check Native handling
   const poolAddress = useAtomValue(
@@ -51,6 +56,18 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount
 
         const userLpWallet = await poolContract.getGetWalletAddress(userAddress)
 
+        const token0MinOut = parseUnits(
+          BN(amount0ToBurn)
+            .multipliedBy(1 - slippage / 1e4)
+            .toString(),
+        )
+
+        const token1MinOut = parseUnits(
+          BN(amount1ToBurn)
+            .multipliedBy(1 - slippage / 1e4)
+            .toString(),
+        )
+
         const payload = beginCell()
           .store(
             storeTokenBurn({
@@ -58,7 +75,7 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount
               $$type: 'TokenBurn',
               amount,
               responseDestination: userAddress,
-              customPayload: null,
+              customPayload: beginCell().storeCoins(token0MinOut).storeCoins(token1MinOut).endCell(),
             }),
           )
           .endCell()
