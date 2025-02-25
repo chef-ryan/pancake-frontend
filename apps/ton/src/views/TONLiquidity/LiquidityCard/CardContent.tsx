@@ -8,6 +8,7 @@ import Link from 'next/link'
 import styled from 'styled-components'
 import { chainIdAtom } from 'ton/atom/chainIdAtom'
 import { isConnectedAtom } from 'ton/atom/isConnectedAtom'
+import { getAssetUrl } from 'utils'
 import { LiquidityList } from './LiquidityList'
 
 const ContentContainer = styled(Box)<{ $isBottomRounded?: boolean }>`
@@ -37,7 +38,7 @@ export const CardContent = (props: CardContentProps) => {
 
         {isWalletConnected && userPools.length === 0 && (
           <FlexGap flexDirection="column" alignItems="center" gap="16px" p="24px">
-            <img src="/images/green-box.png" alt="Empty Box" width={96} />
+            <img src={getAssetUrl('green-box.png')} alt="Empty Box" width={96} />
 
             <Text color="textSubtle">{!isFetched ? <LoadingDot /> : t('No liquidity found')}</Text>
           </FlexGap>

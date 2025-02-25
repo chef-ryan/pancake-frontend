@@ -16,6 +16,7 @@ import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
 import { useToken } from 'hooks/tokens/useToken'
 import { useAtomValue } from 'jotai'
 import { balanceMultipleAtom } from 'ton/logic/balanceMultipleAtom'
+import { getAssetUrl } from 'utils'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 
@@ -160,7 +161,7 @@ function CurrencySearch({
       </Box>
     ) : (
       <Column mt="16px" style={{ padding: '20px', height: '100%', alignItems: 'center' }}>
-        <img src="/images/laptop-bunny.png" alt="No results" width="100px" />
+        <img src={getAssetUrl('laptop-bunny.png')} alt="No results" width="100px" />
         <Text color="textSubtle" textAlign="center" mt="16px" mb="20px">
           {t('No tokens found')}
         </Text>

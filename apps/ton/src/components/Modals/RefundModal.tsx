@@ -8,6 +8,7 @@ import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
 import { useLiquidityRefund } from 'ton/logic/liquidity/useLiquidityRefund'
 import { formatBalance } from 'ton/utils/formatting'
+import { getAssetUrl } from 'utils'
 
 export const RefundModal = () => {
   const { t } = useTranslation()
@@ -21,7 +22,7 @@ export const RefundModal = () => {
 
       {poolsWithRefunds.length === 0 ? (
         <FlexGap my="24px" gap="8px" flexDirection="column" alignItems="center">
-          <img src="/images/laptop-bunny.png" alt="laptop bunny" width="128px" />
+          <img src={getAssetUrl('laptop-bunny.png')} alt="laptop bunny" width="128px" />
           <Text>{t('No leftover tokens to refund')}</Text>
         </FlexGap>
       ) : (
