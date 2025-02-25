@@ -32,3 +32,14 @@ export function getExpectedPoolTokens({ amount0, amount1, reserve0, reserve1, to
 
   return BN.min(a0.multipliedBy(supply).div(r0), a1.multipliedBy(supply).div(r1))
 }
+
+/**
+ * Get user's share from creating a new pool (Should be static)
+ * @param expectedTokens Expected Tokens in parsed form
+ */
+export function getNewPoolShare(expectedTokens: string) {
+  return BN(expectedTokens)
+    .minus(BN(REQUIRED_MIN_LIQUIDITY).div(10 ** LP_TOKEN_DECIMALS))
+    .div(BN(expectedTokens))
+    .multipliedBy(100)
+}

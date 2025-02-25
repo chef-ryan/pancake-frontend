@@ -29,7 +29,7 @@ import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
 import { useAddLiquidity } from 'ton/logic/liquidity/useAddLiquidity'
 import { formatBalance, parseUnits } from 'ton/utils/formatting'
-import { getExpectedPoolTokens } from 'ton/utils/pool'
+import { getExpectedPoolTokens, getNewPoolShare } from 'ton/utils/pool'
 import { CurrencyField } from 'types/currency'
 import { currencyKey } from 'utils/tokens/currency'
 
@@ -154,11 +154,18 @@ export const CardContent = (props: CardContentProps) => {
   }, [currencyAmounts, poolData?.reserve0, poolData?.reserve1, poolData?.totalSupply, currency0, currency1])
 
   const expectedShareInPool = useMemo(() => {
-    if (!lpBalance || !poolData?.totalSupply) return '0'
-
     const parsedExpectedPoolTokens = expectedPoolTokens.isFinite()
       ? parseUnits(expectedPoolTokens.toString() || 0n, LP_TOKEN_DECIMALS).toString()
       : '0'
+
+    // If new pool being created
+    if (
+      !poolData?.totalSupply &&
+      currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0] &&
+      currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]
+    ) {
+      return getNewPoolShare(parsedExpectedPoolTokens).toString()
+    }
 
     const expectedTotalSupply = poolData?.totalSupply
       ? BN(poolData.totalSupply.toString()).plus(parsedExpectedPoolTokens)
@@ -170,7 +177,7 @@ export const CardContent = (props: CardContentProps) => {
       .div(expectedTotalSupply)
       .times(100)
       .toString()
-  }, [lpBalance, poolData?.totalSupply, expectedPoolTokens])
+  }, [lpBalance, poolData?.totalSupply, expectedPoolTokens, currencyAmounts])
 
   const expectedRates = useMemo(() => {
     if (!currency0 || !currency1) return { expectedRate0: '0', expectedRate1: '0', expectedPoolTokens: '0' }
@@ -374,7 +381,7 @@ export const CardContent = (props: CardContentProps) => {
           <Flex justifyContent="space-between" flexWrap="wrap">
             <Text color="textSubtle">{t('Your share in the pair')}</Text>
 
-            <DisplayLoader loading={isLpBalanceLoading}>
+            <DisplayLoader loading={isPoolDataLoading || (Boolean(poolData) && isLpBalanceLoading)}>
               {expectedShareInPool ? (
                 <NumberDisplay value={expectedShareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
               ) : (
