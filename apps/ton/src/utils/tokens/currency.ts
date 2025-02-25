@@ -1,4 +1,5 @@
 import { Currency, Native, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
+import { API_BASE_URL } from 'config/constants/endpoints'
 import mainnetList from 'public/lists/main.json'
 import testnetList from 'public/lists/testnet.json'
 import { ResultJettonData } from 'types/tonapi'
@@ -31,7 +32,7 @@ export async function fetchTokenByAddress(address: string, chainId: TonChainId):
     return token
   }
 
-  const result = await fetch(`/api/token?address=${address}&chainId=${chainId}`)
+  const result = await fetch(`${API_BASE_URL}/token?address=${address}&chainId=${chainId}`)
   if (!result.ok) throw new Error(`Failed to fetch token data for ${address} on chain ${chainId}`)
 
   const data: ResultJettonData = await result.json()
