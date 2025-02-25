@@ -1,5 +1,7 @@
 import invariant from 'tiny-invariant'
-import { Currency, CurrencyAmount, Price } from '../constants'
+import { CurrencyAmount } from '../fractions/CurrencyAmount'
+import { Currency } from '../currency'
+import { Price } from '../fractions/Price'
 
 export const token0Price = (
   amount0: CurrencyAmount<Currency>,

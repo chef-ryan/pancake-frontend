@@ -19,7 +19,6 @@
     "@pancakeswap/localization": "workspace:*",
     "@pancakeswap/price-api-sdk": "workspace:*",
     "@pancakeswap/routing-sdk": "workspace:*",
-    "@pancakeswap/routing-sdk-addon-ton-v2": "workspace:*",
     "@pancakeswap/sdk": "workspace:*",
     "@pancakeswap/smart-router": "workspace:*",
     "@pancakeswap/swap-sdk-core": "workspace:*",

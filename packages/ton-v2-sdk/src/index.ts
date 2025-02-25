@@ -1,11 +1,6 @@
 export {
-  type Currency,
   type TonContractInstance,
   type TonFunctionDef,
-  Token,
-  Native,
-  CurrencyAmount,
-  Price,
   TON_OPCODES,
   Contracts,
   TonNetworks,
@@ -16,6 +11,12 @@ export {
   NATIVE,
   WNATIVE,
 } from './constants'
+
+export { type Currency, Token, Native } from './currency'
+
+export { Price } from './fractions/Price'
+
+export { CurrencyAmount } from './fractions/CurrencyAmount'
 
 export {
   priceOf,

@@ -1,6 +1,7 @@
 import { Percent } from '@pancakeswap/swap-sdk-core'
 import { Hex } from 'viem'
-import { Currency, CurrencyAmount } from './constants'
+import { Currency } from './currency'
+import { CurrencyAmount } from './fractions/CurrencyAmount'
 
 export interface TradeOptions {
   /**
