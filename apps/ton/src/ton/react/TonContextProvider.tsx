@@ -5,7 +5,11 @@ import { tonStateAtom } from 'ton/atom/tonStateAtom'
 
 export const TonContextProvider = ({ children }: { children: React.ReactNode }) => {
   return (
-    <TonConnectUIProvider manifestUrl={`${typeof window !== 'undefined' && window.location.origin}/ton-manifest.json`}>
+    <TonConnectUIProvider
+      manifestUrl={`${typeof window !== 'undefined' && window.location.origin}/${
+        process.env.NEXT_PUBLIC_GLOBAL_PREFIX || ''
+      }/ton-manifest.json`}
+    >
       <Container>{children}</Container>
     </TonConnectUIProvider>
   )
