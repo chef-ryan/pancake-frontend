@@ -5,14 +5,6 @@
   "tokens": [
     {
       "chainId": -3,
-      "address": "kQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffAw5",
-      "name": "Proxy TON",
-      "symbol": "pTON",
-      "decimals": 9,
-      "logoURI": "https://cache.tonapi.io/imgproxy/X7T-fLahBBVIxXacXAqrsCHIgFgTQE3Jt2HAdnc5_Mc/rs:fill:200:200:1/g:no/aHR0cHM6Ly9zdGF0aWMuc3Rvbi5maS9sb2dvL3Rvbl9zeW1ib2wucG5n.webp"
-    },
-    {
-      "chainId": -3,
       "address": "kQA8oT-HRBY-9-yFymg17hD5FE07--Z1gYc_sZTbzqpOZr1t",
       "name": "Pancake Token",
       "symbol": "CAKE",

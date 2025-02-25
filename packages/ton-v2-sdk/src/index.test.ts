@@ -18,7 +18,6 @@ test('exports', () => {
       "NATIVE",
       "WNATIVE",
       "priceOf",
-      "getPairAddress",
       "getOutputAmount",
       "getInputAmount",
       "Trade",

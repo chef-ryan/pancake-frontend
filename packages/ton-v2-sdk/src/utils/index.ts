@@ -1,6 +1,6 @@
 export * from './amount'
 export * from './price'
-export * from './getAddress'
+export * from './address'
 export * from './trade'
 export * from './swap'
 export * from './liquidity'

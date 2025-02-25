@@ -20,7 +20,6 @@ export { CurrencyAmount } from './fractions/CurrencyAmount'
 
 export {
   priceOf,
-  getPairAddress,
   getOutputAmount,
   getInputAmount,
   Trade,
