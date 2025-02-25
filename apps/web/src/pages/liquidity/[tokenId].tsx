@@ -62,7 +62,7 @@ import { GetStaticPaths, GetStaticProps } from 'next'
 import { NextSeo } from 'next-seo'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { ReactNode, memo, useCallback, useMemo, useState } from 'react'
+import { ReactNode, memo, useCallback, useMemo, useState, useEffect } from 'react'
 import { usePoolInfo } from 'state/farmsV4/state/extendPools/hooks'
 import { ChainLinkSupportChains } from 'state/info/constant'
 import { useSingleCallResult } from 'state/multicall/hooks'
@@ -82,7 +82,6 @@ import { AprCalculatorV2 } from 'views/AddLiquidityV3/components/AprCalculatorV2
 import RateToggle from 'views/AddLiquidityV3/formViews/V3FormView/components/RateToggle'
 import { PageWithoutFAQ } from 'views/Page'
 import { useSendTransaction, useWalletClient } from 'wagmi'
-import { redirect } from 'next/navigation'
 
 export const BodyWrapper = styled(Card)`
   border-radius: 24px;
@@ -196,15 +195,23 @@ export default function PoolPage() {
 
   const { tokenId: tokenIdFromUrl } = router.query
 
-  if (tokenIdFromUrl === 'pools') {
-    redirect('/liquidity/pools')
-  } else if (tokenIdFromUrl === 'positions') {
-    redirect('/liquidity/positions')
-  }
+  const isValidNumber = Boolean(
+    tokenIdFromUrl && typeof tokenIdFromUrl === 'string' && Number.isFinite(Number(tokenIdFromUrl)),
+  )
 
-  const parsedTokenId = tokenIdFromUrl ? BigInt(tokenIdFromUrl as string) : undefined
+  const parsedTokenId = isValidNumber ? BigInt(tokenIdFromUrl as string) : undefined
 
   const { loading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (tokenIdFromUrl === 'pools') {
+        window.location.replace('/liquidity/pools')
+      } else if (tokenIdFromUrl === 'positions') {
+        window.location.replace('/liquidity/positions')
+      }
+    }
+  }, [tokenIdFromUrl])
 
   const {
     token0: token0Address,
