@@ -241,10 +241,10 @@ export function useIsTransactionUnsupported(currencyIn?: Currency | null, curren
 
   // if unsupported list loaded & either token on list, mark as unsupported
   if (unsupportedTokens) {
-    if (tokenIn && Object.keys(unsupportedTokens).includes(tokenIn.address)) {
+    if (tokenIn && unsupportedTokens[tokenIn.address]) {
       return true
     }
-    if (tokenOut && Object.keys(unsupportedTokens).includes(tokenOut.address)) {
+    if (tokenOut && unsupportedTokens[tokenOut.address]) {
       return true
     }
   }
@@ -260,10 +260,10 @@ export function useIsTransactionWarning(currencyIn?: Currency, currencyOut?: Cur
   const tokenOut = wrappedCurrency(currencyOut, chainId)
 
   if (warningTokens) {
-    if (tokenIn && Object.keys(warningTokens).includes(tokenIn.address)) {
+    if (tokenIn && warningTokens[tokenIn.address]) {
       return true
     }
-    if (tokenOut && Object.keys(warningTokens).includes(tokenOut.address)) {
+    if (tokenOut && warningTokens[tokenOut.address]) {
       return true
     }
   }
