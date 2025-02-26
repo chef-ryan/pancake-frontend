@@ -21,6 +21,9 @@ const TonEndPoints = {
   [TonChainId.Testnet]: `https://testnet.toncenter.com/api/v2/jsonRPC?api_key=${process.env.NEXT_PUBLIC_TONCENTER_TESTNET_API_KEY}`,
 }
 
+const mainnetClient = new TonClient({ endpoint: TonEndPoints[TonChainId.Mainnet] })
+const testnetClient = new TonClient({ endpoint: TonEndPoints[TonChainId.Testnet] })
+
 const key = (token0, token1) => presetKey(token0.address, token1.address)
 
 const getTokenPairs = (tokens: any[]) => {
@@ -42,7 +45,7 @@ const getTokenPairs = (tokens: any[]) => {
 }
 
 const getPoolAddress = async (chainId: TonChainId, token0Address: any, token1Address: any) => {
-  const client = new TonClient({ endpoint: TonEndPoints[chainId] })
+  const client = chainId === TonChainId.Mainnet ? mainnetClient : testnetClient
   const router = client.open(Router.fromAddress(parseAddress(Contracts[TonContractNames.PCSRouter][chainId].address)))
 
   const jettonMaster0 = client.open(JettonMasterUSDT.fromAddress(parseAddress(token0Address)))

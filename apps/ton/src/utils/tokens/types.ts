@@ -6,6 +6,7 @@ export interface TokenInfo {
   readonly symbol: string
   readonly address: string
   readonly decimals: number
+  readonly jettonCode?: string
   readonly logoURI?: string
   readonly tags?: string[]
   readonly extensions?: {

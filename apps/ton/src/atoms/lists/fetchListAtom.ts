@@ -23,6 +23,7 @@ export const fetchListAtom = atomWithQuery<Token[]>((get) => {
             tokenData.symbol,
             tokenData.name,
             tokenData.logoURI,
+            tokenData.jettonCode,
           ),
       )
     },

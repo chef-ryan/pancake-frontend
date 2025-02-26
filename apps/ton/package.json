@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "build:pools": "tsx ./src/scripts/buildPools.ts",
+    "build:jettons": "tsx ./src/scripts/buildJettons.ts",
     "start": "next start",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json}\""
