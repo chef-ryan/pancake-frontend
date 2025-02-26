@@ -19,9 +19,11 @@ export const Dot = styled(Box)`
   border-radius: 50%;
 `
 
-export const ScrollableList = styled(FlexGap).attrs({ flexDirection: 'column', gap: '8px' })<{ maxHeight?: string }>`
+export const ScrollableList = styled(FlexGap).attrs({
+  flexDirection: 'column',
+  gap: '8px',
+})`
   overflow-y: auto;
-  max-height: ${({ maxHeight }) => maxHeight || '300px'};
   min-height: 20px;
 `
 

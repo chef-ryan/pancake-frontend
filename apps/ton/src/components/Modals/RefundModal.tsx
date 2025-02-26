@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Button, Flex, FlexGap, Text } from '@pancakeswap/uikit'
+import { Button, Flex, FlexGap, LoadingDot, Text } from '@pancakeswap/uikit'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import { Card } from 'components/Card'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/widgets'
@@ -13,7 +13,7 @@ import { getAssetUrl } from 'utils'
 
 export const RefundModal = () => {
   const { t } = useTranslation()
-  const { poolsWithRefunds } = useUserRefundPools()
+  const { poolsWithRefunds, isFetching } = useUserRefundPools()
 
   return (
     <FlexGap gap="8px" flexDirection="column">
@@ -24,10 +24,10 @@ export const RefundModal = () => {
       {poolsWithRefunds.length === 0 ? (
         <FlexGap my="24px" gap="8px" flexDirection="column" alignItems="center">
           <img src={getAssetUrl('laptop-bunny.png')} alt="laptop bunny" width="128px" />
-          <Text>{t('No leftover tokens to refund')}</Text>
+          <Text color="textSubtle">{isFetching ? <LoadingDot /> : t('No leftover tokens to refund')}</Text>
         </FlexGap>
       ) : (
-        <ScrollableList px="2px" maxHeight="300px">
+        <ScrollableList px="2px" maxHeight={[null, null, null, '300px']}>
           {poolsWithRefunds.map((pool) => (
             <PoolRefundRow
               key={pool.poolAddress}

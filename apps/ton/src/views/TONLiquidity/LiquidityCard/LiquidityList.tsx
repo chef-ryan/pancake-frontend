@@ -9,7 +9,7 @@ export const LiquidityList = (props: LiquidityListProps) => {
 
   return (
     <>
-      <ScrollableList padding="16px" {...props}>
+      <ScrollableList padding="16px" maxHeight="300px" {...props}>
         {userPools.map((item) => (
           <LiquidityRow key={item.poolAddress} {...item} />
         ))}
