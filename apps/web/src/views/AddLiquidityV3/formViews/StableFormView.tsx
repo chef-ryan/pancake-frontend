@@ -194,7 +194,18 @@ export default function StableFormView({
           commonBasesType={CommonBasesType.LIQUIDITY}
         />
       </AutoColumn>
-      <HideMedium>{buttons}</HideMedium>
+      <HideMedium style={{ gap: 16, width: '100%', flexDirection: 'column' }}>
+        {hasSevereSlippage && (
+          <Message variant="warning">
+            <MessageText>
+              {t(
+                'Adding liquidity is disabled due to severe slippage. Enable Expert Mode to proceed, but do so with caution.',
+              )}
+            </MessageText>
+          </Message>
+        )}
+        {buttons}
+      </HideMedium>
 
       <RightContainer>
         <AutoColumn>
@@ -288,19 +299,19 @@ export default function StableFormView({
                 loading={!executionSlippage && (loading || infoLoading)}
               />
             </AutoRow>
-            {hasSevereSlippage && (
-              <AutoRow justifyContent="space-between" mb="16px">
-                <Message variant="warning">
-                  <MessageText>
-                    {t(
-                      'Adding liquidity is disabled due to severe slippage. Enable Expert Mode to proceed, but do so with caution.',
-                    )}
-                  </MessageText>
-                </Message>
-              </AutoRow>
-            )}
           </Box>
-          <MediumOnly>{buttons}</MediumOnly>
+          <MediumOnly style={{ gap: 16, flexDirection: 'column' }}>
+            {hasSevereSlippage && (
+              <Message variant="warning">
+                <MessageText>
+                  {t(
+                    'Adding liquidity is disabled due to severe slippage. Enable Expert Mode to proceed, but do so with caution.',
+                  )}
+                </MessageText>
+              </Message>
+            )}
+            {buttons}
+          </MediumOnly>
         </AutoColumn>
       </RightContainer>
     </>
