@@ -6,8 +6,8 @@ import { CommitButton } from 'components/CommitButton'
 import CurrencyInputPanel from 'components/CurrencyInputPanel'
 
 import { ApprovalState } from 'hooks/useApproveCallback'
-import { CurrencyField as Field } from 'utils/types'
 import { logGTMClickAddLiquidityEvent } from 'utils/customGTMEventTracking'
+import { CurrencyField as Field } from 'utils/types'
 
 import { useTranslation } from '@pancakeswap/localization'
 import { useIsExpertMode } from '@pancakeswap/utils/user'
@@ -233,8 +233,8 @@ export default function StableFormView({
               <Text>
                 {price?.toSignificant(6) ?? '-'}{' '}
                 {t('%assetA% per %assetB%', {
-                  assetB: currencies[Field.CURRENCY_B]?.symbol ?? '',
-                  assetA: currencies[Field.CURRENCY_A]?.symbol ?? '',
+                  assetA: currencies[Field.CURRENCY_B]?.symbol ?? '',
+                  assetB: currencies[Field.CURRENCY_A]?.symbol ?? '',
                 })}
               </Text>
             </AutoRow>
