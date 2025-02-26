@@ -10,9 +10,9 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { routerContractAtom } from 'ton/atom/contracts/routerContractAtom'
 import { getJettonWalletAddress } from 'ton/atom/jettonWalletAddressAtom'
-import { getCurrencyOrder } from 'ton/utils/address'
 import { formatBalance } from 'ton/utils/formatting'
 import { generateQueryId } from 'ton/utils/generateQueryId'
+import { getCurrencyOrder } from 'ton/utils/tokenOrder'
 import { getTransactionByBOC } from 'ton/utils/transaction'
 
 interface AddLiquidityArgs {
@@ -39,8 +39,7 @@ export const useAddLiquidity = () => {
   const addLiquidity = useCallback(
     async ({ token0, token1, minLpOut, amount0: amount0_, amount1: amount1_ }: AddLiquidityArgs) => {
       try {
-        // Sort according to Native first and if both not native then use .sortsBefore
-        const { currency0, currency1, isFlipped } = getCurrencyOrder(token0, token1)
+        const { currency0, currency1, isFlipped } = await getCurrencyOrder(token0, token1)
         let amount0 = amount0_
         let amount1 = amount1_
         if (isFlipped) {

@@ -1,12 +1,16 @@
+import { TonChainId } from '@pancakeswap/ton-v2-sdk'
+import { useQuery } from '@tanstack/react-query'
 import BN from 'bignumber.js'
 import { PRESET_POOLS } from 'config/presetPools'
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
+import { addressAtom } from 'ton/atom/addressAtom'
+import { chainIdAtom } from 'ton/atom/chainIdAtom'
 import { lpBalanceByPoolsQueryAtom } from 'ton/atom/liquidity/lpBalanceByPoolsQueryAtom'
 import { poolDataMultipleQueryAtom } from 'ton/atom/liquidity/poolDataMultipleQueryAtom'
 import { networkAtom } from 'ton/atom/networkAtom'
-import { getTokenOrder } from 'ton/utils/address'
-import { parsePresetKey } from 'utils'
+import { getTokenOrder } from 'ton/utils/tokenOrder'
+import { parsePresetKey, stringify } from 'utils'
 
 interface RawPoolData {
   balance: bigint
@@ -37,17 +41,23 @@ interface PoolInfo {
 const getTokenPairs = (network: string): string[][] =>
   Object.keys(PRESET_POOLS[network]).map((tokenPair) => parsePresetKey(tokenPair))
 
-const getPoolsWithBalance = (pools: RawPoolData[], tokenPairs: string[][]): InitialPoolData[] =>
-  pools
-    .map((pool, index) => {
-      const { token0, token1 } = getTokenOrder(tokenPairs[index][0], tokenPairs[index][1])
-      return {
-        ...pool,
-        token0,
-        token1,
-      }
-    })
-    .filter((pool) => pool.balance > 0n)
+const getPoolsWithBalance = async (
+  chainId: TonChainId,
+  pools: RawPoolData[],
+  tokenPairs: string[][],
+): Promise<InitialPoolData[]> =>
+  (
+    await Promise.all(
+      pools.map(async (pool, index) => {
+        const { token0, token1 } = await getTokenOrder(chainId, tokenPairs[index][0], tokenPairs[index][1])
+        return {
+          ...pool,
+          token0,
+          token1,
+        }
+      }),
+    )
+  ).filter((pool) => pool.balance > 0n)
 
 const combinePoolData = (poolsWithBalance: InitialPoolData[], poolInfos: PoolInfo[]): CombinedPoolData[] =>
   poolsWithBalance.map((pool, index) => {
@@ -71,7 +81,10 @@ const combinePoolData = (poolsWithBalance: InitialPoolData[], poolInfos: PoolInf
   })
 
 export const useUserPools = () => {
+  const userAddress = useAtomValue(addressAtom)
   const network = useAtomValue(networkAtom)
+  const chainId = useAtomValue(chainIdAtom)
+
   const tokenPairs = useMemo(() => getTokenPairs(network), [network])
 
   const {
@@ -81,16 +94,23 @@ export const useUserPools = () => {
   } = useAtomValue(lpBalanceByPoolsQueryAtom(Object.values(PRESET_POOLS[network])))
 
   // Filter out pools with zero user balance
-  const poolsWithBalance = useMemo(() => getPoolsWithBalance(pools, tokenPairs), [pools, tokenPairs])
+  const { data: poolsWithBalance, isFetched: isPoolsWithSortedTokensFetched } = useQuery({
+    queryKey: ['poolsWithBalance', chainId, stringify(pools), tokenPairs, userAddress],
+    queryFn: () => getPoolsWithBalance(chainId, pools, tokenPairs),
+    retry: 3,
+  })
 
   // Liquidity Pool Information
   const { data: poolInfos, isFetched: isPoolDataFetched } = useAtomValue(
-    poolDataMultipleQueryAtom(poolsWithBalance.map((pool) => pool.poolAddress)),
+    poolDataMultipleQueryAtom(poolsWithBalance ? poolsWithBalance.map((pool) => pool.poolAddress) : []),
   )
 
-  const finalPoolData = useMemo(() => combinePoolData(poolsWithBalance, poolInfos), [poolsWithBalance, poolInfos])
+  const finalPoolData = useMemo(
+    () => (poolsWithBalance ? combinePoolData(poolsWithBalance, poolInfos) : []),
+    [poolsWithBalance, poolInfos],
+  )
 
-  const isFetched = isPoolBalanceFetched && isPoolDataFetched
+  const isFetched = isPoolBalanceFetched && isPoolDataFetched && isPoolsWithSortedTokensFetched
 
   return {
     ...rest,

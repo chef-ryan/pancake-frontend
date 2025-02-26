@@ -10,6 +10,10 @@ export function truncateHash(hash?: string, chars = 6): string {
   return `${hash.substring(0, chars)}...${hash.substring(hash.length - chars)}`
 }
 
+export function stringify(data: any): string {
+  return JSON.stringify(data, (_, value) => (typeof value === 'bigint' ? value.toString() : value), 2)
+}
+
 /**
  * Key for a pair of tokens for pre-built pools list
  */

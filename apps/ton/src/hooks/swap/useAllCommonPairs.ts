@@ -1,11 +1,13 @@
-import { useMemo } from 'react'
+import { Currency, CurrencyAmount, Pair, Token } from '@pancakeswap/ton-v2-sdk'
+import { useQuery } from '@tanstack/react-query'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from 'config/constants/exchange'
+import { useAtomValue } from 'jotai'
 import flatMap from 'lodash/flatMap'
 import uniqBy from 'lodash/uniqBy'
 import uniqWith from 'lodash/uniqWith'
-import { Currency, Token, Pair, CurrencyAmount } from '@pancakeswap/ton-v2-sdk'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from 'config/constants/exchange'
-import { useAtomValue } from 'jotai'
+import { useMemo } from 'react'
 import { poolDataQueriesAtom, useRefreshPoolData } from 'ton/atom/liquidity/poolDataQueriesAtom'
+import { getCurrencyOrder } from 'ton/utils/tokenOrder'
 
 interface UseAllCommonPairsReturnType {
   isLoading: boolean
@@ -95,21 +97,41 @@ export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): U
 }
 
 const usePairs = (pairs: [Token, Token][]) => {
-  const pairsAddress = useMemo(
-    () =>
-      pairs.map(([token0, token1]) =>
-        token0.sortsBefore(token1)
-          ? {
-              token0Address: token0.wrapped.address,
-              token1Address: token1.wrapped.address,
-            }
-          : {
-              token1Address: token0.wrapped.address,
-              token0Address: token1.wrapped.address,
-            },
-      ),
-    [pairs],
-  )
+  // const pairsAddress = useMemo(
+  //   () =>
+  //     pairs.map(([token0, token1]) =>
+  //       token0.sortsBefore(token1)
+  //         ? {
+  //             token0Address: token0.wrapped.address,
+  //             token1Address: token1.wrapped.address,
+  //           }
+  //         : {
+  //             token1Address: token0.wrapped.address,
+  //             token0Address: token1.wrapped.address,
+  //           },
+  //     ),
+  //   [pairs],
+  // )
+
+  const { data: pairsAddress } = useQuery({
+    queryKey: ['pairs', pairs],
+    queryFn: async () => {
+      return Promise.all(
+        pairs.map(async ([token0, token1]) =>
+          (await getCurrencyOrder(token0, token1)).isFlipped
+            ? {
+                token1Address: token0.wrapped.address,
+                token0Address: token1.wrapped.address,
+              }
+            : {
+                token0Address: token0.wrapped.address,
+                token1Address: token1.wrapped.address,
+              },
+        ),
+      )
+    },
+    initialData: [],
+  })
   const result = useAtomValue(poolDataQueriesAtom(pairsAddress))
   const { refresh } = useRefreshPoolData(pairsAddress)
   return useMemo(() => {

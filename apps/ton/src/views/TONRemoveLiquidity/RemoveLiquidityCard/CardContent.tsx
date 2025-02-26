@@ -1,5 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { ArrowDownIcon, Box, BoxProps, Button, Flex, FlexGap, MinusIcon, Slider, Text } from '@pancakeswap/uikit'
+import { useQuery } from '@tanstack/react-query'
 import { setRemoveLiquidityModalAtom } from 'atoms/modals/removeLiquidityModalAtom'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
@@ -19,8 +20,8 @@ import { addressAtom } from 'ton/atom/addressAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { useRemoveLiquidity } from 'ton/logic/liquidity/useRemoveLiquidity'
-import { getCurrencyOrder } from 'ton/utils/address'
 import { formatBalance } from 'ton/utils/formatting'
+import { getCurrencyOrder } from 'ton/utils/tokenOrder'
 
 const ContentContainer = styled(Box)<{ $isBottomRounded?: boolean }>`
   padding: 24px;
@@ -71,14 +72,25 @@ export const CardContent = (props: CardContentProps) => {
   const { data: currency0_ } = useAtomValue(tokenByAddressQueryAtom(address0))
   const { data: currency1_ } = useAtomValue(tokenByAddressQueryAtom(address1))
 
-  const { currency0, currency1, isFlipped } =
-    currency0_ && currency1_
-      ? getCurrencyOrder(currency0_, currency1_)
-      : {
-          currency0: currency0_,
-          currency1: currency1_,
-          isFlipped: false,
-        }
+  const {
+    data: { currency0, currency1, isFlipped },
+  } = useQuery({
+    queryKey: ['removeLiquidity_currencyOrder', currency0_, currency1_],
+    queryFn: async () => {
+      return currency0_ && currency1_
+        ? getCurrencyOrder(currency0_, currency1_)
+        : {
+            currency0: currency0_!,
+            currency1: currency1_!,
+            isFlipped: false,
+          }
+    },
+    initialData: {
+      currency0: currency0_!,
+      currency1: currency1_!,
+      isFlipped: false,
+    },
+  })
 
   console.log('RemoveLiquidity', {
     currency0: currency0?.symbol,
