@@ -6,15 +6,17 @@ import { useIDOContract } from '../ido/useIDOContract'
 declare global {
   interface Window {
     binancew3w: {
-      sign: (params: { binanceChainId: string; contractAddress: string; address: string }) => Promise<{
-        code: string
-        message: string
-        success: boolean
-        data: {
-          signature: string
-          expireAt: number
-        }
-      }>
+      pcs: {
+        sign: (params: { binanceChainId: string; contractAddress: string; address: string }) => Promise<{
+          code: string
+          message: string
+          success: boolean
+          data: {
+            signature: string
+            expireAt: number
+          }
+        }>
+      }
     }
   }
 }
@@ -26,14 +28,16 @@ export const useW3WAccountSign = () => {
 
   const sign = useCallback(async () => {
     if (!address) throw new Error('No address provided')
-    if (
-      typeof window === 'undefined' ||
-      typeof window.binancew3w === 'undefined' ||
-      typeof window.binancew3w.sign === 'undefined'
-    )
+    if (typeof window === 'undefined' || typeof window.binancew3w?.pcs?.sign === 'undefined')
       throw new Error('Cannot sign message')
 
-    return window.binancew3w.sign({
+    console.log('signing w3w account', {
+      binanceChainId: `${chainId}`,
+      contractAddress: contract?.address ?? '',
+      address,
+    })
+
+    return window.binancew3w.pcs.sign({
       binanceChainId: `${chainId}`,
       contractAddress: contract?.address ?? '',
       address,
