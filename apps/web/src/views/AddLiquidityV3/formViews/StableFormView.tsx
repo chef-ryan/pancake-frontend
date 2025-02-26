@@ -1,6 +1,18 @@
 import { CommonBasesType } from 'components/SearchModal/types'
 
-import { AutoColumn, AutoRow, Box, Button, Dots, Flex, QuestionHelper, RowBetween, Text } from '@pancakeswap/uikit'
+import {
+  AutoColumn,
+  AutoRow,
+  Box,
+  Button,
+  Dots,
+  Flex,
+  Message,
+  MessageText,
+  QuestionHelper,
+  RowBetween,
+  Text,
+} from '@pancakeswap/uikit'
 
 import { CommitButton } from 'components/CommitButton'
 import CurrencyInputPanel from 'components/CurrencyInputPanel'
@@ -52,6 +64,7 @@ export default function StableFormView({
   stableTotalFee,
   stableAPR,
   executionSlippage,
+  hasSevereSlippage,
   loading,
   infoLoading,
   price,
@@ -275,6 +288,17 @@ export default function StableFormView({
                 loading={!executionSlippage && (loading || infoLoading)}
               />
             </AutoRow>
+            {hasSevereSlippage && (
+              <AutoRow justifyContent="space-between" mb="16px">
+                <Message variant="warning">
+                  <MessageText>
+                    {t(
+                      'Adding liquidity is disabled due to severe slippage. Enable Expert Mode to proceed, but do so with caution.',
+                    )}
+                  </MessageText>
+                </Message>
+              </AutoRow>
+            )}
           </Box>
           <MediumOnly>{buttons}</MediumOnly>
         </AutoColumn>

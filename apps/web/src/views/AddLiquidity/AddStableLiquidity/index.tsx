@@ -52,6 +52,7 @@ export interface AddStableChildrenProps {
   loading: boolean
   infoLoading?: boolean
   allowedSlippage: number
+  hasSevereSlippage: boolean
   stableAPR?: number
   shouldShowApprovalGroup: boolean
   showFieldAApproval: boolean
@@ -361,7 +362,9 @@ export default function AddStableLiquidity({
     (parsedAmountA?.greaterThan(0) && approvalA !== ApprovalState.APPROVED) ||
     (parsedAmountB?.greaterThan(0) && approvalB !== ApprovalState.APPROVED)
 
-  const buttonDisabled = !isValid || notApprovalYet || (!!slippageSeverity && slippageSeverity > 2 && !expertMode)
+  const hasSevereSlippage = !!slippageSeverity && slippageSeverity > 2 && !expertMode
+
+  const buttonDisabled = !isValid || notApprovalYet || hasSevereSlippage
 
   const showFieldAApproval = approvalA === ApprovalState.NOT_APPROVED || approvalA === ApprovalState.PENDING
   const showFieldBApproval = approvalB === ApprovalState.NOT_APPROVED || approvalB === ApprovalState.PENDING
@@ -397,5 +400,6 @@ export default function AddStableLiquidity({
     setLiquidityState,
     reserves,
     pair,
+    hasSevereSlippage,
   })
 }

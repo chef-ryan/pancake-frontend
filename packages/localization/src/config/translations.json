@@ -3633,5 +3633,6 @@
   "Method not support ": "Method not support ",
   "Please upgrade your wallet app": "Please upgrade your wallet app",
   "Account Already Participated": "Account Already Participated",
-  "You have already participated in this TGE": "You have already participated in this TGE"
+  "You have already participated in this TGE": "You have already participated in this TGE",
+  "Adding liquidity is disabled due to severe slippage. Enable Expert Mode to proceed, but do so with caution.": "Adding liquidity is disabled due to severe slippage. Enable Expert Mode to proceed, but do so with caution."
 }
