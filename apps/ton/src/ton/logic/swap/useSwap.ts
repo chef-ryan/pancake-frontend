@@ -103,7 +103,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade }: SwapArgs) =>
           address: token0.isNative ? routerJettonWallet0.toString() : userJettonWallet0!.toString(),
           // Attached TON for fees, not the amount of jettons to transfer!
           // todo:@eric add estimate logic
-          amount: GAS.toString(),
+          amount: token0.isNative ? (parseUnits(amount0, token0.decimals) + FORWARD_GAS).toString() : GAS.toString(),
           payload: payload.toBoc().toString('base64'),
         },
       ],
