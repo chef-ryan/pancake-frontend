@@ -4,11 +4,11 @@ import { styled } from 'styled-components'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { CurrencyLogo } from './CurrencyLogo'
 
-const Wrapper = styled.div<{ margin: boolean }>`
+const Wrapper = styled.div<{ $margin: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-right: ${({ margin }) => margin && '4px'};
+  margin-right: ${({ $margin }) => $margin && '4px'};
 `
 
 interface DoubleCurrencyLogoProps {
@@ -31,7 +31,7 @@ export function DoubleCurrencyLogo({
   const chainLogoSize = useMemo(() => size * 0.66, [size])
   return (
     <>
-      <Wrapper margin={margin}>
+      <Wrapper $margin={margin}>
         {currency0 && (
           <CurrencyLogo currency={currency0} size={`${size.toString()}px`} style={{ marginRight: innerMargin }} />
         )}

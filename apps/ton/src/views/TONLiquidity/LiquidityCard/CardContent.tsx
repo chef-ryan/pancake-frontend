@@ -34,7 +34,7 @@ export const CardContent = (props: CardContentProps) => {
   return (
     <>
       <ContentContainer $isBottomRounded={!isWalletConnected} {...props}>
-        {!isWalletConnected && <WalletDisclaimer p="64px" text={t('Connect wallet to view your liquidity')} />}
+        {!isWalletConnected && <WalletDisclaimer py="64px" text={t('Connect wallet to view your liquidity')} />}
 
         {isWalletConnected && userPools.length === 0 && (
           <FlexGap flexDirection="column" alignItems="center" gap="16px" p="24px">

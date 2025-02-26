@@ -80,18 +80,37 @@ export const LiquidityRow = ({
           content={
             <Box mt="8px">
               <Flex mt="5px" justifyContent="space-between">
-                <Text color="textSubtle">{t('Pooled %symbol%', { symbol: symbol0 })}</Text>
+                <Text color="textSubtle" fontSize={['14px', null, '16px']}>
+                  {t('Pooled %symbol%', { symbol: symbol0 })}
+                </Text>
 
-                <Text>{amount0.gt(0) ? formatBigNumber(amount0, LP_TOKEN_DECIMALS) : '-'}</Text>
+                <Text fontSize={['14px', null, '16px']}>
+                  {amount0.gt(0) ? formatBigNumber(amount0, LP_TOKEN_DECIMALS) : '-'}
+                </Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
-                <Text color="textSubtle">{t('Pooled %symbol%', { symbol: symbol1 })}</Text>
+                <Text color="textSubtle" fontSize={['14px', null, '16px']}>
+                  {t('Pooled %symbol%', { symbol: symbol1 })}
+                </Text>
 
-                <Text>{amount1.gt(0) ? formatBigNumber(amount1, LP_TOKEN_DECIMALS) : '-'}</Text>
+                <Text fontSize={['14px', null, '16px']}>
+                  {amount1.gt(0) ? formatBigNumber(amount1, LP_TOKEN_DECIMALS) : '-'}
+                </Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
-                <Text color="textSubtle">{t('Your share in the pool')}</Text>
-                {userShare ? <NumberDisplay value={userShare} suffix="%" maximumSignificantDigits={6} /> : '-'}
+                <Text color="textSubtle" fontSize={['14px', null, '16px']}>
+                  {t('Your share in the pool')}
+                </Text>
+                {userShare ? (
+                  <NumberDisplay
+                    value={userShare}
+                    suffix="%"
+                    maximumSignificantDigits={6}
+                    fontSize={['14px', null, '16px']}
+                  />
+                ) : (
+                  '-'
+                )}
               </Flex>
               <FlexGap mt="10px" justifyContent="space-between" gap="16px">
                 <Link href={`/liquidity/add/${token0}/${token1}`} style={{ width: '100%' }}>
