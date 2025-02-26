@@ -1,4 +1,4 @@
-import { Box, Button, Svg, SvgProps } from '@pancakeswap/uikit'
+import { Box, Button, FlexGap, Svg, SvgProps } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 
 export const Hr = styled.hr`
@@ -17,6 +17,12 @@ export const Dot = styled(Box)`
   width: 12px;
   height: 12px;
   border-radius: 50%;
+`
+
+export const ScrollableList = styled(FlexGap).attrs({ flexDirection: 'column', gap: '8px' })<{ maxHeight?: string }>`
+  overflow-y: auto;
+  max-height: ${({ maxHeight }) => maxHeight || '300px'};
+  min-height: 20px;
 `
 
 export const CircleSvg = ({

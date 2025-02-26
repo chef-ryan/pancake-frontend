@@ -6,6 +6,7 @@ import { CurrencyLogo, DoubleCurrencyLogo } from 'components/widgets'
 import { useUserRefundPools } from 'hooks/liquidity/useUserRefundPools'
 import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
+import { ScrollableList } from 'styles'
 import { useLiquidityRefund } from 'ton/logic/liquidity/useLiquidityRefund'
 import { formatBalance } from 'ton/utils/formatting'
 import { getAssetUrl } from 'utils'
@@ -26,7 +27,7 @@ export const RefundModal = () => {
           <Text>{t('No leftover tokens to refund')}</Text>
         </FlexGap>
       ) : (
-        <>
+        <ScrollableList px="2px" maxHeight="300px">
           {poolsWithRefunds.map((pool) => (
             <PoolRefundRow
               key={pool.poolAddress}
@@ -37,7 +38,7 @@ export const RefundModal = () => {
               lpAccountAddress={pool.lpAccountAddress}
             />
           ))}
-        </>
+        </ScrollableList>
       )}
     </FlexGap>
   )
