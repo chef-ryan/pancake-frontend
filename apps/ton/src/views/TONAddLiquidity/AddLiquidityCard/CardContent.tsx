@@ -83,8 +83,8 @@ export const CardContent = (props: CardContentProps) => {
   // TODO: Handle native token
   const { data: lpBalance, isLoading: isLpBalanceLoading } = useAtomValue(
     lpBalanceQueryAtom({
-      token0Address: currency0?.isNative ? address : currency0?.address,
-      token1Address: currency1?.isNative ? address : currency1?.address,
+      token0Address: currency0?.wrapped.address,
+      token1Address: currency1?.wrapped.address,
     }),
   )
 
