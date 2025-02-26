@@ -11,160 +11,155 @@ import { useUserAddress } from 'hooks/useUserAddress'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { chainIdAtom } from 'ton/atom/chainIdAtom'
-import { TonContext } from 'ton/context/TonContext'
-import { getJettonWalletAddress, parseAddress } from 'ton/utils/address'
+import { getJettonWalletAddress, useJettonWalletAddress } from 'ton/atom/jettonWalletAddressAtom'
+import { parseAddress } from 'ton/utils/address'
+import { parseUnits } from 'ton/utils/formatting'
 import { generateQueryId } from 'ton/utils/generateQueryId'
 import { getTransactionByBOC } from 'ton/utils/transaction'
 
+const GAS = toNano('0.6')
+const FORWARD_GAS = toNano('0.5')
+
 interface SwapArgs {
-  trade: Trade<Currency, Currency, TradeType>
-  token0: Currency
-  token1: Currency
+  trade?: Trade<Currency, Currency, TradeType> | null
+  token0?: Currency
+  token1?: Currency
   amount0: string
-  minOut: string
+  minOut?: string
 }
 
-export const useSwap = () => {
+export const useSwap = ({ amount0, minOut, token0, token1, trade }: SwapArgs) => {
   const { t } = useTranslation()
   const [tonUI] = useTonConnectUI()
-
   const userAddress = useUserAddress()
-
   const chainId = useAtomValue(chainIdAtom)
+
+  const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter][chainId].address)
+  const userJettonWallet0 = useJettonWalletAddress(token0?.wrapped.address, userAddress)
+  const routerJettonWallet0 = useJettonWalletAddress(token0?.wrapped.address, routerAddress)
+  const routerJettonWallet1 = useJettonWalletAddress(trade?.route.path[1].wrapped.address, routerAddress)
 
   const setTransactionModal = useSetAtom(setTransactionModalAtom)
   const setErrorMsgModal = useSetAtom(setErrorMsgModalAtom)
 
-  const getTxRequest = useCallback(
-    async ({ amount0, minOut, token0, trade }: SwapArgs) => {
-      const queryId = generateQueryId()
-      const client = TonContext.instance.getClient()
-      const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter][chainId].address)
+  const getTxRequest = useCallback(async () => {
+    const queryId = generateQueryId()
+    if (!routerJettonWallet1 || !routerJettonWallet0 || !trade || !token0) {
+      return undefined
+    }
+    if (!token0.isNative && !userJettonWallet0) {
+      return undefined
+    }
 
-      const userJettonWallet0 = await getJettonWalletAddress(client, userAddress, token0)
-      const routerJettonWallet0 = await getJettonWalletAddress(client, routerAddress, token0)
-      const routerJettonWallet1 = await getJettonWalletAddress(client, routerAddress, trade.route.path[1])
-
-      // multihops
-      let lastSwapNext: any | null = null
-      if (trade.route.path.length > 2) {
-        const path = trade?.route.path
-        for (let idx = path.length - 1; idx >= 2; idx--) {
-          // eslint-disable-next-line no-await-in-loop
-          const routerJettonWalletOut = await getJettonWalletAddress(client, routerAddress, path[idx])
-          const next = {
-            tokenAddress: routerJettonWalletOut,
-            // todo:@eric
-            minOut: toNano('0.01'),
-            next: lastSwapNext,
-          }
-          lastSwapNext = next
+    // multihops
+    let lastSwapNext: any | null = null
+    if (trade.route.path.length > 2) {
+      const path = trade?.route.path
+      for (let idx = path.length - 1; idx >= 2; idx--) {
+        // eslint-disable-next-line no-await-in-loop
+        const routerJettonWalletOut = await getJettonWalletAddress(path[idx].wrapped.address, routerAddress)
+        const next = {
+          tokenAddress: routerJettonWalletOut,
+          // todo:@eric
+          minOut: toNano('0.01'),
+          next: lastSwapNext,
         }
+        lastSwapNext = next
       }
+    }
 
-      const forwardPayload = beginCell()
-        .store(
-          storeSwap({
-            fromRealUser: userAddress,
-            fromUserAddress: userAddress,
-            minOut: toNano(minOut),
-            refAddress: null,
-            refMessageValue: 0n,
-            tokenWallet: routerJettonWallet1,
-            next: lastSwapNext,
-          }),
-        )
-        .endCell()
+    const forwardPayload = beginCell()
+      .store(
+        storeSwap({
+          fromRealUser: userAddress,
+          fromUserAddress: userAddress,
+          minOut: toNano('0.01'),
+          refAddress: null,
+          refMessageValue: 0n,
+          tokenWallet: routerJettonWallet1,
+          next: lastSwapNext,
+        }),
+      )
+      .endCell()
 
-      const payload = beginCell()
-        .store(
-          storeJettonTransferMessage({
-            queryId,
-            // input amount
-            amount: toNano(amount0),
-            destination: routerAddress,
-            responseDestination: userAddress,
-            customPayload: null,
-            forwardAmount: toNano('0.5'),
-            forwardPayload,
-          }),
-        )
-        .endCell()
+    const payload = beginCell()
+      .store(
+        storeJettonTransferMessage({
+          queryId,
+          amount: parseUnits(amount0, token0.decimals),
+          destination: routerAddress,
+          responseDestination: userAddress,
+          customPayload: null,
+          forwardAmount: FORWARD_GAS,
+          forwardPayload,
+        }),
+      )
+      .endCell()
 
-      return {
-        validUntil: Math.floor(Date.now() / 1000) + 60,
-        messages: [
-          {
-            address: token0.isNative ? routerJettonWallet0.toString() : userJettonWallet0.toString(),
-            // Attached TON for fees, not the amount of jettons to transfer!
-            // todo:@eric add estimate logic
-            amount: toNano('0.6').toString(),
-            payload: payload.toBoc().toString('base64'),
-          },
-        ],
+    return {
+      validUntil: Math.floor(Date.now() / 1000) + 60,
+      messages: [
+        {
+          address: token0.isNative ? routerJettonWallet0.toString() : userJettonWallet0!.toString(),
+          // Attached TON for fees, not the amount of jettons to transfer!
+          // todo:@eric add estimate logic
+          amount: GAS.toString(),
+          payload: payload.toBoc().toString('base64'),
+        },
+      ],
+    }
+  }, [userAddress, amount0, routerAddress, routerJettonWallet0, routerJettonWallet1, trade, userJettonWallet0, token0])
+
+  const swap = useCallback(async () => {
+    try {
+      setTransactionModal({
+        type: ActionType.ConfirmSwap,
+        isOpen: true,
+        currency0: token0,
+        currency1: token1,
+        amount0,
+        amount1: minOut,
+      })
+
+      const txRequest: SendTransactionRequest | undefined = await getTxRequest()
+      if (!txRequest) {
+        return
       }
-    },
-    [chainId, userAddress],
-  )
+      const { boc } = await tonUI.sendTransaction(txRequest)
 
-  const swap = useCallback(
-    async ({ amount0, minOut, token0, token1, trade }: SwapArgs) => {
-      try {
+      if (boc) {
         setTransactionModal({
-          type: ActionType.ConfirmSwap,
+          type: ActionType.SwapSubmitted,
           isOpen: true,
           currency0: token0,
           currency1: token1,
           amount0,
           amount1: minOut,
         })
+      }
 
-        const txRequest: SendTransactionRequest = await getTxRequest({
+      const hash = await getTransactionByBOC(userAddress, boc)
+      if (hash) {
+        setTransactionModal({
+          type: ActionType.SwapCompleted,
+          currency0: token0,
+          currency1: token1,
           amount0,
-          minOut,
-          token0,
-          token1,
-          trade,
-        })
-        const { boc } = await tonUI.sendTransaction(txRequest)
-
-        if (boc) {
-          setTransactionModal({
-            type: ActionType.SwapSubmitted,
-            isOpen: true,
-            currency0: token0,
-            currency1: token1,
-            amount0,
-            amount1: minOut,
-          })
-        }
-
-        const hash = await getTransactionByBOC(userAddress, boc)
-        if (hash) {
-          setTransactionModal({
-            type: ActionType.SwapCompleted,
-            currency0: token0,
-            currency1: token1,
-            amount0,
-            amount1: minOut,
-            hash,
-          })
-        }
-      } catch (e) {
-        let msg = typeof e === 'string' ? e : (e as Error)?.message
-        if (e instanceof UserRejectsError || e instanceof TonConnectUIError) {
-          msg = t('Transaction rejected')
-        }
-        setErrorMsgModal({
-          isOpen: true,
-          msg,
+          amount1: minOut,
+          hash,
         })
       }
-    },
-    [setErrorMsgModal, t, userAddress, tonUI, getTxRequest, setTransactionModal],
-  )
+    } catch (e) {
+      let msg = typeof e === 'string' ? e : (e as Error)?.message
+      if (e instanceof UserRejectsError || e instanceof TonConnectUIError) {
+        msg = t('Transaction rejected')
+      }
+      setErrorMsgModal({
+        isOpen: true,
+        msg,
+      })
+    }
+  }, [amount0, minOut, token0, token1, setErrorMsgModal, t, userAddress, tonUI, getTxRequest, setTransactionModal])
 
-  return {
-    swap,
-  }
+  return { swap }
 }

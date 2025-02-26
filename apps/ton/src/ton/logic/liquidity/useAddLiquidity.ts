@@ -9,8 +9,8 @@ import { useUserAddress } from 'hooks/useUserAddress'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { routerContractAtom } from 'ton/atom/contracts/routerContractAtom'
-import { TonContext } from 'ton/context/TonContext'
-import { getCurrencyOrder, getJettonWalletAddress } from 'ton/utils/address'
+import { getJettonWalletAddress } from 'ton/atom/jettonWalletAddressAtom'
+import { getCurrencyOrder } from 'ton/utils/address'
 import { formatBalance } from 'ton/utils/formatting'
 import { generateQueryId } from 'ton/utils/generateQueryId'
 import { getTransactionByBOC } from 'ton/utils/transaction'
@@ -59,12 +59,14 @@ export const useAddLiquidity = () => {
           isOpen: true,
         })
 
-        const client = TonContext.instance.getClient()
+        const userJettonWallet0 = await getJettonWalletAddress(currency0.wrapped.address, userAddress)
+        const userJettonWallet1 = await getJettonWalletAddress(currency1.wrapped.address, userAddress)
+        const routerJettonWallet0 = await getJettonWalletAddress(currency0.wrapped.address, routerAddress)
+        const routerJettonWallet1 = await getJettonWalletAddress(currency1.wrapped.address, routerAddress)
 
-        const userJettonWallet0 = await getJettonWalletAddress(client, userAddress, currency0)
-        const userJettonWallet1 = await getJettonWalletAddress(client, userAddress, currency1)
-        const routerJettonWallet0 = await getJettonWalletAddress(client, routerAddress, currency0)
-        const routerJettonWallet1 = await getJettonWalletAddress(client, routerAddress, currency1)
+        if (!userJettonWallet0 || !userJettonWallet1 || !routerJettonWallet0 || !routerJettonWallet1) {
+          throw new Error('get jetton wallet address failed')
+        }
 
         const forwardPayload0 = beginCell()
           .store(

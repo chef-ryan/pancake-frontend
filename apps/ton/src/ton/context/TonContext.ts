@@ -1,3 +1,4 @@
+import { createStore } from 'jotai'
 import { TonChainId, TonContextEvents, TonNetworks } from '@pancakeswap/ton-v2-sdk'
 import { TonClient } from '@ton/ton'
 import { tonState } from 'ton/atom/tonStateAtom'
@@ -22,3 +23,5 @@ export class TonContext extends Emiter<TonContextEvents> {
 
   public static instance = new TonContext()
 }
+
+export const atomStore = createStore()

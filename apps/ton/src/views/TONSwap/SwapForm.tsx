@@ -75,7 +75,6 @@ export const SwapForm = () => {
   const [allowedSlippage] = useUserSlippagePercent()
   const [isSwapDetailPanelOpen] = useIsSwapDetailPanelOpen()
   const { realizedLPFee, priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
-  const { swap } = useSwap()
   const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
   const { data: activeList, isFetched } = useAtomValue(fetchListAtom)
 
@@ -101,20 +100,15 @@ export const SwapForm = () => {
     return true
   }, [confirmPriceImpactWithoutFee, priceImpactWithoutFee])
 
-  const doSwap = useCallback(async () => {
-    if (!inputCurrency || !outputCurrency || !trade) {
-      return
-    }
-    swap({
-      trade,
-      minOut: isExactIn
-        ? trade.minimumAmountOut(allowedSlippage).toExact()
-        : trade.maximumAmountIn(allowedSlippage).toExact(),
-      amount0: formattedAmounts[Field.INPUT] ?? '0',
-      token0: inputCurrency,
-      token1: outputCurrency,
-    })
-  }, [allowedSlippage, isExactIn, trade, formattedAmounts, swap, inputCurrency, outputCurrency])
+  const { swap } = useSwap({
+    trade,
+    minOut: isExactIn
+      ? trade?.minimumAmountOut(allowedSlippage).toExact()
+      : trade?.maximumAmountIn(allowedSlippage).toExact(),
+    amount0: formattedAmounts[Field.INPUT] ?? '0',
+    token0: inputCurrency,
+    token1: outputCurrency,
+  })
 
   const setSwapConfirmModal = useSetAtom(setConfirmSwapModalAtom)
   const confirmSwap = useCallback(async () => {
@@ -130,9 +124,9 @@ export const SwapForm = () => {
       outputCurrency,
       trade,
       refreshTrade,
-      onConfirm: doSwap,
+      onConfirm: swap,
     })
-  }, [inputCurrency, outputCurrency, setSwapConfirmModal, trade, refreshTrade, doSwap, swapPreflightCheck])
+  }, [inputCurrency, outputCurrency, setSwapConfirmModal, trade, refreshTrade, swap, swapPreflightCheck])
 
   // Set default currencies on load
   useEffect(() => {

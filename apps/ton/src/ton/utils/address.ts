@@ -1,6 +1,5 @@
 import { Currency, getAddressCellHash } from '@pancakeswap/ton-v2-sdk'
 import { Address } from '@ton/core'
-import { JettonMaster, TonClient } from '@ton/ton'
 
 export const parseAddress = (address?: string) => {
   if (!address) return Address.parse('0:0000000000000000000000000000000000000000000000000000000000000000')
@@ -10,11 +9,6 @@ export const parseAddress = (address?: string) => {
 export const isAddress = (address?: any) => {
   if (!address) return false
   return Address.isAddress(address)
-}
-
-export const getJettonWalletAddress = async (client: TonClient, userAddress: Address, currency: Currency) => {
-  const jettonMaster = client.open(JettonMaster.create(parseAddress(currency.wrapped.address)))
-  return jettonMaster.getWalletAddress(userAddress)
 }
 
 export function getCurrencyOrder(currency0: Currency, currency1: Currency) {

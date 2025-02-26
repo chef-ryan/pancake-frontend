@@ -6,7 +6,6 @@ import { Currency, Token, Pair, CurrencyAmount } from '@pancakeswap/ton-v2-sdk'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from 'config/constants/exchange'
 import { useAtomValue } from 'jotai'
 import { poolDataQueriesAtom, useRefreshPoolData } from 'ton/atom/liquidity/poolDataQueriesAtom'
-import { useUserAddress } from 'hooks/useUserAddress'
 
 interface UseAllCommonPairsReturnType {
   isLoading: boolean
@@ -96,21 +95,20 @@ export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): U
 }
 
 const usePairs = (pairs: [Token, Token][]) => {
-  const userAddress = useUserAddress()
   const pairsAddress = useMemo(
     () =>
       pairs.map(([token0, token1]) =>
         token0.sortsBefore(token1)
           ? {
-              token0Address: token0.isNative ? userAddress.toString() : token0.wrapped.address,
-              token1Address: token1.isNative ? userAddress.toString() : token1.wrapped.address,
+              token0Address: token0.wrapped.address,
+              token1Address: token1.wrapped.address,
             }
           : {
-              token1Address: token0.isNative ? userAddress.toString() : token0.wrapped.address,
-              token0Address: token1.isNative ? userAddress.toString() : token1.wrapped.address,
+              token1Address: token0.wrapped.address,
+              token0Address: token1.wrapped.address,
             },
       ),
-    [pairs, userAddress],
+    [pairs],
   )
   const result = useAtomValue(poolDataQueriesAtom(pairsAddress))
   const { refresh } = useRefreshPoolData(pairsAddress)
@@ -132,7 +130,7 @@ const usePairs = (pairs: [Token, Token][]) => {
       if (!pool) {
         return null
       }
-      const [token0, token1] = token0_.sortsBefore(token1_) ? [token0_, token1_] : [token1_, token0_]
+      const [token0, token1] = pool.jetton0MasterAddress === token0_.address ? [token0_, token1_] : [token1_, token0_]
       return {
         ...pool,
         chainId: token0.chainId,
