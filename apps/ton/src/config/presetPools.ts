@@ -5,6 +5,9 @@ export const PRESET_POOLS = {
   [TonNetworks.Mainnet]: [],
   [TonNetworks.Testnet]: {
     // ...testnetPools,
+    // TON-PAN
+    'kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg<>kQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffAw5':
+      'EQD_Lx2fpT3CDX16OzHWu4utvHkMqk4cww65uN53js4WY5Au',
     // TON-USDC
     'kQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffAw5<>kQBN6HSn7GmAB30K_YmL3vhS2ms5LMm9aPW0PGzvUZASRzng':
       'kQDINV8OA01yK-fmAECxCXwskiQI_A5GAZYRBDnPhvrmzISS',
