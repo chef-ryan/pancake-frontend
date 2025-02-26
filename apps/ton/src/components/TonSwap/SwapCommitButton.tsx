@@ -4,9 +4,10 @@ import { Currency, Trade } from '@pancakeswap/ton-v2-sdk'
 import { Button, ButtonProps } from '@pancakeswap/uikit'
 import { inputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
 import { useAtomValue } from 'jotai'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { isConnectedAtom } from 'ton/atom/isConnectedAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
+import { computeTradePriceBreakdown, warningSeverity } from 'utils/exchange'
 import { tryParseAmount } from 'utils/tryParseAmount'
 
 interface SwapCommitButtonProps extends ButtonProps {
@@ -26,11 +27,21 @@ export const SwapCommitButton = memo(({ isLoading = false, trade, ...props }: Sw
   const isInsufficientBalance0 = inputCurrency && typedAmount ? typedAmount.greaterThan(balance0) : false
   const isInsufficientLiquidity = !trade?.route.path.length && !isLoading
 
-  return (
-    <Button disabled={isInsufficientBalance0 || !isConnected || isLoading || isInsufficientLiquidity} {...props}>
-      {!isConnected
+  const priceImpactSeverity = useMemo(() => {
+    const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
+    return warningSeverity(priceImpactWithoutFee)
+  }, [trade])
+
+  const disabled = useMemo(
+    () => isInsufficientBalance0 || !isConnected || isLoading || isInsufficientLiquidity || priceImpactSeverity > 3,
+    [isInsufficientBalance0, isConnected, isLoading, isInsufficientLiquidity, priceImpactSeverity],
+  )
+
+  const buttonText = useMemo(
+    () =>
+      !isConnected
         ? t('Connect Wallet')
-        : !typedValue
+        : !typedValue.length
         ? t('Enter an amount')
         : isLoading
         ? t('Updating the quote')
@@ -38,7 +49,26 @@ export const SwapCommitButton = memo(({ isLoading = false, trade, ...props }: Sw
         ? t('Insufficient %symbol% balance', { symbol: inputCurrency?.symbol })
         : isInsufficientLiquidity
         ? t('Insufficient liquidity for this trade.')
-        : t('Swap')}
+        : priceImpactSeverity > 3
+        ? t('Price Impact Too High')
+        : priceImpactSeverity > 2
+        ? t('Swap Anyway')
+        : t('Swap'),
+    [
+      inputCurrency?.symbol,
+      isConnected,
+      isInsufficientLiquidity,
+      isInsufficientBalance0,
+      isLoading,
+      priceImpactSeverity,
+      t,
+      typedValue.length,
+    ],
+  )
+
+  return (
+    <Button disabled={disabled} variant={priceImpactSeverity > 2 ? 'danger' : 'primary'} {...props}>
+      {buttonText}
     </Button>
   )
 })

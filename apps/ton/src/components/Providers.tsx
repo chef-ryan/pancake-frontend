@@ -1,5 +1,5 @@
 import { LanguageProvider } from '@pancakeswap/localization'
-import { dark, light, ModalProvider, ResetCSS, UIKitProvider } from '@pancakeswap/uikit'
+import { dark, DialogProvider, light, ModalProvider, ResetCSS, UIKitProvider } from '@pancakeswap/uikit'
 import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import useThemeCookie from 'hooks/useThemeCookie'
 import { queryClientAtom } from 'jotai-tanstack-query'
@@ -52,7 +52,7 @@ export const Providers = ({ children, dehydratedState }: ProvidersProps) => {
                     <ResetCSS />
                     <GlobalStyle />
                     <LanguageProvider>
-                      <ModalProvider>
+                      <ModalProvider portalProvider={DialogProvider}>
                         {children}
                         <AppModal />
                       </ModalProvider>

@@ -7,8 +7,9 @@ import { Percent } from '@pancakeswap/swap-sdk-core'
  * Formatted version of price impact text with warning colors
  */
 export default function FormattedPriceImpact({ priceImpact }: { priceImpact?: Percent }) {
+  const severity = warningSeverity(priceImpact)
   return (
-    <SeverityErrorText color="positive60" fontSize="14px" severity={warningSeverity(priceImpact)}>
+    <SeverityErrorText color={severity === 0 ? 'positive60' : undefined} fontSize="14px" severity={severity}>
       {priceImpact ? (priceImpact.lessThan(ONE_BIPS) ? '<0.01%' : `${priceImpact.toFixed(2)}%`) : '-'}
     </SeverityErrorText>
   )
