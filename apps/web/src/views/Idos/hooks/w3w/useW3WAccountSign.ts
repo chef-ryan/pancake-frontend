@@ -1,34 +1,44 @@
 import { useCallback } from 'react'
-import { v4 } from 'uuid'
 import type { Address, Hex } from 'viem'
-import { useAccount, useSignMessage } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 import { useIDOContract } from '../ido/useIDOContract'
+
+declare global {
+  interface Window {
+    binancew3w: {
+      sign: (params: { binanceChainId: string; contractAddress: string; address: string }) => Promise<{
+        code: string
+        message: string
+        success: boolean
+        data: {
+          signature: string
+          expireAt: number
+        }
+      }>
+    }
+  }
+}
 
 export const useW3WAccountSign = () => {
   const { address } = useAccount()
-  const { signMessageAsync } = useSignMessage()
+  const chainId = useChainId()
   const contract = useIDOContract()
 
   const sign = useCallback(async () => {
     if (!address) throw new Error('No address provided')
-    const timestamp = Date.now() + 1000 * 60 * 20 // now + 20 minutes
-    const nonce = v4()
-    const message = [timestamp.toString(), address, nonce].join(' ') as `0x${string}`
+    if (
+      typeof window === 'undefined' ||
+      typeof window.binancew3w === 'undefined' ||
+      typeof window.binancew3w.sign === 'undefined'
+    )
+      throw new Error('Cannot sign message')
 
-    console.debug('message', message)
-
-    const signature = await signMessageAsync({
-      message,
-    })
-
-    return w3wSign({
+    return window.binancew3w.sign({
+      binanceChainId: `${chainId}`,
+      contractAddress: contract?.address ?? '',
       address,
-      contractAddress: contract?.address,
-      signature,
-      timestamp,
-      nonce,
     })
-  }, [address, contract?.address, signMessageAsync])
+  }, [address, contract?.address, chainId])
 
   return sign
 }

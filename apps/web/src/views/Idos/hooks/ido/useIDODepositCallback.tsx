@@ -53,7 +53,8 @@ export const useIDODepositCallback = () => {
       const amountPool = amount.currency.isNative ? 0n : amount.quotient
       try {
         const receipt = await fetchWithCatchTxError(async () => {
-          const { signature, expireAt } = await sign()
+          const result = await sign()
+          const { signature, expireAt } = result.data || {}
 
           if (amount.currency.isToken) {
             await writeContractAsync({
