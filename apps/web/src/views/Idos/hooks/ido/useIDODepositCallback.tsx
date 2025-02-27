@@ -53,8 +53,7 @@ export const useIDODepositCallback = () => {
       const amountPool = amount.currency.isNative ? 0n : amount.quotient
       try {
         const receipt = await fetchWithCatchTxError(async () => {
-          const result = await sign()
-          const { signature, expireAt } = result.data || {}
+          const { signature, expireAt } = await sign()
 
           if (amount.currency.isToken) {
             await writeContractAsync({
@@ -64,9 +63,6 @@ export const useIDODepositCallback = () => {
               args: [idoContract.address, amount.quotient],
             })
           }
-
-          console.log('signature', signature)
-          console.log('expireAt', expireAt)
 
           if (!signature || !expireAt) {
             throw new W3WSignError('Invalid signature or expiredAt')
