@@ -60,8 +60,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade }: SwapArgs) =>
         const routerJettonWalletOut = await getJettonWalletAddress(path[idx].wrapped.address, routerAddress)
         const next = {
           tokenAddress: routerJettonWalletOut,
-          // todo:@eric
-          minOut: toNano('0.01'),
+          minOut: idx === path.length - 1 && minOut ? parseUnits(minOut, token1?.decimals) : 1n,
           next: lastSwapNext,
         }
         lastSwapNext = next
@@ -73,7 +72,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade }: SwapArgs) =>
         storeSwap({
           fromRealUser: userAddress,
           fromUserAddress: userAddress,
-          minOut: toNano('0.01'),
+          minOut: 1n,
           refAddress: null,
           refMessageValue: 0n,
           tokenWallet: routerJettonWallet1,
@@ -108,7 +107,18 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade }: SwapArgs) =>
         },
       ],
     }
-  }, [userAddress, amount0, routerAddress, routerJettonWallet0, routerJettonWallet1, trade, userJettonWallet0, token0])
+  }, [
+    minOut,
+    token1?.decimals,
+    userAddress,
+    amount0,
+    routerAddress,
+    routerJettonWallet0,
+    routerJettonWallet1,
+    trade,
+    userJettonWallet0,
+    token0,
+  ])
 
   const swap = useCallback(async () => {
     try {
