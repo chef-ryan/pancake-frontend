@@ -1,14 +1,19 @@
 import { useAtomValue } from 'jotai'
 import noop from 'lodash/noop'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { useTranslation } from '@pancakeswap/localization'
 import { Rounding } from '@pancakeswap/swap-sdk-core'
-import { Native, TonNetworks } from '@pancakeswap/ton-v2-sdk'
+import { Native } from '@pancakeswap/ton-v2-sdk'
 import { Column, Text } from '@pancakeswap/uikit'
 import { formatFraction } from '@pancakeswap/utils/formatFractions'
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
-import { independentFieldAtom, inputCurrencyAtom, outputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
+import {
+  independentFieldAtom,
+  typedValueAtom,
+  useInputCurrencyQueryState,
+  useOutputCurrencyQueryState,
+} from 'atoms/swap/swapStateAtom'
 import { ButtonAndDetailsPanel } from 'components/TonSwap/ButtonAndDetailsPanel'
 import CurrencyInputPanelSimplify from 'components/TonSwap/CurrencyInputPanelSimplify'
 import { FlipButton } from 'components/TonSwap/FlipButton'
@@ -25,12 +30,16 @@ import { computeTradePriceBreakdown } from 'utils/exchange'
 import { PricingAndSlippage } from 'components/TonSwap/SwapDetails/PricingAndSlippage'
 import { AdvancedSwapDetailsDropdown } from 'components/TonSwap/SwapDetails/AdvancedSwapDetailsDropdown'
 import { useUserSlippagePercent } from 'hooks/useUserSlippage'
+import { networkAtom } from 'ton/atom/networkAtom'
 
 export const SwapForm = () => {
   const { t } = useTranslation()
+  const network = useAtomValue(networkAtom)
 
-  const inputCurrency = useAtomValue(inputCurrencyAtom)
-  const outputCurrency = useAtomValue(outputCurrencyAtom)
+  const { data: activeList } = useAtomValue(fetchListAtom)
+  const cakeAddress = useMemo(() => activeList?.find((item) => item.symbol === 'CAKE')?.address ?? '', [activeList])
+  const [inputCurrency] = useInputCurrencyQueryState(Native.onNetwork(network).symbol)
+  const [outputCurrency] = useOutputCurrencyQueryState(cakeAddress)
   const typedValue = useAtomValue(typedValueAtom)
   const independentField = useAtomValue(independentFieldAtom)
 
@@ -74,7 +83,6 @@ export const SwapForm = () => {
   const [isSwapDetailPanelOpen] = useIsSwapDetailPanelOpen()
   const { realizedLPFee } = computeTradePriceBreakdown(trade)
   const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
-  const { data: activeList, isFetched } = useAtomValue(fetchListAtom)
 
   const [isInsufficientBalance0, isInsufficientLiquidity] = useMemo(
     () => [
@@ -94,17 +102,6 @@ export const SwapForm = () => {
     token0: inputCurrency,
     token1: outputCurrency,
   })
-
-  // Set default currencies on load
-  useEffect(() => {
-    if (isFetched && !inputCurrency && !outputCurrency && activeList && activeList.length > 1) {
-      onCurrencySelection(Field.INPUT, Native.onNetwork(TonNetworks.Testnet))
-      onCurrencySelection(
-        Field.OUTPUT,
-        activeList.find((item) => item.symbol === 'CAKE'),
-      )
-    }
-  }, [activeList, inputCurrency, outputCurrency, isFetched, onCurrencySelection])
 
   const [inputTitle, outputTitle] = useMemo(
     () => [

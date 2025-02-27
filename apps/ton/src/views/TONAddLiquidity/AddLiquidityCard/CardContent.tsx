@@ -63,8 +63,8 @@ export const CardContent = (props: CardContentProps) => {
 
   const [slippage] = useUserSlippage()
 
-  const [currency0] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY0, token0Address)
-  const [currency1] = useCurrency(CurrencyField.ADD_LIQUIDITY_CURRENCY1, token1Address)
+  const currency0 = useCurrency(token0Address)
+  const currency1 = useCurrency(token1Address)
 
   const [token0Value, setToken0Value] = useAtom(currency0TypedValue)
   const [token1Value, setToken1Value] = useAtom(currency1TypedValue)

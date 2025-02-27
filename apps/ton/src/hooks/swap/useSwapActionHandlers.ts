@@ -1,23 +1,26 @@
 import { Currency } from '@pancakeswap/ton-v2-sdk'
-import { setCurrencyAtom } from 'atoms/currencyAtoms'
-import { independentFieldAtom, inputCurrencyAtom, outputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import {
+  independentFieldAtom,
+  typedValueAtom,
+  useInputCurrencyQueryState,
+  useOutputCurrencyQueryState,
+} from 'atoms/swap/swapStateAtom'
+import { useAtom, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { Field } from 'types'
 
 export const useSwapActionHandlers = () => {
   const setTypedValue = useSetAtom(typedValueAtom)
-  const [independentField, setIndependentField] = useAtom(independentFieldAtom)
-  const setCurrency = useSetAtom(setCurrencyAtom)
+  const [, setIndependentField] = useAtom(independentFieldAtom)
 
-  const inputCurrency = useAtomValue(inputCurrencyAtom)
-  const outputCurrency = useAtomValue(outputCurrencyAtom)
+  const [inputCurrency, setInputCurrency] = useInputCurrencyQueryState()
+  const [outputCurrency, setOutputCurrency] = useOutputCurrencyQueryState()
 
   const onSwitchTokens = useCallback(() => {
-    setCurrency(Field.INPUT, outputCurrency)
-    setCurrency(Field.OUTPUT, inputCurrency)
+    setInputCurrency(outputCurrency)
+    setOutputCurrency(inputCurrency)
     // setIndependentField(independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT)
-  }, [setCurrency, inputCurrency, outputCurrency])
+  }, [setInputCurrency, setOutputCurrency, inputCurrency, outputCurrency])
 
   const onCurrencySelection = useCallback(
     (field: Field, currency?: Currency) => {
@@ -28,9 +31,13 @@ export const useSwapActionHandlers = () => {
         onSwitchTokens()
         return
       }
-      setCurrency(field, currency)
+      if (field === Field.INPUT) {
+        setInputCurrency(currency)
+      } else {
+        setOutputCurrency(currency)
+      }
     },
-    [setCurrency, inputCurrency, outputCurrency, onSwitchTokens],
+    [setInputCurrency, setOutputCurrency, inputCurrency, outputCurrency, onSwitchTokens],
   )
 
   const onUserInput = useCallback(

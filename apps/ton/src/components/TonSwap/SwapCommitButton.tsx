@@ -2,7 +2,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { Currency, Trade } from '@pancakeswap/ton-v2-sdk'
 import { Button, ButtonProps } from '@pancakeswap/uikit'
-import { inputCurrencyAtom, typedValueAtom } from 'atoms/swap/swapStateAtom'
+import { typedValueAtom, useInputCurrencyQueryState } from 'atoms/swap/swapStateAtom'
 import { useAtomValue } from 'jotai'
 import { memo, useMemo } from 'react'
 import { isConnectedAtom } from 'ton/atom/isConnectedAtom'
@@ -19,7 +19,7 @@ export const SwapCommitButton = memo(({ isLoading = false, trade, ...props }: Sw
   const { t } = useTranslation()
   const isConnected = useAtomValue(isConnectedAtom)
 
-  const inputCurrency = useAtomValue(inputCurrencyAtom)
+  const [inputCurrency] = useInputCurrencyQueryState()
   const typedValue = useAtomValue(typedValueAtom)
   const typedAmount = tryParseAmount(typedValue, inputCurrency)
   const { data: balance0 } = useAtomValue(balanceAtom(inputCurrency))

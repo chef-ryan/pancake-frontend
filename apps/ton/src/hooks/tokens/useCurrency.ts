@@ -1,35 +1,25 @@
-import { currencyFamily } from 'atoms/currencyAtoms'
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
-import { useAtom, useAtomValue } from 'jotai'
-import { useEffect, useRef } from 'react'
-import { CurrencyField } from 'types/currency'
+import { useAtomValue } from 'jotai'
+import { useMemo } from 'react'
 import { useNativeCurrency } from './useNativeCurrency'
 
-export const useCurrency = (field: CurrencyField, address: string) => {
-  const isFetchComplete = useRef(false)
+export const useCurrency = (address?: string) => {
   const nativeCurrency = useNativeCurrency()
-
-  const [currency, setCurrency] = useAtom(currencyFamily(field))
-
-  const { data: tokenByAddress, isFetched } = useAtomValue(tokenByAddressQueryAtom(address))
+  const { data: tokenByAddress, isFetched } = useAtomValue(tokenByAddressQueryAtom(address ?? ''))
   const { data: list } = useAtomValue(fetchListAtom)
 
-  useEffect(() => {
-    if (!isFetchComplete.current && address) {
-      const tokenInList = list?.find((item) => item.address === address)
-      if (address.toLowerCase() === nativeCurrency.symbol.toLowerCase()) {
-        setCurrency(nativeCurrency)
-        isFetchComplete.current = true
-      } else if (tokenInList) {
-        setCurrency(tokenInList)
-        isFetchComplete.current = true
-      } else if (tokenByAddress && isFetched) {
-        setCurrency(tokenByAddress)
-        isFetchComplete.current = true
-      }
+  return useMemo(() => {
+    const tokenInList = list?.find((item) => item.address === address)
+    if (address?.toLowerCase() === nativeCurrency.symbol.toLowerCase()) {
+      return nativeCurrency
     }
-  }, [currency, setCurrency, tokenByAddress, isFetched, list, address, nativeCurrency])
-
-  return [currency, setCurrency] as const
+    if (tokenInList) {
+      return tokenInList
+    }
+    if (tokenByAddress && isFetched) {
+      return tokenByAddress
+    }
+    return undefined
+  }, [tokenByAddress, isFetched, list, address, nativeCurrency])
 }
