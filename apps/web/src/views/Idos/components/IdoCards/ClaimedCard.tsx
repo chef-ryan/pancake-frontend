@@ -57,7 +57,9 @@ export const ClaimedCard: React.FC<{
         <FlexGap flexDirection="row" gap="8px" mt="16px">
           <Button
             variant="secondary"
+            px="14px"
             width="100%"
+            style={{ whiteSpace: 'nowrap' }}
             as="a"
             href="deeplink: bnc://app.binance.com/mp/app?appId=xoqXxUSMRccLCrZNRebmzj&startPagePath=cGFnZXMvd2FsbGV0L2hvbWUvaW5kZXg="
           >
@@ -66,6 +68,8 @@ export const ClaimedCard: React.FC<{
           <Button
             width="100%"
             as="a"
+            px="14px"
+            style={{ whiteSpace: 'nowrap' }}
             href="deeplink: bnc://app.binance.com/mp/app?appId=xoqXxUSMRccLCrZNRebmzj&startPagePath=cGFnZXMvc3dhcC9pbmRleA==&startPageQuery=ZnJvbUJpbmFuY2VDaGFpbklkPTU2JnRvQmluYW5jZUNoYWluSWQ9NTYmZnJvbVRva2VuQWRkcmVzcz0weDU1ZDM5ODMyNmY5OTA1OWZGNzc1NDg1MjQ2OTk5MDI3QjMxOTc5NTUmdG9Ub2tlbkFkZHJlc3M9MHhlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVl"
           >
             {t('Swap %token%', { token: offeringCurrency?.symbol })}
