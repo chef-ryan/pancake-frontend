@@ -210,7 +210,7 @@ export const bestTradeExactOut = <TInput extends Currency, TOutput extends Curre
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i]
     // pair irrelevant
-    if (!pair.token0.equals(amountOut.currency) && !pair.token1.equals(amountOut.currency)) continue
+    if (!pair.token0.wrapped.equals(amountOut.currency) && !pair.token1.wrapped.equals(amountOut.currency)) continue
     if (pair.reserve0.equalTo(ZERO) || pair.reserve1.equalTo(ZERO)) continue
 
     let amountIn: CurrencyAmount<Currency>
@@ -225,7 +225,7 @@ export const bestTradeExactOut = <TInput extends Currency, TOutput extends Curre
       throw error
     }
     // we have arrived at the input token, so this is the first trade of one of the paths
-    if (amountIn.currency.equals(tokenIn)) {
+    if (amountIn.currency.wrapped.equals(tokenIn)) {
       sortedInsert(
         bestTrades,
         new Trade(
@@ -276,7 +276,7 @@ export const bestTradeExactIn = <TInput extends Currency, TOutput extends Curren
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i]
     // pair irrelevant
-    if (!pair.token0.equals(amountIn.currency) && !pair.token1.equals(amountIn.currency)) continue
+    if (!pair.token0.wrapped.equals(amountIn.currency) && !pair.token1.wrapped.equals(amountIn.currency)) continue
     if (pair.reserve0.equalTo(ZERO) || pair.reserve1.equalTo(ZERO)) continue
 
     let amountOut: CurrencyAmount<Currency>
@@ -291,7 +291,7 @@ export const bestTradeExactIn = <TInput extends Currency, TOutput extends Curren
       throw error
     }
     // we have arrived at the output token, so this is the final trade of one of the paths
-    if (amountOut.currency.equals(tokenOut)) {
+    if (amountOut.currency.wrapped.equals(tokenOut)) {
       sortedInsert(
         bestTrades,
         new Trade(
@@ -336,8 +336,8 @@ export const isTradeBetter = (
 
   if (
     tradeA.tradeType !== tradeB.tradeType ||
-    !tradeA.inputAmount.currency.equals(tradeB.inputAmount.currency) ||
-    !tradeA.outputAmount.currency.equals(tradeB.outputAmount.currency)
+    !tradeA.inputAmount.currency.wrapped.equals(tradeB.inputAmount.currency.wrapped) ||
+    !tradeA.outputAmount.currency.wrapped.equals(tradeB.outputAmount.currency.wrapped)
   ) {
     throw new Error('Trades are not comparable')
   }

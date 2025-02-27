@@ -1,5 +1,4 @@
 import { Currency, CurrencyAmount, Pair, Token } from '@pancakeswap/ton-v2-sdk'
-import { useQuery } from '@tanstack/react-query'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from 'config/constants/exchange'
 import { useAtomValue } from 'jotai'
 import flatMap from 'lodash/flatMap'
@@ -7,7 +6,6 @@ import uniqBy from 'lodash/uniqBy'
 import uniqWith from 'lodash/uniqWith'
 import { useMemo } from 'react'
 import { poolDataQueriesAtom, useRefreshPoolData } from 'ton/atom/liquidity/poolDataQueriesAtom'
-import { getCurrencyOrder } from 'ton/utils/tokenOrder'
 
 interface UseAllCommonPairsReturnType {
   isLoading: boolean
@@ -27,7 +25,7 @@ export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): U
     const additionalA = tokenA ? ADDITIONAL_BASES[chainId]?.[tokenA.address] ?? [] : []
     const additionalB = tokenB ? ADDITIONAL_BASES[chainId]?.[tokenB.address] ?? [] : []
 
-    return [...common, ...additionalA, ...additionalB]
+    return [...common, ...additionalA, ...additionalB].map((c) => c.wrapped)
   }, [chainId, tokenA, tokenB])
 
   const basePairs: [Token, Token][] = useMemo(

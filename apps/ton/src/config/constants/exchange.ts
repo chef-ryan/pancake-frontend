@@ -33,9 +33,9 @@ export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(50n, BIPS_BASE)
 // max hops for swap
 export const MAX_HOPS = 3
 
-export const ADDITIONAL_BASES: { [chainId in TonChainId]?: { [tokenAddress: string]: Token[] } } = {}
+export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {}
 
-export const CUSTOM_BASES: { [chainId in TonChainId]?: { [tokenAddress: string]: Token[] } } = {}
+export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {}
 // todo:@eric mock bases to test multihops
 const USDC = tokenList.tokens.find((t) => t.symbol === 'USDC')!
 export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Currency[] } = {
