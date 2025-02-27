@@ -367,7 +367,7 @@ export const USDC = {
   ),
   [ChainId.MONAD_TESTNET]: new ERC20Token(
     ChainId.MONAD_TESTNET,
-    '0x673cD70FA883394a1f3DEb3221937Ceb7C2618D7',
+    '0xf817257fed379853cDe0fa4F97AB987181B1E5Ea',
     18,
     'USDC',
     'USD Coin',
