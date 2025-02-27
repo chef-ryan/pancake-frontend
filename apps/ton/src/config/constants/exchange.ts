@@ -1,5 +1,5 @@
 import { ONE_HUNDRED_PERCENT, Percent } from '@pancakeswap/sdk'
-import { Currency, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
+import { Currency, NATIVE, Native, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
 import tokenList from 'public/lists/testnet.json'
 
 export const BIG_INT_ZERO = 0n
@@ -36,23 +36,12 @@ export const MAX_HOPS = 3
 export const ADDITIONAL_BASES: { [chainId in TonChainId]?: { [tokenAddress: string]: Token[] } } = {}
 
 export const CUSTOM_BASES: { [chainId in TonChainId]?: { [tokenAddress: string]: Token[] } } = {}
-
 // todo:@eric mock bases to test multihops
 const USDC = tokenList.tokens.find((t) => t.symbol === 'USDC')!
-const tTON = tokenList.tokens.find((t) => t.symbol === 'tTON')!
 export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Currency[] } = {
   [TonChainId.Testnet]: [
-    /* new Native(NATIVE[TonChainId.Testnet]),
-    new Token(
-      TonChainId.Testnet,
-      'kQCHLgAWLrFnHChbETKLnUEpA_oW0_5f9SDVYc9mJtVDMXrC',
-      9,
-      'USDT',
-      'USDT',
-      'https://cache.tonapi.io/imgproxy/JHJ0sotb2B_DU6JIHdIMKEz_5wmkeY4EboeQLPlpUBY/rs:fill:200:200:1/g:no/aHR0cHM6Ly90b25hcGktaW1nLWNhY2hlLmZyYTEuZGlnaXRhbG9jZWFuc3BhY2VzLmNvbS9jYThiNTk1Mzc3Nzg0OGNkNzE4YzYzZDE5OTQzZDEyOWFjOTI5OGJjYTdjZTFhZGNjMDBiMTVlYWU4M2U4NjhlLnBuZw.webp',
-    ), */
+    new Native(NATIVE[TonChainId.Testnet]),
     new Token(USDC.chainId, USDC.address, USDC.decimals, USDC.name, USDC.symbol, USDC.logoURI),
-    new Token(tTON.chainId, tTON.address, tTON.decimals, tTON.name, tTON.symbol, tTON.logoURI),
   ] satisfies Currency[],
   [TonChainId.Mainnet]: [],
 }
