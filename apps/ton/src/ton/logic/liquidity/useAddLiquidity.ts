@@ -14,6 +14,7 @@ import { formatBalance } from 'ton/utils/formatting'
 import { generateQueryId } from 'ton/utils/generateQueryId'
 import { getCurrencyOrder } from 'ton/utils/tokenOrder'
 import { getTransactionByBOC } from 'ton/utils/transaction'
+import { logGTMAddLiquidityTxSentEvent } from 'utils/customGTMEventTracking'
 
 interface AddLiquidityArgs {
   token0: Currency
@@ -139,6 +140,7 @@ export const useAddLiquidity = () => {
         }
         const hash = await getTransactionByBOC(userAddress, boc)
         if (hash) {
+          logGTMAddLiquidityTxSentEvent()
           setTxnModal({
             type: ActionType.TransactionComplete,
             currency0,

@@ -97,41 +97,15 @@ export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): U
 }
 
 const usePairs = (pairs: [Token, Token][]) => {
-  // const pairsAddress = useMemo(
-  //   () =>
-  //     pairs.map(([token0, token1]) =>
-  //       token0.sortsBefore(token1)
-  //         ? {
-  //             token0Address: token0.wrapped.address,
-  //             token1Address: token1.wrapped.address,
-  //           }
-  //         : {
-  //             token1Address: token0.wrapped.address,
-  //             token0Address: token1.wrapped.address,
-  //           },
-  //     ),
-  //   [pairs],
-  // )
+  const pairsAddress = useMemo(
+    () =>
+      pairs.map(([token0, token1]) => ({
+        token0Address: token0.wrapped.address,
+        token1Address: token1.wrapped.address,
+      })),
+    [pairs],
+  )
 
-  const { data: pairsAddress } = useQuery({
-    queryKey: ['pairs', pairs],
-    queryFn: async () => {
-      return Promise.all(
-        pairs.map(async ([token0, token1]) =>
-          (await getCurrencyOrder(token0, token1)).isFlipped
-            ? {
-                token1Address: token0.wrapped.address,
-                token0Address: token1.wrapped.address,
-              }
-            : {
-                token0Address: token0.wrapped.address,
-                token1Address: token1.wrapped.address,
-              },
-        ),
-      )
-    },
-    initialData: [],
-  })
   const result = useAtomValue(poolDataQueriesAtom(pairsAddress))
   const { refresh } = useRefreshPoolData(pairsAddress)
   return useMemo(() => {

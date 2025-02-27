@@ -22,6 +22,7 @@ import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { useRemoveLiquidity } from 'ton/logic/liquidity/useRemoveLiquidity'
 import { formatBalance } from 'ton/utils/formatting'
 import { getCurrencyOrder } from 'ton/utils/tokenOrder'
+import { logGTMClickRemoveLiquidityEvent } from 'utils/customGTMEventTracking'
 
 const ContentContainer = styled(Box)<{ $isBottomRounded?: boolean }>`
   padding: 24px;
@@ -189,6 +190,7 @@ export const CardContent = (props: CardContentProps) => {
   }, [removeLiquidity, lpTokensToBurn])
 
   const openConfirmationModal = useCallback(() => {
+    logGTMClickRemoveLiquidityEvent()
     setRemoveLiquidityModal({
       amount0: formatBalance(outputAmounts?.amount0 ?? 0n, currency0?.decimals),
       amount1: formatBalance(outputAmounts?.amount1 ?? 0n, currency1?.decimals),

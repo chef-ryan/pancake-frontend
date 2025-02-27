@@ -1,3 +1,7 @@
+import { useAtomValue } from 'jotai'
+import noop from 'lodash/noop'
+import { useEffect, useMemo } from 'react'
+
 import { useTranslation } from '@pancakeswap/localization'
 import { Rounding } from '@pancakeswap/swap-sdk-core'
 import { Native, TonNetworks } from '@pancakeswap/ton-v2-sdk'
@@ -12,21 +16,15 @@ import { SwapCommitButton } from 'components/TonSwap/SwapCommitButton'
 import { SwapUIV2 } from 'components/widgets/swap-v2'
 import { useBestTrade } from 'hooks/swap/useBestTrade'
 import { useSwapActionHandlers } from 'hooks/swap/useSwapActionHandlers'
-import { useAtomValue, useSetAtom } from 'jotai'
-import noop from 'lodash/noop'
-import { useCallback, useEffect, useMemo } from 'react'
 import { balanceAtom } from 'ton/logic/balanceAtom'
 import { useSwap } from 'ton/logic/swap/useSwap'
 import { Field } from 'types'
 import { tryParseAmount } from 'utils/tryParseAmount'
 import { useIsSwapDetailPanelOpen } from 'hooks/swap/useIsSwapDetailPanelOpen'
 import { computeTradePriceBreakdown } from 'utils/exchange'
-import { setConfirmSwapModalAtom } from 'atoms/modals/confirmSwapModalAtom'
 import { PricingAndSlippage } from 'components/TonSwap/SwapDetails/PricingAndSlippage'
 import { AdvancedSwapDetailsDropdown } from 'components/TonSwap/SwapDetails/AdvancedSwapDetailsDropdown'
 import { useUserSlippagePercent } from 'hooks/useUserSlippage'
-import { useAsyncConfirmPriceImpactWithoutFee } from '@pancakeswap/widgets-internal'
-import { ALLOWED_PRICE_IMPACT_HIGH, PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN } from 'config/constants/exchange'
 
 export const SwapForm = () => {
   const { t } = useTranslation()
@@ -74,7 +72,7 @@ export const SwapForm = () => {
   const { data: balance0 } = useAtomValue(balanceAtom(inputCurrency))
   const [allowedSlippage] = useUserSlippagePercent()
   const [isSwapDetailPanelOpen] = useIsSwapDetailPanelOpen()
-  const { realizedLPFee, priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
+  const { realizedLPFee } = computeTradePriceBreakdown(trade)
   const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
   const { data: activeList, isFetched } = useAtomValue(fetchListAtom)
 
@@ -85,23 +83,10 @@ export const SwapForm = () => {
     ],
     [balance0, parsedAmounts, isTradeLoading, trade?.route.path.length],
   )
-  const confirmPriceImpactWithoutFee = useAsyncConfirmPriceImpactWithoutFee(
-    priceImpactWithoutFee,
-    PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN,
-    ALLOWED_PRICE_IMPACT_HIGH,
-  )
-  const swapPreflightCheck = useCallback(async () => {
-    if (priceImpactWithoutFee) {
-      const confirmed = await confirmPriceImpactWithoutFee()
-      if (!confirmed) {
-        return false
-      }
-    }
-    return true
-  }, [confirmPriceImpactWithoutFee, priceImpactWithoutFee])
 
-  const { swap } = useSwap({
+  const { confirmSwap } = useSwap({
     trade,
+    refreshTrade,
     minOut: isExactIn
       ? trade?.minimumAmountOut(allowedSlippage).toExact()
       : trade?.maximumAmountIn(allowedSlippage).toExact(),
@@ -109,24 +94,6 @@ export const SwapForm = () => {
     token0: inputCurrency,
     token1: outputCurrency,
   })
-
-  const setSwapConfirmModal = useSetAtom(setConfirmSwapModalAtom)
-  const confirmSwap = useCallback(async () => {
-    if (!inputCurrency || !outputCurrency) {
-      return
-    }
-    if (!(await swapPreflightCheck())) {
-      return
-    }
-    setSwapConfirmModal({
-      isOpen: true,
-      inputCurrency,
-      outputCurrency,
-      trade,
-      refreshTrade,
-      onConfirm: swap,
-    })
-  }, [inputCurrency, outputCurrency, setSwapConfirmModal, trade, refreshTrade, swap, swapPreflightCheck])
 
   // Set default currencies on load
   useEffect(() => {

@@ -31,6 +31,7 @@ import { useAddLiquidity } from 'ton/logic/liquidity/useAddLiquidity'
 import { formatBalance, parseUnits } from 'ton/utils/formatting'
 import { getExpectedPoolTokens, getNewPoolShare } from 'ton/utils/pool'
 import { CurrencyField } from 'types/currency'
+import { logGTMClickAddLiquidityConfirmEvent, logGTMClickAddLiquidityEvent } from 'utils/customGTMEventTracking'
 import { currencyKey } from 'utils/tokens/currency'
 
 const ContentContainer = styled(Box)<{ $isBottomRounded?: boolean }>`
@@ -259,7 +260,7 @@ export const CardContent = (props: CardContentProps) => {
 
   const handleAddLiquidity = useCallback(async () => {
     if (isDisabled || !currency0?.wrapped.address || !currency1?.wrapped.address) return
-
+    logGTMClickAddLiquidityConfirmEvent()
     try {
       const expectedTokens = getExpectedPoolTokens({
         amount0: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals),
@@ -290,7 +291,7 @@ export const CardContent = (props: CardContentProps) => {
 
   const openConfirmationModal = useCallback(() => {
     // TODO: Determine data directly in modal
-
+    logGTMClickAddLiquidityEvent()
     setAddLiquidityModal({
       isOpen: true,
       currency0,

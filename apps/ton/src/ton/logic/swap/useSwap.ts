@@ -1,12 +1,15 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { Contracts, Currency, TonContractNames, Trade, storeSwap } from '@pancakeswap/ton-v2-sdk'
+import { useAsyncConfirmPriceImpactWithoutFee } from '@pancakeswap/widgets-internal'
 import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
 import { beginCell, toNano } from '@ton/core'
 import { SendTransactionRequest, TonConnectUIError, UserRejectsError, useTonConnectUI } from '@tonconnect/ui-react'
+import { setConfirmSwapModalAtom } from 'atoms/modals/confirmSwapModalAtom'
 import { setErrorMsgModalAtom } from 'atoms/modals/errorMsgModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
 import { ActionType } from 'components/Modals/ActionModal'
+import { ALLOWED_PRICE_IMPACT_HIGH, PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN } from 'config/constants/exchange'
 import { useUserAddress } from 'hooks/useUserAddress'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
@@ -16,19 +19,22 @@ import { parseAddress } from 'ton/utils/address'
 import { parseUnits } from 'ton/utils/formatting'
 import { generateQueryId } from 'ton/utils/generateQueryId'
 import { getTransactionByBOC } from 'ton/utils/transaction'
+import { logGTMClickSwapConfirmEvent, logGTMClickSwapEvent, logGTMSwapTxSentEvent } from 'utils/customGTMEventTracking'
+import { computeTradePriceBreakdown } from 'utils/exchange'
 
 const GAS = toNano('0.6')
 const FORWARD_GAS = toNano('0.5')
 
 interface SwapArgs {
   trade?: Trade<Currency, Currency, TradeType> | null
+  refreshTrade: () => void
   token0?: Currency
   token1?: Currency
   amount0: string
   minOut?: string
 }
 
-export const useSwap = ({ amount0, minOut, token0, token1, trade }: SwapArgs) => {
+export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }: SwapArgs) => {
   const { t } = useTranslation()
   const [tonUI] = useTonConnectUI()
   const userAddress = useUserAddress()
@@ -121,6 +127,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade }: SwapArgs) =>
   ])
 
   const swap = useCallback(async () => {
+    logGTMClickSwapConfirmEvent()
     try {
       setTransactionModal({
         type: ActionType.ConfirmSwap,
@@ -150,6 +157,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade }: SwapArgs) =>
 
       const hash = await getTransactionByBOC(userAddress, boc)
       if (hash) {
+        logGTMSwapTxSentEvent()
         setTransactionModal({
           type: ActionType.SwapCompleted,
           currency0: token0,
@@ -171,5 +179,40 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade }: SwapArgs) =>
     }
   }, [amount0, minOut, token0, token1, setErrorMsgModal, t, userAddress, tonUI, getTxRequest, setTransactionModal])
 
-  return { swap }
+  const setSwapConfirmModal = useSetAtom(setConfirmSwapModalAtom)
+  const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
+  const confirmPriceImpactWithoutFee = useAsyncConfirmPriceImpactWithoutFee(
+    priceImpactWithoutFee,
+    PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN,
+    ALLOWED_PRICE_IMPACT_HIGH,
+  )
+  const swapPreflightCheck = useCallback(async () => {
+    if (priceImpactWithoutFee) {
+      const confirmed = await confirmPriceImpactWithoutFee()
+      if (!confirmed) {
+        return false
+      }
+    }
+    return true
+  }, [confirmPriceImpactWithoutFee, priceImpactWithoutFee])
+
+  const confirmSwap = useCallback(async () => {
+    if (!token0 || !token1) {
+      return
+    }
+    if (!(await swapPreflightCheck())) {
+      return
+    }
+    logGTMClickSwapEvent()
+    setSwapConfirmModal({
+      isOpen: true,
+      inputCurrency: token0,
+      outputCurrency: token1,
+      trade,
+      refreshTrade,
+      onConfirm: swap,
+    })
+  }, [token0, token1, setSwapConfirmModal, trade, refreshTrade, swap, swapPreflightCheck])
+
+  return { swap, confirmSwap }
 }
