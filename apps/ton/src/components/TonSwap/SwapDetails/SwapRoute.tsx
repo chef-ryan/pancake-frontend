@@ -1,14 +1,14 @@
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { Currency, Trade } from '@pancakeswap/ton-v2-sdk'
 import { ChevronRightIcon, Flex, Text } from '@pancakeswap/uikit'
-import { Fragment, memo } from 'react'
+import { Fragment } from 'react'
 
 export interface AdvancedSwapDetailsProps {
   trade?: Trade<Currency, Currency, TradeType> | null
   isLoading?: boolean
 }
 
-export default memo(function SwapRoute({ trade }: AdvancedSwapDetailsProps) {
+export const SwapRoute = ({ trade }: AdvancedSwapDetailsProps) => {
   return trade ? (
     <Flex flexWrap="wrap" width="100%" justifyContent="flex-end" alignItems="center">
       {trade.route.path.map((token, i, path) => {
@@ -27,4 +27,4 @@ export default memo(function SwapRoute({ trade }: AdvancedSwapDetailsProps) {
       })}
     </Flex>
   ) : null
-})
+}

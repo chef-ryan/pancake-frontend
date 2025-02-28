@@ -7,7 +7,7 @@ import { BUYBACK_FEE, LP_HOLDERS_FEE, TOTAL_FEE, TREASURY_FEE } from 'config/con
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from 'utils/exchange'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
 import { useUserSlippage } from 'hooks/useUserSlippage'
-import SwapRoute, { AdvancedSwapDetailsProps } from './SwapRoute'
+import { SwapRoute, AdvancedSwapDetailsProps } from './SwapRoute'
 import FormattedPriceImpact from '../FormattedPriceImpact'
 
 const DetailsTitle = styled(Text)`
@@ -127,30 +127,26 @@ export function AdvancedSwapDetails(props: AdvancedSwapDetailsProps) {
   const { t } = useTranslation()
   const [allowedSlippage] = useUserSlippage()
 
-  const showRoute = Boolean(props.trade && props.trade.route.path.length > 1)
-
   return (
     <AutoColumn gap="8px">
       <TradeSummary {...props} allowedSlippage={allowedSlippage} />
-      {showRoute && (
-        <RowBetween>
-          <RowFixed>
-            <Flex alignItems="center">
-              <QuestionHelperV2
-                text={t('Routing through these tokens resulted in the best price for your trade.')}
-                placement="top"
-              >
-                <DetailsTitle>{t('Route')}</DetailsTitle>
-              </QuestionHelperV2>
-            </Flex>
-          </RowFixed>
-          <RowFixed>
-            <SkeletonV2 width="50px" height="18px" borderRadius="8px" minHeight="auto" isDataReady={!props.isLoading}>
-              <SwapRoute {...props} />
-            </SkeletonV2>
-          </RowFixed>
-        </RowBetween>
-      )}
+      <RowBetween>
+        <RowFixed>
+          <Flex alignItems="center">
+            <QuestionHelperV2
+              text={t('Routing through these tokens resulted in the best price for your trade.')}
+              placement="top"
+            >
+              <DetailsTitle>{t('Route')}</DetailsTitle>
+            </QuestionHelperV2>
+          </Flex>
+        </RowFixed>
+        <RowFixed>
+          <SkeletonV2 width="50px" height="18px" borderRadius="8px" minHeight="auto" isDataReady={!props.isLoading}>
+            <SwapRoute {...props} />
+          </SkeletonV2>
+        </RowFixed>
+      </RowBetween>
     </AutoColumn>
   )
 }
