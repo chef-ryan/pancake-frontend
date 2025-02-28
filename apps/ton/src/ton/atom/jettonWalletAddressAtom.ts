@@ -1,7 +1,7 @@
 import { Address, JettonMaster } from '@ton/ton'
 import { atom, useAtomValue } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
-import { TonContext, atomStore } from 'ton/context/TonContext'
+import { TonContext } from 'ton/context/TonContext'
 import { parseAddress } from 'ton/utils/address'
 
 export const jettonWalletAddressAtom = atomFamily(
@@ -19,16 +19,16 @@ export const jettonWalletAddressAtom = atomFamily(
   (a, b) => a.tokenAddress.equals(b.tokenAddress) && a.owner.equals(b.owner),
 )
 
-export const getJettonWalletAddress = async (
-  tokenAddress: Address | string | undefined,
-  owner: Address | string | undefined,
-): Promise<Address | undefined> => {
-  const walletAtom = jettonWalletAddressAtom({
-    tokenAddress: Address.isAddress(tokenAddress) ? tokenAddress : parseAddress(tokenAddress),
-    owner: Address.isAddress(owner) ? owner : parseAddress(owner),
-  })
-  return atomStore.get(walletAtom)
-}
+// export const getJettonWalletAddress = async (
+//   tokenAddress: Address | string | undefined,
+//   owner: Address | string | undefined,
+// ): Promise<Address | undefined> => {
+//   const walletAtom = jettonWalletAddressAtom({
+//     tokenAddress: Address.isAddress(tokenAddress) ? tokenAddress : parseAddress(tokenAddress),
+//     owner: Address.isAddress(owner) ? owner : parseAddress(owner),
+//   })
+//   return atomStore.get(walletAtom)
+// }
 
 export const useJettonWalletAddress = (
   tokenAddress: Address | string | undefined,

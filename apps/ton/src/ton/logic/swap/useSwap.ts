@@ -14,10 +14,11 @@ import { useUserAddress } from 'hooks/useUserAddress'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { chainIdAtom } from 'ton/atom/chainIdAtom'
-import { getJettonWalletAddress, useJettonWalletAddress } from 'ton/atom/jettonWalletAddressAtom'
+import { useJettonWalletAddress } from 'ton/atom/jettonWalletAddressAtom'
 import { parseAddress } from 'ton/utils/address'
 import { parseUnits } from 'ton/utils/formatting'
 import { generateQueryId } from 'ton/utils/generateQueryId'
+import { getJettonWalletAddress } from 'ton/utils/jettonWalletAddress'
 import { getTransactionByBOC } from 'ton/utils/transaction'
 import { logGTMClickSwapConfirmEvent, logGTMClickSwapEvent, logGTMSwapTxSentEvent } from 'utils/customGTMEventTracking'
 import { computeTradePriceBreakdown } from 'utils/exchange'
@@ -63,7 +64,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
       const path = trade?.route.path
       for (let idx = path.length - 1; idx >= 2; idx--) {
         // eslint-disable-next-line no-await-in-loop
-        const routerJettonWalletOut = await getJettonWalletAddress(path[idx].wrapped.address, routerAddress)
+        const routerJettonWalletOut = await getJettonWalletAddress(routerAddress, path[idx].wrapped.address)
         const next = {
           tokenAddress: routerJettonWalletOut,
           minOut: idx === path.length - 1 && minOut ? parseUnits(minOut, token1?.decimals) : 1n,

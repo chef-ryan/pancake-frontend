@@ -4,6 +4,8 @@ import { JettonMaster } from '@ton/ton'
 import { TonContext } from 'ton/context/TonContext'
 import { parseAddress } from './address'
 
+const cache = new Map<string, Address>()
+
 /**
  * Compute jetton wallet address offline if available, otherwise fetch from JettonMaster
  * Reference: https://docs.ton.org/v3/guidelines/dapps/cookbook#how-to-calculate-users-jetton-wallet-address-offline
@@ -11,8 +13,13 @@ import { parseAddress } from './address'
  * @param currency - Currency object or address of currency
  * @returns Jetton wallet address of user
  */
-export const getJettonWalletAddress = async (userAddress: string, currency: Currency | string) => {
-  const USER_ADDRESS = parseAddress(userAddress)
+export const getJettonWalletAddress = async (userAddress: Address | string, currency: Currency | string) => {
+  const cacheKey = `${userAddress.toString()}-${typeof currency === 'string' ? currency : currency.wrapped.address}`
+  if (cache.has(cacheKey)) {
+    return cache.get(cacheKey) as Address
+  }
+
+  const USER_ADDRESS = typeof userAddress === 'string' ? parseAddress(userAddress) : userAddress
 
   // If no jettonCode in currency, then fetch jettonWalletAddress directly from JettonMaster
   if (typeof currency === 'string' || !currency.wrapped.jettonCode) {
@@ -20,7 +27,9 @@ export const getJettonWalletAddress = async (userAddress: string, currency: Curr
     const jettonMaster = client.open(
       JettonMaster.create(parseAddress(typeof currency === 'string' ? currency : currency.wrapped.address)),
     )
-    return jettonMaster.getWalletAddress(USER_ADDRESS)
+    const address = await jettonMaster.getWalletAddress(USER_ADDRESS)
+    cache.set(cacheKey, address)
+    return address
   }
 
   const JETTON_WALLET_CODE = Cell.fromBoc(Buffer.from(currency.wrapped.jettonCode, 'hex'))[0]
@@ -41,5 +50,6 @@ export const getJettonWalletAddress = async (userAddress: string, currency: Curr
     .endCell()
 
   const userJettonWalletAddress = new Address(0, jettonWalletStateInit.hash())
+  cache.set(cacheKey, userJettonWalletAddress)
   return userJettonWalletAddress
 }

@@ -4,11 +4,11 @@ import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
 import { parseAddress } from 'ton/utils/address'
 
+import { getJettonWalletAddress } from 'ton/utils/jettonWalletAddress'
+import { chainIdAtom } from '../chainIdAtom'
 import { poolContractAtom } from '../contracts/poolContractAtom'
 import { networkAtom } from '../networkAtom'
 import { poolAddressAtom } from './poolAddressAtom'
-import { getJettonWalletAddress } from '../jettonWalletAddressAtom'
-import { chainIdAtom } from '../chainIdAtom'
 
 export const getKeyByPair = ({
   token0Address,
@@ -28,7 +28,7 @@ export const poolDataQueryAtom = atomFamily(({ token0Address, token1Address }: P
     queryFn: async () => {
       try {
         const poolAddress = await get(poolAddressAtom({ token0Address, token1Address }))
-        if (!poolAddress) {
+        if (!poolAddress || !token0Address || !token1Address) {
           return null
         }
 
@@ -37,8 +37,12 @@ export const poolDataQueryAtom = atomFamily(({ token0Address, token1Address }: P
 
         const chainId = get(chainIdAtom)
         const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter][chainId].address)
-        const jettonWallet0 = await getJettonWalletAddress(token0Address, routerAddress)
-        const jettonWallet1 = await getJettonWalletAddress(token1Address, routerAddress)
+
+        const [jettonWallet0, jettonWallet1] = await Promise.all([
+          getJettonWalletAddress(routerAddress, token0Address),
+          getJettonWalletAddress(routerAddress, token1Address),
+        ])
+
         const [jetton0MasterAddress, jetton1MasterAddress] =
           jettonWallet0 && jettonWallet0.equals(result.token0Address)
             ? [token0Address, token1Address]

@@ -9,9 +9,10 @@ import { useUserAddress } from 'hooks/useUserAddress'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { routerContractAtom } from 'ton/atom/contracts/routerContractAtom'
-import { getJettonWalletAddress } from 'ton/atom/jettonWalletAddressAtom'
+
 import { formatBalance } from 'ton/utils/formatting'
 import { generateQueryId } from 'ton/utils/generateQueryId'
+import { getJettonWalletAddress } from 'ton/utils/jettonWalletAddress'
 import { getCurrencyOrder } from 'ton/utils/tokenOrder'
 import { getTransactionByBOC } from 'ton/utils/transaction'
 import { logGTMAddLiquidityTxSentEvent } from 'utils/customGTMEventTracking'
@@ -59,13 +60,15 @@ export const useAddLiquidity = () => {
           isOpen: true,
         })
 
-        const userJettonWallet0 = await getJettonWalletAddress(currency0.wrapped.address, userAddress)
-        const userJettonWallet1 = await getJettonWalletAddress(currency1.wrapped.address, userAddress)
-        const routerJettonWallet0 = await getJettonWalletAddress(currency0.wrapped.address, routerAddress)
-        const routerJettonWallet1 = await getJettonWalletAddress(currency1.wrapped.address, routerAddress)
+        const [userJettonWallet0, userJettonWallet1, routerJettonWallet0, routerJettonWallet1] = await Promise.all([
+          getJettonWalletAddress(userAddress, currency0.wrapped.address),
+          getJettonWalletAddress(userAddress, currency1.wrapped.address),
+          getJettonWalletAddress(routerAddress, currency0.wrapped.address),
+          getJettonWalletAddress(routerAddress, currency1.wrapped.address),
+        ])
 
         if (!userJettonWallet0 || !userJettonWallet1 || !routerJettonWallet0 || !routerJettonWallet1) {
-          throw new Error('get jetton wallet address failed')
+          throw new Error('Failed to get Jetton Wallet addresses')
         }
 
         const forwardPayload0 = beginCell()
