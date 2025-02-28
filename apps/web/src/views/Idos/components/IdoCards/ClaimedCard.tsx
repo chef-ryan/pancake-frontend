@@ -61,7 +61,7 @@ export const ClaimedCard: React.FC<{
             width="100%"
             style={{ whiteSpace: 'nowrap' }}
             as="a"
-            href="bnc://app.binance.com/mp/app?appId=xoqXxUSMRccLCrZNRebmzj&startPagePath=cGFnZXMvd2FsbGV0L2hvbWUvaW5kZXg="
+            href="bnc://app.binance.com/mp/app?appId=xoqXxUSMRccLCrZNRebmzj&startPagePath=cGFnZXMvd2FsbGV0L2hvbWUvaW5kZXg=&showOptions=2"
           >
             {t('View in Wallet')}
           </Button>
@@ -70,7 +70,7 @@ export const ClaimedCard: React.FC<{
             as="a"
             px="14px"
             style={{ whiteSpace: 'nowrap' }}
-            href="bnc://app.binance.com/mp/app?appId=xoqXxUSMRccLCrZNRebmzj&startPagePath=cGFnZXMvc3dhcC9pbmRleA==&startPageQuery=ZnJvbUJpbmFuY2VDaGFpbklkPTU2JnRvQmluYW5jZUNoYWluSWQ9NTYmZnJvbVRva2VuQWRkcmVzcz0weDU1ZDM5ODMyNmY5OTA1OWZGNzc1NDg1MjQ2OTk5MDI3QjMxOTc5NTUmdG9Ub2tlbkFkZHJlc3M9MHhlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVl"
+            href="bnc://app.binance.com/mp/app?appId=xoqXxUSMRccLCrZNRebmzj&startPagePath=cGFnZXMvc3dhcC9pbmRleA&startPageQuery=ZnJvbUJpbmFuY2VDaGFpbklkPTU2JnRvQmluYW5jZUNoYWluSWQ9NTYmZnJvbVRva2VuQWRkcmVzcz0weDU1ZDM5ODMyNmY5OTA1OWZGNzc1NDg1MjQ2OTk5MDI3QjMxOTc5NTUmdG9Ub2tlbkFkZHJlc3M9MHhlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVl&showOptions=2"
           >
             {t('Swap %token%', { token: offeringCurrency?.symbol })}
           </Button>
