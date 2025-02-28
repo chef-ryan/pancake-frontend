@@ -1,5 +1,16 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { ArrowDownIcon, Box, BoxProps, Button, Flex, FlexGap, MinusIcon, Slider, Text } from '@pancakeswap/uikit'
+import {
+  ArrowDownIcon,
+  Box,
+  BoxProps,
+  Button,
+  Flex,
+  FlexGap,
+  LoadingDot,
+  MinusIcon,
+  Slider,
+  Text,
+} from '@pancakeswap/uikit'
 import { useQuery } from '@tanstack/react-query'
 import { setRemoveLiquidityModalAtom } from 'atoms/modals/removeLiquidityModalAtom'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
@@ -22,6 +33,7 @@ import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { useRemoveLiquidity } from 'ton/logic/liquidity/useRemoveLiquidity'
 import { formatBalance } from 'ton/utils/formatting'
 import { getCurrencyOrder } from 'ton/utils/tokenOrder'
+import { getAssetUrl } from 'utils'
 import { logGTMClickRemoveLiquidityEvent } from 'utils/customGTMEventTracking'
 
 const ContentContainer = styled(Box)<{ $isBottomRounded?: boolean }>`
@@ -70,8 +82,8 @@ export const CardContent = (props: CardContentProps) => {
   const [address0, address1] = useMemo(() => router.query?.currency ?? [], [router.query])
 
   // TODO: Handle native
-  const { data: currency0_ } = useAtomValue(tokenByAddressQueryAtom(address0))
-  const { data: currency1_ } = useAtomValue(tokenByAddressQueryAtom(address1))
+  const { data: currency0_, isLoading: isCurrency0Loading } = useAtomValue(tokenByAddressQueryAtom(address0))
+  const { data: currency1_, isLoading: isCurrency1Loading } = useAtomValue(tokenByAddressQueryAtom(address1))
 
   const {
     data: { currency0, currency1 },
@@ -207,6 +219,25 @@ export const CardContent = (props: CardContentProps) => {
     return (
       <ContentContainer $isBottomRounded={!isWalletConnected} {...props}>
         <WalletDisclaimer my="8px" text={t('Connect wallet to remove liquidity')} />
+      </ContentContainer>
+    )
+  }
+
+  if (isCurrency0Loading || isCurrency1Loading) {
+    return (
+      <ContentContainer $isBottomRounded {...props}>
+        <FlexGap gap="16px" flexDirection="column" justifyContent="center" alignItems="center">
+          <img src={getAssetUrl('green-box.png')} alt={t('Loading')} width="96" />
+          <LoadingDot />
+        </FlexGap>
+      </ContentContainer>
+    )
+  }
+
+  if (!currency0 || !currency1) {
+    return (
+      <ContentContainer $isBottomRounded {...props}>
+        <WalletDisclaimer my="8px" text={t('Invalid currencies')} />
       </ContentContainer>
     )
   }

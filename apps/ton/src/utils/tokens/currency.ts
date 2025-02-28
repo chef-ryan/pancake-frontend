@@ -2,6 +2,7 @@ import { Currency, Native, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
 import { API_BASE_URL } from 'config/constants/endpoints'
 import mainnetList from 'public/lists/main.json'
 import testnetList from 'public/lists/testnet.json'
+import { isAddressEqual } from 'ton/utils/address'
 import { ResultJettonData } from 'types/tonapi'
 import { unwrappedToken } from './unwrappedToken'
 
@@ -13,13 +14,19 @@ export function currencyKey(currency?: Currency): string {
 
 const tokenCache = new Map<string, Currency>()
 export async function fetchTokenByAddress(address: string, chainId: TonChainId): Promise<Currency | undefined> {
-  if (address === Native.onChain(chainId).symbol) return Native.onChain(chainId)
+  // If address is "TON" or its wrapped token address (pTON), return Native
+  if (
+    address.toLowerCase() === Native.onChain(chainId).symbol.toLowerCase() ||
+    isAddressEqual(address, Native.onChain(chainId).wrapped.address)
+  ) {
+    return Native.onChain(chainId)
+  }
 
   if (tokenCache.has(address)) return tokenCache.get(address)
 
   // Check for token in list first
-  const tokensFromList = chainId === TonChainId.Mainnet ? mainnetList.tokens : testnetList.tokens
-  const tokenFromList = tokensFromList.find((token) => token.address.toLowerCase() === address.toLowerCase())
+  const tokensFromList = chainId === TonChainId.Testnet ? testnetList.tokens : mainnetList.tokens
+  const tokenFromList = tokensFromList.find((token) => isAddressEqual(token.address, address))
   if (tokenFromList) {
     const token = new Token(
       chainId,

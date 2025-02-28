@@ -7,7 +7,7 @@ export async function getPoolAddress(
   token1Address: string,
 ): Promise<string> {
   const response = await fetch(
-    `${API_BASE_URL}/poolAddress?token0=${token0Address}&token1=${token1Address}&chainId=${chainId}`,
+    `${API_BASE_URL}/poolAddress?chainId=${chainId}&token0=${token0Address}&token1=${token1Address}`,
   )
   if (!response.ok) {
     throw new Error(`Failed to fetch pool address for ${token0Address} and ${token1Address}`)

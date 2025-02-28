@@ -38,7 +38,7 @@ export const CardContent = (props: CardContentProps) => {
 
         {isWalletConnected && userPools.length === 0 && (
           <FlexGap flexDirection="column" alignItems="center" gap="16px" p="24px">
-            <img src={getAssetUrl('green-box.png')} alt="Empty Box" width={96} />
+            <img src={getAssetUrl('green-box.png')} alt={t('Empty Box')} width={96} />
 
             <Text color="textSubtle">{!isFetched ? <LoadingDot /> : t('No liquidity found')}</Text>
           </FlexGap>

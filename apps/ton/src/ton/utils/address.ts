@@ -9,3 +9,7 @@ export const isAddress = (address?: any) => {
   if (!address) return false
   return Address.isAddress(address)
 }
+
+export const isAddressEqual = (address0: string, address1: string) => {
+  return Address.parse(address0).toString() === Address.parse(address1).toString()
+}
