@@ -81,7 +81,6 @@ export const CardContent = (props: CardContentProps) => {
     poolDataQueryAtom({ token0Address: currency0?.wrapped.address, token1Address: currency1?.wrapped.address }),
   )
 
-  // TODO: Handle native token
   const { data: lpBalance, isLoading: isLpBalanceLoading } = useAtomValue(
     lpBalanceQueryAtom({
       token0Address: currency0?.wrapped.address,

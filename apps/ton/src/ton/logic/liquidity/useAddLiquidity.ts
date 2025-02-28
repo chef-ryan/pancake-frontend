@@ -7,6 +7,7 @@ import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
 import { ActionType } from 'components/Modals/ActionModal'
 import { useUserAddress } from 'hooks/useUserAddress'
 import { useAtomValue, useSetAtom } from 'jotai'
+import { useRouter } from 'next/router'
 import { useCallback } from 'react'
 import { routerContractAtom } from 'ton/atom/contracts/routerContractAtom'
 
@@ -30,6 +31,7 @@ interface AddLiquidityArgs {
 const GAS = toNano('0.6')
 
 export const useAddLiquidity = () => {
+  const router = useRouter()
   const [tonUI] = useTonConnectUI()
 
   const userAddress = useUserAddress()
@@ -152,6 +154,8 @@ export const useAddLiquidity = () => {
             amount1: formattedAmount1,
             hash,
           })
+
+          router.push('/liquidity')
         }
       } catch (e) {
         console.error(e)
@@ -160,7 +164,7 @@ export const useAddLiquidity = () => {
         resetAppModal()
       }
     },
-    [tonUI, userAddress, routerAddress, setTxnModal, resetAppModal],
+    [tonUI, userAddress, routerAddress, setTxnModal, resetAppModal, router],
   )
 
   return {

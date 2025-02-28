@@ -32,7 +32,7 @@
     "@ton-community/assets-sdk": "^0.0.5",
     "@ton/core": "^0.59.0",
     "@ton/ton": "^15.1.0",
-    "@tonconnect/ui-react": "^2.0.9",
+    "@tonconnect/ui-react": "^2.0.11",
     "@vanilla-extract/next-plugin": "^2.3.0",
     "@vanilla-extract/vite-plugin": "catalog:",
     "bignumber.js": "^9.1.2",
