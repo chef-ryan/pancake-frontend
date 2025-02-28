@@ -20,10 +20,7 @@ export async function getTokenOrder(chainId: TonChainId, token0Address: string, 
 export async function getCurrencyOrder(currency0: Currency, currency1: Currency) {
   if (!currency0 || !currency1) return { currency0, currency1, isFlipped: false }
 
-  if (currency0.isNative) return { currency0, currency1, isFlipped: false }
-  if (currency1.isNative) return { currency0: currency1, currency1: currency0, isFlipped: true }
-
-  const result = await getTokenOrder(currency0.chainId, currency0.address, currency1.address)
+  const result = await getTokenOrder(currency0.chainId, currency0.wrapped.address, currency1.wrapped.address)
 
   return result.isFlipped
     ? { currency0: currency1, currency1: currency0, isFlipped: true }

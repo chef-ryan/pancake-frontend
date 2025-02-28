@@ -32,11 +32,10 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount
 
   const [slippage] = useUserSlippage()
 
-  // TODO: Check Native handling
   const poolAddress = useAtomValue(
     poolAddressAtom({
-      token0Address: currency0?.isNative ? userAddress.toString() : currency0?.address.toString(),
-      token1Address: currency1?.isNative ? userAddress.toString() : currency1?.address.toString(),
+      token0Address: currency0?.wrapped.address.toString(),
+      token1Address: currency1?.wrapped.address.toString(),
     }),
   )
 
@@ -118,7 +117,18 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount
         resetAppModal()
       }
     },
-    [tonUI, userAddress, poolContract, setTxnModal, currency0, currency1, amount0ToBurn, amount1ToBurn, resetAppModal],
+    [
+      slippage,
+      tonUI,
+      userAddress,
+      poolContract,
+      setTxnModal,
+      currency0,
+      currency1,
+      amount0ToBurn,
+      amount1ToBurn,
+      resetAppModal,
+    ],
   )
 
   return { removeLiquidity }

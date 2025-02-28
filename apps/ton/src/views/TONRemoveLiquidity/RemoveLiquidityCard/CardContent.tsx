@@ -74,7 +74,7 @@ export const CardContent = (props: CardContentProps) => {
   const { data: currency1_ } = useAtomValue(tokenByAddressQueryAtom(address1))
 
   const {
-    data: { currency0, currency1, isFlipped },
+    data: { currency0, currency1 },
   } = useQuery({
     queryKey: ['removeLiquidity_currencyOrder', currency0_, currency1_],
     queryFn: async () => {
@@ -93,12 +93,6 @@ export const CardContent = (props: CardContentProps) => {
     },
   })
 
-  console.log('RemoveLiquidity', {
-    currency0: currency0?.symbol,
-    currency1: currency1?.symbol,
-    isFlipped,
-  })
-
   const { data: lpBalance, isLoading: isLpBalanceLoading } = useAtomValue(
     lpBalanceQueryAtom({
       token0Address: currency0?.wrapped.address,
@@ -107,8 +101,8 @@ export const CardContent = (props: CardContentProps) => {
   )
   const { data: poolData, isLoading: isPoolDataLoading } = useAtomValue(
     poolDataQueryAtom({
-      token0Address: currency0?.isNative ? userAddress : currency0?.address,
-      token1Address: currency1?.isNative ? userAddress : currency1?.address,
+      token0Address: currency0?.wrapped.address,
+      token1Address: currency1?.wrapped.address,
     }),
   )
 

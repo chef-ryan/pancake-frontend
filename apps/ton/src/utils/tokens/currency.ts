@@ -3,16 +3,17 @@ import { API_BASE_URL } from 'config/constants/endpoints'
 import mainnetList from 'public/lists/main.json'
 import testnetList from 'public/lists/testnet.json'
 import { ResultJettonData } from 'types/tonapi'
+import { unwrappedToken } from './unwrappedToken'
 
 export function currencyKey(currency?: Currency): string {
-  if (!currency) return 'UNKNOWN'
-  return currency.isNative ? currency.symbol : currency.address
+  const unwrapped = unwrappedToken(currency)
+  if (!unwrapped) return 'UNKNOWN'
+  return unwrapped.isNative ? unwrapped.symbol : unwrapped.address
 }
 
 const tokenCache = new Map<string, Currency>()
 export async function fetchTokenByAddress(address: string, chainId: TonChainId): Promise<Currency | undefined> {
-  if (address === Native.onChain(TonChainId.Mainnet).symbol) return Native.onChain(TonChainId.Mainnet)
-  if (address === Native.onChain(TonChainId.Testnet).symbol) return Native.onChain(TonChainId.Testnet)
+  if (address === Native.onChain(chainId).symbol) return Native.onChain(chainId)
 
   if (tokenCache.has(address)) return tokenCache.get(address)
 

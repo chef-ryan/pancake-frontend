@@ -68,7 +68,10 @@ function CurrencyRow({
 
   const { data: balanceRaw, isLoading: isBalanceLoading } = useAtomValue(balanceAtom(currency))
 
-  const balance = formatBigInt(balanceRaw, currency.decimals, currency.decimals)
+  const balance = useMemo(
+    () => formatBigInt(balanceRaw, currency.decimals, currency.decimals),
+    [balanceRaw, currency.decimals],
+  )
 
   // only show add or remove buttons if not on selected list
   return (

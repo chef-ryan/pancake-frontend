@@ -9,10 +9,12 @@ import { Collapse } from 'components/widgets/swap-v2/Collapse'
 import { ADDRESS_CONCAT_LENGTH, LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 import { useAtomValue } from 'jotai'
 import Link from 'next/link'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { formatBigNumber } from 'ton/utils/formatting'
 import { truncateHash } from 'utils'
+import { getAddLiquidityLink, getRemoveLiquidityLink } from 'utils/getLink'
+import { unwrappedToken } from 'utils/tokens/unwrappedToken'
 
 const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
   width: 100%;
@@ -48,12 +50,17 @@ export const LiquidityRow = ({
     setIsOpen(!isOpen)
   }, [isOpen, setIsOpen])
 
+  const [symbol0, symbol1] = useMemo(
+    () => [
+      unwrappedToken(currency0)?.symbol ?? currency0?.symbol ?? truncateHash(token0, ADDRESS_CONCAT_LENGTH),
+      unwrappedToken(currency1)?.symbol ?? currency1?.symbol ?? truncateHash(token1, ADDRESS_CONCAT_LENGTH),
+    ],
+    [currency0, currency1, token0, token1],
+  )
+
   if (!token0 || !token1) {
     return null
   }
-
-  const symbol0 = currency0?.symbol ?? truncateHash(token0, ADDRESS_CONCAT_LENGTH)
-  const symbol1 = currency1?.symbol ?? truncateHash(token1, ADDRESS_CONCAT_LENGTH)
 
   return (
     <>
@@ -113,10 +120,10 @@ export const LiquidityRow = ({
                 )}
               </Flex>
               <FlexGap mt="10px" justifyContent="space-between" gap="16px">
-                <Link href={`/liquidity/add/${token0}/${token1}`} style={{ width: '100%' }}>
+                <Link href={getAddLiquidityLink(currency0, currency1)} style={{ width: '100%' }}>
                   <StyledButton endIcon={<AddIcon color="primary60" />}>{t('Add')}</StyledButton>
                 </Link>
-                <Link href={`/liquidity/remove/${token0}/${token1}`} style={{ width: '100%' }}>
+                <Link href={getRemoveLiquidityLink(currency0, currency1)} style={{ width: '100%' }}>
                   <StyledButton endIcon={<MinusIcon color="primary60" />}>{t('Remove')}</StyledButton>
                 </Link>
               </FlexGap>

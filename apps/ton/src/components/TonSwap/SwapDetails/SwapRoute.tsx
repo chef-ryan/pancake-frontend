@@ -2,6 +2,7 @@ import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { Currency, Trade } from '@pancakeswap/ton-v2-sdk'
 import { ChevronRightIcon, Flex, Text } from '@pancakeswap/uikit'
 import { Fragment } from 'react'
+import { unwrappedToken } from 'utils/tokens/unwrappedToken'
 
 export interface AdvancedSwapDetailsProps {
   trade?: Trade<Currency, Currency, TradeType> | null
@@ -13,12 +14,12 @@ export const SwapRoute = ({ trade }: AdvancedSwapDetailsProps) => {
     <Flex flexWrap="wrap" width="100%" justifyContent="flex-end" alignItems="center">
       {trade.route.path.map((token, i, path) => {
         const isLastItem: boolean = i === path.length - 1
+        const symbol = unwrappedToken(token)?.symbol ?? token.symbol
         return (
-          // eslint-disable-next-line react/no-array-index-key
-          <Fragment key={i}>
+          <Fragment key={token.wrapped.address}>
             <Flex alignItems="end">
               <Text fontSize="14px" ml="0.125rem" mr="0.125rem">
-                {token.symbol}
+                {symbol}
               </Text>
             </Flex>
             {!isLastItem && <ChevronRightIcon width="12px" />}
@@ -26,5 +27,7 @@ export const SwapRoute = ({ trade }: AdvancedSwapDetailsProps) => {
         )
       })}
     </Flex>
-  ) : null
+  ) : (
+    '-'
+  )
 }
