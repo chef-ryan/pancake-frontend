@@ -2,9 +2,23 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Button, Card, CardBody, FlexGap, Text } from '@pancakeswap/uikit'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import useTheme from 'hooks/useTheme'
+import { zeroAddress } from 'viem'
 import { useIDOCurrencies } from 'views/Idos/hooks/ido/useIDOCurrencies'
 import { IDOUserStatus } from 'views/Idos/hooks/ido/useIDOUserStatus'
+import { useChainId } from 'wagmi'
 import { formatDollarAmount } from './IdoDepositButton'
+
+declare global {
+  interface Window {
+    _bnJumpToAsset: () => void
+    _bnJumpToTrade: (params: {
+      fromChainId: number
+      toChainId: number
+      fromTokenAddress: string
+      toTokenAddress: string
+    }) => void
+  }
+}
 
 export const ClaimedCard: React.FC<{
   userStatus: IDOUserStatus | undefined
@@ -13,6 +27,7 @@ export const ClaimedCard: React.FC<{
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const claimed = userStatus?.claimed
+  const chainId = useChainId()
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
   const claimableAmount = userStatus?.claimableAmount?.toSignificant(6)
   const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIDOCurrencies()
@@ -24,6 +39,33 @@ export const ClaimedCard: React.FC<{
       enabled: Boolean(claimableAmount !== undefined && Number.isFinite(+claimableAmount)),
     },
   )
+
+  const handleWalletClick = () => {
+    try {
+      window._bnJumpToAsset()
+    } catch (error) {
+      console.error('Failed to open wallet', error)
+      window.open(
+        'bnc://app.binance.com/mp/app?appId=xoqXxUSMRccLCrZNRebmzj&startPagePath=cGFnZXMvd2FsbGV0L2hvbWUvaW5kZXg=&showOptions=2',
+      )
+    }
+  }
+
+  const handleSwap = () => {
+    try {
+      window._bnJumpToTrade({
+        fromChainId: chainId,
+        toChainId: chainId,
+        fromTokenAddress: offeringCurrency?.wrapped.address ?? '',
+        toTokenAddress: zeroAddress,
+      })
+    } catch (error) {
+      console.error('Failed to open swap', error)
+      window.open(
+        'bnc://app.binance.com/mp/app?appId=xoqXxUSMRccLCrZNRebmzj&startPagePath=cGFnZXMvc3dhcC9pbmRleA&startPageQuery=ZnJvbUJpbmFuY2VDaGFpbklkPTU2JnRvQmluYW5jZUNoYWluSWQ9NTYmZnJvbVRva2VuQWRkcmVzcz0weDU1ZDM5ODMyNmY5OTA1OWZGNzc1NDg1MjQ2OTk5MDI3QjMxOTc5NTUmdG9Ub2tlbkFkZHJlc3M9MHhlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVl&showOptions=2',
+      )
+    }
+  }
 
   if (!claimed || !userHasStaked) {
     return null
@@ -60,18 +102,11 @@ export const ClaimedCard: React.FC<{
             px="14px"
             width="100%"
             style={{ whiteSpace: 'nowrap' }}
-            as="a"
-            href="bnc://app.binance.com/mp/app?appId=xoqXxUSMRccLCrZNRebmzj&startPagePath=cGFnZXMvd2FsbGV0L2hvbWUvaW5kZXg=&showOptions=2"
+            onClick={handleWalletClick}
           >
             {t('View in Wallet')}
           </Button>
-          <Button
-            width="100%"
-            as="a"
-            px="14px"
-            style={{ whiteSpace: 'nowrap' }}
-            href="bnc://app.binance.com/mp/app?appId=xoqXxUSMRccLCrZNRebmzj&startPagePath=cGFnZXMvc3dhcC9pbmRleA&startPageQuery=ZnJvbUJpbmFuY2VDaGFpbklkPTU2JnRvQmluYW5jZUNoYWluSWQ9NTYmZnJvbVRva2VuQWRkcmVzcz0weDU1ZDM5ODMyNmY5OTA1OWZGNzc1NDg1MjQ2OTk5MDI3QjMxOTc5NTUmdG9Ub2tlbkFkZHJlc3M9MHhlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVl&showOptions=2"
-          >
+          <Button width="100%" px="14px" style={{ whiteSpace: 'nowrap' }} onClick={handleSwap}>
             {t('Swap %token%', { token: offeringCurrency?.symbol })}
           </Button>
         </FlexGap>
