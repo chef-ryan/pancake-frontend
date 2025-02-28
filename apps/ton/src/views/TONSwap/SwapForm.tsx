@@ -31,10 +31,14 @@ import { PricingAndSlippage } from 'components/TonSwap/SwapDetails/PricingAndSli
 import { AdvancedSwapDetailsDropdown } from 'components/TonSwap/SwapDetails/AdvancedSwapDetailsDropdown'
 import { useUserSlippagePercent } from 'hooks/useUserSlippage'
 import { networkAtom } from 'ton/atom/networkAtom'
+import { addressAtom } from 'ton/atom/addressAtom'
+import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 
 export const SwapForm = () => {
   const { t } = useTranslation()
   const network = useAtomValue(networkAtom)
+  const address = useAtomValue(addressAtom)
+  const isWalletConnected = !!address
 
   const { data: activeList } = useAtomValue(fetchListAtom)
   const cakeAddress = useMemo(() => activeList?.find((item) => item.symbol === 'CAKE')?.address ?? '', [activeList])
@@ -165,21 +169,25 @@ export const SwapForm = () => {
           </Column>
         </SwapUIV2.InputPanelWrapper>
       </SwapUIV2.SwapTabAndInputPanelWrapper>
-      <ButtonAndDetailsPanel
-        shouldRenderDetails={Boolean(typedValue) && !isInsufficientLiquidity}
-        swapCommitButton={<SwapCommitButton trade={trade} isLoading={isTradeLoading} onClick={confirmSwap} />}
-        pricingAndSlippage={
-          <PricingAndSlippage
-            isLoading={isTradeLoading}
-            price={trade?.executionPrice}
-            showSlippage={false}
-            showFee={Boolean(trade && !isSwapDetailPanelOpen)}
-            fee={realizedLPFee}
-            onRefresh={refreshTrade}
-          />
-        }
-        tradeDetails={<AdvancedSwapDetailsDropdown isLoading={isTradeLoading} trade={trade} />}
-      />
+      {!isWalletConnected ? (
+        <ConnectWalletButton width="100%" />
+      ) : (
+        <ButtonAndDetailsPanel
+          shouldRenderDetails={Boolean(typedValue) && !isInsufficientLiquidity}
+          swapCommitButton={<SwapCommitButton trade={trade} isLoading={isTradeLoading} onClick={confirmSwap} />}
+          pricingAndSlippage={
+            <PricingAndSlippage
+              isLoading={isTradeLoading}
+              price={trade?.executionPrice}
+              showSlippage={false}
+              showFee={Boolean(trade && !isSwapDetailPanelOpen)}
+              fee={realizedLPFee}
+              onRefresh={refreshTrade}
+            />
+          }
+          tradeDetails={<AdvancedSwapDetailsDropdown isLoading={isTradeLoading} trade={trade} />}
+        />
+      )}
     </SwapUIV2.SwapFormWrapper>
   )
 }
