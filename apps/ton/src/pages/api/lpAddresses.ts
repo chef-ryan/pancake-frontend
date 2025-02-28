@@ -30,7 +30,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Invalid query parameters' })
   }
 
-  const client = chainId === TonChainId.Mainnet ? mainnetClient : testnetClient
+  const client = chainId === TonChainId.Testnet ? testnetClient : mainnetClient
+
   const poolAddress = parseAddress(poolAddress_ as string)
   const userAddress = parseAddress(userAddress_ as string)
 

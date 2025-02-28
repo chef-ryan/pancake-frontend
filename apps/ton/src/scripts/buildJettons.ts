@@ -27,7 +27,7 @@ const testnetClient = new TonClient({ endpoint: TonEndPoints[TonChainId.Testnet]
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 async function processTokensByChain(chainId: TonChainId, tokens: TokenInfo[]) {
-  const client = chainId === TonChainId.Mainnet ? mainnetClient : testnetClient
+  const client = chainId === TonChainId.Testnet ? testnetClient : mainnetClient
 
   const chunkedTokens = chunk(tokens, 40)
 

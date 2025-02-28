@@ -19,11 +19,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const chainId: TonChainId = Number(chainId_)
 
-  if (!chainId || !token0 || !token1 || (+chainId !== TonChainId.Mainnet && +chainId !== TonChainId.Testnet)) {
+  if (!chainId || !token0 || !token1 || (chainId !== TonChainId.Mainnet && chainId !== TonChainId.Testnet)) {
     return res.status(400).json({ error: 'Invalid query parameters' })
   }
 
-  const client = chainId === TonChainId.Mainnet ? mainnetClient : testnetClient
+  const client = chainId === TonChainId.Testnet ? testnetClient : mainnetClient
 
   try {
     const token0Address = parseAddress(token0 as string)

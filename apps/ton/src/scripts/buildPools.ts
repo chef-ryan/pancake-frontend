@@ -45,7 +45,7 @@ const getTokenPairs = (tokens: any[]) => {
 }
 
 const getPoolAddress = async (chainId: TonChainId, token0Address: any, token1Address: any) => {
-  const client = chainId === TonChainId.Mainnet ? mainnetClient : testnetClient
+  const client = chainId === TonChainId.Testnet ? testnetClient : mainnetClient
   const router = client.open(Router.fromAddress(parseAddress(Contracts[TonContractNames.PCSRouter][chainId].address)))
 
   const jettonMaster0 = client.open(JettonMasterUSDT.fromAddress(parseAddress(token0Address)))

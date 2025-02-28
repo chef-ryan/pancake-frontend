@@ -26,23 +26,6 @@ const nextConfig = {
   // Adjust Base Path for TG Bot
   basePath: `/${process.env.NEXT_PUBLIC_GLOBAL_PREFIX || ''}`,
 
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: `/${process.env.NEXT_PUBLIC_GLOBAL_PREFIX || ''}`,
-        permanent: false,
-        basePath: false,
-      },
-      {
-        source: '/liquidity/:path*',
-        destination: `/${process.env.NEXT_PUBLIC_GLOBAL_PREFIX || ''}/liquidity/:path*`,
-        permanent: false,
-        basePath: false,
-      },
-    ]
-  },
-
   // Adjust build output directory (default is `.next`)
   distDir: '.next',
 
