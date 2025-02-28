@@ -126,8 +126,8 @@ export const useAddLiquidity = () => {
               payload: payload0.toBoc().toString('base64'),
             },
             {
-              address: userJettonWallet1.toString(),
-              amount: GAS.toString(),
+              address: currency1.isNative ? routerJettonWallet1.toString() : userJettonWallet1.toString(),
+              amount: (GAS + (currency1.isNative ? amount1 : 0n)).toString(),
               payload: payload1.toBoc().toString('base64'),
             },
           ],
