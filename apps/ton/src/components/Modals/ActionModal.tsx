@@ -36,11 +36,11 @@ export enum ActionType {
   SwapCompleted = 'SwapCompleted',
 }
 
-const iconByActionType: (t) => {
+const iconByActionType = (): {
   [key in ActionType]?: { icon: string | JSX.Element; alt?: string }
-} = (t) => ({
+} => ({
   [ActionType.ConfirmTransaction]: {
-    icon: <TransactionAnimation type="loading" />,
+    icon: <TransactionAnimation type="loading" width="36px" />,
   },
   [ActionType.TransactionSubmitted]: {
     icon: <TransactionAnimation type="submit" />,
@@ -52,24 +52,18 @@ const iconByActionType: (t) => {
     icon: <AddCircleLoading />,
   },
   [ActionType.ConfirmLiquidityRemoval]: {
-    // icon: <AddCircleLoading />,
-    icon: <TransactionAnimation type="loading" />,
+    icon: <TransactionAnimation type="loading" width="36px" />,
   },
   [ActionType.ConfirmSwap]: {
-    icon: '/images/bunny-Illustration.png',
-    alt: t('Confirm Swap'),
+    icon: <TransactionAnimation type="loading" width="36px" />,
   },
   [ActionType.SwapSubmitted]: {
-    icon: '/images/bunny-Illustration.png',
-    alt: t('Confirm Swap'),
+    icon: <TransactionAnimation type="submit" />,
   },
   [ActionType.SwapCompleted]: {
-    icon: '/images/bunny-Illustration.png',
-    alt: t('Confirm Swap'),
+    icon: <TransactionAnimation type="longSuccess" width="96px" />,
   },
 })
-
-const SWAP_TYPES = [ActionType.ConfirmSwap, ActionType.SwapSubmitted, ActionType.SwapCompleted]
 
 interface ActionProps {
   currency0?: Currency
@@ -82,28 +76,28 @@ interface ActionProps {
 }
 
 export const ActionModal = memo((props: ActionProps) => {
-  const { type } = props
-
-  return type && SWAP_TYPES.includes(type) ? <SwapConfirmModal {...props} /> : <LiquidityConfirmModal {...props} />
+  return <LiquidityConfirmModal {...props} />
 })
+
+const CONFIRM_TYPES = [ActionType.ConfirmSwap, ActionType.ConfirmLiquidityRemoval, ActionType.ConfirmLiquiditySupply]
 
 const LiquidityConfirmModal = ({ currency0, currency1, amount0, amount1, hash, type }: ActionProps) => {
   const { t } = useTranslation()
   const network = useAtomValue(networkAtom)
   const userAddress = useAtomValue(addressAtom)
 
-  const actionIcon = type ? iconByActionType(t)[type] : null
+  const actionIcon = type ? iconByActionType()[type] : null
 
   return (
-    <StyledFlexColumn gap="8px">
+    <StyledFlexColumn gap="16px">
       <Grid gridTemplateColumns={['1fr 1fr 1fr']}>
         <GridColumn>
           <Box>
             {currency0 && <CurrencyLogo currency={currency0} size="40px" />}
             <FlexGap justifyContent="center" alignItems="center" gap="4px">
-              {amount0 && <NumberDisplay value={amount0} maximumSignificantDigits={6} fontSize="24px" bold />}
+              {amount0 && <NumberDisplay value={amount0} maximumSignificantDigits={6} fontSize="16px" bold />}
               {currency0 && (
-                <Text fontSize="24px" bold>
+                <Text fontSize="16px" bold>
                   {currency0?.symbol}
                 </Text>
               )}
@@ -111,23 +105,23 @@ const LiquidityConfirmModal = ({ currency0, currency1, amount0, amount1, hash, t
           </Box>
         </GridColumn>
         {actionIcon && (
-          <GridColumn>
+          <FlexGap mt="1px" justifyContent="center" alignItems="flex-start">
             <Box>
               {typeof actionIcon.icon === 'string' ? (
-                <img src={actionIcon.icon as string} alt={actionIcon.alt} width="80px" />
+                <img src={actionIcon.icon as string} alt={actionIcon.alt} width="36px" />
               ) : (
                 actionIcon.icon
               )}
             </Box>
-          </GridColumn>
+          </FlexGap>
         )}
         <GridColumn>
           <Box>
             {currency1 && <CurrencyLogo currency={currency1} size="40px" />}
             <FlexGap justifyContent="center" alignItems="center" gap="4px">
-              {amount1 && <NumberDisplay value={amount1} maximumSignificantDigits={6} fontSize="24px" bold />}
+              {amount1 && <NumberDisplay value={amount1} maximumSignificantDigits={6} fontSize="16px" bold />}
               {currency1 && (
-                <Text fontSize="24px" bold>
+                <Text fontSize="16px" bold>
                   {currency1?.symbol}
                 </Text>
               )}
@@ -137,22 +131,16 @@ const LiquidityConfirmModal = ({ currency0, currency1, amount0, amount1, hash, t
       </Grid>
 
       {hash ? (
-        <Box m="24px 0 4px">
-          <Text color="primary60">
-            <Link href={getBlockExplorerLink(hash, 'transaction', network)} target="_blank">
-              {t('View on explorer:')} {truncateHash(hash)}
-            </Link>
-          </Text>
-        </Box>
-      ) : type === ActionType.ConfirmLiquiditySupply || type === ActionType.ConfirmLiquidityRemoval ? (
-        <Box m="24px 0 4px">
-          <Text color="textSubtle">
-            {t('Please approve this in your wallet %address%', { address: truncateHash(userAddress, 4) })}
-          </Text>
-        </Box>
-      ) : (
-        <></>
-      )}
+        <Text color="primary60" small>
+          <Link href={getBlockExplorerLink(hash, 'transaction', network)} target="_blank">
+            {t('View on explorer:')} {truncateHash(hash)}
+          </Link>
+        </Text>
+      ) : type && CONFIRM_TYPES.includes(type) ? (
+        <Text color="textSubtle" small>
+          {t('Please approve this in your wallet %address%', { address: truncateHash(userAddress, 4) })}
+        </Text>
+      ) : null}
     </StyledFlexColumn>
   )
 }

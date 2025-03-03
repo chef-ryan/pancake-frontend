@@ -18,9 +18,10 @@ type ConfirmSwapModalAtomProps = { isOpen: boolean } & ConfirmSwapModalProps
 
 export const setConfirmSwapModalAtom = atom(null, (_, set, { isOpen = true, ...props }: ConfirmSwapModalAtomProps) => {
   set(appModalAtom, {
-    title: <Title />,
+    title: null,
     content: <ConfirmSwapModal {...props} />,
     closeable: true,
     isOpen,
+    bodyPadding: '16px 16px 32px',
   })
 })

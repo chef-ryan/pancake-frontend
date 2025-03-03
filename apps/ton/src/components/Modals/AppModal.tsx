@@ -10,7 +10,7 @@ export const AppModal = () => {
 
   const [modalData, setModalData] = useAtom(appModalAtom)
 
-  const { isOpen, title, content, closeable } = modalData
+  const { isOpen, title, content, closeable, ...props } = modalData
 
   const handleDismiss = useCallback(() => {
     if (!closeable) return
@@ -27,7 +27,8 @@ export const AppModal = () => {
         minHeight="240px"
         overrideHeaderContent={isSmallScreen ? <GrabberBar mt="2px" /> : title ? null : <></>}
         hideCloseButton={!closeable}
-        bodyPadding="16px 24px"
+        bodyPadding="16px 24px 32px"
+        {...props}
       >
         {title && isSmallScreen && (
           <ModalTitle mb="32px">

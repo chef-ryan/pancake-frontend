@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency as EVMCurrency, TradeType } from '@pancakeswap/swap-sdk-core'
 import { Currency, Trade } from '@pancakeswap/ton-v2-sdk'
-import { ArrowDownIcon, Button, Flex, FlexGap, Heading } from '@pancakeswap/uikit'
+import { ArrowDownIcon, Button, Column, Flex, FlexGap, Heading } from '@pancakeswap/uikit'
 import { LightGreyCard } from 'components/Card'
 import { CurrencyLogo } from 'components/widgets'
 
@@ -25,26 +25,26 @@ export const ConfirmSwapModal = ({
 }: ConfirmSwapModalProps) => {
   const { t } = useTranslation()
   return (
-    <>
-      <FlexGap flexDirection="column" gap="16px">
-        <Flex justifyContent="space-between">
+    <Column gap="24px">
+      <FlexGap flexDirection="column" gap="16px" px="16px">
+        <Flex justifyContent="space-between" alignItems="center">
           <Heading scale="md">{trade?.inputAmount.toExact() ?? '-'}</Heading>
           <FlexGap gap="8px" alignItems="center">
             <Heading scale="md">{inputCurrency.symbol}</Heading>
-            <CurrencyLogo currency={inputCurrency as unknown as EVMCurrency} size={`${LOGO_SIZE.MAX}px`} />
+            <CurrencyLogo currency={inputCurrency as unknown as EVMCurrency} size={`${LOGO_SIZE.X_MAX}px`} />
           </FlexGap>
         </Flex>
         <ArrowDownIcon color="textSubtle" width="24px" />
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" alignItems="center">
           <Heading scale="md">{trade?.outputAmount.toExact() ?? '-'}</Heading>
           <FlexGap gap="8px" alignItems="center">
             <Heading scale="md">{outputCurrency.symbol}</Heading>
-            <CurrencyLogo currency={outputCurrency as unknown as EVMCurrency} size={`${LOGO_SIZE.MAX}px`} />
+            <CurrencyLogo currency={outputCurrency as unknown as EVMCurrency} size={`${LOGO_SIZE.X_MAX}px`} />
           </FlexGap>
         </Flex>
       </FlexGap>
 
-      <LightGreyCard mt="24px" padding="16px">
+      <LightGreyCard padding="16px">
         <PricingAndSlippage
           isLoading={false}
           price={trade?.executionPrice}
@@ -55,9 +55,7 @@ export const ConfirmSwapModal = ({
         <AdvancedSwapDetailsDropdown trade={trade} />
       </LightGreyCard>
 
-      <Button mt="24px" onClick={onConfirm}>
-        {t('Continue')}
-      </Button>
-    </>
+      <Button onClick={onConfirm}>{t('Continue')}</Button>
+    </Column>
   )
 }

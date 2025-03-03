@@ -1,7 +1,8 @@
+import { type ModalProps } from '@pancakeswap/uikit'
 import { atom } from 'jotai'
 import { ReactNode } from 'react'
 
-export interface AppModalData {
+export interface AppModalData extends ModalProps {
   isOpen: boolean
   /** Pass translated values */
   title: ReactNode | null

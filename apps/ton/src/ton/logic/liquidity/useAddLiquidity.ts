@@ -133,7 +133,7 @@ export const useAddLiquidity = () => {
           ],
         }
 
-        const { boc } = await tonUI.sendTransaction(txRequest)
+        const { boc } = await tonUI.sendTransaction(txRequest, { modals: ['error'] })
         if (boc) {
           setTxnModal({
             type: ActionType.TransactionSubmitted,

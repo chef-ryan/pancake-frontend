@@ -17,6 +17,7 @@ export enum LOGO_SIZE {
   LARGE = 28,
   X_LARGE = 30,
   MAX = 32,
+  X_MAX = 40,
 }
 
 export const fontSizeBySymbolAtom = atom<Record<string, { symbol?: number; logo?: number }>>({})

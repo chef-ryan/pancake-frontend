@@ -143,7 +143,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
       if (!txRequest) {
         return
       }
-      const { boc } = await tonUI.sendTransaction(txRequest)
+      const { boc } = await tonUI.sendTransaction(txRequest, { modals: ['error'] })
 
       if (boc) {
         setTransactionModal({
