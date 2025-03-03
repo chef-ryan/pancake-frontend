@@ -4,6 +4,7 @@ import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Box, Column, FlexGap, Grid, Row, Text } from '@pancakeswap/uikit'
 import { ConfirmModalState, SwapPendingModalContent } from '@pancakeswap/widgets-internal'
 import { TransactionAnimation } from 'components/Animations/TransactionAnimation'
+import { AddCircleLoading } from 'components/Misc/AddCircleLoading'
 import { CurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { useAtomValue } from 'jotai'
@@ -48,8 +49,7 @@ const iconByActionType: (t) => {
     icon: <TransactionAnimation type="longSuccess" width="96px" />,
   },
   [ActionType.ConfirmLiquiditySupply]: {
-    // icon: <AddCircleLoading />,
-    icon: <TransactionAnimation type="loading" />,
+    icon: <AddCircleLoading />,
   },
   [ActionType.ConfirmLiquidityRemoval]: {
     // icon: <AddCircleLoading />,

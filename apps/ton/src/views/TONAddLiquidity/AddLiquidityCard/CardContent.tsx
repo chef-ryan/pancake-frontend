@@ -102,13 +102,13 @@ export const CardContent = (props: CardContentProps) => {
       [CurrencyField.ADD_LIQUIDITY_CURRENCY0]:
         independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY0 || !rates.currency1 || !rates.currency0
           ? token0Value
-          : token1Value
+          : BN(token1Value).isFinite()
           ? BN(token1Value).times(rates.currency1).toString()
           : '',
       [CurrencyField.ADD_LIQUIDITY_CURRENCY1]:
         independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY1 || !rates.currency0 || !rates.currency1
           ? token1Value
-          : token0Value
+          : BN(token0Value).isFinite()
           ? BN(token0Value).times(rates.currency0).toString()
           : '',
     }

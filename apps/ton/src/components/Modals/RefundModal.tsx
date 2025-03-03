@@ -65,7 +65,7 @@ const PoolRefundRow = ({
     <LightCard padding="16px">
       <Column gap="16px">
         <FlexGap gap="8px">
-          <DoubleCurrencyLogo currency0={currency0} currency1={currency1} />
+          <DoubleCurrencyLogo currency0={currency0} currency1={currency1} overlap />
           <Text bold>
             {currency0?.symbol}-{currency1?.symbol}
           </Text>

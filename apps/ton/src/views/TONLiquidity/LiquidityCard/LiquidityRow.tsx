@@ -36,7 +36,7 @@ const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
 `
 
 const AppearLightCard = styled(LightCard)`
-  animation: ${appearUpAnimation} 0.3s ease-in-out forwards;
+  animation: ${appearUpAnimation} 0.4s ease-out forwards;
   will-change: transform, opacity;
 `
 

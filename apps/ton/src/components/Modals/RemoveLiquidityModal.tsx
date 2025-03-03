@@ -76,7 +76,7 @@ export const RemoveLiquidityModal = ({
         <Hr />
         <Flex mt="16px" justifyContent="space-between">
           <FlexGap gap="8px">
-            <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} />
+            <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} overlap />
             <Text color="textSubtle">
               {t('%currency0%/%currency1% Burned', {
                 currency0: currency0?.symbol,

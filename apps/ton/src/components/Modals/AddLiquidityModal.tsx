@@ -45,7 +45,7 @@ export const AddLiquidityModal = ({
       <LightGreyCard>
         <Flex justifyContent="space-between" flexWrap="wrap">
           <FlexGap gap="8px">
-            <DoubleCurrencyLogo currency0={currency0} currency1={currency1} />
+            <DoubleCurrencyLogo currency0={currency0} currency1={currency1} overlap />
             <Text bold>
               {currency0?.symbol}-{currency1?.symbol} LP
             </Text>
