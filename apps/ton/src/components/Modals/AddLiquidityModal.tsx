@@ -40,10 +40,10 @@ export const AddLiquidityModal = ({
   const [slippage] = useUserSlippage()
 
   return (
-    <StyledFlexGap gap="8px">
+    <StyledFlexGap gap="8px" minWidth={[null, null, null, '380px']}>
       <Text color="textSubtle">{t('You will receive')}</Text>
       <LightGreyCard>
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" flexWrap="wrap">
           <FlexGap gap="8px">
             <DoubleCurrencyLogo currency0={currency0} currency1={currency1} />
             <Text bold>
@@ -81,7 +81,7 @@ export const AddLiquidityModal = ({
         </FlexGap>
       </LightGreyCard>
 
-      <Flex mt="8px" justifyContent="space-between" flexWrap="wrap">
+      <Flex mt="16px" justifyContent="space-between" flexWrap="wrap">
         <Text color="textSubtle">{t('Rates')}</Text>
         <Flex flexDirection="column">
           <Text>
@@ -96,12 +96,13 @@ export const AddLiquidityModal = ({
           </Text>
         </Flex>
       </Flex>
-      <Flex justifyContent="space-between" flexWrap="wrap">
+
+      <Flex mt="8px" justifyContent="space-between" flexWrap="wrap">
         <Text color="textSubtle">{t('Your share in the pair')}</Text>
         <NumberDisplay value={shareInPool} suffix="%" maximumSignificantDigits={6} />
       </Flex>
 
-      <Flex justifyContent="space-between" flexWrap="wrap" alignItems="center">
+      <Flex mt="8px" justifyContent="space-between" flexWrap="wrap" alignItems="center">
         <Text color="textSubtle">{t('Slippage Tolerance')}</Text>
         <Text>{slippage / 100}%</Text>
       </Flex>
