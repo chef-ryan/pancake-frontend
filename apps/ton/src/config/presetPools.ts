@@ -5,7 +5,7 @@ export const PRESET_POOLS = {
   [TonNetworks.Mainnet]: [],
   [TonNetworks.Testnet]: {
     // ...testnetPools,
-    // TON-PAN
+    // PAN-TON
     'kQABtdKCYuAAIrEAD4LbONdybLTYsYleyYhsy6CfsXkkP0tg<>kQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffAw5':
       'EQD_Lx2fpT3CDX16OzHWu4utvHkMqk4cww65uN53js4WY5Au',
     // TON-USDC
@@ -41,5 +41,8 @@ export const PRESET_POOLS = {
     // JET-RB4
     'EQAiihOa4xLY1gDK55C6LzSU5cRImwXJMmIKkjQ5T5e1wr85<>kQAFlRlDdSoVFSXX9j7EcudkTedrix7JEVbjfps9oFXnIyJ9':
       'EQDE_tbygSmE01uVhPQ0nsMT1lbFftuzx4SXJ0AAIFi8TFKo',
+    // TON-JET
+    'kQCM3B12QK1e4yZSf8GtBRT0aLMNyEsBc_DhVfRRtOEffAw5<>EQAiihOa4xLY1gDK55C6LzSU5cRImwXJMmIKkjQ5T5e1wr85':
+      'EQDsCbNuMFhlsyJlkSMQ2WNPLxY9Z1dXpeG4rKya2ypRzsHu',
   },
 }
