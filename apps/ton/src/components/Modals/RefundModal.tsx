@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Button, Flex, FlexGap, LoadingDot, Text } from '@pancakeswap/uikit'
+import { Button, Column, Flex, FlexGap, LoadingDot, PreTitle, Text } from '@pancakeswap/uikit'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
-import { Card } from 'components/Card'
+import { Card, LightCard } from 'components/Card'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/widgets'
 import { useUserRefundPools } from 'hooks/liquidity/useUserRefundPools'
 import { useAtomValue } from 'jotai'
@@ -16,10 +16,8 @@ export const RefundModal = () => {
   const { poolsWithRefunds, isFetching } = useUserRefundPools()
 
   return (
-    <FlexGap gap="8px" flexDirection="column">
-      <Text color="secondary" textTransform="uppercase" small bold>
-        {t('Pools and Refunds')}
-      </Text>
+    <FlexGap gap="16px" flexDirection="column">
+      <PreTitle>{t('Pools and Refunds')}</PreTitle>
 
       {poolsWithRefunds.length === 0 ? (
         <FlexGap my="24px" gap="8px" flexDirection="column" alignItems="center">
@@ -64,35 +62,37 @@ const PoolRefundRow = ({ token0, token1, refundAmount0, refundAmount1, lpAccount
   }, [refund])
 
   return (
-    <Card>
-      <FlexGap gap="8px">
-        <DoubleCurrencyLogo currency0={currency0} currency1={currency1} />
-        <Text bold>
-          {currency0?.symbol}-{currency1?.symbol}
+    <LightCard padding="16px">
+      <Column gap="16px">
+        <FlexGap gap="8px">
+          <DoubleCurrencyLogo currency0={currency0} currency1={currency1} />
+          <Text bold>
+            {currency0?.symbol}-{currency1?.symbol}
+          </Text>
+        </FlexGap>
+
+        <Text color="textSubtle" textTransform="uppercase" fontSize="12px" bold>
+          {t('Refundable')}
         </Text>
-      </FlexGap>
+        <FlexGap gap="16px" flexDirection="column">
+          <Flex justifyContent="space-between">
+            <FlexGap gap="8px">
+              <CurrencyLogo currency={currency0} />
+              <Text>{currency0?.symbol}</Text>
+            </FlexGap>
+            <Text>{formatBalance(refundAmount0, currency0?.decimals)}</Text>
+          </Flex>
+          <Flex justifyContent="space-between">
+            <FlexGap gap="8px">
+              <CurrencyLogo currency={currency1} />
+              <Text>{currency1?.symbol}</Text>
+            </FlexGap>
+            <Text>{formatBalance(refundAmount1, currency1?.decimals)}</Text>
+          </Flex>
 
-      <Text mt="16px" color="textSubtle" textTransform="uppercase" small bold>
-        {t('Refundable')}
-      </Text>
-      <FlexGap mt="16px" gap="16px" flexDirection="column">
-        <Flex justifyContent="space-between">
-          <FlexGap gap="8px">
-            <CurrencyLogo currency={currency0} />
-            <Text>{currency0?.symbol}</Text>
-          </FlexGap>
-          <Text>{formatBalance(refundAmount0, currency0?.decimals)}</Text>
-        </Flex>
-        <Flex justifyContent="space-between">
-          <FlexGap gap="8px">
-            <CurrencyLogo currency={currency1} />
-            <Text>{currency1?.symbol}</Text>
-          </FlexGap>
-          <Text>{formatBalance(refundAmount1, currency1?.decimals)}</Text>
-        </Flex>
-
-        <Button onClick={handleRefund}>{t('Refund')}</Button>
-      </FlexGap>
-    </Card>
+          <Button onClick={handleRefund}>{t('Refund')}</Button>
+        </FlexGap>
+      </Column>
+    </LightCard>
   )
 }

@@ -35,7 +35,7 @@ const StyledModalContainer = styled(ModalContainer)`
   width: 100%;
   min-width: 320px;
   max-width: 420px !important;
-  min-height: calc(var(--vh, 1vh) * 90);
+  min-height: calc(var(--vh, 1vh) * 80);
   ${({ theme }) => theme.mediaQueries.md} {
     min-height: auto;
   }
@@ -47,6 +47,7 @@ const StyledModalHeader = styled(ModalHeader)`
 
 const StyledModalBody = styled(ModalBody)`
   padding: 4px 24px 24px;
+  max-height: calc(90vh - 48px);
   overflow-y: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -141,7 +142,7 @@ export default function CurrencySearchModal({
 
   useEffect(() => {
     if (!wrapperRef.current) return
-    setHeight(wrapperRef.current.offsetHeight - 330)
+    setHeight(wrapperRef.current.offsetHeight - 250)
   }, [])
 
   return (
@@ -189,23 +190,6 @@ export default function CurrencySearchModal({
                     ml={isMobile ? '18px' : '12px'}
                     tooltipPlacement="top"
                   />
-                  {/* <AddToWalletButton
-                    data-dd-action-name="Add to wallet"
-                    variant="text"
-                    p="0"
-                    ml={isMobile ? '21px' : '15px'}
-                    height="auto"
-                    width="fit-content"
-                    tokenAddress={selectedCurrency.wrapped.address}
-                    tokenSymbol={selectedCurrency.symbol}
-                    tokenDecimals={selectedCurrency.decimals}
-                    tokenLogo={
-                      selectedCurrency.wrapped instanceof WrappedTokenInfo
-                        ? selectedCurrency.wrapped.logoURI
-                        : undefined
-                    }
-                    tooltipPlacement="top"
-                  /> */}
                 </FlexGap>
               )}
             </>
@@ -231,18 +215,6 @@ export default function CurrencySearchModal({
           />
         ) : (
           ''
-        )}
-        {modalView === CurrencyModalView.search && (
-          <Footer>
-            <Button
-              scale="sm"
-              variant="text"
-              onClick={() => setModalView(CurrencyModalView.manage)}
-              className="list-token-manage-button"
-            >
-              {t('Manage Tokens')}
-            </Button>
-          </Footer>
         )}
       </StyledModalBody>
     </StyledModalContainer>

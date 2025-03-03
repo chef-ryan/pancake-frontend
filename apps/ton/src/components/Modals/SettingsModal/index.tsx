@@ -2,6 +2,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import {
   Button,
   ChevronRightIcon,
+  FlexGap,
   Heading,
   ModalV2,
   MotionModal,
@@ -48,32 +49,31 @@ export const SettingsModal = ({ isOpen, onDismiss }: SettingsModalProps) => {
         title={t('Settings')}
         onDismiss={onDismiss}
         headerBorderColor="transparent"
-        minWidth="400px"
         maxWidth={isSmallScreen ? '100%' : '460px'}
         overrideHeaderContent={isSmallScreen ? <GrabberBar mt="2px" /> : null}
-        bodyPadding="0 24px 24px"
+        bodyPadding="16px 16px 32px"
       >
-        {isSmallScreen && <Heading mb="24px">{t('Settings')}</Heading>}
+        <FlexGap gap="32px" flexDirection="column">
+          {isSmallScreen && <Heading>{t('Settings')}</Heading>}
 
-        <PreTitle>{t('Slippage and Deadline')}</PreTitle>
-
-        <SlippageSettings mt="8px" />
-        <TransactionDeadlineSettings mt="16px" />
-        <RoutingPreference mt="16px" />
-
-        <LightGreyCard mt="24px">
-          <PreTitle>{t('Failed Transactions Refund')}</PreTitle>
-
-          <Text mt="12px" fontSize="14px">
-            {t(
-              'Failed “Add Liquidity” transactions may introduce leftover tokens in the pool contract. To check and claim those tokens, enter the token pairs within the following page.',
-            )}
-          </Text>
-
-          <TextButton mt="16px" endIcon={<ChevronRightIcon color="primary60" />} onClick={openRefundModal}>
-            {t('Check and Refund')}
-          </TextButton>
-        </LightGreyCard>
+          <FlexGap gap="16px" flexDirection="column">
+            <PreTitle>{t('Slippage and Deadline')}</PreTitle>
+            <SlippageSettings />
+            <TransactionDeadlineSettings />
+            <RoutingPreference />
+            <LightGreyCard padding="12px">
+              <PreTitle mb="8px">{t('Failed Transactions Refund')}</PreTitle>
+              <Text fontSize="14px">
+                {t(
+                  'Failed “Add Liquidity” transactions may introduce leftover tokens in the pool contract. To check and claim those tokens, enter the token pairs within the following page.',
+                )}
+              </Text>
+              <TextButton endIcon={<ChevronRightIcon color="primary60" />} onClick={openRefundModal}>
+                {t('Check and Refund')}
+              </TextButton>
+            </LightGreyCard>
+          </FlexGap>
+        </FlexGap>
       </MotionModal>
     </ModalV2>
   )

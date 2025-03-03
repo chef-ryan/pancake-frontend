@@ -2,8 +2,8 @@ import { Flex, FlexProps } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 
 const HorizontalBar = styled.div`
-  width: 100px;
-  height: 6px;
+  width: 64px;
+  height: 4px;
   background-color: ${({ theme }) => theme.colors.backgroundDisabled};
   border-radius: 10px;
 `

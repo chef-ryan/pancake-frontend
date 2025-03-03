@@ -23,14 +23,15 @@ export const AppModal = () => {
         title={title}
         onDismiss={handleDismiss}
         headerBorderColor="transparent"
-        minWidth="380px"
+        minWidth="360px"
         minHeight="240px"
         overrideHeaderContent={isSmallScreen ? <GrabberBar mt="2px" /> : title ? null : <></>}
         hideCloseButton={!closeable}
+        bodyPadding="16px 24px"
       >
         {title && isSmallScreen && (
-          <ModalTitle mb="24px">
-            <Heading scale="lg" width="100%">
+          <ModalTitle mb="32px">
+            <Heading scale="md" width="100%">
               {title}
             </Heading>
           </ModalTitle>

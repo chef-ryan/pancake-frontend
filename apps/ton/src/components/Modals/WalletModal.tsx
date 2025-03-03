@@ -65,7 +65,7 @@ export const WalletModal = () => {
 
   return (
     <FlexGap gap="8px" flexDirection="column">
-      <LightTertiaryCard active={false}>
+      <LightTertiaryCard active={false} padding="5px">
         <Flex alignItems="center" justifyContent="space-between">
           <FlexGap alignItems="center" gap="8px">
             <WalletIconContainer>

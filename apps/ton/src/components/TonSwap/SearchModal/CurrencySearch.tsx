@@ -46,7 +46,6 @@ function CurrencySearch({
   tokensToShow,
 }: CurrencySearchProps) {
   const { t } = useTranslation()
-  const { chainId } = useActiveChainId()
 
   // refs for fixed size lists
   const fixedList = useRef<FixedSizeList>()
@@ -54,13 +53,8 @@ function CurrencySearch({
   const [searchQuery, setSearchQuery] = useState<string>('')
   const debouncedQuery = useDebounce(searchQuery, 200)
 
-  const [invertSearchOrder] = useState<boolean>(false)
-
   const { data: activeList } = useAtomValue(fetchListAtom)
   const allTokens = useMemo(() => activeList || [], [activeList])
-
-  // if they input an address, use it
-  const searchToken = useToken(debouncedQuery)
 
   const { isMobile } = useMatchBreakpoints()
 
@@ -78,7 +72,6 @@ function CurrencySearch({
   }, [tokensToShow, allTokens, debouncedQuery])
 
   const filteredQueryTokens = useSortedTokensByQuery(filteredTokens, debouncedQuery)
-  // const tokenComparator = useTokenComparator(invertSearchOrder)
 
   const balances = useAtomValue(balanceMultipleAtom(filteredQueryTokens))
   const filteredSortedTokens: Currency[] = useMemo(() => {
@@ -104,7 +97,6 @@ function CurrencySearch({
 
   const handleInput = useCallback((event) => {
     const input = event.target.value
-    // const checksummedInput = parseAddress(input).toString()
     const checksummedInput = input
     setSearchQuery(checksummedInput || input)
     fixedList.current?.scrollTo(0)
@@ -129,57 +121,46 @@ function CurrencySearch({
     [debouncedQuery, filteredSortedTokens, handleCurrencySelect, native],
   )
 
-  const getCurrencyListRows = useCallback(() => {
-    // if (searchToken && !searchTokenIsAdded && !hasFilteredInactiveTokens) {
-    //   return (
-    //     <Column style={{ padding: '20px 0', height: '100%' }}>
-    //       <ImportRow
-    //         onCurrencySelect={handleCurrencySelect}
-    //         token={searchToken}
-    //         showImportView={showImportView}
-    //         setImportToken={setImportToken}
-    //       />
-    //     </Column>
-    //   )
-    // }
-
-    return filteredSortedTokens?.length ? (
-      <Box mx="-24px" mt="20px" mb="24px">
-        <CurrencyList
-          height={isMobile ? (showCommonBases ? height || 250 : height ? height + 80 : 350) : 390}
-          showNative={showNative}
-          currencies={filteredSortedTokens}
-          inactiveCurrencies={[]}
-          breakIndex={filteredSortedTokens ? filteredSortedTokens.length : undefined}
-          onCurrencySelect={handleCurrencySelect}
-          otherCurrency={otherSelectedCurrency}
-          selectedCurrency={selectedCurrency}
-          fixedListRef={fixedList}
-          showImportView={showImportView}
-          setImportToken={setImportToken}
-        />
-      </Box>
-    ) : (
-      <Column mt="16px" style={{ padding: '20px', height: '100%', alignItems: 'center' }}>
-        <img src={getAssetUrl('laptop-bunny.png')} alt="No results" width="100px" />
-        <Text color="textSubtle" textAlign="center" mt="16px" mb="20px">
-          {t('No tokens found')}
-        </Text>
-      </Column>
-    )
-  }, [
-    filteredSortedTokens,
-    handleCurrencySelect,
-    otherSelectedCurrency,
-    selectedCurrency,
-    setImportToken,
-    showNative,
-    showImportView,
-    t,
-    showCommonBases,
-    isMobile,
-    height,
-  ])
+  const CurrencyListRows = useMemo(
+    () =>
+      filteredSortedTokens?.length ? (
+        <Box mx="-24px" mt="20px">
+          <CurrencyList
+            height={isMobile ? (showCommonBases ? height || 250 : height ? height + 80 : 350) : 390}
+            showNative={showNative}
+            currencies={filteredSortedTokens}
+            inactiveCurrencies={[]}
+            breakIndex={filteredSortedTokens ? filteredSortedTokens.length : undefined}
+            onCurrencySelect={handleCurrencySelect}
+            otherCurrency={otherSelectedCurrency}
+            selectedCurrency={selectedCurrency}
+            fixedListRef={fixedList}
+            showImportView={showImportView}
+            setImportToken={setImportToken}
+          />
+        </Box>
+      ) : (
+        <Column mt="16px" style={{ padding: '20px', height: '100%', alignItems: 'center' }}>
+          <img src={getAssetUrl('laptop-bunny.png')} alt="No results" width="100px" />
+          <Text color="textSubtle" textAlign="center" mt="16px" mb="20px">
+            {t('No tokens found')}
+          </Text>
+        </Column>
+      ),
+    [
+      filteredSortedTokens,
+      handleCurrencySelect,
+      otherSelectedCurrency,
+      selectedCurrency,
+      setImportToken,
+      showNative,
+      showImportView,
+      t,
+      showCommonBases,
+      isMobile,
+      height,
+    ],
+  )
 
   return (
     <>
@@ -206,7 +187,7 @@ function CurrencySearch({
           />
         )}
       </AutoColumn>
-      {getCurrencyListRows()}
+      {CurrencyListRows}
     </>
   )
 }
