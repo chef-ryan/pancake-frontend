@@ -86,19 +86,20 @@ export const LiquidityRow = ({
           title={
             <FlexGap flexDirection="column" gap="2px">
               <FlexGap gap="8px">
-                <DoubleCurrencyLogo currency0={currency0} currency1={currency1} />
-                <Text>
-                  {symbol0}-{symbol1} LP
-                </Text>
+                <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={28} overlap />
+                <FlexGap flexDirection="column">
+                  <Text>
+                    {symbol0}-{symbol1} LP
+                  </Text>
+                  <NumberDisplay
+                    value={formatBigNumber(balance, LP_TOKEN_DECIMALS).toString()}
+                    maximumSignificantDigits={4}
+                    small
+                    bold
+                    color="textSubtle"
+                  />
+                </FlexGap>
               </FlexGap>
-
-              <NumberDisplay
-                value={formatBigNumber(balance, LP_TOKEN_DECIMALS).toString()}
-                maximumSignificantDigits={4}
-                small
-                bold
-                color="textSubtle"
-              />
             </FlexGap>
           }
           content={

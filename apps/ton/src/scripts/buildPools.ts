@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import path from 'path'
 
-import { Contracts, TonChainId, TonContractNames } from '@pancakeswap/ton-v2-sdk'
+import { Contracts, Native, TonChainId, TonContractNames } from '@pancakeswap/ton-v2-sdk'
 import { TonClient } from '@ton/ton'
 import { writeFileSync } from 'fs'
 import { parseAddress } from 'ton/utils/address'
@@ -103,8 +103,8 @@ const generatePoolsForPairs = async (chainId: TonChainId, pairs: any[][]) => {
 }
 
 export const buildPools = async () => {
-  const mainnetTokens = mainnetList.tokens
-  const testnetTokens = testnetList.tokens
+  const mainnetTokens = [...mainnetList.tokens, Native.onChain(TonChainId.Mainnet).wrapped]
+  const testnetTokens = [...testnetList.tokens, Native.onChain(TonChainId.Testnet).wrapped]
 
   const mainnetPairs = getTokenPairs(mainnetTokens)
   const testnetPairs = getTokenPairs(testnetTokens)
