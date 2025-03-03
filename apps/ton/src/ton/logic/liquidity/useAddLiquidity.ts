@@ -18,6 +18,8 @@ import { getCurrencyOrder } from 'ton/utils/tokenOrder'
 import { getTransactionByBOC } from 'ton/utils/transaction'
 import { logGTMAddLiquidityTxSentEvent } from 'utils/customGTMEventTracking'
 
+import BN from 'bignumber.js'
+
 interface AddLiquidityArgs {
   token0: Currency
   token1: Currency
@@ -28,7 +30,8 @@ interface AddLiquidityArgs {
   minLpOut: bigint
 }
 
-const GAS = toNano('0.6')
+const GAS = BN(toNano('0.6').toString())
+const FORWARD_GAS = toNano('0.3')
 
 export const useAddLiquidity = () => {
   const router = useRouter()
@@ -89,7 +92,7 @@ export const useAddLiquidity = () => {
               destination: routerAddress,
               responseDestination: userAddress,
               customPayload: null,
-              forwardAmount: toNano('0.3'),
+              forwardAmount: FORWARD_GAS,
               forwardPayload: forwardPayload0,
             }),
           )
@@ -111,7 +114,7 @@ export const useAddLiquidity = () => {
               destination: routerAddress,
               responseDestination: userAddress,
               customPayload: null,
-              forwardAmount: toNano('0.3'),
+              forwardAmount: FORWARD_GAS,
               forwardPayload: forwardPayload1,
             }),
           )
@@ -122,18 +125,26 @@ export const useAddLiquidity = () => {
           messages: [
             {
               address: currency0.isNative ? routerJettonWallet0.toString() : userJettonWallet0.toString(),
-              amount: (GAS + (currency0.isNative ? amount0 : 0n)).toString(),
+              amount: GAS.plus(currency0.isNative ? amount0.toString() : BN(0)).toString(),
               payload: payload0.toBoc().toString('base64'),
             },
             {
               address: currency1.isNative ? routerJettonWallet1.toString() : userJettonWallet1.toString(),
-              amount: (GAS + (currency1.isNative ? amount1 : 0n)).toString(),
+              amount: GAS.plus(currency1.isNative ? amount1.toString() : BN(0)).toString(),
               payload: payload1.toBoc().toString('base64'),
             },
           ],
         }
 
         const { boc } = await tonUI.sendTransaction(txRequest, { modals: ['error'] })
+        console.log('txnRequest', {
+          txRequest,
+          amount0,
+          amount1,
+          gassedAmount0: GAS.plus(currency0.isNative ? amount0.toString() : BN(0)).toString(),
+          gassedAmount1: GAS.plus(currency1.isNative ? amount1.toString() : BN(0)).toString(),
+        })
+
         if (boc) {
           setTxnModal({
             type: ActionType.TransactionSubmitted,
