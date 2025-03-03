@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { AddIcon, appearAnimation, Box, Button, Flex, FlexGap, MinusIcon, Text } from '@pancakeswap/uikit'
+import { AddIcon, Box, Button, Flex, FlexGap, MinusIcon, Text } from '@pancakeswap/uikit'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import BN from 'bignumber.js'
 import { LightCard } from 'components/Card'
@@ -10,11 +10,23 @@ import { ADDRESS_CONCAT_LENGTH, LP_TOKEN_DECIMALS } from 'config/constants/forma
 import { useAtomValue } from 'jotai'
 import Link from 'next/link'
 import { useCallback, useMemo, useState } from 'react'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { formatBigNumber } from 'ton/utils/formatting'
 import { truncateHash } from 'utils'
 import { getAddLiquidityLink, getRemoveLiquidityLink } from 'utils/getLink'
 import { unwrappedToken } from 'utils/tokens/unwrappedToken'
+
+const appearUpAnimation = keyframes`
+  from {
+    opacity: 0.2;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`
 
 const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
   width: 100%;
@@ -24,7 +36,8 @@ const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
 `
 
 const AppearLightCard = styled(LightCard)`
-  animation: ${appearAnimation} 0.3s ease-out forwards;
+  animation: ${appearUpAnimation} 0.3s ease-in-out forwards;
+  will-change: transform, opacity;
 `
 
 interface LiquidityRowProps {
