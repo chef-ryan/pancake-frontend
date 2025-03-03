@@ -1,7 +1,13 @@
+import { PageMeta } from 'components/Layout/Page'
 import { TONAddLiquidity } from 'views/TONAddLiquidity'
 
 const AddLiquidityPage = () => {
-  return <TONAddLiquidity />
+  return (
+    <>
+      <PageMeta />
+      <TONAddLiquidity />
+    </>
+  )
 }
 
 export default AddLiquidityPage

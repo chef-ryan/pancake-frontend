@@ -17,11 +17,17 @@ interface PathList {
 const getPathList = memoize((t: ContextApi['t']): PathList => {
   return {
     paths: {
-      '/home': { title: t('Home') },
-      '/': { basePath: true, title: t('Exchange'), image: `${ASSET_CDN}/web/og/swap.jpg` },
-      '/swap': { basePath: true, title: t('Exchange'), image: `${ASSET_CDN}/web/og/swap.jpg` },
-      '/add': { basePath: true, title: t('Add Liquidity'), image: `${ASSET_CDN}/web/og/liquidity.jpg` },
-      '/remove': { basePath: true, title: t('Remove Liquidity'), image: `${ASSET_CDN}/web/og/liquidity.jpg` },
+      '/': { basePath: true, title: t('Swap'), image: `${ASSET_CDN}/web/og/swap.jpg` },
+      '/liquidity/add/[[...currency]]': {
+        basePath: true,
+        title: t('Add Liquidity'),
+        image: `${ASSET_CDN}/web/og/liquidity.jpg`,
+      },
+      '/liquidity/remove/[[...currency]]': {
+        basePath: true,
+        title: t('Remove Liquidity'),
+        image: `${ASSET_CDN}/web/og/liquidity.jpg`,
+      },
       '/liquidity': { title: t('Liquidity'), image: `${ASSET_CDN}/web/og/liquidity.jpg` },
     },
     defaultTitleSuffix: t('PancakeSwap'),
@@ -43,7 +49,7 @@ export const getCustomMeta = memoize(
 
     if (pathMetadata) {
       return {
-        title: `${pathMetadata.title}`,
+        title: `${pathMetadata.title} | PancakeSwap`,
         ...(pathMetadata.description && { description: pathMetadata.description }),
         image: pathMetadata.image,
       }

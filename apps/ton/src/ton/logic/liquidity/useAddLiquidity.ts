@@ -137,13 +137,6 @@ export const useAddLiquidity = () => {
         }
 
         const { boc } = await tonUI.sendTransaction(txRequest, { modals: ['error'] })
-        console.log('txnRequest', {
-          txRequest,
-          amount0,
-          amount1,
-          gassedAmount0: GAS.plus(currency0.isNative ? amount0.toString() : BN(0)).toString(),
-          gassedAmount1: GAS.plus(currency1.isNative ? amount1.toString() : BN(0)).toString(),
-        })
 
         if (boc) {
           setTxnModal({

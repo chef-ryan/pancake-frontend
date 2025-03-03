@@ -18,7 +18,7 @@ import { unwrappedToken } from 'utils/tokens/unwrappedToken'
 
 const appearUpAnimation = keyframes`
   from {
-    opacity: 0.2;
+    opacity: 0;
     transform: translateY(8px);
   }
 

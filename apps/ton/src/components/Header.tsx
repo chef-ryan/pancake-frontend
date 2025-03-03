@@ -14,6 +14,7 @@ import {
 } from '@pancakeswap/uikit'
 import { bridgeLink } from 'config/constants/endpoints'
 import { useAtomValue } from 'jotai'
+import { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { networkAtom } from 'ton/atom/networkAtom'
 import { Logo } from './Logo'
@@ -41,6 +42,21 @@ export const Header = ({ showBridgeLink }: HeaderProps) => {
   const network = useAtomValue(networkAtom)
 
   const { isOpen, setIsOpen, onDismiss } = useModalV2()
+
+  const shareData = useMemo(
+    () => ({
+      title: window.document.title,
+      text: t('Trade on PancakeSwap TON'),
+      url: window.location.href,
+    }),
+    [t],
+  )
+
+  const handleShareClick = useCallback(() => {
+    if (navigator.canShare(shareData)) {
+      navigator.share(shareData)
+    }
+  }, [shareData])
 
   return (
     <StyledHeader>
@@ -71,9 +87,11 @@ export const Header = ({ showBridgeLink }: HeaderProps) => {
         <IconButton variant="text" scale="sm" onClick={() => setIsOpen(true)}>
           <CogIcon width={24} color="textSubtle" />
         </IconButton>
-        <IconButton variant="text" scale="sm">
-          <ShareIcon width={24} color="textSubtle" />
-        </IconButton>
+        {navigator.canShare(shareData) && (
+          <IconButton variant="text" scale="sm" onClick={handleShareClick}>
+            <ShareIcon width={24} color="textSubtle" />
+          </IconButton>
+        )}
       </FlexGap>
 
       <SettingsModal isOpen={isOpen} onDismiss={onDismiss} />
