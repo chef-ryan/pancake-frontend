@@ -14,28 +14,33 @@ export function useSwapActionHandlers(): {
 
   const onSwitchTokens = useCallback(() => {
     dispatch(switchCurrencies())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [dispatch])
 
-  const onCurrencySelection = useCallback((field: Field, currency?: Currency) => {
-    dispatch(
-      selectCurrency({
-        field,
-        currencyId: currency?.isToken ? currency.address : currency?.isNative ? currency.symbol : '',
-      }),
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const onCurrencySelection = useCallback(
+    (field: Field, currency?: Currency) => {
+      dispatch(
+        selectCurrency({
+          field,
+          currencyId: currency?.isToken ? currency.address : currency?.isNative ? currency.symbol : '',
+        }),
+      )
+    },
+    [dispatch],
+  )
 
-  const onUserInput = useCallback((field: Field, typedValue: string) => {
-    dispatch(typeInput({ field, typedValue }))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const onUserInput = useCallback(
+    (field: Field, typedValue: string) => {
+      dispatch(typeInput({ field, typedValue }))
+    },
+    [dispatch],
+  )
 
-  const onChangeRecipient = useCallback((recipient: string | null) => {
-    dispatch(setRecipient({ recipient }))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const onChangeRecipient = useCallback(
+    (recipient: string | null) => {
+      dispatch(setRecipient({ recipient }))
+    },
+    [dispatch],
+  )
 
   return {
     onSwitchTokens,
