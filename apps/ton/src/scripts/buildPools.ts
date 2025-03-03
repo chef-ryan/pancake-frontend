@@ -103,8 +103,8 @@ const generatePoolsForPairs = async (chainId: TonChainId, pairs: any[][]) => {
 }
 
 export const buildPools = async () => {
-  const mainnetTokens = [...mainnetList.tokens, Native.onChain(TonChainId.Mainnet).wrapped]
-  const testnetTokens = [...testnetList.tokens, Native.onChain(TonChainId.Testnet).wrapped]
+  const mainnetTokens = [Native.onChain(TonChainId.Mainnet).wrapped, ...mainnetList.tokens]
+  const testnetTokens = [Native.onChain(TonChainId.Testnet).wrapped, ...testnetList.tokens]
 
   const mainnetPairs = getTokenPairs(mainnetTokens)
   const testnetPairs = getTokenPairs(testnetTokens)
