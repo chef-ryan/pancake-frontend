@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { AddIcon, Box, Button, Flex, FlexGap, MinusIcon, Text } from '@pancakeswap/uikit'
+import { AddIcon, appearAnimation, Box, Button, Flex, FlexGap, MinusIcon, Text } from '@pancakeswap/uikit'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import BN from 'bignumber.js'
 import { LightCard } from 'components/Card'
@@ -21,6 +21,10 @@ const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
   border-radius: ${({ theme }) => theme.radii['12px']};
   border-bottom: 2px solid rgba(0, 0, 0, 0.1);
   color: ${({ theme }) => theme.colors.primary60};
+`
+
+const AppearLightCard = styled(LightCard)`
+  animation: ${appearAnimation} 0.3s ease-out forwards;
 `
 
 interface LiquidityRowProps {
@@ -64,7 +68,7 @@ export const LiquidityRow = ({
 
   return (
     <>
-      <LightCard>
+      <AppearLightCard>
         <Collapse
           title={
             <FlexGap flexDirection="column" gap="2px">
@@ -132,7 +136,7 @@ export const LiquidityRow = ({
           isOpen={isOpen}
           onToggle={handleToggle}
         />
-      </LightCard>
+      </AppearLightCard>
     </>
   )
 }

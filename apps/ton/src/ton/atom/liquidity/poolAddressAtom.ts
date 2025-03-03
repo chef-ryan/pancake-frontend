@@ -26,8 +26,8 @@ export const poolAddressAtom = atomFamily(({ token0Address, token1Address }: Poo
 
     const key = presetKey(token0Address, token1Address)
     const keyInverted = presetKey(token1Address, token0Address)
-    if (PRESET_POOLS[key]) return parseAddress(PRESET_POOLS[key])
-    if (PRESET_POOLS[keyInverted]) return parseAddress(PRESET_POOLS[keyInverted])
+    if (PRESET_POOLS[key]) return parseAddress(PRESET_POOLS[key].poolAddress)
+    if (PRESET_POOLS[keyInverted]) return parseAddress(PRESET_POOLS[keyInverted].poolAddress)
 
     const poolAddress_ = await getPoolAddress(get(chainIdAtom), token0Address, token1Address)
     if (poolAddress_) {

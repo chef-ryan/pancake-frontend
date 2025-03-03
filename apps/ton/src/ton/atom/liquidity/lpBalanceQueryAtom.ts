@@ -24,8 +24,6 @@ export const lpBalanceQueryAtom = atomFamily(({ token0Address, token1Address }: 
       const poolAddress = await get(poolAddressAtom({ token0Address, token1Address }))
       if (!poolAddress) return 0n
 
-      // const pool = get(poolContractAtom(poolAddress))
-      // const lpWalletAddress = await pool.getGetWalletAddress(parseAddress(userAddress))
       const lpWalletAddress = await getLpWalletAddress(get(chainIdAtom), userAddress, poolAddress.toString())
 
       const lpWallet = get(lpWalletContractAtom(lpWalletAddress.toString()))

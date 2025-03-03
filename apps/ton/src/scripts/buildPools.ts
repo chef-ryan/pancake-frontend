@@ -84,7 +84,12 @@ const generatePoolsForPairs = async (chainId: TonChainId, pairs: any[][]) => {
 
         console.log(`[${chainId}] Pool Address for ${token0.symbol}-${token1.symbol}: ${poolAddress.toString()}`)
 
-        if (poolAddress) pools[key(token0, token1)] = poolAddress.toString()
+        if (poolAddress)
+          pools[key(token0, token1)] = {
+            token0: token0.address,
+            token1: token1.address,
+            poolAddress: poolAddress.toString(),
+          }
       }),
     )
 
@@ -92,9 +97,7 @@ const generatePoolsForPairs = async (chainId: TonChainId, pairs: any[][]) => {
     await sleep(100)
   }
 
-  const network = chainId === TonChainId.Mainnet ? 'main' : 'testnet'
-
-  writeFileSync(path.resolve(__dirname, `../../public/lists/pools-${network}.json`), JSON.stringify(pools, null, 2), {
+  writeFileSync(path.resolve(__dirname, `../../public/lists/pools_${chainId}.json`), JSON.stringify(pools, null, 2), {
     flag: 'w+',
   })
 }

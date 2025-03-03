@@ -1,120 +1,95 @@
-import { TonChainId } from '@pancakeswap/ton-v2-sdk'
 import { useQuery } from '@tanstack/react-query'
+import { addUserPoolAtom, updateUserPoolAtom, userPoolsAtom } from 'atoms/user/userPoolsAtom'
 import BN from 'bignumber.js'
+import { QUERY_DEFAULT_STALE_TIME } from 'config/constants/exchange'
+import { POOL_CHUNK_DELAY, POOL_CHUNK_SIZE } from 'config/constants/fetching'
 import { PRESET_POOLS } from 'config/presetPools'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
+import chunk from 'lodash/chunk'
 import { useMemo } from 'react'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { chainIdAtom } from 'ton/atom/chainIdAtom'
-import { lpBalanceByPoolsQueryAtom } from 'ton/atom/liquidity/lpBalanceByPoolsQueryAtom'
-import { poolDataMultipleQueryAtom } from 'ton/atom/liquidity/poolDataMultipleQueryAtom'
-import { networkAtom } from 'ton/atom/networkAtom'
+import { TonContext } from 'ton/context/TonContext'
+import { parseAddress } from 'ton/utils/address'
+import { getLpWalletAddress } from 'ton/utils/api'
 import { getTokenOrder } from 'ton/utils/tokenOrder'
-import { parsePresetKey, stringify } from 'utils'
-
-interface RawPoolData {
-  balance: bigint
-  poolAddress: string
-}
-
-interface InitialPoolData extends RawPoolData {
-  token0: string
-  token1: string
-}
-
-interface CombinedPoolData extends Omit<InitialPoolData, 'balance'> {
-  balance: BN
-  amount0: BN
-  amount1: BN
-  reserve0: BN
-  reserve1: BN
-  totalSupply: BN
-  userShare?: number
-}
-
-interface PoolInfo {
-  reserve0: bigint
-  reserve1: bigint
-  totalSupply: bigint
-}
-
-const getTokenPairs = (network: string): string[][] =>
-  Object.keys(PRESET_POOLS[network]).map((tokenPair) => parsePresetKey(tokenPair))
-
-const getPoolsWithBalance = async (
-  chainId: TonChainId,
-  pools: RawPoolData[],
-  tokenPairs: string[][],
-): Promise<InitialPoolData[]> =>
-  (
-    await Promise.all(
-      pools.map(async (pool, index) => {
-        const { token0, token1 } = await getTokenOrder(chainId, tokenPairs[index][0], tokenPairs[index][1])
-        return {
-          ...pool,
-          token0,
-          token1,
-        }
-      }),
-    )
-  ).filter((pool) => pool.balance > 0n)
-
-const combinePoolData = (poolsWithBalance: InitialPoolData[], poolInfos: PoolInfo[]): CombinedPoolData[] =>
-  poolsWithBalance.map((pool, index) => {
-    const { reserve0, reserve1, totalSupply } = poolInfos[index] ?? { reserve0: 0n, reserve1: 0n, totalSupply: 0n }
-    return {
-      ...pool,
-      balance: new BN(pool.balance.toString()),
-      amount0: poolInfos[index]
-        ? new BN(pool.balance.toString()).multipliedBy(reserve0.toString()).dividedBy(totalSupply.toString())
-        : BN(0),
-      amount1: poolInfos[index]
-        ? new BN(pool.balance.toString()).multipliedBy(reserve1.toString()).dividedBy(totalSupply.toString())
-        : BN(0),
-      reserve0: new BN(poolInfos[index]?.reserve0.toString() ?? '0'),
-      reserve1: new BN(poolInfos[index]?.reserve1.toString() ?? '0'),
-      totalSupply: new BN(poolInfos[index]?.totalSupply.toString() ?? '0'),
-      userShare: poolInfos[index]
-        ? new BN(pool.balance.toString()).multipliedBy(100).dividedBy(totalSupply.toString()).toNumber()
-        : 0,
-    }
-  })
+import { LpWallet } from 'ton/wrappers/tact_LpWallet'
+import { Pool } from 'ton/wrappers/tact_Pool'
+import { CombinedPoolData } from 'types/pools'
 
 export const useUserPools = () => {
+  const client = TonContext.instance.getClient()
+
   const userAddress = useAtomValue(addressAtom)
-  const network = useAtomValue(networkAtom)
   const chainId = useAtomValue(chainIdAtom)
 
-  const tokenPairs = useMemo(() => getTokenPairs(network), [network])
+  const userPools = useAtomValue(userPoolsAtom)
+  const addUserPool = useSetAtom(addUserPoolAtom)
+  const updateUserPool = useSetAtom(updateUserPoolAtom)
 
-  const {
-    data: pools,
-    isFetched: isPoolBalanceFetched,
-    ...rest
-  } = useAtomValue(lpBalanceByPoolsQueryAtom(Object.values(PRESET_POOLS[network])))
+  const chunkedPresetPools = useMemo(() => {
+    return chunk(Object.values(PRESET_POOLS[chainId]), POOL_CHUNK_SIZE)
+  }, [chainId])
 
-  // Filter out pools with zero user balance
-  const { data: poolsWithBalance, isFetched: isPoolsWithSortedTokensFetched } = useQuery({
-    queryKey: ['poolsWithBalance', chainId, stringify(pools), tokenPairs, userAddress],
-    queryFn: () => getPoolsWithBalance(chainId, pools, tokenPairs),
-    retry: 3,
+  const { isFetched, isLoading } = useQuery({
+    queryKey: ['userPools', chainId, userAddress],
+    queryFn: async () => {
+      for (const pools of chunkedPresetPools) {
+        // eslint-disable-next-line no-await-in-loop
+        await Promise.allSettled(
+          pools.map(async (pool) => {
+            const lpWalletAddress = await getLpWalletAddress(chainId, userAddress, pool.poolAddress)
+            const lpBalance = (
+              await client.open(LpWallet.fromAddress(parseAddress(lpWalletAddress))).getGetWalletData()
+            ).balance
+
+            if (lpBalance > 0n) {
+              // Fetch pool data
+              const poolContract = client.open(Pool.fromAddress(parseAddress(pool.poolAddress)))
+              const { reserve0, reserve1, totalSupply } = await poolContract.getGetPoolData()
+
+              // Determine token order
+              let { token0, token1 } = pool
+              const { isFlipped } = await getTokenOrder(chainId, pool.token0, pool.token1)
+              if (isFlipped) {
+                token0 = pool.token1
+                token1 = pool.token0
+              }
+
+              const combinedPoolData: CombinedPoolData = {
+                // User's LP balance of token0
+                balance: BN(lpBalance.toString()),
+                amount0: BN(lpBalance.toString()).multipliedBy(reserve0.toString()).dividedBy(totalSupply.toString()),
+                amount1: BN(lpBalance.toString()).multipliedBy(reserve1.toString()).dividedBy(totalSupply.toString()),
+                reserve0: BN(reserve0.toString()),
+                reserve1: BN(reserve1.toString()),
+                totalSupply: BN(totalSupply.toString()),
+                userShare: BN(lpBalance.toString()).multipliedBy(100).dividedBy(totalSupply.toString()).toNumber(),
+                token0,
+                token1,
+                poolAddress: pool.poolAddress,
+              }
+
+              if (userPools.some((userPool) => userPool.poolAddress === pool.poolAddress)) {
+                updateUserPool(combinedPoolData)
+              } else {
+                addUserPool(combinedPoolData)
+              }
+            }
+          }),
+        )
+
+        // Delay between fetching each chunk
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((resolve) => setTimeout(resolve, POOL_CHUNK_DELAY))
+      }
+
+      return []
+    },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    staleTime: QUERY_DEFAULT_STALE_TIME,
   })
 
-  // Liquidity Pool Information
-  const { data: poolInfos, isFetched: isPoolDataFetched } = useAtomValue(
-    poolDataMultipleQueryAtom(poolsWithBalance ? poolsWithBalance.map((pool) => pool.poolAddress) : []),
-  )
-
-  const finalPoolData = useMemo(
-    () => (poolsWithBalance ? combinePoolData(poolsWithBalance, poolInfos) : []),
-    [poolsWithBalance, poolInfos],
-  )
-
-  const isFetched = isPoolBalanceFetched && isPoolDataFetched && isPoolsWithSortedTokensFetched
-
-  return {
-    ...rest,
-    data: finalPoolData,
-    isFetched,
-  }
+  return { data: userPools, isFetched, isLoading }
 }
