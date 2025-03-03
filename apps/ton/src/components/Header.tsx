@@ -8,7 +8,6 @@ import {
   LogoIcon,
   OpenNewIcon,
   ShareIcon,
-  Tag,
   Text,
   useModalV2,
 } from '@pancakeswap/uikit'
@@ -45,7 +44,7 @@ export const Header = ({ showBridgeLink }: HeaderProps) => {
 
   const shareData = useMemo(
     () => ({
-      title: window.document.title,
+      title: t('TON | PancakeSwap'),
       text: t('Trade on PancakeSwap TON'),
       url: window.location.href,
     }),
@@ -66,11 +65,6 @@ export const Header = ({ showBridgeLink }: HeaderProps) => {
         <Flex ml="-4px" alignItems="center">
           <Logo />
           <Text ml="8px">TON</Text>
-          {network === 'testnet' && (
-            <Tag variant="textSubtle" scale="sm" px="8px" ml="8px">
-              {t('testnet')}
-            </Tag>
-          )}
         </Flex>
       </Flex>
 

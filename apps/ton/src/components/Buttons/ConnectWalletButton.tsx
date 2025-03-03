@@ -1,10 +1,12 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Button, ButtonProps, ChevronDownIcon, WalletFilledV2Icon } from '@pancakeswap/uikit'
+import { TonChainId } from '@pancakeswap/ton-v2-sdk'
+import { Button, ButtonProps, ChevronDownIcon, Tag, Text, WalletFilledV2Icon } from '@pancakeswap/uikit'
 import { useTonConnectUI } from '@tonconnect/ui-react'
 import { setWalletModalAtom } from 'atoms/modals/walletModalAtom'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import styled from 'styled-components'
+import { chainIdAtom } from 'ton/atom/chainIdAtom'
 import { isConnectedAtom } from 'ton/atom/isConnectedAtom'
 
 const ConnectButton = styled(Button)`
@@ -13,6 +15,7 @@ const ConnectButton = styled(Button)`
 `
 
 const ConnectedButton = styled(Button).attrs({ variant: 'tertiary' })`
+  position: relative;
   border-radius: 999px;
   border-bottom: 2px solid rgba(0, 0, 0, 0.2);
   padding: 0 8px;
@@ -28,11 +31,19 @@ const WalletCirclularIcon = styled(WalletFilledV2Icon)`
   padding: 4px;
 `
 
+const StyledTag = styled(Tag)`
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  height: 20px;
+`
+
 export const ConnectWalletButton = (props: ButtonProps) => {
   const { t } = useTranslation()
 
   const [tonUI] = useTonConnectUI()
   const isConnected = useAtomValue(isConnectedAtom)
+  const chainId = useAtomValue(chainIdAtom)
   const setWalletModal = useSetAtom(setWalletModalAtom)
 
   const handleConnect = useCallback(() => {
@@ -46,6 +57,13 @@ export const ConnectWalletButton = (props: ButtonProps) => {
   if (isConnected) {
     return (
       <ConnectedButton onClick={openWalletModal} endIcon={<ChevronDownIcon color="textSubtle" />} {...props}>
+        {chainId === TonChainId.Testnet && (
+          <StyledTag variant="secondary" scale="sm" px="6px" py="0">
+            <Text color="" fontSize="10px">
+              {t('Testnet')}
+            </Text>
+          </StyledTag>
+        )}
         <WalletCirclularIcon color="primary" />
       </ConnectedButton>
     )
