@@ -95,6 +95,8 @@ export const CardContent = (props: CardContentProps) => {
     reserve1: poolData?.reserve1,
   })
 
+  const isPoolExists = useMemo(() => Boolean(poolData && poolData?.totalSupply), [poolData])
+
   const currencyAmounts = useMemo(() => {
     return {
       [CurrencyField.ADD_LIQUIDITY_CURRENCY0]:
@@ -350,7 +352,7 @@ export const CardContent = (props: CardContentProps) => {
         <FlexGap flexDirection="column" mt="24px" gap="16px">
           <Flex justifyContent="space-between" flexWrap="wrap">
             <Text color="textSubtle">{t('Rates')}</Text>
-            {poolData ? (
+            {isPoolExists ? (
               <Box>
                 <Text>
                   1 {currency0?.symbol} ≈{' '}
@@ -384,7 +386,7 @@ export const CardContent = (props: CardContentProps) => {
           <Flex justifyContent="space-between" flexWrap="wrap">
             <Text color="textSubtle">{t('Your share in the pair')}</Text>
 
-            <DisplayLoader loading={isPoolDataLoading || (Boolean(poolData) && isLpBalanceLoading)}>
+            <DisplayLoader loading={isPoolDataLoading || (isPoolExists && isLpBalanceLoading)}>
               {expectedShareInPool ? (
                 <NumberDisplay value={expectedShareInPool.toString()} suffix="%" maximumSignificantDigits={6} />
               ) : (
