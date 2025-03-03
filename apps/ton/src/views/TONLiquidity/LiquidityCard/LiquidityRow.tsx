@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { AddIcon, Box, Button, Flex, FlexGap, MinusIcon, Text } from '@pancakeswap/uikit'
+import { AddIcon, Box, Button, Flex, FlexGap, MinusIcon, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import BN from 'bignumber.js'
 import { LightCard } from 'components/Card'
@@ -30,9 +30,17 @@ const appearUpAnimation = keyframes`
 
 const StyledButton = styled(Button).attrs({ variant: 'tertiary', scale: 'sm' })`
   width: 100%;
-  border-radius: ${({ theme }) => theme.radii['12px']};
+  font-size: 14px;
+  height: 28px;
+  padding-right: 8px;
   border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: ${({ theme }) => theme.radii['12px']};
   color: ${({ theme }) => theme.colors.primary60};
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    font-size: 16px;
+    height: 32px;
+  }
 `
 
 const AppearLightCard = styled(LightCard)`
@@ -58,6 +66,7 @@ export const LiquidityRow = ({
   userShare = 0,
 }: LiquidityRowProps) => {
   const { t } = useTranslation()
+  const { isMobile } = useMatchBreakpoints()
   const [isOpen, setIsOpen] = useState(false)
 
   const { data: currency0 } = useAtomValue(tokenByAddressQueryAtom(token0))
@@ -137,7 +146,7 @@ export const LiquidityRow = ({
                   '-'
                 )}
               </Flex>
-              <FlexGap mt="10px" justifyContent="space-between" gap="16px">
+              <FlexGap mt="10px" justifyContent="space-between" gap={isMobile ? '8px' : '16px'}>
                 <Link href={getAddLiquidityLink(currency0, currency1)} style={{ width: '100%' }}>
                   <StyledButton endIcon={<AddIcon color="primary60" />}>{t('Add')}</StyledButton>
                 </Link>

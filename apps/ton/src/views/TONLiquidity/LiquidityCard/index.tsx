@@ -32,6 +32,7 @@ export const LiquidityCard = (props: LiquidityCardProps) => {
                 text={t(`
                     When you add liquidity, you'll receive pool tokens that represent your position. These tokens earn fees automatically, proportional to your share of the pool.
                 `)}
+                placement="bottom-start"
               />
             </FlexGap>
           </Text>
