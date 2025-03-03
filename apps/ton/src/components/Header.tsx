@@ -12,16 +12,15 @@ import {
   useModalV2,
 } from '@pancakeswap/uikit'
 import { bridgeLink } from 'config/constants/endpoints'
-import { useAtomValue } from 'jotai'
 import { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
-import { networkAtom } from 'ton/atom/networkAtom'
 import { Logo } from './Logo'
 import { SettingsModal } from './Modals/SettingsModal'
 
 const StyledHeader = styled.header`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-between;
   padding: 16px 24px;
   align-items: center;
@@ -38,7 +37,6 @@ interface HeaderProps {
 }
 export const Header = ({ showBridgeLink }: HeaderProps) => {
   const { t } = useTranslation()
-  const network = useAtomValue(networkAtom)
 
   const { isOpen, setIsOpen, onDismiss } = useModalV2()
 

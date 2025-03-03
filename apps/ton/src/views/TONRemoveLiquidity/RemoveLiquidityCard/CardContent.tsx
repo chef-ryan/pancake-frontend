@@ -10,6 +10,7 @@ import {
   MinusIcon,
   Slider,
   Text,
+  useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import { useQuery } from '@tanstack/react-query'
 import { setRemoveLiquidityModalAtom } from 'atoms/modals/removeLiquidityModalAtom'
@@ -53,15 +54,16 @@ const StyledButton = styled(Button).attrs({
   scale: 'sm',
   variant: 'tertiary',
 })`
-  width: fit-content;
+  padding: 0;
   height: 28px;
+  width: 100%;
   border-radius: 8px;
   border: 2px solid ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.primary60};
-  font-size: 14px;
+  font-size: 12px;
 
   ${({ theme }) => theme.mediaQueries.sm} {
-    width: 100%;
+    font-size: 14px;
   }
 `
 
@@ -70,6 +72,8 @@ const QUICK_INPUTS = [10, 20, 75, 100]
 interface CardContentProps extends BoxProps {}
 export const CardContent = (props: CardContentProps) => {
   const { t } = useTranslation()
+
+  const { isMobile } = useMatchBreakpoints()
 
   const userAddress = useAtomValue(addressAtom)
   const isWalletConnected = !!userAddress
@@ -254,7 +258,7 @@ export const CardContent = (props: CardContentProps) => {
             value={sliderValue}
             onValueChanged={handleSliderChange}
           />
-          <FlexGap mt="12px" gap="16px" flexWrap={['wrap', 'nowrap']}>
+          <FlexGap mt="12px" gap={isMobile ? '6px' : '16px'}>
             {QUICK_INPUTS.map((value) => (
               <StyledButton key={value} onClick={() => handleQuickInput(value)}>
                 {value === 100 ? t('MAX') : t('%value%%', { value })}

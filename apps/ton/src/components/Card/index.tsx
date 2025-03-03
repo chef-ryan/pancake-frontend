@@ -10,7 +10,7 @@ export interface LightCardProps extends BoxProps {
 
 export const Card = styled(Box)<LightCardProps>`
   width: ${({ width }) => width ?? '100%'};
-  padding: ${({ padding }) => padding ?? '1.25rem'};
+  padding: ${({ padding }) => padding ?? '16px'};
   border: ${({ border }) => border};
   border-radius: ${({ borderRadius }) => borderRadius ?? '16px'};
   background-color: ${({ theme }) => theme.colors.background};

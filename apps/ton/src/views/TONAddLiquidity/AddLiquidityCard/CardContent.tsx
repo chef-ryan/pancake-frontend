@@ -328,13 +328,13 @@ export const CardContent = (props: CardContentProps) => {
           showMaxButton={false}
           title={
             <Text color="textSubtle" small>
-              {t('Choose a valid trading pair')}
+              {t('Choose a trading pair')}
             </Text>
           }
           disabled={isPoolDataLoading}
         />
 
-        <AddIcon mt="12px" width={28} />
+        <AddIcon mt="12px" color="textSubtle" width={28} />
 
         <Box mt="-18px">
           <CurrencyInputPanelSimplify
