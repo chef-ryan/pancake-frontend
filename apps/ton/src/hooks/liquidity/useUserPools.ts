@@ -97,7 +97,7 @@ export const useUserPools = () => {
       }
 
       // Set pools to prioritize loading first next time
-      setCachedUserPools(cachedPools)
+      if (cachedPools.length > 0) setCachedUserPools(cachedPools)
 
       return []
     },

@@ -22,7 +22,8 @@ export const updateUserPoolAtom = atom(null, (get, set, pool: CombinedPoolData) 
 })
 
 const cachedUserPoolsListAtom = atomFamily(
-  (chainId: TonChainId) => atomWithStorage<InitialPoolData[]>('pcs:cachedUserPools', []),
+  (chainId: TonChainId) =>
+    atomWithStorage<InitialPoolData[]>(`pcs:cachedUserPools::${chainId}`, [], undefined, { unstable_getOnInit: true }),
   isEqual,
 )
 export const cachedUserPoolsAtom = atom(
