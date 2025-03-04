@@ -4,10 +4,8 @@ import { useCallback, useMemo, useState } from 'react'
 
 import { useTranslation } from '@pancakeswap/localization'
 import { Rounding } from '@pancakeswap/swap-sdk-core'
-import { Native } from '@pancakeswap/ton-v2-sdk'
 import { Column, Text } from '@pancakeswap/uikit'
 import { formatFraction } from '@pancakeswap/utils/formatFractions'
-import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import {
   independentFieldAtom,
   typedValueAtom,
@@ -30,21 +28,17 @@ import { computeTradePriceBreakdown } from 'utils/exchange'
 import { PricingAndSlippage } from 'components/TonSwap/SwapDetails/PricingAndSlippage'
 import { AdvancedSwapDetailsDropdown } from 'components/TonSwap/SwapDetails/AdvancedSwapDetailsDropdown'
 import { useUserSlippagePercent } from 'hooks/useUserSlippage'
-import { networkAtom } from 'ton/atom/networkAtom'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 
 export const SwapForm = () => {
   const { t } = useTranslation()
-  const network = useAtomValue(networkAtom)
   const address = useAtomValue(addressAtom)
   const isWalletConnected = !!address
 
   const [isSwaping, setIsSwaping] = useState(false)
-  const { data: activeList } = useAtomValue(fetchListAtom)
-  const cakeAddress = useMemo(() => activeList?.find((item) => item.symbol === 'CAKE')?.address ?? '', [activeList])
-  const [inputCurrency] = useInputCurrencyQueryState(Native.onNetwork(network).symbol)
-  const [outputCurrency] = useOutputCurrencyQueryState(cakeAddress)
+  const [inputCurrency] = useInputCurrencyQueryState()
+  const [outputCurrency] = useOutputCurrencyQueryState()
   const typedValue = useAtomValue(typedValueAtom)
   const independentField = useAtomValue(independentFieldAtom)
 
