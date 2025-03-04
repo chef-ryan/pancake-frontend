@@ -11,6 +11,7 @@ import { LOGO_SIZE } from '../CurrencyInputPanelSimplify/state'
 
 export interface ConfirmSwapModalProps {
   onConfirm?: () => void
+  onClose?: () => void
   inputCurrency: Currency
   outputCurrency: Currency
   trade?: Trade<Currency, Currency, TradeType> | null

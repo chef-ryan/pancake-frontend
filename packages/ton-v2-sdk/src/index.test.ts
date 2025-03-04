@@ -13,6 +13,7 @@ test('exports', () => {
     "TonContractTypes",
     "TonNetworks",
     "WNATIVE",
+    "GAS_CONSTANTS",
     "Native",
     "Token",
     "Price",

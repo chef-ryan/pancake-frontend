@@ -12,63 +12,75 @@ import { tryParseAmount } from 'utils/tryParseAmount'
 
 interface SwapCommitButtonProps extends ButtonProps {
   isLoading?: boolean
+  isSwaping?: boolean
   trade?: Trade<Currency, Currency, TradeType> | null
 }
 
-export const SwapCommitButton = memo(({ isLoading = false, trade, ...props }: SwapCommitButtonProps) => {
-  const { t } = useTranslation()
-  const isConnected = useAtomValue(isConnectedAtom)
+export const SwapCommitButton = memo(
+  ({ isLoading = false, isSwaping = false, trade, ...props }: SwapCommitButtonProps) => {
+    const { t } = useTranslation()
+    const isConnected = useAtomValue(isConnectedAtom)
 
-  const [inputCurrency] = useInputCurrencyQueryState()
-  const typedValue = useAtomValue(typedValueAtom)
-  const typedAmount = tryParseAmount(typedValue, inputCurrency)
-  const { data: balance0 } = useAtomValue(balanceAtom(inputCurrency))
+    const [inputCurrency] = useInputCurrencyQueryState()
+    const typedValue = useAtomValue(typedValueAtom)
+    const typedAmount = tryParseAmount(typedValue, inputCurrency)
+    const { data: balance0 } = useAtomValue(balanceAtom(inputCurrency))
 
-  const isInsufficientBalance0 = inputCurrency && typedAmount ? typedAmount.greaterThan(balance0) : false
-  const isInsufficientLiquidity = !trade?.route.path.length && !isLoading
+    const isInsufficientBalance0 = inputCurrency && typedAmount ? typedAmount.greaterThan(balance0) : false
+    const isInsufficientLiquidity = !trade?.route.path.length && !isLoading
 
-  const priceImpactSeverity = useMemo(() => {
-    const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
-    return warningSeverity(priceImpactWithoutFee)
-  }, [trade])
+    const priceImpactSeverity = useMemo(() => {
+      const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
+      return warningSeverity(priceImpactWithoutFee)
+    }, [trade])
 
-  const disabled = useMemo(
-    () => isInsufficientBalance0 || !isConnected || isLoading || isInsufficientLiquidity || priceImpactSeverity > 3,
-    [isInsufficientBalance0, isConnected, isLoading, isInsufficientLiquidity, priceImpactSeverity],
-  )
+    const disabled = useMemo(
+      () =>
+        isInsufficientBalance0 ||
+        !isConnected ||
+        isLoading ||
+        isSwaping ||
+        isInsufficientLiquidity ||
+        priceImpactSeverity > 3,
+      [isInsufficientBalance0, isConnected, isLoading, isSwaping, isInsufficientLiquidity, priceImpactSeverity],
+    )
 
-  const buttonText = useMemo(
-    () =>
-      !isConnected
-        ? t('Connect Wallet')
-        : !typedValue.length
-        ? t('Enter an amount')
-        : isLoading
-        ? t('Updating the quote')
-        : isInsufficientBalance0
-        ? t('Insufficient %symbol% balance', { symbol: inputCurrency?.symbol })
-        : isInsufficientLiquidity
-        ? t('Insufficient liquidity for this trade.')
-        : priceImpactSeverity > 3
-        ? t('Price Impact Too High')
-        : priceImpactSeverity > 2
-        ? t('Swap Anyway')
-        : t('Swap'),
-    [
-      inputCurrency?.symbol,
-      isConnected,
-      isInsufficientLiquidity,
-      isInsufficientBalance0,
-      isLoading,
-      priceImpactSeverity,
-      t,
-      typedValue.length,
-    ],
-  )
+    const buttonText = useMemo(
+      () =>
+        !isConnected
+          ? t('Connect Wallet')
+          : !typedValue.length
+          ? t('Enter an amount')
+          : isLoading
+          ? t('Updating the quote')
+          : isInsufficientBalance0
+          ? t('Insufficient %symbol% balance', { symbol: inputCurrency?.symbol })
+          : isInsufficientLiquidity
+          ? t('Insufficient liquidity for this trade.')
+          : priceImpactSeverity > 3
+          ? t('Price Impact Too High')
+          : priceImpactSeverity > 2
+          ? t('Swap Anyway')
+          : isSwaping
+          ? t('Waiting For Confirmation')
+          : t('Swap'),
+      [
+        isSwaping,
+        inputCurrency?.symbol,
+        isConnected,
+        isInsufficientLiquidity,
+        isInsufficientBalance0,
+        isLoading,
+        priceImpactSeverity,
+        t,
+        typedValue.length,
+      ],
+    )
 
-  return (
-    <Button disabled={disabled} variant={priceImpactSeverity > 2 ? 'danger' : 'primary'} {...props}>
-      {buttonText}
-    </Button>
-  )
-})
+    return (
+      <Button disabled={disabled} variant={priceImpactSeverity > 2 ? 'danger' : 'primary'} {...props}>
+        {buttonText}
+      </Button>
+    )
+  },
+)

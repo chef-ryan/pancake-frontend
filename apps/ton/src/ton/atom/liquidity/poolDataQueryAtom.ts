@@ -56,12 +56,10 @@ export const poolDataQueryAtom = atomFamily(({ token0Address, token1Address }: P
           jetton1MasterAddress,
         }
       } catch (e) {
-        // if AxiosError, trigger retry
-        // otherwise, treat as no pool exist
-        if ((e as any)?.isAxiosError) {
-          throw new Error((e as any).message)
+        if ((e as Error).message.includes('exit_code')) {
+          return null
         }
-        return null
+        throw new Error((e as any).message)
       }
     },
     enabled: Boolean(token0Address && token1Address),

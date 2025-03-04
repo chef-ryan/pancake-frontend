@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai'
 import noop from 'lodash/noop'
-import { useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { useTranslation } from '@pancakeswap/localization'
 import { Rounding } from '@pancakeswap/swap-sdk-core'
@@ -40,6 +40,7 @@ export const SwapForm = () => {
   const address = useAtomValue(addressAtom)
   const isWalletConnected = !!address
 
+  const [isSwaping, setIsSwaping] = useState(false)
   const { data: activeList } = useAtomValue(fetchListAtom)
   const cakeAddress = useMemo(() => activeList?.find((item) => item.symbol === 'CAKE')?.address ?? '', [activeList])
   const [inputCurrency] = useInputCurrencyQueryState(Native.onNetwork(network).symbol)
@@ -107,6 +108,20 @@ export const SwapForm = () => {
     token1: outputCurrency,
   })
 
+  const handleSwap = useCallback(async () => {
+    try {
+      setIsSwaping(true)
+      await confirmSwap()
+      onUserInput(Field.INPUT, '')
+    } catch (e) {
+      refreshTrade()
+    } finally {
+      setIsSwaping(false)
+    }
+  }, [onUserInput, confirmSwap, refreshTrade])
+
+  const handlePercentInput = useCallback(() => {}, [])
+
   const [inputTitle, outputTitle] = useMemo(
     () => [
       <Text color="textSubtle" fontSize={12} bold>
@@ -140,8 +155,8 @@ export const SwapForm = () => {
               commonBasesType={undefined}
               isUserInsufficientBalance={isInsufficientBalance0}
               onUserInput={(val) => onUserInput(Field.INPUT, val)}
-              onPercentInput={noop}
-              onMax={noop}
+              onPercentInput={handlePercentInput}
+              onMax={handlePercentInput}
               onCurrencySelect={(currency) => onCurrencySelection(Field.INPUT, currency)}
             />
             <FlipButton typedValue={formattedAmounts[Field.OUTPUT]} />
@@ -174,7 +189,9 @@ export const SwapForm = () => {
       ) : (
         <ButtonAndDetailsPanel
           shouldRenderDetails={Boolean(typedValue) && !isInsufficientLiquidity}
-          swapCommitButton={<SwapCommitButton trade={trade} isLoading={isTradeLoading} onClick={confirmSwap} />}
+          swapCommitButton={
+            <SwapCommitButton trade={trade} isSwaping={isSwaping} isLoading={isTradeLoading} onClick={handleSwap} />
+          }
           pricingAndSlippage={
             <PricingAndSlippage
               isLoading={isTradeLoading}

@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Pair } from '@pancakeswap/ton-v2-sdk'
+import { Currency, GAS_CONSTANTS, Pair } from '@pancakeswap/ton-v2-sdk'
 import {
   Box,
   Button,
@@ -306,18 +306,26 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
     [selectedCurrencyBalance, currency, hideBalance],
   )
 
+  const balanceExcludingGas = useMemo(
+    () =>
+      currency?.isNative
+        ? selectedCurrencyBalance - GAS_CONSTANTS.swapTonToJetton.forwardGasAmount
+        : selectedCurrencyBalance,
+    [currency?.isNative, selectedCurrencyBalance],
+  )
+
   const onMax = useCallback(() => {
-    onUserInput(formatBalance(selectedCurrencyBalance, currency?.decimals))
-  }, [selectedCurrencyBalance, , currency, onUserInput])
+    onUserInput(formatBalance(balanceExcludingGas, currency?.decimals))
+  }, [balanceExcludingGas, currency, onUserInput])
 
   const onPercentInput = useCallback(
     (percent: number) => {
-      if (selectedCurrencyBalance) {
-        const val = (selectedCurrencyBalance * BigInt(percent)) / 100n
+      if (balanceExcludingGas) {
+        const val = (balanceExcludingGas * BigInt(percent)) / 100n
         onUserInput(formatBalance(val, currency?.decimals))
       }
     },
-    [selectedCurrencyBalance, currency, onUserInput],
+    [balanceExcludingGas, currency, onUserInput],
   )
 
   return (

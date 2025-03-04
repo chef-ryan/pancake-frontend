@@ -10,12 +10,13 @@ export const AppModal = () => {
 
   const [modalData, setModalData] = useAtom(appModalAtom)
 
-  const { isOpen, title, content, closeable, ...props } = modalData
+  const { isOpen, title, content, closeable, onClose, ...props } = modalData
 
   const handleDismiss = useCallback(() => {
     if (!closeable) return
     setModalData((prev) => ({ ...prev, isOpen: false }))
-  }, [closeable, setModalData])
+    onClose?.()
+  }, [closeable, onClose, setModalData])
 
   return (
     <ModalV2 isOpen={isOpen} onDismiss={handleDismiss} closeOnOverlayClick={closeable}>

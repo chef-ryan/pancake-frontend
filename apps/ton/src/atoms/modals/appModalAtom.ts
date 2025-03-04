@@ -8,6 +8,7 @@ export interface AppModalData extends ModalProps {
   title: ReactNode | null
   content: ReactNode | null
   closeable?: boolean
+  onClose?: () => void
 }
 
 export const defaultAppModalData: AppModalData = {

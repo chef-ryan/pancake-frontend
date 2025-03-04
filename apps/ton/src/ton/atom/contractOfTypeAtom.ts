@@ -1,10 +1,9 @@
-import { Contracts, TonContractInstance, TonContractTypes } from '@pancakeswap/ton-v2-sdk'
+import { TonContractInstance, TonContractTypes } from '@pancakeswap/ton-v2-sdk'
 import { atom } from 'jotai'
 import { ContractProxy } from 'ton/context/ContractProxy'
 import { ContractClasses } from 'ton/def/contractClass.def'
 
 type TClasses = typeof ContractClasses
-type TContracts = typeof Contracts
 interface Params<TType extends TonContractTypes> {
   type: TType
   address: string

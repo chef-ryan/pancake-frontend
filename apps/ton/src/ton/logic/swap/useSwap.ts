@@ -1,9 +1,9 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
-import { Contracts, Currency, TonContractNames, Trade, storeSwap } from '@pancakeswap/ton-v2-sdk'
+import { Contracts, Currency, TonContractNames, Trade, storeSwap, GAS_CONSTANTS } from '@pancakeswap/ton-v2-sdk'
 import { useAsyncConfirmPriceImpactWithoutFee } from '@pancakeswap/widgets-internal'
 import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
-import { beginCell, toNano } from '@ton/core'
+import { beginCell } from '@ton/core'
 import { SendTransactionRequest, TonConnectUIError, UserRejectsError, useTonConnectUI } from '@tonconnect/ui-react'
 import { setConfirmSwapModalAtom } from 'atoms/modals/confirmSwapModalAtom'
 import { setErrorMsgModalAtom } from 'atoms/modals/errorMsgModalAtom'
@@ -22,9 +22,6 @@ import { getJettonWalletAddress } from 'ton/utils/jettonWalletAddress'
 import { getTransactionByBOC } from 'ton/utils/transaction'
 import { logGTMClickSwapConfirmEvent, logGTMClickSwapEvent, logGTMSwapTxSentEvent } from 'utils/customGTMEventTracking'
 import { computeTradePriceBreakdown } from 'utils/exchange'
-
-const GAS = toNano('0.6')
-const FORWARD_GAS = toNano('0.5')
 
 interface SwapArgs {
   trade?: Trade<Currency, Currency, TradeType> | null
@@ -57,6 +54,8 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
     if (!token0.isNative && !userJettonWallet0) {
       return undefined
     }
+
+    const isTonToJetton = token0.isNative
 
     // multihops
     let lastSwapNext: any | null = null
@@ -96,7 +95,9 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
           destination: routerAddress,
           responseDestination: userAddress,
           customPayload: null,
-          forwardAmount: FORWARD_GAS,
+          forwardAmount: isTonToJetton
+            ? GAS_CONSTANTS.swapTonToJetton.forwardGasAmount
+            : GAS_CONSTANTS.swapJettonToJetton.forwardGasAmount,
           forwardPayload,
         }),
       )
@@ -106,10 +107,12 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
       validUntil: Math.floor(Date.now() / 1000) + 60,
       messages: [
         {
-          address: token0.isNative ? routerJettonWallet0.toString() : userJettonWallet0!.toString(),
-          // Attached TON for fees, not the amount of jettons to transfer!
-          // todo:@eric add estimate logic
-          amount: token0.isNative ? (parseUnits(amount0, token0.decimals) + FORWARD_GAS).toString() : GAS.toString(),
+          address: isTonToJetton ? routerJettonWallet0.toString() : userJettonWallet0!.toString(),
+          // Attached TON for fees, not the amount of jettons to transfer
+          amount: (isTonToJetton
+            ? parseUnits(amount0, token0.decimals) + GAS_CONSTANTS.swapTonToJetton.forwardGasAmount
+            : GAS_CONSTANTS.swapJettonToJetton.gasAmount + GAS_CONSTANTS.swapJettonToJetton.forwardGasAmount
+          ).toString(),
           payload: payload.toBoc().toString('base64'),
         },
       ],
@@ -141,9 +144,9 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
 
       const txRequest: SendTransactionRequest | undefined = await getTxRequest()
       if (!txRequest) {
-        return
+        return Promise.reject()
       }
-      const { boc } = await tonUI.sendTransaction(txRequest, { modals: ['error'] })
+      const { boc } = await tonUI.sendTransaction(txRequest, { modals: [] })
 
       if (boc) {
         setTransactionModal({
@@ -168,6 +171,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
           hash,
         })
       }
+      return Promise.resolve()
     } catch (e) {
       let msg = typeof e === 'string' ? e : (e as Error)?.message
       if (e instanceof UserRejectsError || e instanceof TonConnectUIError) {
@@ -177,6 +181,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
         isOpen: true,
         msg,
       })
+      return Promise.reject()
     }
   }, [amount0, minOut, token0, token1, setErrorMsgModal, t, userAddress, tonUI, getTxRequest, setTransactionModal])
 
@@ -198,21 +203,43 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
   }, [confirmPriceImpactWithoutFee, priceImpactWithoutFee])
 
   const confirmSwap = useCallback(async () => {
+    let resolve = (_value: any) => {}
+    let reject = () => {}
+    const pm = new Promise((resolve_, reject_) => {
+      resolve = resolve_
+      reject = reject_
+    })
     if (!token0 || !token1) {
-      return
+      reject()
+      return pm
     }
     if (!(await swapPreflightCheck())) {
-      return
+      reject()
+      return pm
     }
     logGTMClickSwapEvent()
+    const onConfirm = async () => {
+      try {
+        const res = await swap()
+        resolve(res)
+      } catch (e) {
+        reject()
+      }
+    }
+    const onClose = () => {
+      reject()
+    }
+
     setSwapConfirmModal({
       isOpen: true,
       inputCurrency: token0,
       outputCurrency: token1,
       trade,
       refreshTrade,
-      onConfirm: swap,
+      onConfirm,
+      onClose,
     })
+    return pm
   }, [token0, token1, setSwapConfirmModal, trade, refreshTrade, swap, swapPreflightCheck])
 
   return { swap, confirmSwap }

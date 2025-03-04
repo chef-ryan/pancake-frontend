@@ -8,6 +8,7 @@ export {
   TonContractTypes,
   TonNetworks,
   WNATIVE,
+  GAS_CONSTANTS,
   type TonContractInstance,
   type TonFunctionDef,
 } from './constants'
