@@ -87,10 +87,10 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
 
   const handleRemoveList = useCallback(() => {
     confirm({
-      message: 'Please confirm you would like to remove this list',
+      message: t('Please confirm you would like to remove this list'),
       onConfirm: (confirmed) => confirmed && dispatch(removeList(listUrl)),
     })
-  }, [confirm, dispatch, listUrl])
+  }, [confirm, dispatch, listUrl, t])
 
   const handleEnableList = useCallback(() => {
     dispatch(enableList(listUrl))
