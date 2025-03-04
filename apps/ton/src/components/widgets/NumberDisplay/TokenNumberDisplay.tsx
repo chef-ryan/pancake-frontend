@@ -1,8 +1,8 @@
-import BigNumber from 'bignumber.js'
+import { useTranslation } from '@pancakeswap/localization'
 import { Text, useTooltip, type TextProps } from '@pancakeswap/uikit'
 import { formatNumber, formatNumberWithFullDigits } from '@pancakeswap/utils/formatNumber'
-import { type ReactNode, memo, useMemo, type ElementType, CSSProperties } from 'react'
-import { useTranslation } from '@pancakeswap/localization'
+import BigNumber from 'bignumber.js'
+import { CSSProperties, memo, useMemo, type ElementType, type ReactNode } from 'react'
 
 export type NumberDisplayProps = {
   prefix?: ReactNode
@@ -21,7 +21,7 @@ export const NumberDisplay = memo(function NumberDisplay({
   suffix,
   maximumSignificantDigits = 12,
   roundingMode = BigNumber.ROUND_DOWN,
-  showFullDigitsTooltip = true,
+  showFullDigitsTooltip = false,
   style,
   ...props
 }: NumberDisplayProps) {
