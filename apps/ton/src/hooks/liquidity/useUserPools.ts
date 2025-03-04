@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-import { addUserPoolAtom, updateUserPoolAtom, userPoolsAtom } from 'atoms/user/userPoolsAtom'
+import { addUserPoolAtom, cachedUserPoolsAtom, updateUserPoolAtom, userPoolsAtom } from 'atoms/user/userPoolsAtom'
 import BN from 'bignumber.js'
 import { QUERY_DEFAULT_STALE_TIME } from 'config/constants/exchange'
 import { POOL_CHUNK_DELAY, POOL_CHUNK_SIZE } from 'config/constants/fetching'
 import { PRESET_POOLS } from 'config/presetPools'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import chunk from 'lodash/chunk'
+import uniqWith from 'lodash/uniqWith'
 import { useMemo } from 'react'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { chainIdAtom } from 'ton/atom/chainIdAtom'
@@ -15,7 +16,7 @@ import { getLpWalletAddress } from 'ton/utils/api'
 import { getTokenOrder } from 'ton/utils/tokenOrder'
 import { LpWallet } from 'ton/wrappers/tact_LpWallet'
 import { Pool } from 'ton/wrappers/tact_Pool'
-import { CombinedPoolData } from 'types/pools'
+import { CombinedPoolData, InitialPoolData } from 'types/pools'
 
 export const useUserPools = () => {
   const client = TonContext.instance.getClient()
@@ -27,13 +28,23 @@ export const useUserPools = () => {
   const addUserPool = useSetAtom(addUserPoolAtom)
   const updateUserPool = useSetAtom(updateUserPoolAtom)
 
+  const [cachedUserPools, setCachedUserPools] = useAtom(cachedUserPoolsAtom)
+
   const chunkedPresetPools = useMemo(() => {
-    return chunk(Object.values(PRESET_POOLS[chainId]), POOL_CHUNK_SIZE)
-  }, [chainId])
+    return chunk(
+      uniqWith(
+        [...cachedUserPools, ...Object.values(PRESET_POOLS[chainId])],
+        (a, b) => a.poolAddress === b.poolAddress,
+      ),
+      POOL_CHUNK_SIZE,
+    )
+  }, [chainId, cachedUserPools])
 
   const { isFetched, isLoading } = useQuery({
     queryKey: ['userPools', chainId, userAddress],
     queryFn: async () => {
+      const cachedPools = [] as InitialPoolData[]
+
       for (const pools of chunkedPresetPools) {
         // eslint-disable-next-line no-await-in-loop
         await Promise.allSettled(
@@ -74,6 +85,7 @@ export const useUserPools = () => {
                 updateUserPool(combinedPoolData)
               } else {
                 addUserPool(combinedPoolData)
+                cachedPools.push(pool)
               }
             }
           }),
@@ -83,6 +95,9 @@ export const useUserPools = () => {
         // eslint-disable-next-line no-await-in-loop
         await new Promise((resolve) => setTimeout(resolve, POOL_CHUNK_DELAY))
       }
+
+      // Set pools to prioritize loading first next time
+      setCachedUserPools(cachedPools)
 
       return []
     },

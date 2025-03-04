@@ -1,9 +1,9 @@
 import { TonChainId } from '@pancakeswap/ton-v2-sdk'
 import { atom } from 'jotai'
-import { atomFamily } from 'jotai/utils'
+import { atomFamily, atomWithStorage } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
 import { chainIdAtom } from 'ton/atom/chainIdAtom'
-import { CombinedPoolData } from 'types/pools'
+import { CombinedPoolData, InitialPoolData } from 'types/pools'
 
 const userPoolsListAtom = atomFamily((chainId: TonChainId) => atom<CombinedPoolData[]>([]), isEqual)
 export const userPoolsAtom = atom((get) => get(userPoolsListAtom(get(chainIdAtom))))
@@ -20,3 +20,14 @@ export const updateUserPoolAtom = atom(null, (get, set, pool: CombinedPoolData) 
     ),
   )
 })
+
+const cachedUserPoolsListAtom = atomFamily(
+  (chainId: TonChainId) => atomWithStorage<InitialPoolData[]>('pcs:cachedUserPools', []),
+  isEqual,
+)
+export const cachedUserPoolsAtom = atom(
+  (get) => get(cachedUserPoolsListAtom(get(chainIdAtom))),
+  (get, set, pools: InitialPoolData[]) => {
+    set(cachedUserPoolsListAtom(get(chainIdAtom)), pools)
+  },
+)

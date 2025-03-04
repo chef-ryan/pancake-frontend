@@ -1,7 +1,7 @@
 import BN from 'bignumber.js'
 
 export interface RawPoolData {
-  balance: bigint
+  balance?: bigint
   poolAddress: string
 }
 
