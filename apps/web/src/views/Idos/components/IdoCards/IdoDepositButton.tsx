@@ -178,7 +178,7 @@ export const IdoDepositButton: React.FC<{
     if (inputRef.current) {
       inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       if (isAndroid && isBinance) {
-        setMinHeight('calc(100vh - 120px)')
+        setMinHeight('calc(100vh - 80px)')
       }
     }
   }, [isAndroid, isBinance])
@@ -218,6 +218,21 @@ export const IdoDepositButton: React.FC<{
       disconnectAsync()
     }
   }
+
+  // issue: https://issues.chromium.org/issues/41177736
+  // android may not trigger blur event when keyboard hide
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const isSoftKeyboardOpen =
+      Math.min(window.innerWidth / window.screen.width, window.innerHeight / window.screen.height) < 0.7
+    if (
+      document.activeElement?.tagName === 'INPUT' &&
+      document.activeElement?.id === `idoStakeCurrency${stakeCurrency?.symbol}` &&
+      !isSoftKeyboardOpen
+    ) {
+      ;(document.activeElement as HTMLInputElement).blur()
+    }
+  }, [stakeCurrency?.symbol])
 
   return (
     <>
