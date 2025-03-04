@@ -206,13 +206,7 @@ function ManageLists({
     return listUrls
       .filter((listUrl) => {
         // only show loaded lists, hide unsupported lists
-        const isValid = Boolean(lists[listUrl].current) && !UNSUPPORTED_LIST_URLS.includes(listUrl)
-
-        if (isValid && chainId) {
-          return MULTI_CHAIN_LIST_URLS[chainId]?.includes(listUrl)
-        }
-
-        return false
+        return Boolean(lists[listUrl].current) && !UNSUPPORTED_LIST_URLS.includes(listUrl)
       })
       .sort((u1, u2) => {
         const { current: l1 } = lists[u1]
@@ -243,7 +237,7 @@ function ManageLists({
         if (l2) return 1
         return 0
       })
-  }, [lists, chainId, activeCopy])
+  }, [lists, activeCopy])
 
   // temporary fetched list for import flow
   const [tempList, setTempList] = useState<TokenList>()

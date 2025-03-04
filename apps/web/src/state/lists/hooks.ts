@@ -213,7 +213,13 @@ export function useAllListsByChainId(chainId: number): {
   const urls = useAtomValue(selectorByUrlsAtom)
 
   return useMemo(
-    () => _pickBy(urls, (_, url) => chainId && MULTI_CHAIN_LIST_URLS[chainId]?.includes(url)),
+    () =>
+      _pickBy(urls, (tokens, url) => {
+        if (chainId) {
+          return tokens.current?.tokens?.[0]?.chainId === chainId
+        }
+        return false
+      }),
     [chainId, urls],
   )
 }
@@ -234,8 +240,21 @@ export function useActiveListUrls(): string[] | undefined {
 
 export function useActiveListUrlsByChainId(chainId: number): string[] | undefined {
   const urls = useAtomValue(activeListUrlsAtom)
+  const tokenLists = useAtomValue(selectorByUrlsAtom)
 
-  return useMemo(() => urls.filter((url) => chainId && MULTI_CHAIN_LIST_URLS[chainId]?.includes(url)), [urls, chainId])
+  return useMemo(
+    () =>
+      urls.filter((url) => {
+        if (chainId) {
+          const tokenList = tokenLists[url]
+          if (tokenList) {
+            return tokenList.current?.tokens?.[0]?.chainId === chainId
+          }
+        }
+        return false
+      }),
+    [tokenLists, urls, chainId],
+  )
 }
 
 export function useInactiveListUrls() {

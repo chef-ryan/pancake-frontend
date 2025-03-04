@@ -30,7 +30,6 @@ export function UpdaterByChainId({ chainId }: { chainId: number }): null {
 
   // get all loaded lists, and the active urls
   const lists = useAllListsByChainId(chainId)
-  const activeListUrls = useActiveListUrlsByChainId(chainId)
 
   useEffect(() => {
     if (isReady) {
@@ -110,7 +109,7 @@ export function UpdaterByChainId({ chainId }: { chainId: number }): null {
         }
       }
     })
-  }, [dispatch, lists, activeListUrls, isReady])
+  }, [dispatch, lists, isReady])
 
   return null
 }
