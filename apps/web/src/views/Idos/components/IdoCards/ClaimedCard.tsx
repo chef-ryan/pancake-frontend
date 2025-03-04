@@ -2,7 +2,6 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Button, Card, CardBody, FlexGap, Text } from '@pancakeswap/uikit'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import useTheme from 'hooks/useTheme'
-import { zeroAddress } from 'viem'
 import { useIDOCurrencies } from 'views/Idos/hooks/ido/useIDOCurrencies'
 import { IDOUserStatus } from 'views/Idos/hooks/ido/useIDOUserStatus'
 import { useChainId } from 'wagmi'
@@ -57,7 +56,7 @@ export const ClaimedCard: React.FC<{
         fromChainId: chainId,
         toChainId: chainId,
         fromTokenAddress: offeringCurrency?.wrapped.address ?? '',
-        toTokenAddress: zeroAddress,
+        toTokenAddress: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
       })
     } catch (error) {
       console.error('Failed to open swap', error)
