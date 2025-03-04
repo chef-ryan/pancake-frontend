@@ -79,7 +79,10 @@ export function usePublicNodeWaitForTransaction() {
             throw new RetryableError(`Block not found for transaction: ${opts.hash}`)
           } else if (error instanceof WaitForTransactionReceiptTimeoutError) {
             throw new RetryableError(`Timeout reached when fetching transaction receipt: ${opts.hash}`)
-          } else if (error instanceof HttpRequestError && error.details?.includes('Load failed')) {
+          } else if (
+            error instanceof HttpRequestError &&
+            (error.details?.includes('Load failed') || error.details?.includes('Failed to fetch'))
+          ) {
             // retry on network error
             throw new RetryableError(`Network error: ${error.details}`)
           }
