@@ -50,6 +50,7 @@ import {
 } from 'state/user/smartRouter'
 import { usePCSX, usePCSXFeatureEnabled } from 'hooks/usePCSX'
 import { styled } from 'styled-components'
+import { ACCESS_TOKEN_SUPPORT_CHAIN_IDS } from 'components/AccessRisk/config/supportedChains'
 import GasSettings from './GasSettings'
 import TransactionSettings from './TransactionSettings'
 import { SettingsMode } from './types'
@@ -213,7 +214,7 @@ const SettingsModal: React.FC<React.PropsWithChildren<InjectedModalProps>> = ({ 
                   }}
                 />
               </Flex>
-              {chainId === ChainId.BSC && (
+              {ACCESS_TOKEN_SUPPORT_CHAIN_IDS.includes(chainId) && (
                 <>
                   <Flex justifyContent="space-between" alignItems="center" mb="24px">
                     <Flex alignItems="center">
