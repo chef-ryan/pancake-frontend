@@ -119,7 +119,7 @@ export const LiquidityRow = ({
                 </Text>
 
                 <Text fontSize={['14px', null, '16px']}>
-                  {amount0.gt(0) ? formatBigNumber(amount0, LP_TOKEN_DECIMALS) : '-'}
+                  {amount0.gt(0) ? formatBigNumber(amount0, currency0?.decimals) : '-'}
                 </Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
@@ -128,7 +128,7 @@ export const LiquidityRow = ({
                 </Text>
 
                 <Text fontSize={['14px', null, '16px']}>
-                  {amount1.gt(0) ? formatBigNumber(amount1, LP_TOKEN_DECIMALS) : '-'}
+                  {amount1.gt(0) ? formatBigNumber(amount1, currency1?.decimals) : '-'}
                 </Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">

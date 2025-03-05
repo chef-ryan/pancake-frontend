@@ -282,7 +282,7 @@ export const CardContent = (props: CardContentProps) => {
       })
 
       // Calculate minLPOut
-      const minLpOut = expectedTokens.times(1 - slippage / 10000).toFixed(0)
+      const minLpOut = expectedTokens.times(1 - slippage / 10_000).toFixed(0)
 
       // Add liquidity
       addLiquidity({

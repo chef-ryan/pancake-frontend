@@ -57,14 +57,14 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount
 
         const token0MinOut = parseUnits(
           BN(amount0ToBurn)
-            .multipliedBy(1 - slippage / 1e4)
+            .multipliedBy(1 - slippage / 10_000)
             .toString(),
           currency0?.decimals,
         )
 
         const token1MinOut = parseUnits(
           BN(amount1ToBurn)
-            .multipliedBy(1 - slippage / 1e4)
+            .multipliedBy(1 - slippage / 10_000)
             .toString(),
           currency1?.decimals,
         )
