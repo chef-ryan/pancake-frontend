@@ -6,6 +6,7 @@ import { LightCard } from 'components/Card'
 import { DoubleCurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { Collapse } from 'components/widgets/swap-v2/Collapse'
+import { MAXIMUM_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
 import { ADDRESS_CONCAT_LENGTH, LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 import { useAtomValue } from 'jotai'
 import Link from 'next/link'
@@ -102,7 +103,7 @@ export const LiquidityRow = ({
                   </Text>
                   <NumberDisplay
                     value={formatBigNumber(balance, LP_TOKEN_DECIMALS).toString()}
-                    maximumSignificantDigits={4}
+                    maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS}
                     small
                     bold
                     color="textSubtle"
