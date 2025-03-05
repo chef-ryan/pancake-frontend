@@ -24,7 +24,7 @@ const nextConfig = {
   env: {},
 
   // Adjust Base Path for TG Bot
-  basePath: `/${process.env.NEXT_PUBLIC_GLOBAL_PREFIX || ''}`,
+  basePath: process.env.NEXT_PUBLIC_GLOBAL_PREFIX ? `/${process.env.NEXT_PUBLIC_GLOBAL_PREFIX}` : '',
 
   // Adjust build output directory (default is `.next`)
   distDir: '.next',
