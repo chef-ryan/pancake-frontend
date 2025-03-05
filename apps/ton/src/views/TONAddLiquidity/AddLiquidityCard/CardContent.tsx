@@ -146,22 +146,12 @@ export const CardContent = (props: CardContentProps) => {
     const amount0 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]
     const amount1 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]
 
-    const parsedAmount0 = parseUnits(amount0, currency0?.decimals).toString()
-    const parsedAmount1 = parseUnits(amount1, currency1?.decimals).toString()
-
-    const parsedReserve0 = poolData?.reserve0
-      ? parseUnits(poolData.reserve0.toString(), currency0.decimals).toString()
-      : '0'
-    const parsedReserve1 = poolData?.reserve1
-      ? parseUnits(poolData.reserve1.toString(), currency1.decimals).toString()
-      : '0'
-
     return getExpectedPoolTokens({
-      amount0: parsedAmount0,
-      amount1: parsedAmount1,
-      reserve0: parsedReserve0,
-      reserve1: parsedReserve1,
-      totalSupply: poolData?.totalSupply || 0n,
+      amount0,
+      amount1,
+      reserve0: formatBalance(poolData?.reserve0 ?? 0n, currency0.decimals),
+      reserve1: formatBalance(poolData?.reserve1 ?? 0n, currency1.decimals),
+      totalSupply: formatBalance(poolData?.totalSupply ?? 0n, LP_TOKEN_DECIMALS) || 0n,
     })
   }, [currencyAmounts, poolData?.reserve0, poolData?.reserve1, poolData?.totalSupply, currency0, currency1])
 
@@ -195,7 +185,7 @@ export const CardContent = (props: CardContentProps) => {
   }, [lpBalance, poolData?.totalSupply, expectedPoolTokens, currencyAmounts])
 
   const expectedRates = useMemo(() => {
-    if (!currency0 || !currency1) return { expectedRate0: '0', expectedRate1: '0', expectedPoolTokens: '0' }
+    if (!currency0 || !currency1) return { expectedRate0: '0', expectedRate1: '0' }
 
     const amount0 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]
     const amount1 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]
@@ -212,9 +202,8 @@ export const CardContent = (props: CardContentProps) => {
     return {
       expectedRate0,
       expectedRate1,
-      expectedPoolTokens,
     }
-  }, [currencyAmounts, poolData?.reserve0, poolData?.reserve1, currency0, currency1, expectedPoolTokens])
+  }, [currencyAmounts, poolData?.reserve0, poolData?.reserve1, currency0, currency1])
 
   const handleToken0Input = useCallback(
     (value: string) => {
