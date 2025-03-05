@@ -200,16 +200,11 @@ export const CardContent = (props: CardContentProps) => {
     const amount0 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]
     const amount1 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]
 
-    const parsedAmount0 = parseUnits(amount0, currency0?.decimals).toString()
-    const parsedAmount1 = parseUnits(amount1, currency1?.decimals).toString()
+    const formattedReserve0 = formatBalance(poolData?.reserve0 || 0n, currency0.decimals)
+    const formattedReserve1 = formatBalance(poolData?.reserve1 || 0n, currency1.decimals)
 
-    // Calculate future rates & share in pool
-    const expectedReserve0 = poolData?.reserve0
-      ? BN(poolData.reserve0.toString()).plus(parsedAmount0)
-      : BN(parsedAmount0)
-    const expectedReserve1 = poolData?.reserve1
-      ? BN(poolData.reserve1.toString()).plus(parsedAmount1)
-      : BN(parsedAmount1)
+    const expectedReserve0 = BN(formattedReserve0).plus(amount0)
+    const expectedReserve1 = BN(formattedReserve1).plus(amount1)
 
     const expectedRate0 = expectedReserve1.div(expectedReserve0).toString()
     const expectedRate1 = expectedReserve0.div(expectedReserve1).toString()
