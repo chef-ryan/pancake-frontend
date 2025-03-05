@@ -3,7 +3,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Flex, PancakeToggle, PreTitle, QuestionHelper, Text, Toggle } from '@pancakeswap/uikit'
 import { useAudioPlay } from '@pancakeswap/utils/user'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
 import GasSettings from '../GasSettings'
 import { PrimaryOutlineButton } from '../styles'
@@ -34,14 +34,14 @@ export const SettingsTab = memo(
     const { onChangeRecipient } = useSwapActionHandlers()
     const [audioPlay, setAudioMode] = useAudioPlay()
 
-    const handleExpertModeToggle = () => {
+    const handleExpertModeToggle = useCallback(() => {
       if (expertMode || !showExpertModeAcknowledgement) {
         onChangeRecipient(null)
         setExpertMode((s) => !s)
       } else {
         setShowConfirmExpertModal(true)
       }
-    }
+    }, [expertMode, showExpertModeAcknowledgement, setShowConfirmExpertModal, setExpertMode, onChangeRecipient])
 
     return (
       <TabContent id={`${ariaId}_motion-tabpanel-0`} role="tabpanel" aria-labelledby={`${ariaId}_motion-tab-0`}>

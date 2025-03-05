@@ -29,7 +29,11 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import useTheme from 'hooks/useTheme'
 import { useWebNotifications } from 'hooks/useWebNotifications'
 import { ReactNode, Suspense, lazy, useCallback, useState } from 'react'
-import { useSubgraphHealthIndicatorManager, useUserUsernameVisibility } from 'state/user/hooks'
+import {
+  useGlobalSettingsChanged,
+  useSubgraphHealthIndicatorManager,
+  useUserUsernameVisibility,
+} from 'state/user/hooks'
 import { useUserShowTestnet } from 'state/user/hooks/useUserShowTestnet'
 import { useUserTokenRisk } from 'state/user/hooks/useUserTokenRisk'
 import {
@@ -70,19 +74,30 @@ const ScrollableContainer = styled(Flex)`
 `
 
 const SettingsModal: React.FC<React.PropsWithChildren<InjectedModalProps>> = ({ onDismiss }) => {
+  const { chainId } = useActiveChainId()
+  const { t } = useTranslation()
+  const { isDark, setTheme } = useTheme()
+
+  const { isGlobalSettingsChanged, resetSettings } = useGlobalSettingsChanged()
   const [subgraphHealth, setSubgraphHealth] = useSubgraphHealthIndicatorManager()
   const [userUsernameVisibility, setUserUsernameVisibility] = useUserUsernameVisibility()
   const [showTestnet, setShowTestnet] = useUserShowTestnet()
   const { enabled } = useWebNotifications()
-
-  const { chainId } = useActiveChainId()
   const [tokenRisk, setTokenRisk] = useUserTokenRisk()
 
-  const { t } = useTranslation()
-  const { isDark, setTheme } = useTheme()
-
   return (
-    <Modal title={t('Settings')} headerBackground="gradientCardHeader" onDismiss={onDismiss}>
+    <Modal
+      title={t('Settings')}
+      headerBackground="gradientCardHeader"
+      onDismiss={onDismiss}
+      headerRightSlot={
+        isGlobalSettingsChanged && (
+          <Button ml="8px" variant="text" scale="sm" onClick={resetSettings}>
+            {t('Reset')}
+          </Button>
+        )
+      }
+    >
       <ScrollableContainer>
         <Flex pb="24px" flexDirection="column">
           <PreTitle mb="24px">{t('Global')}</PreTitle>

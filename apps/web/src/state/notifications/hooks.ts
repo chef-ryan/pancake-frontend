@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState, useAppDispatch } from 'state'
 import { toggleAllowNotifications } from './actions'
-import { NotificationState } from './reducer'
+import { initialState, NotificationState } from './reducer'
 
 export function useHasUnreadNotifications(subscription: string | undefined): {
   unreadLength: number
@@ -35,7 +35,7 @@ export function useImportantNotificationsOnly(subscription: string | undefined):
   return state.notifications?.[subscription].importantAlertsOnly
 }
 
-export function useAllowNotifications(): [boolean | undefined, (allowNotifications: boolean) => void] {
+export function useAllowNotifications() {
   const dispatch = useAppDispatch()
   const allowNotifications = useSelector<AppState, AppState['notifications']['allowNotifications']>((state) => {
     return state.notifications.allowNotifications
@@ -48,5 +48,5 @@ export function useAllowNotifications(): [boolean | undefined, (allowNotificatio
     [dispatch],
   )
 
-  return [allowNotifications, setAllowNotifications]
+  return [allowNotifications, setAllowNotifications, initialState.allowNotifications] as const
 }

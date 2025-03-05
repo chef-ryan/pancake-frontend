@@ -3,9 +3,9 @@ import { useExperimentalFeatureEnabled } from 'hooks/useExperimentalFeatureEnabl
 import { useAllowNotifications } from 'state/notifications/hooks'
 
 export const useWebNotifications = () => {
-  const [allowNotifications] = useAllowNotifications()
+  const [allowNotifications, , defaultAllowNotificationsValue] = useAllowNotifications()
   const featureEnabled = useExperimentalFeatureEnabled(EXPERIMENTAL_FEATURES.WebNotifications)
   const enabled = Boolean(allowNotifications ?? featureEnabled)
 
-  return { enabled }
+  return { enabled, defaultValue: defaultAllowNotificationsValue ?? featureEnabled }
 }

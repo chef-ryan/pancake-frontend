@@ -15,7 +15,12 @@ import { AppState, useAppDispatch } from 'state'
 import { safeGetAddress } from 'utils'
 import { Hex, hexToBigInt } from 'viem'
 import { useWalletClient } from 'wagmi'
-import { GAS_PRICE_GWEI } from '../../types'
+import { initialState } from 'state/user/reducer'
+import { useUserShowTestnet } from 'state/user/hooks/useUserShowTestnet'
+import { useUserTokenRisk } from 'state/user/hooks/useUserTokenRisk'
+import { useWebNotifications } from 'hooks/useWebNotifications'
+import { useAllowNotifications } from 'state/notifications/hooks'
+import { useUserChart } from './useUserChart'
 import {
   FarmStakedOnly,
   SerializedPair,
@@ -37,7 +42,7 @@ import {
   updateUserPredictionChartDisclaimerShow,
   updateUserUsernameVisibility,
 } from '../actions'
-import { useUserChart } from './useUserChart'
+import { GAS_PRICE_GWEI } from '../../types'
 
 // Get user preference for exchange price chart
 // For mobile layout chart is hidden by default
@@ -59,7 +64,11 @@ export function useSubgraphHealthIndicatorManager() {
     [dispatch],
   )
 
-  return [isSubgraphHealthIndicatorDisplayed, setSubgraphHealthIndicatorDisplayedPreference] as const
+  return [
+    isSubgraphHealthIndicatorDisplayed,
+    setSubgraphHealthIndicatorDisplayedPreference,
+    initialState.isSubgraphHealthIndicatorDisplayed,
+  ] as const
 }
 
 export function useUserFarmStakedOnly(isActive: boolean): [boolean, (stakedOnly: boolean) => void, () => void] {
@@ -216,7 +225,7 @@ export function useUserPredictionChainlinkChartDisclaimerShow(): [boolean, (show
   return [userPredictionChainlinkChartDisclaimerShow, setPredictionUserChainlinkChartDisclaimerShow]
 }
 
-export function useUserUsernameVisibility(): [boolean, (usernameVisibility: boolean) => void] {
+export function useUserUsernameVisibility() {
   const dispatch = useAppDispatch()
   const userUsernameVisibility = useSelector<AppState, AppState['user']['userUsernameVisibility']>((state) => {
     return state.user.userUsernameVisibility
@@ -233,7 +242,7 @@ export function useUserUsernameVisibility(): [boolean, (usernameVisibility: bool
     [dispatch],
   )
 
-  return [userUsernameVisibility, setUserUsernameVisibility]
+  return [userUsernameVisibility, setUserUsernameVisibility, initialState.userUsernameVisibility] as const
 }
 
 export function useAddUserToken(): (token: ERC20Token) => void {
@@ -336,7 +345,7 @@ export function useGasPrice(chainIdOverride?: number): bigint | undefined {
   return undefined
 }
 
-export function useGasPriceManager(): [string, (userGasPrice: string) => void] {
+export function useGasPriceManager() {
   const dispatch = useAppDispatch()
   const userGasPrice = useSelector<AppState, AppState['user']['gasPrice']>((state) => state.user.gasPrice)
 
@@ -347,7 +356,7 @@ export function useGasPriceManager(): [string, (userGasPrice: string) => void] {
     [dispatch],
   )
 
-  return [userGasPrice, setGasPrice]
+  return [userGasPrice, setGasPrice, initialState.gasPrice] as const
 }
 
 function serializePair(pair: Pair): SerializedPair {
@@ -466,6 +475,51 @@ export function useTrackedTokenPairs(): [ERC20Token, ERC20Token][] {
 
     return Object.keys(keyed).map((key) => keyed[key])
   }, [combinedList])
+}
+
+export function useGlobalSettingsChanged() {
+  const [subgraphHealth, setSubgraphHealth, defaultSubgraphHealthValue] = useSubgraphHealthIndicatorManager()
+  const [userUsernameVisibility, setUsernameVisibility, defaultUserUsernameVisibilityValue] =
+    useUserUsernameVisibility()
+  const [showTestnet, setShowTestnet, defaultShowTestnetValue] = useUserShowTestnet()
+  const [tokenRisk, setTokenRisk, defaultTokenRiskValue] = useUserTokenRisk()
+  const { enabled: notificationsEnabled, defaultValue: defaultNotificationsValue } = useWebNotifications()
+  const [, setAllowNotifications] = useAllowNotifications()
+  const [gasPrice, setGasPrice, defaultGasPrice] = useGasPriceManager()
+
+  const resetSettings = useCallback(() => {
+    setSubgraphHealth(defaultSubgraphHealthValue)
+    setUsernameVisibility(defaultUserUsernameVisibilityValue)
+    setShowTestnet(defaultShowTestnetValue)
+    setTokenRisk(defaultTokenRiskValue)
+    setAllowNotifications(defaultNotificationsValue ?? true)
+    setGasPrice(defaultGasPrice)
+  }, [
+    setShowTestnet,
+    setTokenRisk,
+    setAllowNotifications,
+    setGasPrice,
+    defaultGasPrice,
+    defaultNotificationsValue,
+    defaultShowTestnetValue,
+    defaultSubgraphHealthValue,
+    defaultTokenRiskValue,
+    defaultUserUsernameVisibilityValue,
+    gasPrice,
+    setSubgraphHealth,
+    setUsernameVisibility,
+  ])
+
+  return {
+    isGlobalSettingsChanged:
+      subgraphHealth !== defaultSubgraphHealthValue ||
+      userUsernameVisibility !== defaultUserUsernameVisibilityValue ||
+      showTestnet !== defaultShowTestnetValue ||
+      tokenRisk !== defaultTokenRiskValue ||
+      notificationsEnabled !== defaultNotificationsValue ||
+      gasPrice !== defaultGasPrice,
+    resetSettings,
+  }
 }
 
 /**
