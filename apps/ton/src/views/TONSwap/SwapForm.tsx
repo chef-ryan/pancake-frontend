@@ -1,5 +1,6 @@
 import { useAtomValue } from 'jotai'
 import noop from 'lodash/noop'
+import debounce from 'lodash/debounce'
 import { useCallback, useMemo, useState } from 'react'
 
 import { useTranslation } from '@pancakeswap/localization'
@@ -102,17 +103,22 @@ export const SwapForm = () => {
     token1: outputCurrency,
   })
 
+  const resetSwapingState = debounce(() => {
+    setIsSwaping(false)
+    refreshTrade()
+  }, 20000)
+
   const handleSwap = useCallback(async () => {
     try {
       setIsSwaping(true)
+      resetSwapingState()
       await confirmSwap()
       onUserInput(Field.INPUT, '')
-    } catch (e) {
-      refreshTrade()
     } finally {
       setIsSwaping(false)
+      refreshTrade()
     }
-  }, [onUserInput, confirmSwap, refreshTrade])
+  }, [onUserInput, confirmSwap, refreshTrade, resetSwapingState])
 
   const handlePercentInput = useCallback(() => {}, [])
 

@@ -1,15 +1,13 @@
-import { AddIcon, Box, CircleLoader } from '@pancakeswap/uikit'
+import { type BoxProps, AddIcon, Box, CircleLoader } from '@pancakeswap/uikit'
 
-export const AddCircleLoading = () => {
+export const AddCircleLoading = ({ width = '30px', ...props }: { width?: string } & BoxProps) => {
   return (
-    <>
-      <Box position="relative">
-        <Box position="absolute" opacity="0.8" style={{ scale: '1.25' }}>
-          <CircleLoader size="24px" />
-        </Box>
-
-        <AddIcon width="24px" />
+    <Box position="relative" {...props}>
+      <Box position="absolute" opacity="0.8" style={{ scale: '1.25' }}>
+        <CircleLoader size={width} />
       </Box>
-    </>
+
+      <AddIcon width={width} />
+    </Box>
   )
 }

@@ -13,16 +13,18 @@ interface TransactionAnimationsProps {
   width?: string
 }
 
-export const TransactionAnimation = ({ type, width }: TransactionAnimationsProps) => {
+const DEFAULT_WIDTH = '36px'
+
+export const TransactionAnimation = ({ type, width = DEFAULT_WIDTH }: TransactionAnimationsProps) => {
   switch (type) {
     case 'loading':
-      return <Lottie animationData={LoadingData} style={{ width: width || '50px' }} />
+      return <Lottie animationData={LoadingData} style={{ width }} />
     case 'longSuccess':
-      return <Lottie animationData={LongSuccessData} style={{ width: width || '50px' }} />
+      return <Lottie loop={false} animationData={LongSuccessData} style={{ width, marginTop: '-12px' }} />
     case 'shortSuccess':
-      return <Lottie animationData={ShortSuccessData} style={{ width: width || '50px' }} />
+      return <Lottie loop={false} animationData={ShortSuccessData} style={{ width }} />
     case 'submit':
-      return <Lottie animationData={SubmitData} style={{ width: width || '50px' }} />
+      return <Lottie loop={false} animationData={SubmitData} style={{ width }} />
     default:
       return null
   }
