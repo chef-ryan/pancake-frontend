@@ -1,14 +1,14 @@
-import { styled } from 'styled-components'
 import { useTranslation } from '@pancakeswap/localization'
-import { Text, RowBetween, RowFixed, AutoColumn, Flex, QuestionHelperV2, SkeletonV2 } from '@pancakeswap/uikit'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
-import { Field } from 'types'
-import { BUYBACK_FEE, LP_HOLDERS_FEE, TOTAL_FEE, TREASURY_FEE } from 'config/constants/exchange'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from 'utils/exchange'
+import { AutoColumn, Flex, QuestionHelperV2, RowBetween, RowFixed, SkeletonV2, Text } from '@pancakeswap/uikit'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
+import { BUYBACK_FEE, LP_HOLDERS_FEE, TOTAL_FEE, TREASURY_FEE } from 'config/constants/exchange'
 import { useUserSlippage } from 'hooks/useUserSlippage'
-import { SwapRoute, AdvancedSwapDetailsProps } from './SwapRoute'
+import { styled } from 'styled-components'
+import { Field } from 'types'
+import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from 'utils/exchange'
 import FormattedPriceImpact from '../FormattedPriceImpact'
+import { AdvancedSwapDetailsProps, SwapRoute } from './SwapRoute'
 
 const DetailsTitle = styled(Text)`
   text-decoration: underline dotted;
@@ -89,10 +89,12 @@ function TradeSummary({
               {!trade
                 ? '-'
                 : isExactIn
-                ? `${slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4)} ${trade.outputAmount.currency.symbol}` ??
-                  '-'
-                : `${slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4)} ${trade.inputAmount.currency.symbol}` ??
-                  '-'}
+                ? `${slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4) ?? '-'} ${
+                    trade.outputAmount.currency.symbol
+                  }`
+                : `${slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4) ?? '-'} ${
+                    trade.inputAmount.currency.symbol
+                  }`}
             </DetailsContent>
           </RowFixed>
         </SkeletonV2>
