@@ -192,7 +192,6 @@ export const ZapLiquidityWidget: React.FC<ZapLiquidityProps> = ({
     <CurrencySearchModal
       onCurrencySelect={handleSelectToken}
       commonBasesType={CommonBasesType.LIQUIDITY}
-      mode="zap-currency"
       showCommonBases
       showCurrencyInHeader
       showSearchInput

@@ -150,7 +150,7 @@ export const SettingsModalV2 = ({
 
   // For Global Settings, show existing modal
   if (mode === SettingsMode.GLOBAL) {
-    return <SettingsModal onDismiss={onDismissGlobalSettings} mode={SettingsMode.GLOBAL} />
+    return <SettingsModal onDismiss={onDismissGlobalSettings} />
   }
 
   return (

@@ -215,7 +215,6 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
   const { t } = useTranslation()
 
-  const mode = id
   const token = pair ? pair.liquidityToken : currency?.isToken ? currency : null
   const [isInputFocus, setIsInputFocus] = useState(false)
 
@@ -237,7 +236,6 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
       commonBasesType={commonBasesType}
       showSearchInput={showSearchInput}
       tokensToShow={tokensToShow}
-      mode={mode}
       showCurrencyInHeader
     />,
   )

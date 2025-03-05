@@ -43,7 +43,6 @@ import {
 import { usePCSX, usePCSXFeatureEnabled } from 'hooks/usePCSX'
 import { styled } from 'styled-components'
 import GasSettings from './GasSettings'
-import { SettingsMode } from './types'
 
 const WebNotiToggle = lazy(() => import('./WebNotiToggle'))
 
@@ -70,7 +69,7 @@ const ScrollableContainer = styled(Flex)`
   }
 `
 
-const SettingsModal: React.FC<React.PropsWithChildren<InjectedModalProps>> = ({ onDismiss, mode }) => {
+const SettingsModal: React.FC<React.PropsWithChildren<InjectedModalProps>> = ({ onDismiss }) => {
   const [subgraphHealth, setSubgraphHealth] = useSubgraphHealthIndicatorManager()
   const [userUsernameVisibility, setUserUsernameVisibility] = useUserUsernameVisibility()
   const [showTestnet, setShowTestnet] = useUserShowTestnet()
@@ -85,111 +84,107 @@ const SettingsModal: React.FC<React.PropsWithChildren<InjectedModalProps>> = ({ 
   return (
     <Modal title={t('Settings')} headerBackground="gradientCardHeader" onDismiss={onDismiss}>
       <ScrollableContainer>
-        {mode === SettingsMode.GLOBAL && (
-          <>
-            <Flex pb="24px" flexDirection="column">
-              <PreTitle mb="24px">{t('Global')}</PreTitle>
-              <Flex justifyContent="space-between" mb="24px">
-                <Text>{t('Dark mode')}</Text>
-                <ThemeSwitcher isDark={isDark} toggleTheme={() => setTheme(isDark ? 'light' : 'dark')} />
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center" mb="24px">
-                <Flex alignItems="center">
-                  <Text>{t('Subgraph Health Indicator')}</Text>
-                  <QuestionHelper
-                    text={t(
-                      'Turn on subgraph health indicator all the time. Default is to show the indicator only when the network is delayed',
-                    )}
-                    placement="top"
-                    ml="4px"
-                  />
-                </Flex>
-                <Toggle
-                  id="toggle-subgraph-health-button"
-                  checked={subgraphHealth}
-                  scale="md"
-                  onChange={() => {
-                    setSubgraphHealth(!subgraphHealth)
-                  }}
-                />
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center" mb="24px">
-                <Flex alignItems="center">
-                  <Text>{t('Show username')}</Text>
-                  <QuestionHelper text={t('Shows username of wallet instead of bunnies')} placement="top" ml="4px" />
-                </Flex>
-                <Toggle
-                  id="toggle-username-visibility"
-                  checked={userUsernameVisibility}
-                  scale="md"
-                  onChange={() => {
-                    setUserUsernameVisibility(!userUsernameVisibility)
-                  }}
-                />
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center" mb="24px">
-                <Flex alignItems="center">
-                  <Text>{t('Allow notifications')}</Text>
-                  <QuestionHelper
-                    text={t(
-                      'Enables the web notifications feature. If turned off you will be automatically unsubscribed and the notification bell will not be visible',
-                    )}
-                    placement="top"
-                    ml="4px"
-                  />
-                  <BetaTag>{t('BETA')}</BetaTag>
-                </Flex>
-                <Suspense fallback={null}>
-                  <WebNotiToggle enabled={enabled} />
-                </Suspense>
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center" mb="24px">
-                <Flex alignItems="center">
-                  <Text>{t('Show testnet')}</Text>
-                </Flex>
-                <Toggle
-                  id="toggle-show-testnet"
-                  checked={showTestnet}
-                  scale="md"
-                  onChange={() => {
-                    setShowTestnet((s) => !s)
-                  }}
-                />
-              </Flex>
-              {chainId === ChainId.BSC && (
-                <>
-                  <Flex justifyContent="space-between" alignItems="center" mb="24px">
-                    <Flex alignItems="center">
-                      <Text>{t('Token Risk Scanning')}</Text>
-                      <QuestionHelper
-                        text={
-                          <AccessRiskTooltips
-                            hasResult
-                            riskLevel={TOKEN_RISK.SOME_RISK}
-                            riskLevelDescription={t(
-                              'Automatic risk scanning for the selected token. This scanning result is for reference only, and should NOT be taken as investment advice.',
-                            )}
-                          />
-                        }
-                        placement="top"
-                        ml="4px"
-                      />
-                    </Flex>
-                    <Toggle
-                      id="toggle-token-risk"
-                      checked={tokenRisk}
-                      scale="md"
-                      onChange={() => {
-                        setTokenRisk(!tokenRisk)
-                      }}
-                    />
-                  </Flex>
-                  <GasSettings />
-                </>
-              )}
+        <Flex pb="24px" flexDirection="column">
+          <PreTitle mb="24px">{t('Global')}</PreTitle>
+          <Flex justifyContent="space-between" mb="24px">
+            <Text>{t('Dark mode')}</Text>
+            <ThemeSwitcher isDark={isDark} toggleTheme={() => setTheme(isDark ? 'light' : 'dark')} />
+          </Flex>
+          <Flex justifyContent="space-between" alignItems="center" mb="24px">
+            <Flex alignItems="center">
+              <Text>{t('Subgraph Health Indicator')}</Text>
+              <QuestionHelper
+                text={t(
+                  'Turn on subgraph health indicator all the time. Default is to show the indicator only when the network is delayed',
+                )}
+                placement="top"
+                ml="4px"
+              />
             </Flex>
-          </>
-        )}
+            <Toggle
+              id="toggle-subgraph-health-button"
+              checked={subgraphHealth}
+              scale="md"
+              onChange={() => {
+                setSubgraphHealth(!subgraphHealth)
+              }}
+            />
+          </Flex>
+          <Flex justifyContent="space-between" alignItems="center" mb="24px">
+            <Flex alignItems="center">
+              <Text>{t('Show username')}</Text>
+              <QuestionHelper text={t('Shows username of wallet instead of bunnies')} placement="top" ml="4px" />
+            </Flex>
+            <Toggle
+              id="toggle-username-visibility"
+              checked={userUsernameVisibility}
+              scale="md"
+              onChange={() => {
+                setUserUsernameVisibility(!userUsernameVisibility)
+              }}
+            />
+          </Flex>
+          <Flex justifyContent="space-between" alignItems="center" mb="24px">
+            <Flex alignItems="center">
+              <Text>{t('Allow notifications')}</Text>
+              <QuestionHelper
+                text={t(
+                  'Enables the web notifications feature. If turned off you will be automatically unsubscribed and the notification bell will not be visible',
+                )}
+                placement="top"
+                ml="4px"
+              />
+              <BetaTag>{t('BETA')}</BetaTag>
+            </Flex>
+            <Suspense fallback={null}>
+              <WebNotiToggle enabled={enabled} />
+            </Suspense>
+          </Flex>
+          <Flex justifyContent="space-between" alignItems="center" mb="24px">
+            <Flex alignItems="center">
+              <Text>{t('Show testnet')}</Text>
+            </Flex>
+            <Toggle
+              id="toggle-show-testnet"
+              checked={showTestnet}
+              scale="md"
+              onChange={() => {
+                setShowTestnet((s) => !s)
+              }}
+            />
+          </Flex>
+          {chainId === ChainId.BSC && (
+            <>
+              <Flex justifyContent="space-between" alignItems="center" mb="24px">
+                <Flex alignItems="center">
+                  <Text>{t('Token Risk Scanning')}</Text>
+                  <QuestionHelper
+                    text={
+                      <AccessRiskTooltips
+                        hasResult
+                        riskLevel={TOKEN_RISK.SOME_RISK}
+                        riskLevelDescription={t(
+                          'Automatic risk scanning for the selected token. This scanning result is for reference only, and should NOT be taken as investment advice.',
+                        )}
+                      />
+                    }
+                    placement="top"
+                    ml="4px"
+                  />
+                </Flex>
+                <Toggle
+                  id="toggle-token-risk"
+                  checked={tokenRisk}
+                  scale="md"
+                  onChange={() => {
+                    setTokenRisk(!tokenRisk)
+                  }}
+                />
+              </Flex>
+              <GasSettings />
+            </>
+          )}
+        </Flex>
       </ScrollableContainer>
     </Modal>
   )
