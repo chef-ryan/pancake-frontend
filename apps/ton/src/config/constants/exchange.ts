@@ -25,7 +25,7 @@ export const QUERY_RETRY_DELAY = 1500 // 1.5 seconds
 export const DEFAULT_SIGNIFICANT_DIGITS = 5
 export const MAXIMUM_SIGNIFICANT_DIGITS = 9
 
-// Minimum liquidity for adding to a new pool, defined in smart contract
+// Liquidity removed when creating new pools, defined in smart contract
 export const REQUIRED_MIN_LIQUIDITY = 1000
 
 export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(50n, BIPS_BASE)

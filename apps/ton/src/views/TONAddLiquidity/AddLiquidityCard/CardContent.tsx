@@ -257,16 +257,11 @@ export const CardContent = (props: CardContentProps) => {
     if (isDisabled || !currency0?.wrapped.address || !currency1?.wrapped.address) return
     logGTMClickAddLiquidityConfirmEvent()
     try {
-      const expectedTokens = getExpectedPoolTokens({
-        amount0: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals),
-        amount1: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals),
-        reserve0: poolData?.reserve0 || 0n,
-        reserve1: poolData?.reserve1 || 0n,
-        totalSupply: poolData?.totalSupply || 0n,
-      })
-
       // Calculate minLPOut
-      const minLpOut = expectedTokens.times(1 - slippage / 10_000).toFixed(0)
+      const minLpOut = expectedPoolTokens
+        .multipliedBy(1 - slippage / 10_000)
+        .multipliedBy(10 ** LP_TOKEN_DECIMALS)
+        .toFixed(0)
 
       // Add liquidity
       addLiquidity({
@@ -282,7 +277,18 @@ export const CardContent = (props: CardContentProps) => {
       console.error('Error adding liquidity', e)
       toastError(t('Error adding liquidity'))
     }
-  }, [t, addLiquidity, toastSuccess, toastError, currency0, currency1, isDisabled, currencyAmounts, slippage, poolData])
+  }, [
+    t,
+    addLiquidity,
+    toastSuccess,
+    toastError,
+    currency0,
+    currency1,
+    isDisabled,
+    currencyAmounts,
+    slippage,
+    expectedPoolTokens,
+  ])
 
   const openConfirmationModal = useCallback(() => {
     // TODO: Determine data directly in modal
