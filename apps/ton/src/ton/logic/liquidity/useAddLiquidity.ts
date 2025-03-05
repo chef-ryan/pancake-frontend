@@ -47,12 +47,7 @@ export const useAddLiquidity = () => {
     async ({ token0, token1, minLpOut, amount0: amount0_, amount1: amount1_ }: AddLiquidityArgs) => {
       try {
         const { currency0, currency1, isFlipped } = await getCurrencyOrder(token0, token1)
-        let amount0 = amount0_
-        let amount1 = amount1_
-        if (isFlipped) {
-          amount0 = amount1_
-          amount1 = amount0_
-        }
+        const [amount0, amount1] = !isFlipped ? [amount0_, amount1_] : [amount1_, amount0_]
 
         const formattedAmount0 = formatBalance(amount0, currency0.decimals)
         const formattedAmount1 = formatBalance(amount1, currency1.decimals)
@@ -125,18 +120,18 @@ export const useAddLiquidity = () => {
           messages: [
             {
               address: currency0.isNative ? routerJettonWallet0.toString() : userJettonWallet0.toString(),
-              amount: GAS.plus(currency0.isNative ? amount0.toString() : BN(0)).toString(),
+              amount: (currency0.isNative ? FORWARD_GAS + amount0 : GAS).toString(),
               payload: payload0.toBoc().toString('base64'),
             },
             {
               address: currency1.isNative ? routerJettonWallet1.toString() : userJettonWallet1.toString(),
-              amount: GAS.plus(currency1.isNative ? amount1.toString() : BN(0)).toString(),
+              amount: (currency1.isNative ? FORWARD_GAS + amount1 : GAS).toString(),
               payload: payload1.toBoc().toString('base64'),
             },
           ],
         }
 
-        const { boc } = await tonUI.sendTransaction(txRequest, { modals: ['error'] })
+        const { boc } = await tonUI.sendTransaction(txRequest, { modals: [] })
 
         if (boc) {
           setTxnModal({
