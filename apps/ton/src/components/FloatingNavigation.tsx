@@ -1,10 +1,13 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Box, SortArrowIcon, Text, Cards } from '@pancakeswap/uikit'
+import { Box, Cards, SortArrowIcon, Text } from '@pancakeswap/uikit'
+import { useAtomValue } from 'jotai'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
 import styled from 'styled-components'
+import { isConnectedAtom } from 'ton/atom/isConnectedAtom'
 import { ConnectWalletButton } from './Buttons/ConnectWalletButton'
+import { NetworkButton } from './Buttons/NetworkButton'
 
 const FloatingBox = styled(Box)`
   position: fixed;
@@ -48,6 +51,8 @@ export const FloatingNavigation = () => {
 
   const router = useRouter()
 
+  const isConnected = useAtomValue(isConnectedAtom)
+
   const isActive = useCallback((path: string) => router.pathname === path, [router.pathname])
   const getItemColor = useCallback((path: string) => (isActive(path) ? 'secondary' : 'textSubtle'), [isActive])
 
@@ -67,6 +72,7 @@ export const FloatingNavigation = () => {
               {t('Liquidity')}
             </StyledText>
           </StyledLink>
+          {!isConnected && <NetworkButton />}
           <ConnectWalletButton />
         </Navigation>
       </FloatingBox>

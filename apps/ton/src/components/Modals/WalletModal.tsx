@@ -74,7 +74,7 @@ export const WalletModal = () => {
             <Text bold>{truncateHash(address, 4)}</Text>
           </FlexGap>
           <FlexGap gap="8px">
-            <Text>{t('TON Network')}</Text>
+            <Text bold>{t('TON Network')}</Text>
             <Logo />
           </FlexGap>
         </Flex>

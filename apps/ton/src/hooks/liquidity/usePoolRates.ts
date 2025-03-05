@@ -1,6 +1,7 @@
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { useQuery } from '@tanstack/react-query'
 import BN from 'bignumber.js'
+import { formatBalance } from 'ton/utils/formatting'
 import { getCurrencyOrder } from 'ton/utils/tokenOrder'
 import { stringify } from 'utils'
 
@@ -22,18 +23,25 @@ export const usePoolRates = ({ currency0, currency1, reserve0, reserve1 }: UsePo
 
       if (!currency0 || !currency1 || !reserve0 || !reserve1) return rates
 
-      const { isFlipped } = await getCurrencyOrder(currency0, currency1)
+      const {
+        currency0: currency0Sorted,
+        currency1: currency1Sorted,
+        isFlipped,
+      } = await getCurrencyOrder(currency0, currency1)
 
-      const rateCurrency0 = BN(reserve1.toString()).div(BN(reserve0.toString()))
-      const rateCurrency1 = BN(reserve0.toString()).div(BN(reserve1.toString()))
+      const formattedReserve0 = formatBalance(reserve0, currency0Sorted.decimals).toString()
+      const formattedReserve1 = formatBalance(reserve1, currency1Sorted.decimals).toString()
+
+      const rateCurrency0 = BN(formattedReserve1).div(BN(formattedReserve0))
+      const rateCurrency1 = BN(formattedReserve0).div(BN(formattedReserve1))
 
       if (isFlipped) {
         rates.currency0 = rateCurrency1.toString()
         rates.currency1 = rateCurrency0.toString()
-        return rates
+      } else {
+        rates.currency0 = rateCurrency0.toString()
+        rates.currency1 = rateCurrency1.toString()
       }
-      rates.currency0 = rateCurrency0.toString()
-      rates.currency1 = rateCurrency1.toString()
 
       return rates
     },

@@ -1,4 +1,5 @@
-import { NATIVE, TonChainId } from '@pancakeswap/ton-v2-sdk'
+import { TonChainId } from '@pancakeswap/ton-v2-sdk'
+import { getAssetUrl } from 'utils'
 
 export const AVAILABLE_NETWORKS: {
   name: string
@@ -11,7 +12,7 @@ export const AVAILABLE_NETWORKS: {
   {
     name: 'TON Network',
     symbol: 'TON',
-    logoURL: NATIVE[TonChainId.Mainnet].logoURI,
+    logoURL: getAssetUrl('ton-logo.png'),
     chainId: TonChainId.Mainnet,
     url: '#',
   },

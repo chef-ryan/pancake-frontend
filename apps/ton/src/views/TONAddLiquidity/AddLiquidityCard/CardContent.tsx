@@ -146,11 +146,21 @@ export const CardContent = (props: CardContentProps) => {
     const amount0 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]
     const amount1 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]
 
+    const parsedAmount0 = parseUnits(amount0, currency0?.decimals).toString()
+    const parsedAmount1 = parseUnits(amount1, currency1?.decimals).toString()
+
+    const parsedReserve0 = poolData?.reserve0
+      ? parseUnits(poolData.reserve0.toString(), currency0.decimals).toString()
+      : '0'
+    const parsedReserve1 = poolData?.reserve1
+      ? parseUnits(poolData.reserve1.toString(), currency1.decimals).toString()
+      : '0'
+
     return getExpectedPoolTokens({
-      amount0,
-      amount1,
-      reserve0: poolData?.reserve0 || 0n,
-      reserve1: poolData?.reserve1 || 0n,
+      amount0: parsedAmount0,
+      amount1: parsedAmount1,
+      reserve0: parsedReserve0,
+      reserve1: parsedReserve1,
       totalSupply: poolData?.totalSupply || 0n,
     })
   }, [currencyAmounts, poolData?.reserve0, poolData?.reserve1, poolData?.totalSupply, currency0, currency1])

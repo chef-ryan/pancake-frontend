@@ -41,7 +41,7 @@ export const useUserPools = () => {
   }, [chainId, cachedUserPools])
 
   const { isFetched, isLoading } = useQuery({
-    queryKey: ['userPools', chainId, userAddress],
+    queryKey: ['userPools', chunkedPresetPools, chainId, userAddress],
     queryFn: async () => {
       const cachedPools = [] as InitialPoolData[]
 

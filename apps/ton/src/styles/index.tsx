@@ -7,10 +7,10 @@ export const Hr = styled.hr`
 `
 
 export const TertiaryButton = styled(Button)`
+  width: 100%;
   background-color: ${({ theme }) => theme.colors.tertiary};
   color: ${({ theme }) => theme.colors.primary60};
   border: 1px solid ${({ theme }) => theme.colors.tertiary};
-  width: 100%;
 `
 
 export const Dot = styled(Box)`
