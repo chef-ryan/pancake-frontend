@@ -14,16 +14,9 @@ const userTxTTLAtom = atomWithStorage<number | undefined>('pcs:user:tx-ttl', und
 export function useUserTransactionTTL() {
   const { chainId } = useActiveChainId()
   const [userTTL, setTTL] = useAtom(userTxTTLAtom)
-  const ttl = useMemo(
-    () =>
-      userTTL === undefined
-        ? chainId && L2_CHAIN_IDS.includes(chainId)
-          ? L2_DEADLINE_FROM_NOW
-          : DEFAULT_DEADLINE_FROM_NOW
-        : userTTL,
-    [userTTL, chainId],
-  )
-  return [ttl, setTTL] as const
+  const defaultValue = chainId && L2_CHAIN_IDS.includes(chainId) ? L2_DEADLINE_FROM_NOW : DEFAULT_DEADLINE_FROM_NOW
+  const ttl = useMemo(() => (userTTL === undefined ? defaultValue : userTTL), [userTTL, defaultValue])
+  return [ttl, setTTL, defaultValue] as const
 }
 
 // combines the block timestamp with the user setting to give the deadline that should be used for any submitted transaction

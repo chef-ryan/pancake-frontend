@@ -16,7 +16,7 @@ const userSlippageAtomWithLocalStorage = atom(
 )
 
 export const useUserSlippage = () => {
-  return useAtom(userSlippageAtomWithLocalStorage)
+  return [...useAtom(userSlippageAtomWithLocalStorage), INITIAL_ALLOWED_SLIPPAGE] as const
 }
 
 // Derived atom for slippage as a Percent

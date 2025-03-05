@@ -18,6 +18,7 @@ import { useExpertMode, useUserExpertModeAcknowledgement } from '@pancakeswap/ut
 
 import { ReactNode, useCallback, useId, useState } from 'react'
 import { useRoutingSettingChanged } from 'state/user/smartRouter'
+import { useSwapSettingsChanged } from 'hooks/useSwapSettingsChanged'
 import SettingsModal from '../SettingsModal'
 import { SettingsMode } from '../types'
 import { CustomizeRoutingTab } from './CustomizeRoutingTab'
@@ -55,6 +56,7 @@ export const SettingsModalV2 = ({
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
 
+  const { isSwapSettingsChanged, resetSettings } = useSwapSettingsChanged()
   const [showExpertModeAcknowledgement, setShowExpertModeAcknowledgement] = useUserExpertModeAcknowledgement()
   const [expertMode, setExpertMode] = useExpertMode()
   const [isRoutingSettingChange, reset] = useRoutingSettingChanged()
@@ -153,16 +155,20 @@ export const SettingsModalV2 = ({
     return <SettingsModal onDismiss={onDismissGlobalSettings} />
   }
 
+  const showResetButton = Boolean(
+    activeTabIndex === TabIndex.CUSTOMIZE_ROUTING ? isRoutingSettingChange : isSwapSettingsChanged,
+  )
+  const onReset = activeTabIndex === TabIndex.CUSTOMIZE_ROUTING ? reset : resetSettings
+
   return (
     <MotionModal
       minWidth={[null, null, '420px']}
       minHeight={isMobile ? '500px' : undefined}
       headerPadding="2px 14px 0 24px"
       headerRightSlot={
-        activeTabIndex === TabIndex.CUSTOMIZE_ROUTING &&
-        isRoutingSettingChange && (
+        showResetButton && (
           <TabContent type="to_right">
-            <Button ml="8px" variant="text" scale="sm" onClick={reset}>
+            <Button ml="8px" variant="text" scale="sm" onClick={onReset}>
               {t('Reset')}
             </Button>
           </TabContent>

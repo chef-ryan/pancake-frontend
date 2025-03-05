@@ -29,11 +29,7 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import useTheme from 'hooks/useTheme'
 import { useWebNotifications } from 'hooks/useWebNotifications'
 import { ReactNode, Suspense, lazy, useCallback, useState } from 'react'
-import {
-  useGlobalSettingsChanged,
-  useSubgraphHealthIndicatorManager,
-  useUserUsernameVisibility,
-} from 'state/user/hooks'
+import { useSubgraphHealthIndicatorManager, useUserUsernameVisibility } from 'state/user/hooks'
 import { useUserShowTestnet } from 'state/user/hooks/useUserShowTestnet'
 import { useUserTokenRisk } from 'state/user/hooks/useUserTokenRisk'
 import {
@@ -46,6 +42,7 @@ import {
 } from 'state/user/smartRouter'
 import { usePCSX, usePCSXFeatureEnabled } from 'hooks/usePCSX'
 import { styled } from 'styled-components'
+import { useGlobalSettingsChanged } from 'hooks/useGlobalSettingsChanged'
 import GasSettings from './GasSettings'
 
 const WebNotiToggle = lazy(() => import('./WebNotiToggle'))

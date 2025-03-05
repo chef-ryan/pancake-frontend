@@ -1,8 +1,10 @@
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 
-const userAudioPlayAtom = atomWithStorage('pcs:audio-play-2', false)
+const DEFAULT_VALUE = false
+
+const userAudioPlayAtom = atomWithStorage('pcs:audio-play-2', DEFAULT_VALUE)
 
 export function useAudioPlay() {
-  return useAtom(userAudioPlayAtom)
+  return [...useAtom(userAudioPlayAtom), DEFAULT_VALUE] as const
 }

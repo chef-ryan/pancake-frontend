@@ -16,10 +16,6 @@ import { safeGetAddress } from 'utils'
 import { Hex, hexToBigInt } from 'viem'
 import { useWalletClient } from 'wagmi'
 import { initialState } from 'state/user/reducer'
-import { useUserShowTestnet } from 'state/user/hooks/useUserShowTestnet'
-import { useUserTokenRisk } from 'state/user/hooks/useUserTokenRisk'
-import { useWebNotifications } from 'hooks/useWebNotifications'
-import { useAllowNotifications } from 'state/notifications/hooks'
 import { useUserChart } from './useUserChart'
 import {
   FarmStakedOnly,
@@ -475,51 +471,6 @@ export function useTrackedTokenPairs(): [ERC20Token, ERC20Token][] {
 
     return Object.keys(keyed).map((key) => keyed[key])
   }, [combinedList])
-}
-
-export function useGlobalSettingsChanged() {
-  const [subgraphHealth, setSubgraphHealth, defaultSubgraphHealthValue] = useSubgraphHealthIndicatorManager()
-  const [userUsernameVisibility, setUsernameVisibility, defaultUserUsernameVisibilityValue] =
-    useUserUsernameVisibility()
-  const [showTestnet, setShowTestnet, defaultShowTestnetValue] = useUserShowTestnet()
-  const [tokenRisk, setTokenRisk, defaultTokenRiskValue] = useUserTokenRisk()
-  const { enabled: notificationsEnabled, defaultValue: defaultNotificationsValue } = useWebNotifications()
-  const [, setAllowNotifications] = useAllowNotifications()
-  const [gasPrice, setGasPrice, defaultGasPrice] = useGasPriceManager()
-
-  const resetSettings = useCallback(() => {
-    setSubgraphHealth(defaultSubgraphHealthValue)
-    setUsernameVisibility(defaultUserUsernameVisibilityValue)
-    setShowTestnet(defaultShowTestnetValue)
-    setTokenRisk(defaultTokenRiskValue)
-    setAllowNotifications(defaultNotificationsValue ?? true)
-    setGasPrice(defaultGasPrice)
-  }, [
-    setShowTestnet,
-    setTokenRisk,
-    setAllowNotifications,
-    setGasPrice,
-    defaultGasPrice,
-    defaultNotificationsValue,
-    defaultShowTestnetValue,
-    defaultSubgraphHealthValue,
-    defaultTokenRiskValue,
-    defaultUserUsernameVisibilityValue,
-    gasPrice,
-    setSubgraphHealth,
-    setUsernameVisibility,
-  ])
-
-  return {
-    isGlobalSettingsChanged:
-      subgraphHealth !== defaultSubgraphHealthValue ||
-      userUsernameVisibility !== defaultUserUsernameVisibilityValue ||
-      showTestnet !== defaultShowTestnetValue ||
-      tokenRisk !== defaultTokenRiskValue ||
-      notificationsEnabled !== defaultNotificationsValue ||
-      gasPrice !== defaultGasPrice,
-    resetSettings,
-  }
 }
 
 /**
