@@ -20,14 +20,12 @@ import { PairState } from 'hooks/usePairs'
 import { CurrencyField as Field } from 'utils/types'
 import { useDerivedMintInfo, useMintActionHandlers } from 'state/mint/hooks'
 
-import { SettingsMode } from 'components/Menu/GlobalSettings/types'
 import { useAddLiquidityV2FormState } from 'state/mint/reducer'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useGasPrice, usePairAdder } from 'state/user/hooks'
 import { calculateGasMargin } from 'utils'
 import { calculateSlippageAmount, useRouterContract } from 'utils/exchange'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
-import SettingsModal from '../../components/Menu/GlobalSettings/SettingsModal'
 import { useTransactionDeadline } from '../../hooks/useTransactionDeadline'
 import ConfirmAddLiquidityModal from './components/ConfirmAddLiquidityModal'
 import { useCurrencySelectRoute } from './useCurrencySelectRoute'
@@ -52,7 +50,6 @@ export interface LP2ChildrenProps {
   pairState: PairState
   poolTokenPercentage?: Percent
   price?: Price<Currency, Currency>
-  onPresentSettingsModal: () => void
   allowedSlippage: number
   pair?: Pair | null
   poolData?: {
@@ -338,8 +335,6 @@ export default function AddLiquidity({
 
   const shouldShowApprovalGroup = (showFieldAApproval || showFieldBApproval) && isValid
 
-  const [onPresentSettingsModal] = useModal(<SettingsModal mode={SettingsMode.SWAP_LIQUIDITY} />)
-
   return children({
     isOneWeiAttack,
     error,
@@ -354,7 +349,6 @@ export default function AddLiquidity({
     pairState,
     poolTokenPercentage,
     price,
-    onPresentSettingsModal,
     allowedSlippage,
     pair,
     poolData,

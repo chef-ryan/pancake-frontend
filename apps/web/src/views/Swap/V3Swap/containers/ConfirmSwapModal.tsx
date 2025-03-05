@@ -3,7 +3,7 @@ import { ChainId, Currency, CurrencyAmount, Token, TradeType } from '@pancakeswa
 import { useCallback, useMemo } from 'react'
 
 import { WrappedTokenInfo } from '@pancakeswap/token-lists'
-import { Box, BscScanIcon, Flex, InjectedModalProps, Link } from '@pancakeswap/uikit'
+import { Box, BscScanIcon, Flex, InjectedModalProps, Link, ModalV2, useModalV2 } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import truncateHash from '@pancakeswap/utils/truncateHash'
 import { useUserSlippage } from '@pancakeswap/utils/user'
@@ -24,6 +24,7 @@ import { SwapTransactionErrorContent } from 'views/Swap/components/SwapTransacti
 
 import { Hash } from 'viem'
 import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
+import { SettingsModalV2 } from 'components/Menu/GlobalSettings/SettingsModalV2'
 import { TransactionConfirmSwapContent } from '../components'
 import { ConfirmAction } from '../hooks/useConfirmModalState'
 import { AllowedAllowanceState } from '../types'
@@ -58,7 +59,6 @@ type ConfirmSwapModalProps = InjectedModalProps & {
   swapErrorMessage?: string
   onAcceptChanges: () => void
   onConfirm: (setConfirmModalState?: () => void) => void
-  openSettingModal?: () => void
 }
 
 export const ConfirmSwapModal: React.FC<ConfirmSwapModalProps> = ({
@@ -72,7 +72,6 @@ export const ConfirmSwapModal: React.FC<ConfirmSwapModalProps> = ({
   customOnDismiss,
   txHash,
   orderHash,
-  openSettingModal,
   onAcceptChanges,
   onConfirm,
 }) => {
@@ -118,6 +117,8 @@ export const ConfirmSwapModal: React.FC<ConfirmSwapModalProps> = ({
     onDismiss?.()
   }, [customOnDismiss, onDismiss])
 
+  const { isOpen, onOpen, onDismiss: onModalDismiss } = useModalV2()
+
   const modalContent = useMemo(() => {
     const isExactIn = originalOrder?.trade.tradeType === TradeType.EXACT_INPUT
     const currencyA = currencyBalances?.INPUT?.currency ?? originalOrder?.trade?.inputAmount?.currency
@@ -130,11 +131,10 @@ export const ConfirmSwapModal: React.FC<ConfirmSwapModalProps> = ({
     if (swapErrorMessage) {
       return (
         <Flex width="100%" alignItems="center" height="calc(430px - 73px - 120px)">
-          <SwapTransactionErrorContent
-            message={swapErrorMessage}
-            onDismiss={handleDismiss}
-            openSettingModal={openSettingModal}
-          />
+          <SwapTransactionErrorContent message={swapErrorMessage} onDismiss={handleDismiss} openSettingModal={onOpen} />
+          <ModalV2 isOpen={isOpen} onDismiss={onModalDismiss} closeOnOverlayClick>
+            <SettingsModalV2 onDismiss={onModalDismiss} />
+          </ModalV2>
         </Flex>
       )
     }
@@ -280,12 +280,14 @@ export const ConfirmSwapModal: React.FC<ConfirmSwapModalProps> = ({
     chainId,
     t,
     handleDismiss,
-    openSettingModal,
     stepContents,
     pendingModalSteps,
     showAddToWalletButton,
     orderHash,
     token,
+    isOpen,
+    onModalDismiss,
+    onOpen,
   ])
 
   if (!chainId) return null

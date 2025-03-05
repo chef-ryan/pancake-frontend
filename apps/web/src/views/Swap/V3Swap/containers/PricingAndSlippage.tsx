@@ -1,4 +1,4 @@
-import { useModal } from '@pancakeswap/uikit'
+import { ModalV2, useModalV2 } from '@pancakeswap/uikit'
 import { Swap as SwapUI } from '@pancakeswap/widgets-internal'
 
 import { useTranslation } from '@pancakeswap/localization'
@@ -6,8 +6,7 @@ import { Price, Currency } from '@pancakeswap/sdk'
 import { useUserSlippage } from '@pancakeswap/utils/user'
 import { memo } from 'react'
 
-import SettingsModal from '../../../../components/Menu/GlobalSettings/SettingsModal'
-import { SettingsMode } from '../../../../components/Menu/GlobalSettings/types'
+import { SettingsModalV2 } from 'components/Menu/GlobalSettings/SettingsModalV2'
 import { useIsWrapping } from '../hooks'
 
 interface Props {
@@ -24,7 +23,7 @@ export const PricingAndSlippage = memo(function PricingAndSlippage({
   const { t } = useTranslation()
   const [allowedSlippage] = useUserSlippage()
   const isWrapping = useIsWrapping()
-  const [onPresentSettingsModal] = useModal(<SettingsModal mode={SettingsMode.SWAP_LIQUIDITY} />)
+  const { isOpen, onOpen, onDismiss } = useModalV2()
 
   if (isWrapping) {
     return null
@@ -41,7 +40,11 @@ export const PricingAndSlippage = memo(function PricingAndSlippage({
     <SwapUI.Info
       price={priceNode}
       allowedSlippage={showSlippage ? allowedSlippage : undefined}
-      onSlippageClick={onPresentSettingsModal}
-    />
+      onSlippageClick={onOpen}
+    >
+      <ModalV2 isOpen={isOpen} onDismiss={onDismiss} closeOnOverlayClick>
+        <SettingsModalV2 onDismiss={onDismiss} />
+      </ModalV2>
+    </SwapUI.Info>
   )
 })

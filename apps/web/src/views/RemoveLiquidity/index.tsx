@@ -11,12 +11,14 @@ import {
   ColumnCenter,
   Flex,
   IconButton,
+  ModalV2,
   PencilIcon,
   Slider,
   Text,
   TooltipText,
   useMatchBreakpoints,
   useModal,
+  useModalV2,
   useToast,
   useTooltip,
 } from '@pancakeswap/uikit'
@@ -48,20 +50,19 @@ import { calculateGasMargin } from 'utils'
 import { currencyId } from 'utils/currencyId'
 import { calculateSlippageAmount, useRouterContract } from 'utils/exchange'
 
-import { SettingsMode } from 'components/Menu/GlobalSettings/types'
 import { CommonBasesType } from 'components/SearchModal/types'
 import { Field } from 'state/burn/actions'
 import { useRemoveLiquidityV2FormState } from 'state/burn/reducer'
 import { useGasPrice } from 'state/user/hooks'
 import { logGTMClickRemoveLiquidityEvent } from 'utils/customGTMEventTracking'
 import { isUserRejected, logError } from 'utils/sentry'
+import { SettingsModalV2 } from 'components/Menu/GlobalSettings/SettingsModalV2'
 import { AppBody, AppHeader } from '../../components/App'
 import ConnectWalletButton from '../../components/ConnectWalletButton'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import StyledInternalLink from '../../components/Links'
 import Dots from '../../components/Loader/Dots'
 import { CurrencyLogo } from '../../components/Logo'
-import SettingsModal from '../../components/Menu/GlobalSettings/SettingsModal'
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
 import { useTransactionDeadline } from '../../hooks/useTransactionDeadline'
 import { formatAmount } from '../../utils/formatInfoNumbers'
@@ -475,7 +476,7 @@ export default function RemoveLiquidity({ currencyA, currencyB, currencyIdA, cur
     'removeLiquidityModal',
   )
 
-  const [onPresentSettingsModal] = useModal(<SettingsModal mode={SettingsMode.SWAP_LIQUIDITY} />)
+  const { isOpen, onOpen, onDismiss } = useModalV2()
 
   return (
     <CardBody>
@@ -668,9 +669,12 @@ export default function RemoveLiquidity({ currencyA, currencyB, currencyIdA, cur
       <RowBetween mt="16px">
         <Text bold color="secondary" fontSize="12px">
           {t('Slippage Tolerance')}
-          <IconButton scale="sm" variant="text" onClick={onPresentSettingsModal}>
+          <IconButton scale="sm" variant="text" onClick={onOpen}>
             <PencilIcon color="primary" width="10px" />
           </IconButton>
+          <ModalV2 isOpen={isOpen} onDismiss={onDismiss} closeOnOverlayClick>
+            <SettingsModalV2 onDismiss={onDismiss} />
+          </ModalV2>
         </Text>
         <Text bold color="primary">
           {allowedSlippage / 100}%

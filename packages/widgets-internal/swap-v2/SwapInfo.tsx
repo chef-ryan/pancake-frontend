@@ -14,7 +14,13 @@ export const SwapInfoLabel = (props: PropsWithChildren<TextProps>) => (
   <Text fontSize="12px" bold color="secondary" {...props} />
 );
 
-export const SwapInfo = ({ allowedSlippage, price, onSlippageClick, allowedSlippageSlot }: SwapInfoType) => {
+export const SwapInfo = ({
+  allowedSlippage,
+  price,
+  onSlippageClick,
+  allowedSlippageSlot,
+  children,
+}: PropsWithChildren<SwapInfoType>) => {
   const { t } = useTranslation();
   const isMounted = useIsMounted();
 
@@ -44,6 +50,7 @@ export const SwapInfo = ({ allowedSlippage, price, onSlippageClick, allowedSlipp
             ))}
         </RowBetween>
       )}
+      {children}
     </AutoColumn>
   );
 };

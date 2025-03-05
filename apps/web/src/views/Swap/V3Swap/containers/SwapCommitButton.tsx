@@ -10,8 +10,7 @@ import { GreyCard } from 'components/Card'
 import { CommitButton } from 'components/CommitButton'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AutoRow } from 'components/Layout/Row'
-import SettingsModal, { RoutingSettingsButton, withCustomOnDismiss } from 'components/Menu/GlobalSettings/SettingsModal'
-import { SettingsMode } from 'components/Menu/GlobalSettings/types'
+import { RoutingSettingsButton } from 'components/Menu/GlobalSettings/SettingsModal'
 import { BIG_INT_ZERO } from 'config/constants/exchange'
 import { useCurrency } from 'hooks/Tokens'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
@@ -33,19 +32,10 @@ import { CommitButtonProps } from '../types'
 import { computeTradePriceBreakdown } from '../utils/exchange'
 import { ConfirmSwapModal } from './ConfirmSwapModal'
 
-const SettingsModalWithCustomDismiss = withCustomOnDismiss(SettingsModal)
-
 interface SwapCommitButtonPropsType {
   order?: PriceOrder
   tradeError?: Error | null
   tradeLoading?: boolean
-}
-
-const useSettingModal = (onDismiss) => {
-  const [openSettingsModal] = useModal(
-    <SettingsModalWithCustomDismiss customOnDismiss={onDismiss} mode={SettingsMode.SWAP_LIQUIDITY} />,
-  )
-  return openSettingsModal
 }
 
 const useSwapCurrencies = () => {
@@ -209,11 +199,6 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
     callToAction()
   }, [beforeCommit, callToAction])
 
-  // modals
-  const onSettingModalDismiss = useCallback(() => {
-    setIndirectlyOpenConfirmModalState(true)
-  }, [])
-  const openSettingModal = useSettingModal(onSettingModalDismiss)
   const [openConfirmSwapModal] = useModal(
     <ConfirmSwapModal
       order={order}
@@ -226,7 +211,6 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
       currencyBalances={currencyBalances}
       onAcceptChanges={handleAcceptChanges}
       onConfirm={onConfirm}
-      openSettingModal={openSettingModal}
       customOnDismiss={reset}
     />,
     true,

@@ -22,21 +22,13 @@ import {
   ThemeSwitcher,
   Toggle,
 } from '@pancakeswap/uikit'
-import {
-  useAudioPlay,
-  useExpertMode,
-  useUserExpertModeAcknowledgement,
-  useUserSingleHopOnly,
-} from '@pancakeswap/utils/user'
-import { ExpertModal } from '@pancakeswap/widgets-internal'
+import { useUserSingleHopOnly } from '@pancakeswap/utils/user'
 import { TOKEN_RISK } from 'components/AccessRisk'
 import AccessRiskTooltips from 'components/AccessRisk/AccessRiskTooltips'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useSpeedQuote } from 'hooks/useSpeedQuote'
 import useTheme from 'hooks/useTheme'
 import { useWebNotifications } from 'hooks/useWebNotifications'
 import { ReactNode, Suspense, lazy, useCallback, useState } from 'react'
-import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
 import { useSubgraphHealthIndicatorManager, useUserUsernameVisibility } from 'state/user/hooks'
 import { useUserShowTestnet } from 'state/user/hooks/useUserShowTestnet'
 import { useUserTokenRisk } from 'state/user/hooks/useUserTokenRisk'
@@ -51,7 +43,6 @@ import {
 import { usePCSX, usePCSXFeatureEnabled } from 'hooks/usePCSX'
 import { styled } from 'styled-components'
 import GasSettings from './GasSettings'
-import TransactionSettings from './TransactionSettings'
 import { SettingsMode } from './types'
 
 const WebNotiToggle = lazy(() => import('./WebNotiToggle'))
@@ -79,65 +70,17 @@ const ScrollableContainer = styled(Flex)`
   }
 `
 
-export const withCustomOnDismiss =
-  (Component) =>
-  ({
-    onDismiss,
-    customOnDismiss,
-    mode,
-    ...props
-  }: {
-    onDismiss?: () => void
-    customOnDismiss: () => void
-    mode: SettingsMode
-  }) => {
-    const handleDismiss = useCallback(() => {
-      onDismiss?.()
-      if (customOnDismiss) {
-        customOnDismiss()
-      }
-    }, [customOnDismiss, onDismiss])
-
-    return <Component {...props} mode={mode} onDismiss={handleDismiss} />
-  }
-
 const SettingsModal: React.FC<React.PropsWithChildren<InjectedModalProps>> = ({ onDismiss, mode }) => {
-  const [showConfirmExpertModal, setShowConfirmExpertModal] = useState(false)
-  const [showExpertModeAcknowledgement, setShowExpertModeAcknowledgement] = useUserExpertModeAcknowledgement()
-  const [expertMode, setExpertMode] = useExpertMode()
-  const [audioPlay, setAudioMode] = useAudioPlay()
-  const [speedQuote, setSpeedQuote] = useSpeedQuote()
   const [subgraphHealth, setSubgraphHealth] = useSubgraphHealthIndicatorManager()
   const [userUsernameVisibility, setUserUsernameVisibility] = useUserUsernameVisibility()
   const [showTestnet, setShowTestnet] = useUserShowTestnet()
   const { enabled } = useWebNotifications()
 
-  const { onChangeRecipient } = useSwapActionHandlers()
   const { chainId } = useActiveChainId()
   const [tokenRisk, setTokenRisk] = useUserTokenRisk()
 
   const { t } = useTranslation()
   const { isDark, setTheme } = useTheme()
-
-  if (showConfirmExpertModal) {
-    return (
-      <ExpertModal
-        setShowConfirmExpertModal={setShowConfirmExpertModal}
-        onDismiss={onDismiss}
-        toggleExpertMode={() => setExpertMode((s) => !s)}
-        setShowExpertModeAcknowledgement={setShowExpertModeAcknowledgement}
-      />
-    )
-  }
-
-  const handleExpertModeToggle = () => {
-    if (expertMode || !showExpertModeAcknowledgement) {
-      onChangeRecipient(null)
-      setExpertMode((s) => !s)
-    } else {
-      setShowConfirmExpertModal(true)
-    }
-  }
 
   return (
     <Modal title={t('Settings')} headerBackground="gradientCardHeader" onDismiss={onDismiss}>
@@ -245,66 +188,6 @@ const SettingsModal: React.FC<React.PropsWithChildren<InjectedModalProps>> = ({ 
                 </>
               )}
             </Flex>
-          </>
-        )}
-        {mode === SettingsMode.SWAP_LIQUIDITY && (
-          <>
-            <Flex pt="3px" flexDirection="column">
-              <PreTitle>{t('Swaps & Liquidity')}</PreTitle>
-              <Flex justifyContent="space-between" alignItems="center" mb="24px">
-                {chainId === ChainId.BSC && <GasSettings />}
-              </Flex>
-              <TransactionSettings />
-            </Flex>
-            <Flex justifyContent="space-between" alignItems="center" mb="24px">
-              <Flex alignItems="center">
-                <Text>{t('Expert Mode')}</Text>
-                <QuestionHelper
-                  text={t('Bypasses confirmation modals and allows high slippage trades. Use at your own risk.')}
-                  placement="top"
-                  ml="4px"
-                />
-              </Flex>
-              <Toggle
-                id="toggle-expert-mode-button"
-                scale="md"
-                checked={expertMode}
-                onChange={handleExpertModeToggle}
-              />
-            </Flex>
-            <Flex justifyContent="space-between" alignItems="center" mb="24px">
-              <Flex alignItems="center">
-                <Text>{t('Flippy sounds')}</Text>
-                <QuestionHelper
-                  text={t('Fun sounds to make a truly immersive pancake-flipping trading experience')}
-                  placement="top"
-                  ml="4px"
-                />
-              </Flex>
-              <PancakeToggle
-                id="toggle-audio-play"
-                checked={audioPlay}
-                onChange={() => setAudioMode((s) => !s)}
-                scale="md"
-              />
-            </Flex>
-            <Flex justifyContent="space-between" alignItems="center" mb="24px">
-              <Flex alignItems="center">
-                <Text>{t('Fast routing (BETA)')}</Text>
-                <QuestionHelper
-                  text={t('Increase the speed of finding best swapping routes')}
-                  placement="top"
-                  ml="4px"
-                />
-              </Flex>
-              <PancakeToggle
-                id="toggle-speed-quote"
-                checked={speedQuote}
-                onChange={() => setSpeedQuote((s) => !s)}
-                scale="md"
-              />
-            </Flex>
-            <RoutingSettingsButton />
           </>
         )}
       </ScrollableContainer>
