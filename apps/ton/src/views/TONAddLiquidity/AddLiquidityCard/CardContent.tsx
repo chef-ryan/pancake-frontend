@@ -258,10 +258,17 @@ export const CardContent = (props: CardContentProps) => {
     logGTMClickAddLiquidityConfirmEvent()
     try {
       // Calculate minLPOut
-      const minLpOut = expectedPoolTokens
-        .multipliedBy(1 - slippage / 10_000)
-        .multipliedBy(10 ** LP_TOKEN_DECIMALS)
-        .toFixed(0)
+
+      const minLpOut = parseUnits(expectedPoolTokens.multipliedBy(1 - slippage / 10_000).toString(), LP_TOKEN_DECIMALS)
+
+      console.log('minLpOut', {
+        minLpOut,
+        slippageAdjustedLPExpected: expectedPoolTokens.multipliedBy(1 - slippage / 10_000).toString(),
+        amount0: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0],
+        amount1: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1],
+        parsedAmount0: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals),
+        parsedAmount1: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals),
+      })
 
       // Add liquidity
       addLiquidity({
@@ -346,6 +353,7 @@ export const CardContent = (props: CardContentProps) => {
             showMaxButton={false}
             showQuickInputButton={false}
             disabled={isPoolDataLoading}
+            title={<>&nbsp;</>}
           />
         </Box>
 

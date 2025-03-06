@@ -80,14 +80,14 @@ const PoolRefundRow = ({
               <CurrencyLogo currency={currency0} />
               <Text>{currency0?.symbol}</Text>
             </FlexGap>
-            <Text>{formatBigNumber(refundAmount0, currency0?.decimals)}</Text>
+            <Text>{refundAmount0.gt(0) ? formatBigNumber(refundAmount0, currency0?.decimals) : '0'}</Text>
           </Flex>
           <Flex justifyContent="space-between">
             <FlexGap gap="8px">
               <CurrencyLogo currency={currency1} />
               <Text>{currency1?.symbol}</Text>
             </FlexGap>
-            <Text>{formatBigNumber(refundAmount1, currency1?.decimals)}</Text>
+            <Text>{refundAmount1.gt(0) ? formatBigNumber(refundAmount1, currency1?.decimals) : '0'}</Text>
           </Flex>
 
           <Button onClick={handleRefund}>{t('Refund')}</Button>
