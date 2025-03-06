@@ -2,7 +2,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { SwapCSS } from '@pancakeswap/uikit'
 import { escapeRegExp } from '@pancakeswap/utils/escapeRegExp'
 import clsx from 'clsx'
-import { memo } from 'react'
+import { ChangeEvent, memo } from 'react'
 import { styled } from 'styled-components'
 
 const StyledInput = styled.input`
@@ -17,7 +17,7 @@ export type NumericalInputProps = {
   fontSize?: string
   inputRef?: React.RefObject<HTMLInputElement>
   padding?: string
-  onUserInput: (input: string) => void
+  onUserInput: (input: string, event: ChangeEvent<HTMLInputElement>) => void
 } & SwapCSS.InputVariants &
   Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>
 
@@ -34,9 +34,9 @@ export const NumericalInput = memo(function InnerInput({
   padding,
   ...rest
 }: NumericalInputProps) {
-  const enforcer = (nextUserInput: string) => {
+  const enforcer = (nextUserInput: string, event: ChangeEvent<HTMLInputElement>) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-      onUserInput(nextUserInput)
+      onUserInput(nextUserInput, event)
     }
   }
 
@@ -56,7 +56,7 @@ export const NumericalInput = memo(function InnerInput({
       value={value}
       onChange={(event) => {
         // replace commas with periods, because we exclusively uses period as the decimal separator
-        enforcer(event.target.value.replace(/,/g, '.'))
+        enforcer(event.target.value.replace(/,/g, '.'), event)
       }}
       // universal input options
       inputMode="decimal"

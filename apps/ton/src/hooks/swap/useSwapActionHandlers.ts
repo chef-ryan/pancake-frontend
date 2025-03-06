@@ -6,13 +6,12 @@ import {
   useOutputCurrencyQueryState,
 } from 'atoms/swap/swapStateAtom'
 import { useAtom, useSetAtom } from 'jotai'
-import { useCallback } from 'react'
+import { ChangeEvent, useCallback } from 'react'
 import { Field } from 'types'
 
 export const useSwapActionHandlers = () => {
   const setTypedValue = useSetAtom(typedValueAtom)
   const [, setIndependentField] = useAtom(independentFieldAtom)
-
   const [inputCurrency, setInputCurrency] = useInputCurrencyQueryState()
   const [outputCurrency, setOutputCurrency] = useOutputCurrencyQueryState()
 

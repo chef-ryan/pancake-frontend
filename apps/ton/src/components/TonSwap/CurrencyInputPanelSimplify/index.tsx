@@ -15,7 +15,7 @@ import {
 } from '@pancakeswap/uikit'
 
 import { CurrencyLogo, SwapUIV2 } from 'components/widgets'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ChangeEvent, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from 'styled-components'
 
 import { formatNumber } from '@pancakeswap/utils/formatNumber'
@@ -142,7 +142,7 @@ interface CurrencyInputPanelProps {
   field?: string // Example: 'INPUT', 'OUTPUT'
 
   value: string | undefined
-  onUserInput: (value: string) => void
+  onUserInput: (value: string, e?: ChangeEvent<HTMLInputElement>) => void
   onInputBlur?: () => void
 
   onPercentInput?: (percent: number) => void // TODO: Remove
@@ -207,10 +207,32 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   const [isInputFocus, setIsInputFocus] = useState(false)
   const amountInDollar = 0 // dummy value
 
+  const handleUserInput = useCallback(
+    (v: string, e?: ChangeEvent<HTMLInputElement>, currency_?: Currency) => {
+      const cursor = e?.target.selectionStart
+      const c = currency_ ?? currency
+      onUserInput(c ? limitNumber(v, c?.decimals) : v, e)
+      setTimeout(() => {
+        if (cursor) {
+          e.target.setSelectionRange(cursor, cursor)
+        }
+      }, 0)
+    },
+    [onUserInput, currency],
+  )
+
+  const handleCurrencySelect = useCallback(
+    (c: Currency) => {
+      onCurrencySelect?.(c)
+      if (value) handleUserInput(value, undefined, c)
+    },
+    [value, onCurrencySelect, handleUserInput],
+  )
+
   const [onPresentCurrencyModal] = useModal(
     <CurrencySearchModal
       field={field}
-      onCurrencySelect={onCurrencySelect}
+      onCurrencySelect={handleCurrencySelect}
       selectedCurrency={currency}
       otherSelectedCurrency={otherCurrency}
       showCommonBases={showCommonBases}
@@ -228,12 +250,6 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
     otherCurrency?.symbol,
   )
 
-  const handleUserInput = useCallback(
-    (val: string) => {
-      onUserInput(val)
-    },
-    [onUserInput],
-  )
   const handleUserInputBlur = useCallback(() => {
     onInputBlur?.()
     setTimeout(() => setIsInputFocus(false), 300)
@@ -266,17 +282,17 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   )
 
   const onMax = useCallback(() => {
-    onUserInput(formatBalance(balanceExcludingGas, currency?.decimals))
-  }, [balanceExcludingGas, currency, onUserInput])
+    handleUserInput(formatBalance(balanceExcludingGas, currency?.decimals))
+  }, [balanceExcludingGas, currency, handleUserInput])
 
   const onPercentInput = useCallback(
     (percent: number) => {
       if (balanceExcludingGas) {
         const val = (balanceExcludingGas * BigInt(percent)) / 100n
-        onUserInput(formatBalance(val, currency?.decimals))
+        handleUserInput(formatBalance(val, currency?.decimals))
       }
     },
-    [balanceExcludingGas, currency, onUserInput],
+    [balanceExcludingGas, currency, handleUserInput],
   )
 
   const topEle = useMemo(
@@ -395,5 +411,19 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
     />
   )
 })
+
+const limitNumber = (val: string, decimal: number) => {
+  const [integer, fraction] = val.split('.')
+  if (!fraction) {
+    return val
+  }
+  if (decimal <= 0) {
+    return integer
+  }
+  if (fraction.length > decimal) {
+    return `${integer}.${fraction.slice(0, decimal)}`
+  }
+  return val
+}
 
 export default CurrencyInputPanelSimplify
