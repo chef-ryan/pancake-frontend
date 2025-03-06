@@ -2,20 +2,23 @@ import { useTranslation } from '@pancakeswap/localization'
 import {
   Button,
   ChevronRightIcon,
+  Flex,
   FlexGap,
   Heading,
   ModalV2,
   MotionModal,
   PreTitle,
   Text,
+  ThemeSwitcher,
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import { setRefundModalAtom } from 'atoms/modals/refundModalAtom'
 import { LightGreyCard } from 'components/Card'
 import { GrabberBar } from 'components/Misc/GrabberBar'
 import { useSetAtom } from 'jotai'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
+import { useTheme } from 'next-themes'
 import { SlippageSettings } from './SlippageSettings'
 import { TransactionDeadlineSettings } from './TransactionDeadlineSettings'
 import { RoutingPreference } from './RoutingPreference'
@@ -43,6 +46,9 @@ export const SettingsModal = ({ isOpen, onDismiss }: SettingsModalProps) => {
     setRefundModal()
   }, [onDismiss, setRefundModal])
 
+  const { resolvedTheme, setTheme } = useTheme()
+  const isDark = useMemo(() => resolvedTheme === 'dark', [resolvedTheme])
+
   return (
     <ModalV2 title={t('Settings')} isOpen={isOpen} onDismiss={onDismiss} closeOnOverlayClick>
       <MotionModal
@@ -54,7 +60,12 @@ export const SettingsModal = ({ isOpen, onDismiss }: SettingsModalProps) => {
         bodyPadding="16px 16px 32px"
       >
         <FlexGap gap="32px" flexDirection="column">
-          {isSmallScreen && <Heading>{t('Settings')}</Heading>}
+          {isSmallScreen && (
+            <Flex justifyContent="space-between" alignItems="center">
+              <Heading>{t('Settings')}</Heading>
+              <ThemeSwitcher isDark={isDark} toggleTheme={() => setTheme(isDark ? 'light' : 'dark')} />
+            </Flex>
+          )}
 
           <FlexGap gap="16px" flexDirection="column">
             <PreTitle>{t('Slippage and Deadline')}</PreTitle>

@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Token } from '@pancakeswap/ton-v2-sdk'
+import { Currency, CurrencyAmount, Token } from '@pancakeswap/ton-v2-sdk'
 
 import { ArrowForwardIcon, CircleLoader, Column, QuestionHelper, Text } from '@pancakeswap/uikit'
 import { formatBigInt, formatNumber } from '@pancakeswap/utils/formatBalance'
@@ -68,10 +68,10 @@ function CurrencyRow({
 
   const { data: balanceRaw, isLoading: isBalanceLoading } = useAtomValue(balanceAtom(currency))
 
-  const balance = useMemo(
-    () => formatBigInt(balanceRaw, currency.decimals, currency.decimals),
-    [balanceRaw, currency.decimals],
-  )
+  const [balance, balanceDisplay] = useMemo(() => {
+    const amount = CurrencyAmount.fromRawAmount(currency, balanceRaw)
+    return [amount.toExact(), amount.toSignificant(4)]
+  }, [balanceRaw, currency])
 
   // only show add or remove buttons if not on selected list
   return (
@@ -86,13 +86,10 @@ function CurrencyRow({
 
       <Column>
         <Text bold>{currency?.symbol}</Text>
-        {/* <Text color="textSubtle" small ellipsis maxWidth="200px">
-          {!isOnSelectedList && customAdded && `${t('Added by user')} •`} {currency?.name}
-        </Text> */}
       </Column>
       <RowFixed style={{ justifySelf: 'flex-end' }}>
         {userAddress && balance !== undefined ? (
-          <StyledBalanceText title={balance}>{formatNumber(Number(balance), 0)}</StyledBalanceText>
+          <StyledBalanceText title={balance}>{balanceDisplay}</StyledBalanceText>
         ) : userAddress && isBalanceLoading ? (
           <CircleLoader />
         ) : (
@@ -151,8 +148,6 @@ export default function CurrencyList({
       const otherSelected = Boolean(otherCurrency && currency && otherCurrency.equals(currency))
 
       const handleSelect = () => onCurrencySelect(currency)
-      // const token = currency.wrapped
-      // const showImport = index > currencies.length
 
       if (index === breakIndex || !data) {
         return (
@@ -172,18 +167,6 @@ export default function CurrencyList({
         )
       }
 
-      // if (showImport && token) {
-      //   return (
-      //     <ImportRow
-      //       onCurrencySelect={handleSelect}
-      //       style={style}
-      //       token={token}
-      //       showImportView={showImportView}
-      //       setImportToken={setImportToken}
-      //       dim
-      //     />
-      //   )
-      // }
       return (
         <CurrencyRow
           style={style}

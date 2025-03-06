@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, GAS_CONSTANTS, Pair } from '@pancakeswap/ton-v2-sdk'
+import { Currency, CurrencyAmount, GAS_CONSTANTS, Pair } from '@pancakeswap/ton-v2-sdk'
 import {
   Box,
   ChevronDownIcon,
@@ -248,7 +248,10 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   }, [onPresentCurrencyModal, disableCurrencySelect])
 
   const balance = useMemo(
-    () => (!hideBalance && !!currency ? formatBalance(selectedCurrencyBalance, currency.decimals) : undefined),
+    () =>
+      !hideBalance && !!currency
+        ? CurrencyAmount.fromRawAmount(currency, selectedCurrencyBalance).toSignificant(6)
+        : undefined,
     [selectedCurrencyBalance, currency, hideBalance],
   )
 
@@ -277,7 +280,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   const topEle = useMemo(
     () => (
       <Flex justifyContent="space-between" alignItems="center" width="100%" position="relative">
-        {title || <>&nbsp;</>}
+        {title}
         <LazyAnimatePresence mode="wait" features={domAnimation}>
           {account ? (
             !isInputFocus || !onMax ? (

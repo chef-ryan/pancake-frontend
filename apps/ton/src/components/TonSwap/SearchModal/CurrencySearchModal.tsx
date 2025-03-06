@@ -3,7 +3,6 @@ import { useTranslation } from '@pancakeswap/localization'
 
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import {
-  Button,
   CopyButton,
   FlexGap,
   Heading,
@@ -26,11 +25,6 @@ import { styled } from 'styled-components'
 import CurrencySearch from './CurrencySearch'
 import { CurrencyModalView } from './types'
 
-const Footer = styled.div`
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.backgroundAlt};
-  text-align: center;
-`
 const StyledModalContainer = styled(ModalContainer)`
   width: 100%;
   min-width: 320px;
@@ -70,7 +64,6 @@ export interface CurrencySearchModalProps extends InjectedModalProps {
 }
 
 export default function CurrencySearchModal({
-  field,
   onDismiss = () => null,
   onCurrencySelect,
   selectedCurrency,
@@ -95,35 +88,9 @@ export default function CurrencySearchModal({
   const prevView = usePreviousValue(modalView)
 
   // used for import token flow
-  const [importToken, setImportToken] = useState<Currency | undefined>()
-
-  // used for import list
-  // const [importList, setImportList] = useState<TokenList | undefined>()
-  const [listURL, setListUrl] = useState<string | undefined>()
+  const [, setImportToken] = useState<Currency | undefined>()
 
   const { t } = useTranslation()
-
-  // const [, dispatch] = useListState()
-  // const lists = useAllLists()
-  // const adding = Boolean(listURL && lists[listURL]?.loadingRequestId)
-
-  // const fetchList = useFetchListCallback(dispatch)
-
-  // const [addError, setAddError] = useState<string | null>(null)
-
-  // const handleAddList = useCallback(() => {
-  //   if (adding || !listURL) return
-  //   setAddError(null)
-  //   fetchList(listURL)
-  //     .then(() => {
-  //       dispatch(enableList(listURL))
-  //       setModalView(CurrencyModalView.manage)
-  //     })
-  //     .catch((error) => {
-  //       setAddError(error.message)
-  //       dispatch(removeList(listURL))
-  //     })
-  // }, [adding, dispatch, fetchList, listURL])
 
   const config = {
     [CurrencyModalView.search]: { title: t('Select a Token'), onBack: undefined },

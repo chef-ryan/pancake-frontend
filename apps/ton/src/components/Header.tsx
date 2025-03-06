@@ -1,3 +1,4 @@
+import { useTheme } from 'next-themes'
 import { useTranslation } from '@pancakeswap/localization'
 import {
   CogIcon,
@@ -9,6 +10,8 @@ import {
   OpenNewIcon,
   ShareIcon,
   Text,
+  ThemeSwitcher,
+  useMatchBreakpoints,
   useModalV2,
 } from '@pancakeswap/uikit'
 import { bridgeLink } from 'config/constants/endpoints'
@@ -39,6 +42,12 @@ export const Header = ({ showBridgeLink }: HeaderProps) => {
   const { t } = useTranslation()
 
   const { isOpen, setIsOpen, onDismiss } = useModalV2()
+
+  const { resolvedTheme, setTheme } = useTheme()
+  const isDark = useMemo(() => resolvedTheme === 'dark', [resolvedTheme])
+
+  const { isMobile, isMd } = useMatchBreakpoints()
+  const isSmallScreen = isMobile || isMd
 
   const shareData = useMemo(
     () => ({
@@ -76,6 +85,7 @@ export const Header = ({ showBridgeLink }: HeaderProps) => {
           </>
         )}
 
+        {!isSmallScreen && <ThemeSwitcher isDark={isDark} toggleTheme={() => setTheme(isDark ? 'light' : 'dark')} />}
         <IconButton variant="text" scale="sm" onClick={() => setIsOpen(true)}>
           <CogIcon width={24} color="textSubtle" />
         </IconButton>

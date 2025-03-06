@@ -44,7 +44,7 @@ const iconByActionType = (): {
     icon: <TransactionAnimation type="submit" />,
   },
   [ActionType.TransactionComplete]: {
-    icon: <TransactionAnimation type="longSuccess" width="62px" />,
+    icon: <TransactionAnimation type="shortSuccess" width="62px" />,
   },
   [ActionType.ConfirmLiquiditySupply]: {
     icon: <AddCircleLoading pt="5px" />,
@@ -59,7 +59,7 @@ const iconByActionType = (): {
     icon: <TransactionAnimation type="submit" />,
   },
   [ActionType.SwapCompleted]: {
-    icon: <TransactionAnimation type="longSuccess" width="62px" />,
+    icon: <TransactionAnimation type="shortSuccess" width="62px" />,
   },
 })
 

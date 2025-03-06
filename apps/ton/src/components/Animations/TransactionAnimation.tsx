@@ -22,7 +22,7 @@ export const TransactionAnimation = ({ type, width = DEFAULT_WIDTH }: Transactio
     case 'longSuccess':
       return <Lottie loop={false} animationData={LongSuccessData} style={{ width, marginTop: '-12px' }} />
     case 'shortSuccess':
-      return <Lottie loop={false} animationData={ShortSuccessData} style={{ width }} />
+      return <Lottie loop={false} animationData={ShortSuccessData} style={{ width, marginTop: '-12px' }} />
     case 'submit':
       return <Lottie loop={false} animationData={SubmitData} style={{ width }} />
     default:
