@@ -10,7 +10,9 @@ export const WalletDisclaimer = ({ text, imgWidth, ...props }: ConnectWalletDisc
   return (
     <FlexGap flexDirection="column" alignItems="center" gap="16px" {...props}>
       <img src={getAssetUrl('wallet.png')} alt="wallet" width={imgWidth || 64} />
-      <Text color="textSubtle">{text}</Text>
+      <Text color="textSubtle" fontSize={['14px', '14px', '16px']} textAlign="center">
+        {text}
+      </Text>
     </FlexGap>
   )
 }

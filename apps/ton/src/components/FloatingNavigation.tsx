@@ -25,11 +25,16 @@ const Navigation = styled(Box)`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 24px;
-  padding: 12px 16px 12px 32px;
+  gap: 12px;
+  padding: 12px 16px 12px 24px;
   border-radius: 999px;
   background: ${({ theme }) => theme.colors.invertedContrast};
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    gap: 24px;
+    padding: 12px 16px 12px 32px;
+  }
 `
 
 const StyledLink = styled(Link)`

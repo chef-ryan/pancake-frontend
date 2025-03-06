@@ -91,6 +91,7 @@ export const useUserRefundPools = () => {
 
       return null
     },
+    enabled: !!userAddress,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     staleTime: QUERY_DEFAULT_STALE_TIME,

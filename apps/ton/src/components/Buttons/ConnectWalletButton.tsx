@@ -1,6 +1,14 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { TonChainId } from '@pancakeswap/ton-v2-sdk'
-import { Button, ButtonProps, ChevronDownIcon, Tag, Text, WalletFilledV2Icon } from '@pancakeswap/uikit'
+import {
+  Button,
+  ButtonProps,
+  ChevronDownIcon,
+  Tag,
+  Text,
+  useMatchBreakpoints,
+  WalletFilledV2Icon,
+} from '@pancakeswap/uikit'
 import { useTonConnectUI } from '@tonconnect/ui-react'
 import { setWalletModalAtom } from 'atoms/modals/walletModalAtom'
 import { useAtomValue, useSetAtom } from 'jotai'
@@ -46,6 +54,8 @@ export const ConnectWalletButton = (props: ButtonProps) => {
   const chainId = useAtomValue(chainIdAtom)
   const setWalletModal = useSetAtom(setWalletModalAtom)
 
+  const { isMobile } = useMatchBreakpoints()
+
   const handleConnect = useCallback(() => {
     tonUI.openModal()
   }, [tonUI])
@@ -70,7 +80,12 @@ export const ConnectWalletButton = (props: ButtonProps) => {
   }
 
   return (
-    <ConnectButton onClick={handleConnect} endIcon={<WalletFilledV2Icon color="invertedContrast" />} {...props}>
+    <ConnectButton
+      onClick={handleConnect}
+      endIcon={!isMobile && <WalletFilledV2Icon color="invertedContrast" />}
+      px={['12px', '12px', '16px']}
+      {...props}
+    >
       {t('Connect')}
     </ConnectButton>
   )

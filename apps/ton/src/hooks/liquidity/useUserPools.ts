@@ -101,6 +101,7 @@ export const useUserPools = () => {
 
       return []
     },
+    enabled: !!userAddress,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     staleTime: QUERY_DEFAULT_STALE_TIME,
