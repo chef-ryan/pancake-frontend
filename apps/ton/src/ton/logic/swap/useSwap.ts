@@ -10,6 +10,7 @@ import { setErrorMsgModalAtom } from 'atoms/modals/errorMsgModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
 import { ActionType } from 'components/Modals/ActionModal'
 import { ALLOWED_PRICE_IMPACT_HIGH, PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN } from 'config/constants/exchange'
+import { useLatestTxReceipt } from 'hooks/useLatestTxReceipt'
 import { useUserAddress } from 'hooks/useUserAddress'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
@@ -45,6 +46,8 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
 
   const setTransactionModal = useSetAtom(setTransactionModalAtom)
   const setErrorMsgModal = useSetAtom(setErrorMsgModalAtom)
+
+  const [, setLatestTxReceipt] = useLatestTxReceipt()
 
   const getTxRequest = useCallback(async () => {
     const queryId = generateQueryId()
@@ -162,6 +165,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
       const hash = await getTransactionByBOC(userAddress, boc)
       if (hash) {
         logGTMSwapTxSentEvent()
+        setLatestTxReceipt({ hash })
         setTransactionModal({
           type: ActionType.SwapCompleted,
           currency0: token0,
@@ -183,7 +187,19 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
       })
       return Promise.reject()
     }
-  }, [amount0, minOut, token0, token1, setErrorMsgModal, t, userAddress, tonUI, getTxRequest, setTransactionModal])
+  }, [
+    amount0,
+    setLatestTxReceipt,
+    minOut,
+    token0,
+    token1,
+    setErrorMsgModal,
+    t,
+    userAddress,
+    tonUI,
+    getTxRequest,
+    setTransactionModal,
+  ])
 
   const setSwapConfirmModal = useSetAtom(setConfirmSwapModalAtom)
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)

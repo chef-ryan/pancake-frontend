@@ -1,5 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, GAS_CONSTANTS, Pair } from '@pancakeswap/ton-v2-sdk'
+import { Currency, GAS_CONSTANTS, Pair } from '@pancakeswap/ton-v2-sdk'
+import { CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import {
   Box,
   ChevronDownIcon,
@@ -17,8 +18,9 @@ import { CurrencyLogo, SwapUIV2 } from 'components/widgets'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from 'styled-components'
 
-import { formatNumber } from '@pancakeswap/utils/formatBalance'
-
+import { formatNumber } from '@pancakeswap/utils/formatNumber'
+import { formatNumber as formatBalanceNumber } from '@pancakeswap/utils/formatBalance'
+import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { useAtomValue } from 'jotai'
 import { CurrencySelectButton } from 'styles/inputStyles'
 import { addressAtom } from 'ton/atom/addressAtom'
@@ -35,7 +37,7 @@ const formatDollarAmount = (amount: number) => {
   if (amount > 0 && amount < 0.01) {
     return '<0.01'
   }
-  return formatNumber(amount)
+  return formatBalanceNumber(amount)
 }
 
 const useSizeAdaption = (value: string, currencySymbol?: string, otherCurrencySymbol?: string) => {
@@ -247,13 +249,13 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
     }
   }, [onPresentCurrencyModal, disableCurrencySelect])
 
-  const balance = useMemo(
-    () =>
-      !hideBalance && !!currency
-        ? CurrencyAmount.fromRawAmount(currency, selectedCurrencyBalance).toSignificant(6)
-        : undefined,
-    [selectedCurrencyBalance, currency, hideBalance],
-  )
+  const balance = useMemo(() => {
+    if (hideBalance || !currency) {
+      return undefined
+    }
+    const amount = CurrencyAmount.fromRawAmount(currency as any, selectedCurrencyBalance)
+    return formatNumber(formatAmount(amount, 6) ?? 0)
+  }, [selectedCurrencyBalance, currency, hideBalance])
 
   const balanceExcludingGas = useMemo(
     () =>

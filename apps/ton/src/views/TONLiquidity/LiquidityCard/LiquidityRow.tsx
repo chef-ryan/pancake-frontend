@@ -7,7 +7,7 @@ import { DoubleCurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { Collapse } from 'components/widgets/swap-v2/Collapse'
 import { MAXIMUM_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
-import { ADDRESS_CONCAT_LENGTH, LP_TOKEN_DECIMALS } from 'config/constants/formatting'
+import { ADDRESS_CONCAT_LENGTH, NUMBER_FORMAT_DECIMALS } from 'config/constants/formatting'
 import { useAtomValue } from 'jotai'
 import Link from 'next/link'
 import { useCallback, useMemo, useState } from 'react'
@@ -102,7 +102,7 @@ export const LiquidityRow = ({
                     {symbol0}-{symbol1} LP
                   </Text>
                   <NumberDisplay
-                    value={formatBigNumber(balance, LP_TOKEN_DECIMALS).toString()}
+                    value={formatBigNumber(balance, NUMBER_FORMAT_DECIMALS).toString()}
                     maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS}
                     small
                     bold
@@ -120,7 +120,14 @@ export const LiquidityRow = ({
                 </Text>
 
                 <Text fontSize={['14px', null, '16px']}>
-                  {amount0.gt(0) ? formatBigNumber(amount0, currency0?.decimals) : '-'}
+                  {amount0.gt(0) ? (
+                    <NumberDisplay
+                      value={formatBigNumber(amount0, NUMBER_FORMAT_DECIMALS).toString()}
+                      maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS}
+                    />
+                  ) : (
+                    '-'
+                  )}
                 </Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
@@ -129,7 +136,14 @@ export const LiquidityRow = ({
                 </Text>
 
                 <Text fontSize={['14px', null, '16px']}>
-                  {amount1.gt(0) ? formatBigNumber(amount1, currency1?.decimals) : '-'}
+                  {amount1.gt(0) ? (
+                    <NumberDisplay
+                      value={formatBigNumber(amount1, NUMBER_FORMAT_DECIMALS).toString()}
+                      maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS}
+                    />
+                  ) : (
+                    '-'
+                  )}
                 </Text>
               </Flex>
               <Flex mt="5px" justifyContent="space-between">
