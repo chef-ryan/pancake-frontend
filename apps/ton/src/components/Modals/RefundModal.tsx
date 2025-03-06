@@ -3,7 +3,6 @@ import { Button, Column, Flex, FlexGap, LoadingDot, PreTitle, Text } from '@panc
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import { LightCard } from 'components/Card'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/widgets'
-import { LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 import { useUserRefundPools } from 'hooks/liquidity/useUserRefundPools'
 import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
@@ -81,14 +80,14 @@ const PoolRefundRow = ({
               <CurrencyLogo currency={currency0} />
               <Text>{currency0?.symbol}</Text>
             </FlexGap>
-            <Text>{formatBigNumber(refundAmount0, LP_TOKEN_DECIMALS)}</Text>
+            <Text>{formatBigNumber(refundAmount0, currency0?.decimals)}</Text>
           </Flex>
           <Flex justifyContent="space-between">
             <FlexGap gap="8px">
               <CurrencyLogo currency={currency1} />
               <Text>{currency1?.symbol}</Text>
             </FlexGap>
-            <Text>{formatBigNumber(refundAmount1, LP_TOKEN_DECIMALS)}</Text>
+            <Text>{formatBigNumber(refundAmount1, currency1?.decimals)}</Text>
           </Flex>
 
           <Button onClick={handleRefund}>{t('Refund')}</Button>

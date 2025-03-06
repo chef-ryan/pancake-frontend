@@ -6,6 +6,9 @@ import { POOL_CHUNK_DELAY, POOL_CHUNK_SIZE } from 'config/constants/fetching'
 import { PRESET_POOLS } from 'config/presetPools'
 import { useAtomValue, useSetAtom } from 'jotai'
 import chunk from 'lodash/chunk'
+import uniqWith from 'lodash/uniqWith'
+
+import { cachedUserPoolsAtom } from 'atoms/user/userPoolsAtom'
 import { useMemo } from 'react'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { chainIdAtom } from 'ton/atom/chainIdAtom'
@@ -29,9 +32,17 @@ export const useUserRefundPools = () => {
   const addRefundPool = useSetAtom(addUserRefundPoolAtom)
   const updateRefundPool = useSetAtom(updateUserRefundPoolAtom)
 
+  const cachedUserPools = useAtomValue(cachedUserPoolsAtom)
+
   const chunkedPresetPools = useMemo(() => {
-    return chunk(Object.values(PRESET_POOLS[chainId]), POOL_CHUNK_SIZE)
-  }, [chainId])
+    return chunk(
+      uniqWith(
+        [...cachedUserPools, ...Object.values(PRESET_POOLS[chainId])],
+        (a, b) => a.poolAddress === b.poolAddress,
+      ),
+      POOL_CHUNK_SIZE,
+    )
+  }, [chainId, cachedUserPools])
 
   const { isFetching } = useQuery({
     queryKey: ['refundPools', chainId, userAddress],
@@ -77,6 +88,8 @@ export const useUserRefundPools = () => {
         // eslint-disable-next-line no-await-in-loop
         await new Promise((resolve) => setTimeout(resolve, POOL_CHUNK_DELAY))
       }
+
+      return null
     },
     refetchOnMount: false,
     refetchOnWindowFocus: false,
