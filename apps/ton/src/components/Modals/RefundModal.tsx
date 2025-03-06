@@ -3,6 +3,9 @@ import { Button, Column, Flex, FlexGap, LoadingDot, PreTitle, Text } from '@panc
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
 import { LightCard } from 'components/Card'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/widgets'
+import { NumberDisplay } from 'components/widgets/NumberDisplay'
+import { MAXIMUM_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
+import { NUMBER_FORMAT_DECIMALS } from 'config/constants/formatting'
 import { useUserRefundPools } from 'hooks/liquidity/useUserRefundPools'
 import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
@@ -80,14 +83,20 @@ const PoolRefundRow = ({
               <CurrencyLogo currency={currency0} />
               <Text>{currency0?.symbol}</Text>
             </FlexGap>
-            <Text>{formatBigNumber(refundAmount0, currency0?.decimals)}</Text>
+            <NumberDisplay
+              value={formatBigNumber(refundAmount0, NUMBER_FORMAT_DECIMALS).toString()}
+              maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS}
+            />
           </Flex>
           <Flex justifyContent="space-between">
             <FlexGap gap="8px">
               <CurrencyLogo currency={currency1} />
               <Text>{currency1?.symbol}</Text>
             </FlexGap>
-            <Text>{formatBigNumber(refundAmount1, currency1?.decimals)}</Text>
+            <NumberDisplay
+              value={formatBigNumber(refundAmount1, NUMBER_FORMAT_DECIMALS).toString()}
+              maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS}
+            />
           </Flex>
 
           <Button onClick={handleRefund}>{t('Refund')}</Button>

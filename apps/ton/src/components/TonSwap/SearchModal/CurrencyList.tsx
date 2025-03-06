@@ -1,8 +1,10 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Token } from '@pancakeswap/ton-v2-sdk'
+import { CurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { Currency, Token } from '@pancakeswap/ton-v2-sdk'
 
 import { ArrowForwardIcon, CircleLoader, Column, QuestionHelper, Text } from '@pancakeswap/uikit'
-import { formatBigInt, formatNumber } from '@pancakeswap/utils/formatBalance'
+import { formatAmount } from '@pancakeswap/utils/formatFractions'
+import { formatNumber } from '@pancakeswap/utils/formatNumber'
 import { LightGreyCard } from 'components/Card'
 import { RowBetween, RowFixed } from 'components/Layout/Row'
 import { CurrencyLogo } from 'components/widgets/CurrencyLogo'
@@ -29,10 +31,6 @@ const FixedContentRow = styled.div`
   grid-gap: 16px;
   align-items: center;
 `
-
-// function Balance({ balance }: { balance: CurrencyAmount<Currency> }) {
-//   return <StyledBalanceText title={balance.toExact()}>{formatAmount(balance, 4)}</StyledBalanceText>
-// }
 
 const MenuItem = styled(RowBetween)<{ disabled: boolean; selected: boolean }>`
   padding: 4px 20px;
@@ -62,15 +60,12 @@ function CurrencyRow({
   style: CSSProperties
 }) {
   const userAddress = useAtomValue(addressAtom)
-
-  // const { t } = useTranslation()
   const key = currencyKey(currency)
 
   const { data: balanceRaw, isLoading: isBalanceLoading } = useAtomValue(balanceAtom(currency))
-
   const [balance, balanceDisplay] = useMemo(() => {
-    const amount = CurrencyAmount.fromRawAmount(currency, balanceRaw)
-    return [amount.toExact(), amount.toSignificant(4)]
+    const amount = CurrencyAmount.fromRawAmount(currency as any, balanceRaw)
+    return [amount.toExact(), formatNumber(formatAmount(amount, 4) ?? 0)]
   }, [balanceRaw, currency])
 
   // only show add or remove buttons if not on selected list
