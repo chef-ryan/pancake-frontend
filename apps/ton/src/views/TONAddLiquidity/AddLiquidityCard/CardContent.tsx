@@ -257,8 +257,6 @@ export const CardContent = (props: CardContentProps) => {
     if (isDisabled || !currency0?.wrapped.address || !currency1?.wrapped.address) return
     logGTMClickAddLiquidityConfirmEvent()
     try {
-      // Calculate minLPOut
-
       const minLpOut = parseUnits(expectedPoolTokens.multipliedBy(1 - slippage / 10_000).toString(), LP_TOKEN_DECIMALS)
 
       console.log('minLpOut', {

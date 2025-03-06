@@ -44,6 +44,9 @@ class MyDocument extends Document {
           <link rel="shortcut icon" href="/favicon.ico" />
           <link rel="apple-touch-icon" href="/logo.png" />
           <link rel="manifest" href="/manifest.json" />
+
+          <meta name="theme-color" media="(prefers-color-scheme: light)" content="#E5FDFF" />
+          <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#323c5c" />
         </Head>
         <body>
           <noscript>
