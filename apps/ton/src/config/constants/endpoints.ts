@@ -1,5 +1,7 @@
 import { TonChainId, TonNetworks } from '@pancakeswap/ton-v2-sdk'
 
+export const TG_BOT_URL = 'https://tgqa.noahlabs.tech/ton' // TODO: Update for Mainnet
+
 export const ASSET_CDN = 'https://assets.pancakeswap.finance'
 
 export const API_BASE_URL = `/${process.env.NEXT_PUBLIC_GLOBAL_PREFIX}/api`

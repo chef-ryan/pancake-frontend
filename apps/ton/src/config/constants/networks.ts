@@ -1,5 +1,6 @@
 import { TonChainId } from '@pancakeswap/ton-v2-sdk'
 import { getAssetUrl } from 'utils'
+import { TG_BOT_URL } from './endpoints'
 
 export const AVAILABLE_NETWORKS: {
   name: string
@@ -21,6 +22,10 @@ export const AVAILABLE_NETWORKS: {
     symbol: 'BSC',
     logoURL: 'https://assets.pcswap.org/web/chains/56.png',
     chainId: 56,
-    url: '/tg-swap',
+    url:
+      typeof window !== 'undefined' && window.location.href.includes(TG_BOT_URL)
+        ? '/tg-swap'
+        : 'https://pancakeswap.finance',
+    isExternal: typeof window !== 'undefined' && window.location.href.includes(TG_BOT_URL),
   },
 ]
