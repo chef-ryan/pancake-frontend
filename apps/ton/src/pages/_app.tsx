@@ -1,8 +1,14 @@
-import Script from 'next/script'
+import BigNumber from 'bignumber.js'
 import { FloatingNavigation } from 'components/FloatingNavigation'
 import { Providers } from 'components/Providers'
 import type { AppProps } from 'next/app'
+import Script from 'next/script'
 import '../styles/globals.css' // Import global CSS
+
+BigNumber.config({
+  EXPONENTIAL_AT: 1000,
+  DECIMAL_PLACES: 80,
+})
 
 const MyApp = ({ Component, pageProps }: AppProps<{ dehydratedState?: any }>) => {
   return (
