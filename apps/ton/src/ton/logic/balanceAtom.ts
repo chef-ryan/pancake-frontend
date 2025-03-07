@@ -1,6 +1,6 @@
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { Address } from '@ton/ton'
-import { blockNumberAtom } from 'hooks/useBlockNumber'
+import { txReceiptAtom } from 'hooks/useLatestTxReceipt'
 import { atomWithQuery } from 'jotai-tanstack-query'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
@@ -14,7 +14,7 @@ import { JettonWalletUSDT } from 'ton/wrappers/tact_JettonWalletUSDT'
 export const balanceAtom = atomFamily(
   (token?: Currency | null) =>
     atomWithQuery((get) => ({
-      queryKey: ['balance', get(networkAtom), get(addressAtom), token, get(blockNumberAtom)],
+      queryKey: ['balance', get(networkAtom), get(addressAtom), token, get(txReceiptAtom)],
       queryFn: async () => {
         if (!token) return 0n
         const client = TonContext.instance.getClient()
