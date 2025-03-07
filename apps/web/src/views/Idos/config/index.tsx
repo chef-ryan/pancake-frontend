@@ -156,6 +156,7 @@ export const idoConfigDict: Record<string, IDOConfig> = {
                 </Trans>
               </li>
             </ul>
+            <br />
             <Trans>Please ensure you comply with the eligibility requirements before participating.</Trans>
           </>
         ),
