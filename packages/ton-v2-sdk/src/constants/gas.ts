@@ -2,12 +2,12 @@ import { toNano } from '@ton/core'
 
 export const GAS_CONSTANTS = {
   swapJettonToJetton: {
-    gasAmount: toNano('0.3'),
-    forwardGasAmount: toNano('0.24'),
+    gasAmount: toNano('0.36'),
+    forwardGasAmount: toNano('0.3'),
   },
   swapJettonToTon: {
-    gasAmount: toNano('0.3'),
-    forwardGasAmount: toNano('0.24'),
+    gasAmount: toNano('0.36'),
+    forwardGasAmount: toNano('0.3'),
   },
   swapTonToJetton: {
     forwardGasAmount: toNano('0.3'),

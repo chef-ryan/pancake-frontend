@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 import noop from 'lodash/noop'
 import debounce from 'lodash/debounce'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useTranslation } from '@pancakeswap/localization'
 import { Rounding } from '@pancakeswap/swap-sdk-core'

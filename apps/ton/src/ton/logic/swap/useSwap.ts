@@ -20,7 +20,7 @@ import { parseAddress } from 'ton/utils/address'
 import { parseUnits } from 'ton/utils/formatting'
 import { generateQueryId } from 'ton/utils/generateQueryId'
 import { getJettonWalletAddress } from 'ton/utils/jettonWalletAddress'
-import { getTransactionByBOC } from 'ton/utils/transaction'
+import { checkTransactionApplied, getTransactionByBOC } from 'ton/utils/transaction'
 import { logGTMClickSwapConfirmEvent, logGTMClickSwapEvent, logGTMSwapTxSentEvent } from 'utils/customGTMEventTracking'
 import { computeTradePriceBreakdown } from 'utils/exchange'
 
@@ -65,11 +65,12 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
     if (trade.route.path.length > 2) {
       const path = trade?.route.path
       for (let idx = path.length - 1; idx >= 2; idx--) {
+        const currency = path[idx]
         // eslint-disable-next-line no-await-in-loop
-        const routerJettonWalletOut = await getJettonWalletAddress(routerAddress, path[idx].wrapped.address)
+        const routerJettonWalletOut = await getJettonWalletAddress(routerAddress, currency.wrapped.address)
         const next = {
           tokenAddress: routerJettonWalletOut,
-          minOut: idx === path.length - 1 && minOut ? parseUnits(minOut, token1?.decimals) : 1n,
+          minOut: idx === path.length - 1 && minOut ? parseUnits(minOut, currency?.decimals) : 1n,
           next: lastSwapNext,
         }
         lastSwapNext = next
@@ -114,7 +115,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
           // Attached TON for fees, not the amount of jettons to transfer
           amount: (isTonToJetton
             ? parseUnits(amount0, token0.decimals) + GAS_CONSTANTS.swapTonToJetton.forwardGasAmount
-            : GAS_CONSTANTS.swapJettonToJetton.gasAmount + GAS_CONSTANTS.swapJettonToJetton.forwardGasAmount
+            : GAS_CONSTANTS.swapJettonToJetton.gasAmount
           ).toString(),
           payload: payload.toBoc().toString('base64'),
         },
@@ -122,7 +123,6 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
     }
   }, [
     minOut,
-    token1?.decimals,
     userAddress,
     amount0,
     routerAddress,
@@ -165,7 +165,6 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
       const hash = await getTransactionByBOC(userAddress, boc)
       if (hash) {
         logGTMSwapTxSentEvent()
-        setLatestTxReceipt({ hash })
         setTransactionModal({
           type: ActionType.SwapCompleted,
           currency0: token0,
@@ -174,6 +173,12 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
           amount1: minOut,
           hash,
         })
+        // dont await, just let it go
+        checkTransactionApplied({ hash })
+          .then(() => {
+            setLatestTxReceipt({ hash })
+          })
+          .catch((e) => console.error(e))
       }
       return Promise.resolve()
     } catch (e) {

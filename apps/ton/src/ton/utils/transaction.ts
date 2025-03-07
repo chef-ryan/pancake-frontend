@@ -1,5 +1,9 @@
+import { getDefaultStore } from 'jotai'
 import { Address, beginCell, Cell, storeMessage } from '@ton/ton'
 import { TonContext } from 'ton/context/TonContext'
+import { traceEndPoints } from 'ton/context/endpoints'
+import { chainIdAtom } from 'ton/atom/chainIdAtom'
+
 import { retry } from './helpers'
 
 export async function getTransactionByBOC(userAddress: string | Address, boc: string): Promise<string> {
@@ -37,6 +41,23 @@ export async function getTransactionByBOC(userAddress: string | Address, boc: st
         }
       }
       throw new Error('Transaction not found')
+    },
+    { retries: 30, delay: 1000 },
+  )
+}
+
+export const checkTransactionApplied = async ({ hash }: { hash: string }) => {
+  const store = getDefaultStore()
+  const chainId = store.get(chainIdAtom)
+  return retry(
+    async () => {
+      const traceResponse = await fetch(`${traceEndPoints[chainId]}&tx_hash=${hash}&include_actions=true`)
+      const traceData = await traceResponse.json()
+
+      if (traceData?.traces?.length) {
+        return traceData
+      }
+      throw new Error('Transaction not applied')
     },
     { retries: 30, delay: 1000 },
   )
