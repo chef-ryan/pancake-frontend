@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, GAS_CONSTANTS, Pair } from '@pancakeswap/ton-v2-sdk'
 import { CurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { Currency, GAS_CONSTANTS, Pair } from '@pancakeswap/ton-v2-sdk'
 import {
   Box,
   ChevronDownIcon,
@@ -18,9 +18,9 @@ import { CurrencyLogo, SwapUIV2 } from 'components/widgets'
 import { ChangeEvent, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from 'styled-components'
 
-import { formatNumber } from '@pancakeswap/utils/formatNumber'
 import { formatNumber as formatBalanceNumber } from '@pancakeswap/utils/formatBalance'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
+import { formatNumber } from '@pancakeswap/utils/formatNumber'
 import { useAtomValue } from 'jotai'
 import { CurrencySelectButton } from 'styles/inputStyles'
 import { addressAtom } from 'ton/atom/addressAtom'
@@ -155,7 +155,6 @@ interface CurrencyInputPanelProps {
   onCurrencySelect?: (currency: Currency) => void
   currency?: Currency | null
   disableCurrencySelect?: boolean
-  hideBalance?: boolean
   pair?: Pair | null
   otherCurrency?: Currency | null
   id: string
@@ -171,8 +170,10 @@ interface CurrencyInputPanelProps {
   currencyLoading?: boolean
   inputLoading?: boolean
   title?: React.ReactNode
-  hideBalanceComp?: boolean
+
+  hideBalance?: boolean
   isUserInsufficientBalance?: boolean
+  overrideBalance?: bigint
 }
 const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   field,
@@ -199,10 +200,12 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   inputLoading,
   title,
   isUserInsufficientBalance,
+  overrideBalance,
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation()
   const account = useAtomValue(addressAtom)
-  const { data: selectedCurrencyBalance } = useAtomValue(balanceAtom(currency))
+  const { data: selectedCurrencyBalance_ } = useAtomValue(balanceAtom(currency))
+  const selectedCurrencyBalance = overrideBalance ?? selectedCurrencyBalance_
 
   const [isInputFocus, setIsInputFocus] = useState(false)
   const amountInDollar = 0 // dummy value
