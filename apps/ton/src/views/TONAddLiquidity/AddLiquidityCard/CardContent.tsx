@@ -307,8 +307,11 @@ export const CardContent = (props: CardContentProps) => {
       const parsedAmount1 = parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals)
 
       // Deduct refund amounts from input amounts
-      const amount0ToSend = parsedAmount0 - (lpAccount.amount0 ?? 0n)
-      const amount1ToSend = parsedAmount1 - (lpAccount.amount1 ?? 0n)
+      let amount0ToSend = parsedAmount0 - (lpAccount.amount0 ?? 0n)
+      amount0ToSend = amount0ToSend < 0n ? 0n : amount0ToSend
+
+      let amount1ToSend = parsedAmount1 - (lpAccount.amount1 ?? 0n)
+      amount1ToSend = amount1ToSend < 0n ? 0n : amount1ToSend
 
       // Add liquidity
       addLiquidity({
