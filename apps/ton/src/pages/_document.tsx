@@ -49,9 +49,6 @@ class MyDocument extends Document {
           <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#323c5c" />
         </Head>
         <body>
-          <Main />
-          <NextScript />
-          <div id="portal-root" />
           {process.env.NEXT_PUBLIC_GTM_ID ? (
             <noscript>
               <iframe
@@ -63,7 +60,9 @@ class MyDocument extends Document {
               />
             </noscript>
           ) : null}
-          <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_TRACKING_ID}`} />
+          <Main />
+          <NextScript />
+          <div id="portal-root" />
           <script
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{
@@ -71,7 +70,6 @@ class MyDocument extends Document {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', ${process.env.NEXT_PUBLIC_GA_TRACKING_ID});
           `,
             }}
           />
