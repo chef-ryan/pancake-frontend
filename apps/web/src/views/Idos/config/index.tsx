@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { ChainId } from '@pancakeswap/chains'
 import { Trans } from '@pancakeswap/localization'
 import { ASSET_CDN } from 'config/constants/endpoints'
@@ -25,7 +26,6 @@ export const idoConfigDict: Record<string, IDOConfig> = {
     chainId: ChainId.BSC,
     bannerUrl: `${ASSET_CDN}/web/ido/myshell-banner.png`,
     contractAddress: '0x0D54115eF8474C48103A1e3b41464BF3dB00E4B2',
-    // eslint-disable-next-line react/no-unescaped-entities
     tgeTitle: <Trans>MyShell's Token Generation Event</Trans>,
     tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
     description: (
@@ -103,32 +103,27 @@ export const idoConfigDict: Record<string, IDOConfig> = {
               The following nationalities are currently not eligible to participate in Binance-exclusive TGEs:
             </Trans>
             <ul>
-              <li>United States</li>
-              <li>Cuba</li>
-              <li>Iran</li>
-              <li>North Korea</li>
-              <li>Syria</li>
-              <li>Belgium</li>
-              <li>Bahrain</li>
-              <li>Canada</li>
-              <li>Netherlands</li>
-              <li>Spain</li>
-              <li>El Salvador</li>
-              <li>Poland</li>
-              <li>Kazakhstan</li>
-              <li>UAE</li>
-              <li>Australia</li>
-              <li>Japan</li>
-              <li>New Zealand</li>
-              <li>South Africa</li>
-              <li>Argentina</li>
-              <li>Brazil</li>
-              <li>Colombia</li>
-              <li>Mexico</li>
-              <li>Indonesia</li>
-              <li>Thailand</li>
-              <li>Turkey</li>
-              <li>India</li>
+              <li>
+                <b>
+                  <Trans>Binance Wallet users</Trans>
+                </b>{' '}
+                <Trans>
+                  from the following nationalities are currently not eligible to participate in this event: United
+                  States, Spain, Poland, Belgium, Kazakhstan, Bahrain, UAE, Australia, Japan, New Zealand, Argentina,
+                  Brazil, Colombia, Sweden, Indonesia, Thailand, Canada, Iran, Cuba, North Korea, Syria, Russia,
+                  Ukraine, Belarus.
+                </Trans>
+              </li>
+              <li>
+                <b>
+                  <Trans>PancakeSwap users</Trans>
+                </b>{' '}
+                <Trans>
+                  from the following nationalities are currently not eligible to participate in this event: Belarus,
+                  Myanmar, Côte d'Ivoire, Cuba, Iran, Iraq, Liberia, Sudan, Syria, Zimbabwe, Congo (Kinshasa), North
+                  Korea.
+                </Trans>
+              </li>
             </ul>
             <Trans>Please ensure you comply with the eligibility requirements before participating.</Trans>
           </>
