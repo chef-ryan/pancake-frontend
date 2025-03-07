@@ -306,11 +306,20 @@ export const CardContent = (props: CardContentProps) => {
       const parsedAmount0 = parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals)
       const parsedAmount1 = parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals)
 
+      let refundAmount0 = lpAccount.amount0 ?? 0n
+      let refundAmount1 = lpAccount.amount1 ?? 0n
+
+      const { isFlipped } = await getCurrencyOrder(currency0, currency1)
+      if (isFlipped) {
+        refundAmount0 = lpAccount.amount1 ?? 0n
+        refundAmount1 = lpAccount.amount0 ?? 0n
+      }
+
       // Deduct refund amounts from input amounts
-      let amount0ToSend = parsedAmount0 - (lpAccount.amount0 ?? 0n)
+      let amount0ToSend = parsedAmount0 - refundAmount0
       amount0ToSend = amount0ToSend < 0n ? 0n : amount0ToSend
 
-      let amount1ToSend = parsedAmount1 - (lpAccount.amount1 ?? 0n)
+      let amount1ToSend = parsedAmount1 - refundAmount1
       amount1ToSend = amount1ToSend < 0n ? 0n : amount1ToSend
 
       // Add liquidity
