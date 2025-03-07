@@ -49,17 +49,30 @@ class MyDocument extends Document {
           <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#323c5c" />
         </Head>
         <body>
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${process.env.NEXT_PUBLIC_GTAG}`}
-              height="0"
-              width="0"
-              style={{ display: 'none', visibility: 'hidden' }}
-            />
-          </noscript>
           <Main />
           <NextScript />
           <div id="portal-root" />
+          {process.env.NEXT_PUBLIC_GTM_ID ? (
+            <noscript>
+              <iframe
+                title="gtm"
+                src={`https://www.googletagmanager.com/ns.html?id=${process.env.NEXT_PUBLIC_GTM_ID}`}
+                height="0"
+                width="0"
+                style={{ display: 'none', visibility: 'hidden' }}
+              />
+            </noscript>
+          ) : null}
+          <script
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{
+              __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+          `,
+            }}
+          />
         </body>
       </Html>
     )
