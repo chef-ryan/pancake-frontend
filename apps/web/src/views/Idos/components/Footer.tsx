@@ -11,7 +11,7 @@ export const Footer: React.FC = () => {
     <CardBody>
       <FlexGap gap="12px" flexDirection="column">
         <FlexGap gap="12px">
-          <Link href="https://myshell.ai" target="_blank" rel="noopener noreferrer">
+          <Link href={currentIdoConfig?.projectUrl} target="_blank" rel="noopener noreferrer">
             <LanguageIcon width="24px" color={theme.colors.textSubtle} />
           </Link>
           <Link href={`https://bscscan.com/address/${idoContract?.address}`} target="_blank" rel="noopener noreferrer">
