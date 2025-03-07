@@ -19,7 +19,7 @@ export const Footer: React.FC = () => {
           </Link>
         </FlexGap>
         <Text color="textSubtle" fontSize="14px" lineHeight="16.8px">
-          {currentIdoConfig.description}
+          {currentIdoConfig?.description}
         </Text>
       </FlexGap>
     </CardBody>

@@ -37,15 +37,46 @@ export const idoConfigDict: Record<string, IDOConfig> = {
       </Trans>
     ),
   },
-  round2: {
-    id: 'round2',
-    projectUrl: 'https://pancakeswap.finance/',
+  bubblemaps: {
+    id: 'bubblemaps',
+    projectUrl: 'https://bubblemaps.io/',
     chainId: ChainId.BSC,
-    bannerUrl: '/images/ido/ido-banner.png',
+    bannerUrl: `${ASSET_CDN}/web/ido/bubblemaps-banner.png`,
     contractAddress: '0x0000000000000000000000000000000000000000',
-    tgeTitle: <Trans>Round 2 Token Generation Event</Trans>,
-    tgeSubtitle: <Trans>Details coming soon</Trans>,
-    description: <Trans>Round 2 is the next phase of our token generation events. Stay tuned for more details.</Trans>,
+    tgeTitle: <Trans>Bubblemaps's Token Generation Event</Trans>,
+    tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
+    description: (
+      <>
+        <Trans>
+          Bubblemaps is a crypto analytical tool turning blockchain data into a powerful visual experience. It shows
+          connections between a token’s holders and helps identify team wallets, VCs, and insiders—making it easier to
+          understand the tokenomics and spot potential risks.
+        </Trans>
+        <br />
+        <br />
+        Website:{' '}
+        <a href="https://bubblemaps.io/" target="_blank" rel="noreferrer">
+          https://bubblemaps.io/
+        </a>
+        <br />
+        <br />
+        X:{' '}
+        <a href="https://x.com/bubblemaps" target="_blank" rel="noreferrer">
+          https://x.com/bubblemaps
+        </a>
+        <br />
+        <br />
+        <Trans> What can Bubblemaps do? </Trans>
+        <br />
+        <Trans>
+          Investigate wallets, reveal connections, and see through the noise of blockchain data. For more detailed case
+          studies of Bubblemaps capabilities, please refer to the following link:
+        </Trans>{' '}
+        <a href="https://bubblemaps.io/case-studies" target="_blank" rel="noreferrer">
+          https://bubblemaps.io/case-studies
+        </a>
+      </>
+    ),
     faqs: [
       {
         title: <Trans>1. When can I claim my tokens?</Trans>,
