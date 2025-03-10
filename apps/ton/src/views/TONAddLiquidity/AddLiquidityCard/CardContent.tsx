@@ -171,10 +171,10 @@ export const CardContent = (props: CardContentProps) => {
 
     const parsedAmount0 = parseUnits(amount0, currency0.decimals)
     const parsedAmount1 = parseUnits(amount1, currency1.decimals)
-    const parsedTotalSupply = poolData?.totalSupply || 0n
 
     const parsedReserve0 = poolData?.reserve0 || 0n
     const parsedReserve1 = poolData?.reserve1 || 0n
+    const parsedTotalSupply = poolData?.totalSupply || 0n
 
     return getExpectedPoolTokens({
       amount0: parsedAmount0,

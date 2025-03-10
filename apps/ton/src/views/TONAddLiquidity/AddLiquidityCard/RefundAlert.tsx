@@ -40,7 +40,7 @@ export const RefundAlert = ({ poolAddress, currency0: currency0_, currency1: cur
         <Box>
           <Text small>
             {t(
-              'Unclaimed refunds may be used up while adding liquidity to this pool. You can choose to claim them now.',
+              'Unclaimed refunds could be utilized during liquidity addition, resulting in a higher deposit. We recommend claiming your refund prior to proceeding.',
             )}
           </Text>
           <FlexGap mt="16px" gap="16px" flexDirection="column">
