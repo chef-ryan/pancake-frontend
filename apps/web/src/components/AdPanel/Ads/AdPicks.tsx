@@ -23,10 +23,10 @@ import { PickBaseCoin } from '../PickBaseCoin'
 import { PickConfig } from '../types'
 
 const StyledAdTag = styled(AdTag)`
-    maxWidth: '70px',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
+  max-width: 75px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 `
 
 const usePicksData = (poolId: `0x{string}`, chain: string) => {
