@@ -59,7 +59,7 @@ export const Header = ({ showBridgeLink }: HeaderProps) => {
   )
 
   const handleShareClick = useCallback(() => {
-    if (navigator.canShare(shareData)) {
+    if (navigator.canShare?.(shareData)) {
       navigator.share(shareData)
     }
   }, [shareData])
@@ -89,7 +89,7 @@ export const Header = ({ showBridgeLink }: HeaderProps) => {
         <IconButton variant="text" scale="sm" onClick={() => setIsOpen(true)}>
           <CogIcon width={24} color="textSubtle" />
         </IconButton>
-        {navigator.canShare(shareData) && (
+        {navigator.canShare?.(shareData) && (
           <IconButton variant="text" scale="sm" onClick={handleShareClick}>
             <ShareIcon width={24} color="textSubtle" />
           </IconButton>
