@@ -148,9 +148,39 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
             marginTop: '14.5px',
           }}
         >
-          <AdTag title={t('Fee Tier')} value={`${fee}%`} index={0} />
-          <AdTag title={t('APR')} value={`${(100 * apr).toFixed(2)}%`} index={1} />
-          <AdTag title={t('TVL')} value={tvlAmt || '-'} index={2} />
+          <AdTag
+            title={t('Fee Tier')}
+            value={`${fee}%`}
+            index={0}
+            style={{
+              maxWidth: '70px',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          />
+          <AdTag
+            title={t('APR')}
+            value={`${(100 * apr).toFixed(2)}%`}
+            index={1}
+            style={{
+              maxWidth: '70px',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          />
+          <AdTag
+            title={t('TVL')}
+            value={tvlAmt || '-'}
+            index={2}
+            style={{
+              maxWidth: '70px',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          />
         </Box>
       </AdCard>
     </div>

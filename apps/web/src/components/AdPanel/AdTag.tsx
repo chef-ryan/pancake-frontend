@@ -1,11 +1,22 @@
-import { Text } from '@pancakeswap/uikit'
+import { BoxProps, Text } from '@pancakeswap/uikit'
 import styled, { DefaultTheme } from 'styled-components'
+import { CSSProperties, HTMLAttributes } from 'react'
 
 const colors = ['tertiary', 'input']
-export const AdTag = ({ title, value, index }: { title: string; value: string; index: number }) => {
+export const AdTag = ({
+  title,
+  value,
+  index,
+  style,
+}: {
+  title: string
+  value: string
+  index: number
+  style?: CSSProperties
+}) => {
   const color = colors[index % colors.length]
   return (
-    <TagBox color={color}>
+    <TagBox color={color} style={style}>
       <Title>{title}</Title>
       <Value>{value}</Value>
     </TagBox>
