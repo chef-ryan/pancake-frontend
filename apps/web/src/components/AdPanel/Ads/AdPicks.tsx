@@ -16,11 +16,11 @@ import { useMyPositions } from 'views/PoolDetail/components/MyPositionsContext'
 import { getPoolDetailPageLink } from 'views/universalFarms/components'
 import { sumApr } from 'views/universalFarms/utils/sumApr'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
+import { AdTag } from '../AdTag'
 import { BodyText } from '../BodyText'
 import { AdCard } from '../Card'
 import { PickBaseCoin } from '../PickBaseCoin'
 import { PickConfig } from '../types'
-import { AdTag } from '../AdTag'
 
 const usePicksData = (poolId: `0x{string}`, chain: string) => {
   const chainId = getChainId(chain)!
@@ -148,9 +148,9 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
             marginTop: '14.5px',
           }}
         >
-          <AdTag title="FEE TIER" value={`${fee}%`} index={0} />
-          <AdTag title="APR" value={`${(100 * apr).toFixed(2)}%`} index={1} />
-          <AdTag title="TVL" value={tvlAmt || '-'} index={2} />
+          <AdTag title={t('Fee Tier')} value={`${fee}%`} index={0} />
+          <AdTag title={t('APR')} value={`${(100 * apr).toFixed(2)}%`} index={1} />
+          <AdTag title={t('TVL')} value={tvlAmt || '-'} index={2} />
         </Box>
       </AdCard>
     </div>
