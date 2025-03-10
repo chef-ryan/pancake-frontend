@@ -121,10 +121,7 @@ export const LiquidityRow = ({
 
                 <Text fontSize={['14px', null, '16px']}>
                   {amount0.gt(0) ? (
-                    <NumberDisplay
-                      value={formatBigNumber(amount0, currency0?.decimals).toString()}
-                      maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS}
-                    />
+                    <NumberDisplay value={formatBigNumber(amount0, currency0?.decimals).toString()} />
                   ) : (
                     '-'
                   )}
@@ -137,10 +134,7 @@ export const LiquidityRow = ({
 
                 <Text fontSize={['14px', null, '16px']}>
                   {amount1.gt(0) ? (
-                    <NumberDisplay
-                      value={formatBigNumber(amount1, currency1?.decimals).toString()}
-                      maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS}
-                    />
+                    <NumberDisplay value={formatBigNumber(amount1, currency1?.decimals).toString()} />
                   ) : (
                     '-'
                   )}

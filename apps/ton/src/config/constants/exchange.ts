@@ -1,8 +1,10 @@
 import { ONE_HUNDRED_PERCENT, Percent } from '@pancakeswap/sdk'
 import { Currency, NATIVE, Native, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
+import BN from 'bignumber.js'
 import tokenList from 'public/lists/testnet.json'
 
 export const BIG_INT_ZERO = 0n
+export const ZERO_BN = BN(0)
 
 // one basis point
 export const BIPS_BASE = 10000n

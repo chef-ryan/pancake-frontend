@@ -12,18 +12,19 @@ import {
   Text,
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
-import { useQuery } from '@tanstack/react-query'
 import { setRemoveLiquidityModalAtom } from 'atoms/modals/removeLiquidityModalAtom'
 import { tokenByAddressQueryAtom } from 'atoms/tokens/tokenByAddressQueryAtom'
+import BN from 'bignumber.js'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
 import { LightGreyCard } from 'components/Card'
 import { WalletDisclaimer } from 'components/Card/WalletDisclaimer'
 import { DisplayLoader } from 'components/Misc/DisplayLoader'
 import { CurrencyLogo } from 'components/widgets'
 import { NumberDisplay } from 'components/widgets/NumberDisplay'
-import { MAXIMUM_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
+import { MAXIMUM_SIGNIFICANT_DIGITS, ZERO_BN } from 'config/constants/exchange'
 import { LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 import { usePoolRates } from 'hooks/liquidity/usePoolRates'
+import { useCurrencyOrder } from 'hooks/tokens/useCurrencyOrder'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
@@ -32,8 +33,7 @@ import { addressAtom } from 'ton/atom/addressAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { useRemoveLiquidity } from 'ton/logic/liquidity/useRemoveLiquidity'
-import { formatBalance } from 'ton/utils/formatting'
-import { getCurrencyOrder } from 'ton/utils/tokenOrder'
+import { formatBigNumber } from 'ton/utils/formatting'
 import { getAssetUrl } from 'utils'
 import { logGTMClickRemoveLiquidityEvent } from 'utils/customGTMEventTracking'
 
@@ -85,28 +85,12 @@ export const CardContent = (props: CardContentProps) => {
 
   const [address0, address1] = useMemo(() => router.query?.currency ?? [], [router.query])
 
-  // TODO: Handle native
   const { data: currency0_, isLoading: isCurrency0Loading } = useAtomValue(tokenByAddressQueryAtom(address0))
   const { data: currency1_, isLoading: isCurrency1Loading } = useAtomValue(tokenByAddressQueryAtom(address1))
 
-  const {
-    data: { currency0, currency1 },
-  } = useQuery({
-    queryKey: ['removeLiquidity_currencyOrder', currency0_, currency1_],
-    queryFn: async () => {
-      return currency0_ && currency1_
-        ? getCurrencyOrder(currency0_, currency1_)
-        : {
-            currency0: currency0_!,
-            currency1: currency1_!,
-            isFlipped: false,
-          }
-    },
-    initialData: {
-      currency0: currency0_!,
-      currency1: currency1_!,
-      isFlipped: false,
-    },
+  const { currency0, currency1 } = useCurrencyOrder({
+    currency0_,
+    currency1_,
   })
 
   const { data: lpBalance, isLoading: isLpBalanceLoading } = useAtomValue(
@@ -134,27 +118,31 @@ export const CardContent = (props: CardContentProps) => {
   const depositedAmounts = useMemo(() => {
     if (!lpBalance || !poolData) {
       return {
-        amount0: 0n,
-        amount1: 0n,
+        amount0: ZERO_BN,
+        amount1: ZERO_BN,
       }
     }
 
     return {
-      amount0: (lpBalance * BigInt(poolData.reserve0)) / BigInt(poolData?.totalSupply ?? 1),
-      amount1: (lpBalance * BigInt(poolData.reserve1)) / BigInt(poolData?.totalSupply ?? 1),
+      amount0: BN(lpBalance.toString())
+        .times(BN(poolData.reserve0.toString()))
+        .div(BN(poolData?.totalSupply?.toString() ?? '1')),
+      amount1: BN(lpBalance.toString())
+        .times(BN(poolData.reserve1.toString()))
+        .div(BN(poolData?.totalSupply?.toString() ?? '1')),
     }
   }, [lpBalance, poolData])
 
   const outputAmounts = useMemo(() => {
     if (!depositedAmounts) {
       return {
-        amount0: 0n,
-        amount1: 0n,
+        amount0: ZERO_BN,
+        amount1: ZERO_BN,
       }
     }
 
-    const amount0 = (BigInt(sliderValue) * BigInt(depositedAmounts.amount0)) / 100n
-    const amount1 = (BigInt(sliderValue) * BigInt(depositedAmounts.amount1)) / 100n
+    const amount0 = BN(sliderValue).times(depositedAmounts.amount0).div(100)
+    const amount1 = BN(sliderValue).times(depositedAmounts.amount1).div(100)
 
     return {
       amount0,
@@ -163,15 +151,15 @@ export const CardContent = (props: CardContentProps) => {
   }, [depositedAmounts, sliderValue])
 
   const lpTokensToBurn = useMemo(
-    () => (lpBalance ? (lpBalance * BigInt(sliderValue)) / 100n : 0n),
+    () => (lpBalance ? BN(lpBalance.toString()).times(sliderValue).div(100) : ZERO_BN),
     [lpBalance, sliderValue],
   )
 
   const { removeLiquidity } = useRemoveLiquidity({
     currency0,
     currency1,
-    amount0ToBurn: formatBalance(outputAmounts?.amount0 ?? 0n, currency0?.decimals),
-    amount1ToBurn: formatBalance(outputAmounts?.amount1 ?? 0n, currency1?.decimals),
+    amount0ToBurn: formatBigNumber(outputAmounts?.amount0 ?? 0n, currency0?.decimals),
+    amount1ToBurn: formatBigNumber(outputAmounts?.amount1 ?? 0n, currency1?.decimals),
   })
 
   const isDisabled = useMemo(() => {
@@ -196,17 +184,17 @@ export const CardContent = (props: CardContentProps) => {
   }, [])
 
   const handleRemoveLiquidity = useCallback(() => {
-    removeLiquidity(lpTokensToBurn)
+    removeLiquidity(BigInt(lpTokensToBurn.toString()))
   }, [removeLiquidity, lpTokensToBurn])
 
   const openConfirmationModal = useCallback(() => {
     logGTMClickRemoveLiquidityEvent()
     setRemoveLiquidityModal({
-      amount0: formatBalance(outputAmounts?.amount0 ?? 0n, currency0?.decimals),
-      amount1: formatBalance(outputAmounts?.amount1 ?? 0n, currency1?.decimals),
+      amount0: formatBigNumber(outputAmounts?.amount0 ?? 0n, currency0?.decimals),
+      amount1: formatBigNumber(outputAmounts?.amount1 ?? 0n, currency1?.decimals),
       currency0,
       currency1,
-      tokenBurnAmount: formatBalance(lpTokensToBurn, LP_TOKEN_DECIMALS),
+      tokenBurnAmount: formatBigNumber(lpTokensToBurn, LP_TOKEN_DECIMALS),
       onConfirm: handleRemoveLiquidity,
     })
   }, [
@@ -278,7 +266,7 @@ export const CardContent = (props: CardContentProps) => {
                 <Text color="textSubtle">{t('Pooled %currency%', { currency: currency0?.symbol ?? '' })}</Text>
               </FlexGap>
               <DisplayLoader loading={isPoolDataLoading || isLpBalanceLoading}>
-                <NumberDisplay value={formatBalance(outputAmounts?.amount0 ?? 0n, currency0?.decimals)} />
+                <NumberDisplay value={formatBigNumber(outputAmounts?.amount0 ?? 0n, currency0?.decimals)} />
               </DisplayLoader>
             </Flex>
             <Flex justifyContent="space-between" flexWrap="wrap">
@@ -287,7 +275,7 @@ export const CardContent = (props: CardContentProps) => {
                 <Text color="textSubtle">{t('Pooled %currency%', { currency: currency1?.symbol ?? '' })}</Text>
               </FlexGap>
               <DisplayLoader loading={isPoolDataLoading || isLpBalanceLoading}>
-                <NumberDisplay value={formatBalance(outputAmounts?.amount1 ?? 0n, currency1?.decimals)} />
+                <NumberDisplay value={formatBigNumber(outputAmounts?.amount1 ?? 0n, currency1?.decimals)} />
               </DisplayLoader>
             </Flex>
           </FlexGap>

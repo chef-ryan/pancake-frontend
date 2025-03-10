@@ -297,7 +297,7 @@ export const CardContent = (props: CardContentProps) => {
 
       console.log('minLpOut', {
         minLpOut,
-        slippageAdjustedLPExpected: expectedPoolTokens.multipliedBy(1 - slippage / 10_000).toString(),
+        slippageAdjustedLPExpected: expectedPoolTokens.multipliedBy(1 - slippage / 10_000).toFixed(LP_TOKEN_DECIMALS),
         amount0: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0],
         amount1: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1],
         parsedAmount0: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals),
