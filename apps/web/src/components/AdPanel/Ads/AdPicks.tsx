@@ -22,6 +22,13 @@ import { AdCard } from '../Card'
 import { PickBaseCoin } from '../PickBaseCoin'
 import { PickConfig } from '../types'
 
+const StyledAdTag = styled(AdTag)`
+    maxWidth: '70px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+`
+
 const usePicksData = (poolId: `0x{string}`, chain: string) => {
   const chainId = getChainId(chain)!
   const pool = usePoolInfo({ poolAddress: poolId, chainId }) || null
@@ -148,39 +155,9 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
             marginTop: '14.5px',
           }}
         >
-          <AdTag
-            title={t('Fee Tier')}
-            value={`${fee}%`}
-            index={0}
-            style={{
-              maxWidth: '70px',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          />
-          <AdTag
-            title={t('APR')}
-            value={`${(100 * apr).toFixed(2)}%`}
-            index={1}
-            style={{
-              maxWidth: '70px',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          />
-          <AdTag
-            title={t('TVL')}
-            value={tvlAmt || '-'}
-            index={2}
-            style={{
-              maxWidth: '70px',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          />
+          <StyledAdTag title={t('Fee Tier')} value={`${fee}%`} index={0} />
+          <StyledAdTag title={t('APR')} value={`${(100 * apr).toFixed(2)}%`} index={1} />
+          <StyledAdTag title={t('TVL')} value={tvlAmt || '-'} index={2} />
         </Box>
       </AdCard>
     </div>
