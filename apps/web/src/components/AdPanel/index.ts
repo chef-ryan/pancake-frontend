@@ -1,7 +1,7 @@
 import { BodyText } from './BodyText'
 import { AdButton as Button } from './Button'
 import { AdCard as Card } from './Card'
-import { AdPlayer, DesktopCard, MobileCard, AdSlides as AdsSlides, PickAdSlides as PicksAdsSlides } from './CardLayouts'
+import { AdPlayer, DesktopCard, MobileCard } from './CardLayouts'
 
 export const AdPanel = {
   DesktopCard,
@@ -10,6 +10,4 @@ export const AdPanel = {
   Card,
   BodyText,
   Button,
-  AdsSlides,
-  PicksAdsSlides,
 }

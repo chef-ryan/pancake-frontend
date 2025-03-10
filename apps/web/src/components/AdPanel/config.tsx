@@ -1,17 +1,15 @@
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
-import { atom, useAtomValue } from 'jotai'
 import { useMemo } from 'react'
-import { AdsIds, useAdsConfigs } from 'components/AdPanel/hooks/useAdsConfig'
 import { AdCakeStaking } from './Ads/AdCakeStaking'
+import { AdCommon } from './Ads/AdCommon'
 import { AdIfo } from './Ads/AdIfo'
 import { AdPCSX } from './Ads/AdPCSX'
-import { AdPicks } from './Ads/AdPicks'
 import { AdSpringboard } from './Ads/AdSpringboard'
+import { AdTradingCompetitionAndy } from './Ads/AdTradingCompetition'
 import { ExpandableAd } from './Expandable/ExpandableAd'
+import { AdsIds } from './hooks/useAdsConfig'
 import { shouldRenderOnPages } from './renderConditions'
-import { AdSlide, PicksConfig } from './types'
 import { useShouldRenderAdIfo } from './useShouldRenderAdIfo'
-import { AdCommon } from './Ads/AdCommon'
 
 enum Priority {
   FIRST_AD = 6,
@@ -22,57 +20,18 @@ enum Priority {
   VERY_LOW = 1,
 }
 
-const picksConfigAtom = atom(async () => {
-  const time = Math.floor((Date.now() / 1000) * 60 * 5) // Cache 5min
-
-  const urlPreview = `https://proofs.pancakeswap.com/picks/today-preview.json?t=${time}`
-  const isPreview = window.location.origin !== 'https://pancakeswap.finance'
-  const url = isPreview ? urlPreview : `https://proofs.pancakeswap.com/picks/today.json?t=${time}`
-  try {
-    const response = await fetch(url)
-    const json = await response.json()
-    return json as PicksConfig
-  } catch (ex) {
-    return null
-  }
-})
-export const usePicksConfig = () => {
-  const picksConfig = useAtomValue(picksConfigAtom)
-
-  if (!picksConfig) {
-    return []
-  }
-
-  const adList: AdSlide[] = picksConfig.configs.map((config, i) => {
-    return {
-      id: `pick-${config.poolId}`,
-      component: <AdPicks config={config} index={i} />,
-    }
-  })
-  return adList
-}
-
 export const useAdConfig = () => {
   const { isDesktop } = useMatchBreakpoints()
   const shouldRenderOnPage = shouldRenderOnPages(['/buy-crypto', '/', '/prediction'])
   const MAX_ADS = isDesktop ? 6 : 4
   const shouldRenderAdIfo = useShouldRenderAdIfo()
-  const configs = useAdsConfigs()
-  const commonAdConfigs = useMemo(() => {
-    return Object.entries(configs)
-      .map(([key, value]) => {
-        if (value.ad) {
-          return {
-            id: value.id,
-            component: <AdCommon id={key as AdsIds} />,
-          }
-        }
-        return undefined
-      })
-      .filter(Boolean) as { id: string; component: JSX.Element }[]
-  }, [configs])
 
-  const adList: Array<AdSlide> = useMemo(
+  const adList: Array<{
+    id: string
+    component: JSX.Element
+    shouldRender?: Array<boolean>
+    priority?: number
+  }> = useMemo(
     () => [
       {
         id: 'expandable-ad',
@@ -80,10 +39,17 @@ export const useAdConfig = () => {
         priority: Priority.FIRST_AD,
         shouldRender: [shouldRenderOnPage],
       },
-      ...commonAdConfigs,
+      {
+        id: 'tst-perp',
+        component: <AdCommon id={AdsIds.TST_PERP} />,
+      },
       {
         id: 'ad-springboard',
         component: <AdSpringboard />,
+      },
+      {
+        id: 'ad-andy-tc',
+        component: <AdTradingCompetitionAndy />,
       },
       {
         id: 'ad-ifo',
@@ -99,7 +65,7 @@ export const useAdConfig = () => {
         component: <AdCakeStaking />,
       },
     ],
-    [shouldRenderOnPage, shouldRenderAdIfo, commonAdConfigs],
+    [shouldRenderOnPage, shouldRenderAdIfo],
   )
 
   return useMemo(
