@@ -1,5 +1,7 @@
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { useQuery } from '@tanstack/react-query'
+import { useAtomValue } from 'jotai'
+import { chainIdAtom } from 'ton/atom/chainIdAtom'
 import { getCurrencyOrder } from 'ton/utils/tokenOrder'
 
 interface UseCurrencyOrderProps {
@@ -8,10 +10,11 @@ interface UseCurrencyOrderProps {
 }
 
 export const useCurrencyOrder = ({ currency0_, currency1_ }: UseCurrencyOrderProps) => {
+  const chainId = useAtomValue(chainIdAtom)
   const {
     data: { currency0, currency1, isFlipped },
   } = useQuery({
-    queryKey: ['currency-order', currency0_, currency1_],
+    queryKey: ['currency-order', chainId, currency0_, currency1_],
     queryFn: async () =>
       currency0_ && currency1_
         ? getCurrencyOrder(currency0_, currency1_)

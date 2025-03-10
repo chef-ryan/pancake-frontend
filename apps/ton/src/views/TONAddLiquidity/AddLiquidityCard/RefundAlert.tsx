@@ -6,7 +6,6 @@ import { NumberDisplay } from 'components/widgets/NumberDisplay'
 import { MAXIMUM_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
 import { useCurrencyOrder } from 'hooks/tokens/useCurrencyOrder'
 import { useAtomValue } from 'jotai'
-import { useMemo } from 'react'
 import { lpAccountMultipleQueryAtom } from 'ton/atom/liquidity/lpAccountMultipleQueryAtom'
 import { useLiquidityRefund } from 'ton/logic/liquidity/useLiquidityRefund'
 import { formatBalance } from 'ton/utils/formatting'
@@ -18,9 +17,9 @@ interface RefundAlertProps {
 }
 export const RefundAlert = ({ poolAddress, currency0: currency0_, currency1: currency1_ }: RefundAlertProps) => {
   const { t } = useTranslation()
-  const { data, isFetching } = useAtomValue(lpAccountMultipleQueryAtom([poolAddress]))
-
-  const lpAccount = useMemo(() => data[0], [data])
+  const {
+    data: [lpAccount],
+  } = useAtomValue(lpAccountMultipleQueryAtom([poolAddress]))
 
   const { currency0, currency1 } = useCurrencyOrder({
     currency0_,
@@ -33,8 +32,7 @@ export const RefundAlert = ({ poolAddress, currency0: currency0_, currency1: cur
     currency1,
   })
 
-  if (!lpAccount || !currency0 || !currency1 || (!isFetching && lpAccount.amount0 === 0n && lpAccount.amount1 === 0n))
-    return null
+  if (!lpAccount || !currency0 || !currency1 || (lpAccount.amount0 === 0n && lpAccount.amount1 === 0n)) return null
 
   return (
     <>
@@ -47,8 +45,8 @@ export const RefundAlert = ({ poolAddress, currency0: currency0_, currency1: cur
           </Text>
           <FlexGap mt="16px" gap="16px" flexDirection="column">
             <Flex justifyContent="space-between">
-              <FlexGap gap="8px">
-                <CurrencyLogo currency={currency0} size="18px" />
+              <FlexGap gap="8px" alignItems="center">
+                <CurrencyLogo currency={currency0} size="20px" />
                 <Text small>{currency0?.symbol}</Text>
               </FlexGap>
               <NumberDisplay
@@ -58,8 +56,8 @@ export const RefundAlert = ({ poolAddress, currency0: currency0_, currency1: cur
               />
             </Flex>
             <Flex justifyContent="space-between">
-              <FlexGap gap="8px">
-                <CurrencyLogo currency={currency1} size="18px" />
+              <FlexGap gap="8px" alignItems="center">
+                <CurrencyLogo currency={currency1} size="20px" />
                 <Text small>{currency1?.symbol}</Text>
               </FlexGap>
               <NumberDisplay

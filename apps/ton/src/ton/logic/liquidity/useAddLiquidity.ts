@@ -47,6 +47,7 @@ export const useAddLiquidity = () => {
     async ({ token0, token1, minLpOut, amount0: amount0_, amount1: amount1_ }: AddLiquidityArgs) => {
       try {
         const { currency0, currency1, isFlipped } = await getCurrencyOrder(token0, token1)
+
         const [amount0, amount1] = !isFlipped ? [amount0_, amount1_] : [amount1_, amount0_]
 
         const formattedAmount0 = formatBalance(amount0, currency0.decimals)

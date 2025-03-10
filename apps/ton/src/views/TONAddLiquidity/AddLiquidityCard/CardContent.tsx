@@ -18,6 +18,7 @@ import { MAXIMUM_SIGNIFICANT_DIGITS } from 'config/constants/exchange'
 import { LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 import { usePoolRates } from 'hooks/liquidity/usePoolRates'
 import { useCurrency } from 'hooks/tokens/useCurrency'
+import { useCurrencyOrder } from 'hooks/tokens/useCurrencyOrder'
 import { useUserSlippage } from 'hooks/useUserSlippage'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
@@ -67,6 +68,11 @@ export const CardContent = (props: CardContentProps) => {
   const currency0 = useCurrency(token0Address)
   const currency1 = useCurrency(token1Address)
 
+  const { isFlipped } = useCurrencyOrder({
+    currency0_: currency0,
+    currency1_: currency1,
+  })
+
   const [token0Value, setToken0Value] = useAtom(currency0TypedValue)
   const [token1Value, setToken1Value] = useAtom(currency1TypedValue)
 
@@ -78,9 +84,19 @@ export const CardContent = (props: CardContentProps) => {
   const setCurrency = useSetAtom(setCurrencyAtom)
   const setAddLiquidityModal = useSetAtom(setAddLiquidityModalAtom)
 
-  const { data: poolData, isLoading: isPoolDataLoading } = useAtomValue(
+  const { data: poolDataUnordered, isLoading: isPoolDataLoading } = useAtomValue(
     poolDataQueryAtom({ token0Address: currency0?.wrapped.address, token1Address: currency1?.wrapped.address }),
   )
+
+  // Correct poolData for the currently selected order of currencies
+  const poolData = useMemo(() => {
+    if (!poolDataUnordered) return undefined
+    return {
+      ...poolDataUnordered,
+      reserve0: isFlipped ? poolDataUnordered.reserve1 : poolDataUnordered.reserve0,
+      reserve1: isFlipped ? poolDataUnordered.reserve0 : poolDataUnordered.reserve1,
+    }
+  }, [poolDataUnordered, isFlipped])
 
   const { data: lpBalance, isLoading: isLpBalanceLoading } = useAtomValue(
     lpBalanceQueryAtom({
@@ -153,14 +169,21 @@ export const CardContent = (props: CardContentProps) => {
     const amount0 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]
     const amount1 = currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]
 
+    const parsedAmount0 = parseUnits(amount0, currency0.decimals)
+    const parsedAmount1 = parseUnits(amount1, currency1.decimals)
+    const parsedTotalSupply = poolData?.totalSupply || 0n
+
+    const parsedReserve0 = poolData?.reserve0 || 0n
+    const parsedReserve1 = poolData?.reserve1 || 0n
+
     return getExpectedPoolTokens({
-      amount0,
-      amount1,
-      reserve0: formatBalance(poolData?.reserve0 ?? 0n, currency0.decimals),
-      reserve1: formatBalance(poolData?.reserve1 ?? 0n, currency1.decimals),
-      totalSupply: formatBalance(poolData?.totalSupply ?? 0n, LP_TOKEN_DECIMALS) || 0n,
-    })
-  }, [currencyAmounts, poolData?.reserve0, poolData?.reserve1, poolData?.totalSupply, currency0, currency1])
+      amount0: parsedAmount0,
+      amount1: parsedAmount1,
+      reserve0: parsedReserve0,
+      reserve1: parsedReserve1,
+      totalSupply: parsedTotalSupply,
+    }).dividedBy(10 ** LP_TOKEN_DECIMALS)
+  }, [currency0, currency1, currencyAmounts, poolData?.totalSupply, poolData?.reserve0, poolData?.reserve1])
 
   const expectedShareInPool = useMemo(() => {
     const parsedExpectedPoolTokens = expectedPoolTokens.isFinite()
@@ -264,6 +287,9 @@ export const CardContent = (props: CardContentProps) => {
     if (isDisabled || !currency0?.wrapped.address || !currency1?.wrapped.address) return
     logGTMClickAddLiquidityConfirmEvent()
     try {
+      const parsedAmount0 = parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals)
+      const parsedAmount1 = parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals)
+
       const minLpOut = parseUnits(
         expectedPoolTokens.multipliedBy(1 - slippage / 10_000).toFixed(LP_TOKEN_DECIMALS),
         LP_TOKEN_DECIMALS,
@@ -277,9 +303,6 @@ export const CardContent = (props: CardContentProps) => {
         parsedAmount0: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals),
         parsedAmount1: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals),
       })
-
-      const parsedAmount0 = parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals)
-      const parsedAmount1 = parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals)
 
       // Add liquidity
       addLiquidity({
