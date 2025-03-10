@@ -138,16 +138,20 @@ export const CardContent = (props: CardContentProps) => {
         independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY0 || !rates.currency1 || !rates.currency0
           ? token0Value
           : BN(token1Value).isFinite()
-          ? BN(token1Value).times(rates.currency1).toString()
+          ? BN(token1Value)
+              .times(rates.currency1)
+              .toFixed(currency0?.decimals ?? 0)
           : '',
       [CurrencyField.ADD_LIQUIDITY_CURRENCY1]:
         independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY1 || !rates.currency0 || !rates.currency1
           ? token1Value
           : BN(token0Value).isFinite()
-          ? BN(token0Value).times(rates.currency0).toString()
+          ? BN(token0Value)
+              .times(rates.currency0)
+              .toFixed(currency1?.decimals ?? 0)
           : '',
     }
-  }, [independentField, token0Value, token1Value, rates.currency0, rates.currency1])
+  }, [independentField, token0Value, token1Value, rates.currency0, rates.currency1, currency0, currency1])
 
   const isInsufficientBalance0 = useMemo(() => {
     if (!currency0) return false
@@ -306,13 +310,13 @@ export const CardContent = (props: CardContentProps) => {
       const parsedAmount0 = parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals)
       const parsedAmount1 = parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals)
 
-      let refundAmount0 = lpAccount.amount0 ?? 0n
-      let refundAmount1 = lpAccount.amount1 ?? 0n
+      let refundAmount0 = lpAccount?.amount0 ?? 0n
+      let refundAmount1 = lpAccount?.amount1 ?? 0n
 
       const { isFlipped } = await getCurrencyOrder(currency0, currency1)
       if (isFlipped) {
-        refundAmount0 = lpAccount.amount1 ?? 0n
-        refundAmount1 = lpAccount.amount0 ?? 0n
+        refundAmount0 = lpAccount?.amount1 ?? 0n
+        refundAmount1 = lpAccount?.amount0 ?? 0n
       }
 
       // Deduct refund amounts from input amounts
