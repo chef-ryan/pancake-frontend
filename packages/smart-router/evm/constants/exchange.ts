@@ -166,6 +166,7 @@ export const ADDITIONAL_BASES: {
 
     [bscTokens.mdlp.address]: [bscTokens.dlp],
     [bscTokens.dlp.address]: [bscTokens.mdlp],
+    [bscTokens.broccoli.address]: [bscTokens.oldBroccoli],
 
     // pancakeswap/pancake-frontend#7909
     // LSDT

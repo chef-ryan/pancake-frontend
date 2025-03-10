@@ -3365,4 +3365,6 @@ export const bscTokens = {
     'MyShell Token',
     'https://myshell.ai/',
   ),
+  oldBroccoli: new ERC20Token(ChainId.BSC, '0x6d5AD1592ed9D6D1dF9b93c793AB759573Ed6714', 18, 'Broccoli', `CZ'S DOG`),
+  broccoli: new ERC20Token(ChainId.BSC, '0x4D3Fdd3B945e00faD1E106D3376d43511807E6C5', 18, 'Broccoli', `CZ'S DOG`),
 }
