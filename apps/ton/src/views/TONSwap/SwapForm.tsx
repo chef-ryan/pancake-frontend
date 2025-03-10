@@ -166,7 +166,7 @@ export const SwapForm = () => {
               currency={outputCurrency}
               otherCurrency={inputCurrency}
               commonBasesType={undefined}
-              onUserInput={(val) => onUserInput(Field.OUTPUT, val)}
+              onUserInput={noop}
               onPercentInput={noop}
               onMax={noop}
               onCurrencySelect={(currency) => onCurrencySelection(Field.OUTPUT, currency)}
