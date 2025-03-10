@@ -38,10 +38,12 @@ export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: To
 export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {}
 // todo:@eric mock bases to test multihops
 const USDC = tokenList.tokens.find((t) => t.symbol === 'USDC')!
+const tTON = tokenList.tokens.find((t) => t.symbol === 'tTON')!
 export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Currency[] } = {
   [TonChainId.Testnet]: [
     new Native(NATIVE[TonChainId.Testnet]),
     new Token(USDC.chainId, USDC.address, USDC.decimals, USDC.name, USDC.symbol, USDC.logoURI),
+    new Token(tTON.chainId, tTON.address, tTON.decimals, tTON.name, tTON.symbol, tTON.logoURI),
   ] satisfies Currency[],
   [TonChainId.Mainnet]: [],
 }
