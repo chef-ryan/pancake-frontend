@@ -173,6 +173,8 @@ export const CardContent = (props: CardContentProps) => {
       !currency1 ||
       !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0] ||
       !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1] ||
+      BN(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]).isZero() ||
+      BN(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]).isZero() ||
       isInsufficientBalance0 ||
       isInsufficientBalance1 ||
       isPoolDataLoading
