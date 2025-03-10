@@ -92,7 +92,10 @@ interface TokenQueryResponse {
 
 const tokenPageDataAtom = atomFamily((params: TokenPageParams) => {
   return atom(async () => {
-    const resp = await fetch(`/api/token/v3/${params.chain || 'bsc'}/${params.address}`)
+    const type = 'v3'
+    const chain = params.chain || 'bsc'
+    const address = params.address
+    const resp = await fetch(`/api/token?chain=${chain}&token=${address}&type=${type}`)
     const json = await resp.json()
     return json as TokenQueryResponse
   })

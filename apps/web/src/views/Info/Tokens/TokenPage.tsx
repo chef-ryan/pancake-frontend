@@ -87,7 +87,8 @@ interface TokenQueryResponse {
 }
 const tokenInfoAtom = atomFamily((params: TokenInfoParams) => {
   return atom(async () => {
-    const resp = await fetch(`/api/token/${params.type}/${params.chain}/${params.address}`)
+    const { address, chain, type } = params
+    const resp = await fetch(`/api/token?chain=${chain}&token=${address}&type=${type}`)
     const json = await resp.json()
     return json as TokenQueryResponse
   })
