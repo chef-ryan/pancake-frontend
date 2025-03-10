@@ -16,7 +16,13 @@ interface GetExpectedLpTokensArgs {
   reserve1: BigintIsh
   totalSupply: BigintIsh
 }
-export function getExpectedPoolTokens({ amount0, amount1, reserve0, reserve1, totalSupply }: GetExpectedLpTokensArgs) {
+export function getExpectedPoolTokens({
+  amount0,
+  amount1,
+  reserve0,
+  reserve1,
+  totalSupply,
+}: GetExpectedLpTokensArgs): BN {
   const a0 = BN(amount0.toString())
   const a1 = BN(amount1.toString())
   const r0 = BN(reserve0.toString())

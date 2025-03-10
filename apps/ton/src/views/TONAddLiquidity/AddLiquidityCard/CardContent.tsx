@@ -198,7 +198,7 @@ export const CardContent = (props: CardContentProps) => {
 
   const expectedShareInPool = useMemo(() => {
     const parsedExpectedPoolTokens = expectedPoolTokens.isFinite()
-      ? parseUnits(expectedPoolTokens.toString() || 0n, LP_TOKEN_DECIMALS).toString()
+      ? parseUnits(expectedPoolTokens.toFixed(LP_TOKEN_DECIMALS) || 0n, LP_TOKEN_DECIMALS).toString()
       : '0'
 
     // If new pool being created
@@ -298,7 +298,10 @@ export const CardContent = (props: CardContentProps) => {
     if (isDisabled || !currency0?.wrapped.address || !currency1?.wrapped.address) return
     logGTMClickAddLiquidityConfirmEvent()
     try {
-      const minLpOut = parseUnits(expectedPoolTokens.multipliedBy(1 - slippage / 10_000).toString(), LP_TOKEN_DECIMALS)
+      const minLpOut = parseUnits(
+        expectedPoolTokens.multipliedBy(1 - slippage / 10_000).toFixed(LP_TOKEN_DECIMALS),
+        LP_TOKEN_DECIMALS,
+      )
 
       console.log('minLpOut', {
         minLpOut,
@@ -365,7 +368,7 @@ export const CardContent = (props: CardContentProps) => {
       isOpen: true,
       currency0,
       currency1,
-      outputAmount: expectedPoolTokens.toString(),
+      outputAmount: expectedPoolTokens.toFixed(LP_TOKEN_DECIMALS),
       amount0: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0],
       amount1: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1],
       rate0: expectedRates.expectedRate0,
