@@ -182,14 +182,13 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
       }
       return Promise.resolve()
     } catch (e) {
-      let msg = typeof e === 'string' ? e : (e as Error)?.message
-      if (e instanceof UserRejectsError || e instanceof TonConnectUIError) {
-        msg = t('Transaction rejected')
+      const msg = typeof e === 'string' ? e : (e as Error)?.message
+      if (e instanceof UserRejectsError || e instanceof TonConnectUIError || msg.includes('Reject request')) {
+        setErrorMsgModal({
+          isOpen: true,
+          msg: t('Transaction rejected'),
+        })
       }
-      setErrorMsgModal({
-        isOpen: true,
-        msg,
-      })
       return Promise.reject()
     }
   }, [
