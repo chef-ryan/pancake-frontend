@@ -1,7 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { AddIcon, Box, BoxProps, Button, Flex, FlexGap, Loading, Text, useToast } from '@pancakeswap/uikit'
-import { useQuery } from '@tanstack/react-query'
 import { setCurrencyAtom } from 'atoms/currencyAtoms'
 import {
   currency0TypedValue,
@@ -25,18 +24,16 @@ import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { addressAtom } from 'ton/atom/addressAtom'
-import { lpAccountMultipleQueryAtom } from 'ton/atom/liquidity/lpAccountMultipleQueryAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
 import { useAddLiquidity } from 'ton/logic/liquidity/useAddLiquidity'
 import { formatBalance, parseUnits } from 'ton/utils/formatting'
 import { getExpectedPoolTokens, getNewPoolShare } from 'ton/utils/pool'
-import { getCurrencyOrder } from 'ton/utils/tokenOrder'
 import { CurrencyField } from 'types/currency'
-import { stringify } from 'utils'
 import { logGTMClickAddLiquidityConfirmEvent, logGTMClickAddLiquidityEvent } from 'utils/customGTMEventTracking'
 import { currencyKey } from 'utils/tokens/currency'
+import { RefundAlert } from './RefundAlert'
 
 const ContentContainer = styled(Box)<{ $isBottomRounded?: boolean }>`
   padding: 24px;
@@ -75,8 +72,8 @@ export const CardContent = (props: CardContentProps) => {
 
   const [independentField, setIndependentField] = useAtom(liquidityIndependentFieldAtom)
 
-  const { data: initialBalance0 } = useAtomValue(balanceAtom(currency0))
-  const { data: initialBalance1 } = useAtomValue(balanceAtom(currency1))
+  const { data: balance0 } = useAtomValue(balanceAtom(currency0))
+  const { data: balance1 } = useAtomValue(balanceAtom(currency1))
 
   const setCurrency = useSetAtom(setCurrencyAtom)
   const setAddLiquidityModal = useSetAtom(setAddLiquidityModalAtom)
@@ -91,37 +88,6 @@ export const CardContent = (props: CardContentProps) => {
       token1Address: currency1?.wrapped.address,
     }),
   )
-
-  // Fetch LpAccount for Refund amounts
-  const {
-    data: [lpAccount],
-    isFetching: isLpAccountLoading,
-  } = useAtomValue(lpAccountMultipleQueryAtom(poolData ? [poolData?.poolAddress.toString()] : []))
-
-  // If user has unclaimed refund amounts, it will be claimed in the Add Liquidity txn
-  // so add those amounts to balances and deduct from input amounts when sending txn
-  const {
-    data: [balance0, balance1],
-  } = useQuery({
-    queryKey: [
-      'balancesWithRefunds',
-      currency0,
-      currency1,
-      stringify(initialBalance0),
-      stringify(initialBalance1),
-      stringify(lpAccount),
-    ],
-    queryFn: async () => {
-      if (!currency0 || !currency1 || isLpAccountLoading) return [initialBalance0, initialBalance1]
-
-      const { isFlipped } = await getCurrencyOrder(currency0, currency1)
-      if (isFlipped) {
-        return [initialBalance0 + (lpAccount?.amount1 || 0n), initialBalance1 + (lpAccount?.amount0 || 0n)]
-      }
-      return [initialBalance0 + (lpAccount?.amount0 || 0n), initialBalance1 + (lpAccount?.amount1 || 0n)]
-    },
-    initialData: [initialBalance0, initialBalance1],
-  })
 
   const rates = usePoolRates({
     currency0,
@@ -315,30 +281,12 @@ export const CardContent = (props: CardContentProps) => {
       const parsedAmount0 = parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals)
       const parsedAmount1 = parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals)
 
-      let refundAmount0 = lpAccount?.amount0 ?? 0n
-      let refundAmount1 = lpAccount?.amount1 ?? 0n
-
-      const { isFlipped } = await getCurrencyOrder(currency0, currency1)
-      if (isFlipped) {
-        refundAmount0 = lpAccount?.amount1 ?? 0n
-        refundAmount1 = lpAccount?.amount0 ?? 0n
-      }
-
-      // Deduct refund amounts from input amounts
-      let amount0ToSend = parsedAmount0 - refundAmount0
-      amount0ToSend = amount0ToSend < 0n ? 0n : amount0ToSend
-
-      let amount1ToSend = parsedAmount1 - refundAmount1
-      amount1ToSend = amount1ToSend < 0n ? 0n : amount1ToSend
-
       // Add liquidity
       addLiquidity({
         token0: currency0,
         token1: currency1,
         amount0: parsedAmount0,
         amount1: parsedAmount1,
-        amount0ToSend,
-        amount1ToSend,
         minLpOut: BigInt(minLpOut),
       })
 
@@ -358,7 +306,6 @@ export const CardContent = (props: CardContentProps) => {
     currencyAmounts,
     slippage,
     expectedPoolTokens,
-    lpAccount,
   ])
 
   const openConfirmationModal = useCallback(() => {
@@ -403,7 +350,6 @@ export const CardContent = (props: CardContentProps) => {
             </Text>
           }
           disabled={isPoolDataLoading}
-          overrideBalance={balance0}
         />
 
         <AddIcon mt="12px" color="textSubtle" width={28} />
@@ -419,7 +365,6 @@ export const CardContent = (props: CardContentProps) => {
             showQuickInputButton={false}
             disabled={isPoolDataLoading}
             title={<>&nbsp;</>}
-            overrideBalance={balance1}
           />
         </Box>
 
@@ -473,6 +418,12 @@ export const CardContent = (props: CardContentProps) => {
 
             <SlippageButton />
           </Flex>
+
+          <RefundAlert
+            currency0={currency0}
+            currency1={currency1}
+            poolAddress={poolData?.poolAddress.toString() || ''}
+          />
         </FlexGap>
       </ContentContainer>
 

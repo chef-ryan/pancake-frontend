@@ -11,7 +11,7 @@ export const TONAddLiquidity = () => {
         <Header showBridgeLink />
       </Box>
       <Flex width="100%" height="100%" justifyContent="center" position="relative">
-        <Flex flexDirection="column" alignItems="center" height="100%" width="100%">
+        <Flex pb="64px" flexDirection="column" alignItems="center" height="100%" width="100%">
           <CardContainer>
             <AddLiquidityCard />
           </CardContainer>

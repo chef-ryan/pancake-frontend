@@ -27,9 +27,6 @@ interface AddLiquidityArgs {
   amount0: bigint
   amount1: bigint
 
-  amount0ToSend: bigint
-  amount1ToSend: bigint
-
   minLpOut: bigint
 }
 
@@ -47,20 +44,10 @@ export const useAddLiquidity = () => {
   const resetAppModal = useSetAtom(resetAppModalAtom)
 
   const addLiquidity = useCallback(
-    async ({
-      token0,
-      token1,
-      minLpOut,
-      amount0: amount0_,
-      amount1: amount1_,
-      amount0ToSend: amount0ToSend_,
-      amount1ToSend: amount1ToSend_,
-    }: AddLiquidityArgs) => {
+    async ({ token0, token1, minLpOut, amount0: amount0_, amount1: amount1_ }: AddLiquidityArgs) => {
       try {
         const { currency0, currency1, isFlipped } = await getCurrencyOrder(token0, token1)
-        const [amount0, amount1, amount0ToSend, amount1ToSend] = !isFlipped
-          ? [amount0_, amount1_, amount0ToSend_, amount1ToSend_]
-          : [amount1_, amount0_, amount1ToSend_, amount0ToSend_]
+        const [amount0, amount1] = !isFlipped ? [amount0_, amount1_] : [amount1_, amount0_]
 
         const formattedAmount0 = formatBalance(amount0, currency0.decimals)
         const formattedAmount1 = formatBalance(amount1, currency1.decimals)
@@ -96,7 +83,7 @@ export const useAddLiquidity = () => {
           .store(
             storeJettonTransferMessage({
               queryId: generateQueryId(),
-              amount: amount0ToSend,
+              amount: amount0,
               destination: routerAddress,
               responseDestination: userAddress,
               customPayload: null,
@@ -118,7 +105,7 @@ export const useAddLiquidity = () => {
           .store(
             storeJettonTransferMessage({
               queryId: generateQueryId(),
-              amount: amount1ToSend,
+              amount: amount1,
               destination: routerAddress,
               responseDestination: userAddress,
               customPayload: null,
@@ -133,12 +120,12 @@ export const useAddLiquidity = () => {
           messages: [
             {
               address: currency0.isNative ? routerJettonWallet0.toString() : userJettonWallet0.toString(),
-              amount: (currency0.isNative ? FORWARD_GAS + amount0ToSend : GAS).toString(),
+              amount: (currency0.isNative ? FORWARD_GAS + amount0 : GAS).toString(),
               payload: payload0.toBoc().toString('base64'),
             },
             {
               address: currency1.isNative ? routerJettonWallet1.toString() : userJettonWallet1.toString(),
-              amount: (currency1.isNative ? FORWARD_GAS + amount1ToSend : GAS).toString(),
+              amount: (currency1.isNative ? FORWARD_GAS + amount1 : GAS).toString(),
               payload: payload1.toBoc().toString('base64'),
             },
           ],

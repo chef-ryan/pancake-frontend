@@ -1,4 +1,5 @@
 import { QUERY_MEDIUM_STALE_TIME, QUERY_RETRY_DELAY } from 'config/constants/exchange'
+import { txReceiptAtom } from 'hooks/useLatestTxReceipt'
 import { atomWithQuery } from 'jotai-tanstack-query'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
@@ -10,7 +11,7 @@ import { networkAtom } from '../networkAtom'
 
 export const lpAccountMultipleQueryAtom = atomFamily((poolAddresses: string[]) => {
   return atomWithQuery((get) => ({
-    queryKey: ['lpAccountMultiple', get(networkAtom), poolAddresses],
+    queryKey: ['lpAccountMultiple', get(networkAtom), poolAddresses, get(txReceiptAtom)],
     queryFn: async () => {
       async function getLpAccountData(poolAddress: string) {
         const userAddress = get(addressAtom)
