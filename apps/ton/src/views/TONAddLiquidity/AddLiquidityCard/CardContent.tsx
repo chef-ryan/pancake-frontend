@@ -122,7 +122,7 @@ export const CardContent = (props: CardContentProps) => {
           : BN(token1Value).isFinite()
           ? BN(token1Value)
               .times(rates.currency1)
-              .toFixed(currency0?.decimals ?? 0)
+              .toFixed(currency0?.decimals ?? 0, BN.ROUND_DOWN)
           : '',
       [CurrencyField.ADD_LIQUIDITY_CURRENCY1]:
         independentField === CurrencyField.ADD_LIQUIDITY_CURRENCY1 || !rates.currency0 || !rates.currency1
@@ -130,7 +130,7 @@ export const CardContent = (props: CardContentProps) => {
           : BN(token0Value).isFinite()
           ? BN(token0Value)
               .times(rates.currency0)
-              .toFixed(currency1?.decimals ?? 0)
+              .toFixed(currency1?.decimals ?? 0, BN.ROUND_DOWN)
           : '',
     }
   }, [independentField, token0Value, token1Value, rates.currency0, rates.currency1, currency0, currency1])
@@ -291,13 +291,15 @@ export const CardContent = (props: CardContentProps) => {
       const parsedAmount1 = parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1.decimals)
 
       const minLpOut = parseUnits(
-        expectedPoolTokens.multipliedBy(1 - slippage / 10_000).toFixed(LP_TOKEN_DECIMALS),
+        expectedPoolTokens.multipliedBy(1 - slippage / 10_000).toFixed(LP_TOKEN_DECIMALS, BN.ROUND_DOWN),
         LP_TOKEN_DECIMALS,
       )
 
       console.log('minLpOut', {
         minLpOut,
-        slippageAdjustedLPExpected: expectedPoolTokens.multipliedBy(1 - slippage / 10_000).toFixed(LP_TOKEN_DECIMALS),
+        slippageAdjustedLPExpected: expectedPoolTokens
+          .multipliedBy(1 - slippage / 10_000)
+          .toFixed(LP_TOKEN_DECIMALS, BN.ROUND_DOWN),
         amount0: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0],
         amount1: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1],
         parsedAmount0: parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0.decimals),
