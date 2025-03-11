@@ -338,7 +338,7 @@ export const CardContent = (props: CardContentProps) => {
       isOpen: true,
       currency0,
       currency1,
-      outputAmount: expectedPoolTokens.toFixed(LP_TOKEN_DECIMALS),
+      outputAmount: expectedPoolTokens.toFixed(LP_TOKEN_DECIMALS, BN.ROUND_DOWN),
       amount0: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0],
       amount1: currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1],
       rate0: expectedRates.expectedRate0,
