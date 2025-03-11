@@ -9,6 +9,9 @@ catalogs:
     '@aptos-labs/ts-sdk':
       specifier: 1.30.0
       version: 1.30.0
+    jotai:
+      specifier: 2.12.2
+      version: 2.12.2
     next:
       specifier: 14.2.14
       version: 14.2.14
@@ -315,8 +318,8 @@ importers:
         specifier: ^1.11.10
         version: 1.11.10
       jotai:
-        specifier: ^2.4.3
-        version: 2.5.1(@types/react@18.2.37)(react@18.2.0)
+        specifier: 'catalog:'
+        version: 2.12.2(@types/react@18.2.37)(react@18.2.0)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -410,16 +413,16 @@ importers:
         version: 5.52.1(react@18.2.0)
       '@vanilla-extract/next-plugin':
         specifier: ^2.3.0
-        version: 2.3.2(@types/node@18.0.4)(next@14.2.14(@babel/core@7.23.9)(@opentelemetry/api@1.9.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(terser@5.24.0)(webpack@5.89.0)
+        version: 2.3.2(@types/node@18.0.4)(next@14.2.14(@babel/core@7.23.3)(@opentelemetry/api@1.9.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(terser@5.24.0)(webpack@5.89.0)
       next:
         specifier: 'catalog:'
-        version: 14.2.14(@babel/core@7.23.9)(@opentelemetry/api@1.9.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 14.2.14(@babel/core@7.23.3)(@opentelemetry/api@1.9.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       next-seo:
         specifier: ^5.15.0
-        version: 5.15.0(next@14.2.14(@babel/core@7.23.9)(@opentelemetry/api@1.9.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 5.15.0(next@14.2.14(@babel/core@7.23.3)(@opentelemetry/api@1.9.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       next-themes:
         specifier: ^0.2.1
-        version: 0.2.1(next@14.2.14(@babel/core@7.23.9)(@opentelemetry/api@1.9.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 0.2.1(next@14.2.14(@babel/core@7.23.3)(@opentelemetry/api@1.9.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       qs:
         specifier: ^6.0.0
         version: 6.11.2
@@ -509,8 +512,8 @@ importers:
         specifier: ^5.0.0
         version: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       jotai:
-        specifier: ^2.4.3
-        version: 2.5.1(@types/react@18.2.37)(react@18.2.0)
+        specifier: 'catalog:'
+        version: 2.12.2(@types/react@18.2.37)(react@18.2.0)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -779,8 +782,8 @@ importers:
         specifier: 5.0.0
         version: 5.0.0(graphql@16.8.1)
       jotai:
-        specifier: ^2.4.3
-        version: 2.5.1(@types/react@18.2.37)(react@18.2.0)
+        specifier: 'catalog:'
+        version: 2.12.2(@types/react@18.2.37)(react@18.2.0)
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -1168,8 +1171,8 @@ importers:
         specifier: 5.0.0
         version: 5.0.0(graphql@16.8.1)
       jotai:
-        specifier: ^2.4.3
-        version: 2.5.1(@types/react@18.2.37)(react@18.2.0)
+        specifier: 'catalog:'
+        version: 2.12.2(@types/react@18.2.37)(react@18.2.0)
       js-cookie:
         specifier: ^3.0.1
         version: 3.0.5
@@ -2439,6 +2442,9 @@ importers:
       ajv:
         specifier: ^6.12.3
         version: 6.12.6
+      jotai:
+        specifier: 'catalog:'
+        version: 2.12.2(@types/react@18.2.37)(react@18.2.0)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -2452,9 +2458,6 @@ importers:
       '@types/react':
         specifier: ^18.2.21
         version: 18.2.37
-      jotai:
-        specifier: ^2.4.3
-        version: 2.5.1(@types/react@18.2.37)(react@18.2.0)
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
@@ -2504,8 +2507,8 @@ importers:
         specifier: ^1.13.0
         version: 1.14.0
       jotai:
-        specifier: ^2.2.2
-        version: 2.5.1(@types/react@18.2.37)(react@18.2.0)
+        specifier: 'catalog:'
+        version: 2.12.2(@types/react@18.2.37)(react@18.2.0)
       qrcode.react:
         specifier: ^3.1.0
         version: 3.1.0(react@18.2.0)
@@ -2793,6 +2796,9 @@ importers:
       dayjs:
         specifier: ^1.11.10
         version: 1.11.10
+      jotai:
+        specifier: 'catalog:'
+        version: 2.12.2(@types/react@18.2.37)(react@18.2.0)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -2815,9 +2821,6 @@ importers:
       bignumber.js:
         specifier: ^9.0.0
         version: 9.1.2
-      jotai:
-        specifier: ^2.4.3
-        version: 2.5.1(@types/react@18.2.37)(react@18.2.0)
       styled-components:
         specifier: 6.0.7
         version: 6.0.7(babel-plugin-styled-components@1.13.3)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -12356,8 +12359,8 @@ packages:
   jose@5.2.1:
     resolution: {integrity: sha512-qiaQhtQRw6YrOaOj0v59h3R6hUY9NvxBmmnMfKemkqYmBB0tEc97NbLP7ix44VP5p9/0YHG8Vyhzuo5YBNwviA==}
 
-  jotai@2.5.1:
-    resolution: {integrity: sha512-vanPCCSuHczUXNbVh/iUunuMfrWRL4FdBtAbTRmrfqezJcKb8ybBTg8iivyYuUHapjcDETyJe1E4inlo26bVHA==}
+  jotai@2.12.2:
+    resolution: {integrity: sha512-oN8715y7MkjXlSrpyjlR887TOuc/NLZMs9gvgtfWH/JP47ChwO0lR2ijSwBvPMYyXRAPT+liIAhuBavluKGgtA==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@types/react': '>=17.0.0'
@@ -30919,7 +30922,7 @@ snapshots:
 
   jose@5.2.1: {}
 
-  jotai@2.5.1(@types/react@18.2.37)(react@18.2.0):
+  jotai@2.12.2(@types/react@18.2.37)(react@18.2.0):
     optionalDependencies:
       '@types/react': 18.2.37
       react: 18.2.0

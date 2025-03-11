@@ -12,3 +12,4 @@ catalog:
   next: 14.2.14
   wrangler: 3.81.0
   '@aptos-labs/ts-sdk': 1.30.0
+  jotai: 2.12.2
