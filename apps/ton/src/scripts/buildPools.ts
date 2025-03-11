@@ -69,7 +69,8 @@ const generatePoolsForPairs = async (chainId: TonChainId, pairs: any[][]) => {
   console.log(`[${chainId}] Fetching pool addresses for ${pairs.length} pairs`)
 
   const pools = {}
-  const BATCH_SIZE = 40
+  const BATCH_SIZE = 20
+  const DELAY = 100
 
   const chunks = chunk(pairs, BATCH_SIZE)
 
@@ -94,7 +95,7 @@ const generatePoolsForPairs = async (chainId: TonChainId, pairs: any[][]) => {
     )
 
     // eslint-disable-next-line no-await-in-loop
-    await sleep(100)
+    await sleep(DELAY)
   }
 
   writeFileSync(path.resolve(__dirname, `../../public/lists/pools_${chainId}.json`), JSON.stringify(pools, null, 2), {
