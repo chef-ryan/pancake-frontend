@@ -33,7 +33,7 @@ import { addressAtom } from 'ton/atom/addressAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { useRemoveLiquidity } from 'ton/logic/liquidity/useRemoveLiquidity'
-import { formatBigNumber } from 'ton/utils/formatting'
+import { formatBalance, formatBigNumber } from 'ton/utils/formatting'
 import { getAssetUrl } from 'utils'
 import { logGTMClickRemoveLiquidityEvent } from 'utils/customGTMEventTracking'
 
@@ -151,7 +151,7 @@ export const CardContent = (props: CardContentProps) => {
   }, [depositedAmounts, sliderValue])
 
   const lpTokensToBurn = useMemo(
-    () => (lpBalance ? BN(lpBalance.toString()).times(sliderValue).div(100) : ZERO_BN),
+    () => (lpBalance ? (lpBalance * BigInt(sliderValue)) / 100n : 0n),
     [lpBalance, sliderValue],
   )
 
@@ -194,7 +194,7 @@ export const CardContent = (props: CardContentProps) => {
       amount1: formatBigNumber(outputAmounts?.amount1 ?? 0n, currency1?.decimals),
       currency0,
       currency1,
-      tokenBurnAmount: formatBigNumber(lpTokensToBurn, LP_TOKEN_DECIMALS),
+      tokenBurnAmount: formatBalance(lpTokensToBurn, LP_TOKEN_DECIMALS),
       onConfirm: handleRemoveLiquidity,
     })
   }, [
