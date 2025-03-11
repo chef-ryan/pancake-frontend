@@ -13,11 +13,9 @@ import {
   useMatchBreakpoints,
   useModal,
 } from '@pancakeswap/uikit'
-
 import { CurrencyLogo, SwapUIV2 } from 'components/widgets'
 import { ChangeEvent, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from 'styled-components'
-
 import { formatNumber as formatBalanceNumber } from '@pancakeswap/utils/formatBalance'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { formatNumber } from '@pancakeswap/utils/formatNumber'
@@ -26,6 +24,8 @@ import { CurrencySelectButton } from 'styles/inputStyles'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
 import { formatBalance } from 'ton/utils/formatting'
+import { useStablePrice } from 'hooks/useStablePrice'
+
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { FONT_SIZE, LOGO_SIZE, useFontSize } from './state'
 
@@ -208,7 +208,11 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   const selectedCurrencyBalance = overrideBalance ?? selectedCurrencyBalance_
 
   const [isInputFocus, setIsInputFocus] = useState(false)
-  const amountInDollar = 0 // dummy value
+  const stablePrice = useStablePrice(currency)
+  const amountInDollar = useMemo(
+    () => parseFloat(stablePrice?.toSignificant(currency?.decimals) ?? '0') * parseFloat(value ?? '0'),
+    [currency?.decimals, stablePrice, value],
+  )
 
   const handleUserInput = useCallback(
     (v: string, e?: ChangeEvent<HTMLInputElement>, currency_?: Currency) => {
@@ -392,7 +396,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
           </Flex>
         </Box>
       ) : null,
-    [inputLoading, showUSDPrice],
+    [amountInDollar, inputLoading, showUSDPrice],
   )
 
   return (

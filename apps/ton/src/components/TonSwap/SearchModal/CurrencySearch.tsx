@@ -1,19 +1,15 @@
 import { useDebounce, useSortedTokensByQuery } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-/* eslint-disable no-restricted-syntax */
 import { Currency } from '@pancakeswap/ton-v2-sdk'
 import { AutoColumn, Box, Column, Input, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FixedSizeList } from 'react-window'
 import { createFilterToken } from 'utils/tokens/filterTokens'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
-
 import { Address } from '@ton/core'
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import Row from 'components/Layout/Row'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
-import { useToken } from 'hooks/tokens/useToken'
 import { useAtomValue } from 'jotai'
 import { balanceMultipleAtom } from 'ton/logic/balanceMultipleAtom'
 import { getAssetUrl } from 'utils'

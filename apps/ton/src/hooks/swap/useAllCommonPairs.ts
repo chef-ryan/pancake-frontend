@@ -94,7 +94,7 @@ export function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): U
   )
 }
 
-const usePairs = (pairs: [Token, Token][]) => {
+export const usePairs = (pairs: [Token, Token][]) => {
   const pairsAddress = useMemo(
     () =>
       pairs.map(([token0, token1]) => ({

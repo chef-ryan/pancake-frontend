@@ -3,6 +3,7 @@ import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { Currency, Trade } from '@pancakeswap/ton-v2-sdk'
 import { Button, ButtonProps } from '@pancakeswap/uikit'
 import { typedValueAtom, useInputCurrencyQueryState } from 'atoms/swap/swapStateAtom'
+import { ConnectWalletButton } from 'components/Buttons/ConnectWalletButton'
 import { useAtomValue } from 'jotai'
 import { memo, useMemo } from 'react'
 import { isConnectedAtom } from 'ton/atom/isConnectedAtom'
@@ -35,21 +36,13 @@ export const SwapCommitButton = memo(
     }, [trade])
 
     const disabled = useMemo(
-      () =>
-        isInsufficientBalance0 ||
-        !isConnected ||
-        isLoading ||
-        isSwaping ||
-        isInsufficientLiquidity ||
-        priceImpactSeverity > 3,
-      [isInsufficientBalance0, isConnected, isLoading, isSwaping, isInsufficientLiquidity, priceImpactSeverity],
+      () => isInsufficientBalance0 || isLoading || isSwaping || isInsufficientLiquidity || priceImpactSeverity > 3,
+      [isInsufficientBalance0, isLoading, isSwaping, isInsufficientLiquidity, priceImpactSeverity],
     )
 
     const buttonText = useMemo(
       () =>
-        !isConnected
-          ? t('Connect Wallet')
-          : !typedValue.length
+        !typedValue.length
           ? t('Enter an amount')
           : isLoading
           ? t('Updating the quote')
@@ -67,7 +60,6 @@ export const SwapCommitButton = memo(
       [
         isSwaping,
         inputCurrency?.symbol,
-        isConnected,
         isInsufficientLiquidity,
         isInsufficientBalance0,
         isLoading,
@@ -77,7 +69,9 @@ export const SwapCommitButton = memo(
       ],
     )
 
-    return (
+    return !isConnected ? (
+      <ConnectWalletButton width="100%" />
+    ) : (
       <Button disabled={disabled} variant={priceImpactSeverity > 2 ? 'danger' : 'primary'} {...props}>
         {buttonText}
       </Button>

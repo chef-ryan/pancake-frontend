@@ -1,7 +1,8 @@
-import { Percent } from '@pancakeswap/swap-sdk-core'
-import { Hex } from 'viem'
-import { Currency } from './currency'
-import { CurrencyAmount } from './fractions/CurrencyAmount'
+import { type Percent } from '@pancakeswap/swap-sdk-core'
+import { type Address } from '@ton/core'
+import { type Hex } from 'viem'
+import { type Currency } from './currency'
+import { type CurrencyAmount } from './fractions/CurrencyAmount'
 
 export interface TradeOptions {
   /**
@@ -57,4 +58,5 @@ export interface Pair {
   readonly token1: Currency
   readonly reserve0: CurrencyAmount<Currency>
   readonly reserve1: CurrencyAmount<Currency>
+  readonly poolAddress: Address
 }

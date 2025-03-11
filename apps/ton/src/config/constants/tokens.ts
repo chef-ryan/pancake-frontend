@@ -1,3 +1,4 @@
+import tokenList from 'public/lists/testnet.json'
 import { Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
 
 // Common tokens
@@ -38,4 +39,29 @@ export const PRESET_TOKENS = {
       'https://tokens.pancakeswap.finance/images/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82.png',
     ),
   },
+}
+
+// we have USDC pair on testnet, so used USDC instead of USDT on testnet
+const USDC = tokenList.tokens.find((t) => t.symbol === 'USDC')!
+
+export const USDT = {
+  [TonChainId.Mainnet]: new Token(
+    TonChainId.Mainnet,
+    'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs',
+    6,
+    'USD₮',
+    'Tether USD',
+  ),
+  [TonChainId.Testnet]: new Token(TonChainId.Testnet, USDC.address, USDC.decimals, USDC.symbol, USDC.name),
+}
+
+export const J_USDT = {
+  [TonChainId.Mainnet]: new Token(
+    TonChainId.Mainnet,
+    'EQBynBO23ywHy_CgarY9NK9FTz0yDsG82PtcbSTQgGoXwiuA',
+    6,
+    'jUSDT',
+    'jUSDT',
+  ),
+  [TonChainId.Testnet]: new Token(TonChainId.Testnet, USDC.address, USDC.decimals, USDC.symbol, USDC.name),
 }
