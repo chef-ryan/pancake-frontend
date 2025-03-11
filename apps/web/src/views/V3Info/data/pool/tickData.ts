@@ -4,7 +4,7 @@ import { Address } from 'viem'
 import { explorerApiClient } from 'state/info/api/client'
 import { components } from 'state/info/api/schema'
 
-const PRICE_FIXED_DIGITS = 4
+const PRICE_SIGNIFICANT_DIGITS = 4
 const DEFAULT_SURROUNDING_TICKS = 300
 const FEE_TIER_TO_TICK_SPACING = (feeTier: number): number => {
   switch (feeTier) {
@@ -149,8 +149,8 @@ export const fetchTicksSurroundingPrice = async (
       liquidityActive: BigInt(poolData.liquidity),
       tickIdx: activeTickIdx,
       liquidityNet: 0n,
-      price0: tickToPrice(token0, token1, activeTickIdxForPrice).toSignificant(PRICE_FIXED_DIGITS),
-      price1: tickToPrice(token1, token0, activeTickIdxForPrice).toSignificant(PRICE_FIXED_DIGITS),
+      price0: tickToPrice(token0, token1, activeTickIdxForPrice).toSignificant(PRICE_SIGNIFICANT_DIGITS),
+      price1: tickToPrice(token1, token0, activeTickIdxForPrice).toSignificant(PRICE_SIGNIFICANT_DIGITS),
       liquidityGross: 0n,
     }
 
@@ -197,8 +197,8 @@ export const fetchTicksSurroundingPrice = async (
           liquidityActive: previousTickProcessed.liquidityActive,
           tickIdx: currentTickIdx,
           liquidityNet: 0n,
-          price0: tickToPrice(token0, token1, currentTickIdx).toSignificant(PRICE_FIXED_DIGITS),
-          price1: tickToPrice(token1, token0, currentTickIdx).toSignificant(PRICE_FIXED_DIGITS),
+          price0: tickToPrice(token0, token1, currentTickIdx).toSignificant(PRICE_SIGNIFICANT_DIGITS),
+          price1: tickToPrice(token1, token0, currentTickIdx).toSignificant(PRICE_SIGNIFICANT_DIGITS),
           liquidityGross: 0n,
         }
 
