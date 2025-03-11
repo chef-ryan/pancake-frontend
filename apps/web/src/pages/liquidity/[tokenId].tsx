@@ -17,7 +17,6 @@ import {
   PreTitle,
   RowBetween,
   ScanLink,
-  Spinner,
   SyncAltIcon,
   Tag,
   Text,
@@ -34,6 +33,7 @@ import { useQuery } from '@tanstack/react-query'
 import { AppHeader } from 'components/App'
 import { LightGreyCard } from 'components/Card'
 import FormattedCurrencyAmount from 'components/FormattedCurrencyAmount/FormattedCurrencyAmount'
+import PageLoader from 'components/Loader/PageLoader'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/Logo'
 import { MerklSection } from 'components/Merkl/MerklSection'
 import { MerklTag } from 'components/Merkl/MerklTag'
@@ -63,6 +63,7 @@ import { NextSeo } from 'next-seo'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode, memo, useCallback, useMemo, useState } from 'react'
+import { usePoolInfo } from 'state/farmsV4/state/extendPools/hooks'
 import { ChainLinkSupportChains } from 'state/info/constant'
 import { useSingleCallResult } from 'state/multicall/hooks'
 import { useIsTransactionPending, useTransactionAdder } from 'state/transactions/hooks'
@@ -79,9 +80,9 @@ import { unwrappedToken } from 'utils/wrappedCurrency'
 import { hexToBigInt } from 'viem'
 import { AprCalculatorV2 } from 'views/AddLiquidityV3/components/AprCalculatorV2'
 import RateToggle from 'views/AddLiquidityV3/formViews/V3FormView/components/RateToggle'
-import Page from 'views/Page'
+import { PageWithoutFAQ } from 'views/Page'
 import { useSendTransaction, useWalletClient } from 'wagmi'
-import { usePoolInfo } from 'state/farmsV4/state/extendPools/hooks'
+import { redirect } from 'next/navigation'
 
 export const BodyWrapper = styled(Card)`
   border-radius: 24px;
@@ -192,7 +193,14 @@ export default function PoolPage() {
   const { account, chainId } = useAccountActiveChain()
 
   const router = useRouter()
+
   const { tokenId: tokenIdFromUrl } = router.query
+
+  if (tokenIdFromUrl === 'pools') {
+    redirect('/liquidity/pools')
+  } else if (tokenIdFromUrl === 'positions') {
+    redirect('/liquidity/positions')
+  }
 
   const parsedTokenId = tokenIdFromUrl ? BigInt(tokenIdFromUrl as string) : undefined
 
@@ -517,14 +525,12 @@ export default function PoolPage() {
     ) : null
 
   return (
-    <Page>
+    <Box mb="40px">
       {!isLoading && <NextSeo title={`${currencyQuote?.symbol}-${currencyBase?.symbol} V3 LP #${tokenIdFromUrl}`} />}
-      <BodyWrapper>
-        {isLoading ? (
-          <Flex width="100%" justifyContent="center" alignItems="center" minHeight="200px" mb="32px">
-            <Spinner />
-          </Flex>
-        ) : (
+      {isLoading ? (
+        <PageLoader />
+      ) : (
+        <BodyWrapper>
           <>
             <AppHeader
               title={
@@ -629,7 +635,9 @@ export default function PoolPage() {
                     <Text fontSize="24px" fontWeight={600} mb="8px">
                       $
                       {fiatValueOfLiquidity?.greaterThan(new Fraction(1, 100))
-                        ? fiatValueOfLiquidity.toFixed(2, { groupSeparator: ',' })
+                        ? fiatValueOfLiquidity.toFixed(2, {
+                            groupSeparator: ',',
+                          })
                         : '-'}
                     </Text>
                     <LightGreyCard
@@ -692,7 +700,9 @@ export default function PoolPage() {
                       <Text fontSize="24px" fontWeight={600}>
                         $
                         {fiatValueOfFees?.greaterThan(new Fraction(1, 100))
-                          ? fiatValueOfFees.toFixed(2, { groupSeparator: ',' })
+                          ? fiatValueOfFees.toFixed(2, {
+                              groupSeparator: ',',
+                            })
                           : '-'}
                       </Text>
 
@@ -789,24 +799,25 @@ export default function PoolPage() {
                     tickAtLimit={tickAtLimit}
                   />
                 </Box>
-
-                <MerklSection
-                  disabled={!isOwnNFT}
-                  outRange={!inRange}
-                  notEnoughLiquidity={Boolean(
-                    fiatValueOfLiquidity
-                      ? fiatValueOfLiquidity.lessThan(
-                          // NOTE: if Liquidity is lessage 20$, can't participate in Merkl
-                          new Fraction(
-                            BigInt(20) * fiatValueOfLiquidity.decimalScale * fiatValueOfLiquidity.denominator,
-                            fiatValueOfLiquidity?.denominator,
-                          ),
-                        )
-                      : false,
-                  )}
-                  poolAddress={poolAddress}
-                  chainId={pool?.chainId}
-                />
+                <Flex ml={['0px', '0px', '16px', '16px']} mt="24px">
+                  <MerklSection
+                    disabled={!isOwnNFT}
+                    outRange={!inRange}
+                    notEnoughLiquidity={Boolean(
+                      fiatValueOfLiquidity
+                        ? fiatValueOfLiquidity.lessThan(
+                            // NOTE: if Liquidity is lessage 20$, can't participate in Merkl
+                            new Fraction(
+                              BigInt(20) * fiatValueOfLiquidity.decimalScale * fiatValueOfLiquidity.denominator,
+                              fiatValueOfLiquidity?.denominator,
+                            ),
+                          )
+                        : false,
+                    )}
+                    poolAddress={poolAddress}
+                    chainId={pool?.chainId}
+                  />
+                </Flex>
               </Flex>
               {positionDetails && currency0 && currency1 && (
                 <PositionHistory
@@ -817,14 +828,15 @@ export default function PoolPage() {
               )}
             </CardBody>
           </>
-        )}
-      </BodyWrapper>
-    </Page>
+        </BodyWrapper>
+      )}
+    </Box>
   )
 }
 
 PoolPage.chains = CHAIN_IDS
 PoolPage.screen = true
+PoolPage.Layout = PageWithoutFAQ
 
 type PositionTX = {
   id: string

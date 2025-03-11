@@ -1,5 +1,46 @@
 # @pancakeswap/widgets-internal
 
+## 0.3.18
+
+### Patch Changes
+
+- Updated dependencies [6a6acdb]
+- Updated dependencies [77db844]
+  - @pancakeswap/chains@0.5.0
+  - @pancakeswap/farms@1.1.0
+  - @pancakeswap/tokens@0.7.0
+  - @pancakeswap/v3-sdk@3.9.0
+  - @pancakeswap/pools@5.1.37
+  - @pancakeswap/sdk@5.8.11
+  - @pancakeswap/uikit@0.67.4
+  - @pancakeswap/utils@6.0.10
+  - @pancakeswap/hooks@0.0.34
+
+## 0.3.17
+
+### Patch Changes
+
+- 7e7a185: Remove usdv widget
+  - @pancakeswap/farms@1.0.84
+
+## 0.3.16
+
+### Patch Changes
+
+- @pancakeswap/farms@1.0.83
+
+## 0.3.15
+
+### Patch Changes
+
+- Updated dependencies [36f8955]
+  - @pancakeswap/farms@1.0.82
+  - @pancakeswap/sdk@5.8.10
+  - @pancakeswap/tokens@0.6.29
+  - @pancakeswap/utils@6.0.9
+  - @pancakeswap/v3-sdk@3.8.13
+  - @pancakeswap/pools@5.1.36
+
 ## 0.3.14
 
 ### Patch Changes

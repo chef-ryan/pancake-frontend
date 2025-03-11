@@ -1,5 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { LinkExternal, Text } from '@pancakeswap/uikit'
+import Link from 'next/link'
 import { PropsWithChildren } from 'react'
 import styled from 'styled-components'
 import { displayApr } from '../../utils/displayApr'
@@ -49,7 +50,6 @@ export const AprTooltipContent: React.FC<PropsWithChildren<AprTooltipContentProp
   merklApr,
   merklLink,
   showDesc = true,
-  expired,
   children,
 }) => {
   const { t } = useTranslation()
@@ -77,7 +77,7 @@ export const AprTooltipContent: React.FC<PropsWithChildren<AprTooltipContentProp
         <li>
           {t('LP Fee APR')}:&nbsp;&nbsp;<b>{displayApr(lpFeeApr)}</b>
         </li>
-        {merklApr && !expired ? (
+        {merklApr ? (
           <StyledLi>
             <Text lineHeight={1.5}>
               {t('Merkl APR')}:&nbsp;&nbsp;<b>{displayApr(merklApr)}</b>
@@ -93,16 +93,32 @@ export const AprTooltipContent: React.FC<PropsWithChildren<AprTooltipContentProp
         <>
           <br />
           {cakeApr?.boost && (
-            <Text>
-              {/* {t('Calculated using the total active liquidity staked versus the CAKE reward emissions for the farm.')} */}
-              {t(
-                'Calculated using the total liquidity in the pool versus the total reward amount. Actual APR may be higher as some liquidity is not staked or not in-range.',
-              )}
-            </Text>
+            <>
+              <Text>
+                {t('To receive boosted Farm APRs, lock more CAKE as')}{' '}
+                <Link style={{ display: 'inline-block' }} href="/cake-staking">
+                  <Text color="primary">veCAKE</Text>
+                </Link>
+                {', '}
+                {t('and for longer durations.')}{' '}
+                <LinkExternal
+                  style={{ display: 'inline-block' }}
+                  href="https://docs.pancakeswap.finance/products/yield-farming/bcake/how-to-use-the-new-bcake"
+                >
+                  {t('More info')}
+                </LinkExternal>
+              </Text>
+            </>
           )}
-          <Text mt="15px">{t('APRs for individual positions may vary depending on the configs.')}</Text>
+          <Text mt="10px">
+            {t(
+              'APRs are calculated using the total liquidity in the pool versus the total reward amount, actual APRs may be higher as some liquidity is not staked or in-range.',
+            )}
+          </Text>
+          <Text mt="10px">{t('APRs for individual positions may vary depending on the price range set.')}</Text>
         </>
       )}
+
       {children}
     </>
   )

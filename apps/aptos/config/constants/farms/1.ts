@@ -55,6 +55,54 @@ const farms: SerializedFarmConfig[] = [
   },
   // * By order of release
   {
+    pid: 28,
+    lpSymbol: 'MOOMOO-APT LP',
+    lpAddress:
+      '0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::LPToken<0x1::aptos_coin::AptosCoin, 0xc5fbbcc4637aeebb4e732767abee8a21f2b0776f73b73e16ce13e7d31d6700da::MOOMOO::MOOMOO>',
+    token: mainnetTokens.apt,
+    quoteToken: mainnetTokens.MOOMOO, // MOOMOO
+    dual: {
+      token: mainnetTokens.apt,
+      aptIncentiveInfo: 0,
+    },
+  },
+  {
+    pid: 27,
+    lpSymbol: 'aBTC-APT LP',
+    lpAddress:
+      '0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::LPToken<0x1::aptos_coin::AptosCoin, 0x4e1854f6d332c9525e258fb6e66f84b6af8aba687bbcb832a24768c4e175feec::abtc::ABTC>',
+    token: mainnetTokens.apt,
+    quoteToken: mainnetTokens.aBTC, // aBTC
+    dual: {
+      token: mainnetTokens.apt,
+      aptIncentiveInfo: 0,
+    },
+  },
+  {
+    pid: 26,
+    lpSymbol: 'MOD-lzUSDC LP',
+    lpAddress:
+      '0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::LPToken<0x6f986d146e4a90b828d8c12c14b6f4e003fdff11a8eecceceb63744363eaac01::mod_coin::MOD, 0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDC>',
+    token: mainnetTokens.MOD, // MOD
+    quoteToken: mainnetTokens.lzusdc, // lzUSDC
+    dual: {
+      token: mainnetTokens.apt,
+      aptIncentiveInfo: 0,
+    },
+  },
+  {
+    pid: 25,
+    lpSymbol: 'APT-lzUSDT LP',
+    lpAddress:
+      '0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::LPToken<0x1::aptos_coin::AptosCoin, 0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDT>',
+    token: mainnetTokens.apt, // APT
+    quoteToken: mainnetTokens.lzusdt, // lzUSDT
+    dual: {
+      token: mainnetTokens.apt,
+      aptIncentiveInfo: 0,
+    },
+  },
+  {
     pid: 24,
     lpSymbol: 'whUSDC-lzUSDC LP',
     lpAddress:

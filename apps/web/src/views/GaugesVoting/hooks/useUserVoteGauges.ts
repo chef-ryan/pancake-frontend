@@ -21,7 +21,7 @@ export type VoteSlope = {
 
 export const useUserVoteSlopes = () => {
   const { data: gauges } = useGauges()
-  const { data: userInfo } = useVeCakeUserInfo()
+  const { data: userInfo, isLoading: isUserInfoLoading } = useVeCakeUserInfo()
   const gaugesVotingContract = useGaugesVotingContract()
   const { account, chainId } = useAccountActiveChain()
   const publicClient = useMemo(() => getPublicClient({ chainId }), [chainId])
@@ -35,62 +35,64 @@ export const useUserVoteSlopes = () => {
       userInfo?.cakePoolProxy,
       publicClient,
     ],
-    initialData: [],
     queryFn: async (): Promise<VoteSlope[]> => {
       if (!gauges || gauges.length === 0 || !account || !publicClient) return []
 
       const delegated = userInfo?.cakePoolType === CakePoolType.DELEGATED
 
       const hasProxy =
-        userInfo?.cakePoolProxy && !isAddressEqual(userInfo?.cakePoolProxy, zeroAddress) && userInfo && !delegated
+        !delegated && userInfo && userInfo.cakePoolProxy && !isAddressEqual(userInfo.cakePoolProxy, zeroAddress)
 
-      const contracts = gauges
-        .filter((g) => !!g.hash)
-        .map((gauge) => {
-          return {
-            ...gaugesVotingContract,
-            functionName: 'voteUserSlopes',
-            args: [account, gauge.hash as Hex],
-          } as const
-        })
+      const contracts = gauges.map((gauge) => {
+        return {
+          address: gaugesVotingContract.address,
+          abi: gaugesVotingContract.abi,
+          functionName: 'voteUserSlopes',
+          args: [account, gauge.hash as Hex],
+        } as const
+      })
 
       if (hasProxy) {
         gauges.forEach((gauge) => {
           contracts.push({
-            ...gaugesVotingContract,
+            address: gaugesVotingContract.address,
+            abi: gaugesVotingContract.abi,
             functionName: 'voteUserSlopes',
             args: [userInfo.cakePoolProxy, gauge.hash as Hex],
           } as const)
         })
       }
+      try {
+        const response = await publicClient.multicall({
+          contracts,
+          allowFailure: false,
+        })
 
-      const response = await publicClient.multicall({
-        contracts,
-        allowFailure: false,
-      })
+        const len = gauges.length
+        return gauges.map((gauge, index) => {
+          const [nativeSlope, nativePower, nativeEnd] = response[index] ?? [0n, 0n, 0n]
+          const [proxySlope, proxyPower, proxyEnd] = response[index + len] ?? [0n, 0n, 0n]
 
-      const len = gauges.length
-      return gauges.map((gauge, index) => {
-        const [nativeSlope, nativePower, nativeEnd] = response[index] ?? [0n, 0n, 0n]
-        const [proxySlope, proxyPower, proxyEnd] = response[index + len] ?? [0n, 0n, 0n]
-
-        return {
-          hash: gauge.hash,
-          nativePower: Number(nativePower),
-          nativeSlope: Number(nativeSlope),
-          nativeEnd: Number(nativeEnd),
-          proxyPower: Number(proxyPower),
-          proxySlope: Number(proxySlope),
-          proxyEnd: Number(proxyEnd),
-        }
-      })
+          return {
+            hash: gauge.hash,
+            nativePower: Number(nativePower),
+            nativeSlope: Number(nativeSlope),
+            nativeEnd: Number(nativeEnd),
+            proxyPower: Number(proxyPower),
+            proxySlope: Number(proxySlope),
+            proxyEnd: Number(proxyEnd),
+          }
+        })
+      } catch (error) {
+        console.error('useUserVoteSlopes', error)
+        return []
+      }
     },
-
-    enabled: Boolean(gauges && gauges.length) && account && account !== '0x',
+    enabled: Boolean(gauges?.length) && !isUserInfoLoading && account && account !== '0x',
   })
 
   return {
-    data,
+    data: useMemo(() => data || [], [data]),
     refetch,
     isLoading,
   }

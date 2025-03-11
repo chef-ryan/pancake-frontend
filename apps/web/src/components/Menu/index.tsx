@@ -3,9 +3,9 @@ import { Text, Menu as UikitMenu, footerLinks, useModal } from '@pancakeswap/uik
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { usePhishingBanner } from '@pancakeswap/utils/user'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
+import InfoStripes from 'components/AdPanel/InfoStripes'
 import USCitizenConfirmModal from 'components/Modal/USCitizenConfirmModal'
 import { NetworkSwitcher } from 'components/NetworkSwitcher'
-import PhishingWarningBanner from 'components/PhishingWarningBanner'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useCakePrice } from 'hooks/useCakePrice'
 import { usePerpUrl } from 'hooks/usePerpUrl'
@@ -14,6 +14,7 @@ import { IdType, useUserNotUsCitizenAcknowledgement } from 'hooks/useUserIsUsCit
 import { useWebNotifications } from 'hooks/useWebNotifications'
 import { useRouter } from 'next/router'
 import { Suspense, lazy, useCallback, useMemo } from 'react'
+import { styled } from 'styled-components'
 import { getOptionsUrl } from 'utils/getOptionsUrl'
 import GlobalSettings from './GlobalSettings'
 import { SettingsMode } from './GlobalSettings/types'
@@ -119,7 +120,7 @@ const Menu = (props) => {
         </>
       }
       chainId={chainId}
-      banner={showPhishingWarningBanner && typeof window !== 'undefined' && <PhishingWarningBanner />}
+      banner={showPhishingWarningBanner && typeof window !== 'undefined' && <InfoStripes />}
       isDark={isDark}
       toggleTheme={toggleTheme}
       currentLang={currentLanguage.code}
@@ -146,3 +147,26 @@ const Menu = (props) => {
 }
 
 export default Menu
+
+const SharedComponentWithOutMenuWrapper = styled.div`
+  display: none;
+`
+
+export const SharedComponentWithOutMenu: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const { enabled } = useWebNotifications()
+  return (
+    <>
+      <SharedComponentWithOutMenuWrapper>
+        <GlobalSettings mode={SettingsMode.GLOBAL} />
+        {enabled && (
+          <Suspense fallback={null}>
+            <Notifications />
+          </Suspense>
+        )}
+        <NetworkSwitcher />
+        <UserMenu />
+      </SharedComponentWithOutMenuWrapper>
+      {children}
+    </>
+  )
+}

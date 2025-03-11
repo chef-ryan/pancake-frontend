@@ -4,6 +4,8 @@ import { SentryErrorBoundary } from 'components/ErrorBoundary'
 import GlobalCheckClaimStatus from 'components/GlobalCheckClaimStatus'
 import { PageMeta } from 'components/Layout/Page'
 import { AffiliateExpiredModal } from 'components/Modal/AffiliateExpiredModal'
+import { AffiliateSunsetModal } from 'components/Modal/AffiliateSunsetModal'
+import { SimpleStakingSunsetModal } from 'components/Modal/SimpleStakingSunsetModal'
 import { NetworkModal } from 'components/NetworkModal'
 import { FixedSubgraphHealthIndicator } from 'components/SubgraphHealthIndicator/FixedSubgraphHealthIndicator'
 import TransactionsDetailModal from 'components/TransactionDetailModal'
@@ -27,11 +29,18 @@ import { PersistGate } from 'redux-persist/integration/react'
 import 'utils/abortcontroller-polyfill'
 import { V4CakeIcon } from 'views/Home/components/V4CakeIcon'
 
+import { DesktopCard } from 'components/AdPanel/DesktopCard'
+import { MobileCard } from 'components/AdPanel/MobileCard'
+import { layoutDesktopAdIgnoredPages, layoutMobileAdIgnoredPages } from 'components/AdPanel/config'
+import { shouldRenderOnPages } from 'components/AdPanel/renderConditions'
+import { Cb1Membership } from 'components/Cb1/Cb1Membership'
 import { ZKSyncAirdropModalWithAutoPopup } from 'components/ClaimZksyncAirdropModal'
 import { useDataDogRUM } from 'hooks/useDataDogRUM'
 import { useLoadExperimentalFeatures } from 'hooks/useExperimentalFeatureEnabled'
 import useInitNotificationsClient from 'hooks/useInitNotificationsClient'
+import useOptionsSunsetNotification from 'hooks/useOptionsSunsetNotification'
 import { useVercelFeatureFlagOverrides } from 'hooks/useVercelToolbar'
+import { useWalletConnectRouterSync } from 'hooks/useWalletConnectRouterSync'
 import { useWeb3WalletView } from 'hooks/useWeb3WalletView'
 import { useInitGlobalWorker } from 'hooks/useWorker'
 import { persistor, useStore } from 'state'
@@ -39,7 +48,7 @@ import { usePollBlockNumber } from 'state/block/hooks'
 import { Blocklist, Updaters } from '..'
 import { SEO } from '../../next-seo.config'
 import Providers from '../Providers'
-import Menu from '../components/Menu'
+import Menu, { SharedComponentWithOutMenu } from '../components/Menu'
 import GlobalStyle from '../style/Global'
 
 const EasterEgg = dynamic(() => import('components/EasterEgg'), { ssr: false })
@@ -64,6 +73,8 @@ function GlobalHooks() {
   useThemeCookie()
   useLockedEndNotification()
   useInitNotificationsClient()
+  useWalletConnectRouterSync()
+  useOptionsSunsetNotification()
   return null
 }
 
@@ -76,6 +87,8 @@ function MPGlobalHooks() {
   useInitNotificationsClient()
   return null
 }
+
+const LoadVConsole = dynamic(() => import('components/vConsole'), { ssr: false })
 
 function MyApp(props: AppProps<{ initialReduxState: any; dehydratedState: any }>) {
   const { pageProps, Component } = props
@@ -93,24 +106,20 @@ function MyApp(props: AppProps<{ initialReduxState: any; dehydratedState: any }>
           content="Cheaper and faster than Uniswap? Discover PancakeSwap, the leading DEX on BNB Smart Chain (BSC) with the best farms in DeFi and a lottery for CAKE."
         />
         <meta name="theme-color" content="#1FC7D4" />
-        {(Component as NextPageWithLayout).mp && (
-          // eslint-disable-next-line @next/next/no-sync-scripts
-          <script
-            src="https://public.bnbstatic.com/static/js/mp-webview-sdk/webview-v1.0.0.min.js"
-            integrity="sha384-PV6Pqh2oiQNNl9jwtcTIue3fwDnP5k80+DaPY8/AS4qxGA91MsE3G91BQ2jQ81oT"
-            crossOrigin="anonymous"
-            id="mp-webview"
-          />
-        )}
       </Head>
       <DefaultSeo {...SEO} />
-      <Providers store={store} dehydratedState={pageProps.dehydratedState}>
+      {/* <LoadVConsole /> */}
+      <Providers
+        store={store}
+        dehydratedState={pageProps.dehydratedState}
+        w3wWagmiConfig={(Component as any).w3wWagmiConfig}
+      >
         <PageMeta />
         {(Component as NextPageWithLayout).Meta && (
           // @ts-ignore
           <Component.Meta {...pageProps} />
         )}
-        {(Component as NextPageWithLayout).mp ? <MPGlobalHooks /> : <GlobalHooks />}
+        <GlobalHooks />
         <ResetCSS />
         <GlobalStyle />
         <GlobalCheckClaimStatus excludeLocations={[]} />
@@ -169,7 +178,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 
   // Use the layout defined at the page level, if available
   const Layout = Component.Layout || Fragment
-  const ShowMenu = Component.mp ? Fragment : Menu
+  const ShowMenu = Component.mp ? SharedComponentWithOutMenu : Menu
   const isShowScrollToTopButton = Component.isShowScrollToTopButton || true
   const shouldScreenWallet = Component.screen || false
   const isShowV4IconButton = Component.isShowV4IconButton || false
@@ -179,6 +188,8 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
       <ShowMenu>
         <Layout>
           <Component {...pageProps} />
+          <MobileCard shouldRender={!shouldRenderOnPages(layoutMobileAdIgnoredPages)} mt="4px" mb="12px" />
+          <DesktopCard shouldRender={!shouldRenderOnPages(layoutDesktopAdIgnoredPages)} />
         </Layout>
       </ShowMenu>
       <EasterEgg iterations={2} />
@@ -191,7 +202,10 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
       {isShowV4IconButton && <V4CakeIcon />}
       <ZKSyncAirdropModalWithAutoPopup />
       <AffiliateExpiredModal />
+      <AffiliateSunsetModal />
+      <SimpleStakingSunsetModal />
       <VercelToolbar />
+      <Cb1Membership />
     </ProductionErrorBoundary>
   )
 }

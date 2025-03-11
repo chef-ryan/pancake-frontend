@@ -48,6 +48,7 @@ import { usePoolsWithMultiChains } from 'hooks/v3/usePools'
 import { PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { V3_MIGRATION_SUPPORTED_CHAINS } from 'config/constants/supportChains'
 import { useIntersectionObserver } from '@pancakeswap/hooks'
+import ConnectWalletButton from 'components/ConnectWalletButton'
 import {
   Card,
   IPoolsFilterPanelProps,
@@ -307,19 +308,24 @@ const useStablePositions = ({
   }
 }
 
-const EmptyListPlaceholder = ({ text, imageUrl }: { text: string; imageUrl?: string }) => (
-  <FlexGap alignItems="center" flexDirection="column" gap="16px">
-    <img
-      width={156}
-      height={179}
-      alt="empty placeholder"
-      src={imageUrl ?? `${ASSET_CDN}/web/universalFarms/empty_list_bunny.png`}
-    />
-    <Text fontSize="14px" color="textSubtle" textAlign="center">
-      {text}
-    </Text>
-  </FlexGap>
-)
+const EmptyListPlaceholder = ({ text, imageUrl }: { text: string; imageUrl?: string }) => {
+  const { address: account } = useAccount()
+
+  return (
+    <FlexGap alignItems="center" flexDirection="column" gap="16px">
+      <img
+        width={156}
+        height={179}
+        alt="empty placeholder"
+        src={imageUrl ?? `${ASSET_CDN}/web/universalFarms/empty_list_bunny.png`}
+      />
+      <Text fontSize="14px" color="textSubtle" textAlign="center">
+        {text}
+      </Text>
+      {!account ? <ConnectWalletButton /> : null}
+    </FlexGap>
+  )
+}
 
 const allChainIds = MAINNET_CHAINS.map((chain) => chain.id)
 const NUMBER_OF_FARMS_VISIBLE = 10
@@ -406,7 +412,14 @@ export const PositionPage = () => {
       )
     }
 
-    if (!v3PositionList.length && !v2PositionList.length && !stablePositionList.length) {
+    if (
+      !v3Loading &&
+      !v2Loading &&
+      !stableLoading &&
+      !v3PositionList.length &&
+      !v2PositionList.length &&
+      !stablePositionList.length
+    ) {
       return (
         <EmptyListPlaceholder
           text={t('You have no %status% position in this wallet.', {
@@ -429,7 +442,19 @@ export const PositionPage = () => {
       [Protocol.V2]: v2PositionList,
       [Protocol.STABLE]: stablePositionList,
     }
-    return selectedPoolTypes.reduce((acc, type) => acc.concat(sectionMap[type]), []).slice(0, cursorVisible)
+    const elements = selectedPoolTypes.reduce((acc, type) => acc.concat(sectionMap[type]), []).slice(0, cursorVisible)
+    if (v3Loading || v2Loading || stableLoading) {
+      return [
+        ...elements,
+        <>
+          <PositionItemSkeleton />
+          <Text color="textSubtle" textAlign="center">
+            <Dots>{t('Loading')}</Dots>
+          </Text>
+        </>,
+      ]
+    }
+    return elements
   }, [
     account,
     t,

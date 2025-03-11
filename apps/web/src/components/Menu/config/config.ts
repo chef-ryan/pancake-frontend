@@ -126,12 +126,10 @@ const config: (
         },
         {
           label: t('Staking'),
-          supportChainIds: SUPPORT_CAKE_STAKING,
           items: [
             {
               label: t('CAKE Staking'),
               href: '/cake-staking',
-              supportChainIds: SUPPORT_CAKE_STAKING,
             },
             {
               label: t('Syrup Pools'),
@@ -144,37 +142,11 @@ const config: (
     },
     {
       label: t('Bridge'),
-      href: 'https://bridge.pancakeswap.finance',
+      href: '/bridge',
       icon: BridgeIcon,
       type: DropdownMenuItemType.EXTERNAL_LINK,
       image: '/images/decorations/pe2.png',
-      items: [
-        {
-          label: t('Stargate'),
-          href: 'https://bridge.pancakeswap.finance/stargate',
-          type: DropdownMenuItemType.EXTERNAL_LINK,
-        },
-        {
-          label: t('Axelar'),
-          href: 'https://bridge.pancakeswap.finance/axelar',
-          type: DropdownMenuItemType.EXTERNAL_LINK,
-        },
-        {
-          label: t('Celer'),
-          href: 'https://cbridge.celer.network/1/12360001/',
-          type: DropdownMenuItemType.EXTERNAL_LINK,
-        },
-        {
-          label: t('Wormhole'),
-          href: 'https://bridge.pancakeswap.finance/wormhole',
-          type: DropdownMenuItemType.EXTERNAL_LINK,
-        },
-        {
-          label: t('Aptos'),
-          href: 'https://docs.pancakeswap.finance/readme/get-started-aptos/aptos-coin-guide',
-          type: DropdownMenuItemType.EXTERNAL_LINK,
-        },
-      ].map((item) => addMenuItemSupported(item, chainId)),
+      showItemsOnMobile: false,
     },
     {
       label: t('Play'),
@@ -192,6 +164,11 @@ const config: (
       ],
       items: [
         {
+          label: t('Springboard'),
+          href: 'https://springboard.pancakeswap.finance',
+          type: DropdownMenuItemType.EXTERNAL_LINK,
+        },
+        {
           label: t('Prediction (BETA)'),
           href: '/prediction',
           image: '/images/decorations/prediction.png',
@@ -201,12 +178,6 @@ const config: (
           label: t('Lottery'),
           href: '/lottery',
           image: '/images/decorations/lottery.png',
-        },
-        {
-          label: t('Quests'),
-          href: 'https://quest.pancakeswap.finance/quests',
-          status: { text: t('New'), color: 'success' },
-          type: DropdownMenuItemType.EXTERNAL_LINK,
         },
       ].map((item) => addMenuItemSupported(item, chainId)),
     },

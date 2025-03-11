@@ -35,7 +35,7 @@ export const getCakeApr = (pool: PoolInfo, cakePrice: BigNumber): Promise<CakeAp
 }
 
 // @todo @ChefJerry should directly fetch from poolInfo api, BE need update
-export const getLpApr = async (pool: PoolInfo, signal?: AbortSignal): Promise<number> => {
+export const getLpApr = async (pool: PoolInfo, apr24h: boolean = false, signal?: AbortSignal): Promise<number> => {
   const { protocol } = pool
   const chainName = chainIdToExplorerInfoChainName[pool.chainId]
 
@@ -57,6 +57,9 @@ export const getLpApr = async (pool: PoolInfo, signal?: AbortSignal): Promise<nu
     return 0
   }
 
+  if (apr24h) {
+    return resp.data.apr24h ? parseFloat(resp.data.apr24h) : 0
+  }
   return resp.data.apr7d ? parseFloat(resp.data.apr7d) : 0
 }
 
@@ -163,12 +166,14 @@ export const DEFAULT_V2_CAKE_APR_BOOST_MULTIPLIER = {
   [ChainId.BSC]: 2.5,
   [ChainId.ZKSYNC]: 2.5,
   [ChainId.ARBITRUM_ONE]: 2.5,
+  [ChainId.BASE]: 2.5,
 }
 export const DEFAULT_V3_CAKE_APR_BOOST_MULTIPLIER = {
   [ChainId.ETHEREUM]: 2,
   [ChainId.BSC]: 2,
   [ChainId.ZKSYNC]: 2,
   [ChainId.ARBITRUM_ONE]: 2,
+  [ChainId.BASE]: 2,
 }
 export const getV2PoolCakeApr = async (
   pool: V2PoolInfo | StablePoolInfo,
@@ -198,14 +203,13 @@ export const getV2PoolCakeApr = async (
 
 export const getMerklApr = async (result: any, chainId: number) => {
   try {
-    if (!result[chainId] || !result[chainId].pools) return {}
-    return Object.keys(result[chainId].pools).reduce((acc, poolId) => {
-      const key = `${chainId}:${safeGetAddress(poolId)}`
-      if (!result[chainId].pools[poolId].aprs || !Object.keys(result[chainId].pools[poolId].aprs).length) return acc
+    const opportunities = result?.filter((opportunity) => opportunity?.chainId === chainId)
+    if (!opportunities || opportunities?.length === 0) return {}
+    return opportunities.reduce((acc, opportunity) => {
+      const key = `${chainId}:${safeGetAddress(opportunity.identifier)}`
 
-      const apr = result[chainId].pools[poolId].aprs?.['Average APR (rewards / pool TVL)'] ?? '0'
       // eslint-disable-next-line no-param-reassign
-      acc[key] = apr / 100
+      acc[key] = (opportunity.apr ?? 0) / 100
       return acc
     }, {} as MerklApr)
   } catch (error) {
@@ -215,10 +219,20 @@ export const getMerklApr = async (result: any, chainId: number) => {
 }
 
 export const getAllNetworkMerklApr = async (signal?: AbortSignal) => {
-  const resp = await fetch(`https://api.angle.money/v2/merkl?AMMs=pancakeswapv3`, { signal })
+  const resp = await fetch(
+    `https://api.merkl.xyz/v4/opportunities/?chainId=${supportedChainIdV4.join(
+      ',',
+    )}&test=false&status=LIVE&items=1000&action=POOL,HOLD`,
+    { signal },
+  )
   if (resp.ok) {
     const result = await resp.json()
-    const aprs = await Promise.all(supportedChainIdV4.map((chainId) => getMerklApr(result, chainId)))
+    const pancakeResult = result?.filter(
+      (opportunity) =>
+        opportunity?.tokens?.[0]?.symbol?.toLowerCase().startsWith('cake-lp') ||
+        opportunity?.protocol?.id?.toLowerCase().startsWith('pancakeswap'),
+    )
+    const aprs = await Promise.all(supportedChainIdV4.map((chainId) => getMerklApr(pancakeResult, chainId)))
     return aprs.reduce((acc, apr) => Object.assign(acc, apr), {})
   }
   throw resp

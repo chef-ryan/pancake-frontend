@@ -5,8 +5,7 @@ import { memo, useMemo } from 'react'
 import { styled } from 'styled-components'
 
 import { PriceOrder } from '@pancakeswap/price-api-sdk'
-import { GasTokenSelector } from 'components/Paymaster/GasTokenSelector'
-import { usePaymaster } from 'hooks/usePaymaster'
+import { MevSwapDetail } from 'views/Mev/MevSwapDetail'
 import { isClassicOrder, isXOrder } from 'views/Swap/utils'
 import { useIsWrapping, useSlippageAdjustedAmounts } from '../../Swap/V3Swap/hooks'
 import { computeTradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
@@ -44,8 +43,6 @@ export const TradeDetails = memo(function TradeDetails({ loaded, order }: Props)
     [order],
   )
 
-  const { isPaymasterAvailable } = usePaymaster()
-
   if (isWrapping || !order || !slippageAdjustedAmounts || !order.trade) {
     return null
   }
@@ -64,7 +61,6 @@ export const TradeDetails = memo(function TradeDetails({ loaded, order }: Props)
           priceImpactWithoutFee={priceImpactWithoutFee ?? undefined}
           realizedLPFee={lpFeeAmount ?? undefined}
           hasStablePair={hasStablePool}
-          gasTokenSelector={isPaymasterAvailable && <GasTokenSelector currency={order?.trade.inputAmount.currency} />}
           loading={!loaded}
         />
         <Box mt="10px" pl="4px">
@@ -74,6 +70,7 @@ export const TradeDetails = memo(function TradeDetails({ loaded, order }: Props)
             <RoutesBreakdown routes={order?.trade?.routes} wrapperStyle={{ padding: 0 }} loading={!loaded} />
           )}
         </Box>
+        <MevSwapDetail />
       </AutoColumn>
     </AdvancedDetailsFooter>
   )

@@ -30,6 +30,7 @@ import { warningSeverity } from 'utils/exchange'
 import { isClassicOrder, isXOrder } from 'views/Swap/utils'
 import { ConfirmSwapModalV2 } from 'views/Swap/V3Swap/containers/ConfirmSwapModalV2'
 import { useAccount, useChainId } from 'wagmi'
+import { NoValidRouteError } from 'hooks/useBestAMMTrade'
 import { useParsedAmounts, useSlippageAdjustedAmounts, useSwapInputError } from '../../Swap/V3Swap/hooks'
 import { useConfirmModalState } from '../../Swap/V3Swap/hooks/useConfirmModalState'
 import { useSwapConfig } from '../../Swap/V3Swap/hooks/useSwapConfig'
@@ -156,10 +157,13 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
     inputCurrency ?? undefined,
     outputCurrency ?? undefined,
   ])
-  const currencyBalances = {
-    [Field.INPUT]: relevantTokenBalances[0],
-    [Field.OUTPUT]: relevantTokenBalances[1],
-  }
+  const currencyBalances = useMemo(
+    () => ({
+      [Field.INPUT]: relevantTokenBalances[0],
+      [Field.OUTPUT]: relevantTokenBalances[1],
+    }),
+    [relevantTokenBalances],
+  )
   const parsedAmounts = useParsedAmounts(order?.trade, currencyBalances, false)
   const parsedIndependentFieldAmount = parsedAmounts[independentField]
   const swapInputError = useSwapInputError(order, currencyBalances)
@@ -200,9 +204,14 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
     setTradeToConfirm(order)
   }, [order])
 
+  const hasNoValidRouteError = useMemo(
+    () => Boolean(tradeError && tradeError instanceof NoValidRouteError),
+    [tradeError],
+  )
+
   const noRoute = useMemo(
-    () => (isClassicOrder(order) && !((order.trade?.routes?.length ?? 0) > 0)) || tradeError,
-    [order, tradeError],
+    () => (isClassicOrder(order) && !((order.trade?.routes?.length ?? 0) > 0)) || hasNoValidRouteError,
+    [order, hasNoValidRouteError],
   )
   const isValid = useMemo(() => !swapInputError && !tradeLoading, [swapInputError, tradeLoading])
   const disabled = useMemo(
@@ -280,7 +289,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
     )
   }, [isExpertMode, isRecipientEmpty, isRecipientError, priceImpactSeverity, swapInputError, t, tradeLoading])
 
-  if (noRoute && userHasSpecifiedInputOutput && !tradeLoading) {
+  if (noRoute && userHasSpecifiedInputOutput && (hasNoValidRouteError || !tradeLoading)) {
     return <ResetRoutesButton />
   }
 

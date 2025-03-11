@@ -33,11 +33,13 @@ import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 import { useAccountPositionDetailByPool } from 'state/farmsV4/state/accountPositions/hooks'
 import { usePoolInfo } from 'state/farmsV4/state/extendPools/hooks'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { formatFiatNumber } from '@pancakeswap/utils/formatFiatNumber'
 import { useTotalPriceUSD } from 'hooks/useTotalPriceUSD'
 import { useLPApr } from 'state/swap/useLPApr'
 import { formatAmount } from 'utils/formatInfoNumbers'
+import { MerklSection } from 'components/Merkl/MerklSection'
+import { MerklTag } from 'components/Merkl/MerklTag'
 
 export const BodyWrapper = styled(Card)`
   border-radius: 24px;
@@ -146,6 +148,7 @@ export default function PoolV2Page() {
               <Heading as="h2" ml="8px">
                 {pair?.token0?.symbol}-{pair?.token1?.symbol} LP
               </Heading>
+              <MerklTag poolAddress={pair?.liquidityToken?.address} />
             </Flex>
           }
           backTo="/liquidity/positions"
@@ -234,6 +237,15 @@ export default function PoolV2Page() {
                 </LightGreyCard>
               </Box>
             </Flex>
+            <Flex width="100%">
+              <MerklSection
+                disabled={!pair || !positionDetails}
+                notEnoughLiquidity={totalUSDValue < 20}
+                poolAddress={pair?.liquidityToken?.address}
+                chainId={chainId}
+                outRange={false}
+              />
+            </Flex>
             <Flex
               flexDirection={isMobile ? 'column' : 'row'}
               justifyContent={isPoolStaked ? 'space-between' : 'flex-end'}
@@ -263,7 +275,7 @@ export default function PoolV2Page() {
                     {t('LP reward APR')}: {formatAmount(poolData.lpApr)}%
                   </Text>
                 )}
-                <Text color="textSubtle" ml="4px">
+                <Text color="textSubtle">
                   {t('Your share in pool')}: {poolTokenPercentage ? `${poolTokenPercentage.toFixed(8)}%` : '-'}
                 </Text>
               </Flex>

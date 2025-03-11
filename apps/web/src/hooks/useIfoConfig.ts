@@ -1,9 +1,9 @@
+import { Ifo, SUPPORTED_CHAIN_IDS, getActiveIfo, getIfoConfig, getInActiveIfos } from '@pancakeswap/ifos'
 import { useQuery } from '@tanstack/react-query'
-import { getActiveIfo, getInActiveIfos, getIfoConfig, SUPPORTED_CHAIN_IDS, Ifo } from '@pancakeswap/ifos'
 
 import { useActiveChainId } from 'hooks/useActiveChainId'
+import orderBy from 'lodash/orderBy'
 import { useMemo } from 'react'
-import sortBy from 'lodash/sortBy'
 
 export function useIfoConfigs() {
   const { chainId } = useActiveChainId()
@@ -71,7 +71,7 @@ export function useIfoConfigAcrossChainsById(id: string) {
 export function useActiveIfoConfigAcrossChains() {
   const configs = useIfoConfigsAcrossChains()
   return useMemo(() => {
-    const sortedConfigs = sortBy(configs, 'plannedStartTime')
+    const sortedConfigs = orderBy(configs, 'plannedStartTime', 'desc')
     return sortedConfigs?.find((ifo) => ifo.isActive)
   }, [configs])
 }

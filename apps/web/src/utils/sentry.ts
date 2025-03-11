@@ -18,25 +18,25 @@ const assignError = (maybeError: any) => {
   return maybeError
 }
 
-const possibleRejectMessage = ['Cancelled by User', 'cancel', 'Transaction was rejected', 'denied']
+const possibleRejectMessage = ['Cancelled by User', 'cancel', 'Transaction was rejected', 'denied', 'user has reject']
 
 // provider user rejected error code
 export const isUserRejected = (err) => {
   if (err instanceof UserRejectedRequestError) {
     return true
   }
-  if ('details' in err) {
-    // fallback for some wallets that don't follow EIP 1193, trust, safe
-    if (possibleRejectMessage.some((msg) => err.details?.includes(msg))) {
-      return true
-    }
-  }
-
-  // fallback for raw rpc error code
   if (err && typeof err === 'object') {
+    if ('details' in err) {
+      // fallback for some wallets that don't follow EIP 1193, trust, safe
+      if (possibleRejectMessage.some((msg) => err.details?.includes(msg))) {
+        return true
+      }
+    }
+
+    // fallback for raw rpc error code
     if (
       ('code' in err && (err.code === 4001 || err.code === 'ACTION_REJECTED')) ||
-      ('cause' in err && err.cause && 'code' in err.cause && err.cause.code === 4001)
+      ('cause' in err && err.cause && typeof err.cause === 'object' && 'code' in err.cause && err.cause.code === 4001)
     ) {
       return true
     }

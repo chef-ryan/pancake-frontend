@@ -3,6 +3,7 @@ import smartRouterPkgs from '@pancakeswap/smart-router/package.json' with { type
 import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { RetryChunkLoadPlugin } from 'webpack-retry-chunk-load-plugin'
 
 const withVanillaExtract = createVanillaExtractPlugin()
 
@@ -84,6 +85,17 @@ const nextConfig = {
     ]
   },
   webpack: (webpackConfig, { isServer }) => {
+    webpackConfig.plugins.push(
+        new RetryChunkLoadPlugin({
+          cacheBust: `function() {
+          return 'cache-bust=' + Date.now();
+        }`,
+          retryDelay: `function(retryAttempt) {
+          return 2 ** (retryAttempt - 1) * 500;
+        }`,
+          maxRetries: 5,
+        }),
+    )
     if (!isServer && webpackConfig.optimization.splitChunks) {
       // webpack doesn't understand worker deps on quote worker, so we need to manually add them
       // https://github.com/webpack/webpack/issues/16895

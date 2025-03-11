@@ -7,6 +7,7 @@ import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin'
 import vercelToolbarPlugin from '@vercel/toolbar/plugins/next'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { RetryChunkLoadPlugin } from 'webpack-retry-chunk-load-plugin'
 
 const withVercelToolbar = vercelToolbarPlugin()
 
@@ -26,9 +27,11 @@ const sentryWebpackPluginOptions =
         // recommended:
         //   release, url, org, project, authToken, configFile, stripPrefix,
         //   urlPrefix, include, ignore
-        silent: false, // Logging when deploying to check if there is any problem
+        silent: true, // Logging when deploying to check if there is any problem
         validate: true,
         hideSourceMaps: false,
+        tryRun: true,
+        disable: true
         // https://github.com/getsentry/sentry-webpack-plugin#options.
       }
     : {
@@ -107,6 +110,15 @@ const config = {
   },
   async headers() {
     return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin-allow-popups',
+          },
+        ],
+      },
       {
         source: '/favicon.ico',
         headers: [
@@ -193,11 +205,6 @@ const config = {
         permanent: true,
       },
       {
-        source: '/api/v3/:chainId/farms/liquidity/:address',
-        destination: 'https://farms-api.pancakeswap.com/v3/:chainId/liquidity/:address',
-        permanent: false,
-      },
-      {
         source: '/images/tokens/:address',
         destination: 'https://tokens.pancakeswap.finance/images/:address',
         permanent: false,
@@ -215,6 +222,17 @@ const config = {
       new webpack.DefinePlugin({
         __SENTRY_DEBUG__: false,
         __SENTRY_TRACING__: false,
+      }),
+    )
+    webpackConfig.plugins.push(
+      new RetryChunkLoadPlugin({
+        cacheBust: `function() {
+          return 'cache-bust=' + Date.now();
+        }`,
+        retryDelay: `function(retryAttempt) {
+          return 2 ** (retryAttempt - 1) * 500;
+        }`,
+        maxRetries: 5,
       }),
     )
     if (!isServer && webpackConfig.optimization.splitChunks) {

@@ -2,10 +2,11 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Button, Flex, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 
+import { AdPlayer } from 'components/AdPanel/AdPlayer'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import useTheme from 'hooks/useTheme'
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { styled } from 'styled-components'
 import { useAccount } from 'wagmi'
 import { useDrawCanvas } from '../hooks/useDrawCanvas'
@@ -128,6 +129,7 @@ const Hero = () => {
   const internalRef = useRef(0)
   const seqInternalRef = useRef(0)
   const { isIOS } = useIsIOS()
+
   const { drawImage, isVideoPlaying } = useDrawCanvas(
     videoRef,
     canvasRef,
@@ -151,7 +153,8 @@ const Hero = () => {
     [starVideoRef, cakeVideoRef, rock01VideoRef, rock02VideoRef, rock03VideoRef],
   )
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    videoRef.current?.play()
     starVideoRef.current?.play()
     cakeVideoRef.current?.play()
     rock01VideoRef.current?.play()
@@ -245,7 +248,6 @@ const Hero = () => {
           >
             {t('Trade, earn, and own crypto on the all-in-one multichain DEX')}
           </Text>
-
           <Flex justifyContent={isMobile || isMd ? 'center' : 'start'}>
             {!account && <ConnectWalletButton style={{ borderRadius: isXs ? 12 : undefined }} scale="md" mr="8px" />}
             <NextLinkFromReactRouter to="/swap">
@@ -257,6 +259,15 @@ const Hero = () => {
                 {t('Trade Now')}
               </Button>
             </NextLinkFromReactRouter>
+          </Flex>
+          <Flex
+            mt="32px"
+            alignItems="center"
+            justifyContent="center"
+            width="fit-content"
+            mx={['auto', 'auto', 'auto', '0']}
+          >
+            <AdPlayer />
           </Flex>
         </Flex>
         <Flex
@@ -276,22 +287,22 @@ const Hero = () => {
               />
               {!(isIOS || isMobile) && (
                 <VideoWrapper>
-                  <CakeVideo ref={videoRef} width={width} autoPlay muted playsInline>
+                  <CakeVideo ref={videoRef} width={width} autoPlay muted playsInline preload="auto">
                     <source src={`${ASSET_CDN}/web/landing/bunnyv2.webm`} type="video/webm" />
                   </CakeVideo>
-                  <CakeVideo ref={starVideoRef} width={width} autoPlay loop muted playsInline>
+                  <CakeVideo ref={starVideoRef} width={width} autoPlay loop muted playsInline preload="auto">
                     <source src={`${ASSET_CDN}/web/landing/star.webm`} type="video/webm" />
                   </CakeVideo>
                   <CakeVideo ref={cakeVideoRef} width={width} autoPlay loop muted playsInline>
                     <source src={`${ASSET_CDN}/web/landing/hero-cake.webm`} type="video/webm" />
                   </CakeVideo>
-                  <CakeVideo ref={rock01VideoRef} width={width} autoPlay loop muted playsInline>
+                  <CakeVideo ref={rock01VideoRef} width={width} autoPlay loop muted playsInline preload="auto">
                     <source src={`${ASSET_CDN}/web/landing/rock01.webm`} type="video/webm" />
                   </CakeVideo>
-                  <CakeVideo ref={rock02VideoRef} width={width} autoPlay loop muted playsInline>
+                  <CakeVideo ref={rock02VideoRef} width={width} autoPlay loop muted playsInline preload="auto">
                     <source src={`${ASSET_CDN}/web/landing/rock02.webm`} type="video/webm" />
                   </CakeVideo>
-                  <CakeVideo ref={rock03VideoRef} width={width} autoPlay loop muted playsInline>
+                  <CakeVideo ref={rock03VideoRef} width={width} autoPlay loop muted playsInline preload="auto">
                     <source src={`${ASSET_CDN}/web/landing/rock03.webm`} type="video/webm" />
                   </CakeVideo>
                 </VideoWrapper>
