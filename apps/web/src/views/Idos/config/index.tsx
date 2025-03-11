@@ -42,7 +42,7 @@ export const idoConfigDict: Record<string, IDOConfig> = {
     projectUrl: 'https://bubblemaps.io/',
     chainId: ChainId.BSC,
     bannerUrl: `${ASSET_CDN}/web/ido/bubblemaps-banner.png`,
-    contractAddress: '0x0000000000000000000000000000000000000000',
+    contractAddress: '0xb330A50d27341730b7B3fD285B150e5742C3b090',
     tgeTitle: <Trans>Bubblemaps's Token Generation Event</Trans>,
     tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
     description: (
@@ -140,9 +140,9 @@ export const idoConfigDict: Record<string, IDOConfig> = {
                 </b>{' '}
                 <Trans>
                   from the following nationalities are currently not eligible to participate in this event: United
-                  States, Spain, Poland, Belgium, Kazakhstan, Bahrain, UAE, Australia, Japan, New Zealand, Argentina,
-                  Brazil, Colombia, Sweden, Indonesia, Thailand, Canada, Iran, Cuba, North Korea, Syria, Russia,
-                  Ukraine, Belarus.
+                  States, Poland, Belgium, Kazakhstan, Bahrain, UAE, Australia, Japan, New Zealand, Argentina, Brazil,
+                  Colombia, Sweden, Indonesia, Thailand, Canada, Iran, Cuba, North Korea, Syria, Russia, Ukraine,
+                  Belarus.
                 </Trans>
               </li>
               <li>
