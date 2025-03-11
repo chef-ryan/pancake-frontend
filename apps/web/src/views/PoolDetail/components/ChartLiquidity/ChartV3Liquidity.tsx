@@ -82,13 +82,13 @@ export const ChartV3Liquidity: React.FC<ChartLiquidityProps> = ({ address, poolI
   useEffect(() => {
     async function formatData() {
       if (poolTickData && poolInfo && feeTier) {
+        const token0 = poolInfo.token0?.wrapped
+        const token1 = poolInfo.token1?.wrapped
+        const feeAmount: FeeAmount = feeTier
         const newData = await Promise.all(
           poolTickData.ticksProcessed.map(async (t: TickProcessed, i) => {
             const active = t.tickIdx === poolTickData.activeTickIdx
             const sqrtPriceX96 = TickMath.getSqrtRatioAtTick(t.tickIdx)
-            const feeAmount: FeeAmount = feeTier
-            const token0 = poolInfo.token0?.wrapped
-            const token1 = poolInfo.token1?.wrapped
             const mockTicks = [
               {
                 index: t.tickIdx - TICK_SPACINGS[feeAmount],

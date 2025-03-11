@@ -149,8 +149,8 @@ export const fetchTicksSurroundingPrice = async (
       liquidityActive: BigInt(poolData.liquidity),
       tickIdx: activeTickIdx,
       liquidityNet: 0n,
-      price0: tickToPrice(token0, token1, activeTickIdxForPrice).toFixed(PRICE_FIXED_DIGITS),
-      price1: tickToPrice(token1, token0, activeTickIdxForPrice).toFixed(PRICE_FIXED_DIGITS),
+      price0: tickToPrice(token0, token1, activeTickIdxForPrice).toSignificant(PRICE_FIXED_DIGITS),
+      price1: tickToPrice(token1, token0, activeTickIdxForPrice).toSignificant(PRICE_FIXED_DIGITS),
       liquidityGross: 0n,
     }
 
@@ -197,8 +197,8 @@ export const fetchTicksSurroundingPrice = async (
           liquidityActive: previousTickProcessed.liquidityActive,
           tickIdx: currentTickIdx,
           liquidityNet: 0n,
-          price0: tickToPrice(token0, token1, currentTickIdx).toFixed(PRICE_FIXED_DIGITS),
-          price1: tickToPrice(token1, token0, currentTickIdx).toFixed(PRICE_FIXED_DIGITS),
+          price0: tickToPrice(token0, token1, currentTickIdx).toSignificant(PRICE_FIXED_DIGITS),
+          price1: tickToPrice(token1, token0, currentTickIdx).toSignificant(PRICE_FIXED_DIGITS),
           liquidityGross: 0n,
         }
 
