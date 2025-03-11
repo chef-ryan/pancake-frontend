@@ -3,7 +3,12 @@ import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { Currency, Trade } from '@pancakeswap/ton-v2-sdk'
 import { ChevronRightIcon, Flex, QuestionHelper, Text } from '@pancakeswap/uikit'
 import { Fragment } from 'react'
+import styled from 'styled-components'
 import { unwrappedToken } from 'utils/tokens/unwrappedToken'
+
+export const TruncatedText = styled(Text).attrs({ ellipsis: true })`
+  max-width: 46px;
+`
 
 export interface AdvancedSwapDetailsProps {
   trade?: Trade<Currency, Currency, TradeType> | null
@@ -20,9 +25,9 @@ export const SwapRoute = ({ trade }: AdvancedSwapDetailsProps) => {
         return (
           <Fragment key={token.wrapped.address}>
             <Flex alignItems="end">
-              <Text fontSize="14px" ml="0.125rem" mr="0.125rem">
+              <TruncatedText title={symbol} fontSize="14px" ml="0.125rem" mr="0.125rem">
                 {symbol}
-              </Text>
+              </TruncatedText>
             </Flex>
             {!isLastItem && <ChevronRightIcon width="12px" />}
           </Fragment>
