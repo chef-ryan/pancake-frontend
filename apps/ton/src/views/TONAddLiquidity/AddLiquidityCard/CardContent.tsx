@@ -334,7 +334,6 @@ export const CardContent = (props: CardContentProps) => {
   ])
 
   const openConfirmationModal = useCallback(() => {
-    // TODO: Determine data directly in modal
     logGTMClickAddLiquidityEvent()
     setAddLiquidityModal({
       isOpen: true,
