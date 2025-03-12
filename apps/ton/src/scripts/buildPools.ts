@@ -85,7 +85,7 @@ const generatePoolsForPairs = async (chainId: TonChainId, pairs: any[][]) => {
           const [token0, token1] = pair
           const poolAddress = await getPoolAddress(chainId, token0.address, token1.address)
 
-          console.log(`[${chainId}] Pool Address for ${token0.symbol}-${token1.symbol}: ${poolAddress.toString()}`)
+          console.log(`[${chainId}] ☑️  Pool Address for ${token0.symbol}-${token1.symbol}: ${poolAddress.toString()}`)
 
           if (poolAddress)
             pools[key(token0, token1)] = {

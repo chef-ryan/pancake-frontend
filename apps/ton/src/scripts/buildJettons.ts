@@ -39,13 +39,18 @@ async function processTokensByChain(chainId: TonChainId, tokens: TokenInfo[]) {
     const result = await Promise.all(
       chunkedTokens[i].map(async (token) => {
         // Skip if token already has jettonData
-        if (token.jettonCode && token.jettonCode.length > 0) return token
+        if (token.jettonCode && token.jettonCode.length > 0) {
+          console.log(`buildJettons [${chainId}]: ⏭️  Skipping ${token.symbol} ${token.address}`)
+          return token
+        }
 
         try {
           const jettonMaster = client.open(JettonMaster.create(parseAddress(token.address)))
           const jettonData = await jettonMaster.getJettonData()
 
           const walletCodeHex = jettonData.walletCode.toBoc().toString('hex')
+
+          console.log(`buildJettons [${chainId}]: ✅ ${token.symbol} ${token.address}`)
 
           return {
             ...token,
