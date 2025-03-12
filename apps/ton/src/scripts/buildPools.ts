@@ -17,7 +17,8 @@ import testnetList from '../../public/lists/testnet.json'
 dotenv.config({ path: path.resolve(__dirname, '../../.env.local') })
 
 const TonEndPoints = {
-  [TonChainId.Mainnet]: 'https://main.ton.dev',
+  [TonChainId.Mainnet]:
+    'https://attentive-warmhearted-fire.ton-mainnet.quiknode.pro/9a4ad85a1139b7d19fa1dc658547bdde9184bd4d/jsonRPC',
   [TonChainId.Testnet]: `https://testnet.toncenter.com/api/v2/jsonRPC?api_key=${process.env.NEXT_PUBLIC_TONCENTER_TESTNET_API_KEY}`,
 }
 
@@ -80,17 +81,24 @@ const generatePoolsForPairs = async (chainId: TonChainId, pairs: any[][]) => {
     // eslint-disable-next-line no-await-in-loop
     await Promise.all(
       chunkPairs.map(async (pair) => {
-        const [token0, token1] = pair
-        const poolAddress = await getPoolAddress(chainId, token0.address, token1.address)
+        try {
+          const [token0, token1] = pair
+          const poolAddress = await getPoolAddress(chainId, token0.address, token1.address)
 
-        console.log(`[${chainId}] Pool Address for ${token0.symbol}-${token1.symbol}: ${poolAddress.toString()}`)
+          console.log(`[${chainId}] Pool Address for ${token0.symbol}-${token1.symbol}: ${poolAddress.toString()}`)
 
-        if (poolAddress)
-          pools[key(token0, token1)] = {
-            token0: token0.address,
-            token1: token1.address,
-            poolAddress: poolAddress.toString(),
-          }
+          if (poolAddress)
+            pools[key(token0, token1)] = {
+              token0: token0.address,
+              token1: token1.address,
+              poolAddress: poolAddress.toString(),
+            }
+        } catch (error: any) {
+          console.error(
+            `buildPools [${chainId}]: ⚠️  Error processing pair ${pair[0].symbol}-${pair[1].symbol}`,
+            error?.message,
+          )
+        }
       }),
     )
 
@@ -110,7 +118,7 @@ export const buildPools = async () => {
   const mainnetPairs = getTokenPairs(mainnetTokens)
   const testnetPairs = getTokenPairs(testnetTokens)
 
-  //   await generatePoolsForPairs(TonChainId.Mainnet, mainnetPairs)
+  await generatePoolsForPairs(TonChainId.Mainnet, mainnetPairs)
   await generatePoolsForPairs(TonChainId.Testnet, testnetPairs)
 }
 

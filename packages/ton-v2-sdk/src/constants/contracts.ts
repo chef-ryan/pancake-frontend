@@ -40,7 +40,7 @@ export const Contracts = {
   [TonContractNames.PCSRouter]: {
     type: TonContractTypes.PCSRouter,
     [TonChainId.Mainnet]: {
-      address: 'EQBVB6mOKLp7SxChOzegQqtum1Thiuf9ddkhl8lKtQxMMePR',
+      address: 'EQDtlb8tFbaDvHI2yVgTdLijSZ8c3lJ9D1II87G5LmssIrAK',
     },
     [TonChainId.Testnet]: {
       address: 'kQB-oiKteYtZu8F37inMW2NXDz0DeYNAw4tjd8wZGTUpIkJG',

@@ -17,7 +17,8 @@ import testnetList from '../../public/lists/testnet.json'
 dotenv.config({ path: path.resolve(__dirname, '../../.env.local') })
 
 const TonEndPoints = {
-  [TonChainId.Mainnet]: 'https://main.ton.dev',
+  [TonChainId.Mainnet]:
+    'https://attentive-warmhearted-fire.ton-mainnet.quiknode.pro/9a4ad85a1139b7d19fa1dc658547bdde9184bd4d/jsonRPC',
   [TonChainId.Testnet]: `https://testnet.toncenter.com/api/v2/jsonRPC?api_key=${process.env.NEXT_PUBLIC_TONCENTER_TESTNET_API_KEY}`,
 }
 
@@ -40,14 +41,22 @@ async function processTokensByChain(chainId: TonChainId, tokens: TokenInfo[]) {
         // Skip if token already has jettonData
         if (token.jettonCode && token.jettonCode.length > 0) return token
 
-        const jettonMaster = client.open(JettonMaster.create(parseAddress(token.address)))
-        const jettonData = await jettonMaster.getJettonData()
+        try {
+          const jettonMaster = client.open(JettonMaster.create(parseAddress(token.address)))
+          const jettonData = await jettonMaster.getJettonData()
 
-        const walletCodeHex = jettonData.walletCode.toBoc().toString('hex')
+          const walletCodeHex = jettonData.walletCode.toBoc().toString('hex')
 
-        return {
-          ...token,
-          jettonCode: walletCodeHex,
+          return {
+            ...token,
+            jettonCode: walletCodeHex,
+          }
+        } catch (error: any) {
+          console.error(
+            `buildJettons [${chainId}]: ⚠️  Error processing token ${token.symbol} ${token.address}`,
+            error?.message,
+          )
+          return token
         }
       }),
     )
@@ -58,7 +67,7 @@ async function processTokensByChain(chainId: TonChainId, tokens: TokenInfo[]) {
     await sleep(100)
   }
 
-  console.log(`buildJettons [${chainId}]: ${results.length} tokens processed`)
+  console.log(`buildJettons [${chainId}]: ✅ ${results.length} tokens processed`)
 
   writeFileSync(
     path.resolve(__dirname, `../../public/lists/${chainId === TonChainId.Mainnet ? 'main' : 'testnet'}.json`),
@@ -71,7 +80,7 @@ async function buildJettonData() {
   const mainnetTokens = mainnetList.tokens
   const testnetTokens = testnetList.tokens
 
-  //   await processTokensByChain(TonChainId.Mainnet, mainnetTokens)
+  await processTokensByChain(TonChainId.Mainnet, mainnetTokens)
   await processTokensByChain(TonChainId.Testnet, testnetTokens)
 }
 

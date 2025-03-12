@@ -72,5 +72,8 @@
     "stylelint-config-styled-components": "^0.1.1",
     "tsx": "^4.7.1",
     "typescript": "^5"
+  },
+  "peerDependencies": {
+    "axios": "^1.6.7"
   }
 }
