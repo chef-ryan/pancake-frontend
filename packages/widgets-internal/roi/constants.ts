@@ -15,4 +15,4 @@ export const spanIndexToSpan: { [key: number]: number } = {
   4: 1825, // 5y
 };
 
-export const PRICE_FIXED_DIGITS = 8;
+export const PRICE_SIGNIFICANT_DIGITS = 8;

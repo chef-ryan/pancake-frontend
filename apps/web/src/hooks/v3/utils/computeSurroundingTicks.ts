@@ -3,7 +3,7 @@ import { tickToPrice } from '@pancakeswap/v3-sdk'
 import { Ticks } from '../useAllV3TicksQuery'
 import { TickProcessed } from '../types'
 
-const PRICE_FIXED_DIGITS = 8
+const PRICE_SIGNIFICANT_DIGITS = 8
 
 // Computes the numSurroundingTicks above or below the active tick.
 export default function computeSurroundingTicks(
@@ -26,7 +26,7 @@ export default function computeSurroundingTicks(
       liquidityActive: previousTickProcessed.liquidityActive,
       tick,
       liquidityNet: BigInt(sortedTickData[i].liquidityNet),
-      price0: tickToPrice(token0, token1, tick).toFixed(PRICE_FIXED_DIGITS),
+      price0: tickToPrice(token0, token1, tick).toSignificant(PRICE_SIGNIFICANT_DIGITS),
     }
 
     // Update the active liquidity.

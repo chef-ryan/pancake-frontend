@@ -1,7 +1,7 @@
 import { Token } from "@pancakeswap/sdk";
 import { tickToPrice } from "@pancakeswap/v3-sdk";
 
-import { PRICE_FIXED_DIGITS } from "../constants";
+import { PRICE_SIGNIFICANT_DIGITS } from "../constants";
 import { TickProcessed, TickData } from "../types";
 
 // Computes the numSurroundingTicks above or below the active tick.
@@ -25,7 +25,7 @@ export function computeSurroundingTicks(
       liquidityActive: previousTickProcessed.liquidityActive,
       tick,
       liquidityNet: BigInt(sortedTickData[i].liquidityNet),
-      price0: tickToPrice(token0, token1, tick).toFixed(PRICE_FIXED_DIGITS),
+      price0: tickToPrice(token0, token1, tick).toSignificant(PRICE_SIGNIFICANT_DIGITS),
     };
 
     // Update the active liquidity.

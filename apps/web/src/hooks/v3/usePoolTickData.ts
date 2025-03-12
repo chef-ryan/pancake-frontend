@@ -8,7 +8,7 @@ import useAllV3TicksQuery, { TickData } from './useAllV3TicksQuery'
 import { usePool } from './usePools'
 import computeSurroundingTicks from './utils/computeSurroundingTicks'
 
-const PRICE_FIXED_DIGITS = 8
+const PRICE_SIGNIFICANT_DIGITS = 8
 
 function useTicksFromSubgraph(
   currencyA: Currency | undefined | null,
@@ -113,7 +113,7 @@ export function usePoolActiveLiquidity(
       liquidityActive: BigInt(pool[1]?.liquidity ?? 0),
       tick: activeTick,
       liquidityNet: Number(ticks[pivot].tick) === activeTick ? BigInt(ticks[pivot].liquidityNet) : 0n,
-      price0: tickToPrice(token0, token1, activeTick).toFixed(PRICE_FIXED_DIGITS),
+      price0: tickToPrice(token0, token1, activeTick).toSignificant(PRICE_SIGNIFICANT_DIGITS),
     }
 
     const subsequentTicks = computeSurroundingTicks(token0, token1, activeTickProcessed, ticks, pivot, true)
