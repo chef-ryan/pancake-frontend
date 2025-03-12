@@ -47,6 +47,7 @@ class MyDocument extends Document {
 
           <meta name="theme-color" media="(prefers-color-scheme: light)" content="#E5FDFF" />
           <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#323c5c" />
+          <script async src="https://telegram.org/js/telegram-web-app.js?56" />
         </Head>
         <body>
           {process.env.NEXT_PUBLIC_GTM_ID ? (
