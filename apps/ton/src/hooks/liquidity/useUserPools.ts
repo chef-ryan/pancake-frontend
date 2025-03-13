@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { addUserPoolAtom, cachedUserPoolsAtom, updateUserPoolAtom, userPoolsAtom } from 'atoms/user/userPoolsAtom'
 import BN from 'bignumber.js'
-import { QUERY_DEFAULT_STALE_TIME } from 'config/constants/exchange'
+import { QUERY_MEDIUM_STALE_TIME } from 'config/constants/exchange'
 import { POOL_CHUNK_DELAY, POOL_CHUNK_SIZE } from 'config/constants/fetching'
 import { PRESET_POOLS } from 'config/presetPools'
+import { txReceiptAtom } from 'hooks/useLatestTxReceipt'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import chunk from 'lodash/chunk'
 import uniqWith from 'lodash/uniqWith'
@@ -25,6 +26,8 @@ export const useUserPools = () => {
   const chainId = useAtomValue(chainIdAtom)
 
   const userPools = useAtomValue(userPoolsAtom)
+  const txReceipt = useAtomValue(txReceiptAtom)
+
   const addUserPool = useSetAtom(addUserPoolAtom)
   const updateUserPool = useSetAtom(updateUserPoolAtom)
 
@@ -41,7 +44,7 @@ export const useUserPools = () => {
   }, [chainId, cachedUserPools])
 
   const { isFetched, isLoading } = useQuery({
-    queryKey: ['userPools', chunkedPresetPools, chainId, userAddress],
+    queryKey: ['userPools', chunkedPresetPools, chainId, userAddress, txReceipt],
     queryFn: async () => {
       const cachedPools = [] as InitialPoolData[]
 
@@ -104,7 +107,7 @@ export const useUserPools = () => {
     enabled: !!userAddress,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
-    staleTime: QUERY_DEFAULT_STALE_TIME,
+    refetchInterval: QUERY_MEDIUM_STALE_TIME,
   })
 
   return { data: userPools, isFetched, isLoading }
