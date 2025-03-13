@@ -1,7 +1,8 @@
 import { ONE_HUNDRED_PERCENT, Percent } from '@pancakeswap/sdk'
 import { Currency, NATIVE, Native, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
 import BN from 'bignumber.js'
-import tokenList from 'public/lists/testnet.json'
+import mainnetTokenList from 'public/lists/main.json'
+import testnetTokenList from 'public/lists/testnet.json'
 
 export const BIG_INT_ZERO = 0n
 export const ZERO_BN = BN(0)
@@ -38,16 +39,25 @@ export const MAX_HOPS = 3
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {}
 
 export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {}
+
 // todo:@eric mock bases to test multihops
-const USDC = tokenList.tokens.find((t) => t.symbol === 'USDC')!
-const tTON = tokenList.tokens.find((t) => t.symbol === 'tTON')!
+const USDC = testnetTokenList.tokens.find((t) => t.symbol === 'USDC')!
+const tTON = testnetTokenList.tokens.find((t) => t.symbol === 'tTON')!
+
+const tUSDT = mainnetTokenList.tokens.find((t) => t.symbol === 'tUSDT')!
+const RB4 = mainnetTokenList.tokens.find((t) => t.symbol === 'RB4')!
+
 export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Currency[] } = {
   [TonChainId.Testnet]: [
     new Native(NATIVE[TonChainId.Testnet]),
     new Token(USDC.chainId, USDC.address, USDC.decimals, USDC.name, USDC.symbol, USDC.logoURI),
     new Token(tTON.chainId, tTON.address, tTON.decimals, tTON.name, tTON.symbol, tTON.logoURI),
   ] satisfies Currency[],
-  [TonChainId.Mainnet]: [],
+  [TonChainId.Mainnet]: [
+    new Native(NATIVE[TonChainId.Mainnet]),
+    new Token(tUSDT.chainId, tUSDT.address, tUSDT.decimals, tUSDT.name, tUSDT.symbol, tUSDT.logoURI),
+    new Token(RB4.chainId, RB4.address, RB4.decimals, RB4.name, RB4.symbol, RB4.logoURI),
+  ],
 }
 
 export const TOTAL_FEE = 0.0025
