@@ -118,6 +118,8 @@ export const buildPools = async () => {
   const mainnetPairs = getTokenPairs(mainnetTokens)
   const testnetPairs = getTokenPairs(testnetTokens)
 
+  console.log('\n====================================BUILD POOLS====================================\n')
+
   await generatePoolsForPairs(TonChainId.Mainnet, mainnetPairs)
   await generatePoolsForPairs(TonChainId.Testnet, testnetPairs)
 }

@@ -85,6 +85,8 @@ async function buildJettonData() {
   const mainnetTokens = mainnetList.tokens
   const testnetTokens = testnetList.tokens
 
+  console.log('\n====================================BUILD JETTONS====================================\n')
+
   await processTokensByChain(TonChainId.Mainnet, mainnetTokens)
   await processTokensByChain(TonChainId.Testnet, testnetTokens)
 }
