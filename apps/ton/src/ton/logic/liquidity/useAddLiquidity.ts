@@ -1,6 +1,6 @@
 import { Currency, storeAddLiquidity } from '@pancakeswap/ton-v2-sdk'
 import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
-import { beginCell, toNano } from '@ton/core'
+import { beginCell } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
 import { resetAppModalAtom } from 'atoms/modals/appModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
@@ -18,7 +18,7 @@ import { getCurrencyOrder } from 'ton/utils/tokenOrder'
 import { getTransactionByBOC } from 'ton/utils/transaction'
 import { logGTMAddLiquidityTxSentEvent } from 'utils/customGTMEventTracking'
 
-import BN from 'bignumber.js'
+import { gasConstantsAtom } from 'ton/atom/gasConstantsAtom'
 
 interface AddLiquidityArgs {
   token0: Currency
@@ -30,15 +30,16 @@ interface AddLiquidityArgs {
   minLpOut: bigint
 }
 
-const GAS = BN(toNano('0.6').toString())
-const FORWARD_GAS = toNano('0.3')
-
 export const useAddLiquidity = () => {
   const router = useRouter()
   const [tonUI] = useTonConnectUI()
 
   const userAddress = useUserAddress()
   const routerAddress = useAtomValue(routerContractAtom).address
+  const GAS_CONSTANTS = useAtomValue(gasConstantsAtom)
+
+  const GAS = GAS_CONSTANTS.provideLp.gasAmount
+  const FORWARD_GAS = GAS_CONSTANTS.provideLp.forwardGasAmount
 
   const setTxnModal = useSetAtom(setTransactionModalAtom)
   const resetAppModal = useSetAtom(resetAppModalAtom)
@@ -164,7 +165,7 @@ export const useAddLiquidity = () => {
         resetAppModal()
       }
     },
-    [tonUI, userAddress, routerAddress, setTxnModal, resetAppModal, router],
+    [tonUI, userAddress, routerAddress, setTxnModal, resetAppModal, router, GAS, FORWARD_GAS],
   )
 
   return {

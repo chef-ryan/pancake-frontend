@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { CurrencyAmount } from '@pancakeswap/swap-sdk-core'
-import { Currency, GAS_CONSTANTS, Pair } from '@pancakeswap/ton-v2-sdk'
+import { Currency, Pair } from '@pancakeswap/ton-v2-sdk'
 import {
   Box,
   ChevronDownIcon,
@@ -13,19 +13,20 @@ import {
   useMatchBreakpoints,
   useModal,
 } from '@pancakeswap/uikit'
-import { CurrencyLogo, SwapUIV2 } from 'components/widgets'
-import { ChangeEvent, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { styled } from 'styled-components'
 import { formatNumber as formatBalanceNumber } from '@pancakeswap/utils/formatBalance'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { formatNumber } from '@pancakeswap/utils/formatNumber'
+import { CurrencyLogo, SwapUIV2 } from 'components/widgets'
+import { useStablePrice } from 'hooks/useStablePrice'
 import { useAtomValue } from 'jotai'
+import { ChangeEvent, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { styled } from 'styled-components'
 import { CurrencySelectButton } from 'styles/inputStyles'
 import { addressAtom } from 'ton/atom/addressAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
 import { formatBalance } from 'ton/utils/formatting'
-import { useStablePrice } from 'hooks/useStablePrice'
 
+import { gasConstantsAtom } from 'ton/atom/gasConstantsAtom'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { FONT_SIZE, LOGO_SIZE, useFontSize } from './state'
 
@@ -205,6 +206,8 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   const { t } = useTranslation()
   const account = useAtomValue(addressAtom)
   const { data: selectedCurrencyBalance_ } = useAtomValue(balanceAtom(currency))
+  const GAS_CONSTANTS = useAtomValue(gasConstantsAtom)
+
   const selectedCurrencyBalance = overrideBalance ?? selectedCurrencyBalance_
 
   const [isInputFocus, setIsInputFocus] = useState(false)
@@ -285,7 +288,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
       currency?.isNative
         ? selectedCurrencyBalance - GAS_CONSTANTS.swapTonToJetton.forwardGasAmount
         : selectedCurrencyBalance,
-    [currency?.isNative, selectedCurrencyBalance],
+    [currency?.isNative, selectedCurrencyBalance, GAS_CONSTANTS],
   )
 
   const onMax = useCallback(() => {

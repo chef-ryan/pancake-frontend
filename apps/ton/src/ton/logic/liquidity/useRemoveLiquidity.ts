@@ -1,5 +1,5 @@
 import { Currency } from '@pancakeswap/ton-v2-sdk'
-import { beginCell, toNano } from '@ton/core'
+import { beginCell } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
 import { resetAppModalAtom } from 'atoms/modals/appModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
@@ -10,6 +10,7 @@ import { useUserSlippage } from 'hooks/useUserSlippage'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { poolContractAtom } from 'ton/atom/contracts/poolContractAtom'
+import { gasConstantsAtom } from 'ton/atom/gasConstantsAtom'
 import { poolAddressAtom } from 'ton/atom/liquidity/poolAddressAtom'
 import { parseUnits } from 'ton/utils/formatting'
 import { getTransactionByBOC } from 'ton/utils/transaction'
@@ -26,6 +27,9 @@ interface RemoveLiquidityProps {
 export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount1ToBurn }: RemoveLiquidityProps) => {
   const [tonUI] = useTonConnectUI()
   const userAddress = useUserAddress()
+
+  const GAS_CONSTANTS = useAtomValue(gasConstantsAtom)
+  const GAS = GAS_CONSTANTS.removeLp.gasAmount
 
   const setTxnModal = useSetAtom(setTransactionModalAtom)
   const resetAppModal = useSetAtom(resetAppModalAtom)
@@ -86,7 +90,7 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount
           messages: [
             {
               address: userLpWallet.toString(),
-              amount: toNano('0.5').toString(),
+              amount: GAS.toString(),
               payload: payload.toBoc().toString('base64'),
             },
           ],
@@ -124,6 +128,7 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount
       tonUI,
       userAddress,
       poolContract,
+      GAS,
       setTxnModal,
       currency0,
       currency1,

@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
-import { Contracts, Currency, TonContractNames, Trade, storeSwap, GAS_CONSTANTS } from '@pancakeswap/ton-v2-sdk'
+import { Currency, Trade, storeSwap } from '@pancakeswap/ton-v2-sdk'
 import { useAsyncConfirmPriceImpactWithoutFee } from '@pancakeswap/widgets-internal'
 import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
 import { beginCell } from '@ton/core'
@@ -14,9 +14,10 @@ import { useLatestTxReceipt } from 'hooks/useLatestTxReceipt'
 import { useUserAddress } from 'hooks/useUserAddress'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
-import { chainIdAtom } from 'ton/atom/chainIdAtom'
+import { routerContractAtom } from 'ton/atom/contracts/routerContractAtom'
+import { gasConstantsAtom } from 'ton/atom/gasConstantsAtom'
+
 import { useJettonWalletAddress } from 'ton/atom/jettonWalletAddressAtom'
-import { parseAddress } from 'ton/utils/address'
 import { parseUnits } from 'ton/utils/formatting'
 import { generateQueryId } from 'ton/utils/generateQueryId'
 import { getJettonWalletAddress } from 'ton/utils/jettonWalletAddress'
@@ -36,10 +37,12 @@ interface SwapArgs {
 export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }: SwapArgs) => {
   const { t } = useTranslation()
   const [tonUI] = useTonConnectUI()
-  const userAddress = useUserAddress()
-  const chainId = useAtomValue(chainIdAtom)
 
-  const routerAddress = parseAddress(Contracts[TonContractNames.PCSRouter][chainId].address)
+  const userAddress = useUserAddress()
+
+  const GAS_CONSTANTS = useAtomValue(gasConstantsAtom)
+  const routerAddress = useAtomValue(routerContractAtom).address
+
   const userJettonWallet0 = useJettonWalletAddress(token0?.wrapped.address, userAddress)
   const routerJettonWallet0 = useJettonWalletAddress(token0?.wrapped.address, routerAddress)
   const routerJettonWallet1 = useJettonWalletAddress(trade?.route.path[1].wrapped.address, routerAddress)
@@ -122,15 +125,18 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
       ],
     }
   }, [
-    minOut,
+    routerJettonWallet1,
+    routerJettonWallet0,
+    trade,
+    token0,
+    userJettonWallet0,
     userAddress,
+    minOut,
     amount0,
     routerAddress,
-    routerJettonWallet0,
-    routerJettonWallet1,
-    trade,
-    userJettonWallet0,
-    token0,
+    GAS_CONSTANTS.swapTonToJetton.forwardGasAmount,
+    GAS_CONSTANTS.swapJettonToJetton.forwardGasAmount,
+    GAS_CONSTANTS.swapJettonToJetton.gasAmount,
   ])
 
   const swap = useCallback(async () => {

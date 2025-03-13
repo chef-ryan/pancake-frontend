@@ -273,6 +273,7 @@ export const CardContent = (props: CardContentProps) => {
       router.replace(
         {
           query: {
+            ...router.query,
             currency: [currencyKey(newCurrency0), currencyKey(newCurrency1)],
           },
         },
