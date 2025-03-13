@@ -108,7 +108,7 @@ function MyApp(props: AppProps<{ initialReduxState: any; dehydratedState: any }>
         <meta name="theme-color" content="#1FC7D4" />
       </Head>
       <DefaultSeo {...SEO} />
-      {/* <LoadVConsole /> */}
+      <LoadVConsole />
       <Providers
         store={store}
         dehydratedState={pageProps.dehydratedState}
