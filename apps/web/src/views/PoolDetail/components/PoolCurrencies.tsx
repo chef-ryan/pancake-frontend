@@ -32,7 +32,7 @@ function getTokenUrls(chainPath: string, poolInfo?: PoolInfo | null) {
 
   const v2Url = (token: Currency) => `/info${chainPath}/tokens/${token.wrapped.address}${stableSwapUrlQuery}`
 
-  const v3Url = (token: Currency) => `/info/${protocol}/${chainPath}/tokens/${token.wrapped.address}`
+  const v3Url = (token: Currency) => `/info/${protocol}${chainPath}/tokens/${token.wrapped.address}`
 
   if (protocol === 'stable' || protocol === 'v2') {
     return {
