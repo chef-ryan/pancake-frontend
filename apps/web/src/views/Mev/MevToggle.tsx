@@ -19,6 +19,7 @@ import {
 
 import useTheme from 'hooks/useTheme'
 import { styled } from 'styled-components'
+import { useEffect } from 'react'
 import { AddMevRpcButton } from './AddMevRpcButton'
 import { useIsMEVEnabled, useShouldShowMEVToggle, useWalletType } from './hooks'
 import { ManualConfigModal } from './ManualConfigModal'
@@ -54,6 +55,12 @@ export const MevToggle: React.FC = () => {
       trigger: 'hover',
     },
   )
+
+  useEffect(() => {
+    if (!shouldShowMEVToggle) {
+      onDismiss()
+    }
+  }, [shouldShowMEVToggle, onDismiss])
 
   if (!shouldShowMEVToggle) {
     return null
