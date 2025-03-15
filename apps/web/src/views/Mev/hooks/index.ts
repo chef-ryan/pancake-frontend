@@ -17,62 +17,6 @@ import {
   walletSupportManualRPCConfig,
 } from '../constant'
 
-const WalletProviders = [
-  'isApexWallet',
-  'isAvalanche',
-  'isBackpack',
-  'isBifrost',
-  'isBitKeep',
-  'isBitski',
-  'isBlockWallet',
-  'isBraveWallet',
-  'isCoinbaseWallet',
-  'isDawn',
-  'isEnkrypt',
-  'isExodus',
-  'isFrame',
-  'isFrontier',
-  'isGamestop',
-  'isHyperPay',
-  'isImToken',
-  'isKuCoinWallet',
-  'isMathWallet',
-  // 'isMetaMask',
-  'isOkxWallet',
-  'isOKExWallet',
-  'isOneInchAndroidWallet',
-  'isOneInchIOSWallet',
-  'isOneKey',
-  'isOpera',
-  'isPhantom',
-  'isPortal',
-  'isRabby',
-  'isRainbow',
-  'isStatus',
-  'isTally',
-  'isTokenPocket',
-  'isTokenary',
-  'isTrust',
-  'isTrustWallet',
-  'isUniswapWallet',
-  'isXDEFI',
-  'isZerion',
-  'isBinance',
-]
-
-async function checkWalletSupportAddEthereumChain(connector: Connector) {
-  try {
-    if (typeof connector.getProvider !== 'function') return false
-
-    const provider = (await connector.getProvider()) as any
-
-    return provider && provider.isMetaMask && !WalletProviders.some((p: string) => p in provider)
-  } catch (error) {
-    console.error(error, 'wallet_addEthereumChain is not supported')
-    return false
-  }
-}
-
 async function fetchMEVStatus(walletClient: WalletClient): Promise<{ mevEnabled: boolean }> {
   if (!walletClient || !walletClient?.request) {
     console.error('Ethereum provider not found')
@@ -85,10 +29,8 @@ async function fetchMEVStatus(walletClient: WalletClient): Promise<{ mevEnabled:
       method: 'eth_call',
       params: [
         {
-          from: walletClient.account?.address ?? '0x',
           to: '0x0000000000000000000000000000000000000048',
           value: '0x30',
-          data: '0x',
         },
         'latest',
       ],
@@ -101,26 +43,15 @@ async function fetchMEVStatus(walletClient: WalletClient): Promise<{ mevEnabled:
   }
 }
 
-export function useWalletSupportsAddEthereumChain() {
-  const { connector } = useAccount()
-  const { data, isLoading } = useQuery({
-    queryKey: ['walletSupportsAddEthereumChain', connector?.uid],
-    queryFn: () => checkWalletSupportAddEthereumChain(connector!),
-    enabled: Boolean(connector),
-    retry: false,
-  })
-  return { walletSupportsAddEthereumChain: data ?? false, isLoading }
-}
-
 export function useIsMEVEnabled() {
   const { data: walletClient } = useWalletClient()
   const { account, chainId } = useAccountActiveChain()
   const { walletType } = useWalletType()
 
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ['isMEVEnabled', walletClient, account, chainId, walletType],
+  const { data, isLoading, isPending, refetch } = useQuery({
+    queryKey: ['isMEVEnabled', walletClient?.uid, account, chainId, walletType],
     queryFn: () => fetchMEVStatus(walletClient!),
-    enabled: Boolean(account) && walletClient && chainId === ChainId.BSC,
+    enabled: Boolean(account && walletClient && chainId === ChainId.BSC),
     staleTime: 60000,
   })
 
@@ -130,14 +61,13 @@ export function useIsMEVEnabled() {
       (walletType !== WalletType.mevNotSupported &&
         (data?.mevEnabled || (walletType === WalletType.mevDefaultOnBSC && chainId === ChainId.BSC))) ??
       false,
-    isLoading,
+    isLoading: isPending || isLoading,
     refetch,
     isMEVProtectAvailable: chainId === ChainId.BSC,
   }
 }
 
 export const useShouldShowMEVToggle = () => {
-  const { isLoading: isWalletSupportLoading } = useWalletSupportsAddEthereumChain()
   const { account } = useAccountActiveChain()
   const { isMEVEnabled, isLoading, isMEVProtectAvailable } = useIsMEVEnabled()
   const { walletType, isLoading: isWalletTypeLoading } = useWalletType()
@@ -145,7 +75,6 @@ export const useShouldShowMEVToggle = () => {
     !isLoading &&
     !isWalletTypeLoading &&
     !isMEVEnabled &&
-    !isWalletSupportLoading &&
     Boolean(account) &&
     walletType > WalletType.mevNotSupported &&
     isMEVProtectAvailable
