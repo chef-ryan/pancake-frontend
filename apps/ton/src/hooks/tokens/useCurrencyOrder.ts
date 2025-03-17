@@ -18,8 +18,8 @@ export const useCurrencyOrder = ({ currency0_, currency1_ }: UseCurrencyOrderPro
     queryFn: async () =>
       currency0_ && currency1_
         ? getCurrencyOrder(currency0_, currency1_)
-        : { currency0: undefined, currency1: undefined, isFlipped: false },
-    initialData: { currency0: undefined, currency1: undefined, isFlipped: false },
+        : { currency0: currency0_, currency1: currency1_, isFlipped: false },
+    initialData: { currency0: currency0_, currency1: currency1_, isFlipped: false },
   })
 
   return { currency0, currency1, isFlipped }

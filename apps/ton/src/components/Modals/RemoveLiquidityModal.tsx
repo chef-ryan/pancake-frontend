@@ -16,6 +16,8 @@ const GridColumn = styled(FlexGap)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  gap: 8px;
 `
 
 export interface RemoveLiquidityModalProps {
@@ -43,12 +45,12 @@ export const RemoveLiquidityModal = ({
       <Text textAlign="center" fontSize="20px" bold>
         {t('You will receive')}
       </Text>
-      <Grid mt="16px" px="16px" gridTemplateColumns={['1fr 1fr 1fr']}>
+      <Grid mt="16px" px="16px" gridTemplateColumns="1fr 1fr 1fr">
         <GridColumn>
           <CurrencyLogo currency={currency0} size="40px" />
           <FlexGap justifyContent="center" alignItems="center" gap="4px">
-            <NumberDisplay value={amount0} maximumSignificantDigits={6} fontSize="20px" bold />
-            <Text fontSize="20px" bold>
+            <NumberDisplay value={amount0} maximumSignificantDigits={6} fontSize={['12px', '14px', '20px']} bold />
+            <Text fontSize={['12px', '14px', '20px']} bold>
               {currency0?.symbol}
             </Text>
           </FlexGap>
@@ -59,8 +61,8 @@ export const RemoveLiquidityModal = ({
         <GridColumn>
           <CurrencyLogo currency={currency1} size="40px" />
           <FlexGap justifyContent="center" alignItems="center" gap="4px">
-            <NumberDisplay value={amount1} maximumSignificantDigits={6} fontSize="20px" bold />
-            <Text fontSize="20px" bold>
+            <NumberDisplay value={amount1} maximumSignificantDigits={6} fontSize={['12px', '14px', '20px']} bold />
+            <Text fontSize={['12px', '14px', '20px']} bold>
               {currency1?.symbol}
             </Text>
           </FlexGap>
@@ -68,27 +70,32 @@ export const RemoveLiquidityModal = ({
       </Grid>
 
       <LightGreyCard mt="16px">
-        <Text color="textSubtle">
+        <Text color="textSubtle" fontSize={['14px', '20px']}>
           {t('Output is estimated. If the price changes by more than %slippage%% your transaction will revert.', {
             slippage: slippage / 100,
           })}
         </Text>
         <Hr />
-        <Flex mt="16px" justifyContent="space-between">
-          <FlexGap gap="8px">
+        <Flex mt="16px" justifyContent="space-between" flexWrap="wrap">
+          <FlexGap gap="8px" flexWrap="wrap">
             <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} overlap />
-            <Text color="textSubtle">
+            <Text color="textSubtle" fontSize={['14px', '20px']}>
               {t('%currency0%/%currency1% Burned', {
                 currency0: currency0?.symbol,
                 currency1: currency1?.symbol,
               })}
             </Text>
           </FlexGap>
-          <NumberDisplay value={tokenBurnAmount} color="textSubtle" maximumSignificantDigits={12} />
+          <NumberDisplay
+            value={tokenBurnAmount}
+            color="textSubtle"
+            fontSize={['14px', '20px']}
+            maximumSignificantDigits={12}
+          />
         </Flex>
       </LightGreyCard>
 
-      <Button mt="8px" onClick={onConfirm}>
+      <Button mt="8px" minHeight="48px" onClick={onConfirm}>
         {t('Continue')}
       </Button>
     </StyledFlexGap>

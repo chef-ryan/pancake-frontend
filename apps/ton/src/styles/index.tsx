@@ -15,6 +15,7 @@ export const TertiaryButton = styled(Button)`
 
 export const Dot = styled(Box)`
   width: 12px;
+  min-width: 12px;
   height: 12px;
   border-radius: 50%;
 `

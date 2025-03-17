@@ -207,6 +207,14 @@ export const CardContent = (props: CardContentProps) => {
     handleRemoveLiquidity,
   ])
 
+  if (!currency0 || !currency1) {
+    return (
+      <ContentContainer $isBottomRounded {...props}>
+        <WalletDisclaimer my="8px" text={t('Invalid currencies')} />
+      </ContentContainer>
+    )
+  }
+
   if (!isWalletConnected) {
     return (
       <ContentContainer $isBottomRounded={!isWalletConnected} {...props}>
@@ -222,14 +230,6 @@ export const CardContent = (props: CardContentProps) => {
           <img src={getAssetUrl('green-box.png')} alt={t('Loading')} width="96" />
           <LoadingDot />
         </FlexGap>
-      </ContentContainer>
-    )
-  }
-
-  if (!currency0 || !currency1) {
-    return (
-      <ContentContainer $isBottomRounded {...props}>
-        <WalletDisclaimer my="8px" text={t('Invalid currencies')} />
       </ContentContainer>
     )
   }
@@ -260,8 +260,8 @@ export const CardContent = (props: CardContentProps) => {
         <Text color="textSubtle">{t('You will receive')}</Text>
         <LightGreyCard mt="8px">
           <FlexGap flexDirection="column" gap="8px">
-            <Flex justifyContent="space-between" flexWrap="wrap">
-              <FlexGap gap="8px">
+            <Flex justifyContent="space-between" flexDirection={['column', 'row']}>
+              <FlexGap gap="8px" flexWrap="wrap">
                 <CurrencyLogo currency={currency0} />
                 <Text color="textSubtle">{t('Pooled %currency%', { currency: currency0?.symbol ?? '' })}</Text>
               </FlexGap>
@@ -269,8 +269,8 @@ export const CardContent = (props: CardContentProps) => {
                 <NumberDisplay value={formatBigNumber(outputAmounts?.amount0 ?? 0n, currency0?.decimals)} />
               </DisplayLoader>
             </Flex>
-            <Flex justifyContent="space-between" flexWrap="wrap">
-              <FlexGap gap="8px">
+            <Flex justifyContent="space-between" flexDirection={['column', 'row']}>
+              <FlexGap gap="8px" flexWrap="wrap">
                 <CurrencyLogo currency={currency1} />
                 <Text color="textSubtle">{t('Pooled %currency%', { currency: currency1?.symbol ?? '' })}</Text>
               </FlexGap>

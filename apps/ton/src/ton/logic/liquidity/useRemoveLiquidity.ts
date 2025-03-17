@@ -38,8 +38,8 @@ export const useRemoveLiquidity = ({ currency0, currency1, amount0ToBurn, amount
 
   const poolAddress = useAtomValue(
     poolAddressAtom({
-      token0Address: currency0?.wrapped.address.toString(),
-      token1Address: currency1?.wrapped.address.toString(),
+      token0Address: currency0 ? currency0.wrapped.address.toString() : '',
+      token1Address: currency1 ? currency1.wrapped.address.toString() : '',
     }),
   )
 

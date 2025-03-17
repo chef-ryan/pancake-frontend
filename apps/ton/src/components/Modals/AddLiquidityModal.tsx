@@ -58,10 +58,10 @@ export const AddLiquidityModal = ({
         {t('Your deposit')}
       </Text>
       <LightGreyCard>
-        <FlexGap gap="16px" alignItems="center">
+        <FlexGap gap="16px" alignItems="center" flexWrap={['wrap', 'nowrap']}>
           <CircleSvg percent={0.5} />
           <FlexGap flexDirection="column" gap="8px" width="100%">
-            <FlexGap gap="16px" justifyContent="space-between">
+            <FlexGap gap="16px" justifyContent="space-between" flexWrap="wrap">
               <FlexGap gap="8px" alignItems="center">
                 <Dot bg="primary" />
                 <CurrencyLogo currency={currency0} />
@@ -69,7 +69,7 @@ export const AddLiquidityModal = ({
               </FlexGap>
               <NumberDisplay value={amount0} maximumSignificantDigits={MAXIMUM_SIGNIFICANT_DIGITS} />
             </FlexGap>
-            <FlexGap gap="16px" justifyContent="space-between">
+            <FlexGap gap="16px" justifyContent="space-between" flexWrap="wrap">
               <FlexGap gap="8px" alignItems="center">
                 <Dot bg="secondary" />
                 <CurrencyLogo currency={currency1} />
@@ -107,7 +107,7 @@ export const AddLiquidityModal = ({
         <Text>{slippage / 100}%</Text>
       </Flex>
 
-      <Button mt="8px" onClick={onConfirm}>
+      <Button mt="8px" minHeight="48px" onClick={onConfirm}>
         {t('Confirm Supply')}
       </Button>
     </StyledFlexGap>

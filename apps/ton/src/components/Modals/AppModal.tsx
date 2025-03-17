@@ -24,7 +24,7 @@ export const AppModal = () => {
         title={title}
         onDismiss={handleDismiss}
         headerBorderColor="transparent"
-        minWidth="360px"
+        minWidth={[null, null, null, '360px']}
         minHeight="240px"
         overrideHeaderContent={isSmallScreen ? <GrabberBar mt="2px" /> : title ? null : <></>}
         hideCloseButton={!closeable}
