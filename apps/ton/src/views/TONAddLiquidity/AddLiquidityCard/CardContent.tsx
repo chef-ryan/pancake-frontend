@@ -25,6 +25,7 @@ import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { addressAtom } from 'ton/atom/addressAtom'
+import { lpAccountMultipleQueryAtom } from 'ton/atom/liquidity/lpAccountMultipleQueryAtom'
 import { lpBalanceQueryAtom } from 'ton/atom/liquidity/lpBalanceQueryAtom'
 import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
@@ -105,6 +106,10 @@ export const CardContent = (props: CardContentProps) => {
     }),
   )
 
+  const {
+    data: [lpAccount],
+  } = useAtomValue(lpAccountMultipleQueryAtom([poolData ? poolData.poolAddress.toString() : '']))
+
   const rates = usePoolRates({
     currency0,
     currency1,
@@ -161,6 +166,11 @@ export const CardContent = (props: CardContentProps) => {
     )
   }, [currencyAmounts, currency1])
 
+  // Pool does not exist and user has refund amounts to claim. May impact new pool price ratio
+  const isNewPoolWithRefundAvailable = useMemo(() => {
+    return !isPoolExists && lpAccount && (lpAccount.amount0 > 0n || lpAccount.amount1 > 0n)
+  }, [isPoolExists, lpAccount])
+
   const isDisabled = useMemo(() => {
     return (
       !currency0 ||
@@ -173,7 +183,8 @@ export const CardContent = (props: CardContentProps) => {
       isInsufficientBalance0 ||
       isInsufficientBalance1 ||
       isInsufficientAmount0 ||
-      isInsufficientAmount1
+      isInsufficientAmount1 ||
+      isNewPoolWithRefundAvailable
     )
   }, [
     currency0,
@@ -184,6 +195,7 @@ export const CardContent = (props: CardContentProps) => {
     isPoolDataLoading,
     isInsufficientAmount0,
     isInsufficientAmount1,
+    isNewPoolWithRefundAvailable,
   ])
 
   const expectedPoolTokens = useMemo(() => {
@@ -398,7 +410,9 @@ export const CardContent = (props: CardContentProps) => {
                 ? currency1?.symbol
                 : `${currency0?.symbol} & ${currency1?.symbol}`,
           })
-        ) : currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0] &&
+        ) : currency0 &&
+          currency1 &&
+          currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0] &&
           currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1] &&
           (isInsufficientAmount0 || isInsufficientAmount1) ? (
           t('Insufficient %tokens% Amount', {
@@ -409,6 +423,8 @@ export const CardContent = (props: CardContentProps) => {
                 ? currency1?.symbol
                 : `${currency0?.symbol} & ${currency1?.symbol}`,
           })
+        ) : isNewPoolWithRefundAvailable ? (
+          t('Please Claim Refund First')
         ) : (
           t('Supply')
         )}
@@ -426,6 +442,7 @@ export const CardContent = (props: CardContentProps) => {
     currency0,
     currency1,
     currencyAmounts,
+    isNewPoolWithRefundAvailable,
   ])
 
   return (

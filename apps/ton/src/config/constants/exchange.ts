@@ -1,6 +1,5 @@
 import { ONE_HUNDRED_PERCENT, Percent } from '@pancakeswap/sdk'
 import { Currency, NATIVE, Native, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
-import { toNano } from '@ton/core'
 import BN from 'bignumber.js'
 import mainnetTokenList from 'public/lists/main.json'
 import testnetTokenList from 'public/lists/testnet.json'
@@ -33,7 +32,7 @@ export const MAXIMUM_SIGNIFICANT_DIGITS = 9
 export const REQUIRED_MIN_LIQUIDITY = 1000
 
 // Any amount0 or amount1 that is less than this will be refunded in an Add Liquidity transaction
-export const MINIMUM_ADD_LIQUIDITY_AMOUNT = toNano(0.000001)
+export const MINIMUM_ADD_LIQUIDITY_AMOUNT = 1000n
 
 export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(50n, BIPS_BASE)
 
