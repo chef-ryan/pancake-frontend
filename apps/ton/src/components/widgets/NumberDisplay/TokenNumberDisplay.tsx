@@ -56,7 +56,15 @@ export const NumberDisplay = memo(function NumberDisplay({
 
   return (
     <>
-      <Text ref={targetRef} style={{ textDecoration: showTooltip ? 'underline dotted' : 'none', ...style }} {...props}>
+      <Text
+        ref={targetRef}
+        style={{
+          textDecoration: showTooltip ? 'underline dotted' : 'none',
+          pointerEvents: !showTooltip ? 'none' : 'auto',
+          ...style,
+        }}
+        {...props}
+      >
         {prefix}
         {valueDisplay}
         {suffix}
