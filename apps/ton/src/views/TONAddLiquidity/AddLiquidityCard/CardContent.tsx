@@ -30,7 +30,7 @@ import { poolDataQueryAtom } from 'ton/atom/liquidity/poolDataQueryAtom'
 import { balanceAtom } from 'ton/logic/balanceAtom'
 import { useAddLiquidity } from 'ton/logic/liquidity/useAddLiquidity'
 import { formatBalance, parseUnits } from 'ton/utils/formatting'
-import { getExpectedPoolTokens, getNewPoolShare } from 'ton/utils/pool'
+import { getExpectedPoolTokens, getNewPoolShare, isSufficientLiquidityAmount } from 'ton/utils/pool'
 import { CurrencyField } from 'types/currency'
 import { logGTMClickAddLiquidityConfirmEvent, logGTMClickAddLiquidityEvent } from 'utils/customGTMEventTracking'
 import { currencyKey } from 'utils/tokens/currency'
@@ -149,6 +149,18 @@ export const CardContent = (props: CardContentProps) => {
     )
   }, [currencyAmounts, balance1, currency1])
 
+  const isInsufficientAmount0 = useMemo(() => {
+    return !isSufficientLiquidityAmount(
+      parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0], currency0?.decimals),
+    )
+  }, [currencyAmounts, currency0])
+
+  const isInsufficientAmount1 = useMemo(() => {
+    return !isSufficientLiquidityAmount(
+      parseUnits(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1], currency1?.decimals),
+    )
+  }, [currencyAmounts, currency1])
+
   const isDisabled = useMemo(() => {
     return (
       !currency0 ||
@@ -157,11 +169,22 @@ export const CardContent = (props: CardContentProps) => {
       !currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1] ||
       BN(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0]).isZero() ||
       BN(currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]).isZero() ||
+      isPoolDataLoading ||
       isInsufficientBalance0 ||
       isInsufficientBalance1 ||
-      isPoolDataLoading
+      isInsufficientAmount0 ||
+      isInsufficientAmount1
     )
-  }, [currency0, currency1, currencyAmounts, isInsufficientBalance0, isInsufficientBalance1, isPoolDataLoading])
+  }, [
+    currency0,
+    currency1,
+    currencyAmounts,
+    isInsufficientBalance0,
+    isInsufficientBalance1,
+    isPoolDataLoading,
+    isInsufficientAmount0,
+    isInsufficientAmount1,
+  ])
 
   const expectedPoolTokens = useMemo(() => {
     if (!currency0 || !currency1) return BN(0)
@@ -359,6 +382,52 @@ export const CardContent = (props: CardContentProps) => {
     handleAddLiquidity,
   ])
 
+  const ConfirmButton = useCallback(() => {
+    return (
+      <Button onClick={openConfirmationModal} width="100%" disabled={isDisabled}>
+        {isPoolDataLoading ? (
+          <>
+            {t('Updating')} <Loading ml="8px" size="14px" />{' '}
+          </>
+        ) : isInsufficientBalance0 || isInsufficientBalance1 ? (
+          t('Insufficient %tokens% Balance', {
+            tokens:
+              isInsufficientBalance0 && !isInsufficientBalance1
+                ? currency0?.symbol
+                : !isInsufficientBalance0 && isInsufficientBalance1
+                ? currency1?.symbol
+                : `${currency0?.symbol} & ${currency1?.symbol}`,
+          })
+        ) : currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0] &&
+          currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1] &&
+          (isInsufficientAmount0 || isInsufficientAmount1) ? (
+          t('Insufficient %tokens% Amount', {
+            tokens:
+              isInsufficientAmount0 && !isInsufficientAmount1
+                ? currency0?.symbol
+                : !isInsufficientAmount0 && isInsufficientAmount1
+                ? currency1?.symbol
+                : `${currency0?.symbol} & ${currency1?.symbol}`,
+          })
+        ) : (
+          t('Supply')
+        )}
+      </Button>
+    )
+  }, [
+    t,
+    openConfirmationModal,
+    isDisabled,
+    isPoolDataLoading,
+    isInsufficientBalance0,
+    isInsufficientBalance1,
+    isInsufficientAmount0,
+    isInsufficientAmount1,
+    currency0,
+    currency1,
+    currencyAmounts,
+  ])
+
   return (
     <>
       <ContentContainer $isBottomRounded={!isWalletConnected} {...props}>
@@ -453,28 +522,7 @@ export const CardContent = (props: CardContentProps) => {
       </ContentContainer>
 
       <StyledCardFooter>
-        {!isWalletConnected ? (
-          <ConnectWalletButton width="100%" />
-        ) : (
-          <Button onClick={openConfirmationModal} width="100%" disabled={isDisabled}>
-            {isPoolDataLoading ? (
-              <>
-                {t('Updating')} <Loading ml="8px" size="14px" />{' '}
-              </>
-            ) : isInsufficientBalance0 || isInsufficientBalance1 ? (
-              t('Insufficient %tokens% Balance', {
-                tokens:
-                  isInsufficientBalance0 && !isInsufficientBalance1
-                    ? currency0?.symbol
-                    : !isInsufficientBalance0 && isInsufficientBalance1
-                    ? currency1?.symbol
-                    : `${currency0?.symbol} & ${currency1?.symbol}`,
-              })
-            ) : (
-              t('Supply')
-            )}
-          </Button>
-        )}
+        {!isWalletConnected ? <ConnectWalletButton width="100%" /> : <ConfirmButton />}
       </StyledCardFooter>
     </>
   )
