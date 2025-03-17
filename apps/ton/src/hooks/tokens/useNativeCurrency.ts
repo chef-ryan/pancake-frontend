@@ -1,8 +1,8 @@
-import { Native, TonNetworks } from '@pancakeswap/ton-v2-sdk'
+import { Native } from '@pancakeswap/ton-v2-sdk'
 import { useAtomValue } from 'jotai'
-import { networkAtom } from 'ton/atom/networkAtom'
+import { chainIdAtom } from 'ton/atom/chainIdAtom'
 
 export const useNativeCurrency = () => {
-  const network = useAtomValue(networkAtom)
-  return Native.onNetwork(TonNetworks[network])
+  const chainId = useAtomValue(chainIdAtom)
+  return Native.onChain(chainId)
 }
