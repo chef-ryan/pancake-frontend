@@ -1,8 +1,8 @@
-import { getDefaultStore } from 'jotai'
 import { Address, beginCell, Cell, storeMessage } from '@ton/ton'
+import { getDefaultStore } from 'jotai'
+import { chainIdAtom } from 'ton/atom/chainIdAtom'
 import { TonContext } from 'ton/context/TonContext'
 import { traceEndPoints } from 'ton/context/endpoints'
-import { chainIdAtom } from 'ton/atom/chainIdAtom'
 
 import { retry } from './helpers'
 
@@ -14,7 +14,7 @@ export async function getTransactionByBOC(userAddress: string | Address, boc: st
   return retry(
     async () => {
       const transactions = await client.getTransactions(address, {
-        limit: 3,
+        limit: 5,
       })
       for (const tx of transactions) {
         const inMsg = tx.inMessage

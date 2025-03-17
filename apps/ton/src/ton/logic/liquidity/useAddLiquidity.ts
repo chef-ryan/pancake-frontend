@@ -1,6 +1,6 @@
 import { Currency, storeAddLiquidity } from '@pancakeswap/ton-v2-sdk'
 import { storeJettonTransferMessage } from '@ton-community/assets-sdk'
-import { beginCell } from '@ton/core'
+import { beginCell, storeStateInit } from '@ton/core'
 import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react'
 import { resetAppModalAtom } from 'atoms/modals/appModalAtom'
 import { setTransactionModalAtom } from 'atoms/modals/transactionModalAtom'
@@ -19,6 +19,8 @@ import { getTransactionByBOC } from 'ton/utils/transaction'
 import { logGTMAddLiquidityTxSentEvent } from 'utils/customGTMEventTracking'
 
 import { gasConstantsAtom } from 'ton/atom/gasConstantsAtom'
+
+import { getProxyTonStateInit } from 'ton/utils/proxyTon'
 
 interface AddLiquidityArgs {
   token0: Currency
@@ -117,6 +119,22 @@ export const useAddLiquidity = () => {
           )
           .endCell()
 
+        const proxyTonStateInit0 = currency0.isNative
+          ? beginCell()
+              .store(storeStateInit(await getProxyTonStateInit(userAddress, currency0)))
+              .endCell()
+              .toBoc()
+              .toString('base64')
+          : undefined
+
+        const proxyTonStateInit1 = currency1.isNative
+          ? beginCell()
+              .store(storeStateInit(await getProxyTonStateInit(userAddress, currency1)))
+              .endCell()
+              .toBoc()
+              .toString('base64')
+          : undefined
+
         const txRequest: SendTransactionRequest = {
           validUntil: Math.floor(Date.now() / 1000) + 60 * 2,
           messages: [
@@ -124,11 +142,13 @@ export const useAddLiquidity = () => {
               address: currency0.isNative ? routerJettonWallet0.toString() : userJettonWallet0.toString(),
               amount: (currency0.isNative ? FORWARD_GAS + amount0 : GAS).toString(),
               payload: payload0.toBoc().toString('base64'),
+              stateInit: proxyTonStateInit0,
             },
             {
               address: currency1.isNative ? routerJettonWallet1.toString() : userJettonWallet1.toString(),
               amount: (currency1.isNative ? FORWARD_GAS + amount1 : GAS).toString(),
               payload: payload1.toBoc().toString('base64'),
+              stateInit: proxyTonStateInit1,
             },
           ],
         }
