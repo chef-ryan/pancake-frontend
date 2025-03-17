@@ -27,6 +27,9 @@ const testnetClient = new TonClient({ endpoint: TonEndPoints[TonChainId.Testnet]
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
+const cliArgs = process.argv.slice(2)
+const isForced = cliArgs.includes('--force')
+
 async function processTokensByChain(chainId: TonChainId, tokens: TokenInfo[]) {
   const client = chainId === TonChainId.Testnet ? testnetClient : mainnetClient
 
@@ -38,8 +41,8 @@ async function processTokensByChain(chainId: TonChainId, tokens: TokenInfo[]) {
     // eslint-disable-next-line no-await-in-loop
     const result = await Promise.all(
       chunkedTokens[i].map(async (token) => {
-        // Skip if token already has jettonData
-        if (token.jettonCode && token.jettonCode.length > 0) {
+        // Skip if token already has jettonData, unless forced
+        if (!isForced && token.jettonCode && token.jettonCode.length > 0) {
           console.log(`buildJettons [${chainId}]: ⏭️  Skipping ${token.symbol} ${token.address}`)
           return token
         }
@@ -76,7 +79,7 @@ async function processTokensByChain(chainId: TonChainId, tokens: TokenInfo[]) {
 
   writeFileSync(
     path.resolve(__dirname, `../../public/lists/${chainId === TonChainId.Mainnet ? 'main' : 'testnet'}.json`),
-    JSON.stringify({ ...mainnetList, tokens: results }, null, 2),
+    JSON.stringify({ ...(chainId === TonChainId.Mainnet ? mainnetList : testnetList), tokens: results }, null, 2),
   )
 }
 
