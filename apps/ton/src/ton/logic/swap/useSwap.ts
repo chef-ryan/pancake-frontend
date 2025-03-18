@@ -85,7 +85,10 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
         storeSwap({
           fromRealUser: userAddress,
           fromUserAddress: userAddress,
+
+          // If it is NOT a Multihop trade, set minOut for token0 => token1
           minOut: !lastSwapNext && minOut ? parseUnits(minOut, token1?.decimals) : 1n,
+
           refAddress: null,
           refMessageValue: 0n,
           tokenWallet: routerJettonWallet1,

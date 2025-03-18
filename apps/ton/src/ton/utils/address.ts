@@ -7,7 +7,11 @@ export const parseAddress = (address?: string) => {
 
 export const isAddress = (address?: any) => {
   if (!address) return false
-  return Address.isAddress(address)
+  try {
+    return !!Address.parse(address)
+  } catch {
+    return false
+  }
 }
 
 export const isAddressEqual = (address0: string, address1: string) => {

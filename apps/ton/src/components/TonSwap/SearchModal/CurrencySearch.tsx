@@ -6,12 +6,12 @@ import { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useS
 import { FixedSizeList } from 'react-window'
 import { createFilterToken } from 'utils/tokens/filterTokens'
 
-import { Address } from '@ton/core'
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
 import Row from 'components/Layout/Row'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
 import { useAtomValue } from 'jotai'
 import { balanceMultipleAtom } from 'ton/logic/balanceMultipleAtom'
+import { isAddress } from 'ton/utils/address'
 import { getAssetUrl } from 'utils'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
@@ -63,7 +63,7 @@ function CurrencySearch({
   }, [debouncedQuery, native, tokensToShow])
 
   const filteredTokens: Currency[] = useMemo(() => {
-    const filterToken = createFilterToken(debouncedQuery, (address) => Address.isAddress(address))
+    const filterToken = createFilterToken(debouncedQuery, (address) => isAddress(address))
     return Object.values(tokensToShow || allTokens).filter(filterToken)
   }, [tokensToShow, allTokens, debouncedQuery])
 
@@ -165,7 +165,7 @@ function CurrencySearch({
           <Row>
             <Input
               id="token-search-input"
-              placeholder={t('Search by name or paste address')}
+              placeholder={t('Search by name')}
               scale="lg"
               autoComplete="off"
               value={searchQuery}
