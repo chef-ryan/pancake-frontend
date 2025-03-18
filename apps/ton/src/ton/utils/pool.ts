@@ -39,7 +39,7 @@ export function getExpectedPoolTokens({
  * @param amount Amount to check (Parsed with decimals)
  */
 export function isSufficientLiquidityAmount(amount: BigintIsh): boolean {
-  return BN(amount.toString()).gte(MINIMUM_ADD_LIQUIDITY_AMOUNT.toString())
+  return BN(amount.toString()).gt(MINIMUM_ADD_LIQUIDITY_AMOUNT.toString())
 }
 
 /**
