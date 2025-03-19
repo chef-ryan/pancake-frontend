@@ -1,13 +1,13 @@
 import { ONE_HUNDRED_PERCENT } from '@pancakeswap/sdk'
 import { Fraction, Percent, TradeType } from '@pancakeswap/swap-sdk-core'
-import { Currency, CurrencyAmount, Trade } from '@pancakeswap/ton-v2-sdk'
+import { Currency, CurrencyAmount, Pair, Trade } from '@pancakeswap/ton-v2-sdk'
 import {
   ALLOWED_PRICE_IMPACT_HIGH,
   ALLOWED_PRICE_IMPACT_LOW,
   ALLOWED_PRICE_IMPACT_MEDIUM,
   BIPS_BASE,
   BLOCKED_PRICE_IMPACT_NON_EXPERT,
-  INPUT_FRACTION_AFTER_FEE,
+  calculateInputFractionAfterFee,
 } from 'config/constants/exchange'
 import memoize from 'lodash/memoize'
 import { Field } from 'types'
@@ -36,7 +36,8 @@ export function computeTradePriceBreakdown(trade?: Trade<Currency, Currency, Tra
     ? undefined
     : ONE_HUNDRED_PERCENT.subtract(
         trade.route.pairs.reduce<Fraction>(
-          (currentFee: Fraction): Fraction => currentFee.multiply(INPUT_FRACTION_AFTER_FEE),
+          (currentFee: Fraction, pair: Pair): Fraction =>
+            currentFee.multiply(calculateInputFractionAfterFee(pair.lpFee + pair.protocolFee + pair.refFee)),
           ONE_HUNDRED_PERCENT,
         ),
       )

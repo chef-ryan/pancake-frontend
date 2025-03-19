@@ -2,9 +2,11 @@ import { useTranslation } from '@pancakeswap/localization'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { AutoColumn, Flex, QuestionHelperV2, RowBetween, RowFixed, SkeletonV2, Text } from '@pancakeswap/uikit'
 import { SlippageButton } from 'components/Buttons/SlippageButton'
-import { BUYBACK_FEE, LP_HOLDERS_FEE, TOTAL_FEE, TREASURY_FEE } from 'config/constants/exchange'
+import { POOL_FEE_DECIMALS } from 'config/constants/formatting'
 import { useUserSlippage } from 'hooks/useUserSlippage'
+import { useMemo } from 'react'
 import { styled } from 'styled-components'
+import { formatBalance } from 'ton/utils/formatting'
 import { Field } from 'types'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from 'utils/exchange'
 import FormattedPriceImpact from '../FormattedPriceImpact'
@@ -36,10 +38,19 @@ function TradeSummary({
   const isExactIn = trade ? trade.tradeType === TradeType.EXACT_INPUT : true
   const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade ?? undefined, allowedSlippage)
 
-  const totalFeePercent = `${(TOTAL_FEE * 100).toFixed(2)}%`
-  const lpHoldersFeePercent = `${(LP_HOLDERS_FEE * 100).toFixed(2)}%`
-  const treasuryFeePercent = `${(TREASURY_FEE * 100).toFixed(4)}%`
-  const buyBackFeePercent = `${(BUYBACK_FEE * 100).toFixed(4)}%`
+  const fees = useMemo(() => {
+    if (!trade) return null
+
+    const lpHoldersFee = trade.route.pairs.reduce((acc, pair) => acc + pair.lpFee, 0n)
+    const treasuryFee = trade.route.pairs.reduce((acc, pair) => acc + pair.protocolFee, 0n)
+    const totalFee = trade.route.pairs.reduce((acc, pair) => acc + pair.lpFee + pair.protocolFee + pair.refFee, 0n)
+
+    return {
+      lpHoldersFeePercent: `${formatBalance(lpHoldersFee, POOL_FEE_DECIMALS)}%`,
+      treasuryFeePercent: `${formatBalance(treasuryFee, POOL_FEE_DECIMALS)}%`,
+      totalFeePercent: `${formatBalance(totalFee, POOL_FEE_DECIMALS)}%`,
+    }
+  }, [trade])
 
   return (
     <>
@@ -103,12 +114,14 @@ function TradeSummary({
         <RowFixed>
           <QuestionHelperV2
             text={
-              <>
-                <Text>{t('For each trade a %amount% fee is paid', { amount: totalFeePercent })}</Text>
-                <Text>- {t('%amount% to LP token holders', { amount: lpHoldersFeePercent })}</Text>
-                <Text>- {t('%amount% to the Treasury', { amount: treasuryFeePercent })}</Text>
-                <Text>- {t('%amount% towards CAKE buyback and burn', { amount: buyBackFeePercent })}</Text>
-              </>
+              fees && (
+                <>
+                  <Text>{t('For each trade a %amount% fee is paid', { amount: fees.totalFeePercent })}</Text>
+                  <Text>- {t('%amount% to LP token holders', { amount: fees.lpHoldersFeePercent })}</Text>
+                  <Text>- {t('%amount% to the Treasury', { amount: fees.treasuryFeePercent })}</Text>
+                  {/* <Text>- {t('%amount% towards CAKE buyback and burn', { amount: buyBackFeePercent })}</Text> */}
+                </>
+              )
             }
             placement="top"
           >

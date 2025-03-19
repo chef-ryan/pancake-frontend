@@ -172,7 +172,7 @@ export default function CurrencyList({
         />
       )
     },
-    [selectedCurrency, otherCurrency, breakIndex, onCurrencySelect, t],
+    [selectedCurrency, otherCurrency, onCurrencySelect, breakIndex, t],
   )
 
   const itemKey = useCallback((index: number, data: any) => `${currencyKey(data[index])}-${index}`, [])

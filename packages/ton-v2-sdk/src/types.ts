@@ -59,4 +59,7 @@ export interface Pair {
   readonly reserve0: CurrencyAmount<Currency>
   readonly reserve1: CurrencyAmount<Currency>
   readonly poolAddress: Address
+  readonly lpFee: bigint
+  readonly protocolFee: bigint
+  readonly refFee: bigint
 }

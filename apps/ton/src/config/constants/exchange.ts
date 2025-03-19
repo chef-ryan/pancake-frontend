@@ -3,12 +3,14 @@ import { Currency, NATIVE, Native, Token, TonChainId } from '@pancakeswap/ton-v2
 import BN from 'bignumber.js'
 import mainnetTokenList from 'public/lists/main.json'
 import testnetTokenList from 'public/lists/testnet.json'
+import { POOL_FEE_DECIMALS } from './formatting'
 
 export const BIG_INT_ZERO = 0n
 export const ZERO_BN = BN(0)
 
 // one basis point
-export const BIPS_BASE = 10000n
+const BIPS_BASE_DECIMALS = 4
+export const BIPS_BASE = 10_000n
 export const ONE_BIPS = new Percent(1n, BIPS_BASE)
 
 // used for warning states
@@ -63,10 +65,8 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Currency[] } = 
   ],
 }
 
-// TOD: Fetch fees from contract, as it can be updated
-export const TOTAL_FEE = 0.0025
-export const LP_HOLDERS_FEE = 0.0017
-export const TREASURY_FEE = 0.000225
-export const BUYBACK_FEE = 0.000575
-export const BASE_FEE = new Percent(25n, BIPS_BASE)
-export const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(BASE_FEE)
+export const calculateBaseFee = (fee: bigint) => {
+  // Correct the decimals since pool fee precision is 3 decimals and BIPS_BASE is 4 decimals
+  return new Percent(fee / BigInt(10 ** (BIPS_BASE_DECIMALS - POOL_FEE_DECIMALS)), BIPS_BASE)
+}
+export const calculateInputFractionAfterFee = (fee: bigint) => ONE_HUNDRED_PERCENT.subtract(calculateBaseFee(fee))

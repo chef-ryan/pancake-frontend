@@ -126,7 +126,8 @@ function CurrencySearch({
             showNative={showNative}
             currencies={filteredSortedTokens}
             inactiveCurrencies={[]}
-            breakIndex={filteredSortedTokens ? filteredSortedTokens.length : undefined}
+            // breakIndex={filteredSortedTokens ? filteredSortedTokens.length : undefined}
+            breakIndex={undefined}
             onCurrencySelect={handleCurrencySelect}
             otherCurrency={otherSelectedCurrency}
             selectedCurrency={selectedCurrency}
