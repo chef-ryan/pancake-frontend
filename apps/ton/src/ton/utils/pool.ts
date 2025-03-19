@@ -24,10 +24,7 @@ export function getExpectedPoolTokens({
   const supply = BN(totalSupply.toString())
 
   if (supply.isZero()) {
-    return a0
-      .multipliedBy(a1)
-      .sqrt()
-      .minus(BN(REQUIRED_MIN_LIQUIDITY).div(10 ** LP_TOKEN_DECIMALS))
+    return a0.multipliedBy(a1).sqrt().minus(BN(REQUIRED_MIN_LIQUIDITY))
   }
 
   return BN.min(a0.multipliedBy(supply).div(r0), a1.multipliedBy(supply).div(r1))
