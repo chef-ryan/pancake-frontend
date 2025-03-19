@@ -121,7 +121,7 @@ export const useAddLiquidity = () => {
 
         const proxyTonStateInit0 = currency0.isNative
           ? beginCell()
-              .store(storeStateInit(await getProxyTonStateInit(userAddress, currency0)))
+              .store(storeStateInit(await getProxyTonStateInit(routerAddress, currency0)))
               .endCell()
               .toBoc()
               .toString('base64')
@@ -129,7 +129,7 @@ export const useAddLiquidity = () => {
 
         const proxyTonStateInit1 = currency1.isNative
           ? beginCell()
-              .store(storeStateInit(await getProxyTonStateInit(userAddress, currency1)))
+              .store(storeStateInit(await getProxyTonStateInit(routerAddress, currency1)))
               .endCell()
               .toBoc()
               .toString('base64')
