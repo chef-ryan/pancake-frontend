@@ -49,8 +49,8 @@ export const RemoveLiquidityModal = ({
         <GridColumn>
           <CurrencyLogo currency={currency0} size="40px" />
           <FlexGap justifyContent="center" alignItems="center" gap="4px">
-            <NumberDisplay value={amount0} maximumSignificantDigits={6} fontSize={['12px', '14px', '20px']} bold />
-            <Text fontSize={['12px', '14px', '20px']} bold>
+            <NumberDisplay value={amount0} maximumSignificantDigits={6} fontSize={['12px', '14px', '16px']} bold />
+            <Text fontSize={['12px', '14px', '16px']} bold>
               {currency0?.symbol}
             </Text>
           </FlexGap>
@@ -61,8 +61,8 @@ export const RemoveLiquidityModal = ({
         <GridColumn>
           <CurrencyLogo currency={currency1} size="40px" />
           <FlexGap justifyContent="center" alignItems="center" gap="4px">
-            <NumberDisplay value={amount1} maximumSignificantDigits={6} fontSize={['12px', '14px', '20px']} bold />
-            <Text fontSize={['12px', '14px', '20px']} bold>
+            <NumberDisplay value={amount1} maximumSignificantDigits={6} fontSize={['12px', '14px', '16px']} bold />
+            <Text fontSize={['12px', '14px', '16px']} bold>
               {currency1?.symbol}
             </Text>
           </FlexGap>
@@ -70,7 +70,7 @@ export const RemoveLiquidityModal = ({
       </Grid>
 
       <LightGreyCard mt="16px">
-        <Text color="textSubtle" fontSize={['14px', '20px']}>
+        <Text color="textSubtle" fontSize={['14px', '16px']}>
           {t('Output is estimated. If the price changes by more than %slippage%% your transaction will revert.', {
             slippage: slippage / 100,
           })}
@@ -79,7 +79,7 @@ export const RemoveLiquidityModal = ({
         <Flex mt="16px" justifyContent="space-between" flexWrap="wrap">
           <FlexGap gap="8px" flexWrap="wrap">
             <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} overlap />
-            <Text color="textSubtle" fontSize={['14px', '20px']}>
+            <Text color="textSubtle" fontSize={['14px', '16px']}>
               {t('%currency0%/%currency1% Burned', {
                 currency0: currency0?.symbol,
                 currency1: currency1?.symbol,
@@ -89,7 +89,7 @@ export const RemoveLiquidityModal = ({
           <NumberDisplay
             value={tokenBurnAmount}
             color="textSubtle"
-            fontSize={['14px', '20px']}
+            fontSize={['14px', '16px']}
             maximumSignificantDigits={12}
           />
         </Flex>
