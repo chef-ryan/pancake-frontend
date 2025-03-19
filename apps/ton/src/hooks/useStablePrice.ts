@@ -1,11 +1,11 @@
-import { useMemo } from 'react'
 import { Currency, Price, Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
+import { J_USDT, tUSDT, USDT } from 'config/constants/tokens'
+import { useMemo } from 'react'
 import { getCurrencyPrice } from 'utils/getCurrencyPrice'
-import { USDT, J_USDT } from 'config/constants/tokens'
 
-import { useActiveChainId } from './useActiveChainId'
-import { useNativeCurrency } from './tokens/useNativeCurrency'
 import { usePairs } from './swap/useAllCommonPairs'
+import { useNativeCurrency } from './tokens/useNativeCurrency'
+import { useActiveChainId } from './useActiveChainId'
 
 export const useStablePrice = (currency?: Currency | null): Price<Currency, Currency> | undefined => {
   const { chainId: chainId_ } = useActiveChainId()
@@ -15,7 +15,7 @@ export const useStablePrice = (currency?: Currency | null): Price<Currency, Curr
   const wnative = native.wrapped
   const wrapped = currency?.wrapped
   const defaultStable = useMemo(() => USDT[chainId], [chainId])
-  const stableTokens = useMemo(() => [USDT[chainId], J_USDT[chainId]], [chainId])
+  const stableTokens = useMemo(() => [USDT[chainId], tUSDT[chainId], J_USDT[chainId]], [chainId])
 
   const {
     data: [stableNativePairInfo, nativePairInfo],

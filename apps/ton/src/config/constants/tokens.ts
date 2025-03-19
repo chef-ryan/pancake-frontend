@@ -1,5 +1,6 @@
 import { Token, TonChainId } from '@pancakeswap/ton-v2-sdk'
-import tokenList from 'public/lists/testnet.json'
+import mainnetTokenList from 'public/lists/main.json'
+import testnetTokenList from 'public/lists/testnet.json'
 
 // Common tokens
 export const PRESET_TOKENS = {
@@ -43,7 +44,20 @@ export const PRESET_TOKENS = {
 }
 
 // we have USDC pair on testnet, so used USDC instead of USDT on testnet
-const USDC = tokenList.tokens.find((t) => t.symbol === 'USDC')!
+const USDC = testnetTokenList.tokens.find((t) => t.symbol === 'USDC')!
+
+const tUSDTToken = mainnetTokenList.tokens.find((t) => t.symbol === 'tUSDT')!
+
+export const tUSDT = {
+  [TonChainId.Mainnet]: new Token(
+    TonChainId.Mainnet,
+    tUSDTToken.address,
+    tUSDTToken.decimals,
+    tUSDTToken.symbol,
+    tUSDTToken.name,
+  ),
+  [TonChainId.Testnet]: new Token(TonChainId.Testnet, USDC.address, USDC.decimals, USDC.symbol, USDC.name),
+}
 
 export const USDT = {
   [TonChainId.Mainnet]: new Token(
