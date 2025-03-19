@@ -51,8 +51,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       error: null,
     })
   } catch (error: any) {
-    // Cache error response for 1 hour
-    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600, stale-while-revalidate')
+    // Cache error response for 1 second
+    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
 
     return res.status(500).json({ data: null, error: `An error occurred: ${error?.message ?? error}` })
   }
