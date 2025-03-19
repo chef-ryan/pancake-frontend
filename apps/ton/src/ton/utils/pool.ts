@@ -1,7 +1,6 @@
 import { BigintIsh } from '@pancakeswap/swap-sdk-core'
 import BN from 'bignumber.js'
 import { MINIMUM_ADD_LIQUIDITY_AMOUNT, REQUIRED_MIN_LIQUIDITY } from 'config/constants/exchange'
-import { LP_TOKEN_DECIMALS } from 'config/constants/formatting'
 
 interface GetExpectedLpTokensArgs {
   amount0: BigintIsh
@@ -40,12 +39,9 @@ export function isSufficientLiquidityAmount(amount: BigintIsh): boolean {
 }
 
 /**
- * Get user's share from creating a new pool (Should be static)
+ * Get user's share from creating a new pool
  * @param expectedTokens Expected Tokens in parsed form
  */
 export function getNewPoolShare(expectedTokens: string) {
-  return BN(expectedTokens)
-    .minus(BN(REQUIRED_MIN_LIQUIDITY).div(10 ** LP_TOKEN_DECIMALS))
-    .div(BN(expectedTokens))
-    .multipliedBy(100)
+  return BN(expectedTokens).minus(BN(REQUIRED_MIN_LIQUIDITY)).div(BN(expectedTokens)).multipliedBy(100)
 }
