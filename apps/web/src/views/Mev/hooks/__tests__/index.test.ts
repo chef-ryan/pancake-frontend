@@ -22,6 +22,80 @@ import {
   useWalletType,
 } from '../index'
 
+// Helper function to mock useAccountActiveChain with configurable parameters
+const mockUseAccountActiveChain = async (params: {
+  account?: `0x${string}`
+  chainId?: number
+  status?: 'connected' | 'disconnected' | 'connecting'
+  connector?: any
+}) => {
+  const { account, chainId = ChainId.BSC, status = 'connected', connector } = params
+  const useAccountActiveChain = await import('hooks/useAccountActiveChain')
+  return vi.mocked(useAccountActiveChain.default).mockReturnValueOnce({
+    account,
+    chainId,
+    status,
+    connector,
+  })
+}
+
+// Helper function to create a mock connector with configurable parameters
+const createMockConnector = (params?: {
+  id?: string
+  name?: string
+  type?: string
+  isMetaMask?: boolean
+  chainId?: number
+  getProvider?: () => Promise<any>
+}) => {
+  const {
+    id = 'mock',
+    name = 'Mock Wallet',
+    type = 'mock',
+    isMetaMask = true,
+    chainId = ChainId.BSC,
+    getProvider = vi.fn().mockResolvedValue({
+      isMetaMask,
+    }),
+  } = params || {}
+
+  return {
+    id,
+    name,
+    type,
+    uid: 'test-connector',
+    connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId }),
+    disconnect: vi.fn(),
+    getProvider,
+    getAccounts: vi.fn().mockResolvedValue(['0x123']),
+    getChainId: vi.fn().mockResolvedValue(chainId),
+    isAuthorized: vi.fn().mockResolvedValue(true),
+    onAccountsChanged: vi.fn(),
+    onChainChanged: vi.fn(),
+    onDisconnect: vi.fn(),
+    emitter: {
+      uid: 'emitter-uid',
+      on: vi.fn(),
+      off: vi.fn(),
+      once: vi.fn(),
+      emit: vi.fn(),
+      listenerCount: vi.fn(),
+      _emitter: {
+        on: vi.fn(),
+        off: vi.fn(),
+        once: vi.fn(),
+        emit: vi.fn(),
+        eventNames: vi.fn().mockReturnValue([]),
+        listeners: vi.fn().mockReturnValue([]),
+        listenerCount: vi.fn().mockReturnValue(0),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        removeAllListeners: vi.fn(),
+      },
+    },
+  }
+}
+
 // Mock dependencies
 vi.mock('viem/actions', () => ({
   addChain: vi.fn(),
@@ -135,51 +209,6 @@ vi.mock('wagmi', async (importOriginal) => {
   }
 })
 
-vi.mock('hooks/useAccountActiveChain', () => ({
-  default: vi.fn(() => ({
-    account: '0x123',
-    chainId: ChainId.BSC,
-    status: 'connected',
-    connector: {
-      id: 'mock',
-      name: 'Mock Wallet',
-      type: 'mock',
-      uid: 'test-connector',
-      connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-      disconnect: vi.fn(),
-      getProvider: vi.fn().mockResolvedValue({
-        isMetaMask: true,
-      }),
-      getAccounts: vi.fn().mockResolvedValue(['0x123']),
-      getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-      isAuthorized: vi.fn().mockResolvedValue(true),
-      onAccountsChanged: vi.fn(),
-      onChainChanged: vi.fn(),
-      onDisconnect: vi.fn(),
-      emitter: {
-        uid: 'emitter-uid',
-        on: vi.fn(),
-        off: vi.fn(),
-        once: vi.fn(),
-        emit: vi.fn(),
-        listenerCount: vi.fn(),
-        _emitter: {
-          on: vi.fn(),
-          off: vi.fn(),
-          once: vi.fn(),
-          emit: vi.fn(),
-          eventNames: vi.fn().mockReturnValue([]),
-          listeners: vi.fn().mockReturnValue([]),
-          listenerCount: vi.fn().mockReturnValue(0),
-          addListener: vi.fn(),
-          removeListener: vi.fn(),
-          removeAllListeners: vi.fn(),
-        },
-      },
-    },
-  })),
-}))
-
 describe('MEV Hooks', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -212,43 +241,7 @@ describe('MEV Hooks', () => {
     test('should return true for MetaMask wallet that supports addEthereumChain', async () => {
       const { useAccount } = await import('wagmi')
       vi.mocked(useAccount).mockReturnValueOnce({
-        connector: {
-          id: 'mock',
-          name: 'Mock Wallet',
-          type: 'mock',
-          uid: 'test-connector',
-          connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-          disconnect: vi.fn(),
-          getProvider: vi.fn().mockResolvedValue({
-            isMetaMask: true,
-          }),
-          getAccounts: vi.fn().mockResolvedValue(['0x123']),
-          getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-          isAuthorized: vi.fn().mockResolvedValue(true),
-          onAccountsChanged: vi.fn(),
-          onChainChanged: vi.fn(),
-          onDisconnect: vi.fn(),
-          emitter: {
-            uid: 'emitter-uid',
-            on: vi.fn(),
-            off: vi.fn(),
-            once: vi.fn(),
-            emit: vi.fn(),
-            listenerCount: vi.fn(),
-            _emitter: {
-              on: vi.fn(),
-              off: vi.fn(),
-              once: vi.fn(),
-              emit: vi.fn(),
-              eventNames: vi.fn().mockReturnValue([]),
-              listeners: vi.fn().mockReturnValue([]),
-              listenerCount: vi.fn().mockReturnValue(0),
-              addListener: vi.fn(),
-              removeListener: vi.fn(),
-              removeAllListeners: vi.fn(),
-            },
-          },
-        },
+        connector: createMockConnector(),
         address: '0x123',
         addresses: ['0x123'],
         chain: {
@@ -289,43 +282,7 @@ describe('MEV Hooks', () => {
     test('should return false for non-MetaMask wallet', async () => {
       const { useAccount } = await import('wagmi')
       vi.mocked(useAccount).mockReturnValueOnce({
-        connector: {
-          id: 'mock',
-          name: 'Mock Wallet',
-          type: 'mock',
-          uid: 'test-connector',
-          connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-          disconnect: vi.fn(),
-          getProvider: vi.fn().mockResolvedValue({
-            isMetaMask: false,
-          }),
-          getAccounts: vi.fn().mockResolvedValue(['0x123']),
-          getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-          isAuthorized: vi.fn().mockResolvedValue(true),
-          onAccountsChanged: vi.fn(),
-          onChainChanged: vi.fn(),
-          onDisconnect: vi.fn(),
-          emitter: {
-            uid: 'emitter-uid',
-            on: vi.fn(),
-            off: vi.fn(),
-            once: vi.fn(),
-            emit: vi.fn(),
-            listenerCount: vi.fn(),
-            _emitter: {
-              on: vi.fn(),
-              off: vi.fn(),
-              once: vi.fn(),
-              emit: vi.fn(),
-              eventNames: vi.fn().mockReturnValue([]),
-              listeners: vi.fn().mockReturnValue([]),
-              listenerCount: vi.fn().mockReturnValue(0),
-              addListener: vi.fn(),
-              removeListener: vi.fn(),
-              removeAllListeners: vi.fn(),
-            },
-          },
-        },
+        connector: createMockConnector({ isMetaMask: false }),
         address: '0x123',
         addresses: ['0x123'],
         chain: {
@@ -366,10 +323,8 @@ describe('MEV Hooks', () => {
 
   describe('useIsMEVEnabled', () => {
     test('should return false when account is not available', async () => {
-      const useAccountActiveChain = await import('hooks/useAccountActiveChain')
-      vi.mocked(useAccountActiveChain.default).mockReturnValueOnce({
+      await mockUseAccountActiveChain({
         account: undefined,
-        chainId: ChainId.BSC,
         status: 'disconnected',
         connector: undefined,
       })
@@ -403,48 +358,10 @@ describe('MEV Hooks', () => {
     })
 
     test('should return false for non-BSC chain', async () => {
-      const useAccountActiveChain = await import('hooks/useAccountActiveChain')
-      vi.mocked(useAccountActiveChain.default).mockReturnValueOnce({
+      await mockUseAccountActiveChain({
         account: '0x123',
         chainId: ChainId.ETHEREUM,
-        status: 'connected',
-        connector: {
-          id: 'mock',
-          name: 'Mock Wallet',
-          type: 'mock',
-          uid: 'test-connector',
-          connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-          disconnect: vi.fn(),
-          getProvider: vi.fn().mockResolvedValue({
-            isMetaMask: true,
-          }),
-          getAccounts: vi.fn().mockResolvedValue(['0x123']),
-          getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-          isAuthorized: vi.fn().mockResolvedValue(true),
-          onAccountsChanged: vi.fn(),
-          onChainChanged: vi.fn(),
-          onDisconnect: vi.fn(),
-          emitter: {
-            uid: 'emitter-uid',
-            on: vi.fn(),
-            off: vi.fn(),
-            once: vi.fn(),
-            emit: vi.fn(),
-            listenerCount: vi.fn(),
-            _emitter: {
-              on: vi.fn(),
-              off: vi.fn(),
-              once: vi.fn(),
-              emit: vi.fn(),
-              eventNames: vi.fn().mockReturnValue([]),
-              listeners: vi.fn().mockReturnValue([]),
-              listenerCount: vi.fn().mockReturnValue(0),
-              addListener: vi.fn(),
-              removeListener: vi.fn(),
-              removeAllListeners: vi.fn(),
-            },
-          },
-        },
+        connector: createMockConnector(),
       })
 
       const { result } = renderHook(() => useIsMEVEnabled(), {
@@ -551,43 +468,8 @@ describe('MEV Hooks', () => {
         isPaused: false,
       })
 
-      const mockConnector = {
-        id: 'mock',
-        name: 'Mock Wallet',
-        type: 'mock',
-        uid: 'test-connector',
-        connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-        disconnect: vi.fn(),
-        getProvider: vi.fn().mockResolvedValue({
-          isMetaMask: false,
-        }),
-        getAccounts: vi.fn().mockResolvedValue(['0x123']),
-        getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-        isAuthorized: vi.fn().mockResolvedValue(true),
-        onAccountsChanged: vi.fn(),
-        onChainChanged: vi.fn(),
-        onDisconnect: vi.fn(),
-        emitter: {
-          uid: 'emitter-uid',
-          on: vi.fn(),
-          off: vi.fn(),
-          once: vi.fn(),
-          emit: vi.fn(),
-          listenerCount: vi.fn(),
-          _emitter: {
-            on: vi.fn(),
-            off: vi.fn(),
-            once: vi.fn(),
-            emit: vi.fn(),
-            eventNames: vi.fn().mockReturnValue([]),
-            listeners: vi.fn().mockReturnValue([]),
-            listenerCount: vi.fn().mockReturnValue(0),
-            addListener: vi.fn(),
-            removeListener: vi.fn(),
-            removeAllListeners: vi.fn(),
-          },
-        },
-      }
+      const mockConnector = createMockConnector()
+
       const { useAccount } = await import('wagmi')
       vi.mocked(useAccount).mockReturnValueOnce({
         connector: mockConnector,
@@ -672,43 +554,8 @@ describe('MEV Hooks', () => {
         isPaused: false,
       })
 
-      const mockConnector = {
-        id: 'mock',
-        name: 'Mock Wallet',
-        type: 'mock',
-        uid: 'test-connector',
-        connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-        disconnect: vi.fn(),
-        getProvider: vi.fn().mockResolvedValue({
-          isMetaMask: true,
-        }),
-        getAccounts: vi.fn().mockResolvedValue(['0x123']),
-        getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-        isAuthorized: vi.fn().mockResolvedValue(true),
-        onAccountsChanged: vi.fn(),
-        onChainChanged: vi.fn(),
-        onDisconnect: vi.fn(),
-        emitter: {
-          uid: 'emitter-uid',
-          on: vi.fn(),
-          off: vi.fn(),
-          once: vi.fn(),
-          emit: vi.fn(),
-          listenerCount: vi.fn(),
-          _emitter: {
-            on: vi.fn(),
-            off: vi.fn(),
-            once: vi.fn(),
-            emit: vi.fn(),
-            eventNames: vi.fn().mockReturnValue([]),
-            listeners: vi.fn().mockReturnValue([]),
-            listenerCount: vi.fn().mockReturnValue(0),
-            addListener: vi.fn(),
-            removeListener: vi.fn(),
-            removeAllListeners: vi.fn(),
-          },
-        },
-      }
+      const mockConnector = createMockConnector()
+
       const { useAccount } = await import('wagmi')
       vi.mocked(useAccount).mockReturnValueOnce({
         connector: mockConnector,
@@ -786,43 +633,8 @@ describe('MEV Hooks', () => {
         isPaused: false,
       })
 
-      const mockConnector = {
-        id: 'mock',
-        name: 'Mock Wallet',
-        type: 'mock',
-        uid: 'test-connector',
-        connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-        disconnect: vi.fn(),
-        getProvider: vi.fn().mockResolvedValue({
-          isMetaMask: false,
-        }),
-        getAccounts: vi.fn().mockResolvedValue(['0x123']),
-        getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-        isAuthorized: vi.fn().mockResolvedValue(true),
-        onAccountsChanged: vi.fn(),
-        onChainChanged: vi.fn(),
-        onDisconnect: vi.fn(),
-        emitter: {
-          uid: 'emitter-uid',
-          on: vi.fn(),
-          off: vi.fn(),
-          once: vi.fn(),
-          emit: vi.fn(),
-          listenerCount: vi.fn(),
-          _emitter: {
-            on: vi.fn(),
-            off: vi.fn(),
-            once: vi.fn(),
-            emit: vi.fn(),
-            eventNames: vi.fn().mockReturnValue([]),
-            listeners: vi.fn().mockReturnValue([]),
-            listenerCount: vi.fn().mockReturnValue(0),
-            addListener: vi.fn(),
-            removeListener: vi.fn(),
-            removeAllListeners: vi.fn(),
-          },
-        },
-      }
+      const mockConnector = createMockConnector()
+
       const { useAccount } = await import('wagmi')
       vi.mocked(useAccount).mockReturnValueOnce({
         connector: mockConnector,
@@ -877,13 +689,7 @@ describe('MEV Hooks', () => {
     })
 
     test('should return mevDefaultOnBSC for WalletConnect with supported wallet', async () => {
-      const mockConnector = {
-        id: 'mock',
-        name: 'Mock Wallet',
-        type: 'mock',
-        uid: 'test-connector',
-        connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-        disconnect: vi.fn(),
+      const mockConnector = createMockConnector({
         getProvider: vi.fn().mockResolvedValue({
           isWalletConnect: true,
           session: {
@@ -894,162 +700,40 @@ describe('MEV Hooks', () => {
             },
           },
         }),
-        getAccounts: vi.fn().mockResolvedValue(['0x123']),
-        getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-        isAuthorized: vi.fn().mockResolvedValue(true),
-        onAccountsChanged: vi.fn(),
-        onChainChanged: vi.fn(),
-        onDisconnect: vi.fn(),
-        emitter: {
-          uid: 'emitter-uid',
-          on: vi.fn(),
-          off: vi.fn(),
-          once: vi.fn(),
-          emit: vi.fn(),
-          listenerCount: vi.fn(),
-          _emitter: {
-            on: vi.fn(),
-            off: vi.fn(),
-            once: vi.fn(),
-            emit: vi.fn(),
-            eventNames: vi.fn().mockReturnValue([]),
-            listeners: vi.fn().mockReturnValue([]),
-            listenerCount: vi.fn().mockReturnValue(0),
-            addListener: vi.fn(),
-            removeListener: vi.fn(),
-            removeAllListeners: vi.fn(),
-          },
-        },
-      }
+      })
 
       const result = await getWalletType(mockConnector)
       expect(result).toBe(WalletType.mevDefaultOnBSC)
     })
 
     test('should return mevOnlyManualConfig for wallets that support manual RPC config', async () => {
-      const mockConnector = {
-        id: 'mock',
-        name: 'Mock Wallet',
-        type: 'mock',
-        uid: 'test-connector',
-        connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-        disconnect: vi.fn(),
+      const mockConnector = createMockConnector({
         getProvider: vi.fn().mockResolvedValue({
           [walletSupportManualRPCConfig[0]]: true,
         }),
-        getAccounts: vi.fn().mockResolvedValue(['0x123']),
-        getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-        isAuthorized: vi.fn().mockResolvedValue(true),
-        onAccountsChanged: vi.fn(),
-        onChainChanged: vi.fn(),
-        onDisconnect: vi.fn(),
-        emitter: {
-          uid: 'emitter-uid',
-          on: vi.fn(),
-          off: vi.fn(),
-          once: vi.fn(),
-          emit: vi.fn(),
-          listenerCount: vi.fn(),
-          _emitter: {
-            on: vi.fn(),
-            off: vi.fn(),
-            once: vi.fn(),
-            emit: vi.fn(),
-            eventNames: vi.fn().mockReturnValue([]),
-            listeners: vi.fn().mockReturnValue([]),
-            listenerCount: vi.fn().mockReturnValue(0),
-            addListener: vi.fn(),
-            removeListener: vi.fn(),
-            removeAllListeners: vi.fn(),
-          },
-        },
-      }
+      })
 
       const result = await getWalletType(mockConnector)
       expect(result).toBe(WalletType.mevOnlyManualConfig)
     })
 
     test('should return mevDefaultOnBSC for wallets with default MEV on BSC', async () => {
-      const mockConnector = {
-        id: 'mock',
-        name: 'Mock Wallet',
-        type: 'mock',
-        uid: 'test-connector',
-        connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-        disconnect: vi.fn(),
+      const mockConnector = createMockConnector({
         getProvider: vi.fn().mockResolvedValue({
           [walletSupportDefaultMevOnBSC[0]]: true,
         }),
-        getAccounts: vi.fn().mockResolvedValue(['0x123']),
-        getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-        isAuthorized: vi.fn().mockResolvedValue(true),
-        onAccountsChanged: vi.fn(),
-        onChainChanged: vi.fn(),
-        onDisconnect: vi.fn(),
-        emitter: {
-          uid: 'emitter-uid',
-          on: vi.fn(),
-          off: vi.fn(),
-          once: vi.fn(),
-          emit: vi.fn(),
-          listenerCount: vi.fn(),
-          _emitter: {
-            on: vi.fn(),
-            off: vi.fn(),
-            once: vi.fn(),
-            emit: vi.fn(),
-            eventNames: vi.fn().mockReturnValue([]),
-            listeners: vi.fn().mockReturnValue([]),
-            listenerCount: vi.fn().mockReturnValue(0),
-            addListener: vi.fn(),
-            removeListener: vi.fn(),
-            removeAllListeners: vi.fn(),
-          },
-        },
-      }
+      })
 
       const result = await getWalletType(mockConnector)
       expect(result).toBe(WalletType.mevDefaultOnBSC)
     })
 
     test('should return nativeSupportCustomRPC for wallets with custom RPC support', async () => {
-      const mockConnector = {
-        id: 'mock',
-        name: 'Mock Wallet',
-        type: 'mock',
-        uid: 'test-connector',
-        connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-        disconnect: vi.fn(),
+      const mockConnector = createMockConnector({
         getProvider: vi.fn().mockResolvedValue({
           [walletSupportCustomRPCNative[0]]: true,
         }),
-        getAccounts: vi.fn().mockResolvedValue(['0x123']),
-        getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-        isAuthorized: vi.fn().mockResolvedValue(true),
-        onAccountsChanged: vi.fn(),
-        onChainChanged: vi.fn(),
-        onDisconnect: vi.fn(),
-        emitter: {
-          uid: 'emitter-uid',
-          on: vi.fn(),
-          off: vi.fn(),
-          once: vi.fn(),
-          emit: vi.fn(),
-          listenerCount: vi.fn(),
-          _emitter: {
-            on: vi.fn(),
-            off: vi.fn(),
-            once: vi.fn(),
-            emit: vi.fn(),
-            eventNames: vi.fn().mockReturnValue([]),
-            listeners: vi.fn().mockReturnValue([]),
-            listenerCount: vi.fn().mockReturnValue(0),
-            addListener: vi.fn(),
-            removeListener: vi.fn(),
-            removeAllListeners: vi.fn(),
-          },
-        },
-      }
+      })
 
       const result = await getWalletType(mockConnector)
       expect(result).toBe(WalletType.nativeSupportCustomRPC)
@@ -1081,43 +765,8 @@ describe('MEV Hooks', () => {
     })
 
     test('should call getWalletType with connector', async () => {
-      const mockConnector = {
-        id: 'mock',
-        name: 'Mock Wallet',
-        type: 'mock',
-        uid: 'test-connector',
-        connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-        disconnect: vi.fn(),
-        getProvider: vi.fn().mockResolvedValue({
-          isMetaMask: true,
-        }),
-        getAccounts: vi.fn().mockResolvedValue(['0x123']),
-        getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-        isAuthorized: vi.fn().mockResolvedValue(true),
-        onAccountsChanged: vi.fn(),
-        onChainChanged: vi.fn(),
-        onDisconnect: vi.fn(),
-        emitter: {
-          uid: 'emitter-uid',
-          on: vi.fn(),
-          off: vi.fn(),
-          once: vi.fn(),
-          emit: vi.fn(),
-          listenerCount: vi.fn(),
-          _emitter: {
-            on: vi.fn(),
-            off: vi.fn(),
-            once: vi.fn(),
-            emit: vi.fn(),
-            eventNames: vi.fn().mockReturnValue([]),
-            listeners: vi.fn().mockReturnValue([]),
-            listenerCount: vi.fn().mockReturnValue(0),
-            addListener: vi.fn(),
-            removeListener: vi.fn(),
-            removeAllListeners: vi.fn(),
-          },
-        },
-      }
+      const mockConnector = createMockConnector()
+
       const { useAccount } = await import('wagmi')
       vi.mocked(useAccount).mockReturnValueOnce({
         connector: mockConnector,
