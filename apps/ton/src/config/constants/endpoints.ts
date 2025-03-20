@@ -1,6 +1,6 @@
 import { TonChainId, TonNetworks } from '@pancakeswap/ton-v2-sdk'
 
-export const TG_BOT_URL = 'https://tgqa.noahlabs.tech/ton' // TODO: Update for Mainnet
+export const TG_BOT_URL = 'https://tgqa.noahlabs.tech/ton'
 
 export const ASSET_CDN = 'https://assets.pancakeswap.finance'
 
@@ -18,7 +18,7 @@ export const TON_API = {
   [TonChainId.Testnet]: 'https://testnet.tonapi.io',
 }
 
-export const bridgeLink = 'https://bridge.pancakeswap.finance'
+export const bridgeLink = 'https://bridge.ton.org'
 
 // Learn More Links to Docs
 export const liquidityLearnMoreUrl = 'https://docs.pancakeswap.finance'

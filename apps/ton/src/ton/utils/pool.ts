@@ -43,5 +43,7 @@ export function isSufficientLiquidityAmount(amount: BigintIsh): boolean {
  * @param expectedTokens Expected Tokens in parsed form
  */
 export function getNewPoolShare(expectedTokens: string) {
-  return BN(expectedTokens).minus(BN(REQUIRED_MIN_LIQUIDITY)).div(BN(expectedTokens)).multipliedBy(100)
+  return BN(expectedTokens)
+    .div(BN(expectedTokens).plus(BN(REQUIRED_MIN_LIQUIDITY)))
+    .multipliedBy(100)
 }

@@ -211,13 +211,16 @@ export const CardContent = (props: CardContentProps) => {
     const parsedReserve1 = poolData?.reserve1 || 0n
     const parsedTotalSupply = poolData?.totalSupply || 0n
 
-    return getExpectedPoolTokens({
-      amount0: parsedAmount0,
-      amount1: parsedAmount1,
-      reserve0: parsedReserve0,
-      reserve1: parsedReserve1,
-      totalSupply: parsedTotalSupply,
-    }).dividedBy(10 ** LP_TOKEN_DECIMALS)
+    return BN.max(
+      getExpectedPoolTokens({
+        amount0: parsedAmount0,
+        amount1: parsedAmount1,
+        reserve0: parsedReserve0,
+        reserve1: parsedReserve1,
+        totalSupply: parsedTotalSupply,
+      }).dividedBy(10 ** LP_TOKEN_DECIMALS),
+      BN(0),
+    )
   }, [currency0, currency1, currencyAmounts, poolData?.totalSupply, poolData?.reserve0, poolData?.reserve1])
 
   const expectedShareInPool = useMemo(() => {
@@ -227,6 +230,10 @@ export const CardContent = (props: CardContentProps) => {
 
     // If new pool being created
     if (!poolData?.totalSupply) {
+      if (!parsedExpectedPoolTokens) {
+        return '0'
+      }
+
       if (
         currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY0] &&
         currencyAmounts[CurrencyField.ADD_LIQUIDITY_CURRENCY1]

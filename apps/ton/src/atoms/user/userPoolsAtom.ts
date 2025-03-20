@@ -1,4 +1,4 @@
-import { TonChainId } from '@pancakeswap/ton-v2-sdk'
+import { Contracts, TonChainId, TonContractNames } from '@pancakeswap/ton-v2-sdk'
 import { atom } from 'jotai'
 import { atomFamily, atomWithStorage } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
@@ -24,9 +24,14 @@ export const updateUserPoolAtom = atom(null, (get, set, pool: CombinedPoolData) 
 
 const cachedUserPoolsListAtom = atomFamily(
   ({ chainId, userAddress }: { chainId: TonChainId; userAddress: string }) =>
-    atomWithStorage<InitialPoolData[]>(`pcs:cachedUserPools::${chainId}::${userAddress}`, [], undefined, {
-      unstable_getOnInit: true,
-    }),
+    atomWithStorage<InitialPoolData[]>(
+      `pcs:cachedUserPools::${chainId}::${Contracts[TonContractNames.PCSRouter][chainId].address}::${userAddress}`,
+      [],
+      undefined,
+      {
+        unstable_getOnInit: true,
+      },
+    ),
   isEqual,
 )
 export const cachedUserPoolsAtom = atom(
