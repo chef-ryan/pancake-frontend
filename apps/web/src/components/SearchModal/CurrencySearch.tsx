@@ -14,7 +14,7 @@ import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useAllLists, useInactiveListUrls } from 'state/lists/hooks'
 import { safeGetAddress } from 'utils'
 
-import { useAllTokens, useIsUserAddedToken, useToken } from '../../hooks/Tokens'
+import { useAllTokens, useIsUserAddedToken, useSortTokens, useToken } from '../../hooks/Tokens'
 import Row from '../Layout/Row'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
@@ -102,12 +102,13 @@ function CurrencySearch({
 
   // if they input an address, use it
   const searchToken = useToken(debouncedQuery)
-  const filteredSortedTokens = useAllTokens({
+  const filteredTokens = useAllTokens({
     filter: {
       query: debouncedQuery,
-      invertSearchOrder,
     },
   })
+  const filteredSortedTokens = useSortTokens(filteredTokens, invertSearchOrder)
+
   const searchTokenIsAdded = useIsUserAddedToken(searchToken)
 
   const { isMobile } = useMatchBreakpoints()

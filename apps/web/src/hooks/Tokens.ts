@@ -20,7 +20,7 @@ import { useTokenBalances } from 'state/wallet/hooks'
 import { safeGetAddress } from 'utils'
 import { erc20Abi, isAddress } from 'viem'
 import { useAccount } from 'wagmi'
-import useUserAddedTokens, { useUserAddedTokensByChainIds } from '../state/user/hooks/useUserAddedTokens'
+import useUserAddedTokens from '../state/user/hooks/useUserAddedTokens'
 import { useActiveChainId } from './useActiveChainId'
 import useNativeCurrency from './useNativeCurrency'
 
@@ -69,10 +69,28 @@ interface TokenFilterOptions {
   chainId?: number
   filter?: {
     query: string
-    invertSearchOrder: boolean
     limit?: number
   }
 }
+
+export function useSortTokens(tokens: Token[], invert: boolean): Token[] {
+  const { address: account } = useAccount()
+  const balances = useTokenBalances(account ?? undefined, tokens)
+  const comparator = useMemo(() => {
+    return getTokenComparator(balances ?? {})
+  }, [balances])
+
+  const sorted = useMemo(() => {
+    if (invert) {
+      tokens.sort((a, b) => comparator(b, a))
+    } else {
+      tokens.sort(comparator)
+    }
+    return tokens
+  }, [tokens, comparator, invert])
+  return sorted
+}
+
 export function useAllTokens(options?: TokenFilterOptions): Token[] {
   const { chainId: activeChainId } = useActiveChainId()
   const { chainId, filter } = options || {
@@ -86,32 +104,22 @@ export function useAllTokens(options?: TokenFilterOptions): Token[] {
     }),
   )
   const tokens = useMemo(() => {
-    return tokenInfos.map(toToken).filter((x) => x) as Token[]
-  }, [])
-
-  const { address: account } = useAccount()
-  const balances = useTokenBalances(account ?? undefined, tokens)
-  const comparator = useMemo(() => {
-    return getTokenComparator(balances ?? {})
-  }, [balances])
+    return (tokenInfos || []).map(toToken).filter((x) => x) as Token[]
+  }, [tokenInfos])
 
   const filtered = useMemo(() => {
     let list = tokens
     if (filter) {
-      const { query, invertSearchOrder } = filter
+      const { query } = filter
       const filterToken = createFilterToken(query, (address) => isAddress(address))
       list = list.filter(filterToken)
-      list = getSortedTokensByQuery(filtered, query)
-      if (invertSearchOrder) {
-        list.sort((a, b) => comparator(b, a))
-      }
-      list.sort(comparator)
+      list = getSortedTokensByQuery(list, query)
       if (filter.limit) {
         list = list.slice(0, filter.limit)
       }
     }
     return list
-  }, [tokens, filter?.query, filter?.invertSearchOrder, comparator])
+  }, [tokens, filter?.query])
 
   return filtered
 }
@@ -154,65 +162,6 @@ export type TokenChainAddressMap<TChainId extends number = number> = {
     [tokenAddress: Address]: ERC20Token
   }
 }
-
-const tokenMapCache = new WeakMap<TokenAddressMap<ChainId>, string>()
-
-// const memoizedTokenMap = memoize(
-//   (
-//     chainIds: ChainId[],
-//     tokenMap: TokenAddressMap<ChainId>,
-//     userAddedTokenMap: { [p: number]: Token[] },
-//   ): TokenChainAddressMap => {
-//     return chainIds.reduce<TokenChainAddressMap>((tokenMap_, chainId) => {
-//       tokenMap_[chainId] = tokenMap_[chainId] || {}
-//       userAddedTokenMap[chainId].forEach((token) => {
-//         const checksumAddress = safeGetAddress(token.address)
-//         if (checksumAddress) {
-//           tokenMap_[chainId][checksumAddress] = token
-//         }
-//       })
-//       Object.keys(tokenMap[chainId] || {}).forEach((address) => {
-//         const checksumAddress = safeGetAddress(address)
-//         if (checksumAddress && !tokenMap_[chainId][checksumAddress]) {
-//           tokenMap_[chainId][checksumAddress] = tokenMap[chainId][address].token
-//         }
-//       })
-
-//       return tokenMap_
-//     }, {})
-//   },
-//   (chainIds, tokenMap, userAddedTokenMap) => {
-//     let tokenMapId = tokenMapCache.get(tokenMap)
-//     if (!tokenMapId) {
-//       tokenMapId = uniqueId()
-//       tokenMapCache.set(tokenMap, tokenMapId)
-//     }
-//     const chainIdsKey = chainIds.join(',')
-//     // User-added tokens are small and contain only the token; stringify can be used.
-//     const userAddedTokenMapKey = JSON.stringify(
-//       Object.keys(userAddedTokenMap).reduce((acc, chainId) => {
-//         acc[chainId] = userAddedTokenMap[chainId].map((token) => token.address || '')
-//         return acc
-//       }, {} as { [p: number]: string[] }),
-//     )
-//     return `${chainIdsKey}:${tokenMapId}:${userAddedTokenMapKey}`
-//   },
-// )
-
-export function useTokensByChainIds(chainIds: number[], tokenMap: TokenAddressMap<ChainId>): TokenChainAddressMap {
-  const userAddedTokenMap = useUserAddedTokensByChainIds(chainIds)
-
-  // return memoizedTokenMap(chainIds, tokenMap, userAddedTokenMap)
-  return []
-}
-
-// /**
-//  * Returns all tokens that are from active urls and user added tokens
-//  */
-// export function useAllTokensByChainIds(chainIds: number[]): TokenChainAddressMap {
-//   const allTokenMap = useAtomValue(combinedTokenMapFromActiveUrlsAtom)
-//   return useTokensByChainIds(chainIds, allTokenMap)
-// }
 
 export function useOfficialsAndUserAddedTokensByChainIds(chainIds: number[]): TokenChainAddressMap {
   const tokenMap = useAtomValue(combinedTokenMapFromOfficialsUrlsAtom)
