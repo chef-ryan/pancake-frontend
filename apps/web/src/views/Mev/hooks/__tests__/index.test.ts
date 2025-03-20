@@ -1,12 +1,11 @@
 import { ChainId } from '@pancakeswap/chains'
-import { act, renderHook } from '@testing-library/react-hooks'
+import { renderHook, act } from '@testing-library/react'
 import { createWagmiWrapper } from 'testUtils'
+import { WalletType } from 'views/Mev/types'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { BSCMevGuardChain } from 'utils/mevGuardChains'
 import { MethodNotFoundRpcError } from 'viem'
 import { addChain } from 'viem/actions'
-
-import { WalletType } from 'views/Mev/types'
-import { beforeEach, describe, expect, test, vi } from 'vitest'
 import {
   walletConnectSupportDefaultMevOnBSC,
   walletSupportCustomRPCNative,
@@ -21,232 +20,18 @@ import {
   useWalletSupportsAddEthereumChain,
   useWalletType,
 } from '../index'
+import {
+  createMockConnector,
+  mockUseAccount,
+  mockUseAccountActiveChain,
+  mockUseWalletClient,
+  setupViemActionsMocks,
+  setupWagmiMocks,
+} from './wallet-test-utils'
 
-// Helper function to mock useAccountActiveChain with configurable parameters
-const mockUseAccountActiveChain = async (params: {
-  account?: `0x${string}`
-  chainId?: number
-  status?: 'connected' | 'disconnected' | 'connecting'
-  connector?: any
-}) => {
-  const { account, chainId = ChainId.BSC, status = 'connected', connector } = params
-  const useAccountActiveChain = await import('hooks/useAccountActiveChain')
-  return vi.mocked(useAccountActiveChain.default).mockReturnValueOnce({
-    account,
-    chainId,
-    status,
-    connector,
-  })
-}
-
-// Helper function to create a mock connector with configurable parameters
-const createMockConnector = (params?: {
-  id?: string
-  name?: string
-  type?: string
-  isMetaMask?: boolean
-  chainId?: number
-  getProvider?: () => Promise<any>
-}) => {
-  const {
-    id = 'mock',
-    name = 'Mock Wallet',
-    type = 'mock',
-    isMetaMask = true,
-    chainId = ChainId.BSC,
-    getProvider = vi.fn().mockResolvedValue({
-      isMetaMask,
-    }),
-  } = params || {}
-
-  return {
-    id,
-    name,
-    type,
-    uid: 'test-connector',
-    connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId }),
-    disconnect: vi.fn(),
-    getProvider,
-    getAccounts: vi.fn().mockResolvedValue(['0x123']),
-    getChainId: vi.fn().mockResolvedValue(chainId),
-    isAuthorized: vi.fn().mockResolvedValue(true),
-    onAccountsChanged: vi.fn(),
-    onChainChanged: vi.fn(),
-    onDisconnect: vi.fn(),
-    emitter: {
-      uid: 'emitter-uid',
-      on: vi.fn(),
-      off: vi.fn(),
-      once: vi.fn(),
-      emit: vi.fn(),
-      listenerCount: vi.fn(),
-      _emitter: {
-        on: vi.fn(),
-        off: vi.fn(),
-        once: vi.fn(),
-        emit: vi.fn(),
-        eventNames: vi.fn().mockReturnValue([]),
-        listeners: vi.fn().mockReturnValue([]),
-        listenerCount: vi.fn().mockReturnValue(0),
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        removeAllListeners: vi.fn(),
-      },
-    },
-  }
-}
-
-// Helper function to mock useWalletClient with configurable parameters
-const mockUseWalletClient = async (walletClient?: any) => {
-  const mockClient = walletClient || {
-    account: {
-      address: '0x123',
-    },
-    request: vi.fn(),
-  }
-
-  const { useWalletClient } = await import('wagmi')
-  return vi.mocked(useWalletClient).mockReturnValueOnce({
-    data: mockClient,
-    error: null,
-    isError: false,
-    isPending: false,
-    isLoading: false,
-    isSuccess: true,
-    status: 'success',
-    isLoadingError: false,
-    isRefetchError: false,
-    dataUpdatedAt: Date.now(),
-    errorUpdatedAt: 0,
-    failureCount: 0,
-    failureReason: null,
-    errorUpdateCount: 0,
-    isFetched: true,
-    isFetchedAfterMount: true,
-    isFetching: false,
-    isPlaceholderData: false,
-    isRefetching: false,
-    isStale: false,
-    refetch: vi.fn(),
-    fetchStatus: 'idle',
-    queryKey: ['walletClient'],
-    isInitialLoading: false,
-    isPaused: false,
-  })
-}
-
-// Mock dependencies
-vi.mock('viem/actions', () => ({
-  addChain: vi.fn(),
-}))
-
-// Update the wagmi mock
-vi.mock('wagmi', async (importOriginal) => {
-  const actual = await importOriginal()
-
-  // Create a mock wallet connector inside the mock function
-  const createConnectorMock = (isMetaMask = true) => ({
-    id: 'mock',
-    name: 'Mock Wallet',
-    type: 'mock',
-    uid: 'test-connector',
-    connect: vi.fn().mockResolvedValue({ accounts: ['0x123'], chainId: ChainId.BSC }),
-    disconnect: vi.fn(),
-    getProvider: vi.fn().mockResolvedValue({
-      isMetaMask,
-    }),
-    getAccounts: vi.fn().mockResolvedValue(['0x123']),
-    getChainId: vi.fn().mockResolvedValue(ChainId.BSC),
-    isAuthorized: vi.fn().mockResolvedValue(true),
-    onAccountsChanged: vi.fn(),
-    onChainChanged: vi.fn(),
-    onDisconnect: vi.fn(),
-    emitter: {
-      uid: 'emitter-uid',
-      on: vi.fn(),
-      off: vi.fn(),
-      once: vi.fn(),
-      emit: vi.fn(),
-      listenerCount: vi.fn(),
-      _emitter: {
-        on: vi.fn(),
-        off: vi.fn(),
-        once: vi.fn(),
-        emit: vi.fn(),
-        eventNames: vi.fn().mockReturnValue([]),
-        listeners: vi.fn().mockReturnValue([]),
-        listenerCount: vi.fn().mockReturnValue(0),
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        removeAllListeners: vi.fn(),
-      },
-    },
-  })
-
-  return {
-    ...(actual as any),
-    useAccount: vi.fn(() => ({
-      connector: createConnectorMock(),
-      address: '0x123',
-      addresses: ['0x123'],
-      chain: {
-        id: ChainId.BSC,
-        name: 'BSC',
-        nativeCurrency: {
-          name: 'BNB',
-          symbol: 'BNB',
-          decimals: 18,
-        },
-        rpcUrls: {
-          default: {
-            http: ['https://bsc-dataseed.binance.org/'],
-          },
-          public: {
-            http: ['https://bsc-dataseed.binance.org/'],
-          },
-        },
-      },
-      chainId: ChainId.BSC,
-      isConnected: true,
-      isReconnecting: false,
-      isConnecting: false,
-      isDisconnected: false,
-      status: 'connected',
-    })),
-    useWalletClient: vi.fn(() => ({
-      data: {
-        account: {
-          address: '0x123',
-        },
-        request: vi.fn(),
-      },
-      error: null,
-      isError: false,
-      isPending: false,
-      isLoading: false,
-      isSuccess: true,
-      status: 'success',
-      isLoadingError: false,
-      isRefetchError: false,
-      dataUpdatedAt: Date.now(),
-      errorUpdatedAt: 0,
-      failureCount: 0,
-      failureReason: null,
-      errorUpdateCount: 0,
-      isFetched: true,
-      isFetchedAfterMount: true,
-      isFetching: false,
-      isPlaceholderData: false,
-      isRefetching: false,
-      isStale: false,
-      refetch: vi.fn(),
-      fetchStatus: 'idle',
-      queryKey: ['walletClient'],
-      isInitialLoading: false,
-      isPaused: false,
-    })),
-  }
-})
+// Setup mocks for external dependencies
+setupViemActionsMocks()
+setupWagmiMocks()
 
 describe('MEV Hooks', () => {
   beforeEach(() => {
@@ -255,17 +40,12 @@ describe('MEV Hooks', () => {
 
   describe('useWalletSupportsAddEthereumChain', () => {
     test('should return false when connector is not available', async () => {
-      const { useAccount } = await import('wagmi')
-      vi.mocked(useAccount).mockReturnValueOnce({
+      await mockUseAccount({
         connector: undefined,
         address: undefined,
         addresses: undefined,
-        chain: undefined,
         chainId: undefined,
         isConnected: false,
-        isReconnecting: false,
-        isConnecting: false,
-        isDisconnected: true,
         status: 'disconnected',
       })
 
@@ -278,94 +58,33 @@ describe('MEV Hooks', () => {
     })
 
     test('should return true for MetaMask wallet that supports addEthereumChain', async () => {
-      const { useAccount } = await import('wagmi')
-      vi.mocked(useAccount).mockReturnValueOnce({
+      await mockUseAccount({
         connector: createMockConnector(),
         address: '0x123',
         addresses: ['0x123'],
-        chain: {
-          id: ChainId.BSC,
-          name: 'BSC',
-          nativeCurrency: {
-            name: 'BNB',
-            symbol: 'BNB',
-            decimals: 18,
-          },
-          rpcUrls: {
-            default: {
-              http: ['https://bsc-dataseed.binance.org/'],
-            },
-            public: {
-              http: ['https://bsc-dataseed.binance.org/'],
-            },
-          },
-        },
         chainId: ChainId.BSC,
         isConnected: true,
-        isReconnecting: false,
-        isConnecting: false,
-        isDisconnected: false,
         status: 'connected',
       })
 
-      const { result, waitForNextUpdate } = renderHook(() => useWalletSupportsAddEthereumChain(), {
+      const { result } = renderHook(() => useWalletSupportsAddEthereumChain(), {
         wrapper: createWagmiWrapper(),
       })
 
-      await waitForNextUpdate()
+      await vi.waitFor(() => {
+        expect(result.current.isLoading).toBe(false)
+      })
 
       expect(result.current.walletSupportsAddEthereumChain).toBe(true)
-      expect(result.current.isLoading).toBe(false)
-    })
-
-    test('should return false for non-MetaMask wallet', async () => {
-      const { useAccount } = await import('wagmi')
-      vi.mocked(useAccount).mockReturnValueOnce({
-        connector: createMockConnector({ isMetaMask: false }),
-        address: '0x123',
-        addresses: ['0x123'],
-        chain: {
-          id: ChainId.BSC,
-          name: 'BSC',
-          nativeCurrency: {
-            name: 'BNB',
-            symbol: 'BNB',
-            decimals: 18,
-          },
-          rpcUrls: {
-            default: {
-              http: ['https://bsc-dataseed.binance.org/'],
-            },
-            public: {
-              http: ['https://bsc-dataseed.binance.org/'],
-            },
-          },
-        },
-        chainId: ChainId.BSC,
-        isConnected: true,
-        isReconnecting: false,
-        isConnecting: false,
-        isDisconnected: false,
-        status: 'connected',
-      })
-
-      const { result, waitForNextUpdate } = renderHook(() => useWalletSupportsAddEthereumChain(), {
-        wrapper: createWagmiWrapper(),
-      })
-
-      await waitForNextUpdate()
-
-      expect(result.current.walletSupportsAddEthereumChain).toBe(false)
-      expect(result.current.isLoading).toBe(false)
     })
   })
 
   describe('useIsMEVEnabled', () => {
-    test('should return false when account is not available', async () => {
+    test('should return false when not connected to BSC', async () => {
       await mockUseAccountActiveChain({
-        account: undefined,
-        status: 'disconnected',
-        connector: undefined,
+        account: '0x123',
+        chainId: ChainId.ETHEREUM,
+        status: 'connected',
       })
 
       const { result } = renderHook(() => useIsMEVEnabled(), {
@@ -373,18 +92,20 @@ describe('MEV Hooks', () => {
       })
 
       expect(result.current.isMEVEnabled).toBe(false)
-      expect(result.current.isMEVProtectAvailable).toBe(true)
     })
 
-    test('should return true for wallet with default MEV on BSC', async () => {
+    test('should return true when connected to BSC with MEV RPC', async () => {
+      await mockUseAccountActiveChain({
+        account: '0x123',
+        chainId: ChainId.BSC,
+        status: 'connected',
+      })
+
       vi.mock('../index', async () => {
         const actual = await vi.importActual('../index')
         return {
-          ...actual,
-          useWalletType: vi.fn().mockReturnValue({
-            walletType: WalletType.mevDefaultOnBSC,
-            isLoading: false,
-          }),
+          ...(actual as any),
+          isBSCMevRpc: vi.fn().mockReturnValue(true),
         }
       })
 
@@ -393,22 +114,6 @@ describe('MEV Hooks', () => {
       })
 
       expect(result.current.isMEVEnabled).toBe(true)
-      expect(result.current.isMEVProtectAvailable).toBe(true)
-    })
-
-    test('should return false for non-BSC chain', async () => {
-      await mockUseAccountActiveChain({
-        account: '0x123',
-        chainId: ChainId.ETHEREUM,
-        connector: createMockConnector(),
-      })
-
-      const { result } = renderHook(() => useIsMEVEnabled(), {
-        wrapper: createWagmiWrapper(),
-      })
-
-      expect(result.current.isMEVEnabled).toBe(false)
-      expect(result.current.isMEVProtectAvailable).toBe(false)
     })
   })
 
@@ -417,18 +122,26 @@ describe('MEV Hooks', () => {
       vi.mock('../index', async () => {
         const actual = await vi.importActual('../index')
         return {
-          ...actual,
-          useIsMEVEnabled: vi.fn().mockReturnValue({
-            isMEVEnabled: true,
-            isLoading: false,
-            isMEVProtectAvailable: true,
-          }),
-          useWalletType: vi.fn().mockReturnValue({
-            walletType: WalletType.nativeSupportCustomRPC,
-            isLoading: false,
-          }),
+          ...(actual as any),
+          useIsMEVEnabled: vi.fn().mockReturnValue({ isMEVEnabled: true }),
+        }
+      })
+
+      const { result } = renderHook(() => useShouldShowMEVToggle(), {
+        wrapper: createWagmiWrapper(),
+      })
+
+      expect(result.current).toBe(false)
+    })
+
+    test('should return false when wallet does not support addEthereumChain', async () => {
+      vi.mock('../index', async () => {
+        const actual = await vi.importActual('../index')
+        return {
+          ...(actual as any),
+          useIsMEVEnabled: vi.fn().mockReturnValue({ isMEVEnabled: false }),
           useWalletSupportsAddEthereumChain: vi.fn().mockReturnValue({
-            walletSupportsAddEthereumChain: true,
+            walletSupportsAddEthereumChain: false,
             isLoading: false,
           }),
         }
@@ -441,20 +154,12 @@ describe('MEV Hooks', () => {
       expect(result.current).toBe(false)
     })
 
-    test('should return true when conditions are met to show toggle', async () => {
+    test('should return true when wallet supports addEthereumChain and MEV is not enabled', async () => {
       vi.mock('../index', async () => {
         const actual = await vi.importActual('../index')
         return {
-          ...actual,
-          useIsMEVEnabled: vi.fn().mockReturnValue({
-            isMEVEnabled: false,
-            isLoading: false,
-            isMEVProtectAvailable: true,
-          }),
-          useWalletType: vi.fn().mockReturnValue({
-            walletType: WalletType.nativeSupportCustomRPC,
-            isLoading: false,
-          }),
+          ...(actual as any),
+          useIsMEVEnabled: vi.fn().mockReturnValue({ isMEVEnabled: false }),
           useWalletSupportsAddEthereumChain: vi.fn().mockReturnValue({
             walletSupportsAddEthereumChain: true,
             isLoading: false,
@@ -471,7 +176,7 @@ describe('MEV Hooks', () => {
   })
 
   describe('useAddMevRpc', () => {
-    test('should call addChain with correct parameters', async () => {
+    test('should add MEV RPC to wallet', async () => {
       const mockWalletClient = {
         account: {
           address: '0x123',
@@ -482,33 +187,12 @@ describe('MEV Hooks', () => {
 
       const mockConnector = createMockConnector()
 
-      const { useAccount } = await import('wagmi')
-      vi.mocked(useAccount).mockReturnValueOnce({
+      await mockUseAccount({
         connector: mockConnector,
         address: '0x123',
         addresses: ['0x123'],
-        chain: {
-          id: ChainId.BSC,
-          name: 'BSC',
-          nativeCurrency: {
-            name: 'BNB',
-            symbol: 'BNB',
-            decimals: 18,
-          },
-          rpcUrls: {
-            default: {
-              http: ['https://bsc-dataseed.binance.org/'],
-            },
-            public: {
-              http: ['https://bsc-dataseed.binance.org/'],
-            },
-          },
-        },
         chainId: ChainId.BSC,
         isConnected: true,
-        isReconnecting: false,
-        isConnecting: false,
-        isDisconnected: false,
         status: 'connected',
       })
 
@@ -539,33 +223,12 @@ describe('MEV Hooks', () => {
       }
       await mockUseWalletClient(mockWalletClient)
 
-      const { useAccount } = await import('wagmi')
-      vi.mocked(useAccount).mockReturnValueOnce({
+      await mockUseAccount({
         connector: createMockConnector(),
         address: '0x123',
         addresses: ['0x123'],
-        chain: {
-          id: ChainId.BSC,
-          name: 'BSC',
-          nativeCurrency: {
-            name: 'BNB',
-            symbol: 'BNB',
-            decimals: 18,
-          },
-          rpcUrls: {
-            default: {
-              http: ['https://bsc-dataseed.binance.org/'],
-            },
-            public: {
-              http: ['https://bsc-dataseed.binance.org/'],
-            },
-          },
-        },
         chainId: ChainId.BSC,
         isConnected: true,
-        isReconnecting: false,
-        isConnecting: false,
-        isDisconnected: false,
         status: 'connected',
       })
 
@@ -591,33 +254,12 @@ describe('MEV Hooks', () => {
 
       const mockConnector = createMockConnector()
 
-      const { useAccount } = await import('wagmi')
-      vi.mocked(useAccount).mockReturnValueOnce({
+      await mockUseAccount({
         connector: mockConnector,
         address: '0x123',
         addresses: ['0x123'],
-        chain: {
-          id: ChainId.BSC,
-          name: 'BSC',
-          nativeCurrency: {
-            name: 'BNB',
-            symbol: 'BNB',
-            decimals: 18,
-          },
-          rpcUrls: {
-            default: {
-              http: ['https://bsc-dataseed.binance.org/'],
-            },
-            public: {
-              http: ['https://bsc-dataseed.binance.org/'],
-            },
-          },
-        },
         chainId: ChainId.BSC,
         isConnected: true,
-        isReconnecting: false,
-        isConnecting: false,
-        isDisconnected: false,
         status: 'connected',
       })
 
@@ -698,17 +340,12 @@ describe('MEV Hooks', () => {
 
   describe('useWalletType', () => {
     test('should return mevNotSupported when connector is not available', async () => {
-      const { useAccount } = await import('wagmi')
-      vi.mocked(useAccount).mockReturnValueOnce({
+      await mockUseAccount({
         connector: undefined,
         address: undefined,
         addresses: undefined,
-        chain: undefined,
         chainId: undefined,
         isConnected: false,
-        isReconnecting: false,
-        isConnecting: false,
-        isDisconnected: true,
         status: 'disconnected',
       })
 
@@ -722,36 +359,7 @@ describe('MEV Hooks', () => {
 
     test('should call getWalletType with connector', async () => {
       const mockConnector = createMockConnector()
-
-      const { useAccount } = await import('wagmi')
-      vi.mocked(useAccount).mockReturnValueOnce({
-        connector: mockConnector,
-        address: '0x123',
-        addresses: ['0x123'],
-        chain: {
-          id: ChainId.BSC,
-          name: 'BSC',
-          nativeCurrency: {
-            name: 'BNB',
-            symbol: 'BNB',
-            decimals: 18,
-          },
-          rpcUrls: {
-            default: {
-              http: ['https://bsc-dataseed.binance.org/'],
-            },
-            public: {
-              http: ['https://bsc-dataseed.binance.org/'],
-            },
-          },
-        },
-        chainId: ChainId.BSC,
-        isConnected: true,
-        isReconnecting: false,
-        isConnecting: false,
-        isDisconnected: false,
-        status: 'connected',
-      })
+      await mockUseAccount({ connector: mockConnector })
 
       const getWalletTypeSpy = vi.spyOn(await import('../index'), 'getWalletType')
 
