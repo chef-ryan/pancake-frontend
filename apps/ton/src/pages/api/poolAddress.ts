@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .getGetPoolAddress(jettonWalletAddress0, jettonWalletAddress1)
 
     // Cache response for 1 week
-    res.setHeader('Cache-Control', 'public, max-age=604800, s-maxage=604800, stale-while-revalidate')
+    res.setHeader('Cache-Control', 's-maxage=604800')
 
     return res.status(200).json({ data: poolAddress.toString(), error: null })
   } catch (error: any) {
