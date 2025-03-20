@@ -96,6 +96,45 @@ const createMockConnector = (params?: {
   }
 }
 
+// Helper function to mock useWalletClient with configurable parameters
+const mockUseWalletClient = async (walletClient?: any) => {
+  const mockClient = walletClient || {
+    account: {
+      address: '0x123',
+    },
+    request: vi.fn(),
+  }
+
+  const { useWalletClient } = await import('wagmi')
+  return vi.mocked(useWalletClient).mockReturnValueOnce({
+    data: mockClient,
+    error: null,
+    isError: false,
+    isPending: false,
+    isLoading: false,
+    isSuccess: true,
+    status: 'success',
+    isLoadingError: false,
+    isRefetchError: false,
+    dataUpdatedAt: Date.now(),
+    errorUpdatedAt: 0,
+    failureCount: 0,
+    failureReason: null,
+    errorUpdateCount: 0,
+    isFetched: true,
+    isFetchedAfterMount: true,
+    isFetching: false,
+    isPlaceholderData: false,
+    isRefetching: false,
+    isStale: false,
+    refetch: vi.fn(),
+    fetchStatus: 'idle',
+    queryKey: ['walletClient'],
+    isInitialLoading: false,
+    isPaused: false,
+  })
+}
+
 // Mock dependencies
 vi.mock('viem/actions', () => ({
   addChain: vi.fn(),
@@ -439,34 +478,7 @@ describe('MEV Hooks', () => {
         },
         request: vi.fn(),
       }
-      const { useWalletClient } = await import('wagmi')
-      vi.mocked(useWalletClient).mockReturnValueOnce({
-        data: mockWalletClient,
-        error: null,
-        isError: false,
-        isPending: false,
-        isLoading: false,
-        isSuccess: true,
-        status: 'success',
-        isLoadingError: false,
-        isRefetchError: false,
-        dataUpdatedAt: Date.now(),
-        errorUpdatedAt: 0,
-        failureCount: 0,
-        failureReason: null,
-        errorUpdateCount: 0,
-        isFetched: true,
-        isFetchedAfterMount: true,
-        isFetching: false,
-        isPlaceholderData: false,
-        isRefetching: false,
-        isStale: false,
-        refetch: vi.fn(),
-        fetchStatus: 'idle',
-        queryKey: ['walletClient'],
-        isInitialLoading: false,
-        isPaused: false,
-      })
+      await mockUseWalletClient(mockWalletClient)
 
       const mockConnector = createMockConnector()
 
@@ -525,40 +537,11 @@ describe('MEV Hooks', () => {
         },
         request: vi.fn(),
       }
-      const { useWalletClient } = await import('wagmi')
-      vi.mocked(useWalletClient).mockReturnValueOnce({
-        data: mockWalletClient,
-        error: null,
-        isError: false,
-        isPending: false,
-        isLoading: false,
-        isSuccess: true,
-        status: 'success',
-        isLoadingError: false,
-        isRefetchError: false,
-        dataUpdatedAt: Date.now(),
-        errorUpdatedAt: 0,
-        failureCount: 0,
-        failureReason: null,
-        errorUpdateCount: 0,
-        isFetched: true,
-        isFetchedAfterMount: true,
-        isFetching: false,
-        isPlaceholderData: false,
-        isRefetching: false,
-        isStale: false,
-        refetch: vi.fn(),
-        fetchStatus: 'idle',
-        queryKey: ['walletClient'],
-        isInitialLoading: false,
-        isPaused: false,
-      })
-
-      const mockConnector = createMockConnector()
+      await mockUseWalletClient(mockWalletClient)
 
       const { useAccount } = await import('wagmi')
       vi.mocked(useAccount).mockReturnValueOnce({
-        connector: mockConnector,
+        connector: createMockConnector(),
         address: '0x123',
         addresses: ['0x123'],
         chain: {
@@ -604,34 +587,7 @@ describe('MEV Hooks', () => {
         },
         request: vi.fn(),
       }
-      const { useWalletClient } = await import('wagmi')
-      vi.mocked(useWalletClient).mockReturnValueOnce({
-        data: mockWalletClient,
-        error: null,
-        isError: false,
-        isPending: false,
-        isLoading: false,
-        isSuccess: true,
-        status: 'success',
-        isLoadingError: false,
-        isRefetchError: false,
-        dataUpdatedAt: Date.now(),
-        errorUpdatedAt: 0,
-        failureCount: 0,
-        failureReason: null,
-        errorUpdateCount: 0,
-        isFetched: true,
-        isFetchedAfterMount: true,
-        isFetching: false,
-        isPlaceholderData: false,
-        isRefetching: false,
-        isStale: false,
-        refetch: vi.fn(),
-        fetchStatus: 'idle',
-        queryKey: ['walletClient'],
-        isInitialLoading: false,
-        isPaused: false,
-      })
+      await mockUseWalletClient(mockWalletClient)
 
       const mockConnector = createMockConnector()
 
