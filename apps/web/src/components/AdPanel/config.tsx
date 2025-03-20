@@ -88,6 +88,7 @@ export const useAdConfig = () => {
 
 // Array of strings or regex patterns
 const commonLayoutAdIgnoredPages = [
+  '/',
   '/home',
   '/cake-staking',
   // Route matching: /liquidity/pool/<chainName>/<poolAddress>
@@ -101,7 +102,7 @@ const commonLayoutAdIgnoredPages = [
  */
 export const layoutMobileAdIgnoredPages = [
   ...commonLayoutAdIgnoredPages,
-  '/',
+  '/swap',
   '/prediction',
   '/liquidity/pools',
   '/migration/bcake',

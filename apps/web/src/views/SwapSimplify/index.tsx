@@ -74,7 +74,6 @@ export default function V4Swap() {
     <Page removePadding hideFooterOnDesktop={isChartExpanded || false} showExternalLink={false} showHelpLink={false}>
       <Flex
         width="100%"
-        height="100%"
         justifyContent="center"
         position="relative"
         mt={isChartExpanded ? undefined : isMobile ? '18px' : '42px'}
@@ -115,19 +114,13 @@ export default function V4Swap() {
         <Flex
           flexDirection="column"
           alignItems="center"
-          height="100%"
           width={isChartDisplayed && !isMobile ? 'auto' : '100%'}
           mt={isChartExpanded && !isMobile ? '42px' : undefined}
           position="relative"
           zIndex={1}
         >
-          <StyledSwapContainer
-            justifyContent="center"
-            width="100%"
-            style={{ height: '100%' }}
-            $isChartExpanded={isChartExpanded}
-          >
-            <Wrapper height="100%">
+          <StyledSwapContainer justifyContent="center" width="100%" $isChartExpanded={isChartExpanded}>
+            <Wrapper>
               <V4SwapForm />
             </Wrapper>
           </StyledSwapContainer>
