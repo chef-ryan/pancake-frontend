@@ -1,7 +1,9 @@
 import { LanguageProvider } from '@pancakeswap/localization'
+import { TokenListProvider } from '@pancakeswap/token-lists/react'
 import { DialogProvider, ModalProvider, UIKitProvider, dark, light } from '@pancakeswap/uikit'
 import { Store } from '@reduxjs/toolkit'
 import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MULTI_CHAIN_LIST_URLS } from 'config/constants/lists'
 import { HistoryManagerProvider } from 'contexts/HistoryContext'
 import { ThemeProvider as NextThemeProvider, useTheme as useNextTheme } from 'next-themes'
 import { useMemo } from 'react'
@@ -35,15 +37,17 @@ const Providers: React.FC<
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary state={dehydratedState}>
           <Provider store={store}>
-            <NextThemeProvider>
-              <LanguageProvider>
-                <StyledUIKitProvider>
-                  <HistoryManagerProvider>
-                    <ModalProvider portalProvider={DialogProvider}>{children}</ModalProvider>
-                  </HistoryManagerProvider>
-                </StyledUIKitProvider>
-              </LanguageProvider>
-            </NextThemeProvider>
+            <TokenListProvider listName="pcs-evm-list" listsMap={MULTI_CHAIN_LIST_URLS}>
+              <NextThemeProvider>
+                <LanguageProvider>
+                  <StyledUIKitProvider>
+                    <HistoryManagerProvider>
+                      <ModalProvider portalProvider={DialogProvider}>{children}</ModalProvider>
+                    </HistoryManagerProvider>
+                  </StyledUIKitProvider>
+                </LanguageProvider>
+              </NextThemeProvider>
+            </TokenListProvider>
           </Provider>
         </HydrationBoundary>
       </QueryClientProvider>

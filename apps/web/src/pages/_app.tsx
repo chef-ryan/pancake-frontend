@@ -22,7 +22,7 @@ import type { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import Script from 'next/script'
-import { Fragment } from 'react'
+import { Fragment, Suspense } from 'react'
 import { PersistGate } from 'redux-persist/integration/react'
 import 'utils/abortcontroller-polyfill'
 import { V4CakeIcon } from 'views/Home/components/V4CakeIcon'
@@ -199,7 +199,9 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
       {shouldScreenWallet && <Blocklist />}
       {isShowV4IconButton && <V4CakeIcon />}
       <ZKSyncAirdropModalWithAutoPopup />
-      <SimpleStakingSunsetModal />
+      <Suspense>
+        <SimpleStakingSunsetModal />
+      </Suspense>
       <VercelToolbar />
       <Cb1Membership />
     </ProductionErrorBoundary>

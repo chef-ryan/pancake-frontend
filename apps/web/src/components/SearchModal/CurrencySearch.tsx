@@ -1,4 +1,4 @@
-import { useDebounce, useSortedTokensByQuery } from '@pancakeswap/hooks'
+import { useDebounce } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 /* eslint-disable no-restricted-syntax */
 import { Currency, Token } from '@pancakeswap/sdk'
@@ -14,7 +14,6 @@ import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useAllLists, useInactiveListUrls } from 'state/lists/hooks'
 import { safeGetAddress } from 'utils'
 
-import { useTokenComparator } from 'hooks/useTokenComparator'
 import { useAllTokens, useIsUserAddedToken, useToken } from '../../hooks/Tokens'
 import Row from '../Layout/Row'
 import CommonBases from './CommonBases'
@@ -101,10 +100,14 @@ function CurrencySearch({
 
   const [invertSearchOrder] = useState<boolean>(false)
 
-  const allTokens = useAllTokens()
-
   // if they input an address, use it
   const searchToken = useToken(debouncedQuery)
+  const filteredSortedTokens = useAllTokens({
+    filter: {
+      query: debouncedQuery,
+      invertSearchOrder,
+    },
+  })
   const searchTokenIsAdded = useIsUserAddedToken(searchToken)
 
   const { isMobile } = useMatchBreakpoints()
@@ -117,19 +120,6 @@ function CurrencySearch({
     const s = debouncedQuery.toLowerCase().trim()
     return native && native.symbol?.toLowerCase?.()?.indexOf(s) !== -1
   }, [debouncedQuery, native, tokensToShow])
-
-  const filteredTokens: Token[] = useMemo(() => {
-    const filterToken = createFilterToken(debouncedQuery, (address) => isAddress(address))
-    return Object.values(tokensToShow || allTokens).filter(filterToken)
-  }, [tokensToShow, allTokens, debouncedQuery])
-
-  const filteredQueryTokens = useSortedTokensByQuery(filteredTokens, debouncedQuery)
-  const tokenComparator = useTokenComparator(invertSearchOrder)
-
-  const filteredSortedTokens: Token[] = useMemo(
-    () => [...filteredQueryTokens].sort(tokenComparator),
-    [filteredQueryTokens, tokenComparator],
-  )
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {

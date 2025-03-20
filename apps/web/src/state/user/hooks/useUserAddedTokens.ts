@@ -1,7 +1,9 @@
 import { Token } from '@pancakeswap/sdk'
 import { deserializeToken } from '@pancakeswap/token-lists'
+import { userTokensAtom, useTokenListName } from '@pancakeswap/token-lists/react'
 import { createSelector } from '@reduxjs/toolkit'
 import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from '../../index'
@@ -14,7 +16,9 @@ export const userAddedTokenSelector = (chainId?: number) =>
   )
 export default function useUserAddedTokens(): Token[] {
   const { chainId } = useActiveChainId()
-  return useSelector(useMemo(() => userAddedTokenSelector(chainId), [chainId]))
+  const listName = useTokenListName()
+  const list = useAtomValue(userTokensAtom({ listName, chainId: chainId.toString() }))
+  return list
 }
 
 export const userAddedTokenSelectorByChainIds = (chainIds: number[]) =>

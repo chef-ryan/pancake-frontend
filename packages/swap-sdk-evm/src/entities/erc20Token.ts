@@ -14,7 +14,8 @@ export class ERC20Token extends Token {
     symbol: string,
     name?: string,
     projectLink?: string,
+    logoURI?: string,
   ) {
-    super(chainId, validateAndParseAddress(address), decimals, symbol, name, projectLink)
+    super(chainId, validateAndParseAddress(address), decimals, symbol, name, projectLink, logoURI)
   }
 }
