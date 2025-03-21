@@ -14,7 +14,9 @@ import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useAllLists, useInactiveListUrls } from 'state/lists/hooks'
 import { safeGetAddress } from 'utils'
 
-import { useAllTokens, useIsUserAddedToken, useSortTokens, useToken } from '../../hooks/Tokens'
+import { isUserAddedTokenAtom, useTokenListName } from '@pancakeswap/token-lists/react'
+import { useAtomValue } from 'jotai'
+import { useAllTokens, useSortTokens, useToken } from '../../hooks/Tokens'
 import Row from '../Layout/Row'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
@@ -109,7 +111,13 @@ function CurrencySearch({
   })
   const filteredSortedTokens = useSortTokens(filteredTokens, invertSearchOrder)
 
-  const searchTokenIsAdded = useIsUserAddedToken(searchToken)
+  const listName = useTokenListName()
+  const searchTokenIsAdded = useAtomValue(
+    isUserAddedTokenAtom({
+      listName,
+      token: searchToken ?? undefined,
+    }),
+  )
 
   const { isMobile } = useMatchBreakpoints()
   const [audioPlay] = useAudioPlay()

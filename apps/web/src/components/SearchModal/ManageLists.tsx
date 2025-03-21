@@ -1,12 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { TokenList, Version } from '@pancakeswap/token-lists'
-import {
-  acceptListUpdate,
-  disableList,
-  enableList,
-  removeList,
-  useFetchListCallback,
-} from '@pancakeswap/token-lists/react'
+import { getTokenList } from '@pancakeswap/token-lists/react'
 import {
   AutoColumn,
   Button,
@@ -68,6 +62,7 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
   const listsByUrl = useAtomValue(selectorByUrlsAtom)
   const [, dispatch] = useListState()
   const { current: list, pendingUpdate: pending } = listsByUrl[listUrl]
+  const enableList = useSetAtom(en)
 
   const activeTokensOnThisChain = useMemo(() => {
     if (!list || !chainId) {
@@ -195,8 +190,6 @@ function ManageLists({
     setListUrlInput(e.target.value)
   }, [])
 
-  const fetchList = useFetchListCallback(dispatch)
-
   const validUrl: boolean = useMemo(() => {
     return uriToHttp(listUrlInput).length > 0
   }, [listUrlInput])
@@ -252,7 +245,7 @@ function ManageLists({
   useEffect(() => {
     // if valid url, fetch details for card
     if (validUrl) {
-      fetchList(listUrlInput, false)
+      getTokenList(listUrlInput)
         .then((list) => setTempList(list))
         .catch(() => setAddError('Error importing list'))
     } else {
@@ -266,7 +259,7 @@ function ManageLists({
     if (listUrlInput === '') {
       setAddError(undefined)
     }
-  }, [fetchList, listUrlInput, validUrl])
+  }, [listUrlInput, validUrl])
 
   // check if list is already imported
   const isImported = Object.keys(lists).includes(listUrlInput)
@@ -274,6 +267,7 @@ function ManageLists({
   // set list values and have parent modal switch to import list view
   const handleImport = useCallback(() => {
     if (!tempList) return
+    console.log(tempList)
     setImportList(tempList)
     setModalView(CurrencyModalView.importList)
     setListUrl(listUrlInput)

@@ -4,7 +4,7 @@ import { Currency, ERC20Token, getTokenComparator, NativeCurrency, Token } from 
 import { type Address, zeroAddress } from 'viem'
 
 import { createFilterToken, TokenAddressMap, TokenInfo } from '@pancakeswap/token-lists'
-import { allActiveTokensAtom, useTokenListName } from '@pancakeswap/token-lists/react'
+import { allActiveTokensAtom, userTokensAtom, useTokenListName } from '@pancakeswap/token-lists/react'
 import { useReadContracts } from '@pancakeswap/wagmi'
 import { GELATO_NATIVE } from 'config/constants'
 import { UnsafeCurrency } from 'config/constants/types'
@@ -12,7 +12,6 @@ import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 import {
   combinedCurrenciesMapFromActiveUrlsAtom,
-  combinedTokenMapFromOfficialsUrlsAtom,
   useUnsupportedTokenList,
   useWarningTokenList,
 } from 'state/lists/hooks'
@@ -20,7 +19,6 @@ import { useTokenBalances } from 'state/wallet/hooks'
 import { safeGetAddress } from 'utils'
 import { erc20Abi, isAddress } from 'viem'
 import { useAccount } from 'wagmi'
-import useUserAddedTokens from '../state/user/hooks/useUserAddedTokens'
 import { useActiveChainId } from './useActiveChainId'
 import useNativeCurrency from './useNativeCurrency'
 
@@ -164,8 +162,9 @@ export type TokenChainAddressMap<TChainId extends number = number> = {
 }
 
 export function useOfficialsAndUserAddedTokensByChainIds(chainIds: number[]): TokenChainAddressMap {
-  const tokenMap = useAtomValue(combinedTokenMapFromOfficialsUrlsAtom)
-  return useTokensByChainIds(chainIds, tokenMap)
+  // const tokenMap = useAtomValue(combinedTokenMapFromOfficialsUrlsAtom)
+  // return useTokensByChainIds(chainIds, tokenMap)
+  return {}
 }
 
 export function useAllOnRampTokens(): { [address: string]: Currency } {
@@ -181,9 +180,10 @@ export function useAllOnRampTokens(): { [address: string]: Currency } {
  */
 export function useOfficialsAndUserAddedTokens(): { [address: string]: ERC20Token } {
   const { chainId } = useActiveChainId()
-  const tokenMap = useAtomValue(combinedTokenMapFromOfficialsUrlsAtom)
+  // const tokenMap = useAtomValue(combinedTokenMapFromOfficialsUrlsAtom)
+  const tokenMap = {}
 
-  const userAddedTokens = useUserAddedTokens()
+  const userAddedTokens = useAtomValue(userTokensAtom(useTokenListName()))
   return useMemo(() => {
     return (
       userAddedTokens
@@ -230,17 +230,6 @@ export function useIsTokenActive(token: ERC20Token | undefined | null): boolean 
   return Boolean(tokenAddress && !!activeTokens[tokenAddress])
 }
 
-// Check if currency is included in custom list from user storage
-export function useIsUserAddedToken(currency: Currency | undefined | null): boolean {
-  const userAddedTokens = useUserAddedTokens()
-
-  if (!currency?.equals) {
-    return false
-  }
-
-  return !!userAddedTokens.find((token) => currency?.equals(token))
-}
-
 export function useToken(tokenAddress?: string): ERC20Token | undefined | null {
   const { chainId } = useActiveChainId()
   return useTokenByChainId(tokenAddress, chainId)
@@ -250,7 +239,9 @@ export function useToken(tokenAddress?: string): ERC20Token | undefined | null {
 // otherwise returns the token
 export function useTokenByChainId(tokenAddress?: string, chainId?: number): ERC20Token | undefined | null {
   const unsupportedTokens = useUnsupportedTokens()
-  const tokens = useAllTokens(chainId)
+  const tokens = useAllTokens({
+    chainId,
+  })
 
   const address = safeGetAddress(tokenAddress)
 

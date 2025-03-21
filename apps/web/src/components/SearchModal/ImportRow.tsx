@@ -1,7 +1,9 @@
-import { CSSProperties } from 'react'
 import { Currency, Token } from '@pancakeswap/sdk'
+import { isUserAddedTokenAtom, useTokenListName } from '@pancakeswap/token-lists/react'
+import { useIsTokenActive } from 'hooks/Tokens'
+import { useAtomValue } from 'jotai'
+import { CSSProperties } from 'react'
 import { useCombinedInactiveList } from 'state/lists/hooks'
-import { useIsUserAddedToken, useIsTokenActive } from 'hooks/Tokens'
 import ImportTokenRow from './ImportTokenRow'
 
 export default function ImportRow({
@@ -24,7 +26,12 @@ export default function ImportRow({
   const list = token?.chainId && inactiveTokenList?.[token.chainId]?.[token.address]?.list
 
   // check if already active on list or local storage tokens
-  const isAdded = useIsUserAddedToken(token)
+  const isAdded = useAtomValue(
+    isUserAddedTokenAtom({
+      listName: useTokenListName(),
+      token,
+    }),
+  )
   const isActive = useIsTokenActive(token)
 
   return (

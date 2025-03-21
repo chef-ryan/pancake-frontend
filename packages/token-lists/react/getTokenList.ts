@@ -1,18 +1,17 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-await-in-loop */
-import { TokenList } from '@pancakeswap/token-lists'
 import uriToHttp from '@pancakeswap/utils/uriToHttp'
-import Ajv from 'ajv'
 import schema from '../schema/pancakeswap.json'
-
-export const validator = new Ajv({ allErrors: true }).compile(schema)
+import { TokenList } from '../src/types'
 
 /**
  * Contains the logic for resolving a list URL to a validated token list
  * @param listUrl list url
  */
-export default async function getTokenList(listUrl: string): Promise<TokenList> {
+export async function getTokenList(listUrl: string): Promise<TokenList> {
   const urls: string[] = uriToHttp(listUrl)
+  const { default: Ajv } = await import('ajv')
+  const validator = new Ajv({ allErrors: true }).compile(schema)
 
   for (const [i, url] of urls.entries()) {
     try {

@@ -1,8 +1,12 @@
 import { nanoid } from '@reduxjs/toolkit'
 import { useCallback } from 'react'
-import { fetchTokenList } from './actions'
 import { TokenList } from '../src/types'
+import { fetchTokenList } from './actions'
+import { getTokenList } from './getTokenList'
 
+/**
+ * @deprecated Please using TokenListProvider with atoms
+ */
 function useFetchListCallback(
   dispatch: (action?: unknown) => void,
 ): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
@@ -14,7 +18,6 @@ function useFetchListCallback(
         dispatch(fetchTokenList.pending({ requestId, url: listUrl }))
       }
       // lazy load avj and token list schema
-      const getTokenList = (await import('./getTokenList')).default
       return getTokenList(listUrl)
         .then((tokenList) => {
           if (sendDispatch) {

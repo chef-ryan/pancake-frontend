@@ -1,3 +1,4 @@
+import { AsyncStorage } from 'jotai/vanilla/utils/atomWithStorage'
 import localForage from 'localforage'
 
 export interface StorageInterface {
@@ -6,37 +7,33 @@ export interface StorageInterface {
   removeItem: (key: string) => Promise<void>
 }
 
-const memoryStorage = new Map<string, any>()
+function noop() {}
 
-const memoryStorageInterface: StorageInterface = {
-  getItem: async <T>(key: string, defaultValue: T | null): Promise<T | null> => {
-    const value = memoryStorage.get(key)
-    return value !== undefined ? (value as T) : defaultValue
-  },
-  setItem: async (key: string, value: any): Promise<void> => {
-    memoryStorage.set(key, value)
-  },
-  removeItem: async (key: string): Promise<void> => {
-    memoryStorage.delete(key)
-  },
+const noopStorage: AsyncStorage<any> = {
+  getItem: () => Promise.resolve(noop()),
+  setItem: () => Promise.resolve(noop()),
+  removeItem: () => Promise.resolve(noop()),
 }
 
-export function IndexedDBStorage(storeName: string, dbName: string): StorageInterface {
+export function IndexedDBStorage<Value>(dbName: string, storeName: string): AsyncStorage<Value> {
   if (typeof window !== 'undefined') {
     const db = localForage.createInstance({
       name: dbName,
       storeName,
     })
     return {
-      getItem: async <T>(key: string, defaultValue: T | null) => {
-        const value = await db.getItem<T>(key)
-        return value !== null && value !== undefined ? value : defaultValue
+      getItem: async (key: string, initialValue: Value) => {
+        const value = await db.getItem(key)
+        if (value) {
+          return value as Value
+        }
+        return initialValue
       },
       setItem: async (k: string, v: any) => {
         await db.setItem(k, v)
       },
-      removeItem: (key: string) => db.removeItem(key),
+      removeItem: db.removeItem,
     }
   }
-  return memoryStorageInterface
+  return noopStorage as AsyncStorage<Value>
 }

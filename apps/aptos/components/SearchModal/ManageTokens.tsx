@@ -1,6 +1,7 @@
 import { Coin, PAIR_LP_TYPE_TAG, Token } from '@pancakeswap/aptos-swap-sdk'
-import { APTOS_COIN, isStructTag, useAccount, useBalance, useAccountBalances } from '@pancakeswap/awgmi'
+import { APTOS_COIN, isStructTag, useAccount, useAccountBalances, useBalance } from '@pancakeswap/awgmi'
 import { useTranslation } from '@pancakeswap/localization'
+import { userTokensAtom, useTokenListName } from '@pancakeswap/token-lists/react'
 import {
   AddCircleIcon,
   AptosIcon,
@@ -24,10 +25,11 @@ import { CurrencyLogo } from 'components/Logo'
 import { L0_USDC } from 'config/coins'
 import { useAllTokens, useToken } from 'hooks/Tokens'
 import { useActiveChainId } from 'hooks/useNetwork'
+import { useAtomValue } from 'jotai'
 import { useRouter } from 'next/router'
 import { RefObject, useCallback, useMemo, useRef, useState } from 'react'
 import { Field, selectCurrency, useSwapState } from 'state/swap'
-import { useRemoveUserAddedToken, useUserAddedTokens } from 'state/user'
+import { useRemoveUserAddedToken } from 'state/user'
 import { styled } from 'styled-components'
 import { getBlockExploreLink } from 'utils'
 import ImportRow from './ImportRow'
@@ -89,7 +91,8 @@ export default function ManageTokens({
   const { data: searchToken } = useToken(searchQuery)
 
   // all tokens for local list
-  const userAddedTokens: Token[] = useUserAddedTokens()
+  const tokenListName = useTokenListName()
+  const userAddedTokens: Token[] = useAtomValue(userTokensAtom(tokenListName))
   const removeToken = useRemoveUserAddedToken()
 
   const { query } = useRouter()

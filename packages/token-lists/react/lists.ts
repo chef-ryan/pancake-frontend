@@ -16,6 +16,9 @@ const noopStorage: AsyncStorage<any> = {
 // eslint-disable-next-line symbol-description
 const EMPTY = Symbol()
 
+/**
+ * @deprecated This will be removed for next iterations, please use atoms
+ */
 export const createListsAtom = (storeName: string, reducer: any, initialState: any) => {
   /**
    * Persist you redux state using IndexedDB

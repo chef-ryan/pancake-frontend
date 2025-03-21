@@ -1,6 +1,6 @@
 import { useAtomValue, useSetAtom } from 'jotai'
 import { createContext, useContext, useEffect } from 'react'
-import { initTokenListsAtom, tokenListInitializedAtom } from './tokenListAtoms'
+import { initTokenListsAtom, tokenListInitializedAtom } from './atoms/init.atoms'
 
 const TokenListContext = createContext<{
   listName?: string

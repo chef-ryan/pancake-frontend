@@ -1,17 +1,18 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency, CurrencyAmount, Token } from '@pancakeswap/sdk'
+import { isUserAddedTokenAtom, useTokenListName } from '@pancakeswap/token-lists/react'
 import { ArrowForwardIcon, Column, QuestionHelper, Text } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { LightGreyCard } from 'components/Card'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import useNativeCurrency from 'hooks/useNativeCurrency'
+import { useAtomValue } from 'jotai'
 import { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
 import { styled } from 'styled-components'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 import { useAccount } from 'wagmi'
-import { useIsUserAddedToken } from '../../hooks/Tokens'
 import { useCombinedActiveList } from '../../state/lists/hooks'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 import { isTokenOnList } from '../../utils'
@@ -74,7 +75,12 @@ function CurrencyRow({
   const key = currencyKey(currency)
   const selectedTokenList = useCombinedActiveList()
   const isOnSelectedList = isTokenOnList(selectedTokenList, currency)
-  const customAdded = useIsUserAddedToken(currency)
+  const customAdded = useAtomValue(
+    isUserAddedTokenAtom({
+      listName: useTokenListName(),
+      token: currency as Token,
+    }),
+  )
 
   const balance = useCurrencyBalance(account ?? undefined, currency)
 
