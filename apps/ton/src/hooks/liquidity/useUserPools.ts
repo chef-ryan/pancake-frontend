@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { addUserPoolAtom, cachedUserPoolsAtom, updateUserPoolAtom, userPoolsAtom } from 'atoms/user/userPoolsAtom'
 import BN from 'bignumber.js'
+import { TG_BOT_URL } from 'config/constants/endpoints'
 import { QUERY_MEDIUM_STALE_TIME } from 'config/constants/exchange'
 import { POOL_CHUNK_DELAY, POOL_CHUNK_SIZE } from 'config/constants/fetching'
 import { PRESET_POOLS } from 'config/presetPools'
@@ -105,8 +106,11 @@ export const useUserPools = () => {
       return []
     },
     enabled: !!userAddress,
-    refetchOnMount: false,
-    refetchOnWindowFocus: true,
+
+    // Refetch on mount only for TGBot
+    refetchOnMount: typeof window !== 'undefined' && window.location.href.includes(TG_BOT_URL),
+
+    refetchOnWindowFocus: false,
     refetchInterval: QUERY_MEDIUM_STALE_TIME,
   })
 
