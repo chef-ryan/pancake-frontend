@@ -41,8 +41,8 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;800&amp;display=swap"
             rel="stylesheet"
           />
-          <link rel="shortcut icon" href="/favicon.ico" />
-          <link rel="apple-touch-icon" href="/logo.png" />
+          <link rel="shortcut icon" href={`${process.env.NEXT_PUBLIC_GLOBAL_PREFIX}/favicon.ico`} />
+          <link rel="apple-touch-icon" href={`${process.env.NEXT_PUBLIC_GLOBAL_PREFIX}/logo.png`} />
           <link rel="manifest" href="/manifest.json" />
 
           <meta name="theme-color" media="(prefers-color-scheme: light)" content="#E5FDFF" />
