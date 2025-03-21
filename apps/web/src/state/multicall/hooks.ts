@@ -178,11 +178,10 @@ export function useSingleContractMultipleData<TAbi extends Abi | readonly unknow
 }: // FIXME: wagmiv2
 SingleContractMultipleDataCallParameters<TAbi, TFunctionName>): CallState<any>[] {
   const { chainId } = useActiveChainId()
-  const { enabled = true } = options ?? {}
 
   const calls = useMemo(
     () =>
-      enabled && contract && contract.abi && contract.address && args && args.length > 0
+      contract && contract.abi && contract.address && args && args.length > 0
         ? args.map((inputs) => {
             if (!contract.address) return undefined
             return {
@@ -195,7 +194,7 @@ SingleContractMultipleDataCallParameters<TAbi, TFunctionName>): CallState<any>[]
             }
           })
         : [],
-    [args, contract, enabled, functionName],
+    [args, contract, functionName],
   )
 
   const results = useCallsData(calls, options)
@@ -236,7 +235,7 @@ export function useMultipleContractSingleData<TAbi extends Abi | readonly unknow
 }: // FIXME: wagmiv2
 // MultipleSameDataCallParameters<TAbi, TFunctionName>): CallState<ContractFunctionResult<TAbi, TFunctionName>>[] {
 MultipleSameDataCallParameters<TAbi, TFunctionName>): CallState<any>[] {
-  const { enabled = true, blocksPerFetch } = options ?? {}
+  const { enabled, blocksPerFetch } = options ?? { enabled: true }
   const callData: Hex | undefined = useMemo(
     () =>
       abi && enabled
@@ -300,9 +299,8 @@ export function useSingleCallResult<TAbi extends Abi | readonly unknown[], TFunc
   options,
 }: // FIXME: wagmiv2
 SingleCallParameters<TAbi, TFunctionName>): CallState<any> {
-  const { enabled = true } = options ?? {}
   const calls = useMemo<Call[]>(() => {
-    return enabled && contract && contract.abi && contract.address
+    return contract && contract.abi && contract.address
       ? [
           {
             address: contract.address,
@@ -314,7 +312,7 @@ SingleCallParameters<TAbi, TFunctionName>): CallState<any> {
           },
         ]
       : []
-  }, [contract, args, enabled, functionName])
+  }, [contract, args, functionName])
 
   const result = useCallsData(calls, options)[0]
 
