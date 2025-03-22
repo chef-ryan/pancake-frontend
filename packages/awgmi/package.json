@@ -9,7 +9,7 @@
   "dependencies": {
     "@ethersproject/units": "^5.7.0",
     "eventemitter3": "^4.0.7",
-    "use-sync-external-store": "^1.2.0",
+    "use-sync-external-store": "^1.4.0",
     "zustand": "^4.1.1"
   },
   "keywords": [
