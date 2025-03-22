@@ -1,11 +1,15 @@
 import { ChainId } from '@pancakeswap/chains'
 import { createFarmFetcher, getLegacyFarmConfig, SerializedFarm, SerializedFarmsState } from '@pancakeswap/farms'
-import { createAsyncThunk, createSlice, isAnyOf } from '@reduxjs/toolkit'
-import type {
-  UnknownAsyncThunkFulfilledAction,
-  UnknownAsyncThunkPendingAction,
-  UnknownAsyncThunkRejectedAction,
-} from '@reduxjs/toolkit/dist/matchers'
+import {
+  createAsyncThunk,
+  createSlice,
+  isAnyOf,
+  isAsyncThunkAction,
+  isFulfilled,
+  isPending,
+  isRejected,
+} from '@reduxjs/toolkit'
+import type { UnknownAction } from '@reduxjs/toolkit'
 import BigNumber from 'bignumber.js'
 import { getFarmsPriceHelperLpFiles } from 'config/constants/priceHelperLps'
 import stringify from 'fast-json-stable-stringify'
@@ -419,20 +423,25 @@ export const fetchBCakeWrapperDataAsync = createAsyncThunk<
   },
 )
 
-type UnknownAsyncThunkFulfilledOrPendingAction =
-  | UnknownAsyncThunkFulfilledAction
-  | UnknownAsyncThunkPendingAction
-  | UnknownAsyncThunkRejectedAction
-
-export const serializeLoadingKey = (
-  action: UnknownAsyncThunkFulfilledOrPendingAction,
-  suffix: UnknownAsyncThunkFulfilledOrPendingAction['meta']['requestStatus'],
-) => {
-  const type = action.type.split(`/${suffix}`)[0]
-  return stringify({
-    arg: action.meta.arg,
-    type,
-  })
+export const serializeLoadingKey = (action: UnknownAction) => {
+  if (isAsyncThunkAction(action)) {
+    let suffix: 'fulfilled' | 'rejected' | 'pending' | undefined
+    if (isFulfilled(action)) {
+      suffix = 'fulfilled'
+    } else if (isRejected(action)) {
+      suffix = 'rejected'
+    } else if (isPending(action)) {
+      suffix = 'pending'
+    }
+    if (suffix) {
+      const type = action.type.split(`/${suffix}`)[0]
+      return stringify({
+        arg: action.meta.arg,
+        type,
+      })
+    }
+  }
+  return ''
 }
 
 export const farmsSlice = createSlice({
@@ -531,7 +540,7 @@ export const farmsSlice = createSlice({
         fetchBCakeWrapperDataAsync.pending,
       ),
       (state, action) => {
-        state.loadingKeys[serializeLoadingKey(action, 'pending')] = true
+        state.loadingKeys[serializeLoadingKey(action)] = true
       },
     )
     builder.addMatcher(
@@ -542,7 +551,7 @@ export const farmsSlice = createSlice({
         fetchBCakeWrapperUserDataAsync.fulfilled,
       ),
       (state, action) => {
-        state.loadingKeys[serializeLoadingKey(action, 'fulfilled')] = false
+        state.loadingKeys[serializeLoadingKey(action)] = false
       },
     )
     builder.addMatcher(
@@ -553,7 +562,7 @@ export const farmsSlice = createSlice({
         fetchBCakeWrapperDataAsync.rejected,
       ),
       (state, action) => {
-        state.loadingKeys[serializeLoadingKey(action, 'rejected')] = false
+        state.loadingKeys[serializeLoadingKey(action)] = false
       },
     )
   },

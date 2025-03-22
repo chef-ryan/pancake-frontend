@@ -91,7 +91,7 @@
     "react-dom": "^18.2.0",
     "react-is": "^17.0.2",
     "react-markdown": "^6.0.2",
-    "react-redux": "^8.0.5",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^5.2.0",
     "react-transition-group": "*",
     "remark-gfm": "*",
@@ -108,7 +108,7 @@
     "react": "^18.2.0",
     "react-device-detect": "*",
     "react-dom": "^18.2.0",
-    "react-redux": "^8.0.5",
+    "react-redux": "^9.2.0",
     "react-transition-group": "*",
     "remark-gfm": "*",
     "styled-components": "6.0.7"
