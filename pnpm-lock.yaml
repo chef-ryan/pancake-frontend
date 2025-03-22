@@ -1303,6 +1303,12 @@ importers:
       styled-system:
         specifier: ^5.1.5
         version: 5.1.5
+      stylis:
+        specifier: 4.3.6
+        version: 4.3.6
+      stylis-plugin-rtl:
+        specifier: 2.1.1
+        version: 2.1.1(stylis@4.3.6)
       swiper:
         specifier: ^11.1.12
         version: 11.1.12
@@ -2630,6 +2636,12 @@ importers:
       styled-system:
         specifier: ^5.1.5
         version: 5.1.5
+      stylis:
+        specifier: 4.3.6
+        version: 4.3.6
+      stylis-plugin-rtl:
+        specifier: 2.1.1
+        version: 2.1.1(stylis@4.3.6)
       tslib:
         specifier: ^2.2.0
         version: 2.6.2
@@ -10373,6 +10385,10 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
 
+  cssjanus@2.3.0:
+    resolution: {integrity: sha512-ZZXXn51SnxRxAZ6fdY7mBDPmA4OZd83q/J9Gdqz3YmE9TUq+9tZl+tdOnCi7PpNygI6PEkehj9rgifv5+W8a5A==}
+    engines: {node: '>=10.0.0'}
+
   csstype@2.6.21:
     resolution: {integrity: sha512-Z1PhmomIfypOpoMjRQB70jfvy/wxT50qW08YXO5lMIJkrdq4yOTR+AW7FqutScmB9NkLwxo+jU+kZLbofZZq/w==}
 
@@ -15876,11 +15892,19 @@ packages:
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     hasBin: true
 
+  stylis-plugin-rtl@2.1.1:
+    resolution: {integrity: sha512-q6xIkri6fBufIO/sV55md2CbgS5c6gg9EhSVATtHHCdOnbN/jcI0u3lYhNVeuI65c4lQPo67g8xmq5jrREvzlg==}
+    peerDependencies:
+      stylis: 4.x
+
   stylis@4.2.0:
     resolution: {integrity: sha512-Orov6g6BB1sDfYgzWfTHDOxamtX1bE/zo104Dh9e6fqJ3PooipYyfJ0pUmrZO2wAvO8YbEyeFrkV91XTsGMSrw==}
 
   stylis@4.3.0:
     resolution: {integrity: sha512-E87pIogpwUsUwXw7dNyU4QDjdgVMy52m+XEOPEKUn161cCzWjjhPSQhByfd1CcNvrOLnXQ6OnnZDwnJrz/Z4YQ==}
+
+  stylis@4.3.6:
+    resolution: {integrity: sha512-yQ3rwFWRfwNUY7H5vpU0wfdkNSnvnJinhF9830Swlaxl03zsOjCfmX0ugac+3LtK0lYSgwL/KXc8oYL3mG4YFQ==}
 
   sucrase@3.34.0:
     resolution: {integrity: sha512-70/LQEZ07TEcxiU2dz51FKaE6hCTWC6vr7FOk3Gr0U60C3shtAN+H+BFr9XlYe5xqf3RA8nrc+VIwzCfnxuXJw==}
@@ -28375,6 +28399,8 @@ snapshots:
 
   cssesc@3.0.0: {}
 
+  cssjanus@2.3.0: {}
+
   csstype@2.6.21: {}
 
   csstype@3.1.2: {}
@@ -35302,9 +35328,16 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  stylis-plugin-rtl@2.1.1(stylis@4.3.6):
+    dependencies:
+      cssjanus: 2.3.0
+      stylis: 4.3.6
+
   stylis@4.2.0: {}
 
   stylis@4.3.0: {}
+
+  stylis@4.3.6: {}
 
   sucrase@3.34.0:
     dependencies:
