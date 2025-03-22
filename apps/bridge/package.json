@@ -39,7 +39,7 @@
     "jotai": "^2.4.3",
     "lodash": "^4.17.21",
     "next": "catalog:",
-    "next-themes": "^0.2.1",
+    "next-themes": "catalog:",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "styled-components": "6.0.7",

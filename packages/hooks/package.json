@@ -13,7 +13,7 @@
     "react": "^18.2.0",
     "@pancakeswap/swap-sdk-core": "workspace:*",
     "@pancakeswap/utils": "workspace:*",
-    "next-themes": "^0.2.1"
+    "next-themes": "catalog:"
   },
   "peerDependencies": {
     "styled-components": "6.0.7"
