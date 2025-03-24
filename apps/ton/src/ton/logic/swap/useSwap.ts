@@ -94,7 +94,7 @@ export const useSwap = ({ amount0, token0, token1, trade, refreshTrade }: SwapAr
             !lastSwapNext && destMinOut
               ? parseUnits(destMinOut, token1?.decimals)
               : parseUnits(
-                  trade?.minimumAmountOut(allowedSlippage, trade.tokenAmounts[0]).toExact(),
+                  trade?.minimumAmountOut(allowedSlippage, trade.tokenAmounts[1]).toExact(),
                   trade.tokenAmounts[0].currency.decimals,
                 ),
           refAddress: null,
