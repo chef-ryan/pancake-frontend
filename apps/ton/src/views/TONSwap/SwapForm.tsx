@@ -27,7 +27,6 @@ import { useIsSwapDetailPanelOpen } from 'hooks/swap/useIsSwapDetailPanelOpen'
 import { computeTradePriceBreakdown } from 'utils/exchange'
 import { PricingAndSlippage } from 'components/TonSwap/SwapDetails/PricingAndSlippage'
 import { AdvancedSwapDetailsDropdown } from 'components/TonSwap/SwapDetails/AdvancedSwapDetailsDropdown'
-import { useUserSlippagePercent } from 'hooks/useUserSlippage'
 
 export const SwapForm = () => {
   const { t } = useTranslation()
@@ -73,7 +72,6 @@ export const SwapForm = () => {
   )
 
   const { data: balance0 } = useAtomValue(balanceAtom(inputCurrency))
-  const [allowedSlippage] = useUserSlippagePercent()
   const [isSwapDetailPanelOpen] = useIsSwapDetailPanelOpen()
   const { realizedLPFee } = computeTradePriceBreakdown(trade)
   const { onUserInput, onCurrencySelection } = useSwapActionHandlers()
@@ -89,9 +87,6 @@ export const SwapForm = () => {
   const { confirmSwap } = useSwap({
     trade,
     refreshTrade,
-    minOut: isExactIn
-      ? trade?.minimumAmountOut(allowedSlippage).toExact()
-      : trade?.maximumAmountIn(allowedSlippage).toExact(),
     amount0: formattedAmounts[Field.INPUT] ?? '0',
     token0: inputCurrency,
     token1: outputCurrency,
