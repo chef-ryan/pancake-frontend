@@ -12,8 +12,9 @@ import { ActionType } from 'components/Modals/ActionModal'
 import { ALLOWED_PRICE_IMPACT_HIGH, PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN } from 'config/constants/exchange'
 import { useLatestTxReceipt } from 'hooks/useLatestTxReceipt'
 import { useUserAddress } from 'hooks/useUserAddress'
+import { useUserSlippagePercent } from 'hooks/useUserSlippage'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { routerContractAtom } from 'ton/atom/contracts/routerContractAtom'
 import { gasConstantsAtom } from 'ton/atom/gasConstantsAtom'
 
@@ -31,14 +32,14 @@ interface SwapArgs {
   token0?: Currency
   token1?: Currency
   amount0: string
-  minOut?: string
 }
 
-export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }: SwapArgs) => {
+export const useSwap = ({ amount0, token0, token1, trade, refreshTrade }: SwapArgs) => {
   const { t } = useTranslation()
   const [tonUI] = useTonConnectUI()
 
   const userAddress = useUserAddress()
+  const [allowedSlippage] = useUserSlippagePercent()
 
   const GAS_CONSTANTS = useAtomValue(gasConstantsAtom)
   const routerAddress = useAtomValue(routerContractAtom).address
@@ -51,6 +52,8 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
   const setErrorMsgModal = useSetAtom(setErrorMsgModalAtom)
 
   const [, setLatestTxReceipt] = useLatestTxReceipt()
+
+  const destMinOut = useMemo(() => trade?.minimumAmountOut(allowedSlippage).toExact(), [allowedSlippage, trade])
 
   const getTxRequest = useCallback(async () => {
     const queryId = generateQueryId()
@@ -69,11 +72,12 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
       const path = trade?.route.path
       for (let idx = path.length - 1; idx >= 2; idx--) {
         const currency = path[idx]
+        const minOut = trade?.minimumAmountOut(allowedSlippage, trade.tokenAmounts[idx]).toExact()
         // eslint-disable-next-line no-await-in-loop
         const routerJettonWalletOut = await getJettonWalletAddress(routerAddress, currency.wrapped.address)
         const next = {
           tokenAddress: routerJettonWalletOut,
-          minOut: idx === path.length - 1 && minOut ? parseUnits(minOut, currency?.decimals) : 1n,
+          minOut: minOut ? parseUnits(minOut, currency?.decimals) : 1n,
           next: lastSwapNext,
         }
         lastSwapNext = next
@@ -85,10 +89,14 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
         storeSwap({
           fromRealUser: userAddress,
           fromUserAddress: userAddress,
-
           // If it is NOT a Multihop trade, set minOut for token0 => token1
-          minOut: !lastSwapNext && minOut ? parseUnits(minOut, token1?.decimals) : 1n,
-
+          minOut:
+            !lastSwapNext && destMinOut
+              ? parseUnits(destMinOut, token1?.decimals)
+              : parseUnits(
+                  trade?.minimumAmountOut(allowedSlippage, trade.tokenAmounts[0]).toExact(),
+                  trade.tokenAmounts[0].currency.decimals,
+                ),
           refAddress: null,
           refMessageValue: 0n,
           tokenWallet: routerJettonWallet1,
@@ -128,13 +136,15 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
       ],
     }
   }, [
+    destMinOut,
+    token1?.decimals,
+    allowedSlippage,
     routerJettonWallet1,
     routerJettonWallet0,
     trade,
     token0,
     userJettonWallet0,
     userAddress,
-    minOut,
     amount0,
     routerAddress,
     GAS_CONSTANTS.swapTonToJetton.forwardGasAmount,
@@ -151,7 +161,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
         currency0: token0,
         currency1: token1,
         amount0,
-        amount1: minOut,
+        amount1: destMinOut,
       })
 
       const txRequest: SendTransactionRequest | undefined = await getTxRequest()
@@ -167,7 +177,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
           currency0: token0,
           currency1: token1,
           amount0,
-          amount1: minOut,
+          amount1: destMinOut,
         })
       }
 
@@ -179,7 +189,7 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
           currency0: token0,
           currency1: token1,
           amount0,
-          amount1: minOut,
+          amount1: destMinOut,
           hash,
         })
         // dont await, just let it go
@@ -201,9 +211,9 @@ export const useSwap = ({ amount0, minOut, token0, token1, trade, refreshTrade }
       return Promise.reject()
     }
   }, [
+    destMinOut,
     amount0,
     setLatestTxReceipt,
-    minOut,
     token0,
     token1,
     setErrorMsgModal,
