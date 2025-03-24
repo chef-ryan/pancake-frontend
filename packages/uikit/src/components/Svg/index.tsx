@@ -223,6 +223,7 @@ export { default as WalletFilledIcon } from "./Icons/WalletFilled";
 export { default as WalletFilledV2Icon } from "./Icons/WalletFilledV2";
 export { default as WalletRegisterIcon } from "./Icons/WalletRegister";
 export { default as WarningIcon } from "./Icons/Warning";
+export { default as WaterDropletIcon } from "./Icons/WaterDroplet";
 export { default as YoutubeIcon } from "./Icons/YoutubeIcon";
 export { default as ZkEVMIcon } from "./Icons/ZkEVM";
 export { default as ZkSyncIcon } from "./Icons/ZkSync";

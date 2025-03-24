@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Box, Cards, SortArrowIcon, Text } from '@pancakeswap/uikit'
+import { Box, SortArrowIcon, Text, WaterDropletIcon } from '@pancakeswap/uikit'
 import { useAtomValue } from 'jotai'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -23,7 +23,7 @@ const FloatingBox = styled(Box)`
 
 const Navigation = styled(Box)`
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   gap: 12px;
   padding: 12px 16px 12px 24px;
@@ -31,9 +31,13 @@ const Navigation = styled(Box)`
   background: ${({ theme }) => theme.colors.invertedContrast};
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 
+  width: 90%;
+
   ${({ theme }) => theme.mediaQueries.sm} {
     gap: 24px;
     padding: 12px 16px 12px 32px;
+    justify-content: center;
+    width: auto;
   }
 `
 
@@ -72,8 +76,8 @@ export const FloatingNavigation = () => {
             </StyledText>
           </StyledLink>
           <StyledLink href="/liquidity">
-            <Cards color={getItemColor('/liquidity')} width={24} />
-            <StyledText color={getItemColor('/liquidity')} bold={isActive('/liquidity')}>
+            <WaterDropletIcon color={getItemColor('/liquidity')} width={16} height={22} />
+            <StyledText mt="3px" color={getItemColor('/liquidity')} bold={isActive('/liquidity')}>
               {t('Liquidity')}
             </StyledText>
           </StyledLink>
