@@ -25,7 +25,13 @@ export const NumericalInput = memo(function InnerInput({
 }: NumericalInputProps) {
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === "" || inputRegex.test(escapeRegExp(nextUserInput))) {
-      onUserInput(nextUserInput);
+      // Limit to 18 decimal places
+      const [integer, decimal] = nextUserInput.split(".");
+      if (decimal && decimal.length > 18) {
+        onUserInput(`${integer}.${decimal.substring(0, 18)}`);
+      } else {
+        onUserInput(nextUserInput);
+      }
     }
   };
 
@@ -54,7 +60,7 @@ export const NumericalInput = memo(function InnerInput({
       autoCorrect="off"
       // text-specific options
       type="text"
-      pattern="^[0-9]*[.,]?[0-9]*$"
+      pattern="^[0-9]*[.,]?[0-9]{0,18}$"
       placeholder={placeholder || "0.0"}
       minLength={1}
       maxLength={79}
