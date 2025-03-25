@@ -1,7 +1,7 @@
 /* eslint-disable no-var */
 /* eslint-disable vars-on-top */
 import { Currency } from '@pancakeswap/swap-sdk-core'
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook } from '@testing-library/react'
 import { useCurrency } from 'hooks/Tokens'
 import { useAtom } from 'jotai'
 import { parse } from 'querystring'
