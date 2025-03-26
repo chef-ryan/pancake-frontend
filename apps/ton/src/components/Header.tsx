@@ -1,4 +1,3 @@
-import { useTheme } from 'next-themes'
 import { useTranslation } from '@pancakeswap/localization'
 import {
   CogIcon,
@@ -15,6 +14,7 @@ import {
   useModalV2,
 } from '@pancakeswap/uikit'
 import { bridgeLink } from 'config/constants/endpoints'
+import { useTheme } from 'next-themes'
 import { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { Logo } from './Logo'
@@ -35,10 +35,7 @@ const StyledLinkExternal = styled(LinkExternal)`
   cursor: pointer;
 `
 
-interface HeaderProps {
-  showBridgeLink?: boolean
-}
-export const Header = ({ showBridgeLink }: HeaderProps) => {
+export const Header = () => {
   const { t } = useTranslation()
 
   const { isOpen, setIsOpen, onDismiss } = useModalV2()
@@ -76,14 +73,10 @@ export const Header = ({ showBridgeLink }: HeaderProps) => {
       </Flex>
 
       <FlexGap gap="16px" alignItems="center">
-        {showBridgeLink && (
-          <>
-            <StyledLinkExternal href={bridgeLink} showExternalIcon={false}>
-              <span>{t('Get TON')}</span>
-              <OpenNewIcon color="textSubtle" />
-            </StyledLinkExternal>
-          </>
-        )}
+        <StyledLinkExternal href={bridgeLink} showExternalIcon={false}>
+          <span>{t('Get TON')}</span>
+          <OpenNewIcon color="textSubtle" />
+        </StyledLinkExternal>
 
         {!isSmallScreen && <ThemeSwitcher isDark={isDark} toggleTheme={() => setTheme(isDark ? 'light' : 'dark')} />}
         <IconButton variant="text" scale="sm" onClick={() => setIsOpen(true)}>

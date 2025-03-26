@@ -17,7 +17,7 @@ export const TONLiquidity = () => {
   return (
     <Page removePadding>
       <Box width="100%">
-        <Header showBridgeLink />
+        <Header />
       </Box>
       <Flex width="100%" height="100%" justifyContent="center" position="relative">
         <Flex flexDirection="column" alignItems="center" height="100%" width="100%">
