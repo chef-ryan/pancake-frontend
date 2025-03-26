@@ -1,4 +1,4 @@
-import { cloneElement, createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import { cloneElement, createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
 
 export function useHover<T>(): [(value: T) => void, boolean] {
   const [value, setValue] = useState<boolean>(false)
@@ -32,5 +32,7 @@ export const HoverProvider = ({ children }: { children: HoverNode }) => {
   const [ref, isHover] = useHover()
 
   const child = typeof children === 'function' ? (children as any)(ref) : children
-  return <HoverContext.Provider value={{ isHover }}>{cloneElement(child as any, { ref })}</HoverContext.Provider>
+  const providerValue = useMemo(() => ({ isHover }), [isHover])
+
+  return <HoverContext.Provider value={providerValue}>{cloneElement(child as any, { ref })}</HoverContext.Provider>
 }
