@@ -46,6 +46,7 @@ export default function RangeSelector({
 
   const leftValue = useMemo(() => {
     if (ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]) return '0'
+    if (leftPrice?.denominator === 0n) return ''
 
     try {
       if (
@@ -63,6 +64,7 @@ export default function RangeSelector({
 
   const rightValue = useMemo(() => {
     if (ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]) return '∞'
+    if (rightPrice?.denominator === 0n) return ''
 
     try {
       if (
