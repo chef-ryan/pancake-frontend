@@ -12,14 +12,13 @@ export const Menu = styled.div<{ $isOpen: boolean; $overrideHeight: boolean }>`
   width: 400px;
   overflow: hidden;
   position: relative;
-  visibility: visible;
   z-index: 1001;
 
   ${({ $isOpen }) =>
     !$isOpen &&
     `
     pointer-events: none;
-    visibility: hidden;
+display: none
   `}
   ${({ $overrideHeight }) =>
     $overrideHeight &&
