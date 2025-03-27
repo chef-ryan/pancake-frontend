@@ -18,7 +18,7 @@ export const Menu = styled.div<{ $isOpen: boolean; $overrideHeight: boolean }>`
     !$isOpen &&
     `
     pointer-events: none;
-display: none
+    display: none;
   `}
   ${({ $overrideHeight }) =>
     $overrideHeight &&
