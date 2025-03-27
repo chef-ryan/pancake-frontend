@@ -89,9 +89,5 @@ const Dropdown: React.FC<React.PropsWithChildren<DropdownProps>> = ({ target, po
     </Container>
   );
 };
-Dropdown.defaultProps = {
-  // eslint-disable-next-line react/default-props-match-prop-types
-  position: "bottom",
-};
 
 export default Dropdown;

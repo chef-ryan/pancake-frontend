@@ -18,7 +18,7 @@
     "@types/lodash": "^4.14.168",
     "bignumber.js": "^9.0.0",
     "jotai": "^2.4.3",
-    "styled-components": "6.0.7",
+    "styled-components": "6.1.16",
     "viem": "catalog:"
   },
   "peerDependenciesMeta": {

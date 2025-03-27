@@ -1,7 +1,9 @@
 import { Box } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
 
-export const StyledPriceChart = styled(Box)<{
+export const StyledPriceChart = styled(Box).attrs<{ height?: string }>(({ height = '70%' }) => ({
+  height,
+}))<{
   $isDark: boolean
   $isExpanded: boolean
   $isFullWidthContainer?: boolean
@@ -10,6 +12,7 @@ export const StyledPriceChart = styled(Box)<{
   border-radius: 32px;
   width: 100%;
   padding-top: 24px;
+
   ${({ theme }) => theme.mediaQueries.sm} {
     padding-top: 8px;
     background: ${({ $isDark }) => ($isDark ? 'rgba(39, 38, 44, 0.5)' : 'rgba(255, 255, 255, 0.5)')};
@@ -19,7 +22,3 @@ export const StyledPriceChart = styled(Box)<{
     height: ${({ $isExpanded }) => ($isExpanded ? '100%' : '516px')};
   }
 `
-
-StyledPriceChart.defaultProps = {
-  height: '70%',
-}

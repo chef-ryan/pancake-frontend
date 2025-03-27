@@ -11,7 +11,11 @@ interface ProgressBarProps {
   $background?: string;
 }
 
-export const Bar = styled.div.withConfig({ shouldForwardProp })<ProgressBarProps>`
+export const Bar = styled.div
+  .attrs<ProgressBarProps>(({ primary = false }) => ({
+    primary,
+  }))
+  .withConfig({ shouldForwardProp })<ProgressBarProps>`
   position: absolute;
   top: 0;
   left: 0;
@@ -23,10 +27,6 @@ export const Bar = styled.div.withConfig({ shouldForwardProp })<ProgressBarProps
   height: 100%;
   transition: width 200ms ease;
 `;
-
-Bar.defaultProps = {
-  primary: false,
-};
 
 interface StyledProgressProps {
   variant: ProgressProps["variant"];

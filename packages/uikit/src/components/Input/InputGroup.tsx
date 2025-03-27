@@ -44,7 +44,13 @@ const InputIcon = styled.div<{ scale: Scales; $isEndIcon?: boolean }>`
   `}
 `;
 
-const InputGroup = ({ scale = scales.MD, startIcon, endIcon, children, ...props }: InputGroupProps): JSX.Element => (
+const InputGroup = ({
+  scale = scales.MD,
+  startIcon,
+  endIcon,
+  children,
+  ...props
+}: InputGroupProps): React.JSX.Element => (
   <StyledInputGroup
     scale={scale}
     width="100%"

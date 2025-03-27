@@ -16,9 +16,16 @@ const spinStyle = css`
   animation: ${rotate} 2s linear infinite;
 `;
 
-const Svg = styled("svg").withConfig({
-  shouldForwardProp: (p) => !["spin"].includes(p),
-})<SvgProps>`
+const Svg = styled("svg")
+  .withConfig({
+    shouldForwardProp: (p) => !["spin"].includes(p),
+  })
+  .attrs<SvgProps>(({ color = "text", width = "20px", xmlns = "http://www.w3.org/2000/svg", spin = false }) => ({
+    color,
+    width,
+    xmlns,
+    spin,
+  }))`
   align-self: center; // Safari fix
   fill: ${({ theme, color }) =>
     getThemeValue(theme, `colors.${color}`, color)}; // should use color and currentColor in svg path
@@ -32,12 +39,5 @@ const Svg = styled("svg").withConfig({
     filter: none !important;
   }
 `;
-
-Svg.defaultProps = {
-  color: "text",
-  width: "20px",
-  xmlns: "http://www.w3.org/2000/svg",
-  spin: false,
-};
 
 export default Svg;

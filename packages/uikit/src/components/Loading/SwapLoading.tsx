@@ -2,7 +2,10 @@ import { styled } from "styled-components";
 import { ASSET_CDN } from "../../util/endpoints";
 import { Box } from "../Box";
 
-const SwapLoading = styled(Box)`
+const SwapLoading = styled(Box).attrs(({ width = "18px", height = "18px" }) => ({
+  width,
+  height,
+}))`
   background-image: url(${ASSET_CDN}/web/swap-spinner.png);
   background-size: contain;
   -webkit-animation: spin 2s linear infinite;
@@ -25,10 +28,5 @@ const SwapLoading = styled(Box)`
     }
   }
 `;
-
-SwapLoading.defaultProps = {
-  width: "18px",
-  height: "18px",
-};
 
 export default SwapLoading;

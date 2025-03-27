@@ -22,9 +22,10 @@ interface TabProps extends BoxProps {
   onClick?: () => void
 }
 
-export const TabToggle = styled(Box).attrs({
-  as: 'button',
-})<TabProps>`
+export const TabToggle = styled(Box).attrs<TabProps>(({ p = '16px', as = 'button' }) => ({
+  as,
+  p,
+}))<TabProps>`
   display: inline-flex;
   justify-content: center;
   cursor: pointer;
@@ -39,10 +40,6 @@ export const TabToggle = styled(Box).attrs({
   background-color: ${({ theme, isActive }) => (isActive ? theme.card.background : theme.colors.input)};
   box-shadow: none;
 `
-
-TabToggle.defaultProps = {
-  p: '16px',
-}
 
 interface TabToggleGroupProps {
   children: React.ReactElement[]

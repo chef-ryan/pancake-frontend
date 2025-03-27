@@ -23,6 +23,10 @@ const Text = styled.div
     return {
       ...props,
       title,
+      color: props.color ?? "text",
+      small: props.small ?? false,
+      fontSize: props.fontSize ?? "16px",
+      ellipsis: props.ellipsis ?? false,
     };
   })
   .withConfig({
@@ -45,12 +49,5 @@ const Text = styled.div
 
   ${({ small }) => small && `font-size: 14px;`}
 `;
-
-Text.defaultProps = {
-  color: "text",
-  small: false,
-  fontSize: "16px",
-  ellipsis: false,
-};
 
 export default Text;

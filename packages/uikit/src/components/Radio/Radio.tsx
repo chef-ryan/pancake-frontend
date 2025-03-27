@@ -23,7 +23,13 @@ const getCheckedScale = ({ scale }: RadioProps) => {
   }
 };
 
-const Radio = styled.input.attrs({ type: "radio" }).withConfig({ shouldForwardProp })<RadioProps>`
+const Radio = styled.input
+  .attrs<RadioProps>(({ type = "radio", scale = scales.MD, m = 0 }) => ({
+    type,
+    scale,
+    m,
+  }))
+  .withConfig({ shouldForwardProp })<RadioProps>`
   appearance: none;
   overflow: hidden;
   cursor: pointer;
@@ -72,10 +78,5 @@ const Radio = styled.input.attrs({ type: "radio" }).withConfig({ shouldForwardPr
   }
   ${space}
 `;
-
-Radio.defaultProps = {
-  scale: scales.MD,
-  m: 0,
-};
 
 export default Radio;

@@ -20,7 +20,7 @@
     "viem": "catalog:",
     "wagmi": "catalog:",
     "@tanstack/react-query": "^5.52.1",
-    "styled-components": "6.0.7",
+    "styled-components": "6.1.16",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@solana/web3.js": "^1",

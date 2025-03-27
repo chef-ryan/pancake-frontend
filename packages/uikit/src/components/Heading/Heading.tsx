@@ -21,7 +21,10 @@ const style = {
   },
 };
 
-const Heading = styled(Text).attrs({ bold: true })<HeadingProps>`
+const Heading = styled(Text).attrs<HeadingProps>(({ bold = true, as = tags.H2 as any }) => ({
+  bold,
+  as,
+}))<HeadingProps>`
   font-size: ${({ scale }) => style[scale || scales.MD].fontSize};
   font-weight: 600;
   line-height: 1.1;
@@ -30,9 +33,5 @@ const Heading = styled(Text).attrs({ bold: true })<HeadingProps>`
     font-size: ${({ scale }) => style[scale || scales.MD].fontSizeLg};
   }
 `;
-
-Heading.defaultProps = {
-  as: tags.H2 as any,
-};
 
 export default Heading;

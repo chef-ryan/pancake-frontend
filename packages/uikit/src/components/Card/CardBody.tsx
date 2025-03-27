@@ -4,14 +4,14 @@ import { space, SpaceProps } from "styled-system";
 
 export type CardBodyProps = SpaceProps;
 
-const CardBody = styled.div.withConfig({
-  shouldForwardProp,
-})<CardBodyProps>`
+const CardBody = styled.div
+  .withConfig({
+    shouldForwardProp,
+  })
+  .attrs<CardBodyProps>(({ p = ["16px", null, "24px"] }) => ({
+    p,
+  }))<CardBodyProps>`
   ${space}
 `;
-
-CardBody.defaultProps = {
-  p: ["16px", null, "24px"],
-};
 
 export default CardBody;
