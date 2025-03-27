@@ -117,13 +117,19 @@ function NotificationsOnboardingButton({
   if (!address)
     return (
       <AutoColumn gap="md" width="100%">
-        <ConnectWalletButton style={{ ...props }} disabled={!isReady} />
+        <ConnectWalletButton style={{ ...props }} />
       </AutoColumn>
     )
 
   return (
     <AutoColumn gap="md" width="100%">
-      <CommitButton variant="primary" onClick={handleAction} isLoading={loading} style={{ ...props }}>
+      <CommitButton
+        variant="primary"
+        onClick={handleAction}
+        disabled={!isReady}
+        isLoading={loading}
+        style={{ ...props }}
+      >
         <Flex alignItems="center">
           <Text px="4px" fontWeight="bold" color="white">
             {buttonText}

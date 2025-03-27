@@ -1,14 +1,16 @@
+import dynamic from 'next/dynamic'
 import { Box } from '@pancakeswap/uikit'
 import { useSubscription } from '@web3inbox/react'
 import { useInitializeNotifications } from 'hooks/useInitializeNotifications'
 import React, { memo, useCallback, useEffect, useState } from 'react'
 import NotificationMenu from './components/NotificationDropdown/NotificationMenu'
-import NotificationSettings from './containers/NotificationSettings'
-import NotificationView from './containers/NotificationView'
-import OnBoardingView from './containers/OnBoardingView'
 import { ViewContainer } from './styles'
 import { PAGE_VIEW } from './types'
 import { disableGlobalScroll, enableGlobalScroll } from './utils/toggleEnableScroll'
+
+const OnBoardingView = dynamic(() => import('./containers/OnBoardingView'), { ssr: false })
+const NotificationView = dynamic(() => import('./containers/NotificationView'), { ssr: false })
+const NotificationSettings = dynamic(() => import('./containers/NotificationSettings'), { ssr: false })
 
 const Notifications = () => {
   const { isReady } = useInitializeNotifications()
