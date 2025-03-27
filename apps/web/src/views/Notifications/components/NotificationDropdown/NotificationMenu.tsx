@@ -69,7 +69,7 @@ const NotificationMenu: React.FC<{
         style={{ top: '100%', position: 'fixed' }}
         $overrideHeight={viewIndex === PAGE_VIEW.OnboardView}
       >
-        <Box>{children}</Box>
+        {isMenuOpen ? <Box>{children}</Box> : null}
       </Menu>
     </Flex>
   )
