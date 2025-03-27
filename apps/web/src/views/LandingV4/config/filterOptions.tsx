@@ -11,7 +11,7 @@ import { TagType, TagValue } from 'views/LandingV4/config/types'
 
 interface SelectorConfigProps extends OptionProps {
   id: TagValue
-  icon: JSX.Element
+  icon: React.JSX.Element
 }
 
 export const useSelectorConfig = (): SelectorConfigProps[] => {
