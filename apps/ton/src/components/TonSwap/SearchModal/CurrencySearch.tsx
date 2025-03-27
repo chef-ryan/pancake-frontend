@@ -7,11 +7,13 @@ import { FixedSizeList } from 'react-window'
 import { createFilterToken } from 'utils/tokens/filterTokens'
 
 import { fetchListAtom } from 'atoms/lists/fetchListAtom'
+import BN from 'bignumber.js'
 import Row from 'components/Layout/Row'
 import { useNativeCurrency } from 'hooks/tokens/useNativeCurrency'
 import { useAtomValue } from 'jotai'
 import { balanceMultipleAtom } from 'ton/logic/balanceMultipleAtom'
 import { isAddress } from 'ton/utils/address'
+import { formatBalance } from 'ton/utils/formatting'
 import { getAssetUrl } from 'utils'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
@@ -74,7 +76,9 @@ function CurrencySearch({
     return filteredQueryTokens
       .map((token, index) => ({ token, balance: balances[index] }))
       .slice()
-      .sort((a, b) => Number((b.balance || 0n) - (a.balance || 0n)))
+      .sort((a, b) =>
+        BN(formatBalance(b.balance, b.token.decimals)).comparedTo(formatBalance(a.balance, a.token.decimals)),
+      )
       .map(({ token }) => token)
   }, [filteredQueryTokens, balances])
 
