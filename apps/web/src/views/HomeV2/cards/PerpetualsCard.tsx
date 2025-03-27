@@ -1,4 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
+import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { Flex, Text, TriangleDownIcon, TriangleUpIcon, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { HomePageToken } from 'pages/api/home/types'
 import React from 'react'
@@ -88,14 +89,13 @@ export const PerpetualCard: React.FC<PerpetualCardProps> = ({ tokens }) => {
           key={token.id}
           left={
             <>
-              <img
+              <CurrencyLogo
                 style={{
+                  width: getIconSize(isMobile),
+                  height: getIconSize(isMobile),
                   borderRadius: '50%',
                 }}
-                src={token.icon}
-                alt={token.symbol}
-                width={getIconSize(isMobile)}
-                height={getIconSize(isMobile)}
+                currency={{ address: token.id, chainId: token.chainId, isToken: true }}
               />
               <Flex flexDirection="column" ml="12px">
                 <HomepageSymbol isMobile={isMobile} isTablet={isTablet}>
