@@ -14,14 +14,9 @@ export const StyledLink = styled(Text)<LinkProps>`
   }
 `;
 
-const Link: React.FC<React.PropsWithChildren<LinkProps>> = ({ external, ...props }) => {
+const Link: React.FC<React.PropsWithChildren<LinkProps>> = ({ external, color = "primary", ...props }) => {
   const internalProps = external ? EXTERNAL_LINK_PROPS : {};
-  return <StyledLink as="a" {...internalProps} {...props} />;
-};
-
-/* eslint-disable react/default-props-match-prop-types */
-Link.defaultProps = {
-  color: "primary",
+  return <StyledLink as="a" {...internalProps} color={color} {...props} />;
 };
 
 export default Link;
