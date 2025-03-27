@@ -1,6 +1,6 @@
 import { SignMessageArgs, SignMessageResult, signMessage as signMessage_ } from '@pancakeswap/awgmi/core'
 import { useMutation } from '@tanstack/react-query'
-import * as React from 'react'
+import { useCallback } from 'react'
 import { MutationConfig } from '../types'
 
 export type UseSignMessageArgs = Partial<SignMessageArgs>
@@ -32,12 +32,12 @@ export function useSignMessage({
       onSuccess,
     })
 
-  const signMessage = React.useCallback(
+  const signMessage = useCallback(
     (args?: SignMessageArgs) => mutate(args || ({ message } as SignMessageArgs)),
     [message, mutate],
   )
 
-  const signMessageAsync = React.useCallback(
+  const signMessageAsync = useCallback(
     (args?: SignMessageArgs) => mutateAsync(args || ({ message } as SignMessageArgs)),
     [message, mutateAsync],
   )

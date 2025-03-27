@@ -92,7 +92,7 @@ export const AdSlidesRender = ({
   )
 }
 
-function getTargetAndToggleAnimation(swiperRef: RefObject<SwiperRef>, pause: boolean = true): void {
+function getTargetAndToggleAnimation(swiperRef: RefObject<SwiperRef | null>, pause: boolean = true): void {
   const parent = swiperRef.current as HTMLDivElement | null
   if (!parent) {
     console.warn('swiperRef.current is null or undefined')

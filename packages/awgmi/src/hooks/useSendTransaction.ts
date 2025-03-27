@@ -1,7 +1,6 @@
 import { sendTransaction, SendTransactionArgs, SendTransactionResult } from '@pancakeswap/awgmi/core'
 import { useMutation } from '@tanstack/react-query'
-import * as React from 'react'
-
+import { useCallback } from 'react'
 import { MutationConfig } from '../types'
 
 export type UseSendTransactionArgs = Partial<SendTransactionArgs>
@@ -38,7 +37,7 @@ export function useSendTransaction({
       onSuccess,
     })
 
-  const _sendTransaction = React.useCallback(
+  const _sendTransaction = useCallback(
     (args: UseSendTransactionMutationArgs) =>
       mutate({
         networkName,
@@ -48,7 +47,7 @@ export function useSendTransaction({
     [mutate, networkName, payload],
   )
 
-  const _sendTransactionAsync = React.useCallback(
+  const _sendTransactionAsync = useCallback(
     (args?: UseSendTransactionMutationArgs) => {
       console.info(args)
       console.trace()

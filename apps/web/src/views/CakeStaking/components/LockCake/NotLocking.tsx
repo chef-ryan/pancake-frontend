@@ -26,8 +26,8 @@ export const NotLocking = ({ hideTitle }: { hideTitle?: boolean }) => {
 interface NotLockingCardProps {
   hideTitle?: boolean
   hideCardPadding?: boolean
-  customVeCakeCard?: JSX.Element
-  customDataRow?: JSX.Element
+  customVeCakeCard?: React.JSX.Element
+  customDataRow?: React.JSX.Element
   onDismiss?: () => void
 }
 

@@ -15,7 +15,7 @@ const StyledDropdown = styled(Dropdown)`
 
 interface AddTaskListProps {
   setIsOpen: (isOpen: boolean) => void
-  dropdownRef: React.RefObject<HTMLDivElement>
+  dropdownRef: React.RefObject<HTMLDivElement | null>
 }
 
 export const AddTaskList: React.FC<AddTaskListProps> = ({ setIsOpen, dropdownRef }) => {

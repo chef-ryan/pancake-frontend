@@ -29,14 +29,13 @@ const Multiplier: React.FunctionComponent<React.PropsWithChildren<FarmTableMulti
 }) => {
   const displayMultiplier = multiplier ? multiplier.toLowerCase() : <Skeleton width={30} />;
 
-  const tooltipContent = FarmMultiplierInfo({
-    farmCakePerSecond: farmCakePerSecond ?? "-",
-    totalMultipliers: totalMultipliers ?? "-",
-  });
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(tooltipContent, {
-    placement: "top-end",
-    tooltipOffset: [20, 10],
-  });
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <FarmMultiplierInfo farmCakePerSecond={farmCakePerSecond ?? "-"} totalMultipliers={totalMultipliers ?? "-"} />,
+    {
+      placement: "top-end",
+      tooltipOffset: [20, 10],
+    }
+  );
 
   return (
     <Container>

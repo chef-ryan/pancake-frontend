@@ -91,7 +91,7 @@ export default function Updater(): null {
   const currentBlock = useCurrentBlock()
   const { chainId } = useActiveChainId()
   const multicallContract = useMulticallContract()
-  const cancellations = useRef<{ blockNumber: number; cancellations: (() => void)[] }>()
+  const cancellations = useRef<{ blockNumber: number; cancellations: (() => void)[] }>(null)
   const worker = useWorker()
 
   const listeningKeys: { [callKey: string]: number } = useMemo(() => {

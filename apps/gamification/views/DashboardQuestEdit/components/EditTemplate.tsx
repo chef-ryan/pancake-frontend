@@ -55,7 +55,7 @@ interface EditTemplateProps {
   state: StateType
   questId?: string
   backButtonUrl: string
-  uploadImageComponent?: JSX.Element
+  uploadImageComponent?: React.JSX.Element
   updateValue: (key: string, value: string | Date) => void
 }
 

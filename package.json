@@ -82,6 +82,11 @@
     "ws": "^8.17.1",
     "zod": "^3.22.3"
   },
+  "resolutions": {
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-is": "catalog:"
+  },
   "pnpm": {
     "patchedDependencies": {
       "@ledgerhq/connect-kit-loader@1.1.2": "patches/@ledgerhq__connect-kit-loader@1.1.2.patch"

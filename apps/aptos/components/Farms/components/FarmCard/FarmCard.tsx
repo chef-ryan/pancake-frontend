@@ -67,14 +67,12 @@ const FarmCard: React.FC<React.PropsWithChildren<FarmCardProps>> = ({
   const addLiquidityUrl = `/add/${liquidityUrlPathParts}`
   const isPromotedFarm = farm.token?.symbol === 'CAKE'
 
-  const multiplierTooltipContent = FarmMultiplierInfo({
-    farmCakePerSecond: farmCakePerSecond ?? '-',
-    totalMultipliers: totalMultipliers ?? '-',
-  })
-
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(multiplierTooltipContent, {
-    placement: 'bottom',
-  })
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <FarmMultiplierInfo farmCakePerSecond={farmCakePerSecond ?? '-'} totalMultipliers={totalMultipliers ?? '-'} />,
+    {
+      placement: 'bottom',
+    },
+  )
 
   const {
     targetRef: totalValueTargetRef,

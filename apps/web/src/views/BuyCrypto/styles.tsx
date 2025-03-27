@@ -232,9 +232,15 @@ export const OnRampIconCircleWrapper = styled(Box)<{ border: boolean }>`
     `}
 `
 
-const InputExtended = styled('input').withConfig({
-  shouldForwardProp: (props) => !['scale', 'isSuccess', 'isWarning'].includes(props),
-})<InputProps & { height: string }>`
+const InputExtended = styled('input')
+  .withConfig({
+    shouldForwardProp: (props) => !['scale', 'isSuccess', 'isWarning'].includes(props),
+  })
+  .attrs<InputProps>(({ scale = scales.MD, isSuccess = false, isWarning = false }) => ({
+    scale,
+    isSuccess,
+    isWarning,
+  }))<InputProps & { height: string }>`
   background-color: ${({ theme }) => theme.colors.input};
   border-radius: 16px;
   box-shadow: ${getBoxShadow};
@@ -271,11 +277,5 @@ const InputExtended = styled('input').withConfig({
     }};
   }
 `
-
-InputExtended.defaultProps = {
-  scale: scales.MD,
-  isSuccess: false,
-  isWarning: false,
-}
 
 export default InputExtended

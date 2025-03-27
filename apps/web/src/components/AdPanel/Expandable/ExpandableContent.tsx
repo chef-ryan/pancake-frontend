@@ -6,7 +6,7 @@ interface ExpandableContentProps extends PropsWithChildren {
   title: string
   isExpanded: boolean
   expandableContent?: ReactNode
-  extendedContentRef?: React.RefObject<HTMLDivElement>
+  extendedContentRef?: React.RefObject<HTMLDivElement | null>
   defaultContent?: ReactNode
 }
 

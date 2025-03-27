@@ -1,6 +1,6 @@
 import { ConnectArgs, ConnectResult, connect as connectCore } from '@pancakeswap/awgmi/core'
 import { useMutation } from '@tanstack/react-query'
-import * as React from 'react'
+import { useCallback } from 'react'
 import { useClient } from '../context'
 import { MutationConfig } from '../types'
 
@@ -36,7 +36,7 @@ export function useConnect({
       onSuccess,
     })
 
-  const connect = React.useCallback(
+  const connect = useCallback(
     (args?: Partial<ConnectArgs>) => {
       return mutate(<ConnectArgs>{
         connector: args?.connector ?? connector,
@@ -46,7 +46,7 @@ export function useConnect({
     [connector, mutate, networkName],
   )
 
-  const connectAsync = React.useCallback(
+  const connectAsync = useCallback(
     (args?: Partial<ConnectArgs>) => {
       return mutateAsync(<ConnectArgs>{
         connector: args?.connector ?? connector,

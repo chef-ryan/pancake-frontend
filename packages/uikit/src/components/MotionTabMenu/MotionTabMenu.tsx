@@ -68,6 +68,7 @@ export const MotionTabMenu: React.FC<React.PropsWithChildren<MotionTabMenuProps>
           >
             <Box px={["8px", "12px"]} py="8px">
               {cloneElement(child, {
+                // @ts-ignore
                 color,
                 bold: isActive,
                 isactive: isActive,

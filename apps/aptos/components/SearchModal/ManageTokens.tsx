@@ -79,7 +79,7 @@ export default function ManageTokens({
   const [{ INPUT, OUTPUT }, dispatch] = useSwapState()
 
   // manage focus on modal show
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(null)
   const handleInput = useCallback((event) => {
     const input = event.target.value
     setSearchQuery(input)

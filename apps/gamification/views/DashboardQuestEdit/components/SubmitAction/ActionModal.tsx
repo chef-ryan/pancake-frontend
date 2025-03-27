@@ -13,7 +13,7 @@ interface ModalConfig {
   title: string
   hideCloseButton?: boolean
   closeOnOverlayClick?: boolean
-  component?: JSX.Element
+  component?: React.JSX.Element
 }
 
 export enum QuestEditModalState {

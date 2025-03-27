@@ -4,15 +4,15 @@ import { space, SpaceProps } from "styled-system";
 
 export type CardFooterProps = SpaceProps;
 
-const CardFooter = styled.div.withConfig({
-  shouldForwardProp,
-})<CardFooterProps>`
+const CardFooter = styled.div
+  .withConfig({
+    shouldForwardProp,
+  })
+  .attrs<CardFooterProps>(({ p = "24px" }) => ({
+    p,
+  }))<CardFooterProps>`
   border-top: 1px solid ${({ theme }) => theme.colors.cardBorder};
   ${space}
 `;
-
-CardFooter.defaultProps = {
-  p: "24px",
-};
 
 export default CardFooter;

@@ -72,7 +72,7 @@ export const DesktopView: React.FC<React.PropsWithChildren<DesktopViewProps>> = 
 
   const videoRef = useRef<null | HTMLDivElement>(null)
   const gutterRef = useRef<null | HTMLDivElement>(null)
-  const splitInstance = useRef<SplitInstance>()
+  const splitInstance = useRef<undefined | SplitInstance>(undefined)
 
   const [isPaneOpen, setIsPaneOpen] = useState(false)
 

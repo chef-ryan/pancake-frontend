@@ -68,10 +68,10 @@ export const CurrencySearch: React.FC<CurrencySearchProps> = ({
   )
 
   // refs for fixed size lists
-  const fixedList = useRef<FixedSizeList>()
+  const fixedList = useRef<FixedSizeList>(null)
 
   // manage focus on modal show
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!isMobile) inputRef.current?.focus()

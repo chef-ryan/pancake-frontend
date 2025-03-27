@@ -5,7 +5,7 @@ const BAD_SRCS: { [imageSrc: string]: true } = {};
 
 export interface TokenLogoProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   srcs: string[];
-  imageRef?: React.RefObject<HTMLImageElement>;
+  imageRef?: React.RefObject<HTMLImageElement | null>;
 }
 
 /**

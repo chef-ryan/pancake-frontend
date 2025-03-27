@@ -43,7 +43,7 @@ export default function Zoom({
   showResetButton: boolean;
   zoomLevels: ZoomLevels;
 }) {
-  const zoomBehavior = useRef<ZoomBehavior<Element, unknown>>();
+  const zoomBehavior = useRef<ZoomBehavior<Element, unknown>>(null);
 
   const [zoomIn, zoomOut, zoomInitial, zoomReset] = useMemo(
     () => [

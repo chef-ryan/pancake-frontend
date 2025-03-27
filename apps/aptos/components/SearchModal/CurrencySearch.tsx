@@ -85,7 +85,7 @@ function CurrencySearch({
   const chainId = useActiveChainId()
 
   // refs for fixed size lists
-  const fixedList = useRef<FixedSizeList>()
+  const fixedList = useRef<FixedSizeList>(null)
 
   const [searchQuery, setSearchQuery] = useState<string>('')
   const debouncedQuery = useDebounce(searchQuery, 200)
@@ -103,9 +103,9 @@ function CurrencySearch({
 
   const native = useNativeCurrency()
 
-  const showNative: boolean | undefined = useMemo(() => {
+  const showNative: boolean = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim()
-    return native && native.symbol?.toLowerCase?.()?.indexOf(s) !== -1
+    return Boolean(native && native.symbol?.toLowerCase?.()?.indexOf(s) !== -1)
   }, [debouncedQuery, native])
 
   const filteredTokens: Token[] = useMemo(() => {
@@ -136,7 +136,7 @@ function CurrencySearch({
   )
 
   // manage focus on modal show
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!isMobile) inputRef.current?.focus()

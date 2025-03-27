@@ -53,7 +53,7 @@ export default function ManageTokens({
   const [searchQuery, setSearchQuery] = useState<string>('')
 
   // manage focus on modal show
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(null)
   const handleInput = useCallback((event) => {
     const input = event.target.value
     const checksummedInput = safeGetAddress(input)

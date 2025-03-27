@@ -25,9 +25,9 @@ function isAnimating(node?: Animatable | Document): boolean {
  * @param skip - Whether to skip the animation and remove the node immediately.
  */
 export function useUnmountingAnimation(
-  node: RefObject<HTMLElement>,
+  node: RefObject<HTMLElement | null>,
   getAnimatingClass: () => string,
-  animatedElements?: RefObject<HTMLElement>[],
+  animatedElements?: RefObject<HTMLElement | null>[],
   skip = false
 ) {
   useEffect(() => {

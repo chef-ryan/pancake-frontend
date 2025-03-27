@@ -51,7 +51,7 @@ export const LockCakeForm: React.FC<{
   fieldOnly?: boolean
   disabled?: boolean
   hideLockCakeDataSetStyle?: boolean
-  customVeCakeCard?: null | JSX.Element
+  customVeCakeCard?: null | React.JSX.Element
   onDismiss?: () => void
 }> = ({ fieldOnly, disabled, customVeCakeCard, hideLockCakeDataSetStyle, onDismiss }) => {
   const [value, onChange] = useAtom(cakeLockAmountAtom)

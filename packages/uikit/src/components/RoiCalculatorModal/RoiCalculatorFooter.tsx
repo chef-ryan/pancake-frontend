@@ -81,15 +81,14 @@ const RoiCalculatorFooter: React.FC<React.PropsWithChildren<RoiCalculatorFooterP
   const { t } = useTranslation();
   const isAptos = rewardCakePerSecond === true;
 
-  const multiplierTooltipContent = FarmMultiplierInfo({
-    farmCakePerSecond: farmCakePerSecond ?? "-",
-    totalMultipliers: totalMultipliers ?? "-",
-  });
   const {
     targetRef: multiplierRef,
     tooltip: multiplierTooltip,
     tooltipVisible: multiplierTooltipVisible,
-  } = useTooltip(multiplierTooltipContent, { placement: "top-end", tooltipOffset: [20, 10] });
+  } = useTooltip(
+    <FarmMultiplierInfo farmCakePerSecond={farmCakePerSecond ?? "-"} totalMultipliers={totalMultipliers ?? "-"} />,
+    { placement: "top-end", tooltipOffset: [20, 10] }
+  );
 
   const gridRowCount = isFarm ? 4 : 2;
 

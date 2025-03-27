@@ -10,7 +10,7 @@ export interface IMultiSelectChangeEvent<T extends string | number = string> {
 }
 
 export interface ISelectItem<T extends string | number> extends SelectItem {
-  icon?: string | JSX.Element;
+  icon?: string | React.JSX.Element;
   value: T;
   label: string;
   [k: string]: any;

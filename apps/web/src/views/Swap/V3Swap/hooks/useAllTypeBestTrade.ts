@@ -17,14 +17,14 @@ export const useAllTypeBestTrade = () => {
   const [isQuotingPaused, setIsQuotingPaused] = useState(false)
   const bestOrder = useSwapBestOrder()
   const { isLoading, trade, refresh, syncing, isStale, error } = useSwapBestTrade({ maxHops: 3 })
-  const lockedAMMTrade = useRef<Trade | undefined>()
+  const lockedAMMTrade = useRef<Trade | undefined>(undefined)
   const lockedOrder = useRef<
     | (InterfaceOrder<Currency, Currency> & {
         isLoading: typeof isLoading
         error: typeof error
       })
     | undefined
-  >()
+  >(undefined)
 
   const currentOrder = useMemo(() => {
     const best = bestOrder.order

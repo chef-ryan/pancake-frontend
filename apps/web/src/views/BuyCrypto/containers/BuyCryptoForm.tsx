@@ -87,7 +87,7 @@ export function BuyCryptoForm({ providerAvailabilities }: { providerAvailabiliti
 
   const bestQuoteRef = useRef<OnRampProviderQuote | undefined>(undefined)
   const debouncedQuery = useDebounce(searchQuery, 200)
-  const externalTxIdRef = useRef<string>()
+  const externalTxIdRef = useRef<string | undefined>(undefined)
 
   useEffect(() => {
     externalTxIdRef.current = v4()

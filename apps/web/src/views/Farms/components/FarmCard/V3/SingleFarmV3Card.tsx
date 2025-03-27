@@ -45,7 +45,9 @@ import FarmV3StakeAndUnStake, { FarmV3LPPosition, FarmV3LPPositionDetail, FarmV3
 
 const { FarmV3HarvestAction } = FarmWidget.FarmV3Table
 
-export const ActionContainer = styled(Flex)`
+export const ActionContainer = styled(Flex).attrs(({ bg = 'dropdown' }) => ({
+  bg,
+}))`
   width: 100%;
   border: 2px solid ${({ theme }) => theme.colors.input};
   border-radius: 16px;
@@ -73,10 +75,6 @@ const Arrow = styled.div`
     z-index: -1;
   }
 `
-
-ActionContainer.defaultProps = {
-  bg: 'dropdown',
-}
 
 type PositionType = 'staked' | 'unstaked'
 

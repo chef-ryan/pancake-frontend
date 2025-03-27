@@ -28,8 +28,8 @@ export enum TagValue {
 }
 
 export interface HooksType {
-  title: JSX.Element
-  desc: JSX.Element
+  title: React.JSX.Element
+  desc: React.JSX.Element
   createDate: string
   githubLink: string
   tags: TagType[]

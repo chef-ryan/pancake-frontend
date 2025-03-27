@@ -94,7 +94,7 @@ const getHandler = (
   setHoverValue: Dispatch<SetStateAction<number | undefined>> | undefined,
   setHoverDate: Dispatch<SetStateAction<string | undefined>> | undefined,
   isMobile: boolean,
-  legendRef: RefObject<HTMLDivElement>
+  legendRef: RefObject<HTMLDivElement | null>
 ) => {
   return (param: MouseEventParams) => {
     if (newSeries && param) {

@@ -70,14 +70,12 @@ export const DetailsSection: React.FC<React.PropsWithChildren<ExpandableSectionP
     currentLanguage: { locale },
   } = useTranslation();
 
-  const multiplierTooltipContent = FarmMultiplierInfo({
-    farmCakePerSecond: farmCakePerSecond ?? "-",
-    totalMultipliers: totalMultipliers ?? "-",
-  });
-
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(multiplierTooltipContent, {
-    placement: "bottom",
-  });
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <FarmMultiplierInfo farmCakePerSecond={farmCakePerSecond ?? "-"} totalMultipliers={totalMultipliers ?? "-"} />,
+    {
+      placement: "bottom",
+    }
+  );
 
   return (
     <Wrapper>

@@ -16,11 +16,11 @@ const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." charac
 export type NumericalInputProps = {
   value: string | number | undefined;
   fontSize?: string;
-  inputRef?: React.RefObject<HTMLInputElement>;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
   padding?: string;
   onUserInput: (input: string) => void;
 } & SwapCSS.InputVariants &
-  Omit<React.HTMLProps<HTMLInputElement>, "ref" | "onChange" | "as">;
+  Omit<React.HTMLProps<HTMLInputElement | null>, "ref" | "onChange" | "as">;
 
 export const NumericalInput = memo(function InnerInput({
   value,

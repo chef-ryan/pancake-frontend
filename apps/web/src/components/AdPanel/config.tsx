@@ -39,7 +39,7 @@ export const useAdConfig = () => {
         }
         return undefined
       })
-      .filter(Boolean) as { id: string; component: JSX.Element }[]
+      .filter(Boolean) as { id: string; component: React.JSX.Element }[]
   }, [configs])
 
   const adList: Array<AdSlide> = useMemo(

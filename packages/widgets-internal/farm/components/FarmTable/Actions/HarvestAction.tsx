@@ -8,7 +8,7 @@ import { ActionContainer, ActionContent, ActionTitles } from "./styles";
 export interface HarvestActionProps {
   earnings: BigNumber;
   earningsBusd: number;
-  displayBalance: string | JSX.Element;
+  displayBalance: string | React.JSX.Element;
   pendingTx: boolean;
   userDataReady: boolean;
   disabled: boolean;

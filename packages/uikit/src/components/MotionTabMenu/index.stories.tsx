@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { BrowserRouter } from "react-router-dom";
 import { Text } from "../Text";
@@ -11,7 +11,7 @@ export default {
 };
 
 const Template: React.FC<React.PropsWithChildren<MotionTabMenuProps>> = ({ children, ...args }) => {
-  const [activeIndex, setActiveIndex] = React.useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
     <BrowserRouter>

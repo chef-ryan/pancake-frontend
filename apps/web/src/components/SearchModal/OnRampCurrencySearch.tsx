@@ -45,7 +45,7 @@ function OnRampCurrencySearch({
   const [searchQuery, setSearchQuery] = useState<string>('')
 
   // refs for fixed size lists
-  const fixedList = useRef<FixedSizeList>()
+  const fixedList = useRef<FixedSizeList>(undefined)
   const debouncedQuery = useDebounce(searchQuery, 200)
   const native = useNativeCurrency()
 
@@ -74,7 +74,7 @@ function OnRampCurrencySearch({
   )
 
   // manage focus on modal show
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!isMobile) inputRef.current?.focus()

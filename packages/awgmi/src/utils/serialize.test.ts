@@ -2,7 +2,7 @@
 /* eslint-disable react/no-children-prop */
 /* eslint-disable no-buffer-constructor */
 /* eslint-disable prefer-object-spread */
-import * as React from 'react'
+import React from 'react'
 import { describe, expect, it } from 'vitest'
 
 import { serialize } from './serialize'

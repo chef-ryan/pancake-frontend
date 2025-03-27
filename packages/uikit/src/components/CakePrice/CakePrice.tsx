@@ -1,5 +1,5 @@
-import React from "react";
 import { styled } from "styled-components";
+import { memo } from "react";
 import LogoRound from "../Svg/Icons/LogoRound";
 import Text from "../Text/Text";
 import Skeleton from "../Skeleton/Skeleton";
@@ -44,4 +44,4 @@ const CakePrice: React.FC<React.PropsWithChildren<Props>> = ({
   ) : null;
 };
 
-export default React.memo(CakePrice);
+export default memo(CakePrice);

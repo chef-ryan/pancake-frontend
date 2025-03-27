@@ -1,7 +1,9 @@
 import { styled } from "styled-components";
 import { Flex } from "@pancakeswap/uikit";
 
-export const ActionContainer = styled(Flex)`
+export const ActionContainer = styled(Flex).attrs({
+  flex: 1,
+})`
   flex-direction: column;
   padding: 16px;
   border: 2px solid ${({ theme }) => theme.colors.input};
@@ -13,17 +15,12 @@ export const ActionContainer = styled(Flex)`
     margin-right: 12px;
     margin-bottom: 0;
   }
-}
 
   ${({ theme }) => theme.mediaQueries.xl} {
     margin-left: 32px;
     margin-right: 0;
   }
 `;
-
-ActionContainer.defaultProps = {
-  flex: 1,
-};
 
 export const RowActionContainer = styled(ActionContainer)`
   flex-direction: row;
@@ -34,12 +31,10 @@ export const ActionTitles = styled.div`
   font-size: 12px;
 `;
 
-export const ActionContent = styled(Flex)`
+export const ActionContent = styled(Flex).attrs(({ mt = "8px" }) => ({
+  mt,
+}))`
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
-
-ActionContent.defaultProps = {
-  mt: "8px",
-};

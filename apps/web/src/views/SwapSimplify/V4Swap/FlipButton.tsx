@@ -43,7 +43,7 @@ export const Line = styled.div`
   top: calc(50% + 6px);
 `
 
-const getCompactWapperStyle = (compact?: boolean): CSSProperties => {
+const getCompactWrapperStyle = (compact?: boolean): CSSProperties => {
   if (compact) {
     return {
       position: 'relative',
@@ -116,7 +116,7 @@ export const FlipButton = memo(function FlipButton({
       justify="space-between"
       position="relative"
       style={{
-        ...getCompactWapperStyle(compact),
+        ...getCompactWrapperStyle(compact),
       }}
     >
       {!compact && <Line />}

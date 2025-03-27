@@ -11,8 +11,8 @@ interface CurrencyInputPanelProps extends Omit<NumericalInputProps, "onBlur" | "
   inputLeft?: React.ReactNode;
   showBridgeWarning?: boolean;
   inputFontSize?: string;
-  wrapperRef?: React.RefObject<HTMLDivElement>;
-  inputRef?: React.RefObject<HTMLInputElement>;
+  wrapperRef?: React.RefObject<HTMLDivElement | null>;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
 }
 export function CurrencyInputPanelSimplify({
   value,

@@ -8,7 +8,7 @@ import { TaikoEthTooltips } from 'views/Farms/components/CustomTooltips/TaikoEth
  */
 interface CustomTooltipsType {
   identifier: Address
-  tooltips: JSX.Element
+  tooltips: React.JSX.Element
 }
 
 const CONTRACTS_LP_WITH_TOOLTIPS: CustomTooltipsType[] = [

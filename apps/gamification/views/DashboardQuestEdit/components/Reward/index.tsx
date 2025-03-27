@@ -28,7 +28,7 @@ const BoxContainer = styled(Flex)`
 
 interface RewardProps {
   state: StateType
-  actionComponent?: JSX.Element
+  actionComponent?: React.JSX.Element
   updateValue: (key: string, value: boolean) => void
 }
 

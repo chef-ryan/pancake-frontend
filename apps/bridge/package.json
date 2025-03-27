@@ -39,21 +39,21 @@
     "jotai": "^2.4.3",
     "lodash": "^4.17.21",
     "next": "catalog:",
-    "next-themes": "^0.2.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "styled-components": "6.0.7",
+    "next-themes": "^0.4.6",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "styled-components": "6.1.16",
     "styled-jsx": "5.1.1",
     "viem": "catalog:",
     "wagmi": "catalog:"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "14.2.3",
+    "@next/eslint-plugin-next": "15.2.3",
     "@pancakeswap/next-config": "workspace:*",
     "@pancakeswap/tsconfig": "workspace:*",
     "@types/node": "18.0.4",
-    "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.0.6",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
     "eslint": "^8.32.0",
     "webpack-retry-chunk-load-plugin": "3.1.1"
   }

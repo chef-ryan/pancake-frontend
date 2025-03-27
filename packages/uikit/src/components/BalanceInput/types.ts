@@ -6,7 +6,7 @@ export interface BalanceInputProps extends BoxProps {
   value: string | number;
   onUserInput: (input: string) => void;
   inputAlign?: "left" | "right";
-  innerRef?: React.RefObject<HTMLInputElement>;
+  innerRef?: React.RefObject<HTMLInputElement | null>;
   currencyValue?: ReactNode;
   placeholder?: string;
   inputProps?: Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "placeholder" | "onChange"> & InputProps;

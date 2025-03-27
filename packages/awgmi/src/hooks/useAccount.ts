@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
-import * as React from 'react'
 
 import { GetAccountResult, getAccount, watchAccount } from '@pancakeswap/awgmi/core'
+import { useRef } from 'react'
 import { useSyncExternalStoreWithTracked } from './useSyncExternalStoreWithTracked'
 
 export type UseAccountConfig = {
@@ -21,7 +21,7 @@ export type UseAccountConfig = {
 
 export function useAccount({ onConnect, onDisconnect }: UseAccountConfig = {}) {
   const account = useSyncExternalStoreWithTracked(watchAccount, getAccount)
-  const previousAccount = React.useRef<typeof account>()
+  const previousAccount = useRef<typeof account>(undefined)
 
   if (!!onConnect && previousAccount.current?.status !== 'connected' && account.status === 'connected')
     onConnect({

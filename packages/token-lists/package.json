@@ -16,18 +16,18 @@
     "lodash": "^4.17.21"
   },
   "peerDependencies": {
-    "@reduxjs/toolkit": "^1.9.1",
+    "@reduxjs/toolkit": "^2.6.1",
     "jotai": "^2.4.3",
     "localforage": "^1.10.0",
-    "react": "^18.2.0"
+    "react": "catalog:"
   },
   "devDependencies": {
     "@pancakeswap/utils": "workspace:*",
-    "@reduxjs/toolkit": "^1.9.1",
-    "@types/react": "^18.2.21",
+    "@reduxjs/toolkit": "^2.6.1",
+    "@types/react": "^19.0.1",
     "jotai": "^2.4.3",
     "localforage": "^1.10.0",
-    "react": "^18.2.0",
+    "react": "catalog:",
     "tsup": "^6.7.0"
   },
   "exports": {

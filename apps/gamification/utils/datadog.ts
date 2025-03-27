@@ -6,7 +6,7 @@ try {
     clientToken: process.env.NEXT_PUBLIC_DATADOG_CLIENT_TOKEN || '',
     env: process.env.NEXT_PUBLIC_VERCEL_ENV,
     version: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
-    site: process.env.NEXT_PUBLIC_DD_RUM_SITE || '',
+    site: (process.env.NEXT_PUBLIC_DD_RUM_SITE || undefined) as any,
     forwardErrorsToLogs: true,
     sessionSampleRate: 100,
     service: 'pancakeswap-web',
@@ -47,7 +47,7 @@ function createDatadogRumManager() {
       enableExperimentalFeatures: ['feature_flags'],
       applicationId: process.env.NEXT_PUBLIC_DD_RUM_APP_ID || '',
       clientToken: process.env.NEXT_PUBLIC_DD_RUM_CLIENT_TOKEN || '',
-      site: process.env.NEXT_PUBLIC_DD_RUM_SITE || '',
+      site: (process.env.NEXT_PUBLIC_DD_RUM_SITE || undefined) as any,
       service: 'pancakeswap-web',
       env,
       sessionSampleRate,
@@ -60,7 +60,7 @@ function createDatadogRumManager() {
     initialized = true
   }
 
-  const setUser: typeof ddRum.setUser = (...args) => {
+  const setUser: typeof ddRum.setUser = (...args: Parameters<typeof ddRum.setUser>) => {
     if (!initialized) {
       return
     }

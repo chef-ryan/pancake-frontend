@@ -1,6 +1,6 @@
 import { simulateTransaction, SimulateTransactionArgs, SimulateTransactionResult } from '@pancakeswap/awgmi/core'
 import { useMutation } from '@tanstack/react-query'
-import * as React from 'react'
+import { useCallback } from 'react'
 import { MutationConfig } from '../types'
 import { useNetwork } from './useNetwork'
 
@@ -49,7 +49,7 @@ export function useSimulateTransaction({
       onSuccess,
     })
 
-  const _simulateTransaction = React.useCallback(
+  const _simulateTransaction = useCallback(
     (args: UseSimulateTransactionMutationArgs) =>
       mutate({
         networkName,
@@ -62,7 +62,7 @@ export function useSimulateTransaction({
     [mutate, networkName, options, payload, query, throwOnError],
   )
 
-  const _simulateTransactionAsync = React.useCallback(
+  const _simulateTransactionAsync = useCallback(
     (args?: UseSimulateTransactionMutationArgs) =>
       mutateAsync({
         networkName,

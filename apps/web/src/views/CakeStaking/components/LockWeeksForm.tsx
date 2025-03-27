@@ -254,7 +254,7 @@ interface LockWeeksFormProps {
   expired?: boolean
   disabled?: boolean
   hideLockWeeksDataSetStyle?: boolean
-  customVeCakeCard?: null | JSX.Element
+  customVeCakeCard?: null | React.JSX.Element
   onDismiss?: () => void
 }
 

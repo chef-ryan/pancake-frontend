@@ -33,7 +33,7 @@ const DropdownContainer = styled(Flex)`
 
 interface DropdownProps extends FlexProps {
   setIsOpen: (value: boolean) => void
-  dropdownRef: React.RefObject<HTMLDivElement>
+  dropdownRef: React.RefObject<HTMLDivElement | null>
   children: React.ReactNode
 }
 

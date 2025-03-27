@@ -10,7 +10,7 @@ const useModal = (
   updateOnPropsChange = false,
   modalId = "defaultNodeId"
 ): [Handler, Handler] => {
-  const currentModal = useRef<React.ReactNode>();
+  const currentModal = useRef<React.ReactNode>(null);
   currentModal.current = modal;
   const { isOpen, nodeId, modalNode, setModalNode, onPresent, onDismiss } = useContext(Context);
   const onPresentCallback = useCallback(() => {

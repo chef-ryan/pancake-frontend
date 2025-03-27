@@ -53,7 +53,7 @@ const StyledCardRibbon = styled.div<Partial<StyledCardRibbonProps>>`
 const CardRibbon: React.FC<React.PropsWithChildren<CardRibbonProps>> = ({
   variantColor,
   text,
-  ribbonPosition,
+  ribbonPosition = "right",
   ...props
 }) => {
   return (
@@ -61,11 +61,6 @@ const CardRibbon: React.FC<React.PropsWithChildren<CardRibbonProps>> = ({
       <div title={text}>{text}</div>
     </StyledCardRibbon>
   );
-};
-
-CardRibbon.defaultProps = {
-  // eslint-disable-next-line react/default-props-match-prop-types
-  ribbonPosition: "right",
 };
 
 export default CardRibbon;

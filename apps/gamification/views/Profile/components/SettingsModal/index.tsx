@@ -23,7 +23,7 @@ import { UserInfo } from 'views/Profile/hooks/settingsModal/useUserSocialHub'
 import { useAccount } from 'wagmi'
 
 interface SocialComponentProps {
-  icon: JSX.Element
+  icon: React.JSX.Element
   name: string
   disabled: boolean
   connected?: boolean

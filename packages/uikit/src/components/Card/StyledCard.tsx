@@ -31,9 +31,16 @@ const getBorderColor = ({ isActive, isSuccess, isWarning, borderBackground, them
   return theme.colors.cardBorder;
 };
 
-export const StyledCard = styled.div.withConfig({
-  shouldForwardProp,
-})<StyledCardProps>`
+export const StyledCard = styled.div
+  .withConfig({
+    shouldForwardProp,
+  })
+  .attrs<StyledCardProps>(({ isActive = false, isSuccess = false, isWarning = false, isDisabled = false }) => ({
+    isActive,
+    isSuccess,
+    isWarning,
+    isDisabled,
+  }))<StyledCardProps>`
   background: ${getBorderColor};
   border-radius: ${({ theme }) => theme.radii.card};
   color: ${({ theme, isDisabled }) => theme.colors[isDisabled ? "textDisabled" : "text"]};
@@ -59,10 +66,3 @@ export const StyledCardInner = styled(Box)<{ background?: string; hasCustomBorde
   background: ${({ theme, background }) => background ?? theme.card.background};
   border-radius: ${({ theme }) => theme.radii.card};
 `;
-
-StyledCard.defaultProps = {
-  isActive: false,
-  isSuccess: false,
-  isWarning: false,
-  isDisabled: false,
-};

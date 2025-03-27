@@ -32,8 +32,8 @@ const ValueText = styled(Text)`
 
 interface NewStakingDataSetProps {
   cakeAmount?: number
-  customVeCakeCard?: JSX.Element
-  customDataRow?: JSX.Element
+  customVeCakeCard?: React.JSX.Element
+  customDataRow?: React.JSX.Element
 }
 
 export const NewStakingDataSet: React.FC<React.PropsWithChildren<NewStakingDataSetProps>> = ({

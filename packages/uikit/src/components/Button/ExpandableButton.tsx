@@ -14,7 +14,7 @@ export interface ExpandableButtonProps extends SpaceProps {
 
 export const ExpandableButton: React.FC<React.PropsWithChildren<ExpandableButtonProps>> = ({
   onClick,
-  expanded,
+  expanded = false,
   children,
   ...rest
 }) => {
@@ -25,13 +25,10 @@ export const ExpandableButton: React.FC<React.PropsWithChildren<ExpandableButton
     </IconButton>
   );
 };
-ExpandableButton.defaultProps = {
-  expanded: false,
-};
 
 export const ExpandableLabel: React.FC<React.PropsWithChildren<ExpandableButtonProps>> = ({
   onClick,
-  expanded,
+  expanded = false,
   children,
   iconColor = "primary",
   iconSize,
@@ -55,7 +52,4 @@ export const ExpandableLabel: React.FC<React.PropsWithChildren<ExpandableButtonP
       {children}
     </Button>
   );
-};
-ExpandableLabel.defaultProps = {
-  expanded: false,
 };

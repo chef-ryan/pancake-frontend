@@ -94,7 +94,7 @@ function CurrencySearch({
   const { chainId } = useActiveChainId()
 
   // refs for fixed size lists
-  const fixedList = useRef<FixedSizeList>()
+  const fixedList = useRef<FixedSizeList | undefined>(undefined)
 
   const [searchQuery, setSearchQuery] = useState<string>('')
   const debouncedQuery = useDebounce(searchQuery, 200)
@@ -142,7 +142,7 @@ function CurrencySearch({
   )
 
   // manage focus on modal show
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!isMobile) inputRef.current?.focus()

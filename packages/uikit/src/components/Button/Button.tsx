@@ -4,8 +4,18 @@ import EXTERNAL_LINK_PROPS from "../../util/externalLinkProps";
 import StyledButton from "./StyledButton";
 import { ButtonProps, scales, variants } from "./types";
 
-const Button = <E extends ElementType = "button">(props: ButtonProps<E>): JSX.Element => {
-  const { startIcon, endIcon, external, className, isLoading, disabled, children, ...rest } = props;
+const Button = <E extends ElementType = "button">({
+  startIcon,
+  endIcon,
+  external = false,
+  className,
+  isLoading = false,
+  disabled = false,
+  variant = variants.PRIMARY,
+  scale = scales.MD,
+  children,
+  ...rest
+}: ButtonProps<E>): React.JSX.Element => {
   const internalProps = external ? EXTERNAL_LINK_PROPS : {};
   const isDisabled = isLoading || disabled;
 
@@ -17,6 +27,8 @@ const Button = <E extends ElementType = "button">(props: ButtonProps<E>): JSX.El
         "pancake-button--disabled": isDisabled && !isLoading,
       })}
       disabled={isDisabled}
+      variant={variant}
+      scale={scale}
       {...internalProps}
       {...rest}
     >
@@ -35,14 +47,6 @@ const Button = <E extends ElementType = "button">(props: ButtonProps<E>): JSX.El
       </>
     </StyledButton>
   );
-};
-
-Button.defaultProps = {
-  isLoading: false,
-  external: false,
-  variant: variants.PRIMARY,
-  scale: scales.MD,
-  disabled: false,
 };
 
 export default Button;

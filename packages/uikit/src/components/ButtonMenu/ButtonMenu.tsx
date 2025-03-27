@@ -76,6 +76,7 @@ const ButtonMenu: React.FC<React.PropsWithChildren<ButtonMenuProps>> = ({
     <StyledButtonMenu disabled={disabled} variant={variant} fullWidth={fullWidth} {...props}>
       {Children.map(children, (child: ReactElement, index) => {
         return cloneElement(child, {
+          // @ts-ignore
           isActive: activeIndex === index,
           onClick: onItemClick ? (e: React.MouseEvent<HTMLElement>) => onItemClick(index, e) : undefined,
           scale,

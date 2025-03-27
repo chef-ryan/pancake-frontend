@@ -11,7 +11,7 @@ interface ExpandableActionsProps extends FlexProps {
   /** Secondary Action Button */
   actionButton?: React.ReactNode
   isExpanded: boolean
-  actionPanelRef?: React.RefObject<HTMLDivElement>
+  actionPanelRef?: React.RefObject<HTMLDivElement | null>
   handleDismiss: () => void
   handleExpand?: () => void
   toggleHeight?: (isHovering: boolean, isExpanded: boolean) => void

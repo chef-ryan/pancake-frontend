@@ -30,7 +30,7 @@ export function CurrencyLogo({
   size?: string;
   style?: React.CSSProperties;
   useTrustWalletUrl?: boolean;
-  imageRef?: React.RefObject<HTMLImageElement>;
+  imageRef?: React.RefObject<HTMLImageElement | null>;
 } & SpaceProps) {
   const uriLocations = useHttpLocations(currency?.logoURI);
 

@@ -13,22 +13,10 @@ import { ChartLiquidityProps, V3LiquidityChartData } from './type'
 
 const ZOOM_INTERVAL = 20
 
-const CustomBar = ({
-  x,
-  y,
-  width,
-  height,
-  fill,
-}: {
-  x: number
-  y: number
-  width: number
-  height: number
-  fill: string
-}) => {
+const CustomBar = (props) => {
   return (
     <g>
-      <rect x={x} y={y} fill={fill} width={width} height={height} rx="2" />
+      <rect x={props.x} y={props.y} fill={props.fill} width={props.width} height={props.height} rx="2" />
     </g>
   )
 }

@@ -1,9 +1,9 @@
+import React, { useContext, createContext } from 'react'
 import { Aptos } from '@aptos-labs/ts-sdk'
-import * as React from 'react'
 
 import { Client } from './client'
 
-export const Context = React.createContext<Client<Aptos> | undefined>(undefined)
+export const Context = createContext<Client<Aptos> | undefined>(undefined)
 
 export type AwgmiConfigProps<TProvider extends Aptos = Aptos> = {
   /** React-decorated Client instance */
@@ -18,7 +18,7 @@ export function AwgmiConfig<TProvider extends Aptos>({
 }
 
 export function useClient<TProvider extends Aptos>() {
-  const client = React.useContext(Context) as unknown as Client<TProvider>
+  const client = useContext(Context) as unknown as Client<TProvider>
   if (!client) throw new Error(['`useClient` must be used within `AwgmiConfig`.\n'].join('\n'))
   return client
 }

@@ -11,10 +11,10 @@
   "dependencies": {
     "@pancakeswap/uikit": "workspace:*",
     "@types/node": "20.5.7",
-    "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.0.6",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
     "next": "catalog:",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   }
 }

@@ -1,7 +1,10 @@
 import { styled } from "styled-components";
 import { Box } from "../Box";
 
-const Loading = styled(Box)`
+const Loading = styled(Box).attrs(({ width = "20px", height = "20px" }) => ({
+  width,
+  height,
+}))`
   border-radius: 50%;
   border: 2px solid ${({ theme }) => theme.colors.textDisabled};
   border-top: 2px solid transparent;
@@ -25,10 +28,5 @@ const Loading = styled(Box)`
     }
   }
 `;
-
-Loading.defaultProps = {
-  width: "20px",
-  height: "20px",
-};
 
 export default Loading;

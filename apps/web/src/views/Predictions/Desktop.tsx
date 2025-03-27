@@ -149,7 +149,7 @@ const Desktop: React.FC<React.PropsWithChildren> = () => {
     dispatch(setChartPaneState(true))
   }, [dispatch])
 
-  const splitInstance = useRef<SplitInstance>()
+  const splitInstance = useRef<SplitInstance | undefined>(undefined)
 
   const tokenSymbol = useMemo(() => config?.token.symbol ?? '', [config])
 

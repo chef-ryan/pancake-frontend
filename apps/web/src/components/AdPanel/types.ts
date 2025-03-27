@@ -11,7 +11,7 @@ export interface AdPlayerProps {
 
 export interface AdSlide {
   id: string
-  component: JSX.Element
+  component: React.JSX.Element
   shouldRender?: Array<boolean>
   priority?: number
 }

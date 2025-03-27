@@ -54,6 +54,7 @@ const TabMenu: React.FC<React.PropsWithChildren<TabMenuProps>> = ({
           const inverseBackgroundColor = isActive ? "input" : "textSubtle";
 
           return cloneElement(child, {
+            // @ts-ignore
             isActive,
             onClick: onItemClick ? () => onItemClick(index) : undefined,
             color: isColorInverse ? inverseColor : color,

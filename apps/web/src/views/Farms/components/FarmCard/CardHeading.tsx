@@ -87,14 +87,12 @@ const CardHeading: React.FC<React.PropsWithChildren<ExpandableSectionProps>> = (
   const hasSwellReward = useHasSwellReward(lpAddress)
   const customTooltips = useHasCustomFarmLpTooltips(lpAddress)
 
-  const multiplierTooltipContent = FarmMultiplierInfo({
-    farmCakePerSecond: farmCakePerSecond ?? '-',
-    totalMultipliers: totalMultipliers ?? '-',
-  })
-
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(multiplierTooltipContent, {
-    placement: 'bottom',
-  })
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <FarmMultiplierInfo farmCakePerSecond={farmCakePerSecond ?? '-'} totalMultipliers={totalMultipliers ?? '-'} />,
+    {
+      placement: 'bottom',
+    },
+  )
 
   return (
     <Wrapper justifyContent="space-between" alignItems="center" mb="12px">
