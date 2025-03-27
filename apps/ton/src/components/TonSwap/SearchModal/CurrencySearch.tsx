@@ -73,7 +73,8 @@ function CurrencySearch({
   const filteredSortedTokens: Currency[] = useMemo(() => {
     return filteredQueryTokens
       .map((token, index) => ({ token, balance: balances[index] }))
-      .toSorted((a, b) => Number((b.balance || 0n) - (a.balance || 0n)))
+      .slice()
+      .sort((a, b) => Number((b.balance || 0n) - (a.balance || 0n)))
       .map(({ token }) => token)
   }, [filteredQueryTokens, balances])
 
