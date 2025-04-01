@@ -95,11 +95,15 @@ export const getAccountV3Positions = async (chainId: number, account: Address): 
   const positions = await readPositions(chainId, farmingTokenIds.concat(nonFarmTokenIds))
 
   const farmingTokenIdsLength = farmingTokenIds.length
-  positions.forEach((_, index) => {
-    positions[index].isStaked = index < farmingTokenIdsLength
+  positions.forEach((pos, index) => {
+    // eslint-disable-next-line no-param-reassign
+    pos.isStaked = index < farmingTokenIdsLength
   })
 
   return positions.sort((a, b) => {
+    if (a.isStaked !== b.isStaked) {
+      return a.isStaked ? -1 : 1
+    }
     const aId = a.tokenId ?? BigInt(0)
     const bId = b.tokenId ?? BigInt(0)
     return aId < bId ? 1 : -1
