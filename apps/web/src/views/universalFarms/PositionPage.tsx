@@ -132,7 +132,7 @@ const getPoolStatus = (pos: PositionDetail, pool: Pool | null) => {
   if (pos.liquidity === 0n) {
     return V3_STATUS.CLOSED
   }
-  if (pool && (pool.tickCurrent < pos.tickLower || pool.tickCurrent >= pos.tickUpper)) {
+  if (!pool || (pool && (pool.tickCurrent < pos.tickLower || pool.tickCurrent >= pos.tickUpper))) {
     return V3_STATUS.INACTIVE
   }
   return V3_STATUS.ACTIVE
