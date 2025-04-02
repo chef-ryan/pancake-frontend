@@ -1,8 +1,10 @@
 import { ChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
-import { AutoColumn, AutoRow, Text } from '@pancakeswap/uikit'
+import { AutoColumn, AutoRow, Flex, InlineMenu, Text } from '@pancakeswap/uikit'
 import { ChainLogo } from '@pancakeswap/widgets-internal'
 import { useActiveChainId } from 'hooks/useActiveChainId'
+import drop from 'lodash/drop'
+import take from 'lodash/take'
 import { useMemo } from 'react'
 import { chainNameConverter } from 'utils/chainNameConverter'
 import { chains as evmChains } from 'utils/wagmi'
@@ -25,6 +27,18 @@ export default function SwapNetworkSelection({
 
   const selectedChain = useMemo(() => evmChains.find((chain) => chain.id === usedChainId), [usedChainId])
 
+  const [shownChains, hiddenChains] = useMemo(() => {
+    const filteredChains = evmChains.filter((chain) => {
+      if (chain.id === usedChainId) return false
+      if ('testnet' in chain && chain.testnet && chain.id !== ChainId.MONAD_TESTNET) {
+        return showTestnet
+      }
+      return true
+    })
+
+    return [take(filteredChains, 4), drop(filteredChains, 4)]
+  }, [usedChainId, showTestnet])
+
   return (
     <AutoColumn gap="sm">
       <AutoRow>
@@ -44,23 +58,40 @@ export default function SwapNetworkSelection({
           </ButtonWrapper>
         ) : null}
 
-        {evmChains
-          .filter((chain) => {
-            if (chain.id === usedChainId) return false
-            if ('testnet' in chain && chain.testnet && chain.id !== ChainId.MONAD_TESTNET) {
-              return showTestnet
-            }
-            return true
-          })
-          .map((chain) => {
-            return (
-              <ButtonWrapper key={`buttonNetworkSelect#${chain.id}`} style={{ marginRight: '4px' }}>
-                <BaseWrapper onClick={() => onSelect(chain.id)}>
+        {shownChains.map((chain) => {
+          return (
+            <ButtonWrapper key={`buttonNetworkSelect#${chain.id}`} style={{ marginRight: '4px' }}>
+              <BaseWrapper onClick={() => onSelect(chain.id)}>
+                <ChainLogo chainId={chain.id} px="4px" />
+              </BaseWrapper>
+            </ButtonWrapper>
+          )
+        })}
+
+        <InlineMenu
+          component={
+            <ButtonWrapper>
+              <BaseWrapper>
+                <Text color="textSubtle" bold px="6px">
+                  +{hiddenChains.length}
+                </Text>
+              </BaseWrapper>
+            </ButtonWrapper>
+          }
+        >
+          <Flex flexDirection="column" pt="12px" pb="4px">
+            {hiddenChains.map((chain) => {
+              return (
+                <Flex key={`buttonNetworkSelect#${chain.id}`} onClick={() => onSelect(chain.id)} pb="8px" px="16px">
                   <ChainLogo chainId={chain.id} px="4px" />
-                </BaseWrapper>
-              </ButtonWrapper>
-            )
-          })}
+                  <Text color="inherit" px="6px">
+                    {chainNameConverter(chain.name)}
+                  </Text>
+                </Flex>
+              )
+            })}
+          </Flex>
+        </InlineMenu>
       </RowWrapper>
     </AutoColumn>
   )
