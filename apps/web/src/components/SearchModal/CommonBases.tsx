@@ -13,7 +13,7 @@ import { CommonBasesType } from './types'
 export const ButtonWrapper = styled.div`
   display: inline-block;
   vertical-align: top;
-  margin-right: 10px;
+  margin-right: 8px;
 `
 
 export const BaseWrapper = styled.div<{ disable?: boolean }>`
