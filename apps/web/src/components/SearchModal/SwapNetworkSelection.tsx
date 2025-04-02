@@ -8,7 +8,7 @@ import { chainNameConverter } from 'utils/chainNameConverter'
 import { chains as evmChains } from 'utils/wagmi'
 import { BaseWrapper, ButtonWrapper, RowWrapper } from './CommonBases'
 
-export default function NetworkSection({
+export default function SwapNetworkSelection({
   chainId,
   onSelect,
   showTestnet,
@@ -36,8 +36,8 @@ export default function NetworkSection({
         {selectedChain ? (
           <ButtonWrapper>
             <BaseWrapper disable>
-              <ChainLogo chainId={selectedChain.id} />
-              <Text color="inherit" p="2px 6px">
+              <ChainLogo chainId={selectedChain.id} position="relative" top="2px" pl="4px" />
+              <Text color="inherit" px="6px">
                 {chainNameConverter(selectedChain.name)}
               </Text>
             </BaseWrapper>
@@ -56,7 +56,7 @@ export default function NetworkSection({
             return (
               <ButtonWrapper key={`buttonNetworkSelect#${chain.id}`}>
                 <BaseWrapper onClick={() => onSelect(chain.id)}>
-                  <ChainLogo chainId={chain.id} />
+                  <ChainLogo chainId={chain.id} px="4px" />
                 </BaseWrapper>
               </ButtonWrapper>
             )
