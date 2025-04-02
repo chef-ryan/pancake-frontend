@@ -235,9 +235,11 @@ export function queryParametersToSwapState(
   return {
     [Field.INPUT]: {
       currencyId: inputCurrency,
+      chainId: undefined,
     },
     [Field.OUTPUT]: {
       currencyId: outputCurrency,
+      chainId: undefined,
     },
     typedValue: parseTokenAmountURLParameter(parsedQs.exactAmount),
     independentField: parseIndependentFieldURLParameter(parsedQs.exactField),
