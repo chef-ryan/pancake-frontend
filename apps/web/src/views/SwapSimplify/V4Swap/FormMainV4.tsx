@@ -15,6 +15,7 @@ import { useCurrencyBalances } from 'state/wallet/hooks'
 import { currencyId } from 'utils/currencyId'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 
+import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { useAccount } from 'wagmi'
 import useWarningImport from '../../Swap/hooks/useWarningImport'
 import { useIsWrapping } from '../../Swap/V3Swap/hooks'
@@ -68,6 +69,8 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
     }
   }, [maxAmountInput, onUserInput])
 
+  const { canSwitch, switchNetwork } = useSwitchNetwork()
+
   const handleCurrencySelect = useCallback(
     (
       newCurrency: Currency,
@@ -83,6 +86,11 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
       const oldCurrencyId = isInput ? currentInputCurrencyId : currentOutputCurrencyId
       const otherCurrencyId = isInput ? currentOutputCurrencyId : currentInputCurrencyId
       const newCurrencyId = currencyId(newCurrency)
+
+      if (isInput && canSwitch) {
+        switchNetwork(newCurrency.chainId)
+      }
+
       replaceBrowserHistoryMultiple({
         ...(newCurrencyId === otherCurrencyId && { [isInput ? 'outputCurrency' : 'inputCurrency']: oldCurrencyId }),
         [isInput ? 'inputCurrency' : 'outputCurrency']: newCurrencyId,

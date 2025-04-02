@@ -50,7 +50,14 @@ export default function SwapNetworkSelection({
         {selectedChain ? (
           <ButtonWrapper style={{ marginRight: '4px' }}>
             <BaseWrapper disable>
-              <ChainLogo chainId={selectedChain.id} position="relative" top="2px" pl="4px" />
+              <ChainLogo
+                chainId={selectedChain.id}
+                style={{
+                  position: 'relative',
+                  top: '2px',
+                }}
+                pl="4px"
+              />
               <Text color="inherit" px="6px">
                 {chainNameConverter(selectedChain.name)}
               </Text>
