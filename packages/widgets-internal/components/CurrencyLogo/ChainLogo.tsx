@@ -10,7 +10,7 @@ export const ChainLogo = memo(
     width = 24,
     height = 24,
     ...props
-  }: { chainId?: number; width?: number; height?: number } & SpaceProps) => {
+  }: { chainId?: number; width?: number; height?: number; position?: string; top?: string } & SpaceProps) => {
     const icon = chainId ? (
       <Image
         alt={`chain-${chainId}`}
