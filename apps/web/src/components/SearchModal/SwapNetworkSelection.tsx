@@ -34,7 +34,7 @@ export default function SwapNetworkSelection({
       </AutoRow>
       <RowWrapper>
         {selectedChain ? (
-          <ButtonWrapper>
+          <ButtonWrapper style={{ marginRight: '4px' }}>
             <BaseWrapper disable>
               <ChainLogo chainId={selectedChain.id} position="relative" top="2px" pl="4px" />
               <Text color="inherit" px="6px">
@@ -54,7 +54,7 @@ export default function SwapNetworkSelection({
           })
           .map((chain) => {
             return (
-              <ButtonWrapper key={`buttonNetworkSelect#${chain.id}`}>
+              <ButtonWrapper key={`buttonNetworkSelect#${chain.id}`} style={{ marginRight: '4px' }}>
                 <BaseWrapper onClick={() => onSelect(chain.id)}>
                   <ChainLogo chainId={chain.id} px="4px" />
                 </BaseWrapper>
