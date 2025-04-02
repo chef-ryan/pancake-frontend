@@ -21,7 +21,7 @@ import Row from '../Layout/Row'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 import ImportRow from './ImportRow'
-import NetworkSection from './NetworkSection'
+import SwapNetworkSelection from './SwapNetworkSelection'
 import { getSwapSound } from './swapSound'
 
 interface CurrencySearchProps {
@@ -265,7 +265,10 @@ function CurrencySearch({
             />
           </Row>
         )}
-        <NetworkSection chainId={selectedChainId} onSelect={(currentChainId) => setSelectedChainId(currentChainId)} />
+        <SwapNetworkSelection
+          chainId={selectedChainId}
+          onSelect={(currentChainId) => setSelectedChainId(currentChainId)}
+        />
         {showCommonBases && (
           <CommonBases
             chainId={selectedChainId}
