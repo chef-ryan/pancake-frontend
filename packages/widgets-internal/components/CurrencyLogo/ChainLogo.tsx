@@ -1,7 +1,6 @@
-import { Box, HelpIcon } from "@pancakeswap/uikit";
+import { Box, BoxProps, HelpIcon } from "@pancakeswap/uikit";
 import Image from "next/image";
 import { memo } from "react";
-import { SpaceProps } from "styled-system";
 import { ASSET_CDN } from "../../utils/endpoints";
 
 export const ChainLogo = memo(
@@ -10,7 +9,7 @@ export const ChainLogo = memo(
     width = 24,
     height = 24,
     ...props
-  }: { chainId?: number; width?: number; height?: number; position?: string; top?: string } & SpaceProps) => {
+  }: { chainId?: number; width?: number; height?: number } & BoxProps) => {
     const icon = chainId ? (
       <Image
         alt={`chain-${chainId}`}
