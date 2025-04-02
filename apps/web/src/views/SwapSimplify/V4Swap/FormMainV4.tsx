@@ -38,12 +38,14 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
   const {
     independentField,
     typedValue,
-    [Field.INPUT]: { currencyId: inputCurrencyId },
-    [Field.OUTPUT]: { currencyId: outputCurrencyId },
+    [Field.INPUT]: { currencyId: inputCurrencyId, chainId: inputChainId },
+    [Field.OUTPUT]: { currencyId: outputCurrencyId, chainId: outputChainId },
   } = useSwapState()
+
   const isWrapping = useIsWrapping()
-  const inputCurrency = useCurrency(inputCurrencyId)
-  const outputCurrency = useCurrency(outputCurrencyId)
+  const inputCurrency = useCurrency(inputCurrencyId, inputChainId)
+
+  const outputCurrency = useCurrency(outputCurrencyId, outputChainId)
   const { onCurrencySelection, onUserInput } = useSwapActionHandlers()
   const [inputBalance] = useCurrencyBalances(account, [inputCurrency, outputCurrency])
   const maxAmountInput = useMemo(() => maxAmountSpend(inputBalance), [inputBalance])
