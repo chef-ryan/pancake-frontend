@@ -165,13 +165,13 @@ const BuyTicketsModal: React.FC<React.PropsWithChildren<BuyTicketsModalProps>> =
         })}
       </Text>
       <Text>
-        {t('%amount%  tickets: %discount%%', {
+        {t('%amount% tickets: %discount%%', {
           amount: 50,
           discount: getDiscountPercentage(50, discountDivisor, priceTicketInCake),
         })}
       </Text>
       <Text>
-        {t('%amount%  tickets: %discount%%', {
+        {t('%amount% tickets: %discount%%', {
           amount: 100,
           discount: getDiscountPercentage(100, discountDivisor, priceTicketInCake),
         })}
