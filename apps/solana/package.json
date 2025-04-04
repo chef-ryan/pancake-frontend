@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
-    "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json}\""
+    "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json}\"",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
     "@jup-ag/react-hook": "6.2.0",

@@ -41,7 +41,7 @@
     "updateLPsAPR": "pnpm turbo run build --filter=@pancakeswap/farms && NODE_PATH=./apps/web/src tsx --tsconfig ./apps/web/tsconfig.json scripts/updateLPsAPR.ts",
     "updateAptosLPsAPR": "pnpm turbo run build --filter=@pancakeswap/aptos-swap-sdk && NODE_PATH=./apps/aptos/src tsx --tsconfig ./apps/aptos/tsconfig.json  scripts/updateAptosLpsAPR/index.ts",
     "updateMerkl": "NODE_PATH=./apps/web/src tsx --tsconfig ./apps/web/tsconfig.json scripts/updateMerkl/index.ts",
-    "clean": "turbo run clean && rm -rf node_modules",
+    "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo",
     "changeset": "changeset",
     "version-packages": "changeset version && pnpm i --lockfile-only",
     "release-packages": "turbo run build --filter=./packages/* && changeset version && changeset publish",
