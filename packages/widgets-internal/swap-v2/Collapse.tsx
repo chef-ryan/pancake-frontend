@@ -1,5 +1,4 @@
 import { ChevronDownIcon } from "@pancakeswap/uikit";
-import { useLayoutEffect, useRef } from "react";
 import { styled } from "styled-components";
 
 const PADDING = 0;
@@ -11,10 +10,13 @@ const TitleWrapper = styled.div`
   flex-grow: 0;
   cursor: pointer;
 `;
-const ContentWrapper = styled.div<{ show: boolean }>`
-  transform: ${({ show }) => (show ? "translateY(0)" : "translateY(-10px)")};
-  opacity: ${({ show }) => (show ? 1 : 0)};
-  transition: transform 0.3s ease, opacity 0.3s ease;
+const ContentWrapper = styled.div<{ isOpen: boolean }>`
+  transform-origin: top;
+  max-height: ${({ isOpen }) => (isOpen ? "1000px" : "0")};
+  transform: scaleY(${({ isOpen }) => (isOpen ? 1 : 0)});
+  opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, max-height 0.25s ease-in-out;
+  will-change: max-height, transform, opacity;
 `;
 const IconWrapper = styled.div`
   display: flex;
@@ -36,8 +38,6 @@ const Container = styled.div`
   flex-direction: column;
   padding: ${PADDING}px;
   flex-grow: 0;
-  will-change: height;
-  transition: height 0.25s ease-in-out;
 `;
 
 interface CollapseProps {
@@ -45,35 +45,18 @@ interface CollapseProps {
   content?: React.ReactNode;
   isOpen?: boolean;
   onToggle?: () => void;
-  recalculateDep?: boolean;
 }
 
-export const Collapse: React.FC<CollapseProps> = ({ title, content, isOpen, onToggle, recalculateDep = false }) => {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    if (!wrapperRef.current || !titleRef.current || !contentRef.current) return;
-
-    const titleHeight = titleRef.current.scrollHeight;
-    const contentHeight = contentRef.current.scrollHeight;
-    const targetHeight = isOpen ? titleHeight + contentHeight + PADDING * 2 : titleHeight + PADDING * 2;
-
-    wrapperRef.current.style.height = `${targetHeight}px`;
-  }, [isOpen, recalculateDep]);
-
+export const Collapse: React.FC<CollapseProps> = ({ title, content, isOpen = false, onToggle }) => {
   return (
-    <Container ref={wrapperRef}>
-      <TitleWrapper ref={titleRef} onClick={onToggle}>
+    <Container>
+      <TitleWrapper onClick={onToggle}>
         {title}
         <IconWrapper className={isOpen ? "open" : undefined}>
           <ChevronDownIcon color="textSubtle" width="24px" />
         </IconWrapper>
       </TitleWrapper>
-      <ContentWrapper ref={contentRef} show={!!isOpen}>
-        {content}
-      </ContentWrapper>
+      <ContentWrapper isOpen={isOpen}>{content}</ContentWrapper>
     </Container>
   );
 };
