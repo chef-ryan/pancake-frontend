@@ -11,7 +11,11 @@ const TitleWrapper = styled.div`
   flex-grow: 0;
   cursor: pointer;
 `;
-const ContentWrapper = styled.div``;
+const ContentWrapper = styled.div<{ show: boolean }>`
+  transform: ${({ show }) => (show ? "translateY(0)" : "translateY(-10px)")};
+  opacity: ${({ show }) => (show ? 1 : 0)};
+  transition: transform 0.3s ease, opacity 0.3s ease;
+`;
 const IconWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -50,34 +54,26 @@ export const Collapse: React.FC<CollapseProps> = ({ title, content, isOpen, onTo
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (!contentRef.current || !titleRef.current || !wrapperRef.current) return;
-    const titleElement = titleRef.current;
-    const contentElement = contentRef.current;
-    const wrapperElement = wrapperRef.current;
-    const contentHeight = contentElement.scrollHeight;
-    const titleHeight = titleElement.scrollHeight;
+    if (!wrapperRef.current || !titleRef.current || !contentRef.current) return;
 
-    if (!isOpen) {
-      wrapperElement.style.height = `${titleHeight + PADDING * 2}px`;
-    } else {
-      wrapperElement.style.height = `${titleHeight + contentHeight + PADDING * 2}px`;
-    }
-  }, [isOpen, titleRef.current?.scrollHeight, contentRef.current?.scrollHeight, recalculateDep]);
+    const titleHeight = titleRef.current.scrollHeight;
+    const contentHeight = contentRef.current.scrollHeight;
+    const targetHeight = isOpen ? titleHeight + contentHeight + PADDING * 2 : titleHeight + PADDING * 2;
+
+    wrapperRef.current.style.height = `${targetHeight}px`;
+  }, [isOpen, recalculateDep]);
 
   return (
     <Container ref={wrapperRef}>
-      <TitleWrapper
-        ref={titleRef}
-        onClick={() => {
-          onToggle?.();
-        }}
-      >
+      <TitleWrapper ref={titleRef} onClick={onToggle}>
         {title}
         <IconWrapper className={isOpen ? "open" : undefined}>
           <ChevronDownIcon color="textSubtle" width="24px" />
         </IconWrapper>
       </TitleWrapper>
-      <ContentWrapper ref={contentRef}>{content}</ContentWrapper>
+      <ContentWrapper ref={contentRef} show={!!isOpen}>
+        {content}
+      </ContentWrapper>
     </Container>
   );
 };
