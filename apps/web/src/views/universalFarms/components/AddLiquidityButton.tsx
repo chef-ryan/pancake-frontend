@@ -1,5 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, Box, BoxProps, Button, ButtonProps } from '@pancakeswap/uikit'
+import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 
 export const AddLiquidityButton: React.FC<ButtonProps & { wrapperProps?: BoxProps; to?: string }> = ({
   wrapperProps,
@@ -10,9 +11,11 @@ export const AddLiquidityButton: React.FC<ButtonProps & { wrapperProps?: BoxProp
   return (
     <Box width="100%" {...wrapperProps}>
       {/* @ts-ignore */}
-      <Button as="a" href={to} endIcon={<AddIcon color="invertedContrast" />} {...props}>
-        {t('Add Liquidity')}
-      </Button>
+      <NextLinkFromReactRouter to={to}>
+        <Button endIcon={<AddIcon color="invertedContrast" />} {...props}>
+          {t('Add Liquidity')}
+        </Button>
+      </NextLinkFromReactRouter>
     </Box>
   )
 }
