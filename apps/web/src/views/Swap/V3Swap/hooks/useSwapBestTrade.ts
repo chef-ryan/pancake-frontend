@@ -1,3 +1,4 @@
+import { parseBridgeQuoteResponse, ResponseType } from '@pancakeswap/price-api-sdk'
 import { TradeType } from '@pancakeswap/sdk'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import { useUserSingleHopOnly } from '@pancakeswap/utils/user'
@@ -59,9 +60,31 @@ export function useSwapBestOrder({ maxHops }: Options = {}) {
     trackPerf: true,
     retry: 1,
   }
-  const { fetchStatus, data, isStale, error, refetch } = useBestTradeFromApi(bestTradeOptions)
+  const { fetchStatus, data: swapData, isStale, error, refetch } = useBestTradeFromApi(bestTradeOptions)
   useBestTradeFromApiShadow(bestTradeOptions, 'quote-api-ori')
   useBestTradeFromApiShadow(bestTradeOptions, 'quote-api-opt')
+
+  const isBridge = useMemo(() => {
+    return inputCurrency && outputCurrency && inputCurrency?.chainId !== outputCurrency?.chainId
+  }, [inputCurrency, outputCurrency])
+
+  // if bridge, return bridege trade
+
+  let data = swapData
+
+  // TODO: remove this mock
+  if (isBridge && amount && outputCurrency) {
+    data = parseBridgeQuoteResponse(
+      {
+        messageType: ResponseType.MM_PRICE_RESPONSE,
+        message: 'good moock',
+      },
+      {
+        amountIn: amount,
+        currencyOut: outputCurrency,
+      },
+    )
+  }
 
   const [loading, setLoading] = useState(false)
   const refresh = useCallback(async () => {
