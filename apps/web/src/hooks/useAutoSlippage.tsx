@@ -140,6 +140,15 @@ export default function useClassicAutoSlippageTolerance(trade?: SupportedTrade):
   const outputDollarValue =
     outputAmount && outputUSDPrice ? parseFloat(outputAmount) * parseFloat(outputUSDPrice.toSignificant(6)) : undefined
 
+  // Get USD price of input amount
+  const inputCurrency = trade?.inputAmount?.currency
+  const inputUSDPrice = useStablecoinPrice(inputCurrency)
+  const inputAmountValue = trade?.inputAmount?.toSignificant(6)
+  const inputDollarValue =
+    inputAmountValue && inputUSDPrice
+      ? parseFloat(inputAmountValue) * parseFloat(inputUSDPrice.toSignificant(6))
+      : undefined
+
   // Gas estimation
   const supportsGasEstimate = useMemo(() => chainId && chainSupportsGasEstimates(chainId), [chainId])
 
@@ -187,6 +196,8 @@ export default function useClassicAutoSlippageTolerance(trade?: SupportedTrade):
       const calculatedSlippage = calculateSlippageFromDollarValues(dollarCostToUse, outputDollarValue)
 
       console.info('Auto Slippage: Calculated result', {
+        gasCostUSDValue,
+        gasEstimateUSD,
         dollarCostToUse,
         outputDollarValue,
         fraction: dollarCostToUse / outputDollarValue,
@@ -194,7 +205,11 @@ export default function useClassicAutoSlippageTolerance(trade?: SupportedTrade):
         result: calculatedSlippage.toFixed(2),
       })
 
-      return calculatedSlippage.lessThan(inputBasedSlippage)
+      console.log({ calculatedSlippage, inputBasedSlippage }, 'autoSlippage')
+
+      return calculatedSlippage.lessThan(inputBasedSlippage) &&
+        inputDollarValue &&
+        (inputDollarValue * 1.1 > outputDollarValue || inputDollarValue * 0.9 < outputDollarValue)
         ? inputBasedSlippage
         : applySlippageLimits(calculatedSlippage)
     }
