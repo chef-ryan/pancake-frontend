@@ -102,6 +102,8 @@ export function FormMainForHomePage({ inputAmount, outputAmount, tradeLoading }:
               {t('From')}
             </Text>
           }
+          showSearchHeader
+          modalTitle={t('From')}
         />
         <FlipButton compact={isMobile} replaceBrowser={false} />
         <CurrencyInputPanelSimplify
@@ -125,6 +127,8 @@ export function FormMainForHomePage({ inputAmount, outputAmount, tradeLoading }:
               {t('To')}
             </Text>
           }
+          showSearchHeader
+          modalTitle={t('To')}
         />
       </Column>
     </SwapUIV2.InputPanelWrapper>
