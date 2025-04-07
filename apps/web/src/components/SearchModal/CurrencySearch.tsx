@@ -3,9 +3,9 @@ import { useTranslation } from '@pancakeswap/localization'
 /* eslint-disable no-restricted-syntax */
 import { ChainId, Currency, getTokenComparator, Token } from '@pancakeswap/sdk'
 import { createFilterToken, WrappedTokenInfo } from '@pancakeswap/token-lists'
-import { AutoColumn, Box, Column, Input, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { AutoColumn, Box, Column, ModalCloseButton, ModalTitle, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useAudioPlay } from '@pancakeswap/utils/user'
-import { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FixedSizeList } from 'react-window'
 import { isAddress } from 'viem'
 
@@ -15,11 +15,13 @@ import { useAllLists, useInactiveListUrls } from 'state/lists/hooks'
 import { safeGetAddress } from 'utils'
 
 import { UpdaterByChainId } from 'state/lists/updater'
+import { useSearchQuery } from 'state/tokenList/searchQueryAtom'
 import { useAllTokenBalances } from 'state/wallet/hooks'
 import { useAllTokens, useIsUserAddedToken, useToken } from '../../hooks/Tokens'
 import Row from '../Layout/Row'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
+import { CurrencySearchInput } from './CurrencySearchInput'
 import ImportRow from './ImportRow'
 import SwapNetworkSelection from './SwapNetworkSelection'
 import { getSwapSound } from './swapSound'
@@ -36,6 +38,9 @@ interface CurrencySearchProps {
   height?: number
   tokensToShow?: Token[]
   showChainLogo?: boolean
+  showSearchHeader?: boolean
+  headerTitle?: React.ReactNode
+  onDismiss?: () => void
 }
 
 function useSearchInactiveTokenLists(search: string | undefined, minResults = 10): WrappedTokenInfo[] {
@@ -93,11 +98,14 @@ function CurrencySearch({
   height,
   tokensToShow,
   showChainLogo,
+  showSearchHeader,
+  onDismiss,
+  headerTitle,
 }: CurrencySearchProps) {
   const { chainId: activeChainId } = useActiveChainId()
 
   const { t } = useTranslation()
-  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [searchQuery] = useSearchQuery()
   const debouncedQuery = useDebounce(searchQuery, 200)
   // refs for fixed size lists
   const fixedList = useRef<FixedSizeList>()
@@ -158,10 +166,7 @@ function CurrencySearch({
     if (!isMobile) inputRef.current?.focus()
   }, [isMobile])
 
-  const handleInput = useCallback((event) => {
-    const input = event.target.value
-    const checksummedInput = safeGetAddress(input)
-    setSearchQuery(checksummedInput || input)
+  const handleOnInput = useCallback(() => {
     fixedList.current?.scrollTo(0)
   }, [])
 
@@ -203,7 +208,7 @@ function CurrencySearch({
     return Boolean(filteredSortedTokens?.length) || hasFilteredInactiveTokens ? (
       <Box mx="-24px" mt="20px" mb="24px">
         <CurrencyList
-          height={isMobile ? (showCommonBases ? height || 250 : height ? height + 80 : 350) : 390}
+          height={isMobile ? (showCommonBases ? height || 250 : height ? height + 80 : 350) : 340}
           showNative={showNative}
           currencies={filteredSortedTokens}
           inactiveCurrencies={filteredInactiveTokens}
@@ -244,25 +249,29 @@ function CurrencySearch({
     isMobile,
     height,
     showChainLogo,
+    selectedChainId,
   ])
 
   return (
     <>
       <UpdaterByChainId chainId={selectedChainId ?? activeChainId} />
 
+      {showSearchHeader && (
+        <ModalTitle my="12px" justifyContent="space-between">
+          <Text fontSize="16px" mr="8px" bold>
+            {headerTitle}
+          </Text>
+          <CurrencySearchInput inputRef={inputRef} handleEnter={handleEnter} onInput={handleOnInput} compact />
+
+          <Box mr="-16px">
+            <ModalCloseButton onDismiss={onDismiss} padding="0" />
+          </Box>
+        </ModalTitle>
+      )}
       <AutoColumn gap="16px">
-        {showSearchInput && (
+        {showSearchInput && !showSearchHeader && (
           <Row>
-            <Input
-              id="token-search-input"
-              placeholder={t('Search by name or paste address')}
-              scale="lg"
-              autoComplete="off"
-              value={searchQuery}
-              ref={inputRef as RefObject<HTMLInputElement>}
-              onChange={handleInput}
-              onKeyDown={handleEnter}
-            />
+            <CurrencySearchInput inputRef={inputRef} handleEnter={handleEnter} onInput={handleOnInput} />
           </Row>
         )}
         <SwapNetworkSelection

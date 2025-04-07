@@ -181,6 +181,8 @@ interface CurrencyInputPanelProps {
   title?: React.ReactNode
   hideBalanceComp?: boolean
   isUserInsufficientBalance?: boolean
+  modalTitle?: React.ReactNode
+  showSearchHeader?: boolean
 }
 const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   value,
@@ -211,6 +213,8 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   inputLoading,
   title,
   isUserInsufficientBalance,
+  modalTitle,
+  showSearchHeader,
 }: CurrencyInputPanelProps) {
   const { address: account } = useAccount()
 
@@ -241,7 +245,8 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
       showSearchInput={showSearchInput}
       tokensToShow={tokensToShow}
       mode={mode}
-      showCurrencyInHeader
+      modalTitle={modalTitle}
+      showSearchHeader={showSearchHeader}
     />,
   )
 

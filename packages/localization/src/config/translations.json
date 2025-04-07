@@ -3362,8 +3362,6 @@
   "Reset slippage settings": "Reset slippage settings",
   "to avoid potential loss": "to avoid potential loss",
   "Mins": "Mins",
-  "Select token": "Select token",
-  "Search by name or paste address": "Search by name or paste address",
   "Copy token address": "Copy token address",
   "Open on Explorer": "Open on Explorer",
   "Your transaction may fail. Reset settings to avoid potential loss": "Your transaction may fail. Reset settings to avoid potential loss",
@@ -3694,5 +3692,7 @@
   "Website": "Website",
   "StakeStone Token Generation Event": "StakeStone Token Generation Event",
   "StakeStone is a decentralized omnichain liquidity infrastructure protocol designed to transform how liquidity is acquired, distributed, and utilized across blockchain ecosystems. Its core mission is to deliver efficient, sustainable, and organic liquidity flows that adapt to the needs of an increasingly modular and multi-chain DeFi landscape.": "StakeStone is a decentralized omnichain liquidity infrastructure protocol designed to transform how liquidity is acquired, distributed, and utilized across blockchain ecosystems. Its core mission is to deliver efficient, sustainable, and organic liquidity flows that adapt to the needs of an increasingly modular and multi-chain DeFi landscape.",
-  "StakeStone powers a growing suite of products including STONE (yield-bearing liquid ETH), SBTC and STONEBTC (liquid and yield-generating BTC assets), and LiquidityPad, a customizable liquidity vault platform for emerging chains. Together, these offerings form the foundation of StakeStone’s Omnichain Liquidity Layer, enabling frictionless capital deployment and value accrual across ecosystems.": "StakeStone powers a growing suite of products including STONE (yield-bearing liquid ETH), SBTC and STONEBTC (liquid and yield-generating BTC assets), and LiquidityPad, a customizable liquidity vault platform for emerging chains. Together, these offerings form the foundation of StakeStone’s Omnichain Liquidity Layer, enabling frictionless capital deployment and value accrual across ecosystems."
+  "StakeStone powers a growing suite of products including STONE (yield-bearing liquid ETH), SBTC and STONEBTC (liquid and yield-generating BTC assets), and LiquidityPad, a customizable liquidity vault platform for emerging chains. Together, these offerings form the foundation of StakeStone’s Omnichain Liquidity Layer, enabling frictionless capital deployment and value accrual across ecosystems.": "StakeStone powers a growing suite of products including STONE (yield-bearing liquid ETH), SBTC and STONEBTC (liquid and yield-generating BTC assets), and LiquidityPad, a customizable liquidity vault platform for emerging chains. Together, these offerings form the foundation of StakeStone’s Omnichain Liquidity Layer, enabling frictionless capital deployment and value accrual across ecosystems.",
+  "Popular tokens": "Popular tokens",
+  "Search name / address": "Search name / address"
 }
