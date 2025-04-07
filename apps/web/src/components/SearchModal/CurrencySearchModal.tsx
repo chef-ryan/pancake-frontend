@@ -7,7 +7,6 @@ import {
   Button,
   CopyButton,
   FlexGap,
-  Heading,
   InjectedModalProps,
   MODAL_SWIPE_TO_CLOSE_VELOCITY,
   ModalBackButton,
@@ -69,7 +68,9 @@ export interface CurrencySearchModalProps extends InjectedModalProps {
   showSearchInput?: boolean
   tokensToShow?: Token[]
   showCurrencyInHeader?: boolean
+  showSearchHeader?: boolean
   showChainLogo?: boolean
+  modalTitle?: React.ReactNode
 }
 
 export default function CurrencySearchModal({
@@ -77,12 +78,14 @@ export default function CurrencySearchModal({
   onCurrencySelect,
   selectedCurrency,
   otherSelectedCurrency,
-  showCommonBases = true,
   commonBasesType,
-  showSearchInput,
   tokensToShow,
-  showCurrencyInHeader = false,
   showChainLogo,
+  modalTitle,
+  showCommonBases = true,
+  showSearchInput,
+  showCurrencyInHeader = false,
+  showSearchHeader,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.search)
 
@@ -144,7 +147,7 @@ export default function CurrencySearchModal({
 
   useEffect(() => {
     if (!wrapperRef.current) return
-    setHeight(wrapperRef.current.offsetHeight - 330)
+    setHeight(wrapperRef.current.offsetHeight - 380)
   }, [])
 
   return (
@@ -162,65 +165,68 @@ export default function CurrencySearchModal({
       }}
       ref={wrapperRef}
     >
-      <StyledModalHeader>
-        <ModalTitle>
-          {config[modalView].onBack && <ModalBackButton onBack={config[modalView].onBack} />}
-
-          {showCurrencyInHeader && selectedCurrency ? (
-            <>
-              <CurrencyLogo
-                size="32px"
-                showChainLogo={showChainLogo}
-                currency={selectedCurrency}
-                style={{ borderRadius: '50%' }}
-              />
-              <Text px="8px" bold fontSize="20px">
-                {selectedCurrency.symbol}
+      {!showSearchHeader && (
+        <StyledModalHeader>
+          <ModalTitle>
+            {config[modalView].onBack && <ModalBackButton onBack={config[modalView].onBack} />}
+            {showCurrencyInHeader && selectedCurrency ? (
+              <>
+                <CurrencyLogo
+                  size="32px"
+                  showChainLogo={showChainLogo}
+                  currency={selectedCurrency}
+                  style={{ borderRadius: '50%' }}
+                />
+                <Text px="8px" bold fontSize="20px">
+                  {selectedCurrency.symbol}
+                </Text>
+                {!selectedCurrency.isNative && (
+                  <FlexGap gap="8px" alignItems="center">
+                    <CopyButton
+                      data-dd-action-name="Copy token address"
+                      width="16px"
+                      buttonColor="textSubtle"
+                      text={selectedCurrency.wrapped.address}
+                      tooltipMessage={t('Token address copied')}
+                      defaultTooltipMessage={t('Copy token address')}
+                      tooltipPlacement="top"
+                    />
+                    <ViewOnExplorerButton
+                      address={selectedCurrency.wrapped.address}
+                      chainId={selectedCurrency.chainId}
+                      type="token"
+                      color="textSubtle"
+                      width="18px"
+                      tooltipPlacement="top"
+                    />
+                    <AddToWalletButton
+                      data-dd-action-name="Add to wallet"
+                      variant="text"
+                      p="0"
+                      height="auto"
+                      width="fit-content"
+                      tokenAddress={selectedCurrency.wrapped.address}
+                      tokenSymbol={selectedCurrency.symbol}
+                      tokenDecimals={selectedCurrency.decimals}
+                      tokenLogo={
+                        selectedCurrency.wrapped instanceof WrappedTokenInfo
+                          ? selectedCurrency.wrapped.logoURI
+                          : undefined
+                      }
+                      tooltipPlacement="top"
+                    />
+                  </FlexGap>
+                )}
+              </>
+            ) : (
+              <Text fontSize="18px" bold>
+                {config[modalView].title}
               </Text>
-              {!selectedCurrency.isNative && (
-                <FlexGap gap="8px" alignItems="center">
-                  <CopyButton
-                    data-dd-action-name="Copy token address"
-                    width="16px"
-                    buttonColor="textSubtle"
-                    text={selectedCurrency.wrapped.address}
-                    tooltipMessage={t('Token address copied')}
-                    defaultTooltipMessage={t('Copy token address')}
-                    tooltipPlacement="top"
-                  />
-                  <ViewOnExplorerButton
-                    address={selectedCurrency.wrapped.address}
-                    chainId={selectedCurrency.chainId}
-                    type="token"
-                    color="textSubtle"
-                    width="18px"
-                    tooltipPlacement="top"
-                  />
-                  <AddToWalletButton
-                    data-dd-action-name="Add to wallet"
-                    variant="text"
-                    p="0"
-                    height="auto"
-                    width="fit-content"
-                    tokenAddress={selectedCurrency.wrapped.address}
-                    tokenSymbol={selectedCurrency.symbol}
-                    tokenDecimals={selectedCurrency.decimals}
-                    tokenLogo={
-                      selectedCurrency.wrapped instanceof WrappedTokenInfo
-                        ? selectedCurrency.wrapped.logoURI
-                        : undefined
-                    }
-                    tooltipPlacement="top"
-                  />
-                </FlexGap>
-              )}
-            </>
-          ) : (
-            <Heading>{config[modalView].title}</Heading>
-          )}
-        </ModalTitle>
-        <ModalCloseButton onDismiss={onDismiss} />
-      </StyledModalHeader>
+            )}
+          </ModalTitle>
+          <ModalCloseButton onDismiss={onDismiss} />
+        </StyledModalHeader>
+      )}
       <StyledModalBody>
         {modalView === CurrencyModalView.search ? (
           <CurrencySearch
@@ -235,6 +241,9 @@ export default function CurrencySearchModal({
             height={height}
             tokensToShow={tokensToShow}
             showChainLogo={showChainLogo}
+            showSearchHeader={showSearchHeader}
+            headerTitle={modalTitle}
+            onDismiss={onDismiss}
           />
         ) : modalView === CurrencyModalView.importToken && importToken ? (
           <ImportToken tokens={[importToken]} handleCurrencySelect={handleCurrencySelect} />

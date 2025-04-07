@@ -96,7 +96,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
         [isInput ? 'inputCurrency' : 'outputCurrency']: newCurrencyId,
       })
     },
-    [onCurrencySelection, warningSwapHandler],
+    [onCurrencySelection, warningSwapHandler, canSwitch, switchNetwork],
   )
   const handleInputSelect = useCallback(
     (newCurrency: Currency) =>
@@ -147,6 +147,8 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
           </Text>
         }
         isUserInsufficientBalance={isUserInsufficientBalance}
+        modalTitle={t('From')}
+        showSearchHeader
       />
       <FlipButton />
       <CurrencyInputPanelSimplify
@@ -168,6 +170,8 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
             {t('To')}
           </Text>
         }
+        modalTitle={t('To')}
+        showSearchHeader
       />
       <AssignRecipientButton />
       <Recipient />
