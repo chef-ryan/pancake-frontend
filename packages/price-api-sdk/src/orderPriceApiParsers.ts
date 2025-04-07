@@ -8,6 +8,7 @@ import { getTradeTypeKey } from './getTradeType'
 import {
   AMMOrder,
   AMMPriceResponse,
+  BridgeQuoteResponse,
   ErrorResponse,
   OrderType,
   PriceOrder,
@@ -71,6 +72,35 @@ export function getRequestBody({ amount, quoteCurrency, tradeType, amm, x, slipp
     tokenIn: getCurrencyIdentifier(currencyIn),
     tokenOut: getCurrencyIdentifier(currencyOut),
     configs,
+  }
+}
+
+// TODO: remove this mock
+export function parseBridgeQuoteResponse<
+  input extends Currency,
+  output extends Currency,
+  tradeType extends TradeType = TradeType,
+>(
+  res: BridgeQuoteResponse | ErrorResponse,
+  {
+    amountIn,
+    currencyOut,
+  }: {
+    amountIn: CurrencyAmount<input>
+    currencyOut: output
+  },
+): PriceOrder<input, output, tradeType> {
+  if (res.messageType === ResponseType.ERROR) {
+    throw new Error(res.message.error)
+  }
+
+  return {
+    type: OrderType.PCS_BRIDGE,
+    trade: {
+      inputAmount: amountIn,
+      outputAmount: CurrencyAmount.fromRawAmount(currencyOut, amountIn.quotient.toString()),
+      routes: [],
+    },
   }
 }
 
