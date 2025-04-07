@@ -14,7 +14,7 @@ import { useStablecoinPrice, useStablecoinPriceAmount } from './useStablecoinPri
 
 const DEFAULT_AUTO_SLIPPAGE = new Percent(50, 10_000) // 0.5%
 const MIN_AUTO_SLIPPAGE_TOLERANCE = new Percent(50, 10_000) // 0.5%
-const MAX_AUTO_SLIPPAGE_TOLERANCE = new Percent(550, 10_000) // 5.5%
+const MAX_AUTO_SLIPPAGE_TOLERANCE = new Percent(500, 10_000) // 5%
 
 // Helper functions
 const isL2ChainId = (chainId?: number): boolean => {
