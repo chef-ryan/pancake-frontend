@@ -3,10 +3,13 @@ import { useAllTokens } from 'hooks/Tokens'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import first from 'lodash/first'
 import { useMemo } from 'react'
-import { notEmpty } from 'utils/notEmpty'
 import { Address, erc20Abi, isAddress } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
 import { useMultipleContractSingleDataWagmi } from '../multicall/hooks'
+
+export function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
+  return value !== null && value !== undefined
+}
 
 /**
  * Returns a map of the given addresses to their eventually consistent BNB balances.
