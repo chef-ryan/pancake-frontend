@@ -196,6 +196,7 @@ export default function useClassicAutoSlippageTolerance(trade?: SupportedTrade):
       const calculatedSlippage = calculateSlippageFromDollarValues(dollarCostToUse, outputDollarValue)
 
       console.info('Auto Slippage: Calculated result', {
+        inputDollarValue,
         gasCostUSDValue,
         gasEstimateUSD,
         dollarCostToUse,
@@ -205,11 +206,9 @@ export default function useClassicAutoSlippageTolerance(trade?: SupportedTrade):
         result: calculatedSlippage.toFixed(2),
       })
 
-      console.log({ calculatedSlippage, inputBasedSlippage }, 'autoSlippage')
-
       return calculatedSlippage.lessThan(inputBasedSlippage) &&
         inputDollarValue &&
-        (inputDollarValue * 1.1 > outputDollarValue || inputDollarValue * 0.9 < outputDollarValue)
+        inputDollarValue * 0.9 < outputDollarValue // at least 10% value change
         ? inputBasedSlippage
         : applySlippageLimits(calculatedSlippage)
     }
