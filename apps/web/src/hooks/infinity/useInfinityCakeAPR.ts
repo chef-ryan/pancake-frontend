@@ -81,6 +81,7 @@ export const useInfinityCLPositionCakeAPR = ({
     const positionRewardPerEpoch = rewardsPerEpoch?.[position.tokenId.toString()]
     const rewardForPositionPerYear = positionRewardPerEpoch
       ? positionRewardPerEpoch
+          .dividedBy(1e18)
           .times(3)
           .times(365)
           .times(cakePrice ?? 1)
@@ -143,6 +144,7 @@ export const useInfinityBinPositionCakeAPR = ({
 
     const rewardForPositionPerYear = positionRewardPerEpoch
       ? positionRewardPerEpoch
+          .dividedBy(1e18)
           .times(3)
           .times(365)
           .times(cakePrice ?? 1)
