@@ -9,7 +9,7 @@ import {
   TradeType,
   ZERO,
 } from '@pancakeswap/sdk'
-import { Route, SmartRouter, SmartRouterTrade, InfinityRouter } from '@pancakeswap/smart-router'
+import { InfinityRouter, Route, SmartRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
 import { formatPrice, parseNumberToFraction } from '@pancakeswap/utils/formatFractions'
 import { FeeAmount } from '@pancakeswap/v3-sdk'
 
@@ -82,7 +82,7 @@ export function computeTradePriceBreakdown(trade?: TradeEssentialForPriceBreakdo
           return currentFee.multiply(ONE_HUNDRED_PERCENT.subtract(v3FeeToPercent(pool.fee)))
         }
         if (SmartRouter.isInfinityClPool(pool) || SmartRouter.isInfinityBinPool(pool)) {
-          const v4FeePercent = calculateV4FeePercent(pool)
+          const v4FeePercent = new Percent(calculateInfiFeePercent(pool.fee, pool.protocolFee).totalFee, 1e6)
           return currentFee.multiply(ONE_HUNDRED_PERCENT.subtract(v4FeePercent))
         }
         return currentFee
@@ -138,10 +138,13 @@ export function v3FeeToPercent(fee: FeeAmount): Percent {
   return new Percent(fee, BIPS_BASE * 100n)
 }
 
-export function calculateV4FeePercent(pool: { protocolFee?: number; fee: number }): Percent {
-  /* eslint-disable no-bitwise */
-  const protocolFee = (pool.protocolFee ?? 0) & 0xfff
-  const lpFee = pool.fee
-  const totalFee = (protocolFee + ((1e6 - protocolFee) * lpFee) / 1e6).toFixed(0)
-  return new Percent(totalFee, 1e6)
+export function calculateInfiFeePercent(lpFee: number, protocolFee?: number) {
+  const protocolFee1 = (protocolFee ?? 0) & 0xfff
+  const totalFee = (protocolFee1 + ((1e6 - protocolFee1) * lpFee) / 1e6).toFixed(0)
+
+  return {
+    totalFee: Number(totalFee),
+    lpFee,
+    protocolFee: protocolFee1,
+  }
 }
