@@ -9,7 +9,7 @@ export const useInfinityFeeTier = (pool: Pool | BinPool | null) => {
   }, [pool])
 }
 
-export function getInfinityFeeTier(
+function getInfinityFeeTier(
   pool: {
     protocolFee: number
     fee: number
@@ -17,11 +17,7 @@ export function getInfinityFeeTier(
     dynamic?: boolean
   } | null,
 ) {
-  /* eslint-disable no-bitwise */
-  const protocolFee = (pool?.protocolFee ?? 0) & 0xfff
-  const lpFee = pool?.fee ?? 0
-
-  const totalFee = (protocolFee + ((1e6 - protocolFee) * lpFee) / 1e6).toFixed(0)
+  const { totalFee, lpFee, protocolFee } = calculateInfinityFeeTier(pool?.protocolFee ?? 0, pool?.fee ?? 0)
 
   return {
     protocol: pool?.poolType === 'Bin' ? 'Infinity LBAMM' : 'Infinity CLAMM',
@@ -31,5 +27,16 @@ export function getInfinityFeeTier(
     protocolFee: new Percent(protocolFee, 1e6),
     dynamic: pool?.dynamic,
     hasPool: !!pool,
+  }
+}
+
+export function calculateInfinityFeeTier(protocolFee: number, lpFee: number) {
+  const maskedProtocolFee = protocolFee & 0xfff
+  const totalFee = (maskedProtocolFee + ((1e6 - maskedProtocolFee) * lpFee) / 1e6).toFixed(0)
+
+  return {
+    totalFee: Number(totalFee),
+    lpFee,
+    protocolFee: maskedProtocolFee,
   }
 }
