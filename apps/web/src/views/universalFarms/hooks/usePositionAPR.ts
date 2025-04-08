@@ -1,5 +1,6 @@
-import { BinLiquidityShape, getCurrencyPriceFromId } from '@pancakeswap/infinity-sdk'
-import { Currency, CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
+import { Protocol } from '@pancakeswap/farms'
+import { BinLiquidityShape } from '@pancakeswap/infinity-sdk'
+import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { BIG_ONE, BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { formatPercent } from '@pancakeswap/utils/formatFractions'
 import {
@@ -22,10 +23,14 @@ import { useCakePrice } from 'hooks/useCakePrice'
 import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
 import useV3DerivedInfo from 'hooks/v3/useV3DerivedInfo'
 import { useAtomValue } from 'jotai'
-import isUndefined from 'lodash/isUndefined'
 import { useMemo } from 'react'
 import { CakeApr } from 'state/farmsV4/atom'
-import { useExtraInfinityPositionInfo, useExtraV3PositionInfo, usePoolApr } from 'state/farmsV4/hooks'
+import {
+  useAccountPositionDetailByPool,
+  useExtraInfinityPositionInfo,
+  useExtraV3PositionInfo,
+  usePoolApr,
+} from 'state/farmsV4/hooks'
 import {
   InfinityBinPositionDetail,
   InfinityCLPositionDetail,
@@ -51,6 +56,7 @@ import { usePool } from 'views/AddLiquidityInfinity/hooks/usePool'
 import { useV3FormState } from 'views/AddLiquidityV3/formViews/V3FormView/form/reducer'
 import { useLmPoolLiquidity } from 'views/Farms/hooks/useLmPoolLiquidity'
 import { useEstimateUserMultiplier } from 'views/universalFarms/hooks/useEstimateUserMultiplier'
+import { useAccount } from 'wagmi'
 import { getActiveLiquidityFromShape } from '../utils/getActiveLiquidityFromShape'
 import { useBinAmountsFromUsdValue } from './useBinAmountsFromUsdValue'
 
@@ -644,25 +650,15 @@ export const useInfinityBinDerivedApr = (poolInfo: InfinityBinPoolInfo) => {
   const { data: token1UsdPrice } = useCurrencyUsdPrice(currency1)
   const pool = usePool<'Bin'>()
   const poolLiquidity = poolInfo.liquidity
+  const { address: account } = useAccount()
+  const { data: existingPosition } = useAccountPositionDetailByPool<Protocol.InfinityBIN>(
+    poolInfo.chainId,
+    account,
+    poolInfo,
+  )
   // const poolLiquidity = useBinPoolLiquidity({ poolId: poolInfo.poolId, chainId: poolInfo.chainId })
 
   const [{ lowerBinId, upperBinId }] = useBinRangeQueryState()
-  const [priceLower, priceUpper] = useMemo(() => {
-    if (!pool || isUndefined(pool?.binStep)) return [undefined, undefined]
-
-    let minPrice_: Price<Currency, Currency> | undefined
-    let maxPrice_: Price<Currency, Currency> | undefined
-
-    if (lowerBinId) {
-      minPrice_ = getCurrencyPriceFromId(lowerBinId, pool.binStep, pool.token0, pool.token1)
-    }
-
-    if (upperBinId) {
-      maxPrice_ = getCurrencyPriceFromId(upperBinId, pool.binStep, pool.token0, pool.token1)
-    }
-
-    return [minPrice_, maxPrice_]
-  }, [pool, lowerBinId, upperBinId])
   const { depositCurrencyAmount0, depositCurrencyAmount1 } = useAddDepositAmounts()
 
   const [aprAmountA, aprAmountB] = useBinAmountsFromUsdValue({
@@ -705,7 +701,7 @@ export const useInfinityBinDerivedApr = (poolInfo: InfinityBinPoolInfo) => {
 
   const cakePrice = useCakePrice()
 
-  const userTVLUsd = usePositionTVLUsd({
+  const derivedUserTVLUsd = usePositionTVLUsd({
     token0UsdPrice,
     token1UsdPrice,
     token0Price: poolInfo.token0Price,
@@ -714,13 +710,28 @@ export const useInfinityBinDerivedApr = (poolInfo: InfinityBinPoolInfo) => {
     amount1: amountB ?? undefined,
   })
 
-  const baseLqBN = useMemo(
-    () =>
-      liquidity.plus(poolLiquidity?.toString() ?? 0).isGreaterThan(0)
-        ? liquidity.plus(poolLiquidity?.toString() ?? 0)
-        : 1,
-    [liquidity, poolLiquidity],
-  )
+  const existingPositionTvlUsd = useMemo(() => {
+    const position = existingPosition?.[0]
+    if (!position || !currency0 || !currency1) return BIG_ZERO
+    const amount0 = CurrencyAmount.fromRawAmount(currency0, position.reserveX ?? 0n)
+    const amount1 = CurrencyAmount.fromRawAmount(currency1, position.reserveY ?? 0n)
+    return new BN(amount0.toExact())
+      .times(token0UsdPrice ?? 0)
+      .plus(new BN(amount1.toExact()).times(token1UsdPrice ?? 0))
+  }, [existingPosition, token0UsdPrice, token1UsdPrice, currency0, currency1])
+
+  const userTVLUsd = useMemo(() => {
+    return existingPositionTvlUsd.plus(derivedUserTVLUsd)
+  }, [existingPositionTvlUsd, derivedUserTVLUsd])
+
+  const share = useMemo(() => {
+    if (liquidity.isZero()) return new BN(0)
+
+    const existingPositionLiquidity = existingPosition?.[0]?.activeLiquidity.toString() ?? 0
+    const lqBN = new BN(liquidity.toString()).plus(existingPositionLiquidity)
+    const targetLiquidity = new BN(poolLiquidity?.toString() ?? 0).plus(liquidity)
+    return lqBN.dividedBy(targetLiquidity.isGreaterThan(0) ? targetLiquidity : 1)
+  }, [existingPosition, liquidity, poolLiquidity])
 
   const cakeApr = useMemo(() => {
     if (!inRange) {
@@ -736,7 +747,7 @@ export const useInfinityBinDerivedApr = (poolInfo: InfinityBinPoolInfo) => {
       : new BN(globalCakeApr.cakePerYear ?? 0)
           .times(globalCakeApr.poolWeight ?? 0)
           .times(cakePrice)
-          .times(liquidity.dividedBy(baseLqBN))
+          .times(share)
           .div(userTVLUsd)
 
     return {
@@ -744,14 +755,12 @@ export const useInfinityBinDerivedApr = (poolInfo: InfinityBinPoolInfo) => {
       value: baseApr.toString() as `${number}`,
       boost: undefined,
     }
-  }, [inRange, globalCakeApr, cakePrice, userTVLUsd, liquidity, baseLqBN])
+  }, [inRange, userTVLUsd, globalCakeApr, cakePrice, share])
 
   const apr = useMemo(
     () =>
-      userTVLUsd.isZero()
-        ? BIG_ZERO
-        : new BN(poolInfo.fee24hUsd ?? 0).multipliedBy(365).times(liquidity.dividedBy(baseLqBN)).div(userTVLUsd),
-    [liquidity, baseLqBN, poolInfo.fee24hUsd, userTVLUsd],
+      userTVLUsd.isZero() ? BIG_ZERO : new BN(poolInfo.fee24hUsd ?? 0).multipliedBy(365).times(share).div(userTVLUsd),
+    [userTVLUsd, poolInfo.fee24hUsd, share],
   )
 
   return {

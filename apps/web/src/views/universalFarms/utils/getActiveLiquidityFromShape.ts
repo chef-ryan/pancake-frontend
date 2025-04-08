@@ -23,17 +23,21 @@ export function getActiveLiquidityFromShape({
     lowerBinId,
     upperBinId,
     activeIdDesired: activeBinId,
-    amount0,
-    amount1,
+    amount0: amount0 ?? 0n,
+    amount1: amount1 ?? 0n,
   })
   const totalX = shape.distributionX.reduce((acc, val) => acc + val, 0n)
   const totalY = shape.distributionY.reduce((acc, val) => acc + val, 0n)
-  const unitX = amount0 / totalX
-  const unitY = amount1 / totalY
+  const unitX = (amount0 ?? 0n) / max(totalX, 1n)
+  const unitY = (amount1 ?? 0n) / max(totalY, 1n)
   const price = getPriceX128FromId(BigInt(activeBinId), BigInt(binStep))
-  const activeX = shape.distributionX[activeBinId - lowerBinId]
-  const activeY = shape.distributionY[activeBinId - lowerBinId]
+  const activeX = shape.distributionX[activeBinId - lowerBinId] ?? 0n
+  const activeY = shape.distributionY[activeBinId - lowerBinId] ?? 0n
   const Y = new BN((activeY * unitY).toString()).times(new BN(2).pow(SCALE_OFFSET.toString()))
-  const activeLiquidity = Y.plus((unitX * activeX * price).toString())
+  const X = new BN((activeX * unitX).toString()).times(price.toString())
+  const activeLiquidity = new BN(0).plus(Y).plus(X)
+
   return activeLiquidity
 }
+
+const max = (a: bigint, b: bigint) => (a > b ? a : b)
