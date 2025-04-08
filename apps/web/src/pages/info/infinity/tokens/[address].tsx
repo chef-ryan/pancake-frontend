@@ -1,3 +1,4 @@
+import { InfinityProvider } from 'hooks/infinity/useInfinityContext'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import { getTokenStaticPaths, getTokenStaticProps } from 'utils/pageUtils'
 import { InfoPageLayout } from 'views/InfinityInfo/components/Layout'
@@ -8,7 +9,11 @@ const TokenPage = ({ address }: { address: string }) => {
     return null
   }
 
-  return <TokenInfo address={address.toLowerCase()} />
+  return (
+    <InfinityProvider>
+      <TokenInfo address={address.toLowerCase()} />
+    </InfinityProvider>
+  )
 }
 
 TokenPage.Layout = InfoPageLayout
