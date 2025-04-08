@@ -14,6 +14,9 @@ export const isXOrder = (order: InterfaceOrder | undefined | null): order is XOr
 export const isClassicOrder = (order: InterfaceOrder | undefined | null): order is ClassicOrder =>
   order?.type === OrderType.PCS_CLASSIC
 
+export const isBridgeOrder = (order: InterfaceOrder | undefined | null): order is ClassicOrder =>
+  order?.type === OrderType.PCS_BRIDGE
+
 export type InterfaceOrder<
   input extends Currency = Currency,
   output extends Currency = Currency,

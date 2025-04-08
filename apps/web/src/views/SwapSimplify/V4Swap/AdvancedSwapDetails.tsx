@@ -24,9 +24,9 @@ import { Field } from 'state/swap/actions'
 import { styled } from 'styled-components'
 import FormattedPriceImpact from '../../Swap/components/FormattedPriceImpact'
 import { RouterViewer } from '../../Swap/components/RouterViewer'
+import { SlippageButton } from '../../Swap/components/SlippageButton'
 import SwapRoute from '../../Swap/components/SwapRoute'
 import { useFeeSaved } from '../../Swap/hooks/useFeeSaved'
-import { SlippageButton } from '../../Swap/V3Swap/components/SlippageButton'
 import { SlippageAdjustedAmounts } from '../../Swap/V3Swap/utils/exchange'
 
 const DetailsTitle = styled(Text)`

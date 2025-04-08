@@ -19,6 +19,7 @@ import { SettingsMode } from 'components/Menu/GlobalSettings/types'
 import { BIG_INT_ZERO } from 'config/constants/exchange'
 import { useCurrency } from 'hooks/Tokens'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
+import { NoValidRouteError } from 'hooks/useBestAMMTrade'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
@@ -28,9 +29,7 @@ import { useCurrencyBalances } from 'state/wallet/hooks'
 import { logGTMClickSwapConfirmEvent, logGTMClickSwapEvent } from 'utils/customGTMEventTracking'
 import { warningSeverity } from 'utils/exchange'
 import { isClassicOrder, isXOrder } from 'views/Swap/utils'
-import { ConfirmSwapModalV2 } from 'views/Swap/V3Swap/containers/ConfirmSwapModalV2'
 import { useAccount, useChainId } from 'wagmi'
-import { NoValidRouteError } from 'hooks/useBestAMMTrade'
 import { useParsedAmounts, useSlippageAdjustedAmounts, useSwapInputError } from '../../Swap/V3Swap/hooks'
 import { useConfirmModalState } from '../../Swap/V3Swap/hooks/useConfirmModalState'
 import { useSwapConfig } from '../../Swap/V3Swap/hooks/useSwapConfig'
@@ -38,6 +37,7 @@ import { useSwapCurrency } from '../../Swap/V3Swap/hooks/useSwapCurrency'
 import { CommitButtonProps } from '../../Swap/V3Swap/types'
 import { computeTradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
 import { useIsRecipientError } from '../hooks/useIsRecipientError'
+import { ConfirmSwapModalV3 } from './ConfirmSwapModal/ConfirmSwapModalV3'
 
 const SettingsModalWithCustomDismiss = withCustomOnDismiss(SettingsModalV2)
 
@@ -235,7 +235,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   }, [])
   const openSettingModal = useSettingModal(onSettingModalDismiss)
   const [openConfirmSwapModal] = useModal(
-    <ConfirmSwapModalV2
+    <ConfirmSwapModalV3
       order={order}
       orderHash={orderHash}
       originalOrder={tradeToConfirm}
@@ -251,7 +251,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
     />,
     true,
     true,
-    'confirmSwapModalV2',
+    'confirmSwapModalV3',
   )
 
   const handleSwap = useCallback(() => {
