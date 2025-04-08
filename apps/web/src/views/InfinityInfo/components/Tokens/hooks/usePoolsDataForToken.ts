@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
-import { calculateInfinityFeeTier } from 'hooks/infinity/useInfinityFeeTier'
 import { explorerApiClient } from 'state/info/api/client'
 import { useExplorerChainNameByQuery } from 'state/info/api/hooks'
 import type { components, operations } from 'state/info/api/schema'
 import { useChainNameByQuery } from 'state/info/hooks'
 import { PoolDataForView } from 'state/info/types'
+import { calculateInfiFeePercent } from 'views/Swap/V3Swap/utils/exchange'
 
 export const usePoolsDataForToken = (address: string): PoolDataForView[] | undefined => {
   const chainName = useChainNameByQuery()
@@ -24,7 +24,7 @@ export const usePoolsDataForToken = (address: string): PoolDataForView[] | undef
       return {
         data: resp.data.map((item) => {
           if (item.protocolFee) {
-            const { totalFee } = calculateInfinityFeeTier(item.protocolFee, item.feeTier)
+            const { totalFee } = calculateInfiFeePercent(item.feeTier, item.protocolFee)
             return {
               ...item,
               feeTier: totalFee,
