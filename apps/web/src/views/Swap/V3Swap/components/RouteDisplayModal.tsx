@@ -1,9 +1,11 @@
+import { parseProtocolFeesToNumbers } from '@pancakeswap/infinity-sdk'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency } from '@pancakeswap/sdk'
+import { Currency, Rounding } from '@pancakeswap/sdk'
 import { Route, SmartRouter } from '@pancakeswap/smart-router'
 import {
   AtomBox,
   AutoColumn,
+  Column,
   Flex,
   Modal,
   ModalV2,
@@ -95,36 +97,51 @@ export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayPr
       ? pairs.map((p, index) => {
           const [input, output] = p
           const pool = pools[index]
-          const isV4ClPool = SmartRouter.isV4ClPool(pool)
-          const isV4BinPool = SmartRouter.isV4BinPool(pool)
-          const isV4Pool = isV4BinPool || isV4ClPool
+          const isInfinityClPool = SmartRouter.isInfinityClPool(pool)
+          const isInfinityBinPool = SmartRouter.isInfinityBinPool(pool)
+          const isInfinityPool = isInfinityBinPool || isInfinityClPool
           const isV3Pool = SmartRouter.isV3Pool(pool)
           const isV2Pool = SmartRouter.isV2Pool(pool)
           const key = isV2Pool
             ? `v2_${pool.reserve0.currency.symbol}_${pool.reserve1.currency.symbol}`
             : SmartRouter.isStablePool(pool) || isV3Pool
             ? pool.address
-            : isV4Pool
+            : isInfinityPool
             ? pool.id
             : undefined
           if (!key) return null
-          const feeDisplay = isV3Pool || isV4Pool ? v3FeeToPercent(pool.fee).toSignificant(6) : ''
-          const text = isV2Pool
-            ? 'V2'
-            : isV3Pool
-            ? `V3 (${feeDisplay}%)`
-            : isV4ClPool
-            ? `V4CL (${feeDisplay}%)`
-            : isV4BinPool
-            ? `V4Bin (${feeDisplay}%)`
-            : t('StableSwap')
-          const tooltipText = `${input.symbol}/${output.symbol}${isV3Pool || isV4Pool ? ` (${feeDisplay}%)` : ''}`
+          const feeDisplay =
+            isV3Pool || isInfinityPool
+              ? Number(
+                  v3FeeToPercent(
+                    isV3Pool ? pool.fee : pool.fee + (parseProtocolFeesToNumbers(pool.protocolFee)?.[0] ?? 0),
+                  ).toFixed(3, {}, Rounding.ROUND_HALF_UP),
+                ).toString()
+              : ''
+          const text = isV2Pool ? (
+            'V2'
+          ) : isV3Pool ? (
+            `V3 (${feeDisplay}%)`
+          ) : isInfinityClPool ? (
+            <Column alignItems="center">
+              <span>Infinity CL</span>
+              <span>({feeDisplay}%)</span>
+            </Column>
+          ) : isInfinityBinPool ? (
+            <Column alignItems="center">
+              <span>Infinity Bin</span>
+              <span>({feeDisplay}%)</span>
+            </Column>
+          ) : (
+            t('StableSwap')
+          )
+          const tooltipText = `${input.symbol}/${output.symbol}${isV3Pool || isInfinityPool ? ` (${feeDisplay}%)` : ''}`
           return (
             <PairNode
               pair={p}
               key={key}
               text={text}
-              className={isV4Pool || isV3Pool ? 'highlight' : ''}
+              className={isInfinityPool || isV3Pool ? 'highlight' : ''}
               tooltipText={tooltipText}
             />
           )
@@ -168,7 +185,7 @@ function PairNode({
   tooltipText,
 }: {
   pair: Pair
-  text: string
+  text: string | React.ReactNode
   className: string
   tooltipText: string
 }) {

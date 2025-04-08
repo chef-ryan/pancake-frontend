@@ -8,8 +8,8 @@ import { useMemo } from 'react'
 import { warningSeverity } from 'utils/exchange'
 import { multiplyPriceByAmount } from 'utils/prices'
 import { computeTradePriceBreakdown } from 'views/Swap/V3Swap/utils/exchange'
+import { useBestAMMTrade } from './quoter/useBestAMMTrade'
 import { useActiveChainId } from './useActiveChainId'
-import { useBestAMMTrade } from './useBestAMMTrade'
 import { useCurrencyUsdPrice } from './useCurrencyUsdPrice'
 
 type UseStablecoinPriceConfig = {
@@ -24,8 +24,11 @@ const DEFAULT_CONFIG: UseStablecoinPriceConfig = {
 export function useStablecoinPrice(
   currency?: Currency | null,
   config: UseStablecoinPriceConfig = DEFAULT_CONFIG,
+  overrideChainId?: number,
 ): Price<Currency, Currency> | undefined {
-  const { chainId: currentChainId } = useActiveChainId()
+  const { chainId: activeChainId } = useActiveChainId()
+  const currentChainId = overrideChainId || activeChainId
+
   const chainId = currency?.chainId
   const { enabled, hideIfPriceImpactTooHigh } = { ...DEFAULT_CONFIG, ...config }
 
@@ -105,6 +108,10 @@ export function useStablecoinPrice(
     return undefined
   }, [currency, stableCoin, enabled, isCake, cakePrice, isStableCoin, priceFromApi, trade, hideIfPriceImpactTooHigh])
 
+  if (price?.denominator === 0n) {
+    return undefined
+  }
+
   return price
 }
 
@@ -112,8 +119,9 @@ export const useStablecoinPriceAmount = (
   currency?: Currency,
   amount?: number,
   config?: UseStablecoinPriceConfig,
+  overrideChainId?: number,
 ): number | undefined => {
-  const stablePrice = useStablecoinPrice(currency, { enabled: !!currency, ...config })
+  const stablePrice = useStablecoinPrice(currency, { enabled: !!currency, ...config }, overrideChainId)
 
   return useMemo(() => {
     if (amount) {
