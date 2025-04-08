@@ -63,28 +63,24 @@ export const useMultiChainPoolsFarmingStatus = (pools: UniversalFarmConfig[]) =>
   )
 }
 
-export const usePositionIsFarming = ({
-  chainId,
-  poolId,
-  tokenId,
-}: {
-  chainId?: number
-  poolId?: Address
-  tokenId?: bigint
-}) => {
-  const { address } = useAccount()
-  const { data: rewards } = usePoolFarmRewardsFormAPI({
-    address,
-    chainId,
-    poolId,
-    timestamp: dayjs().startOf('hour').unix(),
+export const usePositionIsFarming = ({ chainId, poolId }: { chainId?: number; poolId?: Address }) => {
+  const { data: campaignsByPoolId } = useQuery({
+    queryKey: ['CampaignsByPoolId', poolId, chainId],
+    queryFn: async () =>
+      fetchCampaignsByPoolIds({ chainId: Number(chainId), poolIds: [poolId!], fetchAll: true, includeInactive: false }),
+    enabled: !!poolId,
+    retry: false,
   })
-  return useMemo(() => {
-    if (!tokenId) {
-      return !!rewards?.find((r) => r.poolId === poolId)
-    }
-    return !!rewards?.find((r) => r.tokenIds.includes(tokenId.toString()))
-  }, [rewards, tokenId, poolId])
+  return useMemo(
+    () =>
+      campaignsByPoolId?.some(
+        (camp) =>
+          camp.poolId === poolId &&
+          Number(camp.startTime) <= Number(dayjs().unix()) &&
+          Number(camp.startTime) + Number(camp.duration) >= Number(dayjs().unix()),
+      ),
+    [campaignsByPoolId, poolId],
+  )
 }
 
 export const usePositionsWithFarming = <T extends InfinityBinPositionDetail | InfinityCLPositionDetail>({
