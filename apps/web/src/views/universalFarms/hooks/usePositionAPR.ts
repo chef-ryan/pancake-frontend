@@ -1,4 +1,4 @@
-import { getCurrencyPriceFromId } from '@pancakeswap/infinity-sdk'
+import { BinLiquidityShape, getCurrencyPriceFromId } from '@pancakeswap/infinity-sdk'
 import { Currency, CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
 import { BIG_ONE, BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { formatPercent } from '@pancakeswap/utils/formatFractions'
@@ -41,7 +41,7 @@ import {
   InfinityPoolInfo,
   PoolInfo,
 } from 'state/farmsV4/state/type'
-import { useBinRangeQueryState, useClRangeQueryState } from 'state/infinity/shared'
+import { useBinRangeQueryState, useClRangeQueryState, useLiquidityShapeQueryState } from 'state/infinity/shared'
 import {
   lastEditAtom,
   useAddDepositAmounts,
@@ -51,7 +51,8 @@ import { usePool } from 'views/AddLiquidityInfinity/hooks/usePool'
 import { useV3FormState } from 'views/AddLiquidityV3/formViews/V3FormView/form/reducer'
 import { useLmPoolLiquidity } from 'views/Farms/hooks/useLmPoolLiquidity'
 import { useEstimateUserMultiplier } from 'views/universalFarms/hooks/useEstimateUserMultiplier'
-import { calculateBinLiquidityByReserve } from '../utils/calculateBinLiquidityByReserve'
+import { getActiveLiquidityFromShape } from '../utils/getActiveLiquidityFromShape'
+import { useBinAmountsFromUsdValue } from './useBinAmountsFromUsdValue'
 
 const V3_LP_FEE_RATE = {
   [FeeAmount.LOWEST]: 0.67,
@@ -663,22 +664,13 @@ export const useInfinityBinDerivedApr = (poolInfo: InfinityBinPoolInfo) => {
     return [minPrice_, maxPrice_]
   }, [pool, lowerBinId, upperBinId])
   const { depositCurrencyAmount0, depositCurrencyAmount1 } = useAddDepositAmounts()
-  const price = useMemo(() => {
-    return pool?.activeId
-      ? getCurrencyPriceFromId(pool?.activeId, pool?.binStep, pool?.token0, pool?.token1)
-      : undefined
-  }, [pool?.activeId, pool?.binStep, pool?.token0, pool?.token1])
 
-  const { amountA: aprAmountA, amountB: aprAmountB } = useAmountsByUsdValue({
-    usdValue: '1',
-    currencyA: currency0,
-    currencyB: currency1,
-    price,
-    priceLower,
-    priceUpper,
-    sqrtRatioX96: price ? encodeSqrtRatioX96(price?.numerator, price?.denominator) : undefined,
-    currencyAUsdPrice: token0UsdPrice,
-    currencyBUsdPrice: token1UsdPrice,
+  const [aprAmountA, aprAmountB] = useBinAmountsFromUsdValue({
+    usdValue: '10',
+    currency0,
+    currency1,
+    currency0UsdPrice: token0UsdPrice,
+    currency1UsdPrice: token1UsdPrice,
   })
 
   const amountA = useMemo(() => {
@@ -688,18 +680,23 @@ export const useInfinityBinDerivedApr = (poolInfo: InfinityBinPoolInfo) => {
     return depositCurrencyAmount1 || aprAmountB || undefined
   }, [aprAmountB, depositCurrencyAmount1])
 
-  const liquidity = useMemo(
-    () =>
-      calculateBinLiquidityByReserve({
-        lowerBinId,
-        upperBinId,
-        binStep: pool?.binStep,
-        reserveX: amountA?.quotient,
-        reserveY: amountB?.quotient,
-        activeBinId: pool?.activeId,
-      }) ?? new BN('0'),
-    [lowerBinId, upperBinId, pool?.binStep, amountA, amountB, pool?.activeId],
-  )
+  const [liquidityShape] = useLiquidityShapeQueryState()
+
+  const liquidity = useMemo(() => {
+    if (!lowerBinId || !upperBinId || !pool?.binStep) return new BN(0)
+
+    const l = getActiveLiquidityFromShape({
+      liquidityShape: liquidityShape as BinLiquidityShape,
+      lowerBinId,
+      upperBinId,
+      binStep: pool?.binStep,
+      amount0: amountA.quotient,
+      amount1: amountB.quotient,
+      activeBinId: pool?.activeId,
+    })
+
+    return l
+  }, [amountA, amountB, lowerBinId, upperBinId, pool?.binStep, pool?.activeId, liquidityShape])
 
   const inRange = useMemo(() => {
     if (!pool || !lowerBinId || !upperBinId) return false
