@@ -265,11 +265,6 @@ export const InfinityCLPosition = () => {
     [],
   )
 
-  useEffect(() => {
-    // todo:@eric for QA, remove before launch
-    console.log('poolId', poolId)
-  }, [poolId])
-
   return (
     <>
       {!isLoading && (
