@@ -172,7 +172,7 @@ export const InfinityCLPosition = () => {
   // status
   const inRange = isPoolTickInRange((pool as any) ?? undefined, tickLower, tickUpper)
   const removed = liquidity === 0n
-  const isFarming = usePositionIsFarming({ chainId, poolId, tokenId })
+  const isFarming = usePositionIsFarming({ chainId, poolId })
 
   const nativeCurrency = useNativeCurrency()
   const nativeWrappedSymbol = nativeCurrency.wrapped.symbol
