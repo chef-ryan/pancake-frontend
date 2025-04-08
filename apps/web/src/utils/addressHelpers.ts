@@ -4,6 +4,7 @@ import {
   bCakeFarmBoosterV3VeCakeAddress,
   bCakeFarmWrapperBoosterVeCakeAddress,
 } from '@pancakeswap/farms/constants/v3'
+import { PoolType } from '@pancakeswap/infinity-sdk'
 
 import addresses from 'config/constants/contracts'
 import { VaultKey } from 'state/types'
@@ -216,6 +217,14 @@ export const getRevenueSharingPoolGatewayAddress = (chainId?: number) => {
   return getAddressFromMap(addresses.revenueSharingPoolGateway, chainId)
 }
 
-export const getCakePoolAddress = (chainId?: number) => {
-  return getAddressFromMap(addresses.cakeVault, chainId)
+export const getPoolManagerAddress = (type: PoolType, chainId?: number) => {
+  return type === 'CL'
+    ? getAddressFromMap(addresses.poolManagerCL, chainId)
+    : getAddressFromMap(addresses.poolManagerBin, chainId)
+}
+
+export const getInfinityPositionManagerAddress = (type: PoolType, chainId?: number) => {
+  return type === 'CL'
+    ? getAddressFromMap(addresses.positionManagerCL, chainId)
+    : getAddressFromMap(addresses.positionManagerBin, chainId)
 }

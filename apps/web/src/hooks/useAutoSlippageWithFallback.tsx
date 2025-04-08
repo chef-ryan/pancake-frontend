@@ -1,5 +1,5 @@
 import { ExclusiveDutchOrderTrade } from '@pancakeswap/pcsx-sdk'
-import { SmartRouterTrade, V4Router } from '@pancakeswap/smart-router'
+import { SmartRouterTrade, InfinityRouter } from '@pancakeswap/smart-router'
 import { Currency, CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
 import { useUserSlippage } from '@pancakeswap/utils/user'
 import { atom, useAtom } from 'jotai'
@@ -25,7 +25,7 @@ export const useAutoSlippageEnabled = () => {
 
 type SupportedTrade =
   | SmartRouterTrade<TradeType>
-  | V4Router.V4TradeWithoutGraph<TradeType>
+  | InfinityRouter.InfinityTradeWithoutGraph<TradeType>
   | ExclusiveDutchOrderTrade<Currency, Currency>
 
 /**

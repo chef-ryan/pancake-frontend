@@ -31,6 +31,8 @@ export const CardWrapper = styled.div`
   position: relative;
   width: 100%;
   margin-top: 10px;
+  padding-left: 50px;
+
   ${({ theme }) => theme.mediaQueries.sm} {
     width: 296px;
     margin-left: 50px;
@@ -89,7 +91,12 @@ export const useBCakeTooltipContent = () => {
 export const BCakeBoosterCard: React.FC<{ variants?: 'farm' | 'pm' }> = ({ variants = 'farm' }) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const { isMobile } = useMatchBreakpoints()
+  const { isMobile, isXs } = useMatchBreakpoints()
+  const left = useMemo(() => {
+    if (variants === 'pm') return -185
+    if (isXs || isMobile) return -10
+    return -20
+  }, [variants, isXs, isMobile])
 
   const tooltipContent = useBCakeTooltipContent()
 
@@ -99,7 +106,7 @@ export const BCakeBoosterCard: React.FC<{ variants?: 'farm' | 'pm' }> = ({ varia
   })
   return (
     <CardWrapper>
-      <ImageWrapper style={{ left: variants === 'pm' ? -185 : isMobile ? -65 : -70, top: 105 }}>
+      <ImageWrapper style={{ left, top: 105 }}>
         <Image
           src={variants === 'pm' ? boosterCardImagePM : boosterCardImage}
           alt="booster-card-image"

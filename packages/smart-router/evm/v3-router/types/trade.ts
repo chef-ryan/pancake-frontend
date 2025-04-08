@@ -38,6 +38,7 @@ export type TradeConfig = BaseTradeConfig & {
   blockNumber?: number | (() => Promise<number>)
   quoteProvider: QuoteProvider
   quoterOptimization?: boolean
+  quoteId?: string
 } & PriceReferences &
   AbortControl
 

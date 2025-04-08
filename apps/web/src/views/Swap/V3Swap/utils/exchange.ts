@@ -9,7 +9,7 @@ import {
   TradeType,
   ZERO,
 } from '@pancakeswap/sdk'
-import { Route, SmartRouter, SmartRouterTrade, V4Router } from '@pancakeswap/smart-router'
+import { Route, SmartRouter, SmartRouterTrade, InfinityRouter } from '@pancakeswap/smart-router'
 import { formatPrice, parseNumberToFraction } from '@pancakeswap/utils/formatFractions'
 import { FeeAmount } from '@pancakeswap/v3-sdk'
 
@@ -23,7 +23,7 @@ export type SlippageAdjustedAmounts = {
 }
 
 // Helper function to check if a trade is V4Trade
-const isV4Trade = (trade: any): trade is V4Router.V4TradeWithoutGraph<TradeType> => {
+const isV4Trade = (trade: any): trade is InfinityRouter.InfinityTradeWithoutGraph<TradeType> => {
   return trade && 'gasUseEstimate' in trade
 }
 
@@ -81,6 +81,10 @@ export function computeTradePriceBreakdown(trade?: TradeEssentialForPriceBreakdo
         if (SmartRouter.isV3Pool(pool)) {
           return currentFee.multiply(ONE_HUNDRED_PERCENT.subtract(v3FeeToPercent(pool.fee)))
         }
+        if (SmartRouter.isInfinityClPool(pool) || SmartRouter.isInfinityBinPool(pool)) {
+          const v4FeePercent = calculateV4FeePercent(pool)
+          return currentFee.multiply(ONE_HUNDRED_PERCENT.subtract(v4FeePercent))
+        }
         return currentFee
       }, ONE_HUNDRED_PERCENT),
     )
@@ -132,4 +136,12 @@ export function formatExecutionPrice(
 
 export function v3FeeToPercent(fee: FeeAmount): Percent {
   return new Percent(fee, BIPS_BASE * 100n)
+}
+
+export function calculateV4FeePercent(pool: { protocolFee?: number; fee: number }): Percent {
+  /* eslint-disable no-bitwise */
+  const protocolFee = (pool.protocolFee ?? 0) & 0xfff
+  const lpFee = pool.fee
+  const totalFee = (protocolFee + ((1e6 - protocolFee) * lpFee) / 1e6).toFixed(0)
+  return new Percent(totalFee, 1e6)
 }

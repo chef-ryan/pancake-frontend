@@ -21,6 +21,7 @@ export type CallByGasLimitParams = AbortControl &
     retryFailedCallsWithGreaterLimit?:
       | {
           gasLimitMultiplier: number
+          maxRetry?: number
         }
       | undefined
   }
@@ -54,8 +55,13 @@ export async function multicallByGasLimit(
     return callResult
   }
 
-  const { gasLimitMultiplier: retryGasLimitMultiplier } = retryFailedCallsWithGreaterLimit
+  const { gasLimitMultiplier: retryGasLimitMultiplier, maxRetry = 2 } = retryFailedCallsWithGreaterLimit
+  let retry = 0
   async function retryFailedCalls(result: CallResult) {
+    retry += 1
+    if (retry > maxRetry) {
+      return result
+    }
     if (result.results.every((r) => r.success)) {
       return result
     }

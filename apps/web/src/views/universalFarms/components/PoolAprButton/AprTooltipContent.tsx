@@ -3,7 +3,7 @@ import { LinkExternal, Text } from '@pancakeswap/uikit'
 import Link from 'next/link'
 import { PropsWithChildren } from 'react'
 import styled from 'styled-components'
-import { displayApr } from '../../utils/displayApr'
+import { displayApr } from '@pancakeswap/utils/displayApr'
 
 const StyledLi = styled.li`
   flex-wrap: nowrap;
