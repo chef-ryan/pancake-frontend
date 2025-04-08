@@ -8,6 +8,7 @@ import { InfinityPoolInfo } from 'state/farmsV4/state/type'
 import { Address } from 'viem/accounts'
 import { useCampaignsByChainId } from './useCampaigns'
 import { useFarmRewardsByPoolId } from './useFarmReward'
+import { usePositionIsFarming } from './useIsFarming'
 
 interface InfinityCakeAPRProps {
   chainId?: number
@@ -70,9 +71,10 @@ export const useInfinityCLPositionCakeAPR = ({
   const { cakePerYear, poolWeight } = useInfinityCakeAPR({ chainId, poolId, tvlUSD, cakePrice })
   const { address } = useAccount()
   const rewardsPerEpoch = useFarmRewardsByPoolId({ chainId, address, poolId })
+  const isFarming = usePositionIsFarming({ chainId, poolId })
 
   return useMemo(() => {
-    if (!cakePerYear || !tvlUSD) {
+    if (!cakePerYear || !tvlUSD || !isFarming) {
       return {
         value: '0' as `${number}`,
       }
@@ -94,6 +96,7 @@ export const useInfinityCLPositionCakeAPR = ({
       value: rewardForPositionPerYear.div(tvlUSD).toString() as `${number}`,
     }
   }, [
+    isFarming,
     position.tokenId,
     rewardsPerEpoch,
     cakePerYear,
@@ -112,6 +115,7 @@ export const useInfinityBinPositionCakeAPR = ({
   pool,
 }: InfinityPositionCakeAPR<InfinityBinPositionDetail>) => {
   const { chainId, poolId } = pool
+  const isFarming = usePositionIsFarming({ chainId, poolId })
   const activeTVLUsd = useMemo(() => {
     if (!tvlUSD || !position.liquidity || (!position.poolLiquidity && !pool.liquidity)) {
       return '0' as `${number}`
@@ -128,7 +132,7 @@ export const useInfinityBinPositionCakeAPR = ({
   const rewardsPerEpoch = useFarmRewardsByPoolId({ chainId, address, poolId })
 
   return useMemo(() => {
-    if (!cakePerYear || !tvlUSD) {
+    if (!cakePerYear || !tvlUSD || !isFarming) {
       return {
         value: '0' as `${number}`,
       }
@@ -157,6 +161,7 @@ export const useInfinityBinPositionCakeAPR = ({
       value: rewardForPositionPerYear.div(tvlUSD).toString() as `${number}`,
     }
   }, [
+    isFarming,
     rewardsPerEpoch,
     cakePerYear,
     tvlUSD,
