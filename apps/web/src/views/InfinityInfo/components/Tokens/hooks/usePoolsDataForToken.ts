@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
+import { calculateInfinityFeeTier } from 'hooks/infinity/useInfinityFeeTier'
 import { explorerApiClient } from 'state/info/api/client'
 import { useExplorerChainNameByQuery } from 'state/info/api/hooks'
 import type { components, operations } from 'state/info/api/schema'
@@ -13,8 +14,25 @@ export const usePoolsDataForToken = (address: string): PoolDataForView[] | undef
   const { data } = useQuery({
     queryKey: [`infinity/info/pool/poolsDataForToken/${chainName}/${address}`],
 
-    queryFn: ({ signal }) => {
-      return fetchPoolsForToken(address, explorerChainName!, signal)
+    queryFn: async ({ signal }) => {
+      const resp = await fetchPoolsForToken(address, explorerChainName!, signal)
+      if (resp.error) {
+        return {
+          data: [],
+        }
+      }
+      return {
+        data: resp.data.map((item) => {
+          if (item.protocolFee) {
+            const { totalFee } = calculateInfinityFeeTier(item.protocolFee, item.feeTier)
+            return {
+              ...item,
+              feeTier: totalFee,
+            } as PoolDataForView
+          }
+          return item
+        }),
+      }
     },
     enabled: Boolean(explorerChainName && address && address !== 'undefined'),
     ...QUERY_SETTINGS_IMMUTABLE,
@@ -76,5 +94,6 @@ const transformPoolData = (
     tvlToken1: Number.parseFloat(item.tvlToken1),
     volumeUSDChange: 0,
     tvlUSDChange: 0,
+    protocolFee: Number.parseInt(item.protocolFee ?? '0'),
   }
 }

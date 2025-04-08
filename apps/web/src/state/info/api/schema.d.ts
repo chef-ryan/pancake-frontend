@@ -5447,6 +5447,8 @@ export interface operations {
             lpFeeUSD48h?: string
             /** @description lp fee in USD in 7d */
             lpFeeUSD7d?: string
+            /** @description protocol fee for infinity pools */
+            protocolFee?: string
           }[]
         }
       }
