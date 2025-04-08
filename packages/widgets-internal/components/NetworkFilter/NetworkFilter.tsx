@@ -3,12 +3,13 @@ import { useCallback, useState } from "react";
 import styled from "styled-components";
 
 export interface INetworkProps {
+  multiple?: boolean;
   data: IMultiSelectProps<number>["options"];
   value: number[];
   onChange: (value: INetworkProps["value"], e: IMultiSelectChangeEvent<number>) => void;
 }
 
-const Container = styled.div<{ $isShow: boolean }>`
+export const Container = styled.div<{ $isShow: boolean }>`
   flex: 1;
 
   .p-multiselect-panel {
@@ -43,7 +44,7 @@ const Container = styled.div<{ $isShow: boolean }>`
  `}
 `;
 
-export const NetworkFilter: React.FC<INetworkProps> = ({ data, value, onChange }: INetworkProps) => {
+export const NetworkFilter: React.FC<INetworkProps> = ({ data, value, onChange, multiple }: INetworkProps) => {
   const [isShow, setIsShow] = useState(false);
 
   const handleSelectChange = useCallback(
@@ -58,6 +59,7 @@ export const NetworkFilter: React.FC<INetworkProps> = ({ data, value, onChange }
   return (
     <Container $isShow={isShow}>
       <MultiSelect
+        multiple={multiple}
         style={{
           backgroundColor: "var(--colors-input)",
         }}

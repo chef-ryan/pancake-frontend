@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { ChainId } from '@pancakeswap/chains'
-import { type Address, zeroAddress } from 'viem'
+import { type Address, erc20Abi, zeroAddress } from 'viem'
 import { ERC20Token, Currency, NativeCurrency, Token } from '@pancakeswap/sdk'
 
 import { TokenAddressMap } from '@pancakeswap/token-lists'
@@ -17,7 +17,6 @@ import {
   useWarningTokenList,
 } from 'state/lists/hooks'
 import { safeGetAddress } from 'utils'
-import { erc20Abi } from 'viem'
 import memoize from 'lodash/memoize'
 import uniqueId from 'lodash/uniqueId'
 import useUserAddedTokens, { useUserAddedTokensByChainIds } from '../state/user/hooks/useUserAddedTokens'
@@ -49,8 +48,10 @@ const mapWithoutUrlsBySymbol = (tokenMap?: TokenAddressMap<ChainId>, chainId?: n
 /**
  * Returns all tokens of activeChain that are from active urls and user added tokens
  */
-export function useAllTokens(): { [address: string]: ERC20Token } {
-  const { chainId } = useActiveChainId()
+export function useAllTokens(overrideChainId?: number): { [address: string]: ERC20Token } {
+  const { chainId: activeChainId } = useActiveChainId()
+  const chainId = overrideChainId || activeChainId
+
   const tokenMap = useAtomValue(combinedTokenMapFromActiveUrlsAtom)
   const userAddedTokens = useUserAddedTokens()
   return useMemo(() => {
@@ -182,8 +183,10 @@ export function useOfficialsAndUserAddedTokens(): { [address: string]: ERC20Toke
   }, [userAddedTokens, tokenMap, chainId])
 }
 
-export function useUnsupportedTokens(): { [address: string]: ERC20Token } {
-  const { chainId } = useActiveChainId()
+export function useUnsupportedTokens(overrideChainId?: number): { [address: string]: ERC20Token } {
+  const { chainId: activeChainId } = useActiveChainId()
+  const chainId = overrideChainId || activeChainId
+
   const unsupportedTokensMap = useUnsupportedTokenList()
   return useMemo(() => mapWithoutUrls(unsupportedTokensMap, chainId), [unsupportedTokensMap, chainId])
 }
@@ -194,8 +197,8 @@ export function useWarningTokens(): { [address: string]: ERC20Token } {
   return useMemo(() => mapWithoutUrls(warningTokensMap, chainId), [warningTokensMap, chainId])
 }
 
-export function useIsTokenActive(token: ERC20Token | undefined | null): boolean {
-  const activeTokens = useAllTokens()
+export function useIsTokenActive(token: ERC20Token | undefined | null, chainId?: number): boolean {
+  const activeTokens = useAllTokens(chainId)
 
   if (!activeTokens || !token) {
     return false
@@ -207,8 +210,8 @@ export function useIsTokenActive(token: ERC20Token | undefined | null): boolean 
 }
 
 // Check if currency is included in custom list from user storage
-export function useIsUserAddedToken(currency: Currency | undefined | null): boolean {
-  const userAddedTokens = useUserAddedTokens()
+export function useIsUserAddedToken(currency: Currency | undefined | null, chainId?: number): boolean {
+  const userAddedTokens = useUserAddedTokens(chainId)
 
   if (!currency?.equals) {
     return false
@@ -292,6 +295,20 @@ export function useCurrency(currencyId: string | undefined): UnsafeCurrency {
     currencyId?.toLowerCase() === zeroAddress
 
   const token = useToken(isNative ? undefined : currencyId)
+  return isNative ? native : token
+}
+
+export function useCurrencyByChainId(
+  currencyId: string | undefined,
+  chainId?: number,
+): Currency | ERC20Token | undefined {
+  const native: NativeCurrency = useNativeCurrency(chainId)
+  const isNative =
+    currencyId?.toUpperCase() === native.symbol?.toUpperCase() ||
+    currencyId?.toLowerCase() === GELATO_NATIVE ||
+    currencyId?.toLowerCase() === zeroAddress
+
+  const token = useTokenByChainId(isNative ? undefined : currencyId, chainId) ?? undefined
   return isNative ? native : token
 }
 

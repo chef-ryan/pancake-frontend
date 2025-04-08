@@ -30,8 +30,10 @@ export const NEVER_RELOAD: ListenerOptions = {
 }
 
 // the lowest level call for subscribing to contract data
-function useCallsData(calls: (Call | undefined)[], options?: ListenerOptions): CallResult[] {
-  const { chainId } = useActiveChainId()
+function useCallsData(calls: (Call | undefined)[], options?: ListenerOptions, overrideChainId?: number): CallResult[] {
+  const { chainId: activeChainId } = useActiveChainId()
+  const chainId = overrideChainId || activeChainId
+
   const [{ callResults }, dispatch] = useAtom(multicallReducerAtom)
 
   const serializedCallKeys: string = useMemo(
@@ -123,6 +125,7 @@ function toCallState<
   if (!valid) return INVALID_CALL_STATE
   if (valid && !blockNumber) return LOADING_CALL_STATE
   if (!functionName || !abi || !latestBlockNumber) return LOADING_CALL_STATE
+
   const success = data && data.length > 2
   const syncing = (blockNumber ?? 0) < latestBlockNumber
   let result
@@ -226,6 +229,7 @@ export type MultipleSameDataCallParameters<
   abi: TAbi
   // FIXME: wagmiv2
   functionName: any
+  chainId?: number
   options?: ListenerOptionsWithGas
 } & any
 // GetFunctionArgs<TAbi, TFunctionName>
@@ -267,8 +271,9 @@ MultipleSameDataCallParameters<TAbi, TFunctionName>): CallState<any>[] {
     [addresses, callData],
   )
 
-  const results = useCallsData(calls, options?.blocksPerFetch ? { blocksPerFetch } : DEFAULT_OPTIONS)
   const { chainId } = useActiveChainId()
+
+  const results = useCallsData(calls, options?.blocksPerFetch ? { blocksPerFetch } : DEFAULT_OPTIONS, chainId)
 
   const queryClient = useQueryClient()
 

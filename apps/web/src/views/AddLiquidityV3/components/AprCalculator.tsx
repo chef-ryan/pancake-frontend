@@ -19,6 +19,7 @@ import {
   isPoolTickInRange,
   parseProtocolFees,
   TickMath,
+  TICK_SPACINGS,
 } from '@pancakeswap/v3-sdk'
 import {
   RoiCalculatorModalV2,
@@ -113,7 +114,10 @@ export function AprCalculator({
     () => (sqrtRatioX96 ? TickMath.getTickAtSqrtRatio(sqrtRatioX96) : undefined),
     [sqrtRatioX96],
   )
-  const activeTick = useMemo(() => getActiveTick(tickCurrent, feeAmount), [tickCurrent, feeAmount])
+  const activeTick = useMemo(
+    () => (feeAmount ? getActiveTick(tickCurrent, TICK_SPACINGS[feeAmount]) : undefined),
+    [tickCurrent, feeAmount],
+  )
   const { ticks: data } = useAllV3Ticks({ currencyA: baseCurrency, currencyB: quoteCurrency, feeAmount, activeTick })
   const volume24H = usePoolAvgTradingVolume({
     address: poolAddress,

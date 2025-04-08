@@ -10,7 +10,7 @@ import { useSwapState } from 'state/swap/hooks'
 import { styled } from 'styled-components'
 import { StyledSwapContainer } from '../Swap/styles'
 import { SwapFeaturesContext } from '../Swap/SwapFeaturesContext'
-import { V4SwapFormForHomePage } from './V4Swap/V4SwapFormForHomepage'
+import { V4SwapFormForHomePage } from './InfinitySwap/V4SwapFormForHomepage'
 
 const Wrapper = styled(Box)`
   width: 100%;

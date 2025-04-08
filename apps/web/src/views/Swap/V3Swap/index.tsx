@@ -1,13 +1,13 @@
+import { OrderType } from '@pancakeswap/price-api-sdk'
 import { SmartRouter } from '@pancakeswap/smart-router/evm'
 import { useMemo } from 'react'
-import { OrderType } from '@pancakeswap/price-api-sdk'
 
-import { logger } from 'utils/datadog'
 import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
+import { logger } from 'utils/datadog'
 
+import { useAllTypeBestTradeSync } from 'hooks/QuoteProvider'
 import { BuyCryptoLink, FormHeader, FormMain, PricingAndSlippage, TradeDetails } from './containers'
 import { CommitButton } from './containers/CommitButton'
-import { useAllTypeBestTrade } from './hooks/useAllTypeBestTrade'
 import { useCheckInsufficientError } from './hooks/useCheckSufficient'
 
 export function V3SwapForm() {
@@ -22,7 +22,7 @@ export function V3SwapForm() {
     resumeQuoting,
     xOrder,
     ammOrder,
-  } = useAllTypeBestTrade()
+  } = useAllTypeBestTradeSync()
   const { data: inputUsdPrice } = useCurrencyUsdPrice(bestOrder?.trade?.inputAmount.currency)
   const { data: outputUsdPrice } = useCurrencyUsdPrice(bestOrder?.trade?.outputAmount.currency)
 

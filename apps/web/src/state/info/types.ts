@@ -121,7 +121,9 @@ export type TokenData = {
 
   liquidityToken: number
   liquidityUSD: number
+  tvlUSD: number
   liquidityUSDChange: number
+  tvlUSDChange: number
 
   priceUSD: number
   priceUSDChange: number
