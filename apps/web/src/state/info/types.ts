@@ -89,23 +89,6 @@ export interface ProtocolDataForView {
   txCountChange: number
 }
 
-type BaseTokenData = {
-  exists: boolean
-  name: string
-  symbol: string
-  address: string
-  decimals: number
-
-  volumeUSD: number
-  volumeUSDChange: number
-  volumeUSDWeek: number
-  txCount: number
-
-  priceUSD: number
-  priceUSDChange: number
-  priceUSDChangeWeek: number
-}
-
 export type TokenData = {
   exists: boolean
 
@@ -278,6 +261,7 @@ export interface PoolDataForView {
 
   // 24h fees
   feeUSD
+  protocolFee?: number
 }
 
 export interface ChartDayData {
