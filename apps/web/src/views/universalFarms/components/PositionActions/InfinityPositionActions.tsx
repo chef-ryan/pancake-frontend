@@ -37,6 +37,7 @@ export const InfinityPositionActions = ({ pos, positionList = [] }: ActionPanelP
     attemptingTx: harvestAttemptingTxn,
     isMerkleRootMismatch,
     hasRewards,
+    hasUnclaimedRewards,
   } = useFarmInfinityActions({
     chainId,
     onDone: (resp) => setLatestTxReceipt(resp),
@@ -88,7 +89,7 @@ export const InfinityPositionActions = ({ pos, positionList = [] }: ActionPanelP
         <Button
           width={['100px']}
           scale="md"
-          disabled={isAttemptingTx || isMerkleRootMismatch || !hasRewards}
+          disabled={isAttemptingTx || isMerkleRootMismatch || !hasRewards || !hasUnclaimedRewards}
           onClick={modalState.onOpen}
         >
           {isAttemptingTx ? t('Harvesting') : t('Harvest')}

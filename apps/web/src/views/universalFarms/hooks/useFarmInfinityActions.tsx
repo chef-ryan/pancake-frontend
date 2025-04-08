@@ -18,6 +18,7 @@ import { useCheckShouldSwitchNetwork } from './useCheckShouldSwitchNetwork'
 
 interface FarmInfinityActionReturnType {
   hasRewards: boolean
+  hasUnclaimedRewards: boolean
   isMerkleRootMismatch: boolean
   attemptingTx: boolean
   onHarvest: () => Promise<void>
@@ -133,6 +134,7 @@ const useFarmInfinityActions = ({
 
   return {
     hasRewards: Boolean(allRewards?.length),
+    hasUnclaimedRewards: totalUnclaimedRewards?.some((r) => Number(r.totalReward) > 0),
     isMerkleRootMismatch: Boolean(merkleRootMismatch),
     attemptingTx: loading || isSwitchingNetwork,
     onHarvest,
