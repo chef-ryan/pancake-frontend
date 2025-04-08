@@ -82,6 +82,7 @@ export function useSwapBestOrder({ maxHops }: Options = {}) {
       {
         amountIn: amount,
         currencyOut: outputCurrency,
+        tradeType,
       },
     )
   }
