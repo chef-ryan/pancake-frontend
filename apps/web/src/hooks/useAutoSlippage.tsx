@@ -8,6 +8,7 @@ import { L2_CHAIN_IDS } from 'config/chains'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useMemo } from 'react'
 
+import { BridgeTrade } from '@pancakeswap/price-api-sdk'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useGasPrice } from 'state/user/hooks'
 import useNativeCurrency from './useNativeCurrency'
@@ -134,6 +135,7 @@ type SupportedTrade =
   | SmartRouterTrade<TradeType>
   | V4Router.V4TradeWithoutGraph<TradeType>
   | ExclusiveDutchOrderTrade<Currency, Currency>
+  | BridgeTrade
 
 export default function useClassicAutoSlippageTolerance(trade?: SupportedTrade): Percent {
   const { chainId } = useActiveChainId()
