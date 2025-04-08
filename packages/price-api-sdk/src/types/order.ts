@@ -40,19 +40,20 @@ export type ClassicOrder<tradeType extends TradeType = TradeType> = {
   trade: V4Router.V4TradeWithoutGraph<tradeType>
 }
 
-export interface BridgeTrade {
+export interface BridgeTrade<tradeType extends TradeType = TradeType> {
   inputAmount: CurrencyAmount<Currency>
   outputAmount: CurrencyAmount<Currency>
   routes: []
+  tradeType: tradeType
 }
 
-export type BridgeOrder = {
+export type BridgeOrder<tradeType extends TradeType = TradeType> = {
   type: OrderType.PCS_BRIDGE
-  trade: BridgeTrade
+  trade: BridgeTrade<tradeType>
 }
 
 export type PriceOrder<
   input extends Currency = Currency,
   output extends Currency = Currency,
   tradeType extends TradeType = TradeType,
-> = ClassicOrder<tradeType> | XOrder<input, output, tradeType> | BridgeOrder
+> = ClassicOrder<tradeType> | XOrder<input, output, tradeType> | BridgeOrder<tradeType>

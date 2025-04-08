@@ -85,9 +85,11 @@ export function parseBridgeQuoteResponse<
   {
     amountIn,
     currencyOut,
+    tradeType,
   }: {
     amountIn: CurrencyAmount<input>
     currencyOut: output
+    tradeType: tradeType
   },
 ): PriceOrder<input, output, tradeType> {
   if (res.messageType === ResponseType.ERROR) {
@@ -100,6 +102,7 @@ export function parseBridgeQuoteResponse<
       inputAmount: amountIn,
       outputAmount: CurrencyAmount.fromRawAmount(currencyOut, amountIn.quotient.toString()),
       routes: [],
+      tradeType,
     },
   }
 }
