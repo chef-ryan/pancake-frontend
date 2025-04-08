@@ -1,4 +1,5 @@
 import { ExclusiveDutchOrderTrade } from '@pancakeswap/pcsx-sdk'
+import { BridgeTrade } from '@pancakeswap/price-api-sdk'
 import { SmartRouterTrade, V4Router } from '@pancakeswap/smart-router'
 import { Currency, CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
 import { useUserSlippage } from '@pancakeswap/utils/user'
@@ -27,6 +28,7 @@ type SupportedTrade =
   | SmartRouterTrade<TradeType>
   | V4Router.V4TradeWithoutGraph<TradeType>
   | ExclusiveDutchOrderTrade<Currency, Currency>
+  | BridgeTrade
 
 /**
  * Returns the slippage tolerance based on user settings or auto-calculated value
