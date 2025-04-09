@@ -6,13 +6,15 @@ export const useBinAmountsFromUsdValue = ({ usdValue, currency0, currency1, curr
   const usdAmount = parseFloat(usdValue) / 2
 
   const amount0 = useMemo(() => {
-    const amount = new BN(usdAmount).times(10 ** currency0.decimals).div(currency0UsdPrice)
+    if (!currency0 || !currency0UsdPrice) return undefined
+    const amount = new BN(usdAmount).times(10 ** currency0.decimals).div(currency0UsdPrice ?? 1)
     const [n, d] = amount.isFinite() ? amount.toFraction() : [0, 1]
     return CurrencyAmount.fromFractionalAmount(currency0, n.toString(), d.toString())
   }, [usdAmount, currency0, currency0UsdPrice])
 
   const amount1 = useMemo(() => {
-    const amount = new BN(usdAmount).times(10 ** currency1.decimals).div(currency1UsdPrice)
+    if (!currency1 || !currency1UsdPrice) return undefined
+    const amount = new BN(usdAmount).times(10 ** currency1.decimals).div(currency1UsdPrice ?? 1)
     const [n, d] = amount.isFinite() ? amount.toFraction() : [0, 1]
     return CurrencyAmount.fromFractionalAmount(currency1, n.toString(), d.toString())
   }, [usdAmount, currency1, currency1UsdPrice])
