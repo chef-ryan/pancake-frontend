@@ -257,15 +257,19 @@ export const useInfinityCLPositionApr = (pool: InfinityPoolInfo, position: Infin
     amount0,
     amount1,
   })
-  const cakeApr = useInfinityCLPositionCakeAPR({ pool, position, cakePrice, tvlUSD: TVLUsd })
-  console.debug('debug', { pool, position, TVLUsd, cakeApr })
-  return useInfinityPositionApr({
-    pool: {
+  const poolWithOnChainLiquidity = useMemo(() => {
+    if (!onChainPoolInfo) return pool
+    return {
       ...pool,
       // @notice: backend returns liquidity not 100% on time
       // it will cause the derived apr not same as the position apr after created
-      liquidity: onChainPoolInfo?.liquidity ?? pool.liquidity,
-    },
+      liquidity: onChainPoolInfo.liquidity ?? pool.liquidity,
+    }
+  }, [onChainPoolInfo, pool])
+  const cakeApr = useInfinityCLPositionCakeAPR({ pool: poolWithOnChainLiquidity, position, cakePrice, tvlUSD: TVLUsd })
+  console.debug('debug', { pool, position, TVLUsd, cakeApr })
+  return useInfinityPositionApr({
+    pool: poolWithOnChainLiquidity,
     position,
     positionLiquidity: position.liquidity,
     removed,
