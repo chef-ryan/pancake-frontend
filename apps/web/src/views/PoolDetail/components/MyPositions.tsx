@@ -232,7 +232,7 @@ const MyPositionsInner: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
     }
     if (isInfinityProtocol(protocol)) {
       link = getAddInfinityLiquidityURL({
-        chainId,
+        chainId: poolInfo.chainId,
         poolId: (poolInfo as InfinityPoolInfo).poolId,
       })
     }
