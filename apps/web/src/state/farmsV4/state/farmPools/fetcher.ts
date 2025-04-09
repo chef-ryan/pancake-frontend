@@ -21,6 +21,7 @@ import { isInfinityProtocol } from 'utils/protocols'
 import { publicClient } from 'utils/viem'
 import { type Address } from 'viem'
 
+import uniqWith from 'lodash/uniqWith'
 import { InfinityPoolInfo, PoolInfo } from '../type'
 import { parseFarmPools } from '../utils'
 
@@ -207,12 +208,15 @@ export const fetchFarmPools = async (
   }
 
   const fetchFarmConfig = await fetchAllUniversalFarms()
-  const localPools = fetchFarmConfig.filter((farm) => {
-    return (
-      args.protocols?.includes(farm.protocol) &&
-      (Array.isArray(args.chainId) ? args.chainId.includes(farm.chainId) : farm.chainId === args.chainId)
-    )
-  })
+  const localPools = uniqWith(
+    fetchFarmConfig.filter((farm) => {
+      return (
+        args.protocols?.includes(farm.protocol) &&
+        (Array.isArray(args.chainId) ? args.chainId.includes(farm.chainId) : farm.chainId === args.chainId)
+      )
+    }),
+    (a, b) => a.chainId === b.chainId && a.lpAddress === b.lpAddress && a.protocol === b.protocol,
+  )
   const remoteMissedPoolsIndex: number[] = []
 
   const finalPools = await Promise.all(
