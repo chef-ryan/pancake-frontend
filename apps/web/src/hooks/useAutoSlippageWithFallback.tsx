@@ -1,11 +1,11 @@
 import { ExclusiveDutchOrderTrade } from '@pancakeswap/pcsx-sdk'
-import { SmartRouterTrade, InfinityRouter } from '@pancakeswap/smart-router'
+import { InfinityRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
 import { Currency, CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
 import { useUserSlippage } from '@pancakeswap/utils/user'
 import { atom, useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { useAllTypeBestTrade } from 'views/Swap/V3Swap/hooks/useAllTypeBestTrade'
+import { useAllTypeBestTradeSync } from './QuoteProvider'
 import useClassicAutoSlippageTolerance, {
   MIN_DEFAULT_SLIPPAGE_NUMERATOR,
   useInputBasedAutoSlippage,
@@ -85,7 +85,7 @@ export const AutoSlippageProvider = ({ children }: { children?: React.ReactNode 
   )
 }
 export const Sync = () => {
-  const result = useAllTypeBestTrade()
+  const result = useAllTypeBestTradeSync()
   const tradeRef = useRef(result?.bestOrder?.trade)
   const isSameOrder = useMemo(() => {
     if (!tradeRef.current || !result?.bestOrder?.trade) return false
