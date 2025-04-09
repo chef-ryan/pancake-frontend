@@ -1,7 +1,7 @@
 import intersection from 'lodash/intersection'
 import { ALL_PROTOCOLS, Protocol } from '@pancakeswap/farms'
 import { INetworkProps, ITokenProps, toTokenValue } from '@pancakeswap/widgets-internal'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { getKeyForPools, useAccountInfinityBinPositions, useAccountInfinityCLPositions } from 'state/farmsV4/hooks'
 import {
   InfinityBinPositionDetail,
@@ -16,6 +16,7 @@ import { InfinityPositionActions } from '../components/PositionActions/InfinityP
 import { InfinityBinPositionItem } from '../components/PositionItem/InfinityBinPositionItem'
 import { InfinityCLPositionItem } from '../components/PositionItem/InfinityCLPositionItem'
 import { useAllChainIds } from './useMultiChains'
+import { usePositionEarningAmount } from './usePositionEarningAmount'
 
 type InfinityPositionItemsParams = {
   selectedNetwork: INetworkProps['value']
@@ -35,6 +36,21 @@ export const useInfinityPositionItems = ({
   const infinityTypes = useMemo(
     () => (isSelectAllProtocols || !protocols.length ? ALL_PROTOCOLS : protocols),
     [protocols, isSelectAllProtocols],
+  )
+  const [positionEarningAmount] = usePositionEarningAmount()
+
+  const isExhausted = useCallback(
+    (pos: InfinityCLPositionDetail | InfinityBinPositionDetail) => {
+      if (pos.liquidity > 0n) {
+        return false
+      }
+      const reward = positionEarningAmount?.[pos.chainId]?.[pos.poolId]
+      if (!reward) {
+        return false
+      }
+      return !(pos.protocol === Protocol.InfinityCLAMM ? reward[Number(pos.tokenId)] ?? true : reward ?? true)
+    },
+    [positionEarningAmount],
   )
 
   const filteredPositions = useMemo(
@@ -57,7 +73,8 @@ export const useInfinityPositionItems = ({
             !features.length ||
             (isInfinityProtocol(pos.protocol) &&
               pos.poolKey?.hooks &&
-              intersection(features, getHookByAddress(pos.chainId, pos.poolKey.hooks)?.category).length)),
+              intersection(features, getHookByAddress(pos.chainId, pos.poolKey.hooks)?.category).length)) &&
+          !isExhausted(pos),
       ),
     [
       positions,
@@ -68,6 +85,7 @@ export const useInfinityPositionItems = ({
       farmsOnly,
       features,
       isSelectAllFeatures,
+      isExhausted,
     ],
   )
 
