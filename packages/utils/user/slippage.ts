@@ -1,6 +1,6 @@
 import { Percent } from '@pancakeswap/swap-sdk-core'
 import { atom, useAtom } from 'jotai'
-import { atomWithStorage } from 'jotai/utils'
+import { atomWithStorage, RESET } from 'jotai/utils'
 
 export const INITIAL_ALLOWED_SLIPPAGE = 50
 
@@ -8,9 +8,11 @@ const userSlippageAtom = atomWithStorage('pcs:slippage', INITIAL_ALLOWED_SLIPPAG
 
 const userSlippageAtomWithLocalStorage = atom(
   (get) => get(userSlippageAtom),
-  (_get, set, slippage: number) => {
+  (_get, set, slippage: number | typeof RESET) => {
     if (typeof slippage === 'number') {
       set(userSlippageAtom, slippage)
+    } else if (slippage === RESET) {
+      set(userSlippageAtom, RESET)
     }
   },
 )

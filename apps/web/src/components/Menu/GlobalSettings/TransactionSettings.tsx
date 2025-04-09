@@ -18,6 +18,7 @@ import { VerticalDivider } from '@pancakeswap/widgets-internal'
 import { useAutoSlippageEnabled } from 'hooks/useAutoSlippageWithFallback'
 import { useUserTransactionTTL } from 'hooks/useTransactionDeadline'
 import styled from 'styled-components'
+import { RESET } from 'jotai/utils'
 import { PrimaryOutlineButton } from './styles'
 
 const ButtonsContainer = styled(FlexGap).attrs({ flexWrap: 'wrap', gap: '4px' })`
@@ -57,8 +58,6 @@ const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." charact
 const THREE_DAYS_IN_SECONDS = 60 * 60 * 24 * 3
 
 const DEFAULT_TXN_DEADLINE = 20 // In Minutes
-
-export const DEFAULT_SLIPPAGE_TOLERANCE = 50
 
 const SlippageTabs = () => {
   const [userSlippageTolerance, setUserSlippageTolerance] = useUserSlippage()
@@ -147,6 +146,7 @@ const SlippageTabs = () => {
             scale="sm"
             onClick={() => {
               setSlippageInput('')
+              setUserSlippageTolerance(RESET)
               setIsAutoSlippageEnabled(true)
             }}
             variant={isAutoSlippageEnabled ? 'subtle' : 'light'}
@@ -242,7 +242,7 @@ const SlippageTabs = () => {
                 role="button"
                 onClick={() => {
                   setSlippageInput('')
-                  setUserSlippageTolerance(DEFAULT_SLIPPAGE_TOLERANCE)
+                  setUserSlippageTolerance(RESET)
                 }}
                 style={{
                   textDecoration: 'underline',

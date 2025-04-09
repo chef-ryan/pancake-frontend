@@ -265,7 +265,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
     if (isInputFocus) {
       onUserInput(value ?? '')
     }
-  }, [value, defaultValue, isInputFocus])
+  }, [value, defaultValue, onUserInput, isInputFocus])
 
   const handleUserInput = useCallback((val: string) => {
     setValue(val)
