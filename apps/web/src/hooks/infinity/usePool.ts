@@ -8,6 +8,7 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import { PoolState } from 'hooks/v3/types'
 import { useMemo } from 'react'
 import { fetchPoolInfo } from 'state/farmsV4/state/accountPositions/fetcher/infinity/getPoolInfo'
+import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { Address } from 'viem'
 import { getBinPoolWithCache, getClPoolWithCache } from './getPool'
 import { isPoolId } from './utils/pool'
@@ -21,9 +22,10 @@ export const usePoolById = <
 ): [PoolState, TPool | null] => {
   const { chainId: activeChainId } = useActiveChainId()
   const chainId = overrideChainId || activeChainId
+  const [latestTxReceipt] = useLatestTxReceipt()
 
   const { data } = useQuery({
-    queryKey: ['poolInfo', poolId, chainId],
+    queryKey: ['poolInfo', poolId, chainId, latestTxReceipt?.blockHash],
     queryFn: () => fetchPoolInfo(poolId!, chainId),
     enabled: isPoolId(poolId) && !!chainId,
     retry: false,

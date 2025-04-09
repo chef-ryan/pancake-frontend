@@ -37,7 +37,13 @@ export const getClPoolWithCache = ({
 }): CLPool => {
   const cacheKey = `${chainId}:${poolId}`
   const cachedPool = clPoolCache.get(cacheKey)
-  if (cachedPool) return cachedPool
+  if (cachedPool) {
+    cachedPool.sqrtRatioX96 = BigInt(sqrtRatioX96)
+    cachedPool.liquidity = BigInt(liquidity)
+    cachedPool.tickCurrent = tick
+    clPoolCache.set(cacheKey, cachedPool)
+    return cachedPool
+  }
 
   const pool = new CLPool({
     poolType,
@@ -71,7 +77,11 @@ export const getBinPoolWithCache = ({
 }): BinPool => {
   const cacheKey = `${chainId}:${poolId}`
   const cachedPool = binPoolCache.get(cacheKey)
-  if (cachedPool) return cachedPool
+  if (cachedPool) {
+    cachedPool.activeId = rawPoolInfo.activeId
+    binPoolCache.set(cacheKey, cachedPool)
+    return cachedPool
+  }
 
   const [currency0, currency1] = sortCurrencies([currencyA, currencyB])
 
