@@ -48,11 +48,11 @@ export class Pool {
 
   public readonly protocolFee: number
 
-  public readonly sqrtRatioX96: bigint
+  public sqrtRatioX96: bigint
 
-  public readonly liquidity: bigint
+  public liquidity: bigint
 
-  public readonly tickCurrent: number
+  public tickCurrent: number
 
   public readonly tickDataProvider: TickDataProvider
 
