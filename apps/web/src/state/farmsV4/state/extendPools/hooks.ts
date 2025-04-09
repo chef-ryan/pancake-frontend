@@ -9,6 +9,7 @@ import memoize from 'lodash/memoize'
 import { useCallback, useMemo, useState } from 'react'
 import { Address } from 'viem/accounts'
 
+import { useLatestTxReceipt } from '../accountPositions/hooks/useLatestTxReceipt'
 import type { PoolInfo } from '../type'
 import { DEFAULT_QUERIES, ExtendPoolsQuery, FetchPoolsProps, useExtendPoolsAtom } from './atom'
 import { fetchExplorerPoolInfo, fetchExplorerPoolsList, queryInfinityPoolInfoOnChain } from './fetcher'
@@ -145,8 +146,9 @@ export const usePoolInfo = <TPoolType extends PoolInfo>({
   poolAddress: `0x${string}` | undefined
   chainId: number | undefined
 }): TPoolType | undefined | null => {
+  const [latestTxReceipt] = useLatestTxReceipt()
   const { data: poolInfo } = useQuery({
-    queryKey: ['poolInfo', chainId, poolAddress],
+    queryKey: ['poolInfo', chainId, poolAddress, latestTxReceipt?.blockHash],
     queryFn: async () => {
       let result
       if (!poolAddress || !chainId) {

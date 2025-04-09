@@ -763,8 +763,8 @@ export const useInfinityBinDerivedApr = (poolInfo: InfinityBinPoolInfo) => {
 
   const apr = useMemo(
     () =>
-      userTVLUsd.isZero() ? BIG_ZERO : new BN(poolInfo.fee24hUsd ?? 0).multipliedBy(365).times(share).div(userTVLUsd),
-    [userTVLUsd, poolInfo.fee24hUsd, share],
+      userTVLUsd.isZero() ? BIG_ZERO : new BN(poolInfo.lpFee24hUsd ?? 0).multipliedBy(365).times(share).div(userTVLUsd),
+    [userTVLUsd, poolInfo.lpFee24hUsd, share],
   )
 
   return {
