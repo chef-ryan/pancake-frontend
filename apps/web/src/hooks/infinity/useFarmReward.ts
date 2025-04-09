@@ -458,7 +458,7 @@ export const useFarmRewardsByPoolId = ({ chainId, address, poolId }: PoolFarmRew
   const rewardsMap = useMemo(() => formatRewardsMap(rewards), [rewards])
   const previousRewardsMap = useMemo(() => formatRewardsMap(previousRewards), [previousRewards])
   return useMemo(() => {
-    if (!rewardsMap) {
+    if (!(rewardsMap && Object.keys(rewardsMap).length)) {
       return undefined
     }
     return Object.keys(rewardsMap).reduce<{ [k: string]: BigNumber }>((acc, k) => {
