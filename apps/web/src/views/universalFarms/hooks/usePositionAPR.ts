@@ -690,8 +690,8 @@ export const useInfinityBinDerivedApr = (poolInfo: InfinityBinPoolInfo) => {
       lowerBinId,
       upperBinId,
       binStep: pool?.binStep,
-      amount0: amountA.quotient,
-      amount1: amountB.quotient,
+      amount0: amountA?.quotient ?? 0n,
+      amount1: amountB?.quotient ?? 0n,
       activeBinId: pool?.activeId,
     })
 
