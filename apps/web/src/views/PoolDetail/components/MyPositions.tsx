@@ -281,9 +281,11 @@ const MyPositionsInner: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
   const { isMobile } = useMatchBreakpoints()
 
   const currency0 =
-    useCurrencyByChainId(poolInfo?.token0.isNative ? zeroAddress : (poolInfo?.token0 as Token)?.address, chainId) ??
-    undefined
-  const currency1 = useCurrencyByChainId(poolInfo?.token1.address, chainId) ?? undefined
+    useCurrencyByChainId(
+      poolInfo?.token0.isNative ? zeroAddress : (poolInfo?.token0 as Token)?.address,
+      poolInfo?.chainId,
+    ) ?? undefined
+  const currency1 = useCurrencyByChainId(poolInfo?.token1.address, poolInfo?.chainId) ?? undefined
 
   const key = useMemo(() => `${chainId}:${lpAddress}` as const, [chainId, lpAddress])
   const { cakeApr, merklApr } = usePoolApr(key, poolInfo)
