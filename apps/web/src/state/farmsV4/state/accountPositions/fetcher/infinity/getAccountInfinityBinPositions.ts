@@ -145,6 +145,7 @@ export const parseBinPositions = async (rows: Rows, chainId: number): Promise<In
           reserveY: BigInt(bin.reserveY),
           userSharesOfBin: BigInt(bin.userSharesOfBin ?? 0),
           binLiquidity: BigInt(bin.binLiquidity),
+          totalShares: BigInt(bin.totalShares),
         } satisfies ReserveOfBin),
     )
 
