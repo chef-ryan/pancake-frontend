@@ -34,6 +34,7 @@ export type ReserveOfBin = {
   userSharesOfBin: bigint
   nextBinId?: number | null
   binLiquidity: bigint
+  totalShares: bigint
 }
 
 export type InfinityBinPositionDetail = {
