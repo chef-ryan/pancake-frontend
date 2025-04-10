@@ -5,8 +5,8 @@ test('exports', () => {
   expect(Object.keys(exportedNameSpaces)).toMatchInlineSnapshot(`
     [
       "InfinityMixedQuoterActions",
-      "INFI_CL_QUOTER_ADDRESSES",
       "INFI_BIN_QUOTER_ADDRESSES",
+      "INFI_CL_QUOTER_ADDRESSES",
       "INFI_MIXED_QUOTER_ADDRESSES",
       "EMPTY_FEE_PATH_PLACEHOLDER",
       "MIXED_ROUTE_QUOTER_ADDRESSES",
