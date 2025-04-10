@@ -1,6 +1,7 @@
 import { BinPool } from '@pancakeswap/infinity-sdk'
 import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, AutoColumn } from '@pancakeswap/uikit'
+import PageLoader from 'components/Loader/PageLoader'
 import { useIsTransactionUnsupported, useIsTransactionWarning } from 'hooks/Trades'
 import { useInfinityPoolIdRouteParams } from 'hooks/dynamicRoute/usePoolIdRoute'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
@@ -166,6 +167,10 @@ export const SubmitButton = () => {
     isDeposit1Enabled,
     t,
   ])
+
+  if (!pool) {
+    return <PageLoader />
+  }
 
   return (
     <AutoColumn mt="24px" gap="8px">
