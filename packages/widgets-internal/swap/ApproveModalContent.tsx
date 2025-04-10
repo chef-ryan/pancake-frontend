@@ -1,8 +1,22 @@
+import { useTheme } from "@pancakeswap/hooks";
 import { useTranslation } from "@pancakeswap/localization";
 import { Currency } from "@pancakeswap/swap-sdk-core";
-import { AutoColumn, Box, Column, ColumnCenter, Flex, Text, TooltipText, useTooltip } from "@pancakeswap/uikit";
+import {
+  AutoColumn,
+  Box,
+  Button,
+  Column,
+  ColumnCenter,
+  Flex,
+  LinkExternal,
+  SwapLoading,
+  Text,
+  TooltipText,
+  useTooltip,
+} from "@pancakeswap/uikit";
 import { FC, ReactNode, Ref, useMemo, useRef } from "react";
 import styled, { css } from "styled-components";
+import { CurrencyLogo } from "../components/CurrencyLogo";
 import { ApprovalPhaseIcon } from "./Logos";
 import { AnimationType, slideInAnimation, slideOutAnimation } from "./styles";
 import { useUnmountingAnimation } from "./useUnmountingAnimation";
@@ -140,5 +154,55 @@ export const ApproveModalContent: React.FC<ApproveModalContentProps> = ({
       currentStep,
       disableEntranceAnimation,
     ]
+  );
+};
+
+const TertiaryButton = styled(Button).attrs({ variant: "tertiary" })<{ $color: string }>`
+  height: unset;
+  padding: 7px 8px;
+  font-size: 14px;
+  border-radius: 12px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  color: ${({ $color }) => $color};
+`;
+
+export const ApproveCrossChainModalContent = ({ currency, chainName }: { currency: Currency; chainName: string }) => {
+  const { t } = useTranslation();
+  const { theme } = useTheme();
+
+  return (
+    <AutoColumn gap="8px" justify="center" alignItems="center">
+      <AutoColumn gap="4px" justify="center" alignItems="center">
+        <Box width="fit-content">
+          <CurrencyLogo currency={currency} size="40px" showChainLogo />
+        </Box>
+        <Flex>
+          <Text bold mr="4px">
+            {currency.symbol}
+          </Text>
+
+          <Text bold color="textSubtle">
+            ({chainName})
+          </Text>
+        </Flex>
+      </AutoColumn>
+
+      <TertiaryButton
+        $color={theme.colors.primary60}
+        onClick={() => {
+          window.open("https://pancakeswap.com/faq#why-approve-this-token", "_blank");
+        }}
+      >
+        <LinkExternal showExternalIcon target="_blank" color={theme.colors.primary60}>
+          {t("Why approving this?")}
+        </LinkExternal>
+      </TertiaryButton>
+      <Flex mt="8px">
+        <Text color="textSubtle" fontSize="12px" mr="8px">
+          {t("Please proceed in your wallet")}
+        </Text>
+        <SwapLoading reverse />
+      </Flex>
+    </AutoColumn>
   );
 };
