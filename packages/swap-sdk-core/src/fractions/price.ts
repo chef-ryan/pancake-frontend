@@ -105,7 +105,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> extends Frac
     quote: TQuote,
     value: string
   ): Price<TBase, TQuote> | undefined {
-    if (!value.match(/^\d*\.?\d+$/)) {
+    if (!value || value.length > 257 || !value.match(/^\d*\.?\d+$/)) {
       return undefined
     }
 
