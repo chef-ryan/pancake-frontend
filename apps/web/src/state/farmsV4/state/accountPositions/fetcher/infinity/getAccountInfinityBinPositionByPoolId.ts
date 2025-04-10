@@ -114,6 +114,7 @@ export const getAccountInfinityBinPositionByPoolId = async ({
 
           return {
             binId,
+            totalShares,
             userSharesOfBin,
             reserveX,
             reserveY,
@@ -128,8 +129,14 @@ export const getAccountInfinityBinPositionByPoolId = async ({
     const reserveY = reserveOfBins.reduce((acc, bin) => acc + bin.reserveY, BigInt(0))
     const poolLiquidity = reserveOfBins.reduce((acc, bin) => acc + bin.binLiquidity, BigInt(0))
     const poolActiveLiquidity = reserveOfBins.find((bin) => bin.binId === activeBinId)?.binLiquidity ?? 0n
-    const userLiquidity = reserveOfBins.reduce((acc, bin) => acc + bin.userSharesOfBin, BigInt(0))
-    const userActiveLiquidity = reserveOfBins.find((bin) => bin.binId === activeBinId)?.userSharesOfBin ?? 0n
+    const userLiquidity = reserveOfBins.reduce(
+      (acc, bin) => acc + (bin.userSharesOfBin * bin.binLiquidity) / bin.totalShares,
+      BigInt(0),
+    )
+    const activeBin_ = reserveOfBins.find((bin) => bin.binId === activeBinId)
+    const userActiveLiquidity = activeBin_
+      ? (activeBin_.userSharesOfBin * activeBin_.binLiquidity) / activeBin_.totalShares
+      : 0n
 
     if (userLiquidity === 0n) return undefined
 
