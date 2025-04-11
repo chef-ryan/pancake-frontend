@@ -8,7 +8,7 @@ export const CL_DYNAMIC_HOOK = {
   address: CL_DYNAMIC_FEE_HOOKS_BY_CHAIN[ChainId.BSC],
   name: 'Dynamic Fees (CLAMM)',
   poolType: POOL_TYPE.CLAMM,
-  description: 'It will set lpFee to 3000 i.e 0.3% in afterInitialize',
+  description: 'It will set lpFee to 0.05% in afterInitialize',
   github: 'https://github.com/pancakeswap/infinity-dynamic-fee-hook',
   category: [HOOK_CATEGORY.DynamicFees],
   isVerified: true,
