@@ -204,7 +204,7 @@ exports[`PancakeSwap Universal Router Infinity-Bin Pool Command Generation Test 
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x0000000000000000000000000000000000000000000000000000000000050000"
               },
               "zeroForOne": false,
@@ -278,7 +278,7 @@ exports[`PancakeSwap Universal Router Infinity-Bin Pool Command Generation Test 
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x0000000000000000000000000000000000000000000000000000000000050000"
               },
               "zeroForOne": true,
@@ -352,7 +352,7 @@ exports[`PancakeSwap Universal Router Infinity-Bin Pool Command Generation Test 
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x0000000000000000000000000000000000000000000000000000000000050000"
               },
               "zeroForOne": false,
@@ -446,7 +446,7 @@ exports[`PancakeSwap Universal Router Infinity-Bin Pool Command Generation Test 
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x0000000000000000000000000000000000000000000000000000000000050000"
               },
               "zeroForOne": true,

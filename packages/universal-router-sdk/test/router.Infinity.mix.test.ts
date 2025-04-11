@@ -4,11 +4,11 @@ import {
   CurrencyAmount,
   ERC20Token,
   Ether,
-  Pair,
   Percent,
   TradeType,
   Route as V2Route,
   Trade as V2Trade,
+  Pair,
   ZERO_ADDRESS,
 } from '@pancakeswap/sdk'
 import { InfinityBinPool, InfinityClPool, PoolType, SmartRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
