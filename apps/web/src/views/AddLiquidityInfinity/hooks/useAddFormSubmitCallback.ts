@@ -111,16 +111,17 @@ export const useAddFormSubmitCallback = () => {
       let permit2Signature0: Permit2Signature | undefined
       let permit2Signature1: Permit2Signature | undefined
 
-      if (!currency0?.isNative && requirePermit0) {
+      const amount0Desired = depositCurrencyAmount0?.quotient ?? 0n
+      const amount1Desired = depositCurrencyAmount1?.quotient ?? 0n
+
+      if (!currency0?.isNative && requirePermit0 && amount0Desired > 0n) {
         permit2Signature0 = await permitCallback0()
       }
 
-      if (!currency1?.isNative && requirePermit1) {
+      if (!currency1?.isNative && requirePermit1 && amount1Desired > 0n) {
         permit2Signature1 = await permitCallback1()
       }
 
-      const amount0Desired = depositCurrencyAmount0?.quotient ?? 0n
-      const amount1Desired = depositCurrencyAmount1?.quotient ?? 0n
       const [amount0Min, amount0Max] = depositCurrencyAmount0
         ? calculateSlippageAmount(depositCurrencyAmount0, allowedSlippage)
         : [0n, maxUint128]
