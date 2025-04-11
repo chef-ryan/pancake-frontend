@@ -7,7 +7,9 @@ import { Box, BscScanIcon, Flex, InjectedModalProps, Link } from '@pancakeswap/u
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import truncateHash from '@pancakeswap/utils/truncateHash'
 import {
+  ApproveCrossChainModalContent,
   ApproveModalContent,
+  ConfirmationPendingContent,
   ConfirmModalState,
   SwapPendingModalContent,
   SwapTransactionReceiptModalContent,
@@ -18,11 +20,13 @@ import { useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { getBlockExploreLink, getBlockExploreName } from 'utils'
+import { chains as evmChains } from 'utils/wagmi'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 import { SwapTransactionErrorContent } from 'views/Swap/components/SwapTransactionErrorContent'
 
+import { chainNameConverter } from 'utils/chainNameConverter'
 import { Hash } from 'viem'
-import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
+import { InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
 import { ApproveStepFlow } from 'views/Swap/V3Swap/containers/ApproveStepFlow'
 import { useSlippageAdjustedAmounts } from 'views/Swap/V3Swap/hooks'
 import { ConfirmAction } from 'views/Swap/V3Swap/hooks/useConfirmModalState'
@@ -140,6 +144,23 @@ export const ConfirmSwapModalV3: React.FC<ConfirmSwapModalV3Props> = ({
         </Flex>
       )
     }
+
+    if (isBridgeOrder(originalOrder)) {
+      if (currencyA && confirmModalState === ConfirmModalState.APPROVING_TOKEN) {
+        return (
+          <ApproveCrossChainModalContent
+            currency={currencyA as Currency}
+            chainName={chainNameConverter(evmChains.find((chain) => chain.id === currencyA.chainId)?.name || '')}
+          />
+        )
+      }
+
+      if (confirmModalState === ConfirmModalState.PENDING_CONFIRMATION) {
+        // TODO: update bridge UI
+        return <ConfirmationPendingContent pendingText="Confirm Bridge" />
+      }
+    }
+
     if (
       confirmModalState === ConfirmModalState.APPROVING_TOKEN ||
       confirmModalState === ConfirmModalState.PERMITTING ||

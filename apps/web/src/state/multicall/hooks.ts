@@ -1,3 +1,4 @@
+import { Token } from '@pancakeswap/sdk'
 import { useReadContracts } from '@pancakeswap/wagmi'
 import { useQueryClient } from '@tanstack/react-query'
 import { useActiveChainId } from 'hooks/useActiveChainId'
@@ -226,6 +227,7 @@ export type MultipleSameDataCallParameters<
   TAbiStateMutability extends AbiStateMutability = AbiStateMutability,
 > = {
   addresses: (Address | undefined)[]
+  tokens?: (Token | undefined)[]
   abi: TAbi
   // FIXME: wagmiv2
   functionName: any
@@ -235,20 +237,20 @@ export type MultipleSameDataCallParameters<
 
 export function useMultipleContractSingleDataWagmi({
   abi,
-  addresses,
+  tokens,
   functionName,
   args,
   options,
 }: MultipleSameDataCallParameters) {
   const contracts = useMemo(() => {
-    return addresses.map((address) => ({
+    return tokens.map((token) => ({
       abi,
-      address,
+      address: token.address,
       functionName,
       args,
-      chainId: options?.chainId,
+      chainId: token?.chainId,
     }))
-  }, [addresses, abi, functionName, args, options?.chainId])
+  }, [tokens, abi, functionName, args, options?.chainId])
 
   return useReadContracts({
     // 2048 is the maximum batch size for wagmi.
