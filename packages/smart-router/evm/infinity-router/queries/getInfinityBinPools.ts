@@ -193,7 +193,7 @@ async function fillPoolsWithBins({
   pools,
   clientProvider,
   gasLimit,
-  priceRange = 0.1,
+  priceRange = 0.05,
 }: FillPoolsWithBinsParams): Promise<InfinityBinPool[]> {
   const chainId: ChainId = pools[0]?.currency0.chainId
   const client = clientProvider?.({ chainId })
