@@ -666,7 +666,7 @@ exports[`PancakeSwap StableSwap Through Universal Router, BSC Network Only > sho
             "expiration": 281474976710655,
             "nonce": 0
           },
-          "spender": "0x1A0A18AC4BECDDbd6389559687d1A73d8927E416",
+          "spender": "0xd9C500DfF816a1Da21A48A732d3498Bf09dc9AEB",
           "sigDeadline": "281474976710655"
         }
       },

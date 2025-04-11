@@ -18,7 +18,7 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > la
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x00000000000000000000000000000000000000000000000000000000000a0000"
               },
               "zeroForOne": false,
@@ -122,113 +122,6 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > la
 ]
 `;
 
-exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > label: should encode CAKE->USDC through mixed swaps Infinity(WETH-CAKE) -> v2(WETH-USDC) 1`] = `
-[
-  {
-    "command": "INFI_SWAP",
-    "args": [],
-    "actions": [
-      {
-        "action": "CL_SWAP_EXACT_IN_SINGLE",
-        "args": [
-          {
-            "type": "tuple",
-            "name": "params",
-            "value": {
-              "poolKey": {
-                "currency0": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-                "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
-                "hooks": "0x0000000000000000000000000000000000000000",
-                "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
-                "parameters": "0x00000000000000000000000000000000000000000000000000000000000a0000"
-              },
-              "zeroForOne": false,
-              "amountIn": "50",
-              "amountOutMinimum": "0",
-              "hookData": "0x0000000000000000000000000000000000000000"
-            }
-          }
-        ]
-      },
-      {
-        "action": "SETTLE",
-        "args": [
-          {
-            "type": "address",
-            "name": "currency",
-            "value": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898"
-          },
-          {
-            "type": "uint256",
-            "name": "amount",
-            "value": "50"
-          },
-          {
-            "type": "bool",
-            "name": "payerIsUser",
-            "value": true
-          }
-        ]
-      },
-      {
-        "action": "TAKE",
-        "args": [
-          {
-            "type": "address",
-            "name": "currency",
-            "value": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
-          },
-          {
-            "type": "address",
-            "name": "recipient",
-            "value": "0x2E8135bE71230c6B1B4045696d41C09Db0414226"
-          },
-          {
-            "type": "uint256",
-            "name": "amount",
-            "value": "0"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "command": "V2_SWAP_EXACT_IN",
-    "args": [
-      {
-        "type": "address",
-        "name": "recipient",
-        "value": "0x0000000000000000000000000000000000000001"
-      },
-      {
-        "type": "uint256",
-        "name": "amountIn",
-        "value": "57896044618658097711785492504343953926634992332820282019728792003956564819968"
-      },
-      {
-        "type": "uint256",
-        "name": "amountOutMin",
-        "value": "9523"
-      },
-      {
-        "type": "address[]",
-        "name": "path",
-        "value": [
-          "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-          "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
-        ]
-      },
-      {
-        "type": "bool",
-        "name": "payerIsUser",
-        "value": false
-      }
-    ]
-  }
-]
-`;
-
 exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > should encode CAKE->USDC through mixed swaps Infinity(ETH-CAKE) -> v3(WETH-USDC) 1`] = `
 [
   {
@@ -247,7 +140,7 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > sh
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x00000000000000000000000000000000000000000000000000000000000a0000"
               },
               "zeroForOne": false,
@@ -366,7 +259,7 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > sh
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x00000000000000000000000000000000000000000000000000000000000a0000"
               },
               "zeroForOne": false,
@@ -467,113 +360,6 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > sh
 ]
 `;
 
-exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > should encode CAKE->USDC through mixed swaps Infinity(WETH-CAKE) -> v2(WETH-USDC) 1`] = `
-[
-  {
-    "command": "INFI_SWAP",
-    "args": [],
-    "actions": [
-      {
-        "action": "CL_SWAP_EXACT_IN_SINGLE",
-        "args": [
-          {
-            "type": "tuple",
-            "name": "params",
-            "value": {
-              "poolKey": {
-                "currency0": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-                "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
-                "hooks": "0x0000000000000000000000000000000000000000",
-                "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
-                "parameters": "0x00000000000000000000000000000000000000000000000000000000000a0000"
-              },
-              "zeroForOne": false,
-              "amountIn": "50",
-              "amountOutMinimum": "0",
-              "hookData": "0x0000000000000000000000000000000000000000"
-            }
-          }
-        ]
-      },
-      {
-        "action": "SETTLE",
-        "args": [
-          {
-            "type": "address",
-            "name": "currency",
-            "value": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898"
-          },
-          {
-            "type": "uint256",
-            "name": "amount",
-            "value": "50"
-          },
-          {
-            "type": "bool",
-            "name": "payerIsUser",
-            "value": true
-          }
-        ]
-      },
-      {
-        "action": "TAKE",
-        "args": [
-          {
-            "type": "address",
-            "name": "currency",
-            "value": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
-          },
-          {
-            "type": "address",
-            "name": "recipient",
-            "value": "0x2E8135bE71230c6B1B4045696d41C09Db0414226"
-          },
-          {
-            "type": "uint256",
-            "name": "amount",
-            "value": "0"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "command": "V2_SWAP_EXACT_IN",
-    "args": [
-      {
-        "type": "address",
-        "name": "recipient",
-        "value": "0x0000000000000000000000000000000000000001"
-      },
-      {
-        "type": "uint256",
-        "name": "amountIn",
-        "value": "57896044618658097711785492504343953926634992332820282019728792003956564819968"
-      },
-      {
-        "type": "uint256",
-        "name": "amountOutMin",
-        "value": "9523"
-      },
-      {
-        "type": "address[]",
-        "name": "path",
-        "value": [
-          "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-          "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
-        ]
-      },
-      {
-        "type": "bool",
-        "name": "payerIsUser",
-        "value": false
-      }
-    ]
-  }
-]
-`;
-
 exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > should encode CAKE->USDC through mixed swaps Infinity(WETH-CAKE) -> v3(WETH-USDC) 1`] = `
 [
   {
@@ -592,7 +378,7 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > sh
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x00000000000000000000000000000000000000000000000000000000000a0000"
               },
               "zeroForOne": false,
@@ -746,7 +532,7 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > sh
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x00000000000000000000000000000000000000000000000000000000000a0000"
               },
               "zeroForOne": true,
@@ -800,7 +586,7 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > sh
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x0000000000000000000000000000000000000000000000000000000000050000"
               },
               "zeroForOne": true,
@@ -843,7 +629,7 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > sh
                 "currency1": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x00000000000000000000000000000000000000000000000000000000000a0000"
               },
               "zeroForOne": true,
@@ -897,7 +683,7 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > sh
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x0000000000000000000000000000000000000000000000000000000000050000"
               },
               "zeroForOne": true,
@@ -940,7 +726,7 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > sh
                 "currency1": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x00000000000000000000000000000000000000000000000000000000000a0000"
               },
               "zeroForOne": true,
@@ -1059,7 +845,7 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > mixed > sh
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x00000000000000000000000000000000000000000000000000000000000a0000"
               },
               "zeroForOne": true,
@@ -1161,7 +947,7 @@ exports[`PancakeSwap Universal Mixed Router Command Generation Test > multi-rout
                 "currency1": "0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898",
                 "hooks": "0x0000000000000000000000000000000000000000",
                 "poolManager": "0x0000000000000000000000000000000000000000",
-                "fee": 8388608,
+                "fee": 500,
                 "parameters": "0x00000000000000000000000000000000000000000000000000000000000a0000"
               },
               "zeroForOne": true,
