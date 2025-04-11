@@ -6,7 +6,7 @@ import { useBestAMMTradeOptions } from './quoter.types'
 import { useBestAMMTradeFromOffchainQuoter } from './useBestAMMTradeFromOffchainQuoter'
 import { useBestAMMTradeFromQuoterWorker } from './useBestAMMTradeFromQuoterWorker'
 import { useBestAMMTradeFromQuoterWorker2 } from './useBestAMMTradeFromQuoterWorker2'
-import { useBetterQuote } from './useBetterQuote'
+import { getBetterQuote } from './getBetterQuote'
 
 SmartRouter.logger.enable('error,log')
 
@@ -54,7 +54,7 @@ export function useBestAMMTrade({ type = 'quoter', ...params }: useBestAMMTradeO
     autoRevalidate: quoterAutoRevalidate,
   })
 
-  const bestOffchainWithQuickOnChainQuote = useBetterQuote(
+  const bestOffchainWithQuickOnChainQuote = getBetterQuote(
     bestVerifiedTradeFromOffchainQuoter,
     bestTradeFromQuickOnChainQuote,
     { factorGasCost: false },

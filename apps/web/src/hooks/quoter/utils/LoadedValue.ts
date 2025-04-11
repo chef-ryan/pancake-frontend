@@ -4,7 +4,7 @@ export type LoadedValue<T> =
       error: Error | undefined
       syncing?: boolean
       isStale?: boolean
-      refresh?: (...args: any[]) => Promise<void>
+      refresh?: (...args: any[]) => any
     } & T)
   | undefined
 

@@ -93,8 +93,8 @@ export const SERVER_NODES = {
 
 export const PUBLIC_NODES = {
   [ChainId.BSC]: [
-    process.env.NEXT_PUBLIC_NODE_PRODUCTION || '',
     getNodeRealUrl(ChainId.BSC, process.env.NEXT_PUBLIC_NODE_REAL_API_ETH) || '',
+    process.env.NEXT_PUBLIC_NODE_PRODUCTION || '',
     process.env.NEXT_PUBLIC_NODIES_BSC || '',
     getGroveUrl(ChainId.BSC, process.env.NEXT_PUBLIC_GROVE_API_KEY) || '',
     'https://bsc.publicnode.com',

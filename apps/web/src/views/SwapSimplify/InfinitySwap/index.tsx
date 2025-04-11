@@ -46,7 +46,6 @@ export const InfinitySwapForm = memo(() => {
     xOrder,
     ammOrder,
   } = useAllTypeBestTradeSync()
-  console.log('[refresh] swap')
   const isWrapping = useIsWrapping()
   const { chainId: activeChianId } = useActiveChainId()
   const isUserInsufficientBalance = useUserInsufficientBalance(bestOrder)
