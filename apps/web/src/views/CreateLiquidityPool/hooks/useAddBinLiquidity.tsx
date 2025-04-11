@@ -94,9 +94,10 @@ export const addBinLiquidity = async (
       value,
     })
     .then((gasLimit) => {
+      console.info('debug gasLimit', gasLimit)
       setAttemptingTx?.(true)
       try {
-        return sendTransactionAsync({
+        const tx = sendTransactionAsync({
           account,
           to,
           data,
@@ -104,6 +105,7 @@ export const addBinLiquidity = async (
           gas: calculateGasMargin(gasLimit),
           chainId,
         })
+        return tx
       } catch (error) {
         console.error('send tx error')
         console.trace(error)
