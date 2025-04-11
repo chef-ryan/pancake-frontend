@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { AddIcon, Box, BoxProps, Flex, FlexGap, PreTitle, Text } from '@pancakeswap/uikit'
+import { AddIcon, Box, BoxProps, Flex, FlexGap, PreTitle, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { CurrencySelectV2 } from 'components/CurrencySelectV2'
 import { ChainLogo } from 'components/Logo/ChainLogo'
 import { CommonBasesType } from 'components/SearchModal/types'
@@ -17,6 +17,7 @@ export const FieldSelectCurrencies: React.FC<FieldSelectCurrenciesProps> = ({ ..
   const chainName = chainId ? getChainFullName(chainId) : undefined
   const { baseCurrency, quoteCurrency } = useCurrencies()
   const { handleBaseCurrencySelect, handleQuoteCurrencySelect } = useFieldSelectCurrencies()
+  const { isXs } = useMatchBreakpoints()
 
   return (
     <Box {...boxProps}>
@@ -31,7 +32,7 @@ export const FieldSelectCurrencies: React.FC<FieldSelectCurrenciesProps> = ({ ..
           </Flex>
         ) : null}
       </Flex>
-      <FlexGap gap="4px" width="100%" mb="8px" alignItems="center">
+      <FlexGap gap="4px" width="100%" mb="8px" alignItems="center" flexDirection={isXs ? 'column' : 'row'}>
         <CurrencySelectV2
           id="infinity-form-select-base-currency"
           chainId={chainId}

@@ -10,6 +10,7 @@ import {
   Radio,
   Text,
   Toggle,
+  useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import { GreyCard } from '@pancakeswap/widgets-internal'
 import Divider from 'components/Divider'
@@ -26,6 +27,7 @@ type FieldHookSettingsProps = BoxProps & {
 
 export const HookSettings: React.FC<FieldHookSettingsProps> = ({ onHookChange, onHookEnabledChange, ...boxProps }) => {
   const { t } = useTranslation()
+  const { isXs } = useMatchBreakpoints()
 
   const [hookEnabled, setHookEnabled] = useHookEnabledQueryState()
   const [selectionType, setSelectionType] = useHookSelectTypeQueryState()
@@ -46,7 +48,7 @@ export const HookSettings: React.FC<FieldHookSettingsProps> = ({ onHookChange, o
       <DynamicSection mt="12px" disabled={!hookEnabled}>
         <GreyCard padding="16px">
           <AutoColumn gap="8px">
-            <FlexGap gap="24px">
+            <FlexGap gap="24px" flexDirection={isXs ? 'column' : 'row'}>
               <Flex alignItems="center">
                 <label htmlFor="radio-hook-selection-1">
                   <Text mr="8px" style={{ whiteSpace: 'nowrap' }}>
