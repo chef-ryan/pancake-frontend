@@ -62,9 +62,11 @@ export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteOption)
         quoteCurrencyUsdPrice,
         nativeCurrencyUsdPrice,
       })
-      return SmartRouter.Transformer.parseTrade(currency.chainId, result as any)
+      console.log(`[quote] get result`, result)
+      const parsed = SmartRouter.Transformer.parseTrade(currency.chainId, result as any)
+      return parsed
     } catch (ex) {
-      console.warn(ex)
+      console.warn(`[quote]`, ex)
       throw new NoValidRouteError()
     }
   })
