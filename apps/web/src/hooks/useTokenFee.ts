@@ -1,17 +1,19 @@
 import { ERC20Token, WNATIVE } from '@pancakeswap/sdk'
 import { feeOnTransferDetectorAddresses, fetchTokenFeeOnTransfer } from '@pancakeswap/smart-router'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { usePublicClient } from 'wagmi'
+import { getViemClients } from 'utils/viem'
 
 export function useTokenFee(token?: ERC20Token) {
-  const publicClient = usePublicClient({ chainId: token?.chainId })
+  const publicClient = getViemClients({
+    chainId: token?.chainId,
+  })
   return useQuery({
     queryKey: ['tokenFee', token?.serialize, publicClient?.key],
     queryFn: () => {
       if (!token) {
         throw new Error('Token not found')
       }
-      if (publicClient?.chain.id !== token.chainId) {
+      if (publicClient?.chain?.id !== token.chainId) {
         throw new Error('Chain id mismatch')
       }
       if (!(token.chainId in feeOnTransferDetectorAddresses)) {
@@ -23,7 +25,7 @@ export function useTokenFee(token?: ERC20Token) {
     enabled:
       !!token &&
       !!publicClient &&
-      WNATIVE[publicClient.chain.id as keyof typeof WNATIVE] &&
-      !token.equals(WNATIVE[publicClient.chain.id as keyof typeof WNATIVE]),
+      WNATIVE[publicClient.chain?.id as keyof typeof WNATIVE] &&
+      !token.equals(WNATIVE[publicClient.chain?.id as keyof typeof WNATIVE]),
   })
 }

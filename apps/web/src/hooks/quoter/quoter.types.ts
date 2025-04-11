@@ -55,6 +55,8 @@ export interface Options {
   retry?: number | boolean
 }
 
+export type QuoteOption = Options
+
 export interface useBestAMMTradeOptions extends Options {
   type?: 'offchain' | 'quoter' | 'auto' | 'api'
 }
