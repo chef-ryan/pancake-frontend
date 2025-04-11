@@ -62,7 +62,7 @@ export const LiquidityShapePicker = ({ value, onChange, ...props }: LiquiditySha
       >
         {PRESET_RANGE_ITEMS.map((item, itemIndex) => (
           <StyledButtonMenuItem key={item.value}>
-            <item.icon color={activeIndex === itemIndex ? "white" : "textSubtle"} />
+            <item.icon color={activeIndex === itemIndex ? "card" : "textSubtle"} />
             {item.label}
           </StyledButtonMenuItem>
         ))}
