@@ -1,24 +1,80 @@
-import { ClassicOrder, XOrder } from '@pancakeswap/price-api-sdk'
-import { getPoolAddress } from '@pancakeswap/smart-router'
-import { ZERO_ADDRESS } from '@pancakeswap/swap-sdk-core'
+import { ClassicOrder, OrderType } from '@pancakeswap/price-api-sdk'
+import { TradeType } from '@pancakeswap/swap-sdk-core'
+import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
+import { useUserSingleHopOnly } from '@pancakeswap/utils/user'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
-import { useEffect } from 'react'
-import { keccak256, stringify } from 'viem/utils'
-import { InterfaceOrder, isClassicOrder } from 'views/Swap/utils'
+import { createContext, Suspense, useContext, useEffect } from 'react'
+import { Field } from 'state/swap/actions'
+import { useSwapState } from 'state/swap/hooks'
+import {
+  useUserInfinitySwapEnable,
+  useUserSplitRouteEnable,
+  useUserStableSwapEnable,
+  useUserV2SwapEnable,
+  useUserV3SwapEnable,
+} from 'state/user/smartRouter'
+import { bestAMMTradeFromQuoterWorkerAtom } from './quoter/atom/bestAMMTradeFromQuoterWorkerAtom'
+import { quoteTimerAtom } from './quoter/atom/quoteTimerAtom'
 import { useAllTypeBestTrade } from './quoter/useAllTypeBestTrade'
+import { useMulticallGasLimit } from './quoter/useMulticallGasLimit'
+import { LoadedValue } from './quoter/utils/LoadedValue'
+import { useCurrency } from './Tokens'
+
+interface QuoteContext {
+  multicallGasLimit?: bigint
+  singleHopOnly?: boolean
+  split?: boolean
+  v2Swap?: boolean
+  v3Swap?: boolean
+  infinitySwap?: boolean
+  stableSwap?: boolean
+  maxHops: number
+}
+const QuoteContext = createContext<QuoteContext>({
+  multicallGasLimit: undefined,
+  singleHopOnly: false,
+  split: false,
+  v2Swap: true,
+  v3Swap: true,
+  infinitySwap: true,
+  stableSwap: true,
+  maxHops: 3,
+})
 
 export const QuoteProvider = ({ children }: { children: React.ReactNode }) => {
+  const limit = useMulticallGasLimit()
+
+  const [singleHopOnly] = useUserSingleHopOnly()
+  const [split] = useUserSplitRouteEnable()
+  const [v2Swap] = useUserV2SwapEnable()
+  const [v3Swap] = useUserV3SwapEnable()
+  const [infinitySwap] = useUserInfinitySwapEnable()
+  const [stableSwap] = useUserStableSwapEnable()
+
   return (
-    <>
+    <QuoteContext.Provider
+      value={{
+        multicallGasLimit: limit,
+        singleHopOnly,
+        split,
+        v2Swap,
+        v3Swap,
+        infinitySwap,
+        stableSwap,
+        maxHops: 3,
+      }}
+    >
       {children}
-      <Sync />
-    </>
+      <Suspense fallback={null}>
+        <Sync />
+      </Suspense>
+    </QuoteContext.Provider>
   )
 }
 
-type QuoterType = typeof useAllTypeBestTrade
+type QuoterFunctionType = typeof useAllTypeBestTrade
 
-const allTypeBestTradeAtom = atom<ReturnType<QuoterType>>({
+const allTypeBestTradeAtom = atom<ReturnType<QuoterFunctionType>>({
   ammOrder: undefined,
   xOrder: undefined,
   betterOrder: undefined,
@@ -37,78 +93,75 @@ export const useAllTypeBestTradeSync = () => {
   return allTypeBestTrade
 }
 
-const hashInterfaceOrder = (order?: InterfaceOrder) => {
-  if (!order) {
-    return 'empty-trade'
-  }
-  if (isClassicOrder(order)) {
-    return hashClassicOrder(order)
-  }
-  return hashXOrder(order)
-}
-
-const hashClassicOrder = (order: ClassicOrder) => {
-  const { trade, type } = order
-
-  if (!trade) {
-    const parts = ['classic', type]
-    return keccak256(`0x${stringify(parts)}`)
-  }
-
-  const { inputAmount, outputAmount, routes, tradeType } = trade
-  const parts = [
-    'classic',
-    type,
-    tradeType,
-    inputAmount.currency.isNative ? ZERO_ADDRESS : inputAmount.currency.address,
-    inputAmount.toExact(),
-    outputAmount.currency.isNative ? ZERO_ADDRESS : outputAmount.currency.address,
-    outputAmount.toExact(),
-    routes.map((route) => {
-      return route.pools.map((pool) => {
-        return getPoolAddress(pool)
-      })
-    }),
-  ]
-  return keccak256(`0x${stringify(parts)}`)
-}
-
-const hashXOrder = (order: XOrder) => {
-  const { type, ammTrade } = order
-
-  if (!ammTrade) {
-    const parts = ['xorder', type]
-    return keccak256(`0x${stringify(parts)}`)
-  }
-  const { routes, inputAmount, outputAmount, tradeType } = ammTrade
-
-  const parts = [
-    'xorder',
-    type,
-    tradeType,
-    inputAmount.currency.isNative ? ZERO_ADDRESS : inputAmount.currency.address,
-    inputAmount.toExact(),
-    outputAmount.currency.isNative ? ZERO_ADDRESS : outputAmount.currency.address,
-    outputAmount.toExact(),
-    routes.map((route) => {
-      return route.pools.map((pool) => {
-        return getPoolAddress(pool)
-      })
-    }),
-  ]
-  return keccak256(`0x${stringify(parts)}`)
-}
-
 const Sync = () => {
-  const result = useAllTypeBestTrade()
+  const {
+    independentField,
+    typedValue,
+    [Field.INPUT]: { currencyId: inputCurrencyId },
+    [Field.OUTPUT]: { currencyId: outputCurrencyId },
+  } = useSwapState()
+  const inputCurrency = useCurrency(inputCurrencyId)
+  const outputCurrency = useCurrency(outputCurrencyId)
+  const isExactIn = independentField === Field.INPUT
+  const independentCurrency = isExactIn ? inputCurrency : outputCurrency
+  const dependentCurrency = isExactIn ? outputCurrency : inputCurrency
+  const tradeType = isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT
+  const amount = tryParseAmount(typedValue, independentCurrency ?? undefined)
+  const { singleHopOnly, split, v2Swap, v3Swap, infinitySwap, stableSwap, maxHops } = useContext(QuoteContext)
+  const setTrade = useSetAtom(allTypeBestTradeAtom)
+  const setQuoteTimer = useSetAtom(quoteTimerAtom)
 
-  const hash = hashInterfaceOrder(result.bestOrder as InterfaceOrder)
-  const setBestTrade = useSetAtom(allTypeBestTradeAtom)
+  // Sync quoter timer
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuoteTimer(Math.floor(Date.now() / 1000))
+    }, 1000)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [])
+
+  const order = useAtomValue(
+    bestAMMTradeFromQuoterWorkerAtom({
+      amount,
+      currency: dependentCurrency,
+      baseCurrency: independentCurrency,
+      tradeType,
+      maxHops: singleHopOnly ? 1 : maxHops,
+      maxSplits: split ? undefined : 0,
+      v2Swap,
+      v3Swap,
+      infinitySwap,
+      stableSwap,
+    }),
+  )
 
   useEffect(() => {
-    setBestTrade(result)
-    console.log('[hash]', hash)
-  }, [hash, result.pauseQuoting, result.resumeQuoting, result.tradeError, result.tradeLoaded])
+    // @ts-ignore
+    const trade = {
+      refresh: () => {},
+      syncing: false,
+      isStale: false,
+      error: undefined,
+      isLoading: false,
+      type: OrderType.PCS_CLASSIC,
+      trade: order,
+    } as LoadedValue<ClassicOrder>
+    setTrade({
+      ammOrder: undefined,
+      xOrder: undefined,
+      betterOrder: undefined,
+      bestOrder: trade,
+      tradeLoaded: true,
+      tradeError: undefined,
+      refreshDisabled: false,
+      refreshOrder: () => {},
+      refreshTrade: () => {},
+      pauseQuoting: () => {},
+      resumeQuoting: () => {},
+    })
+  }, [order])
 
   return null
 }
