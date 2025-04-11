@@ -237,10 +237,10 @@ const MyPositionsInner: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
       })
     }
     return addQueryToPath(link, {
-      chain: CHAIN_QUERY_NAME[chainId],
+      chain: CHAIN_QUERY_NAME[poolInfo.chainId],
       [PERSIST_CHAIN_KEY]: '1',
     })
-  }, [poolInfo, protocol, chainId, feeTier])
+  }, [poolInfo, protocol, feeTier])
   const [_handleHarvestAll, setHandleHarvestAll] = useState(() => () => Promise.resolve())
   const [loading, setLoading] = useState(false)
   const { switchNetworkIfNecessary } = useCheckShouldSwitchNetwork()
