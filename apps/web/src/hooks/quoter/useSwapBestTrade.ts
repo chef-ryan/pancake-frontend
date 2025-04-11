@@ -3,6 +3,7 @@ import { TradeType } from '@pancakeswap/sdk'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import { useUserSingleHopOnly } from '@pancakeswap/utils/user'
 
+import { useDebounce } from '@orbs-network/twap-ui/dist/hooks'
 import { useCurrency } from 'hooks/Tokens'
 import { useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { Field } from 'state/swap/actions'
@@ -78,16 +79,17 @@ export function useSwapBestTrade({ maxHops }: Options = {}) {
       setLoading(false)
     }
   }, [refreshQuote])
+  const debouncedAmount = useDebounce(amount, 300)
 
   const isAutoRefetch = useMemo(
     () =>
       !loading &&
       (isLoading || syncing) &&
-      amount &&
+      debouncedAmount &&
       inputCurrency &&
       outputCurrency &&
       trade &&
-      amount.toExact() === (isExactIn ? trade.inputAmount.toExact() : trade.outputAmount.toExact()) &&
+      debouncedAmount.toExact() === (isExactIn ? trade.inputAmount.toExact() : trade.outputAmount.toExact()) &&
       trade.inputAmount.currency.equals(inputCurrency) &&
       trade.outputAmount.currency.equals(outputCurrency),
     [loading, isLoading, syncing, amount, trade, isExactIn, inputCurrency, outputCurrency],
