@@ -5,7 +5,7 @@ import { usePCSX } from 'hooks/usePCSX'
 import { useThrottleFn } from 'hooks/useThrottleFn'
 import { InterfaceOrder } from 'views/Swap/utils'
 
-import { useBetterQuote } from './useBetterQuote'
+import { getBetterQuote } from './getBetterQuote'
 import { useSwapBestOrder } from './useSwapBestOrder'
 import { useSwapBestTrade } from './useSwapBestTrade'
 import { createLoadedValue, LoadedValue } from './utils/LoadedValue'
@@ -40,7 +40,7 @@ export const useAllTypeBestTrade = () => {
   const hasAvailableDutchOrder =
     bestOrder.enabled && bestOrder.order?.type === OrderType.DUTCH_LIMIT && bestOrder.isValidQuote
   const ductedOrder = hasAvailableDutchOrder ? currentOrder : undefined
-  const betterQuote: LoadedValue<ClassicOrder | XOrder> = useBetterQuote(tradeOrder, ductedOrder)
+  const betterQuote: LoadedValue<ClassicOrder | XOrder> = getBetterQuote(tradeOrder, ductedOrder)
   const finalOrder: LoadedValue<ClassicOrder | XOrder> = xEnabled ? betterQuote : tradeOrder
   const tradeLoaded = Boolean(finalOrder && !finalOrder.isLoading)
 
