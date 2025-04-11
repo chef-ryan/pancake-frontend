@@ -217,7 +217,7 @@ async function fillPoolsWithBins({
         args: [pools[poolIndex].id, binId],
         functionName: 'getBin',
       }),
-      gasLimit: gasLimitPerCall,
+      gasLimit: gasLimitPerCall / 20n, // get Bin is small
     })),
     {
       chainId,
