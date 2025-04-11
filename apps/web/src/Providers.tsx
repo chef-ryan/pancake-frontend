@@ -1,3 +1,4 @@
+import { isInBinance } from '@binance/w3w-utils'
 import { LanguageProvider } from '@pancakeswap/localization'
 import { DialogProvider, ModalProvider, UIKitProvider, dark, light } from '@pancakeswap/uikit'
 import { Store } from '@reduxjs/toolkit'
@@ -30,7 +31,7 @@ const Providers: React.FC<
     w3wWagmiConfig?: boolean
   }>
 > = ({ children, store, dehydratedState, w3wWagmiConfig }) => {
-  const wagmiConfig = useMemo(() => (w3wWagmiConfig ? createW3WWagmiConfig() : createWagmiConfig()), [w3wWagmiConfig])
+  const wagmiConfig = useMemo(() => (isInBinance() ? createW3WWagmiConfig() : createWagmiConfig()), [])
   return (
     <WagmiProvider reconnectOnMount config={wagmiConfig}>
       <W3WConfigProvider value={w3wWagmiConfig}>
