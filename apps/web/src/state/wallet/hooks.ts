@@ -1,7 +1,6 @@
 import { ChainId, Currency, CurrencyAmount, Native, Token } from '@pancakeswap/sdk'
 import { useAllTokens } from 'hooks/Tokens'
 import useNativeCurrency from 'hooks/useNativeCurrency'
-import first from 'lodash/first'
 import { useMemo } from 'react'
 import { Address, erc20Abi, isAddress } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
@@ -37,19 +36,13 @@ export function useTokenBalancesWithLoadingIndicator(
     [tokens],
   )
 
-  const validatedTokenAddresses = useMemo(() => validatedTokens.map((vt) => vt.address), [validatedTokens])
-
-  // NOTE: assume all tokens have the same chainId
-  const chainId = first(validatedTokens)?.chainId
-
   const { data: balances, isLoading } = useMultipleContractSingleDataWagmi({
     abi: erc20Abi,
-    addresses: validatedTokenAddresses,
+    tokens: validatedTokens,
     functionName: 'balanceOf',
     args: useMemo(() => [address as Address] as const, [address]),
     options: {
-      enabled: Boolean(address && validatedTokenAddresses.length > 0),
-      chainId,
+      enabled: Boolean(address && validatedTokens.length > 0),
     },
   })
 

@@ -190,7 +190,10 @@ export const ApproveCrossChainModalContent = ({ currency, chainName }: { currenc
       <TertiaryButton
         $color={theme.colors.primary60}
         onClick={() => {
-          window.open("https://pancakeswap.com/faq#why-approve-this-token", "_blank");
+          window.open(
+            "https://docs.pancakeswap.finance/~/changes/d1gFBwxReM0gH1aeMo0G/readme/help/what-is-an-approval-transaction",
+            "_blank"
+          );
         }}
       >
         <LinkExternal showExternalIcon target="_blank" color={theme.colors.primary60}>
