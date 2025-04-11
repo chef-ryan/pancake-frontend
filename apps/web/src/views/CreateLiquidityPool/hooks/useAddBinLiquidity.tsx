@@ -95,19 +95,27 @@ export const addBinLiquidity = async (
     })
     .then((gasLimit) => {
       setAttemptingTx?.(true)
-      return sendTransactionAsync({
-        account,
-        to,
-        data,
-        value,
-        gas: calculateGasMargin(gasLimit),
-        chainId,
-      })
+      try {
+        return sendTransactionAsync({
+          account,
+          to,
+          data,
+          value,
+          gas: calculateGasMargin(gasLimit),
+          chainId,
+        })
+      } catch (error) {
+        console.error('send tx error')
+        console.trace(error)
+        throw error
+      }
     })
     .then(async (response) => {
       onDone?.(response)
     })
     .catch((err) => {
+      console.error('add liq error')
+      console.trace(err)
       onError?.(err)
       // we only care if the error is something _other_ than the user rejected the tx
       // if (!isUserRejected(err)) {
