@@ -1,6 +1,4 @@
-import { ExclusiveDutchOrderTrade } from '@pancakeswap/pcsx-sdk'
-import { InfinityRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
-import { Currency, CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
+import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { useUserSlippage } from '@pancakeswap/utils/user'
 import { atom, useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
@@ -22,11 +20,6 @@ export const useAutoSlippageAtom = () => {
 export const useAutoSlippageEnabled = () => {
   return useAtom(autoSlippageEnabledAtom)
 }
-
-type SupportedTrade =
-  | SmartRouterTrade<TradeType>
-  | InfinityRouter.InfinityTradeWithoutGraph<TradeType>
-  | ExclusiveDutchOrderTrade<Currency, Currency>
 
 /**
  * Returns the slippage tolerance based on user settings or auto-calculated value
