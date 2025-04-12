@@ -68,12 +68,12 @@ export function bestTradeHookFactory<
       enabled,
     })
 
-    const { data: tokenInFee } = useTokenFee(baseCurrency && baseCurrency.isToken ? baseCurrency : undefined)
-    const { data: tokenOutFee } = useTokenFee(currency && currency.isToken ? currency : undefined)
+    const tokenInFee = useTokenFee(baseCurrency && baseCurrency.isToken ? baseCurrency : undefined)
+    const tokenOutFee = useTokenFee(currency && currency.isToken ? currency : undefined)
 
     const candidatePoolsWithoutV3WithFot = useMemo(() => {
       let pools = candidatePools
-      if (tokenInFee && tokenInFee.result.sellFeeBps > 0n) {
+      if (tokenInFee && tokenInFee.sellFeeBps > 0n) {
         pools = pools?.filter(
           (pool) =>
             !(
@@ -83,7 +83,7 @@ export function bestTradeHookFactory<
             ),
         )
       }
-      if (tokenOutFee && tokenOutFee.result.buyFeeBps > 0n) {
+      if (tokenOutFee && tokenOutFee.buyFeeBps > 0n) {
         pools = pools?.filter(
           (pool) =>
             !(pool.type === PoolType.V3 && currency && (pool.token0.equals(currency) || pool.token1.equals(currency))),

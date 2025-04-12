@@ -53,6 +53,7 @@ export interface Options {
   autoRevalidate?: boolean
   trackPerf?: boolean
   retry?: number | boolean
+  hash: string
 }
 
 export type QuoteOption = Options

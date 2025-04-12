@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
 import { logger } from 'utils/datadog'
 
-import { useAllTypeBestTradeSync } from 'hooks/QuoteProvider'
+import { useAllTypeBestTradeSync } from 'hooks/quoter/QuoteProvider'
 import { BuyCryptoLink, FormHeader, FormMain, PricingAndSlippage, TradeDetails } from './containers'
 import { CommitButton } from './containers/CommitButton'
 import { useCheckInsufficientError } from './hooks/useCheckSufficient'
