@@ -5,7 +5,7 @@ import { useUserSlippage } from '@pancakeswap/utils/user'
 import { atom, useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { useAllTypeBestTradeSync } from './QuoteProvider'
+import { useAllTypeBestTradeSync } from './quoter/QuoteProvider'
 import useClassicAutoSlippageTolerance, {
   MIN_DEFAULT_SLIPPAGE_NUMERATOR,
   useInputBasedAutoSlippage,

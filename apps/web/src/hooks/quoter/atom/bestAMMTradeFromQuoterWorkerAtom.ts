@@ -1,7 +1,8 @@
-import { PoolType, SmartRouter } from '@pancakeswap/smart-router'
-import { TradeType } from '@pancakeswap/swap-sdk-core'
+import { Pool, PoolType, SmartRouter } from '@pancakeswap/smart-router'
+import { Currency, TradeType } from '@pancakeswap/swap-sdk-core'
 import { currencyUSDPriceAtom } from 'hooks/useCurrencyUsdPrice'
 import { nativeCurrencyAtom } from 'hooks/useNativeCurrency'
+import { TokenFee } from 'hooks/useTokenFee'
 import { globalWorkerAtom } from 'hooks/useWorker'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
@@ -11,11 +12,13 @@ import { multicallGasLimitAtom } from '../useMulticallGasLimit'
 import { gasPriceWeiAtom } from './gasPriceAtom'
 import { isEqualQuoteQuery } from './PoolHashHelper'
 import { commonPoolsLiteAtom } from './poolsAtom'
+import { quoteRevalidateAtom } from './revalidateAtom'
 
 export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteOption) => {
-  const { amount, currency, tradeType, maxHops, maxSplits } = option
+  const { amount, currency, tradeType, maxSplits, baseCurrency } = option
   return atom(async (get) => {
     console.log('[quote] call quoter', option)
+    get(quoteRevalidateAtom(option))
     const gasLimit = await get(multicallGasLimitAtom(currency?.chainId))
     if (!amount || !amount.currency || !currency) {
       return undefined
@@ -28,23 +31,27 @@ export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteOption)
     if (!worker) {
       throw new Error('Quote worker not initialized')
     }
-    console.log(`[quote] worker exists`)
 
     try {
       const candidatePools = await get(
         commonPoolsLiteAtom({
           currencyA: amount.currency,
           currencyB: currency,
+          chainId: currency.chainId,
         }),
       )
-      console.log(`[quote] candidates found=${candidatePools.length}`)
+
+      // const tokenInFee = await get(tokenFeeAtom(amount.currency))
+      // const tokenOutFee = await get(tokenFeeAtom(currency))
+      // const filtered = filterPools(candidatePools, baseCurrency || undefined, currency, tokenInFee, tokenOutFee)
+      const filtered = candidatePools
+
       const quoteCurrencyUsdPrice = await get(currencyUSDPriceAtom(currency))
       const nativeCurrency = get(nativeCurrencyAtom(currency.chainId))
       const nativeCurrencyUsdPrice = await get(currencyUSDPriceAtom(nativeCurrency))
 
       const gasPriceWei = await get(gasPriceWeiAtom(currency?.chainId))
       const quoterConfig = (quoteProvider as ReturnType<typeof SmartRouter.createQuoteProvider>)?.getConfig?.()
-      console.log(`[quote] start request from worker`)
       const result = await worker.getBestTrade({
         chainId: currency.chainId,
         currency: SmartRouter.Transformer.serializeCurrency(currency),
@@ -57,13 +64,13 @@ export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteOption)
         maxHops: 3,
         maxSplits,
         poolTypes: getAllowedPoolTypes(option),
-        candidatePools: candidatePools.map(SmartRouter.Transformer.serializePool),
+        candidatePools: filtered.map(SmartRouter.Transformer.serializePool),
         onChainQuoterGasLimit: quoterConfig?.gasLimit?.toString(),
         quoteCurrencyUsdPrice,
         nativeCurrencyUsdPrice,
       })
-      console.log(`[quote] get result`, result)
       const parsed = SmartRouter.Transformer.parseTrade(currency.chainId, result as any)
+      console.log('[quote] parsed', parsed)
       return parsed
     } catch (ex) {
       console.warn(`[quote]`, ex)
@@ -89,4 +96,31 @@ function getAllowedPoolTypes(options: QuoteOption) {
     types.push(PoolType.STABLE)
   }
   return types
+}
+
+function filterPools(
+  pools: Pool[],
+  baseCurrency?: Currency,
+  currency?: Currency,
+  tokenInFee?: TokenFee,
+  tokenOutFee?: TokenFee,
+) {
+  if (tokenInFee && tokenInFee.sellFeeBps > 0n) {
+    return pools?.filter(
+      (pool) =>
+        !(
+          pool.type === PoolType.V3 &&
+          baseCurrency &&
+          (pool.token0.equals(baseCurrency) || pool.token1.equals(baseCurrency))
+        ),
+    )
+  }
+  if (tokenOutFee && tokenOutFee.buyFeeBps > 0n) {
+    return pools?.filter(
+      (pool) =>
+        !(pool.type === PoolType.V3 && currency && (pool.token0.equals(currency) || pool.token1.equals(currency))),
+    )
+  }
+
+  return pools
 }

@@ -4,12 +4,13 @@ import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 
 import { MobileCard } from 'components/AdPanel/MobileCard'
-import { QuoteProvider } from 'hooks/QuoteProvider'
+import { QuoteProvider } from 'hooks/quoter/QuoteProvider'
+import { useSingleTokenSwapInfo } from 'hooks/quoter/useSingleTokenSwapInfo'
 import { useCurrency } from 'hooks/Tokens'
 import { AutoSlippageProvider } from 'hooks/useAutoSlippageWithFallback'
 import { useSwapHotTokenDisplay } from 'hooks/useSwapHotTokenDisplay'
 import { Field } from 'state/swap/actions'
-import { useSingleTokenSwapInfo, useSwapState } from 'state/swap/hooks'
+import { useSwapState } from 'state/swap/hooks'
 import { styled } from 'styled-components'
 import Page from '../Page'
 import PriceChartContainer from '../Swap/components/Chart/PriceChartContainer'
@@ -25,7 +26,7 @@ const Wrapper = styled(Box)`
   }
 `
 
-export default function InfinitySwap() {
+const InfinitySwapInner = () => {
   const { query } = useRouter()
   const { isDesktop, isMobile } = useMatchBreakpoints()
   const {
@@ -64,83 +65,88 @@ export default function InfinitySwap() {
     [Field.OUTPUT]: outputCurrency ?? undefined,
   }
 
-  const singleTokenPrice = useSingleTokenSwapInfo(
+  const singleTokenPrice = useSingleTokenSwapInfo({
     inputCurrencyId,
-    inputCurrency,
+    inputCurrency: inputCurrency || undefined,
     outputCurrencyId,
-    outputCurrency,
-    isChartSupported,
-  )
+    outputCurrency: outputCurrency || undefined,
+  })
 
   return (
-    <QuoteProvider>
-      <Page removePadding hideFooterOnDesktop={isChartExpanded || false} showExternalLink={false} showHelpLink={false}>
+    <Page removePadding hideFooterOnDesktop={isChartExpanded || false} showExternalLink={false} showHelpLink={false}>
+      <Flex
+        width="100%"
+        height="100%"
+        justifyContent="center"
+        position="relative"
+        mt={isChartExpanded ? undefined : isMobile ? '18px' : '42px'}
+        p={isChartExpanded ? undefined : isMobile ? '16px' : '24px'}
+      >
+        {isDesktop && isChartSupported && (
+          <PriceChartContainer
+            inputCurrencyId={inputCurrencyId}
+            inputCurrency={currencies[Field.INPUT]}
+            outputCurrencyId={outputCurrencyId}
+            outputCurrency={currencies[Field.OUTPUT]}
+            isChartExpanded={isChartExpanded}
+            setIsChartExpanded={setIsChartExpanded}
+            isChartDisplayed={isChartDisplayed}
+            currentSwapPrice={singleTokenPrice}
+          />
+        )}
+        {!isDesktop && isChartSupported && (
+          <BottomDrawer
+            content={
+              <PriceChartContainer
+                inputCurrencyId={inputCurrencyId}
+                inputCurrency={currencies[Field.INPUT]}
+                outputCurrencyId={outputCurrencyId}
+                outputCurrency={currencies[Field.OUTPUT]}
+                isChartExpanded={isChartExpanded}
+                setIsChartExpanded={setIsChartExpanded}
+                isChartDisplayed={isChartDisplayed}
+                currentSwapPrice={singleTokenPrice}
+                isFullWidthContainer
+                isMobile
+              />
+            }
+            isOpen={isChartDisplayed}
+            setIsOpen={(isOpen) => setIsChartDisplayed?.(isOpen)}
+          />
+        )}
         <Flex
-          width="100%"
+          flexDirection="column"
+          alignItems="center"
           height="100%"
-          justifyContent="center"
+          width={isChartDisplayed && !isMobile ? 'auto' : '100%'}
+          mt={isChartExpanded && !isMobile ? '42px' : undefined}
           position="relative"
-          mt={isChartExpanded ? undefined : isMobile ? '18px' : '42px'}
-          p={isChartExpanded ? undefined : isMobile ? '16px' : '24px'}
+          zIndex={1}
         >
-          {isDesktop && isChartSupported && (
-            <PriceChartContainer
-              inputCurrencyId={inputCurrencyId}
-              inputCurrency={currencies[Field.INPUT]}
-              outputCurrencyId={outputCurrencyId}
-              outputCurrency={currencies[Field.OUTPUT]}
-              isChartExpanded={isChartExpanded}
-              setIsChartExpanded={setIsChartExpanded}
-              isChartDisplayed={isChartDisplayed}
-              currentSwapPrice={singleTokenPrice}
-            />
-          )}
-          {!isDesktop && isChartSupported && (
-            <BottomDrawer
-              content={
-                <PriceChartContainer
-                  inputCurrencyId={inputCurrencyId}
-                  inputCurrency={currencies[Field.INPUT]}
-                  outputCurrencyId={outputCurrencyId}
-                  outputCurrency={currencies[Field.OUTPUT]}
-                  isChartExpanded={isChartExpanded}
-                  setIsChartExpanded={setIsChartExpanded}
-                  isChartDisplayed={isChartDisplayed}
-                  currentSwapPrice={singleTokenPrice}
-                  isFullWidthContainer
-                  isMobile
-                />
-              }
-              isOpen={isChartDisplayed}
-              setIsOpen={(isOpen) => setIsChartDisplayed?.(isOpen)}
-            />
-          )}
-          <Flex
-            flexDirection="column"
-            alignItems="center"
-            height="100%"
-            width={isChartDisplayed && !isMobile ? 'auto' : '100%'}
-            mt={isChartExpanded && !isMobile ? '42px' : undefined}
-            position="relative"
-            zIndex={1}
+          <StyledSwapContainer
+            justifyContent="center"
+            width="100%"
+            style={{ height: '100%' }}
+            $isChartExpanded={isChartExpanded}
           >
-            <StyledSwapContainer
-              justifyContent="center"
-              width="100%"
-              style={{ height: '100%' }}
-              $isChartExpanded={isChartExpanded}
-            >
-              <AutoSlippageProvider>
-                <Wrapper height="100%">
-                  <InfinitySwapForm />
-                </Wrapper>
-              </AutoSlippageProvider>
-            </StyledSwapContainer>
-          </Flex>
+            <AutoSlippageProvider>
+              <Wrapper height="100%">
+                <InfinitySwapForm />
+              </Wrapper>
+            </AutoSlippageProvider>
+          </StyledSwapContainer>
         </Flex>
+      </Flex>
 
-        <MobileCard />
-      </Page>
+      <MobileCard />
+    </Page>
+  )
+}
+
+export default function InfinitySwap() {
+  return (
+    <QuoteProvider>
+      <InfinitySwapInner />
     </QuoteProvider>
   )
 }
