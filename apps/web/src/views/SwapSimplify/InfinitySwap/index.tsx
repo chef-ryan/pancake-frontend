@@ -6,7 +6,7 @@ import { useTokenRisk } from 'components/AccessRisk'
 import { RiskDetailsPanel, useShouldRiskPanelDisplay } from 'components/AccessRisk/SwapRevampRiskDisplay'
 
 import { GasTokenSelector } from 'components/Paymaster/GasTokenSelector'
-import { useAllTypeBestTradeSync } from 'hooks/QuoteProvider'
+import { useAllTypeBestTradeSync } from 'hooks/quoter/QuoteProvider'
 import { useCurrency } from 'hooks/Tokens'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'

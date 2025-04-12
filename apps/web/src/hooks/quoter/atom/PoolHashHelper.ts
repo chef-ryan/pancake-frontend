@@ -1,3 +1,4 @@
+import { ChainId } from '@pancakeswap/chains'
 import { Currency, getCurrencyAddress, sortCurrencies } from '@pancakeswap/swap-sdk-core'
 import { keccak256, stringify } from 'viem/utils'
 import { QuoteOption } from '../quoter.types'
@@ -6,6 +7,7 @@ export interface PoolQuery {
   currencyA?: Currency
   currencyB?: Currency
   options?: PoolsHookParams
+  chainId?: ChainId
 }
 interface PoolsHookParams {
   // Used for caching
@@ -45,10 +47,18 @@ export class PoolHashHelper {
   }
 }
 
+export const isEqualCurrency = (a: Currency | undefined, b: Currency | undefined) => {
+  if (a === b) {
+    return true
+  }
+  if (!a || !b) {
+    return false
+  }
+  return getCurrencyAddress(a) === getCurrencyAddress(b)
+}
+
 export const isEqualQuoteQuery = (a: QuoteOption, b: QuoteOption) => {
-  const hashA = PoolHashHelper.hashQuoteQuery(a)
-  const hashB = PoolHashHelper.hashQuoteQuery(b)
-  return hashA === hashB
+  return a.hash === b.hash
 }
 
 export const isEqualPoolQuery = (a: PoolQuery, b: PoolQuery) => {

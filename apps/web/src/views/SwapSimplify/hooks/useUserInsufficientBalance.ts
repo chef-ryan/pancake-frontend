@@ -1,10 +1,9 @@
 import { PriceOrder } from '@pancakeswap/price-api-sdk'
-import { useAllTypeBestTradeSync } from 'hooks/QuoteProvider'
+import { useAllTypeBestTradeSync } from 'hooks/quoter/QuoteProvider'
 import { useMemo } from 'react'
 import { Field } from 'state/swap/actions'
 import { useCurrencyBalances } from 'state/wallet/hooks'
 import { useAccount } from 'wagmi'
-import { useSlippageAdjustedAmounts } from '../../Swap/V3Swap/hooks/useSlippageAdjustedAmounts'
 import { useSwapCurrency } from '../../Swap/V3Swap/hooks/useSwapCurrency'
 
 export function useUserInsufficientBalance(order: PriceOrder | undefined): boolean {
@@ -16,7 +15,6 @@ export function useUserInsufficientBalance(order: PriceOrder | undefined): boole
     outputCurrency ?? undefined,
   ])
 
-  const slippageAdjustedAmounts = useSlippageAdjustedAmounts(order)
   const isInsufficientBalance = useMemo(() => {
     const currencyBalances = {
       [Field.INPUT]: relevantTokenBalances[0],

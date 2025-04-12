@@ -13,9 +13,11 @@ import {
   getV3CandidatePoolsWithoutTicks,
   getV3PoolsWithTicksOnChain,
 } from './poolQueries'
+import { poolVersionAtom } from './revalidateAtom'
 
 export const commonPoolsOnChainAtom = atomFamily((query: PoolQuery) => {
-  return atom(async () => {
+  return atom(async (get) => {
+    get(poolVersionAtom(query))
     const poolsArray = await Promise.all([
       getV2CandidatePools(query),
       getV3PoolsWithTicksOnChain(query),
@@ -27,7 +29,8 @@ export const commonPoolsOnChainAtom = atomFamily((query: PoolQuery) => {
 }, isEqualPoolQuery)
 
 export const commonPoolsAtom = atomFamily((query: PoolQuery) => {
-  return atom(async () => {
+  return atom(async (get) => {
+    get(poolVersionAtom(query))
     const poolsArray = await Promise.all([
       getV2CandidatePools(query),
       getV3CandidatePools(query),
@@ -40,7 +43,8 @@ export const commonPoolsAtom = atomFamily((query: PoolQuery) => {
 }, isEqualPoolQuery)
 
 export const commonPoolsLiteAtom = atomFamily((query: PoolQuery) => {
-  return atom(async () => {
+  return atom(async (get) => {
+    get(poolVersionAtom(query))
     const poolsArray = await Promise.all([
       getV2CandidatePools(query),
       getV3CandidatePoolsWithoutTicks(query),
