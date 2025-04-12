@@ -62,6 +62,7 @@ export function useSwapBestOrder({ maxHops }: Options = {}) {
     stableSwap: stableSwapEnable,
     trackPerf: true,
     retry: 1,
+    hash: '',
   } satisfies BestTradeFromApiOptions
   const { fetchStatus, data, isStale, error, refetch } = useBestTradeFromApi(bestTradeOptions)
   // useBestTradeFromApiShadow(bestTradeOptions, 'quote-api-ori')
