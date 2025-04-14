@@ -31,6 +31,7 @@ export function useSingleTokenSwapInfo(query: Query): { [key: string]: number } 
     stableSwap: true,
     xEnabled: false,
     speedQuoteEnabled: true,
+    infinitySwap: false,
   })
 
   const quoteResult = useAtomValue(bestQuoteAtom(quoteOption))
