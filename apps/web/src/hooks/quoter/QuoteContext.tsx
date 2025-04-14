@@ -1,6 +1,8 @@
 import { ChainId } from '@pancakeswap/chains'
 import { useUserSingleHopOnly } from '@pancakeswap/utils/user'
 import { useActiveChainId } from 'hooks/useActiveChainId'
+import { usePCSXEnabledOnChain } from 'hooks/usePCSX'
+import { useSpeedQuote } from 'hooks/useSpeedQuote'
 import { createContext, useContext } from 'react'
 import {
   useUserInfinitySwapEnable,
@@ -21,6 +23,8 @@ export interface QuoteContext {
   stableSwap?: boolean
   maxHops: number
   chainId: number
+  speedQuoteEnabled: boolean
+  xEnabled: boolean
 }
 
 const QuoteContext = createContext<QuoteContext>({
@@ -29,16 +33,20 @@ const QuoteContext = createContext<QuoteContext>({
   split: false,
   v2Swap: true,
   v3Swap: true,
+  xEnabled: false,
   infinitySwap: true,
   stableSwap: true,
   maxHops: 3,
   chainId: ChainId.BSC,
+  speedQuoteEnabled: false,
 })
 
 export const QuoteContextProvider = ({ children }: { children: React.ReactNode }) => {
   const { chainId } = useActiveChainId()
   const limit = useMulticallGasLimit()
+  const [speedQuoteEnabled] = useSpeedQuote()
 
+  const xEnabled = usePCSXEnabledOnChain(chainId)
   const [singleHopOnly] = useUserSingleHopOnly()
   const [split] = useUserSplitRouteEnable()
   const [v2Swap] = useUserV2SwapEnable()
@@ -58,6 +66,8 @@ export const QuoteContextProvider = ({ children }: { children: React.ReactNode }
         stableSwap,
         maxHops: 3,
         chainId,
+        speedQuoteEnabled,
+        xEnabled: Boolean(xEnabled),
       }}
     >
       {children}
