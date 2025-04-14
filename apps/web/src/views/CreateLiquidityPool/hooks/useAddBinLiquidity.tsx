@@ -114,7 +114,7 @@ export const addBinLiquidity = async (
       }
     })
     .then(async (response) => {
-      onDone?.(response)
+      return onDone?.(response)
     })
     .catch((err) => {
       console.error('add liq error')

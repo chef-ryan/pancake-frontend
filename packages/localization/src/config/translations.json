@@ -3275,6 +3275,7 @@
   "Position Created!": "Position Created!",
   "Pool Created!": "Pool Created!",
   "Error creating pool": "Error creating pool",
+  "Error Add Liquidity": "Error Add Liquidity",
   "Create Infinity Liquidity Pool": "Create Infinity Liquidity Pool",
   "A pool with the selected configuration already exists.": "A pool with the selected configuration already exists.",
   "Fee-on transfer tokens and rebasing tokens are NOT compatible.": "Fee-on transfer tokens and rebasing tokens are NOT compatible.",

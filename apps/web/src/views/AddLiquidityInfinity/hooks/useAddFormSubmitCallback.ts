@@ -188,7 +188,7 @@ export const useAddFormSubmitCallback = () => {
       }
     } catch (error) {
       console.error('Error submitting form', error)
-      toastError(t('Error creating pool'), error instanceof Error ? error.message : stringify(error))
+      toastError(t('Error Add Liquidity'), error instanceof Error ? error.message : stringify(error))
     }
   }, [
     lastEditCurrency,
