@@ -1,7 +1,6 @@
 import { Protocol } from '@pancakeswap/farms'
-import { BinPoolManagerAbi, INFINITY_SUPPORTED_CHAINS, POOL_TYPE } from '@pancakeswap/infinity-sdk'
+import { BinPoolManagerAbi, INFINITY_SUPPORTED_CHAINS, parsePoolKey, POOL_TYPE } from '@pancakeswap/infinity-sdk'
 import { Token } from '@pancakeswap/swap-sdk-core'
-import { parsePoolKey } from 'hooks/infinity/usePoolKeyByPoolId'
 import { chainIdToExplorerInfoChainName, explorerApiClient } from 'state/info/api/client'
 import { paths } from 'state/info/api/schema'
 import { getPoolManagerAddress } from 'utils/addressHelpers'

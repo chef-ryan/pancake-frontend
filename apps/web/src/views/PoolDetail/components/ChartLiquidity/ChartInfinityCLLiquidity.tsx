@@ -89,7 +89,7 @@ const formatDataFn = async ({
 
 export const ChartInfinityCLLiquidity: React.FC<InfinityCLChartLiquidityProps> = ({ poolInfo }) => {
   const [formattedData, setFormattedData] = useState<LiquidityChartData[] | undefined>()
-  const { data: poolKey } = usePoolKeyByPoolId(poolInfo?.poolId, poolInfo?.chainId)
+  const { data: poolKey } = usePoolKeyByPoolId(poolInfo?.poolId, poolInfo?.chainId, POOL_TYPE.CLAMM)
   const tickSpacing = (poolKey as PoolKey<'CL'>)?.parameters.tickSpacing
   const poolTickData = useInfinityCLPoolTickData(poolInfo?.poolId, tickSpacing)
 
