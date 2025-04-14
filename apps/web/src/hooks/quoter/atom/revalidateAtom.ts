@@ -17,6 +17,8 @@ export const poolRevalidateAtom = atom(null, async (get, set, option: QuoteOptio
     currencyB: option.currency || undefined,
     chainId: option.currency?.chainId,
     infinity: option.infinitySwap,
+    v2Pools: Boolean(option.v2Swap),
+    v3Pools: Boolean(option.v3Swap),
   }
 
   set(poolVersionAtom(poolQuery), (v) => v + 1)
