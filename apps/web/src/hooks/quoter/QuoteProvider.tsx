@@ -1,6 +1,6 @@
 import { useDebounce } from '@orbs-network/twap-ui/dist/hooks'
 import { ClassicOrder, OrderType } from '@pancakeswap/price-api-sdk'
-import { CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
+import { TradeType } from '@pancakeswap/swap-sdk-core'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import { POOLS_FAST_REVALIDATE } from 'config/pools'
 import { useInputBasedAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
@@ -72,12 +72,14 @@ const REVALIDATE_TIME = 10
 const loadingAtom = atom(false)
 const parseAtom = atom(false)
 const QuoteSync = () => {
+  const swapState = useSwapState()
+  const debouncedSwapState = useDebounce(swapState, 300)
   const {
     independentField,
     typedValue,
     [Field.INPUT]: { currencyId: inputCurrencyId },
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
-  } = useSwapState()
+  } = debouncedSwapState
   const { address } = useAccount()
   const inputCurrency = useCurrency(inputCurrencyId)
   const outputCurrency = useCurrency(outputCurrencyId)
@@ -101,13 +103,11 @@ const QuoteSync = () => {
   const setTrade = useSetAtom(baseAllTypeBestTradeAtom)
   const setLoading = useSetAtom(loadingAtom)
   const [paused, pauseQuote] = useAtom(parseAtom)
-  const debouncedAmount = useDebounce(
-    amount ? CurrencyAmount.fromRawAmount(amount.currency, amount.quotient) : undefined,
-    300,
-  )
+
   const { slippageTolerance: slippage } = useInputBasedAutoSlippageWithFallback(amount)
+
   const quoteOption = createQuoteQuery({
-    amount: debouncedAmount,
+    amount,
     currency: dependentCurrency,
     baseCurrency: independentCurrency,
     tradeType,

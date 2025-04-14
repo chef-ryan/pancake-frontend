@@ -1,6 +1,7 @@
 import { SmartRouterTrade } from '@pancakeswap/smart-router'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { getIsWrapping } from 'hooks/useWrapCallback'
+import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { createQuoteQuery } from '../createQuoteQuery'
 import { getBetterQuoteTrade } from '../getBetterQuote'
@@ -11,7 +12,12 @@ import { bestAMMTradeFromOffchainQuoterAtom } from './bestAMMTradeFromOffchainQu
 import { bestAMMTradeFromQuoterWorkerAtom } from './bestAMMTradeFromQuoterWorkerAtom'
 import { bestTradeFromApi } from './bestTradeFromAPIAtom'
 
-export const bestQuoteAtom = atomFamily((_option: QuoteOption) => {
+type QuoteResult<T> = {
+  hash: string
+  data: T
+}
+
+const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteOption) => {
   return atomWithLoadable(async (get) => {
     const option: QuoteOption = { enabled: true, type: 'quoter', tradeType: TradeType.EXACT_INPUT, ..._option }
     try {
@@ -46,7 +52,7 @@ export const bestQuoteAtom = atomFamily((_option: QuoteOption) => {
         get(bestAMMTradeFromQuoterWorkerAtom(querySingleHop)),
         // non-infinity-solution
         get(bestAMMTradeFromOffchainQuoterAtom(queryNonInfinity)),
-        // infinity-solution
+        // infinity-solution ( via routing sdk )
         option.infinitySwap ? get(bestAMMTradeFromOffchainQuoterAtom(queryWithInfinity)) : undefined,
 
         get(bestTradeFromApi(option)),
@@ -67,6 +73,13 @@ export const bestQuoteAtom = atomFamily((_option: QuoteOption) => {
       console.warn(`[quote]`, ex)
       throw ex
     }
+  })
+}, isEqualQuoteQuery)
+
+export const bestQuoteAtom = atomFamily((_option: QuoteOption) => {
+  return atom(async (get) => {
+    const result = get(bestQuoteWithoutHashAtom(_option))
+    return { ...result, hash: _option.hash }
   })
 }, isEqualQuoteQuery)
 

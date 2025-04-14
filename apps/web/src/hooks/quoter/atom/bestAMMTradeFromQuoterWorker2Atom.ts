@@ -71,6 +71,7 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteOption
         nativeCurrencyUsdPrice,
       })
       const parsed = SmartRouter.Transformer.parseTrade(currency.chainId, result as any)
+      parsed.quoteQueryHash = option.hash
       return parsed
     } catch (ex) {
       console.warn(`[quote]`, ex)

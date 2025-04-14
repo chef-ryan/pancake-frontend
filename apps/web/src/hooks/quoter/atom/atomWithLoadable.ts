@@ -27,11 +27,11 @@ export const atomWithLoadable = <T>(asyncFn: (get: Getter) => Promise<T>) => {
 
   return unwrap(
     baseAtom,
-    () =>
+    (prev) =>
       ({
         loading: true,
-        data: undefined,
-        error: undefined,
+        data: prev?.data,
+        error: prev?.error,
       } as Loadable<T>),
   )
 }
