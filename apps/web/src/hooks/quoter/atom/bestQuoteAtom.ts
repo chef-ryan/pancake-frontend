@@ -26,15 +26,26 @@ export const bestQuoteAtom = atomFamily((_option: QuoteOption) => {
       }
 
       const quotes = await Promise.allSettled([
+        // single hoop quote for quick solution
         get(
           bestAMMTradeFromQuoterWorkerAtom({
             ...option,
             maxHops: 1,
             maxSplits: 0,
             enabled: true,
+            infinitySwap: false,
           }),
         ),
-        get(bestAMMTradeFromOffchainQuoterAtom(option)),
+        // non-infinity-solution
+        get(
+          bestAMMTradeFromOffchainQuoterAtom({
+            ...option,
+            infinitySwap: false,
+          }),
+        ),
+        // infinity-solution
+        option.infinitySwap ? get(bestAMMTradeFromOffchainQuoterAtom(option)) : undefined,
+
         get(bestTradeFromApi(option)),
       ])
       const best = findBestQuote(...quotes)
