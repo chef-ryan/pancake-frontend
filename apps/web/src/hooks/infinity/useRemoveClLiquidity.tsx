@@ -1,6 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { PoolKey, encodeCLPositionManagerDecreaseLiquidityCalldata } from '@pancakeswap/infinity-sdk'
 import { useTranslation } from '@pancakeswap/localization'
+import { usePublicNodeWaitForTransaction } from 'hooks/usePublicNodeWaitForTransaction'
 import { useCallback, useState } from 'react'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { useTransactionAdder } from 'state/transactions/hooks'
@@ -8,7 +9,7 @@ import { calculateGasMargin } from 'utils'
 import { getInfinityPositionManagerAddress } from 'utils/addressHelpers'
 import { isUserRejected } from 'utils/sentry'
 import { transactionErrorToUserReadableMessage } from 'utils/transactionErrorToUserReadableMessage'
-import { getViemClients, publicClient } from 'utils/viem'
+import { getViemClients } from 'utils/viem'
 import type { Address, Hex } from 'viem'
 import { type UseSendTransactionReturnType, useSendTransaction } from 'wagmi'
 
@@ -88,6 +89,7 @@ export const useRemoveClLiquidity = (
   const positionManagerAddress = getInfinityPositionManagerAddress('CL', chainId)
   const { sendTransactionAsync } = useSendTransaction()
   const [, setLatestTxReceipt] = useLatestTxReceipt()
+  const { waitForTransaction } = usePublicNodeWaitForTransaction(chainId)
 
   const removeLiquidity = useCallback(
     async (params: RemoveClLiquidityParam) => {
@@ -101,7 +103,7 @@ export const useRemoveClLiquidity = (
             summary: `Remove liquidity from ${params.tokenId}`,
           },
         )
-        const receipt = await publicClient({ chainId }).waitForTransactionReceipt({
+        const receipt = await waitForTransaction({
           hash: response,
         })
         // wating for transaction receipt
@@ -140,6 +142,7 @@ export const useRemoveClLiquidity = (
       addTransaction,
       onError,
       t,
+      waitForTransaction,
       setLatestTxReceipt,
     ],
   )

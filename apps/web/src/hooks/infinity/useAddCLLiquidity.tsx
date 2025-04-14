@@ -18,6 +18,7 @@ import {
 import { ConfirmationPendingContent } from '@pancakeswap/widgets-internal'
 import { useCurrencyByChainId } from 'hooks/Tokens'
 import { useInfinityCLPositionManagerContract } from 'hooks/useContract'
+import { usePublicNodeWaitForTransaction } from 'hooks/usePublicNodeWaitForTransaction'
 import { useCallback, useState } from 'react'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { useTransactionAdder } from 'state/transactions/hooks'
@@ -178,6 +179,7 @@ export const useAddCLPoolAndPosition = (
   const quoteCurrency = useCurrencyByChainId(quoteCurrencyAddress, chainId)
   const { sendTransactionAsync } = useSendTransaction()
   const [, setLatestTxReceipt] = useLatestTxReceipt()
+  const { waitForTransaction } = usePublicNodeWaitForTransaction(chainId)
   const [onPresentConfirmationModal, onDismissConfirmationModal] = useModal(
     <ConfirmModal />,
     true,
@@ -202,7 +204,7 @@ export const useAddCLPoolAndPosition = (
             },
           )
         }
-        const receipt = await getViemClients({ chainId }).waitForTransactionReceipt({
+        const receipt = await waitForTransaction({
           hash: response,
         })
         setLatestTxReceipt({ blockHash: receipt.blockHash, status: receipt.status })
@@ -239,6 +241,7 @@ export const useAddCLPoolAndPosition = (
       baseCurrency,
       quoteCurrency,
       setLatestTxReceipt,
+      waitForTransaction,
       onDone,
       addTransaction,
       onError,
