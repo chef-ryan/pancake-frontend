@@ -87,23 +87,6 @@ export const addBinLiquidity = async (
   const data = addBinLiquidityMulticall(addBinLiquidityParams)
   const value = params.currency0.isNative ? params.amount0Desired : 0n
 
-  // debug
-  try {
-    console.debug('debug[0] estimateGas', { account, to, data, value, publicClient: viemPublicClient })
-    const d = await viemPublicClient.estimateGas({ account, to, data, value })
-    console.debug('debug[0] estimateGas return', d)
-  } catch (error) {
-    console.trace('debug[0] estimateGas error', error)
-  }
-
-  try {
-    console.debug('debug[1] estimateGas', { account, to, data, value, publicClient })
-    const d = await publicClient?.estimateGas({ account, to, data, value })
-    console.debug('debug[1] estimateGas return', d)
-  } catch (error) {
-    console.trace('debug[1] estimateGas error', error)
-  }
-
   return viemPublicClient
     ?.estimateGas({
       account,
@@ -112,7 +95,6 @@ export const addBinLiquidity = async (
       value,
     })
     .then((gasLimit) => {
-      console.info('debug gasLimit', gasLimit)
       setAttemptingTx?.(true)
       try {
         const tx = sendTransactionAsync({
@@ -185,24 +167,28 @@ export const useAddBinLiquidity = (
     (params: AddBinLiquidityParams) => {
       onPresentConfirmationModal()
       const onTxDone = async (response: Hash) => {
-        onDismissConfirmationModal()
-        setTxHash(response)
-        if (baseCurrency && quoteCurrency) {
-          const baseAmount = formatRawAmount(params.amount0Desired?.toString() ?? '0', baseCurrency?.decimals, 4)
-          const quoteAmount = formatRawAmount(params.amount1Desired?.toString() ?? '0', quoteCurrency.decimals, 4)
-          addTransaction(
-            { hash: response },
-            {
-              type: 'add-liquidity-infinity-bin',
-              summary: `Increase ${baseAmount} ${baseCurrency?.symbol} and ${quoteAmount} ${quoteCurrency?.symbol}`,
-            },
-          )
+        try {
+          onDismissConfirmationModal()
+          setTxHash(response)
+          if (baseCurrency && quoteCurrency) {
+            const baseAmount = formatRawAmount(params.amount0Desired?.toString() ?? '0', baseCurrency?.decimals, 4)
+            const quoteAmount = formatRawAmount(params.amount1Desired?.toString() ?? '0', quoteCurrency.decimals, 4)
+            addTransaction(
+              { hash: response },
+              {
+                type: 'add-liquidity-infinity-bin',
+                summary: `Increase ${baseAmount} ${baseCurrency?.symbol} and ${quoteAmount} ${quoteCurrency?.symbol}`,
+              },
+            )
+          }
+          const receipt = await getViemClients({ chainId }).waitForTransactionReceipt({
+            hash: response,
+          })
+          setLatestTxReceipt({ blockHash: receipt.blockHash, status: receipt.status })
+          onDone?.()
+        } catch (error) {
+          console.error('Error in onTxDone', error)
         }
-        const receipt = await getViemClients({ chainId }).waitForTransactionReceipt({
-          hash: response,
-        })
-        setLatestTxReceipt({ blockHash: receipt.blockHash, status: receipt.status })
-        onDone?.()
       }
 
       const onTxError = (error: any) => {
