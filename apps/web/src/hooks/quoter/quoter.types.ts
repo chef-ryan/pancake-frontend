@@ -1,6 +1,7 @@
 import type { InfinityRouter, QuoteProvider, SmartRouter } from '@pancakeswap/smart-router'
 import type { Currency, CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
 import type { AbortControl } from '@pancakeswap/utils/abortControl'
+import { Address } from 'viem/accounts'
 import type { bestTradeHookFactory } from './bestTradeHookFactory'
 import type { CommonPoolsParams, PoolsWithState } from './useCommonPools'
 import type { LoadedValue } from './utils/LoadedValue'
@@ -56,7 +57,13 @@ export interface Options {
   hash: string
 }
 
-export type QuoteOption = Options
+export type QuoteOption = Options & {
+  type?: 'offchain' | 'quoter' | 'auto' | 'api'
+  speedQuoteEnabled: boolean
+  xEnabled: boolean
+  slippage?: number
+  address?: Address
+}
 
 export interface useBestAMMTradeOptions extends Options {
   type?: 'offchain' | 'quoter' | 'auto' | 'api'

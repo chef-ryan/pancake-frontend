@@ -28,18 +28,19 @@ export class PoolHashHelper {
     }
     const sorted = sortCurrencies(list)
     const str = sorted.map((currency) => getCurrencyAddress(currency)).join(',')
-    const hash = keccak256(`0x{str}`)
+    const hash = keccak256(`0x${str}`)
     return hash
   }
 
   static hashPoolQuery = (query: PoolQuery) => {
     const { currencyA, currencyB, options } = query
     const hash = this.hashCurrenciesWithSort(currencyA, currencyB)
-    return keccak256(`0x{hash}-${options?.blockNumber}`)
+    return keccak256(`0x${hash}-${options?.blockNumber}`)
   }
 
   static hashQuoteQuery = (query: QuoteOption) => {
-    const { amount, currency, baseCurrency, ...rest } = query
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { amount, currency, slippage, ...rest } = query
     const restHash = keccak256(`0x${stringify(rest)}`)
     const hashCurrencies = PoolHashHelper.hashCurrenciesWithSort(amount?.currency, currency || undefined)
     const prts = [amount?.toExact(), hashCurrencies, restHash]

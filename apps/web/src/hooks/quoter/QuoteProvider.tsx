@@ -3,10 +3,12 @@ import { ClassicOrder, OrderType } from '@pancakeswap/price-api-sdk'
 import { CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import { POOLS_FAST_REVALIDATE } from 'config/pools'
+import { useInputBasedAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { Suspense, useEffect } from 'react'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
+import { useAccount } from 'wagmi'
 import { useCurrency } from '../Tokens'
 import { bestQuoteAtom } from './atom/bestQuoteAtom'
 import { poolRevalidateAtom, quoteRevalidateAtom } from './atom/revalidateAtom'
@@ -76,6 +78,7 @@ const QuoteSync = () => {
     [Field.INPUT]: { currencyId: inputCurrencyId },
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
   } = useSwapState()
+  const { address } = useAccount()
   const inputCurrency = useCurrency(inputCurrencyId)
   const outputCurrency = useCurrency(outputCurrencyId)
   const isExactIn = independentField === Field.INPUT
@@ -83,7 +86,18 @@ const QuoteSync = () => {
   const dependentCurrency = isExactIn ? outputCurrency : inputCurrency
   const tradeType = isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT
   const amount = tryParseAmount(typedValue, independentCurrency ?? undefined)
-  const { singleHopOnly, split, v2Swap, v3Swap, infinitySwap, stableSwap, maxHops, chainId } = useQuoteContext()
+  const {
+    singleHopOnly,
+    split,
+    v2Swap,
+    v3Swap,
+    infinitySwap,
+    stableSwap,
+    maxHops,
+    chainId,
+    speedQuoteEnabled,
+    xEnabled,
+  } = useQuoteContext()
   const setTrade = useSetAtom(baseAllTypeBestTradeAtom)
   const setLoading = useSetAtom(loadingAtom)
   const [paused, pauseQuote] = useAtom(parseAtom)
@@ -91,6 +105,7 @@ const QuoteSync = () => {
     amount ? CurrencyAmount.fromRawAmount(amount.currency, amount.quotient) : undefined,
     300,
   )
+  const { slippageTolerance: slippage } = useInputBasedAutoSlippageWithFallback(amount)
   const quoteOption = createQuoteOption({
     amount: debouncedAmount,
     currency: dependentCurrency,
@@ -102,6 +117,10 @@ const QuoteSync = () => {
     v3Swap,
     infinitySwap,
     stableSwap,
+    speedQuoteEnabled,
+    xEnabled,
+    slippage,
+    address,
   })
 
   const revalidateQuote = useSetAtom(quoteRevalidateAtom(quoteOption))
@@ -134,6 +153,7 @@ const QuoteSync = () => {
     return () => {
       clearInterval(interval)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quoteOption.hash, paused, quoteResult.loading])
 
   useEffect(() => {
@@ -166,7 +186,7 @@ const QuoteSync = () => {
       },
     })
     setLoading(false)
-  }, [quoteResult.data, quoteResult.loading, quoteResult.error])
+  }, [quoteResult.data, quoteResult.loading, quoteResult.error, pauseQuote, setTrade, setLoading, revalidateQuote])
 
   return null
 }
