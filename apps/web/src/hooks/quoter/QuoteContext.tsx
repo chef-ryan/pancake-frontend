@@ -19,7 +19,7 @@ export interface QuoteContext {
   split?: boolean
   v2Swap?: boolean
   v3Swap?: boolean
-  infinitySwap?: boolean
+  infinitySwap: boolean
   stableSwap?: boolean
   maxHops: number
   chainId: number

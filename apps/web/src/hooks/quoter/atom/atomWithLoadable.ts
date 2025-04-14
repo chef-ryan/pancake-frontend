@@ -17,17 +17,10 @@ export const atomWithLoadable = <T>(asyncFn: (get: Getter) => Promise<T>) => {
         error: undefined,
       } as Loadable<T>
     } catch (error: any) {
-      let err: Error
-      if (!(error instanceof Error)) {
-        err = new Error(error.toString())
-      } else {
-        err = error
-      }
-
       return {
         loading: false,
         data: undefined,
-        error: err,
+        error,
       } as Loadable<T>
     }
   })

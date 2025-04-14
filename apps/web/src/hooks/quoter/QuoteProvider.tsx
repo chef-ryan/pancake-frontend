@@ -142,7 +142,7 @@ const QuoteSync = () => {
         if (t % REVALIDATE_TIME === 0) {
           revalidateQuote((v) => v + 1)
         }
-        const poolRevalidateTime = POOLS_FAST_REVALIDATE[chainId]
+        const poolRevalidateTime = POOLS_FAST_REVALIDATE[chainId] * 10
         if (poolRevalidateTime && t % poolRevalidateTime === 0) {
           revalidatePools(quoteOption)
         }

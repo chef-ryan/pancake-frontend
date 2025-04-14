@@ -31,6 +31,7 @@ export const bestAMMTradeFromOffchainQuoterAtom = atomFamily((option: QuoteOptio
             currencyA: amount.currency,
             currencyB: currency,
             chainId: currency.chainId,
+            infinity: option.infinitySwap,
           }),
         ),
         get(gasPriceWeiAtom(currency?.chainId)),

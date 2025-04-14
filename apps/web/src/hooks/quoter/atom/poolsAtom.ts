@@ -18,39 +18,57 @@ import { poolVersionAtom } from './revalidateAtom'
 export const commonPoolsOnChainAtom = atomFamily((query: PoolQuery) => {
   return atom(async (get) => {
     get(poolVersionAtom(query))
-    const poolsArray = await Promise.all([
-      getV2CandidatePools(query),
-      getV3PoolsWithTicksOnChain(query),
-      getInfinityClCandidatePools(query),
-      getInfinityBinCandidatePools(query),
-    ])
-    return poolsArray.flat() as Pool[]
+    const { infinity } = query
+    try {
+      const poolsArray = await Promise.all([
+        getV2CandidatePools(query),
+        getV3PoolsWithTicksOnChain(query),
+        infinity ? getInfinityClCandidatePools(query) : [],
+        infinity ? getInfinityBinCandidatePools(query) : [],
+      ])
+      return poolsArray.flat() as Pool[]
+    } catch (ex) {
+      console.warn(ex)
+      return []
+    }
   })
 }, isEqualPoolQuery)
 
 export const commonPoolsAtom = atomFamily((query: PoolQuery) => {
   return atom(async (get) => {
-    get(poolVersionAtom(query))
-    const poolsArray = await Promise.all([
-      getV2CandidatePools(query),
-      getV3CandidatePools(query),
-      getInfinityClCandidatePools(query),
-      getInfinityBinCandidatePools(query),
-    ])
+    try {
+      get(poolVersionAtom(query))
+      const { infinity } = query
+      const poolsArray = await Promise.all([
+        getV2CandidatePools(query),
+        getV3CandidatePools(query),
+        infinity ? getInfinityClCandidatePools(query) : [],
+        infinity ? getInfinityBinCandidatePools(query) : [],
+      ])
 
-    return poolsArray.flat() as Pool[]
+      return poolsArray.flat() as Pool[]
+    } catch (ex) {
+      console.warn(ex)
+      return []
+    }
   })
 }, isEqualPoolQuery)
 
 export const commonPoolsLiteAtom = atomFamily((query: PoolQuery) => {
   return atom(async (get) => {
-    get(poolVersionAtom(query))
-    const poolsArray = await Promise.all([
-      getV2CandidatePools(query),
-      getV3CandidatePoolsWithoutTicks(query),
-      getInfinityClCandidatePoolsWithoutTicks(query),
-      getInfinityBinCandidatePoolsWithoutBins(query),
-    ])
-    return poolsArray.flat() as Pool[]
+    const { infinity } = query
+    try {
+      get(poolVersionAtom(query))
+      const poolsArray = await Promise.all([
+        getV2CandidatePools(query),
+        getV3CandidatePoolsWithoutTicks(query),
+        infinity ? getInfinityClCandidatePoolsWithoutTicks(query) : [],
+        infinity ? getInfinityBinCandidatePoolsWithoutBins(query) : [],
+      ])
+      return poolsArray.flat() as Pool[]
+    } catch (ex) {
+      console.warn(ex)
+      return []
+    }
   })
 }, isEqualPoolQuery)

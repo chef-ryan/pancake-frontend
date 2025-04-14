@@ -48,7 +48,7 @@ export interface Options {
   maxSplits?: number
   v2Swap?: boolean
   v3Swap?: boolean
-  infinitySwap?: boolean
+  infinitySwap: boolean
   stableSwap?: boolean
   enabled?: boolean
   autoRevalidate?: boolean
