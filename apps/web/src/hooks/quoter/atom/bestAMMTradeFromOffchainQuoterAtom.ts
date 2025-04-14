@@ -7,7 +7,7 @@ import { InfinityGetBestTradeReturnType, NoValidRouteError, QuoteOption } from '
 import { getVerifiedTrade } from '../useTradeVerifiedByQuoter'
 import { gasPriceWeiAtom } from './gasPriceAtom'
 import { isEqualQuoteQuery } from './PoolHashHelper'
-import { commonPoolsAtom } from './poolsAtom'
+import { commonPoolsOnChainAtom } from './poolsAtom'
 import { quoteRevalidateAtom } from './revalidateAtom'
 
 export const bestAMMTradeFromOffchainQuoterAtom = atomFamily((option: QuoteOption) => {
@@ -28,7 +28,7 @@ export const bestAMMTradeFromOffchainQuoterAtom = atomFamily((option: QuoteOptio
     try {
       const [candidatePools, gasPriceWei] = await Promise.all([
         get(
-          commonPoolsAtom({
+          commonPoolsOnChainAtom({
             currencyA: amount.currency,
             currencyB: currency,
             chainId: currency.chainId,
@@ -54,6 +54,9 @@ export const bestAMMTradeFromOffchainQuoterAtom = atomFamily((option: QuoteOptio
       })
       const trade = InfinityRouter.Transformer.parseTrade(currency.chainId, result) ?? null
       const verifiedTrade = await getVerifiedTrade(trade)
+      if (verifiedTrade) {
+        verifiedTrade.quoteQueryHash = option.hash
+      }
       return (verifiedTrade || undefined) as InfinityGetBestTradeReturnType | undefined
     } catch (ex) {
       console.warn(`[quote]`, ex)

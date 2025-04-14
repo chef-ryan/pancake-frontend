@@ -55,6 +55,7 @@ export const bestTradeFromApi = atomFamily((option: QuoteOption) => {
       tradeType,
     })
 
+    result.trade.quoteQueryHash = option.hash
     return result.trade
   })
 })
