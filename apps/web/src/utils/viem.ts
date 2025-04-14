@@ -3,9 +3,10 @@ import first from 'lodash/first'
 import { PublicClient, createPublicClient, custom, fallback, http } from 'viem'
 import { mainnet } from 'viem/chains'
 
-import { isInBinance } from '@binance/w3w-utils'
 import { CHAINS } from 'config/chains'
 import { PUBLIC_NODES } from 'config/nodes'
+
+import { isInBinance } from '@binance/w3w-utils'
 
 export type CreatePublicClientParams = {
   transportSignal?: AbortSignal
