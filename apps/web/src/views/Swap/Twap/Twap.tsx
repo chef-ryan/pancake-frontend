@@ -74,6 +74,7 @@ const useBestTrade = (fromToken?: string, toToken?: string, value?: string) => {
     autoRevalidate: false,
     xEnabled: false,
     speedQuoteEnabled: true,
+    infinitySwap: false,
   })
   const tradeResult = useAtomValue(bestQuoteAtom(quoteOption))
   const { data: trade } = tradeResult
