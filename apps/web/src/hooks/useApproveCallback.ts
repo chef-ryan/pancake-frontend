@@ -273,10 +273,3 @@ export function useApproveCallbackFromAmount({
     targetAmount,
   })
 }
-
-// Wraps useApproveCallback in the context of a Gelato Limit Orders
-export function useApproveCallbackFromInputCurrencyAmount(currencyAmountIn: CurrencyAmount<Currency> | undefined) {
-  const gelatoLibrary = useGelatoLimitOrdersLib()
-
-  return useApproveCallback(currencyAmountIn, gelatoLibrary?.erc20OrderRouter?.address ?? undefined)
-}

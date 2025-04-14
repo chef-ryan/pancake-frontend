@@ -8,12 +8,6 @@ const NoOrdersMessage: React.FC<React.PropsWithChildren<{ orderCategory: ORDER_C
 
   const NoOrdersText = useMemo(() => {
     switch (orderCategory) {
-      case ORDER_CATEGORY.Open:
-        return t('No Open Orders')
-      case ORDER_CATEGORY.History:
-        return t('No Order History')
-      case ORDER_CATEGORY.Expired:
-        return t('No Expired Orders')
       case ORDER_CATEGORY.Existing:
         return t('No Existing Orders')
       default:

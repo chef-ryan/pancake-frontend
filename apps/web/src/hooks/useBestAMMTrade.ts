@@ -728,7 +728,7 @@ export function useBestTradeFromApiShadow(
   const previousEnabled = usePreviousValue(Boolean(currency?.chainId))
 
   return useQuery({
-    enabled: featureFlag && !!(amount && currency?.chainId && deferQuotient && poolTypes?.length),
+    enabled: Boolean(featureFlag && !!(amount && currency?.chainId && deferQuotient && poolTypes?.length)),
     refetchInterval: POOLS_FAST_REVALIDATE[currency?.chainId as keyof typeof POOLS_FAST_REVALIDATE] ?? 10_000,
     queryKey: [
       queryType,

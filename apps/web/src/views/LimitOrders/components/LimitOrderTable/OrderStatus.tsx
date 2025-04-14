@@ -5,7 +5,6 @@ import { FormattedOrderData } from 'views/LimitOrders/hooks/useFormattedOrderDat
 
 export enum StatusElementType {
   TAG = 'Tag',
-  TEXT = 'Text',
 }
 
 const StatusElement: React.FC<

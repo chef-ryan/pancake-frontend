@@ -1,4 +1,3 @@
-import { Order } from '@gelatonetwork/limit-orders-lib'
 import { ChainId } from '@pancakeswap/chains'
 import { createAction } from '@reduxjs/toolkit'
 
@@ -79,7 +78,6 @@ export const addTransaction = createAction<{
   summary?: string
   translatableSummary?: { text: string; data?: Record<string, string | number | undefined> }
   type?: TransactionType
-  order?: Order
   crossChainFarm?: CrossChainFarmTransactionType
 }>('transactions/addTransaction')
 export const clearAllTransactions = createAction('transactions/clearAllTransactions')

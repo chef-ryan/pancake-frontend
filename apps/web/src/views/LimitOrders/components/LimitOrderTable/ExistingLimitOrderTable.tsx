@@ -16,7 +16,6 @@ import { useTranslation } from '@pancakeswap/localization'
 import { getBlockExploreLink } from 'utils'
 import { ChainId } from '@pancakeswap/chains'
 import { styled } from 'styled-components'
-import useGelatoLimitOrdersLib from 'hooks/limitOrders/useGelatoLimitOrdersLib'
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { gelatoLimitABI } from 'config/abi/gelatoLimit'
@@ -25,7 +24,7 @@ import useCatchTxError from 'hooks/useCatchTxError'
 import truncateHash from '@pancakeswap/utils/truncateHash'
 import { ExistingOrder } from 'views/LimitOrders/types'
 import { useQueryClient } from '@tanstack/react-query'
-import { EXISTING_ORDERS_QUERY_KEY } from 'views/LimitOrders/hooks/useGelatoLimitOrdersHistory'
+import { EXISTING_ORDERS_QUERY_KEY, GELATO_CONTRACT_ADDRESS } from 'views/LimitOrders/hooks/useGelatoLimitOrdersHistory'
 
 const RowStyle = styled.tr`
   cursor: pointer;
@@ -42,16 +41,15 @@ const ExistingLimitOrderTable = ({ orders }: { orders: ExistingOrder[] }) => {
   const { chainId } = useActiveChainId()
   const publicClient = usePublicClient({ chainId })
   const { data: walletClient } = useWalletClient()
-  const gelatoLimitOrders = useGelatoLimitOrdersLib()
   const { toastSuccess } = useToast()
   const { fetchWithCatchTxError } = useCatchTxError()
   const queryClient = useQueryClient()
 
   const handleCancelOrder = useCallback(
     async (order: ExistingOrder) => {
-      if (publicClient && gelatoLimitOrders?.contract.address && walletClient) {
+      if (publicClient && walletClient) {
         const { request } = await publicClient.simulateContract({
-          address: gelatoLimitOrders?.contract.address as `0x${string}`,
+          address: GELATO_CONTRACT_ADDRESS as `0x${string}`,
           abi: gelatoLimitABI,
           functionName: 'cancelOrder',
           account: address,
@@ -73,16 +71,7 @@ const ExistingLimitOrderTable = ({ orders }: { orders: ExistingOrder[] }) => {
         }
       }
     },
-    [
-      publicClient,
-      gelatoLimitOrders?.contract.address,
-      walletClient,
-      address,
-      t,
-      fetchWithCatchTxError,
-      queryClient,
-      toastSuccess,
-    ],
+    [publicClient, walletClient, address, t, fetchWithCatchTxError, queryClient, toastSuccess],
   )
 
   return (

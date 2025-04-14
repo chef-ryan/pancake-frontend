@@ -1,4 +1,3 @@
-import { Order } from '@gelatonetwork/limit-orders-lib'
 import isEmpty from 'lodash/isEmpty'
 import keyBy from 'lodash/keyBy'
 import mapValues from 'lodash/mapValues'
@@ -36,7 +35,6 @@ export function useTransactionAdder(): (
     approval?: { tokenAddress: string; spender: string; amount: string }
     claim?: { recipient: string }
     type?: TransactionType
-    order?: Order
     crossChainFarm?: CrossChainFarmTransactionType
     // add/remove pool
     baseCurrencyId?: string
@@ -65,7 +63,6 @@ export function useTransactionAdder(): (
         approval,
         claim,
         type,
-        order,
         crossChainFarm,
       }: {
         summary?: string
@@ -73,7 +70,6 @@ export function useTransactionAdder(): (
         claim?: { recipient: string }
         approval?: { tokenAddress: string; spender: string }
         type?: TransactionType
-        order?: Order
         crossChainFarm?: CrossChainFarmTransactionType
       } = {},
     ) => {
@@ -109,7 +105,6 @@ export function useTransactionAdder(): (
           translatableSummary,
           claim,
           type,
-          order,
           crossChainFarm,
         }),
       )
