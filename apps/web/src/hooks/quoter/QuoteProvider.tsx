@@ -12,7 +12,7 @@ import { useAccount } from 'wagmi'
 import { useCurrency } from '../Tokens'
 import { bestQuoteAtom } from './atom/bestQuoteAtom'
 import { poolRevalidateAtom, quoteRevalidateAtom } from './atom/revalidateAtom'
-import { createQuoteOption } from './createQuoteOption'
+import { createQuoteQuery } from './createQuoteQuery'
 import { QuoteContextProvider, useQuoteContext } from './QuoteContext'
 import { useAllTypeBestTrade } from './useAllTypeBestTrade'
 import { LoadedValue } from './utils/LoadedValue'
@@ -106,7 +106,7 @@ const QuoteSync = () => {
     300,
   )
   const { slippageTolerance: slippage } = useInputBasedAutoSlippageWithFallback(amount)
-  const quoteOption = createQuoteOption({
+  const quoteOption = createQuoteQuery({
     amount: debouncedAmount,
     currency: dependentCurrency,
     baseCurrency: independentCurrency,

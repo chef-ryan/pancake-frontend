@@ -4,7 +4,7 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useAtomValue } from 'jotai'
 import { getTokenAddress } from 'views/Swap/components/Chart/utils'
 import { bestQuoteAtom } from './atom/bestQuoteAtom'
-import { createQuoteOption } from './createQuoteOption'
+import { createQuoteQuery } from './createQuoteQuery'
 
 interface Query {
   inputCurrencyId?: string
@@ -19,7 +19,7 @@ export function useSingleTokenSwapInfo(query: Query): { [key: string]: number } 
   const token1Address = getTokenAddress(chainId, outputCurrencyId)
   const amount = tryParseAmount('1', inputCurrency ?? undefined)
 
-  const quoteOption = createQuoteOption({
+  const quoteOption = createQuoteQuery({
     amount,
     baseCurrency: inputCurrency ?? undefined,
     currency: outputCurrency ?? undefined,

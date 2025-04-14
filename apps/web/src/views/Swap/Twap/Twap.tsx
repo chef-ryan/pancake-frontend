@@ -20,7 +20,7 @@ import { AutoRow } from 'components/Layout/Row'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { CommonBasesType } from 'components/SearchModal/types'
 import { bestQuoteAtom } from 'hooks/quoter/atom/bestQuoteAtom'
-import { createQuoteOption } from 'hooks/quoter/createQuoteOption'
+import { createQuoteQuery } from 'hooks/quoter/createQuoteQuery'
 import { useQuoteContext } from 'hooks/quoter/QuoteContext'
 import { QuoteProvider } from 'hooks/quoter/QuoteProvider'
 import { useAllTokens, useCurrency } from 'hooks/Tokens'
@@ -60,7 +60,7 @@ const useBestTrade = (fromToken?: string, toToken?: string, value?: string) => {
 
   const dependentCurrency = useCurrency(toToken)
   const { singleHopOnly, split, v2Swap, v3Swap, stableSwap } = useQuoteContext()
-  const quoteOption = createQuoteOption({
+  const quoteOption = createQuoteQuery({
     amount,
     currency: dependentCurrency,
     baseCurrency: independentCurrency,

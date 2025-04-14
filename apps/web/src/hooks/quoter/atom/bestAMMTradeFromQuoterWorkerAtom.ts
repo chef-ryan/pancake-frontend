@@ -16,7 +16,7 @@ import { commonPoolsLiteAtom } from './poolsAtom'
 import { quoteRevalidateAtom } from './revalidateAtom'
 
 export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteOption) => {
-  const { amount, currency, tradeType, maxSplits } = option
+  const { amount, currency, tradeType, maxSplits, v2Swap, v3Swap } = option
   return atom(async (get) => {
     get(quoteRevalidateAtom(option))
     const gasLimit = await get(multicallGasLimitAtom(currency?.chainId))
@@ -39,6 +39,8 @@ export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteOption)
           currencyB: currency,
           chainId: currency.chainId,
           infinity: option.infinitySwap,
+          v2Pools: Boolean(v2Swap),
+          v3Pools: Boolean(v3Swap),
         }),
       )
 
