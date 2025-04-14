@@ -9,6 +9,8 @@ export interface PoolQuery {
   options?: PoolsHookParams
   chainId?: ChainId
   infinity: boolean
+  v2Pools: boolean
+  v3Pools: boolean
 }
 interface PoolsHookParams {
   // Used for caching
@@ -35,12 +37,13 @@ export class PoolHashHelper {
   }
 
   static hashPoolQuery = (query: PoolQuery) => {
-    const { currencyA, currencyB, options, infinity } = query
+    const { currencyA, currencyB, ...rest } = query
     try {
-      const hash = this.hashCurrenciesWithSort(currencyA, currencyB)
-      return keccak256(`0x${hash}-${infinity}-${options?.blockNumber}`)
+      const hash = PoolHashHelper.hashCurrenciesWithSort(currencyA, currencyB)
+      const hashRest = keccak256(`0x${stringify(rest)}`)
+      return keccak256(`${hash}-$${hashRest}`)
     } catch (ex) {
-      console.error(ex, currencyA, currencyB, options)
+      console.error(ex, 'error: with query', query)
       throw ex
     }
   }

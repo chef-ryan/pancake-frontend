@@ -2,6 +2,7 @@ import { SmartRouterTrade } from '@pancakeswap/smart-router'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { getIsWrapping } from 'hooks/useWrapCallback'
 import { atomFamily } from 'jotai/utils'
+import { createQuoteQuery } from '../createQuoteQuery'
 import { getBetterQuoteTrade } from '../getBetterQuote'
 import { QuoteOption, QuoteTrade } from '../quoter.types'
 import { isEqualQuoteQuery } from './PoolHashHelper'
@@ -12,7 +13,7 @@ import { bestTradeFromApi } from './bestTradeFromAPIAtom'
 
 export const bestQuoteAtom = atomFamily((_option: QuoteOption) => {
   return atomWithLoadable(async (get) => {
-    const option: QuoteOption = { enabled: true, type: 'quoter', ..._option }
+    const option: QuoteOption = { enabled: true, type: 'quoter', tradeType: TradeType.EXACT_INPUT, ..._option }
     try {
       const isWrapping = getIsWrapping(option.amount?.currency, option.currency || undefined, option.currency?.chainId)
       if (isWrapping || !option.enabled) {
@@ -25,26 +26,28 @@ export const bestQuoteAtom = atomFamily((_option: QuoteOption) => {
         return undefined
       }
 
+      const querySingleHop = createQuoteQuery({
+        ...option,
+        maxHops: 1,
+        maxSplits: 0,
+        enabled: true,
+        infinitySwap: false,
+      })
+
+      const queryNonInfinity = createQuoteQuery({
+        ...option,
+        infinitySwap: false,
+      })
+
+      const queryWithInfinity = option
+
       const quotes = await Promise.allSettled([
         // single hoop quote for quick solution
-        get(
-          bestAMMTradeFromQuoterWorkerAtom({
-            ...option,
-            maxHops: 1,
-            maxSplits: 0,
-            enabled: true,
-            infinitySwap: false,
-          }),
-        ),
+        get(bestAMMTradeFromQuoterWorkerAtom(querySingleHop)),
         // non-infinity-solution
-        get(
-          bestAMMTradeFromOffchainQuoterAtom({
-            ...option,
-            infinitySwap: false,
-          }),
-        ),
+        get(bestAMMTradeFromOffchainQuoterAtom(queryNonInfinity)),
         // infinity-solution
-        option.infinitySwap ? get(bestAMMTradeFromOffchainQuoterAtom(option)) : undefined,
+        option.infinitySwap ? get(bestAMMTradeFromOffchainQuoterAtom(queryWithInfinity)) : undefined,
 
         get(bestTradeFromApi(option)),
       ])

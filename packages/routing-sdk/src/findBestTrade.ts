@@ -129,6 +129,7 @@ async function getBestTrade({
 
   const gasPrice = BigInt(typeof gasPriceWei === 'function' ? await gasPriceWei() : gasPriceWei)
   const logger = RemoteLogger.getLogger(quoteId)
+  logger.debug(`[gasprice]: ${gasPrice}`)
   logger.debug(`Sub [FindBestTrade]`, 1)
   logger.debug(
     `[params] isExactIn: ${isExactIn}, gasPrice: ${gasPrice}, baseCurrency=${baseCurrency.symbol}, quoteCurrency=${

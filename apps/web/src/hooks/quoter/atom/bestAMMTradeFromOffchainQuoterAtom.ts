@@ -11,9 +11,10 @@ import { commonPoolsAtom } from './poolsAtom'
 import { quoteRevalidateAtom } from './revalidateAtom'
 
 export const bestAMMTradeFromOffchainQuoterAtom = atomFamily((option: QuoteOption) => {
-  const { amount, currency, tradeType, maxSplits } = option
+  const { amount, currency, tradeType, maxSplits, v2Swap, v3Swap, infinitySwap } = option
   return atom(async (get) => {
     get(quoteRevalidateAtom(option))
+
     if (!amount || !amount.currency || !currency) {
       return undefined
     }
@@ -32,11 +33,12 @@ export const bestAMMTradeFromOffchainQuoterAtom = atomFamily((option: QuoteOptio
             currencyB: currency,
             chainId: currency.chainId,
             infinity: option.infinitySwap,
+            v2Pools: Boolean(v2Swap),
+            v3Pools: Boolean(v3Swap),
           }),
         ),
         get(gasPriceWeiAtom(currency?.chainId)),
       ])
-
       const result = await worker.getBestTradeOffchain({
         chainId: currency.chainId,
         currency: SmartRouter.Transformer.serializeCurrency(currency),
