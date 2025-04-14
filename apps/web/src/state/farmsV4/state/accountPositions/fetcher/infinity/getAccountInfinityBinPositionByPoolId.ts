@@ -1,6 +1,5 @@
 import { Protocol } from '@pancakeswap/farms'
-import { BinPoolManagerAbi, BinPositionManagerAbi } from '@pancakeswap/infinity-sdk'
-import { binPoolIdToPoolKey } from 'hooks/infinity/usePoolKeyByPoolId'
+import { binPoolIdToPoolKey, BinPoolManagerAbi, BinPositionManagerAbi } from '@pancakeswap/infinity-sdk'
 import { getInfinityPositionManagerAddress, getPoolManagerAddress } from 'utils/addressHelpers'
 import { publicClient } from 'utils/viem'
 import { encodeAbiParameters, keccak256, maxUint24, parseAbiParameters, type Address, type Hex } from 'viem'
@@ -32,7 +31,10 @@ export const getAccountInfinityBinPositionByPoolId = async ({
       args: [poolId],
     })
 
-    const poolKey = await binPoolIdToPoolKey(poolId, chainId)
+    const poolKey = await binPoolIdToPoolKey({
+      poolId,
+      publicClient: client,
+    })
 
     const activeBinId = slot0[0]
 

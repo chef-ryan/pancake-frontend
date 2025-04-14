@@ -59,7 +59,7 @@ export const RemoveBinPosition = () => {
   const { theme } = useTheme()
   const { protocol, poolId } = useInfinityBinPositionIdRouteParams()
   const [, pool] = usePoolById<'Bin'>(poolId, chainId)
-  const poolIdToPoolKey = usePoolKeyByPoolId(poolId, chainId)
+  const poolIdToPoolKey = usePoolKeyByPoolId(poolId, chainId, 'Bin')
   const poolKey = poolIdToPoolKey?.data as PoolKey<'Bin'> | undefined
   const [collectAsWrappedNative, setCollectAsWrappedNative] = useState(false)
   const { address: account } = useAccount()
