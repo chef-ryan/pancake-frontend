@@ -18,6 +18,12 @@ export const bestQuoteAtom = atomFamily((_option: QuoteOption) => {
       if (isWrapping || !option.enabled) {
         return undefined
       }
+      if (!option.baseCurrency || !option.currency) {
+        return undefined
+      }
+      if (option.baseCurrency?.equals(option.currency)) {
+        return undefined
+      }
 
       const quotes = await Promise.allSettled([
         get(

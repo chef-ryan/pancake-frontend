@@ -39,6 +39,7 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteOption
           currencyA: amount.currency,
           currencyB: currency,
           chainId: currency.chainId,
+          infinity: option.infinitySwap,
         }),
       )
 

@@ -8,6 +8,7 @@ export interface PoolQuery {
   currencyB?: Currency
   options?: PoolsHookParams
   chainId?: ChainId
+  infinity: boolean
 }
 interface PoolsHookParams {
   // Used for caching
@@ -23,9 +24,10 @@ export class PoolHashHelper {
     if (a) {
       list.push(a)
     }
-    if (b) {
+    if (b && !isEqualCurrency(a, b)) {
       list.push(b)
     }
+
     const sorted = sortCurrencies(list)
     const str = sorted.map((currency) => getCurrencyAddress(currency)).join(',')
     const hash = keccak256(`0x${str}`)
@@ -33,9 +35,14 @@ export class PoolHashHelper {
   }
 
   static hashPoolQuery = (query: PoolQuery) => {
-    const { currencyA, currencyB, options } = query
-    const hash = this.hashCurrenciesWithSort(currencyA, currencyB)
-    return keccak256(`0x${hash}-${options?.blockNumber}`)
+    const { currencyA, currencyB, options, infinity } = query
+    try {
+      const hash = this.hashCurrenciesWithSort(currencyA, currencyB)
+      return keccak256(`0x${hash}-${infinity}-${options?.blockNumber}`)
+    } catch (ex) {
+      console.error(ex, currencyA, currencyB, options)
+      throw ex
+    }
   }
 
   static hashQuoteQuery = (query: QuoteOption) => {
