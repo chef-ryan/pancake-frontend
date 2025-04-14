@@ -24,7 +24,7 @@ const OrderTable: React.FC<React.PropsWithChildren<{ orderCategory: ORDER_CATEGO
   )
 })
 
-const LimitOrderTable: React.FC<React.PropsWithChildren<>> = () => {
+const LimitOrderTable: React.FC<React.PropsWithChildren> = () => {
   const { t } = useTranslation()
   const [activeTab] = useState<ORDER_CATEGORY>(ORDER_CATEGORY.Existing)
   const tabMenuItems = useMemo(() => {
