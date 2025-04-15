@@ -77,7 +77,8 @@ const useBestTrade = (fromToken?: string, toToken?: string, value?: string) => {
     infinitySwap: false,
   })
   const tradeResult = useAtomValue(bestQuoteAtom(quoteOption))
-  const { data: trade } = tradeResult
+  const { data } = tradeResult
+  const trade = data?.trade
 
   const inCurrency = useCurrency(fromToken)
   const outCurrency = useCurrency(toToken)
