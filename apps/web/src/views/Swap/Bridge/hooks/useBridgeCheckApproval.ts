@@ -32,7 +32,7 @@ export const useBridgeCheckApproval = () => {
     [account],
   )
 
-  const requiresApproval = Boolean(approvalData?.approval)
+  const requiresApproval = Boolean(approvalData?.approval?.isRequired)
 
   return {
     checkApproval,

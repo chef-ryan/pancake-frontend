@@ -60,11 +60,12 @@ export const getBridgeCalldata = async ({
 
 export type PostBridgeCheckApprovalResponse = {
   approval: {
+    isRequired: boolean
     to: `0x${string}`
     value: `0x${string}`
     from: `0x${string}`
     data: `0x${string}`
-  } | null
+  }
 }
 
 export const postBridgeCheckApproval = async ({
