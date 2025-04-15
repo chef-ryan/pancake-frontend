@@ -55,7 +55,7 @@ export const InfinitySwapForm = memo(() => {
       },
       afterCommit: resumeQuoting,
     }
-  }, [pauseQuoting, resumeQuoting, inputUsdPrice, outputUsdPrice])
+  }, [pauseQuoting, resumeQuoting])
   const {
     [Field.INPUT]: { currencyId: inputCurrencyId },
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
