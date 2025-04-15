@@ -1,4 +1,3 @@
-import { OrderType } from '@pancakeswap/price-api-sdk'
 import { SmartRouter } from '@pancakeswap/smart-router/evm'
 import { FlexGap } from '@pancakeswap/uikit'
 import { SwapUIV2 } from '@pancakeswap/widgets-internal'
@@ -6,16 +5,15 @@ import { useTokenRisk } from 'components/AccessRisk'
 import { RiskDetailsPanel, useShouldRiskPanelDisplay } from 'components/AccessRisk/SwapRevampRiskDisplay'
 
 import { GasTokenSelector } from 'components/Paymaster/GasTokenSelector'
-import { useAllTypeBestTradeSync } from 'hooks/quoter/QuoteProvider'
 import { useCurrency } from 'hooks/Tokens'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
 import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
 import { usePaymaster } from 'hooks/usePaymaster'
+import { useAllTypeBestTrade } from 'quoter/hook/useAllTypeBestTrade'
 import { memo, useMemo } from 'react'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
-import { logger } from 'utils/datadog'
 import { MevSwapDetail } from 'views/Mev/MevSwapDetail'
 import { MevToggle } from 'views/Mev/MevToggle'
 import { SwapType } from '../../Swap/types'
@@ -34,18 +32,8 @@ import { TradeDetails } from './TradeDetails'
 import { TradingFee } from './TradingFee'
 
 export const InfinitySwapForm = memo(() => {
-  const {
-    betterOrder,
-    bestOrder,
-    refreshOrder,
-    tradeError,
-    tradeLoaded,
-    refreshDisabled,
-    pauseQuoting,
-    resumeQuoting,
-    xOrder,
-    ammOrder,
-  } = useAllTypeBestTradeSync()
+  const { bestOrder, refreshOrder, tradeError, tradeLoaded, refreshDisabled, pauseQuoting, resumeQuoting } =
+    useAllTypeBestTrade()
   const isWrapping = useIsWrapping()
   const { chainId: activeChianId } = useActiveChainId()
   const isUserInsufficientBalance = useUserInsufficientBalance(bestOrder)
@@ -64,52 +52,10 @@ export const InfinitySwapForm = memo(() => {
     return {
       beforeCommit: () => {
         pauseQuoting()
-        try {
-          const validTrade = ammOrder?.trade ?? xOrder?.trade
-          if (!validTrade) {
-            throw new Error('No valid trade to log')
-          }
-          const { inputAmount, tradeType, outputAmount } = validTrade
-          const { currency: inputCurrency } = inputAmount
-          const { currency: outputCurrency } = outputAmount
-          const { chainId } = inputCurrency
-          const ammInputAmount = ammOrder?.trade?.inputAmount.toExact()
-          const ammOutputAmount = ammOrder?.trade?.outputAmount.toExact()
-          const xInputAmount = xOrder?.trade?.inputAmount.toExact()
-          const xOutputAmount = xOrder?.trade?.outputAmount.toExact()
-          logger.info('X/AMM Quote Comparison', {
-            chainId,
-            tradeType,
-            inputNative: inputCurrency.isNative,
-            outputNative: outputCurrency.isNative,
-            inputToken: inputCurrency.wrapped.address,
-            outputToken: outputCurrency.wrapped.address,
-            bestOrderType: betterOrder?.type,
-            ammOrder: {
-              type: ammOrder?.type,
-              inputAmount: ammInputAmount,
-              outputAmount: ammOutputAmount,
-              inputUsdValue: inputUsdPrice && ammInputAmount ? Number(ammInputAmount) * inputUsdPrice : undefined,
-              outputUsdValue: outputUsdPrice && ammOutputAmount ? Number(ammOutputAmount) * outputUsdPrice : undefined,
-            },
-            xOrder: xOrder
-              ? {
-                  filler: xOrder.type === OrderType.DUTCH_LIMIT ? xOrder.trade.orderInfo.exclusiveFiller : undefined,
-                  type: xOrder.type,
-                  inputAmount: xInputAmount,
-                  outputAmount: xOutputAmount,
-                  inputUsdValue: inputUsdPrice && xInputAmount ? Number(xInputAmount) * inputUsdPrice : undefined,
-                  outputUsdValue: outputUsdPrice && xOutputAmount ? Number(xOutputAmount) * outputUsdPrice : undefined,
-                }
-              : undefined,
-          })
-        } catch (error) {
-          //
-        }
       },
       afterCommit: resumeQuoting,
     }
-  }, [pauseQuoting, resumeQuoting, xOrder, ammOrder, inputUsdPrice, outputUsdPrice, betterOrder?.type])
+  }, [pauseQuoting, resumeQuoting, inputUsdPrice, outputUsdPrice])
   const {
     [Field.INPUT]: { currencyId: inputCurrencyId },
     [Field.OUTPUT]: { currencyId: outputCurrencyId },

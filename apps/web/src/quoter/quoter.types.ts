@@ -1,0 +1,70 @@
+import type { InfinityRouter, SmartRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
+import type { Currency, CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
+import type { AbortControl } from '@pancakeswap/utils/abortControl'
+import { Address } from 'viem/accounts'
+import { InterfaceOrder } from 'views/Swap/utils'
+
+export type CreateQuoteProviderParams = {
+  gasLimit?: bigint
+} & AbortControl
+
+export type GetBestTradeParams = Parameters<typeof SmartRouter.getBestTrade>
+
+export type InfinityGetBestTradeReturnType = Omit<
+  Exclude<Awaited<ReturnType<typeof InfinityRouter.getBestTrade>>, undefined>,
+  'graph'
+>
+
+export class NoValidRouteError extends Error {
+  constructor(message?: string) {
+    super(message)
+    this.name = 'NoValidRouteError'
+  }
+}
+
+export type UseBetterQuoteOptions = {
+  factorGasCost?: false
+}
+
+export interface Options {
+  amount?: CurrencyAmount<Currency>
+  baseCurrency?: Currency | null
+  currency?: Currency | null
+  tradeType?: TradeType
+  maxHops?: number
+  maxSplits?: number
+  v2Swap?: boolean
+  v3Swap?: boolean
+  infinitySwap: boolean
+  stableSwap?: boolean
+  enabled?: boolean
+  autoRevalidate?: boolean
+  trackPerf?: boolean
+  retry?: number | boolean
+  hash: string
+}
+
+export type QuoteQuery = Options & {
+  type?: 'offchain' | 'quoter' | 'auto' | 'api'
+  speedQuoteEnabled: boolean
+  xEnabled: boolean
+  slippage?: number
+  address?: Address
+}
+
+export type QuoteResult = {
+  trade: SmartRouterTrade<TradeType>
+  isLoading?: boolean
+  error?: any
+}
+
+export interface QuoteResultForUI {
+  bestOrder?: InterfaceOrder
+  tradeLoaded: boolean
+  tradeError: Error | undefined
+  refreshDisabled: boolean
+  refreshOrder: () => void
+  refreshTrade: () => void
+  pauseQuoting: () => void
+  resumeQuoting: () => void
+}

@@ -1,5 +1,5 @@
 import { SwapUIV2 } from '@pancakeswap/widgets-internal'
-import { useAllTypeBestTrade } from 'hooks/quoter/useAllTypeBestTrade'
+import { useAllTypeBestTrade } from 'quoter/hook/useAllTypeBestTrade'
 import { ButtonAndDetailsPanel } from './ButtonAndDetailsPanel'
 import { FormMainForHomePage } from './FormMainV4ForHomePage'
 import { SwapCommitButton } from './SwapCommitButtonForHomepage'
