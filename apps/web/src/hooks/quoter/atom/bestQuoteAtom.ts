@@ -12,11 +12,6 @@ import { bestAMMTradeFromOffchainQuoterAtom } from './bestAMMTradeFromOffchainQu
 import { bestAMMTradeFromQuoterWorkerAtom } from './bestAMMTradeFromQuoterWorkerAtom'
 import { bestTradeFromApi } from './bestTradeFromAPIAtom'
 
-type QuoteResult<T> = {
-  hash: string
-  data: T
-}
-
 const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteOption) => {
   return atomWithLoadable(async (get) => {
     const option: QuoteOption = { enabled: true, type: 'quoter', tradeType: TradeType.EXACT_INPUT, ..._option }
@@ -60,13 +55,11 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteOption) => {
       const best = findBestQuote(...quotes)
       if (!best) {
         // eslint-disable-next-line no-console
-        console.log(`[quote] quote fallback`)
         const fallback = await get(bestAMMTradeFromQuoterWorkerAtom(option))
         return fallback
       }
       const [bestQuote, bestIndex] = best
       // eslint-disable-next-line no-console
-      console.log(`[quote] quote through index=`, bestIndex)
       return bestQuote as SmartRouterTrade<TradeType> | undefined
     } catch (ex) {
       // eslint-disable-next-line no-console
