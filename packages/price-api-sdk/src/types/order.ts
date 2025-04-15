@@ -56,4 +56,4 @@ export type PriceOrder<
   input extends Currency = Currency,
   output extends Currency = Currency,
   tradeType extends TradeType = TradeType,
-> = ClassicOrder<tradeType> | XOrder<input, output, tradeType> | BridgeOrder<tradeType>
+> = ClassicOrder<tradeType> | XOrder<input, output, tradeType> | BridgeOrder

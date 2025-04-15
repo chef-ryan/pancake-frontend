@@ -36,8 +36,16 @@ import { isBridgeOrder, isClassicOrder, isXOrder } from 'views/Swap/utils'
 import { waitForXOrderReceipt } from 'views/Swap/x/api'
 import { useSendXOrder } from 'views/Swap/x/useSendXOrder'
 
+import { useSetAtom } from 'jotai'
+import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { getBridgeCalldata, postBridgeCheckApproval } from 'views/Swap/Bridge/api'
 import { useBridgeCheckApproval } from 'views/Swap/Bridge/hooks'
+import { crossChainOrderDataAtom } from 'views/SwapSimplify/V4Swap/CrossChainConfirmSwapModal/state/orderData'
+import {
+  CrossChainOrderStatus,
+  CrossChainOrderStepStatus,
+  CrossChainOrderStepType,
+} from 'views/SwapSimplify/V4Swap/CrossChainConfirmSwapModal/types'
 import { useSendTransaction } from 'wagmi'
 import { computeTradePriceBreakdown } from '../utils/exchange'
 import { userRejectedError } from './useSendSwapTransaction'
@@ -153,7 +161,9 @@ const useConfirmActions = (
   const [txHash, setTxHash] = useState<Hex | undefined>(undefined)
   const [orderHash, setOrderHash] = useState<Hex | undefined>(undefined)
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
-  const { toastSuccess, toastError } = useToast()
+  const setCrossChainOrderData = useSetAtom(crossChainOrderDataAtom)
+
+  const { toastSuccess, toastError, toastInfo } = useToast()
 
   const resetState = useCallback(() => {
     setConfirmState(ConfirmModalState.REVIEWING)
@@ -460,6 +470,28 @@ const useConfirmActions = (
               setTxHash(hash)
               logGTMSwapTxSentEvent()
 
+              setConfirmState(ConfirmModalState.ORDER_SUBMITTED)
+              setCrossChainOrderData({
+                status: CrossChainOrderStatus.ORDER_SUBMITTED,
+                order,
+                originalOrder: order,
+                // TODO: Add steps according to the proper Bridging route
+                steps: [
+                  {
+                    type: CrossChainOrderStepType.BRIDGE,
+                    status: CrossChainOrderStepStatus.IN_PROGRESS,
+                    inputCurrency: order.trade.inputAmount.currency,
+                    inputChainName: getFullChainNameById(order.trade.inputAmount.currency.chainId),
+                    outputCurrency: order.trade.outputAmount.currency,
+                    outputChainName: getFullChainNameById(order.trade.outputAmount.currency.chainId),
+                    tx: {
+                      hash,
+                      chainId: order.trade.inputAmount.currency.chainId,
+                    },
+                  },
+                ],
+              })
+
               await retryWaitForTransaction({
                 hash,
                 confirmations: order.trade.inputAmount.currency.chainId
@@ -467,7 +499,24 @@ const useConfirmActions = (
                   : undefined,
               })
 
-              setConfirmState(ConfirmModalState.COMPLETED)
+              setCrossChainOrderData((prev) => ({
+                status: CrossChainOrderStatus.ORDER_SUCCESS,
+                order,
+                originalOrder: order,
+                resultInformation: {
+                  amount: order.trade.outputAmount.toExact(),
+                  currency: order.trade.outputAmount.currency,
+                  chainName: getFullChainNameById(order.trade.outputAmount.currency.chainId),
+                },
+                steps: [
+                  {
+                    ...prev?.steps?.[0],
+                    type: CrossChainOrderStepType.BRIDGE,
+                    status: CrossChainOrderStepStatus.SUCCESS,
+                  },
+                ],
+              }))
+
               toastSuccess(
                 t('Success!'),
                 <ToastDescriptionWithTx txHash={hash} txChainId={order.trade.inputAmount.currency.chainId}>
@@ -489,7 +538,17 @@ const useConfirmActions = (
       },
       showIndicator: true,
     }
-  }, [account, order, retryWaitForTransaction, safeTxHashTransformer, sendTransactionAsync, showError, t, toastSuccess])
+  }, [
+    account,
+    order,
+    retryWaitForTransaction,
+    safeTxHashTransformer,
+    sendTransactionAsync,
+    showError,
+    t,
+    toastSuccess,
+    setCrossChainOrderData,
+  ])
 
   const swapStep = useMemo(() => {
     return {
@@ -619,6 +678,37 @@ const useConfirmActions = (
     }
   }, [account, t, order, resetState, sendXOrder, showError, nativeCurrency, toastSuccess, toastError])
 
+  // const crossChainSwapStep = useMemo(() => {
+  //   return {
+  //     step: ConfirmModalState.PENDING_CONFIRMATION,
+  //     showIndicator: false,
+  //     action: async () => {
+  //       console.log('CrossChainSwapStep is being executed!')
+  //       setConfirmState(ConfirmModalState.PENDING_CONFIRMATION)
+
+  //       // TODO: Implement Cross-Chain Swap Step
+  //       await new Promise((resolve) => setTimeout(resolve, 3000))
+  //       setConfirmState(ConfirmModalState.ORDER_SUBMITTED)
+  //     },
+  //   }
+  // }, [])
+
+  const orderSubmittedStep = useMemo(() => {
+    return {
+      step: ConfirmModalState.ORDER_SUBMITTED,
+      showIndicator: false,
+      action: async () => {
+        setConfirmState(ConfirmModalState.ORDER_SUBMITTED)
+        toastInfo(
+          t('Order Submitted'),
+          <ToastDescriptionWithTx txHash="" txChainId={56}>
+            {t('Bridging TOKEN to your address (TARGET_CHAIN)')}
+          </ToastDescriptionWithTx>,
+        )
+      },
+    }
+  }, [t, toastInfo, setConfirmState])
+
   const actions = useMemo(() => {
     return {
       [ConfirmModalState.WRAPPING]: wrapStep,
@@ -630,8 +720,20 @@ const useConfirmActions = (
         : isClassicOrder(order)
         ? swapStep
         : xSwapStep,
+      [ConfirmModalState.ORDER_SUBMITTED]: orderSubmittedStep,
     } as { [k in ConfirmModalState]: ConfirmAction }
-  }, [revokeStep, permitStep, approveStep, order, swapStep, xSwapStep, wrapStep, approvalBridgeStep, swapBridgeStep])
+  }, [
+    revokeStep,
+    permitStep,
+    approveStep,
+    order,
+    swapStep,
+    xSwapStep,
+    wrapStep,
+    swapBridgeStep,
+    orderSubmittedStep,
+    approvalBridgeStep,
+  ])
 
   return {
     txHash,

@@ -1,5 +1,5 @@
 import { ChainId } from '@pancakeswap/chains'
-import { ClassicOrder, OrderType, PriceOrder, XOrder } from '@pancakeswap/price-api-sdk'
+import { BridgeOrder, ClassicOrder, OrderType, PriceOrder, XOrder } from '@pancakeswap/price-api-sdk'
 import { Currency, TradeType } from '@pancakeswap/swap-sdk-core'
 
 export const TWAP_SUPPORTED_CHAINS = [ChainId.BSC, ChainId.ARBITRUM_ONE, ChainId.BASE, ChainId.LINEA]
@@ -14,8 +14,10 @@ export const isXOrder = (order: InterfaceOrder | undefined | null): order is XOr
 export const isClassicOrder = (order: InterfaceOrder | undefined | null): order is ClassicOrder =>
   order?.type === OrderType.PCS_CLASSIC
 
-export const isBridgeOrder = (order: InterfaceOrder | undefined | null): order is ClassicOrder =>
-  order?.type === OrderType.PCS_BRIDGE
+export const isBridgeOrder = (order: InterfaceOrder | undefined | null): order is BridgeOrder =>
+  // TODO: Remove "true" value after testing
+  true
+// order?.type === OrderType.PCS_BRIDGE
 
 export type InterfaceOrder<
   input extends Currency = Currency,

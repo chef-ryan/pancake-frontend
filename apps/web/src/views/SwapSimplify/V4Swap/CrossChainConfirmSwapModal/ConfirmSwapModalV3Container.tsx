@@ -8,6 +8,7 @@ interface ConfirmSwapModalV3ContainerProps extends Partial<ModalProps> {
   bodyTop?: string
   bodyPadding?: string
   handleDismiss: () => void
+  title?: string
 }
 
 const ConfirmSwapModalV3Container: React.FC<React.PropsWithChildren<ConfirmSwapModalV3ContainerProps>> = ({
@@ -18,13 +19,14 @@ const ConfirmSwapModalV3Container: React.FC<React.PropsWithChildren<ConfirmSwapM
   hideTitleAndBackground,
   headerBackground,
   handleDismiss,
+  title,
   ...props
 }) => {
   const { t } = useTranslation()
 
   return (
     <MotionModal
-      title={hideTitleAndBackground ? '' : t('Confirm Swap')}
+      title={hideTitleAndBackground ? '' : title || t('Confirm Swap')}
       headerPadding={hideTitleAndBackground && headerPadding ? headerPadding : '12px 24px'}
       bodyPadding={hideTitleAndBackground && bodyPadding ? bodyPadding : '24px'}
       bodyTop={bodyTop}

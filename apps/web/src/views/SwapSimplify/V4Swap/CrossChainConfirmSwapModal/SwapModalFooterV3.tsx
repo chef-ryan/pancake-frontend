@@ -33,6 +33,7 @@ import { StyledBalanceMaxMini, SwapCallbackError } from 'views/Swap/components/s
 import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
 import { SlippageAdjustedAmounts, formatExecutionPrice } from 'views/Swap/V3Swap/utils/exchange'
 
+import { DISPLAY_PRECISION } from 'config/constants/formatting'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
@@ -106,8 +107,6 @@ export const SwapModalFooterV3 = memo(function SwapModalFooterV3({
   const [gasToken] = useGasToken()
   const { isPaymasterAvailable, isPaymasterTokenActive } = usePaymaster()
   const gasTokenInfo = paymasterInfo[gasToken.isToken ? gasToken?.wrapped.address : '']
-
-  const displayPrecision = 6
 
   const estimatedTimeDisplay = useMemo(() => {
     if (estimatedTime) {
@@ -212,8 +211,8 @@ export const SwapModalFooterV3 = memo(function SwapModalFooterV3({
           <RowFixed>
             <Text fontSize="14px">
               {tradeType === TradeType.EXACT_INPUT
-                ? formatAmount(slippageAdjustedAmounts?.[Field.OUTPUT], displayPrecision) ?? '-'
-                : formatAmount(slippageAdjustedAmounts?.[Field.INPUT], displayPrecision) ?? '-'}
+                ? formatAmount(slippageAdjustedAmounts?.[Field.OUTPUT], DISPLAY_PRECISION) ?? '-'
+                : formatAmount(slippageAdjustedAmounts?.[Field.INPUT], DISPLAY_PRECISION) ?? '-'}
             </Text>
             <Text fontSize="14px" marginLeft="4px">
               {tradeType === TradeType.EXACT_INPUT ? outputAmount.currency.symbol : inputAmount.currency.symbol}
