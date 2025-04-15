@@ -1,20 +1,21 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { FlexGap, Skeleton, Text, TooltipText, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { displayApr } from '@pancakeswap/utils/displayApr'
 import { FarmWidget } from '@pancakeswap/widgets-internal'
 import { forwardRef, MouseEvent, useCallback, useMemo } from 'react'
-import { displayApr } from '@pancakeswap/utils/displayApr'
 
 type ApyButtonProps = {
   showApyButton?: boolean
   loading?: boolean
   onClick?: () => void
+  hasFarm?: boolean
   onAPRTextClick?: () => void
   baseApr?: number
   boostApr?: number
 }
 
 export const AprButton = forwardRef<HTMLElement, ApyButtonProps>(
-  ({ showApyButton = true, loading, onClick, onAPRTextClick, baseApr, boostApr }, ref) => {
+  ({ showApyButton = true, loading, onClick, onAPRTextClick, baseApr, boostApr, hasFarm }, ref) => {
     const handleClick = useCallback(
       (e: MouseEvent) => {
         e.preventDefault()
@@ -33,17 +34,17 @@ export const AprButton = forwardRef<HTMLElement, ApyButtonProps>(
     return (
       <FlexGap alignItems="center">
         {showApyButton && <FarmWidget.FarmApyButton variant="text-and-button" handleClickButton={handleClick} />}
-        <AprButtonText baseApr={baseApr} boostApr={boostApr} ref={ref} onClick={onAPRTextClick} />
+        <AprButtonText hasFarm={hasFarm} baseApr={baseApr} boostApr={boostApr} ref={ref} onClick={onAPRTextClick} />
       </FlexGap>
     )
   },
 )
 
-type AprButtonTextProps = Pick<ApyButtonProps, 'baseApr' | 'boostApr'> & {
+type AprButtonTextProps = Pick<ApyButtonProps, 'baseApr' | 'boostApr' | 'hasFarm'> & {
   onClick?: () => void
 }
 
-const AprButtonText = forwardRef<HTMLElement, AprButtonTextProps>(({ baseApr, boostApr, onClick }, ref) => {
+const AprButtonText = forwardRef<HTMLElement, AprButtonTextProps>(({ baseApr, boostApr, hasFarm, onClick }, ref) => {
   const { t } = useTranslation()
   const isZeroApr = baseApr === 0
   const hasBoost = boostApr && boostApr > 0
@@ -99,9 +100,16 @@ const AprButtonText = forwardRef<HTMLElement, AprButtonTextProps>(({ baseApr, bo
 
   const commonApr = useMemo(
     () => (
-      <TooltipText ml="4px" fontSize="16px" color="text">
-        {baseApr ? displayApr(baseApr) : null}
-      </TooltipText>
+      <FlexGap>
+        {hasFarm ? (
+          <Text fontSize="16px" color="v2Primary50" bold>
+            🌿
+          </Text>
+        ) : null}
+        <TooltipText ml="4px" fontSize="16px" color="text">
+          {baseApr ? displayApr(baseApr) : null}
+        </TooltipText>
+      </FlexGap>
     ),
     [baseApr],
   )

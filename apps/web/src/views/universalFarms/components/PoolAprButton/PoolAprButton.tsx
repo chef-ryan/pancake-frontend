@@ -69,6 +69,7 @@ export const PoolAprButton: React.FC<PoolGlobalAprButtonProps> = ({
   return (
     <StopPropagation>
       <AprButton
+        hasFarm={Number(cakeApr?.value) > 0}
         ref={targetRef}
         baseApr={baseApr}
         boostApr={boostApr}
