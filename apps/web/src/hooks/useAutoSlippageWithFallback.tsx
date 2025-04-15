@@ -2,8 +2,8 @@ import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { useUserSlippage } from '@pancakeswap/utils/user'
 import { atom, useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
+import { useAllTypeBestTrade } from 'quoter/hook/useAllTypeBestTrade'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { useAllTypeBestTradeSync } from './quoter/QuoteProvider'
 import useClassicAutoSlippageTolerance, {
   MIN_DEFAULT_SLIPPAGE_NUMERATOR,
   useInputBasedAutoSlippage,
@@ -78,7 +78,7 @@ export const AutoSlippageProvider = ({ children }: { children?: React.ReactNode 
   )
 }
 export const Sync = () => {
-  const result = useAllTypeBestTradeSync()
+  const result = useAllTypeBestTrade()
   const tradeRef = useRef(result?.bestOrder?.trade)
   const isSameOrder = useMemo(() => {
     if (!tradeRef.current || !result?.bestOrder?.trade) return false
@@ -97,12 +97,12 @@ export const Sync = () => {
     if (autoSlippage) {
       setAutoSlippageValue(Number(autoSlippage.numerator))
     }
-  }, [autoSlippage])
+  }, [autoSlippage, setAutoSlippageValue])
   useEffect(() => {
     if (!isSameOrder) {
       tradeRef.current = result?.bestOrder?.trade
       updateAutoSlippage()
     }
-  }, [isSameOrder, updateAutoSlippage])
+  }, [isSameOrder, updateAutoSlippage, result?.bestOrder?.trade])
   return null
 }

@@ -1,5 +1,6 @@
 import { Box, Flex, useMatchBreakpoints } from '@pancakeswap/uikit'
 
+import { QuoteProvider } from 'quoter/QuoteProvider'
 import { styled } from 'styled-components'
 import { StyledSwapContainer } from '../Swap/styles'
 import { V4SwapFormForHomePage } from './InfinitySwap/V4SwapFormForHomepage'
@@ -27,7 +28,9 @@ export default function SimpleSwapForHomePage() {
       <Flex flexDirection="column" alignItems="center" height="100%" width="100%" position="relative" zIndex={1}>
         <StyledSwapContainer justifyContent="center" width="100%" style={{ height: '100%' }} $isChartExpanded={false}>
           <Wrapper height="100%">
-            <V4SwapFormForHomePage />
+            <QuoteProvider>
+              <V4SwapFormForHomePage />
+            </QuoteProvider>
           </Wrapper>
         </StyledSwapContainer>
       </Flex>
