@@ -76,7 +76,9 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery)
       const parsed = SmartRouter.Transformer.parseTrade(currency.chainId, result as any) as any as
         | InfinityRouter.InfinityTradeWithoutGraph<TradeType>
         | undefined
-      parsed.quoteQueryHash = option.hash
+      if (parsed) {
+        parsed.quoteQueryHash = option.hash
+      }
       return {
         type: OrderType.PCS_CLASSIC,
         trade: parsed,
