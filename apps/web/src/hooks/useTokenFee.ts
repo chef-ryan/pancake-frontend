@@ -2,8 +2,8 @@ import { Currency, ERC20Token, WNATIVE } from '@pancakeswap/sdk'
 import { feeOnTransferDetectorAddresses, fetchTokenFeeOnTransfer } from '@pancakeswap/smart-router'
 import { atom, useAtomValue } from 'jotai'
 import { atomFamily } from 'jotai/utils'
+import { isEqualCurrency } from 'quoter/utils/PoolHashHelper'
 import { getViemClients } from 'utils/viem'
-import { isEqualCurrency } from './quoter/atom/PoolHashHelper'
 
 export function useTokenFee(token?: ERC20Token) {
   return useAtomValue(tokenFeeAtom(token))
