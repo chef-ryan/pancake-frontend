@@ -128,6 +128,7 @@ export const PoolFeaturesBadge = ({
         labelProps={labelProps}
         icon={PoolTypeIcon}
         fold={false}
+        link={hookData?.learnMoreLink}
       />
     ),
     [PoolTypeIcon, labelProps, poolTypeLabel, props, t]
@@ -157,6 +158,7 @@ export const PoolFeaturesBadge = ({
       {!!(showPoolFeature && hookData?.category?.length) && (
         <FeatureItem
           features={hookData.category}
+          link={hookData?.learnMoreLink}
           showPoolFeatureInfo={showPoolFeatureInfo}
           {...props}
           labelText={t("Pool features")}
@@ -175,6 +177,7 @@ type FeatureItemProps = PoolFeaturesBadgeProps & {
   labelText: string;
   fold?: FeatureStackProps["fold"];
   clickable?: boolean;
+  link?: string;
 };
 
 const FeatureItem = ({
@@ -188,6 +191,7 @@ const FeatureItem = ({
   labelTextProps = {},
   showPoolFeatureInfo,
   clickable,
+  link,
   ...props
 }: FeatureItemProps) => {
   const LayoutContainer = layout === "column" ? AutoColumn : AutoRow;
@@ -220,7 +224,7 @@ const FeatureItem = ({
         />
         {clickable && (
           <ModalV2 isOpen={isModalOpen} onDismiss={() => setIsModalOpen(false)} closeOnOverlayClick>
-            <PoolFeatureModal content={featureContent} title={selectFeature} />
+            <PoolFeatureModal content={featureContent} title={selectFeature} link={link} />
           </ModalV2>
         )}
       </FeaturesContainer>

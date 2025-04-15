@@ -1,7 +1,6 @@
 import { HookData } from '@pancakeswap/infinity-sdk'
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, Button, Flex, FlexGap, GithubIcon, ScanLink, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
-import { VerticalDivider } from '@pancakeswap/widgets-internal'
 import styled from 'styled-components'
 import { truncateText } from 'utils'
 
@@ -27,12 +26,12 @@ export const HookCard = ({ onClick, hookData }: HookCardProps) => {
     <StyledHookCard>
       <Flex justifyContent="space-between" flexDirection={['column', 'column', 'row']}>
         <Text bold> {hookData.name} </Text>
-        <FlexGap gap="5px" mt={['10px', '10px', '0']}>
+        <FlexGap gap="5px" mt={['10px', '10px', '0']} flexWrap="wrap">
           <HookTags hook={hookData} />
         </FlexGap>
       </Flex>
 
-      <Flex mt="16px" justifyContent="space-between">
+      <FlexGap mt="16px" justifyContent="space-between" gap="12px">
         <Box maxWidth="70%">
           <Text color="textSubtle" small style={{ lineBreak: 'anywhere' }}>
             {truncateText(hookData.description, isMobile ? 100 : 200)}
@@ -42,7 +41,7 @@ export const HookCard = ({ onClick, hookData }: HookCardProps) => {
         <Box>
           <Button onClick={onClick}> {t('Select')} </Button>
         </Box>
-      </Flex>
+      </FlexGap>
 
       <FlexGap mt="16px" gap="5px" alignItems="center" justifyContent={isMobile ? 'space-between' : 'normal'}>
         <ScanLink href={hookData.github} small icon={<GithubIcon width="16px" />} style={{ cursor: 'pointer' }}>

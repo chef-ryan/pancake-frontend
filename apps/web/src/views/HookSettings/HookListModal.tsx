@@ -18,7 +18,6 @@ import {
 } from '@pancakeswap/uikit'
 import intersection from 'lodash/intersection'
 import { useCallback, useMemo, useState } from 'react'
-import { FixedSizeList } from 'react-window'
 import styled from 'styled-components'
 import { FilterSelect } from './FilterSelect'
 import { HookCard } from './HookCard'
@@ -26,7 +25,7 @@ import { HookCard } from './HookCard'
 // Modal Styles
 const StyledModalContainer = styled(ModalContainer)`
   width: 100%;
-  min-height: calc(var(--vh, 1vh) * 80);
+  // min-height: calc(var(--vh, 1vh) * 80);
   display: flex;
   flex-direction: column;
 
@@ -128,20 +127,11 @@ export const HookListModal = ({
         </StyledFilterContainer>
         <StyledModalBody alignItems="center" justifyContent="center">
           {hookList.length ? (
-            <FixedSizeList
-              height={document.documentElement.clientHeight * 0.6}
-              itemCount={hookList.length}
-              itemSize={isMobile ? 200 : 168}
-              itemData={hookList}
-              itemKey={(index, item) => item[index].address}
-              width="100%"
-            >
-              {({ style, data: d_, index }) => (
-                <Box style={style}>
-                  <HookCard hookData={d_[index]} onClick={() => onItemClick(d_[index])} />
-                </Box>
-              )}
-            </FixedSizeList>
+            <FlexGap flexDirection="column" gap="12px">
+              {hookList.map((hook) => {
+                return <HookCard key={`${hook.address}`} hookData={hook} onClick={() => onItemClick(hook)} />
+              })}
+            </FlexGap>
           ) : (
             <Box minHeight="30vh">
               <Text color="textSubtle" size="sm">

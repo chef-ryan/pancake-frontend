@@ -4,15 +4,18 @@ import { checksumAddress } from 'viem'
 import { HOOK_CATEGORY, POOL_TYPE, type HookData, type PoolType } from '../../types'
 import { CL_DYNAMIC_FEE_HOOKS_BY_CHAIN } from './dynamicFeeHook'
 
-export const CL_DYNAMIC_HOOK = {
+export const CL_DYNAMIC_HOOK: HookData = {
   address: CL_DYNAMIC_FEE_HOOKS_BY_CHAIN[ChainId.BSC],
   name: 'Dynamic Fees (CLAMM)',
   poolType: POOL_TYPE.CLAMM,
-  description: 'It will set lpFee to 0.05% in afterInitialize',
-  github: 'https://github.com/pancakeswap/infinity-dynamic-fee-hook',
+  description:
+    'PancakeSwap’s Dynamic Fee Hook adjusts swap fees based on market volatility—penalizing arbitrageurs and rewarding LPs during turbulence, while keeping fees low in stable conditions for smoother trading.',
+  github: 'https://github.com/pancakeswap/',
+  learnMoreLink: 'https://docs.pancakeswap.finance/trade/pancakeswap-infinity/hooks/dynamic-fee-hook',
   category: [HOOK_CATEGORY.DynamicFees],
-  isVerified: true,
+  isVerified: false,
   isUpgradable: false,
+  creator: 'https://github.com/pancakeswap/',
   hooksRegistration: {
     afterInitialize: true,
     beforeSwap: true,

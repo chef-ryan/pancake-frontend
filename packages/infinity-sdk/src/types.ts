@@ -196,6 +196,7 @@ export interface HookData {
   poolType?: POOL_TYPE
   github?: string
   audit?: string
+  learnMoreLink?: string
   creator?: string
 
   isVerified?: boolean

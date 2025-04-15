@@ -7,6 +7,7 @@ type PoolTypeModalProps = {
   onDismiss?: () => void;
   content: ReactNode;
   title: ReactNode;
+  link?: string;
 };
 
 const ModalTitle: React.FC<{ content: ReactNode }> = ({ content }) => {
@@ -24,7 +25,7 @@ const ModalTitle: React.FC<{ content: ReactNode }> = ({ content }) => {
   );
 };
 
-export const PoolFeatureModal: React.FC<PoolTypeModalProps> = ({ onDismiss, title, content }) => {
+export const PoolFeatureModal: React.FC<PoolTypeModalProps> = ({ onDismiss, title, content, link }) => {
   const { t } = useTranslation();
   return (
     <Modal title={<ModalTitle content={title} />} onDismiss={onDismiss}>
@@ -39,11 +40,13 @@ export const PoolFeatureModal: React.FC<PoolTypeModalProps> = ({ onDismiss, titl
             </Text>
           </AutoColumn>
 
-          <LinkExternal href="TODO" marginTop="auto">
-            <Text fontSize={16} color="primary" bold>
-              {t("View details in Docs")}
-            </Text>
-          </LinkExternal>
+          {link ? (
+            <LinkExternal href={link} marginTop="auto">
+              <Text fontSize={16} color="primary" bold>
+                {t("View details in Docs")}
+              </Text>
+            </LinkExternal>
+          ) : null}
         </AutoColumn>
       </Flex>
     </Modal>
