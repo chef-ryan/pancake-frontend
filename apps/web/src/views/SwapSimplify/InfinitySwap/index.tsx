@@ -8,7 +8,6 @@ import { GasTokenSelector } from 'components/Paymaster/GasTokenSelector'
 import { useCurrency } from 'hooks/Tokens'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
-import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
 import { usePaymaster } from 'hooks/usePaymaster'
 import { useAllTypeBestTrade } from 'quoter/hook/useAllTypeBestTrade'
 import { memo, useMemo } from 'react'
@@ -38,9 +37,6 @@ export const InfinitySwapForm = memo(() => {
   const { chainId: activeChianId } = useActiveChainId()
   const isUserInsufficientBalance = useUserInsufficientBalance(bestOrder)
   const { shouldShowBuyCrypto, buyCryptoLink } = useBuyCryptoInfo(bestOrder)
-
-  const { data: inputUsdPrice } = useCurrencyUsdPrice(bestOrder?.trade?.inputAmount.currency)
-  const { data: outputUsdPrice } = useCurrencyUsdPrice(bestOrder?.trade?.outputAmount.currency)
 
   const executionPrice = useMemo(
     () => (bestOrder?.trade ? SmartRouter.getExecutionPrice(bestOrder.trade) : undefined),
