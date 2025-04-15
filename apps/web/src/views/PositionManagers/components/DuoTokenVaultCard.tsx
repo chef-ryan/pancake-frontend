@@ -50,6 +50,7 @@ interface Props {
   autoCompound?: boolean
   info?: ReactNode
   isSingleDepositToken: boolean
+  depositEnabled: boolean
   allowDepositToken0?: boolean
   allowDepositToken1?: boolean
   contractAddress: Address
@@ -104,6 +105,7 @@ export const DuoTokenVaultCard = memo(function DuoTokenVaultCard({
   strategy,
   ratio,
   isSingleDepositToken,
+  depositEnabled,
   allowDepositToken0 = true,
   allowDepositToken1 = true,
   contractAddress,
@@ -215,6 +217,7 @@ export const DuoTokenVaultCard = memo(function DuoTokenVaultCard({
           feeTier={feeTier}
           ratio={ratio}
           isSingleDepositToken={isSingleDepositToken}
+          depositEnabled={depositEnabled}
           allowDepositToken0={allowDepositToken0}
           allowDepositToken1={allowDepositToken1}
           contractAddress={contractAddress}

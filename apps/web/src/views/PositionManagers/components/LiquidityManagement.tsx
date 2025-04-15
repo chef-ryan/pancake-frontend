@@ -268,7 +268,7 @@ export const LiquidityManagement = memo(function LiquidityManagement({
                   variant="primary"
                   width="100%"
                   onClick={showAddLiquidityModal}
-                  disabled={positionManagerStatus === PositionManagerStatus.FINISHED}
+                  disabled={!depositEnabled || positionManagerStatus === PositionManagerStatus.FINISHED}
                 >
                   {t('Add Liquidity')}
                 </Button>

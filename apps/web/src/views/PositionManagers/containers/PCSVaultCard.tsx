@@ -198,6 +198,7 @@ export const ThirdPartyVaultCard = memo(function PCSVaultCard({
       managerFee={info?.managerFeePercentage}
       ratio={Number.isNaN(tokenRatio) ? 1 / (tokensPriceUSD.token0 / tokensPriceUSD.token1) : tokenRatio ?? 1}
       isSingleDepositToken={isSingleDepositToken}
+      depositEnabled={Boolean(info?.depositEnabled)}
       allowDepositToken0={allowDepositToken0}
       allowDepositToken1={allowDepositToken1}
       contractAddress={address}
