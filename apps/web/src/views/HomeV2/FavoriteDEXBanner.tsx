@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Box, domAnimation, Flex, LazyAnimatePresence, MotionBox, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Box, Flex, MotionBox, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { HomepageChain } from 'pages/api/home/types'
 import React from 'react'
 import styled from 'styled-components'
@@ -81,8 +81,8 @@ export const FavoriteDEXBanner: React.FC<FavoriteDEXBannerProps> = ({ chains }) 
         justifyContent={isMobile || isTablet ? 'center' : 'flex-start'}
         style={{
           position: 'relative',
-          height: isMobile ? '10px' : '56px',
-          overflow: 'hidden',
+          height: '60px',
+          overflow: isMobile ? 'visible' : 'hidden',
         }}
       >
         <Box style={{ position: isMobile ? 'static' : 'absolute', marginTop: '0px' }}>
