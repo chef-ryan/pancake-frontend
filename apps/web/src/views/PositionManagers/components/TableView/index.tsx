@@ -429,6 +429,7 @@ export const TableRow: React.FC<Props> = ({ config, farmsV3, aprDataList, update
               token1PriceUSD={tokensPriceUSD?.token1}
               poolToken0Amount={info?.poolToken0Amounts}
               poolToken1Amount={info?.poolToken1Amounts}
+              depositEnabled={Boolean(info?.depositEnabled)}
               allowDepositToken0={Boolean(allowDepositToken0)}
               allowDepositToken1={Boolean(allowDepositToken1)}
               isSingleDepositToken={isSingleDepositToken}

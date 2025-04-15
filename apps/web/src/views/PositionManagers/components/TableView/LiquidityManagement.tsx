@@ -55,6 +55,7 @@ export const LiquidityManagement = memo(function LiquidityManagement({
   feeTier,
   ratio,
   isSingleDepositToken,
+  depositEnabled,
   allowDepositToken0,
   allowDepositToken1,
   contractAddress,
@@ -147,7 +148,7 @@ export const LiquidityManagement = memo(function LiquidityManagement({
                 isSingleDepositToken0={isSingleDepositToken0}
                 onAdd={showAddLiquidityModal}
                 onRemove={showRemoveLiquidityModal}
-                isDisabled={positionManagerStatus === PositionManagerStatus.FINISHED}
+                isDisabled={!depositEnabled || positionManagerStatus === PositionManagerStatus.FINISHED}
               />
               {!isDesktop && (
                 <AtomBox
@@ -234,7 +235,7 @@ export const LiquidityManagement = memo(function LiquidityManagement({
                   variant="primary"
                   width="100%"
                   onClick={showAddLiquidityModal}
-                  disabled={positionManagerStatus === PositionManagerStatus.FINISHED}
+                  disabled={!depositEnabled || positionManagerStatus === PositionManagerStatus.FINISHED}
                 >
                   {t('Add Liquidity')}
                 </Button>

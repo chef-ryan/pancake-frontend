@@ -19,6 +19,7 @@ export const ActionPanel: React.FC<
   token1PriceUSD,
   poolToken0Amount,
   poolToken1Amount,
+  depositEnabled,
   allowDepositToken0,
   allowDepositToken1,
   isSingleDepositToken,
@@ -122,6 +123,7 @@ export const ActionPanel: React.FC<
             feeTier={feeTier}
             ratio={ratio}
             isSingleDepositToken={isSingleDepositToken}
+            depositEnabled={depositEnabled}
             allowDepositToken0={allowDepositToken0}
             allowDepositToken1={allowDepositToken1}
             contractAddress={contractAddress}

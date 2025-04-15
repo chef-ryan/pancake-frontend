@@ -67,6 +67,7 @@ export interface LiquidityManagementProps {
   feeTier: FeeAmount
   ratio: number
   isSingleDepositToken: boolean
+  depositEnabled: boolean
   allowDepositToken0: boolean
   allowDepositToken1: boolean
   contractAddress: Address
@@ -116,6 +117,7 @@ export const LiquidityManagement = memo(function LiquidityManagement({
   feeTier,
   ratio,
   isSingleDepositToken,
+  depositEnabled,
   allowDepositToken0,
   allowDepositToken1,
   contractAddress,
@@ -204,7 +206,7 @@ export const LiquidityManagement = memo(function LiquidityManagement({
               isSingleDepositToken0={isSingleDepositToken0}
               onAdd={showAddLiquidityModal}
               onRemove={showRemoveLiquidityModal}
-              isDisabled={positionManagerStatus === PositionManagerStatus.FINISHED}
+              isDisabled={!depositEnabled || positionManagerStatus === PositionManagerStatus.FINISHED}
             />
             <AtomBox
               width={{

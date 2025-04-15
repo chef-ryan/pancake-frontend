@@ -2,6 +2,7 @@ import {
   positionManagerAdapterABI,
   positionManagerVeBCakeWrapperABI,
   positionManagerWrapperABI,
+  positionManagerVaultABI,
 } from '@pancakeswap/position-managers'
 import { Percent } from '@pancakeswap/sdk'
 import { useQuery } from '@tanstack/react-query'
@@ -9,12 +10,15 @@ import BigNumber from 'bignumber.js'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import {
   useContract,
+  usePositionManagerAdapterContract,
   usePositionManagerBCakeWrapperContract,
   usePositionManagerWrapperContract,
 } from 'hooks/useContract'
+import { useCallback, useMemo } from 'react'
 import { publicClient } from 'utils/wagmi'
 import { Address, erc20Abi } from 'viem'
 import { useAccount } from 'wagmi'
+import { getContract } from 'utils/contractHelpers'
 
 export async function getAdapterTokensAmounts({ address, chainId }): Promise<{
   token0Amounts: bigint
@@ -114,6 +118,42 @@ export const useAdapterTokensAmounts = (adapterAddress: Address) => {
   return { data, refetch }
 }
 
+export const usePositionManagerDepositEnabled = (adapterAddress: Address | undefined) => {
+  const adapterContract = usePositionManagerAdapterContract(adapterAddress ?? '0x')
+  const { chainId } = useActiveChainId()
+
+  const { data } = useQuery({
+    queryKey: ['positionManagerDeposits', adapterAddress],
+    queryFn: async () => {
+      if (!adapterContract || !adapterAddress) {
+        throw new Error('Adapter contract or address is invalid')
+      }
+      try {
+        const vaultAddress = await adapterContract.read.vault()
+        const vaultContract = getContract({
+          abi: positionManagerVaultABI,
+          address: vaultAddress,
+          chainId,
+        })
+        const [deposit0Max, deposit1Max] = await Promise.all([
+          vaultContract.read.deposit0Max(),
+          vaultContract.read.deposit1Max(),
+        ])
+        return Boolean(deposit0Max !== 0n || deposit1Max !== 0n)
+      } catch (error) {
+        console.warn('Error fetching deposits:', error)
+        return true // Return true to not block deposits in ux
+      }
+    },
+    enabled: Boolean(chainId && adapterAddress && adapterContract),
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+  })
+
+  return { data: Boolean(data) }
+}
+
 export const useUserAmounts = (wrapperAddress: Address, isBCakeWrapper: boolean) => {
   const { address: account } = useAccount()
   const contract = usePositionManagerWrapperContract(wrapperAddress)
@@ -177,50 +217,69 @@ export const usePositionInfo = (wrapperAddress: Address, adapterAddress: Address
     bCakeRefetch: refetchBCakeUserAmounts,
   } = useUserAmounts(wrapperAddress, isBCakeWrapper)
   const { data: poolAmounts, refetch: refetchPoolAmounts } = useAdapterTokensAmounts(adapterAddress)
+  const { data: depositEnabled } = usePositionManagerDepositEnabled(adapterAddress)
   const { data: pendingReward, refetch: refetchPendingReward } = useUserPendingRewardAmounts(wrapperAddress)
   const { data: staticData, bCakeData: bCakeStaticData } = useWrapperStaticData(wrapperAddress, isBCakeWrapper)
   const { data: lpTokenDecimals } = useVaultStaticData(poolAmounts?.vaultAddress)
+  const refetchPositionInfo = useCallback(() => {
+    const refetchUser = isBCakeWrapper ? refetchBCakeUserAmounts : refetchUserAmounts
+    refetchUser()
+    refetchPoolAmounts()
+    refetchPendingReward()
+  }, [refetchPoolAmounts, refetchPendingReward, refetchBCakeUserAmounts, refetchUserAmounts, isBCakeWrapper])
 
   const poolAndUserAmountsReady = (userAmounts || bCakeUserAmounts) && poolAmounts
   const bCakeDataReady = bCakeStaticData && bCakeUserAmounts
   const userLpAmounts = isBCakeWrapper ? bCakeUserAmounts?.[0] ?? BigInt(0) : userAmounts?.[0] ?? BigInt(0)
   const resultStaticData = isBCakeWrapper ? bCakeStaticData : staticData
-  return {
-    pendingReward,
-    poolToken0Amounts: poolAmounts?.token0Amounts ?? BigInt(0),
-    poolToken1Amounts: poolAmounts?.token1Amounts ?? BigInt(0),
-    userToken0Amounts: poolAndUserAmountsReady
-      ? (userLpAmounts * poolAmounts?.token0PerShare) / poolAmounts.precision
-      : BigInt(0),
-    userToken1Amounts: poolAndUserAmountsReady
-      ? (userLpAmounts * poolAmounts?.token1PerShare) / poolAmounts.precision
-      : BigInt(0),
-    userVaultPercentage: poolAndUserAmountsReady
-      ? new Percent(userLpAmounts, poolAmounts.totalSupply)
-      : new Percent(0, 100),
-    refetchPositionInfo: () => {
-      const refetchUser = isBCakeWrapper ? refetchBCakeUserAmounts : refetchUserAmounts
-      refetchUser()
-      refetchPoolAmounts()
-      refetchPendingReward()
-    },
-    startTimestamp: resultStaticData?.startTimestamp ? Number(resultStaticData.startTimestamp) : 0,
-    endTimestamp: resultStaticData?.endTimestamp ? Number(resultStaticData.endTimestamp) : 0,
-    rewardPerSecond: resultStaticData?.rewardPerSecond ?? '',
-    totalSupplyAmounts: poolAmounts?.totalSupply,
-    userLpAmounts,
-    boosterMultiplier:
-      bCakeDataReady && isBCakeWrapper
-        ? Number(new BigNumber(bCakeUserAmounts?.[2].toString()).div(bCakeStaticData.boosterPrecision.toString()))
-        : 0,
-    precision: poolAmounts?.precision,
-    adapterAddress: resultStaticData?.adapterAddress,
-    vaultAddress: poolAmounts?.vaultAddress,
-    managerFeePercentage: poolAmounts?.managerFeePercentage,
-    managerAddress: poolAmounts?.managerAddress,
-    lpTokenDecimals,
-    boosterContractAddress: bCakeStaticData?.boostContractAddress,
-  }
+  return useMemo(
+    () => ({
+      pendingReward,
+      poolToken0Amounts: poolAmounts?.token0Amounts ?? BigInt(0),
+      poolToken1Amounts: poolAmounts?.token1Amounts ?? BigInt(0),
+      userToken0Amounts: poolAndUserAmountsReady
+        ? (userLpAmounts * poolAmounts?.token0PerShare) / poolAmounts.precision
+        : BigInt(0),
+      userToken1Amounts: poolAndUserAmountsReady
+        ? (userLpAmounts * poolAmounts?.token1PerShare) / poolAmounts.precision
+        : BigInt(0),
+      userVaultPercentage: poolAndUserAmountsReady
+        ? new Percent(userLpAmounts, poolAmounts.totalSupply)
+        : new Percent(0, 100),
+      refetchPositionInfo,
+      startTimestamp: resultStaticData?.startTimestamp ? Number(resultStaticData.startTimestamp) : 0,
+      endTimestamp: resultStaticData?.endTimestamp ? Number(resultStaticData.endTimestamp) : 0,
+      rewardPerSecond: resultStaticData?.rewardPerSecond ?? '',
+      totalSupplyAmounts: poolAmounts?.totalSupply,
+      userLpAmounts,
+      boosterMultiplier:
+        bCakeDataReady && isBCakeWrapper
+          ? Number(new BigNumber(bCakeUserAmounts?.[2].toString()).div(bCakeStaticData.boosterPrecision.toString()))
+          : 0,
+      precision: poolAmounts?.precision,
+      adapterAddress: resultStaticData?.adapterAddress,
+      vaultAddress: poolAmounts?.vaultAddress,
+      managerFeePercentage: poolAmounts?.managerFeePercentage,
+      managerAddress: poolAmounts?.managerAddress,
+      lpTokenDecimals,
+      boosterContractAddress: bCakeStaticData?.boostContractAddress,
+      depositEnabled,
+    }),
+    [
+      bCakeDataReady,
+      bCakeStaticData,
+      bCakeUserAmounts,
+      isBCakeWrapper,
+      lpTokenDecimals,
+      pendingReward,
+      poolAmounts,
+      poolAndUserAmountsReady,
+      refetchPositionInfo,
+      resultStaticData,
+      userLpAmounts,
+      depositEnabled,
+    ],
+  )
 }
 
 export const useUserPendingRewardAmounts = (wrapperAddress: Address) => {
