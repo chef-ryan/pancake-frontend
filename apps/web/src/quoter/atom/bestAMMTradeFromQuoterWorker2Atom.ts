@@ -17,12 +17,10 @@ import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { CreateQuoteProviderParams, NoValidRouteError, QuoteQuery } from '../quoter.types'
 import { commonPoolsLiteAtom } from './poolsAtom'
-import { quoteRevalidateAtom } from './revalidateAtom'
 
 export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery) => {
   const { amount, currency, tradeType, maxSplits, v2Swap, v3Swap } = option
   return atom(async (get) => {
-    get(quoteRevalidateAtom(option))
     const gasLimit = await get(multicallGasLimitAtom(currency?.chainId))
     if (!amount || !amount.currency || !currency) {
       return undefined
