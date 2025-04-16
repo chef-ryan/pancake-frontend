@@ -33,13 +33,14 @@ const Title = (props: PropsWithChildren<TextProps>) => (
 
 export const HookName = ({ selectedHook }: HookProps) => {
   const { t } = useTranslation()
+  const link = selectedHook?.learnMoreLink ?? selectedHook?.github
 
   return selectedHook?.name ? (
     <FlexGap flexDirection="column" gap="8px">
       <FlexGap justifyContent="space-between" alignItems="center">
         <Title>{t('Hook Name')}</Title>
-        {selectedHook.github && (
-          <Link href={selectedHook.github} target="_blank">
+        {link && (
+          <Link href={link} target="_blank" rel="noopener noreferrer">
             <IconButton scale="xs" variant="textPrimary60">
               {t('Hook details')}
               <OpenNewIcon ml="4px" color="primary60" width="18px" />
