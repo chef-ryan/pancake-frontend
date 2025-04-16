@@ -1,17 +1,17 @@
 import { getRequestBody, parseQuoteResponse } from '@pancakeswap/price-api-sdk'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { QUOTING_API } from 'config/constants/endpoints'
-import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { QuoteQuery } from 'quoter/quoter.types'
 import { gasPriceWeiAtom } from 'quoter/utils/gasPriceAtom'
 import { getAllowedPoolTypesX } from 'quoter/utils/getAllowedPoolTypes'
 import { basisPointsToPercent } from 'utils/exchange'
 import { InterfaceOrder } from 'views/Swap/utils'
+import { atomWithLoadable } from './atomWithLoadable'
 import { quoteRevalidateAtom } from './revalidateAtom'
 
 export const bestTradeFromApi = atomFamily((option: QuoteQuery) => {
-  return atom(async (get) => {
+  return atomWithLoadable(async (get) => {
     get(quoteRevalidateAtom(option))
 
     const { xEnabled, enabled, slippage, address } = option

@@ -7,24 +7,24 @@ import { isBetterQuoteTrade } from 'quoter/utils/getBetterQuote'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { QuoteQuery } from '../quoter.types'
-import { atomWithLoadable } from './atomWithLoadable'
+import { emptyLoadable, errorLoadable, Loadable, pendingLoadable, valueLoadable } from './atomWithLoadable'
 import { bestAMMTradeFromOffchainQuoterAtom } from './bestAMMTradeFromOffchainQuoterAtom'
 import { bestAMMTradeFromQuoterWorkerAtom } from './bestAMMTradeFromQuoterWorkerAtom'
 import { bestTradeFromApi } from './bestTradeFromAPIAtom'
 
 const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
-  return atomWithLoadable(async (get) => {
+  return atom(async (get) => {
     const option: QuoteQuery = { enabled: true, type: 'quoter', tradeType: TradeType.EXACT_INPUT, ..._option }
     try {
       const isWrapping = getIsWrapping(option.amount?.currency, option.currency || undefined, option.currency?.chainId)
       if (isWrapping || !option.enabled) {
-        return undefined
+        return emptyLoadable<InterfaceOrder | undefined>()
       }
       if (!option.baseCurrency || !option.currency) {
-        return undefined
+        return emptyLoadable<InterfaceOrder | undefined>()
       }
       if (option.baseCurrency?.equals(option.currency)) {
-        return undefined
+        return emptyLoadable<InterfaceOrder | undefined>()
       }
 
       const querySingleHop = createQuoteQuery({
@@ -42,7 +42,7 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
 
       const queryWithInfinity = option
 
-      const quotes = await Promise.allSettled([
+      const quotes = [
         // single hoop quote for quick solution
         get(bestAMMTradeFromQuoterWorkerAtom(querySingleHop)),
         // non-infinity-solution
@@ -51,35 +51,42 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
         option.infinitySwap ? get(bestAMMTradeFromOffchainQuoterAtom(queryWithInfinity)) : undefined,
 
         option.xEnabled ? get(bestTradeFromApi(option)) : undefined,
-      ])
+      ].filter((x) => x) as Loadable<InterfaceOrder>[]
+      const anyLoading = quotes.some((x) => x?.loading)
+
       const best = findBestQuote(...quotes)
       if (!best) {
-        const fallback = await get(bestAMMTradeFromQuoterWorkerAtom(option))
+        if (anyLoading) {
+          return pendingLoadable<InterfaceOrder | undefined>()
+        }
+        const fallback = get(bestAMMTradeFromQuoterWorkerAtom(option))
         return fallback
       }
       const [bestQuote, bestIndex] = best
-      // eslint-disable-next-line no-console
-      console.log(`[quote] through index = ${bestIndex}`, bestQuote)
-      return bestQuote as InterfaceOrder | undefined
+      if (bestQuote) {
+        return valueLoadable(bestQuote as InterfaceOrder | undefined)
+      }
+      if (anyLoading) {
+        return pendingLoadable<InterfaceOrder | undefined>()
+      }
+      return emptyLoadable<InterfaceOrder | undefined>()
     } catch (ex) {
       // eslint-disable-next-line no-console
       console.warn(`[quote]`, ex)
-      throw ex
+      return errorLoadable<InterfaceOrder | undefined>(ex)
     }
   })
 }, isEqualQuoteQuery)
 
 export const bestQuoteAtom = atomFamily((_option: QuoteQuery) => {
   return atom(async (get) => {
-    const result = get(bestQuoteWithoutHashAtom(_option))
+    const result = await get(bestQuoteWithoutHashAtom(_option))
     return { ...result, hash: _option.hash }
   })
 }, isEqualQuoteQuery)
 
-function findBestQuote(
-  ...args: PromiseSettledResult<InterfaceOrder | undefined>[]
-): [InterfaceOrder, number] | undefined {
-  const fulfilledValues = args.filter((x) => x.status === 'fulfilled').map((x) => x.value)
+function findBestQuote(...args: Loadable<InterfaceOrder>[]): [InterfaceOrder, number] | undefined {
+  const fulfilledValues = args.filter((x) => x.data).map((x) => x.data)
 
   let bestOrder: InterfaceOrder | undefined
   let idx = -1

@@ -2,19 +2,19 @@ import { OrderType } from '@pancakeswap/price-api-sdk'
 import { InfinityRouter, SmartRouter } from '@pancakeswap/smart-router'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { globalWorkerAtom } from 'hooks/useWorker'
-import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { gasPriceWeiAtom } from 'quoter/utils/gasPriceAtom'
 import { getVerifiedTrade } from 'quoter/utils/getVerifiedTrade'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { InfinityGetBestTradeReturnType, NoValidRouteError, QuoteQuery } from '../quoter.types'
+import { atomWithLoadable } from './atomWithLoadable'
 import { commonPoolsOnChainAtom } from './poolsAtom'
 import { quoteRevalidateAtom } from './revalidateAtom'
 
 export const bestAMMTradeFromOffchainQuoterAtom = atomFamily((option: QuoteQuery) => {
   const { amount, currency, tradeType, maxSplits, v2Swap, v3Swap, infinitySwap } = option
-  return atom(async (get) => {
+  return atomWithLoadable(async (get) => {
     get(quoteRevalidateAtom(option))
 
     if (!amount || !amount.currency || !currency) {
