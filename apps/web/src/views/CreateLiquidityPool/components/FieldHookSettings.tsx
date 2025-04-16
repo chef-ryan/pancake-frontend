@@ -27,7 +27,7 @@ export const FieldHookSettings: React.FC<FieldHookSettingsProps> = ({ ...boxProp
     [setFeeTierSetting],
   )
 
-  const handleHookEnalbledChange = useCallback(
+  const handleHookEnabledChange = useCallback(
     (enabled: boolean) => {
       if (!enabled && feeTierSetting === 'dynamic') {
         setFeeTierSetting('static')
@@ -39,7 +39,7 @@ export const FieldHookSettings: React.FC<FieldHookSettingsProps> = ({ ...boxProp
   // if dynamic fee, autoselect the dynamicFees hook if there are no any hook selected
   useEffect(() => {
     if (feeTierSetting === 'dynamic') {
-      setHook(dynamicHook)
+      if (!hook) setHook(dynamicHook)
       setHookEnabled(true)
       setHookSelectType('list')
     } else if (feeTierSetting === 'static' && hook === dynamicHook) {
@@ -47,5 +47,5 @@ export const FieldHookSettings: React.FC<FieldHookSettingsProps> = ({ ...boxProp
     }
   }, [dynamicHook, feeTierSetting, hook, setHook, setHookEnabled, setHookSelectType])
 
-  return <HookSettings onHookEnabledChange={handleHookEnalbledChange} onHookChange={handleHookChange} {...boxProps} />
+  return <HookSettings onHookEnabledChange={handleHookEnabledChange} onHookChange={handleHookChange} {...boxProps} />
 }
