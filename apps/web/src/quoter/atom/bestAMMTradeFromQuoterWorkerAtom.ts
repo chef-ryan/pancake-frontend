@@ -4,7 +4,6 @@ import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { currencyUSDPriceAtom } from 'hooks/useCurrencyUsdPrice'
 import { nativeCurrencyAtom } from 'hooks/useNativeCurrency'
 import { globalWorkerAtom } from 'hooks/useWorker'
-import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { multicallGasLimitAtom } from 'quoter/hook/useMulticallGasLimit'
 import { NoValidRouteError, QuoteQuery } from 'quoter/quoter.types'
@@ -14,12 +13,13 @@ import { gasPriceWeiAtom } from 'quoter/utils/gasPriceAtom'
 import { getAllowedPoolTypes } from 'quoter/utils/getAllowedPoolTypes'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { InterfaceOrder } from 'views/Swap/utils'
+import { atomWithLoadable } from './atomWithLoadable'
 import { commonPoolsLiteAtom } from './poolsAtom'
 import { quoteRevalidateAtom } from './revalidateAtom'
 
 export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteQuery) => {
   const { amount, currency, tradeType, maxSplits, v2Swap, v3Swap } = option
-  return atom(async (get) => {
+  return atomWithLoadable(async (get) => {
     get(quoteRevalidateAtom(option))
     const gasLimit = await get(multicallGasLimitAtom(currency?.chainId))
     if (!amount || !amount.currency || !currency) {
