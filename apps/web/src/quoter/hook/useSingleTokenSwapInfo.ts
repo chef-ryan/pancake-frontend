@@ -2,9 +2,9 @@ import { Currency, Price, TradeType } from '@pancakeswap/swap-sdk-core'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useAtomValue } from 'jotai'
+import { bestAMMTradeFromQuoterWorkerAtom } from 'quoter/atom/bestAMMTradeFromQuoterWorkerAtom'
 import { useCurrentBlock } from 'state/block/hooks'
 import { getTokenAddress } from 'views/Swap/components/Chart/utils'
-import { bestQuoteAtom } from '../atom/bestQuoteAtom'
 import { createQuoteQuery } from '../utils/createQuoteQuery'
 
 interface Query {
@@ -37,7 +37,7 @@ export function useSingleTokenSwapInfo(query: Query): { [key: string]: number } 
     blockNumber,
   })
 
-  const quoteResult = useAtomValue(bestQuoteAtom(quoteOption))
+  const quoteResult = useAtomValue(bestAMMTradeFromQuoterWorkerAtom(quoteOption))
   const bestTradeExactIn = quoteResult.data?.trade
   if (!inputCurrency || !outputCurrency || !bestTradeExactIn) {
     return {}

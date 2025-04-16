@@ -31,12 +31,15 @@ export const bestAMMTradeFromOffchainQuoterAtom = atomFamily((option: QuoteQuery
       const [candidatePools, gasPriceWei] = await Promise.all([
         get(
           commonPoolsOnChainAtom({
+            quoteHash: option.hash,
             currencyA: amount.currency,
             currencyB: currency,
             chainId: currency.chainId,
             infinity: infinitySwap,
             v2Pools: Boolean(v2Swap),
             v3Pools: Boolean(v3Swap),
+            signal: option.signal,
+            provider: option.provider,
             options: {
               blockNumber: option.blockNumber,
             },
@@ -56,6 +59,7 @@ export const bestAMMTradeFromOffchainQuoterAtom = atomFamily((option: QuoteQuery
         maxHops: option.maxHops,
         maxSplits,
         candidatePools: candidatePools.map(SmartRouter.Transformer.serializePool),
+        signal: option.signal,
       })
       const trade = InfinityRouter.Transformer.parseTrade(currency.chainId, result) ?? null
       const verifiedTrade = await getVerifiedTrade(trade)
