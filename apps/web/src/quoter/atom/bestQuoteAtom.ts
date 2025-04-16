@@ -50,7 +50,7 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
         // infinity-solution ( via routing sdk )
         option.infinitySwap ? get(bestAMMTradeFromOffchainQuoterAtom(queryWithInfinity)) : undefined,
 
-        get(bestTradeFromApi(option)),
+        option.xEnabled ? get(bestTradeFromApi(option)) : undefined,
       ])
       const best = findBestQuote(...quotes)
       if (!best) {
