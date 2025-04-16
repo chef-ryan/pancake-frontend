@@ -3725,5 +3725,6 @@
   "Please exercise due caution when trading / providing liquidity for the uniBTC token. The protocol recently encountered a security compromise.": "Please exercise due caution when trading / providing liquidity for the uniBTC token. The protocol recently encountered a security compromise.",
   "SS": "SS",
   "These values represent the rewards earned in the last epoch. For the first epoch, the values are estimates.": "These values represent the rewards earned in the last epoch. For the first epoch, the values are estimates.",
-  "Epoch = 8-hour reward cycle": "Epoch = 8-hour reward cycle"
+  "Epoch = 8-hour reward cycle": "Epoch = 8-hour reward cycle",
+  "Only": "Only"
 }

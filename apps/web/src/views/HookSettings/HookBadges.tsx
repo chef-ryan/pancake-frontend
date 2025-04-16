@@ -14,14 +14,19 @@ const Badge = styled(Box)`
 
 interface VerifiedBadgeProps {
   isVerified?: boolean
+  showNonVerified?: boolean
 }
 
-export const VerifiedBadge = ({ isVerified }: VerifiedBadgeProps) => {
+export const VerifiedBadge = ({ isVerified, showNonVerified = false }: VerifiedBadgeProps) => {
   const { t } = useTranslation()
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     isVerified ? t('Contract is verified on block explorer') : t('Contract is not verified on block explorer'),
   )
+
+  if (!isVerified && !showNonVerified) {
+    return null
+  }
 
   return (
     <Badge
