@@ -6,7 +6,7 @@ import SwapLayout from 'views/Swap/SwapLayout'
 
 const StyledSkeleton = styled(Skeleton)`
   background: ${({ theme }) => theme.colors.gradientBubblegum};
-  opacity: 0.01;
+  opacity: 0.1;
 `
 const BgBox = styled(Box)`
   background: ${({ theme }) => theme.colors.gradientBubblegum};
