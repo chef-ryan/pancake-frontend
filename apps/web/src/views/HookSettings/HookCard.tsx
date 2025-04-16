@@ -33,7 +33,7 @@ export const HookCard = ({ onClick, hookData }: HookCardProps) => {
 
       <FlexGap mt="16px" justifyContent="space-between" gap="12px">
         <Box maxWidth="70%">
-          <Text color="textSubtle" small style={{ lineBreak: 'anywhere' }}>
+          <Text color="textSubtle" small style={{ lineBreak: 'auto' }}>
             {truncateText(hookData.description, isMobile ? 100 : 200)}
           </Text>
         </Box>
