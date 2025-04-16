@@ -180,3 +180,21 @@ export const getInfinityClCandidatePoolsWithoutTicks = cacheByLRU(
     key: getCacheKey,
   },
 )
+
+export const getStableSwapPools = cacheByLRU(
+  async (query: PoolQuery) => {
+    const getViemClients = createViemPublicClientGetter()
+    const blockNumber = query?.options?.blockNumber
+    if (!blockNumber) {
+      throw new Error('Failed to get pools on chain. Missing valid params')
+    }
+    const { currencyA, currencyB } = query
+    const resolvedPairs = await SmartRouter.getPairCombinations(currencyA, currencyB)
+    const pools = await SmartRouter.getStablePoolsOnChain(resolvedPairs ?? [], getViemClients, blockNumber)
+    return pools
+  },
+  {
+    ttl: 1000,
+    key: getCacheKey,
+  },
+)

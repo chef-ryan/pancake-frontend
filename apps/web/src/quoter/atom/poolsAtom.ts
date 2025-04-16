@@ -8,6 +8,7 @@ import {
   getInfinityBinCandidatePoolsWithoutBins,
   getInfinityClCandidatePools,
   getInfinityClCandidatePoolsWithoutTicks,
+  getStableSwapPools,
   getV2CandidatePools,
   getV3CandidatePools,
   getV3CandidatePoolsWithoutTicks,
@@ -20,6 +21,7 @@ export const commonPoolsOnChainAtom = atomFamily((query: PoolQuery) => {
     get(poolVersionAtom(query))
     try {
       const poolsArray = await Promise.all([
+        getStableSwapPools(query),
         getV2CandidatePools(query),
         getV3PoolsWithTicksOnChain(query),
         getInfinityClCandidatePools(query),
@@ -38,6 +40,7 @@ export const commonPoolsAtom = atomFamily((query: PoolQuery) => {
     try {
       get(poolVersionAtom(query))
       const poolsArray = await Promise.all([
+        getStableSwapPools(query),
         getV2CandidatePools(query),
         getV3CandidatePools(query),
         getInfinityClCandidatePools(query),
@@ -57,6 +60,7 @@ export const commonPoolsLiteAtom = atomFamily((query: PoolQuery) => {
     try {
       get(poolVersionAtom(query))
       const poolsArray = await Promise.all([
+        getStableSwapPools(query),
         getV2CandidatePools(query),
         getV3CandidatePoolsWithoutTicks(query),
         getInfinityClCandidatePoolsWithoutTicks(query),

@@ -7,6 +7,7 @@ import { useInputBasedAutoSlippageWithFallback } from 'hooks/useAutoSlippageWith
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { baseAllTypeBestTradeAtom, pauseAtom, userTypingAtom } from 'quoter/atom/bestTradeUISyncAtom'
 import { useEffect } from 'react'
+import { useCurrentBlock } from 'state/block/hooks'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { useAccount } from 'wagmi'
@@ -51,6 +52,7 @@ export const useQuoterSync = () => {
   const [paused, pauseQuote] = useAtom(pauseAtom)
 
   const { slippageTolerance: slippage } = useInputBasedAutoSlippageWithFallback(amount)
+  const blockNumber = useCurrentBlock()
 
   const quoteQuery = createQuoteQuery({
     amount,
@@ -67,6 +69,7 @@ export const useQuoterSync = () => {
     xEnabled,
     slippage,
     address,
+    blockNumber,
   })
 
   const revalidateQuote = useSetAtom(quoteRevalidateAtom(quoteQuery))

@@ -2,6 +2,7 @@ import { Currency, Price, TradeType } from '@pancakeswap/swap-sdk-core'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useAtomValue } from 'jotai'
+import { useCurrentBlock } from 'state/block/hooks'
 import { getTokenAddress } from 'views/Swap/components/Chart/utils'
 import { bestQuoteAtom } from '../atom/bestQuoteAtom'
 import { createQuoteQuery } from '../utils/createQuoteQuery'
@@ -19,6 +20,7 @@ export function useSingleTokenSwapInfo(query: Query): { [key: string]: number } 
   const token1Address = getTokenAddress(chainId, outputCurrencyId)
   const amount = tryParseAmount('1', inputCurrency ?? undefined)
 
+  const blockNumber = useCurrentBlock()
   const quoteOption = createQuoteQuery({
     amount,
     baseCurrency: inputCurrency ?? undefined,
@@ -32,6 +34,7 @@ export function useSingleTokenSwapInfo(query: Query): { [key: string]: number } 
     xEnabled: false,
     speedQuoteEnabled: true,
     infinitySwap: false,
+    blockNumber,
   })
 
   const quoteResult = useAtomValue(bestQuoteAtom(quoteOption))
