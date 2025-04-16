@@ -39,7 +39,7 @@ import { useInfinityCLPositionManagerContract } from 'hooks/useContract'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useStablecoinPrice } from 'hooks/useStablecoinPrice'
 import { NextSeo } from 'next-seo'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useExtraInfinityPositionInfo, usePoolInfo } from 'state/farmsV4/hooks'
 import { type InfinityCLPoolInfo } from 'state/farmsV4/state/type'
 import { useSingleCallResult } from 'state/multicall/hooks'
@@ -252,7 +252,7 @@ export const InfinityCLPosition = () => {
     'TransactionConfirmationModalCollectFees',
   )
 
-  const isLoading = loading || !feeAmount
+  const isLoading = loading || !poolKey
 
   const { isMobile } = useMatchBreakpoints()
 
