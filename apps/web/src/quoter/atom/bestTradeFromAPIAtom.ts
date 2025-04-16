@@ -9,12 +9,9 @@ import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { basisPointsToPercent } from 'utils/exchange'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { atomWithLoadable } from './atomWithLoadable'
-import { quoteRevalidateAtom } from './revalidateAtom'
 
 export const bestTradeFromApi = atomFamily((option: QuoteQuery) => {
   return atomWithLoadable(async (get) => {
-    get(quoteRevalidateAtom(option))
-
     const { xEnabled, enabled, slippage, address } = option
     if (!xEnabled || !enabled) {
       return undefined
