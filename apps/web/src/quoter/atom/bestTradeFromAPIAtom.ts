@@ -5,6 +5,7 @@ import { atomFamily } from 'jotai/utils'
 import { QuoteQuery } from 'quoter/quoter.types'
 import { gasPriceWeiAtom } from 'quoter/utils/gasPriceAtom'
 import { getAllowedPoolTypesX } from 'quoter/utils/getAllowedPoolTypes'
+import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { basisPointsToPercent } from 'utils/exchange'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { atomWithLoadable } from './atomWithLoadable'
@@ -59,4 +60,4 @@ export const bestTradeFromApi = atomFamily((option: QuoteQuery) => {
     result.trade.quoteQueryHash = option.hash
     return result as InterfaceOrder
   })
-})
+}, isEqualQuoteQuery)
