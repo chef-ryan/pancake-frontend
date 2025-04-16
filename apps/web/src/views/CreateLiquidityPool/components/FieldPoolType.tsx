@@ -94,7 +94,10 @@ export const FieldPoolType: React.FC<FieldPoolTypeProps> = ({ ...boxProps }) => 
               )}
               <br />
               <br />
-              <LinkExternal href="TODO" fontSize="14px">
+              <LinkExternal
+                href="https://docs.pancakeswap.finance/trade/pancakeswap-infinity/pool-types"
+                fontSize="14px"
+              >
                 {t('Learn More')}
               </LinkExternal>
             </>
