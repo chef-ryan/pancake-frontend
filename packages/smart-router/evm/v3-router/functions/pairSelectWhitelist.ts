@@ -40,15 +40,15 @@ export const getWhiteListPairs = (chainId: ChainId, bases: Token[], a: Currency,
   const A = graph.getOutgoingVertices(a)
   const B = graph.getOutgoingVertices(b)
 
-  if (!A.length || !B.length) {
+  if (!(A.length || B.length)) {
     return []
   }
   const list: [Currency, Currency][] = []
   if (A.length) {
-    list.push(...A.map((x): [Currency, Currency] => [x, b]))
+    list.push(...A.map((x): [Currency, Currency] => [a, x]))
   }
   if (B.length) {
-    list.push(...B.map((x): [Currency, Currency] => [a, x]))
+    list.push(...B.map((x): [Currency, Currency] => [b, x]))
   }
 
   list.push(...[...A, ...B].map((x) => bases.map((base): [Currency, Currency] => [x, base])).flat())
