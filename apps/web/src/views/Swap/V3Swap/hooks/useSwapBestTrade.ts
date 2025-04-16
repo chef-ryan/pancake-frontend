@@ -46,8 +46,12 @@ export function useSwapBestOrder({ maxHops }: Options = {}) {
     return stableSwap && isExactIn
   }, [stableSwap, isExactIn])
 
+  const isBridge = useMemo(() => {
+    return inputCurrency && outputCurrency && inputCurrency?.chainId !== outputCurrency?.chainId
+  }, [inputCurrency, outputCurrency])
+
   const bestTradeOptions = {
-    enabled,
+    enabled: isBridge ? false : enabled,
     amount,
     currency: dependentCurrency,
     baseCurrency: independentCurrency,
@@ -63,10 +67,6 @@ export function useSwapBestOrder({ maxHops }: Options = {}) {
   const { fetchStatus, data: swapData, isStale, error, refetch } = useBestTradeFromApi(bestTradeOptions)
   useBestTradeFromApiShadow(bestTradeOptions, 'quote-api-ori')
   useBestTradeFromApiShadow(bestTradeOptions, 'quote-api-opt')
-
-  const isBridge = useMemo(() => {
-    return inputCurrency && outputCurrency && inputCurrency?.chainId !== outputCurrency?.chainId
-  }, [inputCurrency, outputCurrency])
 
   // if bridge, return bridege trade
 

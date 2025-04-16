@@ -1,7 +1,7 @@
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useMemo, useRef } from 'react'
 import { warningSeverity } from 'utils/exchange'
-import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
+import { InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
 
 import { computeTradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
 
@@ -10,7 +10,11 @@ export const useIsPriceImpactTooHigh = (bestOrder: InterfaceOrder | undefined, i
   const chainIdRef = useRef(chainId)
 
   const { priceImpactWithoutFee } = useMemo(
-    () => computeTradePriceBreakdown(isXOrder(bestOrder) ? bestOrder?.ammTrade : bestOrder?.trade),
+    () =>
+      // TODO: remove when bridge is implemented
+      isBridgeOrder(bestOrder)
+        ? { priceImpactWithoutFee: null }
+        : computeTradePriceBreakdown(isXOrder(bestOrder) ? bestOrder?.ammTrade : bestOrder?.trade),
     [bestOrder],
   )
   const isPriceImpactTooHigh = useMemo(() => {

@@ -145,7 +145,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   const { isRecipientEmpty, isRecipientError } = useIsRecipientError()
 
   const tradePriceBreakdown = useMemo(
-    () => computeTradePriceBreakdown(isXOrder(order) ? undefined : order?.trade),
+    () => computeTradePriceBreakdown(isBridgeOrder(order) || isXOrder(order) ? undefined : order?.trade),
     [order],
   )
 

@@ -3,7 +3,7 @@ import { PriceOrder } from '@pancakeswap/price-api-sdk'
 import { FlexGap, SkeletonV2, Text } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { memo, useMemo } from 'react'
-import { isXOrder } from 'views/Swap/utils'
+import { isBridgeOrder, isXOrder } from 'views/Swap/utils'
 import { useIsWrapping, useSlippageAdjustedAmounts } from '../../Swap/V3Swap/hooks'
 import { computeTradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
 
@@ -16,7 +16,7 @@ export const TradingFee: React.FC<TradingFeeProps> = memo(({ order, loaded }) =>
   const { t } = useTranslation()
   const slippageAdjustedAmounts = useSlippageAdjustedAmounts(order)
   const { lpFeeAmount } = useMemo(
-    () => computeTradePriceBreakdown(isXOrder(order) ? order.ammTrade : order?.trade),
+    () => (isBridgeOrder(order) ? {} : computeTradePriceBreakdown(isXOrder(order) ? order.ammTrade : order?.trade)),
     [order],
   )
   const isWrapping = useIsWrapping()

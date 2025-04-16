@@ -106,15 +106,15 @@ export const XRoutesBreakdown = memo(function XRoutesBreakdown({ wrapperStyle, l
 })
 
 interface RouteProps {
-  route: Pick<Route, 'path'>
+  route: Pick<Route, 'path' | 'type'>
 }
 
 function RouteComp({ route }: RouteProps) {
-  const { path } = route
+  const { path, type } = route
 
   return (
     <RowBetween mt="4px">
-      <SwapRoute path={path} />
+      <SwapRoute path={path} type={type} />
     </RowBetween>
   )
 }

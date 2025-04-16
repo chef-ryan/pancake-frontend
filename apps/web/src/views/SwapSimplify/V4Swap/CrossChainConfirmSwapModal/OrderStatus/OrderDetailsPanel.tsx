@@ -20,7 +20,7 @@ import { useAtom, useAtomValue } from 'jotai'
 import { useCallback, useMemo } from 'react'
 import { Field } from 'state/swap/actions'
 import styled from 'styled-components'
-import { isXOrder } from 'views/Swap/utils'
+import { isBridgeOrder, isXOrder } from 'views/Swap/utils'
 import {
   computeSlippageAdjustedAmounts as computeSlippageAdjustedAmountsWithSmartRouter,
   computeTradePriceBreakdown as computeTradePriceBreakdownWithSmartRouter,
@@ -53,7 +53,7 @@ export const OrderDetailsPanel = ({ ...props }: OrderDetailsPanelProps) => {
   )
 
   const { lpFeeAmount } = useMemo(
-    () => computeTradePriceBreakdownWithSmartRouter(isXOrder(order) ? undefined : order?.trade),
+    () => computeTradePriceBreakdownWithSmartRouter(isBridgeOrder(order) || isXOrder(order) ? undefined : order?.trade),
     [order],
   )
 
