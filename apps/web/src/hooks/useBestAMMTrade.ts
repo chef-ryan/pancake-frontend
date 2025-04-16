@@ -203,11 +203,12 @@ export function useBestAMMTrade({ type = 'quoter', ...params }: useBestAMMTradeO
     { factorGasCost: false },
   )
 
-  const noValidRouteFromOffchainQuoter =
-    Boolean(amount) &&
-    !bestVerifiedTradeFromOffchainQuoter.trade &&
-    !bestVerifiedTradeFromOffchainQuoter.isLoading &&
-    bestVerifiedTradeFromOffchainQuoter.error instanceof NoValidRouteError
+  const noError = Boolean(!bestVerifiedTradeFromOffchainQuoter.error)
+  const validTrade = Boolean(bestVerifiedTradeFromOffchainQuoter.trade)
+  const loading = Boolean(bestVerifiedTradeFromOffchainQuoter.isLoading)
+  const mightExistsTrade = noError && (validTrade || loading)
+
+  const noValidRouteFromOffchainQuoter = Boolean(amount) && !mightExistsTrade
 
   const shouldFallbackQuoterOnChain = !speedQuoteEnabled || noValidRouteFromOffchainQuoter
   const bestTradeFromOnChainQuoter = useBestAMMTradeFromQuoterWorker({
