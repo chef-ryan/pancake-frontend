@@ -1,7 +1,6 @@
 import { useDebounce } from '@orbs-network/twap-ui/dist/hooks'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
-import { POOLS_FAST_REVALIDATE } from 'config/pools'
 import { useCurrency } from 'hooks/Tokens'
 import { useInputBasedAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
@@ -18,7 +17,7 @@ import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { useAccount } from 'wagmi'
 import { bestQuoteAtom } from '../atom/bestQuoteAtom'
-import { poolRevalidateAtom, quoteRevalidateAtom } from '../atom/revalidateAtom'
+import { quoteRevalidateAtom } from '../atom/revalidateAtom'
 import { createQuoteQuery } from '../utils/createQuoteQuery'
 import { useQuoteContext } from './QuoteContext'
 
@@ -89,14 +88,12 @@ export const useQuoterSync = () => {
     for (let i = 0; i < historyHashes.current.length; i++) {
       const hash = historyHashes.current[i]
       abortQuote(hash)
-      console.log(`[abort]`, hash)
     }
     historyHashes.current = [quoteQuery.hash]
     setActiveQuoteHash(quoteQuery.hash)
   }, [quoteQuery.hash])
 
   const revalidateQuote = useSetAtom(quoteRevalidateAtom(quoteQuery))
-  const revalidatePools = useSetAtom(poolRevalidateAtom)
 
   useEffect(() => {
     setTyping(true)
@@ -113,10 +110,6 @@ export const useQuoterSync = () => {
       if (t > 0) {
         if (t % REVALIDATE_TIME === 0) {
           revalidateQuote((v) => v + 1)
-        }
-        const poolRevalidateTime = POOLS_FAST_REVALIDATE[chainId] * 10
-        if (poolRevalidateTime && t % poolRevalidateTime === 0) {
-          revalidatePools(quoteQuery)
         }
       }
       t++
