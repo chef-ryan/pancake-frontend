@@ -13,7 +13,7 @@ import { bestAMMTradeFromQuoterWorkerAtom } from './bestAMMTradeFromQuoterWorker
 import { bestTradeFromApi } from './bestTradeFromAPIAtom'
 
 const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
-  return atom(async (get) => {
+  return atom((get) => {
     const option: QuoteQuery = { enabled: true, type: 'quoter', tradeType: TradeType.EXACT_INPUT, ..._option }
     try {
       const isWrapping = getIsWrapping(option.amount?.currency, option.currency || undefined, option.currency?.chainId)
@@ -79,8 +79,8 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
 }, isEqualQuoteQuery)
 
 export const bestQuoteAtom = atomFamily((_option: QuoteQuery) => {
-  return atom(async (get) => {
-    const result = await get(bestQuoteWithoutHashAtom(_option))
+  return atom((get) => {
+    const result = get(bestQuoteWithoutHashAtom(_option))
     return { ...result, hash: _option.hash }
   })
 }, isEqualQuoteQuery)

@@ -36,6 +36,19 @@ export class PoolHashHelper {
     return hash
   }
 
+  static hashCurrencies(a?: Currency, b?: Currency) {
+    const list: Currency[] = []
+    if (a) {
+      list.push(a)
+    }
+    if (b && !isEqualCurrency(a, b)) {
+      list.push(b)
+    }
+    const str = list.map((currency) => getCurrencyAddress(currency)).join(',')
+    const hash = keccak256(`0x${str}`)
+    return hash
+  }
+
   static hashPoolQuery = (query: PoolQuery) => {
     const { currencyA, currencyB, ...rest } = query
     try {
@@ -52,7 +65,7 @@ export class PoolHashHelper {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { amount, currency, slippage, blockNumber, ...rest } = query
     const restHash = keccak256(`0x${stringify(rest)}`)
-    const hashCurrencies = PoolHashHelper.hashCurrenciesWithSort(amount?.currency, currency || undefined)
+    const hashCurrencies = PoolHashHelper.hashCurrencies(amount?.currency, currency || undefined)
     const prts = [amount?.toExact(), hashCurrencies, restHash]
     return keccak256(`0x${prts.join(':')}`)
   }
