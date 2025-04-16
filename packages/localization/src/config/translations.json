@@ -3172,7 +3172,6 @@
   "The starting price is outside the specified price range": "The starting price is outside the specified price range",
   "Set starting price and price range first": "Set starting price and price range first",
   "Create": "Create",
-  "This pool must be initialized before you can add liquidity. \n                        To initialize, select a starting price for the pool. \n                        Then, enter your liquidity price range and deposit amount. \n                        Gas fees will be higher than usual due to the initialization transaction.": "This pool must be initialized before you can add liquidity. \n                        To initialize, select a starting price for the pool. \n                        Then, enter your liquidity price range and deposit amount. \n                        Gas fees will be higher than usual due to the initialization transaction.",
   "MIN PRICE": "MIN PRICE",
   "MAX PRICE": "MAX PRICE",
   "Amount of liquidity to remove": "Amount of liquidity to remove",
