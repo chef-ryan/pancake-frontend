@@ -1,16 +1,7 @@
 import { useIsMounted, usePreviousValue } from '@pancakeswap/hooks'
 import { getIdFromCurrencyPrice } from '@pancakeswap/infinity-sdk'
 import { useTranslation } from '@pancakeswap/localization'
-import {
-  BalanceInput,
-  Box,
-  BoxProps,
-  FlexGap,
-  PreTitle,
-  QuestionHelper,
-  Text,
-  useMatchBreakpoints,
-} from '@pancakeswap/uikit'
+import { BalanceInput, Box, BoxProps, FlexGap, PreTitle, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { escapeRegExp } from '@pancakeswap/utils/escapeRegExp'
 import BigNumber from 'bignumber.js'
 import { tryParsePrice } from 'hooks/v3/utils'
@@ -137,25 +128,6 @@ export const FieldStartingPrice: React.FC<FieldStartingPriceProps> = ({ ...boxPr
       <ResponsiveTwoColumns mt="0px">
         <FlexGap mt={['16px', '16px', '16px', '16px', '16px', '0']} gap="5px" alignItems="center">
           <PreTitle>{t('Set Starting Price')}</PreTitle>
-          <QuestionHelper
-            color="secondary"
-            placement="auto"
-            text={
-              <>
-                <Text>
-                  {t(
-                    `This pool must be initialized before you can add liquidity. 
-                        To initialize, select a starting price for the pool. 
-                        Then, enter your liquidity price range and deposit amount. 
-                        Gas fees will be higher than usual due to the initialization transaction.`,
-                  )}
-                </Text>
-                <Text mt="16px" bold>
-                  {t('Fee-on transfer tokens and rebasing tokens are NOT compatible.')}
-                </Text>
-              </>
-            }
-          />
         </FlexGap>
         <StartingPriceInput value={startPrice} onUserInput={updatePrice} unit={unit} />
       </ResponsiveTwoColumns>
