@@ -1,7 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { useUserSingleHopOnly } from '@pancakeswap/utils/user'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import { usePCSXEnabledOnChain } from 'hooks/usePCSX'
+import { usePCSX, usePCSXEnabledOnChain } from 'hooks/usePCSX'
 import { useSpeedQuote } from 'hooks/useSpeedQuote'
 import { createContext, useContext } from 'react'
 import {
@@ -46,7 +46,8 @@ export const QuoteContextProvider = ({ children }: { children: React.ReactNode }
   const limit = useMulticallGasLimit()
   const [speedQuoteEnabled] = useSpeedQuote()
 
-  const xEnabled = usePCSXEnabledOnChain(chainId)
+  const [xEnabled] = usePCSX()
+  const xEnabledOnChain = usePCSXEnabledOnChain(chainId)
   const [singleHopOnly] = useUserSingleHopOnly()
   const [split] = useUserSplitRouteEnable()
   const [v2Swap] = useUserV2SwapEnable()
@@ -67,7 +68,7 @@ export const QuoteContextProvider = ({ children }: { children: React.ReactNode }
         maxHops: 3,
         chainId,
         speedQuoteEnabled,
-        xEnabled: Boolean(xEnabled),
+        xEnabled: Boolean(xEnabled && xEnabledOnChain),
       }}
     >
       {children}
