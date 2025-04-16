@@ -25,7 +25,7 @@ import { HookCard } from './HookCard'
 // Modal Styles
 const StyledModalContainer = styled(ModalContainer)`
   width: 100%;
-  // min-height: calc(var(--vh, 1vh) * 80);
+  max-height: 80vh;
   display: flex;
   flex-direction: column;
 
@@ -38,8 +38,9 @@ const StyledModalContainer = styled(ModalContainer)`
 
 const StyledModalBody = styled(ModalBody)`
   padding: 8px;
+  padding-top: 310px;
 
-  ${({ theme }) => theme.mediaQueries.md} {
+  ${({ theme }) => theme.mediaQueries.sm} {
     padding: 24px;
   }
 
