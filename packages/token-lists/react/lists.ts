@@ -3,7 +3,7 @@ import { atomWithStorage, loadable } from 'jotai/utils'
 import { type AsyncStorage } from 'jotai/vanilla/utils/atomWithStorage'
 import localForage from 'localforage'
 import debounce from 'lodash/debounce'
-import { TokenInfo } from '../dist'
+import { TokenInfo } from '../src'
 import { ListsState } from './reducer'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
