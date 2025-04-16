@@ -17,7 +17,7 @@ import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { useAccount } from 'wagmi'
 import { bestQuoteAtom } from '../atom/bestQuoteAtom'
-import { quoteRevalidateAtom } from '../atom/revalidateAtom'
+import { quoteNonceAtom } from '../atom/revalidateAtom'
 import { createQuoteQuery } from '../utils/createQuoteQuery'
 import { useQuoteContext } from './QuoteContext'
 
@@ -61,6 +61,7 @@ export const useQuoterSync = () => {
   const setActiveQuoteHash = useSetAtom(activeQuoteHashAtom)
   const historyHashes = useRef<string[]>([])
   const abortQuote = useSetAtom(abortSignalAtom)
+  const [nonce, setNonce] = useAtom(quoteNonceAtom)
 
   const quoteQuery = createQuoteQuery({
     amount,
@@ -78,6 +79,7 @@ export const useQuoterSync = () => {
     slippage,
     address,
     blockNumber,
+    nonce,
   })
   const abortController = useAtomValue(abortControllerAtom(quoteQuery.hash))
   const viemProvider = useAtomValue(abortableViemProviderAtom(quoteQuery.hash))
@@ -93,8 +95,6 @@ export const useQuoterSync = () => {
     setActiveQuoteHash(quoteQuery.hash)
   }, [quoteQuery.hash])
 
-  const revalidateQuote = useSetAtom(quoteRevalidateAtom(quoteQuery))
-
   useEffect(() => {
     setTyping(true)
   }, [typedValue, setTyping])
@@ -109,7 +109,7 @@ export const useQuoterSync = () => {
       }
       if (t > 0) {
         if (t % REVALIDATE_TIME === 0) {
-          revalidateQuote((v) => v + 1)
+          setNonce((v) => v + 1)
         }
       }
       t++
@@ -128,10 +128,10 @@ export const useQuoterSync = () => {
       tradeError: quoteResult?.error,
       refreshDisabled: false,
       refreshOrder: () => {
-        revalidateQuote((v) => v + 1)
+        setNonce((v) => v + 1)
       },
       refreshTrade: () => {
-        revalidateQuote((v) => v + 1)
+        setNonce((v) => v + 1)
       },
       pauseQuoting: () => {
         pauseQuote(true)
@@ -141,5 +141,5 @@ export const useQuoterSync = () => {
       },
     })
     setTyping(false)
-  }, [quoteResult.data, quoteResult.loading, quoteResult.error, pauseQuote, setTrade, setTyping, revalidateQuote])
+  }, [quoteResult.data, quoteResult.loading, quoteResult.error, pauseQuote, setTrade, setTyping, setNonce])
 }

@@ -75,6 +75,7 @@ export type QuoteQuery = Options & {
   blockNumber: number
   signal?: AbortSignal
   provider?: typeof getViemClients
+  nonce?: number
 }
 
 export type QuoteResult = {

@@ -2,7 +2,8 @@ import { Pool } from '@pancakeswap/smart-router'
 
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import { isEqualPoolQuery, PoolQuery } from 'quoter/utils/PoolHashHelper'
+import { PoolQuery } from 'quoter/quoter.types'
+import { isEqualPoolQuery } from 'quoter/utils/PoolHashHelper'
 import {
   getInfinityBinCandidatePools,
   getInfinityBinCandidatePoolsWithoutBins,
@@ -14,11 +15,9 @@ import {
   getV3CandidatePoolsWithoutTicks,
   getV3PoolsWithTicksOnChain,
 } from '../utils/poolQueries'
-import { poolVersionAtom } from './revalidateAtom'
 
 export const commonPoolsOnChainAtom = atomFamily((query: PoolQuery) => {
   return atom(async (get) => {
-    get(poolVersionAtom(query))
     try {
       const poolsArray = await Promise.all([
         getStableSwapPools(query),
@@ -38,7 +37,6 @@ export const commonPoolsOnChainAtom = atomFamily((query: PoolQuery) => {
 export const commonPoolsAtom = atomFamily((query: PoolQuery) => {
   return atom(async (get) => {
     try {
-      get(poolVersionAtom(query))
       const poolsArray = await Promise.all([
         getStableSwapPools(query),
         getV2CandidatePools(query),
@@ -58,7 +56,6 @@ export const commonPoolsAtom = atomFamily((query: PoolQuery) => {
 export const commonPoolsLiteAtom = atomFamily((query: PoolQuery) => {
   return atom(async (get) => {
     try {
-      get(poolVersionAtom(query))
       const poolsArray = await Promise.all([
         getStableSwapPools(query),
         getV2CandidatePools(query),

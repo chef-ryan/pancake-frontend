@@ -10,13 +10,10 @@ import { InterfaceOrder } from 'views/Swap/utils'
 import { InfinityGetBestTradeReturnType, NoValidRouteError, QuoteQuery } from '../quoter.types'
 import { atomWithLoadable } from './atomWithLoadable'
 import { commonPoolsOnChainAtom } from './poolsAtom'
-import { quoteRevalidateAtom } from './revalidateAtom'
 
 export const bestAMMTradeFromOffchainQuoterAtom = atomFamily((option: QuoteQuery) => {
   const { amount, currency, tradeType, maxSplits, v2Swap, v3Swap, infinitySwap } = option
   return atomWithLoadable(async (get) => {
-    get(quoteRevalidateAtom(option))
-
     if (!amount || !amount.currency || !currency) {
       return undefined
     }
