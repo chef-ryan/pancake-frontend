@@ -1,6 +1,6 @@
 import { ChainId } from '@pancakeswap/chains'
 import { GaugeType, safeGetGaugesByChain } from '@pancakeswap/gauges'
-import { Currency, Token } from '@pancakeswap/sdk'
+import { Currency, getCurrencyAddress, Token } from '@pancakeswap/sdk'
 import { getTokensByChain } from '@pancakeswap/tokens'
 import flatMap from 'lodash/flatMap.js'
 import memoize from 'lodash/memoize.js'
@@ -10,6 +10,7 @@ import type { Address } from 'viem'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from '../../constants'
 import { wrappedCurrency } from '../../utils/currency'
 import { isCurrenciesSameChain, log } from '../utils'
+import { getWhiteListPairs } from './pairSelectWhitelist'
 
 const getToken = memoize(
   (chainId?: ChainId, address?: Address): Token | undefined => {
@@ -173,8 +174,9 @@ export const getPairCombinations = memoize(
     const basePairs: [Currency, Currency][] = flatMap(bases, (base): [Currency, Currency][] =>
       bases.map((otherBase) => [base, otherBase]),
     )
+    const whiteListPairs = getWhiteListPairs(chainId, bases, tokenA, tokenB)
 
-    return [
+    const pairs = [
       // the direct pair
       [tokenA, tokenB],
       // token A against all bases
@@ -183,6 +185,7 @@ export const getPairCombinations = memoize(
       ...bases.map((base): [Currency, Currency] => [tokenB, base]),
       // each base against all bases
       ...basePairs,
+      ...whiteListPairs,
     ]
       .filter((tokens): tokens is [Currency, Currency] => Boolean(tokens[0] && tokens[1]))
       .filter(([t0, t1]) => !t0.equals(t1))
@@ -200,6 +203,21 @@ export const getPairCombinations = memoize(
 
         return true
       })
+    const filtered = filterDupPairs(pairs)
+    return filtered
   },
   resolver,
 )
+
+function filterDupPairs(pairs: [Currency, Currency][]) {
+  const set = new Set<string>()
+  return pairs.filter((pair) => {
+    const [tokenA, tokenB] = pair
+    const key = `${getCurrencyAddress(tokenA)}_${getCurrencyAddress(tokenB)}`
+    if (!set.has(key)) {
+      set.add(key)
+      return true
+    }
+    return false
+  })
+}

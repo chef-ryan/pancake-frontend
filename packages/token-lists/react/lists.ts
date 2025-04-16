@@ -2,6 +2,8 @@ import { atom, useAtom, useAtomValue } from 'jotai'
 import { atomWithStorage, loadable } from 'jotai/utils'
 import { type AsyncStorage } from 'jotai/vanilla/utils/atomWithStorage'
 import localForage from 'localforage'
+import debounce from 'lodash/debounce'
+import { TokenInfo } from '../dist'
 import { ListsState } from './reducer'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -17,6 +19,22 @@ const noopStorage: AsyncStorage<any> = {
 const EMPTY = Symbol()
 
 export const createListsAtom = (storeName: string, reducer: any, initialState: any) => {
+  // A cache for get tokens
+  const map: TokenMap = {}
+
+  const rebuildTokenMap = debounce((state: ListsState) => {
+    Object.keys(map).forEach((chainId) => delete map[Number(chainId)])
+    Object.values(state.byUrl).forEach(({ current }) => {
+      current?.tokens.forEach((token) => {
+        if (!map[token.chainId]) {
+          map[token.chainId] = {}
+        }
+        const chainMap = map[token.chainId]
+        chainMap[token.address.toLowerCase()] = { token }
+      })
+    })
+  }, 300)
+
   /**
    * Persist you redux state using IndexedDB
    * @param {string} dbName - IndexedDB database name
@@ -56,7 +74,10 @@ export const createListsAtom = (storeName: string, reducer: any, initialState: a
       return initialState
     },
     async (get, set, action) => {
-      set(listsStorageAtom, reducer(await get(defaultStateAtom), action))
+      const oldState = get(defaultStateAtom)
+      const newState = reducer(oldState, action)
+      rebuildTokenMap(newState)
+      set(listsStorageAtom, newState)
     },
   )
 
@@ -71,9 +92,26 @@ export const createListsAtom = (storeName: string, reducer: any, initialState: a
     return value.state === 'hasData' && value.data !== EMPTY
   }
 
+  function getToken(chainId: number, tokenAddress: string) {
+    const token = map[chainId]?.[tokenAddress.toLowerCase()]?.token
+    if (token) {
+      return token
+    }
+    return undefined
+  }
+
   return {
     listsAtom: defaultStateAtom,
     useListStateReady,
     useListState,
+    getToken,
+  }
+}
+
+interface TokenMap {
+  [chainId: number]: {
+    [tokenAddress: string]: {
+      token: TokenInfo
+    }
   }
 }
