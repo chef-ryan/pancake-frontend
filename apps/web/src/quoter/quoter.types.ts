@@ -50,6 +50,7 @@ export type QuoteQuery = Options & {
   xEnabled: boolean
   slippage?: number
   address?: Address
+  blockNumber: number
 }
 
 export type QuoteResult = {

@@ -31,6 +31,7 @@ import { useQuoteContext } from 'quoter/hook/QuoteContext'
 import { QuoteProvider } from 'quoter/QuoteProvider'
 import { createQuoteQuery } from 'quoter/utils/createQuoteQuery'
 import { memo, useCallback, useMemo, useRef } from 'react'
+import { useCurrentBlock } from 'state/block/hooks'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
@@ -60,6 +61,7 @@ const useBestTrade = (fromToken?: string, toToken?: string, value?: string) => {
 
   const dependentCurrency = useCurrency(toToken)
   const { singleHopOnly, split, v2Swap, v3Swap, stableSwap } = useQuoteContext()
+  const blockNumber = useCurrentBlock()
   const quoteOption = createQuoteQuery({
     amount,
     currency: dependentCurrency,
@@ -75,6 +77,7 @@ const useBestTrade = (fromToken?: string, toToken?: string, value?: string) => {
     xEnabled: false,
     speedQuoteEnabled: true,
     infinitySwap: false,
+    blockNumber,
   })
   const tradeResult = useAtomValue(bestQuoteAtom(quoteOption))
   const { data } = tradeResult
