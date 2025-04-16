@@ -1,6 +1,8 @@
+import { ChainId } from '@pancakeswap/chains'
 import type { InfinityRouter, SmartRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
 import type { Currency, CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
 import type { AbortControl } from '@pancakeswap/utils/abortControl'
+import type { getViemClients } from 'utils/viem'
 import { Address } from 'viem/accounts'
 import { InterfaceOrder } from 'views/Swap/utils'
 
@@ -44,6 +46,26 @@ export interface Options {
   hash: string
 }
 
+export interface PoolQuery {
+  quoteHash: string
+  currencyA?: Currency
+  currencyB?: Currency
+  options?: PoolsHookParams
+  chainId?: ChainId
+  infinity: boolean
+  v2Pools: boolean
+  v3Pools: boolean
+  signal?: AbortSignal
+  provider?: typeof getViemClients
+}
+interface PoolsHookParams {
+  // Used for caching
+  key?: string
+  blockNumber?: number
+  enabled?: boolean
+  gasLimit?: bigint
+}
+
 export type QuoteQuery = Options & {
   type?: 'offchain' | 'quoter' | 'auto' | 'api'
   speedQuoteEnabled: boolean
@@ -51,6 +73,8 @@ export type QuoteQuery = Options & {
   slippage?: number
   address?: Address
   blockNumber: number
+  signal?: AbortSignal
+  provider?: typeof getViemClients
 }
 
 export type QuoteResult = {

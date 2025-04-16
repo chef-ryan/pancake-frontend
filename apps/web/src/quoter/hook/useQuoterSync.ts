@@ -5,8 +5,14 @@ import { POOLS_FAST_REVALIDATE } from 'config/pools'
 import { useCurrency } from 'hooks/Tokens'
 import { useInputBasedAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import {
+  abortableViemProviderAtom,
+  abortControllerAtom,
+  abortSignalAtom,
+  activeQuoteHashAtom,
+} from 'quoter/atom/abortControlAtoms'
 import { baseAllTypeBestTradeAtom, pauseAtom, userTypingAtom } from 'quoter/atom/bestTradeUISyncAtom'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useCurrentBlock } from 'state/block/hooks'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
@@ -53,6 +59,9 @@ export const useQuoterSync = () => {
 
   const { slippageTolerance: slippage } = useInputBasedAutoSlippageWithFallback(amount)
   const blockNumber = useCurrentBlock()
+  const setActiveQuoteHash = useSetAtom(activeQuoteHashAtom)
+  const historyHashes = useRef<string[]>([])
+  const abortQuote = useSetAtom(abortSignalAtom)
 
   const quoteQuery = createQuoteQuery({
     amount,
@@ -71,6 +80,20 @@ export const useQuoterSync = () => {
     address,
     blockNumber,
   })
+  const abortController = useAtomValue(abortControllerAtom(quoteQuery.hash))
+  const viemProvider = useAtomValue(abortableViemProviderAtom(quoteQuery.hash))
+  quoteQuery.signal = abortController.signal
+  quoteQuery.provider = viemProvider
+
+  useEffect(() => {
+    for (let i = 0; i < historyHashes.current.length; i++) {
+      const hash = historyHashes.current[i]
+      abortQuote(hash)
+      console.log(`[abort]`, hash)
+    }
+    historyHashes.current = [quoteQuery.hash]
+    setActiveQuoteHash(quoteQuery.hash)
+  }, [quoteQuery.hash])
 
   const revalidateQuote = useSetAtom(quoteRevalidateAtom(quoteQuery))
   const revalidatePools = useSetAtom(poolRevalidateAtom)

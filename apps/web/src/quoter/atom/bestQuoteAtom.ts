@@ -7,6 +7,7 @@ import { isBetterQuoteTrade } from 'quoter/utils/getBetterQuote'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { QuoteQuery } from '../quoter.types'
+import { activeQuoteHashAtom } from './abortControlAtoms'
 import { emptyLoadable, errorLoadable, Loadable, pendingLoadable, valueLoadable } from './atomWithLoadable'
 import { bestAMMTradeFromOffchainQuoterAtom } from './bestAMMTradeFromOffchainQuoterAtom'
 import { bestAMMTradeFromQuoterWorkerAtom } from './bestAMMTradeFromQuoterWorkerAtom'
@@ -14,6 +15,10 @@ import { bestTradeFromApi } from './bestTradeFromAPIAtom'
 
 const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
   return atom((get) => {
+    const activeQuoteHash = get(activeQuoteHashAtom)
+    if (!activeQuoteHash) {
+      return pendingLoadable<InterfaceOrder | undefined>()
+    }
     const option: QuoteQuery = { enabled: true, type: 'quoter', tradeType: TradeType.EXACT_INPUT, ..._option }
     try {
       const isWrapping = getIsWrapping(option.amount?.currency, option.currency || undefined, option.currency?.chainId)

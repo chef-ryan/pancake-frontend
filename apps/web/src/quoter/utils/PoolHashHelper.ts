@@ -1,24 +1,6 @@
-import { ChainId } from '@pancakeswap/chains'
 import { Currency, getCurrencyAddress, sortCurrencies } from '@pancakeswap/swap-sdk-core'
 import { keccak256, stringify } from 'viem/utils'
-import { QuoteQuery } from '../quoter.types'
-
-export interface PoolQuery {
-  currencyA?: Currency
-  currencyB?: Currency
-  options?: PoolsHookParams
-  chainId?: ChainId
-  infinity: boolean
-  v2Pools: boolean
-  v3Pools: boolean
-}
-interface PoolsHookParams {
-  // Used for caching
-  key?: string
-  blockNumber?: number
-  enabled?: boolean
-  gasLimit?: bigint
-}
+import { PoolQuery, QuoteQuery } from '../quoter.types'
 
 export class PoolHashHelper {
   static hashCurrenciesWithSort(a?: Currency, b?: Currency) {
@@ -50,7 +32,8 @@ export class PoolHashHelper {
   }
 
   static hashPoolQuery = (query: PoolQuery) => {
-    const { currencyA, currencyB, ...rest } = query
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { currencyA, currencyB, signal, provider, ...rest } = query
     try {
       const hash = PoolHashHelper.hashCurrenciesWithSort(currencyA, currencyB)
       const hashRest = keccak256(`0x${stringify(rest)}`)
@@ -63,7 +46,7 @@ export class PoolHashHelper {
 
   static hashQuoteQuery = (query: QuoteQuery) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { amount, currency, slippage, blockNumber, ...rest } = query
+    const { amount, currency, slippage, blockNumber, provider, signal, ...rest } = query
     const restHash = keccak256(`0x${stringify(rest)}`)
     const hashCurrencies = PoolHashHelper.hashCurrencies(amount?.currency, currency || undefined)
     const prts = [amount?.toExact(), hashCurrencies, restHash]
