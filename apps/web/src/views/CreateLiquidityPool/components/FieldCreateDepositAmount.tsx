@@ -22,7 +22,7 @@ export const FieldCreateDepositAmount: React.FC<FieldDepositAmountProps> = ({ ..
           'This pool must be initialized before you can add liquidity. To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount. Gas fees will be higher than usual due to the initialization transaction.',
         )}
       </Text>
-      <Text>{t('Fee-on transfer tokens and rebasing tokens are NOT compatible')}</Text>
+      <Text>{t('Fee-on transfer tokens and rebasing tokens are NOT compatible.')}</Text>
     </>,
     {
       placement: 'top',
