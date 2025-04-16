@@ -44,7 +44,7 @@ import {
 } from 'state/info/hooks'
 import { styled } from 'styled-components'
 import { getTokenNameAlias, getTokenSymbolAlias } from 'utils/getTokenAlias'
-import { zeroAddress } from 'viem'
+import { isAddress, zeroAddress } from 'viem'
 import { isAddressEqual } from 'viem/utils'
 import { CurrencyLogo } from 'views/Info/components/CurrencyLogo'
 import useCMCLink from 'views/Info/hooks/useCMCLink'
@@ -165,6 +165,8 @@ const TokenInfo: React.FC<{ address: string }> = ({ address }) => {
 
   const tokenSymbol = getTokenSymbolAlias(address, chainId, tokenData?.symbol)
   const tokenName = getTokenNameAlias(address, chainId, tokenData?.name)
+  const swapOutputCurrency =
+    isAddress(address) && isAddressEqual(address, zeroAddress) ? CAKE[multiChainId[chainName]].address : address
   const addLiquidityUrl = useMemo(() => {
     const addr = safeGetAddress(address)
     return getSelectInfinityLiquidityURL({
@@ -264,7 +266,7 @@ const TokenInfo: React.FC<{ address: string }> = ({ address }) => {
                     </NextLinkFromReactRouter>
                   ) : null}
                   <NextLinkFromReactRouter
-                    to={`/swap?outputCurrency=${address}&chain=${CHAIN_QUERY_NAME[multiChainId[chainName]]}`}
+                    to={`/swap?outputCurrency=${swapOutputCurrency}&chain=${CHAIN_QUERY_NAME[multiChainId[chainName]]}`}
                   >
                     <Button>{t('Trade')}</Button>
                   </NextLinkFromReactRouter>
