@@ -11,6 +11,17 @@ import { emptyLoadable, errorLoadable, Loadable, pendingLoadable, valueLoadable 
 import { getRoutingStrategy, StrategyRoute, updateStrategy } from './routingStrategy'
 
 const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
+  const strategyQuery: StrategyQuery = {
+    baseCurrency: _option.baseCurrency || undefined,
+    quoteCurrency: _option.currency || undefined,
+    v2Swap: _option.v2Swap,
+    v3Swap: _option.v3Swap,
+    infinitySwap: _option.infinitySwap,
+    chainId: _option.baseCurrency?.chainId,
+    maxHops: _option.maxHops,
+    maxSplits: _option.maxSplits,
+  }
+  const strategyHash = PoolHashHelper.hashStrategyQuery(strategyQuery)
   return atom((get) => {
     function executeRoutes(routes: StrategyRoute[], option: QuoteQuery) {
       try {
@@ -56,19 +67,6 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
       if (!option.amount?.quotient) {
         return emptyLoadable<InterfaceOrder | undefined>()
       }
-
-      const strategyQuery: StrategyQuery = {
-        baseCurrency: option.baseCurrency,
-        quoteCurrency: option.currency,
-        v2Swap: option.v2Swap,
-        v3Swap: option.v3Swap,
-        infinitySwap: option.infinitySwap,
-        chainId: option.baseCurrency.chainId,
-        maxHops: option.maxHops,
-        maxSplits: option.maxSplits,
-      }
-
-      const strategyHash = PoolHashHelper.hashStrategyQuery(strategyQuery)
 
       const strategy = getRoutingStrategy(strategyHash)
       for (const routes of strategy) {
