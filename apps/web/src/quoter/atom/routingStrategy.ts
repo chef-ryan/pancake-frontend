@@ -6,6 +6,7 @@ import { InterfaceOrder } from 'views/Swap/utils'
 import { Loadable } from './atomWithLoadable'
 import { bestAMMTradeFromOffchainQuoterAtom } from './bestAMMTradeFromOffchainQuoterAtom'
 import { bestAMMTradeFromQuoterWorkerAtom } from './bestAMMTradeFromQuoterWorkerAtom'
+import { bestTradeFromApi } from './bestTradeFromAPIAtom'
 
 type AtomType = AtomFamily<QuoteQuery, Atom<Loadable<InterfaceOrder | undefined>>>
 export interface StrategyRoute {
@@ -45,6 +46,11 @@ const defaultRoutingStrategy: RoutingStrategy = [
         stableSwap: false,
         v3Swap: false,
       },
+    },
+    // #4 x only
+    {
+      query: bestTradeFromApi,
+      overrides: {},
     },
   ],
   [
