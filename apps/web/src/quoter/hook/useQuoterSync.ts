@@ -11,6 +11,8 @@ import {
   activeQuoteHashAtom,
 } from 'quoter/atom/abortControlAtoms'
 import { baseAllTypeBestTradeAtom, pauseAtom, userTypingAtom } from 'quoter/atom/bestTradeUISyncAtom'
+import { updatePlaceholderAtom } from 'quoter/atom/placeholderAtom'
+import { QuoteQuery } from 'quoter/quoter.types'
 import { useEffect, useRef } from 'react'
 import { useCurrentBlock } from 'state/block/hooks'
 import { Field } from 'state/swap/actions'
@@ -63,7 +65,7 @@ export const useQuoterSync = () => {
   const abortQuote = useSetAtom(abortSignalAtom)
   const [nonce, setNonce] = useAtom(quoteNonceAtom)
 
-  const quoteQuery = createQuoteQuery({
+  const quoteQueryInit: QuoteQuery = {
     amount,
     currency: dependentCurrency,
     baseCurrency: independentCurrency,
@@ -80,7 +82,11 @@ export const useQuoterSync = () => {
     address,
     blockNumber,
     nonce,
-  })
+    hash: '',
+  }
+
+  const quoteQuery = createQuoteQuery(quoteQueryInit)
+  const setPlaceholder = useSetAtom(updatePlaceholderAtom)
   const abortController = useAtomValue(abortControllerAtom(quoteQuery.hash))
   const viemProvider = useAtomValue(abortableViemProviderAtom(quoteQuery.hash))
   quoteQuery.signal = abortController.signal
@@ -122,6 +128,10 @@ export const useQuoterSync = () => {
   }, [quoteQuery.hash, paused, quoteResult.loading])
 
   useEffect(() => {
+    if (quoteResult.data?.trade && quoteResult.placeholderHash) {
+      setPlaceholder(quoteResult.placeholderHash, quoteResult.data)
+    }
+
     setTrade({
       bestOrder: quoteResult.data,
       tradeLoaded: !quoteResult?.loading,

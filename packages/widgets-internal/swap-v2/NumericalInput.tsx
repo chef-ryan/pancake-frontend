@@ -36,9 +36,6 @@ export const NumericalInput = memo(function InnerInput({
   ...rest
 }: NumericalInputProps) {
   const enforcer = (nextUserInput: string) => {
-    if (loading) {
-      return;
-    }
     if (nextUserInput === "" || inputRegex.test(escapeRegExp(nextUserInput))) {
       onUserInput(truncateDecimals(nextUserInput));
     }
@@ -59,7 +56,7 @@ export const NumericalInput = memo(function InnerInput({
         })
       )}
       {...rest}
-      value={loading ? "" : truncatedValue}
+      value={truncatedValue}
       onChange={(event) => {
         // replace commas with periods, because we exclusively uses period as the decimal separator
         enforcer(event.target.value.replace(/,/g, "."));
@@ -72,7 +69,7 @@ export const NumericalInput = memo(function InnerInput({
       // text-specific options
       type="text"
       pattern="^[0-9]*[.,]?[0-9]*$"
-      placeholder={loading ? "..." : placeholder || "0.00"}
+      placeholder={placeholder || "0.00"}
       minLength={1}
       maxLength={79}
       spellCheck="false"
