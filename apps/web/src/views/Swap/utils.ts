@@ -15,9 +15,7 @@ export const isClassicOrder = (order: InterfaceOrder | undefined | null): order 
   order?.type === OrderType.PCS_CLASSIC
 
 export const isBridgeOrder = (order: InterfaceOrder | undefined | null): order is BridgeOrder =>
-  // TODO: Remove "true" value after testing
-  true
-// order?.type === OrderType.PCS_BRIDGE
+  order?.type === OrderType.PCS_BRIDGE
 
 export type InterfaceOrder<
   input extends Currency = Currency,

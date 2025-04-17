@@ -11,6 +11,7 @@ export enum RouteType {
   MM,
   V4CL,
   V4BIN,
+  BRIDGE,
 }
 
 export interface BaseRoute {

@@ -43,7 +43,12 @@ export type ClassicOrder<tradeType extends TradeType = TradeType> = {
 export interface BridgeTrade<tradeType extends TradeType = TradeType> {
   inputAmount: CurrencyAmount<Currency>
   outputAmount: CurrencyAmount<Currency>
-  routes: []
+  routes: {
+    path: [Currency, Currency]
+    inputAmount: CurrencyAmount<Currency>
+    outputAmount: CurrencyAmount<Currency>
+    type: 'PCS_BRIDGE'
+  }[]
   tradeType: tradeType
 }
 

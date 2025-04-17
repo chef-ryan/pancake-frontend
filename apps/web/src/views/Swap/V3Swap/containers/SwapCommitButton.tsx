@@ -23,7 +23,7 @@ import { useRoutingSettingChanged } from 'state/user/smartRouter'
 import { useCurrencyBalances } from 'state/wallet/hooks'
 import { logGTMClickSwapConfirmEvent, logGTMClickSwapEvent } from 'utils/customGTMEventTracking'
 import { warningSeverity } from 'utils/exchange'
-import { isClassicOrder, isXOrder } from 'views/Swap/utils'
+import { isBridgeOrder, isClassicOrder, isXOrder } from 'views/Swap/utils'
 import { useAccount, useChainId } from 'wagmi'
 import { useParsedAmounts, useSlippageAdjustedAmounts, useSwapInputError } from '../hooks'
 import { useConfirmModalState } from '../hooks/useConfirmModalState'
@@ -132,7 +132,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   const { isExpertMode } = useSwapConfig()
 
   const tradePriceBreakdown = useMemo(
-    () => computeTradePriceBreakdown(isXOrder(order) ? undefined : order?.trade),
+    () => computeTradePriceBreakdown(isBridgeOrder(order) || isXOrder(order) ? undefined : order?.trade),
     [order],
   )
 

@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency } from '@pancakeswap/sdk'
-import { Route, SmartRouter } from '@pancakeswap/smart-router'
+import { Route, RouteType, SmartRouter } from '@pancakeswap/smart-router'
 import {
   AtomBox,
   AutoColumn,
@@ -16,12 +16,13 @@ import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { memo, useMemo } from 'react'
 
 import { RoutingSettingsButton } from 'components/Menu/GlobalSettings/SettingsModalV2'
+import { SHORT_SYMBOL } from 'components/NetworkSwitcher'
 import { CurrencyLogoWrapper, RouterBox, RouterPoolBox, RouterTypeText } from 'views/Swap/components/RouterViewer'
 import { v3FeeToPercent } from '../utils/exchange'
 
 type Pair = [Currency, Currency]
 
-export type RouteDisplayEssentials = Pick<Route, 'path' | 'pools' | 'inputAmount' | 'outputAmount' | 'percent'>
+export type RouteDisplayEssentials = Pick<Route, 'path' | 'pools' | 'inputAmount' | 'outputAmount' | 'percent' | 'type'>
 
 interface Props extends UseModalV2Props {
   routes: RouteDisplayEssentials[]
@@ -89,6 +90,41 @@ export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayPr
     }
     return currencyPairs
   }, [path])
+
+  if (route.type === RouteType.BRIDGE) {
+    return (
+      <AutoColumn gap="24px">
+        <RouterBox justifyContent="space-between" alignItems="center">
+          <CurrencyLogoWrapper
+            size={{
+              xs: '32px',
+              md: '48px',
+            }}
+            ref={targetRef}
+          >
+            <CurrencyLogo showChainLogo size="44px" currency={inputCurrency} />
+          </CurrencyLogoWrapper>
+          {tooltipVisible && tooltip}
+          <PairNode
+            pair={[inputCurrency, outputCurrency]}
+            text={`${SHORT_SYMBOL[inputCurrency.chainId]} → ${SHORT_SYMBOL[outputCurrency.chainId]}`}
+            className=""
+            tooltipText="hello text"
+          />
+          <CurrencyLogoWrapper
+            size={{
+              xs: '32px',
+              md: '48px',
+            }}
+            ref={outputTargetRef}
+          >
+            <CurrencyLogo showChainLogo size="44px" currency={outputCurrency} />
+          </CurrencyLogoWrapper>
+          {outputTooltipVisible && outputTooltip}
+        </RouterBox>
+      </AutoColumn>
+    )
+  }
 
   const pairNodes =
     pairs.length > 0
