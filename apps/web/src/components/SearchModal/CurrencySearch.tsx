@@ -258,6 +258,7 @@ function CurrencySearch({
         )}
         {showCommonBases && (
           <CommonBases
+            chainId={chainId}
             onSelect={handleCurrencySelect}
             selectedCurrency={selectedCurrency}
             commonBasesType={commonBasesType}
