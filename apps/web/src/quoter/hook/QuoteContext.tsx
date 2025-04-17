@@ -1,4 +1,5 @@
 import { ChainId } from '@pancakeswap/chains'
+import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
 import { useUserSingleHopOnly } from '@pancakeswap/utils/user'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { usePCSX, usePCSXEnabledOnChain } from 'hooks/usePCSX'
@@ -52,6 +53,7 @@ export const QuoteContextProvider = ({ children }: { children: React.ReactNode }
   const [split] = useUserSplitRouteEnable()
   const [v2Swap] = useUserV2SwapEnable()
   const [v3Swap] = useUserV3SwapEnable()
+  const infinitySupportByChain = INFINITY_SUPPORTED_CHAINS.includes(chainId)
   const [infinitySwap] = useUserInfinitySwapEnable()
   const [stableSwap] = useUserStableSwapEnable()
 
@@ -63,7 +65,7 @@ export const QuoteContextProvider = ({ children }: { children: React.ReactNode }
         split,
         v2Swap,
         v3Swap,
-        infinitySwap,
+        infinitySwap: infinitySwap && infinitySupportByChain,
         stableSwap,
         maxHops: 3,
         chainId,

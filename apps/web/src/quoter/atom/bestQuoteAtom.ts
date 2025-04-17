@@ -8,6 +8,7 @@ import { InterfaceOrder } from 'views/Swap/utils'
 import { NoValidRouteError, QuoteQuery, StrategyQuery } from '../quoter.types'
 import { activeQuoteHashAtom } from './abortControlAtoms'
 import { emptyLoadable, errorLoadable, Loadable, pendingLoadable, valueLoadable } from './atomWithLoadable'
+import { placeholderAtom } from './placeholderAtom'
 import { getRoutingStrategy, StrategyRoute, updateStrategy } from './routingStrategy'
 
 const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
@@ -88,7 +89,11 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
 export const bestQuoteAtom = atomFamily((_option: QuoteQuery) => {
   return atom((get) => {
     const result = get(bestQuoteWithoutHashAtom(_option))
-    return { ...result, hash: _option.hash }
+    if (!result.data?.trade && _option.placeholderHash) {
+      const placeHolder = get(placeholderAtom(_option.placeholderHash))
+      return { ...result, data: placeHolder, hash: _option.hash, placeholderHash: _option.placeholderHash }
+    }
+    return { ...result, hash: _option.hash, placeholderHash: _option.placeholderHash }
   })
 }, isEqualQuoteQuery)
 

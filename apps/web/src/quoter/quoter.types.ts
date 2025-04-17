@@ -76,6 +76,7 @@ export type QuoteQuery = Options & {
   signal?: AbortSignal
   provider?: typeof getViemClients
   nonce?: number
+  placeholderHash?: string
 }
 
 export interface StrategyQuery {

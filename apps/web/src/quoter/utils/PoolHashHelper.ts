@@ -46,7 +46,7 @@ export class PoolHashHelper {
 
   static hashQuoteQuery = (query: QuoteQuery) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { amount, currency, slippage, blockNumber, provider, signal, ...rest } = query
+    const { amount, currency, slippage, blockNumber, provider, signal, hash, placeholderHash, ...rest } = query
     const restHash = keccak256(`0x${stringify(rest)}`)
     const hashCurrencies = PoolHashHelper.hashCurrencies(amount?.currency, currency || undefined)
     const prts = [amount?.toExact(), hashCurrencies, restHash]
