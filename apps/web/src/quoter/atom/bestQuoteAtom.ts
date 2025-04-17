@@ -39,8 +39,9 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
         if (bestQuote) {
           if (!anyLoading) {
             updateStrategy(strategyHash, routes[bestIndex])
+            return valueLoadable(bestQuote)
           }
-          return valueLoadable(bestQuote as InterfaceOrder | undefined)
+          return pendingLoadable<InterfaceOrder | undefined>(bestQuote)
         }
         return emptyLoadable<InterfaceOrder | undefined>()
       } catch (ex) {
