@@ -1,6 +1,6 @@
 import { Currency, getCurrencyAddress, sortCurrencies } from '@pancakeswap/swap-sdk-core'
 import { keccak256, stringify } from 'viem/utils'
-import { PoolQuery, QuoteQuery } from '../quoter.types'
+import { PoolQuery, QuoteQuery, StrategyQuery } from '../quoter.types'
 
 export class PoolHashHelper {
   static hashCurrenciesWithSort(a?: Currency, b?: Currency) {
@@ -51,6 +51,14 @@ export class PoolHashHelper {
     const hashCurrencies = PoolHashHelper.hashCurrencies(amount?.currency, currency || undefined)
     const prts = [amount?.toExact(), hashCurrencies, restHash]
     return keccak256(`0x${prts.join(':')}`)
+  }
+
+  static hashStrategyQuery = (query: StrategyQuery) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { baseCurrency, quoteCurrency, ...rest } = query
+    const hashCurrencies = PoolHashHelper.hashCurrencies(baseCurrency, quoteCurrency)
+    const restHash = keccak256(`0x${stringify(rest)}`)
+    return keccak256(`${hashCurrencies}-$${restHash}`)
   }
 }
 

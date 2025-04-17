@@ -2,19 +2,41 @@ import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { getIsWrapping } from 'hooks/useWrapCallback'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import { createQuoteQuery } from 'quoter/utils/createQuoteQuery'
 import { isBetterQuoteTrade } from 'quoter/utils/getBetterQuote'
-import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
+import { isEqualQuoteQuery, PoolHashHelper } from 'quoter/utils/PoolHashHelper'
 import { InterfaceOrder } from 'views/Swap/utils'
-import { QuoteQuery } from '../quoter.types'
+import { QuoteQuery, StrategyQuery } from '../quoter.types'
 import { activeQuoteHashAtom } from './abortControlAtoms'
 import { emptyLoadable, errorLoadable, Loadable, pendingLoadable, valueLoadable } from './atomWithLoadable'
-import { bestAMMTradeFromOffchainQuoterAtom } from './bestAMMTradeFromOffchainQuoterAtom'
-import { bestAMMTradeFromQuoterWorkerAtom } from './bestAMMTradeFromQuoterWorkerAtom'
-import { bestTradeFromApi } from './bestTradeFromAPIAtom'
+import { getRoutingStrategy, StrategyRoute, updateStrategy } from './routingStrategy'
 
 const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
   return atom((get) => {
+    function executeRoutes(routes: StrategyRoute[], option: QuoteQuery) {
+      try {
+        const quotes = routes.map((route) => get(route.query({ ...option, ...route.overrides })))
+        const anyLoading = quotes.some((x) => x?.loading)
+        const best = findBestQuote(...quotes)
+        if (!best) {
+          if (anyLoading) {
+            return pendingLoadable<InterfaceOrder | undefined>()
+          }
+          return undefined
+        }
+        const [bestQuote, bestIndex] = best
+        if (bestQuote) {
+          if (!anyLoading) {
+            updateStrategy(strategyHash, routes[bestIndex])
+          }
+          return valueLoadable(bestQuote as InterfaceOrder | undefined)
+        }
+        return emptyLoadable<InterfaceOrder | undefined>()
+      } catch (ex) {
+        console.warn(`[quote]`, ex)
+        return emptyLoadable<InterfaceOrder | undefined>()
+      }
+    }
+
     const activeQuoteHash = get(activeQuoteHashAtom)
     if (!activeQuoteHash) {
       return pendingLoadable<InterfaceOrder | undefined>()
@@ -35,58 +57,27 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
         return emptyLoadable<InterfaceOrder | undefined>()
       }
 
-      // #1 single hop
-      const querySingleHop = createQuoteQuery({
-        ...option,
-        maxHops: 1,
-        maxSplits: 0,
-        enabled: true,
-      })
+      const strategyQuery: StrategyQuery = {
+        baseCurrency: option.baseCurrency,
+        quoteCurrency: option.currency,
+        v2Swap: option.v2Swap,
+        v3Swap: option.v3Swap,
+        infinitySwap: option.infinitySwap,
+        chainId: option.baseCurrency.chainId,
+        maxHops: option.maxHops,
+        maxSplits: option.maxSplits,
+      }
 
-      // #2 v2,v3,ss
-      const queryNonInfinity = createQuoteQuery({
-        ...option,
-        infinitySwap: false,
-      })
+      const strategyHash = PoolHashHelper.hashStrategyQuery(strategyQuery)
 
-      // #3 infinity only
-      const queryInfinityOnly = createQuoteQuery({
-        ...option,
-        v2Swap: false,
-        stableSwap: false,
-        v3Swap: false,
-      })
-
-      // const fullQueryWithInfinity = option
-
-      const quotes = [
-        // single hoop quote for quick solution
-        get(bestAMMTradeFromQuoterWorkerAtom(querySingleHop)),
-        // non-infinity-solution
-        get(bestAMMTradeFromOffchainQuoterAtom(queryNonInfinity)),
-        // infinity-only-solution ( via routing sdk )
-        get(bestAMMTradeFromOffchainQuoterAtom(queryInfinityOnly)),
-
-        option.xEnabled ? get(bestTradeFromApi(option)) : undefined,
-      ].filter((x) => x) as Loadable<InterfaceOrder>[]
-      const anyLoading = quotes.some((x) => x?.loading)
-
-      const best = findBestQuote(...quotes)
-      if (!best) {
-        if (anyLoading) {
-          return pendingLoadable<InterfaceOrder | undefined>()
+      const strategy = getRoutingStrategy(strategyHash)
+      for (const routes of strategy) {
+        const quote = executeRoutes(routes, option)
+        if (quote) {
+          return quote
         }
-        console.log(`[quote] using fallback`, anyLoading)
-        const fallback = get(bestAMMTradeFromQuoterWorkerAtom(option))
-        return fallback
       }
-      const [bestQuote, bestIndex] = best
-      if (bestQuote) {
-        return valueLoadable(bestQuote as InterfaceOrder | undefined)
-      }
-      if (anyLoading) {
-        return pendingLoadable<InterfaceOrder | undefined>()
-      }
+
       return emptyLoadable<InterfaceOrder | undefined>()
     } catch (ex) {
       // eslint-disable-next-line no-console
@@ -103,7 +94,7 @@ export const bestQuoteAtom = atomFamily((_option: QuoteQuery) => {
   })
 }, isEqualQuoteQuery)
 
-function findBestQuote(...args: Loadable<InterfaceOrder>[]): [InterfaceOrder, number] | undefined {
+function findBestQuote(...args: Loadable<InterfaceOrder | undefined>[]): [InterfaceOrder, number] | undefined {
   const fulfilledValues = args.filter((x) => x.data).map((x) => x.data)
 
   let bestOrder: InterfaceOrder | undefined

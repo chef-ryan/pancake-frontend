@@ -78,6 +78,17 @@ export type QuoteQuery = Options & {
   nonce?: number
 }
 
+export interface StrategyQuery {
+  baseCurrency?: Currency
+  quoteCurrency?: Currency
+  chainId?: ChainId
+  v2Swap?: boolean
+  v3Swap?: boolean
+  infinitySwap: boolean
+  maxHops?: number
+  maxSplits?: number
+}
+
 export type QuoteResult = {
   trade: SmartRouterTrade<TradeType>
   isLoading?: boolean
