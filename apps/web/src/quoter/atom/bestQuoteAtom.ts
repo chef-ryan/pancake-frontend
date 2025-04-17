@@ -31,29 +31,41 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
       if (option.baseCurrency?.equals(option.currency)) {
         return emptyLoadable<InterfaceOrder | undefined>()
       }
+      if (!option.amount?.quotient) {
+        return emptyLoadable<InterfaceOrder | undefined>()
+      }
 
+      // #1 single hop
       const querySingleHop = createQuoteQuery({
         ...option,
         maxHops: 1,
         maxSplits: 0,
         enabled: true,
-        infinitySwap: false,
       })
 
+      // #2 v2,v3,ss
       const queryNonInfinity = createQuoteQuery({
         ...option,
         infinitySwap: false,
       })
 
-      const queryWithInfinity = option
+      // #3 infinity only
+      const queryInfinityOnly = createQuoteQuery({
+        ...option,
+        v2Swap: false,
+        stableSwap: false,
+        v3Swap: false,
+      })
+
+      // const fullQueryWithInfinity = option
 
       const quotes = [
         // single hoop quote for quick solution
         get(bestAMMTradeFromQuoterWorkerAtom(querySingleHop)),
         // non-infinity-solution
         get(bestAMMTradeFromOffchainQuoterAtom(queryNonInfinity)),
-        // infinity-solution ( via routing sdk )
-        option.infinitySwap ? get(bestAMMTradeFromOffchainQuoterAtom(queryWithInfinity)) : undefined,
+        // infinity-only-solution ( via routing sdk )
+        get(bestAMMTradeFromOffchainQuoterAtom(queryInfinityOnly)),
 
         option.xEnabled ? get(bestTradeFromApi(option)) : undefined,
       ].filter((x) => x) as Loadable<InterfaceOrder>[]
@@ -64,6 +76,7 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
         if (anyLoading) {
           return pendingLoadable<InterfaceOrder | undefined>()
         }
+        console.log(`[quote] using fallback`, anyLoading)
         const fallback = get(bestAMMTradeFromQuoterWorkerAtom(option))
         return fallback
       }
