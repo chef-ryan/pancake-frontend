@@ -5,7 +5,7 @@ import { atomFamily } from 'jotai/utils'
 import { isBetterQuoteTrade } from 'quoter/utils/getBetterQuote'
 import { isEqualQuoteQuery, PoolHashHelper } from 'quoter/utils/PoolHashHelper'
 import { InterfaceOrder } from 'views/Swap/utils'
-import { QuoteQuery, StrategyQuery } from '../quoter.types'
+import { NoValidRouteError, QuoteQuery, StrategyQuery } from '../quoter.types'
 import { activeQuoteHashAtom } from './abortControlAtoms'
 import { emptyLoadable, errorLoadable, Loadable, pendingLoadable, valueLoadable } from './atomWithLoadable'
 import { getRoutingStrategy, StrategyRoute, updateStrategy } from './routingStrategy'
@@ -76,7 +76,7 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
         }
       }
 
-      return emptyLoadable<InterfaceOrder | undefined>()
+      return errorLoadable<InterfaceOrder | undefined>(new NoValidRouteError())
     } catch (ex) {
       // eslint-disable-next-line no-console
       console.warn(`[quote]`, ex)
