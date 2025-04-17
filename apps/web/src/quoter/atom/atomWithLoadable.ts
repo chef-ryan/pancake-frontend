@@ -31,10 +31,10 @@ export const errorLoadable = <T>(error: any) => {
   } as Loadable<T>
 }
 
-export const pendingLoadable = <T>() => {
+export const pendingLoadable = <T>(val?: T) => {
   return {
     loading: true,
-    data: undefined,
+    data: val ?? undefined,
     error: undefined,
   } as Loadable<T>
 }

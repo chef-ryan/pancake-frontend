@@ -132,6 +132,10 @@ export const useQuoterSync = () => {
       setPlaceholder(quoteResult.placeholderHash, quoteResult.data)
     }
 
+    if (paused) {
+      return
+    }
+
     setTrade({
       bestOrder: quoteResult.data,
       tradeLoaded: !quoteResult?.loading,
@@ -151,5 +155,5 @@ export const useQuoterSync = () => {
       },
     })
     setTyping(false)
-  }, [quoteResult.data, quoteResult.loading, quoteResult.error, pauseQuote, setTrade, setTyping, setNonce])
+  }, [quoteResult.data, quoteResult.loading, quoteResult.error, pauseQuote, setTrade, setTyping, setNonce, paused])
 }
