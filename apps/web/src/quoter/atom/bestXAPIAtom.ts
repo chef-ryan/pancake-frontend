@@ -10,7 +10,7 @@ import { basisPointsToPercent } from 'utils/exchange'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { atomWithLoadable } from './atomWithLoadable'
 
-export const bestTradeFromApi = atomFamily((option: QuoteQuery) => {
+export const bestXApiAtom = atomFamily((option: QuoteQuery) => {
   return atomWithLoadable(async (get) => {
     const { xEnabled, enabled, slippage, address } = option
     if (!xEnabled || !enabled) {
