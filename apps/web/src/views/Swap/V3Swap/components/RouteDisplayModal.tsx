@@ -181,11 +181,16 @@ export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayPr
           const useDiscountHooks = isInfinityPool && pool.hooks && hookDiscount[pool.hooks]
           let infinityFee = 0
           let infinityDiscountFee = 0
-          if (useDiscountHooks) {
-            const { discountFee, originalFee } = hookDiscount[pool.hooks!]
+          if (isInfinityPool) {
             const protocolFee = parseProtocolFeesToNumbers(pool.protocolFee)?.[0] ?? 0
-            infinityFee = originalFee + protocolFee
-            infinityDiscountFee = discountFee + protocolFee
+            if (useDiscountHooks) {
+              const { discountFee, originalFee } = hookDiscount[pool.hooks!]
+              infinityFee = originalFee + protocolFee
+              infinityDiscountFee = discountFee + protocolFee
+            } else {
+              infinityFee = pool.fee + protocolFee
+              infinityDiscountFee = infinityFee
+            }
           }
           const isV3Pool = SmartRouter.isV3Pool(pool)
           const isV2Pool = SmartRouter.isV2Pool(pool)
