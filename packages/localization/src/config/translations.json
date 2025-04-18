@@ -3839,5 +3839,7 @@
   "Please exercise due caution when trading / providing liquidity for the uniBTC token. The protocol recently encountered a security compromise.": "Please exercise due caution when trading / providing liquidity for the uniBTC token. The protocol recently encountered a security compromise.",
   "SS": "SS",
   "These values represent the rewards earned in the last epoch. For the first epoch, the values are estimates.": "These values represent the rewards earned in the last epoch. For the first epoch, the values are estimates.",
-  "Epoch = 8-hour reward cycle": "Epoch = 8-hour reward cycle"
+  "Epoch = 8-hour reward cycle": "Epoch = 8-hour reward cycle",
+  "You’re trading via Brevis Hook-enabled pool, check for discount eligibility on pool page.": "You’re trading via Brevis Hook-enabled pool, check for discount eligibility on pool page.",
+  "You’ve qualified for a discount via a Brevis Hook-enabled pool!": "You’ve qualified for a discount via a Brevis Hook-enabled pool!"
 }
