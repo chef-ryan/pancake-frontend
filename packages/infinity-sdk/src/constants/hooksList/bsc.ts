@@ -1,6 +1,5 @@
 import { ChainId } from '@pancakeswap/chains'
 
-import { checksumAddress } from 'viem'
 import { HOOK_CATEGORY, POOL_TYPE, type HookData, type PoolType } from '../../types'
 import { CL_DYNAMIC_FEE_HOOKS_BY_CHAIN } from './dynamicFeeHook'
 
@@ -44,36 +43,36 @@ const dynamicHooksList: HookData[] = [CL_DYNAMIC_HOOK]
 
 export const bscHooksList: HookData[] = [
   ...dynamicHooksList,
-  {
-    address: checksumAddress('0x9F0D5091D31a7801d34da352572BAc84e8Ac48Ad'),
-    name: 'Fee Discount Hook (CAKE Holding)',
-    poolType: POOL_TYPE.CLAMM,
-    description: 'Fee discount based on the last 30-day CAKE token holding.',
-    github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
-    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
-    creator: 'https://github.com/brevis-network',
-    audit: '',
-    isVerified: true,
-    isUpgradable: true,
-    hooksRegistration: {
-      beforeSwap: true,
-    },
-  },
-  {
-    address: checksumAddress('0x4910a4852A06D0F6B206bd737ea3C98866Be796C'),
-    name: 'Fee Discount Hook (Trading Volume)',
-    poolType: POOL_TYPE.CLAMM,
-    description: 'Fee discount based on the last 30-day trading volume.',
-    github: 'https://github.com/brevis-network/vip-hook',
-    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
-    creator: 'https://github.com/brevis-network',
-    audit: '',
-    isVerified: true,
-    isUpgradable: true,
-    hooksRegistration: {
-      beforeSwap: true,
-    },
-  },
+  // {
+  //   address: checksumAddress('0x9F0D5091D31a7801d34da352572BAc84e8Ac48Ad'),
+  //   name: 'Fee Discount Hook (CAKE Holding)',
+  //   poolType: POOL_TYPE.CLAMM,
+  //   description: 'Fee discount based on the last 30-day CAKE token holding.',
+  //   github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
+  //   category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+  //   creator: 'https://github.com/brevis-network',
+  //   audit: '',
+  //   isVerified: true,
+  //   isUpgradable: true,
+  //   hooksRegistration: {
+  //     beforeSwap: true,
+  //   },
+  // },
+  // {
+  //   address: checksumAddress('0x4910a4852A06D0F6B206bd737ea3C98866Be796C'),
+  //   name: 'Fee Discount Hook (Trading Volume)',
+  //   poolType: POOL_TYPE.CLAMM,
+  //   description: 'Fee discount based on the last 30-day trading volume.',
+  //   github: 'https://github.com/brevis-network/vip-hook',
+  //   category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+  //   creator: 'https://github.com/brevis-network',
+  //   audit: '',
+  //   isVerified: true,
+  //   isUpgradable: true,
+  //   hooksRegistration: {
+  //     beforeSwap: true,
+  //   },
+  // },
   // {
   //   address: '0x0A6440c9cfb5f28BE699a9e4e83BF8A89de72498',
   //   name: 'veCake Exclusive (CLAMM)',
