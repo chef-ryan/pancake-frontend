@@ -60,21 +60,24 @@ function listUrlRowHTMLId(listUrl: string) {
   return `list-row-${listUrl.replace(/\./g, '-')}`
 }
 
-const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
-  const { chainId } = useActiveChainId()
+const ListRow = memo(function ListRow({ listUrl, chainId }: { listUrl: string; chainId?: number }) {
+  const { chainId: activeChainId } = useActiveChainId()
+
+  const selectedChainId = chainId ?? activeChainId
+
   const { t } = useTranslation()
-  const isActive = useIsListActive(listUrl)
+  const isActive = useIsListActive(listUrl, selectedChainId)
 
   const listsByUrl = useAtomValue(selectorByUrlsAtom)
   const [, dispatch] = useListState()
   const { current: list, pendingUpdate: pending } = listsByUrl[listUrl]
 
   const activeTokensOnThisChain = useMemo(() => {
-    if (!list || !chainId) {
+    if (!list || !selectedChainId) {
       return 0
     }
-    return list.tokens.reduce((acc, cur) => (cur.chainId === chainId ? acc + 1 : acc), 0)
-  }, [chainId, list])
+    return list.tokens.reduce((acc, cur) => (cur.chainId === selectedChainId ? acc + 1 : acc), 0)
+  }, [selectedChainId, list])
 
   const handleAcceptListUpdate = useCallback(() => {
     if (!pending) return
@@ -168,19 +171,23 @@ function ManageLists({
   setModalView,
   setImportList,
   setListUrl,
+  chainId,
 }: {
   setModalView: (view: CurrencyModalView) => void
   setImportList: (list: TokenList) => void
   setListUrl: (url: string) => void
+  chainId?: number
 }) {
   const [listUrlInput, setListUrlInput] = useState<string>('')
 
-  const { chainId } = useActiveChainId()
+  const { chainId: activeChainId } = useActiveChainId()
+
+  const selectedChainId = chainId ?? activeChainId
 
   const { t } = useTranslation()
   const [, dispatch] = useListState()
 
-  const lists = useAllLists()
+  const lists = useAllLists(selectedChainId)
 
   // sort by active but only if not visible
   const activeListUrls = useActiveListUrls()
@@ -208,8 +215,8 @@ function ManageLists({
         // only show loaded lists, hide unsupported lists
         const isValid = Boolean(lists[listUrl].current) && !UNSUPPORTED_LIST_URLS.includes(listUrl)
 
-        if (isValid && chainId) {
-          return MULTI_CHAIN_LIST_URLS[chainId]?.includes(listUrl)
+        if (isValid && selectedChainId) {
+          return MULTI_CHAIN_LIST_URLS[selectedChainId]?.includes(listUrl)
         }
 
         return false
@@ -243,7 +250,7 @@ function ManageLists({
         if (l2) return 1
         return 0
       })
-  }, [lists, chainId, activeCopy])
+  }, [lists, selectedChainId, activeCopy])
 
   // temporary fetched list for import flow
   const [tempList, setTempList] = useState<TokenList>()
@@ -327,7 +334,7 @@ function ManageLists({
       <ListContainer>
         <AutoColumn gap="md">
           {sortedLists.map((listUrl) => (
-            <ListRow key={listUrl} listUrl={listUrl} />
+            <ListRow key={listUrl} chainId={selectedChainId} listUrl={listUrl} />
           ))}
         </AutoColumn>
       </ListContainer>

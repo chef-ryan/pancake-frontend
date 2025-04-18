@@ -5,7 +5,7 @@ import { ChainId, Currency, getTokenComparator, Token } from '@pancakeswap/sdk'
 import { createFilterToken, WrappedTokenInfo } from '@pancakeswap/token-lists'
 import { AutoColumn, Box, Column, ModalCloseButton, ModalTitle, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useAudioPlay } from '@pancakeswap/utils/user'
-import { KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { KeyboardEvent, useCallback, useEffect, useMemo, useRef } from 'react'
 import { FixedSizeList } from 'react-window'
 import { isAddress } from 'viem'
 
@@ -41,6 +41,8 @@ interface CurrencySearchProps {
   showSearchHeader?: boolean
   headerTitle?: React.ReactNode
   onDismiss?: () => void
+  setSelectedChainId: (chainId: ChainId) => void
+  selectedChainId?: ChainId
 }
 
 function useSearchInactiveTokenLists(search: string | undefined, minResults = 10): WrappedTokenInfo[] {
@@ -101,6 +103,8 @@ function CurrencySearch({
   showSearchHeader,
   onDismiss,
   headerTitle,
+  setSelectedChainId,
+  selectedChainId,
 }: CurrencySearchProps) {
   const { chainId: activeChainId } = useActiveChainId()
 
@@ -112,8 +116,6 @@ function CurrencySearch({
 
   const { isMobile } = useMatchBreakpoints()
   const [audioPlay] = useAudioPlay()
-
-  const [selectedChainId, setSelectedChainId] = useState<ChainId | undefined>(selectedCurrency?.chainId)
 
   // === use all tokens and native currency related to the chainId
 

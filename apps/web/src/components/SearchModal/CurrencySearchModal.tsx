@@ -1,6 +1,6 @@
 import { usePreviousValue } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Token } from '@pancakeswap/sdk'
+import { ChainId, Currency, Token } from '@pancakeswap/sdk'
 import { TokenList, WrappedTokenInfo } from '@pancakeswap/token-lists'
 import { enableList, removeList, useFetchListCallback } from '@pancakeswap/token-lists/react'
 import {
@@ -88,6 +88,7 @@ export default function CurrencySearchModal({
   showSearchHeader,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.search)
+  const [selectedChainId, setSelectedChainId] = useState<ChainId | undefined>(selectedCurrency?.chainId)
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
@@ -244,6 +245,8 @@ export default function CurrencySearchModal({
             showSearchHeader={showSearchHeader}
             headerTitle={modalTitle}
             onDismiss={onDismiss}
+            setSelectedChainId={setSelectedChainId}
+            selectedChainId={selectedChainId}
           />
         ) : modalView === CurrencyModalView.importToken && importToken ? (
           <ImportToken tokens={[importToken]} handleCurrencySelect={handleCurrencySelect} />
@@ -262,6 +265,7 @@ export default function CurrencySearchModal({
             setImportToken={setImportToken}
             setImportList={setImportList}
             setListUrl={setListUrl}
+            chainId={selectedChainId}
           />
         ) : (
           ''
