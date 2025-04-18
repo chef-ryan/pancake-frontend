@@ -4,6 +4,7 @@ import Divider from 'components/Divider'
 import { useLayoutEffect, useRef } from 'react'
 import styled from 'styled-components'
 
+import { isAddress } from 'viem/utils'
 import { HookAddress, HookName, HookTagsComponent, HookVerification } from './HookSettingsList'
 import { useManualHook } from './hooks/useManualHook'
 
@@ -40,7 +41,7 @@ export const HookSettingsManual = () => {
             value={manualHookAddress}
             onChange={(event) => setManualHook(event.target.value)}
             placeholder={t('Hook Contract Address')}
-            $isDanger={!isVerified && manualHookAddress !== ''}
+            $isDanger={manualHookAddress !== '' && !isAddress(manualHookAddress)}
             style={{ paddingRight: manualHookAddress ? '40px' : '10px' }}
             disabled={isVerifing}
           />
@@ -58,7 +59,7 @@ export const HookSettingsManual = () => {
         </Box>
       </HookAddress>
       <HookVerification selectedHook={manualHook} />
-      {!isVerified && manualHookAddress && <Text color="failure">{t('Invalid hook address')}</Text>}
+      {!isAddress(manualHookAddress) && manualHookAddress && <Text color="failure">{t('Invalid hook address')}</Text>}
       {isVerified && manualHook && (
         <>
           <Divider />
