@@ -54,7 +54,7 @@ export const HookName = ({ selectedHook }: HookProps) => {
 }
 
 export const HookTagsComponent = ({ selectedHook }: HookProps) => (
-  <FlexGap gap="8px">
+  <FlexGap gap="8px" flexWrap="wrap">
     <HookTags hook={selectedHook} />
   </FlexGap>
 )
@@ -91,7 +91,7 @@ export const HookAddress: React.FC<React.PropsWithChildren<HookAddressProps>> = 
 export const HookVerification = ({ selectedHook }: HookProps) =>
   selectedHook ? (
     <FlexGap gap="8px">
-      <VerifiedBadge isVerified={selectedHook?.isVerified} />
+      <VerifiedBadge isVerified={selectedHook?.isVerified} showNonVerified />
       {selectedHook?.isVerified && <UpgradableStatusBadge isUpgradable={selectedHook.isUpgradable} />}
     </FlexGap>
   ) : null
