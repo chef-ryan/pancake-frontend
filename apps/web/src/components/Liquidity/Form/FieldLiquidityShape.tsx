@@ -14,7 +14,7 @@ export const FieldLiquidityShape: React.FC<FieldLiquidityShapeProps> = ({ ...box
     <Box {...boxProps}>
       <RowBetween>
         <PreTitle>{t('Choose Liquidity Shape')}</PreTitle>
-        <ScanLink href="#" fontSize="12px">
+        <ScanLink href="https://docs.pancakeswap.finance/trade/pancakeswap-infinity/pool-types" fontSize="12px">
           {t('LEARN MORE')}
         </ScanLink>
       </RowBetween>
