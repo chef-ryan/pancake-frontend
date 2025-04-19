@@ -1,25 +1,25 @@
-import { useRef, RefObject, useCallback, useState, useMemo } from 'react'
-import { Token } from '@pancakeswap/sdk'
+import { useTranslation } from '@pancakeswap/localization'
+import { ChainId, Token } from '@pancakeswap/sdk'
 import {
-  Text,
+  AutoColumn,
+  BscScanIcon,
   Button,
+  Column,
   DeleteOutlineIcon,
   IconButton,
-  BscScanIcon,
   Input,
   Link,
-  AutoColumn,
-  Column,
+  Text,
 } from '@pancakeswap/uikit'
-import { styled } from 'styled-components'
 import Row, { RowBetween, RowFixed } from 'components/Layout/Row'
+import { CurrencyLogo } from 'components/Logo'
 import { useToken } from 'hooks/Tokens'
+import { useActiveChainId } from 'hooks/useActiveChainId'
+import { RefObject, useCallback, useMemo, useRef, useState } from 'react'
 import { useRemoveUserAddedToken } from 'state/user/hooks'
 import useUserAddedTokens from 'state/user/hooks/useUserAddedTokens'
-import { CurrencyLogo } from 'components/Logo'
+import { styled } from 'styled-components'
 import { getBlockExploreLink, safeGetAddress } from 'utils'
-import { useTranslation } from '@pancakeswap/localization'
-import { useActiveChainId } from 'hooks/useActiveChainId'
 import ImportRow from './ImportRow'
 import { CurrencyModalView } from './types'
 
@@ -42,11 +42,15 @@ const Footer = styled.div`
 export default function ManageTokens({
   setModalView,
   setImportToken,
+  chainId,
 }: {
   setModalView: (view: CurrencyModalView) => void
   setImportToken: (token: Token) => void
+  chainId?: ChainId
 }) {
-  const { chainId } = useActiveChainId()
+  const { chainId: activeChainId } = useActiveChainId()
+
+  const selectedChainId = chainId ?? activeChainId
 
   const { t } = useTranslation()
 
@@ -68,42 +72,46 @@ export default function ManageTokens({
   const removeToken = useRemoveUserAddedToken()
 
   const handleRemoveAll = useCallback(() => {
-    if (chainId && userAddedTokens) {
+    if (selectedChainId && userAddedTokens) {
       userAddedTokens.forEach((token) => {
-        return removeToken(chainId, token.address)
+        return removeToken(selectedChainId, token.address)
       })
     }
-  }, [removeToken, userAddedTokens, chainId])
+  }, [removeToken, userAddedTokens, selectedChainId])
 
   const tokenList = useMemo(() => {
     return (
-      chainId &&
+      selectedChainId &&
       userAddedTokens.map((token) => (
         <RowBetween key={token.address} width="100%">
           <RowFixed>
             <CurrencyLogo currency={token} size="20px" />
             <Link
               external
-              href={getBlockExploreLink(token.address, 'address', chainId)}
+              href={getBlockExploreLink(token.address, 'address', selectedChainId)}
               color="textSubtle"
               ml="10px"
               mr="3px"
             >
               {token.symbol}
             </Link>
-            <a href={getBlockExploreLink(token.address, 'token', chainId)} target="_blank" rel="noreferrer noopener">
+            <a
+              href={getBlockExploreLink(token.address, 'token', selectedChainId)}
+              target="_blank"
+              rel="noreferrer noopener"
+            >
               <BscScanIcon width="20px" color="textSubtle" />
             </a>
           </RowFixed>
           <RowFixed>
-            <IconButton variant="text" onClick={() => removeToken(chainId, token.address)}>
+            <IconButton variant="text" onClick={() => removeToken(selectedChainId, token.address)}>
               <DeleteOutlineIcon color="textSubtle" />
             </IconButton>
           </RowFixed>
         </RowBetween>
       ))
     )
-  }, [userAddedTokens, chainId, removeToken])
+  }, [userAddedTokens, selectedChainId, removeToken])
 
   const isAddressValid = searchQuery === '' || safeGetAddress(searchQuery)
 
