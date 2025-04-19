@@ -1,4 +1,4 @@
-import { Token } from '@pancakeswap/sdk'
+import { ChainId, Token } from '@pancakeswap/sdk'
 import { deserializeToken } from '@pancakeswap/token-lists'
 import { createSelector } from '@reduxjs/toolkit'
 import { useActiveChainId } from 'hooks/useActiveChainId'
@@ -12,9 +12,12 @@ export const userAddedTokenSelector = (chainId?: number) =>
   createSelector(selectUserTokens, (serializedTokensMap) =>
     Object.values((chainId && serializedTokensMap?.[chainId]) ?? {}).map(deserializeToken),
   )
-export default function useUserAddedTokens(): Token[] {
-  const { chainId } = useActiveChainId()
-  return useSelector(useMemo(() => userAddedTokenSelector(chainId), [chainId]))
+export default function useUserAddedTokens(chainId?: ChainId): Token[] {
+  const { chainId: activeChainId } = useActiveChainId()
+
+  const selectedChainId = chainId ?? activeChainId
+
+  return useSelector(useMemo(() => userAddedTokenSelector(selectedChainId), [selectedChainId]))
 }
 
 export const userAddedTokenSelectorByChainIds = (chainIds: number[]) =>

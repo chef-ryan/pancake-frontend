@@ -49,7 +49,7 @@ export default function Manage({
           chainId={chainId}
         />
       ) : (
-        <ManageTokens setModalView={setModalView} setImportToken={setImportToken} />
+        <ManageTokens chainId={chainId} setModalView={setModalView} setImportToken={setImportToken} />
       )}
     </ModalBody>
   )

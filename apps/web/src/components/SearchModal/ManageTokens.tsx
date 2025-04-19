@@ -65,10 +65,10 @@ export default function ManageTokens({
   }, [])
 
   // if they input an address, use it
-  const searchToken = useToken(searchQuery)
+  const searchToken = useToken(searchQuery, selectedChainId)
 
   // all tokens for local list
-  const userAddedTokens: Token[] = useUserAddedTokens()
+  const userAddedTokens: Token[] = useUserAddedTokens(selectedChainId)
   const removeToken = useRemoveUserAddedToken()
 
   const handleRemoveAll = useCallback(() => {

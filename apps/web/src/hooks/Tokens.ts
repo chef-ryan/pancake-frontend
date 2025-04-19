@@ -56,7 +56,7 @@ export function useAllTokens(chainId?: ChainId): { [address: string]: ERC20Token
 
   const tokenMap = useAtomValue(combinedTokenMapFromActiveUrlsAtom)
 
-  const userAddedTokens = useUserAddedTokens()
+  const userAddedTokens = useUserAddedTokens(chainIdToUse)
 
   return useMemo(() => {
     const allTokens = userAddedTokens
@@ -187,20 +187,22 @@ export function useOfficialsAndUserAddedTokens(): { [address: string]: ERC20Toke
   }, [userAddedTokens, tokenMap, chainId])
 }
 
-export function useUnsupportedTokens(): { [address: string]: ERC20Token } {
-  const { chainId } = useActiveChainId()
+export function useUnsupportedTokens(chainId?: ChainId): { [address: string]: ERC20Token } {
+  const { chainId: activeChainId } = useActiveChainId()
+  const selectedChainId = chainId ?? activeChainId
   const unsupportedTokensMap = useUnsupportedTokenList()
-  return useMemo(() => mapWithoutUrls(unsupportedTokensMap, chainId), [unsupportedTokensMap, chainId])
+  return useMemo(() => mapWithoutUrls(unsupportedTokensMap, selectedChainId), [unsupportedTokensMap, selectedChainId])
 }
 
-export function useWarningTokens(): { [address: string]: ERC20Token } {
+export function useWarningTokens(chainId?: ChainId): { [address: string]: ERC20Token } {
+  const { chainId: activeChainId } = useActiveChainId()
+  const selectedChainId = chainId ?? activeChainId
   const warningTokensMap = useWarningTokenList()
-  const { chainId } = useActiveChainId()
-  return useMemo(() => mapWithoutUrls(warningTokensMap, chainId), [warningTokensMap, chainId])
+  return useMemo(() => mapWithoutUrls(warningTokensMap, selectedChainId), [warningTokensMap, selectedChainId])
 }
 
-export function useIsTokenActive(token: ERC20Token | undefined | null): boolean {
-  const activeTokens = useAllTokens()
+export function useIsTokenActive(token: ERC20Token | undefined | null, selectedChainId?: ChainId): boolean {
+  const activeTokens = useAllTokens(selectedChainId)
 
   if (!activeTokens || !token) {
     return false
@@ -212,8 +214,8 @@ export function useIsTokenActive(token: ERC20Token | undefined | null): boolean 
 }
 
 // Check if currency is included in custom list from user storage
-export function useIsUserAddedToken(currency: Currency | undefined | null): boolean {
-  const userAddedTokens = useUserAddedTokens()
+export function useIsUserAddedToken(currency: Currency | undefined | null, selectedChainId?: ChainId): boolean {
+  const userAddedTokens = useUserAddedTokens(selectedChainId)
 
   if (!currency?.equals) {
     return false
