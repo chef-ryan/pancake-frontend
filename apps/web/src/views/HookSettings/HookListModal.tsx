@@ -38,7 +38,6 @@ const StyledModalContainer = styled(ModalContainer)`
 
 const StyledModalBody = styled(ModalBody)`
   padding: 8px;
-  padding-top: 310px;
 
   ${({ theme }) => theme.mediaQueries.sm} {
     padding: 24px;
