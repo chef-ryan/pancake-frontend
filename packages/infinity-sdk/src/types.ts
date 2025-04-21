@@ -203,4 +203,10 @@ export interface HookData {
   isUpgradable?: boolean
 
   hooksRegistration?: HooksRegistration
+  hookType: HookType
+}
+
+export enum HookType {
+  Universal = 'Universal',
+  PerPool = 'PerPool',
 }
