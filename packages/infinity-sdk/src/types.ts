@@ -203,7 +203,7 @@ export interface HookData {
   isUpgradable?: boolean
 
   hooksRegistration?: HooksRegistration
-  hookType: HookType
+  hookType?: HookType
 }
 
 export enum HookType {
