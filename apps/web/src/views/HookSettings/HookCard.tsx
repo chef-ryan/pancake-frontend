@@ -11,6 +11,20 @@ const StyledHookCard = styled(Box)`
   background-color: ${({ theme }) => theme.colors.backgroundAlt};
   border: 1px solid ${({ theme }) => theme.colors.cardBorder};
   border-radius: ${({ theme }) => theme.radii['20px']};
+
+  &:first-of-type {
+    margin-top: 140px;
+  }
+
+  &:only-of-type {
+    margin-top: 0;
+  }
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
 `
 
 interface HookCardProps {
