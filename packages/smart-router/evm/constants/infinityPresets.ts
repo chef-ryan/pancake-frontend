@@ -43,6 +43,26 @@ function getCLHookPreset(x: HookData) {
 export const CL_HOOK_PRESETS_BY_CHAIN: { [key in InfinitySupportedChains]: HookPreset<'CL'>[] } = {
   [ChainId.BSC]: [
     EMPTY_HOOK,
+    {
+      // brevis token-holding discount hook
+      address: '0x9F0D5091D31a7801d34da352572BAc84e8Ac48Ad',
+      registrationBitmap: encodeHooksRegistration({
+        beforeSwap: true,
+      }),
+      poolKeyOverride: {
+        fee: DYNAMIC_FEE_FLAG,
+      },
+    },
+    {
+      // brevis trading-volume discount hook
+      address: '0x4910a4852A06D0F6B206bd737ea3C98866Be796C',
+      registrationBitmap: encodeHooksRegistration({
+        beforeSwap: true,
+      }),
+      poolKeyOverride: {
+        fee: DYNAMIC_FEE_FLAG,
+      },
+    },
     ...hooksList[ChainId.BSC]
       .filter((x) => x.poolType === POOL_TYPE.CLAMM)
       .map((x) => {
