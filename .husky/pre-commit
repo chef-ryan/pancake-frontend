@@ -1,4 +1,12 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-pnpm format:check:staged
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only)
+
+# Check if any staged files are in apps/solana
+if echo "$STAGED_FILES" | grep -q "^apps/solana/"; then
+  cd apps/solana && pnpm type-check
+else
+  pnpm format:check:staged
+fi
