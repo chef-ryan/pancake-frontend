@@ -56,7 +56,7 @@ const getBrevisHookDiscountData = async ({
   pool: InfinityBinPool | InfinityClPool
   account: Address | undefined
 }) => {
-  if (!chainId || !pool.hooks || !account) return undefined
+  if (!chainId || !pool.hooks) return undefined
   const client = publicClient({ chainId })
   const abi = parseAbi(['function getFee(address) public view returns (uint24)'])
 
@@ -64,7 +64,7 @@ const getBrevisHookDiscountData = async ({
     address: pool.hooks,
     abi,
     functionName: 'getFee',
-    args: [account],
+    args: [account ?? zeroAddress],
   } as const satisfies ContractFunctionParameters
   const noDiscountUserCall = {
     address: pool.hooks,
