@@ -126,7 +126,11 @@ const BrevisDiscountFeeDisplay: React.FC<{
             <Text fontSize={14} color={!noDiscount ? 'positive60' : undefined} bold>
               ({feeDisplay}%)
             </Text>
-            {!noDiscount ? <Text fontSize={14}>({originalFeeDisplay}%)</Text> : null}
+            {!noDiscount ? (
+              <Text fontSize={14} style={{ textDecoration: 'strikeThrough' }}>
+                ({originalFeeDisplay}%)
+              </Text>
+            ) : null}
           </FlexGap>
           <BrevisTip flexDirection="row" alignItems="center" gap="4px" ref={targetRef}>
             <BrevisIcon />
