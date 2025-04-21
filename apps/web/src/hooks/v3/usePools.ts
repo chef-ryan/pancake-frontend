@@ -141,16 +141,16 @@ export function usePools(
         | { result: [bigint, number, number, number, number, number, boolean]; status: 'success' | 'error' }
         | undefined
 
-      if (!slot0Result) return [PoolState.INVALID, null]
+      if (!slot0Result) return [PoolState.NOT_EXISTS, null]
       const { result: slot0 } = slot0Result
 
       const liquidityResult = liquidities?.[index]
 
-      if (!liquidityResult) return [PoolState.INVALID, null]
+      if (!liquidityResult) return [PoolState.NOT_EXISTS, null]
       const { result: liquidity } = liquidityResult as { result: bigint; status: 'success' | 'error' }
 
       if (!tokens || slot0Result.status !== 'success' || liquidityResult.status !== 'success')
-        return [PoolState.INVALID, null]
+        return [PoolState.NOT_EXISTS, null]
       if (!slot0 || typeof liquidity === 'undefined') return [PoolState.NOT_EXISTS, null]
 
       const [sqrtPriceX96, tick, , , , feeProtocol] = slot0
