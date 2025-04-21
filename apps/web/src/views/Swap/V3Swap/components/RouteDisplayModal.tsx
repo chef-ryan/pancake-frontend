@@ -127,7 +127,7 @@ const BrevisDiscountFeeDisplay: React.FC<{
               ({feeDisplay}%)
             </Text>
             {!noDiscount ? (
-              <Text fontSize={14} style={{ textDecoration: 'strikeThrough' }}>
+              <Text fontSize={14} strikeThrough>
                 ({originalFeeDisplay}%)
               </Text>
             ) : null}
