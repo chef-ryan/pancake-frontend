@@ -50,6 +50,10 @@ interface CalldataRequestSchema {
   commands: (BridgeDataSchema | SwapDataSchema)[]
 }
 
+function getTokenAddress(currency: Currency): Address {
+  return currency.isNative ? '0x0000000000000000000000000000000000000000' : currency.wrapped.address
+}
+
 export const getBridgeCalldata = async ({
   currencyAmountIn,
   currencyAmountOut,
@@ -63,8 +67,8 @@ export const getBridgeCalldata = async ({
     const bridgeCommand: BridgeDataSchema = {
       command: Command.BRIDGE,
       data: {
-        inputToken: currencyAmountIn.currency.wrapped.address,
-        outputToken: currencyAmountOut.currency.wrapped.address,
+        inputToken: getTokenAddress(currencyAmountIn.currency),
+        outputToken: getTokenAddress(currencyAmountOut.currency),
         inputAmount: currencyAmountIn.quotient.toString(),
         originChainId: currencyAmountIn.currency.chainId,
         destinationChainId: currencyAmountOut.currency.chainId,
@@ -76,8 +80,8 @@ export const getBridgeCalldata = async ({
     }
 
     const calldataRequest: CalldataRequestSchema = {
-      inputToken: currencyAmountIn.currency.wrapped.address,
-      outputToken: currencyAmountOut.currency.wrapped.address,
+      inputToken: getTokenAddress(currencyAmountIn.currency),
+      outputToken: getTokenAddress(currencyAmountOut.currency),
       inputAmount: currencyAmountIn.quotient.toString(),
       originChainId: currencyAmountIn.currency.chainId,
       destinationChainId: currencyAmountOut.currency.chainId,
@@ -126,7 +130,7 @@ export const postBridgeCheckApproval = async ({
       },
       body: JSON.stringify({
         walletAddress: recipient,
-        token: currencyAmountIn.currency.wrapped.address,
+        token: getTokenAddress(currencyAmountIn.currency),
         amount: currencyAmountIn.quotient.toString(),
         chainId: currencyAmountIn.currency.chainId,
       }),

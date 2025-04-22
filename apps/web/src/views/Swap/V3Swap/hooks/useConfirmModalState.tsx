@@ -410,7 +410,7 @@ const useConfirmActions = (
             recipient: account ?? '0x',
           })
 
-          if (approvalResponse?.approval) {
+          if (approvalResponse?.approval?.isRequired) {
             const { to, data } = approvalResponse.approval
             const result = await sendTransactionAsync({
               to,
