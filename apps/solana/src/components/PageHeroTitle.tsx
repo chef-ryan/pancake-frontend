@@ -13,7 +13,7 @@ export default function PageHeroTitle({ title, description }: { title: string; d
     <VStack align="flex-start">
       {isMobile ? null : <Text {...heroGridientColorCSSBlock}>{title}</Text>}
       {description && (
-        <Text fontSize={['sm', 'md']} color={colors.textTertiary}>
+        <Text fontSize={['sm', 'md']} color={colors.textSubtle}>
           {description}
         </Text>
       )}

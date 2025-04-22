@@ -54,37 +54,39 @@ export default function AddressChip({
     <Flex alignItems="center" gap={2} {...restProps}>
       {renderLabel}
 
-      <Text {...textProps}>
-        {showDigitCount === 'all' ? address : `${address?.slice(0, showDigitCount)}...${address?.slice(-1 * showDigitCount)}`}
-      </Text>
+      <Flex>
+        <Text {...textProps}>
+          {showDigitCount === 'all' ? address : `${address?.slice(0, showDigitCount)}...${address?.slice(-1 * showDigitCount)}`}
+        </Text>
 
-      <Flex alignItems="center">
-        {showCopyIcon && (
-          <Box
-            cursor={hasCopied ? 'default' : 'pointer'}
-            onClick={
-              hasCopied
-                ? undefined
-                : () => {
-                    copy()
-                    onCopied?.(copyContent)
-                  }
-            }
-          >
-            {hasCopied ? <CircleCheck color="currentColor" {...iconProps} /> : <CopyIcon color="currentColor" {...iconProps} />}
-          </Box>
-        )}
-        {canExternalLink && address && (
-          <a
-            href={explorerUrl === supportedExplorers[0]?.host ? `${explorerUrl}/token/${address}` : `${explorerUrl}/address/${address}`}
-            rel="noreferrer"
-            target="_blank"
-          >
-            <Box cursor="pointer">
-              <ExternalLink color="currentColor" {...iconProps} />
+        <Flex alignItems="center">
+          {showCopyIcon && (
+            <Box
+              cursor={hasCopied ? 'default' : 'pointer'}
+              onClick={
+                hasCopied
+                  ? undefined
+                  : () => {
+                      copy()
+                      onCopied?.(copyContent)
+                    }
+              }
+            >
+              {hasCopied ? <CircleCheck color="currentColor" {...iconProps} /> : <CopyIcon color="currentColor" {...iconProps} />}
             </Box>
-          </a>
-        )}
+          )}
+          {canExternalLink && address && (
+            <a
+              href={explorerUrl === supportedExplorers[0]?.host ? `${explorerUrl}/token/${address}` : `${explorerUrl}/address/${address}`}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <Box cursor="pointer">
+                <ExternalLink color="currentColor" {...iconProps} />
+              </Box>
+            </a>
+          )}
+        </Flex>
       </Flex>
     </Flex>
   )

@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, useEffect , useMemo, useState } from 'react'
+import React, { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
@@ -43,32 +43,20 @@ const App: FC<PropsWithChildren<any>> = ({ children }) => {
   registerMoonGateWallet({
     authMode: 'Ethereum',
     position: 'top-right'
-    // logoDataUri: 'OPTIONAL ADD IN-WALLET LOGO URL HERE',
-    // buttonLogoUri: 'ADD OPTIONAL LOGO FOR WIDGET BUTTON HERE'
   })
   registerMoonGateWallet({
     authMode: 'Google',
     position: 'top-right'
-    // logoDataUri: 'OPTIONAL ADD IN-WALLET LOGO URL HERE',
-    // buttonLogoUri: 'ADD OPTIONAL LOGO FOR WIDGET BUTTON HERE'
   })
-  // registerMoonGateWallet({
-  //   authMode: 'Twitter',
-  //   position: 'top-right'
-  //   // logoDataUri: 'OPTIONAL ADD IN-WALLET LOGO URL HERE',
-  //   // buttonLogoUri: 'ADD OPTIONAL LOGO FOR WIDGET BUTTON HERE'
-  // })
   registerMoonGateWallet({
     authMode: 'Apple',
     position: 'top-right'
-    // logoDataUri: 'OPTIONAL ADD IN-WALLET LOGO URL HERE',
-    // buttonLogoUri: 'ADD OPTIONAL LOGO FOR WIDGET BUTTON HERE'
   })
 
   const _walletConnect = useMemo(() => {
     const connectWallet: WalletConnectWalletAdapter[] = []
     try {
-      connectWallet.push(
+      /* connectWallet.push(
         new WalletConnectWalletAdapter({
           network: network as WalletAdapterNetwork.Mainnet,
           options: {
@@ -81,7 +69,7 @@ const App: FC<PropsWithChildren<any>> = ({ children }) => {
             }
           }
         })
-      )
+      ) */
     } catch (e) {
       // console.error('WalletConnect error', e)
     }

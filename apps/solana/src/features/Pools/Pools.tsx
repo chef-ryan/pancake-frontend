@@ -1,3 +1,4 @@
+import { ButtonMenu, ButtonMenuItem } from '@pancakeswap/uikit'
 import {
   Box,
   Collapse,
@@ -44,7 +45,7 @@ import NotFound from '@/icons/misc/NotFound'
 import OpenBookIcon from '@/icons/misc/OpenBookIcon'
 import { useAppStore, useTokenStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
-import { appLayoutPaddingX, revertAppLayoutPaddingX } from '@/theme/detailConfig'
+import { revertAppLayoutPaddingX } from '@/theme/detailConfig'
 import { isValidPublicKey } from '@/utils/publicKey'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
@@ -121,32 +122,35 @@ const SORT_ITEMS = [
 ]
 
 export default function Pools() {
-  const { t, i18n } = useTranslation()
+  const { t, i18n: i18n_ } = useTranslation()
   const query = useRouteQuery()
   const currentQuery = useRef(query)
   currentQuery.current = query || {}
-  const isEN = i18n.language === 'en'
+  const isEN = i18n_.language === 'en'
   const isMobile = useAppStore((s) => s.isMobile)
 
-  const tabItems: PoolTabItem[] = [
-    {
-      name: 'Concentrated',
-      label: isEN && isMobile ? 'CLMM' : t('liquidity.concentrated'),
-      value: PoolFetchType.Concentrated
-    },
-    {
-      name: 'Standard',
-      label: isEN && isMobile ? 'STANDARD' : t('liquidity.standard'),
-      value: PoolFetchType.Standard
-    },
-    {
-      name: 'All',
-      label: isEN && isMobile ? 'ALL' : t('common.all'),
-      value: PoolFetchType.All
-    }
-  ]
+  const tabItems: PoolTabItem[] = useMemo(
+    () => [
+      {
+        name: 'V3',
+        label: 'V3',
+        value: PoolFetchType.Concentrated
+      },
+      {
+        name: 'V2',
+        label: 'V2',
+        value: PoolFetchType.Standard
+      },
+      {
+        name: 'All',
+        label: isEN && isMobile ? 'ALL' : t('common.all'),
+        value: PoolFetchType.All
+      }
+    ],
+    [isEN, isMobile, t]
+  )
 
-  const listControllerIconSize = useBreakpointValue({ base: '24px', sm: '28px' })
+  const listControllerIconSize = useBreakpointValue({ base: '24px', sm: '24px' })
   const gridCardSize = useBreakpointValue({ base: undefined, sm: 290 })
   const gridCardGap = useBreakpointValue({ base: 4, sm: 5 })
   const { isOpen: isChartOpen, onOpen: openChart, onClose: closeChart } = useDisclosure()
@@ -164,24 +168,25 @@ export default function Pools() {
 
   useEffectWithUrl(
     'token',
-    (query) => {
-      if (!query) return
+    (query_) => {
+      if (!query_) return
       if (!tokenMap.size) return
-      const tokenMints = query.split(',')
-      const searchTokens: ApiV3Token[] = []
+      const tokenMints = query_.split(',')
+      const searchTokens_: ApiV3Token[] = []
       let searchMints = ''
       tokenMints.forEach((mint) => {
         const token = tokenMap.get(urlToMint(mint)!)
-        if (token) searchTokens.push(token)
+        if (token) searchTokens_.push(token)
         if (!searchMints && isValidPublicKey(mint)) searchMints = mint
       })
 
-      if (searchTokens.length) {
+      if (searchTokens_.length) {
         skipSyncQuery.current = true
-        setSearchTokens(searchTokens)
+        setSearchTokens(searchTokens_)
       }
       if (searchMints) {
         setSearchText((searchText) => searchText || searchMints)
+        // eslint-disable-next-line no-unused-expressions
         isMobile && openMobileSearch()
       }
     },
@@ -223,7 +228,7 @@ export default function Pools() {
     }
     setUrlQuery({
       ...currentQuery.current,
-      token: searchTokens.length ? searchTokens.map((t) => mintToUrl(t.address)).join(',') : undefined
+      token: searchTokens.length ? searchTokens.map(({ address }) => mintToUrl(address)).join(',') : undefined
     })
   }, [searchTokens])
 
@@ -238,10 +243,13 @@ export default function Pools() {
     fromUrl: (u) => tabItems.find((item) => item.value === u) ?? tabItems[0],
     toUrl: (v) => v.value
   })
-  const onPoolValueChange = useEvent((value: PoolFetchType) => {
-    const newActiveTabItem = tabItems.find((item) => item.value === value)
+  const activeTabIdx = useMemo(() => tabItems.findIndex((item) => item.value === activeTabItem.value) ?? 0, [tabItems, activeTabItem.value])
+  const onPoolValueChange = useEvent((idx: number = 0) => {
+    const newActiveTabItem = tabItems[idx]
     if (newActiveTabItem) {
       setActiveTabItem(newActiveTabItem)
+    } else {
+      setActiveTabItem(tabItems[0])
     }
   })
 
@@ -251,7 +259,7 @@ export default function Pools() {
     listControllerRef.current?.resetRenderCount()
   }, [activeTabItem, currentLayoutStyle, showFarms, timeBase])
 
-  const search = searchTokens.reduce((acc, cur) => `${acc  },${  cur.address}`, '')
+  const search = searchTokens.reduce((acc, cur) => `${acc},${cur.address}`, '')
   const hasSearch = searchTokens.length > 0
   const {
     formattedData: orgData,
@@ -298,11 +306,14 @@ export default function Pools() {
     const favorite: FormattedPoolInfoItem[] = []
     const normal: FormattedPoolInfoItem[] = []
     data.forEach((p) => {
-      if (favoritePools.has(p.id)) return favorite.push(p)
-      normal.push(p)
+      if (favoritePools.has(p.id)) {
+        favorite.push(p)
+      } else {
+        normal.push(p)
+      }
     })
     return [...favorite, ...normal]
-  }, [data, Array.from(favoritePools).toString()])
+  }, [data, favoritePools])
 
   const prevSearch = usePrevious(search)
   const sortRef = useRef<string>('default')
@@ -311,7 +322,7 @@ export default function Pools() {
     const sort = sortRef.current.match(/[a-zA-Z]+/g)?.[0] || 'default'
     if (sortRef.current === sort) return
     onChangeSortData(sort)
-  }, [timeBase])
+  }, [timeBase, onChangeSortData])
 
   useEffect(() => {
     if (urlSortKey === sortKey || !POOL_SORT_KEY[urlSortKey as keyof typeof POOL_SORT_KEY]) return
@@ -357,17 +368,32 @@ export default function Pools() {
         }}
       />
     ),
-    [currentLayoutStyle, timeBase]
+    [currentLayoutStyle, timeBase, openChart]
   )
   const searchRef = useRef<HTMLDivElement>(null)
   useOutsideClick({
     ref: searchRef,
     handler() {
-      if (searchText == '' && searchTokens.length === 0) {
+      if (searchText === '' && searchTokens.length === 0) {
         closeMobileSearch()
       }
     }
   })
+
+  const listContainerStyle = useMemo(
+    () =>
+      currentLayoutStyle === 'list'
+        ? {
+            backgroundColor: colors.cardBg,
+            border: `1px solid ${colors.cardBorder01}`,
+            borderRadius: '0 0 24px 24px',
+            borderTopRadius: '0',
+            mb: 10
+          }
+        : {},
+    [currentLayoutStyle]
+  )
+
   return (
     <>
       <Flex flexDirection="column" height="100%" flexGrow={1} {...containerProps}>
@@ -388,11 +414,17 @@ export default function Pools() {
         </Mobile>
 
         {/* Controller Part */}
-        <Box marginX={revertAppLayoutPaddingX} mb={[0, 3]}>
+        <Box
+          border={`1px solid ${colors.cardBorder01}`}
+          borderRadius="16px"
+          borderBottomWidth="2px"
+          bgColor={colors.cardBg}
+          p="16px 24px"
+          mb="16px"
+        >
           <Grid
             columnGap={3}
-            rowGap={[1, 0]}
-            py={2}
+            rowGap={[1, 1]}
             gridTemplate={[
               `
               "tabs more btn" auto
@@ -400,28 +432,25 @@ export default function Pools() {
               "search search search" auto / auto auto 1fr
             `,
               `
-              "tabs tabs  tabs" auto
-              "search more btn" auto
-              "coll  coll  coll" auto / auto  auto 1fr
+              "tabs search more btn" auto
+              "coll coll coll  coll" auto / auto auto auto 1fr
             `,
               `
               "tabs search more btn" auto
               "coll coll coll  coll" auto / auto auto auto 1fr
             `
             ]}
-            paddingX={appLayoutPaddingX}
             backgroundColor={['transparent', colors.backgroundLight30]}
           >
             <GridItem area="tabs">
               <Desktop>
-                <Tabs
-                  items={tabItems}
-                  size={['sm', 'xl']}
-                  tabItemSX={{ px: '4px !important' }}
-                  value={activeTabItem.value}
-                  onChange={onPoolValueChange}
-                  variant="line"
-                />
+                <ButtonMenu scale="sm" activeIndex={activeTabIdx} onItemClick={onPoolValueChange} variant="subtle">
+                  {tabItems.map(({ label, value }) => (
+                    <ButtonMenuItem key={value} height="38px">
+                      {label}
+                    </ButtonMenuItem>
+                  ))}
+                </ButtonMenu>
               </Desktop>
               <Mobile>
                 <Select
@@ -437,7 +466,7 @@ export default function Pools() {
                   }}
                   value={activeTabItem.value}
                   items={tabItems}
-                  onChange={(value) => onPoolValueChange(value)}
+                  onChange={(value) => onPoolValueChange(tabItems.findIndex((i) => i.value === value))}
                 />
               </Mobile>
             </GridItem>
@@ -446,7 +475,7 @@ export default function Pools() {
               {(!isMobile || isMobileSearchOpen) && (
                 <TokenSearchInput
                   ref={searchRef}
-                  width={['unset', '26em']}
+                  width={['unset', '24em']}
                   value={searchText}
                   onChange={setSearchText}
                   selectedListValue={searchTokens}
@@ -458,8 +487,15 @@ export default function Pools() {
 
             <GridItem area="more">
               <Flex gap={3}>
-                <Button onClick={toggleSubcontrollers} variant="capsule" height={['34px', '40px']} isActive={isCollapseOpen}>
-                  <MoreListControllers color={colors.textSecondary} width={listControllerIconSize} height={listControllerIconSize} />
+                <Button
+                  background={colors.inputBg}
+                  onClick={toggleSubcontrollers}
+                  variant="capsule"
+                  height={['34px', '40px']}
+                  paddingInline="3"
+                  isActive={isCollapseOpen}
+                >
+                  <MoreListControllers color={colors.textSubtle} width={listControllerIconSize} height={listControllerIconSize} />
                 </Button>
                 {isMobile && !isMobileSearchOpen && (
                   <Button onClick={openMobileSearch} variant="capsule" height="34px" pl={3} pr={7}>
@@ -550,9 +586,9 @@ export default function Pools() {
                             value={sortKey === 'default' ? 'default' : `${sortKey}_${order ? 'desc' : 'asc'}`}
                             items={SORT_ITEMS}
                             onChange={(value) => {
-                              const [key, order] = value.split('_')
+                              const [key, order_] = value.split('_')
                               onChangeSortData(key)
-                              setOrder(order === 'desc' ? 1 : 0)
+                              setOrder(order_ === 'desc' ? 1 : 0)
                             }}
                           />
                         </FormControl>
@@ -572,7 +608,7 @@ export default function Pools() {
 
         {/* List Content */}
         {isNotFound ? (
-          <Box flexGrow="1" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+          <Box {...listContainerStyle} flexGrow="1" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
             <NotFound />
             <Text mt="4" fontSize="sm" color={colors.textSecondary}>
               {t('error.no_pools_found')}
@@ -581,7 +617,9 @@ export default function Pools() {
         ) : (
           <>
             {isLoading ? (
-              <PoolItemLoadingSkeleton isGrid={currentLayoutStyle === 'grid'} />
+              <Box {...listContainerStyle} px="24px" py="12px">
+                <PoolItemLoadingSkeleton isGrid={currentLayoutStyle === 'grid'} />
+              </Box>
             ) : (
               <List
                 controllerRef={listControllerRef}
@@ -598,6 +636,7 @@ export default function Pools() {
                 getItemKey={(item) => item.id}
                 gap={currentLayoutStyle === 'grid' ? gridCardGap : undefined}
                 zIndex={1}
+                {...listContainerStyle}
               >
                 {renderPoolListItem}
               </List>

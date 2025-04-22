@@ -25,8 +25,8 @@ export default function SolWallet() {
   const handleClose = useCallback(() => setVisible(false), [setVisible])
   const handleOpen = useCallback(() => setVisible(true), [setVisible])
 
-  const handleSelectWallet = useEvent((wallet: Wallet) => {
-    select(wallet.adapter.name)
+  const handleSelectWallet = useEvent((wallet_: Wallet) => {
+    select(wallet_.adapter.name)
     handleClose()
     setTimeout(() => {
       // remove before connected
@@ -45,22 +45,25 @@ export default function SolWallet() {
           onClose={onClose}
         />
         <HStack
+          gap="4px"
+          py="1px"
           cursor="pointer"
           onClick={onOpen}
-          py="5px"
-          px={['5px', '8px']}
-          backgroundColor={colors.backgroundLight}
+          backgroundColor={colors.tertiary}
           borderRadius="full"
+          borderBottom="2px solid rgba(0, 0, 0, 0.20)"
           overflow="hidden"
         >
           {wallet && (
             <Box flex="none" rounded="full" overflow="hidden">
-              <Image src={wallet.adapter.icon} width={['28px', '40px']} height={['28px', '40px']} />
+              <Image src={wallet.adapter.icon} width={['28px', '30px']} height={['28px', '30px']} />
             </Box>
           )}
-          <Text fontSize="sm">{isMobile ? `${publicKey?.toBase58().substring(0, 3)  }...` : encodeStr(publicKey?.toBase58(), 4)}</Text>
-          <Box flex="none">
-            <ChevronDownIcon width={12} height={12} />
+          <Text fontWeight={600} fontSize="sm">
+            {isMobile ? `${publicKey?.toBase58().substring(0, 3)}...` : encodeStr(publicKey?.toBase58(), 3)}
+          </Text>
+          <Box flex="none" mr="8px">
+            <ChevronDownIcon strokeWidth={4} color={colors.textSubtle} width={12} height={12} />
           </Box>
         </HStack>
       </>

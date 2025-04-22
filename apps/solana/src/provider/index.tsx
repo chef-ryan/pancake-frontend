@@ -4,8 +4,9 @@ import { skipRetryStatus } from '@/api/axios'
 import WalletProvider from './WalletProvider'
 import ThemeProvider from './ThemeProvider'
 import GlobalColorProvider from './GlobalColorProvider'
+import { ListContext } from './ListProvider'
 
-export { WalletProvider, ThemeProvider, GlobalColorProvider }
+export { WalletProvider, ThemeProvider, GlobalColorProvider, ListContext }
 
 const timeoutId: Record<string, number> = {}
 export const Providers = ({ children }: { children: ReactNode }) => {
@@ -18,7 +19,9 @@ export const Providers = ({ children }: { children: ReactNode }) => {
           if (apiRetryCount >= 10) return
 
           // Retry after 5 seconds.
-          timeoutId[key] && clearTimeout(timeoutId[key])
+          if (timeoutId[key]) {
+            clearTimeout(timeoutId[key])
+          }
           timeoutId[key] = window.setTimeout(() => revalidate({ retryCount: apiRetryCount }), is429 ? apiRetryCount * 1000 : 5000)
         }
       }}

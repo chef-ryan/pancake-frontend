@@ -6,11 +6,9 @@ import { SystemProps } from '@chakra-ui/react'
 import { colors, sizes } from './cssVariables'
 
 export const heroGridientColorCSSBlock: SystemProps = {
-  background: colors.brandGradient,
-  backgroundClip: 'text',
-  color: 'transparent',
+  color: colors.textSecondary,
   fontSize: sizes.textHeroTitle,
-  fontWeight: '700'
+  fontWeight: '400'
 }
 
 export const panelCard: SystemProps = {

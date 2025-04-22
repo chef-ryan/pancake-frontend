@@ -1,15 +1,18 @@
-import { ChakraProvider } from '@chakra-ui/react'
+import { dark, light, UIKitProvider } from '@pancakeswap/uikit'
+import { ChakraProvider, useColorMode } from '@chakra-ui/react'
 import { Global } from '@emotion/react'
 import type { FC, ReactNode } from 'react'
 import { colors } from '@/theme/cssVariables'
 import { theme } from '../theme'
 
 const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { colorMode } = useColorMode()
   return (
-    <ChakraProvider theme={theme}>
-      {/* through object's styles's global can't inject multi font-face */}
-      <Global
-        styles={`
+    <UIKitProvider theme={colorMode === 'dark' ? dark : light}>
+      <ChakraProvider theme={theme}>
+        {/* through object's styles's global can't inject multi font-face */}
+        <Global
+          styles={`
         html,
         body,
         #__next,
@@ -127,9 +130,10 @@ const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
             font-style: normal
         }
         `}
-      />
-      {children}
-    </ChakraProvider>
+        />
+        {children}
+      </ChakraProvider>
+    </UIKitProvider>
   )
 }
 

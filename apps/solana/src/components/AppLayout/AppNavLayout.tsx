@@ -44,12 +44,13 @@ function AppNavLayout({
       <HStack
         className="navbar"
         flex="none"
-        height={['64px', '80px']}
-        px={['20px', '38px']}
+        height={['64px', '56px']}
+        px={['20px', '16px']}
         gap={['4px', 'max(64px, 6.1vw)']}
         alignItems="center"
         justifyContent="space-between"
         borderBottom={`1px solid ${colors.cardBorder01}`}
+        bgColor={colors.cardBg}
       >
         {/* logo */}
         <Desktop>
@@ -64,7 +65,7 @@ function AppNavLayout({
           <HStack flexGrow={1} justify="start" overflow={['auto', 'visible']} gap={15}>
             <RouteLink href="/swap" isActive={pathname === '/swap'} title={t('swap.title')} />
             <RouteLink href="/liquidity-pools" isActive={pathname.includes('/liquidity')} title={t('liquidity.title')} />
-            <RouteLink href="/portfolio" isActive={pathname === '/portfolio'} title={t('portfolio.title')} />
+            <RouteLink href="/positions" isActive={pathname === '/positions'} title={t('portfolio.title')} />
           </HStack>
         </Desktop>
 
@@ -130,7 +131,8 @@ function RouteLink({
       <Text
         as="span"
         textColor={isActive ? colors.textSecondary : colors.textTertiary}
-        fontSize="lg"
+        fontSize="md"
+        fontWeight={isActive ? 600 : 400}
         px={4}
         py={2}
         rounded="xl"

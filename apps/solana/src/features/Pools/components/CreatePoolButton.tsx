@@ -1,7 +1,7 @@
+import { Button } from '@pancakeswap/uikit'
 import { HStack, useDisclosure } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 
-import Button from '@/components/Button'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
 import { CreatePoolEntryDialog } from '@/features/Create/components/CreatePoolEntryDialog'
 import PlusIcon from '@/icons/misc/PlusIcon'
@@ -29,7 +29,7 @@ export default function CreatePoolButton() {
         </HStack>
       </Mobile>
       <Desktop>
-        <Button onClick={onOpen} variant="outline">
+        <Button onClick={onOpen} variant="primary" p="18px" scale="sm">
           {t('liquidity.create_pool')}
         </Button>
       </Desktop>

@@ -4,7 +4,7 @@
     "playground": "playground",
     "disabled": "Disabled",
     "all": "All",
-    "search_all": "Search all",
+    "search_all": "Search",
     "layout": "Layout",
     "list": "list",
     "grid": "grid",
@@ -505,8 +505,8 @@
     "migrate_clmm_tx_desc": "Migrate {{mint}} to CLMM position."
   },
   "portfolio": {
-    "title": "Portfolio",
-    "hero_title": "My Portfolio",
+    "title": "My Positions",
+    "hero_title": "My Positions",
     "assets_by_pool": "Assets by pool",
     "assets_by_token": "Assets by token",
     "idle_tokens": "Idle tokens",

@@ -2,11 +2,11 @@ import {
   Button,
   SystemStyleObject,
   TabProps,
-  TabIndicator as _TabIndicator,
-  TabList as _TabList,
-  TabListProps as _TabListProps,
-  Tabs as _Tabs,
-  TabsProps as _TabsProps,
+  TabIndicator as CTabIndicator,
+  TabList as CTabList,
+  TabListProps as CTabListProps,
+  Tabs as CTabs,
+  TabsProps as CTabsProps,
   useTab,
   useTabsStyles,
   Tooltip,
@@ -28,7 +28,7 @@ export type TabOptionsObj = {
 
 export type TabItem = TabOptionsObj | string
 
-type TabsProps = Omit<_TabsProps, 'children' | 'onChange' | 'index' | 'defaultIndex'> & {
+type TabsProps = Omit<CTabsProps, 'children' | 'onChange' | 'index' | 'defaultIndex'> & {
   items: readonly TabItem[]
   variant?:
     | 'line' /* has line indicator style */
@@ -40,7 +40,7 @@ type TabsProps = Omit<_TabsProps, 'children' | 'onChange' | 'index' | 'defaultIn
     | 'roundedSwitch'
     | 'squarePanel'
     | 'squarePanelDark'
-  tabListSX?: _TabListProps['sx']
+  tabListSX?: CTabListProps['sx']
   onChange?: (value: any /* string but, don't need to type */) => void
   value?: string
   defaultValue?: string
@@ -132,7 +132,7 @@ export default function Tabs({
   }, [inputValueIndex])
 
   useEffect(() => {
-    if (!isNaN(defaultValueIndex)) {
+    if (!Number.isNaN(defaultValueIndex)) {
       setIndicatorTargetByIndex(defaultValueIndex)
     }
   }, [defaultValueIndex])
@@ -140,7 +140,7 @@ export default function Tabs({
   const onTabChange = useEvent((idx: number) => {
     if (options[idx].disabled) return
     setIndicatorTargetByIndex(idx)
-    return onChange?.(options[idx].value)
+    onChange?.(options[idx].value)
   })
   // change this will recalculate indicatorLeft and indicatorWidth
   const [forceRerenderIndicatorCount, setForceRerenderIndicatorCount] = useState(0)
@@ -151,12 +151,13 @@ export default function Tabs({
   useEffect(() => {
     if (globalThis.document == null) return
     globalThis.document.addEventListener('resize', forceRerenderIndicator)
+    // eslint-disable-next-line consistent-return
     return () => globalThis.document.removeEventListener('resize', forceRerenderIndicator)
   }, [])
   const indicatorLeft = useMemo(() => indicatorTarget?.offsetLeft, [indicatorTarget, forceRerenderIndicatorCount])
   const indicatorWidth = useMemo(() => indicatorTarget?.offsetWidth, [indicatorTarget, forceRerenderIndicatorCount])
   return (
-    <_Tabs
+    <CTabs
       size={size}
       variant={variant}
       w={rest.isFitted ? undefined : 'fit-content'}
@@ -169,7 +170,7 @@ export default function Tabs({
       index={inputValueIndex}
       {...rest}
     >
-      <_TabList sx={tabListSX} gap={variant !== 'line' ? gap : size === 'sm' ? '8px' : size === 'md' ? '16px' : '28px'}>
+      <CTabList sx={tabListSX} gap={variant !== 'line' ? gap : size === 'sm' ? '8px' : size === 'md' ? '16px' : '28px'}>
         {options.map((option, idx) => (
           <CustomTab
             sx={tabItemSX}
@@ -190,14 +191,14 @@ export default function Tabs({
           </CustomTab>
         ))}
         {haveIndicator && (
-          <_TabIndicator
+          <CTabIndicator
             sx={{
               left: `${indicatorLeft}px !important`, // overwrite chakra's wrong style
               width: `${indicatorWidth}px !important` // overwrite chakra's wrong style
             }}
           />
         )}
-      </_TabList>
-    </_Tabs>
+      </CTabList>
+    </CTabs>
   )
 }

@@ -1,4 +1,4 @@
-import { Box, Flex, useColorMode } from '@chakra-ui/react'
+import { Box, Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import SortUpDownArrow from '@/components/SortUpDownArrow'
 import { colors } from '@/theme/cssVariables'
@@ -18,22 +18,23 @@ export function PoolListHeader({
   timeBase: TimeBase
 }) {
   const { t } = useTranslation()
-  const { colorMode } = useColorMode()
-  const isLight = colorMode === 'light'
 
   return (
     <Flex
       w="100%"
       alignItems="center"
-      backgroundColor={isLight ? colors.backgroundDark50 : colors.backgroundLight30}
-      borderRadius="12px 12px 0 0"
-      color={isLight ? colors.textPrimary : colors.textSecondary}
-      fontWeight={500}
-      px={[4, 6]}
-      py={4}
+      backgroundColor={colors.cardBg}
+      border={`1px solid ${colors.cardBorder01}`}
+      borderBottom="none"
+      borderRadius="24px 24px 0 0"
+      color={colors.textSecondary}
+      fontWeight={600}
+      textTransform="uppercase"
+      px="24px"
+      py="12px"
       whiteSpace="nowrap"
       sx={poolListGrid}
-      fontSize={['sm', 'md']}
+      fontSize="12px"
     >
       <Box pl={[0, 4 + 6]}>{t('liquidity.pool')}</Box>
       <Desktop>
@@ -57,7 +58,7 @@ export function PoolListHeader({
           {t(`field.${timeBase}_fees`)}
           {sortKey === POOL_SORT_KEY.fee ? <SortUpDownArrow width="12px" height="12px" isDown={Boolean(order)} /> : null}
         </Flex>
-        <Flex alignItems="center" gap="1" cursor="pointer" onClick={() => handleClickSort('apr')}>
+        <Flex justifyContent="end" alignItems="center" gap="1" cursor="pointer" onClick={() => handleClickSort('apr')}>
           {t(`field.${timeBase}_apr`)}
           {sortKey === POOL_SORT_KEY.apr ? <SortUpDownArrow width="12px" height="12px" isDown={Boolean(order)} /> : null}
         </Flex>

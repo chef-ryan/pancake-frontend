@@ -1,9 +1,10 @@
 import { FlexProps, Grid, forwardRef } from '@chakra-ui/react'
-import { ReactNode, createContext, useDeferredValue, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { ReactNode, useCallback, useDeferredValue, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useRecordedEffect } from '@/hooks/useRecordedEffect'
 import { useScrollDegreeDetector } from '@/hooks/useScrollDegreeDetector'
 import mergeRef from '@/utils/react/mergeRef'
-import { ObserveFn, useIntersectionObserver } from '../hooks/useIntersectionObserver'
+import { ListContext } from '@/provider'
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver'
 import ListItem from './ListItem'
 
 /**
@@ -45,8 +46,6 @@ type ListProps<T> = {
   preventResetOnChange?: boolean
 }
 
-export const listContext = createContext<{ observeFn?: ObserveFn<any> }>({})
-
 function List<T>(
   {
     controllerRef,
@@ -77,6 +76,7 @@ function List<T>(
   const { observe, stop } = useIntersectionObserver({ rootRef: listRef, options: { rootMargin: '80%' } })
   const contextValue = useMemo(() => ({ observeFn: observe }), [observe])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => stop, []) // stop observer when destory
 
   const initRenderItemLength = renderAllAtOnce ? items.length : initRenderCount
@@ -101,7 +101,8 @@ function List<T>(
   const [renderCount, setRenderCount] = useState(0)
   const allListItems = useMemo(
     () => items.slice(0, renderItemLength).map((item, idx) => <ListItem key={getItemKey(item, idx)}>{children?.(item, idx)}</ListItem>),
-    [items, renderItemLength, renderCount, children]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [items, renderItemLength, renderCount, children, getItemKey]
   )
 
   // reset if Item's length has changed
@@ -118,10 +119,10 @@ function List<T>(
     [items, renderAllAtOnce, preventResetOnChange] as const
   )
 
-  function resetRenderCount() {
+  const resetRenderCount = useCallback(() => {
     setRenderItemLength(initRenderItemLength)
     setRenderCount((n) => n + 1)
-  }
+  }, [initRenderItemLength])
 
   useImperativeHandle(
     controllerRef,
@@ -132,7 +133,7 @@ function List<T>(
   )
 
   return (
-    <listContext.Provider value={contextValue}>
+    <ListContext.Provider value={contextValue}>
       <Grid
         className="List"
         ref={mergeRef(listRef, ref)}
@@ -151,7 +152,7 @@ function List<T>(
       >
         {allListItems}
       </Grid>
-    </listContext.Provider>
+    </ListContext.Provider>
   )
 }
 

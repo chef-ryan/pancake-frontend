@@ -1,5 +1,5 @@
 import { ButtonProps as ChakraButtonProps, Button as ChakraButton } from '@chakra-ui/react'
-import { forwardRef } from 'react'
+import { forwardRef, useMemo } from 'react'
 import { MayArray, MayFunction } from '@raydium-io/raydium-sdk-v2'
 import { shrinkToValue } from '@/utils/shrinkToValue'
 
@@ -28,17 +28,18 @@ export interface ButtonProps extends Omit<ChakraButtonProps, 'colorScheme'> {
 }
 
 export default forwardRef(function Button({ validators, ...restProps }: ButtonProps, ref) {
-  const failedValidator = (Array.isArray(validators) ? validators.length > 0 : validators)
-    ? [validators!].flat().find(({ should }) => !shrinkToValue(should))
-    : undefined
-  const mergedProps: Omit<ButtonProps, 'validators'> = failedValidator
-    ? {
-        ...restProps,
-        ...failedValidator.fallbackProps,
-        isDisabled: true,
-        isActive: failedValidator.forceActive
-      }
-    : restProps
-
-  return <ChakraButton ref={ref as any} {...mergedProps} />
+  const mergedProps: Omit<ButtonProps, 'validators'> = useMemo(() => {
+    const failedValidator = (Array.isArray(validators) ? validators.length > 0 : validators)
+      ? [validators!].flat().find(({ should }) => !shrinkToValue(should))
+      : undefined
+    return failedValidator
+      ? {
+          ...restProps,
+          ...failedValidator.fallbackProps,
+          isDisabled: true,
+          isActive: failedValidator.forceActive
+        }
+      : restProps
+  }, [restProps, validators])
+  return <ChakraButton ref={ref as any} _hover={{ opacity: '0.65' }} {...mergedProps} />
 })

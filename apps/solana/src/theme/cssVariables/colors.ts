@@ -2,11 +2,14 @@ import { lightColors as pcsLightColors, darkColors as pcsDarkColors } from '@pan
 
 export const darkColors: Record<keyof typeof colors, string> = {
   // app main bg color
-  primary: '#abc4ff',
+  primary: pcsDarkColors.primary,
+  primary60: pcsDarkColors.primary60,
   secondary: '#22D1F8',
   secondary10: 'rgba(34, 209, 248, 0.1)',
 
   // component color
+  background: pcsDarkColors.background,
+  backgroundAlt: pcsDarkColors.backgroundAlt,
   backgroundDark: '#0b1022',
   backgroundDark50: '#0b102280',
   backgroundMedium: '#161E32',
@@ -18,24 +21,19 @@ export const darkColors: Record<keyof typeof colors, string> = {
   backgroundTransparent10: 'rgba(171, 196, 255, 0.1)',
 
   // text
-  textPrimary: '#ECF5FF',
-  textSecondary: '#abc4ff',
+  textPrimary: pcsDarkColors.text,
+  textSecondary: pcsDarkColors.secondary,
+  textSubtle: pcsDarkColors.textSubtle,
   textTertiary: '#abc4ff80',
   textRevertPrimary: '#181F35',
 
   textLink: '#22D1F8',
 
-  /** 🤔 what's this */
   textQuaternary: '#C4D6FF',
-  /** 🤔 what's this */
   textQuinary: '#1C243E',
-  /** 🤔 what's this */
   textSenary: 'rgba(196, 214, 255, 0.5)',
-  /** 🤔 what's this */
   textSeptenary: '#22D1F8',
-  /** 🤔 what's this */
   textPurple: '#8C6EEF',
-  /** 🤔 what's this */
   textPink: '#FF4EA3',
 
   // button
@@ -106,6 +104,12 @@ export const darkColors: Record<keyof typeof colors, string> = {
 
   // input
   inputMask: '#0B102266',
+  inputBorder: pcsDarkColors.inputSecondary,
+  inputBg: pcsDarkColors.input,
+
+  // card
+  cardBorder01: pcsDarkColors.cardBorder,
+  cardBg: pcsDarkColors.card,
 
   // customize (by V3 frontend coder)
   backgroundApp: 'linear-gradient(29.71deg, #121C34 -18.98%, #050D17 14.6%, #070A15 56.26%, rgba(9, 14, 29, 0.97) 85.27%)',
@@ -122,10 +126,10 @@ export const darkColors: Record<keyof typeof colors, string> = {
   background01: '#090D1D',
   background02: 'rgba(22, 22, 22, 0.5)',
   background03: '#FF4EA31A',
-  cardBorder01: pcsDarkColors.cardBorder,
   text01: '#D6CC56',
   text02: '#fff',
   text03: '#b5b7da',
+  tertiary: pcsDarkColors.tertiary,
   /** it's designer's variable name in Figma */
   brandGradient: 'linear-gradient(244deg, #7748FC 8.17%, #39D0D8 101.65%)',
   dividerDashGradient: 'repeating-linear-gradient(to right, currentColor 0 5px, transparent 5px 10px)',
@@ -138,11 +142,14 @@ export const darkColors: Record<keyof typeof colors, string> = {
 
 export const lightColors: Partial<typeof darkColors> = {
   // app main bg color
-  primary: '#abc4ff',
+  primary: pcsLightColors.primary,
+  primary60: pcsLightColors.primary60,
   secondary: '#4F53F3',
   secondary10: 'rgba(34, 209, 248, 0.1)',
 
   // component color
+  background: pcsLightColors.background,
+  backgroundAlt: pcsLightColors.backgroundAlt,
   backgroundDark: '#EDEDFF',
   backgroundDark50: '#EDEDFF80',
   backgroundMedium: '#EDEDFF',
@@ -154,24 +161,19 @@ export const lightColors: Partial<typeof darkColors> = {
   backgroundTransparent10: 'rgba(171, 196, 255, 0.1)',
 
   // text
-  textPrimary: '#0B1022',
-  textSecondary: '#474ABB',
+  textPrimary: pcsLightColors.text,
+  textSecondary: pcsLightColors.secondary,
+  textSubtle: pcsLightColors.textSubtle,
   textTertiary: '#474ABB99',
   textRevertPrimary: '#ECF5FF',
 
   textLink: '#22D1F8',
 
-  /** 🤔 what's this */
   textQuaternary: '#C4D6FF',
-  /** 🤔 what's this */
   textQuinary: '#1C243E',
-  /** 🤔 what's this */
   textSenary: 'rgba(196, 214, 255, 0.5)',
-  /** 🤔 what's this */
   textSeptenary: '#22D1F8',
-  /** 🤔 what's this */
   textPurple: '#8C6EEF',
-  /** 🤔 what's this */
   textPink: '#FF4EA3',
 
   // button
@@ -242,6 +244,12 @@ export const lightColors: Partial<typeof darkColors> = {
 
   // input
   inputMask: '#fff3',
+  inputBorder: pcsLightColors.inputSecondary,
+  inputBg: pcsLightColors.input,
+  //
+  // card
+  cardBorder01: pcsLightColors.cardBorder,
+  cardBg: pcsLightColors.card,
 
   // customize (by V3 frontend coder)
   backgroundApp: '#fff',
@@ -259,10 +267,10 @@ export const lightColors: Partial<typeof darkColors> = {
   background01: '#EDEDFF',
   background02: '#ABC4FF33',
   background03: '#FF4EA31A',
-  cardBorder01: pcsLightColors.cardBorder,
   text01: '#D6CC56',
   text02: '#000',
   text03: '#474ABB',
+  tertiary: pcsLightColors.tertiary,
   /** it's designer's variable name in Figma */
   brandGradient: 'linear-gradient(244deg, #7748FC 8.17%, #39D0D8 101.65%)',
   dividerDashGradient: 'repeating-linear-gradient(to right, currentColor 0 5px, transparent 5px 10px)',
@@ -279,10 +287,13 @@ export const lightColors: Partial<typeof darkColors> = {
 export const colors = {
   // app main bg color
   primary: 'var(--primary)',
+  primary60: 'var(--primary60)',
   secondary: 'var(--secondary)',
   secondary10: 'var(--secondary10)',
 
   // component color
+  background: 'var(--background)',
+  backgroundAlt: 'var(--background-alt)',
   backgroundDark: 'var(--background-dark)',
   backgroundDark50: 'var(--background-dark50)',
   backgroundMedium: 'var(--background-medium)',
@@ -298,23 +309,18 @@ export const colors = {
   textPrimary: 'var(--text-primary)',
   /** #abc4ff */
   textSecondary: 'var(--text-secondary)',
+  textSubtle: 'var(--text-subtle)',
   /** #abc4ff80 */
   textTertiary: 'var(--text-tertiary)',
   textRevertPrimary: 'var(--text-revert-primary)',
 
   textLink: 'var(--text-link)',
 
-  /** 🤔 what's this */
   textQuaternary: 'var(--text-quaternary)',
-  /** 🤔 what's this */
   textQuinary: 'var(--text-quinary)',
-  /** 🤔 what's this */
   textSenary: 'var(--text-senary)',
-  /** 🤔 what's this */
   textSeptenary: 'var(--text-septenary)',
-  /** 🤔 what's this */
   textPurple: 'var(--text-purple)',
-  /** 🤔 what's this */
   textPink: 'var(--text-pink)',
 
   // button
@@ -383,6 +389,12 @@ export const colors = {
 
   // input
   inputMask: 'var(--input-mask)',
+  inputBorder: 'var(--input-border)',
+  inputBg: 'var(--input-bg)',
+
+  // card
+  cardBorder01: 'var(--card-border-01)',
+  cardBg: 'var(--card-bg)',
 
   // customize (by V3 frontend coder)
   backgroundApp: 'var(--background-app)',
@@ -399,10 +411,10 @@ export const colors = {
   background01: 'var(--background-01)',
   background02: 'var(--background-02)',
   background03: 'var(--background-03)',
-  cardBorder01: 'var(--card-border-01)',
   text01: 'var(--text-01)',
   text02: 'var(--text-02)',
   text03: 'var(--text-03)',
+  tertiary: 'var(--tertiary)',
   /** it's designer's variable name in Figma */
   brandGradient: 'var(--brand-gradient)',
   dividerDashGradient: 'var(--divider-dash-gradient)',

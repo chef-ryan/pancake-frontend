@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react'
 import { ReactNode, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { shrinkToValue } from '@/utils/shrinkToValue'
-import { listContext } from './List'
+import { ListContext } from '@/provider'
 import VirtualBox from './VirtualBox'
 
 type ListItemStatus = {
@@ -12,7 +12,7 @@ export default function ListItem({ children }: { children?: ReactNode | ((status
   const itemRef = useRef<HTMLElement>()
 
   const [isIntersecting, setIsIntersecting] = useState(true)
-  const { observeFn } = useContext(listContext) ?? {}
+  const { observeFn } = useContext(ListContext) ?? {}
 
   const status = useMemo(
     () => ({
@@ -23,10 +23,10 @@ export default function ListItem({ children }: { children?: ReactNode | ((status
 
   useEffect(() => {
     if (!itemRef.current) return
-    observeFn?.(itemRef.current, ({ entry: { isIntersecting } }) => {
-      setIsIntersecting(isIntersecting)
+    observeFn?.(itemRef.current, ({ entry: { isIntersecting: isIntersecting_ } }) => {
+      setIsIntersecting(isIntersecting_)
     })
-  }, [itemRef])
+  }, [itemRef, observeFn])
 
   return (
     <VirtualBox show={isIntersecting} ref={itemRef} w="full" flexShrink={0}>

@@ -31,7 +31,7 @@ const sizeMap = {
   sm: '20px',
   smi: '24px',
   md: '32px',
-  lg: '48px',
+  lg: '40px',
   '2xl': '80px'
 }
 // @ts-expect-error enum
@@ -41,9 +41,6 @@ export default forwardRef(function TokenAvatar(
   { token: originalToken, tokenMint, icon, size = 'md', name, bgBlur, haveHTMLTitle, ...restProps }: TokenAvatarProps,
   ref
 ) {
-  const { colorMode } = useColorMode()
-  const isLight = colorMode !== 'dark'
-
   const [queryUrl, setQueryUrl] = useState('')
 
   useEffect(() => {
@@ -64,13 +61,11 @@ export default forwardRef(function TokenAvatar(
     <Box
       ref={ref}
       bg={colors.tokenAvatarBg}
-      border={isLight ? `1px solid ${colors.primary}` : 'none'}
       minWidth={boxSize}
       minHeight={boxSize}
       maxWidth={boxSize}
       maxHeight={boxSize}
       borderRadius="50%"
-      p=".15em"
       fontSize={boxSize} // for use 'em' unit
       backdropFilter={bgBlur ? 'blur(2px)' : undefined}
       {...restProps}
@@ -88,6 +83,8 @@ export default forwardRef(function TokenAvatar(
             }}
             alt={name || token?.address}
             title={haveHTMLTitle && (name || token) ? `${name || token?.symbol || token?.address}` : undefined}
+            width="100%"
+            height="100%"
           />
         ) : null}
       </Box>

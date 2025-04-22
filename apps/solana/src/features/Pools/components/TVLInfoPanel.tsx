@@ -1,3 +1,4 @@
+import { Card } from '@pancakeswap/uikit'
 import { Box, HStack, Image, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 
@@ -15,19 +16,18 @@ export default function TVLInfoPanel({ tvl, volume }: { tvl: string | number; vo
   )
 }
 
-function TVLInfoItem({ name, value, decoratorImageSrc }: { name: string; value: string | number; decoratorImageSrc?: string }) {
+function TVLInfoItem({ name, value }: { name: string; value: string | number; decoratorImageSrc?: string }) {
   return (
-    <Box backgroundColor={colors.backgroundLight} borderRadius={8} display="flex" overflow="hidden">
-      <Box pl={3} pr={0} py={2}>
-        <Text fontSize="sm" color={colors.textSecondary}>
+    <Card>
+      <Box px={3} py={2}>
+        <Text fontSize="xs" color={colors.textSubtle}>
           {name}
         </Text>
-        <Text fontSize="18px" fontWeight={500} color={colors.textSecondary}>
+        <Text fontSize="24px" fontWeight={600} color={colors.textPrimary}>
           {formatCurrency(value, { symbol: '$', decimalPlaces: 2 })}
         </Text>
       </Box>
-      <Image alignSelf="end" width="70px" objectFit="cover" alt="TVL image" src={decoratorImageSrc} />
-    </Box>
+    </Card>
   )
 }
 

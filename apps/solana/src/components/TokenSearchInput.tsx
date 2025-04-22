@@ -109,6 +109,7 @@ export default forwardRef(function TokenSearchInput(
     if (typeof searchRef === 'function') {
       searchRef(anchorRef.current)
     } else if (searchRef) {
+      // eslint-disable-next-line no-param-reassign
       searchRef.current = anchorRef.current
     }
   }, [searchRef])
@@ -211,7 +212,10 @@ export default forwardRef(function TokenSearchInput(
           if (open) {
             event.stopPropagation()
           }
+          break
         }
+        default:
+          break
       }
     },
     [filteredList, tokenMap, open, scrollIntoView, onSelectedListChange]
@@ -223,9 +227,9 @@ export default forwardRef(function TokenSearchInput(
         <PopoverAnchor>
           <HStack
             ref={anchorRef}
-            color={colors.textTertiary}
-            background={colors.backgroundTransparent12}
-            _hover={{ bg: colors.backgroundTransparent07 }}
+            color={colors.textSubtle}
+            border={`1px solid ${colors.inputBorder}`}
+            background={colors.inputBg}
             pl="2"
             pr="3"
             placeItems="center"
@@ -287,8 +291,8 @@ export default forwardRef(function TokenSearchInput(
           </HStack>
         </PopoverAnchor>
 
-        <PopoverContent minW={['none', '400px']} maxW="100%">
-          <PopoverBody ref={listRef} py="2" px="4" maxH="200px" overflowY="auto" width={`${triggerWidth}px`}>
+        <PopoverContent border={`1px solid ${colors.cardBorder01}`} minW={['none', '380px']} maxW="100%">
+          <PopoverBody ref={listRef} py="2" px="4" maxH="400px" overflowY="auto" width={`${triggerWidth}px`}>
             {filteredList.length ? (
               filteredList.map((token, idx) => (
                 <Flex
@@ -302,16 +306,16 @@ export default forwardRef(function TokenSearchInput(
                     setActiveIndex(idx)
                   }}
                   p="2"
-                  bg={activeIndex === idx ? colors.backgroundDark : 'transparent'}
+                  bg={activeIndex === idx ? colors.background : 'transparent'}
                   cursor="pointer"
-                  borderRadius="4px"
+                  borderRadius="16px"
                   alignItems="center"
                   justifyContent="space-between"
                   gap="2"
                   mb={idx !== filteredList.length - 1 ? '3' : '0'}
                 >
-                  <Flex alignItems="flex-start" gap="2" overflow="hidden">
-                    <TokenAvatar size="sm" mt="0.5" token={token} />
+                  <Flex alignItems="center" gap="2" overflow="hidden">
+                    <TokenAvatar size="lg" mt="0.5" token={token} />
                     <Flex alignItems="center" gap="2" flexWrap="nowrap">
                       <Text variant="title" color={colors.textPrimary} fontSize="md" whiteSpace="nowrap">
                         {token.symbol}
@@ -322,11 +326,11 @@ export default forwardRef(function TokenSearchInput(
                     </Flex>
                   </Flex>
                   <AddressChip
-                    textProps={{ px: '2', bg: colors.backgroundDark, borderRadius: '4px' }}
+                    textProps={{ px: '2', borderRadius: '4px', color: colors.textSubtle }}
                     address={solToWSol(token.address).toString()}
                     canCopy={false}
                     canExternalLink
-                    iconProps={{ fill: colors.textSecondary }}
+                    iconProps={{ color: colors.textSubtle }}
                   />
                 </Flex>
               ))
@@ -344,13 +348,13 @@ export default forwardRef(function TokenSearchInput(
 
 function TokenTag(props: { token: ApiV3Token; handleRemove: (e: MouseEvent<HTMLDivElement>) => void; idx: number }) {
   return (
-    <HStack rounded="full" p={1} gap={1} alignItems="center" bg={colors.backgroundDark}>
-      <TokenAvatar flex="none" size="sm" token={props.token} />
-      <Text flex="none" lineHeight={1} color={colors.textPrimary}>
+    <HStack rounded="full" gap={1} alignItems="center" bg={colors.textSubtle}>
+      <TokenAvatar flex="none" size="smi" token={props.token} />
+      <Text flex="none" lineHeight={1} color={colors.backgroundAlt} my="5px">
         {props.token.symbol}
       </Text>
-      <Box flex="none" onClick={props.handleRemove} ml={2} mr={1} data-idx={props.idx} cursor="pointer">
-        <Close width={10} height={10} color={colors.textSecondary} />
+      <Box flex="none" onClick={props.handleRemove} ml={0.5} mr={1} data-idx={props.idx} cursor="pointer">
+        <Close width={10} height={10} color={colors.backgroundAlt} />
       </Box>
     </HStack>
   )
