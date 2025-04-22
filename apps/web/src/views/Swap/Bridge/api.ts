@@ -10,6 +10,46 @@ export type GetBridgeCalldataResponse = {
   gasFee: string
 }
 
+enum Command {
+  BRIDGE = 'BRIDGE',
+  SWAP = 'SWAP',
+}
+
+interface BridgeDataSchema {
+  command: Command.BRIDGE
+  data: {
+    inputToken: Address
+    outputToken: Address
+    inputAmount: string
+    minOutputAmount?: string
+    originChainId: number
+    destinationChainId: number
+    originChainRecipient: Address
+    destinationChainRecipient?: Address
+  }
+}
+
+interface SwapDataSchema {
+  command: Command.SWAP
+  data: {
+    originChainId: number
+    trade: any
+    slippageTolerance: number
+    deadlineOrPreviousBlockhash?: string
+    recipient?: Address
+  }
+}
+
+interface CalldataRequestSchema {
+  inputToken: Address
+  outputToken: Address
+  inputAmount: string
+  originChainId: number
+  destinationChainId: number
+  recipientOnDestChain: Address
+  commands: (BridgeDataSchema | SwapDataSchema)[]
+}
+
 export const getBridgeCalldata = async ({
   currencyAmountIn,
   currencyAmountOut,
@@ -20,40 +60,43 @@ export const getBridgeCalldata = async ({
   recipient: Address
 }) => {
   try {
-    const resp = await fetch(`${BRIDGE_API_ENDPOINT}/v1/calldata`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    const bridgeCommand: BridgeDataSchema = {
+      command: Command.BRIDGE,
+      data: {
         inputToken: currencyAmountIn.currency.wrapped.address,
         outputToken: currencyAmountOut.currency.wrapped.address,
         inputAmount: currencyAmountIn.quotient.toString(),
         originChainId: currencyAmountIn.currency.chainId,
         destinationChainId: currencyAmountOut.currency.chainId,
-        commands: [
-          {
-            command: 'BRIDGE',
-            data: {
-              inputToken: currencyAmountIn.currency.wrapped.address,
-              outputToken: currencyAmountOut.currency.wrapped.address,
-              inputAmount: currencyAmountIn.quotient.toString(),
-              originChainId: currencyAmountIn.currency.chainId,
-              destinationChainId: currencyAmountOut.currency.chainId,
-              originChainRecipient: recipient,
-              destinationChainRecipient: recipient,
-              // TODO: replace with minOutputAmount from the response or Backend will calculate it
-              minOutputAmount: '1',
-            },
-          },
-        ],
-      }),
+        originChainRecipient: recipient,
+        destinationChainRecipient: recipient,
+        // TODO: replace with minOutputAmount from the response or Backend will calculate it
+        minOutputAmount: '1',
+      },
+    }
+
+    const calldataRequest: CalldataRequestSchema = {
+      inputToken: currencyAmountIn.currency.wrapped.address,
+      outputToken: currencyAmountOut.currency.wrapped.address,
+      inputAmount: currencyAmountIn.quotient.toString(),
+      originChainId: currencyAmountIn.currency.chainId,
+      destinationChainId: currencyAmountOut.currency.chainId,
+      recipientOnDestChain: recipient,
+      commands: [bridgeCommand],
+    }
+
+    const resp = await fetch(`${BRIDGE_API_ENDPOINT}/v1/calldata`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(calldataRequest),
     })
 
     const data = (await resp.json()) as GetBridgeCalldataResponse
     return data
   } catch (error) {
-    console.error('error', error)
+    console.error('getBridgeCalldata Error', error)
     throw error
   }
 }
@@ -92,7 +135,7 @@ export const postBridgeCheckApproval = async ({
     const data = (await resp.json()) as PostBridgeCheckApprovalResponse
     return data
   } catch (error) {
-    console.error('error', error)
+    console.error('postBridgeCheckApproval Error', error)
     throw error
   }
 }

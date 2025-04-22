@@ -1,6 +1,6 @@
 import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Address } from 'viem'
 import { postBridgeCheckApproval, PostBridgeCheckApprovalResponse } from '../api'
 
@@ -34,10 +34,13 @@ export const useBridgeCheckApproval = () => {
 
   const requiresApproval = Boolean(approvalData?.approval?.isRequired)
 
-  return {
-    checkApproval,
-    approvalData,
-    requiresApproval,
-    isLoading,
-  }
+  return useMemo(
+    () => ({
+      checkApproval,
+      approvalData,
+      requiresApproval,
+      isLoading,
+    }),
+    [checkApproval, approvalData, requiresApproval, isLoading],
+  )
 }

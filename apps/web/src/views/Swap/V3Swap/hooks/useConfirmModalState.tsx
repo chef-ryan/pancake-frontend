@@ -104,7 +104,7 @@ const useCreateConfirmSteps = (
     // Handle bridge order approval check
     if (isBridgeOrder(order) && order.trade.inputAmount) {
       const approvalCheck = await checkApproval(order.trade.inputAmount)
-      if (approvalCheck?.approval) {
+      if (approvalCheck?.approval?.isRequired) {
         steps.push(ConfirmModalState.APPROVING_TOKEN)
       }
     } else if (requireApprove) {
