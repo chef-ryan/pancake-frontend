@@ -1,46 +1,85 @@
 import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { useQuery } from '@tanstack/react-query'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Address } from 'viem'
 import { postBridgeCheckApproval, PostBridgeCheckApprovalResponse } from '../api'
 
-export const useBridgeCheckApproval = () => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [approvalData, setApprovalData] = useState<PostBridgeCheckApprovalResponse | null>(null)
+type BridgeCheckApprovalData = PostBridgeCheckApprovalResponse | null | undefined
+
+export const useBridgeCheckApproval = ({ currencyAmountIn }: { currencyAmountIn?: CurrencyAmount<Currency> }) => {
   const { account } = useAccountActiveChain()
 
-  const checkApproval = useCallback(
-    async (currencyAmountIn: CurrencyAmount<Currency>) => {
-      if (!account) return null
+  const isNativeCurrency = currencyAmountIn?.currency?.isNative
+
+  const {
+    data: approvalData,
+    error,
+    isLoading,
+    refetch,
+  } = useQuery<BridgeCheckApprovalData>({
+    queryKey: [
+      'bridge-check-approval',
+      account,
+      isNativeCurrency ? 'native' : currencyAmountIn?.currency?.wrapped.address,
+      currencyAmountIn?.currency?.chainId,
+      currencyAmountIn?.quotient.toString(),
+    ],
+    queryFn: async () => {
+      if (!currencyAmountIn || !account) return Promise.resolve(null)
+
+      if (isNativeCurrency) {
+        return {
+          approval: {
+            isRequired: false,
+          },
+        }
+      }
 
       try {
-        setIsLoading(true)
         const response = await postBridgeCheckApproval({
           currencyAmountIn,
           recipient: account as Address,
         })
 
-        setApprovalData(response)
         return response
-      } catch (error) {
-        console.error('Bridge approval check error:', error)
-        return null
-      } finally {
-        setIsLoading(false)
+      } catch (err) {
+        console.error('Bridge approval check error:', err)
+        throw err
       }
     },
-    [account],
-  )
+    enabled: !!currencyAmountIn && !!account,
+    retry: 1,
+    // If the query fails, return an error object
+    throwOnError: false,
+  })
 
-  const requiresApproval = Boolean(approvalData?.approval?.isRequired)
+  const isRequiredFromResponse = approvalData?.approval?.isRequired
+
+  // NOTE: when approval response returns error, we should flag it as requiring approval to show the approval error
+  const requiresApproval =
+    typeof isRequiredFromResponse === 'boolean' ? isRequiredFromResponse : Boolean(approvalData?.error?.code || error)
+
+  const finalApprovalData: BridgeCheckApprovalData = useMemo(() => {
+    if (error) {
+      return {
+        error: {
+          code: '500',
+          message: `Bridge approval check failed: ${error.message}`,
+        },
+      }
+    }
+
+    return approvalData
+  }, [approvalData, error])
 
   return useMemo(
     () => ({
-      checkApproval,
-      approvalData,
+      approvalData: finalApprovalData,
       requiresApproval,
       isLoading,
+      refetch,
     }),
-    [checkApproval, approvalData, requiresApproval, isLoading],
+    [finalApprovalData, requiresApproval, isLoading, refetch],
   )
 }

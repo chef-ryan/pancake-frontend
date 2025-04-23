@@ -38,7 +38,7 @@ import { useSendXOrder } from 'views/Swap/x/useSendXOrder'
 
 import { useSetAtom } from 'jotai'
 import { getFullChainNameById } from 'utils/getFullChainNameById'
-import { getBridgeCalldata, postBridgeCheckApproval } from 'views/Swap/Bridge/api'
+import { getBridgeCalldata } from 'views/Swap/Bridge/api'
 import { useBridgeCheckApproval } from 'views/Swap/Bridge/hooks'
 import { crossChainOrderDataAtom } from 'views/SwapSimplify/V4Swap/CrossChainConfirmSwapModal/state/orderData'
 import {
@@ -85,7 +85,9 @@ const useCreateConfirmSteps = (
   const nativeCurrency = useNativeCurrency(order?.trade?.inputAmount.currency.chainId)
   const { account } = useAccountActiveChain()
   const balance = useCurrencyBalance(account ?? undefined, nativeCurrency.wrapped)
-  const { checkApproval } = useBridgeCheckApproval()
+  const { requiresApproval } = useBridgeCheckApproval({
+    currencyAmountIn: isBridgeOrder(order) ? order?.trade.inputAmount : undefined,
+  })
 
   return useCallback(async () => {
     const steps: ConfirmModalState[] = []
@@ -102,11 +104,8 @@ const useCreateConfirmSteps = (
     }
 
     // Handle bridge order approval check
-    if (isBridgeOrder(order) && order.trade.inputAmount) {
-      const approvalCheck = await checkApproval(order.trade.inputAmount)
-      if (approvalCheck?.approval?.isRequired) {
-        steps.push(ConfirmModalState.APPROVING_TOKEN)
-      }
+    if (isBridgeOrder(order) && requiresApproval) {
+      steps.push(ConfirmModalState.APPROVING_TOKEN)
     } else if (requireApprove) {
       steps.push(ConfirmModalState.APPROVING_TOKEN)
     }
@@ -116,7 +115,7 @@ const useCreateConfirmSteps = (
     }
     steps.push(ConfirmModalState.PENDING_CONFIRMATION)
     return steps
-  }, [requireRevoke, requireApprove, requirePermit, order, balance, amountToApprove, checkApproval])
+  }, [requireRevoke, requireApprove, requirePermit, order, balance, amountToApprove, requiresApproval])
 }
 
 // define the actions of each step
@@ -392,11 +391,14 @@ const useConfirmActions = (
     t,
   ])
 
+  const { approvalData, refetch } = useBridgeCheckApproval({
+    currencyAmountIn: isBridgeOrder(order) ? order?.trade.inputAmount : undefined,
+  })
+
   const approvalBridgeStep = useMemo(() => {
     return {
       step: ConfirmModalState.APPROVING_TOKEN,
       action: async (nextStep?: ConfirmModalState) => {
-        // TODO: show error message
         if (!order) {
           return
         }
@@ -405,13 +407,18 @@ const useConfirmActions = (
         setConfirmState(ConfirmModalState.APPROVING_TOKEN)
 
         try {
-          const approvalResponse = await postBridgeCheckApproval({
-            currencyAmountIn: order.trade.inputAmount,
-            recipient: account ?? '0x',
-          })
+          if (approvalData?.error?.code) {
+            throw new Error(`Approval check failed: ${approvalData.error.message || approvalData?.error?.code}`)
+          }
 
-          if (approvalResponse?.approval?.isRequired) {
-            const { to, data } = approvalResponse.approval
+          if (typeof approvalData?.approval?.isRequired !== 'boolean') {
+            throw new Error('Approval check response is failed!')
+          }
+
+          // we use approvalData?.approval?.isRequired instead of requiresApproval from the hook
+          // because we want to ensure the accuracy of the approval check response
+          if (approvalData?.approval?.isRequired) {
+            const { to, data } = approvalData.approval
             const result = await sendTransactionAsync({
               to,
               data,
@@ -434,6 +441,8 @@ const useConfirmActions = (
           } else {
             showError(typeof error === 'string' ? error : (error as any)?.message)
           }
+        } finally {
+          refetch()
         }
       },
       showIndicator: true,
