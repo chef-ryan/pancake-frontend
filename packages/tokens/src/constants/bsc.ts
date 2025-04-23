@@ -3370,4 +3370,6 @@ export const bscTokens = {
   ora: new ERC20Token(ChainId.BSC, '0x333333C465a19C85f85c6CfbED7B16b0B26E3333', 18, 'ORA', ''),
   olm: new ERC20Token(ChainId.BSC, '0x972C42a6350B2f82CC532148eEc8862843De94c2', 18, 'OLM', ''),
   brm: new ERC20Token(ChainId.BSC, '0x483d83A361A3cCE99f88BC05fB44C27B6cE0633b', 18, 'BRM', ''),
+  ht1: new ERC20Token(ChainId.BSC, '0xc7a504C10a1fe213031A1872F0b6d53040217Da0', 18, 'HT1', ''),
+  ht2: new ERC20Token(ChainId.BSC, '0x025B2D584404c5a3B65b01C12FCBD6cE08C53e62', 18, 'HT2', ''),
 }
