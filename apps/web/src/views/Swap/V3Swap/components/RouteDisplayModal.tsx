@@ -51,7 +51,7 @@ export const RouteDisplayModal = memo(function RouteDisplayModal({ isOpen, onDis
         style={{ minHeight: '0' }}
         bodyPadding="24px"
       >
-        <AutoColumn gap="48px" justifyContent="space-between" height="100%">
+        <AutoColumn gap="48px" height="100%">
           {routes.map((route, i) => (
             // eslint-disable-next-line react/no-array-index-key
             <RouteDisplay key={i} route={route} />
@@ -102,6 +102,7 @@ const BrevisDiscountFeeDisplay: React.FC<{
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
   const noDiscount = hookDiscount?.discountFee === hookDiscount?.originalFee
+  console.log('debug hookDiscount', { hookDiscount, noDiscount })
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <Text>
       {noDiscount
@@ -115,10 +116,10 @@ const BrevisDiscountFeeDisplay: React.FC<{
       {tooltipVisible && tooltip}
       {isMobile ? (
         <FlexGap gap="4px" ref={targetRef} style={{ textDecoration: 'underline dotted', cursor: 'pointer' }}>
-          <Text color="positive60" bold>
+          <Text color={!noDiscount ? 'positive60' : undefined} bold>
             ({feeDisplay}%)
           </Text>
-          <Text strikeThrough>({originalFeeDisplay}%)</Text>
+          {!noDiscount ? <Text strikeThrough>({originalFeeDisplay}%)</Text> : null}
         </FlexGap>
       ) : (
         <>
