@@ -38,7 +38,7 @@ export default function PoolListItemAprDetailPopoverContent({
     <Flex flexDir="column" p={2} gap={4}>
       <Box>
         <Flex mb={2} alignItems="center" justifyContent="space-between">
-          <Box fontSize={sizes.textSM} color={colors.textSecondary}>
+          <Box fontSize={sizes.textSM} color={colors.textSubtle} fontWeight={600}>
             {t('field.total_apr')}
           </Box>
           <Box fontSize={sizes.textLG} fontWeight="medium" color={colors.textPrimary}>
@@ -51,7 +51,7 @@ export default function PoolListItemAprDetailPopoverContent({
           <Flex flexGrow={2} justify="space-between" align="center">
             <VStack flex={3}>
               <Flex w="full" gap={4} justify="space-between" align="center">
-                <Flex fontSize={sizes.textXS} fontWeight="normal" color={colors.textSecondary} justify="flex-start" align="center">
+                <Flex fontSize={sizes.textXS} fontWeight="normal" color={colors.textSubtle} justify="flex-start" align="center">
                   <Box rounded="full" bg={aprColors[0]} w="7px" h="7px" mr="8px" />
                   {t('field.trade_fees')}
                 </Flex>
@@ -64,7 +64,7 @@ export default function PoolListItemAprDetailPopoverContent({
                 if (!reward || reward.amount === '0') return null
                 return (
                   <Flex w="full" gap={4} key={`reward-${mint?.symbol}-${idx}`} justify="space-between" align="center">
-                    <Flex fontSize={sizes.textXS} fontWeight="normal" color={colors.textSecondary} justify="flex-start" align="center">
+                    <Flex fontSize={sizes.textXS} fontWeight="normal" color={colors.textSubtle} justify="flex-start" align="center">
                       <Box rounded="full" bg={aprColors[idx + 1]} w="7px" h="7px" mr="8px" />
                       {wSolToSolString(mint?.symbol)}
                     </Flex>
@@ -82,7 +82,7 @@ export default function PoolListItemAprDetailPopoverContent({
       {haveWeeklyRewards && (
         <Box>
           <Flex mb={2} alignItems="center" justifyContent="space-between">
-            <Box fontSize={sizes.textSM} color={colors.textSecondary}>
+            <Box fontSize={sizes.textSM} color={colors.textSubtle} fontWeight={600}>
               {t('field.weekly_rewards')}
             </Box>
             <Box fontSize="14px" fontWeight="normal" color={colors.textPrimary}>
@@ -92,13 +92,13 @@ export default function PoolListItemAprDetailPopoverContent({
           {/* total apr */}
           {weeklyRewards.map((reward) => {
             if (reward.amount === '0') return null
-            const {startTime} = reward
-            const {endTime} = reward
+            const { startTime } = reward
+            const { endTime } = reward
             const isRewardStarted = startTime ? startTime * 1000 < Date.now() : true
             const isRewardEnded = endTime ? endTime * 1000 < Date.now() : true
             return (
               <Flex gap={4} w="full" key={String(reward.token?.address)} justify="space-between" align="center" fontSize="12px" mt="8px">
-                <HStack fontWeight="normal" color={colors.textSecondary} spacing="5px">
+                <HStack fontWeight="normal" color={colors.textSubtle} spacing="5px">
                   {isRewardStarted ? (
                     <TokenAvatar size="xs" token={reward.token} />
                   ) : (
@@ -125,9 +125,9 @@ export default function PoolListItemAprDetailPopoverContent({
                       <TokenAvatar size="xs" token={reward.token} />
                     </Box>
                   )}
-                  <Box color={colors.textPrimary}>{formatCurrency(reward.amount, { decimalPlaces: 1, abbreviated: true })}</Box>
-                  <Box>{wSolToSolString(reward.token?.symbol)}</Box>
-                  <Box color={colors.textPrimary}>
+                  <Box color={colors.success}>{formatCurrency(reward.amount, { decimalPlaces: 1, abbreviated: true })}</Box>
+                  <Box color={colors.textPrimary}>{wSolToSolString(reward.token?.symbol)}</Box>
+                  <Box color={colors.textSubtle}>
                     (
                     {formatCurrency(new Decimal(tokenPrices[reward.token.address]?.value || 0).mul(reward.amount).toString(), {
                       symbol: '$',
@@ -138,7 +138,7 @@ export default function PoolListItemAprDetailPopoverContent({
                   </Box>
                 </HStack>
                 {endTime ? (
-                  <Box fontSize="10px" fontWeight="normal" color={colors.textSecondary}>
+                  <Box fontSize="10px" fontWeight="normal" color={colors.textSubtle}>
                     {isRewardStarted
                       ? isRewardEnded
                         ? t('liquidity.rewards_ended')

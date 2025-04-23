@@ -26,7 +26,6 @@ import List, { ListPropController } from '@/components/List'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
 import PageHeroTitle from '@/components/PageHeroTitle'
 import { Select } from '@/components/Select'
-import Tabs from '@/components/Tabs'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
 import TokenSearchInput from '@/components/TokenSearchInput'
 import useFetchMainInfo from '@/hooks/info/useFetchMainInfo'
@@ -121,6 +120,11 @@ const SORT_ITEMS = [
   }
 ]
 
+const LAYOUT_ITEMS = [
+  { value: 'list', label: <ListIcon key="list-icon" /> },
+  { value: 'grid', label: <GridIcon key="grid-icon" /> }
+]
+
 export default function Pools() {
   const { t, i18n: i18n_ } = useTranslation()
   const query = useRouteQuery()
@@ -210,6 +214,13 @@ export default function Pools() {
     fromUrl: (u) => u as TimeBase,
     toUrl: (v) => v
   })
+  const [timeBaseIdx, handleTimeBaseChange] = useMemo(
+    () => [
+      Object.keys(FILED_KEY).indexOf(timeBase),
+      (idx: number) => setTimeBase((Object.keys(FILED_KEY)[idx] ?? Object.keys(FILED_KEY)[0]) as keyof typeof FILED_KEY)
+    ],
+    [timeBase, setTimeBase]
+  )
 
   const [urlSortKey, setUrlSortKey] = useStateWithUrl(sortKey, 'sort_by', {
     fromUrl: (u) => u,
@@ -237,6 +248,13 @@ export default function Pools() {
     fromUrl: (u) => (u === 'grid' ? 'grid' : 'list'),
     toUrl: (v) => (v === 'grid' ? 'grid' : 'list')
   })
+  const [layoutStyle, handleLayoutStyleChange] = useMemo(
+    () => [
+      LAYOUT_ITEMS.findIndex((i) => i.value === currentLayoutStyle),
+      (idx: number) => setCurrentLayoutStyle((LAYOUT_ITEMS[idx] ?? LAYOUT_ITEMS[0]).value as 'list' | 'grid')
+    ],
+    [currentLayoutStyle, setCurrentLayoutStyle]
+  )
 
   // -------- tab --------
   const [activeTabItem, setActiveTabItem] = useStateWithUrl(tabItems[0], 'tab', {
@@ -489,6 +507,8 @@ export default function Pools() {
               <Flex gap={3}>
                 <Button
                   background={colors.inputBg}
+                  border={`1px solid ${colors.inputBorder}`}
+                  borderBottomWidth="2px"
                   onClick={toggleSubcontrollers}
                   variant="capsule"
                   height={['34px', '40px']}
@@ -525,45 +545,45 @@ export default function Pools() {
                     {/* Widgets */}
                     <Box>
                       <FormControl display="flex" alignItems="center">
-                        <FormLabel minW={['80px', 'unset']}>{t('common.layout')}</FormLabel>
-                        <Tabs
-                          items={[
-                            { value: 'list', label: <ListIcon key="list-icon" /> },
-                            { value: 'grid', label: <GridIcon key="grid-icon" /> }
-                          ]}
-                          value={currentLayoutStyle}
-                          variant="roundedPlain"
-                          size="sm"
-                          onChange={setCurrentLayoutStyle}
-                          tabItemSX={{
-                            px: isMobile ? 1 : '1em'
-                          }}
-                        />
+                        <FormLabel color={colors.textSubtle} minW={['80px', 'unset']}>
+                          {t('common.layout')}
+                        </FormLabel>
+
+                        <ButtonMenu scale="sm" activeIndex={layoutStyle} onItemClick={handleLayoutStyleChange} variant="subtle">
+                          {LAYOUT_ITEMS.map(({ label, value }) => (
+                            <ButtonMenuItem key={value} height="38px">
+                              {label}
+                            </ButtonMenuItem>
+                          ))}
+                        </ButtonMenu>
                       </FormControl>
                     </Box>
 
                     <Box>
                       <FormControl display="flex" alignItems="center">
-                        <FormLabel minW={['80px', 'unset']}>{t('common.time_base')}</FormLabel>
-                        <Tabs
-                          variant="roundedPlain"
-                          items={Object.keys(FILED_KEY).map((key) => ({
-                            value: key as TimeBase,
-                            label: (key as TimeBase).toLocaleUpperCase()
-                          }))}
-                          value={timeBase}
-                          onChange={setTimeBase}
-                          tabListSX={{ height: '24px' }}
-                          tabItemSX={{
-                            px: isMobile ? 1 : '1em'
-                          }}
-                        />
+                        <FormLabel color={colors.textSubtle} minW={['80px', 'unset']}>
+                          {t('common.time_base')}
+                        </FormLabel>
+                        <ButtonMenu scale="sm" activeIndex={timeBaseIdx} onItemClick={handleTimeBaseChange} variant="subtle">
+                          {Object.keys(FILED_KEY)
+                            .map((key) => ({
+                              value: key as TimeBase,
+                              label: (key as TimeBase).toLocaleUpperCase()
+                            }))
+                            .map(({ label, value }) => (
+                              <ButtonMenuItem key={value} height="38px">
+                                {label}
+                              </ButtonMenuItem>
+                            ))}
+                        </ButtonMenu>
                       </FormControl>
                     </Box>
 
                     <Flex alignItems="center">
                       <FormControl display="flex" alignItems="center">
-                        <FormLabel minW={['80px', 'unset']}>{t('liquidity.show_farms')}</FormLabel>
+                        <FormLabel color={colors.textSubtle} minW={['80px', 'unset']}>
+                          {t('liquidity.show_farms')}
+                        </FormLabel>
                         <Switch defaultChecked={showFarms} onChange={handleSwitchFarmChange} />
                       </FormControl>
                     </Flex>

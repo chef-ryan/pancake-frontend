@@ -48,7 +48,8 @@ export const darkColors: Record<keyof typeof colors, string> = {
   switchOff: '#ABC4FF',
 
   // select
-  selectActive: '#abc4ff',
+  selectActive: pcsDarkColors.textSubtle,
+  textDisabled: pcsDarkColors.textDisabled,
   selectActiveSecondary: '#22D1F8',
   selectInactive: '#abc4ff1a',
 
@@ -68,6 +69,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   iconEmptyStroke: '#0B1022',
 
   // success/warning/error/info
+  success: pcsDarkColors.success,
   semanticSuccess: '#22D1F8',
   semanticError: '#FF4EA3',
   semanticWarning: '#FED33A',
@@ -164,6 +166,7 @@ export const lightColors: Partial<typeof darkColors> = {
   textPrimary: pcsLightColors.text,
   textSecondary: pcsLightColors.secondary,
   textSubtle: pcsLightColors.textSubtle,
+  textDisabled: pcsLightColors.textDisabled,
   textTertiary: '#474ABB99',
   textRevertPrimary: '#ECF5FF',
 
@@ -188,7 +191,7 @@ export const lightColors: Partial<typeof darkColors> = {
   switchOff: '#8C6EEF80',
 
   // select
-  selectActive: '#8C6EEF',
+  selectActive: pcsLightColors.textSubtle,
   selectActiveSecondary: '#8C6EEF',
   selectInactive: '#abc4ffef',
 
@@ -208,6 +211,7 @@ export const lightColors: Partial<typeof darkColors> = {
   iconEmptyStroke: '#ECF5FF',
 
   // success/warning/error/info
+  success: pcsLightColors.success,
   semanticSuccess: '#39D0D8',
   semanticError: '#FF4EA3',
   semanticWarning: '#B89900',
@@ -310,6 +314,7 @@ export const colors = {
   /** #abc4ff */
   textSecondary: 'var(--text-secondary)',
   textSubtle: 'var(--text-subtle)',
+  textDisabled: 'var(--text-disabled)',
   /** #abc4ff80 */
   textTertiary: 'var(--text-tertiary)',
   textRevertPrimary: 'var(--text-revert-primary)',
@@ -353,6 +358,7 @@ export const colors = {
   iconEmptyStroke: 'var(--icon-empty-stroke)',
 
   // success/warning/error/info
+  success: 'var(--success)',
   semanticSuccess: 'var(--semantic-success)',
   semanticError: 'var(--semantic-error)',
   semanticWarning: 'var(--semantic-warning)',

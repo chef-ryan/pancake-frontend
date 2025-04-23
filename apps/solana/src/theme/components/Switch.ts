@@ -6,15 +6,17 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
 
 const baseStyle = definePartsStyle({
   thumb: {
-    bg: colors.switchOff,
+    bg: colors.backgroundAlt,
     opacity: 0.5,
     _checked: {
-      bg: colors.switchOn,
       opacity: 1
     }
   },
   track: {
-    bg: colors.backgroundTransparent12
+    bg: colors.textDisabled,
+    _checked: {
+      bg: colors.success
+    }
   }
 })
 const sm = definePartsStyle({
