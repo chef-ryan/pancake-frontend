@@ -241,13 +241,27 @@ export const SwapModalFooterV2 = memo(function SwapModalFooterV2({
                   0
                 </Text>
               ) : null}
-              <Text fontSize="14px" ml="8px" strikeThrough={isXOrder(order)}>
-                {hasDynamicHook ? '~' : ''}
-                {formatAmount(realizedLPFee, 6)}
-              </Text>
-              <Text ml="4px" fontSize="14px">
-                {inputAmount.currency.symbol}
-              </Text>
+              {hasDynamicHook ? (
+                <QuestionHelperV2 text={t('This route uses a dynamic fee pool; actual fees may vary.')}>
+                  <Flex style={{ textDecoration: 'underline dotted', cursor: 'help' }}>
+                    <Text fontSize="14px" ml="8px" strikeThrough={isXOrder(order)}>
+                      ~{formatAmount(realizedLPFee, 6)}
+                    </Text>
+                    <Text ml="4px" fontSize="14px">
+                      {inputAmount.currency.symbol}
+                    </Text>
+                  </Flex>
+                </QuestionHelperV2>
+              ) : (
+                <>
+                  <Text fontSize="14px" ml="8px" strikeThrough={isXOrder(order)}>
+                    {formatAmount(realizedLPFee, 6)}
+                  </Text>
+                  <Text ml="4px" fontSize="14px">
+                    {inputAmount.currency.symbol}
+                  </Text>
+                </>
+              )}
             </Flex>
           ) : (
             <Text fontSize="14px" textAlign="right">
