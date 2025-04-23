@@ -29,6 +29,7 @@ import { paymasterInfo } from 'config/paymaster'
 import { usePaymaster } from 'hooks/usePaymaster'
 import { isAddressEqual } from 'utils'
 import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
+import { useHasDynamicHook } from 'views/SwapSimplify/hooks/useHasDynamicHook'
 import FormattedPriceImpact from '../../components/FormattedPriceImpact'
 import { StyledBalanceMaxMini, SwapCallbackError } from '../../components/styleds'
 import { SlippageAdjustedAmounts, formatExecutionPrice } from '../utils/exchange'
@@ -99,6 +100,7 @@ export const SwapModalFooterV2 = memo(function SwapModalFooterV2({
   const [gasToken] = useGasToken()
   const { isPaymasterAvailable, isPaymasterTokenActive } = usePaymaster()
   const gasTokenInfo = paymasterInfo[gasToken.isToken ? gasToken?.wrapped.address : '']
+  const hasDynamicHook = useHasDynamicHook(order)
 
   const displayDecimals = isMobile ? 6 : 12
 
@@ -240,6 +242,7 @@ export const SwapModalFooterV2 = memo(function SwapModalFooterV2({
                 </Text>
               ) : null}
               <Text fontSize="14px" ml="8px" strikeThrough={isXOrder(order)}>
+                {hasDynamicHook ? '~' : ''}
                 {formatAmount(realizedLPFee, 6)}
               </Text>
               <Text ml="4px" fontSize="14px">
