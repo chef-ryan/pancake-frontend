@@ -16,6 +16,7 @@ export const CL_DYNAMIC_HOOK: HookData = {
   isVerified: false,
   isUpgradable: false,
   creator: 'https://github.com/pancakeswap/',
+  defaultFee: 3000,
   hooksRegistration: {
     afterInitialize: true,
     beforeSwap: true,
@@ -62,6 +63,7 @@ export const bscHooksList: HookData[] = [
       beforeSwap: true,
     },
     hookType: HookType.Universal,
+    defaultFee: 3000,
   },
   {
     address: checksumAddress('0x9F0D5091D31a7801d34da352572BAc84e8Ac48Ad'),
@@ -78,6 +80,7 @@ export const bscHooksList: HookData[] = [
       beforeSwap: true,
     },
     hookType: HookType.PerPool,
+    defaultFee: 100000,
   },
   {
     address: checksumAddress('0x4910a4852A06D0F6B206bd737ea3C98866Be796C'),
@@ -94,6 +97,7 @@ export const bscHooksList: HookData[] = [
       beforeSwap: true,
     },
     hookType: HookType.PerPool,
+    defaultFee: 100000,
   },
   // {
   //   address: '0x0A6440c9cfb5f28BE699a9e4e83BF8A89de72498',

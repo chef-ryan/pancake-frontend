@@ -46,6 +46,7 @@ export const TradeSummary = memo(function TradeSummary({
   realizedLPFee,
   isX = false,
   loading = false,
+  hasDynamicHook,
 }: {
   hasStablePair?: boolean
   inputAmount?: CurrencyAmount<Currency>
@@ -56,6 +57,7 @@ export const TradeSummary = memo(function TradeSummary({
   realizedLPFee?: CurrencyAmount<Currency> | null
   isX?: boolean
   loading?: boolean
+  hasDynamicHook?: boolean
 }) {
   const { t } = useTranslation()
   const isExactIn = tradeType === TradeType.EXACT_INPUT
@@ -224,6 +226,13 @@ export const TradeSummary = memo(function TradeSummary({
               <Text color="primary" fontSize="14px">
                 0 {inputAmount?.currency?.symbol}
               </Text>
+            ) : hasDynamicHook ? (
+              <QuestionHelperV2 text={t('This route uses a dynamic fee pool; actual fees may vary.')}>
+                <Text fontSize="14px" style={{ textDecoration: 'underline dotted', cursor: 'help' }}>{`~${formatAmount(
+                  realizedLPFee,
+                  4,
+                )} ${inputAmount?.currency?.symbol}`}</Text>
+              </QuestionHelperV2>
             ) : (
               <Text fontSize="14px">{`${formatAmount(realizedLPFee, 4)} ${inputAmount?.currency?.symbol}`}</Text>
             )}
