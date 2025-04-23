@@ -449,10 +449,6 @@ const MyPositionsInner: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
                   </Flex>
                 )}
               </Row>
-              <Button as="a" href={addLiquidityLink}>
-                {t('Add Liquidity')}
-                <AddIcon ml="8px" color="var(--colors-invertedContrast)" />
-              </Button>
             </AutoColumn>
             {isInfinityProtocol(protocol) ? infinityEarningCard : earningCard}
             <Button as="a" href={addLiquidityLink}>
