@@ -3372,4 +3372,5 @@ export const bscTokens = {
   brm: new ERC20Token(ChainId.BSC, '0x483d83A361A3cCE99f88BC05fB44C27B6cE0633b', 18, 'BRM', ''),
   ht1: new ERC20Token(ChainId.BSC, '0xc7a504C10a1fe213031A1872F0b6d53040217Da0', 18, 'HT1', ''),
   ht2: new ERC20Token(ChainId.BSC, '0x025B2D584404c5a3B65b01C12FCBD6cE08C53e62', 18, 'HT2', ''),
+  ht3: new ERC20Token(ChainId.BSC, '0x103C477E7CdD5E31b64E3CD49c3E9B78411f9485', 18, 'HT3', ''),
 }
