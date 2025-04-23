@@ -149,7 +149,7 @@ export const NetworkFilter: React.FC<INetworkProps> = ({ data, value, onChange, 
                 )}
               </span>
             )}
-            <span>{option.label}</span>
+            <span style={{ overflow: "hidden" }}>{option.label}</span>
           </div>
 
           <StyledButton scale="xs" onClick={(e: React.MouseEvent) => handleOnlyClick(option.value, e)}>
