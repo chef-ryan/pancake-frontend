@@ -1,5 +1,5 @@
 import { ChainId } from '@pancakeswap/chains'
-import { BinPool, Pool as CLPool, PoolType } from '@pancakeswap/infinity-sdk'
+import { BinPool, Pool as CLPool, findHook, PoolType } from '@pancakeswap/infinity-sdk'
 import { Token } from '@pancakeswap/swap-sdk-core'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
@@ -41,13 +41,14 @@ export const usePoolById = <
     }
 
     if (data.poolType === 'CL') {
-      const { poolType, parameters, fee, sqrtPriceX96, liquidity, tick, protocolFee, lpFee } = data
+      const { poolType, parameters, fee, sqrtPriceX96, liquidity, tick, protocolFee, lpFee, hooks } = data
+      const dynamicHook = hooks ? findHook(hooks, chainId) : undefined
       const pool = getClPoolWithCache({
         chainId,
         poolId,
         tokenA: currencyA as Token,
         tokenB: currencyB as Token,
-        lpFee,
+        lpFee: dynamicHook?.defaultFee ?? lpFee,
         fee,
         sqrtRatioX96: sqrtPriceX96,
         liquidity,
