@@ -4,6 +4,7 @@ import {
   INFI_CL_POOL_MANAGER_ADDRESSES,
   PoolKey,
   decodeHooksRegistration,
+  findHook,
   getPoolId,
   isInfinitySupported,
 } from '@pancakeswap/infinity-sdk'
@@ -149,12 +150,13 @@ export const getInfinityClPoolsWithoutTicks = createOnChainPoolFactory<InfinityC
     }
     const [sqrtPriceX96, tick, protocolFee, lpFee] = slot0
     const [currency0, currency1] = sortCurrencies([currencyA, currencyB])
+    const whitelistHook = findHook(hooks, currencyA.wrapped.chainId)
     return {
       id,
       type: PoolType.InfinityCL,
       currency0,
       currency1,
-      fee: lpFee,
+      fee: whitelistHook?.defaultFee ?? lpFee,
       protocolFee,
       liquidity: BigInt(liquidity.toString()),
       sqrtRatioX96: BigInt(sqrtPriceX96.toString()),

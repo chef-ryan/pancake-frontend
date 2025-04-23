@@ -8,6 +8,7 @@ import { PriceOrder } from '@pancakeswap/price-api-sdk'
 import { isClassicOrder, isXOrder } from 'views/Swap/utils'
 import { useIsWrapping, useSlippageAdjustedAmounts } from '../../Swap/V3Swap/hooks'
 import { computeTradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
+import { useHasDynamicHook } from '../hooks/useHasDynamicHook'
 import { TradeSummary } from './AdvancedSwapDetails'
 import { RoutesBreakdown, XRoutesBreakdown } from './RoutesBreakdown'
 
@@ -43,6 +44,7 @@ export const TradeDetails = memo(function TradeDetails({ loaded, order }: Props)
         : undefined,
     [order],
   )
+  const hasDynamicHook = useHasDynamicHook(order)
 
   if (isWrapping || !order || !slippageAdjustedAmounts || !order.trade) {
     return null
@@ -62,6 +64,7 @@ export const TradeDetails = memo(function TradeDetails({ loaded, order }: Props)
           priceImpactWithoutFee={priceImpactWithoutFee ?? undefined}
           realizedLPFee={lpFeeAmount ?? undefined}
           hasStablePair={hasStablePool}
+          hasDynamicHook={hasDynamicHook}
           loading={!loaded}
         />
         <Box mt="10px" pl="4px">

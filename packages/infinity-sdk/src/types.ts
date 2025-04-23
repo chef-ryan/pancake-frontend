@@ -204,6 +204,8 @@ export interface HookData {
 
   hooksRegistration?: HooksRegistration
   hookType?: HookType
+
+  defaultFee?: number
 }
 
 export enum HookType {

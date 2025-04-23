@@ -6,6 +6,7 @@ import { memo, useMemo } from 'react'
 import { isXOrder } from 'views/Swap/utils'
 import { useIsWrapping, useSlippageAdjustedAmounts } from '../../Swap/V3Swap/hooks'
 import { computeTradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
+import { useHasDynamicHook } from '../hooks/useHasDynamicHook'
 
 interface TradingFeeProps {
   loaded: boolean
@@ -19,6 +20,8 @@ export const TradingFee: React.FC<TradingFeeProps> = memo(({ order, loaded }) =>
     () => computeTradePriceBreakdown(isXOrder(order) ? order.ammTrade : order?.trade),
     [order],
   )
+
+  const hasDynamicHooks = useHasDynamicHook(order)
   const isWrapping = useIsWrapping()
 
   if (isWrapping || !order || !order.trade || !slippageAdjustedAmounts) {
@@ -37,7 +40,7 @@ export const TradingFee: React.FC<TradingFeeProps> = memo(({ order, loaded }) =>
             0 {inputAmount?.currency?.symbol}
           </Text>
         ) : (
-          <Text color="textSubtle" fontSize="14px">{`${formatAmount(lpFeeAmount, 4)} ${
+          <Text color="textSubtle" fontSize="14px">{`${hasDynamicHooks ? '~' : ''}${formatAmount(lpFeeAmount, 4)} ${
             inputAmount?.currency?.symbol
           }`}</Text>
         )}
