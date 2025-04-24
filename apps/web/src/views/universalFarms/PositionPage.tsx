@@ -64,9 +64,9 @@ const ToggleWrapper = styled.div`
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex-direction: row;
 
   ${({ theme }) => theme.mediaQueries.lg} {
-    flex-direction: column;
     align-items: flex-start;
   }
 `
@@ -403,20 +403,22 @@ export const PositionPage = () => {
       <CardHeader p={isMobile ? '16px' : undefined}>
         <PoolsFilterPanel onChange={handleFilterChange} value={poolsFilter}>
           {(isMobile || isMd) && <AddLiquidityButton scale="sm" height="40px" width="100%" />}
-          <ControlWrapper>
-            <ToggleWrapper>
-              <Text>{t('Farms only')}</Text>
-              <Toggle checked={farmsOnly} onChange={toggleFarmsOnly} scale="sm" />
-            </ToggleWrapper>
-            <ButtonWrapper>
-              <IconButton onClick={onPresentTransactionsModal} variant="text" scale="xs">
-                <HistoryIcon color="textSubtle" width="24px" />
-              </IconButton>
-              <NotificationDot show={expertMode}>
-                <GlobalSettings mode={SettingsMode.SWAP_LIQUIDITY} scale="xs" />
-              </NotificationDot>
-            </ButtonWrapper>
-          </ControlWrapper>
+          {isMobile ? (
+            <ControlWrapper>
+              <ToggleWrapper>
+                <Text>{t('Farms only')}</Text>
+                <Toggle checked={farmsOnly} onChange={toggleFarmsOnly} scale="sm" />
+              </ToggleWrapper>
+              <ButtonWrapper>
+                <IconButton onClick={onPresentTransactionsModal} variant="text" scale="xs">
+                  <HistoryIcon color="textSubtle" width="24px" />
+                </IconButton>
+                <NotificationDot show={expertMode}>
+                  <GlobalSettings mode={SettingsMode.SWAP_LIQUIDITY} scale="xs" />
+                </NotificationDot>
+              </ButtonWrapper>
+            </ControlWrapper>
+          ) : null}
         </PoolsFilterPanel>
         <SubPanel>
           <StyledButtonMenu
@@ -431,6 +433,22 @@ export const PositionPage = () => {
             <ButtonMenuItem>{t('Inactive')}</ButtonMenuItem>
             <ButtonMenuItem>{t('Closed')}</ButtonMenuItem>
           </StyledButtonMenu>
+          {!isMobile ? (
+            <ControlWrapper>
+              <ToggleWrapper>
+                <Text>{t('Farms only')}</Text>
+                <Toggle checked={farmsOnly} onChange={toggleFarmsOnly} scale="sm" />
+              </ToggleWrapper>
+              <ButtonWrapper>
+                <IconButton onClick={onPresentTransactionsModal} variant="text" scale="xs">
+                  <HistoryIcon color="textSubtle" width="24px" />
+                </IconButton>
+                <NotificationDot show={expertMode}>
+                  <GlobalSettings mode={SettingsMode.SWAP_LIQUIDITY} scale="xs" />
+                </NotificationDot>
+              </ButtonWrapper>
+            </ControlWrapper>
+          ) : null}
           {/* <ButtonContainer>
             <NextLink href={LIQUIDITY_PAGES.infinity.ADD_LIQUIDITY_SELECT}>
               <Button endIcon={<AddIcon color="invertedContrast" />} scale="sm" style={{ whiteSpace: 'nowrap' }}>

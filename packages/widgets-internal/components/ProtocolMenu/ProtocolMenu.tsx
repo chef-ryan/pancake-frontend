@@ -21,7 +21,7 @@ const StyledMenu = styled(ButtonMenu)`
 export const ProtocolMenu: React.FC<IProtocolMenuProps> = ({ data, activeIndex, onChange }) => (
   <StyledMenu scale="sm" activeIndex={activeIndex ?? 0} onItemClick={onChange} variant="subtle">
     {data.map(({ label, value }) => (
-      <StyledButtonMenuItem key={Array.isArray(value) ? value.join("") : value} height="38px">
+      <StyledButtonMenuItem key={Array.isArray(value) ? value.join("") : value} height="43px">
         {label}
       </StyledButtonMenuItem>
     ))}
