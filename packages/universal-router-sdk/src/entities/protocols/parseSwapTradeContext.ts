@@ -1,5 +1,5 @@
-import { TradeType } from '@pancakeswap/sdk'
-import { MSG_SENDER, PoolType, RouteType, SmartRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
+import { Currency, TradeType } from '@pancakeswap/sdk'
+import { MSG_SENDER, Pool, PoolType, Route, RouteType, SmartRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
 import invariant from 'tiny-invariant'
 import { getInputCurrency } from '../../utils/poolHelpers.tmp'
 import { PancakeSwapOptions, SwapSection, SwapTradeContext } from '../types'
@@ -24,7 +24,7 @@ export const parseSwapTradeContext = (
   // Same pool type sections can be aggregated into a single swap
   for (let k = 0; k < trade.routes.length; k++) {
     const route = trade.routes[k]
-    const sections = SmartRouter.partitionMixedRouteByProtocol(route)
+    const sections = partition(route)
 
     const amountIn = SmartRouter.maximumAmountIn(trade, options.slippageTolerance, route.inputAmount)
     const amountOut = SmartRouter.minimumAmountOut(trade, options.slippageTolerance, route.outputAmount)
@@ -36,6 +36,7 @@ export const parseSwapTradeContext = (
     }
 
     let inputCurrency = trade.inputAmount.currency
+
     for (let i = 0; i < sections.length; i++) {
       const section = sections[i]
 
@@ -126,4 +127,38 @@ function poolTypeToRouteType(poolType: PoolType): RouteType {
     default:
       throw new Error('Invalid pool type')
   }
+}
+
+function partition(route: Route): Pool[][] {
+  const sections: Pool[][] = []
+  let currentSection: Pool[] = []
+
+  function isSameType(a: Pool, b: Pool): boolean {
+    return a.type === b.type
+  }
+
+  function noNeedWrap(a: Currency, b: Currency): boolean {
+    return (a.isNative && b.isNative) || (!a.isNative && !b.isNative)
+  }
+
+  let inputCurrency = route.inputAmount.currency
+  for (const pool of route.pools) {
+    const outputCurrency = SmartRouter.getOutputCurrency(pool, inputCurrency)
+    const lastPool = currentSection[currentSection.length - 1]
+    const poolIn = getInputCurrency(pool, inputCurrency)
+
+    if (!lastPool || (isSameType(lastPool, pool) && noNeedWrap(inputCurrency, poolIn))) {
+      currentSection.push(pool)
+    } else {
+      sections.push(currentSection)
+      currentSection = [pool]
+    }
+    inputCurrency = outputCurrency
+  }
+
+  if (currentSection.length > 0) {
+    sections.push(currentSection)
+  }
+
+  return sections
 }
