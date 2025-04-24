@@ -228,3 +228,7 @@ export const getInfinityPositionManagerAddress = (type: PoolType, chainId?: numb
     ? getAddressFromMap(addresses.positionManagerCL, chainId)
     : getAddressFromMap(addresses.positionManagerBin, chainId)
 }
+
+export const getCakePoolAddress = (chainId?: number) => {
+  return getAddressFromMap(addresses.cakeVault, chainId)
+}
