@@ -4,11 +4,11 @@ import {
   CurrencyAmount,
   ERC20Token,
   Ether,
+  Pair,
   Percent,
   TradeType,
   Route as V2Route,
   Trade as V2Trade,
-  Pair,
   ZERO_ADDRESS,
 } from '@pancakeswap/sdk'
 import { InfinityBinPool, InfinityClPool, PoolType, SmartRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
@@ -312,7 +312,7 @@ describe('PancakeSwap Universal Mixed Router Command Generation Test', () => {
       testInfinityTakeAction(actions[3], USDC, MSG_SENDER, ACTION_CONSTANTS.OPEN_DELTA)
     })
 
-    it('label: should encode CAKE->USDC through mixed swaps Infinity(WET-CAKE) -> v2(WETH-USDC)', async () => {
+    it('should encode CAKE->USDC through mixed swaps Infinity(WET-CAKE) -> v2(WETH-USDC)', async () => {
       const inputAmount = CurrencyAmount.fromRawAmount(CAKE, 50n)
       const outputAmount = CurrencyAmount.fromRawAmount(USDC, 10000n)
       const trade = await buildMixedRouteTradeInfinity(inputAmount, outputAmount, TradeType.EXACT_INPUT, [
@@ -344,7 +344,6 @@ describe('PancakeSwap Universal Mixed Router Command Generation Test', () => {
       expect(swapParams.poolKey.currency1).toEqual(CAKE.address)
 
       testInfinitySettleAction(actions[1], CAKE, 50n, true)
-      console.log(actions[2])
       testInfinityTakeAction(actions[2], Ether.onChain(ChainId.BSC), ADDRESS_THIS, ACTION_CONSTANTS.OPEN_DELTA)
     })
   })

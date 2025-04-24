@@ -3,14 +3,14 @@ import { BinPoolParameter, CLPoolParameter, getPoolId, PoolKey } from '@pancakes
 import { getPermit2Address } from '@pancakeswap/permit2-sdk'
 import { Currency, CurrencyAmount, ERC20Token, Native, Pair, Percent, ZERO_ADDRESS } from '@pancakeswap/sdk'
 import {
-  BaseV4Pool,
+  BaseInfinityPool,
+  InfinityBinPool,
+  InfinityClPool,
   PoolType,
   SmartRouter,
   StablePool,
   V2Pool,
   V3Pool,
-  V4BinPool,
-  V4ClPool,
 } from '@pancakeswap/smart-router'
 import {
   computePoolAddress,
@@ -90,7 +90,7 @@ export const convertPoolToV3Pool = (pool: Pool): V3Pool => {
   }
 }
 
-export const convertPoolToInfinityCLPool = (pool: Pool): V4ClPool => {
+export const convertPoolToInfinityCLPool = (pool: Pool): InfinityClPool => {
   return {
     type: PoolType.InfinityCL,
     currency0: pool.token0,
@@ -114,7 +114,7 @@ export const convertV3PoolToSDKPool = ({ token0, token1, fee, sqrtRatioX96, liqu
   new Pool(token0.wrapped, token1.wrapped, fee, sqrtRatioX96, liquidity, tick, ticks)
 export const convertV2PoolToSDKPool = ({ reserve1, reserve0 }: V2Pool) => new Pair(reserve0.wrapped, reserve1.wrapped)
 
-const fixturePoolInfinity = <TType extends V4ClPool | V4BinPool>({
+const fixturePoolInfinity = <TType extends InfinityClPool | InfinityBinPool>({
   type,
   currency0,
   currency1,
@@ -125,9 +125,9 @@ const fixturePoolInfinity = <TType extends V4ClPool | V4BinPool>({
   currency0: Currency
   currency1: Currency
   feeAmount: FeeAmount
-  parameters: TType extends V4ClPool ? CLPoolParameter : BinPoolParameter
+  parameters: TType extends InfinityClPool ? CLPoolParameter : BinPoolParameter
 }): TType => {
-  const poolKey: PoolKey<TType extends V4ClPool ? 'CL' : 'Bin'> = {
+  const poolKey: PoolKey<TType extends InfinityClPool ? 'CL' : 'Bin'> = {
     currency0: currencyAddressInfinity(currency0),
     currency1: currencyAddressInfinity(currency1),
     poolManager: ZERO_ADDRESS,
@@ -137,7 +137,7 @@ const fixturePoolInfinity = <TType extends V4ClPool | V4BinPool>({
   }
   const id = getPoolId(poolKey)
 
-  const baseInfinity: BaseV4Pool = {
+  const baseInfinity: BaseInfinityPool = {
     type: type === 'CL' ? PoolType.InfinityCL : PoolType.InfinityBIN,
     currency0,
     currency1,
@@ -249,7 +249,7 @@ export const fixtureAddresses = async (chainId: ChainId, liquidity: bigint) => {
 
   const ether: Currency = Native.onChain(chainId)
   const infinityPools = {
-    ETH_CAKE_CL_INFI: fixturePoolInfinity<V4ClPool>({
+    ETH_CAKE_CL_INFI: fixturePoolInfinity<InfinityClPool>({
       type: 'CL',
       currency0: ether,
       currency1: CAKE,
@@ -258,7 +258,7 @@ export const fixtureAddresses = async (chainId: ChainId, liquidity: bigint) => {
         tickSpacing: 100,
       },
     }),
-    WETH_CAKE_CL_INFI: fixturePoolInfinity<V4ClPool>({
+    WETH_CAKE_CL_INFI: fixturePoolInfinity<InfinityClPool>({
       type: 'CL',
       currency0: WETH,
       currency1: CAKE,
@@ -267,7 +267,7 @@ export const fixtureAddresses = async (chainId: ChainId, liquidity: bigint) => {
         tickSpacing: 100,
       },
     }),
-    ETH_CAKE_BIN_INFI: fixturePoolInfinity<V4BinPool>({
+    ETH_CAKE_BIN_INFI: fixturePoolInfinity<InfinityBinPool>({
       type: 'Bin',
       currency0: ether,
       currency1: CAKE,
@@ -276,7 +276,7 @@ export const fixtureAddresses = async (chainId: ChainId, liquidity: bigint) => {
         binStep: 5,
       },
     }),
-    ETH_USDC_BIN_INFI: fixturePoolInfinity<V4BinPool>({
+    ETH_USDC_BIN_INFI: fixturePoolInfinity<InfinityBinPool>({
       type: 'Bin',
       currency0: ether,
       currency1: USDC,
@@ -285,7 +285,7 @@ export const fixtureAddresses = async (chainId: ChainId, liquidity: bigint) => {
         binStep: 5,
       },
     }),
-    ETH_USDC_CL_INFI: fixturePoolInfinity<V4ClPool>({
+    ETH_USDC_CL_INFI: fixturePoolInfinity<InfinityClPool>({
       type: 'CL',
       currency0: ether,
       currency1: USDC,
@@ -294,7 +294,16 @@ export const fixtureAddresses = async (chainId: ChainId, liquidity: bigint) => {
         tickSpacing: 100,
       },
     }),
-    CAKE_USDC_CL_INFI: fixturePoolInfinity<V4ClPool>({
+    WETH_USDC_CL_INFI: fixturePoolInfinity<InfinityClPool>({
+      type: 'CL',
+      currency0: WETH,
+      currency1: USDC,
+      feeAmount: FeeAmount.LOW,
+      parameters: {
+        tickSpacing: 100,
+      },
+    }),
+    CAKE_USDC_CL_INFI: fixturePoolInfinity<InfinityClPool>({
       type: 'CL',
       currency0: CAKE,
       currency1: USDC,

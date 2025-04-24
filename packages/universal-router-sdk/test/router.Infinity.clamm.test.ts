@@ -44,6 +44,7 @@ describe('PancakeSwap Universal Router Infinity-Cl Pool Command Generation Test'
 
   let ETH_CAKE_CL_INFI: InfinityClPool
   let ETH_USDC_CL_INFI: InfinityClPool
+  let WETH_USDC_CL_INFI: InfinityClPool
   let WETH_CAKE_CL_INFI: InfinityBinPool
   expect.addSnapshotSerializer({
     serialize(val) {
@@ -55,7 +56,7 @@ describe('PancakeSwap Universal Router Infinity-Cl Pool Command Generation Test'
   })
 
   beforeEach(async () => {
-    ;({ ETHER, CAKE, USDC, ETH_CAKE_CL_INFI, ETH_USDC_CL_INFI, WETH_CAKE_CL_INFI } = await fixtureAddresses(
+    ;({ ETHER, CAKE, USDC, ETH_CAKE_CL_INFI, ETH_USDC_CL_INFI, WETH_USDC_CL_INFI } = await fixtureAddresses(
       chainId,
       liquidity,
     ))
@@ -323,6 +324,44 @@ describe('PancakeSwap Universal Router Infinity-Cl Pool Command Generation Test'
 
       // ACTION #2 TAKE ALL
       testInfinityTakeAction(actions[2], CAKE, MSG_SENDER, ACTION_CONSTANTS.OPEN_DELTA)
+    })
+
+    it('label: should encode a multi-hop exactInput in Infinity: USDC->WETH->CAKE(via ETH->CAKE Pool)', async () => {
+      const inputAmount = CurrencyAmount.fromRawAmount(USDC, 1000)
+      const outputAmount = CurrencyAmount.fromRawAmount(CAKE, 10000)
+
+      const trade = buildInfinityTrade(TradeType.EXACT_INPUT, inputAmount, outputAmount, [
+        WETH_USDC_CL_INFI,
+        ETH_CAKE_CL_INFI,
+      ])
+
+      const options = swapOptions({})
+      const { calldata, value } = PancakeSwapUniversalRouter.swapERC20CallParameters(trade, options)
+      const maxInAmount = SmartRouter.maximumAmountIn(trade, options.slippageTolerance).quotient
+      const minOutAmount = SmartRouter.minimumAmountOut(trade, options.slippageTolerance).quotient
+      console.log('minOut', minOutAmount)
+
+      expect(BigInt(value)).toEqual(0n)
+      const decodedCommands = decodeUniversalCalldata(calldata)
+
+      expect(decodedCommands.length).toEqual(3) // INFI_SWAP - UNWRAP - INFI_SWAP
+
+      // ACTION #0
+      const cmd0 = decodedCommands[0]
+      expect(cmd0.command).toEqual(CommandType[CommandType.INFI_SWAP])
+      const swapParams1 = cmd0.actions![0].args[0].value as EncodedMultiSwapInParams
+      expect(swapParams1.amountIn).toEqual(maxInAmount)
+      expect(swapParams1.amountOutMinimum).toEqual(0n)
+
+      // ACTION #1
+      const cmd1 = decodedCommands[1]
+      expect(cmd1.command).toEqual(CommandType[CommandType.UNWRAP_WETH])
+
+      // Action #2
+      const cmd2 = decodedCommands[2]
+      expect(cmd2.command).toEqual(CommandType[CommandType.INFI_SWAP])
+      const swapParams2 = cmd2.actions![1].args[0].value as EncodedMultiSwapInParams
+      expect(swapParams2.amountOutMinimum).toEqual(minOutAmount)
     })
 
     it('should encode a edge-case single exactInput WBNB->CAKE via tBNB-CAKE-InfinityCL pool', async () => {

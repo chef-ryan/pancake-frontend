@@ -1,6 +1,8 @@
 import { Currency, CurrencyAmount, ERC20Token, Native, Pair, TradeType, Trade as V2Trade } from '@pancakeswap/sdk'
 import {
   Pool as GenericPool,
+  InfinityBinPool,
+  InfinityClPool,
   PoolType,
   RouteType,
   SmartRouter,
@@ -8,8 +10,6 @@ import {
   StablePool,
   V2Pool,
   V3Pool,
-  V4BinPool,
-  V4ClPool,
 } from '@pancakeswap/smart-router'
 import { getSwapOutput } from '@pancakeswap/stable-swap-sdk'
 import { Pool, Trade as V3Trade } from '@pancakeswap/v3-sdk'
@@ -78,7 +78,7 @@ export const buildInfinityTrade = (
   tradeType: TradeType,
   inputAmount: CurrencyAmount<Currency>,
   outputAmount: CurrencyAmount<Currency>,
-  pools: (V4ClPool | V4BinPool)[],
+  pools: (InfinityClPool | InfinityBinPool)[],
 ): SmartRouterTrade<TradeType> => {
   const isInfinityCL = pools.every((pool) => pool.type === PoolType.InfinityCL)
   const isInfinityBin = pools.every((pool) => pool.type === PoolType.InfinityBIN)
