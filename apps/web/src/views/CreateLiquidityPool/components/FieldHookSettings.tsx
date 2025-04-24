@@ -42,10 +42,16 @@ export const FieldHookSettings: React.FC<FieldHookSettingsProps> = ({ ...boxProp
       if (!hook) setHook(dynamicHook)
       setHookEnabled(true)
       setHookSelectType('list')
+
+      if (hook && hook.poolType !== poolType) {
+        setHook(undefined)
+        setHookEnabled(false)
+        setFeeTierSetting('static')
+      }
     } else if (feeTierSetting === 'static' && hook === dynamicHook) {
       setHook(undefined)
     }
-  }, [dynamicHook, feeTierSetting, hook, setHook, setHookEnabled, setHookSelectType])
+  }, [dynamicHook, feeTierSetting, hook, setHook, setHookEnabled, setHookSelectType, setFeeTierSetting, poolType])
 
   return <HookSettings onHookEnabledChange={handleHookEnabledChange} onHookChange={handleHookChange} {...boxProps} />
 }
