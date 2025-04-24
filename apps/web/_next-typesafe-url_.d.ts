@@ -24,6 +24,7 @@ declare module "@@@next-typesafe-url" {
     "/bridge": StaticRoute;
     "/buy-crypto": StaticRoute;
     "/cake-staking": StaticRoute;
+    "/cake-staking/redeem": StaticRoute;
     "/competition/finished/[competition]": StaticRoute;
     "/competition/finished": StaticRoute;
     "/competition": StaticRoute;
