@@ -415,49 +415,51 @@ const MyPositionsInner: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
         {t('My Positions')}
       </Text>
       <Grid gridGap={24} gridTemplateColumns={['1fr', '1fr', '1fr', '1fr', '1fr 2fr']}>
-        <OverviewCard innerCardProps={{ p: [16, null, null, 24] }}>
-          <AutoColumn gap="lg">
-            <AutoColumn gap="8px">
-              <Text color="secondary" fontSize={12} fontWeight={600} textTransform="uppercase">
-                {t('overview')}
-              </Text>
-              <Row justifyContent="space-between">
-                <Text color="textSubtle" fontSize={14}>
-                  {t('My Liquidity Value')}
+        <Box>
+          <OverviewCard innerCardProps={{ p: [16, null, null, 24] }}>
+            <AutoColumn gap="lg">
+              <AutoColumn gap="8px">
+                <Text color="secondary" fontSize={12} fontWeight={600} textTransform="uppercase">
+                  {t('overview')}
                 </Text>
-                <Text>{formatDollarAmount(Number(totalLiquidityUSD))}</Text>
-              </Row>
-              <Row justifyContent="space-between">
-                <Text color="textSubtle" fontSize={14}>
-                  {t('My Total APR')}
-                </Text>
-                <Text>{displayApr(totalAprValue)}</Text>
-              </Row>
-              <Row justifyContent="space-between">
-                <Text color="textSubtle" fontSize={14}>
-                  {t('Earning')}
-                </Text>
-                {!isInfinityProtocol(protocol) && (
-                  <Flex>
-                    <Text mr="4px">{t('LP Fee')}</Text>
-                    <DoubleCurrencyLogo
-                      currency0={poolInfo.token0.wrapped}
-                      currency1={poolInfo.token1.wrapped}
-                      size={24}
-                      innerMargin="-8px"
-                    />
-                  </Flex>
-                )}
-              </Row>
+                <Row justifyContent="space-between">
+                  <Text color="textSubtle" fontSize={14}>
+                    {t('My Liquidity Value')}
+                  </Text>
+                  <Text>{formatDollarAmount(Number(totalLiquidityUSD))}</Text>
+                </Row>
+                <Row justifyContent="space-between">
+                  <Text color="textSubtle" fontSize={14}>
+                    {t('My Total APR')}
+                  </Text>
+                  <Text>{displayApr(totalAprValue)}</Text>
+                </Row>
+                <Row justifyContent="space-between">
+                  <Text color="textSubtle" fontSize={14}>
+                    {t('Earning')}
+                  </Text>
+                  {!isInfinityProtocol(protocol) && (
+                    <Flex>
+                      <Text mr="4px">{t('LP Fee')}</Text>
+                      <DoubleCurrencyLogo
+                        currency0={poolInfo.token0.wrapped}
+                        currency1={poolInfo.token1.wrapped}
+                        size={24}
+                        innerMargin="-8px"
+                      />
+                    </Flex>
+                  )}
+                </Row>
+              </AutoColumn>
+              {isInfinityProtocol(protocol) ? infinityEarningCard : earningCard}
+              <Button as="a" href={addLiquidityLink}>
+                {t('Add Liquidity')}
+                <AddIcon ml="8px" color="var(--colors-invertedContrast)" />
+              </Button>
             </AutoColumn>
-            {isInfinityProtocol(protocol) ? infinityEarningCard : earningCard}
-            <Button as="a" href={addLiquidityLink}>
-              {t('Add Liquidity')}
-              <AddIcon ml="8px" color="var(--colors-invertedContrast)" />
-            </Button>
-          </AutoColumn>
-        </OverviewCard>
-        {hasPoolReward && <RewardInfoCard />}
+          </OverviewCard>
+          {hasPoolReward && <RewardInfoCard />}
+        </Box>
         <PositionsCard>
           <PositionCardHeader variant="pale">
             <Row justifyContent="space-between" flexWrap="wrap" gap="sm">
