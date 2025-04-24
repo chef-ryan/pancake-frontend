@@ -214,8 +214,9 @@ addEventListener('message', (event: MessageEvent<WorkerEvent>) => {
       .finally(() => {
         cleanupAbortController()
         if (process.env.NEXT_PUBLIC_VERCEL_ENV !== 'production') {
+          const symbols = `${currencyAAmount.currency.symbol}-${currencyB.symbol}`
           // eslint-disable-next-line no-restricted-globals, no-console
-          console.log(`[SmartRouter] check log for quoteId:  ${self.origin}/api/logger?id=${quoteId}`)
+          console.log(`[SmartRouter] ${symbols}:  ${self.origin}/api/logger?id=${quoteId}`)
         }
       })
   }
@@ -285,8 +286,9 @@ addEventListener('message', (event: MessageEvent<WorkerEvent>) => {
       .finally(() => {
         cleanupAbortController()
         if (process.env.NEXT_PUBLIC_VERCEL_ENV !== 'production') {
+          const symbols = `${currencyAAmount.currency.symbol}-${currencyB.symbol}`
           // eslint-disable-next-line no-restricted-globals, no-console
-          console.log(`[routing-sdk] check log for quoteId:  ${self.origin}/api/logger?id=${quoteId}`)
+          console.log(`[routing-sdk] ${symbols}:  ${self.origin}/api/logger?id=${quoteId}`)
         }
       })
   }

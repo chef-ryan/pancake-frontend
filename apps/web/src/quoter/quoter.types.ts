@@ -72,7 +72,7 @@ export type QuoteQuery = Options & {
   xEnabled: boolean
   slippage?: number
   address?: Address
-  blockNumber: number
+  blockNumber?: number
   signal?: AbortSignal
   provider?: typeof getViemClients
   nonce?: number

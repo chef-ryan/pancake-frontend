@@ -20,7 +20,7 @@ export async function getBestTrade(
   logger.debug(
     `[SmartRouter] getBestTrade ${config.quoteId}, [${TradeType[tradeType]}] input=${amount.toExact()} ${
       currency.symbol
-    }`,
+    } maxSplits=${config.maxSplits} maxHops=${config.maxHops}`,
   )
   try {
     const { blockNumber: blockNumberFromConfig } = config
@@ -100,7 +100,7 @@ async function getBestRoutes(
     protocols: allowedPoolTypes,
     signal,
   })
-  logger.debug(`Candidate pools: ${candidatePools.length}`)
+  logger.debug(`Candidate pools: ${candidatePools.length}, maxSplits=${maxSplits}, maxHops=${maxHops}`)
   logPools(quoteId, candidatePools, 2)
 
   let baseRoutes = computeAllRoutesNew(inputCurrency, outputCurrency, candidatePools, maxHops, quoteId)
