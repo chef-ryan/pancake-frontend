@@ -14,7 +14,7 @@ export const FieldHookSettings: React.FC<FieldHookSettingsProps> = ({ ...boxProp
   const [feeTierSetting, setFeeTierSetting] = useFeeTierSettingQueryState()
   const [hook, setHook] = useSelectHookFromList()
   const [, setHookEnabled] = useHookEnabledQueryState()
-  const [, setHookSelectType] = useHookSelectTypeQueryState()
+  const [hookSelectType, setHookSelectType] = useHookSelectTypeQueryState()
   const { chainId } = useSelectIdRouteParams()
   const [poolType] = usePoolTypeQueryState()
   const dynamicHook = useDefaultDynamicHook(chainId, poolType)
@@ -38,7 +38,7 @@ export const FieldHookSettings: React.FC<FieldHookSettingsProps> = ({ ...boxProp
 
   // if dynamic fee, autoselect the dynamicFees hook if there are no any hook selected
   useEffect(() => {
-    if (feeTierSetting === 'dynamic') {
+    if (feeTierSetting === 'dynamic' && hookSelectType === 'list') {
       if (!hook) setHook(dynamicHook)
       setHookEnabled(true)
       setHookSelectType('list')
@@ -51,7 +51,17 @@ export const FieldHookSettings: React.FC<FieldHookSettingsProps> = ({ ...boxProp
     } else if (feeTierSetting === 'static' && hook === dynamicHook) {
       setHook(undefined)
     }
-  }, [dynamicHook, feeTierSetting, hook, setHook, setHookEnabled, setHookSelectType, setFeeTierSetting, poolType])
+  }, [
+    dynamicHook,
+    feeTierSetting,
+    hook,
+    setHook,
+    setHookEnabled,
+    setHookSelectType,
+    setFeeTierSetting,
+    poolType,
+    hookSelectType,
+  ])
 
   return <HookSettings onHookEnabledChange={handleHookEnabledChange} onHookChange={handleHookChange} {...boxProps} />
 }

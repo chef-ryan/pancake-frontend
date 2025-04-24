@@ -15,6 +15,7 @@ import {
 import { GreyCard } from '@pancakeswap/widgets-internal'
 import Divider from 'components/Divider'
 import { useCallback } from 'react'
+import { useHookAddressQueryState } from 'state/infinity/create'
 import { HookSettingsList } from './HookSettingsList'
 import { HookSettingsManual } from './HookSettingsManual'
 import { useHookEnabledQueryState, useHookSelectTypeQueryState } from './hooks/useQueriesState'
@@ -31,6 +32,17 @@ export const HookSettings: React.FC<FieldHookSettingsProps> = ({ onHookChange, o
 
   const [hookEnabled, setHookEnabled] = useHookEnabledQueryState()
   const [selectionType, setSelectionType] = useHookSelectTypeQueryState()
+  const [, setHookAddress] = useHookAddressQueryState()
+
+  const handleHookSelectTypeChange = useCallback(
+    (type: 'list' | 'manual') => {
+      setSelectionType(type)
+      if (type === 'manual') {
+        setHookAddress(null)
+      }
+    },
+    [setSelectionType],
+  )
 
   const handleHookEnabledChange = useCallback(() => {
     const newValue = !hookEnabled
@@ -59,7 +71,7 @@ export const HookSettings: React.FC<FieldHookSettingsProps> = ({ onHookChange, o
                   scale="sm"
                   id="radio-hook-selection-1"
                   name="radio-hook-selection"
-                  onChange={() => setSelectionType('list')}
+                  onChange={() => handleHookSelectTypeChange('list')}
                   checked={selectionType === 'list'}
                 />
               </Flex>
@@ -73,7 +85,7 @@ export const HookSettings: React.FC<FieldHookSettingsProps> = ({ onHookChange, o
                   scale="sm"
                   id="radio-hook-selection-2"
                   name="radio-hook-selection"
-                  onChange={() => setSelectionType('manual')}
+                  onChange={() => handleHookSelectTypeChange('manual')}
                   checked={selectionType === 'manual'}
                 />
               </Flex>

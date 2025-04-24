@@ -6,7 +6,6 @@ import {
   useClTickSpacingQueryState,
   useFeeLevelQueryState,
   useFeeTierSettingQueryState,
-  useHookAddressQueryState,
   usePoolTypeQueryState,
   usePriceRangeQueryState,
   useStartingPriceQueryState,
@@ -21,6 +20,7 @@ import {
 import { Address } from 'viem'
 import { CreateLiquidityFeeTier } from 'views/CreateLiquidityPool/types'
 import { useHookEnabledQueryState } from 'views/HookSettings/hooks/useQueriesState'
+import { useSelectedHook } from 'views/HookSettings/hooks/useSelectedHook'
 
 export type InfinitySharedQueryState = {
   poolType: PoolType | null
@@ -64,7 +64,7 @@ export type InfinityQueryState = (BinQueryState | CLQueryState) & InfinityComput
 export const useInfinitySharedQueryState = () => {
   const [poolType] = usePoolTypeQueryState()
   const [hookEnabled] = useHookEnabledQueryState()
-  const [hookAddress] = useHookAddressQueryState()
+  const selectedHook = useSelectedHook()
   const [feeTierSetting] = useFeeTierSettingQueryState()
   const [feeLevel] = useFeeLevelQueryState()
   const [inverted] = useInverted()
@@ -74,7 +74,7 @@ export const useInfinitySharedQueryState = () => {
   return {
     poolType,
     hookEnabled,
-    hookAddress,
+    hookAddress: selectedHook?.address,
     feeTierSetting,
     feeLevel,
     inverted,
