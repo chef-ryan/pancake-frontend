@@ -202,7 +202,7 @@ export const getStableSwapPools = cacheByLRU(
     })
     const blockNumber = query?.options?.blockNumber
     if (!blockNumber) {
-      throw new Error('Failed to get pools on chain. Missing valid params')
+      return []
     }
     const { currencyA, currencyB } = query
     const provider = query.provider ?? getViemClients

@@ -302,7 +302,7 @@ export function getBestSwapRouteBy(
     }
 
     if (splits > maxSplits) {
-      logger.debug('Max splits reached. Stopping search.')
+      logger.debug(`Max splits ${maxSplits} reached. Stopping search.`)
       // metric.putMetric(`MaxSplitsHitReached`, 1, MetricLoggerUnit.Count);
       break
     }
