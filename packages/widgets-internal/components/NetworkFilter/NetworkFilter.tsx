@@ -56,6 +56,12 @@ const ItemContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  padding-right: 24px;
+  white-space: pre-wrap;
+
+  .network-icon {
+    flex: 1;
+  }
 `;
 
 const StyledButton = styled(Button)`
@@ -141,15 +147,15 @@ export const NetworkFilter: React.FC<INetworkProps> = ({ data, value, onChange, 
         <ItemContainer onTouchStart={onTouchStart}>
           <div style={{ display: "flex", alignItems: "center" }}>
             {option.icon && (
-              <span style={{ marginRight: "8px" }}>
+              <span style={{ marginRight: "8px", width: "24px", height: "24px" }}>
                 {typeof option.icon === "string" ? (
-                  <img src={option.icon} alt={option.label} width="24" />
+                  <img className="network-icon" src={option.icon} alt={option.label} width="24" />
                 ) : (
                   option.icon
                 )}
               </span>
             )}
-            <span style={{ overflow: "hidden" }}>{option.label}</span>
+            <span style={{ flex: 1 }}>{option.label}</span>
           </div>
 
           <StyledButton scale="xs" onClick={(e: React.MouseEvent) => handleOnlyClick(option.value, e)}>
