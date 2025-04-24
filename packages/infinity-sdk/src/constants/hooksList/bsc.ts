@@ -16,7 +16,7 @@ export const CL_DYNAMIC_HOOK: HookData = {
   isVerified: false,
   isUpgradable: false,
   creator: 'https://github.com/pancakeswap/',
-  defaultFee: 3000,
+  defaultFee: 500,
   hooksRegistration: {
     afterInitialize: true,
     beforeSwap: true,
