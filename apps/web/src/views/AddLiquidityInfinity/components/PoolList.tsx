@@ -203,16 +203,26 @@ export const PoolList = () => {
 
   const handleToken0Change = useCallback(
     (currency: Currency) => {
-      updateParams({ currencyIdA: getCurrencyAddress(currency) })
+      const newCurrencyIdA = getCurrencyAddress(currency)
+      if (newCurrencyIdA === currencyIdB) {
+        updateParams({ currencyIdA: currencyIdB, currencyIdB: currencyIdA })
+      } else {
+        updateParams({ currencyIdA: newCurrencyIdA })
+      }
     },
-    [updateParams],
+    [updateParams, currencyIdA, currencyIdB],
   )
 
   const handleToken1Change = useCallback(
     (currency: Currency) => {
-      updateParams({ currencyIdB: getCurrencyAddress(currency) })
+      const newCurrencyIdB = getCurrencyAddress(currency)
+      if (newCurrencyIdB === currencyIdA) {
+        updateParams({ currencyIdA: currencyIdB, currencyIdB: currencyIdA })
+      } else {
+        updateParams({ currencyIdB: newCurrencyIdB })
+      }
     },
-    [updateParams],
+    [updateParams, currencyIdA, currencyIdB],
   )
 
   const handleRowClick = useCallback(
