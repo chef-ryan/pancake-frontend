@@ -29,6 +29,15 @@ interface BridgeDataSchema {
   }
 }
 
+// // Define the schema for the "SWAP" command data
+// export const SwapDataSchema = Type.Object({
+//   originChainId: Type.Number(),
+//   trade: TradeSchema,
+//   slippageTolerance: Type.Number(),
+//   deadlineOrPreviousBlockhash: Type.Optional(Type.String()),
+//   recipient: Type.Optional(addressModel),
+// });
+
 interface SwapDataSchema {
   command: Command.SWAP
   data: {
@@ -78,6 +87,15 @@ export const getBridgeCalldata = async ({
         minOutputAmount: '1',
       },
     }
+
+    // const swapCommand: SwapDataSchema = {
+    //   command: Command.SWAP,
+    //   data: {
+    //     originChainId: 42161,
+    //     trade: mockTrade,
+    //     slippageTolerance: 50,
+    //   },
+    // }
 
     const calldataRequest: CalldataRequestSchema = {
       inputToken: getTokenAddress(currencyAmountIn.currency),

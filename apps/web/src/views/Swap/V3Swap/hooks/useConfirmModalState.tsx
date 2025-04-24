@@ -37,7 +37,9 @@ import { waitForXOrderReceipt } from 'views/Swap/x/api'
 import { useSendXOrder } from 'views/Swap/x/useSendXOrder'
 
 import { useSetAtom } from 'jotai'
+import { calculateGasMargin } from 'utils'
 import { getFullChainNameById } from 'utils/getFullChainNameById'
+import { getViemClients } from 'utils/viem'
 import { getBridgeCalldata } from 'views/Swap/Bridge/api'
 import { useBridgeCheckApproval } from 'views/Swap/Bridge/hooks'
 import { crossChainOrderDataAtom } from 'views/SwapSimplify/V4Swap/CrossChainConfirmSwapModal/state/orderData'
@@ -469,10 +471,25 @@ const useConfirmActions = (
           })
 
           if (bridgeCalldataResponse?.transactionData?.calldata) {
-            const result = await sendTransactionAsync({
-              to: bridgeCalldataResponse.transactionData.router,
-              data: bridgeCalldataResponse.transactionData.calldata,
-            })
+            const result = await getViemClients({ chainId })
+              ?.estimateGas({
+                account,
+                to: bridgeCalldataResponse.transactionData.router,
+                data: bridgeCalldataResponse.transactionData.calldata,
+                value: order.trade.inputAmount.currency.isNative
+                  ? BigInt(order.trade.inputAmount.quotient.toString())
+                  : undefined,
+              })
+              .then((gasLimit) => {
+                return sendTransactionAsync({
+                  to: bridgeCalldataResponse.transactionData.router,
+                  data: bridgeCalldataResponse.transactionData.calldata,
+                  value: order.trade.inputAmount.currency.isNative
+                    ? BigInt(order.trade.inputAmount.quotient.toString())
+                    : undefined,
+                  gas: calculateGasMargin(gasLimit),
+                })
+              })
 
             if (result) {
               const hash = await safeTxHashTransformer(result)
