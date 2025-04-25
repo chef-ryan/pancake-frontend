@@ -1,13 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { ChainId } from '@pancakeswap/chains'
+import { Currency, ERC20Token, NativeCurrency, Token } from '@pancakeswap/sdk'
 import { type Address, erc20Abi, zeroAddress } from 'viem'
-import { ERC20Token, Currency, NativeCurrency, Token } from '@pancakeswap/sdk'
 
 import { TokenAddressMap } from '@pancakeswap/token-lists'
 import { useReadContracts } from '@pancakeswap/wagmi'
 import { GELATO_NATIVE } from 'config/constants'
 import { UnsafeCurrency } from 'config/constants/types'
 import { useAtomValue } from 'jotai'
+import memoize from 'lodash/memoize'
+import uniqueId from 'lodash/uniqueId'
 import { useMemo } from 'react'
 import {
   combinedCurrenciesMapFromActiveUrlsAtom,
@@ -17,8 +19,6 @@ import {
   useWarningTokenList,
 } from 'state/lists/hooks'
 import { safeGetAddress } from 'utils'
-import memoize from 'lodash/memoize'
-import uniqueId from 'lodash/uniqueId'
 import useUserAddedTokens, { useUserAddedTokensByChainIds } from '../state/user/hooks/useUserAddedTokens'
 import { useActiveChainId } from './useActiveChainId'
 import useNativeCurrency from './useNativeCurrency'
@@ -53,7 +53,7 @@ export function useAllTokens(overrideChainId?: number): { [address: string]: ERC
   const chainId = overrideChainId || activeChainId
 
   const tokenMap = useAtomValue(combinedTokenMapFromActiveUrlsAtom)
-  const userAddedTokens = useUserAddedTokens()
+  const userAddedTokens = useUserAddedTokens(chainId)
   return useMemo(() => {
     return (
       userAddedTokens
