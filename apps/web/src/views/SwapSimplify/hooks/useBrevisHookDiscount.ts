@@ -9,9 +9,9 @@ import { parseAbi } from 'viem/utils'
 import { useAccount } from 'wagmi'
 
 const whiteListBrevisDiscountHooks = [
-  '0x9F0D5091D31a7801d34da352572BAc84e8Ac48Ad',
-  '0x4910a4852A06D0F6B206bd737ea3C98866Be796C',
-]
+  // '0x9F0D5091D31a7801d34da352572BAc84e8Ac48Ad',
+  // '0x4910a4852A06D0F6B206bd737ea3C98866Be796C',
+] as Address[]
 
 export const useBrevisHookDiscount = (pools: Route['pools']) => {
   const { chainId } = useActiveChainId()
@@ -19,7 +19,7 @@ export const useBrevisHookDiscount = (pools: Route['pools']) => {
   const brevisHookPools = pools.filter(
     (pool) =>
       SmartRouter.isInfinityBinPool(pool) ||
-      (SmartRouter.isInfinityClPool(pool) && whiteListBrevisDiscountHooks.includes(pool?.hooks ?? '')),
+      (SmartRouter.isInfinityClPool(pool) && pool?.hooks && whiteListBrevisDiscountHooks.includes(pool.hooks)),
   ) as Array<InfinityBinPool | InfinityClPool>
 
   const queries = useMemo(() => {

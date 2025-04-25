@@ -1,6 +1,5 @@
 import { ChainId } from '@pancakeswap/chains'
 
-import { checksumAddress } from 'viem'
 import { HOOK_CATEGORY, HookType, POOL_TYPE, type HookData, type PoolType } from '../../types'
 import { CL_DYNAMIC_FEE_HOOKS_BY_CHAIN } from './dynamicFeeHook'
 
@@ -46,59 +45,59 @@ const dynamicHooksList: HookData[] = [CL_DYNAMIC_HOOK]
 
 export const bscHooksList: HookData[] = [
   ...dynamicHooksList,
-  {
-    address: '0x9c5554cCEa7F38c3337f017E8357C3eD62BF9885',
-    name: 'Fee Discount Hook (Primus)',
-    poolType: POOL_TYPE.CLAMM,
-    description:
-      'Prove your CEX 30-day spot trading volume exceeded $1M with zkTLS by Primus and get 50% off the initial fee. Create your proof via the link (https://pancakeswap-hook.primuslabs.xyz/). The proof is valid for 14 days.',
-    github: 'https://github.com/primus-labs/pancakeswapv4-cex-trading-hooks',
-    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
-    creator: 'https://github.com/primus-labs/',
-    audit: '',
-    isVerified: true,
-    isUpgradable: false,
-    hooksRegistration: {
-      afterInitialize: true,
-      beforeSwap: true,
-    },
-    hookType: HookType.Universal,
-    defaultFee: 3000,
-  },
-  {
-    address: checksumAddress('0x9F0D5091D31a7801d34da352572BAc84e8Ac48Ad'),
-    name: 'Fee Discount Hook (CAKE Holding)',
-    poolType: POOL_TYPE.CLAMM,
-    description: 'Fee discount based on the last 30-day CAKE token holding.',
-    github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
-    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
-    creator: 'https://github.com/brevis-network',
-    audit: '',
-    isVerified: true,
-    isUpgradable: true,
-    hooksRegistration: {
-      beforeSwap: true,
-    },
-    hookType: HookType.PerPool,
-    defaultFee: 100000,
-  },
-  {
-    address: checksumAddress('0x4910a4852A06D0F6B206bd737ea3C98866Be796C'),
-    name: 'Fee Discount Hook (Trading Volume)',
-    poolType: POOL_TYPE.CLAMM,
-    description: 'Fee discount based on the last 30-day trading volume.',
-    github: 'https://github.com/brevis-network/vip-hook',
-    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
-    creator: 'https://github.com/brevis-network',
-    audit: '',
-    isVerified: true,
-    isUpgradable: true,
-    hooksRegistration: {
-      beforeSwap: true,
-    },
-    hookType: HookType.PerPool,
-    defaultFee: 100000,
-  },
+  // {
+  //   address: '0x9c5554cCEa7F38c3337f017E8357C3eD62BF9885',
+  //   name: 'Fee Discount Hook (Primus)',
+  //   poolType: POOL_TYPE.CLAMM,
+  //   description:
+  //     'Prove your CEX 30-day spot trading volume exceeded $1M with zkTLS by Primus and get 50% off the initial fee. Create your proof via the link (https://pancakeswap-hook.primuslabs.xyz/). The proof is valid for 14 days.',
+  //   github: 'https://github.com/primus-labs/pancakeswapv4-cex-trading-hooks',
+  //   category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+  //   creator: 'https://github.com/primus-labs/',
+  //   audit: '',
+  //   isVerified: true,
+  //   isUpgradable: false,
+  //   hooksRegistration: {
+  //     afterInitialize: true,
+  //     beforeSwap: true,
+  //   },
+  //   hookType: HookType.Universal,
+  //   defaultFee: 3000,
+  // },
+  // {
+  //   address: checksumAddress('0x9F0D5091D31a7801d34da352572BAc84e8Ac48Ad'),
+  //   name: 'Fee Discount Hook (CAKE Holding)',
+  //   poolType: POOL_TYPE.CLAMM,
+  //   description: 'Fee discount based on the last 30-day CAKE token holding.',
+  //   github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
+  //   category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+  //   creator: 'https://github.com/brevis-network',
+  //   audit: '',
+  //   isVerified: true,
+  //   isUpgradable: true,
+  //   hooksRegistration: {
+  //     beforeSwap: true,
+  //   },
+  //   hookType: HookType.PerPool,
+  //   defaultFee: 100000,
+  // },
+  // {
+  //   address: checksumAddress('0x4910a4852A06D0F6B206bd737ea3C98866Be796C'),
+  //   name: 'Fee Discount Hook (Trading Volume)',
+  //   poolType: POOL_TYPE.CLAMM,
+  //   description: 'Fee discount based on the last 30-day trading volume.',
+  //   github: 'https://github.com/brevis-network/vip-hook',
+  //   category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+  //   creator: 'https://github.com/brevis-network',
+  //   audit: '',
+  //   isVerified: true,
+  //   isUpgradable: true,
+  //   hooksRegistration: {
+  //     beforeSwap: true,
+  //   },
+  //   hookType: HookType.PerPool,
+  //   defaultFee: 100000,
+  // },
   // {
   //   address: '0x0A6440c9cfb5f28BE699a9e4e83BF8A89de72498',
   //   name: 'veCake Exclusive (CLAMM)',
