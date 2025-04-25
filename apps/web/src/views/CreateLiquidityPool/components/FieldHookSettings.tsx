@@ -5,6 +5,8 @@ import { useDefaultDynamicHook } from 'hooks/infinity/useHooksList'
 import { useCallback, useEffect } from 'react'
 import { useFeeTierSettingQueryState, usePoolTypeQueryState } from 'state/infinity/create'
 import { HookSettings } from 'views/HookSettings/HookSettings'
+import { useHookReset } from 'views/HookSettings/hooks/useHookReset'
+import { useManualHook } from 'views/HookSettings/hooks/useManualHook'
 import { useHookEnabledQueryState, useHookSelectTypeQueryState } from 'views/HookSettings/hooks/useQueriesState'
 import { useSelectHookFromList } from 'views/HookSettings/hooks/useSelectHookFromList'
 
@@ -13,11 +15,13 @@ type FieldHookSettingsProps = BoxProps
 export const FieldHookSettings: React.FC<FieldHookSettingsProps> = ({ ...boxProps }) => {
   const [feeTierSetting, setFeeTierSetting] = useFeeTierSettingQueryState()
   const [hook, setHook] = useSelectHookFromList()
+  const { setManualHook } = useManualHook()
   const [, setHookEnabled] = useHookEnabledQueryState()
   const [hookSelectType, setHookSelectType] = useHookSelectTypeQueryState()
   const { chainId } = useSelectIdRouteParams()
   const [poolType] = usePoolTypeQueryState()
   const dynamicHook = useDefaultDynamicHook(chainId, poolType)
+  const resetHook = useHookReset()
 
   // auto update the feeSetting to 'dynamic' or 'static' when hook change
   const handleHookChange = useCallback(
@@ -48,8 +52,8 @@ export const FieldHookSettings: React.FC<FieldHookSettingsProps> = ({ ...boxProp
         setHookEnabled(false)
         setFeeTierSetting('static')
       }
-    } else if (feeTierSetting === 'static' && hook === dynamicHook) {
-      setHook(undefined)
+    } else if (feeTierSetting === 'static' && hook?.category?.includes(HOOK_CATEGORY.DynamicFees)) {
+      resetHook()
     }
   }, [
     dynamicHook,
@@ -61,6 +65,7 @@ export const FieldHookSettings: React.FC<FieldHookSettingsProps> = ({ ...boxProp
     setFeeTierSetting,
     poolType,
     hookSelectType,
+    resetHook,
   ])
 
   return <HookSettings onHookEnabledChange={handleHookEnabledChange} onHookChange={handleHookChange} {...boxProps} />

@@ -18,6 +18,7 @@ import {
 } from '@pancakeswap/uikit'
 import { useCallback, useMemo } from 'react'
 import { usePoolTypeQueryState, useStartingPriceQueryState } from 'state/infinity/create'
+import { useHookReset } from 'views/HookSettings/hooks/useHookReset'
 import {
   useInfinityResetBinQueryState,
   useInfinityResetCLQueryState,
@@ -33,6 +34,7 @@ export const FieldPoolType: React.FC<FieldPoolTypeProps> = ({ ...boxProps }) => 
   const [, setStartPrice] = useStartingPriceQueryState()
   const resetCLQueryState = useInfinityResetCLQueryState()
   const resetBinQueryState = useInfinityResetBinQueryState()
+  const resetHook = useHookReset()
 
   const updatePoolType = useCallback(
     (type: 'CL' | 'Bin') => {
@@ -44,6 +46,7 @@ export const FieldPoolType: React.FC<FieldPoolTypeProps> = ({ ...boxProps }) => 
       } else {
         resetCLQueryState()
       }
+      resetHook()
     },
     [poolType, resetBinQueryState, resetCLQueryState, setPoolType, setStartPrice],
   )
