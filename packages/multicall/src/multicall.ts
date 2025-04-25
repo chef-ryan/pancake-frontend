@@ -1,11 +1,12 @@
-import { toBigInt } from '@pancakeswap/utils/toBigInt'
 import { AbortControl, AbortError, abortInvariant } from '@pancakeswap/utils/abortControl'
+import { toBigInt } from '@pancakeswap/utils/toBigInt'
 import { isViemAbortError } from '@pancakeswap/utils/viem/isAbortError'
 
-import { GetGasLimitParams, getDefaultGasBuffer, getGasLimit } from './getGasLimit'
-import { MulticallRequestWithGas } from './types'
-import { getMulticallContract } from './getMulticallContract'
+import { logStatsInDev } from './CallStats'
 import { getBlockConflictTolerance } from './getBlockConflictTolerance'
+import { GetGasLimitParams, getDefaultGasBuffer, getGasLimit } from './getGasLimit'
+import { getMulticallContract } from './getMulticallContract'
+import { MulticallRequestWithGas } from './types'
 
 export type CallByGasLimitParams = AbortControl &
   GetGasLimitParams & {
@@ -38,6 +39,7 @@ export async function multicallByGasLimit(
     ...rest
   }: CallByGasLimitParams,
 ) {
+  logStatsInDev(calls)
   const gasLimit = await getGasLimit({
     chainId,
     gasBuffer,
