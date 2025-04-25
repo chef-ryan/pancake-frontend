@@ -110,6 +110,7 @@ export const InfoPanel = ({ poolId, chainId }: InfoPanelProps) => {
             <Liquidity.PoolFeaturesBadge
               hookData={hookData}
               layout="row"
+              poolType={poolInfo?.protocol}
               labelTextProps={{ fontSize: '14px', textTransform: 'capitalize' }}
               showPoolFeatureInfo
               showPoolTypeInfo
