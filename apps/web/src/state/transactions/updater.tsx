@@ -1,30 +1,30 @@
+import { AVERAGE_CHAIN_BLOCK_TIMES } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, Text, useToast } from '@pancakeswap/uikit'
+import { useFetchBlockData } from '@pancakeswap/wagmi'
+import { useQuery } from '@tanstack/react-query'
 import { ToastDescriptionWithTx } from 'components/Toast'
+import { BSC_BLOCK_TIME } from 'config'
 import { FAST_INTERVAL } from 'config/constants'
 import forEach from 'lodash/forEach'
 import merge from 'lodash/merge'
 import pickBy from 'lodash/pickBy'
 import React, { useEffect, useMemo, useRef } from 'react'
 import { useAppDispatch } from 'state'
+import { retry, RetryableError } from 'state/multicall/retry'
+import { publicClient } from 'utils/viem'
 import {
   BlockNotFoundError,
   TransactionNotFoundError,
   TransactionReceiptNotFoundError,
   WaitForTransactionReceiptTimeoutError,
 } from 'viem'
-import { usePublicClient } from 'wagmi'
-import { retry, RetryableError } from 'state/multicall/retry'
-import { useQuery } from '@tanstack/react-query'
-import { AVERAGE_CHAIN_BLOCK_TIMES } from '@pancakeswap/chains'
-import { BSC_BLOCK_TIME } from 'config'
-import { useFetchBlockData } from '@pancakeswap/wagmi'
 import {
-  FarmTransactionStatus,
-  MsgStatus,
   CrossChainFarmStepType,
   CrossChainFarmTransactionStep,
+  FarmTransactionStatus,
   finalizeTransaction,
+  MsgStatus,
 } from './actions'
 import { fetchCelerApi } from './fetchCelerApi'
 import { useAllChainTransactions } from './hooks'
@@ -39,7 +39,6 @@ export function shouldCheck(
 }
 
 export const Updater: React.FC<{ chainId: number }> = ({ chainId }) => {
-  const provider = usePublicClient({ chainId })
   const { t } = useTranslation()
 
   const dispatch = useAppDispatch()
@@ -51,14 +50,15 @@ export const Updater: React.FC<{ chainId: number }> = ({ chainId }) => {
   const fetchedTransactions = useRef<{ [txHash: string]: TransactionDetails }>({})
 
   useEffect(() => {
-    if (!chainId || !provider) return
+    const client = publicClient({ chainId })
+    if (!chainId || !client) return
 
     forEach(
       pickBy(transactions, (transaction) => shouldCheck(fetchedTransactions.current, transaction)),
       (transaction) => {
         const getTransaction = async () => {
           try {
-            const receipt: any = await provider.getTransactionReceipt({ hash: transaction.hash })
+            const receipt: any = await client.getTransactionReceipt({ hash: transaction.hash })
 
             dispatch(
               finalizeTransaction({
@@ -107,7 +107,7 @@ export const Updater: React.FC<{ chainId: number }> = ({ chainId }) => {
         })
       },
     )
-  }, [chainId, provider, transactions, dispatch, toastSuccess, toastError, t, refetchBlockData])
+  }, [chainId, transactions, dispatch, toastSuccess, toastError, t, refetchBlockData])
 
   const crossChainFarmPendingTxns = useMemo(
     () =>
