@@ -267,7 +267,6 @@ export const useInfinityCLPositionApr = (pool: InfinityPoolInfo, position: Infin
     }
   }, [onChainPoolInfo, pool])
   const cakeApr = useInfinityCLPositionCakeAPR({ pool: poolWithOnChainLiquidity, position, cakePrice, tvlUSD: TVLUsd })
-  console.debug('debug', { pool, position, TVLUsd, cakeApr })
   return useInfinityPositionApr({
     pool: poolWithOnChainLiquidity,
     position,
