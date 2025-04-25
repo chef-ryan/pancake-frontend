@@ -72,21 +72,23 @@ The QuoterProvider is a React provider component that initializes all quote-rela
 
 Example usage:
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { QuoteProvider } from 'quoter/QuoteProvider';
+```typescript
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { QuoteProvider } from 'quoter/QuoteProvider'
 
 function App() {
-return (
-<QuoteProvider>
-{/_ The rest of your application _/}
-<MySwapPage />
-</QuoteProvider>
-);
+  return (
+    <QuoteProvider>
+      {/_ The rest of your application _/}
+      <MySwapPage />
+    </QuoteProvider>
+  )
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+const root = ReactDOM.createRoot(document.getElementById('root'))
+root.render(<App />)
+```
 
 ---
 
@@ -98,32 +100,34 @@ Once your application is wrapped in the QuoterProvider, you can consume the best
 
 ---
 
-import React from 'react';
-import { useAllTypeBestTrade } from 'quoter/hook/useAllTypeBestTrade';
+```typescript
+import React from 'react'
+import { useAllTypeBestTrade } from 'quoter/hook/useAllTypeBestTrade'
 
 function MySwapPage() {
-const { bestOrder, tradeLoaded, tradeError, refreshTrade } = useAllTypeBestTrade();
+  const { bestOrder, tradeLoaded, tradeError, refreshTrade } = useAllTypeBestTrade()
 
-if (tradeError) {
-return <div>Error loading best trade: {tradeError.message}</div>;
-}
+  if (tradeError) {
+    return <div>Error loading best trade: {tradeError.message}</div>
+  }
 
-if (!tradeLoaded) {
-return <div>Loading best trade...</div>;
-}
+  if (!tradeLoaded) {
+    return <div>Loading best trade...</div>
+  }
 
-if (!bestOrder) {
-return <div>No Best Trade Found.</div>;
-}
+  if (!bestOrder) {
+    return <div>No Best Trade Found.</div>
+  }
 
-return (
-<div>
-<p>Found a best Order with route: {bestOrder.type}</p>
-{/_ bestOrder.trade or other data can be displayed _/}
-<button onClick={refreshTrade}>Refresh Trade</button>
-</div>
-);
+  return (
+    <div>
+      <p>Found a best Order with route: {bestOrder.type}</p>
+      {/_ bestOrder.trade or other data can be displayed _/}
+      <button onClick={refreshTrade}>Refresh Trade</button>
+    </div>
+  )
 }
+```
 
 ---
 
