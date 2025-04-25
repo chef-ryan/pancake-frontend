@@ -1,3 +1,4 @@
+import { Button } from '@pancakeswap/uikit'
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { Minus, Plus } from 'react-feather'
 import { ApiV3PoolInfoConcentratedItem, ApiV3Token, solToWSol } from '@raydium-io/raydium-sdk-v2'
@@ -5,11 +6,9 @@ import { Box, Text, Flex, HStack, VStack, SimpleGrid, Skeleton } from '@chakra-u
 import shallow from 'zustand/shallow'
 import Decimal from 'decimal.js'
 import { useTranslation } from 'react-i18next'
-import dayjs from 'dayjs'
 import DecimalInput from '@/components/DecimalInput'
 import PanelCard from '@/components/PanelCard'
 import Tabs from '@/components/Tabs'
-import Button from '@/components/Button'
 import HorizontalSwitchSmallIcon from '@/icons/misc/HorizontalSwitchSmallIcon'
 import EditIcon from '@/icons/misc/EditIcon'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
@@ -26,23 +25,25 @@ import { Desktop, Mobile } from '@/components/MobileDesktop'
 import { useEvent } from '@/hooks/useEvent'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import { extractNumberOnly } from '@/utils/numberish/regex'
+import { inputCard } from '@/theme/cssBlocks'
 
 const IconStyle = {
   cursor: 'pointer',
-  color: colors.secondary,
-  background: colors.secondary10,
+  color: colors.primary60,
+  border: `2px solid ${colors.primary60}`,
+  strokeWidth: 3,
   width: '20px',
   height: '20px',
-  borderRadius: '4px'
+  borderRadius: '50%'
 }
 const RangeInputStyle = {
-  ctr: { bg: colors.backgroundDark, borderRadius: 'xl', userSelect: 'none' },
-  input: { px: '8px', h: '24px', textAlign: ['left', 'center'], fontWeight: 500, fontSize: 'sm' },
+  ctr: { border: 'none', borderRadius: 'none', userSelect: 'none' },
+  input: { h: '24px', textAlign: ['left', 'center'], fontWeight: 500, fontSize: 'sm' },
   inputGroup: {
     display: 'flex',
-    ml: ['0', '8px'],
     h: '24px',
-    lineHeight: '24px'
+    lineHeight: '24px',
+    p: 0
   }
 }
 
@@ -129,22 +130,6 @@ export default function SetPriceAndRange({
 
   const debouncePriceChange = useEvent(debounce(onPriceChange, 150))
 
-  const handlePriceChange = useCallback(
-    (propsVal: string) => {
-      if (switchRef.current) {
-        switchRef.current = false
-        return
-      }
-      switchRef.current = false
-      const val = extractNumberOnly(propsVal)
-      setCurrentPrice(val)
-      debouncePriceChange({ price: val })
-      handleLeftRangeBlur(new Decimal(val || 0).mul(0.5).toString())
-      handleRightRangeBlur(new Decimal(val || 0).mul(1.5).toString())
-    },
-    [baseIn]
-  )
-
   const handleLeftRangeBlur = useEvent((val: string) => {
     if (val === '') return
     if (
@@ -178,6 +163,22 @@ export default function SetPriceAndRange({
     }
   })
 
+  const handlePriceChange = useCallback(
+    (propsVal: string) => {
+      if (switchRef.current) {
+        switchRef.current = false
+        return
+      }
+      switchRef.current = false
+      const val = extractNumberOnly(propsVal)
+      setCurrentPrice(val)
+      debouncePriceChange({ price: val })
+      handleLeftRangeBlur(new Decimal(val || 0).mul(0.5).toString())
+      handleRightRangeBlur(new Decimal(val || 0).mul(1.5).toString())
+    },
+    [debouncePriceChange, handleLeftRangeBlur, handleRightRangeBlur]
+  )
+
   const handleInputChange = useCallback((val: string, _: number, side?: string) => {
     setPriceRange((pos) => (side === Side.Left ? [val, pos[1]] : [pos[0], val]))
   }, [])
@@ -187,6 +188,7 @@ export default function SetPriceAndRange({
     const tickKey = side === Side.Left ? 'tickLower' : 'tickUpper'
     const tick = tickPriceRef.current[tickKey]
     const pow = (isAdd && baseIn) || (!baseIn && !isAdd) ? 0 : 1
+    /* eslint-disable no-restricted-properties */
     const nextTick = tick! + tempCreatedPool.config.tickSpacing * Math.pow(-1, pow)
     const p = getTickPrice({
       pool: tempCreatedPool,
@@ -224,24 +226,26 @@ export default function SetPriceAndRange({
     }
   })
 
-  const handleSwitchBase = useCallback((v: 'base' | 'quote') => {
-    switchRef.current = true
-    setCurrentPrice((val) => {
-      const newPrice = val ? new Decimal(1).div(val).toString() : val
-      handleLeftRangeBlur(new Decimal(newPrice).mul(0.5).toString())
-      handleRightRangeBlur(new Decimal(newPrice).mul(1.5).toString())
-      return newPrice
-    })
-    onSwitchBase(v === 'base')
-  }, [])
+  const handleSwitchBase = useCallback(
+    (v: 'base' | 'quote') => {
+      switchRef.current = true
+      setCurrentPrice((val) => {
+        const newPrice = val ? new Decimal(1).div(val).toString() : val
+        handleLeftRangeBlur(new Decimal(newPrice).mul(0.5).toString())
+        handleRightRangeBlur(new Decimal(newPrice).mul(1.5).toString())
+        return newPrice
+      })
+      onSwitchBase(v === 'base')
+    },
+    [handleLeftRangeBlur, handleRightRangeBlur, onSwitchBase]
+  )
 
   useEffect(() => {
     if (!isFullRange || !tempCreatedPool) return
     if (isFullRange) {
       computeFullRange()
-      
     }
-  }, [tempCreatedPool, tempCreatedPool?.price, baseIn, isFullRange])
+  }, [computeFullRange, tempCreatedPool, tempCreatedPool?.price, baseIn, isFullRange])
 
   useEffect(() => {
     if (!currentPrice) {
@@ -260,13 +264,14 @@ export default function SetPriceAndRange({
     handleLeftRangeBlur(new Decimal(1).div(priceRangeRef.current[1]).toString())
     handleRightRangeBlur(new Decimal(1).div(priceRangeRef.current[0]).toString())
   })
+
   if (completed)
     return (
-      <PanelCard px={[3, 6]} py={[3, 4]} fontSize="sm" fontWeight="500" color={colors.textSecondary}>
+      <PanelCard px={[3, 6]} py={[3, 4]} fontSize="sm" fontWeight="500">
         <Flex alignItems="center" gap="2" justifyContent="space-between">
           <VStack align="stretch">
-            <HStack>
-              <Text variant="label" fontSize="sm">
+            <HStack color={colors.textPrimary}>
+              <Text variant="label" fontSize="sm" color={colors.textSubtle}>
                 {t('clmm.initial_price')}:
               </Text>
               <Text>{formatCurrency(currentPrice, { decimalPlaces: Math.max(token1.decimals, token2.decimals) })}</Text>
@@ -277,8 +282,8 @@ export default function SetPriceAndRange({
                 })}
               </Text>
             </HStack>
-            <HStack>
-              <Text variant="label" fontSize="sm">
+            <HStack color={colors.textPrimary}>
+              <Text variant="label" fontSize="sm" color={colors.textSubtle}>
                 {t('clmm.price_range')}:
               </Text>
               <Text>
@@ -309,11 +314,10 @@ export default function SetPriceAndRange({
     <PanelCard p={[3, 6]}>
       <Desktop>
         <Flex mb={3} justifyContent="space-between" alignItems="center">
-          <Text fontSize="xl" fontWeight="500">
+          <Text variant="subTitle" fontSize="xl">
             {t('clmm.price_setting')}
           </Text>
           <Tabs
-            variant="squarePanelDark"
             onChange={handleSwitchBase}
             defaultValue={baseIn ? 'base' : 'quote'}
             value={baseIn ? 'base' : 'quote'}
@@ -330,15 +334,13 @@ export default function SetPriceAndRange({
           />
         </Flex>
       </Desktop>
-      <Text mb="2" variant="title">
+      <Text mb="2" variant="subTitle">
         {t('clmm.initial_price')}
       </Text>
       <DecimalInput
         decimals={decimals}
-        variant="filledDark"
-        ctrSx={{ bg: colors.backgroundDark, borderRadius: 'xl', px: '4px', py: ['2px', '6px'] }}
-        inputGroupSx={{ bg: colors.backgroundDark, alignItems: 'center', borderRadius: 'xl' }}
-        inputSx={{ pl: '4px', fontWeight: 500, fontSize: ['md', 'xl'] }}
+        inputGroupSx={{ alignItems: 'center', borderRadius: 'xl' }}
+        inputSx={{ bg: 'transparent', pl: '4px', fontWeight: 500, fontSize: ['md', 'xl'] }}
         postfix={
           <>
             <Desktop>
@@ -351,7 +353,6 @@ export default function SetPriceAndRange({
             </Desktop>
             <Mobile>
               <Tabs
-                variant="squarePanelDark"
                 onChange={handleSwitchBase}
                 defaultValue={baseIn ? 'base' : 'quote'}
                 value={baseIn ? 'base' : 'quote'}
@@ -373,38 +374,33 @@ export default function SetPriceAndRange({
         onChange={handlePriceChange}
       />
       <Flex alignItems="center" gap="2" mt="2" mb="4">
-        <Text variant="label" fontSize="sm">
+        <Text variant="label" fontSize="sm" color={colors.textSubtle}>
           {t('field.current_price')}:
         </Text>
-        <QuestionToolTip iconType="question" label={t('create_standard_pool.current_price_tooltip')} />
-        <Text color={colors.textSecondary} fontSize="sm" display="flex" alignItems="center" gap="1">
+        <QuestionToolTip
+          iconProps={{ color: colors.primary60 }}
+          iconType="question"
+          label={t('create_standard_pool.current_price_tooltip')}
+        />
+        <Text color={colors.textSubtle} fontWeight={600} fontSize="sm" display="flex" alignItems="center" gap="1">
           {isPriceLoading ? <Skeleton width={16} height={4} /> : formatToRawLocaleStr(onlinePrice)}
           {t('common.per_unit', {
             subA: wSolToSolString(priceReverse ? tokenQuote.symbol : tokenBase.symbol),
             subB: wSolToSolString(priceReverse ? tokenBase.symbol : tokenQuote.symbol)
           })}
         </Text>
-        <Box
-          border={`1px solid ${colors.secondary}`}
-          p="1px"
-          borderRadius="2px"
-          width="fit-content"
-          height="fit-content"
-          lineHeight={0}
-        >
+        <Box border={`1px solid ${colors.secondary}`} p="1px" borderRadius="2px" width="fit-content" height="fit-content" lineHeight={0}>
           <HorizontalSwitchSmallIcon cursor="pointer" onClick={handleClick} width="10" height="10" fill={colors.secondary} />
         </Box>
       </Flex>
 
-      <Text variant="title" mb="2" userSelect="none">
+      <Text mb="2" variant="subTitle" userSelect="none">
         {t('clmm.price_range')}
       </Text>
       <Tabs
-        w="full"
         mb="3"
         tabListSX={{ display: 'flex' }}
         tabItemSX={{ flex: 1 }}
-        variant="squarePanelDark"
         defaultValue={rangeMode}
         value={rangeMode}
         onChange={setRangeMode}
@@ -451,8 +447,8 @@ export default function SetPriceAndRange({
       )}
 
       <Button
-        mt="4"
-        isDisabled={!!error}
+        mt="3"
+        disabled={!!error}
         onClick={() => {
           const dataSource = isFullRange ? fullRangeTickRef.current : tickPriceRef.current
           onConfirm({
@@ -487,10 +483,10 @@ function PriceRangeInputBox(props: {
   return (
     <>
       <Desktop>
-        <Flex alignItems="center" gap="1" sx={{ bg: colors.backgroundDark, alignItems: 'center', borderRadius: 'xl', p: '8px' }}>
+        <Flex justifyContent="center" gap="1" sx={{ ...inputCard, alignItems: 'center', p: '8px' }}>
           <Minus style={IconStyle} onClick={props.onMinus} />
-          <Box textAlign="center" flexGrow={1}>
-            <Text whiteSpace="nowrap" variant="label" userSelect="none">
+          <Box textAlign="center" justifyContent="center" width="130px">
+            <Text textTransform="uppercase" whiteSpace="nowrap" variant="label" userSelect="none" color={colors.textSecondary}>
               {props.topLabel}
             </Text>
             <DecimalInput

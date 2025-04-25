@@ -12,9 +12,22 @@ export const heroGridientColorCSSBlock: SystemProps = {
 }
 
 export const panelCard: SystemProps = {
-  bg: colors.backgroundLight,
-  border: colors.panelCardBorder,
+  bg: colors.cardBg,
+  border: `1px solid ${colors.cardBorder01}`,
+  borderBottomWidth: '2px',
   boxShadow: colors.panelCardShadow,
-  borderRadius: ['12px', '20px'],
+  borderRadius: '24px',
   overflow: 'hidden'
+}
+
+export const inputCard: SystemProps = {
+  color: colors.textSubtle,
+  bg: colors.inputBg,
+  border: `1px solid ${colors.inputBorder}`,
+  borderBottomWidth: '2px',
+  borderRadius: '16px'
+}
+
+export const inputFocusStyle = {
+  boxShadow: `0px 0px 0px 1px ${colors.textSecondary}, 0px 0px 0px 4px rgba(118, 69, 217, 0.20)`
 }

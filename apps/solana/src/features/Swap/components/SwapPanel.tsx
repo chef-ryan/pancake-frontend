@@ -13,7 +13,7 @@ import {
 import { ApiV3Token, RAYMint, SOL_INFO, TokenInfo, TransferFeeDataBaseType } from '@raydium-io/raydium-sdk-v2'
 import { PublicKey } from '@solana/web3.js'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useTranslation , Trans } from 'react-i18next'
+import { useTranslation, Trans } from 'react-i18next'
 import shallow from 'zustand/shallow'
 import Decimal from 'decimal.js'
 import dayjs from 'dayjs'
@@ -123,8 +123,8 @@ export function SwapPanel({
     if (!cacheLoaded) return
     onInputMintChange?.(inputMint)
     onOutputMintChange?.(outputMint)
-    const validInputMint = isValidPublicKey(inputMint) ? inputMint : '';
-      const validOutputMint = isValidPublicKey(outputMint) ? outputMint : ''
+    const validInputMint = isValidPublicKey(inputMint) ? inputMint : ''
+    const validOutputMint = isValidPublicKey(outputMint) ? outputMint : ''
     setUrlQuery({ inputMint: mintToUrl(validInputMint), outputMint: mintToUrl(validOutputMint) })
   }, [inputMint, outputMint, cacheLoaded])
 
@@ -173,17 +173,17 @@ export function SwapPanel({
 
   useEffect(() => {
     if (!cacheLoaded) return
-    const [inputMint, outputMint] = [urlToMint(query.inputMint), urlToMint(query.outputMint)]
-    if (inputMint && tokenMap.get(inputMint)) {
-      setInputMint(inputMint)
+    const [inputMint_, outputMint_] = [urlToMint(query.inputMint), urlToMint(query.outputMint)]
+    if (inputMint_ && tokenMap.get(inputMint_)) {
+      setInputMint(inputMint_)
       setSwapPairCache({
-        inputMint
+        inputMint: inputMint_
       })
     }
-    if (outputMint && tokenMap.get(outputMint)) {
-      setOutputMint(outputMint)
+    if (outputMint_ && tokenMap.get(outputMint_)) {
+      setOutputMint(outputMint_)
       setSwapPairCache({
-        outputMint
+        outputMint: outputMint_
       })
     }
   }, [tokenMap, cacheLoaded])
@@ -195,8 +195,8 @@ export function SwapPanel({
   }, [response?.id, isSending])
 
   const debounceUpdate = useCallback(
-    debounce(({ outputAmount, isComputing }) => {
-      setHasValidAmountOut(Number(outputAmount) !== 0 || isComputing)
+    debounce(({ outputAmount: outputAmount_, isComputing: isComputing_ }) => {
+      setHasValidAmountOut(Number(outputAmount_) !== 0 || isComputing_)
     }, 150),
     []
   )
@@ -446,7 +446,7 @@ export function SwapPanel({
         </Flex>
       ) : null}
       <ConnectedButton
-        isDisabled={new Decimal(amountIn || 0).isZero() || !!swapError || needPriceUpdatedAlert || swapDisabled}
+        disabled={new Decimal(amountIn || 0).isZero() || !!swapError || needPriceUpdatedAlert || swapDisabled}
         isLoading={isComputing || isSending}
         loadingText={<div>{isSending ? t('transaction.transaction_initiating') : isComputing ? t('swap.computing') : ''}</div>}
         onClick={isHighRiskTx ? onHightRiskOpen : handleClickSwap}

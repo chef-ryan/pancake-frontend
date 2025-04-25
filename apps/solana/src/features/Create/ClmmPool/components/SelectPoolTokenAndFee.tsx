@@ -1,22 +1,22 @@
-import { Box, Flex, HStack, SystemStyleObject, Tag, Text, useDisclosure } from '@chakra-ui/react'
-import { ApiClmmConfigInfo, ApiV3Token, ClmmConfigInfo, PoolFetchType, TokenInfo, solToWSol } from '@raydium-io/raydium-sdk-v2'
+import { ArrowDropDownIcon } from '@pancakeswap/uikit'
+import { Box, Flex, HStack, SystemStyleObject, Tag, Text, TextProps, useDisclosure } from '@chakra-ui/react'
+import { ApiClmmConfigInfo, ApiV3Token, PoolFetchType, TokenInfo, solToWSol } from '@raydium-io/raydium-sdk-v2'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronDown, ChevronUp } from 'react-feather'
+import { ChevronDown } from 'react-feather'
 import { useTranslation } from 'react-i18next'
 import PanelCard from '@/components/PanelCard'
 import TokenAvatar from '@/components/TokenAvatar'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
 import TokenSelectDialog from '@/components/TokenSelectDialog'
 import useFetchPoolByMint from '@/hooks/pool/useFetchPoolByMint'
-import SubtractIcon from '@/icons/misc/SubtractIcon'
 import EditIcon from '@/icons/misc/EditIcon'
 import { useClmmStore } from '@/store/useClmmStore'
 import { colors } from '@/theme/cssVariables/colors'
 import ConnectedButton from '@/components/ConnectedButton'
 import { Select } from '@/components/Select'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
-import { useTokenStore } from '@/store'
 import { percentFormatter } from '@/utils/numberish/formatter'
+import { inputCard } from '@/theme/cssBlocks'
 
 type Side = 'token1' | 'token2'
 
@@ -40,6 +40,10 @@ const SelectBoxSx: SystemStyleObject = {
   px: '4'
 }
 
+const titleProps: TextProps = {
+  variant: 'title'
+}
+
 export default function SelectPoolTokenAndFee({ completed, initState, show, isLoading, onConfirm, onEdit }: Props) {
   const { t } = useTranslation()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -58,7 +62,6 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
     mintList: token1 && token2 ? [token1.address, token2.address] : [],
     timeout: 100
   })
-  const whiteListMap = useTokenStore((s) => s.whiteListMap)
 
   const { data, isLoading: isExistingLoading } = useFetchPoolByMint({
     shouldFetch: !!token1 && !!token2,
@@ -81,6 +84,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
           )
         })
         .reduce((acc, cur) => acc.set(cur.id, cur.config.id), new Map()),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [token1?.address, token2?.address, data]
   )
 
@@ -92,7 +96,6 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
     const defaultConfig = Object.values(clmmFeeConfigs || {}).find((c) => c.tradeFeeRate === 2500)
     if (!new Set(existingPools.values()).has(defaultConfig?.id || '')) {
       if (defaultConfig) setCurrentConfig((preConfig) => preConfig || defaultConfig)
-      
     }
   }, [poolKey, existingPools, clmmFeeConfigs, isExistingLoading])
 
@@ -104,24 +107,19 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
     [onOpen]
   )
 
-  const handleSelect = useCallback((val: ApiV3Token) => {
-    if (val?.tags.includes('hasFreeze') && !whiteListMap.has(val.address)) {
-      // toastSubject.next({
-      //   title: t('token_selector.token_freeze_warning'),
-      //   description: t('token_selector.token_has_freeze_disable'),
-      //   status: 'warning'
-      // })
-      // return
-    }
-    onClose()
-    setTokens((preVal) => {
-      const anotherSide = selectRef.current === 'token1' ? 'token2' : 'token1'
-      const isDuplicated = val.address === preVal[anotherSide]?.address
-      return { [anotherSide]: isDuplicated ? undefined : preVal[anotherSide], [selectRef.current]: val }
-    })
-  }, [])
+  const handleSelect = useCallback(
+    (val: ApiV3Token) => {
+      onClose()
+      setTokens((preVal) => {
+        const anotherSide = selectRef.current === 'token1' ? 'token2' : 'token1'
+        const isDuplicated = val.address === preVal[anotherSide]?.address
+        return { [anotherSide]: isDuplicated ? undefined : preVal[anotherSide], [selectRef.current]: val }
+      })
+    },
+    [onClose]
+  )
 
-  const filterFn = useCallback((t: TokenInfo) => t.address !== tokens[selectRef.current]?.address, [tokens])
+  const filterFn = useCallback((t_: TokenInfo) => t_.address !== tokens[selectRef.current]?.address, [tokens])
 
   const handleConfirm = () => {
     onConfirm({
@@ -140,10 +138,10 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
         <Flex justifyContent="space-between" alignItems="center">
           <Flex gap="2" alignItems="center">
             <TokenAvatarPair {...tokens} />
-            <Text fontSize="lg" fontWeight="500" color={colors.textPrimary}>
+            <Text fontSize="lg" fontWeight="600" color={colors.textPrimary}>
               {tokens.token1?.symbol} / {tokens.token2?.symbol}
             </Text>
-            <Tag size="sm" variant="rounded">
+            <Tag size="sm" variant="rounded" bg={colors.primary10} color={colors.primary60} border={`1px solid ${colors.primary20}`}>
               {t('field.fee')} {percentFormatter.format((currentConfig?.tradeFeeRate || 0) / 1000000)}
             </Tag>
           </Flex>
@@ -154,54 +152,54 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
   }
   return (
     <PanelCard p={[3, 6]}>
-      <Text variant="title" mb="4">
+      <Text {...titleProps} mb="4">
         {t('common.tokens')}
       </Text>
       <Flex gap="2" alignItems="center" mb="6">
-        <Box data-side="token1" flex="1" bg={colors.backgroundDark} rounded="xl" onClick={handleClick} sx={SelectBoxSx}>
-          <Text variant="label" mb="2">
+        <Box {...inputCard} data-side="token1" flex="1" rounded="xl" onClick={handleClick} sx={SelectBoxSx}>
+          <Text variant="label" color={colors.textSubtle} mb="2">
             {t('common.base_token')}
           </Text>
           <Flex gap="2" alignItems="center" justifyContent="space-between">
             {tokens.token1 ? (
               <Flex gap="2" alignItems="center">
                 <TokenAvatar token={tokens.token1} />
-                <Text variant="title" color={colors.textPrimary}>
+                <Text {...titleProps} color={colors.textPrimary}>
                   {tokens.token1.symbol}
                 </Text>
               </Flex>
             ) : (
-              <Text variant="title" fontSize="lg" opacity="0.5">
+              <Text {...titleProps} color={colors.textSubtle} fontSize="lg" opacity="0.5">
                 {t('common.select')}
               </Text>
             )}
             <ChevronDown color={colors.textSecondary} opacity="0.5" />
           </Flex>
         </Box>
-        <Box data-side="token2" flex="1" bg={colors.backgroundDark} rounded="xl" onClick={handleClick} sx={SelectBoxSx}>
-          <Text variant="label" mb="2">
+        <Box {...inputCard} data-side="token2" flex="1" rounded="xl" onClick={handleClick} sx={SelectBoxSx}>
+          <Text variant="label" color={colors.textSubtle} mb="2">
             {t('common.quote_token')}
           </Text>
           <Flex gap="2" alignItems="center" justifyContent="space-between">
             {tokens.token2 ? (
               <Flex gap="2" alignItems="center">
                 <TokenAvatar token={tokens.token2} />
-                <Text variant="title" color={colors.textPrimary}>
+                <Text {...titleProps} color={colors.textPrimary}>
                   {tokens.token2.symbol}
                 </Text>
               </Flex>
             ) : (
-              <Text variant="title" fontSize="lg" opacity="0.5">
+              <Text {...titleProps} color={colors.textSubtle} fontSize="lg" opacity="0.5">
                 {t('common.select')}
               </Text>
             )}
-            <ChevronDown color={colors.textSecondary} opacity="0.5" />
+            <ChevronDown color={colors.textSubtle} opacity="0.5" />
           </Flex>
         </Box>
       </Flex>
       <TokenSelectDialog onClose={onClose} isOpen={isOpen} filterFn={filterFn} onSelectValue={handleSelect} />
 
-      <Text variant="title" mb="4">
+      <Text {...titleProps} mb="4">
         {t('field.fee_tier')}
       </Text>
       <Flex w="full" gap="2">
@@ -209,33 +207,37 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
           variant="filledDark"
           items={clmmFeeOptions}
           value={currentConfig}
-          renderItem={(v, idx) => {
+          renderItem={(v) => {
             if (v) {
               const existed = new Set(existingPools.values()).has(v.id)
               const selected = currentConfig?.id === v.id
-              const isLastItem = idx === clmmFeeOptions.length - 1
               return (
                 <HStack
-                  color={colors.textPrimary}
+                  color={selected ? colors.backgroundAlt : colors.textPrimary}
                   opacity={existed ? 0.5 : 1}
                   cursor={existed ? 'not-allowed' : 'pointer'}
                   justifyContent="space-between"
-                  mx={4}
+                  bg={selected ? colors.textSubtle : 'transparent'}
                   py={2.5}
+                  px={4}
                   fontSize="sm"
-                  borderBottom={isLastItem ? 'none' : `1px solid ${colors.buttonBg01}`}
                   _hover={{
                     borderBottom: '1px solid transparent'
                   }}
                 >
                   <Text>{percentFormatter.format(v.tradeFeeRate / 1000000)}</Text>
-                  {selected && <SubtractIcon />}
                 </HStack>
               )
             }
             return null
           }}
-          renderTriggerItem={(v) => (v ? <Text fontSize="sm">{percentFormatter.format(v.tradeFeeRate / 1000000)}</Text> : null)}
+          renderTriggerItem={(v) =>
+            v ? (
+              <Text color={colors.textPrimary} fontSize="sm">
+                {percentFormatter.format(v.tradeFeeRate / 1000000)}
+              </Text>
+            ) : null
+          }
           onChange={(val) => {
             const existed = new Set(existingPools.values()).has(val.id)
             const selected = currentConfig?.id === val.id
@@ -246,7 +248,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
             height: '42px'
           }}
           popoverContentSx={{
-            border: `1px solid ${colors.selectInactive}`,
+            border: `1px solid ${colors.inputBorder}`,
             py: 0
           }}
           popoverItemSx={{
@@ -257,12 +259,20 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
             }
           }}
           icons={{
-            open: <ChevronUp color={colors.textSecondary} opacity="0.5" />,
-            close: <ChevronDown color={colors.textSecondary} opacity="0.5" />
+            open: (
+              <ArrowDropDownIcon
+                color={colors.textSubtle}
+                style={{
+                  transform: 'rotate(180deg)',
+                  transition: 'transform 0.1s ease'
+                }}
+              />
+            ),
+            close: <ArrowDropDownIcon color={colors.textSubtle} />
           }}
         />
       </Flex>
-      <ConnectedButton mt="8" isDisabled={!!error || !currentConfig} isLoading={isLoading || isExistingLoading} onClick={handleConfirm}>
+      <ConnectedButton mt="2rem" disabled={!!error || !currentConfig} isLoading={isLoading || isExistingLoading} onClick={handleConfirm}>
         {error ? `${t('common.select')} ${t(error)}` : t('button.continue')}
       </ConnectedButton>
     </PanelCard>

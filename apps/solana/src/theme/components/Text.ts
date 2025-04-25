@@ -8,18 +8,18 @@ export const Text = {
       color: colors.textPrimary
     },
     title: {
-      fontSize: 'md',
-      fontWeight: 500,
+      fontSize: 'lg',
+      fontWeight: 600,
       color: colors.textSecondary
     },
     subTitle: {
       fontSize: 'sm',
-      fontWeight: 400,
+      fontWeight: 600,
       color: colors.textSecondary
     },
     label: {
       fontSize: 'xs',
-      color: colors.textTertiary
+      color: colors.textSubtle
     },
     error: {
       fontSize: 'sm',

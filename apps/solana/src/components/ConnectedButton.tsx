@@ -1,12 +1,15 @@
-import { Button, ButtonProps } from '@chakra-ui/react'
+import { Button, ButtonProps } from '@pancakeswap/uikit'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { LegacyRef, PropsWithChildren, forwardRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppStore } from '@/store'
 
-type Props = PropsWithChildren<ButtonProps>
+type Props = PropsWithChildren<ButtonProps & { loadingText?: React.ReactNode }>
 
-export default forwardRef(function ConnectedButton({ children, onClick, isDisabled, ...props }: Props, ref: LegacyRef<HTMLButtonElement>) {
+export default forwardRef(function ConnectedButton(
+  { children, loadingText, onClick, disabled, ...props }: Props,
+  ref: LegacyRef<HTMLButtonElement>
+) {
   const { t } = useTranslation()
   const connected = useAppStore((s) => s.connected)
   const { setVisible } = useWalletModal()
@@ -14,12 +17,13 @@ export default forwardRef(function ConnectedButton({ children, onClick, isDisabl
 
   return (
     <Button
+      variant="primary"
       ref={connected ? ref : undefined}
       {...props}
-      isDisabled={connected ? isDisabled : false}
+      disabled={connected ? disabled : false}
       onClick={connected ? onClick : handleClick}
     >
-      {connected ? children : t('button.connect_wallet')}
+      {connected ? (props.isLoading && loadingText ? loadingText : children) : t('button.connect_wallet')}
     </Button>
   )
 })

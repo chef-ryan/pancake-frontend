@@ -64,8 +64,8 @@ export default function CreateClmmPool() {
 
   const stepsRef = useRef<StepsRef>(null)
 
-  const handleEdit = useCallback((step: number) => {
-    stepsRef.current?.setActiveStep(step)
+  const handleEdit = useCallback((step_: number) => {
+    stepsRef.current?.setActiveStep(step_)
   }, [])
 
   const handleStep1Confirm = useCallback(
@@ -89,7 +89,7 @@ export default function CreateClmmPool() {
         })
         .finally(offLoading)
     },
-    [createClmmPool]
+    [createClmmPool, offLoading, onLoading]
   )
 
   const handlePriceChange = useCallback(
@@ -123,15 +123,15 @@ export default function CreateClmmPool() {
       currentCreateInfo.current.amount2 = amount2
       onOpen()
     },
-    []
+    [onOpen]
   )
 
   const handleSwitchBase = useCallback(
-    (baseIn: boolean) => {
+    (baseIn_: boolean) => {
       const [token1, token2] = [currentCreateInfo.current.token1, currentCreateInfo.current.token2]
       currentCreateInfo.current.token1 = token2
       currentCreateInfo.current.token2 = token1
-      setBaseIn(baseIn)
+      setBaseIn(baseIn_)
     },
     [setBaseIn]
   )
@@ -201,6 +201,11 @@ export default function CreateClmmPool() {
             "note panel " 1fr / ${genCSS2GridTemplateColumns({ rightLeft: 344, center: 500 })}
           `,
           `
+            "back word  " auto
+            "step panel " auto
+            "note panel " 1fr / ${genCSS2GridTemplateColumns({ rightLeft: 344, center: 500 })}
+          `,
+          `
             "back word  . " auto
             "step panel . " auto
             "note panel . " 1fr / ${genCSS3GridTemplateColumns({ rightLeft: 344, center: 500 })}
@@ -223,7 +228,7 @@ export default function CreateClmmPool() {
               fontSize={['md', 'xl']}
             >
               <ChevronLeftIcon />
-              <Text>{t('common.back')}</Text>
+              <Text color={colors.primary60}>{t('common.back')}</Text>
             </HStack>
           </Flex>
         </GridItem>
@@ -237,23 +242,31 @@ export default function CreateClmmPool() {
             <SubPageNote
               title={t('create_pool.clmm_please_note')}
               description={
-                <Text fontSize="sm" color={isMobile ? colors.textSecondary : colors.textTertiary}>
+                <>
                   <Trans i18nKey="create_pool.clmm_please_note_des">
-                    <Link href="https://docs.raydium.io/raydium/pool-creation/creating-a-clmm-pool-and-farm" isExternal>
+                    <Link
+                      color={colors.primary60}
+                      href="https://docs.raydium.io/raydium/pool-creation/creating-a-clmm-pool-and-farm"
+                      isExternal
+                    >
                       CLMM
                     </Link>
-                    <Link href="https://docs.raydium.io/raydium/pool-creation/creating-a-standard-amm-pool" isExternal>
+                    <Link
+                      color={colors.primary60}
+                      href="https://docs.raydium.io/raydium/pool-creation/creating-a-standard-amm-pool"
+                      isExternal
+                    >
                       Standard
                     </Link>
                   </Trans>
-                </Text>
+                </>
               }
             />
           </Box>
         </GridItem>
 
         <GridItem area="word" display={['none', 'unset']}>
-          <Text whiteSpace="pre-line" w="fit-content" cursor="pointer" color={colors.textSecondary} fontWeight="500" fontSize="xl">
+          <Text whiteSpace="pre-line" w="fit-content" cursor="pointer" color={colors.textSecondary} fontWeight="600" fontSize="xl">
             {friendlySentence}
           </Text>
         </GridItem>
@@ -289,7 +302,7 @@ export default function CreateClmmPool() {
             ) : null}
 
             {needToShowTokenAmountInput ? (
-              <PanelCard px={[3, 6]} py={[3, 4]} fontSize="sm" fontWeight="500" color={colors.textSecondary}>
+              <PanelCard px={[3, 6]} py={[3, 4]} fontSize="sm" fontWeight="500" color={colors.textSubtle}>
                 <TokenAmountPairInputs
                   baseIn={baseIn}
                   tempCreatedPool={createPoolData!.extInfo.mockPoolInfo}

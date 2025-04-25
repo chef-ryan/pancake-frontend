@@ -3,7 +3,10 @@ import { lightColors as pcsLightColors, darkColors as pcsDarkColors } from '@pan
 export const darkColors: Record<keyof typeof colors, string> = {
   // app main bg color
   primary: pcsDarkColors.primary,
+  primary10: pcsDarkColors.primary10,
+  primary20: pcsDarkColors.primary20,
   primary60: pcsDarkColors.primary60,
+  positive60: pcsDarkColors.positive60,
   secondary: '#22D1F8',
   secondary10: 'rgba(34, 209, 248, 0.1)',
 
@@ -66,10 +69,13 @@ export const darkColors: Record<keyof typeof colors, string> = {
 
   // Icon
   iconBg: '#8CA7E8',
-  iconEmptyStroke: '#0B1022',
+  iconEmptyStroke: pcsDarkColors.primary60,
+  iconBorder: pcsDarkColors.cardBorder,
 
   // success/warning/error/info
   success: pcsDarkColors.success,
+  warning20: pcsDarkColors.warning20,
+  warning50: pcsDarkColors.yellow,
   semanticSuccess: '#22D1F8',
   semanticError: '#FF4EA3',
   semanticWarning: '#FED33A',
@@ -81,8 +87,8 @@ export const darkColors: Record<keyof typeof colors, string> = {
   tabFolderTabListBg: 'var(--background-light-opacity)',
 
   // Step
-  stepActiveBg: 'var(--background-light)',
-  stepHoofBg: 'var(--primary)',
+  stepActiveBg: 'var(--tertiary)',
+  stepHoofBg: 'var(--tertiary)',
 
   // +1% is priceFloatingUp; -1% is priceFloatingDown
   priceFloatingUp: '#22D1F8',
@@ -90,7 +96,8 @@ export const darkColors: Record<keyof typeof colors, string> = {
   priceFloatingFlat: '#888888',
 
   // tooltip (this color is not in figma ui color system,but in figma ui page)
-  tooltipBg: '#0D1A3E',
+  tooltipBg: pcsLightColors.backgroundAlt,
+  tooltipText: pcsLightColors.text,
 
   popoverBg: '#141f3a',
 
@@ -143,9 +150,16 @@ export const darkColors: Record<keyof typeof colors, string> = {
 }
 
 export const lightColors: Partial<typeof darkColors> = {
-  // app main bg color
+  // app main color
   primary: pcsLightColors.primary,
+  primary10: pcsLightColors.primary10,
+  primary20: pcsLightColors.primary20,
   primary60: pcsLightColors.primary60,
+  destructive10: pcsLightColors.destructive10,
+  destructive20: pcsLightColors.destructive20,
+  destructive60: pcsLightColors.destructive60,
+  destructive: pcsLightColors.destructive,
+  positive60: pcsLightColors.positive60,
   secondary: '#4F53F3',
   secondary10: 'rgba(34, 209, 248, 0.1)',
 
@@ -208,10 +222,13 @@ export const lightColors: Partial<typeof darkColors> = {
 
   // Icon
   iconBg: '#8C6EEF',
-  iconEmptyStroke: '#ECF5FF',
+  iconEmptyStroke: pcsLightColors.primary60,
+  iconBorder: pcsLightColors.cardBorder,
 
   // success/warning/error/info
   success: pcsLightColors.success,
+  warning20: pcsLightColors.warning20,
+  warning50: pcsLightColors.yellow,
   semanticSuccess: '#39D0D8',
   semanticError: '#FF4EA3',
   semanticWarning: '#B89900',
@@ -223,8 +240,8 @@ export const lightColors: Partial<typeof darkColors> = {
   tabFolderTabListBg: 'var(--background-dark)',
 
   // Step
-  stepActiveBg: 'var(--background-dark-opacity)',
-  stepHoofBg: 'var(--secondary)',
+  stepActiveBg: 'var(--tertiary)',
+  stepHoofBg: 'var(--tertiary)',
 
   // +1% is priceFloatingUp; -1% is priceFloatingDown
   priceFloatingUp: '#22D1F8',
@@ -232,7 +249,8 @@ export const lightColors: Partial<typeof darkColors> = {
   priceFloatingFlat: '#888888',
 
   // tooltip (this color is not in figma ui color system,but in figma ui page)
-  tooltipBg: '#fff',
+  tooltipBg: pcsDarkColors.backgroundAlt,
+  tooltipText: pcsDarkColors.text,
 
   popoverBg: '#fff',
 
@@ -291,7 +309,14 @@ export const lightColors: Partial<typeof darkColors> = {
 export const colors = {
   // app main bg color
   primary: 'var(--primary)',
+  primary10: 'var(--primary10)',
+  primary20: 'var(--primary20)',
   primary60: 'var(--primary60)',
+  destructive10: 'var(--destructive10)',
+  destructive20: 'var(--destructive20)',
+  destructive60: 'var(--destructive60)',
+  destructive: 'var(--destructive)',
+  positive60: 'var(--positive60)',
   secondary: 'var(--secondary)',
   secondary10: 'var(--secondary10)',
 
@@ -356,9 +381,12 @@ export const colors = {
   // Icon
   iconBg: 'var(--icon-bg)',
   iconEmptyStroke: 'var(--icon-empty-stroke)',
+  iconBorder: 'var(--icon-border)',
 
   // success/warning/error/info
   success: 'var(--success)',
+  warning20: 'var(---warning20)',
+  warning50: 'var(---warning50)',
   semanticSuccess: 'var(--semantic-success)',
   semanticError: 'var(--semantic-error)',
   semanticWarning: 'var(--semantic-warning)',
@@ -380,6 +408,7 @@ export const colors = {
 
   // tooltip (this color is not in figma ui color system,but in figma ui page)
   tooltipBg: 'var(--tooltip-bg)',
+  tooltipText: 'var(--tooltip-text)',
 
   popoverBg: 'var(--popover-bg)',
 

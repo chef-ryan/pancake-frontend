@@ -23,7 +23,7 @@ import { getMintSymbol } from '@/utils/token'
 import { colors } from '@/theme/cssVariables/colors'
 import { panelCard } from '@/theme/cssBlocks'
 import toPercentString from '@/utils/numberish/toPercentString'
-import { getFirstNonZeroDecimal , formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
+import { getFirstNonZeroDecimal, formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 
 interface Props {
   isOpen: boolean
@@ -74,9 +74,9 @@ export default function PreviewDepositModal({
         <ModalBody>
           <Box>
             <Flex alignItems="center">
-              <TokenAvatarPair token1={pool.mintA} token2={pool.mintB} mr="2" />
-              <Text fontWeight="500" fontSize="xl">
-                {getPoolName(pool).replace(' - ', '/')}
+              <TokenAvatarPair size="sm" token1={pool.mintA} token2={pool.mintB} mr="2" />
+              <Text fontWeight="600" fontSize="md">
+                {getPoolName(pool).replace(' - ', ' / ')}
               </Text>
               <Badge ml="4" variant={inRange ? 'ok' : 'error'}>
                 {inRange ? t('clmm.in_range') : t('clmm.out_of_range')}

@@ -29,47 +29,29 @@ const rounded = defineStyle({
 const ok = defineStyle({
   width: 'fit-content',
   textTransform: 'none',
-  bg: colors.backgroundTransparent12,
-  py: '1px',
-  px: '8px',
+  bg: colors.primary10,
+  px: '5px',
   display: 'flex',
   alignItems: 'center',
-  gap: '.35em',
-  borderRadius: '8px',
+  borderRadius: '999px',
   fontWeight: 'normal',
   height: 'fit-content',
-  color: colors.textSecondary,
-  '&::before': {
-    content: '""',
-    width: '.5em',
-    height: '.5em',
-    rounded: 'full',
-    bg: colors.priceFloatingUp,
-    transform: 'translateY(5%)'
-  }
+  color: colors.primary60,
+  border: `2px solid ${colors.primary20}`
 })
 
 const error = defineStyle({
   width: 'fit-content',
   textTransform: 'none',
-  bg: colors.backgroundTransparent12,
-  py: '1px',
-  px: '8px',
+  bg: colors.destructive10,
+  px: '5px',
   display: 'flex',
   alignItems: 'center',
-  gap: '.35em',
-  borderRadius: '8px',
+  borderRadius: '999px',
   fontWeight: 'normal',
   height: 'fit-content',
-  color: colors.textSecondary,
-  '&::before': {
-    content: '""',
-    width: '.5em',
-    height: '.5em',
-    rounded: 'full',
-    bg: colors.priceFloatingDown,
-    transform: 'translateY(5%)'
-  }
+  color: colors.destructive,
+  border: `2px solid ${colors.destructive20}`
 })
 
 export const Badge = {

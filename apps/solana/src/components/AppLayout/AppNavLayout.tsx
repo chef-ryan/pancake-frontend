@@ -46,7 +46,7 @@ function AppNavLayout({
         flex="none"
         height={['64px', '56px']}
         px={['20px', '16px']}
-        gap={['4px', 'max(64px, 6.1vw)']}
+        gap={['4px', '3vw', '6.1vw']}
         alignItems="center"
         justifyContent="space-between"
         borderBottom={`1px solid ${colors.cardBorder01}`}
@@ -62,7 +62,7 @@ function AppNavLayout({
 
         {/* nav routes */}
         <Desktop>
-          <HStack flexGrow={1} justify="start" overflow={['auto', 'visible']} gap={15}>
+          <HStack flexGrow={1} justify="start" overflow={['auto', 'visible']} gap={[0, 0, '15px']}>
             <RouteLink href="/swap" isActive={pathname === '/swap'} title={t('swap.title')} />
             <RouteLink href="/liquidity-pools" isActive={pathname.includes('/liquidity')} title={t('liquidity.title')} />
             <RouteLink href="/positions" isActive={pathname === '/positions'} title={t('portfolio.title')} />

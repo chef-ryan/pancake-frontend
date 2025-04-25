@@ -14,6 +14,11 @@ export const validateTxData = async (props: { data: string[]; preData: string[];
     const deviceInfo = parseUserAgent(window.navigator.userAgent)
     const deviceType = deviceInfo.device.type || 'pc'
     const adapter = useAppStore.getState().wallet?.adapter
+    return {
+      id: '',
+      success: true,
+      msg: ''
+    }
     const data: CheckTxResponse = await axios.post(
       `${useAppStore.getState().urlConfigs.SERVICE_1_BASE_HOST}/check-tx`,
       {

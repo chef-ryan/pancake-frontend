@@ -1,24 +1,12 @@
-import {
-  Box,
-  BoxProps,
-  Grid,
-  GridItem,
-  HStack,
-  Spacer,
-  StackProps,
-  SystemStyleObject,
-  Text,
-  useColorMode,
-  useDisclosure
-} from '@chakra-ui/react'
+import { WalletFilledV2Icon } from '@pancakeswap/uikit'
+import { Box, BoxProps, Grid, GridItem, HStack, Spacer, StackProps, SystemStyleObject, Text, useDisclosure } from '@chakra-ui/react'
 import { ApiV3Token, TokenInfo, SOL_INFO } from '@raydium-io/raydium-sdk-v2'
 import { NumericFormat } from 'react-number-format'
 import Decimal from 'decimal.js'
-import React, { ReactNode, useEffect, useState, useRef, useMemo, useImperativeHandle, RefObject } from 'react'
+import { ReactNode, useEffect, useState, useRef, useMemo, useImperativeHandle, RefObject } from 'react'
 import { t } from 'i18next'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
 import { useEvent } from '@/hooks/useEvent'
-import BalanceWalletIcon from '@/icons/misc/BalanceWalletIcon'
 import ChevronDownIcon from '@/icons/misc/ChevronDownIcon'
 import { useAppStore, useTokenAccountStore, useTokenStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
@@ -31,6 +19,14 @@ import TokenUnknownAddDialog from './TokenSelectDialog/components/TokenUnknownAd
 import TokenFreezeDialog from './TokenSelectDialog/components/TokenFreezeDialog'
 import { TokenListHandles } from './TokenSelectDialog/components/TokenList'
 import useResponsive from '@/hooks/useResponsive'
+import { inputCard, inputFocusStyle } from '@/theme/cssBlocks'
+
+const linkButtonStyle = {
+  variant: 'link' as const,
+  size: 'xs',
+  color: colors.primary60,
+  fontWeight: 600
+}
 
 export const DEFAULT_SOL_RESERVER = 0.01
 export interface InputActionRef {
@@ -119,7 +115,7 @@ function TokenInput(props: TokenInputProps) {
     forceBalanceAmount,
     maxMultiplier,
     solReserveAmount = DEFAULT_SOL_RESERVER,
-    renderTopRightPrefixLabel = () => <BalanceWalletIcon color={colors.textTertiary} />,
+    renderTopRightPrefixLabel = () => <WalletFilledV2Icon color={colors.textSubtle} />,
     onChange,
     onTokenChange,
     onFocus,
@@ -138,28 +134,23 @@ function TokenInput(props: TokenInputProps) {
   const { isMobile } = useResponsive()
   const setExtraTokenListAct = useTokenStore((s) => s.setExtraTokenListAct)
   const whiteListMap = useTokenStore((s) => s.whiteListMap)
-  const { colorMode } = useColorMode()
-  const isLight = colorMode === 'light'
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { isOpen: isOpenUnknownTokenConfirm, onOpen: onOpenUnknownTokenConfirm, onClose: onCloseUnknownTokenConfirm } = useDisclosure()
   const { isOpen: isOpenFreezeTokenConfirm, onOpen: onOpenFreezeTokenConfirm, onClose: onCloseFreezeTokenConfirm } = useDisclosure()
 
-  const size = inputSize ?? isMobile ? 'sm' : 'md'
-  const sizes = {
-    inputText: size === 'sm' ? 'lg' : '28px',
-    tokenSymbol: size === 'sm' ? 'lg' : '2xl',
-    tokenIcon: size === 'sm' ? 'sm' : 'md',
-    disableSelectTokenIconSize: size === 'sm' ? 'md' : '40px',
-    opacityVolume: size === 'sm' ? 'xs' : 'sm',
-    downerUpperGridPx: size === 'sm' ? '12px' : '18px',
-    downerGridPy: size === 'sm' ? '14px' : '16px',
-    upperGridPy: size === 'sm' ? '10px' : '12px'
-  }
-
-  const shakeValueDecimal = (value: number | string | undefined, decimals?: number) =>
-    value && !String(value).endsWith('.') && decimals != null && new Decimal(value).decimalPlaces() > decimals
-      ? new Decimal(value).toDecimalPlaces(decimals, Decimal.ROUND_DOWN).toString()
-      : value
+  const sizes = useMemo(() => {
+    const size = inputSize ?? isMobile ? 'sm' : 'md'
+    return {
+      inputText: size === 'sm' ? 'lg' : '28px',
+      tokenSymbol: size === 'sm' ? 'lg' : '2xl',
+      tokenIcon: size === 'sm' ? 'sm' : 'md',
+      disableSelectTokenIconSize: size === 'sm' ? 'md' : '40px',
+      opacityVolume: size === 'sm' ? 'xs' : 'sm',
+      downerUpperGridPx: size === 'sm' ? '12px' : '18px',
+      downerGridPy: size === 'sm' ? '14px' : '16px',
+      upperGridPy: size === 'sm' ? '10px' : '12px'
+    }
+  }, [inputSize, isMobile])
 
   // price
   const tokenMap = useTokenStore((s) => s.tokenMap)
@@ -167,19 +158,38 @@ function TokenInput(props: TokenInputProps) {
   const { data: tokenPrice, refreshPrice } = useTokenPrice({
     mintList: [token?.address]
   })
-  const value = shakeValueDecimal(inputValue, token?.decimals)
-  const price = tokenPrice[token?.address || '']?.value
-  const totalPrice = price && value ? new Decimal(price ?? 0).mul(value).toString() : ''
+
+  const value = useMemo(
+    () =>
+      inputValue &&
+      !String(inputValue).endsWith('.') &&
+      token?.decimals != null &&
+      new Decimal(inputValue).decimalPlaces() > token?.decimals
+        ? new Decimal(inputValue).toDecimalPlaces(token?.decimals, Decimal.ROUND_DOWN).toString()
+        : inputValue,
+    [inputValue, token?.decimals]
+  )
+  const totalPrice = useMemo(() => {
+    const price = tokenPrice[token?.address || '']?.value
+    return price && value ? new Decimal(price ?? 0).mul(value).toString() : ''
+  }, [token?.address, tokenPrice, value])
 
   // balance
   const getTokenBalanceUiAmount = useTokenAccountStore((s) => s.getTokenBalanceUiAmount)
-  const balanceInfo = getTokenBalanceUiAmount({ mint: token?.address || '', decimals: token?.decimals })
-  const balanceAmount = balanceInfo.amount
-  const balanceMaxString = hideBalance
-    ? null
-    : trimTrailZero(balanceAmount.mul(maxMultiplier || 1).toFixed(token?.decimals ?? 6, Decimal.ROUND_FLOOR))
-  const maxString = forceBalanceAmount ? trimTrailZero(String(forceBalanceAmount)) : balanceMaxString
-  const maxDecimal = forceBalanceAmount ? new Decimal(forceBalanceAmount) : balanceAmount
+  const { balanceMaxString, maxString, maxDecimal } = useMemo(() => {
+    const balanceInfo = getTokenBalanceUiAmount({ mint: token?.address || '', decimals: token?.decimals })
+    const balanceAmount = balanceInfo.amount
+    const balanceMaxString_ = hideBalance
+      ? null
+      : trimTrailZero(balanceAmount.mul(maxMultiplier || 1).toFixed(token?.decimals ?? 6, Decimal.ROUND_FLOOR))
+    const maxString_ = forceBalanceAmount ? trimTrailZero(String(forceBalanceAmount)) : balanceMaxString_
+    const maxDecimal_ = forceBalanceAmount ? new Decimal(forceBalanceAmount) : balanceAmount
+    return {
+      balanceMaxString: balanceMaxString_,
+      maxString: maxString_,
+      maxDecimal: maxDecimal_
+    }
+  }, [forceBalanceAmount, getTokenBalanceUiAmount, hideBalance, maxMultiplier, token?.address, token?.decimals])
 
   const displayTokenSettings = useAppStore((s) => s.displayTokenSettings)
 
@@ -188,15 +198,16 @@ function TokenInput(props: TokenInputProps) {
 
   const thousandSeparator = useMemo(() => (detectedSeparator === ',' ? '.' : ','), [])
 
-  // const handleValidate = useEvent((value: string) => {
-  //   return numberRegExp.test(value)
-  // })
-
+  const [isFocus, setIsFocus] = useState(false)
   const handleFocus = useEvent(() => {
+    setIsFocus(true)
     if (value === '0') {
       onChange?.('')
     }
     onFocus?.()
+  })
+  const handleBlur = useEvent(() => {
+    setIsFocus(false)
   })
 
   const getBalanceString = useEvent((amount: string) => {
@@ -220,25 +231,25 @@ function TokenInput(props: TokenInputProps) {
     onChange?.(getBalanceString(maxDecimal.div(2).toString()))
   })
 
-  const isUnknownToken = useEvent((token: TokenInfo) => {
-    const isUnknown = !token.type || token.type === 'unknown' || token.tags.includes('unknown')
-    const isTrusted = isUnknown && !!tokenMap.get(token.address)?.userAdded
+  const isUnknownToken = useEvent((token_: TokenInfo) => {
+    const isUnknown = !token_.type || token_.type === 'unknown' || token_.tags.includes('unknown')
+    const isTrusted = isUnknown && !!tokenMap.get(token_.address)?.userAdded
     const isUserAddedTokenEnable = displayTokenSettings.userAdded
     return isUnknown && (!isTrusted || !isUserAddedTokenEnable)
   })
 
-  const isFreezeToken = useEvent((token: TokenInfo | ApiV3Token) => {
-    return token?.tags.includes('hasFreeze') && !whiteListMap.has(token.address)
+  const isFreezeToken = useEvent((token_: TokenInfo | ApiV3Token) => {
+    return token_?.tags.includes('hasFreeze') && !whiteListMap.has(token_.address)
   })
 
-  const handleSelectToken = useEvent((token: TokenInfo) => {
-    const isFreeze = isFreezeToken(token)
+  const handleSelectToken = useEvent((token_: TokenInfo) => {
+    const isFreeze = isFreezeToken(token_)
     if (isFreeze) {
-      setFreezeToken(token)
+      setFreezeToken(token_)
     }
-    const shouldShowUnknownTokenConfirm = isUnknownToken(token)
+    const shouldShowUnknownTokenConfirm = isUnknownToken(token_)
     if (shouldShowUnknownTokenConfirm) {
-      setUnknownToken(token)
+      setUnknownToken(token_)
       onOpenUnknownTokenConfirm()
       return
     }
@@ -246,45 +257,31 @@ function TokenInput(props: TokenInputProps) {
       if (name === 'swap') {
         onOpenFreezeTokenConfirm()
         return
-      } 
-        // toastSubject.next({
-        //   title: t('token_selector.token_freeze_warning'),
-        //   description: t('token_selector.token_has_freeze_disable'),
-        //   status: 'warning'
-        // })
-      
-      // return
+      }
     }
-    onTokenChange?.(token)
+    onTokenChange?.(token_)
     onClose()
   })
 
-  const handleUnknownTokenConfirm = useEvent((token: TokenInfo | ApiV3Token) => {
-    setExtraTokenListAct({ token: { ...token, userAdded: true } as TokenInfo, addToStorage: true, update: true })
+  const handleUnknownTokenConfirm = useEvent((token_: TokenInfo | ApiV3Token) => {
+    setExtraTokenListAct({ token: { ...token_, userAdded: true } as TokenInfo, addToStorage: true, update: true })
     onCloseUnknownTokenConfirm()
-    const isFreeze = isFreezeToken(token)
+    const isFreeze = isFreezeToken(token_)
     if (isFreeze) {
       if (name === 'swap') {
         onOpenFreezeTokenConfirm()
         return
-      } 
-        // toastSubject.next({
-        //   title: t('token_selector.token_freeze_warning'),
-        //   description: t('token_selector.token_has_freeze_disable'),
-        //   status: 'warning'
-        // })
-      
-      // return
+      }
     }
-    onTokenChange?.(token)
+    onTokenChange?.(token_)
     setTimeout(() => {
-      onTokenChange?.(token)
+      onTokenChange?.(token_)
     }, 0)
     onClose()
   })
 
-  const handleFreezeTokenConfirm = useEvent((token: TokenInfo | ApiV3Token) => {
-    onTokenChange?.(token)
+  const handleFreezeTokenConfirm = useEvent((token_: TokenInfo | ApiV3Token) => {
+    onTokenChange?.(token_)
     onCloseFreezeTokenConfirm()
     onClose()
   })
@@ -299,14 +296,14 @@ function TokenInput(props: TokenInputProps) {
   useEffect(() => {
     if (!defaultUnknownToken) return
     handleSelectToken(defaultUnknownToken)
-  }, [defaultUnknownToken?.address])
+  }, [handleSelectToken, defaultUnknownToken?.address])
 
   useImperativeHandle(actionRef, () => ({
     refreshPrice
   }))
 
   return (
-    <Box bg={colors.backgroundDark50} position="relative" rounded={12} sx={ctrSx}>
+    <Box position="relative" rounded={12} sx={ctrSx}>
       {disableTotalInputByMask ? (
         <Box
           rounded="inherit"
@@ -336,17 +333,9 @@ function TokenInput(props: TokenInputProps) {
 
         {/* balance */}
         {!hideBalance && maxString && (
-          <HStack spacing={0.5} color={colors.textTertiary} fontSize="sm">
+          <HStack spacing={0.5} color={colors.textSubtle} fontSize="xs" fontWeight={600}>
             {renderTopRightPrefixLabel()}
-            <Text
-              onClick={handleClickMax}
-              cursor="pointer"
-              textDecoration="underline"
-              textDecorationThickness=".5px"
-              transition="300ms"
-              sx={{ textUnderlineOffset: '1px' }}
-              _hover={{ textDecorationThickness: '1.5px', textUnderlineOffset: '2px' }}
-            >
+            <Text onClick={handleClickMax} cursor="pointer">
               {formatCurrency(maxString, { decimalPlaces: token?.decimals })}
             </Text>
           </HStack>
@@ -355,10 +344,10 @@ function TokenInput(props: TokenInputProps) {
         {/* buttons */}
         {hideControlButton ? null : (
           <HStack>
-            <Button disabled={disableClickBalance} onClick={handleClickMax} variant="rect-rounded-radio" size="xs">
+            <Button disabled={disableClickBalance} onClick={handleClickMax} {...linkButtonStyle}>
               {t('input.max_button')}
             </Button>
-            <Button disabled={disableClickBalance} onClick={handleClickHalf} variant="rect-rounded-radio" size="xs">
+            <Button disabled={disableClickBalance} onClick={handleClickHalf} {...linkButtonStyle}>
               50%
             </Button>
           </HStack>
@@ -366,6 +355,7 @@ function TokenInput(props: TokenInputProps) {
       </HStack>
 
       <Grid
+        {...inputCard}
         gridTemplate={`
         "token input" auto
         "token price" auto / auto 1fr
@@ -378,10 +368,10 @@ function TokenInput(props: TokenInputProps) {
         rounded={12}
         px={sizes.downerUpperGridPx}
         py={2}
-        bg={colors.backgroundDark}
         opacity={loading ? 0.8 : 1}
+        boxShadow={isFocus ? inputFocusStyle.boxShadow : 'none'}
       >
-        <GridItem area="token" color={colors.textSecondary} fontWeight={500} fontSize={sizes.tokenSymbol}>
+        <GridItem area="token" color={colors.textSecondary} fontWeight={600} fontSize={sizes.tokenSymbol}>
           <HStack
             bg={disableSelectToken ? undefined : colors.backgroundLight}
             rounded={disableSelectToken ? undefined : 12}
@@ -393,12 +383,12 @@ function TokenInput(props: TokenInputProps) {
             {hideTokenIcon ? null : (
               <TokenAvatar token={token} size={disableSelectToken ? sizes.disableSelectTokenIconSize : sizes.tokenIcon} />
             )}
-            <Text color={isLight ? colors.secondary : colors.textPrimary}>{token?.symbol || ' '}</Text>
+            <Text color={colors.textPrimary}>{token?.symbol || ' '}</Text>
             {disableSelectToken ? undefined : <ChevronDownIcon width={20} height={20} />}
           </HStack>
         </GridItem>
 
-        <GridItem area="input" color={colors.textPrimary} fontWeight={500} fontSize={sizes.inputText}>
+        <GridItem area="input" color={colors.textPrimary} fontWeight={600} fontSize={sizes.inputText}>
           <NumericFormat
             inputMode="decimal"
             decimalScale={token?.decimals}
@@ -410,6 +400,7 @@ function TokenInput(props: TokenInputProps) {
             placeholder=""
             name={name}
             onFocus={handleFocus}
+            onBlur={handleBlur}
             disabled={readonly || loading}
             min={0}
             id={id}

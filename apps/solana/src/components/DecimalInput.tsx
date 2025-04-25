@@ -3,6 +3,7 @@ import React, { MouseEvent, KeyboardEvent, ReactNode, useCallback, useEffect, us
 import Decimal from 'decimal.js'
 import { formatToRawLocaleStr, detectedSeparator } from '@/utils/numberish/formatter'
 import { numberRegExp, extractNumberOnly } from '@/utils/numberish/regex'
+import { inputCard } from '@/theme/cssBlocks'
 
 interface Props {
   id?: string
@@ -70,8 +71,8 @@ function DecimalInput(props: Props) {
   valRef.current = value
 
   const clampValueOnBlur = min !== undefined || max !== undefined
-  const handleValidate = useCallback((value: string) => {
-    return numberRegExp.test(value)
+  const handleValidate = useCallback((value_: string) => {
+    return numberRegExp.test(value_)
   }, [])
 
   const handleChange = useCallback(
@@ -118,15 +119,15 @@ function DecimalInput(props: Props) {
     handleChange(val, Number(val))
   }, [handleChange])
 
-  const shakeValueDecimal = (value: number | string | undefined, decimals?: number) =>
-    value && !String(value).endsWith('.') && decimals != null && new Decimal(extractNumberOnly(value, 0)).decimalPlaces() > decimals
-      ? new Decimal(value).toDecimalPlaces(decimals, Decimal.ROUND_FLOOR).toString()
-      : value
+  const shakeValueDecimal = (value_: number | string | undefined, decimals_?: number) =>
+    value_ && !String(value_).endsWith('.') && decimals_ != null && new Decimal(extractNumberOnly(value_, 0)).decimalPlaces() > decimals_
+      ? new Decimal(value_).toDecimalPlaces(decimals_, Decimal.ROUND_FLOOR).toString()
+      : value_
 
   // shaked decimal
   const showedValue = useMemo(() => shakeValueDecimal(value, decimals), [value, decimals])
   return (
-    <Flex flexDirection="column" width={width} opacity={disabled ? '0.5' : '1'} sx={ctrSx}>
+    <Flex flexDirection="column" width={width} opacity={disabled ? '0.5' : '1'} {...inputCard} sx={ctrSx}>
       {title ? (
         <Text mb="6px" minW="40px">
           {title}
@@ -150,8 +151,8 @@ function DecimalInput(props: Props) {
             isDisabled={disabled || false}
             isInvalid={clampValueOnBlur ? undefined : false}
             value={showedValue}
-            format={(value: string | number) => {
-              return formatToRawLocaleStr(value)
+            format={(value_: string | number) => {
+              return formatToRawLocaleStr(value_)
             }}
             // precision={decimals}
             width={width}

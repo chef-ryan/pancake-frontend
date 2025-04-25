@@ -9,16 +9,12 @@ const filledStyle = definePartsStyle({
   field: {
     width: '210px',
     fontSize: '14px',
-    bg: colors.backgroundLight,
+    bg: colors.inputBg,
     borderRadius: '12px',
     _hover: {
-      bg: colors.backgroundLight
-    },
-    _focus: {
-      bg: colors.backgroundLight
+      bg: colors.inputBg
     },
     _focusVisible: {
-      bg: colors.backgroundLight,
       borderColor: 'transparent',
       boxShadow: 'none'
     },
@@ -34,16 +30,16 @@ const filledDarkStyle = definePartsStyle({
   field: {
     width: '210px',
     fontSize: '14px',
-    bg: colors.backgroundDark,
+    bg: colors.inputBg,
     borderRadius: '12px',
     _hover: {
-      bg: colors.backgroundDark
+      bg: colors.inputBg
     },
     _focus: {
-      bg: colors.backgroundDark
+      bg: colors.inputBg
     },
     _focusVisible: {
-      bg: colors.backgroundDark,
+      bg: colors.inputBg,
       borderColor: 'transparent',
       boxShadow: 'none'
     },

@@ -82,11 +82,11 @@ export default forwardRef(function Tooltip(
     return node
   }
 
-  function PopoverContentWrapper({ usePortal, children }: { usePortal?: boolean; children?: ReactNode }) {
-    if (usePortal) {
-      return <Portal>{children}</Portal>
+  function PopoverContentWrapper({ usePortal: usePortal_, children: children_ }: { usePortal?: boolean; children?: ReactNode }) {
+    if (usePortal_) {
+      return <Portal>{children_}</Portal>
     }
-    return <>{children}</>
+    return <>{children_}</>
   }
 
   return (
@@ -111,10 +111,10 @@ export default forwardRef(function Tooltip(
             <Box
               ref={tooltipBoxRef}
               fontSize="sm"
-              color={colors.textSecondary}
-              py={restPopoverProps.variant == 'card' ? undefined : 3}
-              px={restPopoverProps.variant == 'card' ? undefined : 4}
-              rounded={restPopoverProps.variant == 'card' ? 'xl' : 'lg'}
+              color={colors.tooltipText}
+              py={restPopoverProps.variant === 'card' ? undefined : 3}
+              px={restPopoverProps.variant === 'card' ? undefined : 4}
+              rounded={restPopoverProps.variant === 'card' ? 'xl' : 'lg'}
               bg={colors.tooltipBg}
               {...contentBoxProps}
               onClick={(e) => {

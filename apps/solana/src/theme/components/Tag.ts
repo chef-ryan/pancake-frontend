@@ -8,8 +8,8 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
 const roundedStyle = definePartsStyle({
   // define the part you're going to style
   container: {
-    bg: colors.backgroundTransparent12,
-    color: colors.textSecondary,
+    bg: colors.tertiary,
+    color: colors.textSubtle,
     borderRadius: '21px'
   }
 })

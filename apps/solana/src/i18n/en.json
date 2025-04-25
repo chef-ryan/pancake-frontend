@@ -396,11 +396,11 @@
   "create_pool": {
     "modal_title": "I want to...",
     "pool_type": "Pool type:",
-    "modal_tab_standard_amm": "Standard AMM",
+    "modal_tab_standard_amm": "V2 Pools",
     "modal_tab_standard_amm_desc": "Newest CPMM, cheaper, supports Token 2022",
     "modal_tab_legacy_amm": "Legacy AMM v4",
     "modal_tab_legacy_amm_desc": "Legacy AMM program, more expensive due to orderbook market requirement",
-    "modal_tab_concentrated": "Concentrated Liquidity",
+    "modal_tab_concentrated": "V3 Pools",
     "modal_tab_concentrated_desc": "Custom ranges, increased capital efficiency",
     "modal_section_header_pool": "Create pool",
     "modal_section_header_pool_desc": "Select pool type to create a pool for any token pair. Read the guide for <0>CLMM</0> or <1>Standard</1> pools.",

@@ -1,18 +1,4 @@
-import {
-  Box,
-  Center,
-  Flex,
-  Grid,
-  GridItem,
-  Highlight,
-  HStack,
-  Image,
-  Tag,
-  Text,
-  useColorMode,
-  useDisclosure,
-  VStack
-} from '@chakra-ui/react'
+import { Box, Center, Flex, Grid, GridItem, Highlight, HStack, Image, Tag, Text, useDisclosure, VStack } from '@chakra-ui/react'
 import router from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -239,14 +225,14 @@ export default function PoolListItem({
                 {/* tags */}
                 <GridItem area="t">
                   <HStack align="center">
-                    <Tag size="sm" variant="rounded" color={colors.textSubtle} bgColor={colors.tertiary}>
+                    <Tag size="sm" variant="rounded">
                       {formatToRawLocaleStr(toPercentString(pool.feeRate * 100))}
                     </Tag>
 
                     {pool.isOpenBook && (
                       <Tooltip label="This pool shares liquidity to the OpenBook order-book">
                         <Flex alignItems="center">
-                          <Tag size="sm" variant="rounded" color={colors.textSubtle} bgColor={colors.tertiary}>
+                          <Tag size="sm" variant="rounded">
                             <OpenBookIcon />
                           </Tag>
                         </Flex>

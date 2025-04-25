@@ -56,6 +56,7 @@ export default function CLMMTokenInputGroup(props: Props) {
       token1: pool.mintA.address === WSOLMint.toString() ? PublicKey.default.toBase58() : pool.mintA.address,
       token2: pool.mintB.address
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pool?.id, tokenMap, onTokenChange])
 
   const handleToken1Change = useEvent((val: string) => onAmountChange(val, InputSide.TokenA))
@@ -82,6 +83,7 @@ export default function CLMMTokenInputGroup(props: Props) {
           strokeWidth: 1
         }
       }}
+      gap={4}
     >
       <Flex w="100%">
         <TokenInput
@@ -104,7 +106,7 @@ export default function CLMMTokenInputGroup(props: Props) {
           solReserveAmount={solReserveAmount}
         />
       </Flex>
-      <Box my="-10px" zIndex={1}>
+      <Box zIndex={1} mb={-10}>
         <AddLiquidityPlus />
       </Box>
       <Flex w="100%">

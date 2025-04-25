@@ -18,6 +18,7 @@ import ChevronUpIcon from '@/icons/misc/ChevronUpIcon'
 import { colors } from '@/theme/cssVariables'
 import { isObject } from '@/utils/judges/judgeType'
 import { MayFn, shrinkToValue } from '@/utils/shrinkToValue'
+import { inputCard } from '@/theme/cssBlocks'
 
 type SelectorItemObj<T> = {
   value: T
@@ -100,8 +101,6 @@ export function Select<T>({
 
   const isFaceRounded = variant.toLocaleLowerCase().includes('rounded')
   const isFaceLight = variant === 'filled' || variant === 'filledFlowDark' || variant === 'roundedFilledFlowDark'
-  const isWhenOpenFaceLight = variant === 'filled'
-  const isContentDark = variant.toLocaleLowerCase().includes('dark')
 
   const triggerValue = value ?? defaultValue
   function getItemLabel(itemValue: T | undefined, activeIdx?: number) {
@@ -125,23 +124,23 @@ export function Select<T>({
   const Trigger = () => (
     <HStack
       ref={triggerRef}
-      sx={shrinkToValue(sx, [{ isPanelOpen: isOpen }]) ?? shrinkToValue(triggerSX, [{ isPanelOpen: isOpen }])}
       width="max-content"
       fontWeight={500}
       cursor={disabled ? 'not-allowed' : 'pointer'}
       opacity={disabled ? '0.5' : '1'}
-      bg={(isOpen ? isWhenOpenFaceLight : isFaceLight) ? colors.backgroundTransparent12 : colors.backgroundDark}
       _hover={{
-        bg: isWhenOpenFaceLight ? colors.backgroundTransparent12 : colors.backgroundDark
+        opacity: 0.8
       }}
       transition="200ms"
       borderRadius={isFaceRounded ? 'full' : '8px'}
       py={1}
       px={4}
       fontSize={['md']}
-      color={isFaceLight ? colors.textSecondary : colors.textPrimary}
+      color={colors.textPrimary}
+      {...inputCard}
+      sx={shrinkToValue(sx, [{ isPanelOpen: isOpen }]) ?? shrinkToValue(triggerSX, [{ isPanelOpen: isOpen }])}
     >
-      {facePrefix && <Box>{shrinkToValue(facePrefix, [{ open, itemValue: value }])}</Box>}
+      {facePrefix && <Box>{shrinkToValue(facePrefix, [{ open: isOpen, itemValue: value }])}</Box>}
       <Box flexGrow="1">{triggerItem}</Box>
       {isOpen ? getIcon('open', icons) : getIcon('close', icons)}
     </HStack>
@@ -161,15 +160,14 @@ export function Select<T>({
     <Popover strategy="fixed" isOpen={isOpen} onOpen={onOpen} onClose={onClose} autoFocus={false} placement={placement}>
       <PopoverTrigger>{Trigger()}</PopoverTrigger>
       <PopoverContent
+        bg={colors.inputBg}
         ref={panelRef}
         sx={shrinkToValue(popoverContentSx, [{ isPanelOpen: isOpen }])}
-        bg={isContentDark ? colors.backgroundDark : colors.backgroundTransparent12}
         minW={triggerRef.current?.clientWidth}
         maxHeight="8lh" // sometimes, content may be too large, like date-picker's hour/minute picker
         overflowY="auto"
         py="8px"
         _focus={{ boxShadow: 'none' }}
-        border={hasBorder ? `1px solid ${colors.dividerBg}` : undefined}
       >
         {items?.map((item, idx) => {
           const itemValue = isSelectorItemObj(item) ? item.value : item
@@ -177,6 +175,7 @@ export function Select<T>({
             ? shrinkToValue(item.label, [activeItemIndex === idx]) ?? String(itemValue)
             : String(item)
           return (
+            // eslint-disable-next-line react/no-array-index-key
             <Box key={idx}>
               {idx && hasDivider ? <Divider my={2} /> : null}
               <Box

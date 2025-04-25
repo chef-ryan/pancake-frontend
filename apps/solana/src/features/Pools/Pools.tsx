@@ -406,7 +406,7 @@ export default function Pools() {
             border: `1px solid ${colors.cardBorder01}`,
             borderRadius: '0 0 24px 24px',
             borderTopRadius: '0',
-            mb: 10
+            mb: [4, 10]
           }
         : {},
     [currentLayoutStyle]
@@ -476,11 +476,12 @@ export default function Pools() {
                     borderRadius: 'full',
                     height: '34px',
                     minWidth: '102px',
-                    border: '1px solid transparent',
-                    borderColor: isPanelOpen ? 'currentcolor' : 'transparent'
+                    border: `1px solid ${colors.inputBorder}`,
+                    borderColor: isPanelOpen ? 'currentcolor' : colors.inputBorder
                   })}
                   popoverContentSx={{
-                    bg: colors.tooltipBg
+                    bg: colors.tooltipBg,
+                    border: `1px solid ${colors.cardBorder01}`
                   }}
                   value={activeTabItem.value}
                   items={tabItems}
@@ -518,8 +519,17 @@ export default function Pools() {
                   <MoreListControllers color={colors.textSubtle} width={listControllerIconSize} height={listControllerIconSize} />
                 </Button>
                 {isMobile && !isMobileSearchOpen && (
-                  <Button onClick={openMobileSearch} variant="capsule" height="34px" pl={3} pr={7}>
-                    <SearchIcon color={colors.textQuaternary} opacity={0.5} width="16px" height="16px" />
+                  <Button
+                    color={colors.textSubtle}
+                    border={`1px solid ${colors.inputBorder}`}
+                    background={colors.inputBg}
+                    onClick={openMobileSearch}
+                    variant="capsule"
+                    height="34px"
+                    pl={3}
+                    pr={7}
+                  >
+                    <SearchIcon color={colors.textSubtle} opacity={0.5} width="16px" height="16px" />
                   </Button>
                 )}
               </Flex>
@@ -532,15 +542,13 @@ export default function Pools() {
 
             <GridItem area="coll">
               <Collapse in={isCollapseOpen}>
-                <Box pt={[0.5, 4]} pb={[3, 2]}>
+                <Box pt={[4, 4]} pb={[0, 2]}>
                   <Stack
                     direction={['column', 'row']}
                     alignItems={['start', 'center']}
                     spacing={[4, 10]}
                     bg={[colors.tooltipBg, 'transparent']}
                     borderRadius="12px"
-                    py={['16px', '0px']}
-                    px={['30px', '0px']}
                   >
                     {/* Widgets */}
                     <Box>

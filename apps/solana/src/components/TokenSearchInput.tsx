@@ -14,6 +14,7 @@ import SearchIcon from '@/icons/misc/SearchIcon'
 import useResizeObserver from '@/hooks/useResizeObserver'
 import { filterTokenFn } from '@/utils/token'
 import { isValidPublicKey } from '@/utils/publicKey'
+import { inputCard } from '@/theme/cssBlocks'
 
 type SearchBarProps = {
   value: string
@@ -102,7 +103,7 @@ export default forwardRef(function TokenSearchInput(
 
   useEffect(() => {
     if (!selectedList.length || !value) return
-    if (selectedList.some((t) => t.address === value)) onChange('')
+    if (selectedList.some((t_) => t_.address === value)) onChange('')
   }, [value, selectedList, onChange])
 
   useEffect(() => {
@@ -225,17 +226,7 @@ export default forwardRef(function TokenSearchInput(
     <Box {...boxProps}>
       <Popover isOpen={open} autoFocus={false} closeOnBlur={false} placement="bottom-start">
         <PopoverAnchor>
-          <HStack
-            ref={anchorRef}
-            color={colors.textSubtle}
-            border={`1px solid ${colors.inputBorder}`}
-            background={colors.inputBg}
-            pl="2"
-            pr="3"
-            placeItems="center"
-            borderRadius="100px"
-            h={['34px', 10]}
-          >
+          <HStack ref={anchorRef} {...inputCard} pl="2" pr="3" placeItems="center" borderRadius="100px" h={['34px', 10]}>
             {selectedList.length > 0 ? (
               <HStack flexShrink={0}>
                 {selectedList.map((token, idx) => (

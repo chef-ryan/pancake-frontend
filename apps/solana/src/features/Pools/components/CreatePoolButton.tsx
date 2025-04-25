@@ -19,13 +19,13 @@ export default function CreatePoolButton() {
         <HStack
           width={12}
           height="100%"
-          border="1px solid #22D1F8"
+          border={`1px solid ${colors.primary}`}
           borderRadius="md"
           justifyContent="center"
           color={colors.secondary}
           onClick={onOpen}
         >
-          <PlusIcon width="16px" height="16px" />
+          <PlusIcon width="16px" height="16px" color={colors.primary} />
         </HStack>
       </Mobile>
       <Desktop>

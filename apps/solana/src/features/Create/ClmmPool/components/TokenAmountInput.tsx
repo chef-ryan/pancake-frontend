@@ -1,5 +1,6 @@
+import { Button } from '@pancakeswap/uikit'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, HStack, Text, VStack } from '@chakra-ui/react'
+import { HStack, Text, VStack } from '@chakra-ui/react'
 import { ApiV3PoolInfoConcentratedItem } from '@raydium-io/raydium-sdk-v2'
 
 import { useTranslation } from 'react-i18next'
@@ -11,8 +12,8 @@ import { useClmmStore, useTokenAccountStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { debounce } from '@/utils/functionMethods'
 import toPercentString from '@/utils/numberish/toPercentString'
-import { formatCurrency, formatToRawLocaleStr , trimTrailZero } from '@/utils/numberish/formatter'
-import { getMintSymbol, wSolToSol, wsolToSolToken, isSolWSol } from '@/utils/token'
+import { formatCurrency, formatToRawLocaleStr, trimTrailZero } from '@/utils/numberish/formatter'
+import { getMintSymbol, wSolToSol, wsolToSolToken } from '@/utils/token'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
 import { calRatio } from '@/features/Clmm/utils/math'
 import { TickData } from './type'
@@ -41,10 +42,12 @@ export default function TokenAmountPairInputs({ tempCreatedPool, baseIn, onConfi
     ? [tickData.priceLower, tickData.priceUpper]
     : [new Decimal(1).div(tickData.priceUpper).toString(), new Decimal(1).div(tickData.priceLower).toString()]
 
-  const disabledInput = tempCreatedPool
-    ? [new Decimal(tempCreatedPool.price || 0).gt(priceUpper || 0), new Decimal(tempCreatedPool.price || 0).lt(priceLower || 0)]
-    : [false, false]
-  if (!baseIn) disabledInput.reverse()
+  const disabledInput = useMemo(() => {
+    const res = tempCreatedPool
+      ? [new Decimal(tempCreatedPool.price || 0).gt(priceUpper || 0), new Decimal(tempCreatedPool.price || 0).lt(priceLower || 0)]
+      : [false, false]
+    return baseIn ? res : res.reverse()
+  }, [baseIn, priceLower, priceUpper, tempCreatedPool])
 
   const debounceCompute = useCallback(
     debounce((props: Parameters<typeof computePairAmount>[0]) => {
@@ -88,15 +91,25 @@ export default function TokenAmountPairInputs({ tempCreatedPool, baseIn, onConfi
     []
   )
   const handleFocusChange = useCallback(
-    (mint?: string) => (focusPoolARef.current = wSolToSol(mint) === wSolToSol(tempCreatedPool.mintA.address)),
+    (mint?: string) => {
+      focusPoolARef.current = wSolToSol(mint) === wSolToSol(tempCreatedPool.mintA.address)
+    },
     [tempCreatedPool.mintA.address]
   )
+
+  const handleConfirm = useCallback(() => {
+    onConfirm({
+      inputA: focusPoolARef.current,
+      amount1: tokenAmount[baseIn ? 0 : 1],
+      amount2: tokenAmount[baseIn ? 1 : 0],
+      liquidity: computeDataRef.current!.liquidity
+    })
+  }, [baseIn, onConfirm, tokenAmount])
 
   const balanceA = getTokenBalanceUiAmount({ mint: wSolToSol(mintA.address)!, decimals: mintA.decimals }).amount
   const balanceB = getTokenBalanceUiAmount({ mint: wSolToSol(mintB.address)!, decimals: mintB.decimals }).amount
 
-  let error
-  function checkError() {
+  const error = useMemo(() => {
     if (!disabledInput[0]) {
       if (!tokenAmount[0] || new Decimal(tokenAmount[0] || 0).isZero()) return { key: 'error.enter_token_amount' }
       if (new Decimal(tokenAmount[0]).gt(balanceA))
@@ -108,8 +121,7 @@ export default function TokenAmountPairInputs({ tempCreatedPool, baseIn, onConfi
         return { key: 'error.insufficient_sub_balance', props: { token: getMintSymbol({ mint: mintB, transformSol: true }) } }
     }
     return undefined
-  }
-  error = checkError()
+  }, [balanceA, balanceB, disabledInput, mintA, mintB, tokenAmount])
 
   const [mintAVolume, mintBVolume] = [
     new Decimal(tokenAmount[0] || 0).mul(tokenPrices[mintA.address]?.value || 0),
@@ -134,50 +146,26 @@ export default function TokenAmountPairInputs({ tempCreatedPool, baseIn, onConfi
         token2Disable={disabledInput[1]}
         solReserveAmount={0.5}
       />
-      <VStack
-        mt={4}
-        align="stretch"
-        bg={colors.backgroundTransparent07}
-        rounded="xl"
-        border={`1px solid ${colors.backgroundTransparent10}`}
-        color={colors.textPrimary}
-        p={3}
-        gap={1}
-      >
+      <VStack mt={4} align="stretch" rounded="xl" p={3} gap={1}>
         <HStack justify="space-between">
-          <Text color={colors.textSecondary} fontSize="sm">
-            {t('clmm.total_deposit')}
-          </Text>
-          <Text fontSize={['md', 'xl']} fontWeight="500">
+          <Text fontSize="sm">{t('clmm.total_deposit')}</Text>
+          <Text fontSize="sm" color={colors.textPrimary}>
             {formatCurrency(totalVolume.toString(), { symbol: '$', decimalPlaces: 2 })}
           </Text>
         </HStack>
 
         <HStack justify="space-between">
-          <Text color={colors.textSecondary} fontSize="sm">
-            {t('clmm.deposit_ratio')}
-          </Text>
-          <HStack fontWeight="500">
+          <Text fontSize="sm">{t('clmm.deposit_ratio')}</Text>
+          <HStack>
+            <Text color={colors.positive60}>{formatToRawLocaleStr(toPercentString(ratioA, { decimals: 1 }))}</Text>
             <TokenAvatar token={wsolToSolToken(tempCreatedPool![baseIn ? 'mintA' : 'mintB'])} size="sm" />
-            <Text>{formatToRawLocaleStr(toPercentString(ratioA, { decimals: 1 }))}</Text>
             <Text>/</Text>
+            <Text color={colors.positive60}>{formatToRawLocaleStr(toPercentString(ratioB, { decimals: 1 }))}</Text>
             <TokenAvatar token={wsolToSolToken(tempCreatedPool![baseIn ? 'mintB' : 'mintA'])} size="sm" />
-            <Text>{formatToRawLocaleStr(toPercentString(ratioB, { decimals: 1 }))}</Text>
           </HStack>
         </HStack>
       </VStack>
-      <Button
-        mt="4"
-        isDisabled={!!error}
-        onClick={() => {
-          onConfirm({
-            inputA: focusPoolARef.current,
-            amount1: tokenAmount[baseIn ? 0 : 1],
-            amount2: tokenAmount[baseIn ? 1 : 0],
-            liquidity: computeDataRef.current!.liquidity
-          })
-        }}
-      >
+      <Button mt="4" disabled={!!error} onClick={handleConfirm}>
         {error ? t(error.key, error.props || {}) : t('liquidity.preview_pool')}
       </Button>
     </>

@@ -1,9 +1,8 @@
+import { Box, Text, TextProps } from '@chakra-ui/react'
+import { ReactNode } from 'react'
 import InfoCircleIcon from '@/icons/misc/InfoCircleIcon'
 import QuestionCircleIcon from '@/icons/misc/QuestionCircleIcon'
 import { SvgIcon } from '@/icons/type'
-import { colors } from '@/theme/cssVariables'
-import { Box, Text } from '@chakra-ui/react'
-import { ReactNode } from 'react'
 import Tooltip from './Tooltip'
 
 /**
@@ -16,11 +15,12 @@ export function QuestionToolTip(props: {
   iconType?: 'question' | 'info'
   // iconSize?: string
   iconProps?: SvgIcon
+  textProps?: TextProps
 }) {
   return (
     <Tooltip
       label={
-        <Text fontSize="sm" color={colors.textSecondary}>
+        <Text fontSize="sm" {...props.textProps}>
           {props.label}
         </Text>
       }

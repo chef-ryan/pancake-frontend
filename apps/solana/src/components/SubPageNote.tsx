@@ -1,3 +1,4 @@
+import { ErrorIcon, Message, MessageText } from '@pancakeswap/uikit'
 import { Box, BoxProps, Flex, HStack, Text } from '@chakra-ui/react'
 import ExclaimationOctagon from '@/icons/misc/ExclaimationOctagon'
 import { useAppStore } from '@/store'
@@ -40,25 +41,20 @@ export default function SubPageNote({ title, description, ...boxProps }: SubPage
           </HStack>
         </Box>
       ) : (
-        <Box {...panelCard} borderRadius="20px" px={6} py={6} {...boxProps}>
-          <HStack align="flex-start" spacing={3}>
-            <Flex flexGrow={1} direction="column">
-              <HStack justify="space-between">
-                <HStack>
-                  <Flex align="center">
-                    <ExclaimationOctagon color={colors.textSecondary} />
-                  </Flex>
-                  <Text color={colors.textSecondary} fontWeight={500} fontSize="md">
-                    {title}
-                  </Text>
-                </HStack>
-              </HStack>
-              <Text pt={3} as="div" color={colors.textSecondary} fontSize="sm">
-                {description}
-              </Text>
-            </Flex>
-          </HStack>
-        </Box>
+        <Message variant="warning" icon={<ErrorIcon color={colors.warning50} />} style={{ borderColor: colors.warning20 }}>
+          <MessageText>
+            <HStack align="flex-start" spacing={3}>
+              <Flex flexGrow={1} direction="column">
+                <Text color={colors.textPrimary} fontWeight={600} fontSize="md">
+                  {title}
+                </Text>
+                <Text pt={1} as="div" color={colors.textPrimary} fontSize="sm">
+                  {description}
+                </Text>
+              </Flex>
+            </HStack>
+          </MessageText>
+        </Message>
       )}
     </>
   )

@@ -14,7 +14,7 @@ import useTokenPrice from '@/hooks/token/useTokenPrice'
 import usePrevious from '@/hooks/usePrevious'
 import { useAppStore, useClmmStore, useTokenAccountStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
-import { formatToMaxDigit, getFirstNonZeroDecimal, formatCurrency, formatToRawLocaleStr , trimTrailZero } from '@/utils/numberish/formatter'
+import { formatToMaxDigit, getFirstNonZeroDecimal, formatCurrency, formatToRawLocaleStr, trimTrailZero } from '@/utils/numberish/formatter'
 import toPercentString from '@/utils/numberish/toPercentString'
 import IntervalCircle, { IntervalCircleHandler } from '@/components/IntervalCircle'
 import EstimatedAprInfo from '../components/AprInfo'
@@ -271,7 +271,6 @@ export default function CreatePosition() {
   })
 
   const handleRightRangeBlur = useEvent((val: string, skip?: boolean) => {
-    console.log(123123123, val, skip)
     if (val === '' || skip) return
     if (new Decimal(tickPriceRef.current.priceUpper || 0).toDecimalPlaces(new Decimal(val).decimalPlaces()).eq(val)) return
     const r = getPriceAndTick({ pool: currentPool, price: val, baseIn })
@@ -290,7 +289,9 @@ export default function CreatePosition() {
   }, [])
 
   const handleFocusChange = useCallback(
-    (tokenMint?: string) => (focusPoolARef.current = solToWSol(tokenMint || '').toBase58() === solToWSol(poolMintAStr || '').toBase58()),
+    (tokenMint?: string) => {
+      focusPoolARef.current = solToWSol(tokenMint || '').toBase58() === solToWSol(poolMintAStr || '').toBase58()
+    },
     [poolMintAStr]
   )
 
@@ -337,6 +338,7 @@ export default function CreatePosition() {
     const tickKey = side === Side.Left ? 'tickLower' : 'tickUpper'
     const tick = tickPriceRef.current[tickKey]
     const pow = (isAdd && baseIn) || (!baseIn && !isAdd) ? 0 : 1
+    // eslint-disable-next-line no-restricted-properties
     const nextTick = tick! + currentPool.config.tickSpacing * Math.pow(-1, pow)
     const p = getTickPrice({
       pool: currentPool,
@@ -710,9 +712,9 @@ export default function CreatePosition() {
             </Flex>
           ) : null}
           <ConnectedButton
-            w="100%"
-            my="4"
-            isDisabled={featureDisabled || isIdPoolLoading || !!error}
+            width="100%"
+            my="1rem"
+            disabled={featureDisabled || isIdPoolLoading || !!error}
             onClick={() => {
               tokenAmountRef.current = [...tokenAmount]
               onOpen()

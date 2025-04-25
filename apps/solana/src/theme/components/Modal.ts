@@ -9,7 +9,7 @@ const baseStyle = definePartsStyle({
     right: ['24px', '32px'],
     width: '2em',
     height: '2em',
-    color: colors.textSecondary
+    color: colors.textSubtle
   },
   dialog: {
     bg: colors.backgroundLight,
@@ -26,8 +26,8 @@ const baseStyle = definePartsStyle({
     padding: '0px',
     marginTop: ['4px', '10px'],
     marginBottom: ['16px', '18px'],
-    fontSize: ['lg', 'xl'],
-    fontWeight: 500
+    fontSize: ['lg', '2xl'],
+    fontWeight: 600
   },
   footer: {
     padding: '0px'
