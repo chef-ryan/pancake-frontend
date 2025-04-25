@@ -1,160 +1,149 @@
-## Introduction
+# Quoter Implementation - README
 
-The new Quoter provides a more modular and flexible approach to fetching on-chain/off-chain trade quotes. By splitting the logic across multiple atoms, hooks, and utility functions, we can better manage complexity and performance within the swap interface.
-
----
-
-## QuoteQuery and Uniq Hash
+This document describes the new quoter part of the PancakeSwap codebase. It explains how we create a “QuoteQuery” object, how we hash queries, how we determine the best quote atomically, how user inputs interact with these functionalities, and finally how to use the QuoterProvider component and the useAllTypeBestTrade hook.
 
 ---
 
-QuoteQuery is a type that encapsulates all parameters needed to request a trade quote. It includes information such as:
-• Which tokens are being swapped (baseCurrency, currency).  
-• The swapped amount.  
-• The trade type (EXACT_INPUT or EXACT_OUTPUT).  
-• Whether to enable certain features, e.g., v2Swap, v3Swap, infinitySwap, stableSwap.  
-• Slippage tolerance and chain info.
+## 1. What is a QuoteQuery and How Does Hashing Work?
 
-```typescript
-export interface QuoteQuery {
-  hash: string
-  amount?: CurrencyAmount<Currency>
-  baseCurrency?: Currency | null
-  currency?: Currency | null
-  tradeType?: TradeType
-  maxHops?: number
-  maxSplits?: number
-  v2Swap?: boolean
-  v3Swap?: boolean
-  infinitySwap: boolean
-  stableSwap?: boolean
-  enabled?: boolean
-  autoRevalidate?: boolean
-  trackPerf?: boolean
-  retry?: number | boolean
-  type?: 'offchain' | 'quoter' | 'auto' | 'api'
-  speedQuoteEnabled: boolean
-  xEnabled: boolean
-  slippage?: number
-  address?: Address
-}
-```
+### 1.1 QuoteQuery Explanation
 
-** hash **
-For efficiency and caching, every QuoteQuery generates a unique "hash". This hash is produced by combining critical parts of the query (currencies, amounts, chainID, etc.) and taking a keccak256 of their stringified representation. Two queries with identical parameters will have the same hash, which allows us to memoize or reuse existing data.
+A QuoteQuery is the core data structure that captures all parameters needed to request a quote for a swap or trade. It typically includes:
+• The amount and currency involved,  
+• The trade type (EXACT_INPUT or EXACT_OUTPUT),  
+• The user’s chain ID,  
+• Flags enabling or disabling specific router functionalities (e.g., v2Swap, v3Swap, infinitySwap, etc.),  
+• Slippage,  
+• An optional on-chain blockNumber for referencing current state, and  
+• Other internal details such as reference signals for aborting or providing providers.
 
-You can see how the hash is generated in the file:  
-• src/quoter/utils/PoolHashHelper.ts  
-• src/quoter/utils/createQuoteQuery.ts
+In short, the QuoteQuery object fully describes the scenario of a given potential swap.
 
-## bestQuoteAtom
+### 1.2 Hashing Mechanism
 
-The core logic for combining all quote sources (off-chain quoter, quoter worker, or API) resides in bestQuoteAtom. It is constructed via several pieces:
+To ensure consistent, memoized caching of results, each QuoteQuery is hashed. Internally, the system uses a utility class called PoolHashHelper, which:
 
-• bestQuoteWithoutHashAtom – This atom runs the main logic:
+• Sorts and hashes the tokens involved in the query (so the hashing is not order-dependent).  
+• Encodes the rest of the parameters (network, user flags, slippage, etc.).  
+• Produces a unique, reproducible hash string, stored in the QuoteQuery as quoteQuery.hash.
 
-1. Checks user input (currency and amount).
-2. Creates any number of specialized queries (e.g., single-hop, multi-hop, Infinity routing, etc.).
-3. For each sub-query, calls separate atoms (bestAMMTradeFromOffchainQuoterAtom, bestAMMTradeFromQuoterWorkerAtom, bestTradeFromApi, etc.) to fetch candidate trades.
-4. Finds the best route among those trades (e.g., by comparing the final input or output amounts).
+This hash allows the system to:
 
-• bestQuoteAtom – This is essentially the same data as bestQuoteWithoutHashAtom, but it adds the unique hash to the result.
+- Avoid re-running the same logic for identical scenarios.
+- Identify ongoing or previous queries that can be reused.
+- Abort old queries (by referencing the corresponding hash).
 
-Once bestQuoteAtom is read from the store, you get an object that includes:
-• trade: The best trade found.  
-• hash: The unique identifier for that query.  
-• error/loading states if applicable.
+---
 
-For reference, see:
-• src/quoter/atom/bestQuoteAtom.ts
+## 2. How “bestQuoteAtom” Works
 
-## Handle User Input
+The bestQuoteAtom is an atomFamily (from jotai) that receives a QuoteQuery as input, looks up or calculates the best quote for that query, and returns a structured loadable object. In essence:
 
-Whenever the user changes currencies, amounts, or toggles advanced options (like InfinitySwap or v2Swap), the application builds a new QuoteQuery. This triggers a full chain of updates:
+1. You call bestQuoteAtom(quoteQuery).
+2. Internally, it tries different potential swap routes (e.g., off-chain quoter, quoter worker, etc.).
+3. It finds the best trade among those routes (or determines that no valid route exists).
+4. The result is stored in a loadable (loading, success, or error).
 
-1. A new QuoteQuery is generated with a fresh hash (see createQuoteQuery).
-2. bestQuoteAtom is invalidated if the hash changes.
-3. bestQuoteAtom then spawns calls to relevant quote provider atoms (off-chain, on-chain).
-4. The combined best trade is stored in Jotai, and your UI will automatically update.
+When the bestQuoteAtom sees that certain fields (like currency, amount, or chain ID) have changed, it recalculates. This ensures that as user inputs or system changes occur, the bestQuoteAtom always presents the “best trade” or an error if no route is found.
 
-For example, in src/quoter/hook/useQuoterSync.ts:  
-• We read the user’s typed value.  
-• We build a QuoteQuery.  
-• We call bestQuoteAtom(quoteQuery).  
-• We store the final best trade object in a local UI-friendly atom.
+---
 
-## Get Started
+## 3. How This Part Interacts with User Input
 
-In the new quoter architecture, you must wrap your application (or portion of it) with QuoterProvider. This ensures that we have the necessary context (chainId, enabled swaps, etc.) for building correct QuoteQuery objects.
+Throughout the app, user input is captured by various components (e.g., typed values, selected tokens). A common place to see this is in the useQuoterSync hook:
 
-## Step A: QuoterProvider
+1. The user chooses an input and output token, and types an amount.
+2. The application constructs a QuoteQuery from that input.
+3. The QuoteQuery is hashed, making it unique for that scenario.
+4. The bestQuoteAtom is then read for that hash. If the user changes any fields, a new QuoteQuery (and thus a new hash) is created.
+5. Old queries are aborted (via an AbortController) to prevent stale results from overwriting fresh results.
 
-// Example usage in your highest-level component:
+This flow allows the quote system to be highly responsive, aborting outdated queries that are no longer needed, then focusing on the new queries that reflect the user’s current input.
+
+---
+
+## 4. How to Use QuoterProvider and useAllTypeBestTrade
+
+### 4.1 QuoterProvider
+
+The QuoterProvider is a React provider component that initializes all quote-related atoms and synchronization. It also runs a small suspended component (QuoteSync) to keep the quote logic up to date. Here is an example of how to wrap your application with QuoterProvider:
+
+---
+
+Example usage:
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { QuoteProvider } from './quoter/QuoteProvider';
+import { QuoteProvider } from 'quoter/QuoteProvider';
 
 function App() {
 return (
 <QuoteProvider>
-{/_ your app content _/}
-<MainSwapPanel />
+{/_ The rest of your application _/}
+<MySwapPage />
 </QuoteProvider>
 );
 }
 
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+
 ---
 
-• QuoterProvider automatically sets up QuoteContext and ensures that multi-call/pool/worker logic can function.  
-• See src/quoter/QuoteProvider.tsx and src/quoter/hook/QuoteContext.tsx for details.
+Inside the QuoterProvider, contexts such as the “QuoteContext” are provided. The child hook useQuoterSync can then observe user input changes, build QuoteQuery objects, track them with atomic state, and fetch best quotes.
 
-## Step B: The useAllTypeBestTrade Hook
+### 4.2 useAllTypeBestTrade
+
+Once your application is wrapped in the QuoterProvider, you can consume the best trade result easily:
+
+---
 
 import React from 'react';
-import { useAllTypeBestTrade } from './quoter/hook/useAllTypeBestTrade';
+import { useAllTypeBestTrade } from 'quoter/hook/useAllTypeBestTrade';
 
-function MainSwapPanel() {
-const {
-bestOrder,
-tradeLoaded,
-tradeError,
-refreshOrder,
-pauseQuoting,
-resumeQuoting,
-} = useAllTypeBestTrade();
+function MySwapPage() {
+const { bestOrder, tradeLoaded, tradeError, refreshTrade } = useAllTypeBestTrade();
 
 if (tradeError) {
-return <div>There was an error: {tradeError.message}</div>;
+return <div>Error loading best trade: {tradeError.message}</div>;
 }
 
 if (!tradeLoaded) {
 return <div>Loading best trade...</div>;
 }
 
+if (!bestOrder) {
+return <div>No Best Trade Found.</div>;
+}
+
 return (
 <div>
-{/_ Show final best order info _/}
-<pre>{JSON.stringify(bestOrder, null, 2)}</pre>
-<button onClick={refreshOrder}>Refresh</button>
-<button onClick={pauseQuoting}>Pause</button>
-<button onClick={resumeQuoting}>Resume</button>
+<p>Found a best Order with route: {bestOrder.type}</p>
+{/_ bestOrder.trade or other data can be displayed _/}
+<button onClick={refreshTrade}>Refresh Trade</button>
 </div>
 );
 }
 
-• The useAllTypeBestTrade hook retrieves an object from bestTradeUISyncAtom that merges trade data, loading state, and higher-level controls (refresh, pause, etc.).  
-• You can display bestOrder in your swap UI, or do additional logic with tradeLoaded and tradeError.
+---
 
-## Conclusion
+Here’s what’s happening in the snippet:
 
-By adopting this new Quoter architecture, you gain:
-• A more robust and extensible quoting system (plug in new quote providers easily).  
-• Automatic caching and deduplication thanks to hashing logic.  
-• Seamless UI updates via Jotai.  
-• Fine-grained controls for revalidation, pausing, and refreshing quotes.
+1. useAllTypeBestTrade selects the best final route from the store (which is maintained by the bestQuoteAtom) and returns a simple UI-friendly result:  
+   • bestOrder (the final route)  
+   • tradeLoaded / tradeError (status flags)  
+   • refreshTrade (to manually trigger a new quote if needed)
 
-For more details, check out the relevant files under /apps/web/src/quoter, especially:
-• atom/ – The Jotai-based store.  
-• hook/ – The main React hooks that wire up everything.  
-• utils/ – Helper functions, hashing, and verification logic.
+2. You can pause or resume quoting if desired (e.g., if user wants to hold the current price).
+
+---
+
+## Summary
+
+• A QuoteQuery object encapsulates all parameters for fetching a quote.  
+• Each QuoteQuery is uniquely hashed for caching and concurrency control.  
+• The bestQuoteAtom checks multiple possible routes to pick (and store) the best quote.  
+• Hooks like useQuoterSync feed user input into the system, generating QuoteQuery objects.  
+• QuoterProvider sets up the environment for quoting, and useAllTypeBestTrade retrieves the final best trade in your UI.
+
+With this structure, your application can efficiently compute and display the best swap route for any given user input, while also being responsive to changes (like typed amounts, token changes, chain changes, and so on).
