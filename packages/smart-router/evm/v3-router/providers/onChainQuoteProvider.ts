@@ -187,7 +187,9 @@ function onChainQuoteProviderFactory({ getQuoteFunctionName, getQuoterAddress, a
         const multicall2Provider = new PancakeMulticallProvider(chainId, chainProvider, defaultGasLimitPerCall)
         const inputs = routes.map<CallInputs>((route) => getCallInputs(route, isExactIn))
 
-        logger.debug(`Try with Inputs: ${inputs.length}`, 3)
+        logger.debug(`Try quoter with Inputs: ${inputs.length}`, 3)
+        logger.debug(`:${quoterAddress} ${functionName}`, 3)
+        logger.debugJson(inputs[0], 3)
         // logger.debugJson(inputs, 2)
         const retryOptionsWithDefault = {
           retries: DEFAULT_BATCH_RETRIES,
