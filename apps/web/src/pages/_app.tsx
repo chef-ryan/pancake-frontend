@@ -83,6 +83,7 @@ function MPGlobalHooks() {
   return null
 }
 
+// for debug
 const LoadVConsole = dynamic(() => import('components/vConsole'), { ssr: false })
 
 function MyApp(props: AppProps<{ initialReduxState: any; dehydratedState: any }>) {
