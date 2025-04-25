@@ -1,7 +1,17 @@
 import { NextApiHandler } from 'next'
 
 const savedLogs: Map<string, string[]> = new Map()
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+}
 const handler: NextApiHandler = async (req, res) => {
+  if (process.env.NODE_ENV !== 'development') {
+    return res.status(404).end()
+  }
   if (req.method === 'POST') {
     const { body } = req
     const { id, logs } = body
