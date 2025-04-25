@@ -4,6 +4,7 @@ import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { isBetterQuoteTrade } from 'quoter/utils/getBetterQuote'
 import { isEqualQuoteQuery, PoolHashHelper } from 'quoter/utils/PoolHashHelper'
+import { logGTMQuoteQueryEvent } from 'utils/customGTMEventTracking'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { NoValidRouteError, QuoteQuery, StrategyQuery } from '../quoter.types'
 import { activeQuoteHashAtom } from './abortControlAtoms'
@@ -50,10 +51,13 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
       }
     }
 
+    // No active quote hash means some new quoter has started
+    // This quoter query is outdated
     const activeQuoteHash = get(activeQuoteHashAtom)
     if (!activeQuoteHash) {
       return pendingLoadable<InterfaceOrder | undefined>()
     }
+
     const option: QuoteQuery = { enabled: true, type: 'quoter', tradeType: TradeType.EXACT_INPUT, ..._option }
     try {
       const isWrapping = getIsWrapping(option.amount?.currency, option.currency || undefined, option.currency?.chainId)
@@ -70,18 +74,42 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
         return emptyLoadable<InterfaceOrder | undefined>()
       }
 
+      if (!logMap.has(option.hash)) {
+        logGTMQuoteQueryEvent('start', {
+          chain: option.baseCurrency.chainId,
+          currencyA: option.baseCurrency,
+          currencyB: option.currency,
+          type: option.tradeType || TradeType.EXACT_INPUT,
+        })
+        logMap.set(option.hash, Date.now())
+      }
+
       const strategy = getRoutingStrategy(strategyHash)
       for (const routes of strategy) {
         const quote = executeRoutes(routes, option)
         if (quote) {
+          const time = logMap.get(option.hash) || Date.now()
+          logGTMQuoteQueryEvent('succ', {
+            chain: option.baseCurrency.chainId,
+            currencyA: option.baseCurrency,
+            currencyB: option.currency,
+            type: option.tradeType || TradeType.EXACT_INPUT,
+            time: Date.now() - time,
+          })
           return quote
         }
       }
-
-      return errorLoadable<InterfaceOrder | undefined>(new NoValidRouteError())
+      throw new NoValidRouteError()
+      // return errorLoadable<InterfaceOrder | undefined>(new NoValidRouteError())
     } catch (ex) {
       // eslint-disable-next-line no-console
       console.warn(`[quote]`, ex)
+      logGTMQuoteQueryEvent('fail', {
+        chain: option.baseCurrency?.chainId,
+        currencyA: option.baseCurrency || undefined,
+        currencyB: option.currency || undefined,
+        type: option.tradeType || TradeType.EXACT_INPUT,
+      })
       return errorLoadable<InterfaceOrder | undefined>(ex)
     }
   })
@@ -118,3 +146,5 @@ function findBestQuote(...args: Loadable<InterfaceOrder | undefined>[]): [Interf
   }
   return bestOrder ? [bestOrder, idx] : undefined
 }
+
+const logMap = new Map<string, number>()
