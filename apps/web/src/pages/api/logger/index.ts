@@ -1,33 +1,62 @@
-import { NextApiHandler } from 'next'
+import { MulticallRequestWithGas } from '@pancakeswap/multicall'
+import { keccak256 } from 'viem'
 
-const savedLogs: Map<string, string[]> = new Map()
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
+interface TimedCall {
+  timestamp: number
+  hash: string
 }
-const handler: NextApiHandler = async (req, res) => {
+
+interface SlidingCallStats {
+  // Holds raw events so we can slide the window
+  events: TimedCall[]
+  // Computed metrics
+  total: number
+  uniq: number
+}
+
+const stats: Record<string, SlidingCallStats> = {}
+
+const start = Date.now()
+/**
+ * Update the sliding‐window stats.
+ * @param calls  Array of new calls to record
+ * @param windowMs  How far back (in ms) to keep data (e.g. 1000 or 5000)
+ */
+export function updateStats(
+  calls: MulticallRequestWithGas[],
+  windowMs = 5000, // default to 5s
+) {
   if (process.env.NODE_ENV !== 'development') {
-    return res.status(404).end()
+    return
   }
-  if (req.method === 'POST') {
-    const { body } = req
-    const { id, logs } = body
-    if (!id || !logs) {
-      return res.status(400).json({ error: 'Missing id or logs' })
+  const now = Date.now()
+
+  // 1) Record each incoming call with a timestamp+hash
+  for (const call of calls) {
+    const { target } = call
+    const h = keccak256(`0x${target}${call.callData}`)
+
+    if (!stats[target]) {
+      stats[target] = { events: [], total: 0, uniq: 0 }
     }
-    if (!Array.isArray(logs)) {
-      return res.status(400).json({ error: 'Logs must be an array' })
-    }
-    savedLogs.set(id, logs)
-    return res.status(200).json({ status: 'ok' })
+    stats[target].events.push({ timestamp: now, hash: h })
   }
 
-  const id = req.query.id as string
-  const logs = savedLogs.get(id)
-  return res.status(200).send(logs?.join('\n'))
+  const cutoff = now - windowMs
+
+  // 2) For each target, purge old events and recompute metrics
+  for (const [target, stat] of Object.entries(stats)) {
+    // Keep only events within [now - windowMs, now]
+    stat.events = stat.events.filter((e) => e.timestamp >= cutoff)
+
+    // Recompute total / uniq
+    stat.total = stat.events.length
+    const uniqHashes = new Set(stat.events.map((e) => e.hash))
+    stat.uniq = uniqHashes.size
+  }
+
+  const elapsed = Math.floor((Date.now() - start) / 1000)
+  if (elapsed % 5 === 0) {
+    console.log('Sliding call stats:', stats)
+  }
 }
-
-export default handler

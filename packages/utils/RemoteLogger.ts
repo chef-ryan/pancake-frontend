@@ -41,18 +41,22 @@ export class RemoteLogger {
 
   async flush() {
     if (ENABLED && this.id !== '__dummy__') {
-      // eslint-disable-next-line no-restricted-globals
-      const origin = self.origin || window.location.origin
-      await fetch(`${origin}/api/logger`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: this.id,
-          logs: this.logs,
-        }),
-      })
+      try {
+        // eslint-disable-next-line no-restricted-globals
+        const origin = self.origin || window.location.origin
+        await fetch(`${origin}/api/logger`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: this.id,
+            logs: this.logs,
+          }),
+        })
+      } catch (ex) {
+        // Do nothing
+      }
     }
   }
 

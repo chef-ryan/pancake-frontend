@@ -41,7 +41,7 @@ interface QuoteTrade {
 }
 
 export function isBetterQuoteTrade(tradeA: QuoteTrade, tradeB: QuoteTrade, options?: UseBetterQuoteOptions): boolean {
-  const { factorGasCost = true } = options || {}
+  const { factorGasCost = false } = options || {}
 
   if (tradeA.tradeType === TradeType.EXACT_INPUT) {
     const outputAmountB = factorGasCost
@@ -64,7 +64,7 @@ export function getBetterQuoteTrade(
   tradeB: QuoteTrade,
   options?: UseBetterQuoteOptions,
 ): QuoteTrade {
-  const { factorGasCost = true } = options || {}
+  const { factorGasCost = false } = options || {}
 
   if (tradeA.tradeType === TradeType.EXACT_INPUT) {
     const outputAmountB = factorGasCost
