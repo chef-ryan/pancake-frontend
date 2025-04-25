@@ -60,7 +60,7 @@ export const HookSettingsManual = () => {
       </HookAddress>
       <HookVerification selectedHook={manualHook} />
       {!isAddress(manualHookAddress) && manualHookAddress && <Text color="failure">{t('Invalid hook address')}</Text>}
-      {isVerified && manualHook && (
+      {manualHook && (
         <>
           <Divider />
           <HookName selectedHook={manualHook} />
