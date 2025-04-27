@@ -88,6 +88,7 @@ export default function CLMMTokenInputGroup(props: Props) {
       <Flex w="100%">
         <TokenInput
           ctrSx={{ w: '100%' }}
+          sx={{ rounded: 24 }}
           disableTotalInputByMask={token1Disable}
           renderMaskProps={{ bg: colors.inputMask }}
           renderMaskContent={
@@ -112,6 +113,7 @@ export default function CLMMTokenInputGroup(props: Props) {
       <Flex w="100%">
         <TokenInput
           ctrSx={{ w: '100%' }}
+          sx={{ rounded: 24 }}
           disableTotalInputByMask={token2Disable}
           renderMaskProps={{ bg: colors.inputMask }}
           renderMaskContent={

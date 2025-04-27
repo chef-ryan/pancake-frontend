@@ -365,7 +365,6 @@ function TokenInput(props: TokenInputProps) {
         pointerEvents={disableTotalInputByMask ? 'none' : 'initial'}
         width={width}
         sx={sx}
-        rounded={12}
         px={sizes.downerUpperGridPx}
         py={2}
         opacity={loading ? 0.8 : 1}

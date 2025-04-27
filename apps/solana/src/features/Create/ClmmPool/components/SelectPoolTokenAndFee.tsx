@@ -156,7 +156,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
         {t('common.tokens')}
       </Text>
       <Flex gap="2" alignItems="center" mb="6">
-        <Box {...inputCard} data-side="token1" flex="1" rounded="xl" onClick={handleClick} sx={SelectBoxSx}>
+        <Box {...inputCard} data-side="token1" flex="1" onClick={handleClick} sx={SelectBoxSx}>
           <Text variant="label" color={colors.textSubtle} mb="2">
             {t('common.base_token')}
           </Text>
@@ -176,7 +176,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
             <ChevronDown color={colors.textSecondary} opacity="0.5" />
           </Flex>
         </Box>
-        <Box {...inputCard} data-side="token2" flex="1" rounded="xl" onClick={handleClick} sx={SelectBoxSx}>
+        <Box {...inputCard} data-side="token2" flex="1" onClick={handleClick} sx={SelectBoxSx}>
           <Text variant="label" color={colors.textSubtle} mb="2">
             {t('common.quote_token')}
           </Text>

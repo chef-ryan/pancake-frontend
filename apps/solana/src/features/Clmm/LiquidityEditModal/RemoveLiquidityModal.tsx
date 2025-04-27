@@ -98,8 +98,12 @@ export default function RemoveLiquidityModal({
     tickUpperPrefetchData: position.tickUpperRpcData
   })
 
-  const handleFocusA = useCallback(() => (focusARef.current = true), [])
-  const handleFocusB = useCallback(() => (focusARef.current = false), [])
+  const handleFocusA = useCallback(() => {
+    focusARef.current = true
+  }, [])
+  const handleFocusB = useCallback(() => {
+    focusARef.current = false
+  }, [])
 
   let error
   try {
@@ -114,9 +118,9 @@ export default function RemoveLiquidityModal({
   }
 
   const debounceSetPercent = useEvent(
-    debounce((percent: number) => {
-      setPercent(percent)
-      sliderRef.current.changeValue(percent)
+    debounce((percent_: number) => {
+      setPercent(percent_)
+      sliderRef.current.changeValue(percent_)
     }, 100)
   )
 
@@ -143,10 +147,10 @@ export default function RemoveLiquidityModal({
   )
 
   const debounceCalculate = useCallback(
-    debounce((percent: number) => {
+    debounce((percent_: number) => {
       setTokenAmount([
-        new Decimal(positionAmountA).mul(percent).toDecimalPlaces(decimalA).toString(),
-        new Decimal(positionAmountB).mul(percent).toDecimalPlaces(decimalB).toString()
+        new Decimal(positionAmountA).mul(percent_).toDecimalPlaces(decimalA).toString(),
+        new Decimal(positionAmountB).mul(percent_).toDecimalPlaces(decimalB).toString()
       ])
     }),
     [positionAmountA, positionAmountB, decimalA, decimalB]
@@ -189,14 +193,15 @@ export default function RemoveLiquidityModal({
   return (
     <Modal isOpen={isOpen} onClose={handleCloseModal} size="lg">
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader display="flex" gap="2" alignItems="center">
+      <ModalContent gap={4}>
+        <ModalHeader display="flex" alignItems="center">
           {t('clmm.modal_header_remove_liquidity')}
         </ModalHeader>
         <ModalCloseButton top="25px" />
-        <ModalBody mt="10px">
+        <ModalBody gap={4}>
           <TokenInput
-            ctrSx={{ w: '100%', mb: '10px' }}
+            ctrSx={{ w: '100%' }}
+            topBlockSx={{ px: '0', py: '4px' }}
             disableSelectToken
             hideControlButton
             token={poolInfo.mintA}
@@ -208,6 +213,7 @@ export default function RemoveLiquidityModal({
           />
           <TokenInput
             ctrSx={{ w: '100%' }}
+            topBlockSx={{ px: '0', py: '4px' }}
             disableSelectToken
             hideControlButton
             token={poolInfo.mintB}
@@ -281,7 +287,7 @@ export default function RemoveLiquidityModal({
                   <Flex>
                     {allRewardInfos
                       .filter((r) => {
-                        return Number(r.amount) != 0
+                        return Number(r.amount) !== 0
                       })
                       .map((r, idx) => (
                         <TokenAvatar key={r.mint.address} mr="-1" size={['smi', 'md']} token={r.mint} ml={idx ? '-2px' : '0'} />
@@ -291,7 +297,7 @@ export default function RemoveLiquidityModal({
                 <Flex fontSize="sm" gap="1" justifyContent="end">
                   {allRewardInfos
                     .filter((r) => {
-                      return Number(r.amount) != 0
+                      return Number(r.amount) !== 0
                     })
                     .map((r, idx) => {
                       return (
@@ -317,7 +323,7 @@ export default function RemoveLiquidityModal({
             w="full"
             isDisabled={featureDisabled || (!position.liquidity.isZero() && !!error)}
             isLoading={sending}
-            loadingText={`${t(position.liquidity.isZero() ? 'clmm.close_position' : 'liquidity.withdraw_liquidity')  }...`}
+            loadingText={`${t(position.liquidity.isZero() ? 'clmm.close_position' : 'liquidity.withdraw_liquidity')}...`}
             onClick={() => {
               setIsSending(true)
               removeLiquidityAct({
