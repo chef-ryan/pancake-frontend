@@ -1,4 +1,4 @@
-import React, { KeyboardEvent, useState, useCallback, useEffect } from 'react'
+import { KeyboardEvent, useState, useCallback, useEffect } from 'react'
 import {
   Flex,
   Button,
@@ -85,7 +85,7 @@ export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isO
         paddingInline="2rem"
         py="2rem"
       >
-        <ModalHeader marginTop={0} marginBottom="48px">
+        <ModalHeader>
           <HStack spacing="6px">
             <Text>{isSwap ? t('setting_board.slippage_tolerance_swap') : t('setting_board.slippage_tolerance_liquidity')}</Text>
             <QuestionToolTip
@@ -103,7 +103,7 @@ export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isO
                   <Button
                     key={v}
                     size="sm"
-                    isActive={Number(currentSlippage) == v}
+                    isActive={Number(currentSlippage) === v}
                     variant="capsule-radio"
                     onClick={() => {
                       handleChange(v)

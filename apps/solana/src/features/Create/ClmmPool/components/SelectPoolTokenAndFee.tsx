@@ -221,9 +221,6 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
                   py={2.5}
                   px={4}
                   fontSize="sm"
-                  _hover={{
-                    borderBottom: '1px solid transparent'
-                  }}
                 >
                   <Text>{percentFormatter.format(v.tradeFeeRate / 1000000)}</Text>
                 </HStack>

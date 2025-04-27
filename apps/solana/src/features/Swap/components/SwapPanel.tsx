@@ -126,7 +126,7 @@ export function SwapPanel({
     const validInputMint = isValidPublicKey(inputMint) ? inputMint : ''
     const validOutputMint = isValidPublicKey(outputMint) ? outputMint : ''
     setUrlQuery({ inputMint: mintToUrl(validInputMint), outputMint: mintToUrl(validOutputMint) })
-  }, [inputMint, outputMint, cacheLoaded])
+  }, [onOutputMintChange, onInputMintChange, inputMint, outputMint, cacheLoaded])
 
   const [amountIn, setAmountIn] = useState<string>('')
   const [needPriceUpdatedAlert, setNeedPriceUpdatedAlert] = useState(false)
@@ -186,13 +186,13 @@ export function SwapPanel({
         outputMint: outputMint_
       })
     }
-  }, [tokenMap, cacheLoaded])
+  }, [tokenMap, cacheLoaded, query.inputMint, query.outputMint])
 
   useEffect(() => {
-    if (isSending && response && response.data?.outputAmount !== sendingResult.current?.data.outputAmount) {
+    if (isSending && response?.data?.outputAmount !== sendingResult.current?.data.outputAmount) {
       setNeedPriceUpdatedAlert(true)
     }
-  }, [response?.id, isSending])
+  }, [response?.data?.outputAmount, isSending])
 
   const debounceUpdate = useCallback(
     debounce(({ outputAmount: outputAmount_, isComputing: isComputing_ }) => {
@@ -203,7 +203,7 @@ export function SwapPanel({
 
   useEffect(() => {
     debounceUpdate({ outputAmount, isComputing })
-  }, [outputAmount, isComputing])
+  }, [debounceUpdate, outputAmount, isComputing])
 
   const handleInputChange = useCallback((val: string) => {
     setSwapType('BaseIn')
@@ -237,7 +237,7 @@ export function SwapPanel({
         })
       }
     },
-    [inputMint, outputMint]
+    [inputMint, outputMint, onDirectionNeedReverse]
   )
 
   const handleChangeSide = useEvent(() => {

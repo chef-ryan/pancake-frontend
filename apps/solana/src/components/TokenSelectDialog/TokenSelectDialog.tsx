@@ -16,6 +16,7 @@ export interface TokenSelectDialogProps {
   onClose: () => void
 }
 
+/* eslint-disable @typescript-eslint/no-shadow */
 enum PageType {
   TokenList,
   TokenListSetting,
@@ -29,6 +30,81 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
   const { t } = useTranslation()
   const [currentPage, setCurrentPage] = useState<PageType>(PageType.TokenList)
 
+  const TokenListContent = useCallback(
+    () => (
+      <>
+        <ModalHeader>{t('common.select_a_token')}</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody display="flex" flexDirection="column" overflowX="hidden">
+          <Box height={['auto', '60vh']} flex={['1', 'unset']}>
+            <TokenList
+              ref={ref}
+              onOpenTokenList={() => setCurrentPage(PageType.TokenListSetting)}
+              onChooseToken={(token) => {
+                onSelectValue(token)
+              }}
+              isDialogOpen={isOpen}
+              filterFn={filterFn}
+            />
+          </Box>
+        </ModalBody>
+      </>
+    ),
+    [filterFn, isOpen, onSelectValue, ref, t]
+  )
+
+  const TokenListSettingContent = useCallback(
+    () => (
+      <>
+        <ModalHeader>
+          <Grid templateColumns="1fr 3fr 1fr" mb="24px">
+            <GridItem alignSelf="center" cursor="pointer" textAlign="left" onClick={() => setCurrentPage(PageType.TokenList)}>
+              <ChevronLeftIcon width="24px" fontWeight={500} />
+            </GridItem>
+            <GridItem textAlign="center">
+              <Heading fontSize="xl" fontWeight={500} color={colors.textPrimary}>
+                {t('common.token_list_settings')}
+              </Heading>
+            </GridItem>
+            <GridItem textAlign="right" />
+          </Grid>
+        </ModalHeader>
+        <ModalBody display="flex" flexDirection="column" overflowX="hidden">
+          <Box height={['auto', '60vh']} flex={['1', 'unset']}>
+            <TokenListSetting onClick={() => setCurrentPage(PageType.TokenListUnknown)} />
+          </Box>
+        </ModalBody>
+      </>
+    ),
+    [t]
+  )
+
+  const TokenListUnknownContent = useCallback(
+    () => (
+      <>
+        <ModalHeader>
+          <Grid templateColumns="1fr 3fr 1fr" mb="24px">
+            <GridItem alignSelf="center" cursor="pointer" textAlign="left" onClick={() => setCurrentPage(PageType.TokenListSetting)}>
+              <ChevronLeftIcon width="24px" fontWeight={500} />
+            </GridItem>
+            <GridItem textAlign="center">
+              <Heading fontSize="xl" fontWeight={500} color={colors.textPrimary}>
+                {t('swap.user_added_token_list')}
+              </Heading>
+            </GridItem>
+            <GridItem textAlign="right" />
+          </Grid>
+        </ModalHeader>
+        <ModalBody display="flex" flexDirection="column" overflowX="hidden">
+          <Box height={['auto', '60vh']} flex={['1', 'unset']}>
+            <TokenListUnknown />
+          </Box>
+        </ModalBody>
+      </>
+    ),
+    [t]
+  )
+
   const renderModalContent = useCallback(() => {
     switch (currentPage) {
       case PageType.TokenList:
@@ -40,77 +116,7 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
       default:
         return null
     }
-  }, [currentPage])
-
-  const TokenListContent = () => (
-    <>
-      <ModalHeader mx="8px">
-        <Heading fontSize="xl" fontWeight={500} mb="24px">
-          {t('common.select_a_token')}
-        </Heading>
-      </ModalHeader>
-      <ModalCloseButton />
-      <ModalBody display="flex" flexDirection="column" overflowX="hidden">
-        <Box height={['auto', '60vh']} flex={['1', 'unset']}>
-          <TokenList
-            ref={ref}
-            onOpenTokenList={() => setCurrentPage(PageType.TokenListSetting)}
-            onChooseToken={(token) => {
-              onSelectValue(token)
-            }}
-            isDialogOpen={isOpen}
-            filterFn={filterFn}
-          />
-        </Box>
-      </ModalBody>
-    </>
-  )
-
-  const TokenListSettingContent = () => (
-    <>
-      <ModalHeader mx="8px">
-        <Grid templateColumns="1fr 3fr 1fr" mb="24px">
-          <GridItem alignSelf="center" cursor="pointer" textAlign="left" onClick={() => setCurrentPage(PageType.TokenList)}>
-            <ChevronLeftIcon width="24px" fontWeight={500} />
-          </GridItem>
-          <GridItem textAlign="center">
-            <Heading fontSize="xl" fontWeight={500} color={colors.textPrimary}>
-              {t('common.token_list_settings')}
-            </Heading>
-          </GridItem>
-          <GridItem textAlign="right" />
-        </Grid>
-      </ModalHeader>
-      <ModalBody display="flex" flexDirection="column" overflowX="hidden">
-        <Box height={['auto', '60vh']} flex={['1', 'unset']}>
-          <TokenListSetting onClick={() => setCurrentPage(PageType.TokenListUnknown)} />
-        </Box>
-      </ModalBody>
-    </>
-  )
-
-  const TokenListUnknownContent = () => (
-    <>
-      <ModalHeader mx="8px">
-        <Grid templateColumns="1fr 3fr 1fr" mb="24px">
-          <GridItem alignSelf="center" cursor="pointer" textAlign="left" onClick={() => setCurrentPage(PageType.TokenListSetting)}>
-            <ChevronLeftIcon width="24px" fontWeight={500} />
-          </GridItem>
-          <GridItem textAlign="center">
-            <Heading fontSize="xl" fontWeight={500} color={colors.textPrimary}>
-              {t('swap.user_added_token_list')}
-            </Heading>
-          </GridItem>
-          <GridItem textAlign="right" />
-        </Grid>
-      </ModalHeader>
-      <ModalBody display="flex" flexDirection="column" overflowX="hidden">
-        <Box height={['auto', '60vh']} flex={['1', 'unset']}>
-          <TokenListUnknown />
-        </Box>
-      </ModalBody>
-    </>
-  )
+  }, [currentPage, TokenListContent, TokenListSettingContent, TokenListUnknownContent])
 
   const handleClose = useEvent(() => {
     onClose()

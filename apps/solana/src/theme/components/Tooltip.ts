@@ -16,6 +16,11 @@ const card = defineStyle({
   borderRadius: '12px'
 })
 
+const invert = defineStyle({
+  bg: colors.background,
+  color: colors.textPrimary
+})
+
 _Tooltip.defaultProps = {
   hasArrow: true,
   placement: 'top'
@@ -23,5 +28,5 @@ _Tooltip.defaultProps = {
 
 export const Tooltip = defineStyleConfig({
   baseStyle,
-  variants: { card }
+  variants: { card, invert }
 })

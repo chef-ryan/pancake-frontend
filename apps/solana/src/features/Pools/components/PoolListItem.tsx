@@ -153,10 +153,7 @@ export default function PoolListItem({
             </Mobile>
 
             <Tooltip
-              contentBoxProps={{
-                border: `1px solid ${colors.cardBorder01}`,
-                p: '24px'
-              }}
+              variant="card"
               label={
                 <Flex width="252px" gap="8px" flexDir="column">
                   <AddressChip
@@ -271,7 +268,7 @@ export default function PoolListItem({
             </Text>
           </Desktop>
           <Tooltip
-            isContentCard
+            variant="card"
             placement="top-end"
             label={
               <PoolListItemAprDetailPopoverContent
@@ -402,6 +399,7 @@ export default function PoolListItem({
                   <Flex align="center" bg={colors.backgroundTransparent07} borderRadius="lg" w="full" justify="center" minH="36px">
                     <Tooltip
                       isContentCard
+                      variant="card"
                       label={
                         <Flex minW="260px" direction="column" py={2} px={3} gap={4}>
                           <Flex justify="space-between">

@@ -1,3 +1,4 @@
+import { Button } from '@pancakeswap/uikit'
 import { useTranslation } from 'react-i18next'
 import { ApiV3PoolInfoConcentratedItem } from '@raydium-io/raydium-sdk-v2'
 import {
@@ -5,14 +6,14 @@ import {
   Flex,
   Text,
   Badge,
-  Button,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  ModalFooter
+  ModalFooter,
+  TextProps
 } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
 import TokenAvatar from '@/components/TokenAvatar'
@@ -24,6 +25,12 @@ import { colors } from '@/theme/cssVariables/colors'
 import { panelCard } from '@/theme/cssBlocks'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { getFirstNonZeroDecimal, formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
+
+const SubTitle: React.FC<React.PropsWithChildren<TextProps>> = ({ children, ...props }) => (
+  <Text variant="subTitle" color={colors.textSecondary} fontSize="xs" textTransform="uppercase" {...props}>
+    {children}
+  </Text>
+)
 
 interface Props {
   isOpen: boolean
@@ -69,7 +76,7 @@ export default function PreviewDepositModal({
     <Modal size="lg" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent color={colors.textPrimary} border={`1px solid ${colors.backgroundDark}`}>
-        <ModalHeader mb="5">{t('clmm.preview_deposit')}</ModalHeader>
+        <ModalHeader>{t('clmm.preview_deposit')}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Box>
@@ -83,21 +90,14 @@ export default function PreviewDepositModal({
               </Badge>
             </Flex>
 
-            <PanelCard
-              my={[3, '4']}
-              py="2"
-              px="4"
-              fontSize="14px"
-              fontWeight="500"
-              border={`1px solid ${colors.selectInactive}`}
-              bg={colors.modalContainerBg}
-              sx={{ boxShadow: 'none' }}
-            >
-              <Text variant="title">{t('liquidity.my_position')}</Text>
+            <PanelCard my={[3, '4']} py="2" px="4" bg={colors.background}>
+              <SubTitle>{t('liquidity.my_position')}</SubTitle>
               <Flex mt="2" alignItems="center" justifyContent="space-between">
                 <Flex alignItems="center" gap="2">
                   <TokenAvatar size="smi" token={pool.mintA} />
-                  <Text variant="subTitle">{symbolA}</Text>
+                  <Text variant="subTitle" color={colors.textSubtle} fontWeight={400}>
+                    {symbolA}
+                  </Text>
                 </Flex>
                 {formatCurrency(tokenAmount[0], {
                   decimalPlaces: pool.mintA.decimals
@@ -107,7 +107,9 @@ export default function PreviewDepositModal({
               <Flex mt="2" alignItems="center" justifyContent="space-between">
                 <Flex alignItems="center" gap="2">
                   <TokenAvatar size="smi" token={pool.mintB} />
-                  <Text variant="subTitle">{symbolB}</Text>
+                  <Text variant="subTitle" color={colors.textSubtle} fontWeight={400}>
+                    {symbolB}
+                  </Text>
                 </Flex>
                 {formatCurrency(tokenAmount[1], {
                   decimalPlaces: pool.mintB.decimals
@@ -115,19 +117,21 @@ export default function PreviewDepositModal({
                 {symbolB}
               </Flex>
               <Flex mt="2" justifyContent="space-between">
-                <Text color={colors.textSecondary}>{t('field.fee_tier')}</Text>
-                {formatToRawLocaleStr(toPercentString(isCreatePool ? pool.feeRate / 10000 : pool.feeRate * 100))}
+                <Text color={colors.textSubtle}>{t('field.fee_tier')}</Text>
+                <Text color={colors.positive60}>
+                  {formatToRawLocaleStr(toPercentString(isCreatePool ? pool.feeRate / 10000 : pool.feeRate * 100))}
+                </Text>
               </Flex>
             </PanelCard>
 
-            <PanelCard py="3" px="4" border={`1px solid ${colors.selectInactive}`} bg={colors.modalContainerBg} sx={{ boxShadow: 'none' }}>
+            <PanelCard py="3" px="4" bg={colors.background}>
               <Flex mb="2" justifyContent="space-between">
-                <Text variant="title">{t('field.current_price')}</Text>
-                <Flex fontSize="sm" gap="1" fontWeight="500" alignItems="center">
+                <SubTitle>{t('field.current_price')}</SubTitle>
+                <Flex fontSize="sm" gap="1" alignItems="center">
                   {formatCurrency(currentPrice, {
                     decimalPlaces: decimals
                   })}
-                  <Text color={colors.textSecondary}>
+                  <Text color={colors.textSubtle}>
                     {t('common.per_unit', {
                       subA: baseIn ? symbolB : symbolA,
                       subB: baseIn ? symbolA : symbolB
@@ -136,30 +140,19 @@ export default function PreviewDepositModal({
                 </Flex>
               </Flex>
 
-              <Text variant="title" mb="2">
-                {t('clmm.selected_range')}
-              </Text>
+              <SubTitle mb="2">{t('clmm.selected_range')}</SubTitle>
 
               <Flex gap="4">
-                <Flex
-                  {...panelCard}
-                  flexDirection="column"
-                  justifyContent="center"
-                  px={[3, 6]}
-                  py="3"
-                  w="48%"
-                  bg={colors.modalContainerBg}
-                  textAlign="center"
-                >
-                  <Text variant="subTitle">{t('clmm.min_price')}</Text>
-                  <Text fontSize={['lg', 'xl']} fontWeight="500" color={colors.textPrimary}>
+                <Flex {...panelCard} flexDirection="column" justifyContent="center" px={[3, 6]} py="3" w="48%" textAlign="center">
+                  <SubTitle color={colors.textSubtle}>{t('clmm.min_price')}</SubTitle>
+                  <Text fontSize={['lg', 'xl']} fontWeight="600" color={colors.textPrimary}>
                     {price0Decimal > decimals
                       ? formatCurrency(new Decimal(priceRange[0]).toFixed(24), { maximumDecimalTrailingZeroes: 5 })
                       : formatCurrency(new Decimal(priceRange[0]).toDecimalPlaces(decimals).toFixed(24), {
                           maximumDecimalTrailingZeroes: 5
                         })}
                   </Text>
-                  <Text variant="subTitle" color={colors.textSecondary} opacity="0.5">
+                  <Text variant="subTitle" fontWeight={400} color={colors.textSubtle}>
                     {t('common.per_unit', {
                       subA: baseIn ? symbolB : symbolA,
                       subB: baseIn ? symbolA : symbolB
@@ -167,18 +160,9 @@ export default function PreviewDepositModal({
                   </Text>
                 </Flex>
 
-                <Flex
-                  {...panelCard}
-                  flexDirection="column"
-                  justifyContent="center"
-                  px={[3, 6]}
-                  py="3"
-                  w="48%"
-                  bg={colors.modalContainerBg}
-                  textAlign="center"
-                >
-                  <Text variant="subTitle">{t('clmm.max_price')}</Text>
-                  <Text fontSize={['lg', 'xl']} fontWeight="500" color={colors.textPrimary}>
+                <Flex {...panelCard} flexDirection="column" justifyContent="center" px={[3, 6]} py="3" w="48%" textAlign="center">
+                  <SubTitle color={colors.textSubtle}>{t('clmm.max_price')}</SubTitle>
+                  <Text fontSize={['lg', 'xl']} fontWeight="600" color={colors.textPrimary}>
                     {price1Decimal > decimals
                       ? formatCurrency(new Decimal(priceRange[1]).toFixed(24), { maximumDecimalTrailingZeroes: 5, abbreviated: true })
                       : formatCurrency(new Decimal(priceRange[1]).toDecimalPlaces(decimals).toFixed(24), {
@@ -186,7 +170,7 @@ export default function PreviewDepositModal({
                           abbreviated: true
                         })}
                   </Text>
-                  <Text variant="subTitle" color={colors.textSecondary} opacity="0.5">
+                  <Text variant="subTitle" fontWeight={400} color={colors.textSubtle}>
                     {t('common.per_unit', {
                       subA: baseIn ? symbolB : symbolA,
                       subB: baseIn ? symbolA : symbolB
@@ -196,19 +180,10 @@ export default function PreviewDepositModal({
               </Flex>
             </PanelCard>
 
-            <PanelCard
-              my={[3, '4']}
-              py="2"
-              px="4"
-              fontSize="sm"
-              fontWeight="500"
-              border={`1px solid ${colors.selectInactive}`}
-              bg={colors.modalContainerBg}
-              sx={{ borderRadius: '12px', boxShadow: 'none' }}
-            >
+            <PanelCard my={[3, '4']} py="2" px="4" bg={colors.background}>
               <Flex justifyContent="space-between" alignItems="center">
-                <Text variant="title">{t('liquidity.total_deposit')}</Text>
-                <Text fontSize={['lg', 'xl']} fontWeight="500">
+                <SubTitle>{t('liquidity.total_deposit')}</SubTitle>
+                <Text fontSize="md" fontWeight="600">
                   {formatCurrency(totalDeposit.toString(), {
                     symbol: '$',
                     decimalPlaces: 2
@@ -219,8 +194,8 @@ export default function PreviewDepositModal({
           </Box>
         </ModalBody>
         <ModalFooter px="0" py="0" mt="4" mb="2">
-          <Button w="100%" onClick={onConfirm} isLoading={isSending} loadingText={t('transaction.transaction_initiating')}>
-            {t('clmm.confirm_deposit')}
+          <Button width="100%" onClick={onConfirm} isLoading={isSending}>
+            {isSending ? t('transaction.transaction_initiating') : t('clmm.confirm_deposit')}
           </Button>
         </ModalFooter>
       </ModalContent>

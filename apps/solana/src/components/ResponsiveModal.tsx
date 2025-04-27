@@ -62,7 +62,7 @@ export default function ResponsiveModal({
         <Modal {...rest} isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent {...propOfModalContent}>
-            <ModalHeader color={colors.textPrimary} fontWeight="medium" fontSize="xl" pt={8} mb={6}>
+            <ModalHeader color={colors.textPrimary} fontWeight="medium" fontSize="xl">
               {title}
             </ModalHeader>
             <ModalCloseButton size="lg" color={colors.textSecondary} />

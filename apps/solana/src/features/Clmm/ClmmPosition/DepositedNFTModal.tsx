@@ -36,9 +36,7 @@ export default function DepositedNFTModal({ nftAddress, isOpen, onClose }: { nft
     <Modal size="xl" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent sx={{ bg: 'rgba(28, 36, 62, 1)' }}>
-        <ModalHeader mb="5" fontSize="xl">
-          {t('clmm.deposit_successful')}
-        </ModalHeader>
+        <ModalHeader fontSize="xl">{t('clmm.deposit_successful')}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Text variant="title" fontSize="md" mb="6" fontWeight="400">

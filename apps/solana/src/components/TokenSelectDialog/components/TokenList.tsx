@@ -1,5 +1,5 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useState, useRef, forwardRef, useImperativeHandle } from 'react'
-import { TokenInfo, WSOLMint } from '@raydium-io/raydium-sdk-v2'
+import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import { useTranslation } from 'react-i18next'
 import { PublicKey } from '@solana/web3.js'
 import { Box, Divider, Flex, Heading, Input, InputGroup, InputRightAddon, SimpleGrid, Text } from '@chakra-ui/react'
@@ -103,9 +103,9 @@ export default forwardRef<
         { value: (i) => (i.tags.includes('unknown') ? null : i.symbol.length), compareFn }
       ]
     })
-    const filteredList = search ? filterTokenFn(sortedTokenList, { searchStr: search }) : sortedTokenList
-    setDisplayList(filteredList.slice(0, perPage))
-    setFilteredList(filteredList)
+    const filteredList_ = search ? filterTokenFn(sortedTokenList, { searchStr: search }) : sortedTokenList
+    setDisplayList(filteredList_.slice(0, perPage))
+    setFilteredList(filteredList_)
   }, [search, tokenList, tokenAccountMap, orgTokenMap, tokenPrice])
 
   const tempSetNewToken = orgTokenMap.get(search)
@@ -140,12 +140,18 @@ export default forwardRef<
     [getTokenBalanceUiAmount]
   )
 
-  const handleAddUnknownTokenClick = useCallback((token: TokenInfo) => {
-    setExtraTokenListAct({ token: { ...token, userAdded: true }, addToStorage: true, update: true })
-  }, [])
-  const handleRemoveUnknownTokenClick = useCallback((token: TokenInfo) => {
-    unsetExtraTokenListAct(token)
-  }, [])
+  const handleAddUnknownTokenClick = useCallback(
+    (token: TokenInfo) => {
+      setExtraTokenListAct({ token: { ...token, userAdded: true }, addToStorage: true, update: true })
+    },
+    [setExtraTokenListAct]
+  )
+  const handleRemoveUnknownTokenClick = useCallback(
+    (token: TokenInfo) => {
+      unsetExtraTokenListAct(token)
+    },
+    [unsetExtraTokenListAct]
+  )
 
   const USDC = useMemo(() => orgTokenMap.get(USDCMint), [orgTokenMap])
   const SOL = useMemo(() => orgTokenMap.get(SOLMint), [orgTokenMap])
@@ -161,12 +167,12 @@ export default forwardRef<
       <TokenRowItem
         token={token}
         balance={() => getBalance(token)}
-        onClick={(token) => onChooseToken(token)}
-        onAddUnknownTokenClick={(token) => handleAddUnknownTokenClick(token)}
+        onClick={(token_) => onChooseToken(token_)}
+        onAddUnknownTokenClick={(token_) => handleAddUnknownTokenClick(token_)}
         onRemoveUnknownTokenClick={() => handleRemoveUnknownTokenClick(token)}
       />
     ),
-    [getBalance]
+    [getBalance, handleAddUnknownTokenClick, handleRemoveUnknownTokenClick, onChooseToken]
   )
   useImperativeHandle(ref, () => ({
     resetSearch: () => {
@@ -174,7 +180,7 @@ export default forwardRef<
     }
   }))
   return (
-    <Flex direction="column" height="100%" mx="8px">
+    <Flex direction="column" height="100%">
       <InputGroup bg={colors.backgroundDark} color={colors.textSecondary} rounded="8px">
         <Input
           p="8px 16px"

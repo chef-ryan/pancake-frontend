@@ -12,9 +12,10 @@ const baseStyle = definePartsStyle({
     color: colors.textSubtle
   },
   dialog: {
-    bg: colors.backgroundLight,
+    bg: colors.cardBg,
     paddingInline: ['20px', '24px'],
-    paddingBlock: '18px',
+    paddingBlock: '0',
+    paddingBottom: ['20px', '24px'],
     borderRadius: ['20px', '12px'],
     maxHeight: ['95%', '90%']
   },
@@ -23,11 +24,10 @@ const baseStyle = definePartsStyle({
     overflow: 'auto'
   },
   header: {
-    padding: '0px',
-    marginTop: ['4px', '10px'],
-    marginBottom: ['16px', '18px'],
+    padding: '16px 0px',
     fontSize: ['lg', '2xl'],
-    fontWeight: 600
+    fontWeight: 600,
+    marginInline: '0'
   },
   footer: {
     padding: '0px'
@@ -46,8 +46,7 @@ const xl = definePartsStyle({
   dialog: {
     width: 'min(674px, 90vw)',
     height: ['100%', 'auto']
-  },
-  header: { marginTop: ['4px', '10px'], marginBottom: ['16px', '18px'] }
+  }
 })
 const _2xl = definePartsStyle({ dialog: { width: 'min(624px, 90vw)' } })
 const _3xl = definePartsStyle({ dialog: { width: 'min(720px, 90vw)' } })
