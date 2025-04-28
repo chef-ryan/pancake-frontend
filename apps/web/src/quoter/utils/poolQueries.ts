@@ -10,7 +10,9 @@ import { PoolHashHelper } from './PoolHashHelper'
 
 const POOL_TTL = 15_000
 function getCacheKey(args: [PoolQuery]) {
-  const hash = PoolHashHelper.hashPoolQuery(args[0])
+  const poolQuery = args[0]
+  const poolQueryWithoutQuoterHahs: PoolQuery = { ...poolQuery, quoteHash: '' }
+  const hash = PoolHashHelper.hashPoolQuery(poolQueryWithoutQuoterHahs)
   return hash
 }
 

@@ -22,7 +22,14 @@ const cache = new SimpleCache<string, RoutingStrategy>({
 
 const defaultRoutingStrategy: RoutingStrategy = [
   [
-    // Single hop route
+    {
+      query: bestAMMTradeFromOffchainQuoterAtom,
+      overrides: {},
+    },
+    {
+      query: bestXApiAtom,
+      overrides: {},
+    },
     {
       query: bestAMMTradeFromQuoterWorkerAtom,
       overrides: {
@@ -30,27 +37,6 @@ const defaultRoutingStrategy: RoutingStrategy = [
         maxSplits: 0,
         enabled: true,
       },
-    },
-    // #2 v2,v3,ss
-    {
-      query: bestAMMTradeFromOffchainQuoterAtom,
-      overrides: {
-        infinitySwap: false,
-      },
-    },
-    // #3 infinity only
-    {
-      query: bestAMMTradeFromOffchainQuoterAtom,
-      overrides: {
-        v2Swap: false,
-        stableSwap: false,
-        v3Swap: false,
-      },
-    },
-    // #4 x only
-    {
-      query: bestXApiAtom,
-      overrides: {},
     },
   ],
   [
