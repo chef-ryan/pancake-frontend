@@ -33,9 +33,7 @@ const defaultRoutingStrategy: RoutingStrategy = [
     {
       query: bestAMMTradeFromQuoterWorkerAtom,
       overrides: {
-        maxHops: 1,
         maxSplits: 0,
-        enabled: true,
       },
     },
   ],
