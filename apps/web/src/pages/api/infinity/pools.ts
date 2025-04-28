@@ -1,0 +1,182 @@
+import { NextApiHandler } from 'next'
+import qs from 'qs'
+import { stringify } from 'viem'
+import BN from 'bignumber.js'
+
+const MAX_CACHE_SECONDS = 60 * 60 * 24
+
+const handler: NextApiHandler = async (req, res) => {
+  const queryString = qs.stringify(req.query)
+  const queryParsed = qs.parse(queryString)
+  const protocol = queryParsed.protocol
+  const chain = queryParsed.chain
+  if ((protocol !== 'infinityCl' && protocol !== 'infinityBin') || !chain) {
+    return res.status(400).json({ error: 'Missing required fields' })
+  }
+
+  try {
+    // eslint-disable-next-line no-await-in-loop
+    const pools = await fetchAllPools({
+      baseUrl: 'https://explorer.pancakeswap.com/api/cached/pools/list',
+      protocols: [protocol],
+      chains: [chain as any],
+    })
+
+    const result = pools.map((p) => ({
+      id: p.id,
+      tvlUSD: new BN(p.tvlUSD).decimalPlaces(0, BN.ROUND_CEIL).toString(),
+    }))
+
+    res.setHeader('Cache-Control', `max-age=${MAX_CACHE_SECONDS}, s-maxage=${MAX_CACHE_SECONDS}`)
+    return res.status(200).json({
+      data: JSON.parse(stringify(result)),
+      lastUpdated: Number(Date.now()),
+    })
+  } catch (err) {
+    return res.status(500).json({
+      error: JSON.parse(stringify(err)),
+    })
+  }
+}
+
+type PaginatedResponse = {
+  startCursor?: string
+  endCursor?: string
+  hasNextPage: boolean
+  hasPrevPage: boolean
+  rows: Pool[]
+}
+
+type Pool = {
+  id: string
+  chainId: number
+  token0Price: string
+  token1Price: string
+  tvlToken0: string
+  tvlToken1: string
+  tvlUSD: string
+  volumeUSD24h: string
+  apr24h: string
+  protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
+  feeTier: number
+  token0: Token
+  token1: Token
+  isDynamicFee?: boolean
+  hookAddress?: string | null
+}
+
+type Token = {
+  id: string
+  symbol: string
+  name: string
+  decimals: number
+}
+
+type FetchAllPoolsParams = {
+  baseUrl: string
+  orderBy?: 'tvlUSD' | 'volumeUSD24h' | 'apr24h'
+  protocols: Array<'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'>
+  chains: Array<
+    'bsc' | 'bsc-testnet' | 'ethereum' | 'base' | 'opbnb' | 'zksync' | 'polygon-zkevm' | 'linea' | 'arbitrum'
+  >
+  pools?: string[]
+  tokens?: string[]
+  pageSize?: number
+  maxPages?: number // Optional safety limit for maximum pages to fetch
+}
+
+/**
+ * Fetches all data from a paginated API endpoint
+ * @param params Configuration parameters for the fetch operation
+ * @returns Promise resolving to an array of all pools
+ */
+async function fetchAllPools({
+  baseUrl,
+  orderBy = 'tvlUSD',
+  protocols,
+  chains,
+  pools = [],
+  tokens = [],
+  pageSize = 100,
+  maxPages = Infinity,
+}: FetchAllPoolsParams): Promise<Pool[]> {
+  const allResults: Pool[] = []
+  let cursor: string | null = null
+  let hasNextPage = true
+  let pageCount = 0
+
+  // Construct the base URL params
+  const buildUrlParams = (after?: string) => {
+    const params = new URLSearchParams()
+
+    // Add required parameters
+    params.append('orderBy', orderBy)
+
+    // Add protocols
+    protocols.forEach((protocol) => {
+      params.append('protocols', protocol)
+    })
+
+    // Add chains if tokens are not specified
+    if (tokens.length === 0) {
+      chains.forEach((chain) => {
+        params.append('chains', chain)
+      })
+    }
+
+    // Add pools if specified
+    pools.forEach((pool) => {
+      params.append('pools', pool)
+    })
+
+    // Add tokens if specified
+    tokens.forEach((token) => {
+      params.append('tokens', token)
+    })
+
+    // Add pagination parameters
+    if (after) {
+      params.append('after', after)
+    }
+
+    // Add page size
+    params.append('limit', pageSize.toString())
+
+    return params.toString()
+  }
+
+  while (hasNextPage && pageCount < maxPages) {
+    const url = `${baseUrl}?${buildUrlParams(cursor || undefined)}`
+
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const response = await fetch(url)
+
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`)
+      }
+
+      // eslint-disable-next-line no-await-in-loop
+      const data: PaginatedResponse = await response.json()
+
+      // Add the current page of results
+      allResults.push(...data.rows)
+
+      // Update for next iteration
+      hasNextPage = data.hasNextPage
+      cursor = data.endCursor || null
+      pageCount++
+    } catch (error) {
+      console.error('Error fetching data:', error)
+      throw error
+    }
+  }
+
+  if (pageCount >= maxPages && hasNextPage) {
+    console.warn(`Reached maximum page limit of ${maxPages}. Some data may not have been fetched.`)
+  }
+
+  return allResults
+}
+
+export default handler
