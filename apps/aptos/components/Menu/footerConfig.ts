@@ -22,10 +22,6 @@ export const footerLinks: (t: ContextApi['t']) => FooterLinkType[] = (t) => [
         href: 'https://pancakeswap.finance/prediction',
       },
       {
-        label: t('veCAKE'),
-        href: 'https://pancakeswap.finance/cake-staking',
-      },
-      {
         label: t('Merchandise'),
         href: 'https://merch.pancakeswap.finance/',
       },
@@ -66,10 +62,6 @@ export const footerLinks: (t: ContextApi['t']) => FooterLinkType[] = (t) => [
       {
         label: t('Bug Bounty'),
         href: 'https://docs.pancakeswap.finance/developers/bug-bounty',
-      },
-      {
-        label: t('V4'),
-        href: 'https://pancakeswap.finance/v4',
       },
     ],
   },
