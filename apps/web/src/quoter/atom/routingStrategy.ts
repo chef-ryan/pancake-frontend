@@ -30,12 +30,6 @@ const defaultRoutingStrategy: RoutingStrategy = [
       query: bestXApiAtom,
       overrides: {},
     },
-    {
-      query: bestAMMTradeFromQuoterWorkerAtom,
-      overrides: {
-        maxSplits: 0,
-      },
-    },
   ],
   [
     {
