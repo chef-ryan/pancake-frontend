@@ -1,8 +1,8 @@
+import { Button } from '@pancakeswap/uikit'
 import { Flex, Text, HStack, Spacer } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { KeyboardEvent, useCallback, useState } from 'react'
 import Decimal from 'decimal.js'
-import Button from '@/components/Button'
 import DecimalInput from '@/components/DecimalInput'
 import Close from '@/icons/misc/Close'
 import { useEvent } from '@/hooks/useEvent'
@@ -13,6 +13,7 @@ import toPercentString from '@/utils/numberish/toPercentString'
 import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import { setStorageItem } from '@/utils/localStorage'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
+import PanelCard from '../PanelCard'
 
 export function SlippageSettingField({ variant = 'liquidity', onClose }: { variant?: 'swap' | 'liquidity'; onClose?: () => void }) {
   const { t } = useTranslation()
@@ -56,34 +57,27 @@ export function SlippageSettingField({ variant = 'liquidity', onClose }: { varia
   })
 
   return (
-    <Flex
-      flexDirection="column"
-      gap="4"
-      my="2"
-      p="4"
-      border={`1px solid ${colors.backgroundTransparent10}`}
-      bg={colors.backgroundTransparent07}
-      rounded="xl"
-    >
+    <PanelCard flexDirection="column" gap="4" my="2" p="4" rounded="xl">
       <HStack alignItems="center" flexWrap={['wrap', 'nowrap']}>
-        <Text color={colors.textSecondary}>
+        <Text variant="subTitle">
           {isSwap ? t('setting_board.slippage_tolerance_swap') : t('setting_board.slippage_tolerance_liquidity')}
         </Text>
         <QuestionToolTip
           label={isSwap ? t('setting_board.slippage_tolerance_tooltip_swap') : t('setting_board.slippage_tolerance_tooltip_liquidity')}
-          iconProps={{ color: colors.textSecondary }}
+          iconProps={{ color: colors.textSubtle }}
         />
         <Spacer />
-        <Close style={{ cursor: 'pointer' }} width={12} height={12} color={colors.textSecondary} onClick={onClose} />
+        <Close style={{ cursor: 'pointer' }} width={12} height={12} color={colors.textSubtle} onClick={onClose} />
       </HStack>
       <Flex rowGap={2} flexWrap={['wrap', 'unset']} justifyContent="space-between">
         <Flex gap="2">
           {(isSwap ? [0.1, 0.5, 1] : [1, 2.5, 3.5]).map((v) => (
             <Button
               key={v}
-              size="sm"
-              isActive={slippage * 100 == v}
-              variant="capsule-radio"
+              scale="sm"
+              borderRadius="12px"
+              border={`1px solid ${Number((slippage * 100).toFixed(1)) === v ? colors.primary60 : colors.tertiary}`}
+              variant="primary60"
               onClick={() => {
                 handleChange(v)
                 handleUpdateSlippage(v)
@@ -93,12 +87,11 @@ export function SlippageSettingField({ variant = 'liquidity', onClose }: { varia
             </Button>
           ))}
         </Flex>
-        <Flex alignItems="center" rounded="full">
-          <Text fontSize="xs" whiteSpace="nowrap" color={colors.textSecondary}>
+        <Flex alignItems="center" rounded="full" gap={2}>
+          <Text fontSize="xs" whiteSpace="nowrap" color={colors.textSubtle}>
             {t('setting_board.custom')}
           </Text>
           <DecimalInput
-            variant="filledDark"
             value={isFirstFocused ? '' : currentSlippage}
             placeholder={currentSlippage}
             max={50}
@@ -107,9 +100,9 @@ export function SlippageSettingField({ variant = 'liquidity', onClose }: { varia
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             onFocus={handleFocus}
-            inputSx={{ textAlign: 'right', rounded: '40px', h: '36px', w: '70px', py: 0, px: '3' }}
+            inputSx={{ textAlign: 'right', rounded: '40px', h: '32px', w: '25px', py: 0, px: '0' }}
           />
-          <Text fontSize="xs" color={colors.textSecondary}>
+          <Text fontSize="xs" color={colors.textSubtle}>
             %
           </Text>
         </Flex>
@@ -119,6 +112,6 @@ export function SlippageSettingField({ variant = 'liquidity', onClose }: { varia
           {warnText}
         </Text>
       ) : null}
-    </Flex>
+    </PanelCard>
   )
 }

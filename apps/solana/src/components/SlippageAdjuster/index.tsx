@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { Flex, Button } from '@chakra-ui/react'
+import { useState, useEffect } from 'react'
+import { Box, Flex, Text } from '@chakra-ui/react'
+import { Button } from '@pancakeswap/uikit'
 import Decimal from 'decimal.js'
 import { colors } from '@/theme/cssVariables'
 import { useLiquidityStore } from '@/store'
@@ -34,31 +35,19 @@ export function SlippageAdjuster({ variant = 'swap', onClick }: { variant?: 'swa
           height="fit-content"
           py={1}
           px={2}
-          borderRadius="full"
-          bg={isWarn ? colors.warnButtonBg : colors.buttonBg01}
-          color={isWarn ? colors.semanticWarning : colors.textSecondary}
-          fontSize="sm"
-          fontWeight="normal"
+          borderRadius="12px"
           border={isWarn ? `1px solid ${colors.semanticWarning}` : '1px solid transparent'}
-          _hover={{
-            borderColor: colors.secondary,
-            color: colors.secondary,
-            bg: colors.buttonBg01,
-            '.chakra-icon-hover': {
-              fill: colors.secondary
-            }
-          }}
-          _focus={{ boxShadow: 'outline' }}
-          iconSpacing={1}
-          leftIcon={
-            <MoreListControllers
-              width="14"
-              height="14"
-              className="chakra-icon chakra-icon-hover"
-              color={isWarn ? colors.semanticWarning : colors.textSecondary}
-            />
+          startIcon={
+            <Box>
+              <MoreListControllers
+                width="14"
+                height="14"
+                className="chakra-icon chakra-icon-hover"
+                color={isWarn ? colors.semanticWarning : colors.primary60}
+              />
+            </Box>
           }
-          variant="ghost"
+          variant={isWarn ? 'danger' : 'primary60'}
         >
           {currentSlippage}%
         </Button>

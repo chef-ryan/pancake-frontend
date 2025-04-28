@@ -20,6 +20,8 @@ const baseStyle = definePartsStyle({
     maxHeight: ['95%', '90%']
   },
   body: {
+    paddingInline: ['18px', '22px'],
+    marginInline: ['-18px', '-22px'],
     padding: '0',
     overflow: 'auto'
   },

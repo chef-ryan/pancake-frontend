@@ -71,7 +71,7 @@ export default function AmountSlider({
   }))
 
   return (
-    <PanelCard bg={colors.background} px="16px" py="12px" {...restBoxProps}>
+    <PanelCard bg={colors.background} gap={2} px="16px" py="12px" {...restBoxProps}>
       <HStack justify="space-between">
         <HStack spacing={sizes.topLeftLabelAndPercentSpace}>
           {isRenderTopLeftLabel && (
@@ -125,8 +125,7 @@ export default function AmountSlider({
           </HStack>
         </Desktop>
       </HStack>
-      {/* <Box paddingX={0}> */}
-      <Box paddingX={3}>
+      <Box>
         <Slider
           name="lp-amount"
           disabled={isDisabled}

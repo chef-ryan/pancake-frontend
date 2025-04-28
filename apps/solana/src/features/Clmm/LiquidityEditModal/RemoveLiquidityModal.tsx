@@ -1,7 +1,5 @@
-import { Button } from '@pancakeswap/uikit'
+import { Button, Checkbox } from '@pancakeswap/uikit'
 import {
-  Box,
-  Checkbox,
   Collapse,
   Flex,
   HStack,
@@ -221,7 +219,7 @@ export default function RemoveLiquidityModal({
         </ModalHeader>
         <ModalCloseButton top="25px" />
         <ModalBody>
-          <Flex flexDirection="column" gap={4}>
+          <Flex flexDirection="column" gap={4} px={1}>
             <TokenInput
               ctrSx={{ w: '100%' }}
               sx={{ rounded: 24 }}
@@ -260,13 +258,14 @@ export default function RemoveLiquidityModal({
               />
               <Flex align="center" justify={closePositionOpen ? 'space-between' : 'flex-end'} gap={3}>
                 {closePositionOpen && (
-                  <HStack gap={1}>
-                    <Checkbox color={colors.textSecondary} isChecked={!closePosition} onChange={handleClosePositionChange}>
-                      <Box fontSize="sm">{t('liquidity.keep_my_position_open')}</Box>
-                    </Checkbox>
+                  <HStack gap={1} alignItems="center">
+                    <Checkbox scale="xs" checked={!closePosition} onChange={handleClosePositionChange} />
+                    <Text fontSize="sm" color={colors.textSubtle}>
+                      {t('liquidity.keep_my_position_open')}
+                    </Text>
                     <QuestionToolTip
                       iconType="info"
-                      iconProps={{ color: colors.textSecondary }}
+                      iconProps={{ color: colors.primary60 }}
                       label={t('liquidity.keep_my_position_open_tip')}
                     />
                   </HStack>
@@ -276,10 +275,10 @@ export default function RemoveLiquidityModal({
                   <IntervalCircle
                     componentRef={circleRef}
                     svgWidth={18}
-                    strokeWidth={2}
-                    trackStrokeColor={colors.secondary}
+                    strokeWidth={3}
+                    trackStrokeColor={colors.textSecondary}
                     trackStrokeOpacity={0.5}
-                    filledTrackStrokeColor={colors.secondary}
+                    filledTrackStrokeColor={colors.textSecondary}
                     onClick={handleClick}
                     onEnd={onRefresh}
                   />
@@ -288,7 +287,7 @@ export default function RemoveLiquidityModal({
               <Collapse in={isSlippageOpen} animateOpacity>
                 <SlippageSettingField onClose={onSlippageClose} />
               </Collapse>
-              <Flex {...panelCard} p={4} flexDirection="column" gap="2">
+              <Flex {...panelCard} bg={colors.background} p={4} flexDirection="column" gap="2">
                 <Text variant="subTitle" fontSize="xs" textTransform="uppercase">
                   {t('clmm.you_will_receive')}
                 </Text>

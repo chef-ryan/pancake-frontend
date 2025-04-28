@@ -1,3 +1,4 @@
+import { ResetCSS } from '@pancakeswap/uikit'
 import { getCookie } from 'cookies-next'
 import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
@@ -44,6 +45,7 @@ const MyApp = ({ Component, pageProps, ...props }: AppProps) => {
       <DefaultSeo {...SEO} />
       <DynamicProviders>
         <DynamicContent {...props}>
+          <ResetCSS />
           {onlyContent ? (
             <Component {...pageProps} />
           ) : (
