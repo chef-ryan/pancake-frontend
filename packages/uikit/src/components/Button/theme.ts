@@ -67,4 +67,8 @@ export const styleVariants = {
       background: vars.colors.disabled,
     },
   },
+  [variants.PRIMARY60]: {
+    backgroundColor: "tertiary",
+    color: "primary60",
+  },
 };
