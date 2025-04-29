@@ -65,8 +65,8 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
     const epochId = Math.floor(epoch)
 
     // Setup next epoch cache if halfTTS passed
+    const nextKey = calcCacheKey(keyFunction(args), epochId + 1)
     if (halfTTS) {
-      const nextKey = calcCacheKey(keyFunction(args), epochId + 1)
       if (!cache.has(nextKey)) {
         // @ts-ignore
         const nextPromise = fn(...args)
@@ -76,6 +76,7 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
 
     const cacheKey = calcCacheKey(keyFunction(args), epochId)
     // logger(cacheKey, `exists=${cache.has(cacheKey)}`)
+
     if (cache.has(cacheKey)) {
       return ensurePersist(cache.get(cacheKey)!)
     }

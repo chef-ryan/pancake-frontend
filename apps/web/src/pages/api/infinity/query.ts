@@ -18,6 +18,8 @@ import { v2Clients, v3Clients } from 'utils/graphql'
 import { getViemClients } from 'utils/viem.server'
 import { fetchAllPoolsTvl } from './pools'
 
+const MAX_CACHE_SECONDS = 10
+
 function getCurrency(c: CurrencyInfo, chainId: ChainId) {
   if (c.isNative) {
     return Native.onChain(chainId)
@@ -54,6 +56,7 @@ const handler: NextApiHandler = async (req, res) => {
   }
   const pools = await fetchPoolData(c0, c1, chainId)
 
+  res.setHeader('Cache-Control', `max-age=${MAX_CACHE_SECONDS}, s-maxage=${MAX_CACHE_SECONDS}`)
   return res.status(200).json({
     data: pools,
   })
