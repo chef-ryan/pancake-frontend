@@ -159,7 +159,9 @@ async function call(calls: MulticallRequestWithGas[], params: CallParams): Promi
 
   const contract = getMulticallContract({ chainId, client })
   try {
-    const { result } = await contract.simulate.multicallWithGasLimitation([calls, gasBuffer])
+    const { result } = await contract.simulate.multicallWithGasLimitation([calls, gasBuffer], {
+      account: '0x70326b28eaF03eBE05Ae327731835F3F697735D0',
+    })
     const { results, lastSuccessIndex, blockNumber } = formatCallReturn(result as CallReturnFromContract)
     if (lastSuccessIndex === calls.length - 1) {
       return {
