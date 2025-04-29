@@ -99,7 +99,7 @@ export const fetchAllPoolsTvl = cacheByLRU(fetchAllPoolsTvl_, {
   maxCacheSize: 1000,
   persist: {
     name: 'infinityTvlRefs',
-    version: 'v1',
+    version: 'v1.1',
     type: 'r2',
   },
 })

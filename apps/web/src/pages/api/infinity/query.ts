@@ -52,7 +52,7 @@ const handler: NextApiHandler = async (req, res) => {
   if (!inBaseSet(c0, chainId) || !inBaseSet(c1, chainId)) {
     return []
   }
-  const pools = fetchPoolData(c0, c1, chainId)
+  const pools = await fetchPoolData(c0, c1, chainId)
 
   return res.status(200).json({
     data: pools,
@@ -82,31 +82,37 @@ const _fetchPoolData = async (c0: Currency, c1: Currency, chainId: ChainId) => {
     map[ref.id] = ref
   }
 
-  const [ssPools, v2Pools, v3Pools, infinityPools] = await Promise.all([
-    SmartRouter.getStablePoolsOnChain(resolvedPairs ?? [], provider),
-    SmartRouter.getV2CandidatePools({
-      currencyA: c0,
-      currencyB: c1,
-      v2SubgraphProvider: ({ chainId }) => (chainId ? v2Clients[chainId] : undefined),
-      v3SubgraphProvider: ({ chainId }) => (chainId ? v3Clients[chainId] : undefined),
-      onChainProvider: provider,
-    }),
-    SmartRouter.getV3CandidatePools({
-      currencyA: c0,
-      currencyB: c1,
-    }),
-    InfinityRouter.getInfinityCandidatePools({
-      currencyA: c0,
-      currencyB: c1,
-      clientProvider: provider,
-      tvlRefMap: map,
-    }),
-  ])
+  try {
+    const [ssPools, v2Pools, v3Pools, infinityPools] = await Promise.all([
+      SmartRouter.getStablePoolsOnChain(resolvedPairs ?? [], provider),
+      SmartRouter.getV2CandidatePools({
+        currencyA: c0,
+        currencyB: c1,
+        v2SubgraphProvider: ({ chainId }) => (chainId ? v2Clients[chainId] : undefined),
+        v3SubgraphProvider: ({ chainId }) => (chainId ? v3Clients[chainId] : undefined),
+        onChainProvider: provider,
+      }),
+      SmartRouter.getV3CandidatePools({
+        currencyA: c0,
+        currencyB: c1,
+        onChainProvider: provider,
+      }),
+      InfinityRouter.getInfinityCandidatePools({
+        currencyA: c0,
+        currencyB: c1,
+        clientProvider: provider,
+        tvlRefMap: map,
+      }),
+    ])
 
-  const pools = [...ssPools, ...v2Pools, ...v3Pools, ...infinityPools].map((x) =>
-    SmartRouter.Transformer.serializePool(x),
-  )
-  return pools
+    const pools = [...ssPools, ...v2Pools, ...v3Pools, ...infinityPools].map((x) =>
+      SmartRouter.Transformer.serializePool(x),
+    )
+    return pools
+  } catch (ex) {
+    console.error('Error fetching pools', ex)
+    return []
+  }
 }
 
 const fetchPoolData = cacheByLRU(_fetchPoolData, {
