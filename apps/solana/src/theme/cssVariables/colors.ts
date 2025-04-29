@@ -122,7 +122,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   cardBg: pcsDarkColors.card,
 
   // customize (by V3 frontend coder)
-  backgroundApp: 'linear-gradient(29.71deg, #121C34 -18.98%, #050D17 14.6%, #070A15 56.26%, rgba(9, 14, 29, 0.97) 85.27%)',
+  backgroundApp: pcsDarkColors.background,
   solidButtonBg: 'linear-gradient(272.03deg, #39D0D8 2.63%, #22D1F8 95.31%)',
   outlineButtonBg: 'linear-gradient(272.03deg, rgba(57, 208, 216, 0.1) 2.63%, rgba(34, 209, 248, 0.1) 95.31%)',
   filledProgressBg: 'linear-gradient(270deg, #8C6EEF 0%, #4F53F3 100%)',
@@ -276,7 +276,7 @@ export const lightColors: Partial<typeof darkColors> = {
   cardBg: pcsLightColors.card,
 
   // customize (by V3 frontend coder)
-  backgroundApp: '#fff',
+  backgroundApp: pcsLightColors.background,
 
   solidButtonBg: 'linear-gradient(272deg, #4F53F3 2.63%, #8C6EEF 95.31%)',
   outlineButtonBg: 'linear-gradient(270deg, #8C6EEF1a 0%, #4F53F31a 100%)',

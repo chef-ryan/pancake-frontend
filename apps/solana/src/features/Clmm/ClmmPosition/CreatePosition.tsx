@@ -44,6 +44,7 @@ import { useEvent } from '@/hooks/useEvent'
 import { SlippageAdjuster } from '@/components/SlippageAdjuster'
 import useBirdeyeTokenPrice from '@/hooks/token/useBirdeyeTokenPrice'
 import useFetchRpcClmmInfo from '@/hooks/pool/clmm/useFetchRpcClmmInfo'
+import { inputCard, panelCard } from '@/theme/cssBlocks'
 
 type FormatParams = Parameters<typeof formatToMaxDigit>[0]
 
@@ -203,7 +204,7 @@ export default function CreatePosition() {
   useEffect(() => {
     if (!poolId) return
     setRangePercent(currentPool.config.defaultRange)
-  }, [poolId, baseIn])
+  }, [poolId, baseIn, currentPool?.config.defaultRange])
 
   useEffect(() => {
     // initialize pool tick
@@ -245,7 +246,7 @@ export default function CreatePosition() {
       inputA: focusPoolARef.current,
       amount
     })
-  }, [currentPool, baseIn, tokenAmount, priceRange, debounceCompute, rpcData?.currentPrice])
+  }, [poolId, currentPool, baseIn, tokenAmount, priceRange, debounceCompute, rpcData?.currentPrice])
 
   const handleAmountChange = useCallback(
     (val: string, side: string) => {
@@ -321,7 +322,7 @@ export default function CreatePosition() {
       setRangePercent(val)
       if (val === 0) setRangePercent(currentPool.config.defaultRange)
     },
-    [currentPool, baseIn]
+    [getPriceAndTick, formatDecimalToDigit, currentPool, baseIn]
   )
 
   const handleClickSwitch = useCallback(
@@ -359,13 +360,14 @@ export default function CreatePosition() {
       mintA: currentPool.mintA,
       mintB: currentPool.mintB
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPool?.id])
 
   useEffect(() => {
     if (urlPoolId !== poolId && poolId) {
       router.replace(router.pathname, { query: { pool_id: poolId } })
     }
-  }, [urlPoolId, poolId])
+  }, [urlPoolId, poolId, router])
 
   const [priceMin, priceMax] = useMemo(() => {
     if (!currentPool) return [0, 0]
@@ -433,8 +435,8 @@ export default function CreatePosition() {
     >
       <GridItem area="back">
         <Flex>
-          <HStack cursor="pointer" onClick={routeBack} color={colors.textTertiary} fontWeight="500" fontSize={['md', 'xl']}>
-            <ChevronLeftIcon />
+          <HStack cursor="pointer" onClick={routeBack} color={colors.primary60} fontWeight="400" fontSize="md">
+            <ChevronLeftIcon color={colors.textTertiary} />
             <Text>{t('common.back')}</Text>
           </HStack>
         </Flex>
@@ -442,19 +444,11 @@ export default function CreatePosition() {
 
       <GridItem area="chip">
         <Box>
-          <HStack
-            rounded="xl"
-            color={colors.textPrimary}
-            bg={colors.backgroundLight}
-            justifyContent="space-between"
-            py={[4, 4]}
-            px={[4, 6]}
-            gap={[3, 4]}
-          >
-            <Flex direction={['column', 'row']} flex={1} gap="2" fontSize="20px" fontWeight="500">
+          <HStack rounded="xl" color={colors.textPrimary} justifyContent="space-between" py={[4, 4]} gap={[3, 4]}>
+            <Flex direction={['column', 'row']} flex={1} gap="2" fontSize="16px" fontWeight="600">
               <Flex gap="2" alignItems="center">
-                <TokenAvatarPair token1={currentPool?.mintA} token2={currentPool?.mintB} />
-                {currentPool?.poolName.replace('-', '/')}
+                <TokenAvatarPair size="smi" token1={currentPool?.mintA} token2={currentPool?.mintB} />
+                {currentPool?.poolName.replace('-', ' / ')}
                 <Tag size="sm" variant="rounded">
                   {formatToRawLocaleStr(toPercentString((currentPool?.feeRate || 0) * 100))}
                 </Tag>
@@ -462,7 +456,7 @@ export default function CreatePosition() {
               {hasLockedLiquidity && (
                 <Flex alignItems="center" gap={1}>
                   <LockIcon />
-                  <Text opacity={0.6} fontSize="xs" color={colors.lightPurple}>
+                  <Text opacity={0.6} fontSize="xs" color={colors.textSubtle}>
                     {t('liquidity.locked_percent', {
                       percent: formatToRawLocaleStr(toPercentString(currentPool.burnPercent || 0, { alreadyPercented: true }))
                     })}
@@ -472,19 +466,17 @@ export default function CreatePosition() {
             </Flex>
 
             <Desktop>
-              <Flex gap="clamp(32px, 2.7vw, 70px)" justifyContent="space-between" whiteSpace="nowrap">
-                <Flex gap="2" alignItems="center">
-                  <Text color={colors.textTertiary}>{t('liquidity.title')}</Text>
-                  <Text color={colors.textSecondary}>{formatCurrency(currentPool?.tvl, { symbol: '$', decimalPlaces: 2 })}</Text>
-                </Flex>
-                <Flex gap="2" alignItems="center">
-                  <Text color={colors.textTertiary}>{t('field.24h_volume')}</Text>
-                  <Text color={colors.textSecondary}>{formatCurrency(currentPool?.day.volume, { symbol: '$', decimalPlaces: 2 })}</Text>
-                </Flex>
-                <Flex gap="2" alignItems="center">
-                  <Text color={colors.textTertiary}>{t('field.24h_fees')}</Text>
-                  <Text color={colors.textSecondary}>{formatCurrency(currentPool?.day.volumeFee, { symbol: '$', decimalPlaces: 2 })}</Text>
-                </Flex>
+              <Flex gap="24px" justifyContent="space-between" whiteSpace="nowrap">
+                {[
+                  { label: t('liquidity.title'), value: currentPool?.tvl },
+                  { label: t('field.24h_volume'), value: currentPool?.day.volume },
+                  { label: t('field.24h_fees'), value: currentPool?.day.volumeFee }
+                ].map(({ label, value }) => (
+                  <Flex gap="2" alignItems="center">
+                    <Text color={colors.textSubtle}>{label}</Text>
+                    <Text color={colors.textPrimary}>{formatCurrency(value, { symbol: '$', decimalPlaces: 2 })}</Text>
+                  </Flex>
+                ))}
               </Flex>
             </Desktop>
           </HStack>
@@ -513,10 +505,10 @@ export default function CreatePosition() {
           p={[3, '20px']}
           gap={[2, 4]}
           alignItems="center"
-          bg={colors.backgroundLight}
+          {...panelCard}
         >
           <GridItem gridArea="section-title">
-            <Box fontWeight={500}>{t('clmm.set_price_range')}</Box>
+            <Text variant="title">{t('clmm.set_price_range')}</Text>
           </GridItem>
           <GridItem gridArea="chart-window">
             <Grid
@@ -531,10 +523,11 @@ export default function CreatePosition() {
               ]}
               p={[2, 4]}
               pt={12}
-              bg={colors.backgroundDark}
               borderRadius="xl"
               gap="2"
               position="relative"
+              {...panelCard}
+              bg={colors.background}
             >
               <GridItem gridArea="chart">
                 <LiquidityChartRangeInput

@@ -103,13 +103,15 @@ function CreatePoolEntryModal({ isOpen, onClose, onConfirm, children }: CreatePo
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader fontWeight={600}>{t('create_pool.modal_title')}</ModalHeader>
-        <ModalCloseButton />
+      <ModalContent gap="24px">
+        <ModalHeader py="24px" fontSize="16px" fontWeight={600}>
+          {t('create_pool.modal_title')}
+          <ModalCloseButton />
+        </ModalHeader>
 
         <ModalBody>{children}</ModalBody>
 
-        <ModalFooter mt={8}>
+        <ModalFooter>
           <VStack w="full">
             <Button width="100%" variant="primary" onClick={onConfirm}>
               {t('button.continue')}
@@ -170,7 +172,7 @@ export function CreatePoolEntryDialogBody({ type, onChange }: { type: CreateTarg
           isCreatePool
             ? () => (
                 <>
-                  <Stack flexDirection={['column']} mt={2} gap={3}>
+                  <Stack flexDirection={['column']} mt={5} gap={5}>
                     <PoolTypeItem
                       isActive={type === 'concentrated-liquidity'}
                       content={
@@ -224,7 +226,7 @@ function CreateBlock(props: {
 }) {
   return (
     <Box
-      backgroundColor={colors.backgroundDark}
+      backgroundColor={colors.inputBg}
       p={4}
       borderRadius={8}
       position="relative"
@@ -234,7 +236,9 @@ function CreateBlock(props: {
       onClick={props.onClick}
     >
       <Flex justify="space-between">
-        <Text fontWeight="600">{props.title}</Text>
+        <Text fontSize="14px" fontWeight="600">
+          {props.title}
+        </Text>
         {props.selected && <CircleCheck width={16} height={16} fill={colors.secondary} />}
       </Flex>
 
@@ -284,8 +288,8 @@ function PoolTypeItem({
       flexGrow={1}
       color={isActive ? colors.textPrimary : colors.textSubtle}
       bg={isActive ? colors.backgroundAlt : 'transparent'}
-      px={3}
-      py={1.5}
+      px={4}
+      py={2}
       rounded="md"
       position="relative"
       cursor={isDisabled ? 'not-allowed' : 'pointer'}

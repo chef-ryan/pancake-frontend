@@ -26,7 +26,8 @@ const baseStyle = definePartsStyle({
     overflow: 'auto'
   },
   header: {
-    padding: '16px 0px',
+    paddingBlock: ['24px', '28px'],
+    paddingInline: 0,
     fontSize: ['lg', '2xl'],
     fontWeight: 600,
     marginInline: '0'

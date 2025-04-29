@@ -466,7 +466,7 @@ export default function SetPriceAndRange({
     </PanelCard>
   )
 }
-function PriceRangeInputBox(props: {
+export function PriceRangeInputBox(props: {
   side: Side
   topLabel: string
   currentPriceRangeValue: string
