@@ -1,10 +1,10 @@
-import { Box, Flex, FlexProps, Text, TextProps, useClipboard } from '@chakra-ui/react'
-import { ReactNode } from 'react'
 import CircleCheck from '@/icons/misc/CircleCheck'
 import CopyIcon from '@/icons/misc/CopyIcon'
 import ExternalLink from '@/icons/misc/ExternalLink'
 import { SvgIcon } from '@/icons/type'
-import { useAppStore, supportedExplorers } from '@/store/useAppStore'
+import { supportedExplorers, useAppStore } from '@/store/useAppStore'
+import { Box, Flex, FlexProps, Text, TextProps, useClipboard } from '@chakra-ui/react'
+import { ReactNode } from 'react'
 
 type RawAddressChipProps = {
   address?: string
@@ -54,12 +54,12 @@ export default function AddressChip({
     <Flex alignItems="center" gap={2} {...restProps}>
       {renderLabel}
 
-      <Flex>
+      <Flex gap="5px">
         <Text {...textProps}>
           {showDigitCount === 'all' ? address : `${address?.slice(0, showDigitCount)}...${address?.slice(-1 * showDigitCount)}`}
         </Text>
 
-        <Flex alignItems="center">
+        <Flex alignItems="center" gap="5px">
           {showCopyIcon && (
             <Box
               cursor={hasCopied ? 'default' : 'pointer'}

@@ -1,6 +1,7 @@
-import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
-import { Text, Flex } from '@chakra-ui/react'
 import { colors } from '@/theme/cssVariables'
+import styled from '@emotion/styled'
+import { FlexGap, Text } from '@pancakeswap/uikit'
+import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import TokenAvatar from '../../TokenAvatar'
 
 export interface TokenSelectDialogProps {
@@ -9,6 +10,23 @@ export interface TokenSelectDialogProps {
   filterFn?: (token: TokenInfo) => boolean
   onClose: () => void
 }
+
+const StyledCell = styled(FlexGap, {
+  shouldForwardProp: (prop) => !['disabled'].includes(prop)
+})<{ disabled?: boolean }>`
+  background-color: ${colors.inputBg};
+  padding: 5px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
+  border-radius: 8px;
+  cursor: ${(props) => (props.disabled ? 'default' : 'pointer')};
+  transition: background-color 0.15s;
+
+  &:hover {
+    background-color: ${(props) => !props.disabled && colors.background};
+  }
+`
 
 export default function PopularTokenCell({
   disabled,
@@ -20,25 +38,13 @@ export default function PopularTokenCell({
   onClick?: (token: TokenInfo) => void
 }) {
   return (
-    <Flex
-      bg={colors.backgroundDark}
-      alignItems="center"
-      justifyContent="space-around"
-      gap="4px"
-      padding="6px 12.5%"
-      rounded="4px"
-      onClick={disabled ? undefined : () => token && onClick?.(token)}
-      cursor={token && !disabled ? 'pointer' : 'default'}
-      opacity={disabled ? 0.5 : 1}
-    >
+    <StyledCell gap="8px" onClick={disabled ? undefined : () => token && onClick?.(token)}>
       {token && (
         <>
           <TokenAvatar token={token} size="sm" />
-          <Text fontSize="sm" color={colors.textSecondary}>
-            {token.symbol}
-          </Text>
+          <Text fontSize="14px">{token.symbol}</Text>
         </>
       )}
-    </Flex>
+    </StyledCell>
   )
 }

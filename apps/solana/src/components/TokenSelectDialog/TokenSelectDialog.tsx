@@ -1,12 +1,13 @@
-import { useState, useCallback, forwardRef } from 'react'
-import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
-import { Box, Grid, GridItem, Heading, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/react'
 import { useEvent } from '@/hooks/useEvent'
 import ChevronLeftIcon from '@/icons/misc/ChevronLeftIcon'
 import { colors } from '@/theme/cssVariables'
-import TokenListSetting from './components/TokenListSetting'
+import { Box, Grid, GridItem, Heading, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/react'
+import { ModalBackButton, Text } from '@pancakeswap/uikit'
+import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
+import { forwardRef, useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import TokenList, { TokenListHandles } from './components/TokenList'
+import TokenListSetting from './components/TokenListSetting'
 import TokenListUnknown from './components/TokenListUnknown'
 
 export interface TokenSelectDialogProps {
@@ -33,9 +34,11 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
   const TokenListContent = useCallback(
     () => (
       <>
-        <ModalHeader>{t('common.select_a_token')}</ModalHeader>
+        <ModalHeader py={7}>
+          <Text bold>{t('common.select_a_token')}</Text>
+        </ModalHeader>
         <ModalCloseButton />
-        <ModalBody display="flex" flexDirection="column" overflowX="hidden">
+        <ModalBody display="flex" flexDirection="column" px={7} overflow="visible">
           <Box height={['auto', '60vh']} flex={['1', 'unset']}>
             <TokenList
               ref={ref}
@@ -57,19 +60,15 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
     () => (
       <>
         <ModalHeader>
-          <Grid templateColumns="1fr 3fr 1fr" mb="24px">
-            <GridItem alignSelf="center" cursor="pointer" textAlign="left" onClick={() => setCurrentPage(PageType.TokenList)}>
-              <ChevronLeftIcon width="24px" fontWeight={500} />
-            </GridItem>
-            <GridItem textAlign="center">
-              <Heading fontSize="xl" fontWeight={500} color={colors.textPrimary}>
-                {t('common.token_list_settings')}
-              </Heading>
-            </GridItem>
+          <Grid templateColumns="1fr 3fr 1fr" mb="24px" alignItems="center">
+            <ModalBackButton onBack={() => setCurrentPage(PageType.TokenList)} />
+            <Text bold textAlign="center">
+              {t('common.token_list_settings')}
+            </Text>
             <GridItem textAlign="right" />
           </Grid>
         </ModalHeader>
-        <ModalBody display="flex" flexDirection="column" overflowX="hidden">
+        <ModalBody display="flex" flexDirection="column" overflowX="hidden" px={7}>
           <Box height={['auto', '60vh']} flex={['1', 'unset']}>
             <TokenListSetting onClick={() => setCurrentPage(PageType.TokenListUnknown)} />
           </Box>
@@ -95,7 +94,7 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
             <GridItem textAlign="right" />
           </Grid>
         </ModalHeader>
-        <ModalBody display="flex" flexDirection="column" overflowX="hidden">
+        <ModalBody display="flex" flexDirection="column" overflowX="hidden" px={7}>
           <Box height={['auto', '60vh']} flex={['1', 'unset']}>
             <TokenListUnknown />
           </Box>
@@ -127,7 +126,7 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
   return (
     <Modal variant="mobileFullPage" isOpen={isOpen} onClose={handleClose} onCloseComplete={onCloseComplete}>
       <ModalOverlay />
-      <ModalContent>{renderModalContent()}</ModalContent>
+      <ModalContent borderRadius="24px">{renderModalContent()}</ModalContent>
     </Modal>
   )
 })

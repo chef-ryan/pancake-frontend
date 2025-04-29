@@ -1,26 +1,25 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState, useRef, forwardRef, useImperativeHandle } from 'react'
-import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
-import { PublicKey } from '@solana/web3.js'
-import { Box, Divider, Flex, Heading, Input, InputGroup, InputRightAddon, SimpleGrid, Text } from '@chakra-ui/react'
-import Decimal from 'decimal.js'
+import AddressChip from '@/components/AddressChip'
+import List, { ListPropController } from '@/components/List'
+import TokenAvatar from '@/components/TokenAvatar'
+import useTokenInfo from '@/hooks/token/useTokenInfo'
+import useTokenPrice, { TokenPrice } from '@/hooks/token/useTokenPrice'
 import { useEvent } from '@/hooks/useEvent'
-import SearchIcon from '@/icons/misc/SearchIcon'
 import AddTokenIcon from '@/icons/misc/AddTokenIcon'
 import RemoveTokenIcon from '@/icons/misc/RemoveTokenIcon'
 import { useTokenAccountStore, useTokenStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
+import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
+import { isValidPublicKey } from '@/utils/publicKey'
 import { sortItems } from '@/utils/sortItems'
 import { filterTokenFn } from '@/utils/token'
+import { Box, Divider, Flex, SimpleGrid } from '@chakra-ui/react'
+import { Button, Input, InputGroup, SearchIcon, Text } from '@pancakeswap/uikit'
+import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
+import { PublicKey } from '@solana/web3.js'
+import Decimal from 'decimal.js'
+import { ChangeEvent, forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import PopularTokenCell from './PopularTokenCell'
-import List, { ListPropController } from '@/components/List'
-import AddressChip from '@/components/AddressChip'
-import TokenAvatar from '@/components/TokenAvatar'
-import Button from '@/components/Button'
-import useTokenInfo from '@/hooks/token/useTokenInfo'
-import { isValidPublicKey } from '@/utils/publicKey'
-import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
-import useTokenPrice, { TokenPrice } from '@/hooks/token/useTokenPrice'
 
 const perPage = 30
 
@@ -181,27 +180,20 @@ export default forwardRef<
   }))
   return (
     <Flex direction="column" height="100%">
-      <InputGroup bg={colors.backgroundDark} color={colors.textSecondary} rounded="8px">
+      <InputGroup startIcon={<SearchIcon color="textSubtle" />}>
         <Input
-          p="8px 16px"
-          variant="unstyled"
-          _placeholder={{
-            fontSize: '14px',
-            color: colors.textTertiary
-          }}
+          autoComplete="off"
+          scale="lg"
           placeholder={t('token_selector.search_placeholder') ?? undefined}
           value={search}
           onChange={handleSearchChange}
         />
-        <InputRightAddon bg="transparent">
-          <SearchIcon />
-        </InputRightAddon>
       </InputGroup>
 
-      <Box pb="8px">
-        <Heading fontSize="xs" fontWeight={500} color={colors.textTertiary} py="12px">
+      <Box pb="8px" my="12px">
+        <Text fontSize="14px" py="12px">
           {t('common.popular_tokens')}
-        </Heading>
+        </Text>
 
         <SimpleGrid gridTemplateColumns="repeat(auto-fill, minmax(80px, 1fr))" gap={3}>
           <PopularTokenCell token={USDC} onClick={(token) => onChooseToken(token)} disabled={usdcDisabled} />
@@ -215,25 +207,18 @@ export default forwardRef<
 
       <Flex direction="column" flexGrow={1} css={{ contain: 'size' }}>
         <Flex justifyContent="space-between" py="10px">
-          <Heading fontSize="xs" fontWeight={500} color={colors.textTertiary}>
-            {t('common.token')}
-          </Heading>
-          <Heading fontSize="xs" fontWeight={500} color={colors.textTertiary}>
+          <Text fontSize="14px">{t('common.token')}</Text>
+          <Text fontSize="14px">
             {t('common.balance')}/{t('common.address')}
-          </Heading>
+          </Text>
         </Flex>
         {isUnknownNewToken ? (
           <Box padding={4} gap={4} flexDirection="column" display="flex">
             <Flex alignItems="center">
-              <Text flex="1">Symbol:</Text>
-              <InputGroup flex="3" bg={colors.backgroundDark} color={colors.textSecondary} rounded="8px">
+              <Text>Symbol:</Text>
+              <InputGroup>
                 <Input
                   p="8px 16px"
-                  variant="unstyled"
-                  _placeholder={{
-                    fontSize: '14px',
-                    color: colors.textTertiary
-                  }}
                   placeholder={t('token_selector.input_token_symbol') ?? undefined}
                   defaultValue={`${newToken?.symbol}`}
                   onChange={(e) => {
@@ -243,15 +228,10 @@ export default forwardRef<
               </InputGroup>
             </Flex>
             <Flex alignItems="center">
-              <Text flex="1">Name:</Text>
-              <InputGroup flex="3" bg={colors.backgroundDark} color={colors.textSecondary} rounded="8px">
+              <Text>Name:</Text>
+              <InputGroup>
                 <Input
                   p="8px 16px"
-                  variant="unstyled"
-                  _placeholder={{
-                    fontSize: '14px',
-                    color: colors.textTertiary
-                  }}
                   placeholder={t('token_selector.input_token_name') ?? undefined}
                   defaultValue={newToken?.name}
                   onChange={(e) => {
@@ -261,7 +241,6 @@ export default forwardRef<
               </InputGroup>
             </Flex>
             <Button
-              variant="solid-dark"
               width="full"
               bg={colors.backgroundDark}
               onClick={() => {
@@ -284,14 +263,14 @@ export default forwardRef<
         )}
       </Flex>
       {!isUnknownNewToken ? (
-        <Box borderRadius="8px" background={colors.modalContainerBg} p="12px" mb="24px">
-          <Text opacity="50%" fontWeight="normal" fontSize="12px" lineHeight="16px" color={colors.textSecondary}>
+        <Box my="24px">
+          <Text fontSize="14px" style={{ opacity: 0.5 }}>
             {t('token_selector.token_not_found')}
           </Text>
         </Box>
       ) : null}
 
-      <Button variant="solid-dark" width="full" bg={colors.backgroundDark} onClick={() => onOpenTokenList()}>
+      <Button variant="tertiary" width="full" onClick={() => onOpenTokenList()}>
         {t('common.view_token_list')}
       </Button>
     </Flex>
@@ -331,12 +310,10 @@ function TokenRowItem({
     >
       <Flex w="full" justifyContent="space-between" _hover={{ '.addRemoveCtrlContent': { display: 'flex' } }}>
         <Flex w="0" flexGrow={1} minW="0">
-          <TokenAvatar token={token} mr="2" />
+          <TokenAvatar size="40px" token={token} mr="2" />
           <Box w="100%" minW="0" overflow="hidden">
             <Box display="flex" gap={2} alignItems="center">
-              <Text color={colors.textSecondary} mt="0.5">
-                {token.symbol}
-              </Text>
+              <Text bold>{token.symbol}</Text>
               {isUnknown ? (
                 <Box
                   className="addRemoveCtrlContent"
@@ -356,19 +333,21 @@ function TokenRowItem({
                 </Box>
               ) : null}
             </Box>
-            <Text color={colors.textTertiary} isTruncated fontSize="xs">
+            <Text fontSize="12px" color="textSubtle">
               {token.name}
             </Text>
           </Box>
         </Flex>
         <Box flexShrink={0}>
           <Box color={colors.textSecondary} textAlign="right">
-            {formatToRawLocaleStr(balance())}
+            <Text bold>{formatToRawLocaleStr(balance())}</Text>
             <AddressChip
+              iconProps={{ width: '14px', height: '14px' }}
+              textProps={{ lineHeight: 1.5 }}
               onClick={(ev) => ev.stopPropagation()}
-              color={colors.textTertiary}
+              color={colors.textSubtle}
               canExternalLink
-              fontSize="xs"
+              fontSize="12px"
               address={token.address}
             />
           </Box>

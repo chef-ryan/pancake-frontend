@@ -1,8 +1,9 @@
-import { AvatarProps, Box, Image, forwardRef, useColorMode } from '@chakra-ui/react'
-import { useMemo, useState, useEffect } from 'react'
-import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
-import { colors } from '@/theme/cssVariables'
 import useTokenInfo from '@/hooks/token/useTokenInfo'
+import { colors } from '@/theme/cssVariables'
+import { AvatarProps, Box, forwardRef } from '@chakra-ui/react'
+import { DefaultTokenIcon } from '@pancakeswap/uikit'
+import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
+import { useEffect, useMemo, useState } from 'react'
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type TokenAvatarSize = 'xs' | 'sm' | 'smi' | 'md' | 'lg' | '2xl' | (string & {})
@@ -42,6 +43,7 @@ export default forwardRef(function TokenAvatar(
   ref
 ) {
   const [queryUrl, setQueryUrl] = useState('')
+  const [loadFailed, setLoadFailed] = useState(false)
 
   useEffect(() => {
     setQueryUrl('')
@@ -72,14 +74,11 @@ export default forwardRef(function TokenAvatar(
     >
       {/* token icon container */}
       <Box borderRadius="50%" aspectRatio="1" overflow="hidden">
-        {iconSrc ? (
-          <Image
-            loading="lazy"
-            objectFit="cover"
+        {iconSrc && !loadFailed ? (
+          <img
             src={queryUrl || iconSrc}
             onError={() => {
-              if (!iconSrc) return
-              setQueryUrl(new URLSearchParams(iconSrc).get('url') || '')
+              setLoadFailed(true)
             }}
             alt={name || token?.address}
             title={haveHTMLTitle && (name || token) ? `${name || token?.symbol || token?.address}` : undefined}
@@ -87,6 +86,7 @@ export default forwardRef(function TokenAvatar(
             height="100%"
           />
         ) : null}
+        {loadFailed ? <DefaultTokenIcon color="disabled" width="100%" height="100%" /> : null}
       </Box>
     </Box>
   )

@@ -1,12 +1,14 @@
-import { Box, Divider, Grid, GridItem, Text, HStack, Switch } from '@chakra-ui/react'
-import { JupTokenType } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
-import { ReactNode } from 'react'
 import { useEvent } from '@/hooks/useEvent'
-import { useAppStore, useTokenStore, USER_ADDED_KEY } from '@/store'
+import { useAppStore, USER_ADDED_KEY, useTokenStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
-import { Select } from '@/components/Select'
 import { setStorageItem } from '@/utils/localStorage'
+import { Box, Divider } from '@chakra-ui/react'
+import { useHttpLocations } from '@pancakeswap/hooks'
+import { AutoColumn, Row, RowBetween, RowFixed, Text, Toggle, TokenLogo } from '@pancakeswap/uikit'
+import { JupTokenType } from '@raydium-io/raydium-sdk-v2'
+import { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 export default function TokenListSetting({ onClick }: { onClick: () => void }) {
   const { t } = useTranslation()
@@ -37,6 +39,7 @@ export default function TokenListSetting({ onClick }: { onClick: () => void }) {
     <Box height="50vh">
       <TokenListRowItem
         name={`Raydium ${t('common.token_list')}`}
+        logoUrl="https://img-v1.raydium.io/icon/4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R.png"
         tokenCount={raydiumTokenListTokenCount}
         isOpen={isRaydiumTokenListSwitchOn}
         switchable={false}
@@ -44,6 +47,7 @@ export default function TokenListSetting({ onClick }: { onClick: () => void }) {
       <Divider my="10px" color={colors.backgroundTransparent12} />
       <TokenListRowItem
         name={`Jupiter ${t('common.token_list')}`}
+        logoUrl="https://jup.ag/_next/image?url=%2Fsvg%2Fjupiter-logo.png&w=96&q=75"
         tokenCount={jupiterTokenListTokenCount}
         isOpen={isJuiterTokenListSwitchOn}
         onOpen={() => handleSwitchChange('jup', true)}
@@ -68,8 +72,41 @@ export default function TokenListSetting({ onClick }: { onClick: () => void }) {
   )
 }
 
+const StyledListLogo = styled(TokenLogo)<{ size: string }>`
+  width: ${({ size }) => size};
+  height: ${({ size }) => size};
+`
+
+export function ListLogo({
+  logoURI,
+  style,
+  size = '24px',
+  alt
+}: {
+  logoURI: string
+  size?: string
+  style?: React.CSSProperties
+  alt?: string
+}) {
+  const srcs: string[] = useHttpLocations(logoURI)
+
+  return <StyledListLogo alt={alt} size={size} srcs={srcs} style={style} />
+}
+
+const RowWrapper = styled(Row)<{ active: boolean; hasActiveTokens: boolean }>`
+  background-color: ${({ active }) => (active ? '#31D0AA19' : 'transparent')};
+  border: solid 1px;
+  border-color: ${({ active }) => (active ? colors.success : colors.tertiary)};
+  transition: 200ms;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 20px;
+  opacity: ${({ hasActiveTokens }) => (hasActiveTokens ? 1 : 0.4)};
+`
+
 function TokenListRowItem({
   name,
+  logoUrl,
   tokenCount,
   switchable = true,
   isOpen,
@@ -83,6 +120,7 @@ function TokenListRowItem({
 }: {
   name: string
   tokenCount: number
+  logoUrl?: string
   switchable?: boolean
   typeItems?: string[]
   renderItem?: (v: string) => ReactNode
@@ -94,46 +132,24 @@ function TokenListRowItem({
   onClick?: () => void
 }) {
   return (
-    <Grid
-      gridTemplate={`
-        "name     switch  " auto
-        "widgets  widgets " auto / 1fr auto
-      `}
-      gap={[1, 2]}
-      alignItems="center"
-      cursor="pointer"
-    >
-      <GridItem gridArea="name" onClick={() => onClick?.()}>
-        <Text color={colors.textSecondary} textTransform="capitalize">
-          {name}
-        </Text>
-      </GridItem>
-      <GridItem gridArea="widgets">
-        <HStack>
-          {typeItems && (
-            <Select
-              variant="filledDark"
-              items={typeItems}
-              value={currentTypeItem}
-              renderItem={(v) => <Text textTransform="capitalize">{renderItem && v ? renderItem(v) : v}</Text>}
-              renderTriggerItem={(v) => <Text textTransform="capitalize">{renderItem && v ? renderItem(v) : v}</Text>}
-              onChange={(val) => {
-                onTypeItemChange?.(val)
-              }}
-            />
-          )}
-          {!!tokenCount && <Text color={colors.textTertiary}>{tokenCount} tokens</Text>}
-        </HStack>
-      </GridItem>
-      <GridItem gridArea="switch">
-        <Switch
-          disabled={!switchable}
-          defaultChecked={isOpen}
-          onChange={() => {
-            isOpen ? onClose?.() : onOpen?.()
-          }}
-        />
-      </GridItem>
-    </Grid>
+    <RowWrapper active={!!isOpen} hasActiveTokens={!!tokenCount}>
+      <RowBetween>
+        <RowFixed>
+          {logoUrl ? <ListLogo logoURI={logoUrl} size="40px" /> : <div style={{ width: '24px', height: '24px', marginRight: '1rem' }} />}
+          <AutoColumn gap="4px" style={{ marginLeft: '20px' }}>
+            <Text bold>{name}</Text>
+            <Text color="textSubtle" small textTransform="lowercase">
+              {tokenCount} tokens
+            </Text>
+          </AutoColumn>
+        </RowFixed>
+      </RowBetween>
+      <Toggle
+        checked={isOpen}
+        onChange={() => {
+          isOpen ? onClose?.() : onOpen?.()
+        }}
+      />
+    </RowWrapper>
   )
 }

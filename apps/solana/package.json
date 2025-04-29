@@ -46,6 +46,7 @@
     "@moonpay/moonpay-js": "^0.6.1",
     "@next/third-parties": "^14.2.5",
     "@pancakeswap/uikit": "workspace:*",
+    "@pancakeswap/hooks": "workspace:*",
     "@project-serum/serum": "^0.13.65",
     "@raydium-io/raydium-sdk-v2": "0.1.116-alpha",
     "@sentry/nextjs": "^8.26.0",
