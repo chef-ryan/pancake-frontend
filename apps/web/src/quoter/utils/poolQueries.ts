@@ -176,6 +176,46 @@ export const getInfinityClCandidatePools = cacheByLRU(
   },
 )
 
+export const getInfinityCandidatePoolsLight = cacheByLRU(
+  async (query: PoolQuery) => {
+    if (!query.infinity) {
+      return []
+    }
+    const provider = query.provider ?? getViemClients
+    const { currencyA, currencyB } = query
+    const pools = await InfinityRouter.getInfinityCandidatePoolsLite({
+      currencyA,
+      currencyB,
+      clientProvider: provider,
+    })
+    return pools
+  },
+  {
+    ttl: POOL_TTL,
+    key: getCacheKey,
+  },
+)
+
+export const getInfinityCandidatePools = cacheByLRU(
+  async (query: PoolQuery) => {
+    if (!query.infinity) {
+      return []
+    }
+    const provider = query.provider ?? getViemClients
+    const { currencyA, currencyB } = query
+    const pools = await InfinityRouter.getInfinityCandidatePools({
+      currencyA,
+      currencyB,
+      clientProvider: provider,
+    })
+    return pools
+  },
+  {
+    ttl: POOL_TTL,
+    key: getCacheKey,
+  },
+)
+
 export const getInfinityClCandidatePoolsWithoutTicks = cacheByLRU(
   async (query: PoolQuery) => {
     if (!query.infinity) {

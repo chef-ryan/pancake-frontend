@@ -100,6 +100,4 @@ export type V2PoolWithTvl = V2Pool & WithTvl
 
 export type StablePoolWithTvl = StablePool & WithTvl
 
-export type InfinityClPoolWithTvl = InfinityClPool & WithTvl
-
-export type InfinityBinPoolWithTvl = InfinityBinPool & WithTvl
+export type InfinityPoolWithTvl = (InfinityClPool | InfinityBinPool) & WithTvl

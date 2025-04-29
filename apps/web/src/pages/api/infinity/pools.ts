@@ -1,24 +1,29 @@
+import BN from 'bignumber.js'
+import isArray from 'lodash/isArray'
 import { NextApiHandler } from 'next'
 import qs from 'qs'
 import { stringify } from 'viem'
-import BN from 'bignumber.js'
 
 const MAX_CACHE_SECONDS = 60 * 60 * 24
 
 const handler: NextApiHandler = async (req, res) => {
   const queryString = qs.stringify(req.query)
   const queryParsed = qs.parse(queryString)
-  const protocol = queryParsed.protocol
+  const _protocol = queryParsed.protocol
+  const protocols =
+    typeof _protocol === 'string' ? [_protocol] : isArray(_protocol) ? (_protocol as string[]) : undefined
   const chain = queryParsed.chain
-  if ((protocol !== 'infinityCl' && protocol !== 'infinityBin') || !chain) {
-    return res.status(400).json({ error: 'Missing required fields' })
+  const supported = ['infinityCl', 'infinityBin']
+  const valid = protocols && protocols.every((p) => supported.includes(p))
+  if (!valid) {
+    return res.status(400).json({ error: 'Invalid protocol or chain' })
   }
 
   try {
     // eslint-disable-next-line no-await-in-loop
     const pools = await fetchAllPools({
       baseUrl: 'https://explorer.pancakeswap.com/api/cached/pools/list',
-      protocols: [protocol],
+      protocols: protocols as ('infinityBin' | 'infinityCl')[],
       chains: [chain as any],
     })
 

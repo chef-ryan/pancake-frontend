@@ -8,7 +8,6 @@ import {
   getPoolId,
   isInfinitySupported,
 } from '@pancakeswap/infinity-sdk'
-import memoize from 'lodash/memoize.js'
 import { multicallByGasLimit } from '@pancakeswap/multicall'
 import { Native } from '@pancakeswap/sdk'
 import { BigintIsh, Currency, getCurrencyAddress, sortCurrencies } from '@pancakeswap/swap-sdk-core'
@@ -19,9 +18,9 @@ import { infinityCLTickLensAbi } from '../../abis/IInfinityCLTickLens'
 import { CL_HOOK_PRESETS_BY_CHAIN, CL_PRESETS_BY_CHAIN } from '../../constants'
 import { INFI_CL_TICK_LENS_ADDRESSES } from '../../constants/infinity'
 import { getPairCombinations } from '../../v3-router/functions'
-import { createOnChainPoolFactory, infinityClPoolTvlSelector } from '../../v3-router/providers'
+import { createOnChainPoolFactory } from '../../v3-router/providers'
 import { PoolMeta } from '../../v3-router/providers/poolProviders/internalTypes'
-import { InfinityClPool, InfinityClPoolWithTvl, OnChainProvider, PoolType } from '../../v3-router/types'
+import { InfinityClPool, OnChainProvider, PoolType } from '../../v3-router/types'
 import { getV3PoolFetchConfig } from '../constants'
 import { GetInfinityCandidatePoolsParams } from '../types'
 
@@ -44,7 +43,7 @@ export async function getInfinityClCandidatePools({
     currencyB,
     clientProvider,
   })
-  return fillPoolsWithTicks({
+  return fillClPoolsWithTicks({
     pools,
     clientProvider,
     gasLimit,
@@ -71,8 +70,7 @@ export async function getInfinityClCandidatePoolsWithoutTicks({
       pairsWithNative.push(pairWithNative as [Currency, Currency])
     }
   }
-  const pools = await getInfinityClPoolsWithTvlWithoutTicks({ currencyA, currencyB, clientProvider })
-  return infinityClPoolTvlSelector(currencyA, currencyB, pools)
+  return getInfinityClPoolsWithoutTicks(pairsWithNative, clientProvider)
 }
 
 type InfinityClPoolMeta = PoolMeta & {
@@ -83,79 +81,6 @@ type InfinityClPoolMeta = PoolMeta & {
   hooks: Address
   hooksRegistrationBitmap?: Hex | number
 }
-
-const getInfinityClPoolTvl = memoize(
-  (pools: InfinityClPoolTvlReference[], poolId: `0x${string}`) => {
-    const poolWithTvl = pools.find((p) => p.id === poolId)
-    return poolWithTvl?.tvlUSD || 0n
-  },
-  (_, poolAddress) => poolAddress,
-)
-
-export interface InfinityClPoolTvlReference extends Pick<InfinityClPool, 'id'> {
-  tvlUSD: bigint | string
-}
-
-function infinityClPoolsProviderFactory(
-  tvlReferenceProvider: (params: GetInfinityCandidatePoolsParams) => Promise<InfinityClPoolTvlReference[]>,
-) {
-  return async function getInfinityClPoolsWithTvlFromOnChain(
-    params: GetInfinityCandidatePoolsParams,
-  ): Promise<InfinityClPoolWithTvl[]> {
-    const { currencyA, currencyB, clientProvider } = params
-    if (!currencyA || !currencyB) {
-      throw new Error(`Invalid currencyA ${currencyA} or currencyB ${currencyB}`)
-    }
-    const native = Native.onChain(currencyA?.chainId)
-    const wnative = native.wrapped
-    const pairs = await getPairCombinations(currencyA, currencyB)
-    const pairsWithNative = [...pairs]
-    for (const pair of pairs) {
-      const index = pair.findIndex((c) => c.wrapped.equals(wnative))
-      if (index >= 0) {
-        const pairWithNative = [...pair]
-        pairWithNative[index] = native
-        pairsWithNative.push(pairWithNative as [Currency, Currency])
-      }
-    }
-    const pools = await getInfinityClPoolsWithoutTicks(pairsWithNative, clientProvider)
-    const tvlReference = await tvlReferenceProvider(params)
-    if (!Array.isArray(tvlReference)) {
-      throw new Error('Failed to get tvl references')
-    }
-    return pools.map((pool) => {
-      const tvlUSD = BigInt(getInfinityClPoolTvl(tvlReference, pool.id))
-      return {
-        ...pool,
-        tvlUSD,
-      }
-    })
-  }
-}
-
-const createFallbackTvlRefGetter = () => {
-  const cache = new Map<ChainId, InfinityClPoolTvlReference[]>()
-  return async (params: GetInfinityCandidatePoolsParams) => {
-    const { currencyA } = params
-    if (!currencyA?.chainId) {
-      throw new Error(`Cannot get tvl references at chain ${currencyA?.chainId}`)
-    }
-    const cached = cache.get(currencyA.chainId)
-    if (cached) {
-      return cached
-    }
-    const res = await fetch(`http://localhost:3000/api/infinity/pools?chain=bsc&protocol=infinityCl`)
-    if (!res.ok) {
-      throw new Error(`Failed to get infinity cl pools tvl reference. ${res.statusText}`)
-    }
-    const resp = await res.json()
-    const refs: InfinityClPoolTvlReference[] = resp.data
-    cache.set(currencyA.chainId, refs)
-    return refs
-  }
-}
-
-export const getInfinityClPoolsWithTvlWithoutTicks = infinityClPoolsProviderFactory(createFallbackTvlRefGetter())
 
 export const getInfinityClPoolsWithoutTicks = createOnChainPoolFactory<InfinityClPool, InfinityClPoolMeta>({
   abi: CLPoolManagerAbi,
@@ -272,7 +197,7 @@ type FillPoolsWithTicksParams = {
 } & WithClientProvider &
   WithMulticallGasLimit
 
-async function fillPoolsWithTicks({
+export async function fillClPoolsWithTicks({
   pools,
   clientProvider,
   gasLimit,

@@ -12,7 +12,7 @@ export const DEFAULT_POOL_SELECTOR_CONFIG: PoolSelectorConfig = {
   topNWithBaseToken: 3,
 }
 
-export const INFINITY_CL_DEFAULT_POOL_SELECTOR_CONFIG: PoolSelectorConfigChainMap = {
+export const INFINITY_DEFAULT_POOL_SELECTOR_CONFIG: PoolSelectorConfigChainMap = {
   [ChainId.BSC]: {
     topN: 1,
     topNDirectSwaps: 1,

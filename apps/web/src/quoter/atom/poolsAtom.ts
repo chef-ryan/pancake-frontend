@@ -5,10 +5,8 @@ import { atomFamily } from 'jotai/utils'
 import { PoolQuery } from 'quoter/quoter.types'
 import { isEqualPoolQuery } from 'quoter/utils/PoolHashHelper'
 import {
-  getInfinityBinCandidatePools,
-  getInfinityBinCandidatePoolsWithoutBins,
-  getInfinityClCandidatePools,
-  getInfinityClCandidatePoolsWithoutTicks,
+  getInfinityCandidatePools,
+  getInfinityCandidatePoolsLight,
   getStableSwapPools,
   getV2CandidatePools,
   getV3CandidatePools,
@@ -23,8 +21,7 @@ export const commonPoolsOnChainAtom = atomFamily((query: PoolQuery) => {
         getStableSwapPools(query),
         getV2CandidatePools(query),
         getV3PoolsWithTicksOnChain(query),
-        getInfinityClCandidatePools(query),
-        getInfinityBinCandidatePools(query),
+        getInfinityCandidatePools(query),
       ])
       return poolsArray.flat() as Pool[]
     } catch (ex) {
@@ -41,8 +38,7 @@ export const commonPoolsAtom = atomFamily((query: PoolQuery) => {
         getStableSwapPools(query),
         getV2CandidatePools(query),
         getV3CandidatePools(query),
-        getInfinityClCandidatePools(query),
-        getInfinityBinCandidatePools(query),
+        getInfinityCandidatePools(query),
       ])
 
       return poolsArray.flat() as Pool[]
@@ -54,14 +50,13 @@ export const commonPoolsAtom = atomFamily((query: PoolQuery) => {
 }, isEqualPoolQuery)
 
 export const commonPoolsLiteAtom = atomFamily((query: PoolQuery) => {
-  return atom(async (get) => {
+  return atom(async () => {
     try {
       const poolsArray = await Promise.all([
         getStableSwapPools(query),
         getV2CandidatePools(query),
         getV3CandidatePoolsWithoutTicks(query),
-        getInfinityClCandidatePoolsWithoutTicks(query),
-        getInfinityBinCandidatePoolsWithoutBins(query),
+        getInfinityCandidatePoolsLight(query),
       ])
       return poolsArray.flat() as Pool[]
     } catch (ex) {
