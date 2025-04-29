@@ -1,10 +1,11 @@
+import { cacheByLRU } from '@pancakeswap/utils/cacheByLRU'
 import BN from 'bignumber.js'
 import isArray from 'lodash/isArray'
 import { NextApiHandler } from 'next'
 import qs from 'qs'
 import { stringify } from 'viem'
 
-const MAX_CACHE_SECONDS = 60 * 60 * 24
+const MAX_CACHE_SECONDS = 60 * 60
 
 const handler: NextApiHandler = async (req, res) => {
   const queryString = qs.stringify(req.query)
@@ -90,12 +91,21 @@ type FetchAllPoolsParams = {
   maxPages?: number // Optional safety limit for maximum pages to fetch
 }
 
+const fetchAllPools = cacheByLRU(_fetchAllPools, {
+  ttl: MAX_CACHE_SECONDS,
+  maxCacheSize: 1000,
+  persist: {
+    name: 'infinityTvlRefs',
+    version: 'v1',
+    type: 'r2',
+  },
+})
 /**
  * Fetches all data from a paginated API endpoint
  * @param params Configuration parameters for the fetch operation
  * @returns Promise resolving to an array of all pools
  */
-async function fetchAllPools({
+async function _fetchAllPools({
   baseUrl,
   orderBy = 'tvlUSD',
   protocols,
