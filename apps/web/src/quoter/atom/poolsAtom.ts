@@ -5,11 +5,17 @@ import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { PoolQuery } from 'quoter/quoter.types'
 import { isEqualPoolQuery } from 'quoter/utils/PoolHashHelper'
-import { poolQueriesFactory } from 'quoter/utils/poolQueries'
+import { fetchApiPools, poolQueriesFactory } from 'quoter/utils/poolQueries'
 
 export const commonPoolsOnChainAtom = atomFamily((query: PoolQuery) => {
   return atom(async () => {
     const queries = poolQueriesFactory(query.currencyA?.chainId || ChainId.BSC)
+
+    const pools = await fetchApiPools(query)
+    if (pools.length > 0) {
+      console.log(pools)
+      return pools
+    }
     try {
       const poolsArray = await Promise.all([
         queries.getStableSwapPools(query),
@@ -28,6 +34,10 @@ export const commonPoolsOnChainAtom = atomFamily((query: PoolQuery) => {
 export const commonPoolsAtom = atomFamily((query: PoolQuery) => {
   return atom(async () => {
     const queries = poolQueriesFactory(query.currencyA?.chainId || ChainId.BSC)
+    const pools = await fetchApiPools(query)
+    if (pools.length > 0) {
+      return pools
+    }
     try {
       const poolsArray = await Promise.all([
         queries.getStableSwapPools(query),
@@ -47,6 +57,10 @@ export const commonPoolsAtom = atomFamily((query: PoolQuery) => {
 export const commonPoolsLiteAtom = atomFamily((query: PoolQuery) => {
   return atom(async () => {
     const queries = poolQueriesFactory(query.currencyA?.chainId || ChainId.BSC)
+    const pools = await fetchApiPools(query)
+    if (pools.length > 0) {
+      return pools
+    }
     try {
       const poolsArray = await Promise.all([
         queries.getStableSwapPools(query),

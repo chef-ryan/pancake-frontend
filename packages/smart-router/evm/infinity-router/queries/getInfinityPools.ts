@@ -31,7 +31,7 @@ export const getInfinityCandidatePoolsLite = async (
   const [clPools, binPools, tvlMap] = await Promise.all([
     getInfinityClCandidatePoolsWithoutTicks(params),
     getInfinityBinCandidatePoolsWithoutBins(params),
-    getInfinityTvlReference(params),
+    params.tvlRefMap ? params.tvlRefMap : getInfinityTvlReference(params),
   ])
   const pools = [...clPools, ...binPools]
   const poolsWithTvl: InfinityPoolWithTvl[] = pools.map((pool) => {

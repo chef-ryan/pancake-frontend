@@ -22,17 +22,7 @@ const handler: NextApiHandler = async (req, res) => {
 
   try {
     // eslint-disable-next-line no-await-in-loop
-    const pools = await fetchAllPools({
-      baseUrl: 'https://explorer.pancakeswap.com/api/cached/pools/list',
-      protocols: protocols as ('infinityBin' | 'infinityCl')[],
-      chains: [chain as any],
-    })
-
-    const result = pools.map((p) => ({
-      id: p.id,
-      tvlUSD: new BN(p.tvlUSD).decimalPlaces(0, BN.ROUND_CEIL).toString(),
-    }))
-
+    const result = fetchAllPoolsTvl(protocols as string[], chain as string)
     res.setHeader('Cache-Control', `max-age=${MAX_CACHE_SECONDS}, s-maxage=${MAX_CACHE_SECONDS}`)
     return res.status(200).json({
       data: JSON.parse(stringify(result)),
@@ -43,6 +33,19 @@ const handler: NextApiHandler = async (req, res) => {
       error: JSON.parse(stringify(err)),
     })
   }
+}
+
+const fetchAllPoolsTvl_ = async (protocols: string[], chain: string) => {
+  const pools = await fetchAllPools({
+    baseUrl: 'https://explorer.pancakeswap.com/api/cached/pools/list',
+    protocols: protocols as ('infinityBin' | 'infinityCl')[],
+    chains: [chain as any],
+  })
+  const result = pools.map((p) => ({
+    id: p.id,
+    tvlUSD: new BN(p.tvlUSD).decimalPlaces(0, BN.ROUND_CEIL).toString(),
+  }))
+  return result
 }
 
 type PaginatedResponse = {
@@ -91,7 +94,7 @@ type FetchAllPoolsParams = {
   maxPages?: number // Optional safety limit for maximum pages to fetch
 }
 
-const fetchAllPools = cacheByLRU(_fetchAllPools, {
+export const fetchAllPoolsTvl = cacheByLRU(fetchAllPoolsTvl_, {
   ttl: MAX_CACHE_SECONDS,
   maxCacheSize: 1000,
   persist: {
@@ -105,7 +108,7 @@ const fetchAllPools = cacheByLRU(_fetchAllPools, {
  * @param params Configuration parameters for the fetch operation
  * @returns Promise resolving to an array of all pools
  */
-async function _fetchAllPools({
+async function fetchAllPools({
   baseUrl,
   orderBy = 'tvlUSD',
   protocols,

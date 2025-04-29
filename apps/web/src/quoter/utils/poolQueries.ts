@@ -1,14 +1,55 @@
 import { ChainId } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
-import { InfinityRouter, SmartRouter, V3Pool } from '@pancakeswap/smart-router'
+import { InfinityRouter, Pool, SmartRouter, V3Pool } from '@pancakeswap/smart-router'
+import { Currency, ZERO_ADDRESS } from '@pancakeswap/swap-sdk-core'
 import { cacheByLRU } from '@pancakeswap/utils/cacheByLRU'
 import { Tick } from '@pancakeswap/v3-sdk'
 import { POOLS_FAST_REVALIDATE } from 'config/pools'
 import { getPoolTicks } from 'hooks/useAllTicksQuery'
-import { PoolQuery } from 'quoter/quoter.types'
+import { CurrencyInfo, PoolQuery, PoolQueryRequest } from 'quoter/quoter.types'
 import { v2Clients, v3Clients } from 'utils/graphql'
 import { createViemPublicClientGetter, getViemClients } from 'utils/viem'
 import { PoolHashHelper } from './PoolHashHelper'
+
+function toCurrencyInfo(c: Currency) {
+  return {
+    address: c.isNative ? ZERO_ADDRESS : c.address,
+    decimals: c.decimals,
+    isNative: c.isNative,
+    name: c.name,
+    symbol: c.symbol,
+  } as CurrencyInfo
+}
+
+export async function fetchApiPools(poolQuery: PoolQuery) {
+  const url = '/api/infinity/query'
+  const { chainId, currencyA, currencyB, infinity, v2Pools, v3Pools } = poolQuery
+  if (!currencyA || !currencyB || !chainId) {
+    return [] as Pool[]
+  }
+
+  const poolQueryReq: PoolQueryRequest = {
+    chainId,
+    currencyA: toCurrencyInfo(currencyA),
+    currencyB: toCurrencyInfo(currencyB),
+    infinity,
+    v2Pools,
+    v3Pools,
+  }
+  const body = JSON.stringify(poolQueryReq)
+  const res = await fetch(url, {
+    method: 'POST',
+    body,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+  const resp = await res.json()
+  const poolsSerialized = resp.data as SmartRouter.Transformer.SerializedPool[]
+  return poolsSerialized.map((pool) => {
+    return SmartRouter.Transformer.parsePool(chainId, pool)
+  })
+}
 
 export const poolQueriesFactory = (chainId: ChainId) => {
   const POOL_TTL = POOLS_FAST_REVALIDATE[chainId] ?? 10_000
@@ -17,6 +58,7 @@ export const poolQueriesFactory = (chainId: ChainId) => {
     const hash = PoolHashHelper.hashPoolQuery(query)
     return hash
   }
+
   const getV2CandidatePools = cacheByLRU(
     async (query: PoolQuery) => {
       const { currencyA, currencyB } = query

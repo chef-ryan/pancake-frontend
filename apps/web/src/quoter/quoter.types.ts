@@ -58,6 +58,23 @@ export interface PoolQuery {
   signal?: AbortSignal
   provider?: typeof getViemClients
 }
+
+export interface PoolQueryRequest {
+  chainId: ChainId
+  currencyA?: CurrencyInfo
+  currencyB?: CurrencyInfo
+  infinity: boolean
+  v2Pools: boolean
+  v3Pools: boolean
+}
+
+export interface CurrencyInfo {
+  isNative: boolean
+  address: `0x${string}`
+  decimals: number
+  symbol: string
+  name: string
+}
 interface PoolsHookParams {
   // Used for caching
   key?: string
