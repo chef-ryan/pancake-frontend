@@ -41,11 +41,15 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
     return `${persist?.name}-${persist?.version}`
   }
 
-  async function ensurePersist(promise: Promise<any>) {
+  async function ensurePersist(promise: Promise<any>, nextPromise: Promise<any> | undefined = undefined) {
     if (fetchR2Cache && persist) {
       const t = Date.now()
       const r2Promise = fetchR2Cache(persistKey())
-      const value = await Promise.race([r2Promise, promise])
+      const promises = [r2Promise, promise]
+      if (nextPromise) {
+        promises.push(nextPromise)
+      }
+      const value = await Promise.race(promises)
       console.log('*****time usage****', Date.now() - t)
       return value ?? promise
     }
@@ -78,7 +82,8 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
     // logger(cacheKey, `exists=${cache.has(cacheKey)}`)
 
     if (cache.has(cacheKey)) {
-      return ensurePersist(cache.get(cacheKey)!)
+      const nextPromise = cache.get(nextKey)
+      return ensurePersist(cache.get(cacheKey)!, nextPromise)
     }
 
     // @ts-ignore
