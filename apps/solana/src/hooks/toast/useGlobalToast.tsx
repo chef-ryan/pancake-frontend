@@ -1,9 +1,9 @@
-import { ToastPosition, useToast, UseToastOptions, ToastId } from '@chakra-ui/react'
+import { ToastId, ToastPosition, useToast, UseToastOptions } from '@chakra-ui/react'
 import { ReactNode, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Subject } from 'rxjs'
-
 import { v4 as uuid } from 'uuid'
+
 import { Toast } from '@/components/Toast'
 
 export interface RenderProps extends UseToastOptions {
@@ -28,12 +28,9 @@ export const toastSubject = new Subject<
 const toastConfig = {
   duration: 8000,
   isClosable: true,
-  position: 'bottom-right' as ToastPosition,
+  position: 'top-right' as ToastPosition,
   containerStyle: {
-    maxWidth: '300px',
-    '& .chakra-alert__desc': {
-      wordBreak: 'break-word'
-    }
+    maxWidth: '300px'
   }
 }
 
