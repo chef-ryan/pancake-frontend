@@ -116,7 +116,7 @@ const _fetchPoolData = async (c0: Currency, c1: Currency, chainId: ChainId) => {
 }
 
 const fetchPoolData = cacheByLRU(_fetchPoolData, {
-  ttl: 10_000,
+  ttl: 20_000, // Actual cache time is 10s because cacheByLRU will use 1/2 for background refresh
   maxCacheSize: 1000,
   key: ([c0, c1, chainId]) => {
     const chash = PoolHashHelper.hashCurrencies(c0, c1)
