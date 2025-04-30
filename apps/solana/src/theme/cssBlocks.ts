@@ -8,7 +8,7 @@ import { colors, sizes } from './cssVariables'
 export const heroGridientColorCSSBlock: SystemProps = {
   color: colors.textSecondary,
   fontSize: sizes.textHeroTitle,
-  fontWeight: '400'
+  fontWeight: '600'
 }
 
 export const panelCard: SystemProps = {

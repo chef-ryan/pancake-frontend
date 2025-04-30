@@ -10,7 +10,7 @@ import { colors } from '@/theme/cssVariables'
 export default function PageHeroTitle({ title, description }: { title: string; description?: string }) {
   const isMobile = useAppStore((s) => s.isMobile)
   return (
-    <VStack align="flex-start">
+    <VStack align="flex-start" gap="8px">
       {isMobile ? null : <Text {...heroGridientColorCSSBlock}>{title}</Text>}
       {description && (
         <Text fontSize={['sm', 'md']} color={colors.textSubtle}>

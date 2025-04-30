@@ -48,6 +48,9 @@ import { revertAppLayoutPaddingX } from '@/theme/detailConfig'
 import { isValidPublicKey } from '@/utils/publicKey'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
+import i18n from '@/i18n'
+import { setUrlQuery, useRouteQuery } from '@/utils/routeTools'
+import { urlToMint, mintToUrl } from '@/utils/token'
 import { useEffectWithUrl, useStateWithUrl } from '../../hooks/useStateWithUrl'
 import CreatePoolButton from './components/CreatePoolButton'
 import PoolChartModal from './components/PoolChart'
@@ -57,9 +60,6 @@ import PoolListItem from './components/PoolListItem'
 import TVLInfoPanel, { TVLInfoPanelMobile } from './components/TVLInfoPanel'
 import { useScrollTitleCollapse } from './useScrollTitleCollapse'
 import { getFavoritePoolCache, POOL_SORT_KEY } from './util'
-import i18n from '@/i18n'
-import { setUrlQuery, useRouteQuery } from '@/utils/routeTools'
-import { urlToMint, mintToUrl } from '@/utils/token'
 
 export type PoolPageQuery = {
   token?: string
@@ -418,7 +418,7 @@ export default function Pools() {
         {/* Title Part */}
         <Box {...titleContainerProps} display={['none', 'block']} flexShrink={0}>
           <Desktop>
-            <HStack justify="space-between" w="full" pb={4}>
+            <HStack justify="space-between" w="full" py={8}>
               <PageHeroTitle title={t('liquidity.pools')} description={t('liquidity.pools_desc') || ''} />
               <TVLInfoPanel tvl={tvl} volume={volume} />
             </HStack>
