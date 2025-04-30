@@ -1,3 +1,4 @@
+import { Button } from '@pancakeswap/uikit'
 import {
   Drawer,
   DrawerBody,
@@ -22,7 +23,6 @@ import { useTranslation } from 'react-i18next'
 
 import { colors } from '@/theme/cssVariables'
 
-import Button from './Button'
 import { Desktop, Mobile } from './MobileDesktop'
 
 type ResponsiveModalProps = ModalProps & {
@@ -62,17 +62,17 @@ export default function ResponsiveModal({
         <Modal {...rest} isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent {...propOfModalContent}>
-            <ModalHeader color={colors.textPrimary} fontWeight="medium" fontSize="xl">
+            <ModalHeader color={colors.textPrimary} fontWeight={600} fontSize="xl">
               {title}
             </ModalHeader>
-            <ModalCloseButton size="lg" color={colors.textSecondary} />
+            <ModalCloseButton size="lg" color={colors.textSubtle} />
             <ModalBody>{children}</ModalBody>
 
             {showFooter && (
               <ModalFooter mt={4}>
                 <VStack w="full" sx={footerSX}>
                   <Button
-                    w="full"
+                    width="100%"
                     onClick={() => {
                       onConfirm?.()
                       if (closeOnClickConfirmButton) onClose?.()
@@ -81,7 +81,7 @@ export default function ResponsiveModal({
                     {confirmText ?? t('button.confirm')}
                   </Button>
                   {hasSecondaryButton && (
-                    <Button w="full" variant="unstyled" color={colors.textSeptenary} fontWeight="medium" fontSize="sm" onClick={onClose}>
+                    <Button width="100%" variant="text" color={colors.textSeptenary} onClick={onClose}>
                       {cancelText ?? t('button.cancel')}
                     </Button>
                   )}
@@ -102,7 +102,7 @@ export default function ResponsiveModal({
               <DrawerFooter py={4}>
                 <VStack w="full">
                   <Button
-                    w="full"
+                    width="100%"
                     onClick={() => {
                       onConfirm?.()
                       if (closeOnClickConfirmButton) onClose?.()
@@ -111,7 +111,7 @@ export default function ResponsiveModal({
                     {confirmText ?? t('button.confirm')}
                   </Button>
                   {hasSecondaryButton && (
-                    <Button w="full" variant="unstyled" color={colors.textSeptenary} fontWeight="medium" fontSize="sm" onClick={onClose}>
+                    <Button width="100%" variant="text" color={colors.textSeptenary} onClick={onClose}>
                       {cancelText ?? t('button.cancel')}
                     </Button>
                   )}

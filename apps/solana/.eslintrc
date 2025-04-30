@@ -9,7 +9,7 @@
     "import/order": [
       "error",
       {
-        "groups": ["builtin", "external", "internal"],
+        "groups": ["external", "builtin", "internal"],
         "newlines-between": "ignore",
         "pathGroups": [
           {

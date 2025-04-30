@@ -1,10 +1,10 @@
 import { Box, Button, HStack, SimpleGrid, Text, VStack } from '@chakra-ui/react'
+import { SwapHorizIcon } from '@pancakeswap/uikit'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import CircleCheck from '@/icons/misc/CircleCheck'
 import SquareDIcon from '@/icons/misc/SquareDIcon'
 import SquareMIcon from '@/icons/misc/SquareMIcon'
-import SwapHorizontalIcon from '@/icons/misc/SwapHorizontalIcon'
 import { SvgIcon } from '@/icons/type'
 import { useAppStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
@@ -40,17 +40,15 @@ export default function AprMDSwitchWidget(props: SvgIcon) {
       <Tooltip
         label={(handlers) => (
           <SimpleGrid gridTemplateColumns="auto auto" alignItems="center" rowGap={2}>
-            <Text fontSize="sm" fontWeight={500} color={colors.textPrimary}>
-              {aprMode === 'D' ? text.D.title : text.M.title}
-            </Text>
+            <Text fontSize="sm">{aprMode === 'D' ? text.D.title : text.M.title}</Text>
             <Button variant="ghost" size="sm" justifySelf="end" width="fit-content" onClick={toggleAprMode}>
-              <HStack>
-                <SwapHorizontalIcon />
+              <HStack color={colors.primary60}>
+                <SwapHorizIcon color={colors.primary60} />
                 <Text>{t('button.switch')}</Text>
               </HStack>
             </Button>
             <Box gridColumn="span 2">
-              <Text fontSize="xs" color={colors.textTertiary}>
+              <Text fontSize="xs">
                 {aprMode === 'D' ? text.D.description : text.M.description}
                 <Text
                   as="span"
@@ -70,7 +68,9 @@ export default function AprMDSwitchWidget(props: SvgIcon) {
           </SimpleGrid>
         )}
       >
-        <Box onClick={toggleAprMode}>{aprMode === 'D' ? <SquareDIcon {...props} /> : <SquareMIcon {...props} />}</Box>
+        <Box onClick={toggleAprMode}>
+          {aprMode === 'D' ? <SquareDIcon color={colors.textSubtle} {...props} /> : <SquareMIcon color={colors.textSubtle} {...props} />}
+        </Box>
       </Tooltip>
       <AprCalcDialog
         isOpen={isAprDialogOpen}
@@ -116,7 +116,7 @@ export function AprCalcDialog(props: { isOpen: boolean; onClose(): void }) {
       isOpen={props.isOpen}
       onClose={props.onClose}
     >
-      <Box color={colors.textSecondary}>
+      <Box color={colors.textPrimary}>
         <Text>{t('apr_dialog.desc')}</Text>
         <Text color={colors.semanticWarning}>{t('apr_dialog.warning_note')}</Text>
       </Box>

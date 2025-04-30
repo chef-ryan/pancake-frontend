@@ -1,4 +1,4 @@
-import { Button, HStack } from '@chakra-ui/react'
+import { Button, HStack, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 
 import { colors } from '@/theme/cssVariables/colors'
@@ -12,7 +12,7 @@ interface Props {
   onClick: (val: number) => void
 }
 
-export default function ({ options, selected, onClick }: Props) {
+export default ({ options, selected, onClick }: Props) => {
   const { t } = useTranslation()
   const displayOptions = options || OPTIONS
 
@@ -22,25 +22,23 @@ export default function ({ options, selected, onClick }: Props) {
         const isSelected = selected === val
         return (
           <Button
-            onClick={() => onClick(val)}
-            variant="outline"
+            variant="primary60"
             size="xs"
-            opacity={isSelected ? '1' : '0.5'}
-            borderColor={colors.primary}
-            bg={isSelected ? colors.backgroundDark : 'inherit'}
-            color={isSelected ? colors.textPrimary : colors.textSecondary}
-            _hover={isSelected ? { background: colors.backgroundDark } : undefined}
-            px={4}
-            py={1.5}
-            height="unset"
             key={`tab-${val}`}
+            px="14px"
+            py="4px"
+            height="28px"
+            borderBottomWidth={isSelected ? '0' : '2px'}
+            onClick={() => onClick(val)}
           >
             ± {toPercentString(val, { alreadyPercented: false })}
           </Button>
         )
       })}
-      <Button onClick={() => onClick(0)} variant="unstyled" size="xs" color={colors.textTertiary}>
-        {t('button.reset')}
+      <Button onClick={() => onClick(0)} variant="unstyled" size="xs">
+        <Text color={colors.primary60} fontWeight={600}>
+          {t('button.reset')}
+        </Text>
       </Button>
     </HStack>
   )

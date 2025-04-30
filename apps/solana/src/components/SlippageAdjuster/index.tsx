@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Box, Flex, Text } from '@chakra-ui/react'
-import { Button } from '@pancakeswap/uikit'
+import { Box, Button, Flex, Text } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
 import { colors } from '@/theme/cssVariables'
 import { useLiquidityStore } from '@/store'
@@ -34,11 +33,9 @@ export function SlippageAdjuster({ variant = 'swap', onClick }: { variant?: 'swa
           size="xs"
           height="fit-content"
           py={1}
-          px={2}
           borderRadius="12px"
-          border={isWarn ? `1px solid ${colors.semanticWarning}` : '1px solid transparent'}
-          startIcon={
-            <Box>
+          leftIcon={
+            <Box mr="-4px">
               <MoreListControllers
                 width="14"
                 height="14"

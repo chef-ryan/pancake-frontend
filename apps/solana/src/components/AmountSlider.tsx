@@ -1,7 +1,6 @@
-import { Button, Slider } from '@pancakeswap/uikit'
-import { Box, BoxProps, HStack, SliderFilledTrack, SliderThumb, SliderTrack, Text } from '@chakra-ui/react'
+import { Slider } from '@pancakeswap/uikit'
+import { Button, Box, BoxProps, HStack, Text } from '@chakra-ui/react'
 import { ReactNode, RefObject, useEffect, useState, useImperativeHandle } from 'react'
-import { Menu } from 'react-feather'
 import { useTranslation } from 'react-i18next'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { colors } from '@/theme/cssVariables'
@@ -86,42 +85,21 @@ export default function AmountSlider({
 
         <Desktop>
           <HStack spacing={sizes.buttonSpace}>
-            <Button
-              {...btnStyle}
-              onClick={() => {
-                setHotPercent(25)
-                setPercent(25)
-              }}
-            >
-              25%
-            </Button>
-            <Button
-              {...btnStyle}
-              onClick={() => {
-                setHotPercent(50)
-                setPercent(50)
-              }}
-            >
-              50%
-            </Button>
-            <Button
-              {...btnStyle}
-              onClick={() => {
-                setHotPercent(75)
-                setPercent(75)
-              }}
-            >
-              75%
-            </Button>
-            <Button
-              {...btnStyle}
-              onClick={() => {
-                setHotPercent(100)
-                setPercent(100)
-              }}
-            >
-              100%
-            </Button>
+            {[25, 50, 75, 100].map((percent) => (
+              <Button
+                disabled={isDisabled}
+                height="28px"
+                px="8px"
+                variant="primary60"
+                size="xs"
+                onClick={() => {
+                  setHotPercent(percent)
+                  setPercent(percent)
+                }}
+              >
+                {percent}%
+              </Button>
+            ))}
           </HStack>
         </Desktop>
       </HStack>
@@ -139,42 +117,21 @@ export default function AmountSlider({
       </Box>
       <Mobile>
         <HStack spacing={sizes.buttonSpace}>
-          <Button
-            {...btnStyle}
-            onClick={() => {
-              setHotPercent(25)
-              setPercent(25)
-            }}
-          >
-            25%
-          </Button>
-          <Button
-            {...btnStyle}
-            onClick={() => {
-              setHotPercent(50)
-              setPercent(50)
-            }}
-          >
-            50%
-          </Button>
-          <Button
-            {...btnStyle}
-            onClick={() => {
-              setHotPercent(75)
-              setPercent(75)
-            }}
-          >
-            75%
-          </Button>
-          <Button
-            {...btnStyle}
-            onClick={() => {
-              setHotPercent(100)
-              setPercent(100)
-            }}
-          >
-            100%
-          </Button>
+          {[25, 50, 75, 100].map((percent) => (
+            <Button
+              disabled={isDisabled}
+              height="28px"
+              px="8px"
+              variant="primary60"
+              size="xs"
+              onClick={() => {
+                setHotPercent(percent)
+                setPercent(percent)
+              }}
+            >
+              {percent}%
+            </Button>
+          ))}
         </HStack>
       </Mobile>
     </PanelCard>

@@ -8,7 +8,8 @@ export const Button = {
   sizes: {
     xs: {
       height: '20px',
-      paddingInline: '6px'
+      paddingInline: '6px',
+      borderRadius: '8px'
     },
     sm: {
       minHeight: '30px',
@@ -153,6 +154,24 @@ export const Button = {
       '&:disabled:disabled': {
         opacity: '0.5',
         background: colors.textPink
+      }
+    },
+    primary60: {
+      border: 'none',
+      borderBottom: '2px solid rgba(0, 0, 0, 0.10)',
+      color: colors.primary60,
+      bg: colors.tertiary,
+      borderRadius: '8px',
+      fontWeight: '600',
+      _hover: {
+        opacity: '0.7'
+      },
+      _active: {
+        opacity: '0.9',
+        borderBottom: '0'
+      },
+      '&:disabled:disabled': {
+        opacity: '0.5'
       }
     }
   }

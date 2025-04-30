@@ -23,19 +23,19 @@ export default function EstimatedAprInfo({ aprData, value, onChange }: Props) {
   const { t } = useTranslation()
 
   return (
-    <Box borderRadius="xl" borderWidth="1px" borderColor={colors.backgroundTransparent07} p={[2, 4]}>
+    <Box borderRadius="xl" borderWidth="1px" borderColor={colors.backgroundTransparent07} pt={[2, 4]}>
       <Flex justifyContent="space-between" alignItems="flex-start">
         <HStack>
-          <Text fontSize={['sm', 'md']} fontWeight="500" color={colors.textSecondary}>
+          <Text variant="title" fontSize={['sm', 'md']} color={colors.textPrimary}>
             {t('common.estimated_APR')}
           </Text>
           <AprMDSwitchWidget />
         </HStack>
-        <Tabs variant="squarePanelDark" tabItemSX={{ fontSize: ['xs', 'sm'] }} value={value} onChange={onChange} items={timeBasisOptions} />
+        <Tabs variant="subtle" tabItemSX={{ fontSize: ['xs', 'sm'] }} value={value} onChange={onChange} items={timeBasisOptions} />
       </Flex>
       <Flex gap="3" alignItems="center">
         {!isMobile && (
-          <Text fontWeight="500" size="lg">
+          <Text fontWeight="600" fontSize="sm">
             {formatToRawLocaleStr(toPercentString(aprData?.apr || 0))}
           </Text>
         )}
@@ -71,18 +71,18 @@ export default function EstimatedAprInfo({ aprData, value, onChange }: Props) {
 
         <Flex flexWrap="wrap" columnGap={[2, 4]} rowGap={1}>
           {aprData?.fee ? (
-            <Flex alignItems="center" gap="2" fontSize="sm" color={colors.textTertiary}>
+            <Flex alignItems="center" gap="2" fontSize="sm" color={colors.textSubtle}>
               <Box w="7px" h="7px" bg={PORTFOLIO_PIE_COLORS[0]} rounded="full" />
               {t('field.trade_fees')}{' '}
-              <Text color={colors.textPrimary} fontWeight="500">
+              <Text color={colors.textPrimary} fontWeight="600">
                 {formatToRawLocaleStr(toPercentString(aprData.fee.apr || 0))}
               </Text>
             </Flex>
           ) : null}
           {aprData?.rewards.map((d, idx) => (
-            <Flex key={d.mint?.address || 'fees'} alignItems="center" gap="2" fontSize="sm" color={colors.textTertiary}>
+            <Flex key={d.mint?.address || 'fees'} alignItems="center" gap="2" fontSize="sm" color={colors.textSubtle}>
               <Box w="7px" h="7px" bg={PORTFOLIO_PIE_COLORS[(idx + 1) % PORTFOLIO_PIE_COLORS.length]} rounded="full" />
-              <Text color={colors.textPrimary} fontWeight="500">
+              <Text color={colors.textPrimary} fontWeight="600">
                 {formatToRawLocaleStr(toPercentString(d.apr))}
               </Text>
             </Flex>

@@ -1,11 +1,12 @@
+import { ErrorIcon, Message, MessageText } from '@pancakeswap/uikit'
 import { Box, Flex, Grid, GridItem, HStack, Tag, Text, useDisclosure } from '@chakra-ui/react'
 import { ApiV3PoolInfoConcentratedItem, ApiV3Token, PoolFetchType, solToWSol } from '@raydium-io/raydium-sdk-v2'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
+
 import ConnectedButton from '@/components/ConnectedButton'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
 import { AprKey } from '@/hooks/pool/type'
@@ -17,34 +18,34 @@ import { colors } from '@/theme/cssVariables'
 import { formatToMaxDigit, getFirstNonZeroDecimal, formatCurrency, formatToRawLocaleStr, trimTrailZero } from '@/utils/numberish/formatter'
 import toPercentString from '@/utils/numberish/toPercentString'
 import IntervalCircle, { IntervalCircleHandler } from '@/components/IntervalCircle'
-import EstimatedAprInfo from '../components/AprInfo'
-import ChartPriceLabel from '../components/ChartPriceLabel'
-import LiquidityChartRangeInput from '../components/LiquidityChartRangeInput'
-import PreviewDepositModal from '../components/PreviewDepositModal'
-import PriceSwitchButton from '../components/PriceSwitchButton'
-import RangeInput, { Side } from '../components/RangeInput'
-import RangePercentTabs from '../components/RangePercentTabs'
-import CLMMTokenInputGroup, { InputSide } from '../components/TokenInputGroup'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
-import { getPriceBoundary } from '../utils/tick'
-import DepositedNFTModal from './DepositedNFTModal'
-import useValidate from './useValidate'
-
 import { Desktop } from '@/components/MobileDesktop'
 import ChevronLeftIcon from '@/icons/misc/ChevronLeftIcon'
 import LockIcon from '@/icons/misc/LockIcon'
 import WarningIcon from '@/icons/misc/WarningIcon'
-import CircleWarning from '@/icons/misc/CircleWarning'
 import { debounce } from '@/utils/functionMethods'
 import { routeBack, useRouteQuery } from '@/utils/routeTools'
 import { wSolToSol } from '@/utils/token'
-import { calRatio } from '../utils/math'
 import useClmmApr from '@/features/Clmm/useClmmApr'
 import { useEvent } from '@/hooks/useEvent'
 import { SlippageAdjuster } from '@/components/SlippageAdjuster'
 import useBirdeyeTokenPrice from '@/hooks/token/useBirdeyeTokenPrice'
 import useFetchRpcClmmInfo from '@/hooks/pool/clmm/useFetchRpcClmmInfo'
-import { inputCard, panelCard } from '@/theme/cssBlocks'
+import { panelCard } from '@/theme/cssBlocks'
+import { Side } from '@/features/Create/ClmmPool/components/SetPriceAndRange'
+
+import { calRatio } from '../utils/math'
+import EstimatedAprInfo from '../components/AprInfo'
+import ChartPriceLabel from '../components/ChartPriceLabel'
+import LiquidityChartRangeInput from '../components/LiquidityChartRangeInput'
+import PreviewDepositModal from '../components/PreviewDepositModal'
+import PriceSwitchButton from '../components/PriceSwitchButton'
+import RangeInput from '../components/RangeInput'
+import RangePercentTabs from '../components/RangePercentTabs'
+import CLMMTokenInputGroup, { InputSide } from '../components/TokenInputGroup'
+import { getPriceBoundary } from '../utils/tick'
+import DepositedNFTModal from './DepositedNFTModal'
+import useValidate from './useValidate'
 
 type FormatParams = Parameters<typeof formatToMaxDigit>[0]
 
@@ -575,10 +576,8 @@ export default function CreatePosition() {
               onLeftBlur={handleLeftRangeBlur}
               onRightBlur={handleRightRangeBlur}
               onClickAdd={handleClickAdd}
-              postfix={t('common.per_unit', {
-                subA: baseIn ? currentPool?.mintB.symbol : currentPool?.mintA.symbol,
-                subB: baseIn ? currentPool?.mintA.symbol : currentPool?.mintB.symbol
-              })}
+              tokenBase={baseIn ? currentPool?.mintB : currentPool?.mintA}
+              tokenQuote={baseIn ? currentPool?.mintA : currentPool?.mintB}
             />
           </GridItem>
 
@@ -597,38 +596,24 @@ export default function CreatePosition() {
       </GridItem>
 
       <GridItem area="inputs">
-        <Flex
-          fontWeight={500}
-          w="full"
-          flexDirection="column"
-          justifyContent="space-between"
-          rounded="xl"
-          bg={colors.backgroundLight}
-          p="4"
-        >
+        <Flex rounded="xl" p={[3, '20px']} gap={[2, 4]} {...panelCard} w="full" flexDirection="column" justifyContent="space-between">
           <Flex alignItems="center" justifyContent="space-between" mb="3">
-            <Flex>{t('clmm.add_deposit_amount')}</Flex>
+            <Text variant="title">{t('clmm.add_deposit_amount')}</Text>
             <Flex align="center" gap={3}>
               <SlippageAdjuster variant="liquidity" />
               <IntervalCircle
+                svgWidth={18}
+                strokeWidth={3}
+                trackStrokeColor={colors.textSecondary}
+                trackStrokeOpacity={0.5}
+                filledTrackStrokeColor={colors.textSecondary}
                 componentRef={refreshCircleRef}
                 duration={60 * 1000}
-                svgWidth={18}
-                strokeWidth={2}
-                trackStrokeColor={colors.secondary}
-                trackStrokeOpacity={0.5}
-                filledTrackStrokeColor={colors.secondary}
                 onClick={handleClickRefresh}
                 onEnd={handleClickRefresh}
               />
             </Flex>
           </Flex>
-          {/* TODO not need now */}
-          {/* <Flex color={colors.textSecondary} fontSize="sm" mb="4" alignItems="center" gap="1" mt="2">
-            <Text>{t('clmm.match_deposit_ratio')}</Text>
-            <QuestionToolTip iconType="info" label={t('clmm.match_deposit_ratio_tooltip')} />
-            <Switch />
-          </Flex> */}
           <CLMMTokenInputGroup
             disableSelectToken
             pool={currentPool}
@@ -641,16 +626,20 @@ export default function CreatePosition() {
             token2Disable={disabledInput[1]}
             maxMultiplier={0.985}
           />
-          <Box border={`1px solid ${colors.backgroundTransparent07}`} bg={colors.backgroundTransparent12} p="4" mt="4" borderRadius="xl">
+          <Box>
             <HStack justifyContent="space-between">
-              <Text fontSize={['sm', 'md']}>{t('clmm.total_deposit')}</Text>
-              <Text fontSize="lg" fontWeight="500">
+              <Text fontSize="sm" color={colors.textSubtle}>
+                {t('clmm.total_deposit')}
+              </Text>
+              <Text fontSize="sm">
                 {tokenAmount[0] && tokenAmount[1] ? formatCurrency(totalPrice.toString(), { symbol: '$', decimalPlaces: 2 }) : '--'}
               </Text>
             </HStack>
             <HStack justifyContent="space-between" mt={1.5}>
-              <Text fontSize={['sm', 'md']}>{t('clmm.deposit_ratio')}</Text>
-              <Flex alignItems="center" gap="2" fontWeight="500" fontSize="xs">
+              <Text fontSize="sm" color={colors.textSubtle}>
+                {t('clmm.deposit_ratio')}
+              </Text>
+              <Flex alignItems="center" gap="2" fontSize="sm" color={colors.positive60}>
                 <Text>
                   {formatToRawLocaleStr(
                     toPercentString(ratioA, {
@@ -685,24 +674,24 @@ export default function CreatePosition() {
             ) : null}
           </Box>
           {isLowLiquidity ? (
-            <Flex
-              color={colors.text01}
-              border={`1px solid ${colors.backgroundTransparent07}`}
-              bg={colors.warnButtonLightBg}
-              p="4"
-              mt="4"
-              borderRadius="xl"
-            >
-              <Text pt={0.5}>
-                <CircleWarning width={16} height={16} color={colors.semanticWarning} />
-              </Text>
-              <Text fontWeight="bold" fontSize="xs" pl={1.5} textOverflow="ellipsis" whiteSpace="pre-wrap" overflow="hidden">
-                {t('clmm.low_liquidity')}
-                <Text fontWeight="normal" as="span">
-                  {t('clmm.low_liquidity_desc')}
+            <Message variant="warning" icon={<ErrorIcon color={colors.warning50} />} style={{ borderColor: colors.warning20 }}>
+              <MessageText>
+                <Text
+                  color={colors.textPrimary}
+                  fontWeight="bold"
+                  fontSize="xs"
+                  pl={1.5}
+                  textOverflow="ellipsis"
+                  whiteSpace="pre-wrap"
+                  overflow="hidden"
+                >
+                  {t('clmm.low_liquidity')}
+                  <Text fontWeight="normal" as="span">
+                    {t('clmm.low_liquidity_desc')}
+                  </Text>
                 </Text>
-              </Text>
-            </Flex>
+              </MessageText>
+            </Message>
           ) : null}
           <ConnectedButton
             width="100%"

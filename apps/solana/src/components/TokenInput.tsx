@@ -11,6 +11,8 @@ import ChevronDownIcon from '@/icons/misc/ChevronDownIcon'
 import { useAppStore, useTokenAccountStore, useTokenStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { trimTrailZero, formatCurrency, detectedSeparator } from '@/utils/numberish/formatter'
+import useResponsive from '@/hooks/useResponsive'
+import { inputCard, inputFocusStyle } from '@/theme/cssBlocks'
 
 import Button from './Button'
 import TokenAvatar from './TokenAvatar'
@@ -18,8 +20,6 @@ import TokenSelectDialog, { TokenSelectDialogProps } from './TokenSelectDialog'
 import TokenUnknownAddDialog from './TokenSelectDialog/components/TokenUnknownAddDialog'
 import TokenFreezeDialog from './TokenSelectDialog/components/TokenFreezeDialog'
 import { TokenListHandles } from './TokenSelectDialog/components/TokenList'
-import useResponsive from '@/hooks/useResponsive'
-import { inputCard, inputFocusStyle } from '@/theme/cssBlocks'
 
 const linkButtonStyle = {
   variant: 'link' as const,
@@ -141,10 +141,10 @@ function TokenInput(props: TokenInputProps) {
   const sizes = useMemo(() => {
     const size = inputSize ?? isMobile ? 'sm' : 'md'
     return {
-      inputText: size === 'sm' ? 'lg' : '28px',
-      tokenSymbol: size === 'sm' ? 'lg' : '2xl',
+      inputText: size === 'sm' ? 'lg' : '2xl',
+      tokenSymbol: size === 'sm' ? 'lg' : 'xl',
       tokenIcon: size === 'sm' ? 'sm' : 'md',
-      disableSelectTokenIconSize: size === 'sm' ? 'md' : '40px',
+      disableSelectTokenIconSize: size === 'sm' ? 'md' : 'md',
       opacityVolume: size === 'sm' ? 'xs' : 'sm',
       downerUpperGridPx: size === 'sm' ? '12px' : '18px',
       downerGridPy: size === 'sm' ? '14px' : '16px',
@@ -296,6 +296,7 @@ function TokenInput(props: TokenInputProps) {
   useEffect(() => {
     if (!defaultUnknownToken) return
     handleSelectToken(defaultUnknownToken)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleSelectToken, defaultUnknownToken?.address])
 
   useImperativeHandle(actionRef, () => ({

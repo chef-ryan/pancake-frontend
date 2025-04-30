@@ -6,28 +6,32 @@ import { Box, Text, Flex, HStack, VStack, SimpleGrid, Skeleton } from '@chakra-u
 import shallow from 'zustand/shallow'
 import Decimal from 'decimal.js'
 import { useTranslation } from 'react-i18next'
+
 import DecimalInput from '@/components/DecimalInput'
 import PanelCard from '@/components/PanelCard'
 import Tabs from '@/components/Tabs'
 import HorizontalSwitchSmallIcon from '@/icons/misc/HorizontalSwitchSmallIcon'
 import EditIcon from '@/icons/misc/EditIcon'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
-
 import { useClmmStore } from '@/store/useClmmStore'
 import { debounce } from '@/utils/functionMethods'
 import { colors } from '@/theme/cssVariables/colors'
 import { wSolToSolString } from '@/utils/token'
-import { usePriceRangeValidate } from '../useValidate'
-import { TickData } from './type'
-
-import { Side } from '@/features/Clmm/components/RangeInput'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
 import { useEvent } from '@/hooks/useEvent'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import { extractNumberOnly } from '@/utils/numberish/regex'
 import { inputCard } from '@/theme/cssBlocks'
 
-const IconStyle = {
+import { usePriceRangeValidate } from '../useValidate'
+import { TickData } from './type'
+
+export enum Side {
+  Left = 'left',
+  Right = 'right'
+}
+
+export const IconStyle = {
   cursor: 'pointer',
   color: colors.primary60,
   border: `2px solid ${colors.primary60}`,
@@ -36,7 +40,8 @@ const IconStyle = {
   height: '20px',
   borderRadius: '50%'
 }
-const RangeInputStyle = {
+
+export const RangeInputStyle = {
   ctr: { border: 'none', borderRadius: 'none', userSelect: 'none' },
   input: { h: '24px', textAlign: ['left', 'center'], fontWeight: 500, fontSize: 'sm' },
   inputGroup: {
@@ -467,12 +472,13 @@ export default function SetPriceAndRange({
   )
 }
 export function PriceRangeInputBox(props: {
+  disabled?: boolean
   side: Side
   topLabel: string
   currentPriceRangeValue: string
   decimals: number
-  base: ApiV3Token
-  quote: ApiV3Token
+  base?: ApiV3Token
+  quote?: ApiV3Token
   onFocus?: () => void
   onAdd: () => void
   onMinus: () => void
@@ -485,7 +491,7 @@ export function PriceRangeInputBox(props: {
       <Desktop>
         <Flex justifyContent="center" gap="1" sx={{ ...inputCard, alignItems: 'center', p: '8px' }}>
           <Minus style={IconStyle} onClick={props.onMinus} />
-          <Box textAlign="center" justifyContent="center" width="130px">
+          <Box textAlign="center" justifyContent="center" minWidth="120px" width="fit-content">
             <Text textTransform="uppercase" whiteSpace="nowrap" variant="label" userSelect="none" color={colors.textSecondary}>
               {props.topLabel}
             </Text>
@@ -494,6 +500,7 @@ export function PriceRangeInputBox(props: {
               ctrSx={RangeInputStyle.ctr}
               inputSx={RangeInputStyle.input}
               inputGroupSx={RangeInputStyle.inputGroup}
+              disabled={props.disabled}
               side={props.side}
               value={props.currentPriceRangeValue}
               decimals={props.decimals}
@@ -501,12 +508,14 @@ export function PriceRangeInputBox(props: {
               onBlur={props.onInputBlur}
               onChange={props.onInputChange}
             />
-            <Text variant="label" userSelect="none">
-              {t('common.per_unit', {
-                subA: wSolToSolString(props.base.symbol),
-                subB: wSolToSolString(props.quote.symbol)
-              })}
-            </Text>
+            {props.base?.symbol && props.quote?.symbol ? (
+              <Text variant="label" userSelect="none">
+                {t('common.per_unit', {
+                  subA: wSolToSolString(props.base.symbol),
+                  subB: wSolToSolString(props.quote.symbol)
+                })}
+              </Text>
+            ) : null}
           </Box>
           <Plus style={IconStyle} cursor="pointer" onClick={props.onAdd} />
         </Flex>
@@ -529,12 +538,14 @@ export function PriceRangeInputBox(props: {
               onBlur={props.onInputBlur}
               onChange={props.onInputChange}
             />
-            <Text variant="label" userSelect="none" whiteSpace="nowrap">
-              {t('common.per_unit', {
-                subA: wSolToSolString(props.base.symbol),
-                subB: wSolToSolString(props.quote.symbol)
-              })}
-            </Text>
+            {props.base?.symbol && props.quote?.symbol ? (
+              <Text variant="label" userSelect="none" whiteSpace="nowrap">
+                {t('common.per_unit', {
+                  subA: wSolToSolString(props.base.symbol),
+                  subB: wSolToSolString(props.quote.symbol)
+                })}
+              </Text>
+            ) : null}
           </HStack>
         </HStack>
       </Mobile>
