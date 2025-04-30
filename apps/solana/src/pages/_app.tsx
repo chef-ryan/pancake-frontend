@@ -1,37 +1,38 @@
 import { ResetCSS } from '@pancakeswap/uikit'
 import { getCookie } from 'cookies-next'
+import Decimal from 'decimal.js'
 import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
-import Head from 'next/head'
 import dynamic from 'next/dynamic'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
-import Decimal from 'decimal.js'
 
-import '@/components/Toast/toast.css'
 import '@/components/LandingPage/components/tvl.css'
 import '@/components/LandingPage/liquidity.css'
-import 'react-day-picker/dist/style.css'
+import '@/components/Toast/toast.css'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { DefaultSeo } from 'next-seo'
 import { SEO } from 'next-seo.config'
-import { isClient } from '../utils/common'
+import 'react-day-picker/dist/style.css'
 import i18n from '../i18n'
+import { isClient } from '../utils/common'
 
 const DynamicProviders = dynamic(() => import('@/provider').then((mod) => mod.Providers))
 const DynamicContent = dynamic(() => import('@/components/Content'))
 const DynamicAppNavLayout = dynamic(() => import('@/components/AppLayout/AppNavLayout'), { ssr: false })
 
 const CONTENT_ONLY_PATH = ['/', '404', '/moonpay']
-const OVERFLOW_HIDDEN_PATH = ['/liquidity-pools']
+const OVERFLOW_HIDDEN_PATH = ['/liquidity-pools', '/swap']
+const FULL_SIZE_PATH = ['/swap']
 
 Decimal.set({ precision: 1e3 })
 
 const MyApp = ({ Component, pageProps, ...props }: AppProps) => {
   const { pathname } = useRouter()
 
-  const [onlyContent, overflowHidden] = useMemo(
-    () => [CONTENT_ONLY_PATH.includes(pathname), OVERFLOW_HIDDEN_PATH.includes(pathname)],
+  const [onlyContent, overflowHidden, fullSize] = useMemo(
+    () => [CONTENT_ONLY_PATH.includes(pathname), OVERFLOW_HIDDEN_PATH.includes(pathname), FULL_SIZE_PATH.includes(pathname)],
     [pathname]
   )
 
@@ -49,7 +50,7 @@ const MyApp = ({ Component, pageProps, ...props }: AppProps) => {
           {onlyContent ? (
             <Component {...pageProps} />
           ) : (
-            <DynamicAppNavLayout overflowHidden={overflowHidden}>
+            <DynamicAppNavLayout overflowHidden={overflowHidden} fullSize={fullSize}>
               <Component {...pageProps} />
             </DynamicAppNavLayout>
           )}

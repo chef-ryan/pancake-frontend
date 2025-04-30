@@ -1,28 +1,28 @@
-import { LogoIcon, LogoWithTextIcon } from '@pancakeswap/uikit'
-import { Box, Flex, HStack, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React, { ReactNode, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useDisclosure } from '@/hooks/useDelayDisclosure'
 import Gear from '@/icons/misc/Gear'
 import { useAppStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { appLayoutPaddingX } from '@/theme/detailConfig'
-import { useDisclosure } from '@/hooks/useDelayDisclosure'
+import { Box, Flex, HStack, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react'
+import { LogoIcon, LogoWithTextIcon } from '@pancakeswap/uikit'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { ReactNode, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Desktop, Mobile } from '../MobileDesktop'
 import SolWallet from '../SolWallet'
+import AppVersion from './AppVersion'
 import { MobileBottomNavbar } from './MobileBottomNavbar'
 import { ColorThemeSettingField } from './components/ColorThemeSettingField'
 import { DefaultExplorerSettingField } from './components/DefaultExplorerSettingField'
+import DisclaimerModal from './components/DisclaimerModal'
 import { LanguageSettingField } from './components/LanguageSettingField'
+import { PriorityButton } from './components/PriorityButton'
 import { RPCConnectionSettingField } from './components/RPCConnectionSettingField'
 import { Divider } from './components/SettingFieldDivider'
 import { SlippageToleranceSettingField } from './components/SlippageToleranceSettingField'
 import { VersionedTransactionSettingField } from './components/VersionedTransactionSettingField'
-import { PriorityButton } from './components/PriorityButton'
-import DisclaimerModal from './components/DisclaimerModal'
-import AppVersion from './AppVersion'
 
 export interface NavSettings {
   // colorTheme: 'dark' | 'light'
@@ -30,11 +30,14 @@ export interface NavSettings {
 
 function AppNavLayout({
   children,
-  overflowHidden
+  overflowHidden,
+  fullSize = false
 }: {
   children: ReactNode
   /** use screen height */
   overflowHidden?: boolean
+  /** no padding */
+  fullSize?: boolean
 }) {
   const { t } = useTranslation()
   const { pathname } = useRouter()
@@ -78,8 +81,8 @@ function AppNavLayout({
       </HStack>
 
       <Box
-        px={appLayoutPaddingX}
-        pt={[0, 4]}
+        px={fullSize ? 0 : appLayoutPaddingX}
+        pt={fullSize ? 0 : [0, 4]}
         flex={1}
         overflow={overflowHidden ? 'hidden' : 'auto'}
         display="flex"

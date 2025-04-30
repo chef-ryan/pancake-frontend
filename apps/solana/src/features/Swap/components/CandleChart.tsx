@@ -1,12 +1,21 @@
+import useFetchPoolKLine, { TimeType } from '@/hooks/pool/useFetchPoolKLine'
+import { colors } from '@/theme/cssVariables/colors'
+import { formatCurrency } from '@/utils/numberish/formatter'
 import { AbsoluteCenter, Box, GridItem, Spinner, Text, useColorMode } from '@chakra-ui/react'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import dayjs from 'dayjs'
-import { ColorType, CrosshairMode, IChartApi, ISeriesApi, TickMarkType, createChart } from 'lightweight-charts'
+import {
+  CandlestickData,
+  ColorType,
+  CrosshairMode,
+  IChartApi,
+  ISeriesApi,
+  MouseEventParams,
+  TickMarkType,
+  createChart
+} from 'lightweight-charts'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { colors } from '@/theme/cssVariables/colors'
-import useFetchPoolKLine, { TimeType } from '@/hooks/pool/useFetchPoolKLine'
-import { formatCurrency } from '@/utils/numberish/formatter'
 
 interface Props {
   onPriceChange?: (val: { current: number; change: number } | undefined) => void
@@ -14,6 +23,18 @@ interface Props {
   quoteMint?: ApiV3Token
   timeType: TimeType
   untilDate?: number
+}
+
+const getChartColors = (colorMode: 'light' | 'dark') => {
+  const chartTextColor = colorMode === 'light' ? '#474ABB' : '#ABC4FF'
+  const axisColor = '#ecf5ff1a'
+  const volumeColor = colorMode === 'light' ? '#7191FF4d' : '#7081943e'
+  const upColor = '#31D0AA'
+  const downColor = '#ED4B9E'
+  const crosshairColor = colorMode === 'light' ? '#474ABB' : '#ABC4FF'
+  const gridColor = colorMode === 'light' ? '#E7E3EB80' : '#38324180'
+
+  return { chartTextColor, axisColor, volumeColor, upColor, downColor, crosshairColor, gridColor }
 }
 
 export default function CandleChart({ onPriceChange, baseMint, quoteMint, timeType, untilDate }: Props) {
@@ -35,18 +56,16 @@ export default function CandleChart({ onPriceChange, baseMint, quoteMint, timeTy
 
   useEffect(() => {
     if (!pair) return
-    const chartTextColor = colorMode === 'light' ? '#474ABB' : '#ABC4FF'
-    const axisColor = '#ecf5ff1a'
-    const volumeColor = colorMode === 'light' ? '#7191FF4d' : '#7081943e'
-    const upColor = '#22D1F8'
-    const downColor = '#ff4ea3'
-    const crosshairColor = colorMode === 'light' ? '#474ABB' : '#ABC4FF'
+    const { chartTextColor, axisColor, volumeColor, upColor, downColor, crosshairColor, gridColor } = getChartColors(colorMode)
     const chart = createChart(chartCtrRef.current!, {
       layout: { textColor: chartTextColor, background: { type: ColorType.Solid, color: 'transparent' }, fontFamily: 'Space Grotesk' },
-      grid: { vertLines: { color: 'transparent' }, horzLines: { color: 'transparent' } },
+      grid: { vertLines: { color: gridColor }, horzLines: { color: gridColor } },
       crosshair: { mode: CrosshairMode.Normal, vertLine: { color: crosshairColor }, horzLine: { color: crosshairColor } },
       autoSize: true,
-      rightPriceScale: { borderColor: axisColor },
+      rightPriceScale: {
+        visible: true,
+        borderColor: axisColor
+      },
       timeScale: {
         borderColor: axisColor,
         tickMarkFormatter: (time: number, tickMarkType: TickMarkType) => {
@@ -116,8 +135,59 @@ export default function CandleChart({ onPriceChange, baseMint, quoteMint, timeTy
       timeVisible: true
     })
 
+    const legend = document.createElement('div')
+    legend.style = `position: absolute; left: 0px; top: 12px; z-index: 1; font-size: 12px; font-family: sans-serif; line-height: 12px; font-weight: 400;`
+    chartCtrRef.current?.appendChild(legend)
+
+    const firstRow = document.createElement('div')
+    firstRow.style.color = 'black'
+    legend.appendChild(firstRow)
+    const getLastBar = (series: ISeriesApi<'Candlestick'>) => {
+      return series.dataByIndex(Number.MAX_SAFE_INTEGER, -1) as CandlestickData | undefined
+      // return lastIndex ? series.dataByIndex(lastIndex) : undefined
+    }
+    const setTooltipHtml = (
+      o: number | string,
+      h: number | string,
+      l: number | string,
+      c: number | string,
+      diff: number,
+      change: string
+    ) => {
+      legend.innerHTML = `
+<div>
+  <span>O <span style="color: #3DDBB5;">${Number(o)}</span></span>
+  <span>H <span style="color: #3DDBB5;">${Number(h)}</span></span>
+  <span>L <span style="color: #3DDBB5;">${Number(l)}</span></span>
+  <span>C <span style="color: #3DDBB5;">${Number(c)}</span></span>
+  <span style="color: ${diff < 0 ? '#ED4B9E' : '#3DDBB5;'}">${Number(diff).toFixed(5)}</span>
+  <span style="color: ${diff < 0 ? '#ED4B9E' : '#3DDBB5;'}">${change}</span>
+</div>`
+    }
+
+    const updateLegend = (param: MouseEventParams | undefined) => {
+      const validCrosshairPoint = !(
+        param === undefined ||
+        param.time === undefined ||
+        (param.point && (param.point.x < 0 || param.point.y < 0))
+      )
+      const bar = (validCrosshairPoint ? param.seriesData.get(candlestickSeries) : getLastBar(candlestickSeries)) as
+        | CandlestickData
+        | undefined
+      if (!bar) return
+      setTooltipHtml(
+        Number(bar.open).toFixed(5),
+        Number(bar.high).toFixed(5),
+        Number(bar.low).toFixed(5),
+        Number(bar.close).toFixed(5),
+        Number(bar.close - bar.open),
+        `${((100 * Number(bar.close - bar.open)) / bar.open).toFixed(5)}%`
+      )
+    }
+
     // to prevent load next page in immediately next mount
     setTimeout(() => {
+      chart.subscribeCrosshairMove(updateLegend)
       chart.timeScale().subscribeVisibleLogicalRangeChange((newVisiableLogicalRange) => {
         const { from } = newVisiableLogicalRange ?? {}
         const leftBoundaryIsReached = from ? from < 50 /* margin  */ : false
@@ -125,6 +195,7 @@ export default function CandleChart({ onPriceChange, baseMint, quoteMint, timeTy
           loadMore()
         }
       })
+      updateLegend(undefined)
     }, 100)
 
     chartRef.current.chart = chart
@@ -139,7 +210,7 @@ export default function CandleChart({ onPriceChange, baseMint, quoteMint, timeTy
   useEffect(() => {
     if (!chartRef.current.chart) return
     chartRef.current.candle?.setData(data)
-    chartRef.current.volume?.setData(data)
+    chartRef.current.volume?.setData(data.map(({ value, volColor, time }) => ({ value, color: volColor, time })))
   }, [data, timeType, pair])
 
   useEffect(() => {
@@ -147,12 +218,11 @@ export default function CandleChart({ onPriceChange, baseMint, quoteMint, timeTy
   }, [timeType])
 
   useEffect(() => {
-    const chartTextColor = colorMode === 'light' ? '#474ABB' : '#ABC4FF'
-    const volumeColor = colorMode === 'light' ? '#7191FF4d' : '#7081943e'
-    const crosshairColor = colorMode === 'light' ? '#474ABB' : '#ABC4FF'
+    const { chartTextColor, axisColor, volumeColor, upColor, downColor, crosshairColor, gridColor } = getChartColors(colorMode)
     chartRef.current.chart?.applyOptions({
       layout: { textColor: chartTextColor },
-      crosshair: { vertLine: { color: crosshairColor }, horzLine: { color: crosshairColor } }
+      crosshair: { vertLine: { color: crosshairColor }, horzLine: { color: crosshairColor } },
+      grid: { vertLines: { color: gridColor }, horzLines: { color: gridColor } }
     })
     chartRef.current.volume?.applyOptions({
       color: volumeColor
@@ -188,7 +258,7 @@ export default function CandleChart({ onPriceChange, baseMint, quoteMint, timeTy
       <div
         ref={chartCtrRef}
         style={{ opacity: isEmptyResult ? 0 : 1, width: '100%', height: '100%', contain: 'size', paddingTop: '20px' }}
-       />
+      />
     </GridItem>
   )
 }

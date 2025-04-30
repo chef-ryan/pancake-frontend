@@ -1,11 +1,11 @@
-import { solToWSol } from '@raydium-io/raydium-sdk-v2'
-import { CandlestickData } from 'lightweight-charts'
-import { useMemo } from 'react'
-import useSWRInfinite from 'swr/infinite'
 import axios from '@/api/axios'
 import { birdeyeKlineApiAddress } from '@/utils/config/birdeyeAPI'
 import { MINUTE_MILLISECONDS } from '@/utils/date'
 import { throttle } from '@/utils/functionMethods'
+import { solToWSol } from '@raydium-io/raydium-sdk-v2'
+import { CandlestickData } from 'lightweight-charts'
+import { useMemo } from 'react'
+import useSWRInfinite from 'swr/infinite'
 import { useEvent } from '../useEvent'
 import usePrevious from '../usePrevious'
 
@@ -31,6 +31,11 @@ type RawKLineDataItem = {
   /** unix time (s) */
   unixTime: number
   type: TimeType
+}
+
+type VolumeData = {
+  value: number
+  volColor: string
 }
 
 const fetcher = (
@@ -129,8 +134,9 @@ export default function useFetchPoolKLine({
           low: p.l,
           close: p.c,
           time: p.unixTime,
-          value: p.vBase + p.vQuote
-        } as CandlestickData & { value: number }
+          value: p.vBase + p.vQuote,
+          volColor: p.o > p.c ? '#31D0AA80' : '#ED4B9E80'
+        } as CandlestickData & VolumeData
       }),
     [allPoints]
   )

@@ -1,4 +1,4 @@
-import { lightColors as pcsLightColors, darkColors as pcsDarkColors } from '@pancakeswap/uikit'
+import { darkColors as pcsDarkColors, lightColors as pcsLightColors } from '@pancakeswap/uikit'
 
 export const darkColors: Record<keyof typeof colors, string> = {
   // app main bg color
@@ -13,6 +13,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   // component color
   background: pcsDarkColors.background,
   backgroundAlt: pcsDarkColors.backgroundAlt,
+  gradientBubblegum: pcsDarkColors.gradientBubblegum,
   backgroundDark: '#0b1022',
   backgroundDark50: '#0b102280',
   backgroundMedium: '#161E32',
@@ -175,6 +176,7 @@ export const lightColors: Partial<typeof darkColors> = {
   backgroundTransparent12: 'rgba(171, 196, 255, 0.12)',
   backgroundTransparent07: 'rgba(171, 196, 255, 0.07)',
   backgroundTransparent10: 'rgba(171, 196, 255, 0.1)',
+  gradientBubblegum: pcsLightColors.gradientBubblegum,
 
   // text
   textPrimary: pcsLightColors.text,
@@ -332,6 +334,7 @@ export const colors = {
   backgroundTransparent12: 'var(--background-transparent12)',
   backgroundTransparent07: 'var(--background-transparent07)',
   backgroundTransparent10: 'var(--background-transparent10)',
+  gradientBubblegum: 'var(--background-gradient-bubblegum)',
 
   // text
   /** white */

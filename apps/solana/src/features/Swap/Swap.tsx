@@ -1,31 +1,44 @@
 import { Box, Grid, GridItem, HStack, Text, VStack, useClipboard } from '@chakra-ui/react'
 import { RAYMint, SOLMint } from '@raydium-io/raydium-sdk-v2'
 import { PublicKey } from '@solana/web3.js'
-import { useMemo, useState, useRef, useEffect } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { MoonpayBuy } from '@/components/Moonpay'
 import PanelCard from '@/components/PanelCard'
+import { SlippageAdjuster } from '@/components/SlippageAdjuster'
+import Tooltip from '@/components/Tooltip'
+import { TimeType } from '@/hooks/pool/useFetchPoolKLine'
+import { toastSubject } from '@/hooks/toast/useGlobalToast'
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
+import useResponsive from '@/hooks/useResponsive'
+import CreditCardIcon from '@/icons/misc/CreditCardIcon'
+import LinkIcon from '@/icons/misc/LinkIcon'
 import SwapChatEmptyIcon from '@/icons/misc/SwapChatEmptyIcon'
 import SwapChatIcon from '@/icons/misc/SwapChatIcon'
 import SwapExchangeIcon from '@/icons/misc/SwapExchangeIcon'
-import LinkIcon from '@/icons/misc/LinkIcon'
-import CreditCardIcon from '@/icons/misc/CreditCardIcon'
 import { useAppStore, useTokenStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
+import { getMintPriority } from '@/utils/token'
+import { AtomBox } from '@pancakeswap/uikit'
+import styled from 'styled-components'
 import { getVHExpression } from '../../theme/cssValue/getViewportExpression'
-import { getSwapPairCache, setSwapPairCache } from './util'
 import { SwapKlinePanel } from './components/SwapKlinePanel'
 import { SwapKlinePanelMobileDrawer } from './components/SwapKlinePanelMobileDrawer'
 import { SwapKlinePanelMobileThumbnail } from './components/SwapKlinePanelMobileThumbnail'
 import { SwapPanel } from './components/SwapPanel'
-import { TimeType } from '@/hooks/pool/useFetchPoolKLine'
-import { SlippageAdjuster } from '@/components/SlippageAdjuster'
-import { getMintPriority } from '@/utils/token'
-import Tooltip from '@/components/Tooltip'
-import { MoonpayBuy } from '@/components/Moonpay'
-import { toastSubject } from '@/hooks/toast/useGlobalToast'
-import useResponsive from '@/hooks/useResponsive'
+import { getSwapPairCache, setSwapPairCache } from './util'
+
+const SwapPage = styled(AtomBox)`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  padding-bottom: 0;
+  background: ${colors.gradientBubblegum};
+  background-size: auto;
+`
 
 export default function Swap() {
   // const { inputMint: cacheInput, outputMint: cacheOutput } = getSwapPairCache()
@@ -101,139 +114,113 @@ export default function Swap() {
     const _outputMint = outputMint === def ? 'sol' : outputMint
     const href = `https://raydium.io/swap/?inputMint=${_inputMint}&outputMint=${_outputMint}`
     const walletAddress = publicKey?.toBase58()
-    const copyUrl = connected ? `${href  }&referrer=${walletAddress}` : href
+    const copyUrl = connected ? `${href}&referrer=${walletAddress}` : href
     setValue(copyUrl)
   }, [inputMint, outputMint, connected, publicKey])
 
   return (
-    <VStack
-      mx={['unset', 'auto']}
-      mt={[0, getVHExpression([0, 800], [32, 1300])]}
-      width={!isMobile && isPCChartShown ? 'min(100%, 1300px)' : undefined}
-    >
-      <Grid
-        width="full"
-        gridTemplate={[
-          `
+    <SwapPage>
+      <VStack
+        mx={['unset', 'auto']}
+        mt={[0, getVHExpression([0, 800], [32, 1300])]}
+        width={!isMobile && isPCChartShown ? 'min(100%, 1300px)' : undefined}
+      >
+        <Grid
+          width="full"
+          gridTemplate={[
+            `
             "controls" auto
             "panel" auto
             "kline" auto / auto
           `,
-          isPCChartShown
-            ? isChartLeft
-              ? `". controls" auto "kline  panel" auto / 1.5fr 1fr`
-              : `". controls" auto "panel kline" auto / 1fr 1.5fr`
-            : `"controls" auto "panel" auto / auto`
-        ]}
-        columnGap={[3, isPCChartShown ? 4 : 0]}
-        rowGap={2}
-      >
-        <GridItem gridArea="controls">
-          <HStack justifyContent="space-between" my={[1, 0]}>
-            <MoonpayBuy>
-              <HStack gap={1}>
-                <CreditCardIcon />
-                <Text color={colors.textLink} fontWeight="medium">
-                  Buy
-                </Text>
-              </HStack>
-            </MoonpayBuy>
-            <HStack>
-              <SlippageAdjuster />
-              <Tooltip
-                label={t('swap.blink_referral_desc', {
-                  symbol: outputMint === solMintAddress ? tokenMap.get(inputMint)?.symbol : tokenMap.get(outputMint)?.symbol
-                })}
-              >
+            isPCChartShown
+              ? isChartLeft
+                ? `". controls" auto "kline  panel" auto / 1.5fr 1fr`
+                : `". controls" auto "panel kline" auto / 1fr 1.5fr`
+              : `"controls" auto "panel" auto / auto`
+          ]}
+          columnGap={[3, isPCChartShown ? 4 : 0]}
+          rowGap={2}
+        >
+          <GridItem gridArea="controls">
+            <HStack justifyContent="space-between" my={[1, 0]}>
+              <MoonpayBuy>
+                <HStack gap={1}>
+                  <CreditCardIcon />
+                  <Text color={colors.textLink} fontWeight="medium">
+                    Buy
+                  </Text>
+                </HStack>
+              </MoonpayBuy>
+              <HStack>
+                <SlippageAdjuster />
+                <Tooltip
+                  label={t('swap.blink_referral_desc', {
+                    symbol: outputMint === solMintAddress ? tokenMap.get(inputMint)?.symbol : tokenMap.get(outputMint)?.symbol
+                  })}
+                >
+                  <Box
+                    cursor="pointer"
+                    opacity={isBlinkReferralActive ? 1 : 0.6}
+                    onClick={() => {
+                      if (isBlinkReferralActive) {
+                        onCopy()
+                        toastSubject.next({
+                          status: 'success',
+                          title: t('common.copy_success')
+                        })
+                      }
+                    }}
+                  >
+                    <LinkIcon />
+                  </Box>
+                </Tooltip>
+
+                {!isMobile && isPCChartShown && (
+                  <Box
+                    cursor="pointer"
+                    onClick={() => {
+                      setIsChartLeft((b) => !b)
+                    }}
+                  >
+                    <SwapExchangeIcon />
+                  </Box>
+                )}
                 <Box
                   cursor="pointer"
-                  opacity={isBlinkReferralActive ? 1 : 0.6}
                   onClick={() => {
-                    if (isBlinkReferralActive) {
-                      onCopy()
-                      toastSubject.next({
-                        status: 'success',
-                        title: t('common.copy_success')
-                      })
+                    if (!isMobile) {
+                      setIsPCChartShown((b) => !b)
+                    } else {
+                      setIsMobileChartShown(true)
                     }
                   }}
                 >
-                  <LinkIcon />
+                  {isMobile || isPCChartShown ? (
+                    <SwapChatIcon />
+                  ) : (
+                    <Box color={colors.textSecondary}>
+                      <SwapChatEmptyIcon />
+                    </Box>
+                  )}
                 </Box>
-              </Tooltip>
-
-              {!isMobile && isPCChartShown && (
-                <Box
-                  cursor="pointer"
-                  onClick={() => {
-                    setIsChartLeft((b) => !b)
-                  }}
-                >
-                  <SwapExchangeIcon />
-                </Box>
-              )}
-              <Box
-                cursor="pointer"
-                onClick={() => {
-                  if (!isMobile) {
-                    setIsPCChartShown((b) => !b)
-                  } else {
-                    setIsMobileChartShown(true)
-                  }
-                }}
-              >
-                {isMobile || isPCChartShown ? (
-                  <SwapChatIcon />
-                ) : (
-                  <Box color={colors.textSecondary}>
-                    <SwapChatEmptyIcon />
-                  </Box>
-                )}
-              </Box>
+              </HStack>
             </HStack>
-          </HStack>
-        </GridItem>
-        <GridItem ref={swapPanelRef} gridArea="panel">
-          <PanelCard p={[3, 6]} flexGrow={['1', 'unset']}>
-            <SwapPanel
-              onInputMintChange={setInputMint}
-              onOutputMintChange={setOutputMint}
-              onDirectionNeedReverse={() => setIsDirectionNeedReverse((b) => !b)}
-            />
-          </PanelCard>
-        </GridItem>
-
-        <GridItem gridArea="kline" {...(isMobile ? { mb: 3 } : {})} overflow="hidden">
-          <PanelCard ref={klineRef} p={[3, 3]} gap={4} height="100%" {...(isMobile || !isPCChartShown ? { display: 'none' } : {})}>
-            <SwapKlinePanel
-              untilDate={untilDate.current}
-              baseToken={baseToken}
-              quoteToken={quoteToken}
-              timeType={selectedTimeType}
-              onDirectionToggle={() => setDirectionReverse((b) => !b)}
-              onTimeTypeChange={setSelectedTimeType}
-            />
-          </PanelCard>
-          {isMobile && (
-            <PanelCard
-              p={[3, 6]}
-              gap={0}
-              onClick={() => {
-                setIsMobileChartShown(true)
-              }}
-              height="100%"
-            >
-              <SwapKlinePanelMobileThumbnail
-                untilDate={untilDate.current}
-                baseToken={baseToken}
-                quoteToken={quoteToken}
-                // onDirectionToggle={() => setDirectionReverse((b) => !b)}
-                // onTimeTypeChange={setSelectedTimeType}
+          </GridItem>
+          <GridItem ref={swapPanelRef} gridArea="panel">
+            <PanelCard p={[3, 6]} flexGrow={['1', 'unset']}>
+              <SwapPanel
+                onInputMintChange={setInputMint}
+                onOutputMintChange={setOutputMint}
+                onDirectionNeedReverse={() => setIsDirectionNeedReverse((b) => !b)}
               />
-              <SwapKlinePanelMobileDrawer
+            </PanelCard>
+          </GridItem>
+
+          <GridItem gridArea="kline" {...(isMobile ? { mb: 3 } : {})} overflow="hidden">
+            <PanelCard ref={klineRef} p={[3, 3]} gap={4} height="100%" {...(isMobile || !isPCChartShown ? { display: 'none' } : {})}>
+              <SwapKlinePanel
                 untilDate={untilDate.current}
-                isOpen={isMobileChartShown}
-                onClose={() => setIsMobileChartShown(false)}
                 baseToken={baseToken}
                 quoteToken={quoteToken}
                 timeType={selectedTimeType}
@@ -241,9 +228,37 @@ export default function Swap() {
                 onTimeTypeChange={setSelectedTimeType}
               />
             </PanelCard>
-          )}
-        </GridItem>
-      </Grid>
-    </VStack>
+            {isMobile && (
+              <PanelCard
+                p={[3, 6]}
+                gap={0}
+                onClick={() => {
+                  setIsMobileChartShown(true)
+                }}
+                height="100%"
+              >
+                <SwapKlinePanelMobileThumbnail
+                  untilDate={untilDate.current}
+                  baseToken={baseToken}
+                  quoteToken={quoteToken}
+                  // onDirectionToggle={() => setDirectionReverse((b) => !b)}
+                  // onTimeTypeChange={setSelectedTimeType}
+                />
+                <SwapKlinePanelMobileDrawer
+                  untilDate={untilDate.current}
+                  isOpen={isMobileChartShown}
+                  onClose={() => setIsMobileChartShown(false)}
+                  baseToken={baseToken}
+                  quoteToken={quoteToken}
+                  timeType={selectedTimeType}
+                  onDirectionToggle={() => setDirectionReverse((b) => !b)}
+                  onTimeTypeChange={setSelectedTimeType}
+                />
+              </PanelCard>
+            )}
+          </GridItem>
+        </Grid>
+      </VStack>
+    </SwapPage>
   )
 }

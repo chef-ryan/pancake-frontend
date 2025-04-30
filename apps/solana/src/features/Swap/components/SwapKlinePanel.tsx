@@ -1,15 +1,13 @@
-import { Grid, GridItem, HStack, Text, Box } from '@chakra-ui/react'
-import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
-import { useState } from 'react'
-import dayjs from 'dayjs'
 import Tabs from '@/components/Tabs'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
 import { TimeType } from '@/hooks/pool/useFetchPoolKLine'
 import { colors } from '@/theme/cssVariables'
-import toPercentString from '@/utils/numberish/toPercentString'
+import { Box, Grid, GridItem, HStack } from '@chakra-ui/react'
+import { FlexGap, SwapHorizIcon, Text } from '@pancakeswap/uikit'
+import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
+import dayjs from 'dayjs'
+import { useState } from 'react'
 import CandleChart from './CandleChart'
-import SwapIcon from '@/icons/misc/SwapIcon'
-import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 
 export function SwapKlinePanel({
   baseToken,
@@ -48,18 +46,26 @@ export function SwapKlinePanel({
           <HStack spacing={2}>
             <TokenAvatarPair token1={baseToken} token2={quoteToken} />
             <HStack>
-              <Text fontSize="20px" fontWeight="500">
-                {baseToken?.symbol} / {quoteToken?.symbol}
-              </Text>
+              <FlexGap gap="4px">
+                <Text fontSize={20} bold>
+                  {baseToken?.symbol}
+                </Text>
+                <Text fontSize={20} bold color="textSubtle">
+                  /
+                </Text>
+                <Text fontSize={20} bold>
+                  {quoteToken?.symbol}
+                </Text>
+              </FlexGap>
               <Box
                 cursor="pointer"
                 onClick={() => {
                   onDirectionToggle?.()
                 }}
               >
-                <SwapIcon />
+                <SwapHorizIcon color={colors.primary60} />
               </Box>
-              <Text fontSize="sm" color={colors.textTertiary}>
+              <Text fontSize="14px" color={colors.textSubtle} ml="24px">
                 {dayjs().utc().format('YY/MM/DD HH:MM')}
               </Text>
             </HStack>
@@ -67,8 +73,8 @@ export function SwapKlinePanel({
         </GridItem>
         <GridItem gridArea="tabs" marginRight="8px" marginBottom="12px">
           <Tabs
+            value={timeType}
             items={['15m', '1H', '4H', '1D', '1W']}
-            variant="squarePanel"
             onChange={(t: TimeType) => {
               onTimeTypeChange?.(t)
             }}
@@ -86,26 +92,9 @@ export function SwapKlinePanel({
             cursor="pointer"
             paddingLeft="16px"
             height="100%"
-            bg={colors.backgroundDark}
+            bg={colors.backgroundAlt}
             borderRadius="8px"
           >
-            <GridItem gridArea="price" paddingTop="8px">
-              <HStack spacing={2} alignItems="baseline">
-                <Text fontSize="28px" fontWeight={700} color={colors.textPrimary}>
-                  {price ? formatCurrency(price.current, { maximumDecimalTrailingZeroes: 5 }) : price}
-                </Text>
-                {price?.change && (
-                  <Text
-                    fontSize="sm"
-                    color={
-                      price?.change > 0 ? colors.priceFloatingUp : price?.change < 0 ? colors.priceFloatingDown : colors.priceFloatingFlat
-                    }
-                  >
-                    {formatToRawLocaleStr(toPercentString(price?.change, { alwaysSigned: true }))}
-                  </Text>
-                )}
-              </HStack>
-            </GridItem>
             <CandleChart onPriceChange={setPrice} baseMint={baseToken} quoteMint={quoteToken} timeType={timeType} untilDate={untilDate} />
           </Grid>
         </GridItem>
