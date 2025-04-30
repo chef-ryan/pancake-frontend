@@ -359,11 +359,15 @@ export const PositionPage = () => {
     [selectedPoolTypes, sectionMap, cursorVisible, isSelectAllFeatures, features.length],
   )
 
+  const allPositionsLoading = infinityLoading && v3Loading && v2Loading && stableLoading
+  const allPositionsLoaded = !infinityLoading && !v3Loading && !v2Loading && !stableLoading
+  const anyPositionsLoading = infinityLoading || v3Loading || v2Loading || stableLoading
+
   const mainSection = useMemo(() => {
     if (!account) {
       return <EmptyListPlaceholder text={t('Please Connect Wallet to view positions.')} />
     }
-    if (infinityLoading && v3Loading && v2Loading && stableLoading) {
+    if (allPositionsLoading) {
       return (
         <>
           <PositionItemSkeleton />
@@ -374,11 +378,11 @@ export const PositionPage = () => {
       )
     }
 
-    if (!infinityLoading && !v3Loading && !v2Loading && !stableLoading && !visibleList.length) {
+    if (allPositionsLoaded && !visibleList.length) {
       return <EmptyListPlaceholder text={t('Empty page: No results found.')} />
     }
     return visibleList
-  }, [account, infinityLoading, v3Loading, v2Loading, stableLoading, visibleList, t])
+  }, [account, allPositionsLoading, allPositionsLoaded, visibleList, t])
 
   useEffect(() => {
     if (isIntersecting) {
@@ -460,6 +464,14 @@ export const PositionPage = () => {
       </CardHeader>
       <CardBody>
         {mainSection}
+        {!allPositionsLoading && anyPositionsLoading ? (
+          <>
+            <PositionItemSkeleton />
+            <Text color="textSubtle" textAlign="center">
+              <Dots>{t('Loading')}</Dots>
+            </Text>
+          </>
+        ) : null}
         {selectedPoolTypes.length === 1 && selectedPoolTypes.includes(Protocol.V2) ? (
           <Liquidity.FindOtherLP>
             {!!intersection(V3_MIGRATION_SUPPORTED_CHAINS, selectedNetwork).length && (
