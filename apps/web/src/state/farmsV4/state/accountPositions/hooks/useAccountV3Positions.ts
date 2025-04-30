@@ -9,7 +9,7 @@ import { useLatestTxReceipt } from './useLatestTxReceipt'
 export const useAccountV3Positions = (chainIds: number[], account?: Address | null) => {
   const [latestTxReceipt] = useLatestTxReceipt()
 
-  const { data, isPending, isLoading } = useQuery<PositionDetail[], Error>({
+  const { data, isPending } = useQuery<PositionDetail[], Error>({
     queryKey: ['accountV3Positions', account, chainIds.join('-'), latestTxReceipt?.blockHash],
     // @todo @ChefJerry add signal
     queryFn: async () => {
@@ -39,7 +39,7 @@ export const useAccountV3Positions = (chainIds: number[], account?: Address | nu
   return useMemo(
     () => ({
       data: data ?? [],
-      pending: isPending || isLoading,
+      pending: isPending,
     }),
     [data, isPending],
   )

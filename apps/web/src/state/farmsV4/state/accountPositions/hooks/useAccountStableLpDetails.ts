@@ -10,7 +10,7 @@ import { useLatestTxReceipt } from './useLatestTxReceipt'
 export const useAccountStableLpDetails = (chainIds: number[], account?: Address | null) => {
   const [latestTxReceipt] = useLatestTxReceipt()
 
-  const { data, isPending, isLoading } = useQuery<StableLPDetail[], Error>({
+  const { data, isPending } = useQuery<StableLPDetail[], Error>({
     queryKey: ['accountStableLpBalance', account, chainIds.join(','), latestTxReceipt?.blockHash],
     // @todo @ChefJerry add signal
     queryFn: async () => {
@@ -42,7 +42,7 @@ export const useAccountStableLpDetails = (chainIds: number[], account?: Address 
   return useMemo(
     () => ({
       data: data ?? [],
-      pending: isPending || isLoading,
+      pending: isPending,
     }),
     [data, isPending],
   )
