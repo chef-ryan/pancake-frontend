@@ -6,8 +6,12 @@ export const darkColors: Record<keyof typeof colors, string> = {
   primary10: pcsDarkColors.primary10,
   primary20: pcsDarkColors.primary20,
   primary60: pcsDarkColors.primary60,
+  destructive10: pcsDarkColors.destructive10,
+  destructive20: pcsDarkColors.destructive20,
+  destructive60: pcsDarkColors.destructive60,
+  destructive: pcsDarkColors.destructive,
   positive60: pcsDarkColors.positive60,
-  secondary: '#22D1F8',
+  secondary: pcsDarkColors.secondary,
   secondary10: 'rgba(34, 209, 248, 0.1)',
 
   // component color
@@ -75,6 +79,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
 
   // success/warning/error/info
   success: pcsDarkColors.success,
+  failure: pcsDarkColors.failure,
   warning20: pcsDarkColors.warning20,
   warning50: pcsDarkColors.yellow,
   semanticSuccess: '#22D1F8',
@@ -99,6 +104,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   // tooltip (this color is not in figma ui color system,but in figma ui page)
   tooltipBg: pcsLightColors.backgroundAlt,
   tooltipText: pcsLightColors.text,
+  dropdown: pcsDarkColors.dropdown,
 
   popoverBg: '#141f3a',
 
@@ -161,7 +167,7 @@ export const lightColors: Partial<typeof darkColors> = {
   destructive60: pcsLightColors.destructive60,
   destructive: pcsLightColors.destructive,
   positive60: pcsLightColors.positive60,
-  secondary: '#4F53F3',
+  secondary: pcsLightColors.secondary,
   secondary10: 'rgba(34, 209, 248, 0.1)',
 
   // component color
@@ -229,6 +235,7 @@ export const lightColors: Partial<typeof darkColors> = {
 
   // success/warning/error/info
   success: pcsLightColors.success,
+  failure: pcsLightColors.failure,
   warning20: pcsLightColors.warning20,
   warning50: pcsLightColors.yellow,
   semanticSuccess: '#39D0D8',
@@ -253,6 +260,7 @@ export const lightColors: Partial<typeof darkColors> = {
   // tooltip (this color is not in figma ui color system,but in figma ui page)
   tooltipBg: pcsDarkColors.backgroundAlt,
   tooltipText: pcsDarkColors.text,
+  dropdown: pcsLightColors.dropdown,
 
   popoverBg: '#fff',
 
@@ -388,6 +396,7 @@ export const colors = {
 
   // success/warning/error/info
   success: 'var(--success)',
+  failure: 'var(--failure)',
   warning20: 'var(---warning20)',
   warning50: 'var(---warning50)',
   semanticSuccess: 'var(--semantic-success)',
@@ -412,6 +421,7 @@ export const colors = {
   // tooltip (this color is not in figma ui color system,but in figma ui page)
   tooltipBg: 'var(--tooltip-bg)',
   tooltipText: 'var(--tooltip-text)',
+  dropdown: 'var(--dropdown)',
 
   popoverBg: 'var(--popover-bg)',
 

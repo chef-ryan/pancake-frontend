@@ -1,6 +1,7 @@
 import { Axis as d3Axis, axisBottom, NumberValue, ScaleLinear, select } from 'd3'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled from '@emotion/styled'
+import { colors } from '@/theme/cssVariables'
 
 const StyledGroup = styled.g`
   line {
@@ -8,7 +9,7 @@ const StyledGroup = styled.g`
   }
 
   text {
-    color: #7780a0;
+    color: ${colors.textSubtle};
     transform: translateY(5px);
   }
 `

@@ -1,8 +1,9 @@
 import { Flex, SystemCSSProperties } from '@chakra-ui/react'
 import { ScaleLinear, select, zoom, ZoomBehavior, zoomIdentity, ZoomTransform } from 'd3'
-import React, { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { RefreshCcw, ZoomIn, ZoomOut } from 'react-feather'
 import styled from '@emotion/styled'
+import { colors } from '@/theme/cssVariables'
 import { FeeAmount } from './FeeAmount'
 import { ZoomLevels } from './types'
 
@@ -17,9 +18,7 @@ export const ZoomOverlay = styled.rect<{ cursor?: string }>`
 
 export const IconWrapper = styled.div`
   cursor: pointer;
-  background: rgba(57, 208, 216, 0.1);
   border-radius: 50%;
-  padding: 6px;
 `
 
 export default function Zoom({
@@ -111,14 +110,14 @@ export default function Zoom({
             zoomReset()
           }}
         >
-          <RefreshCcw color="#22D1F8" size={16} />
+          <RefreshCcw color={colors.primary60} size={16} />
         </IconWrapper>
       )}
       <IconWrapper onClick={zoomIn}>
-        <ZoomIn size={16} color="#22D1F8" />
+        <ZoomIn size={16} color={colors.primary60} />
       </IconWrapper>
       <IconWrapper onClick={zoomOut}>
-        <ZoomOut size={16} color="#22D1F8" />
+        <ZoomOut size={16} color={colors.primary60} />
       </IconWrapper>
     </Flex>
   )

@@ -1,9 +1,9 @@
 import { BrushBehavior, brushX, D3BrushEvent, ScaleLinear, select } from 'd3'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from '@emotion/styled'
+import { colors } from '@/theme/cssVariables'
 import usePrevious from '@/hooks/usePrevious'
 import { brushHandleAccentPath, brushHandlePath, OffScreenHandle } from './svg'
-import { colors } from '@/theme/cssVariables'
 
 const Handle = styled.path<{ color: string }>`
   cursor: ew-resize;
@@ -19,7 +19,7 @@ const HandleAccent = styled.path`
   pointer-events: none;
 
   stroke-width: 1.5;
-  stroke: #8c6eef;
+  stroke: ${colors.background};
 `
 
 const LabelGroup = styled.g<{ visible: boolean }>`
@@ -28,13 +28,15 @@ const LabelGroup = styled.g<{ visible: boolean }>`
 `
 
 const TooltipBackground = styled.rect`
-  fill: ${colors.backgroundTransparent12};
+  fill: ${colors.dropdown};
+  stroke: ${colors.cardBorder01};
+  stroke-width: 1;
 `
 
 const Tooltip = styled.text`
   text-anchor: middle;
   font-size: 12px;
-  fill: ${colors.textSecondary};
+  fill: ${colors.textSubtle};
 `
 
 // flips the handles draggers when close to the container edges
@@ -242,6 +244,7 @@ export const Brush = ({
       </>
     ),
     [
+      onClickArrow,
       brushLabelValue,
       eastHandleColor,
       eastHandleInView,

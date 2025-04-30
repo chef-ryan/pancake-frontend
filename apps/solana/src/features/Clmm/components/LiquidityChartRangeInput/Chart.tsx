@@ -1,5 +1,8 @@
+import partition from 'lodash/partition'
 import { max, scaleLinear, ZoomTransform } from 'd3'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEvent } from '@/hooks/useEvent'
+import { colors } from '@/theme/cssVariables'
 
 import { Area } from './Area'
 import { AxisBottom } from './AxisBottom'
@@ -8,8 +11,6 @@ import { Line } from './Line'
 import { ChartEntry, LiquidityChartRangeInputProps } from './types'
 import Zoom, { ZoomOverlay } from './Zoom'
 import { FeeAmount } from './FeeAmount'
-
-import { useEvent } from '@/hooks/useEvent'
 
 export const xAccessor = (d: ChartEntry) => d.price0
 export const yAccessor = (d: ChartEntry) => d.activeLiquidity
@@ -49,7 +50,7 @@ export function Chart({
 
   xScaleRef.current = [current * zoomLevels.initialMin, current * zoomLevels.initialMax]
 
-  const handleResetZoom = useCallback(() => onBrushDomainChange(xScaleRef.current, 'reset', ''), [])
+  const handleResetZoom = useCallback(() => onBrushDomainChange(xScaleRef.current, 'reset', ''), [onBrushDomainChange])
 
   const { xScale, yScale } = useMemo(() => {
     const scales = {
@@ -86,7 +87,7 @@ export function Chart({
     }
 
     return scales
-  }, [innerWidth, series, innerHeight, zoom, zoomLevels.initialMin, autoZoom, brushDomain, interactive, feeAmount])
+  }, [priceMax, priceMin, innerWidth, series, innerHeight, zoom, autoZoom, brushDomain, interactive, feeAmount])
 
   useEffect(() => {
     // reset zoom as necessary
@@ -109,6 +110,20 @@ export function Chart({
     onBrushDomainChange(side === 'left' ? [scale[0] + gap, brushDomain![1]] : [brushDomain![0], scale[1] - gap], 'handle', side)
   })
 
+  const [leftSeries, rightSeries] = useMemo(() => {
+    const isHighToLow = series[0]?.price0 > series[series.length - 1]?.price0
+    let [left, right] = partition(series, (d) => (isHighToLow ? +xAccessor(d) < current : +xAccessor(d) > current))
+
+    if (right.length && right[right.length - 1]) {
+      if (right[right.length - 1].price0 !== current) {
+        right = [...right, { activeLiquidity: right[right.length - 1].activeLiquidity, price0: current }]
+      }
+      left = [{ activeLiquidity: right[right.length - 1].activeLiquidity, price0: current }, ...left]
+    }
+
+    return [left, right]
+  }, [current, series])
+
   return (
     <>
       <Zoom
@@ -130,6 +145,16 @@ export function Chart({
       />
       <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'hidden' }}>
         <defs>
+          <linearGradient id="green-gradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor={colors.success} stopOpacity={1} />
+            <stop offset="100%" stopColor={colors.success} stopOpacity={0.2} />
+          </linearGradient>
+          <linearGradient id="red-gradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor={colors.failure} stopOpacity={1} />
+            <stop offset="100%" stopColor={colors.failure} stopOpacity={0.2} />
+          </linearGradient>
+        </defs>
+        <defs>
           <clipPath id={`${id}-chart-clip`}>
             <rect x="0" y="0" width={innerWidth} height={height} />
           </clipPath>
@@ -150,19 +175,46 @@ export function Chart({
 
         <g transform={`translate(${margins.left},${margins.top})`}>
           <g clipPath={`url(#${id}-chart-clip)`}>
-            <Area curveAfter={baseIn} series={series} xScale={xScale} yScale={yScale} xValue={xAccessor} yValue={yAccessor} />
+            <Area
+              fill="url(#red-gradient)"
+              curveAfter={baseIn}
+              series={leftSeries}
+              xScale={xScale}
+              yScale={yScale}
+              xValue={xAccessor}
+              yValue={yAccessor}
+            />
+            <Area
+              fill="url(#green-gradient)"
+              curveAfter={baseIn}
+              series={rightSeries}
+              xScale={xScale}
+              yScale={yScale}
+              xValue={xAccessor}
+              yValue={yAccessor}
+            />
             {interactive && brushDomain && (
               // duplicate area chart with mask for selected area
               <g mask={`url(#${id}-chart-area-mask)`}>
                 <Area
                   curveAfter={baseIn}
-                  series={series}
+                  series={leftSeries}
                   xScale={xScale}
                   yScale={yScale}
                   xValue={xAccessor}
                   yValue={yAccessor}
                   opacity={styles.area.opacity}
-                  fill={styles.area.selection}
+                  fill="url(#red-gradient)"
+                />
+                <Area
+                  curveAfter={baseIn}
+                  series={rightSeries}
+                  xScale={xScale}
+                  yScale={yScale}
+                  xValue={xAccessor}
+                  yValue={yAccessor}
+                  opacity={styles.area.opacity}
+                  fill="url(#green-gradient)"
                 />
               </g>
             )}
@@ -189,10 +241,10 @@ export function Chart({
         <Line value={current} y1={10} color="#FFF" xScale={xScale} innerHeight={innerHeight + 10} />
 
         {/* 24 price range line */}
-        {isNaN(Number(priceMin)) ? null : (
+        {Number.isNaN(Number(priceMin)) ? null : (
           <Line value={priceMin as number} y1={10} color="#8C6EEF" xScale={xScale} innerHeight={innerHeight + 10} />
         )}
-        {isNaN(Number(priceMax)) ? null : (
+        {Number.isNaN(Number(priceMax)) ? null : (
           <Line value={priceMax as number} y1={10} color="#8C6EEF" xScale={xScale} innerHeight={innerHeight + 10} />
         )}
       </svg>

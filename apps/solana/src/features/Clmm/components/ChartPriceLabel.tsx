@@ -14,14 +14,16 @@ export default function ChartPriceLabel({ currentPrice, currentPriceLabel, timeP
   return (
     <Flex gap={[0, 2]} flexDirection="column" justifyContent="center">
       <Flex gap="2">
-        <Box width="8px" height="2px" mt="8px" bg="#FFF" />
-        <Flex flexDirection={['row', 'column']} gap={[2, 0]}>
-          <Text fontSize="xs" fontWeight="500" color={colors.textSecondary}>
-            {t('field.current_price')}
-          </Text>
-          <Text fontSize="xs" fontWeight="500">
+        <Flex flexDirection={['row', 'column']} gap={[2, 2]}>
+          <Flex flexDirection="row" gap="4px" alignItems="center">
+            <Box width="8px" height="8px" bg={colors.secondary} rounded="full" />
+            <Text fontSize="xs" color={colors.textSubtle}>
+              {t('field.current_price')}
+            </Text>
+          </Flex>
+          <Text fontSize="xs" fontWeight="600">
             {currentPrice}{' '}
-            <Text as="span" color={colors.textTertiary}>
+            <Text as="span" color={colors.textSubtle} ml="5px">
               {currentPriceLabel}
             </Text>
           </Text>
@@ -29,14 +31,16 @@ export default function ChartPriceLabel({ currentPrice, currentPriceLabel, timeP
       </Flex>
 
       <Flex gap="2">
-        <Box width="8px" height="2px" mt="8px" bg="#8C6EEF" />
-        <Flex flexDirection={['row', 'column']} gap={[2, 0]}>
-          <Text fontSize="xs" fontWeight="500" color={colors.textSecondary}>
-            {t('clmm.time_price_range', {
-              time: t(`clmm.timebasis_${timeBase}_label`)
-            })}
-          </Text>
-          <Text fontSize="xs" fontWeight="500">
+        <Flex flexDirection={['row', 'column']} gap={[2, 2]}>
+          <Flex flexDirection="row" gap="4px" alignItems="center">
+            <Box width="8px" height="8px" bg={colors.textSubtle} rounded="full" />
+            <Text fontSize="xs" color={colors.textSubtle}>
+              {t('clmm.time_price_range', {
+                time: t(`clmm.timebasis_${timeBase}_label`)
+              })}
+            </Text>
+          </Flex>
+          <Text fontSize="xs" fontWeight="600">
             [{timePrice}]
           </Text>
         </Flex>

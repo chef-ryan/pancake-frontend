@@ -1,22 +1,22 @@
-import React, { CSSProperties, ReactNode, useCallback, useMemo, useRef } from 'react'
+import { CSSProperties, ReactNode, useCallback, useMemo, useRef } from 'react'
 import { BarChart2, CloudOff, Inbox } from 'react-feather'
 import { Text, SystemCSSProperties } from '@chakra-ui/react'
 import styled from '@emotion/styled'
-
 import { format } from 'd3'
 import { useTranslation } from 'react-i18next'
+
+import useElementSizeRectDetector from '@/hooks/useElementSizeRectDetector'
+import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import Loader from '@/components/Loader'
+import { colors } from '@/theme/cssVariables'
 import { Bound } from './Bound'
 import { Chart } from './Chart'
 import { FeeAmount } from './FeeAmount'
 import { useDensityChartData } from './hooks'
 import { ZoomLevels } from './types'
 
-import useElementSizeRectDetector from '@/hooks/useElementSizeRectDetector'
-import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
-
 const theme = {
-  brushHandle: '#22D1F8',
+  brushHandle: colors.primary,
   selectedArea: '#2B6AFF',
   selectedAreaOutOfRange: '#FF4EA3',
   deprecated_text1: '#0D111C',
@@ -100,7 +100,7 @@ export default function LiquidityChartRangeInput({
   timePriceMax,
   onLeftRangeInput,
   onRightRangeInput,
-  interactive,
+  interactive: interactive_,
   baseIn,
   autoZoom,
   outOfRange,
@@ -160,7 +160,7 @@ export default function LiquidityChartRangeInput({
     [onLeftRangeInput, onRightRangeInput]
   )
 
-  interactive = interactive && Boolean(formattedData?.length)
+  const interactive = interactive_ && Boolean(formattedData?.length)
 
   const brushDomain: [number, number] | undefined = useMemo(() => {
     return priceLower && priceUpper ? [parseFloat(Number(priceLower).toFixed(20)), parseFloat(Number(priceUpper).toFixed(20))] : undefined
