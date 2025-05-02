@@ -58,9 +58,9 @@ defaultRoutingStrategy.forEach((strategy) => {
   const { query } = strategy
 
   if (typeof query?.setShouldRemove === 'function') {
-    query.setShouldRemove((createdAt, param) => {
+    query.setShouldRemove((createdAt, _) => {
       const now = Date.now()
-      return now - createdAt > REVALIDATE_TIME * 2 * 1000
+      return now - createdAt > REVALIDATE_TIME * 3 * 1000
     })
   }
 })
