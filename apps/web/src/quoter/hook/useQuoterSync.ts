@@ -8,7 +8,7 @@ import { activeQuoteHashAtom } from 'quoter/atom/abortControlAtoms'
 import { baseAllTypeBestTradeAtom, pauseAtom, userTypingAtom } from 'quoter/atom/bestTradeUISyncAtom'
 import { updatePlaceholderAtom } from 'quoter/atom/placeholderAtom'
 import { fetchCommonPoolsOnChain } from 'quoter/atom/poolsAtom'
-import { PoolQuery, QuoteQuery } from 'quoter/quoter.types'
+import { PoolQuery, QuoteQuery, REVALIDATE_TIME } from 'quoter/quoter.types'
 import { useEffect } from 'react'
 import { useCurrentBlock } from 'state/block/hooks'
 import { Field } from 'state/swap/actions'
@@ -18,8 +18,6 @@ import { bestQuoteAtom } from '../atom/bestQuoteAtom'
 import { quoteNonceAtom } from '../atom/revalidateAtom'
 import { createQuoteQuery } from '../utils/createQuoteQuery'
 import { useQuoteContext } from './QuoteContext'
-
-const REVALIDATE_TIME = 7
 
 export const useQuoterSync = () => {
   const swapState = useSwapState()

@@ -6,6 +6,8 @@ import type { getViemClients } from 'utils/viem'
 import { Address } from 'viem/accounts'
 import { InterfaceOrder } from 'views/Swap/utils'
 
+export const REVALIDATE_TIME = 7
+
 export type CreateQuoteProviderParams = {
   gasLimit?: bigint
 } & AbortControl

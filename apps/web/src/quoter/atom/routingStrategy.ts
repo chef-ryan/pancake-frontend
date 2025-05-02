@@ -1,7 +1,7 @@
 import { SimpleCache } from '@pancakeswap/utils/SimpleCache'
 import { Atom } from 'jotai'
 import { AtomFamily } from 'jotai/vanilla/utils/atomFamily'
-import { QuoteQuery } from 'quoter/quoter.types'
+import { QuoteQuery, REVALIDATE_TIME } from 'quoter/quoter.types'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { Loadable } from './atomWithLoadable'
 import { bestAMMTradeFromQuoterWorker2Atom } from './bestAMMTradeFromQuoterWorker2Atom'
@@ -53,6 +53,17 @@ const defaultRoutingStrategy: RoutingStrategy = [
     priority: 2,
   },
 ]
+
+defaultRoutingStrategy.forEach((strategy) => {
+  const { query } = strategy
+
+  if (typeof query?.setShouldRemove === 'function') {
+    query.setShouldRemove((createdAt, param) => {
+      const now = Date.now()
+      return now - createdAt > REVALIDATE_TIME * 2 * 1000
+    })
+  }
+})
 
 export function getRoutingStrategy() {
   return defaultRoutingStrategy
