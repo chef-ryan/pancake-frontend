@@ -43,7 +43,7 @@ export const Divider = styled.div`
   margin: 8px 0 0 0;
 `
 
-export const IDoCurrentCard = ({ _, bannerUrl }: { idoId: string; bannerUrl: string }) => {
+export const IDoCurrentCard = ({ bannerUrl }: { idoId: string; bannerUrl: string }) => {
   const { status, startTimestamp, endTimestamp } = useIDOConfig()
   const [userStatus0, userStatus1] = useIDOUserStatus()
   const { offeringCurrency } = useIDOCurrencies()
