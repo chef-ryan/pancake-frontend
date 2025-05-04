@@ -122,10 +122,10 @@ export const useAddFormSubmitCallback = () => {
         permit2Signature1 = await permitCallback1()
       }
 
-      const [_, amount0Max] = depositCurrencyAmount0
+      const [, amount0Max] = depositCurrencyAmount0
         ? calculateSlippageAmount(depositCurrencyAmount0, allowedSlippage)
         : [0n, maxUint128]
-      const [_, amount1Max] = depositCurrencyAmount1
+      const [, amount1Max] = depositCurrencyAmount1
         ? calculateSlippageAmount(depositCurrencyAmount1, allowedSlippage)
         : [0n, maxUint128]
 
