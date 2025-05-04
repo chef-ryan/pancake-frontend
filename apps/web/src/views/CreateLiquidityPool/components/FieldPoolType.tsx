@@ -48,7 +48,7 @@ export const FieldPoolType: React.FC<FieldPoolTypeProps> = ({ ...boxProps }) => 
       }
       resetHook()
     },
-    [poolType, resetBinQueryState, resetCLQueryState, setPoolType, setStartPrice],
+    [poolType, resetBinQueryState, resetCLQueryState, resetHook, setPoolType, setStartPrice],
   )
 
   const menuItems = useMemo(() => {

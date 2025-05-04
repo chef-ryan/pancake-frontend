@@ -136,5 +136,5 @@ export const useStablecoinPriceAmount = (
       }
     }
     return undefined
-  }, [amount, stablePrice, currency])
+  }, [amount, stablePrice])
 }

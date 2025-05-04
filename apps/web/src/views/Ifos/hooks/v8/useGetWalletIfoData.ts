@@ -122,7 +122,7 @@ const useGetWalletIfoData = (ifo: Ifo): WalletIfoData => {
       poolBasic: { ...prevState.poolBasic, ...data.basicPoolData },
       poolUnlimited: { ...prevState.poolUnlimited, ...data.unlimitedPoolData },
     }))
-  }, [account, address, dispatch, version, chainId, sourceChain])
+  }, [account, dispatch, version, chainId, ifo, sourceChain])
 
   return {
     ...state,

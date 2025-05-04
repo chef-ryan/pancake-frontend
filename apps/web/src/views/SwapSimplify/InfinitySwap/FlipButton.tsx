@@ -97,7 +97,7 @@ export const FlipButton = memo(function FlipButton({
         outputCurrency: inputCurrencyId,
       })
     }
-  }, [onSwitchTokens, inputCurrencyId, outputCurrencyId])
+  }, [onSwitchTokens, replaceBrowser, inputCurrencyId, outputCurrencyId])
 
   const handleAnimatedButtonClick = useCallback(() => {
     onFlip()

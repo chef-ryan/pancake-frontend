@@ -2,9 +2,9 @@ import { useTranslation } from '@pancakeswap/localization'
 import { useTooltip } from '@pancakeswap/uikit'
 import { FarmWidget } from '@pancakeswap/widgets-internal'
 
-const { CompoundingPoolTag, ManualPoolTag, LockedPoolTag, LockedOrAutoPoolTag } = FarmWidget.Tags
+const { ManualPoolTag } = FarmWidget.Tags
 
-const PoolTypeTag = ({ account, isLocked, children }) => {
+const PoolTypeTag = ({ children }) => {
   const { t } = useTranslation()
 
   const tooltipText = t('You must harvest and compound your earnings from this pool manually.')

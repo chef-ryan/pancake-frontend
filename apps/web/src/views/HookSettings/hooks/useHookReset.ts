@@ -14,5 +14,5 @@ export const useHookReset = () => {
     setHook(undefined)
     setHookSelectType('list')
     setHookEnabled(false)
-  }, [setHookEnabled, setManualHook])
+  }, [setHookEnabled, setHook, setHookSelectType, setManualHook])
 }

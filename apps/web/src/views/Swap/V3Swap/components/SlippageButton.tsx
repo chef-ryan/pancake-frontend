@@ -2,15 +2,7 @@ import { useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { TradeType } from '@pancakeswap/sdk'
 import { InfinityRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
-import {
-  Button,
-  PencilIcon,
-  RiskAlertIcon,
-  Text,
-  useMatchBreakpoints,
-  useTooltip,
-  WarningIcon,
-} from '@pancakeswap/uikit'
+import { Button, PencilIcon, RiskAlertIcon, useMatchBreakpoints, useTooltip, WarningIcon } from '@pancakeswap/uikit'
 import GlobalSettings from 'components/Menu/GlobalSettings'
 import { SettingsMode } from 'components/Menu/GlobalSettings/types'
 import { useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
@@ -25,12 +17,6 @@ const TertiaryButton = styled(Button).attrs({ variant: 'tertiary' })<{ $color: s
   border-radius: 12px;
   border-bottom: 2px solid rgba(0, 0, 0, 0.1);
   color: ${({ $color }) => $color};
-`
-
-const AutoSlippageText = styled(Text)`
-  font-size: 12px;
-  margin-top: 4px;
-  color: ${({ theme }) => theme.colors.textSubtle};
 `
 
 interface SlippageButtonProps {

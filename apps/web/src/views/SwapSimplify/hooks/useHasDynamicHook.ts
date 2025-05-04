@@ -20,5 +20,5 @@ export const useHasDynamicHook = (order?: PriceOrder): boolean => {
     return hooks.some((hook) => {
       return findHook(hook, chainId)?.category?.includes(HOOK_CATEGORY.DynamicFees) ?? false
     })
-  }, [order?.trade])
+  }, [order?.trade, order?.type])
 }

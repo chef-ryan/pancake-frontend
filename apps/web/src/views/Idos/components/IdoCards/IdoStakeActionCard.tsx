@@ -35,7 +35,7 @@ export const IdoStakeActionCard: React.FC<{
   const { status, raiseAmounts, pricePerTokens, saleAmounts } = useIDOConfig()
   const { id, ineligibleContent } = useCurrentIDOConfig() ?? {}
 
-  const [raiseAmount, pricePerToken, saleAmount] = useMemo(() => {
+  const [raiseAmount, pricePerToken] = useMemo(() => {
     if (pid === 0) {
       return [raiseAmounts[0], pricePerTokens[0], saleAmounts[0]]
     }
@@ -50,7 +50,7 @@ export const IdoStakeActionCard: React.FC<{
     },
   )
 
-  const handleConnectWallet = (e) => {
+  const handleConnectWallet = (_) => {
     logGTMIdoConnectWalletEvent(status === 'coming_soon')
   }
 

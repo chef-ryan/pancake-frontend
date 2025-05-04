@@ -41,7 +41,7 @@ export const HookSettings: React.FC<FieldHookSettingsProps> = ({ onHookChange, o
         setHookAddress(null)
       }
     },
-    [setSelectionType],
+    [setSelectionType, setHookAddress],
   )
 
   const handleHookEnabledChange = useCallback(() => {

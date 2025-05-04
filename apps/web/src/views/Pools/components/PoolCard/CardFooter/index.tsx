@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import BigNumber from 'bignumber.js'
 import { styled } from 'styled-components'
 import { useTranslation } from '@pancakeswap/localization'
 import { Flex, CardFooter, ExpandableLabel, HelpIcon } from '@pancakeswap/uikit'
@@ -13,7 +12,6 @@ interface FooterProps {
   pool: Pool.DeserializedPool<Token>
   account: string
   defaultExpanded?: boolean
-  isLocked?: boolean
 }
 
 const ExpandableButtonWrapper = styled(Flex)`
@@ -30,13 +28,7 @@ const ExpandedWrapper = styled(Flex)`
   }
 `
 
-const Footer: React.FC<React.PropsWithChildren<FooterProps>> = ({
-  pool,
-  account,
-  defaultExpanded,
-  children,
-  isLocked = false,
-}) => {
+const Footer: React.FC<React.PropsWithChildren<FooterProps>> = ({ pool, account, defaultExpanded, children }) => {
   const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = useState(defaultExpanded || false)
 
@@ -44,7 +36,7 @@ const Footer: React.FC<React.PropsWithChildren<FooterProps>> = ({
     <CardFooter>
       <ExpandableButtonWrapper>
         <Flex alignItems="center">
-          <PoolTypeTag isLocked={isLocked} account={account}>
+          <PoolTypeTag>
             {(targetRef) => (
               <Flex ref={targetRef}>
                 <HelpIcon ml="4px" width="20px" height="20px" color="textSubtle" />

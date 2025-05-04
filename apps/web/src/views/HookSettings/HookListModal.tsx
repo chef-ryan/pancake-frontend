@@ -14,7 +14,6 @@ import {
   ModalV2,
   ModalV2Props,
   Text,
-  useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import intersection from 'lodash/intersection'
 import { useCallback, useMemo, useState } from 'react'
@@ -83,7 +82,6 @@ export const HookListModal = ({
   onItemClick,
 }: HookListModalProps) => {
   const { t } = useTranslation()
-  const { isMobile } = useMatchBreakpoints()
 
   const [categories, setCategories] = useState<string[]>()
   const [poolType, setPoolType] = useState<POOL_TYPE[]>()

@@ -59,7 +59,6 @@ export const VeCakeRedeem: React.FC = () => {
 
   const proxyCakeLockedAmountDisplay = useDisplayValue(proxyCakeLockedAmount)
   const nativeCakeDisplay = useDisplayValue(nativeCakeLockedAmount)
-  const cakePoolRewardDisplay = useDisplayValue(cakePoolRewards.plus(veCakeRewards))
 
   const handleClaim = useCallback(async () => {
     if (!account || !chainId || !currentBlockTimestamp) return
@@ -139,7 +138,7 @@ export const VeCakeRedeem: React.FC = () => {
         },
       })
     }
-  }, [proxyCakeLockedAmount, account, chainId, currentBlockTimestamp, withdrawAll])
+  }, [proxyCakeLockedAmount, proxyCakeLockedAmountDisplay, t, account, chainId, currentBlockTimestamp, withdrawAll])
   const [expand, setExpand] = useState(false)
 
   const buttons = [

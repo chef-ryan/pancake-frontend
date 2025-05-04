@@ -23,7 +23,7 @@ declare global {
 export const ClaimedCard: React.FC<{
   userStatus: IDOUserStatus | undefined
   pid: number
-}> = ({ userStatus, pid }) => {
+}> = ({ userStatus, _ }) => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const claimed = userStatus?.claimed

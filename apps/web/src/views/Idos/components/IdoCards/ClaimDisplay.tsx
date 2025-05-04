@@ -5,7 +5,6 @@ import ConnectW3WButton from 'components/ConnectW3WButton'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import useTheme from 'hooks/useTheme'
 import { logGTMIdoConnectWalletEvent } from 'utils/customGTMEventTracking'
-import { useCurrentIDOConfig } from 'views/Idos/hooks/ido/useCurrentIDOConfig'
 import { useIDOClaimCallback } from 'views/Idos/hooks/ido/useIDOClaimCallback'
 import { useIDOConfig } from 'views/Idos/hooks/ido/useIDOConfig'
 import { useIDOCurrencies } from 'views/Idos/hooks/ido/useIDOCurrencies'
@@ -23,7 +22,6 @@ export const ClaimDisplay: React.FC<{
   const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIDOCurrencies()
   const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
   const { status } = useIDOConfig()
-  const { icon } = useCurrentIDOConfig() ?? {}
   const amountInDollar = useStablecoinPriceAmount(
     offeringCurrency ?? undefined,
     claimableAmount !== undefined && Number.isFinite(+claimableAmount) ? +claimableAmount : undefined,
@@ -58,7 +56,7 @@ export const ClaimDisplay: React.FC<{
 
   const { isDark } = useTheme()
   const { address: account } = useAccount()
-  const handleConnectWallet = (e) => {
+  const handleConnectWallet = (_) => {
     logGTMIdoConnectWalletEvent(status === 'coming_soon')
   }
   return (

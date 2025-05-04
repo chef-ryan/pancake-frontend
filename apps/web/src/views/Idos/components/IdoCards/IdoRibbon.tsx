@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Box, Flex, Heading, Progress, Text } from '@pancakeswap/uikit'
+import { Box, Flex, Heading, Text } from '@pancakeswap/uikit'
 import { ReactNode } from 'react'
 import { styled } from 'styled-components'
 
@@ -7,10 +7,6 @@ import { IfoStatus } from '@pancakeswap/ifos'
 import useTheme from 'hooks/useTheme'
 import { PublicIfoData } from '../../types'
 import LiveTimer, { SoonTimer } from './Timer'
-
-const StyledProgress = styled(Progress)`
-  background-color: #281a5b;
-`
 
 const Container = styled(Box)`
   position: relative;
@@ -25,7 +21,7 @@ const BigCurve = styled(Box)<{ $status?: PublicIfoData['status']; $dark?: boolea
   transform: translateX(-50%);
   z-index: 1;
 
-  ${({ $status, $dark, theme }) => {
+  ${({ $status, $dark }) => {
     switch ($status) {
       case 'coming_soon':
         return `
@@ -48,19 +44,6 @@ const BigCurve = styled(Box)<{ $status?: PublicIfoData['status']; $dark?: boolea
 const RibbonContainer = styled(Box)`
   z-index: 2;
   position: relative;
-`
-
-const ChainBoardContainer = styled(Box)`
-  position: absolute;
-  top: -4rem;
-  left: 50%;
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    left: unset;
-    top: unset;
-    right: 90px;
-    bottom: 3px;
-  }
 `
 
 export const IdoRibbon = ({

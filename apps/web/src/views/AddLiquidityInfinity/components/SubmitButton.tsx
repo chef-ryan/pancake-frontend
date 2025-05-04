@@ -7,7 +7,6 @@ import { useInfinityPoolIdRouteParams } from 'hooks/dynamicRoute/usePoolIdRoute'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { usePermit2 } from 'hooks/usePermit2'
-import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { useInverted } from 'state/infinity/shared'
 import { useCurrencyBalances } from 'state/wallet/hooks'
@@ -26,7 +25,6 @@ import { useBinIdRange } from '../hooks/useBinIdRange'
 import { usePool } from '../hooks/usePool'
 
 export const SubmitButton = () => {
-  const router = useRouter()
   const { t } = useTranslation()
   const { account, isWrongNetwork } = useActiveWeb3React()
 
@@ -47,7 +45,7 @@ export const SubmitButton = () => {
   const handleSubmit = useCallback(async () => {
     await onSubmit()
     // router.push('/liquidity/pools')
-  }, [onSubmit, router])
+  }, [onSubmit])
 
   const { depositCurrencyAmount0, depositCurrencyAmount1 } = useAddDepositAmounts()
   const parsedAmounts = useMemo(
