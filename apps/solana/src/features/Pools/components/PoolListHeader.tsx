@@ -2,9 +2,10 @@ import { Box, Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import SortUpDownArrow from '@/components/SortUpDownArrow'
 import { colors } from '@/theme/cssVariables'
+import { Desktop, Mobile } from '@/components/MobileDesktop'
+
 import { poolListGrid } from '../cssBlocks'
 import { TimeBase, POOL_SORT_KEY } from '../util'
-import { Desktop, Mobile } from '@/components/MobileDesktop'
 
 export function PoolListHeader({
   sortKey,

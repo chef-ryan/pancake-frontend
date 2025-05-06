@@ -238,5 +238,6 @@ export { default as ZkEVMIcon } from "./Icons/ZkEVM";
 export { default as ZkSyncIcon } from "./Icons/ZkSync";
 export { default as ZoomInIcon } from "./Icons/ZoomIn";
 export { default as ZoomOutIcon } from "./Icons/ZoomOut";
+export { default as WaterIcon } from "./Icons/Water";
 export { default as Svg } from "./Svg";
 export type { SvgProps } from "./types";

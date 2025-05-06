@@ -1,16 +1,12 @@
-import { Box, ColorMode, Menu, MenuButton, SimpleGrid, Text, VStack, useColorMode } from '@chakra-ui/react'
+import { SwapHorizIcon, WaterIcon } from '@pancakeswap/uikit'
+import { Box, ColorMode, SimpleGrid, Text, VStack, useColorMode } from '@chakra-ui/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
-
 import { useTranslation } from 'react-i18next'
-import LiquidityPageThumbnailIcon from '@/icons/pageNavigation/LiquidityPageThumbnailIcon'
-import MorePageThumbnailIcon from '@/icons/pageNavigation/MoreThumbnailIcon'
+
 import PortfolioPageThumbnailIcon from '@/icons/pageNavigation/PortfolioPageThumbnailIcon'
-import PerpetualsPageThumbnailIcon from '@/icons/pageNavigation/PerpetualsPageThumbnailIcon'
-import SwapPageThumbnailIcon from '@/icons/pageNavigation/SwapPageThumbnailIcon'
 import { colors } from '@/theme/cssVariables'
-import { NavMoreButtonMenuPanel } from './components/NavMoreButtonMenuPanel'
 import { shrinkToValue } from '@/utils/shrinkToValue'
 
 /** only used is Mobile */
@@ -25,7 +21,6 @@ export function MobileBottomNavbar() {
   const isLiquidityActive = pathname === liquidityHref
   const protfolioHref = '/portfolio'
   const isPortfolioActive = pathname === protfolioHref
-  const isMoreActive = pathname === '/staking'
 
   return (
     <SimpleGrid
@@ -40,13 +35,13 @@ export function MobileBottomNavbar() {
       <BottomNavbarItem
         href={swapHref}
         text={t('swap.title')}
-        icon={(colorMode) => <SwapPageThumbnailIcon colorMode={colorMode} isActive={isSwapActive} />}
+        icon={() => <SwapHorizIcon color={isSwapActive ? colors.secondary : colors.textSubtle} />}
         isActive={isSwapActive}
       />
       <BottomNavbarItem
         href={liquidityHref}
         text={t('liquidity.title')}
-        icon={(colorMode) => <LiquidityPageThumbnailIcon colorMode={colorMode} isActive={isLiquidityActive} />}
+        icon={() => <WaterIcon color={isLiquidityActive ? colors.secondary : colors.textSubtle} />}
         isActive={isLiquidityActive}
       />
       <BottomNavbarItem
@@ -55,22 +50,6 @@ export function MobileBottomNavbar() {
         icon={(colorMode) => <PortfolioPageThumbnailIcon colorMode={colorMode} isActive={isPortfolioActive} />}
         isActive={isPortfolioActive}
       />
-      <BottomNavbarItem
-        href="https://perps.raydium.io"
-        text={t('perpetuals.title')}
-        icon={(colorMode) => <PerpetualsPageThumbnailIcon colorMode={colorMode} isActive={false} />}
-        isActive={false}
-      />
-      <Menu size="lg" placement="top-end" offset={[0, 30]} /* make menu popup higher */>
-        <MenuButton as="div">
-          <BottomNavbarItem
-            text={t('common.nav_text_more')}
-            icon={(colorMode) => <MorePageThumbnailIcon colorMode={colorMode} isActive={isMoreActive} />}
-            isActive={isMoreActive}
-          />
-        </MenuButton>
-        <NavMoreButtonMenuPanel />
-      </Menu>
     </SimpleGrid>
   )
 }
@@ -87,16 +66,10 @@ function BottomNavbarItem({
   icon?: ReactNode | ((colorMode: ColorMode) => ReactNode)
 }) {
   const { colorMode } = useColorMode()
-  const isDark = colorMode === 'dark'
   const content = (
-    <VStack spacing="6px">
+    <VStack spacing="2px">
       <Box>{shrinkToValue(icon, [colorMode])}</Box>
-      <Text
-        color={isActive ? (isDark ? colors.textPrimary : colors.secondary) : colors.textSecondary}
-        fontSize="9px"
-        lineHeight="12px"
-        fontWeight={isActive ? 500 : 400}
-      >
+      <Text color={isActive ? colors.textSecondary : colors.textSubtle} fontSize="12px" lineHeight="12px" fontWeight={isActive ? 600 : 400}>
         {text}
       </Text>
     </VStack>

@@ -29,8 +29,6 @@ import { useAppStore, useClmmStore, useTokenAccountStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import Button from '@/components/Button'
 import { wSolToSol } from '@/utils/token'
-import CLMMTokenInputGroup, { InputSide } from '../components/TokenInputGroup'
-import { liquidityValidateSchema } from './validateSchema'
 import TokenAvatar from '@/components/TokenAvatar'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
@@ -41,6 +39,8 @@ import { SlippageAdjuster } from '@/components/SlippageAdjuster'
 import { SlippageSettingField } from '@/components/SlippageAdjuster/SlippageSettingField'
 import { useDisclosure } from '@/hooks/useDelayDisclosure'
 import { calRatio } from '../utils/math'
+import CLMMTokenInputGroup, { InputSide } from '../components/TokenInputGroup'
+import { liquidityValidateSchema } from './validateSchema'
 
 export default function AddLiquidityModal({
   isOpen,
@@ -155,8 +155,9 @@ export default function AddLiquidityModal({
   )
 
   const handleFocusChange = useCallback(
-    (tokenMint?: string) =>
-      (focusPoolARef.current = solToWSol(tokenMint || '').toBase58() === solToWSol(poolInfo.mintA.address || '').toBase58()),
+    (tokenMint?: string) => {
+      focusPoolARef.current = solToWSol(tokenMint || '').toBase58() === solToWSol(poolInfo.mintA.address || '').toBase58()
+    },
     [poolInfo.mintA.address]
   )
 
@@ -337,7 +338,7 @@ export default function AddLiquidityModal({
           <Button
             w="full"
             isLoading={sending}
-            loadingText={`${t('liquidity.add_liquidity')  }...`}
+            loadingText={`${t('liquidity.add_liquidity')}...`}
             isDisabled={!!error || featureDisabled}
             onClick={() => {
               setIsSending(true)
