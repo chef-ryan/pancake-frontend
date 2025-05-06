@@ -47,15 +47,11 @@ export const useClearAllQueryStates = () => {
   const [, setBinRange] = useBinRangeQueryState()
   const [, setClRange] = useClRangeQueryState()
 
-  const clearAll = useCallback(async () => {
-    await Promise.all([
-      setInverted(null),
-      setNumBin(null),
-      setLiquidityShape(null),
-      setBinRange({ lowerBinId: null, upperBinId: null }),
-      setClRange({ lowerTick: null, upperTick: null }),
-    ])
+  return useCallback(() => {
+    setInverted(null)
+    setNumBin(null)
+    setLiquidityShape(null)
+    setBinRange({ lowerBinId: null, upperBinId: null })
+    setClRange({ lowerTick: null, upperTick: null })
   }, [setInverted, setNumBin, setLiquidityShape, setBinRange, setClRange])
-
-  return clearAll
 }
