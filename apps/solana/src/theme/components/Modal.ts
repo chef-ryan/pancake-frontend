@@ -22,7 +22,6 @@ const baseStyle = definePartsStyle({
   body: {
     paddingInline: ['18px', '22px'],
     marginInline: ['-18px', '-22px'],
-    padding: '0',
     overflow: 'auto'
   },
   header: {

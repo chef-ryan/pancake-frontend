@@ -372,6 +372,13 @@ export default function Pools() {
 
   const [tvl, volume] = infoData ? [infoData.tvl, infoData.volume24] : ['0', '0']
 
+  const handleOpenChart = useCallback(
+    (info: FormattedPoolInfoItem) => {
+      openChart()
+      setChartPoolInfo(info)
+    },
+    [openChart]
+  )
   const renderPoolListItem = useCallback(
     (info: FormattedPoolInfoItem, idx: number) => (
       <PoolListItem
@@ -380,13 +387,10 @@ export default function Pools() {
         timeBase={timeBase}
         field={FILED_KEY[timeBase]}
         pool={info}
-        onOpenChart={() => {
-          openChart()
-          setChartPoolInfo(info)
-        }}
+        onOpenChart={handleOpenChart}
       />
     ),
-    [currentLayoutStyle, timeBase, openChart]
+    [handleOpenChart, currentLayoutStyle, timeBase]
   )
   const searchRef = useRef<HTMLDivElement>(null)
   useOutsideClick({
@@ -437,12 +441,12 @@ export default function Pools() {
           borderRadius="16px"
           borderBottomWidth="2px"
           bgColor={colors.cardBg}
-          p="16px 24px"
+          px={[4, 6]}
+          py={[2, 4]}
           mb="16px"
         >
           <Grid
             columnGap={3}
-            rowGap={[1, 1]}
             gridTemplate={[
               `
               "tabs more btn" auto
@@ -480,7 +484,6 @@ export default function Pools() {
                     borderColor: isPanelOpen ? 'currentcolor' : colors.inputBorder
                   })}
                   popoverContentSx={{
-                    bg: colors.tooltipBg,
                     border: `1px solid ${colors.cardBorder01}`
                   }}
                   value={activeTabItem.value}
@@ -495,6 +498,7 @@ export default function Pools() {
                 <TokenSearchInput
                   ref={searchRef}
                   width={['unset', '24em']}
+                  mt={['8px', 0]}
                   value={searchText}
                   onChange={setSearchText}
                   selectedListValue={searchTokens}
@@ -506,6 +510,20 @@ export default function Pools() {
 
             <GridItem area="more">
               <Flex gap={3}>
+                {isMobile && !isMobileSearchOpen && (
+                  <Button
+                    color={colors.textSubtle}
+                    border={`1px solid ${colors.inputBorder}`}
+                    background={colors.inputBg}
+                    onClick={openMobileSearch}
+                    variant="capsule"
+                    height="34px"
+                    pl={4}
+                    pr={2}
+                  >
+                    <SearchIcon color={colors.textSubtle} opacity={0.5} width="16px" height="16px" />
+                  </Button>
+                )}
                 <Button
                   background={colors.inputBg}
                   border={`1px solid ${colors.inputBorder}`}
@@ -518,20 +536,6 @@ export default function Pools() {
                 >
                   <MoreListControllers color={colors.textSubtle} width={listControllerIconSize} height={listControllerIconSize} />
                 </Button>
-                {isMobile && !isMobileSearchOpen && (
-                  <Button
-                    color={colors.textSubtle}
-                    border={`1px solid ${colors.inputBorder}`}
-                    background={colors.inputBg}
-                    onClick={openMobileSearch}
-                    variant="capsule"
-                    height="34px"
-                    pl={3}
-                    pr={7}
-                  >
-                    <SearchIcon color={colors.textSubtle} opacity={0.5} width="16px" height="16px" />
-                  </Button>
-                )}
               </Flex>
             </GridItem>
 
@@ -543,13 +547,7 @@ export default function Pools() {
             <GridItem area="coll">
               <Collapse in={isCollapseOpen}>
                 <Box pt={[4, 4]} pb={[0, 2]}>
-                  <Stack
-                    direction={['column', 'row']}
-                    alignItems={['start', 'center']}
-                    spacing={[4, 10]}
-                    bg={[colors.tooltipBg, 'transparent']}
-                    borderRadius="12px"
-                  >
+                  <Stack direction={['column', 'row']} alignItems={['start', 'center']} spacing={[4, 10]} borderRadius="12px">
                     {/* Widgets */}
                     <Box>
                       <FormControl display="flex" alignItems="center">

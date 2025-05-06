@@ -525,7 +525,7 @@ export default function CreatePosition() {
               p={[2, 4]}
               pt={12}
               borderRadius="xl"
-              gap="2"
+              gap="10"
               position="relative"
               {...panelCard}
               bg={colors.background}

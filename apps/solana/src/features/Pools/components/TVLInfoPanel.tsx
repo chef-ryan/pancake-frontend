@@ -38,24 +38,25 @@ export function TVLInfoPanelMobile({ tvl, volume }: { tvl: string | number; volu
       justifyContent="space-between"
       background={colors.backgroundLight}
       py={2}
-      color={colors.textSecondary}
+      color={colors.textPrimary}
       px={appLayoutPaddingX}
       lineHeight={1}
+      fontWeight={600}
     >
       <HStack>
-        <Text fontSize="sm" fontWeight={400}>
+        <Text color={colors.textSubtle} fontSize="xs">
           {t('common.tvl')}
         </Text>
-        <Text fontSize="md" fontWeight={500}>
+        <Text fontSize="md" fontWeight={600}>
           {formatCurrency(tvl, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
         </Text>
       </HStack>
 
       <HStack>
-        <Text fontSize="sm" fontWeight={400}>
+        <Text color={colors.textSubtle} fontSize="xs" fontWeight={400}>
           {t('common.vol_24h')}
         </Text>
-        <Text fontSize="md" fontWeight={500}>
+        <Text fontSize="md" fontWeight={600}>
           {formatCurrency(volume, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
         </Text>
       </HStack>

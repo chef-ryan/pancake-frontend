@@ -17,15 +17,15 @@ export default function CreatePoolButton() {
     <>
       <Mobile>
         <HStack
-          width={12}
+          width={10}
           height="100%"
           border={`1px solid ${colors.primary}`}
-          borderRadius="md"
+          bg={colors.primary}
+          borderRadius="2xl"
           justifyContent="center"
-          color={colors.secondary}
           onClick={onOpen}
         >
-          <PlusIcon width="16px" height="16px" color={colors.primary} />
+          <PlusIcon strokeWidth={2} width="16px" height="16px" color={colors.backgroundAlt} />
         </HStack>
       </Mobile>
       <Desktop>
