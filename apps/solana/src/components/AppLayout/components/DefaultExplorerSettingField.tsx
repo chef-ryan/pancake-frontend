@@ -1,11 +1,11 @@
-import { Flex, HStack, Image, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
 import { useEvent } from '@/hooks/useEvent'
-import { supportedExplorers, useAppStore, EXPLORER_KEY } from '@/store'
-import Button from '../../Button'
+import { EXPLORER_KEY, supportedExplorers, useAppStore } from '@/store'
+import { setStorageItem } from '@/utils/localStorage'
+import { Flex, HStack, Image, Text } from '@chakra-ui/react'
+import { Button } from '@pancakeswap/uikit'
+import { useTranslation } from 'react-i18next'
 import { SettingField } from './SettingField'
 import { SettingFieldToggleButton } from './SettingFieldToggleButton'
-import { setStorageItem } from '@/utils/localStorage'
 
 export function DefaultExplorerSettingField() {
   const { t } = useTranslation()
@@ -45,9 +45,8 @@ export function DefaultExplorerSettingField() {
           {supportedExplorers.map((explorer) => (
             <Button
               key={explorer.name}
-              isActive={explorerUrl === explorer.host}
-              variant="capsule-radio"
-              size="sm"
+              variant={explorerUrl === explorer.host ? 'primary' : 'tertiary'}
+              scale="sm"
               onClick={() => handleChange(explorer.host)}
             >
               <HStack spacing={1.5}>

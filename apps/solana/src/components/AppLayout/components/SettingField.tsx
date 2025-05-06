@@ -1,8 +1,9 @@
-import { Box, Collapse, Flex, HStack, Spacer, Text, useDisclosure } from '@chakra-ui/react'
-import { ReactNode } from 'react'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
 import { colors } from '@/theme/cssVariables'
 import { shrinkToValue } from '@/utils/shrinkToValue'
+import { Box, Collapse, Flex, HStack, Spacer, useDisclosure } from '@chakra-ui/react'
+import { Text } from '@pancakeswap/uikit'
+import { ReactNode } from 'react'
 
 export function SettingField({
   isCollapseDefaultOpen,
@@ -22,14 +23,14 @@ export function SettingField({
   return (
     <Flex flexDir="column" flexWrap={['wrap', 'nowrap']}>
       <HStack onClick={onToggle} alignItems="center" flexWrap={['wrap', 'nowrap']}>
-        <Text color={colors.textSecondary}>{fieldName}</Text>
-        {tooltip && <QuestionToolTip label={tooltip} iconProps={{ color: colors.textSecondary }} />}
+        <Text>{fieldName}</Text>
+        {tooltip && <QuestionToolTip label={tooltip} iconProps={{ color: colors.textSubtle }} />}
         <Spacer />
         <Box cursor={renderWidgetContent ? 'pointer' : undefined}>{shrinkToValue(renderToggleButton, [isOpen])}</Box>
       </HStack>
 
       {renderWidgetContent && (
-        <Collapse in={renderToggleButton ? isOpen : true} animateOpacity>
+        <Collapse in={renderToggleButton ? isOpen : true} animateOpacity style={{ overflow: 'visible' }}>
           <Box pt={3}>{renderWidgetContent}</Box>
         </Collapse>
       )}

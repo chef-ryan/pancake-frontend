@@ -122,6 +122,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   inputMask: '#0B102266',
   inputBorder: pcsDarkColors.inputSecondary,
   inputBg: pcsDarkColors.input,
+  inputSecondary: pcsDarkColors.inputSecondary,
 
   // card
   cardBorder01: pcsDarkColors.cardBorder,
@@ -278,6 +279,8 @@ export const lightColors: Partial<typeof darkColors> = {
   inputMask: '#fff3',
   inputBorder: pcsLightColors.inputSecondary,
   inputBg: pcsLightColors.input,
+  inputSecondary: pcsLightColors.inputSecondary,
+
   //
   // card
   cardBorder01: pcsLightColors.cardBorder,
@@ -439,6 +442,7 @@ export const colors = {
   inputMask: 'var(--input-mask)',
   inputBorder: 'var(--input-border)',
   inputBg: 'var(--input-bg)',
+  inputSecondary: 'var(--input-secondary)',
 
   // card
   cardBorder01: 'var(--card-border-01)',

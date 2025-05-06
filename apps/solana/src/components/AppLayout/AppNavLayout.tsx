@@ -1,18 +1,14 @@
-import { useDisclosure } from '@/hooks/useDelayDisclosure'
-import Gear from '@/icons/misc/Gear'
-import { useAppStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { appLayoutPaddingX } from '@/theme/detailConfig'
-import { Box, Flex, HStack, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react'
-import { LogoIcon, LogoWithTextIcon } from '@pancakeswap/uikit'
+import { Box, Flex, HStack, Text } from '@chakra-ui/react'
+import { CogIcon, LogoIcon, LogoWithTextIcon, ModalV2, MotionModal, useMatchBreakpoints, useModalV2 } from '@pancakeswap/uikit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { ReactNode, useRef } from 'react'
+import React, { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Desktop, Mobile } from '../MobileDesktop'
 import SolWallet from '../SolWallet'
-import AppVersion from './AppVersion'
 import { MobileBottomNavbar } from './MobileBottomNavbar'
 import { ColorThemeSettingField } from './components/ColorThemeSettingField'
 import { DefaultExplorerSettingField } from './components/DefaultExplorerSettingField'
@@ -148,78 +144,59 @@ function RouteLink({
   )
 }
 
-function SettingsMenu() {
-  const { isOpen, onClose, onOpen } = useDisclosure()
-  const triggerRef = useRef<HTMLDivElement>(null)
+function SettingsMenu({ color }: { color?: string }) {
+  const { isOpen, setIsOpen, onDismiss } = useModalV2()
+  const openModal = () => setIsOpen(true)
+
   return (
     <>
       <Box
         w={10}
         h={10}
         p="0"
-        onClick={() => onOpen()}
+        onClick={openModal}
         _hover={{ bg: colors.backgroundLight }}
         rounded="full"
         display="grid"
         placeContent="center"
         cursor="pointer"
-        ref={triggerRef}
       >
-        <Gear />
+        <CogIcon height={24} width={24} color={color || 'textSubtle'} />
       </Box>
-      <SettingsMenuModalContent isOpen={isOpen} onClose={onClose} triggerRef={triggerRef} />
+      <ModalV2 isOpen={isOpen} onDismiss={onDismiss} closeOnOverlayClick>
+        <SettingsMenuModalContent onDismiss={onDismiss} />
+      </ModalV2>
     </>
   )
 }
 
-function SettingsMenuModalContent(props: { isOpen: boolean; triggerRef: React.RefObject<HTMLDivElement>; onClose: () => void }) {
-  const contentRef = useRef<HTMLDivElement>(null)
+function SettingsMenuModalContent({ onDismiss }: { onDismiss: () => void }) {
+  const { isMobile } = useMatchBreakpoints()
   const { t } = useTranslation()
-  const triggerPanelGap = 8
-  const isMobile = useAppStore((s) => s.isMobile)
-  const getTriggerRect = () => props.triggerRef.current?.getBoundingClientRect()
-
   return (
-    <Modal size="lg" isOpen={props.isOpen} onClose={props.onClose}>
-      <ModalOverlay />
-      <ModalContent
-        css={{
-          transform: (() => {
-            const triggerRect = getTriggerRect()
-            return (
-              triggerRect
-                ? `translate(${isMobile ? 0 : -(window.innerWidth - triggerRect.right)}px, ${
-                    triggerRect.bottom + triggerPanelGap
-                  }px) !important`
-                : undefined
-            ) as string | undefined
-          })()
-        }}
-        ref={contentRef}
-        marginTop={0}
-        marginRight={['auto', 0]}
-      >
-        <ModalHeader>{t('setting_board.panel_title')}</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <SlippageToleranceSettingField />
-          <Divider />
-          <SlippageToleranceSettingField variant="liquidity" />
-          <Divider />
-          <VersionedTransactionSettingField />
-          <Divider />
-          <DefaultExplorerSettingField />
-          <Divider />
-          <LanguageSettingField />
-          <Divider />
-          <ColorThemeSettingField />
-          <Divider />
-          <RPCConnectionSettingField />
-          <Divider />
-          <AppVersion />
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <MotionModal
+      title={t('setting_board.panel_title')}
+      minWidth={[null, null, '500px']}
+      minHeight={isMobile ? '500px' : undefined}
+      headerPadding="2px 14px 0 24px"
+      onDismiss={onDismiss}
+    >
+      <SlippageToleranceSettingField />
+      <Divider />
+      <SlippageToleranceSettingField variant="liquidity" />
+      <Divider />
+      <VersionedTransactionSettingField />
+      <Divider />
+      <DefaultExplorerSettingField />
+      <Divider />
+      <LanguageSettingField />
+      <Divider />
+      <ColorThemeSettingField />
+      <Divider />
+      <RPCConnectionSettingField />
+      <Divider />
+      {/* <AppVersion /> */}
+    </MotionModal>
   )
 }
 

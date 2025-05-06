@@ -1,14 +1,14 @@
-import { Flex, Input, InputGroup, InputRightElement, useDisclosure, Spinner } from '@chakra-ui/react'
-import { useEffect, useState, KeyboardEvent } from 'react'
+import { useEvent } from '@/hooks/useEvent'
+import { useAppStore } from '@/store'
+import { colors } from '@/theme/cssVariables'
+import { isValidUrl } from '@/utils/url'
+import { Flex, Input, InputGroup, InputRightElement, Spinner, useDisclosure } from '@chakra-ui/react'
+import { Button } from '@pancakeswap/uikit'
+import { KeyboardEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import shallow from 'zustand/shallow'
-import { colors } from '@/theme/cssVariables'
-import Button from '../../Button'
 import { SettingField } from './SettingField'
 import { SettingFieldToggleButton } from './SettingFieldToggleButton'
-import { useAppStore } from '@/store'
-import { useEvent } from '@/hooks/useEvent'
-import { isValidUrl } from '@/utils/url'
 
 export function RPCConnectionSettingField() {
   const { t } = useTranslation()
@@ -46,9 +46,8 @@ export function RPCConnectionSettingField() {
             {rpcs.map((rpc) => (
               <Button
                 key={rpc.name}
-                isActive={rpcNodeUrl === rpc.url && !isCustom}
-                variant="capsule-radio"
-                size="sm"
+                variant={rpcNodeUrl === rpc.url && !isCustom ? 'primary' : 'tertiary'}
+                scale="sm"
                 onClick={() => {
                   offCustom()
                   if (rpcNodeUrl !== rpc.url) setRpcUrlAct(rpc.url)
@@ -59,9 +58,8 @@ export function RPCConnectionSettingField() {
             ))}
             <Button
               key="Custom"
-              isActive={isCurrentCustom || isCustom}
-              variant="capsule-radio"
-              size="sm"
+              variant={isCurrentCustom || isCustom ? 'primary' : 'tertiary'}
+              scale="sm"
               onClick={() => {
                 onCustom()
                 handleSwitchCustomRpc()

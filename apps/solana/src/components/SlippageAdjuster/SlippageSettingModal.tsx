@@ -1,29 +1,17 @@
-import { KeyboardEvent, useState, useCallback, useEffect } from 'react'
-import {
-  Flex,
-  Button,
-  HStack,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  ModalCloseButton,
-  Text,
-  VStack
-} from '@chakra-ui/react'
-import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
 import DecimalInput from '@/components/DecimalInput'
+import { QuestionToolTip } from '@/components/QuestionToolTip'
+import { SWAP_SLIPPAGE_KEY, useSwapStore } from '@/features/Swap/useSwapStore'
+import { useEvent } from '@/hooks/useEvent'
+import { LIQUIDITY_SLIPPAGE_KEY, useLiquidityStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
-import { useLiquidityStore, LIQUIDITY_SLIPPAGE_KEY } from '@/store'
-import { useSwapStore, SWAP_SLIPPAGE_KEY } from '@/features/Swap/useSwapStore'
+import { setStorageItem } from '@/utils/localStorage'
 import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import toPercentString from '@/utils/numberish/toPercentString'
-import { useEvent } from '@/hooks/useEvent'
-import { setStorageItem } from '@/utils/localStorage'
-import WarningIcon from '@/icons/misc/WarningIcon'
-import { QuestionToolTip } from '@/components/QuestionToolTip'
+import { Flex, HStack, VStack } from '@chakra-ui/react'
+import { Box, Button, Message, ModalV2, MotionModal, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import Decimal from 'decimal.js'
+import { KeyboardEvent, useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isOpen: boolean; onClose: () => void }) {
   const { t } = useTranslation()
@@ -75,96 +63,70 @@ export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isO
   const isWarn = isSwap && (isForerun || isFailrun)
   const warnText = isForerun ? t('setting_board.slippage_tolerance_forerun') : isFailrun ? t('setting_board.slippage_tolerance_fail') : ''
 
+  const { isMobile } = useMatchBreakpoints()
+
   return (
-    <Modal size="md" isOpen={props.isOpen} onClose={props.onClose}>
-      <ModalOverlay />
-      <ModalContent
-        borderRadius="20px"
-        border={`1px solid ${colors.backgroundDark}`}
-        boxShadow="0px 8px 48px 0px #4F53F31A"
-        paddingInline="2rem"
-        py="2rem"
-      >
-        <ModalHeader>
-          <HStack spacing="6px">
-            <Text>{isSwap ? t('setting_board.slippage_tolerance_swap') : t('setting_board.slippage_tolerance_liquidity')}</Text>
+    <ModalV2 isOpen={props.isOpen} onDismiss={props.onClose} closeOnOverlayClick>
+      <MotionModal
+        title={
+          <HStack spacing="6px" alignItems="center">
+            <Text bold>{isSwap ? t('setting_board.slippage_tolerance_swap') : t('setting_board.slippage_tolerance_liquidity')}</Text>
             <QuestionToolTip
               label={isSwap ? t('setting_board.slippage_tolerance_tooltip_swap') : t('setting_board.slippage_tolerance_tooltip_liquidity')}
               iconProps={{ color: colors.textSecondary }}
             />
           </HStack>
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <VStack gap={4} alignItems="flex-start">
-            <Flex rowGap={2} flexWrap={['wrap', 'unset']} justifyContent="space-between" w="full">
-              <Flex gap="2">
-                {(isSwap ? [0.1, 0.5, 1] : [1, 2.5, 3.5]).map((v) => (
-                  <Button
-                    key={v}
-                    size="sm"
-                    isActive={Number(currentSlippage) === v}
-                    variant="capsule-radio"
-                    onClick={() => {
-                      handleChange(v)
-                    }}
-                  >
-                    {formatToRawLocaleStr(toPercentString(v))}
-                  </Button>
-                ))}
-              </Flex>
-              <Flex alignItems="center" rounded="full">
-                <Text fontSize="xs" whiteSpace="nowrap" color={colors.textSecondary}>
-                  {t('setting_board.custom')}
-                </Text>
-                <DecimalInput
-                  variant="filledDark"
-                  value={isFirstFocused ? '' : currentSlippage}
-                  placeholder={currentSlippage}
-                  max={50}
-                  decimals={2}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  onKeyDown={handleKeyDown}
-                  onFocus={handleFocus}
-                  inputSx={{ textAlign: 'right', rounded: '40px', h: '36px', w: '70px', py: 0, px: '3' }}
-                />
-                <Text fontSize="xs" color={colors.textSecondary}>
-                  %
-                </Text>
-              </Flex>
+        }
+        minWidth={[null, null, '470px']}
+        minHeight={isMobile ? '500px' : '240px'}
+        headerPadding="24px 24px 0 24px"
+        headerBorderColor="transparent"
+        onDismiss={props.onClose}
+      >
+        <VStack gap="24px" alignItems="flex-start">
+          <Flex rowGap={2} flexWrap={['wrap', 'unset']} justifyContent="space-between" w="full" alignItems="center">
+            <Flex gap="2">
+              {(isSwap ? [0.1, 0.5, 1] : [1, 2.5, 3.5]).map((v) => (
+                <Button
+                  key={v}
+                  variant={Number(currentSlippage) === v ? 'primary' : 'tertiary'}
+                  onClick={() => {
+                    handleChange(v)
+                  }}
+                >
+                  {formatToRawLocaleStr(toPercentString(v))}
+                </Button>
+              ))}
             </Flex>
-            {isWarn ? (
-              <Flex
-                px={4}
-                py={2}
-                bg={colors.warnButtonLightBg}
-                color={colors.semanticWarning}
-                fontSize="sm"
-                fontWeight="medium"
-                borderRadius="8px"
-                w="full"
-              >
-                <Text pt={0.5}>
-                  <WarningIcon />
-                </Text>
-                <Text pl={2}>{warnText}</Text>
-              </Flex>
-            ) : null}
-            <Button
-              w="full"
-              rounded="lg"
-              background={colors.solidButtonBg}
-              isDisabled={Number(currentSlippage) < 0}
-              onClick={handleSaveFee}
-            >
-              <Text fontSize="md" fontWeight="medium" bgClip="text" color={colors.buttonSolidText}>
-                {t('button.save')}
-              </Text>
-            </Button>
-          </VStack>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+            <Flex alignItems="center" rounded="full" gap="10px">
+              <Text>{t('setting_board.custom')}</Text>
+              <DecimalInput
+                variant="filledDark"
+                value={isFirstFocused ? '' : currentSlippage}
+                placeholder={currentSlippage}
+                max={50}
+                decimals={2}
+                onBlur={handleBlur}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+                onFocus={handleFocus}
+                inputSx={{ textAlign: 'right', rounded: '40px', h: '36px', w: '50px', py: 0, px: '3' }}
+              />
+              <Text>%</Text>
+            </Flex>
+          </Flex>
+          {isWarn ? (
+            <Box maxWidth="422px" width="100%">
+              <Message mt="2" variant="warning">
+                <Text>{warnText}</Text>
+              </Message>
+            </Box>
+          ) : null}
+          <Button disabled={Number(currentSlippage) < 0} onClick={handleSaveFee} width="100%">
+            {t('button.save')}
+          </Button>
+        </VStack>
+      </MotionModal>
+    </ModalV2>
   )
 }

@@ -1,29 +1,20 @@
-import { Text } from '@chakra-ui/react'
+import { Select } from '@pancakeswap/uikit'
 import { useTranslation } from 'react-i18next'
 import { changeLang } from '../../../i18n'
-import { Select } from '../../Select'
 import { SettingField } from './SettingField'
 
-const langMap = {
-  English: 'en',
-  繁體中文: 'zh-TW',
-  简体中文: 'zh-CN',
-  日本語: 'jp',
-  Korean: 'ko',
-  Español: 'es',
-  Français: 'fr',
-  Русский: 'ru',
-  Português: 'pt',
-  Türkçe: 'tr'
-}
-
-function getLangValue(langName: string): string | undefined {
-  return langMap[langName as keyof typeof langMap] as string | undefined
-}
-
-function getLangName(v: string): string | undefined {
-  return Object.entries(langMap).find(([, value]) => value === v)?.[0]
-}
+const langOptions = [
+  { label: '简体中文', value: 'zh-CN' },
+  { label: '繁體中文', value: 'zh-TW' },
+  { label: 'English', value: 'en' },
+  { label: '日本語', value: 'jp' },
+  { label: 'Korean', value: 'ko' },
+  { label: 'Español', value: 'es' },
+  { label: 'Français', value: 'fr' },
+  { label: 'Русский', value: 'ru' },
+  { label: 'Português', value: 'pt' },
+  { label: 'Türkçe', value: 'tr' }
+]
 
 export function LanguageSettingField() {
   const { i18n, t } = useTranslation()
@@ -35,13 +26,13 @@ export function LanguageSettingField() {
       tooltip={t('setting_board.language_tooltip')}
       renderToggleButton={
         <Select
-          variant="roundedFilledDark"
-          value={i18n.language}
-          items={Object.keys(langMap)}
-          onChange={(langName) => {
-            onChange(getLangValue(langName) ?? 'zh-CN' /* Temp */)
+          defaultOptionIndex={langOptions.findIndex((v) => v.value === i18n.language) + 1}
+          options={langOptions}
+          onOptionChange={(option) => {
+            onChange(option.value ?? 'zh-CN')
           }}
-          renderTriggerItem={(v) => <Text fontSize="sm">{v && getLangName(v)}</Text>}
+          listStyle={{ maxHeight: '200px', overflowY: 'auto' }}
+          // renderTriggerItem={(v) => <Text fontSize="sm">{v && getLangName(v)}</Text>}
         />
       }
     />

@@ -1,7 +1,7 @@
-import { Switch } from '@chakra-ui/react'
+import { useAppStore } from '@/store/useAppStore'
+import { Toggle } from '@pancakeswap/uikit'
 import { TxVersion } from '@raydium-io/raydium-sdk-v2'
 import { useTranslation } from 'react-i18next'
-import { useAppStore } from '@/store/useAppStore'
 import { SettingField } from './SettingField'
 
 export function VersionedTransactionSettingField() {
@@ -20,7 +20,7 @@ export function VersionedTransactionSettingField() {
     <SettingField
       fieldName={t('setting_board.versioned_transaction')}
       tooltip={t('setting_board.versioned_transaction_tooltip')}
-      renderToggleButton={<Switch isChecked={txVersion === TxVersion.V0} onChange={handleChange} />}
+      renderToggleButton={<Toggle scale="md" checked={txVersion === TxVersion.V0} onChange={handleChange} />}
     />
   )
 }

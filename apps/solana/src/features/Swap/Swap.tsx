@@ -1,31 +1,20 @@
-import { Box, Grid, GridItem, HStack, Text, VStack, useClipboard } from '@chakra-ui/react'
+import { VStack, useClipboard } from '@chakra-ui/react'
 import { RAYMint, SOLMint } from '@raydium-io/raydium-sdk-v2'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { MoonpayBuy } from '@/components/Moonpay'
 import PanelCard from '@/components/PanelCard'
 import { SlippageAdjuster } from '@/components/SlippageAdjuster'
-import Tooltip from '@/components/Tooltip'
 import { TimeType } from '@/hooks/pool/useFetchPoolKLine'
-import { toastSubject } from '@/hooks/toast/useGlobalToast'
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
 import useResponsive from '@/hooks/useResponsive'
-import CreditCardIcon from '@/icons/misc/CreditCardIcon'
-import LinkIcon from '@/icons/misc/LinkIcon'
-import SwapChatEmptyIcon from '@/icons/misc/SwapChatEmptyIcon'
-import SwapChatIcon from '@/icons/misc/SwapChatIcon'
-import SwapExchangeIcon from '@/icons/misc/SwapExchangeIcon'
 import { useAppStore, useTokenStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { getMintPriority } from '@/utils/token'
-import { AtomBox } from '@pancakeswap/uikit'
+import { AtomBox, FlexGap } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { getVHExpression } from '../../theme/cssValue/getViewportExpression'
-import { SwapKlinePanel } from './components/SwapKlinePanel'
-import { SwapKlinePanelMobileDrawer } from './components/SwapKlinePanelMobileDrawer'
-import { SwapKlinePanelMobileThumbnail } from './components/SwapKlinePanelMobileThumbnail'
 import { SwapPanel } from './components/SwapPanel'
 import { getSwapPairCache, setSwapPairCache } from './util'
 
@@ -124,100 +113,73 @@ export default function Swap() {
         mx={['unset', 'auto']}
         mt={[0, getVHExpression([0, 800], [32, 1300])]}
         width={!isMobile && isPCChartShown ? 'min(100%, 1300px)' : undefined}
+        height="100%"
       >
-        <Grid
-          width="full"
-          gridTemplate={[
-            `
-            "controls" auto
-            "panel" auto
-            "kline" auto / auto
-          `,
-            isPCChartShown
-              ? isChartLeft
-                ? `". controls" auto "kline  panel" auto / 1.5fr 1fr`
-                : `". controls" auto "panel kline" auto / 1fr 1.5fr`
-              : `"controls" auto "panel" auto / auto`
-          ]}
-          columnGap={[3, isPCChartShown ? 4 : 0]}
-          rowGap={2}
-        >
-          <GridItem gridArea="controls">
-            <HStack justifyContent="space-between" my={[1, 0]}>
-              <MoonpayBuy>
-                <HStack gap={1}>
-                  <CreditCardIcon />
-                  <Text color={colors.textLink} fontWeight="medium">
-                    Buy
-                  </Text>
-                </HStack>
-              </MoonpayBuy>
-              <HStack>
-                <SlippageAdjuster />
-                <Tooltip
-                  label={t('swap.blink_referral_desc', {
-                    symbol: outputMint === solMintAddress ? tokenMap.get(inputMint)?.symbol : tokenMap.get(outputMint)?.symbol
-                  })}
-                >
-                  <Box
-                    cursor="pointer"
-                    opacity={isBlinkReferralActive ? 1 : 0.6}
-                    onClick={() => {
-                      if (isBlinkReferralActive) {
-                        onCopy()
-                        toastSubject.next({
-                          status: 'success',
-                          title: t('common.copy_success')
-                        })
-                      }
-                    }}
-                  >
-                    <LinkIcon />
-                  </Box>
-                </Tooltip>
+        <FlexGap gap="16px" height="100%" width="full" alignItems="flex-start" flexDirection="column" justifyContent="center" mt="-50px">
+          <FlexGap justifyContent="flex-end" width="100%" alignItems="center" gap="10px">
+            <SlippageAdjuster />
+            {/* <Tooltip
+              label={t('swap.blink_referral_desc', {
+                symbol: outputMint === solMintAddress ? tokenMap.get(inputMint)?.symbol : tokenMap.get(outputMint)?.symbol
+              })}
+            >
+              <Box
+                cursor="pointer"
+                opacity={isBlinkReferralActive ? 1 : 0.6}
+                onClick={() => {
+                  if (isBlinkReferralActive) {
+                    onCopy()
+                    toastSubject.next({
+                      status: 'success',
+                      title: t('common.copy_success')
+                    })
+                  }
+                }}
+              >
+                <LinkIcon />
+              </Box>
+            </Tooltip>
 
-                {!isMobile && isPCChartShown && (
-                  <Box
-                    cursor="pointer"
-                    onClick={() => {
-                      setIsChartLeft((b) => !b)
-                    }}
-                  >
-                    <SwapExchangeIcon />
-                  </Box>
-                )}
-                <Box
-                  cursor="pointer"
-                  onClick={() => {
-                    if (!isMobile) {
-                      setIsPCChartShown((b) => !b)
-                    } else {
-                      setIsMobileChartShown(true)
-                    }
-                  }}
-                >
-                  {isMobile || isPCChartShown ? (
-                    <SwapChatIcon />
-                  ) : (
-                    <Box color={colors.textSecondary}>
-                      <SwapChatEmptyIcon />
-                    </Box>
-                  )}
+            {!isMobile && isPCChartShown && (
+              <Box
+                cursor="pointer"
+                onClick={() => {
+                  setIsChartLeft((b) => !b)
+                }}
+              >
+                <SwapExchangeIcon />
+              </Box>
+            )}
+            <Box
+              cursor="pointer"
+              onClick={() => {
+                if (!isMobile) {
+                  setIsPCChartShown((b) => !b)
+                } else {
+                  setIsMobileChartShown(true)
+                }
+              }}
+            >
+              {isMobile || isPCChartShown ? (
+                <SwapChatIcon />
+              ) : (
+                <Box color={colors.textSecondary}>
+                  <SwapChatEmptyIcon />
                 </Box>
-              </HStack>
-            </HStack>
-          </GridItem>
-          <GridItem ref={swapPanelRef} gridArea="panel">
-            <PanelCard p={[3, 6]} flexGrow={['1', 'unset']}>
+              )}
+            </Box> */}
+          </FlexGap>
+          <AtomBox ref={swapPanelRef}>
+            <PanelCard p={[3, 6]} flexGrow={['1', 'unset']} maxWidth="480px">
               <SwapPanel
                 onInputMintChange={setInputMint}
                 onOutputMintChange={setOutputMint}
                 onDirectionNeedReverse={() => setIsDirectionNeedReverse((b) => !b)}
               />
             </PanelCard>
-          </GridItem>
+          </AtomBox>
 
-          <GridItem gridArea="kline" {...(isMobile ? { mb: 3 } : {})} overflow="hidden">
+          {/* <GridItem gridArea="kline" {...(isMobile ? { mb: 3 } : {})} overflow="hidden">
             <PanelCard ref={klineRef} p={[3, 3]} gap={4} height="100%" {...(isMobile || !isPCChartShown ? { display: 'none' } : {})}>
               <SwapKlinePanel
                 untilDate={untilDate.current}
@@ -256,8 +218,8 @@ export default function Swap() {
                 />
               </PanelCard>
             )}
-          </GridItem>
-        </Grid>
+          </GridItem> */}
+        </FlexGap>
       </VStack>
     </SwapPage>
   )

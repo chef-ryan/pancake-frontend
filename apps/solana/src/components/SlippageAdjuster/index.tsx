@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react'
-import { Box, Button, Flex, Text } from '@chakra-ui/react'
-import Decimal from 'decimal.js'
-import { colors } from '@/theme/cssVariables'
-import { useLiquidityStore } from '@/store'
 import { useSwapStore } from '@/features/Swap/useSwapStore'
 import { useDisclosure } from '@/hooks/useDelayDisclosure'
 import MoreListControllers from '@/icons/misc/MoreListControllers'
+import { useLiquidityStore } from '@/store'
+import { colors } from '@/theme/cssVariables'
+import { Box, Flex } from '@chakra-ui/react'
+import { Button } from '@pancakeswap/uikit'
+import Decimal from 'decimal.js'
+import { useEffect, useState } from 'react'
 import { SlippageSettingModal } from './SlippageSettingModal'
 
 export function SlippageAdjuster({ variant = 'swap', onClick }: { variant?: 'swap' | 'liquidity'; onClick?: () => void }) {
@@ -34,8 +35,9 @@ export function SlippageAdjuster({ variant = 'swap', onClick }: { variant?: 'swa
           height="fit-content"
           py={1}
           borderRadius="12px"
-          leftIcon={
-            <Box mr="-4px">
+          border={isWarn ? `1px solid ${colors.semanticWarning}` : undefined}
+          startIcon={
+            <Box>
               <MoreListControllers
                 width="14"
                 height="14"
