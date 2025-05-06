@@ -22,7 +22,7 @@ const PoolListPage = () => {
     return () => {
       clearQueryStates()
     }
-  }, [])
+  }, [clearQueryStates])
 
   if (!routeParams) {
     return <PageLoader />

@@ -22,7 +22,7 @@ const LiquiditySelectPage = () => {
     return () => {
       clearQueryStates()
     }
-  }, [])
+  }, [clearQueryStates])
 
   if (!routeParams) {
     return <PageLoader />

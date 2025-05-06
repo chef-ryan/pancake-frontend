@@ -25,7 +25,7 @@ const AddLiquiditySelectorPage = () => {
     return () => {
       clearQueryStates()
     }
-  }, [])
+  }, [clearQueryStates])
 
   if (routeError) {
     console.warn('AddLiquiditySelectorPage routeError', { routeError })

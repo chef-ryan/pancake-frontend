@@ -1,4 +1,5 @@
 import { parseAsBoolean, parseAsInteger, parseAsStringLiteral, useQueryState, useQueryStates } from 'nuqs'
+import { useCallback } from 'react'
 
 export const useInverted = () => {
   return useQueryState(
@@ -46,7 +47,7 @@ export const useClearAllQueryStates = () => {
   const [, setBinRange] = useBinRangeQueryState()
   const [, setClRange] = useClRangeQueryState()
 
-  const clearAll = async () => {
+  const clearAll = useCallback(async () => {
     await Promise.all([
       setInverted(null),
       setNumBin(null),
@@ -54,7 +55,7 @@ export const useClearAllQueryStates = () => {
       setBinRange({ lowerBinId: null, upperBinId: null }),
       setClRange({ lowerTick: null, upperTick: null }),
     ])
-  }
+  }, [setInverted, setNumBin, setLiquidityShape, setBinRange, setClRange])
 
   return clearAll
 }
