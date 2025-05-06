@@ -22,7 +22,8 @@ const LiquiditySelectPage = () => {
     return () => {
       clearQueryStates()
     }
-  }, [clearQueryStates])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (!routeParams) {
     return <PageLoader />

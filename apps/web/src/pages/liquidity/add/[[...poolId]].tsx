@@ -25,7 +25,8 @@ const AddLiquiditySelectorPage = () => {
     return () => {
       clearQueryStates()
     }
-  }, [clearQueryStates])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (routeError) {
     console.warn('AddLiquiditySelectorPage routeError', { routeError })
