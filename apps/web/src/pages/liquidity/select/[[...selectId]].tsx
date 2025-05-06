@@ -6,6 +6,8 @@ import { useDefaultSelectIdRoute, useSelectIdRoute } from 'hooks/dynamicRoute/us
 import NextLink from 'next/link'
 import { CHAIN_IDS } from 'utils/wagmi'
 import { AddLiquiditySelector } from 'views/AddLiquiditySelector'
+import { useClearAllQueryStates } from 'state/infinity/shared'
+import { useEffect } from 'react'
 
 export type RouteType = typeof SelectIdRoute
 
@@ -13,6 +15,14 @@ const LiquiditySelectPage = () => {
   const { routeParams } = useSelectIdRoute()
   const { t } = useTranslation()
   useDefaultSelectIdRoute()
+
+  const clearQueryStates = useClearAllQueryStates()
+
+  useEffect(() => {
+    return () => {
+      clearQueryStates()
+    }
+  }, [])
 
   if (!routeParams) {
     return <PageLoader />

@@ -7,8 +7,10 @@ import { PoolIdRoute } from 'dynamicRoute'
 import { usePoolIdRoute } from 'hooks/dynamicRoute/usePoolIdRoute'
 import NextLink from 'next/link'
 import NotFoundPage from 'pages/404'
+import { useClearAllQueryStates } from 'state/infinity/shared'
 import { CHAIN_IDS } from 'utils/wagmi'
 import { AddLiquidityInfinityForm } from 'views/AddLiquidityInfinity'
+import { useEffect } from 'react'
 
 export type RouteType = typeof PoolIdRoute
 
@@ -16,6 +18,14 @@ const AddLiquiditySelectorPage = () => {
   const { t } = useTranslation()
   const { routeParams, routeError } = usePoolIdRoute()
   const { isLg } = useMatchBreakpoints()
+
+  const clearQueryStates = useClearAllQueryStates()
+
+  useEffect(() => {
+    return () => {
+      clearQueryStates()
+    }
+  }, [])
 
   if (routeError) {
     console.warn('AddLiquiditySelectorPage routeError', { routeError })
