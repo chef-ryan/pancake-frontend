@@ -1,17 +1,18 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { Flex, Button, Text } from '@chakra-ui/react'
 import { useDisclosure } from '@/hooks/useDelayDisclosure'
-import { colors } from '@/theme/cssVariables'
-import { useAppStore, FEE_KEY, PriorityLevel, PriorityMode } from '@/store/useAppStore'
 import { useEvent } from '@/hooks/useEvent'
 import useResponsive from '@/hooks/useResponsive'
-import { setStorageItem } from '@/utils/localStorage'
-import { PriorityModalContent } from './PriorityModalContent'
 import PriorityFastIcon from '@/icons/misc/PriorityFastIcon'
+import PriorityFixIcon from '@/icons/misc/PriorityFixIcon'
 import PriorityTurboIcon from '@/icons/misc/PriorityTurboIcon'
 import PriorityUltraIcon from '@/icons/misc/PriorityUltraIcon'
-import PriorityFixIcon from '@/icons/misc/PriorityFixIcon'
+import { FEE_KEY, PriorityLevel, PriorityMode, useAppStore } from '@/store/useAppStore'
+import { colors } from '@/theme/cssVariables'
+import { setStorageItem } from '@/utils/localStorage'
+import { Flex } from '@chakra-ui/react'
+import { Button, Text } from '@pancakeswap/uikit'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useEffect, useRef, useState } from 'react'
+import { PriorityModalContent } from './PriorityModalContent'
 
 export function PriorityButton() {
   const { isOpen, onClose, onOpen } = useDisclosure()
@@ -61,30 +62,15 @@ export function PriorityButton() {
       <Flex align="center" onClick={() => onOpen()} ref={triggerRef}>
         {isMobile ? (
           connected && (
-            <Flex color={colors.textSecondary} cursor="pointer">
+            <Flex color={colors.textSubtle} cursor="pointer">
               <PriorityIcon />
             </Flex>
           )
         ) : (
-          <Button
-            size="sm"
-            border={feeWarn ? `1px solid ${colors.semanticWarning}` : '1px solid transparent'}
-            bg={feeWarn ? { md: colors.warnButtonBg } : { md: 'transparent' }}
-            _hover={{ borderColor: colors.textLink, bg: colors.infoButtonBg }}
-            {...(isOpen && {
-              zIndex: 1401,
-              border: feeWarn ? `1px solid ${colors.semanticWarning}` : `1px solid ${colors.textLink}`,
-              bg: feeWarn ? colors.warnButtonBg : colors.infoButtonBg
-            })}
-            borderRadius="full"
-            px={{ base: '2', md: '3' }}
-            height={{ base: '8', lg: '9' }}
-          >
-            <Text as="span" fontSize="md" color={colors.textSecondary}>
-              Priority:
-              <Text as="span" color={colors.textLink} ml="1">
-                {isExact ? `${transactionFee} SOL` : PriorityLevel[priorityLevel]}
-              </Text>
+          <Button scale="sm" variant="tertiary">
+            <Text color="primary" bold>
+              {' '}
+              Priority: {isExact ? `${transactionFee} SOL` : PriorityLevel[priorityLevel]}
             </Text>
           </Button>
         )}
