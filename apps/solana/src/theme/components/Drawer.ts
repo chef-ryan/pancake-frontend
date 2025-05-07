@@ -6,7 +6,6 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
 
 const baseStyle = definePartsStyle({
   dialog: {
-    bg: colors.backgroundLight,
     borderRadius: ['18px', '12px']
   },
   header: {
@@ -23,7 +22,6 @@ const baseStyle = definePartsStyle({
     paddingY: ['20px', '26px']
   },
   footer: {
-    bg: colors.backgroundTransparent12,
     borderTopRadius: 'none',
     borderBottomRadius: 'inherit',
     color: colors.secondary,

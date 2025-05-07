@@ -128,6 +128,32 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
       ammConfig: currentConfig!
     })
   }
+
+  const renderItem = useCallback(
+    (v?: ApiClmmConfigInfo) => {
+      if (v) {
+        const existed = new Set(existingPools.values()).has(v.id)
+        const selected = currentConfig?.id === v.id
+        return (
+          <HStack
+            color={selected ? colors.backgroundAlt : colors.textPrimary}
+            opacity={existed ? 0.5 : 1}
+            cursor={existed ? 'not-allowed' : 'pointer'}
+            justifyContent="space-between"
+            bg={selected ? colors.textSubtle : 'transparent'}
+            py={2.5}
+            px={4}
+            fontSize="sm"
+          >
+            <Text>{percentFormatter.format(v.tradeFeeRate / 1000000)}</Text>
+          </HStack>
+        )
+      }
+      return null
+    },
+    [currentConfig?.id, existingPools]
+  )
+
   let error = tokens.token1 ? (tokens.token2 ? undefined : 'common.quote_token') : 'common.base_token'
   error = error || (currentConfig ? undefined : 'field.fee_tier')
 
@@ -163,7 +189,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
           <Flex gap="2" alignItems="center" justifyContent="space-between">
             {tokens.token1 ? (
               <Flex gap="2" alignItems="center">
-                <TokenAvatar token={tokens.token1} />
+                <TokenAvatar size="sm" token={tokens.token1} />
                 <Text {...titleProps} color={colors.textPrimary}>
                   {tokens.token1.symbol}
                 </Text>
@@ -183,7 +209,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
           <Flex gap="2" alignItems="center" justifyContent="space-between">
             {tokens.token2 ? (
               <Flex gap="2" alignItems="center">
-                <TokenAvatar token={tokens.token2} />
+                <TokenAvatar size="sm" token={tokens.token2} />
                 <Text {...titleProps} color={colors.textPrimary}>
                   {tokens.token2.symbol}
                 </Text>
@@ -207,27 +233,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
           variant="filledDark"
           items={clmmFeeOptions}
           value={currentConfig}
-          renderItem={(v) => {
-            if (v) {
-              const existed = new Set(existingPools.values()).has(v.id)
-              const selected = currentConfig?.id === v.id
-              return (
-                <HStack
-                  color={selected ? colors.backgroundAlt : colors.textPrimary}
-                  opacity={existed ? 0.5 : 1}
-                  cursor={existed ? 'not-allowed' : 'pointer'}
-                  justifyContent="space-between"
-                  bg={selected ? colors.textSubtle : 'transparent'}
-                  py={2.5}
-                  px={4}
-                  fontSize="sm"
-                >
-                  <Text>{percentFormatter.format(v.tradeFeeRate / 1000000)}</Text>
-                </HStack>
-              )
-            }
-            return null
-          }}
+          renderItem={renderItem}
           renderTriggerItem={(v) =>
             v ? (
               <Text color={colors.textPrimary} fontSize="sm">

@@ -14,6 +14,7 @@ const crooked = defineStyle({
 
 const rounded = defineStyle({
   width: 'fit-content',
+  lineHeight: 1.5,
   textTransform: 'none',
   bg: colors.backgroundTransparent12,
   py: '1px',
@@ -28,6 +29,7 @@ const rounded = defineStyle({
 
 const ok = defineStyle({
   width: 'fit-content',
+  lineHeight: 1.5,
   textTransform: 'none',
   bg: colors.primary10,
   px: '5px',
@@ -42,6 +44,7 @@ const ok = defineStyle({
 
 const error = defineStyle({
   width: 'fit-content',
+  lineHeight: 1.5,
   textTransform: 'none',
   bg: colors.destructive10,
   px: '5px',

@@ -83,7 +83,7 @@ export default function CLMMTokenInputGroup(props: Props) {
           strokeWidth: 1
         }
       }}
-      gap={4}
+      gap={3}
     >
       <Flex w="100%">
         <TokenInput
@@ -107,7 +107,7 @@ export default function CLMMTokenInputGroup(props: Props) {
           solReserveAmount={solReserveAmount}
         />
       </Flex>
-      <Box zIndex={1} mb={-10}>
+      <Box zIndex={1} mb={-7}>
         <AddLiquidityPlus />
       </Box>
       <Flex w="100%">

@@ -151,9 +151,7 @@ function DecimalInput(props: Props) {
             isDisabled={disabled || false}
             isInvalid={clampValueOnBlur ? undefined : false}
             value={showedValue}
-            format={(value_: string | number) => {
-              return formatToRawLocaleStr(value_)
-            }}
+            format={formatToRawLocaleStr}
             // precision={decimals}
             width={width}
             variant={variant}

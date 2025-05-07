@@ -79,7 +79,7 @@ export default function PreviewDepositModal({
         <ModalHeader>{t('clmm.preview_deposit')}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Box>
+          <Box fontSize="sm">
             <Flex alignItems="center">
               <TokenAvatarPair size="sm" token1={pool.mintA} token2={pool.mintB} mr="2" />
               <Text fontWeight="600" fontSize="md">
@@ -90,7 +90,7 @@ export default function PreviewDepositModal({
               </Badge>
             </Flex>
 
-            <PanelCard my={[3, '4']} py="2" px="4" bg={colors.background}>
+            <PanelCard my={['3', '4']} py={['3', '2']} px="4" bg={colors.background}>
               <SubTitle>{t('liquidity.my_position')}</SubTitle>
               <Flex mt="2" alignItems="center" justifyContent="space-between">
                 <Flex alignItems="center" gap="2">
@@ -145,7 +145,7 @@ export default function PreviewDepositModal({
               <Flex gap="4">
                 <Flex {...panelCard} flexDirection="column" justifyContent="center" px={[3, 6]} py="3" w="48%" textAlign="center">
                   <SubTitle color={colors.textSubtle}>{t('clmm.min_price')}</SubTitle>
-                  <Text fontSize={['lg', 'xl']} fontWeight="600" color={colors.textPrimary}>
+                  <Text fontSize={['md', 'xl']} fontWeight="600" color={colors.textPrimary}>
                     {price0Decimal > decimals
                       ? formatCurrency(new Decimal(priceRange[0]).toFixed(24), { maximumDecimalTrailingZeroes: 5 })
                       : formatCurrency(new Decimal(priceRange[0]).toDecimalPlaces(decimals).toFixed(24), {
@@ -162,7 +162,7 @@ export default function PreviewDepositModal({
 
                 <Flex {...panelCard} flexDirection="column" justifyContent="center" px={[3, 6]} py="3" w="48%" textAlign="center">
                   <SubTitle color={colors.textSubtle}>{t('clmm.max_price')}</SubTitle>
-                  <Text fontSize={['lg', 'xl']} fontWeight="600" color={colors.textPrimary}>
+                  <Text fontSize={['md', 'xl']} fontWeight="600" color={colors.textPrimary}>
                     {price1Decimal > decimals
                       ? formatCurrency(new Decimal(priceRange[1]).toFixed(24), { maximumDecimalTrailingZeroes: 5, abbreviated: true })
                       : formatCurrency(new Decimal(priceRange[1]).toDecimalPlaces(decimals).toFixed(24), {

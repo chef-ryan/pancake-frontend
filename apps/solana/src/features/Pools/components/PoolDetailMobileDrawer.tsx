@@ -1,17 +1,7 @@
-import TokenAvatar from '@/components/TokenAvatar'
-import TokenAvatarPair from '@/components/TokenAvatarPair'
-import { AprData } from '@/features/Clmm/utils/calApr'
-import { WeeklyRewardData } from '@/hooks/pool/type'
-import useTokenPrice from '@/hooks/token/useTokenPrice'
-import OpenBookIcon from '@/icons/misc/OpenBookIcon'
-import StarIcon from '@/icons/misc/StarIcon'
-import { colors } from '@/theme/cssVariables'
-import { formatCurrency } from '@/utils/numberish/formatter'
-import { getMintSymbol, wSolToSolString } from '@/utils/token'
+import { Button } from '@pancakeswap/uikit'
 import {
   Badge,
   Box,
-  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -29,6 +19,17 @@ import { ApiV3Token, TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { panelCard } from '@/theme/cssBlocks'
+import TokenAvatar from '@/components/TokenAvatar'
+import TokenAvatarPair from '@/components/TokenAvatarPair'
+import { AprData } from '@/features/Clmm/utils/calApr'
+import { WeeklyRewardData } from '@/hooks/pool/type'
+import useTokenPrice from '@/hooks/token/useTokenPrice'
+import OpenBookIcon from '@/icons/misc/OpenBookIcon'
+import StarIcon from '@/icons/misc/StarIcon'
+import { colors } from '@/theme/cssVariables'
+import { formatCurrency } from '@/utils/numberish/formatter'
+import { getMintSymbol, wSolToSolString } from '@/utils/token'
 import { toAPRPercent } from '../util'
 import { ChartWindow } from './PoolChart'
 import { aprColors } from './PoolListItemAprLine'
@@ -57,7 +58,7 @@ type PoolDetailMobileDrawerProps = {
 
 function ContentCard({ children }: { children: React.ReactNode }) {
   return (
-    <Box bg={colors.backgroundDark50} borderRadius="12px" w="full" px={4} py={3}>
+    <Box {...panelCard} bg={colors.background} w="full" px={4} py={4}>
       {children}
     </Box>
   )
@@ -89,29 +90,21 @@ export default function PoolDetailMobileDrawer({
   })
 
   return (
-    <Drawer
-      isOpen={isOpen}
-      variant="popFromBottom"
-      placement="bottom"
-      onClose={() => {
-        console.log('close')
-        return onClose()
-      }}
-    >
+    <Drawer isOpen={isOpen} variant="popFromBottom" placement="bottom" onClose={onClose}>
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
         <DrawerBody mt={8}>
-          <Flex direction="column" justify="flex-start" align="center" gap={0}>
+          <Flex direction="column" justify="flex-start" align="center" gap={3}>
             <TokenAvatarPair token1={baseToken} token2={quoteToken} size="lg" pl="3.5%" />
-            <SimpleGrid templateColumns="repeat(3, 1fr)" alignItems="center" mt={1}>
+            <SimpleGrid templateColumns="repeat(3, 1fr)" alignItems="center">
               <Box />
-              <Text fontSize="xl" fontWeight="medium" whiteSpace="nowrap">
-                {pairName}
+              <Text fontSize="md" fontWeight="600" whiteSpace="nowrap">
+                {pairName.replace('-', ' / ')}
               </Text>
               <StarIcon selected={isFavorite} onClick={onFavoriteClick} style={{ cursor: 'pointer', marginLeft: '6px' }} />
             </SimpleGrid>
-            <HStack mt={2}>
+            <HStack>
               <Tag size="sm" variant="rounded">
                 {feeTier}%
               </Tag>
@@ -125,34 +118,36 @@ export default function PoolDetailMobileDrawer({
           <VStack mt={5} spacing={3}>
             <ContentCard>
               <HStack justify="space-between">
-                <Flex direction="column" gap={2}>
-                  <Text fontSize="sm" color={colors.textSecondary}>
-                    {t(`field.${timeBase}_volume`)}
-                  </Text>
-                  <Text textAlign="start">{volume}</Text>
-                </Flex>
-                <Flex direction="column" gap={2}>
-                  <Text fontSize="sm" color={colors.textSecondary}>
-                    {t(`field.${timeBase}_fees`)}
-                  </Text>
-                  <Text textAlign="start">{fees}</Text>
-                </Flex>
-                <Flex direction="column" gap={2}>
-                  <Text fontSize="sm" color={colors.textSecondary}>
-                    {t('common.tvl')}
-                  </Text>
-                  <Text textAlign="start">{tvl}</Text>
-                </Flex>
+                {[
+                  { label: t(`field.${timeBase}_volume`), value: volume },
+                  {
+                    label: t(`field.${timeBase}_fees`),
+                    value: fees
+                  },
+                  {
+                    label: t('common.tvl'),
+                    value: tvl
+                  }
+                ].map(({ label, value }) => (
+                  <Flex direction="column" gap={2}>
+                    <Text fontSize="xs" color={colors.textSubtle} textTransform="uppercase">
+                      {label}
+                    </Text>
+                    <Text fontWeight={600} textAlign="start">
+                      {value}
+                    </Text>
+                  </Flex>
+                ))}
               </HStack>
             </ContentCard>
             <ContentCard>
               <Flex w="full" gap={4}>
                 <Flex flex={1} justify="space-between" align="center">
                   <Flex direction="column" gap="6px">
-                    <Text fontSize="sm" color={colors.textSecondary}>
+                    <Text fontSize="xs" color={colors.textSubtle} textTransform="uppercase">
                       {t('field.total_apr')}
                     </Text>
-                    <Text fontSize="xl" fontWeight="medium">
+                    <Text fontSize="md" fontWeight="600">
                       {toAPRPercent(aprData.apr)}
                     </Text>
                   </Flex>
@@ -160,7 +155,7 @@ export default function PoolDetailMobileDrawer({
                 </Flex>
                 <Flex flex={1} direction="column" gap={2}>
                   <Flex w="full" gap={4} justify="space-between" align="center">
-                    <Flex fontSize="xs" fontWeight="normal" color={colors.textSecondary} justify="flex-start" align="center">
+                    <Flex fontSize="xs" fontWeight="normal" color={colors.textSubtle} justify="flex-start" align="center">
                       <Box rounded="full" bg={aprColors[0]} w="7px" h="7px" mr="8px" />
                       {t('field.trade_fees')}
                     </Flex>
@@ -170,12 +165,9 @@ export default function PoolDetailMobileDrawer({
                   </Flex>
                   {aprData.rewards.map(({ apr, mint: token }, idx) => (
                     <Flex w="full" gap={4} key={`reward-${token?.symbol}-${idx}`} justify="space-between" align="center">
-                      <Flex fontSize="xs" fontWeight="normal" color={colors.textSecondary} justify="flex-start" align="center">
+                      <Flex fontSize="xs" fontWeight="normal" color={colors.textSubtle} justify="flex-start" align="center">
                         <Box rounded="full" bg={aprColors[idx + 1]} w="7px" h="7px" mr="8px" />
-                        <HStack>
-                          <Text>{wSolToSolString(token?.symbol)}</Text>
-                          <TokenAvatar token={token} size="xs" />
-                        </HStack>
+                        <Text>{wSolToSolString(token?.symbol)}</Text>
                       </Flex>
                       <Box fontSize="xs" color={colors.textPrimary}>
                         {toAPRPercent(apr)}
@@ -188,32 +180,28 @@ export default function PoolDetailMobileDrawer({
             {weeklyRewards.length !== 0 && (
               <ContentCard>
                 <Flex gap="2" alignItems="center">
-                  <Text fontSize="sm" color={colors.textSecondary}>
+                  <Text fontSize="xs" color={colors.textSubtle} textTransform="uppercase">
                     {t('field.weekly_rewards')}
                   </Text>
                   {isEcosystem ? <Badge variant="crooked">{t('badge.ecosystem')}</Badge> : null}
                 </Flex>
                 <SimpleGrid templateColumns="repeat(2, 1fr)" columnGap={2}>
                   {weeklyRewards.map((reward) => (
-                    <Flex
-                      w="full"
-                      key={String(reward.token?.address)}
-                      justify="space-between"
-                      align="center"
-                      fontSize="12px"
-                      mt="8px"
-                      gap="1"
-                    >
-                      <HStack fontWeight="normal" color={colors.textSecondary} spacing={1}>
+                    <Flex w="full" key={String(reward.token?.address)} align="center" fontSize="12px" mt="8px" gap={1}>
+                      <HStack fontWeight="normal" color={colors.textSubtle} spacing={1}>
                         <TokenAvatar size="sm" token={reward.token} />
-                        <Box color={colors.textPrimary}>{formatCurrency(reward.amount, { decimalPlaces: 2 })}</Box>
-                        <Box>{getMintSymbol({ mint: reward.token, transformSol: true })}</Box>
+                        <Box color={colors.success} fontWeight="600">
+                          {formatCurrency(reward.amount, { decimalPlaces: 2 })}
+                        </Box>
+                        <Box color={colors.textPrimary}>{getMintSymbol({ mint: reward.token, transformSol: true })}</Box>
                       </HStack>
-                      <Box>
+                      <Box color={colors.textSubtle}>
+                        (
                         {formatCurrency(new Decimal(tokenPrices[reward.token.address]?.value || 0).mul(reward.amount).toString(), {
                           symbol: '$',
                           decimalPlaces: 2
                         })}
+                        )
                       </Box>
                     </Flex>
                   ))}
@@ -221,7 +209,7 @@ export default function PoolDetailMobileDrawer({
               </ContentCard>
             )}
 
-            <ContentCard>
+            <Box w="full">
               <ChartWindow
                 poolAddress={poolId}
                 baseMint={baseToken?.address}
@@ -230,11 +218,11 @@ export default function PoolDetailMobileDrawer({
                   { label: 'Liquidity', value: 'liquidity' }
                 ]}
               />
-            </ContentCard>
+            </Box>
           </VStack>
         </DrawerBody>
         <DrawerFooter bg="transparent">
-          <Button onClick={onDeposit} w="full">
+          <Button onClick={onDeposit} width="100%" variant="primary">
             {t('button.deposit')}
           </Button>
         </DrawerFooter>

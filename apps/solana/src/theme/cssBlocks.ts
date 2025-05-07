@@ -17,7 +17,8 @@ export const panelCard: SystemProps = {
   borderBottomWidth: '2px',
   boxShadow: colors.panelCardShadow,
   borderRadius: '24px',
-  overflow: 'hidden'
+  overflow: 'hidden',
+  lineHeight: 1.5
 }
 
 export const inputCard: SystemProps = {
@@ -25,7 +26,8 @@ export const inputCard: SystemProps = {
   bg: colors.inputBg,
   border: `1px solid ${colors.inputBorder}`,
   borderBottomWidth: '2px',
-  borderRadius: '16px'
+  borderRadius: '16px',
+  lineHeight: 1.5
 }
 
 export const inputFocusStyle = {

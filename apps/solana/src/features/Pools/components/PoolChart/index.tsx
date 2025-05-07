@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import Tabs from '@/components/Tabs'
 import useFetchPoolChartData from '@/hooks/pool/useFetchPoolChartData'
 import { useAppStore } from '@/store'
-import { colors } from '@/theme/cssVariables'
 import { shrinkToValue } from '@/utils/shrinkToValue'
 import Chart from './Chart'
 import { TimeType, availableTimeType } from './const'
@@ -26,8 +25,6 @@ export default function PoolChartModal<T extends string>({
   renderModalHeader?: ((utils: { isOpen?: boolean }) => ReactNode) | ReactNode
   onClose?: () => void
 }) {
-  const { t } = useTranslation()
-
   return (
     <Modal size="xl" isOpen={isOpen} onClose={onClose ?? (() => {})}>
       <ModalOverlay />
@@ -35,15 +32,9 @@ export default function PoolChartModal<T extends string>({
         <ModalHeader>{shrinkToValue(renderModalHeader, [{ isOpen }])}</ModalHeader>
         <ModalCloseButton />
 
-        <ModalBody>
+        <ModalBody py={0}>
           <ChartWindow poolAddress={poolAddress} baseMint={baseMint} categories={categories} />
         </ModalBody>
-
-        <ModalFooter justifyContent="center">
-          <Button minW="132px" mt={2} onClick={onClose}>
-            {t('button.close')}
-          </Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   )
@@ -62,7 +53,10 @@ export function ChartWindow<T extends string>({
 }) {
   const isMobile = useAppStore((s) => s.isMobile)
   const [currentCategory, setCurrentCategory] = useState<T>(categories[0].value)
-  const currentCategoryLabel = useMemo(() => categories.find((c) => c.value === currentCategory)?.label ?? '', [currentCategory])
+  const currentCategoryLabel = useMemo(
+    () => categories.find((c) => c.value === currentCategory)?.label ?? '',
+    [categories, currentCategory]
+  )
   const [currentTimeType, setCurrentTimeType] = useState<TimeType>(availableTimeType[0])
   const { data, isLoading, isEmptyResult } = useFetchPoolChartData({
     category: currentCategory === 'liquidity' ? 'liquidity' : 'volume',
@@ -72,7 +66,7 @@ export function ChartWindow<T extends string>({
   })
   if (isMobile && isEmptyResult) return null
   return (
-    <Chart<typeof data[0]>
+    <Chart<(typeof data)[0]>
       isEmpty={isEmptyResult}
       isActionRunning={isLoading}
       data={data}
@@ -81,12 +75,14 @@ export function ChartWindow<T extends string>({
       yKey="v"
       renderTimeTypeTabs={
         <Tabs
-          visibility={currentCategory === 'volume' ? 'visible' : 'hidden'}
-          pointerEvents={currentCategory === 'volume' ? 'auto' : 'none'}
-          size={['sm', 'sm']}
-          variant="square"
+          style={{
+            pointerEvents: currentCategory === 'volume' ? 'auto' : 'none',
+            visibility: currentCategory === 'volume' ? 'visible' : 'hidden'
+          }}
+          scale={isMobile ? 'xs' : 'sm'}
+          variant="subtle"
           items={availableTimeType}
-          defaultValue={currentTimeType}
+          value={currentTimeType}
           onChange={(value) => {
             setCurrentTimeType(value)
           }}
@@ -95,15 +91,16 @@ export function ChartWindow<T extends string>({
       }
       renderTabs={
         <Tabs
-          size={['sm', 'md']}
-          variant={isMobile ? 'square' : 'squarePanel'}
+          fullWidth
+          tabItemSX={isMobile ? {} : { py: '12px', height: '40px' }}
+          scale={isMobile ? 'xs' : 'sm'}
+          variant="subtle"
           items={categories}
-          defaultValue={currentCategory}
+          value={currentCategory}
           onChange={(value) => {
             setCurrentCategory(value)
           }}
           my={2}
-          sx={{ bg: isMobile ? 'transparent' : colors.backgroundDark }}
         />
       }
     />

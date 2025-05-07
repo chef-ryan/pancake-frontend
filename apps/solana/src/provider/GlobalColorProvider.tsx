@@ -12,7 +12,7 @@ function getVariableList(
 ): (string | undefined)[] {
   return Object.entries(variableKeyMap).map(([jsKey, cssVariableKey]) => {
     const variableKey = cssVariableKey.match(/^var\((.*?)\)$/)?.[1]
-    if (!variableKey) return
+    if (!variableKey) return undefined
     const lightValue = lightConfig[jsKey]
     const darkValue = darkConfig[jsKey]
     return `${variableKey}: ${colorMode === 'light' ? lightValue : darkValue}`

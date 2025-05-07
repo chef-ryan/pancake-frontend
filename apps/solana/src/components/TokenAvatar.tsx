@@ -1,9 +1,9 @@
-import useTokenInfo from '@/hooks/token/useTokenInfo'
-import { colors } from '@/theme/cssVariables'
 import { AvatarProps, Box, forwardRef } from '@chakra-ui/react'
 import { DefaultTokenIcon } from '@pancakeswap/uikit'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import { useEffect, useMemo, useState } from 'react'
+import useTokenInfo from '@/hooks/token/useTokenInfo'
+import { colors } from '@/theme/cssVariables'
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type TokenAvatarSize = 'xs' | 'sm' | 'smi' | 'md' | 'lg' | '2xl' | (string & {})

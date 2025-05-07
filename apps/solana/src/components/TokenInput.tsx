@@ -1,10 +1,3 @@
-import useTokenPrice from '@/hooks/token/useTokenPrice'
-import { useEvent } from '@/hooks/useEvent'
-import useResponsive from '@/hooks/useResponsive'
-import { useAppStore, useTokenAccountStore, useTokenStore } from '@/store'
-import { inputCard, inputFocusStyle } from '@/theme/cssBlocks'
-import { colors } from '@/theme/cssVariables'
-import { detectedSeparator, formatCurrency, trimTrailZero } from '@/utils/numberish/formatter'
 import { Box, BoxProps, Grid, GridItem, StackProps, SystemStyleObject, useDisclosure } from '@chakra-ui/react'
 import {
   AtomBox,
@@ -24,6 +17,13 @@ import { ReactNode, RefObject, useEffect, useImperativeHandle, useMemo, useRef, 
 import { useTranslation } from 'react-i18next'
 import { NumericFormat } from 'react-number-format'
 import styled from 'styled-components'
+import useTokenPrice from '@/hooks/token/useTokenPrice'
+import { useEvent } from '@/hooks/useEvent'
+import useResponsive from '@/hooks/useResponsive'
+import { useAppStore, useTokenAccountStore, useTokenStore } from '@/store'
+import { inputCard, inputFocusStyle } from '@/theme/cssBlocks'
+import { colors } from '@/theme/cssVariables'
+import { detectedSeparator, formatCurrency, trimTrailZero } from '@/utils/numberish/formatter'
 import TokenAvatar from './TokenAvatar'
 import TokenSelectDialog, { TokenSelectDialogProps } from './TokenSelectDialog'
 import TokenFreezeDialog from './TokenSelectDialog/components/TokenFreezeDialog'
@@ -244,7 +244,8 @@ function TokenInput(props: TokenInputProps) {
   const handleClickPercent = useEvent((percent: number) => {
     console.debug('debug handleClickPercent', percent)
     if (!maxString) return
-    onChange?.(getBalanceString(maxDecimal.mul(percent).div(100).toString()))
+    handleFocus()
+    onChange?.(getBalanceString(maxDecimal.mul(percent).div(100).toFixed(token?.decimals)))
   })
 
   const isUnknownToken = useEvent((token_: TokenInfo) => {

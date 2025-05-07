@@ -3,9 +3,11 @@ import { ApiClmmConfigInfo, ApiV3Token, solToWSol } from '@raydium-io/raydium-sd
 import { useCallback, useRef, useState } from 'react'
 import { useTranslation, Trans } from 'react-i18next'
 import shallow from 'zustand/shallow'
-
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
+
+import { useEvent } from '@/hooks/useEvent'
+import useBirdeyeTokenPrice from '@/hooks/token/useBirdeyeTokenPrice'
 import PanelCard from '@/components/PanelCard'
 import { StepsRef } from '@/components/Steps'
 import SubPageNote from '@/components/SubPageNote'
@@ -17,14 +19,13 @@ import { genCSS2GridTemplateColumns, genCSS3GridTemplateColumns } from '@/theme/
 import { debounce, exhaustCall } from '@/utils/functionMethods'
 import { routeBack } from '@/utils/routeTools'
 import { solToWSolToken } from '@/utils/token'
+
 import SelectPoolToken from './components/SelectPoolTokenAndFee'
 import SetPriceAndRange from './components/SetPriceAndRange'
 import Stepper from './components/Stepper'
 import TokenAmountPairInputs from './components/TokenAmountInput'
 import CreateSuccessModal from './components/CreateSuccessModal'
 import CreateSuccessWithLockModal from './components/CreateSuccessWithLockModal'
-import { useEvent } from '@/hooks/useEvent'
-import useBirdeyeTokenPrice from '@/hooks/token/useBirdeyeTokenPrice'
 
 export default function CreateClmmPool() {
   const isMobile = useAppStore((s) => s.isMobile)
@@ -218,15 +219,7 @@ export default function CreateClmmPool() {
         {/* left */}
         <GridItem area="back">
           <Flex>
-            <HStack
-              cursor="pointer"
-              onClick={() => {
-                routeBack()
-              }}
-              color={colors.textTertiary}
-              fontWeight="500"
-              fontSize={['md', 'xl']}
-            >
+            <HStack cursor="pointer" onClick={routeBack} color={colors.textTertiary} fontWeight="500" fontSize={['md', 'xl']}>
               <ChevronLeftIcon />
               <Text color={colors.primary60}>{t('common.back')}</Text>
             </HStack>

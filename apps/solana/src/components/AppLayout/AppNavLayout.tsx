@@ -1,11 +1,11 @@
-import { colors } from '@/theme/cssVariables'
-import { appLayoutPaddingX } from '@/theme/detailConfig'
 import { Box, Flex, HStack, Text } from '@chakra-ui/react'
 import { CogIcon, LogoIcon, LogoWithTextIcon, ModalV2, MotionModal, useMatchBreakpoints, useModalV2 } from '@pancakeswap/uikit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { colors } from '@/theme/cssVariables'
+import { appLayoutPaddingX } from '@/theme/detailConfig'
 
 import { Desktop, Mobile } from '../MobileDesktop'
 import { NetworkSwitcher } from '../NetworkSwitcher'
@@ -80,7 +80,7 @@ function AppNavLayout({
 
       <Box
         px={fullSize ? 0 : appLayoutPaddingX}
-        pt={fullSize ? 0 : [0, 4]}
+        pt={fullSize ? 0 : [4, 4]}
         flex={1}
         overflow={overflowHidden ? 'hidden' : 'auto'}
         display="flex"
