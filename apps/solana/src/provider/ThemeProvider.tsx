@@ -1,12 +1,13 @@
-import { dark, light, UIKitProvider } from '@pancakeswap/uikit'
+import { colors } from '@/theme/cssVariables'
 import { ChakraProvider, useColorMode } from '@chakra-ui/react'
 import { Global } from '@emotion/react'
+import { dark, light, UIKitProvider } from '@pancakeswap/uikit'
 import type { FC, ReactNode } from 'react'
-import { colors } from '@/theme/cssVariables'
 import { theme } from '../theme'
 
 const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { colorMode } = useColorMode()
+
   return (
     <UIKitProvider theme={colorMode === 'dark' ? dark : light}>
       <ChakraProvider theme={theme}>

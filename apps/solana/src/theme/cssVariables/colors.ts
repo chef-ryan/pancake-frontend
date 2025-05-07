@@ -106,6 +106,8 @@ export const darkColors: Record<keyof typeof colors, string> = {
   tooltipText: pcsLightColors.text,
   dropdown: pcsDarkColors.dropdown,
 
+  invertedContrast: pcsDarkColors.invertedContrast,
+
   popoverBg: '#141f3a',
 
   // customize (by V3 frontend coder)
@@ -262,6 +264,8 @@ export const lightColors: Partial<typeof darkColors> = {
   tooltipBg: pcsDarkColors.backgroundAlt,
   tooltipText: pcsDarkColors.text,
   dropdown: pcsLightColors.dropdown,
+
+  invertedContrast: pcsLightColors.invertedContrast,
 
   popoverBg: '#fff',
 
@@ -425,6 +429,8 @@ export const colors = {
   tooltipBg: 'var(--tooltip-bg)',
   tooltipText: 'var(--tooltip-text)',
   dropdown: 'var(--dropdown)',
+
+  invertedContrast: 'var(--inverted-contrast)',
 
   popoverBg: 'var(--popover-bg)',
 

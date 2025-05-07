@@ -1,12 +1,18 @@
-import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin'
 import { withSentryConfig } from '@sentry/nextjs'
+import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin'
 import path from 'path'
 
 const withVanillaExtract = createVanillaExtractPlugin()
 
 const nextConfig = {
+  experimental: {
+    scrollRestoration: true,
+    fallbackNodePolyfills: false,
+    optimizePackageImports: ['@pancakeswap/widgets-internal', '@pancakeswap/uikit']
+  },
   trailingSlash: true,
   transpilePackages: [
+    '@pancakeswap/widgets-internal',
     '@pancakeswap/uikit',
     // https://github.com/TanStack/query/issues/6560#issuecomment-1975771676
     '@tanstack/query-core'

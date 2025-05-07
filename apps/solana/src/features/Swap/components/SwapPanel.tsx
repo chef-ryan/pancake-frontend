@@ -1,48 +1,47 @@
-import {
-  Box,
-  Button,
-  Collapse,
-  Flex,
-  HStack,
-  SimpleGrid,
-  Text,
-  useDisclosure,
-  CircularProgress,
-  Tooltip as ChakraTip
-} from '@chakra-ui/react'
-import { ApiV3Token, RAYMint, SOL_INFO, TokenInfo, TransferFeeDataBaseType } from '@raydium-io/raydium-sdk-v2'
-import { PublicKey } from '@solana/web3.js'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useTranslation, Trans } from 'react-i18next'
-import shallow from 'zustand/shallow'
-import Decimal from 'decimal.js'
-import dayjs from 'dayjs'
-import { NATIVE_MINT } from '@solana/spl-token'
 import ConnectedButton from '@/components/ConnectedButton'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
 import TokenInput, { DEFAULT_SOL_RESERVER, InputActionRef } from '@/components/TokenInput'
+import Tooltip from '@/components/Tooltip'
+import useTokenInfo from '@/hooks/token/useTokenInfo'
 import { useEvent } from '@/hooks/useEvent'
-import { useHover } from '@/hooks/useHover'
+import CircleInfo from '@/icons/misc/CircleInfo'
+import QuestionCircleIcon from '@/icons/misc/QuestionCircleIcon'
+import WarningIcon from '@/icons/misc/WarningIcon'
 import { useAppStore, useTokenAccountStore, useTokenStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
-import CircleInfo from '@/icons/misc/CircleInfo'
-import { getSwapPairCache, setSwapPairCache } from '../util'
-import { urlToMint, mintToUrl, isSolWSol, getMintPriority, getMintSymbol } from '@/utils/token'
-import { SwapInfoBoard } from './SwapInfoBoard'
-import SwapButtonTwoTurnIcon from '@/icons/misc/SwapButtonTwoTurnIcon'
-import SwapButtonOneTurnIcon from '@/icons/misc/SwapButtonOneTurnIcon'
-import useSwap from '../useSwap'
-import { ApiSwapV1OutSuccess } from '../type'
-import { useSwapStore } from '../useSwapStore'
-import HighRiskAlert from './HighRiskAlert'
-import { useRouteQuery, setUrlQuery } from '@/utils/routeTools'
-import WarningIcon from '@/icons/misc/WarningIcon'
+import { debounce } from '@/utils/functionMethods'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import ToPublicKey, { isValidPublicKey } from '@/utils/publicKey'
-import useTokenInfo from '@/hooks/token/useTokenInfo'
-import { debounce } from '@/utils/functionMethods'
-import QuestionCircleIcon from '@/icons/misc/QuestionCircleIcon'
-import Tooltip from '@/components/Tooltip'
+import { setUrlQuery, useRouteQuery } from '@/utils/routeTools'
+import { getMintPriority, getMintSymbol, isSolWSol, mintToUrl, urlToMint } from '@/utils/token'
+import { Box, Button, Tooltip as ChakraTip, CircularProgress, Collapse, Flex, HStack, Text, useDisclosure } from '@chakra-ui/react'
+import { mediaQueries } from '@pancakeswap/uikit'
+import { SwapUIV2 } from '@pancakeswap/widgets-internal'
+import { ApiV3Token, RAYMint, SOL_INFO, TokenInfo, TransferFeeDataBaseType } from '@raydium-io/raydium-sdk-v2'
+import { NATIVE_MINT } from '@solana/spl-token'
+import { PublicKey } from '@solana/web3.js'
+import dayjs from 'dayjs'
+import Decimal from 'decimal.js'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+import shallow from 'zustand/shallow'
+import { ApiSwapV1OutSuccess } from '../type'
+import useSwap from '../useSwap'
+import { useSwapStore } from '../useSwapStore'
+import { getSwapPairCache, setSwapPairCache } from '../util'
+import { FlipButton } from './FlipButton'
+import HighRiskAlert from './HighRiskAlert'
+import { SwapInfoBoard } from './SwapInfoBoard'
+
+const Wrapper = styled(Box)`
+  width: 100%;
+
+  ${mediaQueries.md} {
+    min-width: 328px;
+    max-width: 480px;
+  }
+`
 
 export function SwapPanel({
   onInputMintChange,
@@ -310,159 +309,163 @@ export function SwapPanel({
   })
 
   return (
-    <>
-      <Flex mb={[4, 5]} direction="column">
-        {/* input */}
-        <TokenInput
-          name="swap"
-          topLeftLabel={t('swap.from_label')}
-          ctrSx={getCtrSx('BaseIn')}
-          token={tokenInput}
-          value={isSwapBaseIn ? amountIn : inputAmount}
-          readonly={swapDisabled || (!isSwapBaseIn && isComputing)}
-          disableClickBalance={swapDisabled}
-          onChange={(v) => handleInputChange(v)}
-          filterFn={inputFilterFn}
-          onTokenChange={(token) => handleSelectToken(token, 'input')}
-          defaultUnknownToken={unknownTokenA}
-          actionRef={tokenAActionRef}
-        />
-        <SwapIcon onClick={handleChangeSide} />
-        {/* output */}
-        <TokenInput
-          name="swap"
-          topLeftLabel={t('swap.to_label')}
-          ctrSx={getCtrSx('BaseOut')}
-          token={tokenOutput}
-          value={isSwapBaseIn ? outputAmount : amountIn}
-          readonly={swapDisabled || (isSwapBaseIn && isComputing)}
-          onChange={handleInput2Change}
-          filterFn={outputFilterFn}
-          onTokenChange={(token) => handleSelectToken(token, 'output')}
-          defaultUnknownToken={unknownTokenB}
-          actionRef={tokenBActionRef}
-        />
-      </Flex>
-      {/* swap info */}
-      <Collapse in={hasValidAmountOut} animateOpacity>
-        <Box mb={[4, 5]}>
-          <SwapInfoBoard
-            amountIn={amountIn}
-            tokenInput={tokenInput}
-            tokenOutput={tokenOutput}
-            isComputing={isComputing && !isSending}
-            computedSwapResult={computeResult}
-            onRefresh={handleRefresh}
+    <Wrapper height="100%">
+      <SwapUIV2.InputPanelWrapper id="swap-page">
+        <Flex mb={[4, 5]} direction="column">
+          {/* input */}
+          <TokenInput
+            name="swap"
+            topLeftLabel={t('swap.from_label')}
+            ctrSx={getCtrSx('BaseIn')}
+            token={tokenInput}
+            value={isSwapBaseIn ? amountIn : inputAmount}
+            readonly={swapDisabled || (!isSwapBaseIn && isComputing)}
+            disableClickBalance={swapDisabled}
+            onChange={(v) => handleInputChange(v)}
+            filterFn={inputFilterFn}
+            onTokenChange={(token) => handleSelectToken(token, 'input')}
+            defaultUnknownToken={unknownTokenA}
+            actionRef={tokenAActionRef}
           />
-        </Box>
-      </Collapse>
-
-      <Collapse in={needPriceUpdatedAlert}>
-        <Box pb={[4, 5]}>
-          <SwapPriceUpdatedAlert onConfirm={onPriceUpdatedConfirm} />
-        </Box>
-      </Collapse>
-      {isSolFeeNotEnough ? (
-        <Flex
-          rounded="xl"
-          p="2"
-          mt="-2"
-          mb="3"
-          fontSize="sm"
-          bg="rgba(255, 78, 163,0.1)"
-          color={colors.semanticError}
-          alignItems="start"
-          justifyContent="center"
-        >
-          <WarningIcon style={{ marginTop: '2px', marginRight: '4px' }} stroke={colors.semanticError} />
-          <Text>{t('swap.error_sol_fee_not_insufficient', { amount: formatToRawLocaleStr(DEFAULT_SOL_RESERVER) })}</Text>
-        </Flex>
-      ) : null}
-      {wsolBalance.isZero ? null : (
-        <Flex
-          rounded="md"
-          mt="-2"
-          mb="3"
-          fontSize="xs"
-          fontWeight={400}
-          bg={colors.backgroundTransparent07}
-          alignItems="center"
-          px="4"
-          py="2"
-          gap="1"
-          color={colors.textSecondary}
-        >
-          <CircleInfo />
-          <Trans
-            i18nKey="swap.unwrap_wsol_info"
-            values={{
-              amount: wsolBalance.text
-            }}
-            components={{
-              sub: isUnWrapping ? <Progress /> : <Text cursor="pointer" color={colors.textLink} onClick={handleUnwrap} />
-            }}
+          {/* <SwapIcon onClick={handleChangeSide} /> */}
+          <FlipButton onClick={handleChangeSide} />
+          {/* output */}
+          <TokenInput
+            name="swap"
+            topLeftLabel={t('swap.to_label')}
+            ctrSx={getCtrSx('BaseOut')}
+            token={tokenOutput}
+            value={isSwapBaseIn ? outputAmount : amountIn}
+            readonly={swapDisabled || (isSwapBaseIn && isComputing)}
+            onChange={handleInput2Change}
+            filterFn={outputFilterFn}
+            onTokenChange={(token) => handleSelectToken(token, 'output')}
+            defaultUnknownToken={unknownTokenB}
+            actionRef={tokenBActionRef}
           />
         </Flex>
-      )}
-      {inputFeeConfig || outputFeeConfig ? (
-        <Flex mt="-1" mb="4">
-          {inputFeeConfig && tokenInput ? (
-            <Tooltip
-              contentBoxProps={{ sx: { width: 'fit-content' } }}
-              label={<TransferFeeTip feeConfig={inputFeeConfig} token={tokenInput!} />}
-            >
-              <Box
-                fontSize="xs"
-                bg={colors.backgroundTransparent10}
-                borderColor={colors.primary}
-                color={colors.primary}
-                borderWidth="1px"
-                px="1"
-                borderRadius="4px"
-              >
-                {getMintSymbol({ mint: tokenInput })} ({inputFeeConfig.newerTransferFee.transferFeeBasisPoints / 100}% {t('common.tax')})
-              </Box>
-            </Tooltip>
-          ) : null}
+        {/* swap info */}
+        <Collapse in={hasValidAmountOut} animateOpacity>
+          <Box mb={[4, 5]}>
+            <SwapInfoBoard
+              amountIn={amountIn}
+              tokenInput={tokenInput}
+              tokenOutput={tokenOutput}
+              isComputing={isComputing && !isSending}
+              computedSwapResult={computeResult}
+              onRefresh={handleRefresh}
+            />
+          </Box>
+        </Collapse>
 
-          {outputFeeConfig && tokenOutput ? (
-            <Tooltip
-              contentBoxProps={{ sx: { width: 'fit-content' } }}
-              label={<TransferFeeTip feeConfig={outputFeeConfig} token={tokenOutput!} />}
-            >
-              <Box
-                fontSize="xs"
-                bg={colors.backgroundTransparent10}
-                borderColor={colors.primary}
-                color={colors.primary}
-                borderWidth="1px"
-                px="1"
-                borderRadius="4px"
+        <Collapse in={needPriceUpdatedAlert}>
+          <Box pb={[4, 5]}>
+            <SwapPriceUpdatedAlert onConfirm={onPriceUpdatedConfirm} />
+          </Box>
+        </Collapse>
+        {isSolFeeNotEnough ? (
+          <Flex
+            rounded="xl"
+            p="2"
+            mt="-2"
+            mb="3"
+            fontSize="sm"
+            bg="rgba(255, 78, 163,0.1)"
+            color={colors.semanticError}
+            alignItems="start"
+            justifyContent="center"
+          >
+            <WarningIcon style={{ marginTop: '2px', marginRight: '4px' }} stroke={colors.semanticError} />
+            <Text>{t('swap.error_sol_fee_not_insufficient', { amount: formatToRawLocaleStr(DEFAULT_SOL_RESERVER) })}</Text>
+          </Flex>
+        ) : null}
+        {wsolBalance.isZero ? null : (
+          <Flex
+            rounded="md"
+            mt="-2"
+            mb="3"
+            fontSize="xs"
+            fontWeight={400}
+            bg={colors.backgroundTransparent07}
+            alignItems="center"
+            px="4"
+            py="2"
+            gap="1"
+            color={colors.textSecondary}
+          >
+            <CircleInfo />
+            <Trans
+              i18nKey="swap.unwrap_wsol_info"
+              values={{
+                amount: wsolBalance.text
+              }}
+              components={{
+                sub: isUnWrapping ? <Progress /> : <Text cursor="pointer" color={colors.textLink} onClick={handleUnwrap} />
+              }}
+            />
+          </Flex>
+        )}
+        {inputFeeConfig || outputFeeConfig ? (
+          <Flex mt="-1" mb="4">
+            {inputFeeConfig && tokenInput ? (
+              <Tooltip
+                contentBoxProps={{ sx: { width: 'fit-content' } }}
+                label={<TransferFeeTip feeConfig={inputFeeConfig} token={tokenInput!} />}
               >
-                {getMintSymbol({ mint: tokenOutput })} ({outputFeeConfig.newerTransferFee.transferFeeBasisPoints / 100}% {t('common.tax')})
-              </Box>
-            </Tooltip>
-          ) : null}
-        </Flex>
-      ) : null}
-      <ConnectedButton
-        disabled={new Decimal(amountIn || 0).isZero() || !!swapError || needPriceUpdatedAlert || swapDisabled}
-        isLoading={isComputing || isSending}
-        loadingText={<div>{isSending ? t('transaction.transaction_initiating') : isComputing ? t('swap.computing') : ''}</div>}
-        onClick={isHighRiskTx ? onHightRiskOpen : handleClickSwap}
-      >
-        <Text>
-          {swapDisabled ? t('common.disabled') : swapError || t('swap.title')}
-          {isPoolNotOpenError ? ` ${dayjs(Number(openTime) * 1000).format('YYYY/M/D HH:mm:ss')}` : null}
-        </Text>
-      </ConnectedButton>
-      <HighRiskAlert
-        isOpen={isHightRiskOpen}
-        onClose={offHightRiskOpen}
-        onConfirm={handleHighRiskConfirm}
-        percent={computeResult?.priceImpactPct ?? 0}
-      />
-    </>
+                <Box
+                  fontSize="xs"
+                  bg={colors.backgroundTransparent10}
+                  borderColor={colors.primary}
+                  color={colors.primary}
+                  borderWidth="1px"
+                  px="1"
+                  borderRadius="4px"
+                >
+                  {getMintSymbol({ mint: tokenInput })} ({inputFeeConfig.newerTransferFee.transferFeeBasisPoints / 100}% {t('common.tax')})
+                </Box>
+              </Tooltip>
+            ) : null}
+
+            {outputFeeConfig && tokenOutput ? (
+              <Tooltip
+                contentBoxProps={{ sx: { width: 'fit-content' } }}
+                label={<TransferFeeTip feeConfig={outputFeeConfig} token={tokenOutput!} />}
+              >
+                <Box
+                  fontSize="xs"
+                  bg={colors.backgroundTransparent10}
+                  borderColor={colors.primary}
+                  color={colors.primary}
+                  borderWidth="1px"
+                  px="1"
+                  borderRadius="4px"
+                >
+                  {getMintSymbol({ mint: tokenOutput })} ({outputFeeConfig.newerTransferFee.transferFeeBasisPoints / 100}% {t('common.tax')}
+                  )
+                </Box>
+              </Tooltip>
+            ) : null}
+          </Flex>
+        ) : null}
+        <ConnectedButton
+          disabled={new Decimal(amountIn || 0).isZero() || !!swapError || needPriceUpdatedAlert || swapDisabled}
+          isLoading={isComputing || isSending}
+          loadingText={<div>{isSending ? t('transaction.transaction_initiating') : isComputing ? t('swap.computing') : ''}</div>}
+          onClick={isHighRiskTx ? onHightRiskOpen : handleClickSwap}
+        >
+          <Text>
+            {swapDisabled ? t('common.disabled') : swapError || t('swap.title')}
+            {isPoolNotOpenError ? ` ${dayjs(Number(openTime) * 1000).format('YYYY/M/D HH:mm:ss')}` : null}
+          </Text>
+        </ConnectedButton>
+        <HighRiskAlert
+          isOpen={isHightRiskOpen}
+          onClose={offHightRiskOpen}
+          onConfirm={handleHighRiskConfirm}
+          percent={computeResult?.priceImpactPct ?? 0}
+        />
+      </SwapUIV2.InputPanelWrapper>
+    </Wrapper>
   )
 }
 
@@ -478,28 +481,6 @@ function SwapPriceUpdatedAlert({ onConfirm }: { onConfirm: () => void }) {
         {t('swap.alert_price_updated_button')}
       </Button>
     </HStack>
-  )
-}
-
-function SwapIcon(props: { onClick?: () => void }) {
-  const targetElement = useRef<HTMLDivElement | null>(null)
-  const isHover = useHover(targetElement)
-  return (
-    <SimpleGrid
-      ref={targetElement}
-      bg={isHover ? colors.semanticFocus : undefined}
-      width="42px"
-      height="42px"
-      placeContent="center"
-      rounded="full"
-      cursor="pointer"
-      my={-3}
-      mx="auto"
-      zIndex={2}
-      onClick={props.onClick}
-    >
-      {isHover ? <SwapButtonTwoTurnIcon /> : <SwapButtonOneTurnIcon />}
-    </SimpleGrid>
   )
 }
 

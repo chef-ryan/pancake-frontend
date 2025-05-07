@@ -4,7 +4,6 @@ import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import PanelCard from '@/components/PanelCard'
 import { SlippageAdjuster } from '@/components/SlippageAdjuster'
 import { TimeType } from '@/hooks/pool/useFetchPoolKLine'
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
@@ -170,13 +169,11 @@ export default function Swap() {
             </Box> */}
           </FlexGap>
           <AtomBox ref={swapPanelRef}>
-            <PanelCard p={[3, 6]} flexGrow={['1', 'unset']} maxWidth="480px">
-              <SwapPanel
-                onInputMintChange={setInputMint}
-                onOutputMintChange={setOutputMint}
-                onDirectionNeedReverse={() => setIsDirectionNeedReverse((b) => !b)}
-              />
-            </PanelCard>
+            <SwapPanel
+              onInputMintChange={setInputMint}
+              onOutputMintChange={setOutputMint}
+              onDirectionNeedReverse={() => setIsDirectionNeedReverse((b) => !b)}
+            />
           </AtomBox>
 
           {/* <GridItem gridArea="kline" {...(isMobile ? { mb: 3 } : {})} overflow="hidden">
