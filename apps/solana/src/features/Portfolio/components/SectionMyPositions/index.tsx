@@ -7,9 +7,6 @@ import Tabs from '@/components/Tabs'
 import { colors } from '@/theme/cssVariables'
 import { useAppStore } from '@/store/useAppStore'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
-import { ClmmMyPositionTabContent } from './TabClmm'
-import MyPositionTabStaked from './TabStaked'
-import MyPositionTabStandard from './TabStandard'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
 import { Select } from '@/components/Select'
 import { useStateWithUrl } from '@/hooks/useStateWithUrl'
@@ -20,6 +17,9 @@ import { formatCurrency } from '@/utils/numberish/formatter'
 import { useEvent } from '@/hooks/useEvent'
 import TokenAvatar from '@/components/TokenAvatar'
 import { getMintSymbol } from '@/utils/token'
+import { ClmmMyPositionTabContent } from './TabClmm'
+import MyPositionTabStaked from './TabStaked'
+import MyPositionTabStandard from './TabStandard'
 
 export default function SectionMyPositions() {
   const { t } = useTranslation()
@@ -147,7 +147,7 @@ export default function SectionMyPositions() {
         </GridItem>
         <GridItem area="tabs" justifySelf={['right', 'left']}>
           <Desktop>
-            <Tabs size="md" variant="rounded" items={tabs} onChange={onTabChange} value={currentTab} />
+            <Tabs size="md" variant="subtle" items={tabs} onChange={onTabChange} value={currentTab} />
           </Desktop>
           <Mobile>
             <Select variant="roundedFilledFlowDark" items={tabs} onChange={onTabChange} value={currentTab} />

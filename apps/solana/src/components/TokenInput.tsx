@@ -30,11 +30,11 @@ import TokenFreezeDialog from './TokenSelectDialog/components/TokenFreezeDialog'
 import { TokenListHandles } from './TokenSelectDialog/components/TokenList'
 import TokenUnknownAddDialog from './TokenSelectDialog/components/TokenUnknownAddDialog'
 
-const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'sm' })`
+const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'sm' })<{ disableSelectToken?: boolean }>`
   padding: 24px 4px;
 
   &:hover {
-    background: ${({ theme }) => colors.invertedContrast};
+    background: ${({ disableSelectToken }) => (disableSelectToken ? 'none' : colors.invertedContrast)};
   }
 `
 
@@ -339,7 +339,7 @@ function TokenInput(props: TokenInputProps) {
       ) : null}
       <Flex mb="12px" justifyContent="space-between" alignItems="center" position="relative" width="100%">
         {/* top left label */}
-        <Text color="textSubtle" fontSize={12} bold>
+        <Text color="textSubtle" fontSize={12} bold minHeight={18}>
           {topLeftLabel}
         </Text>
         {/* balance */}
@@ -369,7 +369,7 @@ function TokenInput(props: TokenInputProps) {
         boxShadow={isFocus ? inputFocusStyle.boxShadow : 'none'}
       >
         <GridItem area="token" color={colors.textSecondary} fontWeight={600} fontSize={sizes.tokenSymbol}>
-          <CurrencySelectButton onClick={disableSelectToken ? undefined : onOpen}>
+          <CurrencySelectButton disableSelectToken={disableSelectToken} onClick={disableSelectToken ? undefined : onOpen}>
             <FlexGap alignItems="center" gap="8px">
               {hideTokenIcon ? null : (
                 <TokenAvatar token={token} size={disableSelectToken ? sizes.disableSelectTokenIconSize : sizes.tokenIcon} />
