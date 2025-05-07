@@ -8,6 +8,7 @@ import React, { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Desktop, Mobile } from '../MobileDesktop'
+import { NetworkSwitcher } from '../NetworkSwitcher'
 import SolWallet from '../SolWallet'
 import { MobileBottomNavbar } from './MobileBottomNavbar'
 import { ColorThemeSettingField } from './components/ColorThemeSettingField'
@@ -72,6 +73,7 @@ function AppNavLayout({
         <Flex gap={[0.5, 2]} align="center">
           <PriorityButton />
           <SettingsMenu />
+          <NetworkSwitcher />
           <SolWallet />
         </Flex>
       </HStack>
