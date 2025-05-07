@@ -2,7 +2,7 @@ import { ChainId } from '@pancakeswap/chains'
 import { type HookData, HookType, type PoolType, dynamicHooksList, hooksList } from '@pancakeswap/infinity-sdk'
 import keyBy from 'lodash/keyBy'
 import { useMemo } from 'react'
-import { Address } from 'viem'
+import { Address, getAddress } from 'viem'
 import { usePoolKeyByPoolId } from './usePoolKeyByPoolId'
 
 export const useHooksList = (chainId?: ChainId, poolType?: PoolType): HookData[] => {
@@ -23,7 +23,7 @@ export const useHooksList = (chainId?: ChainId, poolType?: PoolType): HookData[]
 
 export const useHooksMap = (chainId?: ChainId) => {
   const list = useHooksList(chainId)
-  return useMemo(() => keyBy(list, 'address'), [list])
+  return useMemo(() => keyBy(list, (l) => getAddress(l.address)), [list])
 }
 
 export const useHookByAddress = (chainId?: ChainId, address?: HookData['address']): HookData | undefined => {
