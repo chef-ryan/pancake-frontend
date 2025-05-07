@@ -1,19 +1,6 @@
-import { HOOK_CATEGORY } from '@pancakeswap/infinity-sdk'
 import { useTranslation } from '@pancakeswap/localization'
 import { Percent, Token } from '@pancakeswap/swap-sdk-core'
-import {
-  AutoColumn,
-  AutoRow,
-  Box,
-  Flex,
-  FlexGap,
-  Grid,
-  InfoIcon,
-  Spinner,
-  Text,
-  useMatchBreakpoints,
-  useModal,
-} from '@pancakeswap/uikit'
+import { AutoColumn, AutoRow, Box, Flex, FlexGap, Grid, Spinner, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { ChainLogo, DoubleCurrencyLogo, FeeTierTooltip, Liquidity } from '@pancakeswap/widgets-internal'
 import { InfinityFeeTierBreakdown } from 'components/FeeTierBreakdown'
 import { PoolFeatures } from 'components/PoolFeatures/PoolFeatures'
@@ -58,7 +45,6 @@ export const PoolInfo = () => {
   }, [poolInfo?.feeTier, poolInfo?.feeTierBase])
   const poolId = (poolInfo as InfinityPoolInfo)?.poolId
   const hookData = useHookByPoolId(chainId, poolId)
-  const [onPresentHookDetailModal] = useModal(<Liquidity.HookModal hookData={hookData} />)
   const { isMobile } = useMatchBreakpoints()
 
   if (!poolInfo)
@@ -92,22 +78,11 @@ export const PoolInfo = () => {
           {poolInfo?.protocol ? (
             <AutoColumn rowGap="4px">
               <Text fontSize={12} bold color="textSubtle" textTransform="uppercase">
-                {t('fee tier')} 123
+                {t('fee tier')}
               </Text>
               <Box>
                 {isInfinityProtocol(poolInfo.protocol) ? (
-                  <>
-                    <InfinityFeeTierBreakdown poolId={poolId} chainId={chainId} />
-                    {hookData?.category?.includes(HOOK_CATEGORY.DynamicFees) ? (
-                      <InfoIcon
-                        color="textSubtle"
-                        width={18}
-                        height={18}
-                        onClick={onPresentHookDetailModal}
-                        style={{ cursor: 'pointer' }}
-                      />
-                    ) : null}
-                  </>
+                  <InfinityFeeTierBreakdown poolId={poolId} chainId={chainId} hookData={hookData} />
                 ) : (
                   <FeeTierTooltip type={poolInfo.protocol} percent={fee} dynamic={poolInfo?.isDynamicFee} />
                 )}

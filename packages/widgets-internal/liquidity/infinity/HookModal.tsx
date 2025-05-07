@@ -27,7 +27,7 @@ export const HookModal: React.FC<{
   if (!hookData) return null;
 
   return (
-    <Modal title={<ModalTitle />} onDismiss={onDismiss}>
+    <Modal title={<ModalTitle>{hookData?.name}</ModalTitle>} onDismiss={onDismiss}>
       <Flex minHeight="120px" flexDirection="column" width={["100%", "100%", "100%", "480px"]}>
         <AutoColumn gap="24px">
           <AutoColumn gap="sm">
