@@ -1,18 +1,18 @@
-import { useCallback } from 'react'
-import { Box, Button, HStack, Text, Image, useDisclosure } from '@chakra-ui/react'
-import { Wallet, useWallet } from '@solana/wallet-adapter-react'
-import { useWalletModal } from '@solana/wallet-adapter-react-ui'
-import { useTranslation } from 'react-i18next'
+import { WALLET_STORAGE_KEY } from '@/hooks/app/useInitConnection'
 import { useEvent } from '@/hooks/useEvent'
-import WalletRecentTransactionBoard from '../WalletRecentTransactionBoard'
-import SelectWalletModal from './SelectWalletModal'
+import useResponsive from '@/hooks/useResponsive'
 import ChevronDownIcon from '@/icons/misc/ChevronDownIcon'
-import MoneyWalletIcon from '@/icons/misc/MoneyWalletIcon'
+import { useAppStore } from '@/store/useAppStore'
 import { colors } from '@/theme/cssVariables'
 import { encodeStr } from '@/utils/common'
-import { useAppStore } from '@/store/useAppStore'
-import useResponsive from '@/hooks/useResponsive'
-import { WALLET_STORAGE_KEY } from '@/hooks/app/useInitConnection'
+import { Box, HStack, Image, Text, useDisclosure } from '@chakra-ui/react'
+import { Button } from '@pancakeswap/uikit'
+import { Wallet, useWallet } from '@solana/wallet-adapter-react'
+import { useWalletModal } from '@solana/wallet-adapter-react-ui'
+import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import WalletRecentTransactionBoard from '../WalletRecentTransactionBoard'
+import SelectWalletModal from './SelectWalletModal'
 
 export default function SolWallet() {
   const { wallets, select, disconnect, connected, connecting, wallet } = useWallet()
@@ -70,26 +70,10 @@ export default function SolWallet() {
     )
   return (
     <Box>
-      {isMobile ? (
-        <Button
-          fontSize="sm"
-          height="2rem"
-          minHeight="2rem"
-          minWidth="6rem"
-          px={2}
-          iconSpacing={1}
-          isLoading={connecting}
-          loadingText="Connecting.."
-          rightIcon={<MoneyWalletIcon />}
-          onClick={handleOpen}
-        >
-          {t('button.connect')}
-        </Button>
-      ) : (
-        <Button isLoading={connecting} loadingText="Connecting.." onClick={handleOpen}>
-          {t('button.connect_wallet')}
-        </Button>
-      )}
+      <Button isLoading={connecting} onClick={handleOpen} scale="sm" width="auto">
+        <Box display={['none', null, null, 'block']}>{t('button.connect_wallet')}</Box>
+        <Box display={['block', null, null, 'none']}>{t('button.connect')}</Box>
+      </Button>
       <SelectWalletModal wallets={wallets} isOpen={visible} onClose={handleClose} onSelectWallet={handleSelectWallet} />
     </Box>
   )
