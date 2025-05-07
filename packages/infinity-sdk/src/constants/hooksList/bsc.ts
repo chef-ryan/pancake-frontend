@@ -45,88 +45,148 @@ const dynamicHooksList: HookData[] = [CL_DYNAMIC_HOOK]
 
 export const bscHooksList: HookData[] = [
   ...dynamicHooksList,
-  // {
-  //   address: '0x9c5554cCEa7F38c3337f017E8357C3eD62BF9885',
-  //   name: 'Fee Discount Hook (Primus)',
-  //   poolType: POOL_TYPE.CLAMM,
-  //   description:
-  //     'Prove your CEX 30-day spot trading volume exceeded $1M with zkTLS by Primus and get 50% off the initial fee. Create your proof via the link (https://pancakeswap-hook.primuslabs.xyz/). The proof is valid for 14 days.',
-  //   github: 'https://github.com/primus-labs/pancakeswapv4-cex-trading-hooks',
-  //   category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
-  //   creator: 'https://github.com/primus-labs/',
-  //   audit: '',
-  //   isVerified: true,
-  //   isUpgradable: false,
-  //   hooksRegistration: {
-  //     afterInitialize: true,
-  //     beforeSwap: true,
-  //   },
-  //   hookType: HookType.Universal,
-  //   defaultFee: 3000,
-  // },
-  // {
-  //   address: checksumAddress('0x9F0D5091D31a7801d34da352572BAc84e8Ac48Ad'),
-  //   name: 'Fee Discount Hook (CAKE Holding)',
-  //   poolType: POOL_TYPE.CLAMM,
-  //   description: 'Fee discount based on the last 30-day CAKE token holding.',
-  //   github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
-  //   category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
-  //   creator: 'https://github.com/brevis-network',
-  //   audit: '',
-  //   isVerified: true,
-  //   isUpgradable: true,
-  //   hooksRegistration: {
-  //     beforeSwap: true,
-  //   },
-  //   hookType: HookType.PerPool,
-  //   defaultFee: 100000,
-  // },
-  // {
-  //   address: checksumAddress('0x4910a4852A06D0F6B206bd737ea3C98866Be796C'),
-  //   name: 'Fee Discount Hook (Trading Volume)',
-  //   poolType: POOL_TYPE.CLAMM,
-  //   description: 'Fee discount based on the last 30-day trading volume.',
-  //   github: 'https://github.com/brevis-network/vip-hook',
-  //   category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
-  //   creator: 'https://github.com/brevis-network',
-  //   audit: '',
-  //   isVerified: true,
-  //   isUpgradable: true,
-  //   hooksRegistration: {
-  //     beforeSwap: true,
-  //   },
-  //   hookType: HookType.PerPool,
-  //   defaultFee: 100000,
-  // },
-  // {
-  //   address: '0x0A6440c9cfb5f28BE699a9e4e83BF8A89de72498',
-  //   name: 'veCake Exclusive (CLAMM)',
-  //   poolType: POOL_TYPE.CLAMM,
-  //   description:
-  //     'This multi-feature contract allows for liquidity locks, TWAMM (Time weighted average market maker), and impermanent loss hedging on pools. Check the Github readme for more details.',
-  //   github: 'https://testnet.bscscan.com/address/0x0A6440c9cfb5f28BE699a9e4e83BF8A89de72498',
-  //   category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others],
-  //   creator: 'https://github.com/pancakeswap',
-  //   audit: 'https://github.com/pancakeswap',
-  //   isVerified: true,
-  //   isUpgradable: false,
-  //   hooksRegistration: {
-  //     beforeSwap: true,
-  //   },
-  // },
-  // {
-  //   address: '0x0284ceB8F3Ad42131A6feB69E3F324990837Ef2c',
-  //   name: 'veCake Exclusive (Bin)',
-  //   poolType: POOL_TYPE.Bin,
-  //   description: 'Exclusive to holders of veCake (0x3c3C66383690d3cf08205cD3Ba862bc4F6348829)',
-  //   github: 'https://testnet.bscscan.com/address/0x0284ceB8F3Ad42131A6feB69E3F324990837Ef2c',
-  //   category: [HOOK_CATEGORY.Others],
-  //   isVerified: true,
-  //   isUpgradable: false,
-  //   hooksRegistration: {
-  //     beforeSwap: true,
-  //   },
-  // },
+  {
+    // cake-usdt
+    poolType: POOL_TYPE.CLAMM,
+    address: '0x1a3dfbcac585e22f993cc8e09bcc0db388cc1ca3',
+    name: 'CAKE Holder Discount Hook (Brevis)',
+    description: `Powered by Brevis, this hook enables swap fee discounts for CAKE holders who have made at least 1 swap in this pool in the last 30 days. The fee discount tier is based on a user’s last 30-day Time-Weighted Average (TWA) CAKE balance: 
+(VIP 1) 5% discount if 100 CAKE < TWA <= 1,000 CAKE, 
+(VIP 2) 15% discount if 1,000 CAKE < TWA <= 10,000 CAKE,
+(VIP 3) 25% discount if 10,000 CAKE < TWA <= 20,000 CAKE,
+(VIP 4) 35% discount if 20,000 CAKE < TWA <= 30,000 CAKE, 
+(VIP 5) 45% discount if TWA > 30,000 CAKE.
+    `,
+    github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
+    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+    creator: 'https://github.com/brevis-network',
+    audit: '',
+    isVerified: false,
+    isUpgradable: true,
+    hooksRegistration: {
+      beforeSwap: true,
+    },
+    hookType: HookType.PerPool,
+    defaultFee: 2500,
+  },
+  {
+    // USDT-USDC
+    poolType: POOL_TYPE.CLAMM,
+    address: '0x1e9c64cad39ddd36fb808e004067cffc710eb71d',
+    name: 'VIP discount Hook (Brevis)',
+    description: `Powered by Brevis, this hook enables swap fee discounts for VIP traders based on their cumulative trading volume in this pool in the last 30 days:
+(VIP 1) 5% discount if 50,000 USDT < 30-Day Volume <= 1,000,000 USDT, 
+(VIP 2) 15% discount if 1,000,000 USDT < 30-Day Volume <= 5,000,000 USDT,
+(VIP 3) 25% discount if 5,000,000 USDT < 30-Day Volume <= 15,000,000 USDT,
+(VIP 4) 35% discount if 15,000,000 USDT < 30-Day Volume <= 20,000,000 USDT,
+(VIP 5) 45% discount if 30-Day Volume > 20,000,000 USDT.
+    `,
+    github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
+    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+    creator: 'https://github.com/brevis-network',
+    audit: '',
+    isVerified: false,
+    isUpgradable: true,
+    hooksRegistration: {
+      beforeSwap: true,
+    },
+    hookType: HookType.PerPool,
+    defaultFee: 100,
+  },
+  {
+    // ETH-USDT
+    poolType: POOL_TYPE.CLAMM,
+    address: '0xf27b9134b23957d842b08ffa78b07722fb9845bd',
+    name: 'VIP discount Hook (Brevis)',
+    description: `Powered by Brevis, this hook enables swap fee discounts for VIP traders based on their cumulative trading volume in this pool in the last 30 days:
+(VIP 1) 5% discount if 28 ETH < 30-Day Volume <= 555 ETH, 
+(VIP 2) 15% discount if 555 ETH < 30-Day Volume <= 2,778 ETH,
+(VIP 3) 25% discount if 2,778 ETH < 30-Day Volume <= 8,333 ETH,
+(VIP 4) 35% discount if 8,333 ETH < 30-Day Volume <= 11,111 ETH,
+(VIP 5) 45% discount if 30-Day Volume > 11,111 ETH.
+    `,
+    github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
+    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+    creator: 'https://github.com/brevis-network',
+    audit: '',
+    isVerified: false,
+    isUpgradable: true,
+    hooksRegistration: {
+      beforeSwap: true,
+    },
+    hookType: HookType.PerPool,
+    defaultFee: 500,
+  },
+  {
+    // BNB-USDT
+    poolType: POOL_TYPE.Bin,
+    address: '0x60fbcafab24bc117b6facecd00d3e8f56ca4d5e9',
+    name: 'CAKE Holder Discount Hook (Brevis)',
+    description: `Powered by Brevis, this hook enables swap fee discounts for CAKE holders who have made at least 1 swap in this pool in the last 30 days. The fee discount tier is based on a user’s last 30-day Time-Weighted Average (TWA) CAKE balance: 
+(VIP 1) 5% discount if 100 CAKE < TWA <= 1,000 CAKE, 
+(VIP 2) 15% discount if 1,000 CAKE < TWA <= 10,000 CAKE,
+(VIP 3) 25% discount if 10,000 CAKE < TWA <= 20,000 CAKE,
+(VIP 4) 35% discount if 20,000 CAKE < TWA <= 30,000 CAKE, 
+(VIP 5) 45% discount if TWA > 30,000 CAKE.
+    `,
+    github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
+    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+    creator: 'https://github.com/brevis-network',
+    audit: '',
+    isVerified: false,
+    isUpgradable: true,
+    hooksRegistration: {
+      beforeSwap: true,
+    },
+    hookType: HookType.PerPool,
+    defaultFee: 500,
+  },
+  {
+    // BTCB-BNB
+    address: '0x0fcf6d110cf96be56d251716e69e37619932edf2',
+    name: 'CAKE Holder Discount Hook (Brevis)',
+    description: `Powered by Brevis, this hook enables swap fee discounts for CAKE holders who have made at least 1 swap in this pool in the last 30 days. The fee discount tier is based on a user’s last 30-day Time-Weighted Average (TWA) CAKE balance: 
+(VIP 1) 5% discount if 100 CAKE < TWA <= 1,000 CAKE, 
+(VIP 2) 15% discount if 1,000 CAKE < TWA <= 10,000 CAKE,
+(VIP 3) 25% discount if 10,000 CAKE < TWA <= 20,000 CAKE,
+(VIP 4) 35% discount if 20,000 CAKE < TWA <= 30,000 CAKE, 
+(VIP 5) 45% discount if TWA > 30,000 CAKE.
+    `,
+    github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
+    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+    creator: 'https://github.com/brevis-network',
+    audit: '',
+    isVerified: false,
+    isUpgradable: true,
+    hooksRegistration: {
+      beforeSwap: true,
+    },
+    hookType: HookType.PerPool,
+    defaultFee: 500,
+  },
+  {
+    // CAKE-BNB
+    address: '0xdfdfb2c5a717ab00b370e883021f20c2fbaed277',
+    name: 'CAKE Holder Discount Hook (Brevis)',
+    description: `Powered by Brevis, this hook enables swap fee discounts for CAKE holders who have made at least 1 swap in this pool in the last 30 days. The fee discount tier is based on a user’s last 30-day Time-Weighted Average (TWA) CAKE balance: 
+(VIP 1) 5% discount if 100 CAKE < TWA <= 1,000 CAKE, 
+(VIP 2) 15% discount if 1,000 CAKE < TWA <= 10,000 CAKE,
+(VIP 3) 25% discount if 10,000 CAKE < TWA <= 20,000 CAKE,
+(VIP 4) 35% discount if 20,000 CAKE < TWA <= 30,000 CAKE, 
+(VIP 5) 45% discount if TWA > 30,000 CAKE.
+    `,
+    github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
+    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+    creator: 'https://github.com/brevis-network',
+    audit: '',
+    isVerified: false,
+    isUpgradable: true,
+    hooksRegistration: {
+      beforeSwap: true,
+    },
+    hookType: HookType.PerPool,
+    defaultFee: 2500,
+  },
 ]
 
 /**
