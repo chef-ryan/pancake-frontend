@@ -8,9 +8,10 @@ import useFetchMultipleRpcClmmInfo from '@/hooks/pool/clmm/useFetchMultipleRpcCl
 import Button from '@/components/Button'
 import { ClmmDataWithUpdateFn } from '@/hooks/portfolio/useAllPositionInfo'
 import { colors } from '@/theme/cssVariables'
+import { ClmmLockInfo } from '@/hooks/portfolio/clmm/useClmmBalance'
+
 import { ClmmPositionItemsCard } from './components/Clmm/ClmmPositionItemsCard'
 import { openCache } from './components/Clmm/ClmmPositionAccountItem'
-import { ClmmLockInfo } from '@/hooks/portfolio/clmm/useClmmBalance'
 
 const ClmmMyPositionTabContent = memo(
   ({
@@ -37,6 +38,7 @@ const ClmmMyPositionTabContent = memo(
       data.forEach((pos) => {
         const noneZeroPos = pos[1].filter((p) => !p.liquidity.isZero())
         const zeroPos = pos[1].filter((p) => p.liquidity.isZero())
+        // eslint-disable-next-line no-param-reassign
         pos[1] = [...noneZeroPos.sort((a, b) => a.tickLower - b.tickLower), ...zeroPos.sort((a, b) => a.tickLower - b.tickLower)]
       })
       data.sort((a, b) => (formattedDataMap[b[0]]?.tvl || 0) - (formattedDataMap[a[0]]?.tvl || 0))
@@ -58,7 +60,8 @@ const ClmmMyPositionTabContent = memo(
     const positionSlot = Math.max(balance.slot ?? 0, balance.tickSlot ?? 0)
 
     useEffect(() => {
-      if (poolSlot >= positionSlot || poolSlot === 0) return
+      if (poolSlot >= positionSlot || poolSlot === 0) return undefined
+
       const timerId = window.setTimeout(() => {
         mutate()
       }, 500)

@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import PortfolioPageThumbnailIcon from '@/icons/pageNavigation/PortfolioPageThumbnailIcon'
 import { colors } from '@/theme/cssVariables'
 import { shrinkToValue } from '@/utils/shrinkToValue'
+import { PAGE_URLS } from '@/utils/config/routers'
 
 /** only used is Mobile */
 export function MobileBottomNavbar() {
@@ -15,12 +16,9 @@ export function MobileBottomNavbar() {
   const { colorMode } = useColorMode()
   const isLight = colorMode === 'light'
   const { pathname } = useRouter()
-  const swapHref = '/swap'
-  const isSwapActive = pathname === swapHref
-  const liquidityHref = '/liquidity-pools'
-  const isLiquidityActive = pathname === liquidityHref
-  const protfolioHref = '/portfolio'
-  const isPortfolioActive = pathname === protfolioHref
+  const isSwapActive = pathname === PAGE_URLS.SWAP
+  const isLiquidityActive = pathname === PAGE_URLS.LIQUIDITY
+  const isPortfolioActive = pathname === PAGE_URLS.POSITIONS
 
   return (
     <SimpleGrid
@@ -33,19 +31,19 @@ export function MobileBottomNavbar() {
       borderTop={isLight ? `1px solid rgba(171, 196, 255, 0.2)` : `1px solid transparent`}
     >
       <BottomNavbarItem
-        href={swapHref}
+        href={PAGE_URLS.SWAP}
         text={t('swap.title')}
         icon={() => <SwapHorizIcon color={isSwapActive ? colors.secondary : colors.textSubtle} />}
         isActive={isSwapActive}
       />
       <BottomNavbarItem
-        href={liquidityHref}
+        href={PAGE_URLS.LIQUIDITY}
         text={t('liquidity.title')}
         icon={() => <WaterIcon color={isLiquidityActive ? colors.secondary : colors.textSubtle} />}
         isActive={isLiquidityActive}
       />
       <BottomNavbarItem
-        href={protfolioHref}
+        href={PAGE_URLS.POSITIONS}
         text={t('portfolio.title')}
         icon={(colorMode) => <PortfolioPageThumbnailIcon colorMode={colorMode} isActive={isPortfolioActive} />}
         isActive={isPortfolioActive}

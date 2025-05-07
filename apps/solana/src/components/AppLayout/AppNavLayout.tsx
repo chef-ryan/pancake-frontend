@@ -6,6 +6,7 @@ import React, { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { colors } from '@/theme/cssVariables'
 import { appLayoutPaddingX } from '@/theme/detailConfig'
+import { PAGE_URLS } from '@/utils/config/routers'
 
 import { Desktop, Mobile } from '../MobileDesktop'
 import { NetworkSwitcher } from '../NetworkSwitcher'
@@ -63,9 +64,9 @@ function AppNavLayout({
         {/* nav routes */}
         <Desktop>
           <HStack flexGrow={1} justify="start" overflow={['auto', 'visible']} gap={[0, 0, '15px']}>
-            <RouteLink href="/swap" isActive={pathname === '/swap'} title={t('swap.title')} />
-            <RouteLink href="/liquidity-pools" isActive={pathname.includes('/liquidity')} title={t('liquidity.title')} />
-            <RouteLink href="/positions" isActive={pathname === '/positions'} title={t('portfolio.title')} />
+            <RouteLink href={PAGE_URLS.SWAP} isActive={pathname === '/swap'} title={t('swap.title')} />
+            <RouteLink href={PAGE_URLS.LIQUIDITY} isActive={pathname.includes('/liquidity')} title={t('liquidity.title')} />
+            <RouteLink href={PAGE_URLS.POSITIONS} isActive={pathname === '/positions'} title={t('portfolio.title')} />
           </HStack>
         </Desktop>
 

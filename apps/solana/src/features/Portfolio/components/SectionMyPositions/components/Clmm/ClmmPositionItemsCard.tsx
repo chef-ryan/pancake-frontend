@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import { useCallback, useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Box, Flex, Grid, GridItem, HStack, Tag, Text, Skeleton, useDisclosure } from '@chakra-ui/react'
 import Link from 'next/link'
@@ -17,11 +17,11 @@ import SwapHorizontalIcon from '@/icons/misc/SwapHorizontalIcon'
 import ChevronDoubleDownIcon from '@/icons/misc/ChevronDoubleDownIcon'
 import { panelCard } from '@/theme/cssBlocks'
 import { useAppStore } from '@/store'
-import ClmmPositionAccountItem from './ClmmPositionAccountItem'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
 import { ClmmLockInfo } from '@/hooks/portfolio/clmm/useClmmBalance'
+import ClmmPositionAccountItem from './ClmmPositionAccountItem'
 
 const LIST_THRESHOLD = 10
 
@@ -59,12 +59,23 @@ export function ClmmPositionItemsCard({
     setPositions(positions)
   }, [totalPositions, pageCurrent])
 
-  const loadMore = useCallback(() => setPageCurrent((s) => (s < pageTotal ? s + 1 : s)), [])
-  if (poolInfo && rpcData.currentPrice) poolInfo.price = rpcData.currentPrice
-  if (!poolInfo) return isLoading ? <Skeleton w="full" height="140px" rounded="lg" /> : null
+  const loadMore = useCallback(() => setPageCurrent((s) => (s < pageTotal ? s + 1 : s)), [pageTotal])
 
-  const hasLockedLiquidity = !!lockInfo
-  const lockedPositions = hasLockedLiquidity ? positions.filter((p) => !!lockInfo[p.nftMint.toBase58()]) : []
+  useEffect(() => {
+    if (poolInfo && rpcData.currentPrice) {
+      // eslint-disable-next-line no-param-reassign
+      poolInfo.price = rpcData.currentPrice
+    }
+  }, [poolInfo, rpcData.currentPrice])
+
+  const [hasLockedLiquidity, lockedPositions] = useMemo(
+    () => [!!lockInfo, lockInfo ? positions.filter((p) => !!lockInfo[p.nftMint.toBase58()]) : []],
+    [lockInfo, positions]
+  )
+
+  if (!poolInfo) {
+    return isLoading ? <Skeleton w="full" height="140px" rounded="lg" /> : null
+  }
 
   return (
     <Grid
@@ -83,7 +94,6 @@ export function ClmmPositionItemsCard({
       ]}
       py={[4, 5]}
       px={[3, 8]}
-      bg={colors.backgroundLight}
       gap={[2, 4]}
       borderRadius="xl"
       alignItems="center"
@@ -183,7 +193,7 @@ export function ClmmPositionItemsCard({
       <GridItem area="items">
         <Flex flexDir="column" mt={[1, 0]} gap={3}>
           {positions.map((position) =>
-            hasLockedLiquidity && lockInfo[position.nftMint.toBase58()] ? null : (
+            hasLockedLiquidity && lockInfo?.[position.nftMint.toBase58()] ? null : (
               <ClmmPositionAccountItem
                 key={position.nftMint.toBase58()}
                 poolInfo={poolInfo!}
@@ -224,7 +234,7 @@ export function ClmmPositionItemsCard({
                 baseIn={baseIn}
                 initRpcPoolData={initRpcPoolData}
                 setNoRewardClmmPos={setNoRewardClmmPos}
-                lockData={lockInfo[position.nftMint.toBase58()]}
+                lockData={lockInfo?.[position.nftMint.toBase58()]}
                 onSubscribe={onSubscribe}
               />
             ))}
