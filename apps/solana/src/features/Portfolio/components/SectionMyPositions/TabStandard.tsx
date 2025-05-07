@@ -1,16 +1,17 @@
+import { Button } from '@pancakeswap/uikit'
 import { RAYMint } from '@raydium-io/raydium-sdk-v2'
-import { Flex, Text, Link, Button, Skeleton } from '@chakra-ui/react'
+import { Flex, Text, Link, Skeleton } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { useMemo } from 'react'
-import StandardPoolRowItem from './components/Standard/StandardPoolRowItem'
-import { FormattedFarmInfoV6 , FarmBalanceInfo } from '@/hooks/farm/type'
+import { FormattedFarmInfoV6, FarmBalanceInfo } from '@/hooks/farm/type'
 import { FarmPositionInfo, EMPTY_FARM_POS } from '@/hooks/portfolio/farm/useFarmPositions'
 import useFetchAccLpMint from '@/hooks/token/useFetchAccLpMint'
 import useFetchPoolByLpMint from '@/hooks/pool/useFetchPoolByLpMint'
-import { colors } from '@/theme/cssVariables'
 import useLockCpmmBalance from '@/hooks/portfolio/cpmm/useLockCpmmBalance'
 import { formatPoolData } from '@/hooks/pool/formatter'
 import { FormattedPoolInfoStandardItem } from '@/hooks/pool/type'
+import { panelCard } from '@/theme/cssBlocks'
+import StandardPoolRowItem from './components/Standard/StandardPoolRowItem'
 
 const emptyPosition = {
   hasAmount: true,
@@ -103,13 +104,13 @@ export default function MyPositionTabStandard({
         <Skeleton w="full" height="140px" rounded="lg" />
       ) : !hasData ? (
         <Flex
+          {...panelCard}
           alignItems="center"
           justifyContent="center"
           minH="200px"
           flexDir="column"
-          py={5}
-          px={8}
-          bg={colors.backgroundLight}
+          py={2}
+          px={2}
           gap={6}
           borderRadius="xl"
         >

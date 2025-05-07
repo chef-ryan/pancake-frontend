@@ -1,3 +1,4 @@
+import { SwapHorizIcon } from '@pancakeswap/uikit'
 import { useCallback, useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Box, Flex, Grid, GridItem, HStack, Tag, Text, Skeleton, useDisclosure } from '@chakra-ui/react'
@@ -119,8 +120,8 @@ export function ClmmPositionItemsCard({
           >
             <HStack>
               <TokenAvatarPair size={['smi', 'md']} token1={poolInfo.mintA} token2={poolInfo.mintB} />
-              <Text fontSize={['md', '20px']} fontWeight="500">
-                {poolInfo.poolName.replace(' - ', '/')}
+              <Text fontSize={['md', '20px']} fontWeight="600">
+                {poolInfo.poolName.replace('-', ' / ')}
               </Text>
               <Tag size={['sm', 'md']} variant="rounded">
                 {formatToRawLocaleStr(toPercentString(poolInfo.feeRate * 100))}
@@ -129,7 +130,16 @@ export function ClmmPositionItemsCard({
           </Tooltip>
           {isMobile && (
             <Link href={`/clmm/create-position?pool_id=${poolInfo.id}`}>
-              <Button fontSize="xs" height="1.5rem" minHeight="1.5rem" minWidth="4rem" px={2} color={colors.buttonSolidText}>
+              <Button
+                variant="outline"
+                borderColor={colors.primary60}
+                color={colors.primary60}
+                fontSize="xs"
+                height="1.5rem"
+                minHeight="1.5rem"
+                minWidth="4rem"
+                px={2}
+              >
                 {t('button.create')}
               </Button>
             </Link>
@@ -139,7 +149,7 @@ export function ClmmPositionItemsCard({
 
       <GridItem area="price" justifySelf={['stretch', 'left']}>
         <Flex gap={2} justify={['start', 'space-between']} alignItems="center">
-          <Text color={colors.lightPurple} fontSize={isMobile ? 'xs' : 'md'}>
+          <Text color={colors.textSubtle} fontSize={isMobile ? 'xs' : 'md'}>
             {t('field.current_price')}:{' '}
             <Text as="span" color={colors.textPrimary}>
               {baseIn
@@ -157,7 +167,7 @@ export function ClmmPositionItemsCard({
           </Text>
           {/* switch button */}
           {isMobile ? (
-            <SwapHorizontalIcon onClick={onToggle} color={colors.secondary} />
+            <SwapHorizIcon onClick={onToggle} color={colors.primary60} />
           ) : (
             <Box alignSelf="center" ml={[0, 2]}>
               <Tooltip label={t('portfolio.section_positions_clmm_switch_direction_tooltip')}>

@@ -1,3 +1,4 @@
+import { Button } from '@pancakeswap/uikit'
 import { useEffect, useMemo, memo } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
@@ -5,10 +6,9 @@ import { Box, Flex, Text } from '@chakra-ui/react'
 import { ApiV3PoolInfoConcentratedItem } from '@raydium-io/raydium-sdk-v2'
 import useFetchPoolById from '@/hooks/pool/useFetchPoolById'
 import useFetchMultipleRpcClmmInfo from '@/hooks/pool/clmm/useFetchMultipleRpcClmmInfo'
-import Button from '@/components/Button'
 import { ClmmDataWithUpdateFn } from '@/hooks/portfolio/useAllPositionInfo'
-import { colors } from '@/theme/cssVariables'
 import { ClmmLockInfo } from '@/hooks/portfolio/clmm/useClmmBalance'
+import { panelCard } from '@/theme/cssBlocks'
 
 import { ClmmPositionItemsCard } from './components/Clmm/ClmmPositionItemsCard'
 import { openCache } from './components/Clmm/ClmmPositionAccountItem'
@@ -100,13 +100,13 @@ const ClmmMyPositionTabContent = memo(
           ))
         ) : (
           <Flex
+            {...panelCard}
             alignItems="center"
             justifyContent="center"
             minH="200px"
             flexDir="column"
-            py={5}
-            px={8}
-            bg={colors.backgroundLight}
+            py={2}
+            px={2}
             gap={6}
             borderRadius="xl"
           >

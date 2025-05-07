@@ -37,10 +37,6 @@ export default function SectionMyPositions() {
     {
       value: 'standard',
       label: t('portfolio.section_positions_tab_standard')
-    },
-    {
-      value: 'staked RAY',
-      label: t('portfolio.section_positions_tab_staking')
     }
   ]
   const connected = useAppStore((s) => s.connected)
@@ -60,7 +56,8 @@ export default function SectionMyPositions() {
 
   const isFocusClmmTab = currentTab === tabs[0].value
   const isFocusStandardTab = currentTab === tabs[1].value
-  const isFocusStake = currentTab === tabs[2].value
+  // for farm
+  const isFocusStake = false
 
   const noRewardClmmPos = useRef<Set<string>>(new Set())
   const setNoRewardClmmPos = useEvent((poolId: string, isDelete?: boolean) => {
@@ -104,6 +101,8 @@ export default function SectionMyPositions() {
     handleRefreshAll()
   })
 
+  const enableFarm = false
+
   return (
     <>
       <Grid
@@ -123,21 +122,21 @@ export default function SectionMyPositions() {
         `
         ]}
         columnGap={3}
-        rowGap={[3, 2]}
+        rowGap={[3, 4]}
         mb={3}
-        mt={6}
+        mt={[0, 6]}
         alignItems="center"
       >
         <GridItem area="title">
           <Flex gap="2" alignItems="center">
-            <Heading id="my-position" fontSize={['lg', 'xl']} fontWeight="500" color={colors.textPrimary}>
+            <Heading id="my-position" fontSize="xl" fontWeight="600" color={colors.textSecondary}>
               {t('portfolio.section_positions')}
             </Heading>
             <IntervalCircle
               componentRef={circleRef}
               svgWidth={18}
-              strokeWidth={2}
-              trackStrokeColor={colors.secondary}
+              strokeWidth={3}
+              trackStrokeColor={colors.textSubtle}
               trackStrokeOpacity={0.5}
               filledTrackStrokeColor={colors.secondary}
               onClick={handleClick}
@@ -147,15 +146,15 @@ export default function SectionMyPositions() {
         </GridItem>
         <GridItem area="tabs" justifySelf={['right', 'left']}>
           <Desktop>
-            <Tabs size="md" variant="subtle" items={tabs} onChange={onTabChange} value={currentTab} />
+            <Tabs size="sm" variant="subtle" items={tabs} onChange={onTabChange} value={currentTab} />
           </Desktop>
           <Mobile>
-            <Select variant="roundedFilledFlowDark" items={tabs} onChange={onTabChange} value={currentTab} />
+            <Select items={tabs} onChange={onTabChange} value={currentTab} />
           </Mobile>
         </GridItem>
         <GridItem area="action" justifySelf={['stretch', 'stretch', 'right']}>
-          {connected ? (
-            <Box py="6px" px={4} bg={colors.transparentContainerBg} borderRadius="12px">
+          {enableFarm && connected ? (
+            <Box {...panelCard} py="6px" px={4} borderRadius="12px">
               <HStack justify="space-between" gap={8}>
                 <Flex gap={[0, 2]} direction={['column', 'row']} fontSize={['xs', 'sm']} align={['start', 'center']}>
                   <HStack gap={1}>

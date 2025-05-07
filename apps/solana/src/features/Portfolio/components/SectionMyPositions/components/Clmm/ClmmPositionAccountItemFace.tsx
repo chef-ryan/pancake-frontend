@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import BN from 'bn.js'
 import AprMDSwitchWidget from '@/components/AprMDSwitchWidget'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
-import { FormattedPoolInfoConcentratedItem , AprKey } from '@/hooks/pool/type'
+import { FormattedPoolInfoConcentratedItem, AprKey } from '@/hooks/pool/type'
 import useClmmBalance, { ClmmPosition } from '@/hooks/portfolio/clmm/useClmmBalance'
 import Close from '@/icons/misc/Close'
 import ChevronRightIcon from '@/icons/misc/ChevronRightIcon'
@@ -20,6 +20,7 @@ import { TokenPrice } from '@/hooks/token/useTokenPrice'
 import { getPositionAprCore } from '@/features/Clmm/utils/calApr'
 import { useEvent } from '@/hooks/useEvent'
 import LockIcon from '@/icons/misc/LockIcon'
+import { inputCard } from '@/theme/cssBlocks'
 
 export default function ClmmPositionAccountItemFace({
   isViewOpen,
@@ -212,20 +213,38 @@ export default function ClmmPositionAccountItemFace({
       </Desktop>
       <Mobile>
         <Flex
-          borderRadius="md"
+          {...inputCard}
+          flexDir="column"
+          p="4"
+          fontSize="sm"
+          color={colors.textSubtle}
           justifyContent="space-between"
-          p={3}
-          alignItems="center"
-          bg={colors.backgroundDark}
+          gap={2}
           onClick={onClickViewTrigger}
         >
-          <Text fontSize="sm" fontWeight="500">
-            {rangeValue}
-          </Text>
-          <Flex justifyContent="space-between" alignItems="center">
+          <HStack justifyContent="space-between">
             <Badge variant={inRange ? 'ok' : 'error'}>{inRange ? t('clmm.in_range') : t('clmm.out_of_range')}</Badge>
-            <ChevronRightIcon color={colors.secondary} />
-          </Flex>
+            <ChevronRightIcon color={colors.textSubtle} />
+          </HStack>
+          <HStack justifyContent="space-between">
+            <Text fontWeight="600" color={colors.textPrimary}>
+              {rangeValue}
+            </Text>
+            {isFullRange ? null : <Text whiteSpace="nowrap">{rangeValueUnit}</Text>}
+          </HStack>
+          <HStack justifyContent="space-between">
+            <Text>{t('clmm.position')}</Text>
+            <Text whiteSpace="nowrap" display="flex" gap="1" alignItems="center" color={colors.textPrimary} fontWeight={600}>
+              {formatCurrency(totalVolume.toString(), { symbol: '$', decimalPlaces: 2 })}
+              {isLock ? <LockIcon /> : null}
+            </Text>
+          </HStack>
+          <HStack justifyContent="space-between">
+            <Text whiteSpace="nowrap">{t('field.apr')}</Text>
+            <Text whiteSpace="nowrap" color={colors.textPrimary}>
+              {formatToRawLocaleStr(toAPRPercent(apr.apr))}
+            </Text>
+          </HStack>
         </Flex>
       </Mobile>
     </>
