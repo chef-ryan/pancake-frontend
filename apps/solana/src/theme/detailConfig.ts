@@ -1,7 +1,7 @@
 // some global config, (note: these are just js variable not state or css variable)
 // const contentWidth = 'clamp(1600px, 80vw, 2000px)'
 const contentWidth = '1600px'
-export const appLayoutPaddingX = ['20px', `max((100vw - ${contentWidth}) / 2, 3%)`, `max((100vw - ${contentWidth}) / 2, 7%)`]
+export const appLayoutPaddingX = ['16px', `max((100vw - ${contentWidth}) / 2, 3%)`, `max((100vw - ${contentWidth}) / 2, 7%)`]
 export const revertAppLayoutPaddingX = ['-20px', `min((100vw - ${contentWidth}) / -2, -3%)`, `min((100vw - ${contentWidth}) / -2, -7%)`]
 
 const baseWindowWidth = 1440

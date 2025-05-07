@@ -1,3 +1,9 @@
+import { Flex } from '@chakra-ui/react'
+import { Box, Button, Input, Message, Text } from '@pancakeswap/uikit'
+import Decimal from 'decimal.js'
+import { KeyboardEvent, useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 import { SWAP_SLIPPAGE_KEY, useSwapStore } from '@/features/Swap/useSwapStore'
 import { useEvent } from '@/hooks/useEvent'
 import { LIQUIDITY_SLIPPAGE_KEY, useAppStore, useLiquidityStore } from '@/store'
@@ -6,12 +12,6 @@ import { escapeRegExp, inputRegex } from '@/utils/escapeRegExp'
 import { setStorageItem } from '@/utils/localStorage'
 import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import toPercentString from '@/utils/numberish/toPercentString'
-import { Flex } from '@chakra-ui/react'
-import { Box, Button, Input, Message, Text } from '@pancakeswap/uikit'
-import Decimal from 'decimal.js'
-import { KeyboardEvent, useCallback, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 import { SettingField } from './SettingField'
 import { SettingFieldToggleButton } from './SettingFieldToggleButton'
 
@@ -40,7 +40,7 @@ export function SlippageToleranceSettingField({ variant = 'swap' }: { variant?: 
   const [isFirstFocused, setIsFirstFocused] = useState(false)
   const handleChange = useEvent((val: string) => {
     if (val === '' || inputRegex.test(escapeRegExp(val))) {
-      setIsFirstFocused(val === '' ? true : false)
+      setIsFirstFocused(!val)
       setCurrentSlippage(val)
     }
   })

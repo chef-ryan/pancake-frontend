@@ -674,7 +674,7 @@ export default function Pools() {
         <Desktop>
           <PoolChartModal
             renderModalHeader={
-              <Flex alignItems="center" gap={1}>
+              <Flex alignItems="center" gap={2}>
                 <TokenAvatarPair token1={chartPoolInfo?.mintA} token2={chartPoolInfo?.mintB} />
                 <Text>
                   {chartPoolInfo?.mintA.symbol} / {chartPoolInfo?.mintB.symbol}

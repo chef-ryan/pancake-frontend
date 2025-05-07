@@ -8,7 +8,7 @@ import BN from 'bn.js'
 import Decimal from 'decimal.js'
 import TokenAvatar from '@/components/TokenAvatar'
 import CLMMTokenInputGroup, { InputSide } from '@/features/Clmm/components/TokenInputGroup'
-import { useClmmStore, useTokenAccountStore } from '@/store'
+import { useAppStore, useClmmStore, useTokenAccountStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { debounce } from '@/utils/functionMethods'
 import toPercentString from '@/utils/numberish/toPercentString'
@@ -25,6 +25,7 @@ interface Props extends Required<TickData> {
 }
 
 export default function TokenAmountPairInputs({ tempCreatedPool, baseIn, onConfirm, ...tickData }: Props) {
+  const isMobile = useAppStore((s) => s.isMobile)
   const computePairAmount = useClmmStore((s) => s.computePairAmount)
   const getTokenBalanceUiAmount = useTokenAccountStore((s) => s.getTokenBalanceUiAmount)
   const { t } = useTranslation()
@@ -165,7 +166,7 @@ export default function TokenAmountPairInputs({ tempCreatedPool, baseIn, onConfi
           </HStack>
         </HStack>
       </VStack>
-      <Button mt="4" disabled={!!error} onClick={handleConfirm}>
+      <Button mt={isMobile ? '16px' : '24px'} disabled={!!error} onClick={handleConfirm}>
         {error ? t(error.key, error.props || {}) : t('liquidity.preview_pool')}
       </Button>
     </>

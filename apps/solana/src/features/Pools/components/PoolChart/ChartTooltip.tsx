@@ -5,23 +5,24 @@ import { NameType, ValueType } from 'recharts/src/component/DefaultTooltipConten
 import { toUTC } from '@/utils/date'
 import { formatCurrency } from '@/utils/numberish/formatter'
 import { colors } from '@/theme/cssVariables'
+import { panelCard } from '@/theme/cssBlocks'
 
 export default function ChartTooltip({ active, payload, label, category }: TooltipProps<ValueType, NameType> & { category?: string }) {
   const unit = 'USD'
   if (active && payload && payload.length) {
     return (
-      <Box bg={colors.backgroundLight} rounded="12px" px="14px" py={3}>
-        <Box color={colors.textTertiary} fontSize="xs">
+      <Box {...panelCard} px="4" py="2" lineHeight="1.5">
+        <Box color={colors.textSubtle} fontSize="xs">
           {category}
         </Box>
         {payload.map((item, idx) => {
           return (
-            <Box key={`payload-${item.name}-${idx}`} color={colors.textPrimary} fontSize="16px">
+            <Box key={`payload-${item.name}-${idx}`} color={colors.textPrimary} fontSize="14px" fontWeight="600">
               <Box>{`${formatCurrency(item.value as string, { symbol: '$', decimalPlaces: 2 })} ${unit}`}</Box>
             </Box>
           )
         })}
-        <Box color={colors.textTertiary} fontSize="xs">
+        <Box color={colors.textSubtle} fontSize="xs">
           {toUTC(label, { showTime: false, showUTCBadge: false })}
         </Box>
       </Box>

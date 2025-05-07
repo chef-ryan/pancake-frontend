@@ -1,7 +1,7 @@
-import { ButtonMenuProps, ButtonMenu, ButtonMenuItem } from '@pancakeswap/uikit'
+import { ButtonMenuProps, ButtonMenu, ButtonMenuItem, type ButtonMenuItemProps } from '@pancakeswap/uikit'
 import { Scale, Variant } from '@pancakeswap/uikit/components/Button/types'
-import { SystemStyleObject, TabListProps as CTabListProps, TooltipProps } from '@chakra-ui/react'
-import { ReactNode, useCallback, useEffect, useState } from 'react'
+import { TabListProps as CTabListProps, TooltipProps } from '@chakra-ui/react'
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useEvent } from '@/hooks/useEvent'
 import { shrinkToValue } from '@/utils/shrinkToValue'
@@ -26,7 +26,7 @@ type TabsProps<T extends string> = Omit<ButtonMenuProps, 'children'> & {
   defaultValue?: T
 
   renderItem?(itemValue?: T, idx?: number): ReactNode
-  tabItemSX?: SystemStyleObject
+  tabItemSX?: ButtonMenuItemProps
 }
 
 export default function Tabs<T extends string = string>({
@@ -37,18 +37,26 @@ export default function Tabs<T extends string = string>({
   value,
   defaultValue,
   renderItem,
+  tabItemSX = {},
   ...rest
 }: TabsProps<T>) {
-  const options = rawOptions.map((o) => (typeof o === 'string' ? { value: o, label: o } : o))
-  const inputValueIndex = value ? options.findIndex((option) => option.value === value && !option.disabled) : undefined
-  const defaultInputValueIndex = defaultValue ? options.findIndex((option) => option.value === defaultValue && !option.disabled) : undefined
+  const options = useMemo(() => rawOptions.map((o) => (typeof o === 'string' ? { value: o, label: o } : o)), [rawOptions])
+  const inputValueIndex = useMemo(
+    () => (value ? options.findIndex((option) => option.value === value && !option.disabled) : undefined),
+    [options, value]
+  )
+  const defaultInputValueIndex = useMemo(
+    () => (defaultValue ? options.findIndex((option) => option.value === defaultValue && !option.disabled) : undefined),
+    [defaultValue, options]
+  )
   const [activeIndex, setActiveIndex] = useState(inputValueIndex ?? defaultInputValueIndex)
-  const syncActiveIndexState = (idx: number) => setActiveIndex(idx)
+  const syncActiveIndexState = useCallback((idx: number) => setActiveIndex(idx), [])
+
   useEffect(() => {
     if (inputValueIndex != null) {
       syncActiveIndexState(inputValueIndex)
     }
-  }, [inputValueIndex])
+  }, [inputValueIndex, syncActiveIndexState])
 
   const onTabChange = useEvent((idx: number) => {
     if (options[idx].disabled) return
@@ -60,13 +68,13 @@ export default function Tabs<T extends string = string>({
       syncActiveIndexState(idx)
       onTabChange(idx)
     },
-    [onTabChange]
+    [syncActiveIndexState, onTabChange]
   )
 
   return (
-    <ButtonMenu scale={size} activeIndex={inputValueIndex} onItemClick={handleItemClick} variant={variant} {...rest}>
+    <ButtonMenu scale={size} activeIndex={activeIndex} onItemClick={handleItemClick} variant={variant} {...rest}>
       {options.map((option, idx) => (
-        <ButtonMenuItem key={`${option.value}`}>
+        <ButtonMenuItem key={`${option.value}`} {...tabItemSX}>
           {renderItem?.(option.value, idx) ?? shrinkToValue(option.label, [activeIndex === idx]) ?? option.value}
         </ButtonMenuItem>
       ))}

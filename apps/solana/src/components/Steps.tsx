@@ -97,7 +97,7 @@ function Steps({ currentIndex, variant, ctrSx, steps, onChange }: StepsProps, re
             )
           })}
         </HStack>
-        <Text color={colors.textSecondary} fontWeight={600} fontSize="lg" align="center" pt={2}>
+        <Text color={colors.textSecondary} fontWeight={600} fontSize="xl" align="center" pt={4}>
           {activeStep.description}
         </Text>
       </Box>

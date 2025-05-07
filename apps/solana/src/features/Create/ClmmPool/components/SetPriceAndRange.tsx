@@ -316,7 +316,7 @@ export default function SetPriceAndRange({
     )
 
   return (
-    <PanelCard p={[3, 6]}>
+    <PanelCard p={[4, 6]}>
       <Desktop>
         <Flex mb={3} justifyContent="space-between" alignItems="center">
           <Text variant="subTitle" fontSize="xl">
@@ -357,28 +357,21 @@ export default function SetPriceAndRange({
               </Text>
             </Desktop>
             <Mobile>
-              <Tabs
-                onChange={handleSwitchBase}
-                defaultValue={baseIn ? 'base' : 'quote'}
-                value={baseIn ? 'base' : 'quote'}
-                items={[
-                  {
-                    value: 'base',
-                    label: t('common.subject_price', { subject: wSolToSolString(tempCreatedPool?.mintA.symbol || token1.symbol) })
-                  },
-                  {
-                    value: 'quote',
-                    label: t('common.subject_price', { subject: wSolToSolString(tempCreatedPool?.mintB.symbol || token2.symbol) })
-                  }
-                ]}
-              />
+              <Button variant="text" onClick={() => handleSwitchBase(baseIn ? 'quote' : 'base')} scale="sm">
+                <Text variant="label" size="sm" whiteSpace="nowrap" px={4}>
+                  {t('common.per_unit', {
+                    subA: wSolToSolString(tokenBase.symbol),
+                    subB: wSolToSolString(tokenQuote.symbol)
+                  })}
+                </Text>
+              </Button>
             </Mobile>
           </>
         }
         value={currentPrice}
         onChange={handlePriceChange}
       />
-      <Flex alignItems="center" gap="2" mt="2" mb="4">
+      <Flex alignItems="center" gap="2" mt="2" mb={['6', '4']}>
         <Text variant="label" fontSize="sm" color={colors.textSubtle}>
           {t('field.current_price')}:
         </Text>
@@ -405,7 +398,6 @@ export default function SetPriceAndRange({
       <Tabs
         mb="3"
         tabListSX={{ display: 'flex' }}
-        tabItemSX={{ flex: 1 }}
         defaultValue={rangeMode}
         value={rangeMode}
         onChange={setRangeMode}
@@ -525,7 +517,7 @@ export function PriceRangeInputBox(props: {
           <Text variant="label" userSelect="none" width="3em">
             {props.topLabel}
           </Text>
-          <HStack sx={{ bg: colors.backgroundDark, alignItems: 'center', borderRadius: 'xl', p: '8px' }}>
+          <HStack sx={{ bg: colors.inputBg, alignItems: 'center', borderRadius: 'xl', p: '8px' }}>
             <DecimalInput
               variant="unstyled"
               ctrSx={RangeInputStyle.ctr}

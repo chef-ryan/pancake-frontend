@@ -142,15 +142,15 @@ function CreatePoolEntryMobileDrawer({
     <Drawer isOpen={isOpen} variant="popFromBottom" placement="bottom" onClose={onClose}>
       <DrawerOverlay />
       <DrawerContent>
-        <DrawerCloseButton />
-        <DrawerHeader>{t('create_pool.modal_title')}</DrawerHeader>
-        <DrawerBody>{children}</DrawerBody>
+        <DrawerCloseButton size="sm" />
+        <DrawerHeader fontSize="md">{t('create_pool.modal_title')}</DrawerHeader>
+        <DrawerBody mt={4}>{children}</DrawerBody>
         <DrawerFooter mt={4}>
           <VStack w="full">
-            <Button variant="primary" onClick={onConfirm}>
+            <Button width="100%" variant="primary" onClick={onConfirm}>
               {t('button.continue')}
             </Button>
-            <Button variant="text" onClick={onClose}>
+            <Button width="100%" variant="text" onClick={onClose}>
               {t('button.cancel')}
             </Button>
           </VStack>
@@ -176,7 +176,7 @@ export function CreatePoolEntryDialogBody({ type, onChange }: { type: CreateTarg
                     <PoolTypeItem
                       isActive={type === 'concentrated-liquidity'}
                       content={
-                        <Box>
+                        <Box lineHeight="1.5">
                           <Text whiteSpace="nowrap" fontSize="md" fontWeight={600}>
                             {t('create_pool.modal_tab_concentrated')}
                           </Text>
@@ -191,7 +191,7 @@ export function CreatePoolEntryDialogBody({ type, onChange }: { type: CreateTarg
                       isDisabled
                       isActive={false}
                       content={
-                        <Box>
+                        <Box lineHeight="1.5">
                           <Flex alignItems="flex-end" gap="2px">
                             <Text whiteSpace="nowrap" fontSize="md" fontWeight={600}>
                               {t('create_pool.modal_tab_standard_amm')}

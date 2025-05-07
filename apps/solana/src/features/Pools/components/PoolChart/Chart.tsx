@@ -1,10 +1,11 @@
 import { AbsoluteCenter, Box, Center, HStack, Spinner, Text } from '@chakra-ui/react'
 import { ReactNode } from 'react'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from 'recharts'
-
 import { useTranslation } from 'react-i18next'
 import { useAppStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
+import { panelCard } from '@/theme/cssBlocks'
+
 import ChartTooltip from './ChartTooltip'
 
 export default function Chart<T = any>({
@@ -31,8 +32,8 @@ export default function Chart<T = any>({
   return (
     <Box>
       {renderTabs && !isMobile && <Box mb={2}>{renderTabs}</Box>}
-      <Box bg={['', colors.backgroundDark]} rounded={[0, '12px']} px={[0, 6]} pb={[0, 6]} pt={[0, 4]}>
-        <HStack mb={['8px', '40px']} justify="space-between">
+      <Box {...panelCard} bg={colors.background} mt={[0, '6']} px={['4', '6']} py="4">
+        <HStack mb={['8px', '20px']} justify="center">
           <Box>{isMobile && renderTabs}</Box>
           <Box>{renderTimeTypeTabs}</Box>
         </HStack>
@@ -66,12 +67,12 @@ export default function Chart<T = any>({
                     axisLine={false}
                     tickFormatter={(d) => {
                       const tempDate = new Date(d)
-                      return `${(tempDate.getMonth() + 1).toString()  }/${  tempDate.getDate().toString()}`
+                      return `${(tempDate.getMonth() + 1).toString()}/${tempDate.getDate().toString()}`
                     }}
                   />
                 )}
                 {/* <YAxis tickFormatter={yTickformats} /> */}
-                <Bar dataKey={yKey} fill={colors.chart03} radius={200} maxBarSize={7} />
+                <Bar dataKey={yKey} fill={colors.primary} radius={200} maxBarSize={7} />
                 <Tooltip content={<ChartTooltip category={currentCategoryLabel} />} cursor={{ fill: 'transparent' }} />
               </BarChart>
             </ResponsiveContainer>
