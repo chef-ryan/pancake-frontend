@@ -85,7 +85,7 @@ export const RewardCard = ({ rewards }: IRewardCardProps) => {
           <FlexGap alignItems="flex-start" flexDirection="column">
             {apr ? (
               <TooltipText fontSize="16px" bold decorationColor="secondary">
-                {displayApr(parseFloat(apr) ?? 0)}
+                {displayApr(parseFloat(apr) || 0)}
               </TooltipText>
             ) : null}
             <Text fontSize="12px" color="textSubtle">
