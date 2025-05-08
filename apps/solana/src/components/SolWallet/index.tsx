@@ -6,13 +6,55 @@ import { useAppStore } from '@/store/useAppStore'
 import { colors } from '@/theme/cssVariables'
 import { encodeStr } from '@/utils/common'
 import { Box, HStack, Image, Text, useDisclosure } from '@chakra-ui/react'
-import { Button } from '@pancakeswap/uikit'
+import {
+  Button,
+  Flex,
+  LogoutIcon,
+  ModalV2,
+  RefreshIcon,
+  useModal,
+  useModalV2,
+  UserMenu,
+  UserMenuDivider,
+  UserMenuItem,
+  WarningIcon
+} from '@pancakeswap/uikit'
 import { Wallet, useWallet } from '@solana/wallet-adapter-react'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import WalletRecentTransactionBoard from '../WalletRecentTransactionBoard'
 import SelectWalletModal from './SelectWalletModal'
+import WalletModal, { WalletView } from './WalletModal'
+
+const UserMenuItems: React.FC<{
+  onPresentWalletModal: () => void
+  onPresentTransactionModal: () => void
+}> = ({ onPresentWalletModal, onPresentTransactionModal }) => {
+  const { t } = useTranslation()
+  const { disconnect } = useWallet()
+
+  return (
+    <>
+      <UserMenuItem as="button" onClick={onPresentWalletModal}>
+        <Flex alignItems="center" justifyContent="space-between" width="100%">
+          {t('Wallet')}
+          {/* {hasLowNativeBalance && <WarningIcon color="warning" width="24px" />} */}
+        </Flex>
+      </UserMenuItem>
+      {/* <UserMenuItem as="button" onClick={onPresentTransactionModal}>
+        {t('Recent Transactions')}
+      </UserMenuItem> */}
+      <UserMenuDivider />
+      <UserMenuItem as="button" onClick={disconnect}>
+        <Flex alignItems="center" justifyContent="space-between" width="100%">
+          {t('Disconnect')}
+          <LogoutIcon />
+        </Flex>
+      </UserMenuItem>
+    </>
+  )
+}
 
 export default function SolWallet() {
   const { wallets, select, disconnect, connected, connecting, wallet } = useWallet()
@@ -34,38 +76,30 @@ export default function SolWallet() {
     }, 0)
   })
 
+  const { isOpen: isTransactionModalOpen, setIsOpen: setTransactionModalOpen, onDismiss: dismissTransactionModal } = useModalV2()
+  const { isOpen: isWalletModalOpen, setIsOpen: setWalletModalOpen, onDismiss: dismissWalletModal } = useModalV2()
+
   if (connected)
     return (
       <>
-        <WalletRecentTransactionBoard
-          wallet={wallet}
-          address={publicKey?.toBase58() || ''}
-          onDisconnect={disconnect}
-          isOpen={isWalletDrawerShown}
-          onClose={onClose}
-        />
-        <HStack
-          gap="4px"
-          py="1px"
-          cursor="pointer"
-          onClick={onOpen}
-          backgroundColor={colors.tertiary}
-          borderRadius="full"
-          borderBottom="2px solid rgba(0, 0, 0, 0.20)"
-          overflow="hidden"
-        >
-          {wallet && (
-            <Box flex="none" rounded="full" overflow="hidden">
-              <Image src={wallet.adapter.icon} width={['28px', '30px']} height={['28px', '30px']} />
-            </Box>
-          )}
-          <Text fontWeight={600} fontSize="sm">
-            {isMobile ? `${publicKey?.toBase58().substring(0, 3)}...` : encodeStr(publicKey?.toBase58(), 3)}
-          </Text>
-          <Box flex="none" mr="8px">
-            <ChevronDownIcon strokeWidth={4} color={colors.textSubtle} width={12} height={12} />
-          </Box>
-        </HStack>
+        <UserMenu account={publicKey?.toBase58()} variant="default">
+          {({ isOpen }) =>
+            isOpen ? (
+              <UserMenuItems
+                onPresentWalletModal={() => setWalletModalOpen(true)}
+                onPresentTransactionModal={() => setTransactionModalOpen(true)}
+              />
+            ) : (
+              <></>
+            )
+          }
+        </UserMenu>
+        <ModalV2 isOpen={isWalletModalOpen} onDismiss={dismissWalletModal} closeOnOverlayClick maxWidth="320px" minHeight="500px">
+          <WalletModal initialView={WalletView.WALLET_INFO} onDismiss={dismissWalletModal} />
+        </ModalV2>
+        <ModalV2 isOpen={isTransactionModalOpen} onDismiss={dismissTransactionModal} closeOnOverlayClick maxWidth="320px" minHeight="500px">
+          <WalletModal initialView={WalletView.TRANSACTIONS} onDismiss={dismissTransactionModal} />
+        </ModalV2>
       </>
     )
   return (

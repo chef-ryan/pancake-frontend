@@ -571,6 +571,9 @@
     "my_staked_ray": "My Staked RAY"
   },
   "wallet": {
+    "Wallet": "Wallet",
+    "Transactions": "Transactions",
+    "your_wallet": "Your Wallet",
     "connected_hint": {
       "portfolio_info": "Connect wallet to see your asset distribution.",
       "portfolio_idle": "Connect wallet to see your deposited assets.",
