@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "clean": "shx rm -rf .next .swc lib",
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev",
     "build": "next build && next export",
     "start": "next start",
     "lint": "next lint",

@@ -1,9 +1,8 @@
-import { useEvent } from '@/hooks/useEvent'
-import { colors } from '@/theme/cssVariables'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { max, scaleLinear, ZoomTransform } from 'd3'
 import partition from 'lodash/partition'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-
+import { useEvent } from '@/hooks/useEvent'
+import { colors } from '@/theme/cssVariables'
 import { Area } from './Area'
 import { AxisBottom } from './AxisBottom'
 import { Brush } from './Brush'
@@ -28,7 +27,7 @@ export function Chart({
   feeAmount,
   zoomLevels,
   autoZoom,
-  zoomBlockStyle,
+  zoomBlockStyle
 }: LiquidityChartRangeInputProps) {
   const zoomRef = useRef<SVGRectElement | null>(null)
   const xScaleRef = useRef<[number, number]>([0, 0])
@@ -38,7 +37,7 @@ export function Chart({
 
   const [innerHeight, innerWidth] = useMemo(
     () => [height - margins.top - margins.bottom, width - margins.left - margins.right],
-    [width, height, margins],
+    [width, height, margins]
   )
 
   /*
@@ -59,14 +58,14 @@ export function Chart({
           autoZoom
             ? [
                 Math.min(xScaleRef.current[0], brushDomain?.[0] ?? Number.MAX_SAFE_INTEGER),
-                Math.max(xScaleRef.current[1], brushDomain?.[1] ?? Number.MIN_SAFE_INTEGER),
+                Math.max(xScaleRef.current[1], brushDomain?.[1] ?? Number.MIN_SAFE_INTEGER)
               ]
-            : xScaleRef.current,
+            : xScaleRef.current
         )
         .range([0, innerWidth]),
       yScale: scaleLinear()
         .domain([0, max(series, yAccessor)] as number[])
-        .range([innerHeight, 0]),
+        .range([innerHeight, 0])
     }
 
     if (zoom) {
@@ -77,13 +76,10 @@ export function Chart({
 
       const positionDomain =
         autoZoomRef.current || !interactive
-          ? [
-              Math.max(brushDomain?.[0] || 0, 0) * (1 - zoomNum),
-              Math.min(brushDomain?.[1] || 100, Number.MAX_SAFE_INTEGER) * (1 + zoomNum),
-            ]
+          ? [Math.max(brushDomain?.[0] || 0, 0) * (1 - zoomNum), Math.min(brushDomain?.[1] || 100, Number.MAX_SAFE_INTEGER) * (1 + zoomNum)]
           : [
               Math.max(brushDomain?.[0] || 0, priceMin || 0, 0) * 0.9,
-              Math.min(brushDomain?.[1] || 100, priceMax || 100, Number.MAX_SAFE_INTEGER) * 1.1,
+              Math.min(brushDomain?.[1] || 100, priceMax || 100, Number.MAX_SAFE_INTEGER) * 1.1
             ]
       scales.xScale.domain(interactive && !autoZoomRef.current ? newXscale.domain() : positionDomain)
       autoZoomRef.current = false
@@ -110,11 +106,7 @@ export function Chart({
   const onClickArrow = useEvent((side: 'left' | 'right') => {
     const scale = xScale.domain()
     const gap = (scale[1] - scale[0]) / 20
-    onBrushDomainChange(
-      side === 'left' ? [scale[0] + gap, brushDomain![1]] : [brushDomain![0], scale[1] - gap],
-      'handle',
-      side,
-    )
+    onBrushDomainChange(side === 'left' ? [scale[0] + gap, brushDomain![1]] : [brushDomain![0], scale[1] - gap], 'handle', side)
   })
 
   const [leftSeries, rightSeries] = useMemo(() => {
@@ -156,7 +148,7 @@ export function Chart({
             <stop offset="100%" stopColor={colors.secondary} stopOpacity={1} />
           </linearGradient>
           <linearGradient id="red-gradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="100%" stopColor={colors.secondary60} stopOpacity={1} />
+            <stop offset="100%" stopColor={colors.secondary} stopOpacity={1} />
           </linearGradient>
         </defs>
         <defs>
@@ -226,12 +218,7 @@ export function Chart({
             {interactive && <AxisBottom xScale={xScale} innerHeight={innerHeight} />}
           </g>
 
-          <ZoomOverlay
-            cursor={interactive ? undefined : 'crosshair'}
-            width={innerWidth}
-            height={height}
-            ref={zoomRef}
-          />
+          <ZoomOverlay cursor={interactive ? undefined : 'crosshair'} width={innerWidth} height={height} ref={zoomRef} />
 
           <Brush
             id={id}

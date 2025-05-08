@@ -6,7 +6,25 @@
   "extends": ["plugin:@next/next/recommended", "../../packages/eslint-config/lib/next-page-router.js"],
   "rules": {
     "consistent-return": "warn",
-    "import/order": 0,
+    "import/order": [
+      "error",
+      {
+        "groups": ["external", "builtin", "internal"],
+        "newlines-between": "ignore",
+        "pathGroups": [
+          {
+            "pattern": "@/**",
+            "group": "builtin",
+            "position": "after"
+          },
+          {
+            "pattern": "@**",
+            "group": "builtin",
+            "position": "before"
+          }
+        ]
+      }
+    ],
     "no-empty-function": 0,
     "no-restricted-syntax": 0,
     "import/no-unresolved": 0,
@@ -34,7 +52,7 @@
     "import/no-extraneous-dependencies": 0,
     "jsx-a11y/media-has-caption": 0,
     // Exchange
-    "no-param-reassign": 0,
+    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state", "memo"] }],
     "react/require-default-props": 0,
     "no-nested-ternary": 0,
     "max-classes-per-file": 0,

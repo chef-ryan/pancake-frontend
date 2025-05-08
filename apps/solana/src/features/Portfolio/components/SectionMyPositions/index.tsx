@@ -17,9 +17,10 @@ import { formatCurrency } from '@/utils/numberish/formatter'
 import { useEvent } from '@/hooks/useEvent'
 import TokenAvatar from '@/components/TokenAvatar'
 import { getMintSymbol } from '@/utils/token'
-import { ClmmMyPositionTabContent } from './TabClmm'
+import Tooltip from '@/components/Tooltip'
 import MyPositionTabStaked from './TabStaked'
 import MyPositionTabStandard from './TabStandard'
+import { ClmmMyPositionTabContent } from './TabClmm'
 
 export default function SectionMyPositions() {
   const { t } = useTranslation()
@@ -146,7 +147,20 @@ export default function SectionMyPositions() {
         </GridItem>
         <GridItem area="tabs" justifySelf={['right', 'left']}>
           <Desktop>
-            <Tabs size="sm" variant="subtle" items={tabs} onChange={onTabChange} value={currentTab} />
+            <Tabs
+              size="sm"
+              renderItem={(_, i: number) => {
+                const tab = tabs[i]
+                if (tab.value === 'standard') {
+                  return <Tooltip label="Coming soon">V2</Tooltip>
+                }
+                return tab.label
+              }}
+              variant="subtle"
+              items={tabs}
+              onChange={onTabChange}
+              value={currentTab}
+            />
           </Desktop>
           <Mobile>
             <Select items={tabs} onChange={onTabChange} value={currentTab} />

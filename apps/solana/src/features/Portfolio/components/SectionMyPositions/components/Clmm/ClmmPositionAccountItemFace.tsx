@@ -1,7 +1,7 @@
-import { Badge, Button, Divider, Flex, HStack, Text, Tooltip, useDisclosure } from '@chakra-ui/react'
+import BN from 'bn.js'
 import Decimal from 'decimal.js'
 import { useTranslation } from 'react-i18next'
-import BN from 'bn.js'
+import { Badge, Button, Divider, Flex, HStack, Text, Tooltip, useDisclosure } from '@chakra-ui/react'
 import AprMDSwitchWidget from '@/components/AprMDSwitchWidget'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
 import { FormattedPoolInfoConcentratedItem, AprKey } from '@/hooks/pool/type'
@@ -264,8 +264,10 @@ function MinusButton(props: { onClick: () => void; isLoading: boolean }) {
       width={9}
       h="26px"
       px={0}
+      borderColor={colors.primary}
+      backgroundImage=""
     >
-      <MinusIcon color={colors.secondary} />
+      <MinusIcon color={colors.primary} />
     </Button>
   )
 }
@@ -282,6 +284,11 @@ function PlusButton(props: { onClick: () => void; isLoading: boolean }) {
       w={9}
       h="26px"
       px={0}
+      background={colors.primary}
+      _hover={{
+        background: colors.primary
+      }}
+      backgroundImage=""
     >
       <PlusIcon color={colors.buttonSolidText} />
     </Button>
