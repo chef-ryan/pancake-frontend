@@ -143,7 +143,8 @@ export const bscHooksList: HookData[] = [
   },
   {
     // BTCB-BNB
-    address: '0x0fcf6d110cf96be56d251716e69e37619932edf2',
+    poolType: POOL_TYPE.CLAMM,
+    address: '0x0fcF6D110Cf96BE56D251716E69E37619932edF2',
     name: 'CAKE Holder Discount Hook (Brevis)',
     description: `Powered by Brevis, this hook enables swap fee discounts for CAKE holders who have made at least 1 swap in this pool in the last 30 days. The fee discount tier is based on a user’s last 30-day Time-Weighted Average (TWA) CAKE balance: 
 (VIP 1) 5% discount if 100 CAKE < TWA <= 1,000 CAKE, 
@@ -166,6 +167,7 @@ export const bscHooksList: HookData[] = [
   },
   {
     // CAKE-BNB
+    poolType: POOL_TYPE.CLAMM,
     address: '0xDfdfB2c5a717AB00B370E883021f20C2fbaEd277',
     name: 'CAKE Holder Discount Hook (Brevis)',
     description: `Powered by Brevis, this hook enables swap fee discounts for CAKE holders who have made at least 1 swap in this pool in the last 30 days. The fee discount tier is based on a user’s last 30-day Time-Weighted Average (TWA) CAKE balance: 
