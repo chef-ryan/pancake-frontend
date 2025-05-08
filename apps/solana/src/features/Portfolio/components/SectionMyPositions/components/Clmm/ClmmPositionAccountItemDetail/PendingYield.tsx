@@ -1,12 +1,12 @@
-import { Flex, HStack, Text } from '@chakra-ui/react'
-import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
 import Button from '@/components/Button'
 import TokenAvatar from '@/components/TokenAvatar'
+import useResponsive from '@/hooks/useResponsive'
 import { colors } from '@/theme/cssVariables'
 import { formatCurrency } from '@/utils/numberish/formatter'
 import { getMintSymbol } from '@/utils/token'
-import useResponsive from '@/hooks/useResponsive'
+import { Flex, HStack, Text } from '@chakra-ui/react'
+import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
+import { useTranslation } from 'react-i18next'
 
 type PendingYieldProps = {
   pendingYield?: string
@@ -16,7 +16,13 @@ type PendingYieldProps = {
   onHarvest: () => void
 }
 
-export default function PendingYield({ isLoading, hasReward, pendingYield, rewardInfos, onHarvest }: PendingYieldProps) {
+export default function PendingYield({
+  isLoading,
+  hasReward,
+  pendingYield,
+  rewardInfos,
+  onHarvest,
+}: PendingYieldProps) {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useResponsive()
   return (
@@ -30,7 +36,18 @@ export default function PendingYield({ isLoading, hasReward, pendingYield, rewar
             ({pendingYield ?? '$0'})
           </Text>
         </HStack>
-        <Button isLoading={isLoading} isDisabled={!hasReward} onClick={onHarvest} size="sm" fontSize="md" variant="outline">
+        <Button
+          isLoading={isLoading}
+          isDisabled={!hasReward}
+          onClick={onHarvest}
+          size="sm"
+          fontSize="md"
+          variant="outline"
+          style={{
+            borderColor: colors.primary,
+            color: colors.primary,
+          }}
+        >
           {t('portfolio.section_positions_clmm_account_pending_yield_button')}
         </Button>
       </HStack>
@@ -38,7 +55,7 @@ export default function PendingYield({ isLoading, hasReward, pendingYield, rewar
       <Flex display="grid" gridTemplateColumns="repeat(2, 1fr)" columnGap={0} rowGap={2}>
         {rewardInfos
           .filter((r) => {
-            return Number(r.amount) != 0
+            return Number(r.amount) !== 0
           })
           .map((r, index) => (
             <Flex key={r.mint.address} alignItems="center" gap={1} justifyContent={index % 2 === 0 ? 'start' : 'end'}>
@@ -47,7 +64,7 @@ export default function PendingYield({ isLoading, hasReward, pendingYield, rewar
                 {formatCurrency(r.amount, {
                   abbreviated: true,
                   decimalPlaces: isTablet ? 2 : 3,
-                  maximumDecimalTrailingZeroes: 2
+                  maximumDecimalTrailingZeroes: 2,
                 })}
               </Text>
               <Text color={colors.textSecondary} display={['block', 'none', 'block']}>
@@ -59,7 +76,7 @@ export default function PendingYield({ isLoading, hasReward, pendingYield, rewar
                   symbol: '$',
                   abbreviated: true,
                   decimalPlaces: isMobile ? 3 : 2,
-                  maximumDecimalTrailingZeroes: 2
+                  maximumDecimalTrailingZeroes: 2,
                 })}
                 )
               </Text>

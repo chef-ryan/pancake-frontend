@@ -2,10 +2,11 @@ import { SvgIcon } from '../type'
 
 export default function MinusIcon(props: SvgIcon) {
   return (
-    <svg width={8} height={2} viewBox="0 0 8 2" fill="currentColor" className="chakra-icon" {...props}>
+    <svg width={props.width || 24} height={props.height || 24} viewBox="0 0 32 32" fill="none">
+      <rect x="1" y="1" width="30" height="30" rx="11" stroke="#1FC7D4" stroke-width="2" />
       <path
-        d="M1 2C0.447715 2 0 1.55228 0 1C0 0.447715 0.447715 0 1 0H7C7.55228 0 8 0.447715 8 1C8 1.55228 7.55228 2 7 2H1Z"
-        fill="currentColor"
+        d="M10.6347 17.0379C10.3485 17.0379 10.1039 16.9382 9.90093 16.7389C9.6981 16.5394 9.59668 16.295 9.59668 16.0056C9.59668 15.7163 9.69685 15.4701 9.89718 15.2671C10.0977 15.0643 10.3433 14.9629 10.6342 14.9629H21.3652C21.6513 14.9629 21.8959 15.0626 22.0989 15.2619C22.3018 15.4614 22.4032 15.7058 22.4032 15.9951C22.4032 16.2845 22.303 16.5306 22.1027 16.7336C21.9022 16.9365 21.6565 17.0379 21.3657 17.0379H10.6347Z"
+        fill={props.color || '#1FC7D4'}
       />
     </svg>
   )

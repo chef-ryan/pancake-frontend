@@ -1,9 +1,9 @@
+import { colors } from '@/theme/cssVariables'
 import { Flex, SystemCSSProperties } from '@chakra-ui/react'
+import styled from '@emotion/styled'
 import { ScaleLinear, select, zoom, ZoomBehavior, zoomIdentity, ZoomTransform } from 'd3'
 import { useEffect, useMemo, useRef } from 'react'
 import { RefreshCcw, ZoomIn, ZoomOut } from 'react-feather'
-import styled from '@emotion/styled'
-import { colors } from '@/theme/cssVariables'
 import { FeeAmount } from './FeeAmount'
 import { ZoomLevels } from './types'
 
@@ -32,7 +32,7 @@ export default function Zoom({
   zoomLevels,
   interactive,
   feeAmount,
-  style
+  style,
 }: {
   svg: SVGElement | null
   xScale: ScaleLinear<number, number>
@@ -75,9 +75,9 @@ export default function Zoom({
         select(svg as Element)
           .call(zoomBehavior.current.transform, zoomIdentity.translate(0, 0).scale(1))
           .transition()
-          .call(zoomBehavior.current.scaleTo, 0.5)
+          .call(zoomBehavior.current.scaleTo, 0.5),
     ],
-    [svg]
+    [svg],
   )
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export default function Zoom({
       .scaleExtent([zoomLevels.min * (1 / multiplier), zoomLevels.max * multiplier])
       .extent([
         [0, 0],
-        [width, height]
+        [width, height],
       ])
       .on('zoom', ({ transform }: { transform: ZoomTransform }) => setZoom(transform))
 

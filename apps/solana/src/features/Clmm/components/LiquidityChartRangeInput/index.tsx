@@ -1,14 +1,14 @@
-import { CSSProperties, ReactNode, useCallback, useMemo, useRef } from 'react'
-import { BarChart2, CloudOff, Inbox } from 'react-feather'
-import { Text, SystemCSSProperties } from '@chakra-ui/react'
+import { SystemCSSProperties, Text } from '@chakra-ui/react'
 import styled from '@emotion/styled'
 import { format } from 'd3'
+import { CSSProperties, ReactNode, useCallback, useMemo, useRef } from 'react'
+import { BarChart2, CloudOff, Inbox } from 'react-feather'
 import { useTranslation } from 'react-i18next'
 
-import useElementSizeRectDetector from '@/hooks/useElementSizeRectDetector'
-import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import Loader from '@/components/Loader'
+import useElementSizeRectDetector from '@/hooks/useElementSizeRectDetector'
 import { colors } from '@/theme/cssVariables'
+import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import { Bound } from './Bound'
 import { Chart } from './Chart'
 import { FeeAmount } from './FeeAmount'
@@ -22,7 +22,7 @@ const theme = {
   deprecated_text1: '#0D111C',
   deprecated_text4: '#98A1C0',
   deprecated_blue1: '#1B365F',
-  deprecated_red1: '#FA2B39'
+  deprecated_red1: '#FA2B39',
 }
 
 export const AutoColumn = styled.div<{
@@ -49,26 +49,26 @@ const ZOOM_LEVELS: Record<number, ZoomLevels> = {
     initialMin: 0.99,
     initialMax: 1.01,
     min: 0.00001,
-    max: 1.5
+    max: 1.5,
   },
   [FeeAmount.LOW]: {
     initialMin: 0.5,
     initialMax: 1.5,
     min: 0.00001,
-    max: 20
+    max: 20,
   },
   [FeeAmount.MEDIUM]: {
     initialMin: 0.5,
     initialMax: 1.5,
     min: 0.00001,
-    max: 20
+    max: 20,
   },
   [FeeAmount.HIGH]: {
     initialMin: 0.5,
     initialMax: 1.5,
     min: 0.00001,
-    max: 20
-  }
+    max: 20,
+  },
 }
 
 const ChartWrapper = styled.div`
@@ -107,7 +107,7 @@ export default function LiquidityChartRangeInput({
   containerStyle = {},
   zoomBlockStyle,
   chartHeight,
-  defaultRange
+  defaultRange,
 }: {
   poolId: string
   feeAmount?: FeeAmount
@@ -157,13 +157,15 @@ export default function LiquidityChartRangeInput({
       }
       // })
     },
-    [onLeftRangeInput, onRightRangeInput]
+    [onLeftRangeInput, onRightRangeInput],
   )
 
   const interactive = interactive_ && Boolean(formattedData?.length)
 
   const brushDomain: [number, number] | undefined = useMemo(() => {
-    return priceLower && priceUpper ? [parseFloat(Number(priceLower).toFixed(20)), parseFloat(Number(priceUpper).toFixed(20))] : undefined
+    return priceLower && priceUpper
+      ? [parseFloat(Number(priceLower).toFixed(20)), parseFloat(Number(priceUpper).toFixed(20))]
+      : undefined
   }, [priceLower, priceUpper])
 
   const brushLabelValue = useCallback(
@@ -176,7 +178,7 @@ export default function LiquidityChartRangeInput({
       const percent = (x < price ? -1 : 1) * ((Math.max(x, price) - Math.min(x, price)) / price) * 100
       return price ? `${formatToRawLocaleStr(format(Math.abs(percent) > 1 ? '.2~s' : '.2~f')(percent))}%` : ''
     },
-    [baseIn, price, ticksAtLimit]
+    [baseIn, price, ticksAtLimit],
   )
   // if (error) {
   //   sendEvent('exception', { description: error.toString(), fatal: false })
@@ -192,7 +194,7 @@ export default function LiquidityChartRangeInput({
       return {
         ...defaultZoomConfig,
         initialMin: 1 - defaultRange * zoomRate,
-        initialMax: 1 + defaultRange * zoomRate
+        initialMax: 1 + defaultRange * zoomRate,
       }
     }
     return defaultZoomConfig
@@ -201,33 +203,49 @@ export default function LiquidityChartRangeInput({
   return (
     <AutoColumn ref={chartParentRef} gap="md" style={{ ...containerStyle, minHeight: chartHeight || '200px' }}>
       {isUninitialized ? (
-        <InfoBox message={t('error.pool_liquidity_appear')} icon={<Inbox size={56} stroke={theme.deprecated_text1} />} />
+        <InfoBox
+          message={t('error.pool_liquidity_appear')}
+          icon={<Inbox size={56} stroke={theme.deprecated_text1} />}
+        />
       ) : isLoading ? (
         <InfoBox icon={<Loader size="40px" stroke={theme.deprecated_text4} />} />
       ) : error ? (
-        <InfoBox message={t('error.liquidity_data_not_available')} icon={<CloudOff size={56} stroke={theme.deprecated_text4} />} />
+        <InfoBox
+          message={t('error.liquidity_data_not_available')}
+          icon={<CloudOff size={56} stroke={theme.deprecated_text4} />}
+        />
       ) : !formattedData || formattedData.length === 0 || !price ? (
-        <InfoBox message={t('error.no_liquidity_data')} icon={<BarChart2 size={56} stroke={theme.deprecated_text4} />} />
+        <InfoBox
+          message={t('error.no_liquidity_data')}
+          icon={<BarChart2 size={56} stroke={theme.deprecated_text4} />}
+        />
       ) : (
         <ChartWrapper ref={chartBoxRef}>
           <Chart
-            data={{ series: formattedData, current: price, poolId, priceMin: timePriceMin, priceMax: timePriceMax, baseIn }}
+            data={{
+              series: formattedData,
+              current: price,
+              poolId,
+              priceMin: timePriceMin,
+              priceMax: timePriceMax,
+              baseIn,
+            }}
             dimensions={{
               width: interactive ? width ?? 400 : chartParentWidth ?? 400,
-              height: chartHeight || (height ?? 200)
+              height: chartHeight || (height ?? 200),
             }}
             margins={{ top: 10, right: 2, bottom: interactive ? 30 : 0, left: 0 }}
             styles={{
               area: {
                 selection: outOfRange ? theme.selectedAreaOutOfRange : theme.selectedArea,
-                opacity: outOfRange ? '0.5' : '0.3'
+                opacity: outOfRange ? '0.5' : '0.3',
               },
               brush: {
                 handle: {
                   west: theme.brushHandle,
-                  east: theme.brushHandle
-                }
-              }
+                  east: theme.brushHandle,
+                },
+              },
             }}
             interactive={interactive}
             brushLabels={brushLabelValue}

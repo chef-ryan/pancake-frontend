@@ -13,6 +13,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   positive60: pcsDarkColors.positive60,
   secondary: pcsDarkColors.secondary,
   secondary10: 'rgba(34, 209, 248, 0.1)',
+  secondary60: pcsDarkColors.secondary60,
 
   // component color
   background: pcsDarkColors.background,
@@ -156,7 +157,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   tokenAvatarBg: 'linear-gradient(127deg, rgba(171, 196, 255, 0.20) 28.69%, rgba(171, 196, 255, 0.00) 100%) #0b102280',
 
   panelCardShadow: '0px 8px 24px rgba(79, 83, 243, 0.12)',
-  panelCardBorder: 'unset'
+  panelCardBorder: 'unset',
 }
 
 export const lightColors: Partial<typeof darkColors> = {
@@ -172,6 +173,7 @@ export const lightColors: Partial<typeof darkColors> = {
   positive60: pcsLightColors.positive60,
   secondary: pcsLightColors.secondary,
   secondary10: 'rgba(34, 209, 248, 0.1)',
+  secondary60: pcsLightColors.secondary60,
 
   // component color
   background: pcsLightColors.background,
@@ -317,7 +319,7 @@ export const lightColors: Partial<typeof darkColors> = {
   tokenAvatarBg: 'linear-gradient(127deg, rgba(171, 196, 255, 0.20) 28.69%, rgba(171, 196, 255, 0.00) 100%) #fffe',
 
   panelCardShadow: 'none',
-  panelCardBorder: '1px solid rgba(171, 196, 255, 0.50)'
+  panelCardBorder: '1px solid rgba(171, 196, 255, 0.50)',
 }
 /**
  * note: it is not colors value, but colors css variable
@@ -336,6 +338,7 @@ export const colors = {
   positive60: 'var(--positive60)',
   secondary: 'var(--secondary)',
   secondary10: 'var(--secondary10)',
+  secondary60: 'var(--secondary60)',
 
   // component color
   background: 'var(--background)',
@@ -480,5 +483,5 @@ export const colors = {
   tokenAvatarBg: 'var(--token-avatar-bg)',
 
   panelCardShadow: 'var(--panel-card-shadow)',
-  panelCardBorder: 'var(--panel-card-border)'
+  panelCardBorder: 'var(--panel-card-border)',
 }

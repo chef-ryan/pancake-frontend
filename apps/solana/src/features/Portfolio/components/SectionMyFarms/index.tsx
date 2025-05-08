@@ -1,16 +1,16 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Box, Flex, Grid, GridItem, Heading, HStack, Text, useDisclosure } from '@chakra-ui/react'
-import Button from '@/components/Button'
+import { Desktop, Mobile } from '@/components/MobileDesktop'
 import { CreatePoolEntryDialog } from '@/features/Create/components/CreatePoolEntryDialog'
-import useCreatedFarmInfo, { FarmCategory } from '@/hooks/portfolio/farm/useCreatedFarmInfo'
 import useFetchFarmInfoById from '@/hooks/farm/useFetchFarmInfoById'
-import { useStateWithUrl } from '@/hooks/useStateWithUrl'
 import useFetchPoolById from '@/hooks/pool/useFetchPoolById'
+import useCreatedFarmInfo, { FarmCategory } from '@/hooks/portfolio/farm/useCreatedFarmInfo'
+import { useStateWithUrl } from '@/hooks/useStateWithUrl'
 import { useAppStore } from '@/store/useAppStore'
 import { colors } from '@/theme/cssVariables'
+import { Box, Flex, Grid, GridItem, Heading, HStack, Text, useDisclosure } from '@chakra-ui/react'
+import { Button } from '@pancakeswap/uikit'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import FarmItem from './components/FarmItem'
-import { Desktop, Mobile } from '@/components/MobileDesktop'
 
 export type CreateFarmTabValues = FarmCategory
 
@@ -18,25 +18,29 @@ export default function SectionMyCreatedFarms() {
   const { t } = useTranslation()
   const [filterType] = useStateWithUrl(FarmCategory.All, 'create_farm_tab', {
     fromUrl: (v) => v,
-    toUrl: (v) => v
+    toUrl: (v) => v,
   })
   const publicKey = useAppStore((s) => s.publicKey)
   const { formattedData } = useCreatedFarmInfo({ owner: publicKey })
 
   const filteredData = useMemo(
     () => (filterType === FarmCategory.All ? formattedData : formattedData.filter((f) => f.type === filterType)),
-    [formattedData, filterType]
+    [formattedData, filterType],
   )
   const { formattedDataMap: farmDataMap } = useFetchFarmInfoById({
-    idList: filteredData.filter((f) => f.type === FarmCategory.Standard).map((f) => f.id)
+    idList: filteredData.filter((f) => f.type === FarmCategory.Standard).map((f) => f.id),
   })
   const { formattedDataMap } = useFetchPoolById({
-    idList: filteredData.map((d) => d.id)
+    idList: filteredData.map((d) => d.id),
   })
-  const { isOpen: isCreatePoolDialogOpen, onOpen: openCreatePoolDialog, onClose: closeCreatePoolDialog } = useDisclosure()
+  const {
+    isOpen: isCreatePoolDialogOpen,
+    onOpen: openCreatePoolDialog,
+    onClose: closeCreatePoolDialog,
+  } = useDisclosure()
 
   const validFilteredData = filteredData.filter((farm) => {
-    return farm.type !== FarmCategory.Clmm || formattedDataMap[farm.id]?.formattedRewardInfos.length != 0
+    return farm.type !== FarmCategory.Clmm || formattedDataMap[farm.id]?.formattedRewardInfos.length !== 0
   })
 
   const hasValidFarm = Boolean(validFilteredData?.length)
@@ -50,7 +54,11 @@ export default function SectionMyCreatedFarms() {
           <Button onClick={openCreatePoolDialog} size="xs" height="1.5rem" minHeight="1.5rem" px={3}>
             {t('farm.create')}
           </Button>
-          <CreatePoolEntryDialog isOpen={isCreatePoolDialogOpen} onClose={closeCreatePoolDialog} defaultType="standard-farm" />
+          <CreatePoolEntryDialog
+            isOpen={isCreatePoolDialogOpen}
+            onClose={closeCreatePoolDialog}
+            defaultType="standard-farm"
+          />
         </HStack>
       </Mobile>
       <Desktop>
@@ -64,7 +72,7 @@ export default function SectionMyCreatedFarms() {
             `
           "title title " auto
           "tabs  action" auto / 1fr 1fr
-        `
+        `,
           ]}
           columnGap={3}
           rowGap={[3, 2]}
@@ -82,7 +90,11 @@ export default function SectionMyCreatedFarms() {
               <Button onClick={openCreatePoolDialog} size={['sm', 'md']}>
                 {t('farm.create')}
               </Button>
-              <CreatePoolEntryDialog isOpen={isCreatePoolDialogOpen} onClose={closeCreatePoolDialog} defaultType="standard-farm" />
+              <CreatePoolEntryDialog
+                isOpen={isCreatePoolDialogOpen}
+                onClose={closeCreatePoolDialog}
+                defaultType="standard-farm"
+              />
             </>
           </GridItem>
         </Grid>
@@ -90,7 +102,12 @@ export default function SectionMyCreatedFarms() {
 
       <Flex direction="column" gap={4} mt={4}>
         {validFilteredData.map((farm) => (
-          <FarmItem key={`farm-${farm.id}`} {...farm} standardFarm={farmDataMap[farm.id]} clmmData={formattedDataMap[farm.id]} />
+          <FarmItem
+            key={`farm-${farm.id}`}
+            {...farm}
+            standardFarm={farmDataMap[farm.id]}
+            clmmData={formattedDataMap[farm.id]}
+          />
         ))}
       </Flex>
     </Box>

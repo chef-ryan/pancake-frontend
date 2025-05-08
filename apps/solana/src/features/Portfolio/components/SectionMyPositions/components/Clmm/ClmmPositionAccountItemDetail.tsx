@@ -1,22 +1,22 @@
-import { Flex, useDisclosure, Collapse, Divider, Box, HStack, Text, VStack } from '@chakra-ui/react'
-import { useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import Decimal from 'decimal.js'
-import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
-import { AprKey, FormattedPoolInfoConcentratedItem } from '@/hooks/pool/type'
-import useClmmBalance, { ClmmPosition } from '@/hooks/portfolio/clmm/useClmmBalance'
-import { formatCurrency } from '@/utils/numberish/formatter'
-import { AprData } from '@/features/Clmm/utils/calApr'
-import EstimatedApr from './ClmmPositionAccountItemDetail/EstimatedApr'
-import PendingYield from './ClmmPositionAccountItemDetail/PendingYield'
-import { useEvent } from '@/hooks/useEvent'
-import { colors } from '@/theme/cssVariables'
 import AddressChip from '@/components/AddressChip'
 import TokenAvatar from '@/components/TokenAvatar'
 import LiquidityChartRangeInput from '@/features/Clmm/components/LiquidityChartRangeInput'
+import { AprData } from '@/features/Clmm/utils/calApr'
+import { AprKey, FormattedPoolInfoConcentratedItem } from '@/hooks/pool/type'
+import useClmmBalance, { ClmmPosition } from '@/hooks/portfolio/clmm/useClmmBalance'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
-import { debounce } from '@/utils/functionMethods'
+import { useEvent } from '@/hooks/useEvent'
+import { colors } from '@/theme/cssVariables'
 import { onWindowSizeChange } from '@/utils/dom/onWindowSizeChange'
+import { debounce } from '@/utils/functionMethods'
+import { formatCurrency } from '@/utils/numberish/formatter'
+import { Box, Collapse, Divider, Flex, HStack, Text, useDisclosure, VStack } from '@chakra-ui/react'
+import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
+import Decimal from 'decimal.js'
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import EstimatedApr from './ClmmPositionAccountItemDetail/EstimatedApr'
+import PendingYield from './ClmmPositionAccountItemDetail/PendingYield'
 
 type DetailProps = {
   isViewOpen: boolean
@@ -47,7 +47,7 @@ export default function ClmmPositionAccountItemDetail({
   hasReward,
   rewardInfos,
   onTimeBasisChange,
-  onHarvest
+  onHarvest,
 }: DetailProps) {
   const { isOpen: isLoading, onOpen: onSend, onClose: onFinally } = useDisclosure()
   const { t } = useTranslation()
@@ -55,12 +55,20 @@ export default function ClmmPositionAccountItemDetail({
 
   const { getPriceAndAmount } = useClmmBalance({})
   const { data: tokenPrices } = useTokenPrice({
-    mintList: [poolInfo.mintA.address, poolInfo.mintB.address]
+    mintList: [poolInfo.mintA.address, poolInfo.mintB.address],
   })
   const positionDetailInfo = getPriceAndAmount({ poolInfo, position })
   const price = baseIn ? poolInfo.price : new Decimal(1).div(poolInfo.price).toNumber()
-  const timePriceMin = baseIn ? poolInfo.day.priceMin : poolInfo.day.priceMax ? new Decimal(1).div(poolInfo.day.priceMax).toNumber() : 0
-  const timePriceMax = baseIn ? poolInfo.day.priceMax : poolInfo.day.priceMin ? new Decimal(1).div(poolInfo.day.priceMin).toNumber() : 0
+  const timePriceMin = baseIn
+    ? poolInfo.day.priceMin
+    : poolInfo.day.priceMax
+    ? new Decimal(1).div(poolInfo.day.priceMax).toNumber()
+    : 0
+  const timePriceMax = baseIn
+    ? poolInfo.day.priceMax
+    : poolInfo.day.priceMin
+    ? new Decimal(1).div(poolInfo.day.priceMin).toNumber()
+    : 0
 
   const volumeA = positionDetailInfo.amountA.mul(tokenPrices[poolInfo.mintA.address]?.value || 0)
   const volumeB = positionDetailInfo.amountB.mul(tokenPrices[poolInfo.mintB.address]?.value || 0)
@@ -72,12 +80,12 @@ export default function ClmmPositionAccountItemDetail({
         positionDetailInfo.priceUpper.price.toString(),
         Math.max(
           poolInfo.recommendDecimal(positionDetailInfo.priceLower.price),
-          poolInfo.recommendDecimal(positionDetailInfo.priceUpper.price)
-        )
+          poolInfo.recommendDecimal(positionDetailInfo.priceUpper.price),
+        ),
       ]
     const [priceLower, priceUpper] = [
       new Decimal(1).div(positionDetailInfo.priceUpper.price),
-      new Decimal(1).div(positionDetailInfo.priceLower.price)
+      new Decimal(1).div(positionDetailInfo.priceLower.price),
     ]
     return [priceLower.toString(), priceUpper.toString()]
   }, [baseIn, positionDetailInfo.priceLower, positionDetailInfo.priceUpper])
@@ -91,7 +99,7 @@ export default function ClmmPositionAccountItemDetail({
   const handleHarvest = useEvent(() => {
     onHarvest({
       onSend,
-      onFinally
+      onFinally,
     })
   })
 
@@ -133,7 +141,7 @@ export default function ClmmPositionAccountItemDetail({
               autoZoom
               chartHeight={120}
               containerStyle={{
-                paddingLeft: '1.25rem'
+                paddingLeft: '1.25rem',
               }}
             />
             {/* info head */}
@@ -142,21 +150,21 @@ export default function ClmmPositionAccountItemDetail({
                 <HStack width="100%" justifyContent="space-between">
                   <HStack>
                     <Divider borderColor={colors.backgroundApp} opacity="1" width="6px" borderBottomWidth="2px" />
-                    <Text color={colors.textSecondary}>{t('field.current_price')}: </Text>
+                    <Text color={colors.textSubtle}>{t('field.current_price')}: </Text>
                   </HStack>
                   <Text color={colors.lightPurple} fontWeight="medium">
                     <Text as="span" color={colors.textPrimary}>
                       {baseIn
                         ? formatCurrency(poolInfo.price, {
-                            decimalPlaces: poolInfo.recommendDecimal(poolInfo.price)
+                            decimalPlaces: poolInfo.recommendDecimal(poolInfo.price),
                           })
                         : formatCurrency(new Decimal(1).div(poolInfo.price).toString(), {
-                            decimalPlaces: poolInfo.recommendDecimal(new Decimal(1).div(poolInfo.price).toString())
+                            decimalPlaces: poolInfo.recommendDecimal(new Decimal(1).div(poolInfo.price).toString()),
                           })}
                     </Text>{' '}
                     {t('common.per_unit', {
                       subA: poolInfo[baseIn ? 'mintB' : 'mintA'].symbol,
-                      subB: poolInfo[baseIn ? 'mintA' : 'mintB'].symbol
+                      subB: poolInfo[baseIn ? 'mintA' : 'mintB'].symbol,
                     })}
                   </Text>
                 </HStack>
@@ -164,13 +172,13 @@ export default function ClmmPositionAccountItemDetail({
                 <HStack width="100%" justifyContent="space-between">
                   <HStack>
                     <Divider borderColor={colors.textPurple} opacity="1" width="6px" borderBottomWidth="2px" />
-                    <Text color={colors.textSecondary}>{t('clmm.time_price_range', { time: '24h' })}: </Text>
+                    <Text color={colors.textSubtle}>{t('clmm.time_price_range', { time: '24h' })}: </Text>
                   </HStack>
                   <Text color={colors.textPrimary} fontWeight="medium">
                     {`[${formatCurrency(timePriceMin, {
-                      decimalPlaces: poolInfo.poolDecimals
+                      decimalPlaces: poolInfo.poolDecimals,
                     })},${formatCurrency(timePriceMax, {
-                      decimalPlaces: poolInfo.poolDecimals
+                      decimalPlaces: poolInfo.poolDecimals,
                     })}]`}
                   </Text>
                 </HStack>
@@ -204,18 +212,21 @@ export default function ClmmPositionAccountItemDetail({
               <Flex
                 direction={['column', 'column', 'row']}
                 wordBreak="break-all"
-                color={colors.textSecondary}
+                color={colors.textSubtle}
                 justifyContent="center"
                 gap={0.5}
                 pt={1}
               >
-                <Text>{t('clmm.nft_mint_address')}: </Text>
+                <Text color={colors.textSubtle}>{t('clmm.nft_mint_address')}: </Text>
                 <AddressChip
                   address={nftMint}
                   canCopy
                   canExternalLink
+                  textProps={{
+                    color: colors.primary60,
+                  }}
                   iconProps={{
-                    color: colors.textLink
+                    color: colors.primary60,
                   }}
                 />
               </Flex>
@@ -223,17 +234,19 @@ export default function ClmmPositionAccountItemDetail({
             <Divider borderWidth="1px" borderColor={colors.lightPurple} opacity="0.2" />
             <Flex flex={1} flexDirection="column" w="full" justifyContent="space-between">
               <Flex justifyContent="space-between">
-                <Text color={colors.textSecondary}> {t('liquidity.pool_liquidity')}</Text>
-                <Text color={colors.textPrimary}>{formatCurrency(poolInfo.tvl, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}</Text>
+                <Text color={colors.textSubtle}> {t('liquidity.pool_liquidity')}</Text>
+                <Text color={colors.textPrimary}>
+                  {formatCurrency(poolInfo.tvl, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
+                </Text>
               </Flex>
               <Flex justifyContent="space-between">
-                <Text color={colors.textSecondary}>{t('common.24h_volume')}</Text>
+                <Text color={colors.textSubtle}>{t('common.24h_volume')}</Text>
                 <Text color={colors.textPrimary}>
                   {formatCurrency(poolInfo.day.volume, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
                 </Text>
               </Flex>
               <Flex justifyContent="space-between">
-                <Text color={colors.textSecondary}>{t('common.24h_pool_fee')}</Text>
+                <Text color={colors.textSubtle}>{t('common.24h_pool_fee')}</Text>
                 <Text color={colors.textPrimary}>
                   {formatCurrency(poolInfo.day.volumeFee, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
                 </Text>
