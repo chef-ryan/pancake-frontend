@@ -19,7 +19,6 @@ export const PositionDebugView: React.FC<React.PropsWithChildren<{ json: unknown
         )}
       </pre>
     ) : null,
-    {},
   )
 
   if (!isDevelopmentOrPreview) return children
