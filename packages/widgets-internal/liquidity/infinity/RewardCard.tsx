@@ -88,7 +88,6 @@ export const RewardCard = ({ rewards }: IRewardCardProps) => {
               <TooltipText fontSize="16px" bold decorationColor="secondary">
                 {`${formatNumber(new BigNumber(apr).times(100), {
                   maxDecimalDisplayDigits: 2,
-                  roundingMode: BigNumber.ROUND_UP,
                 })}%`}
               </TooltipText>
             ) : null}
