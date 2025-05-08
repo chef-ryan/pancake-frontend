@@ -33,7 +33,9 @@ export const getInfinityCandidatePoolsLite = async (
     getInfinityBinCandidatePoolsWithoutBins(params),
     getInfinityTvlReference(params),
   ])
-  const pools = [...clPools, ...binPools]
+  const pools = [...clPools, ...binPools].filter(
+    (p) => p.id.toLowerCase() === '0x47516855520496B84A169F7BB92ACE7FFB6E8C535BCCB52A308CCFF113AECCFB'.toLowerCase(),
+  )
   const poolsWithTvl: InfinityPoolWithTvl[] = pools.map((pool) => {
     return {
       ...pool,

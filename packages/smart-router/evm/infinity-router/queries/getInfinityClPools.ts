@@ -202,6 +202,9 @@ export async function fillClPoolsWithTicks({
   clientProvider,
   gasLimit,
 }: FillPoolsWithTicksParams): Promise<InfinityClPool[]> {
+  if (pools.length === 0) {
+    return []
+  }
   const chainId: ChainId = pools[0]?.currency0.chainId
   const tickLensAddress = INFI_CL_TICK_LENS_ADDRESSES[chainId]
   const client = clientProvider?.({ chainId })

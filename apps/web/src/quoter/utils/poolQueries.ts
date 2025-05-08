@@ -7,7 +7,6 @@ import { POOLS_FAST_REVALIDATE } from 'config/pools'
 import { getPoolTicks } from 'hooks/useAllTicksQuery'
 import memoize from 'lodash/memoize'
 import { PoolQuery } from 'quoter/quoter.types'
-import { isAddressEqual } from 'utils'
 import { v2Clients, v3Clients } from 'utils/graphql'
 import { createViemPublicClientGetter, getViemClients } from 'utils/viem'
 import { PoolHashHelper } from './PoolHashHelper'
@@ -301,7 +300,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
         currencyB,
         clientProvider: provider,
       })
-      return pools.filter((pool) => isAddressEqual(pool.hooks, '0x1a3dfbcac585e22f993cc8e09bcc0db388cc1ca3'))
+      return pools
     },
     {
       ttl: POOL_TTL,
