@@ -1,4 +1,3 @@
-import { getChainNameInKebabCase } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
 import { Flex } from '@pancakeswap/uikit'
 import {
