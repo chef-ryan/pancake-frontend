@@ -28,10 +28,7 @@ export const toastSubject = new Subject<
 const toastConfig = {
   duration: 8000,
   isClosable: true,
-  position: 'top-right' as ToastPosition,
-  containerStyle: {
-    maxWidth: '300px'
-  }
+  position: 'top-right' as ToastPosition
 }
 
 const userClosedToastIds = new Map<string | number, string>()
