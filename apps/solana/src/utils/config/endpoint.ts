@@ -11,7 +11,7 @@ const parseRPCConf = () => {
   ]
 
   try {
-    const rpcFromEnvVars = JSON.parse(process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT ?? '[]')
+    const rpcFromEnvVars = JSON.parse(process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT_CONF ?? '[]')
     if (rpcFromEnvVars && rpcFromEnvVars.length) {
       return rpcFromEnvVars
     }
