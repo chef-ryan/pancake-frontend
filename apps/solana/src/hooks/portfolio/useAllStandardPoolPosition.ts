@@ -7,7 +7,6 @@ import useFarmPositions from '@/hooks/portfolio/farm/useFarmPositions'
 import useFetchAccLpMint from '@/hooks/token/useFetchAccLpMint'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
 
-
 export default function useAllStandardPoolPosition<T>({ type }: { type?: T }) {
   const getTokenBalanceUiAmount = useTokenAccountStore((s) => s.getTokenBalanceUiAmount)
   const tokenPriceRecord = useTokenStore((s) => s.tokenPriceRecord)
@@ -94,7 +93,10 @@ export default function useAllStandardPoolPosition<T>({ type }: { type?: T }) {
   })
 
   const allValue = standardPoolList.reduce((acc, data) => acc.add(new Decimal(data.value)), new Decimal(0))
-  standardPoolList.forEach((data) => (data.percentage = new Decimal(data.value).div(allValue).mul(100).toDecimalPlaces(2).toNumber()))
+  standardPoolList.forEach((data) => {
+    // eslint-disable-next-line no-param-reassign
+    data.percentage = new Decimal(data.value).div(allValue).mul(100).toDecimalPlaces(2).toNumber()
+  })
 
   const idleLpMintList = useMemo(
     () =>

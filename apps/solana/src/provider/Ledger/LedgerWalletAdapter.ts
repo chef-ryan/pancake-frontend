@@ -1,4 +1,6 @@
+// eslint-disable-next-line import/no-named-default
 import type { default as Transport } from '@ledgerhq/hw-transport'
+// eslint-disable-next-line import/no-named-default
 import type { default as TransportWebHID } from '@ledgerhq/hw-transport-webhid'
 import type { WalletName } from '@solana/wallet-adapter-base'
 import {

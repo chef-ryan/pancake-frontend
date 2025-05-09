@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import { PublicKey } from '@solana/web3.js'
-import { getTokenInfo } from './api'
 import { useTokenStore } from '@/store/useTokenStore'
+import { getTokenInfo } from './api'
 
 export default function useMultipleTokenInfo({
   mintList

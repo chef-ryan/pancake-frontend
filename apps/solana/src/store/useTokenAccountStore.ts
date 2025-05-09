@@ -19,15 +19,14 @@ import {
 import Decimal from 'decimal.js'
 import BN from 'bn.js'
 import { formatLocaleStr, trimTailingZero } from '@/utils/numberish/formatter'
+import { toastSubject } from '@/hooks/toast/useGlobalToast'
+import { txStatusSubject } from '@/hooks/toast/useTxStatus'
+import { retry } from '@/utils/common'
+import logMessage from '@/utils/log'
 import createStore from './createStore'
 import { useAppStore } from './useAppStore'
 import { useTokenStore } from './useTokenStore'
-import { toastSubject } from '@/hooks/toast/useGlobalToast'
-import { txStatusSubject } from '@/hooks/toast/useTxStatus'
 import { TxCallbackProps } from '../types/tx'
-import { retry } from '@/utils/common'
-
-import logMessage from '@/utils/log'
 
 export interface TokenAccountStore {
   tokenAccounts: TokenAccount[]
@@ -122,6 +121,7 @@ export const useTokenAccountStore = createStore<TokenAccountStore>(
           const mintStr = acc.mint.toString()
           const accPubicKey = acc.publicKey?.toString() || ''
           const updateData = readyUpdateDataMap.get(accPubicKey)
+          // eslint-disable-next-line no-param-reassign
           acc.amount = batchUpdateAccountData.deleteAccount.has(accPubicKey) ? new BN(0) : acc.amount
 
           if (!newTokenAccountMap.has(mintStr)) {
@@ -156,6 +156,7 @@ export const useTokenAccountStore = createStore<TokenAccountStore>(
 
       const newTokenAccountRawInfos = tokenAccountRawInfos
         .map((acc) => {
+          // eslint-disable-next-line no-param-reassign
           acc.accountInfo.amount = batchUpdateAccountData.deleteAccount.has(acc.pubkey.toString()) ? new BN(0) : acc.accountInfo.amount
           const updateData = readyUpdateRawDataMap.get(acc.pubkey.toString())
           if (updateData) {
@@ -319,7 +320,7 @@ export const useTokenAccountStore = createStore<TokenAccountStore>(
     },
     migrateATAAct: async ({ migrateAccounts, ...txProps }) => {
       const { connection, publicKey, signAllTransactions } = useAppStore.getState()
-      const {tokenAccounts} = get()
+      const { tokenAccounts } = get()
       if (!connection || !publicKey || !signAllTransactions || !tokenAccounts.length) return
 
       const txBuilder = new TxBuilder({ connection, cluster: 'mainnet', feePayer: publicKey, signAllTransactions })

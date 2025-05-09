@@ -44,7 +44,7 @@ export default function useTokenPrice(props: { mintList: (string | PublicKey | u
   const shouldFetch = startFetch && prepareFetchList.size > 0
 
   const { data, isLoading, error, ...rest } = useSWR(
-    shouldFetch ? [`${BASE_HOST}${MINT_PRICE}` + `?mints=${Array.from(prepareFetchList).slice(0, 49).join(',')}`, fetchRefreshTag] : null,
+    shouldFetch ? [`${BASE_HOST}${MINT_PRICE}?mints=${Array.from(prepareFetchList).slice(0, 49).join(',')}`, fetchRefreshTag] : null,
     fetcher,
     {
       refreshInterval,
@@ -97,7 +97,7 @@ export default function useTokenPrice(props: { mintList: (string | PublicKey | u
 
   useEffect(() => {
     if (!readyList.length) return
-    const {tokenPriceRecord} = useTokenStore.getState()
+    const { tokenPriceRecord } = useTokenStore.getState()
     readyList.forEach((pub) => {
       // if no record or last fetch expired
       if (!tokenPriceRecord.has(pub) || Date.now() - tokenPriceRecord.get(pub)!.fetchTime > refreshInterval) {

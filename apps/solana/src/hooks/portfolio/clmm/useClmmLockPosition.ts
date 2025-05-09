@@ -5,7 +5,9 @@ import { useAppStore } from '@/store'
 import { isValidPublicKey } from '@/utils/publicKey'
 
 let refreshTag = Date.now()
-export const refreshClmmLock = () => (refreshTag = Date.now())
+export const refreshClmmLock = () => {
+  refreshTag = Date.now()
+}
 
 interface ClmmLockInfo {
   [poolId: string]: { [nftMint: string]: { lockId: string; nftAccount: string; positionId: string } }

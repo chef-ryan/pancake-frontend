@@ -16,7 +16,7 @@ export default function useSort({ defaultKey, defaultOrder, formatPropFunc }: Pr
         const propA = formatPropFunc?.(a[sortKey]) ?? a[sortKey]
         const propB = formatPropFunc?.(b[sortKey]) ?? b[sortKey]
         if (typeof propA !== 'number' || typeof propB !== 'number') return Number.MIN_SAFE_INTEGER
-        return (propA - propB) * Math.pow(-1, order)
+        return (propA - propB) * (-1) ** order
       }),
     [sortKey, order, formatPropFunc]
   )

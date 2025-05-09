@@ -164,7 +164,7 @@ export const getTokenInfo = async ({
     return undefined
   } catch {
     if (!notFetchOnline && !isOnlineFetched) {
-      return await getOnlineTokenInfo({ mint, connection, programId })
+      return getOnlineTokenInfo({ mint, connection, programId })
     }
     return undefined
   }

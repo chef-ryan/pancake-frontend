@@ -13,7 +13,9 @@ export enum FarmCategory {
   All = 'all'
 }
 let refreshTag = Date.now()
-export const refreshCreatedFarm = () => (refreshTag = Date.now())
+export const refreshCreatedFarm = () => {
+  refreshTag = Date.now()
+}
 
 const fetcher = ([url]: [string]) => axios.get<OwnerCreatedFarmInfo>(url, { skipError: true })
 

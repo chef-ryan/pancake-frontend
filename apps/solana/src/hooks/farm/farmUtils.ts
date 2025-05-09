@@ -2,9 +2,9 @@ import {
   farmStateV3Layout,
   farmStateV5Layout,
   farmStateV6Layout,
-  farmLedgerLayoutV3_2,
-  farmLedgerLayoutV5_2,
-  farmLedgerLayoutV6_1,
+  farmLedgerLayoutV3_2 as farmLedgerLayoutV32,
+  farmLedgerLayoutV5_2 as farmLedgerLayoutV52,
+  farmLedgerLayoutV6_1 as farmLedgerLayoutV61,
   FormatFarmInfoOut,
   FARM_PROGRAM_ID_V3,
   FARM_PROGRAM_ID_V5,
@@ -18,8 +18,8 @@ import BN from 'bn.js'
 import Decimal from 'decimal.js'
 import dayjs from 'dayjs'
 import { getMintSymbol } from '@/utils/token'
-import { FarmType, ConditionalFarmType, ConditionalFormattedRewardType } from './type'
 import { useAppStore } from '@/store/useAppStore'
+import { FarmType, ConditionalFarmType, FarmDecodeData } from './type'
 
 export type FarmLedgerData = Structure<
   PublicKey | BN | BN[],
@@ -46,27 +46,22 @@ export const FARM_TYPE: Record<
   [FARM_PROGRAM_ID_V3.toString()]: {
     name: FarmType.Raydium,
     version: 3,
-    ledgerLayout: farmLedgerLayoutV3_2,
+    ledgerLayout: farmLedgerLayoutV32,
     stateLayout: farmStateV3Layout
   },
   [FARM_PROGRAM_ID_V5.toString()]: {
     name: FarmType.Fusion,
     version: 5,
-    ledgerLayout: farmLedgerLayoutV5_2,
+    ledgerLayout: farmLedgerLayoutV52,
     stateLayout: farmStateV5Layout
   },
   [FARM_PROGRAM_ID_V6.toString()]: {
     name: FarmType.Ecosystem,
     version: 6,
-    ledgerLayout: farmLedgerLayoutV6_1,
+    ledgerLayout: farmLedgerLayoutV61,
     stateLayout: farmStateV6Layout
   }
 }
-
-export type FarmDecodeData =
-  | ReturnType<typeof farmStateV3Layout.decode>
-  | ReturnType<typeof farmStateV5Layout.decode>
-  | ReturnType<typeof farmStateV6Layout.decode>
 
 export const getFarmState = ({ farmData, chainTimeOffset }: { farmData?: FarmDecodeData; chainTimeOffset: number }) => {
   if (!farmData || !farmData.rewardInfos.length) return [false, true]
@@ -79,7 +74,7 @@ export const getFarmState = ({ farmData, chainTimeOffset }: { farmData?: FarmDec
   }
 
   const currentTime = Date.now() + chainTimeOffset
-  const {rewardInfos} = farmData
+  const { rewardInfos } = farmData
   if (rewardInfos.every(({ rewardOpenTime }) => rewardOpenTime.mul(new BN(1000)).gt(new BN(currentTime)))) return [true, false]
   if (rewardInfos.every(({ rewardEndTime }) => rewardEndTime.mul(new BN(1000)).lt(new BN(currentTime)))) return [false, true]
   return [false, false]
@@ -88,7 +83,7 @@ export const getFarmState = ({ farmData, chainTimeOffset }: { farmData?: FarmDec
 export function formatFarmData<T = FormatFarmInfoOut>(farm: FormatFarmInfoOut): ConditionalFarmType<T> {
   const farmName =
     getMintSymbol({ mint: farm.symbolMints[0], transformSol: true }) +
-    (farm.symbolMints[1] ? `/${  getMintSymbol({ mint: farm.symbolMints[1], transformSol: true })}` : '')
+    (farm.symbolMints[1] ? `/${getMintSymbol({ mint: farm.symbolMints[1], transformSol: true })}` : '')
   const farmType = FARM_TYPE[farm.programId] || FARM_TYPE[FarmType.Raydium]
 
   const formattedRewardInfos = farm.rewardInfos.map((r) => {
@@ -149,6 +144,7 @@ export function updatePoolInfo(poolInfo: FarmDecodeData, lpVault: SplAccount, sl
     if (poolInfo.lastSlot.gte(new BN(slot))) return poolInfo
 
     const spread = new BN(slot).sub(poolInfo.lastSlot)
+    // eslint-disable-next-line no-param-reassign
     poolInfo.lastSlot = new BN(slot)
 
     for (const itemRewardInfo of poolInfo.rewardInfos) {

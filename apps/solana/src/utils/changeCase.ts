@@ -136,5 +136,7 @@ export default function changeCase(
       return toConstantCase(str)
     case 'Sentence case':
       return toSentenceCase(str)
+    default:
+      return str
   }
 }

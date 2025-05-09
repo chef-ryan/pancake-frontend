@@ -6,9 +6,9 @@ import { AxiosResponse } from 'axios'
 import axios from '@/api/axios'
 import { isValidPublicKey } from '@/utils/publicKey'
 import { MINUTE_MILLISECONDS } from '@/utils/date'
+import { useAppStore } from '@/store'
 
 import { FormattedPoolInfoStandardItem } from './type'
-import { useAppStore } from '@/store'
 import { formatPoolData, poolInfoCache, formatAprData } from './formatter'
 
 const fetcher = async ([url]: [url: string]) => {
@@ -52,7 +52,7 @@ export default function useFetchPoolByLpMint(
   const [host, searchLpUrl] = useAppStore((s) => [s.urlConfigs.BASE_HOST, s.urlConfigs.POOL_SEARCH_LP], shallow)
   const url = !lpMintList || !shouldFetch || !readyIdList.length ? null : host + searchLpUrl
 
-  const { data, isLoading, error, ...rest } = useSWR(url ? [`${url  }?lps=${lpMintList.join(',')}`, refreshTag] : url, fetcher, {
+  const { data, isLoading, error, ...rest } = useSWR(url ? [`${url}?lps=${lpMintList.join(',')}`, refreshTag] : url, fetcher, {
     dedupingInterval: refreshInterval,
     focusThrottleInterval: refreshInterval,
     refreshInterval,

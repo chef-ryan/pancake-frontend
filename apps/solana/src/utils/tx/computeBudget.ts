@@ -22,7 +22,7 @@ export const fetchComputePrice = async () => {
 
 export async function getComputeBudgetConfig(): Promise<ComputeBudgetConfig | undefined> {
   const transactionFee = useAppStore.getState().getPriorityFee()
-  if (isNaN(parseFloat(String(transactionFee) || ''))) {
+  if (Number.isNaN(parseFloat(String(transactionFee) || ''))) {
     const json = await fetchComputePrice()
     const { avg } = json?.[15] ?? {}
     if (!avg) return undefined
@@ -30,10 +30,9 @@ export async function getComputeBudgetConfig(): Promise<ComputeBudgetConfig | un
       units: 600000,
       microLamports: Math.min(Math.ceil((avg * 1000000) / 600000), 25000)
     } as ComputeBudgetConfig
-  } 
-    return {
-      units: 600000,
-      microLamports: Math.ceil((Number(transactionFee as string) * 10 ** SOL_INFO.decimals * 1000000) / 600000)
-    } as ComputeBudgetConfig
-  
+  }
+  return {
+    units: 600000,
+    microLamports: Math.ceil((Number(transactionFee as string) * 10 ** SOL_INFO.decimals * 1000000) / 600000)
+  } as ComputeBudgetConfig
 }

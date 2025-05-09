@@ -6,8 +6,9 @@ import { Connection } from '@solana/web3.js'
 import ToPublicKey from '@/utils/publicKey'
 import { MINUTE_MILLISECONDS } from '@/utils/date'
 import { useAppStore } from '@/store'
-import { FARM_TYPE, FarmDecodeData, updatePoolInfo, farmRpcInfoCache } from './farmUtils'
 import logMessage from '@/utils/log'
+import { FARM_TYPE, updatePoolInfo, farmRpcInfoCache } from './farmUtils'
+import { FarmDecodeData } from './type'
 
 const fetcher = ([connection, publicKeyList, type]: [Connection, string[], 'farm' | 'farm lpVault']) => {
   logMessage(`rpc: get multiple ${type} info`)

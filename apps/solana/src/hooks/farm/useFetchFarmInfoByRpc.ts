@@ -7,9 +7,9 @@ import { Connection, PublicKey } from '@solana/web3.js'
 import { MINUTE_MILLISECONDS } from '@/utils/date'
 import { useAppStore } from '@/store'
 import ToPublicKey from '@/utils/publicKey'
+import logMessage from '@/utils/log'
 import { FARM_TYPE, updatePoolInfo, farmRpcInfoCache } from './farmUtils'
 import { useEvent } from '../useEvent'
-import logMessage from '@/utils/log'
 
 const fetcher = ([connection, publicKey]: [Connection, string | PublicKey]) => {
   logMessage('rpc: get farm info')

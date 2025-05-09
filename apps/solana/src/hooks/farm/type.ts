@@ -1,12 +1,19 @@
 import {
   ApiV3Token,
+  farmStateV3Layout,
+  farmStateV5Layout,
+  farmStateV6Layout,
   FormatFarmInfoOut,
   FormatFarmInfoOutV345,
   FormatFarmInfoOutV6,
   RewardInfoV345,
   RewardInfoV6
 } from '@raydium-io/raydium-sdk-v2'
-import { FarmDecodeData } from './farmUtils'
+
+export type FarmDecodeData =
+  | ReturnType<typeof farmStateV3Layout.decode>
+  | ReturnType<typeof farmStateV5Layout.decode>
+  | ReturnType<typeof farmStateV6Layout.decode>
 
 export enum FarmType {
   Raydium = 'Raydium',

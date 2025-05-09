@@ -77,10 +77,10 @@ export default function useClmmPortfolioData<T>({ type }: { type: T }) {
     return [allPositions, groupDataByMint]
   }, [formattedDataMap, tokenPrices, allClmmBalanceData, allPositions.length])
 
-  clmmPoolAssets.forEach(
-    (data) =>
-      (data!.percentage = clmmAll.isZero() ? 100 : new Decimal(data!.value ?? 0).div(clmmAll).mul(100).toDecimalPlaces(2).toNumber())
-  )
+  clmmPoolAssets.forEach((data) => {
+    // eslint-disable-next-line no-param-reassign
+    data!.percentage = clmmAll.isZero() ? 100 : new Decimal(data!.value ?? 0).div(clmmAll).mul(100).toDecimalPlaces(2).toNumber()
+  })
 
   useEffect(
     () => () => {

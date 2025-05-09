@@ -6,9 +6,9 @@ import { AxiosResponse } from 'axios'
 import axios from '@/api/axios'
 import { isValidPublicKey } from '@/utils/publicKey'
 import { MINUTE_MILLISECONDS } from '@/utils/date'
+import { useAppStore, useTokenStore } from '@/store'
 
 import { ConditionalPoolType } from './type'
-import { useAppStore, useTokenStore } from '@/store'
 import { formatPoolData, poolInfoCache, formatAprData } from './formatter'
 
 const fetcher = ([url]: [url: string]) => axios.get<ApiV3PoolInfoItem[]>(url, { skipError: true })
@@ -59,7 +59,7 @@ export default function useFetchPoolById<T = ApiV3PoolInfoItem>(
 
   const url = !readyIdList.length || readyIdList.length === cacheDataList.length || !shouldFetch ? null : host + searchIdUrl
 
-  const { data, isLoading, error, ...rest } = useSWR(url ? [`${url  }?ids=${readyIdList.join(',')}`, refreshTag] : null, fetcher, {
+  const { data, isLoading, error, ...rest } = useSWR(url ? [`${url}?ids=${readyIdList.join(',')}`, refreshTag] : null, fetcher, {
     dedupingInterval: refreshInterval,
     focusThrottleInterval: refreshInterval,
     refreshInterval,

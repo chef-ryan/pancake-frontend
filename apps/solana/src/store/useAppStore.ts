@@ -14,14 +14,15 @@ import {
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Wallet } from '@solana/wallet-adapter-react'
 import { compare } from 'compare-versions'
-import createStore from './createStore'
-import { blackJupMintSet, useTokenStore } from './useTokenStore'
 import { toastSubject } from '@/hooks/toast/useGlobalToast'
 import axios from '@/api/axios'
 import { isValidUrl } from '@/utils/url'
 import { setStorageItem, getStorageItem } from '@/utils/localStorage'
 import { retry, isProdEnv } from '@/utils/common'
 import { rpcs } from '@/utils/config/endpoint'
+import createStore from './createStore'
+// eslint-disable-next-line import/no-cycle
+import { blackJupMintSet, useTokenStore } from './useTokenStore'
 
 export const defaultNetWork = WalletAdapterNetwork.Mainnet // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
 export const defaultEndpoint = clusterApiUrl(defaultNetWork) // You can also provide a custom RPC endpoint
@@ -258,7 +259,7 @@ export const useAppStore = createStore<AppState>(
       axios
         .get<{ offset: number }>(`${urlConfigs.BASE_HOST}${urlConfigs.CHAIN_TIME}`)
         .then((data) => {
-          set({ chainTimeOffset: isNaN(data?.data.offset) ? 0 : data.data.offset * 1000 }, false, { type: 'fetchChainTimeAct' })
+          set({ chainTimeOffset: Number.isNaN(data?.data.offset) ? 0 : data.data.offset * 1000 }, false, { type: 'fetchChainTimeAct' })
         })
         .catch(() => {
           set({ chainTimeOffset: 0 }, false, { type: 'fetchChainTimeAct' })
@@ -343,7 +344,9 @@ export const useAppStore = createStore<AppState>(
         isRpcLoading = true
         await retry<Promise<EpochInfo>>(() => axios.post(url, { method: 'getEpochInfo' }, { skipError: true }), {
           retryCount: 3,
-          onError: () => (isRpcLoading = false)
+          onError: () => {
+            isRpcLoading = false
+          }
         })
         isRpcLoading = false
         const rpcNode = get().rpcs.find((r) => r.url === url)

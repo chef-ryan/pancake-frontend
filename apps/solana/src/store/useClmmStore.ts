@@ -26,18 +26,17 @@ import BN from 'bn.js'
 import Decimal from 'decimal.js'
 import createStore from '@/store/createStore'
 import { useAppStore, useTokenAccountStore, useLiquidityStore } from '@/store'
-import { isSolWSol , getMintSymbol , shortenAddress } from '@/utils/token'
+import { isSolWSol, getMintSymbol, shortenAddress } from '@/utils/token'
 import { toastSubject } from '@/hooks/toast/useGlobalToast'
 import { txStatusSubject } from '@/hooks/toast/useTxStatus'
 import { getDefaultToastData, transformProcessData, handleMultiTxToast } from '@/hooks/toast/multiToastUtil'
 import getEphemeralSigners from '@/utils/tx/getEphemeralSigners'
 
-import { CLMM_FEE_CONFIGS, getTxMeta } from './configs/clmm'
-import { TxCallbackProps, TxCallbackPropsGeneric } from '../types/tx'
 import { getComputeBudgetConfig } from '@/utils/tx/computeBudget'
 import { handleMultiTxRetry } from '@/hooks/toast/retryTx'
 import { ClmmLockInfo } from '@/hooks/portfolio/clmm/useClmmBalance'
-
+import { CLMM_FEE_CONFIGS, getTxMeta } from './configs/clmm'
+import { TxCallbackProps, TxCallbackPropsGeneric } from '../types/tx'
 
 export type CreatePoolBuildData =
   | TxBuildData<{ mockPoolInfo: ApiV3PoolInfoConcentratedItem; address: ClmmKeys }>
@@ -440,7 +439,7 @@ export const useClmmStore = createStore<ClmmState>(
       onConfirmed
     }) => {
       const { raydium, txVersion, getEpochInfo } = useAppStore.getState()
-      const {slippage} = useLiquidityStore.getState()
+      const { slippage } = useLiquidityStore.getState()
       if (!raydium) return ''
 
       const [_amountMinA, _amountMinB] = [
@@ -559,7 +558,7 @@ export const useClmmStore = createStore<ClmmState>(
 
     increaseLiquidityAct: async ({ poolInfo, position, liquidity, amountMaxA, amountMaxB, ...txProps }) => {
       const { raydium, txVersion } = useAppStore.getState()
-      const {slippage} = useLiquidityStore.getState()
+      const { slippage } = useLiquidityStore.getState()
       if (!raydium) return ''
       try {
         const computeBudgetConfig = await getComputeBudgetConfig()
@@ -990,7 +989,7 @@ export const useClmmStore = createStore<ClmmState>(
     },
     computePairAmount: async ({ pool, inputA, tickLower, tickUpper, amount }) => {
       const [connection, getEpochInfo] = [useAppStore.getState().connection, useAppStore.getState().getEpochInfo]
-      const {slippage} = useLiquidityStore.getState()
+      const { slippage } = useLiquidityStore.getState()
       const poolInfo = pool
       const epochInfo = await getEpochInfo()
       if (!poolInfo || !connection || tickLower === undefined || tickLower === undefined || !epochInfo) {
@@ -1018,7 +1017,7 @@ export const useClmmStore = createStore<ClmmState>(
       }
     },
     loadAddRewardWhiteListAct: async (props) => {
-      const {raydium} = useAppStore.getState()
+      const { raydium } = useAppStore.getState()
       if (!raydium) return ''
       const { checkFetch } = props || {}
       if (checkFetch && get().rewardWhiteListMints.length > 0) return

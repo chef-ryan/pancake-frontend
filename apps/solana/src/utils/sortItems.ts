@@ -28,7 +28,7 @@ export function sortItems<T>(items: T[], options?: SortOptions<T>): T[] {
       const orderN =
         compareFn?.(compareTargetA, compareTargetB, { itemA, itemB }) ??
         compareForSort(compareTargetA, compareTargetB) * (mode === 'increase' ? 1 : -1)
-      if (orderN == 0) continue
+      if (orderN === 0) continue
       return orderN
     }
     return compareForSort(itemA, itemB)
@@ -42,26 +42,28 @@ function compareForSort(a: unknown, b: unknown): number {
   if (isNullish(a) && isNullish(b)) return 0
   if (isNumber(a) && isNumber(b)) {
     return a - b
-  } if (isBigInt(a) && isBigInt(b)) {
+  }
+  if (isBigInt(a) && isBigInt(b)) {
     return Number(a - b)
-  } if (isBoolean(a) && isBoolean(b)) {
+  }
+  if (isBoolean(a) && isBoolean(b)) {
     return Number(a) - Number(b)
-  } if (isString(a) && isString(b)) {
+  }
+  if (isString(a) && isString(b)) {
     const numberA = Number(a) // if it's a normal string, `Number()` will return `NaN`
     const numberB = Number(b) // if it's a normal string, `Number()` will return `NaN`
-    if (isNaN(numberB) || isNaN(numberA)) {
+    if (Number.isNaN(numberB) || Number.isNaN(numberA)) {
       // one of them has plain string
       return a.localeCompare(b)
-    } 
-      // all number string
-      return numberA - numberB
-    
+    }
+    // all number string
+    return numberA - numberB
   }
   return 0
 }
 
 function isNullish(value: any): value is undefined | null {
-  return value == undefined && value == null
+  return value === undefined && value == null
 }
 function isNumber(val: unknown): val is number {
   return typeof val === 'number'

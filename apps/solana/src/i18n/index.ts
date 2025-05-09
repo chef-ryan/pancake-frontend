@@ -1,5 +1,6 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import { setStorageItem } from '@/utils/localStorage'
 // import LanguageDetector from 'i18next-browser-languagedetector'
 import en from './en.json'
 import zhTW from './zh-TW.json'
@@ -11,7 +12,6 @@ import fr from './fr.json'
 import ru from './ru.json'
 import pt from './pt.json'
 import tr from './tr.json'
-import { setStorageItem } from '@/utils/localStorage'
 
 export const I18N_CACHE_KEY = 'i18nextLng'
 

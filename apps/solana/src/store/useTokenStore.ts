@@ -1,10 +1,11 @@
 import { PublicKey } from '@solana/web3.js'
 import { MintLayout, RawMint } from '@solana/spl-token'
 import { TokenInfo, JupTokenType, ApiV3Token } from '@raydium-io/raydium-sdk-v2'
-import createStore from './createStore'
-import { useAppStore } from './useAppStore'
 import { getStorageItem, setStorageItem } from '@/utils/localStorage'
 import logMessage from '@/utils/log'
+import createStore from './createStore'
+// eslint-disable-next-line import/no-cycle
+import { useAppStore } from './useAppStore'
 
 export const EXTRA_TOKEN_KEY = '_r_cus_t_'
 

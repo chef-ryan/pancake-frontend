@@ -27,6 +27,7 @@ export const retry = async <T>(
 ): Promise<T> => {
   const { retryCount = 10, interval = 1000, errorMsg = 'request failed', sleepTime, onError } = options || {}
   let retryCounter = 0
+  // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
     if (sleepTime !== undefined) await sleep(sleepTime)
     fetcher()

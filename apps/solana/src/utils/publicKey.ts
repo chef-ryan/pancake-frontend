@@ -7,6 +7,7 @@ export const isValidPublicKey = (val: string | PublicKey): boolean => {
   const valStr = val.toString()
   if (CACHE_KEYS.has(valStr)) return true
   try {
+    // eslint-disable-next-line no-new
     new PublicKey(valStr)
     return true
   } catch {

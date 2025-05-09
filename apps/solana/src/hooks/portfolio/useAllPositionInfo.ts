@@ -4,18 +4,18 @@ import { FormatFarmInfoOutV6, ApiV3PoolInfoConcentratedItem, ApiV3Token, getATAA
 
 import Decimal from 'decimal.js'
 import { AccountState, NATIVE_MINT } from '@solana/spl-token'
-import useFetchPoolById from '../pool/useFetchPoolById'
 
-import { useTokenAccountStore , useFarmStore, useClmmStore, useAppStore } from '@/store'
+import { useTokenAccountStore, useFarmStore, useClmmStore, useAppStore } from '@/store'
 import useFarmPositions from '@/hooks/portfolio/farm/useFarmPositions'
 import useFetchMultipleFarmInfo from '@/hooks/farm/useFetchMultipleFarmInfo'
 import useFetchMultipleFarmBalance from '@/hooks/farm/useFetchMultipleFarmBalance'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
 import { getTickArrayAddress } from '@/hooks/pool/formatter'
-import useClmmPortfolioData, { ClmmPosition } from './clmm/useClmmPortfolioData'
-import useFetchMultipleAccountInfo from '@/hooks/info/useFetchMultipleAccountInfo'
-import { useEvent } from '../useEvent'
 import { debounce } from '@/utils/functionMethods'
+import useFetchMultipleAccountInfo from '@/hooks/info/useFetchMultipleAccountInfo'
+import useClmmPortfolioData, { ClmmPosition } from './clmm/useClmmPortfolioData'
+import { useEvent } from '../useEvent'
+import useFetchPoolById from '../pool/useFetchPoolById'
 
 interface RewardInfo {
   mint: ApiV3Token
@@ -201,19 +201,19 @@ export default function useAllPositionInfo({ shouldFetch = true }: { shouldFetch
             })
           }
         } else if (allFarmRewardInfo.has(rewardMint.address)) {
-            const prevReward = allFarmRewardInfo.get(rewardMint.address)!
-            allFarmRewardInfo.set(rewardMint.address, {
-              mint: rewardMint,
-              amount: new Decimal(prevReward.amount).add(cur).toFixed(rewardMint.decimals),
-              amountUSD: new Decimal(prevReward.amountUSD).add(usdValue).toFixed(10)
-            })
-          } else {
-            allFarmRewardInfo.set(rewardMint.address, {
-              mint: rewardMint,
-              amount: cur,
-              amountUSD: usdValue.toFixed(10)
-            })
-          }
+          const prevReward = allFarmRewardInfo.get(rewardMint.address)!
+          allFarmRewardInfo.set(rewardMint.address, {
+            mint: rewardMint,
+            amount: new Decimal(prevReward.amount).add(cur).toFixed(rewardMint.decimals),
+            amountUSD: new Decimal(prevReward.amountUSD).add(usdValue).toFixed(10)
+          })
+        } else {
+          allFarmRewardInfo.set(rewardMint.address, {
+            mint: rewardMint,
+            amount: cur,
+            amountUSD: usdValue.toFixed(10)
+          })
+        }
       }
 
       return rewardInfo ? acc.add(usdValue) : acc

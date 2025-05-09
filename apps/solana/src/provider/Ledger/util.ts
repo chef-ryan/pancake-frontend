@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-named-default
 import type { default as Transport } from '@ledgerhq/hw-transport'
 import { StatusCodes, TransportStatusError } from '@ledgerhq/hw-transport'
 import { isVersionedTransaction } from '@solana/wallet-adapter-base'

@@ -5,21 +5,21 @@ import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { createStore, useAppStore, useTokenAccountStore, useTokenStore } from '@/store'
 import { toastSubject } from '@/hooks/toast/useGlobalToast'
 import { txStatusSubject, TOAST_DURATION } from '@/hooks/toast/useTxStatus'
-import { ApiSwapV1OutSuccess } from './type'
-import { isSolWSol , getMintSymbol } from '@/utils/token'
+import { isSolWSol, getMintSymbol } from '@/utils/token'
 import axios from '@/api/axios'
-import { getTxMeta } from './swapMeta'
-import { formatLocaleStr , trimTailingZero } from '@/utils/numberish/formatter'
+import { formatLocaleStr, trimTailingZero } from '@/utils/numberish/formatter'
 import { TxCallbackProps } from '@/types/tx'
 import i18n from '@/i18n'
 import { fetchComputePrice } from '@/utils/tx/computeBudget'
 import { getDefaultToastData, handleMultiTxToast, transformProcessData } from '@/hooks/toast/multiToastUtil'
 import { handleMultiTxRetry } from '@/hooks/toast/retryTx'
 import { isSwapSlippageError } from '@/utils/tx/swapError'
+import { getTxMeta } from './swapMeta'
+import { ApiSwapV1OutSuccess } from './type'
 
 const getSwapComputePrice = async () => {
   const transactionFee = useAppStore.getState().getPriorityFee()
-  if (isNaN(parseFloat(String(transactionFee) || ''))) {
+  if (Number.isNaN(parseFloat(String(transactionFee) || ''))) {
     const json = await fetchComputePrice()
     const { avg } = json?.[15] ?? {}
     if (!avg) return undefined
@@ -73,7 +73,7 @@ export const useSwapStore = createStore<SwapStore>(
       }
 
       try {
-        const {tokenMap} = useTokenStore.getState()
+        const { tokenMap } = useTokenStore.getState()
         const [inputToken, outputToken] = [tokenMap.get(swapResponse.data.inputMint)!, tokenMap.get(swapResponse.data.outputMint)!]
         const [isInputSol, isOutputSol] = [wrapSol && isSolWSol(swapResponse.data.inputMint), isSolWSol(swapResponse.data.outputMint)]
 
@@ -274,8 +274,8 @@ export const useSwapStore = createStore<SwapStore>(
     },
 
     unWrapSolAct: async ({ amount, onSent, onError, ...txProps }): Promise<string | undefined> => {
-      const {raydium} = useAppStore.getState()
-      const {txVersion} = useAppStore.getState()
+      const { raydium } = useAppStore.getState()
+      const { txVersion } = useAppStore.getState()
       if (!raydium) return
       const { execute, builder } = await raydium.tradeV2.unWrapWSol({
         amount
@@ -358,7 +358,7 @@ export const useSwapStore = createStore<SwapStore>(
     },
 
     wrapSolAct: async (amount: string): Promise<string | undefined> => {
-      const {raydium} = useAppStore.getState()
+      const { raydium } = useAppStore.getState()
       if (!raydium) return
       const { execute } = await raydium.tradeV2.wrapWSol(new Decimal(amount).mul(10 ** SOL_INFO.decimals).toFixed(0))
       return execute()

@@ -8,10 +8,10 @@ import { useAppStore, defaultEndpoint } from '@/store/useAppStore'
 import usePrevious from '@/hooks/usePrevious'
 import { isLocal, cancelAllRetry } from '@/utils/common'
 import { getDevOnlyStorage } from '@/utils/localStorage'
-import { SSRData } from '../../type'
-import { toastSubject } from '../toast/useGlobalToast'
 import { sendWalletEvent } from '@/api/event'
 import { validateTxData, extendTxData } from '@/api/txService'
+import { SSRData } from '../../type'
+import { toastSubject } from '../toast/useGlobalToast'
 
 const localFakePubKey = '_r_f_wallet_'
 export const WALLET_STORAGE_KEY = 'walletName'
@@ -59,6 +59,7 @@ function useInitConnection(props: SSRData) {
             let allSignedTx: T[] = []
             if (isAndroidCoinBase) {
               for (const tx of transactions) {
+                // eslint-disable-next-line no-await-in-loop
                 const signed = await signTransaction!(tx)
                 allSignedTx.push(signed)
               }

@@ -120,7 +120,10 @@ export default function useFetchAccLpMint<T>({
       percentage: 0
     }
   })
-  lpAssetsList.forEach((data) => (data!.percentage = new Decimal(data!.value ?? 0).div(lpAll).mul(100).toDecimalPlaces(2).toNumber()))
+  lpAssetsList.forEach((data) => {
+    // eslint-disable-next-line no-param-reassign
+    data!.percentage = new Decimal(data!.value ?? 0).div(lpAll).mul(100).toDecimalPlaces(2).toNumber()
+  })
 
   return {
     data: lpMintList,

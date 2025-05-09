@@ -12,12 +12,12 @@ import { AccountInfo } from '@solana/web3.js'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
-import useSubscribeClmmInfo, { RpcPoolData } from './useSubscribeClmmInfo'
 import useFetchMultipleAccountInfo from '@/hooks/info/useFetchMultipleAccountInfo'
 import { getTickArrayAddress } from '@/hooks/pool/formatter'
 import { getPoolName } from '@/features/Pools/util'
 import { MINUTE_MILLISECONDS } from '@/utils/date'
 import { addAccChangeCbk, removeAccChangeCbk } from '@/hooks/app/useTokenAccountInfo'
+import useSubscribeClmmInfo, { RpcPoolData } from './useSubscribeClmmInfo'
 
 interface Props {
   shouldFetch?: boolean

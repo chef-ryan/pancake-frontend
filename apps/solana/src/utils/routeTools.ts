@@ -5,14 +5,13 @@ import { MayFunction, TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import router, { useRouter } from 'next/router'
 
 import { ParsedUrlQuery } from 'querystring'
-import { shrinkToValue } from './shrinkToValue'
-import { shakeObjectUndefinedItems } from './objectTools'
-import { StakingPageQuery } from '@/features/Staking/Staking'
 import { PoolPageQuery } from '@/features/Pools/Pools'
-import { DecreaseLiquidityPageQuery } from '@/features/Liquidity/Decrease'
-import { IncreaseLiquidityPageQuery } from '@/features/Liquidity/Increase'
 import { PortfolioPageQuery } from '@/features/Portfolio'
 import { isClient } from '@/utils/common'
+import { StakingPageQuery } from '@/features/Staking/type'
+import { DecreaseLiquidityPageQuery, IncreaseLiquidityPageQuery } from '@/features/Liquidity/Decrease/components/type'
+import { shrinkToValue } from './shrinkToValue'
+import { shakeObjectUndefinedItems } from './objectTools'
 
 type EditFarmPageQuery = {
   farmId?: string
@@ -102,7 +101,7 @@ export function useRouteQuery<Query extends Record<string, any>>(): Query {
   const router = useRouter()
   const query = router.query as Query
   if (!Object.keys(query).length && isClient()) {
-    const searchParams = new URLSearchParams(location.search)
+    const searchParams = new URLSearchParams(window.location.search)
     return Array.from(searchParams.entries()).reduce(
       (acc, cur) => ({
         ...acc,
@@ -116,7 +115,7 @@ export function useRouteQuery<Query extends Record<string, any>>(): Query {
 
 export function useRoutePageName(): keyof PageRouteConfigs | undefined {
   const router = useRouter()
-  const {pathname} = router
+  const { pathname } = router
   const [pageName] = Object.entries(pageRoutePathnames).find(([, path]) => path === pathname) ?? []
   return pageName as keyof PageRouteConfigs | undefined
 }

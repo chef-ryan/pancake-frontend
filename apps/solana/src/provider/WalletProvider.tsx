@@ -26,10 +26,10 @@ import { TipLinkWalletAdapter } from '@tiplink/wallet-adapter'
 import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
 
 import { type Adapter, type WalletError } from '@solana/wallet-adapter-base'
-import { useAppStore, defaultNetWork, defaultEndpoint } from '../store/useAppStore'
 import { sendWalletEvent } from '@/api/event'
 import { useEvent } from '@/hooks/useEvent'
 import { LedgerWalletAdapter } from './Ledger/LedgerWalletAdapter'
+import { useAppStore, defaultNetWork, defaultEndpoint } from '../store/useAppStore'
 
 initialize()
 

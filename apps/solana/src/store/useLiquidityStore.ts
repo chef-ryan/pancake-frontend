@@ -16,21 +16,20 @@ import {
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
-import createStore from './createStore'
-import { useAppStore } from './useAppStore'
 import { toastSubject } from '@/hooks/toast/useGlobalToast'
 import { txStatusSubject } from '@/hooks/toast/useTxStatus'
 import { getDefaultToastData, transformProcessData, handleMultiTxToast } from '@/hooks/toast/multiToastUtil'
 import { TxCallbackProps, TxCallbackPropsGeneric } from '@/types/tx'
 import { formatLocaleStr } from '@/utils/numberish/formatter'
-
-import { getTxMeta } from './configs/liquidity'
 import { getMintSymbol } from '@/utils/token'
 import getEphemeralSigners from '@/utils/tx/getEphemeralSigners'
 import { getPoolName } from '@/features/Pools/util'
 import { handleMultiTxRetry } from '@/hooks/toast/retryTx'
 import { getComputeBudgetConfig } from '@/utils/tx/computeBudget'
 import { useTokenAccountStore } from './useTokenAccountStore'
+import createStore from './createStore'
+import { useAppStore } from './useAppStore'
+import { getTxMeta } from './configs/liquidity'
 
 export const LIQUIDITY_SLIPPAGE_KEY = '_r_lqd_slippage_'
 
@@ -158,7 +157,7 @@ export const useLiquidityStore = createStore<LiquidityStore>(
     addCpmmLiquidityAct: async ({ onSent, onError, onFinally, ...params }) => {
       const { raydium, txVersion, getEpochInfo } = useAppStore.getState()
       if (!raydium) return ''
-      const {baseIn} = params
+      const { baseIn } = params
       const computeBudgetConfig = await getComputeBudgetConfig()
 
       const percentSlippage = new Percent((get().slippage * 10000).toFixed(0), 10000)

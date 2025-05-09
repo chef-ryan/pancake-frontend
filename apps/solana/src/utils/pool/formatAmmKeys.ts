@@ -76,6 +76,7 @@ export async function formatAmmKeys({
   } = {}
   for (const itemMarketProgram of allMarketProgram) {
     try {
+      // eslint-disable-next-line no-await-in-loop
       const allMarketInfo = await connection.getProgramAccounts(new PublicKey(itemMarketProgram), {
         filters: [
           { dataSize: MARKET_STATE_LAYOUT_V3.span },
@@ -134,6 +135,7 @@ export async function formatAmmKeys({
       })
       .filter((i) => i !== undefined) as ApiPoolInfoV4[]
   ).reduce((a, b) => {
+    // eslint-disable-next-line no-param-reassign
     a[b.id] = b
     return a
   }, {} as { [id: string]: ApiPoolInfoV4 })

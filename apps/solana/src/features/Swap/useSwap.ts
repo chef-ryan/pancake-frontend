@@ -5,10 +5,10 @@ import { useCallback, useEffect, useState } from 'react'
 import Decimal from 'decimal.js'
 import axios from '@/api/axios'
 import { useAppStore } from '@/store'
-import { useSwapStore } from './useSwapStore'
 import { debounce } from '@/utils/functionMethods'
 import { isValidPublicKey } from '@/utils/publicKey'
 import { ApiSwapV1OutSuccess, ApiSwapV1OutError } from './type'
+import { useSwapStore } from './useSwapStore'
 
 const fetcher = async (url: string): Promise<ApiSwapV1OutSuccess | ApiSwapV1OutError> =>
   axios.get(url, {

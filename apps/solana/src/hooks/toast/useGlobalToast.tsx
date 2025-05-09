@@ -39,6 +39,7 @@ function useGlobalToast() {
 
   useEffect(() => {
     const sub = toastSubject.asObservable().subscribe(({ id, update, close, txError, noRpc, ...data }) => {
+      // eslint-disable-next-line no-param-reassign
       id = id ?? uuid()
       const handleClose = (props: RenderProps) => {
         data.onClose?.()

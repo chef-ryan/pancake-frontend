@@ -14,6 +14,7 @@ function loadRef(ref: RefCallback<any> | MutableRefObject<any> | null | undefine
       ref.current.splice(idx, 1, el)
     })
   } else {
+    // eslint-disable-next-line no-param-reassign
     ref.current = el
   }
 }

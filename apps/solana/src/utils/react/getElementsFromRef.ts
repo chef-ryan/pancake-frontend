@@ -1,6 +1,6 @@
 import { RefObject } from 'react'
-import { isObject } from '../judges/judgeType'
 import { MayArray } from '@/types/tools'
+import { isObject } from '../judges/judgeType'
 import { shakeFalsyItem } from '../arrayMethods'
 
 type Element = HTMLElement | undefined | null

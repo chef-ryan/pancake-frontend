@@ -1,6 +1,6 @@
-import { useTokenAccountStore } from '@/store'
 import { PublicKey } from '@solana/web3.js'
 import { useMemo } from 'react'
+import { useTokenAccountStore } from '@/store'
 
 export const useSolBalance = () => {
   const [getTokenBalanceUiAmount] = useTokenAccountStore((s) => [s.getTokenBalanceUiAmount])

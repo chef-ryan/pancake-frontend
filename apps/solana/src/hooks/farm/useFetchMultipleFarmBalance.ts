@@ -10,12 +10,12 @@ import { useAppStore } from '@/store'
 import { addAccChangeCbk, removeAccChangeCbk } from '@/hooks/app/useTokenAccountInfo'
 import { MINUTE_MILLISECONDS } from '@/utils/date'
 import ToPublicKey from '@/utils/publicKey'
+import logMessage from '@/utils/log'
 import { FarmBalanceInfo } from './type'
 import useFetchMultipleFarmInfoByRpc from './useFetchMultipleFarmInfoByRpc'
 import { FARM_TYPE } from './farmUtils'
 
 import { useEvent } from '../useEvent'
-import logMessage from '@/utils/log'
 
 const fetcher = ([connection, publicKeyList]: [Connection, string[]]) => {
   logMessage('rpc: get multiple farm balance info')
@@ -120,7 +120,7 @@ export default function useFetchMultipleFarmBalance(props: {
               mutate,
               ...rest
             }
-          const {ledgerLayout} = FARM_TYPE[data.owner.toString()]
+          const { ledgerLayout } = FARM_TYPE[data.owner.toString()]
           if (!ledgerLayout) return
           const decodeData = ledgerLayout.decode(data!.data)
           const rpcInfoData = rpcInfoDataList.find((d) => d.id === decodeData.id.toString())

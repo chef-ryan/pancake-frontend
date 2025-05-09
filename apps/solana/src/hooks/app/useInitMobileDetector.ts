@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import { useDeviceInfoDetector } from '../useMobileDetector'
 import { useAppStore } from '@/store'
+import { useDeviceInfoDetector } from '../useMobileDetector'
 
 export default function useInitMobileDetector() {
   const { isMobile, isDesktop } = useDeviceInfoDetector()

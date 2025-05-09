@@ -4,11 +4,11 @@ import { Wallet, useWallet } from '@solana/wallet-adapter-react'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { useTranslation } from 'react-i18next'
 import { useEvent } from '@/hooks/useEvent'
-import SelectWalletModal from './SelectWalletModal'
 import { colors } from '@/theme/cssVariables'
 import { MoonpayBuy } from '@/components/Moonpay'
 import MoonPayIcon from '@/icons/misc/MoonPayIcon'
 import { WALLET_STORAGE_KEY } from '@/hooks/app/useInitConnection'
+import SelectWalletModal from './SelectWalletModal'
 
 export default function WalletOnramp() {
   const { wallets, select, connected, connecting } = useWallet()

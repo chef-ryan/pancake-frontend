@@ -33,7 +33,7 @@ export const trimTrailZero = (numberStr?: string) => {
   return splitNum[1].length ? `${splitNum[0]}.${splitNum[1]}` : splitNum[0]
 }
 
-export const numTransform = (value: any) => (isNaN(value) ? 0 : value)
+export const numTransform = (value: any) => (Number.isNaN(value) ? 0 : value)
 
 const stringNumberRegex = /(-?)([\d,_]*)\.?(\d*)/
 export function getFirstNonZeroDecimal(s: string) {
@@ -167,6 +167,7 @@ function decimalTrailingZeroesToExponent(formattedCurrency: string, maximumDecim
 
 function formatCurrencyOverride(formattedCurrency: string, maximumDecimalTrailingZeroes?: number): string {
   if (typeof maximumDecimalTrailingZeroes !== 'undefined') {
+    // eslint-disable-next-line no-param-reassign
     formattedCurrency = decimalTrailingZeroesToExponent(formattedCurrency, maximumDecimalTrailingZeroes)
   }
   return formattedCurrency
@@ -230,18 +231,22 @@ export function formatCurrency(amount?: string | number | Decimal, params: Forma
 
   if (amountNumber === 0.0) {
     return amountNumber.toFixed(0)
-  } if (amountNumber >= 1000) {
+  }
+  if (amountNumber >= 1000) {
     // Large, show no decimal value
     return formatCurrencyOverride(currencyFormatterNoDecimal.format(amountNumber))
-  } if (amountNumber >= 50 && amountNumber < 1000) {
+  }
+  if (amountNumber >= 50 && amountNumber < 1000) {
     // Medium, show 3 fraction digits
     const currencyFormatterMedium: { format: (value: number) => string } = generateIntlNumberFormatter(symbol, abbreviated, 3)
     return formatCurrencyOverride(currencyFormatterMedium.format(amountNumber), maximumDecimalTrailingZeroes)
-  } if (amountNumber >= 0.000001 && amountNumber < 50) {
+  }
+  if (amountNumber >= 0.000001 && amountNumber < 50) {
     // show 6 fraction digits
     const currencyFormatterSmall: { format: (value: number) => string } = generateIntlNumberFormatter(symbol, abbreviated, 6)
     return formatCurrencyOverride(currencyFormatterSmall.format(amountNumber), maximumDecimalTrailingZeroes)
-  } if (amountNumber < 10 ** -6) {
+  }
+  if (amountNumber < 10 ** -6) {
     // show 12 fraction digits
     const currencyFormatterVeryVerySmall: { format: (value: number) => string } = generateIntlNumberFormatter(symbol, abbreviated, 12)
     return formatCurrencyOverride(
