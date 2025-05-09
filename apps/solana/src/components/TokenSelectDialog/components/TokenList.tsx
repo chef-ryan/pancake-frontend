@@ -115,7 +115,6 @@ export default forwardRef<
         : undefined
   })
   const isUnknownNewToken = newToken?.type === 'unknown'
-
   useEffect(() => {
     customTokenInfo.current = {}
     if (!newToken) return
@@ -242,7 +241,6 @@ export default forwardRef<
             </Flex>
             <Button
               width="full"
-              bg={colors.backgroundDark}
               onClick={() => {
                 handleAddUnknownTokenClick({
                   ...newToken,
