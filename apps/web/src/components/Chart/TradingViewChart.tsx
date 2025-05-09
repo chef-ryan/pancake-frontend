@@ -18,6 +18,7 @@ const ChartContainer = styled.div`
   ${({ theme }) => theme.mediaQueries.md} {
     padding-top: 0;
     width: 100%;
+    height: 600px;
   }
 `
 
@@ -36,17 +37,27 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol = 'AAPL', th
           const options: TradingViewWidgetOptions = {
             symbol,
             theme,
+
             disabled_features: [
               'left_toolbar',
               // 'header_widget',
-              // 'timeframes_toolbar',
-              // 'edit_buttons_in_legend',
-              // 'context_menus',
-              // 'control_bar',
-              // 'border_around_the_chart',
-              // 'main_series_scale_menu',
-              // 'legend_context_menu',
-              // 'scales_context_menu',
+              'symbol_info',
+              'header_symbol_search',
+              'symbol_info_price_source',
+              'allow_arbitrary_symbol_search_input',
+              'symbol_search_hot_key',
+              'header_compare',
+              'compare_symbol_search_spread_operators',
+              'studies_symbol_search_spread_operators',
+              'symbol_info_long_description',
+              'show_symbol_logos',
+              'show_symbol_logo_in_legend',
+              'show_symbol_logo_for_compare_studies',
+              'uppercase_instrument_names',
+              'study_symbol_ticker_description',
+              'auto_enable_symbol_labels',
+              'hide_main_series_symbol_from_indicator_legend',
+              'timeframes_toolbar',
             ],
             enabled_features: [
               'hide_left_toolbar_by_default',
