@@ -37,12 +37,23 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol = 'AAPL', th
           const options: TradingViewWidgetOptions = {
             symbol,
             theme,
-
+            custom_css_url: '/css/tradingview-theme.css',
+            overrides: {
+              'mainSeriesProperties.candleStyle.upColor': '#31D0AA',
+              'mainSeriesProperties.candleStyle.downColor': '#ED4B9E',
+              'mainSeriesProperties.candleStyle.borderUpColor': '#31D0AA',
+              'mainSeriesProperties.candleStyle.borderDownColor': '#ED4B9E',
+              'mainSeriesProperties.candleStyle.wickUpColor': '#31D0AA',
+              'mainSeriesProperties.candleStyle.wickDownColor': '#ED4B9E',
+            },
             disabled_features: [
               'left_toolbar',
               // 'header_widget',
               'symbol_info',
               'header_symbol_search',
+              'create_volume_indicator_by_default',
+              'create_volume_indicator_by_default_once',
+              'volume_force_overlay',
               'symbol_info_price_source',
               'allow_arbitrary_symbol_search_input',
               'symbol_search_hot_key',
