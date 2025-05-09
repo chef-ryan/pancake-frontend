@@ -5,20 +5,34 @@ import { Flex, InfoIcon, Text, useModal } from '@pancakeswap/uikit'
 import { FeeTierTooltip, Liquidity } from '@pancakeswap/widgets-internal'
 import { useInfinityFeeTier } from 'hooks/infinity/useInfinityFeeTier'
 import { usePoolById } from 'hooks/infinity/usePool'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Address } from 'viem'
 
 interface FeeTierBreakdownProps {
   poolId?: Address
   chainId?: number
   hookData?: HookData
+  infoIconVisible?: boolean
 }
-export const InfinityFeeTierBreakdown = ({ poolId, chainId, hookData }: FeeTierBreakdownProps) => {
+export const InfinityFeeTierBreakdown = ({
+  poolId,
+  chainId,
+  hookData,
+  infoIconVisible = true,
+}: FeeTierBreakdownProps) => {
   const { t } = useTranslation()
   const [, pool] = usePoolById(poolId, chainId)
 
   const { protocol, type, percent, lpFee, protocolFee } = useInfinityFeeTier(pool)
   const [onPresentHookDetailModal] = useModal(<Liquidity.HookModal hookData={hookData} />)
+  const handleInfoIconClick = useCallback(
+    (e) => {
+      e.stopPropagation()
+      e.preventDefault()
+      onPresentHookDetailModal()
+    },
+    [onPresentHookDetailModal],
+  )
 
   const p = useMemo(() => {
     if (percent.equalTo(0) && hookData?.defaultFee) {
@@ -50,13 +64,13 @@ export const InfinityFeeTierBreakdown = ({ poolId, chainId, hookData }: FeeTierB
   return (
     <Flex alignItems="center">
       <FeeTierTooltip tooltips={tooltips} dynamic={pool?.dynamic} type={type} percent={p} />
-      {hookData?.category?.includes(HOOK_CATEGORY.DynamicFees) ? (
+      {hookData?.category?.includes(HOOK_CATEGORY.DynamicFees) && infoIconVisible ? (
         <InfoIcon
           color="textSubtle"
           width={18}
           height={18}
           ml="4px"
-          onClick={onPresentHookDetailModal}
+          onClick={handleInfoIconClick}
           style={{ cursor: 'pointer' }}
         />
       ) : null}
