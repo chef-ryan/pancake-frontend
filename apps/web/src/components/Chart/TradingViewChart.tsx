@@ -58,6 +58,8 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol = 'AAPL', th
               'auto_enable_symbol_labels',
               'hide_main_series_symbol_from_indicator_legend',
               'timeframes_toolbar',
+              'legend_widget',
+              'display_legend_on_all_charts',
             ],
             enabled_features: [
               'hide_left_toolbar_by_default',
