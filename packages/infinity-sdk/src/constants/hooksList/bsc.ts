@@ -58,7 +58,7 @@ export const bscHooksList: HookData[] = [
 (VIP 5) 45% discount if TWA > 30,000 CAKE.
     `,
     github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
-    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+    category: [HOOK_CATEGORY.DynamicFees],
     creator: 'https://github.com/brevis-network',
     audit: '',
     isVerified: false,
@@ -82,7 +82,7 @@ export const bscHooksList: HookData[] = [
 (VIP 5) 45% discount if 30-Day Volume > 20,000,000 USDT.
     `,
     github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
-    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+    category: [HOOK_CATEGORY.DynamicFees],
     creator: 'https://github.com/brevis-network',
     audit: '',
     isVerified: false,
@@ -106,7 +106,7 @@ export const bscHooksList: HookData[] = [
 (VIP 5) 45% discount if 30-Day Volume > 11,111 ETH.
     `,
     github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
-    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+    category: [HOOK_CATEGORY.DynamicFees],
     creator: 'https://github.com/brevis-network',
     audit: '',
     isVerified: false,
@@ -130,7 +130,7 @@ export const bscHooksList: HookData[] = [
 (VIP 5) 45% discount if TWA > 30,000 CAKE.
     `,
     github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
-    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+    category: [HOOK_CATEGORY.DynamicFees],
     creator: 'https://github.com/brevis-network',
     audit: '',
     isVerified: false,
@@ -154,7 +154,7 @@ export const bscHooksList: HookData[] = [
 (VIP 5) 45% discount if TWA > 30,000 CAKE.
     `,
     github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
-    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+    category: [HOOK_CATEGORY.DynamicFees],
     creator: 'https://github.com/brevis-network',
     audit: '',
     isVerified: false,
@@ -178,7 +178,7 @@ export const bscHooksList: HookData[] = [
 (VIP 5) 45% discount if TWA > 30,000 CAKE.
     `,
     github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
-    category: [HOOK_CATEGORY.Oracle, HOOK_CATEGORY.JIT, HOOK_CATEGORY.Others, HOOK_CATEGORY.DynamicFees],
+    category: [HOOK_CATEGORY.DynamicFees],
     creator: 'https://github.com/brevis-network',
     audit: '',
     isVerified: false,
