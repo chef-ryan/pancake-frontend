@@ -18,7 +18,7 @@ import { StyledSwapContainer } from '../Swap/styles'
 import { SwapFeaturesContext } from '../Swap/SwapFeaturesContext'
 import { InfinitySwapForm } from './InfinitySwap'
 
-const TradingViewChart = dynamic(() => import('components/Chart/TradingViewChart'), { ssr: false })
+const ChartWithPriceHeader = dynamic(() => import('components/Chart/ChartWithPriceHeader'), { ssr: false })
 
 const Wrapper = styled(Box)`
   width: 100%;
@@ -84,10 +84,24 @@ const InfinitySwapInner = () => {
         mt={isChartExpanded ? undefined : isMobile ? '18px' : '42px'}
         p={isChartExpanded ? undefined : isMobile ? '16px' : '24px'}
       >
-        {isDesktop && isChartDisplayed && <TradingViewChart theme="Dark" />}
+        {isDesktop && isChartDisplayed && (
+          <ChartWithPriceHeader
+            currency0={inputCurrency || undefined}
+            currency1={outputCurrency || undefined}
+            symbol={`${inputCurrency?.symbol}/${outputCurrency?.symbol}`}
+            theme="Dark"
+          />
+        )}
         {!isDesktop && isChartDisplayed && (
           <BottomDrawer
-            content={<TradingViewChart theme="Dark" />}
+            content={
+              <ChartWithPriceHeader
+                currency0={inputCurrency || undefined}
+                currency1={outputCurrency || undefined}
+                symbol={`${inputCurrency?.symbol}/${outputCurrency?.symbol}`}
+                theme="Dark"
+              />
+            }
             isOpen={isChartDisplayed}
             setIsOpen={(isOpen) => setIsChartDisplayed?.(isOpen)}
           />
