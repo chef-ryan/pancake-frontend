@@ -102,7 +102,7 @@ const BrevisDiscountFeeDisplay: React.FC<{
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
   const noDiscount = hookDiscount?.discountFee === hookDiscount?.originalFee
-  console.log('debug hookDiscount', { hookDiscount, noDiscount })
+
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <Text>
       {noDiscount
