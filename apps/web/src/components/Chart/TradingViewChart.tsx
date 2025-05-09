@@ -27,11 +27,11 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol = 'AAPL', th
             theme,
             disabled_features: [
               'left_toolbar',
-              'header_widget',
-              'timeframes_toolbar',
-              'edit_buttons_in_legend',
-              'context_menus',
-              'control_bar',
+              // 'header_widget',
+              // 'timeframes_toolbar',
+              // 'edit_buttons_in_legend',
+              // 'context_menus',
+              // 'control_bar',
             ],
             enabled_features: ['hide_left_toolbar_by_default'],
           }
