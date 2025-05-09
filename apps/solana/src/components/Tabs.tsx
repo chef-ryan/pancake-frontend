@@ -1,6 +1,6 @@
 import { ButtonMenuProps, ButtonMenu, ButtonMenuItem, type ButtonMenuItemProps } from '@pancakeswap/uikit'
 import { Scale, Variant } from '@pancakeswap/uikit/components/Button/types'
-import { TabListProps as CTabListProps, TooltipProps } from '@chakra-ui/react'
+import { TabListProps as CTabListProps, SystemStyleObject, TooltipProps } from '@chakra-ui/react'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useEvent } from '@/hooks/useEvent'
@@ -16,17 +16,29 @@ type TabOptionsObj = {
 
 export type TabItem<T extends string = string> = (TabOptionsObj & { value: T }) | T
 
-type TabsProps<T extends string> = Omit<ButtonMenuProps, 'children'> & {
-  size?: Scale
+type TabsProps<T extends string> = Omit<ButtonMenuProps, 'children' | 'variant'> & {
+  isFitted?: boolean
+  size?: Scale | 'lg'
   items: readonly TabItem<T>[]
-  variant?: Variant
+  variant?:
+    | Variant
+    | 'line'
+    | 'square'
+    | 'rounded'
+    | 'folder'
+    | 'roundedLight'
+    | 'roundedPlain'
+    | 'roundedSwitch'
+    | 'squarePanel'
+    | 'squarePanelDark'
+
   tabListSX?: CTabListProps['sx']
   onChange?: (value: T) => void
   value?: T
   defaultValue?: T
 
   renderItem?(itemValue?: T, idx?: number): ReactNode
-  tabItemSX?: ButtonMenuItemProps
+  tabItemSX?: ButtonMenuItemProps & SystemStyleObject
 }
 
 export default function Tabs<T extends string = string>({
@@ -72,7 +84,7 @@ export default function Tabs<T extends string = string>({
   )
 
   return (
-    <ButtonMenu scale={size} activeIndex={activeIndex} onItemClick={handleItemClick} variant={variant} {...rest}>
+    <ButtonMenu scale={size as any} activeIndex={activeIndex} onItemClick={handleItemClick} variant={variant as any} {...rest}>
       {options.map((option, idx) => (
         <ButtonMenuItem key={`${option.value}`} {...tabItemSX}>
           {renderItem?.(option.value, idx) ?? shrinkToValue(option.label, [activeIndex === idx]) ?? option.value}

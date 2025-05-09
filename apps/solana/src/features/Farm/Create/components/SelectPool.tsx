@@ -12,10 +12,10 @@ import SearchIcon from '@/icons/misc/SearchIcon'
 import { colors } from '@/theme/cssVariables'
 import { formatCurrency } from '@/utils/numberish/formatter'
 import { getPoolName } from '@/features/Pools/util'
-import { CreateFarmType } from '@/features/Liquidity/utils'
 
 import { Desktop } from '@/components/MobileDesktop'
 import { panelCard } from '@/theme/cssBlocks'
+import { CreateFarmType } from '@/features/Liquidity/Decrease/components/type'
 // import { QuestionToolTip } from '@/components/QuestionToolTip'
 
 type SelectPoolProps = {

@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 
 import { useTranslation } from 'react-i18next'
 import Button from '@/components/Button'
-import { LiquidityActionModeType } from '@/features/Liquidity/utils'
 import CopyIcon from '@/icons/misc/CopyIcon'
 import { colors } from '@/theme/cssVariables'
 import { routeToPage } from '@/utils/routeTools'
+import { LiquidityActionModeType } from '@/features/Liquidity/Decrease/components/type'
 
 export default function Done() {
   const { t } = useTranslation()

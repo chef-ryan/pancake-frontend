@@ -135,7 +135,7 @@ export default function CandleChart({ onPriceChange, baseMint, quoteMint, timeTy
       timeVisible: true
     })
 
-    const legend = document.createElement('div')
+    const legend = document.createElement('div') as any
     legend.style = `position: absolute; left: 0px; top: 12px; z-index: 1; font-size: 12px; font-family: sans-serif; line-height: 12px; font-weight: 400;`
     chartCtrRef.current?.appendChild(legend)
 
