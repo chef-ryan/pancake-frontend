@@ -75,4 +75,5 @@ export const hookCategoryDesc: Record<HOOK_CATEGORY, React.ReactNode> = {
       conditional executions, enhancing flexibility for traders and liquidity providers.
     </Trans>
   ),
+  [HOOK_CATEGORY.BrevisDiscount]: <Trans>Powered by Brevis, this hook enables swap fee discounts</Trans>,
 };

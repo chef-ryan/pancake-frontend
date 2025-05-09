@@ -185,6 +185,7 @@ export enum HOOK_CATEGORY {
   OrderType = 'Order Type',
   Oracle = 'Oracle',
   Others = 'Others',
+  BrevisDiscount = 'Fee Discount (Brevis)',
 }
 
 export interface HookData {
