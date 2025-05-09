@@ -98,7 +98,8 @@ const BrevisDiscountFeeDisplay: React.FC<{
   hookDiscount?: { originalFee: number; discountFee: number }
   feeDisplay: string
   originalFeeDisplay: string
-}> = ({ hookDiscount, feeDisplay, originalFeeDisplay }) => {
+  showIcon?: boolean
+}> = ({ hookDiscount, feeDisplay, originalFeeDisplay, showIcon }) => {
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
   const noDiscount = hookDiscount?.discountFee === hookDiscount?.originalFee
@@ -134,9 +135,9 @@ const BrevisDiscountFeeDisplay: React.FC<{
             ) : null}
           </FlexGap>
           <BrevisTip flexDirection="row" alignItems="center" gap="4px" ref={targetRef}>
-            <BrevisIcon />
+            {showIcon ? <BrevisIcon /> : null}
             <Text fontSize={12} lineHeight={1} color="secondaryText">
-              Discount powered by Brevis
+              Fee Discount (Brevis)
             </Text>
           </BrevisTip>
         </>
@@ -222,6 +223,7 @@ export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayPr
           ).toString()
           const feeDisplayWithDiscount = (
             <BrevisDiscountFeeDisplay
+              showIcon={route.pools.length === 1}
               feeDisplay={feeDisplay}
               originalFeeDisplay={originalFeeDisplay}
               hookDiscount={hookDiscount[(pool as InfinityBinPool | InfinityClPool).hooks!]}
