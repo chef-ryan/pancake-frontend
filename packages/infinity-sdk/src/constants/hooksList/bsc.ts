@@ -81,7 +81,7 @@ export const bscHooksList: HookData[] = [
 (VIP 4) 35% discount if 15,000,000 USDT < 30-Day Volume <= 20,000,000 USDT,
 (VIP 5) 45% discount if 30-Day Volume > 20,000,000 USDT.
     `,
-    github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
+    github: 'https://github.com/brevis-network/vip-hook',
     category: [HOOK_CATEGORY.BrevisDiscount, HOOK_CATEGORY.DynamicFees],
     creator: 'https://github.com/brevis-network',
     audit: '',
@@ -105,7 +105,7 @@ export const bscHooksList: HookData[] = [
 (VIP 4) 35% discount if 8,333 ETH < 30-Day Volume <= 11,111 ETH,
 (VIP 5) 45% discount if 30-Day Volume > 11,111 ETH.
     `,
-    github: 'https://github.com/brevis-network/pancake-tokenholding-hook/tree/main',
+    github: 'https://github.com/brevis-network/vip-hook',
     category: [HOOK_CATEGORY.BrevisDiscount, HOOK_CATEGORY.DynamicFees],
     creator: 'https://github.com/brevis-network',
     audit: '',
