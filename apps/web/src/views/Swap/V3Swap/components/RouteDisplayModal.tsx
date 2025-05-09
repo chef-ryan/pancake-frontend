@@ -210,11 +210,15 @@ export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayPr
           const feeDisplay =
             isV3Pool || isInfinityPool
               ? Number(
-                  v3FeeToPercent(isV3Pool ? pool.fee : infinityDiscountFee).toFixed(3, {}, Rounding.ROUND_HALF_UP),
+                  v3FeeToPercent(isV3Pool ? pool.fee : infinityDiscountFee).toSignificant(
+                    3,
+                    {},
+                    Rounding.ROUND_HALF_UP,
+                  ),
                 ).toString()
               : ''
           const originalFeeDisplay = Number(
-            v3FeeToPercent(infinityFee).toFixed(3, {}, Rounding.ROUND_HALF_UP),
+            v3FeeToPercent(infinityFee).toSignificant(3, {}, Rounding.ROUND_HALF_UP),
           ).toString()
           const feeDisplayWithDiscount = (
             <BrevisDiscountFeeDisplay
