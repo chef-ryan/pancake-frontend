@@ -7,16 +7,18 @@ import { MobileCard } from 'components/AdPanel/MobileCard'
 import { useCurrency } from 'hooks/Tokens'
 import { AutoSlippageProvider } from 'hooks/useAutoSlippageWithFallback'
 import { useSwapHotTokenDisplay } from 'hooks/useSwapHotTokenDisplay'
+import dynamic from 'next/dynamic'
 import { useSingleTokenSwapInfo } from 'quoter/hook/useSingleTokenSwapInfo'
 import { QuoteProvider } from 'quoter/QuoteProvider'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { styled } from 'styled-components'
 import Page from '../Page'
-import PriceChartContainer from '../Swap/components/Chart/PriceChartContainer'
 import { StyledSwapContainer } from '../Swap/styles'
 import { SwapFeaturesContext } from '../Swap/SwapFeaturesContext'
 import { InfinitySwapForm } from './InfinitySwap'
+
+const TradingViewChart = dynamic(() => import('components/Chart/TradingViewChart'), { ssr: false })
 
 const Wrapper = styled(Box)`
   width: 100%;
@@ -82,34 +84,10 @@ const InfinitySwapInner = () => {
         mt={isChartExpanded ? undefined : isMobile ? '18px' : '42px'}
         p={isChartExpanded ? undefined : isMobile ? '16px' : '24px'}
       >
-        {isDesktop && isChartSupported && (
-          <PriceChartContainer
-            inputCurrencyId={inputCurrencyId}
-            inputCurrency={currencies[Field.INPUT]}
-            outputCurrencyId={outputCurrencyId}
-            outputCurrency={currencies[Field.OUTPUT]}
-            isChartExpanded={isChartExpanded}
-            setIsChartExpanded={setIsChartExpanded}
-            isChartDisplayed={isChartDisplayed}
-            currentSwapPrice={singleTokenPrice}
-          />
-        )}
-        {!isDesktop && isChartSupported && (
+        {isDesktop && isChartDisplayed && <TradingViewChart theme="Dark" />}
+        {!isDesktop && isChartDisplayed && (
           <BottomDrawer
-            content={
-              <PriceChartContainer
-                inputCurrencyId={inputCurrencyId}
-                inputCurrency={currencies[Field.INPUT]}
-                outputCurrencyId={outputCurrencyId}
-                outputCurrency={currencies[Field.OUTPUT]}
-                isChartExpanded={isChartExpanded}
-                setIsChartExpanded={setIsChartExpanded}
-                isChartDisplayed={isChartDisplayed}
-                currentSwapPrice={singleTokenPrice}
-                isFullWidthContainer
-                isMobile
-              />
-            }
+            content={<TradingViewChart theme="Dark" />}
             isOpen={isChartDisplayed}
             setIsOpen={(isOpen) => setIsChartDisplayed?.(isOpen)}
           />
