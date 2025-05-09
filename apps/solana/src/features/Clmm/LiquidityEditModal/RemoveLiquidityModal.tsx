@@ -1,4 +1,4 @@
-import { Button, Checkbox } from '@pancakeswap/uikit'
+import { Button, Checkbox, ModalV2, MotionModal } from '@pancakeswap/uikit'
 import {
   Collapse,
   Flex,
@@ -10,11 +10,12 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Text
+  Text,
+  VStack
 } from '@chakra-ui/react'
 import { ApiV3PoolInfoConcentratedItem } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
-import { useCallback, useEffect, useRef, useState, ChangeEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, ChangeEvent, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import AmountSlider from '@/components/AmountSlider'
 import TokenAvatar from '@/components/TokenAvatar'
@@ -32,11 +33,11 @@ import { getMintSymbol } from '@/utils/token'
 import IntervalCircle, { IntervalCircleHandler } from '@/components/IntervalCircle'
 import { SlippageAdjuster } from '@/components/SlippageAdjuster'
 import { SlippageSettingField } from '@/components/SlippageAdjuster/SlippageSettingField'
-import { removeValidateSchema } from './validateSchema'
 import { useEvent } from '@/hooks/useEvent'
 import { RpcPoolData } from '@/hooks/pool/clmm/useSubscribeClmmInfo'
 import { useDisclosure } from '@/hooks/useDelayDisclosure'
 import { panelCard } from '@/theme/cssBlocks'
+import { removeValidateSchema } from './validateSchema'
 
 export default function RemoveLiquidityModal({
   isOpen,
@@ -56,6 +57,7 @@ export default function RemoveLiquidityModal({
   initRpcPoolData?: RpcPoolData
 }) {
   const { t } = useTranslation()
+  const isMobile = useAppStore((s) => s.isMobile)
   const featureDisabled = useAppStore((s) => s.featureDisabled.removeConcentratedPosition)
   const removeLiquidityAct = useClmmStore((s) => s.removeLiquidityAct)
   const { getPriceAndAmount } = useClmmBalance({})
@@ -210,145 +212,164 @@ export default function RemoveLiquidityModal({
     })
   }, [closePosition, handleCloseModal, minTokenAmount, percent, poolInfo, position, removeLiquidityAct])
 
+  const innerCardStyle = useMemo(
+    () =>
+      isMobile
+        ? ({
+            ...panelCard,
+            borderBottomWidth: '1px',
+            justifyContent: 'flex-start',
+            flexDirection: 'column',
+            p: '8px 16px',
+            borderRadius: '16px',
+            gap: 2
+          } as const)
+        : ({
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          } as const),
+    [isMobile]
+  )
+
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseModal} size="lg">
-      <ModalOverlay />
-      <ModalContent gap={4}>
-        <ModalHeader display="flex" alignItems="center">
-          {t('clmm.modal_header_remove_liquidity')}
-        </ModalHeader>
-        <ModalCloseButton top="25px" />
-        <ModalBody>
-          <Flex flexDirection="column" gap={4} px={1}>
-            <TokenInput
-              ctrSx={{ w: '100%' }}
-              sx={{ rounded: 24 }}
-              size="sm"
-              topBlockSx={{ px: '0', py: '4px' }}
-              disableSelectToken
-              hideControlButton
-              token={poolInfo.mintA}
-              readonly={featureDisabled}
-              value={tokenAmount[0]}
-              forceBalanceAmount={positionAmountA}
-              onFocus={handleFocusA}
-              onChange={handleAmountAChange}
+    <ModalV2 isOpen={isOpen} onDismiss={handleCloseModal} closeOnOverlayClick>
+      <MotionModal
+        title={t('clmm.modal_header_remove_liquidity')}
+        minWidth={[null, null, '500px']}
+        headerPadding="12px 24px"
+        headerBorderColor="transparent"
+        bodyPadding={isMobile ? '0 16px 16px' : '0 24px 24px'}
+        onDismiss={handleCloseModal}
+      >
+        <Flex flexDirection="column" gap={4} px={1}>
+          <TokenInput
+            ctrSx={{ w: '100%' }}
+            sx={{ rounded: 24 }}
+            size="sm"
+            topBlockSx={{ px: '0', py: '4px' }}
+            disableSelectToken
+            hideControlButton
+            token={poolInfo.mintA}
+            readonly={featureDisabled}
+            value={tokenAmount[0]}
+            forceBalanceAmount={positionAmountA}
+            onFocus={handleFocusA}
+            onChange={handleAmountAChange}
+          />
+          <TokenInput
+            ctrSx={{ w: '100%' }}
+            sx={{ rounded: 24 }}
+            size="sm"
+            topBlockSx={{ px: '0', py: '4px' }}
+            disableSelectToken
+            hideControlButton
+            token={poolInfo.mintB}
+            readonly={featureDisabled}
+            forceBalanceAmount={positionAmountB}
+            onFocus={handleFocusB}
+            value={tokenAmount[1]}
+            onChange={handleAmountBChange}
+          />
+          <Flex flexDirection="column" gap={4} mt={[3, 4]}>
+            <AmountSlider
+              isRenderTopLeftLabel={false}
+              actionRef={sliderRef}
+              percent={percent}
+              onChange={handlePercentChange}
+              isDisabled={position.liquidity.isZero()}
             />
-            <TokenInput
-              ctrSx={{ w: '100%' }}
-              sx={{ rounded: 24 }}
-              size="sm"
-              topBlockSx={{ px: '0', py: '4px' }}
-              disableSelectToken
-              hideControlButton
-              token={poolInfo.mintB}
-              readonly={featureDisabled}
-              forceBalanceAmount={positionAmountB}
-              onFocus={handleFocusB}
-              value={tokenAmount[1]}
-              onChange={handleAmountBChange}
-            />
-            <Flex flexDirection="column" gap={4} mt={[3, 4]}>
-              <AmountSlider
-                isRenderTopLeftLabel={false}
-                actionRef={sliderRef}
-                percent={percent}
-                onChange={handlePercentChange}
-                isDisabled={position.liquidity.isZero()}
-              />
-              <Flex align="center" justify={closePositionOpen ? 'space-between' : 'flex-end'} gap={3}>
-                {closePositionOpen && (
-                  <HStack gap={1} alignItems="center">
-                    <Checkbox scale="xs" checked={!closePosition} onChange={handleClosePositionChange} />
-                    <Text fontSize="sm" color={colors.textSubtle}>
-                      {t('liquidity.keep_my_position_open')}
-                    </Text>
-                    <QuestionToolTip
-                      iconType="info"
-                      iconProps={{ color: colors.primary60 }}
-                      label={t('liquidity.keep_my_position_open_tip')}
-                    />
-                  </HStack>
-                )}
-                <Flex align="center" justify="flex-end" gap={3}>
-                  <SlippageAdjuster variant="liquidity" onClick={onToggleSlippage} />
-                  <IntervalCircle
-                    componentRef={circleRef}
-                    svgWidth={18}
-                    strokeWidth={3}
-                    trackStrokeColor={colors.textSecondary}
-                    trackStrokeOpacity={0.5}
-                    filledTrackStrokeColor={colors.textSecondary}
-                    onClick={handleClick}
-                    onEnd={onRefresh}
+            <Flex align="center" justify={closePositionOpen ? 'space-between' : 'flex-end'} gap={3}>
+              {closePositionOpen && (
+                <HStack gap={1} alignItems="center">
+                  <Checkbox scale="xs" checked={!closePosition} onChange={handleClosePositionChange} />
+                  <Text fontSize="sm" color={colors.textSubtle}>
+                    {t('liquidity.keep_my_position_open')}
+                  </Text>
+                  <QuestionToolTip
+                    iconType="info"
+                    iconProps={{ color: colors.primary60 }}
+                    label={t('liquidity.keep_my_position_open_tip')}
                   />
-                </Flex>
+                </HStack>
+              )}
+              <Flex align="center" justify="flex-end" gap={3}>
+                <SlippageAdjuster variant="liquidity" onClick={onToggleSlippage} />
+                <IntervalCircle
+                  componentRef={circleRef}
+                  svgWidth={18}
+                  strokeWidth={3}
+                  trackStrokeColor={colors.textSecondary}
+                  trackStrokeOpacity={0.5}
+                  filledTrackStrokeColor={colors.textSecondary}
+                  onClick={handleClick}
+                  onEnd={onRefresh}
+                />
               </Flex>
-              <Collapse in={isSlippageOpen} animateOpacity>
-                <SlippageSettingField onClose={onSlippageClose} />
-              </Collapse>
-              <Flex {...panelCard} bg={colors.background} p={4} flexDirection="column" gap="2">
-                <Text variant="subTitle" fontSize="xs" textTransform="uppercase">
-                  {t('clmm.you_will_receive')}
-                </Text>
+            </Flex>
+            <Collapse in={isSlippageOpen} animateOpacity>
+              <SlippageSettingField onClose={onSlippageClose} />
+            </Collapse>
+            <Flex {...panelCard} bg={colors.background} p={4} flexDirection="column" gap="2">
+              <Text variant="subTitle" fontSize="xs" textTransform="uppercase">
+                {t('clmm.you_will_receive')}
+              </Text>
 
-                <Flex justifyContent="space-between" alignItems="center">
-                  <Flex alignItems="center" gap="2">
-                    <Text fontSize="sm" color={colors.textSubtle}>
-                      {t('clmm.pooled_assets')}
-                    </Text>
-                    <TokenAvatarPair size={['smi', 'smi']} token1={poolInfo.mintA} token2={poolInfo.mintB} />
-                  </Flex>
-                  <HStack fontSize={['xs', 'sm']} gap="1">
-                    <Text>{formatCurrency(minTokenAmount[0], { decimalPlaces: getFirstNonZeroDecimal(minTokenAmount[0]) + 1 })}</Text>
-                    <Text color={colors.textSubtle}>{getMintSymbol({ mint: poolInfo.mintA, transformSol: true })}</Text>
-                    <Text>+</Text>
-                    <Text>{formatCurrency(minTokenAmount[1], { decimalPlaces: getFirstNonZeroDecimal(minTokenAmount[1]) + 1 })}</Text>
-                    <Text color={colors.textSubtle}>{getMintSymbol({ mint: poolInfo.mintB, transformSol: true })}</Text>
-                  </HStack>
+              <Flex {...innerCardStyle}>
+                <Flex alignItems="center" gap="2">
+                  <Text fontSize="sm" color={colors.textSubtle}>
+                    {t('clmm.pooled_assets')}
+                  </Text>
+                  <TokenAvatarPair size={['smi', 'smi']} token1={poolInfo.mintA} token2={poolInfo.mintB} />
                 </Flex>
+                <HStack fontSize={['xs', 'sm']} gap="1">
+                  <Text>{formatCurrency(minTokenAmount[0], { decimalPlaces: getFirstNonZeroDecimal(minTokenAmount[0]) + 1 })}</Text>
+                  <Text color={colors.textSubtle}>{getMintSymbol({ mint: poolInfo.mintA, transformSol: true })}</Text>
+                  <Text>+</Text>
+                  <Text>{formatCurrency(minTokenAmount[1], { decimalPlaces: getFirstNonZeroDecimal(minTokenAmount[1]) + 1 })}</Text>
+                  <Text color={colors.textSubtle}>{getMintSymbol({ mint: poolInfo.mintB, transformSol: true })}</Text>
+                </HStack>
+              </Flex>
 
-                <Flex justifyContent="space-between" alignItems="center">
-                  <Flex alignItems="center" gap="2">
-                    <Text fontSize="sm" color={colors.textSubtle}>
-                      {t('portfolio.section_positions_clmm_account_pending_yield')}
-                    </Text>
-                    <Flex>
-                      {allRewardInfos
-                        .filter((r) => {
-                          return Number(r.amount) !== 0
-                        })
-                        .map((r, idx) => (
-                          <TokenAvatar key={r.mint.address} mr="-1" size="smi" token={r.mint} ml={idx ? '-2px' : '0'} />
-                        ))}
-                    </Flex>
-                  </Flex>
-                  <Flex fontSize="sm" gap="1" justifyContent="end">
+              <Flex {...innerCardStyle}>
+                <Flex alignItems="center" gap="2">
+                  <Text fontSize="sm" color={colors.textSubtle}>
+                    {t('portfolio.section_positions_clmm_account_pending_yield')}
+                  </Text>
+                  <Flex>
                     {allRewardInfos
                       .filter((r) => {
                         return Number(r.amount) !== 0
                       })
-                      .map((r, idx) => {
-                        return (
-                          <HStack key={`reward-${r.mint.address}`} fontSize={['xs', 'sm']} gap="1">
-                            {idx > 0 ? <Text>+</Text> : null}
-                            <Text>
-                              {formatCurrency(r.amount, {
-                                decimalPlaces: getFirstNonZeroDecimal(r.amount) + 1,
-                                maximumDecimalTrailingZeroes: 2
-                              })}
-                            </Text>
-                            <Text color={colors.textSubtle}>{getMintSymbol({ mint: r.mint, transformSol: true })}</Text>
-                          </HStack>
-                        )
-                      })}
+                      .map((r, idx) => (
+                        <TokenAvatar key={r.mint.address} mr="-1" size="smi" token={r.mint} ml={idx ? '-2px' : '0'} />
+                      ))}
                   </Flex>
+                </Flex>
+                <Flex fontSize="sm" gap="1">
+                  {allRewardInfos
+                    .filter((r) => {
+                      return Number(r.amount) !== 0
+                    })
+                    .map((r, idx) => {
+                      return (
+                        <HStack key={`reward-${r.mint.address}`} fontSize={['xs', 'sm']} gap="1">
+                          {idx > 0 ? <Text>+</Text> : null}
+                          <Text>
+                            {formatCurrency(r.amount, {
+                              decimalPlaces: getFirstNonZeroDecimal(r.amount) + 1,
+                              maximumDecimalTrailingZeroes: 2
+                            })}
+                          </Text>
+                          <Text color={colors.textSubtle}>{getMintSymbol({ mint: r.mint, transformSol: true })}</Text>
+                        </HStack>
+                      )
+                    })}
                 </Flex>
               </Flex>
             </Flex>
           </Flex>
-        </ModalBody>
-        <ModalFooter mt="8" flexDirection="column" gap="2">
+        </Flex>
+        <VStack mt="16px">
           <Button
             width="100%"
             disabled={featureDisabled || (!position.liquidity.isZero() && !!error)}
@@ -366,8 +387,8 @@ export default function RemoveLiquidityModal({
           <Button width="100%" variant="text" onClick={handleCloseModal}>
             <Text color={colors.textSubtle}>{t('button.cancel')}</Text>
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </VStack>
+      </MotionModal>
+    </ModalV2>
   )
 }

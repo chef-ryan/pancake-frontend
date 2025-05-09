@@ -17,7 +17,7 @@ export default ({ options, selected, onClick }: Props) => {
   const displayOptions = options || OPTIONS
 
   return (
-    <HStack flexWrap="wrap" spacing={[2, 3]}>
+    <HStack flexWrap="wrap" spacing={[2, 3]} justifyContent={['space-between', 'flex-start']}>
       {displayOptions.map((val) => {
         const isSelected = selected === val
         return (
@@ -25,7 +25,7 @@ export default ({ options, selected, onClick }: Props) => {
             variant="primary60"
             size="xs"
             key={`tab-${val}`}
-            px="14px"
+            px={['10px', '14px']}
             py="4px"
             height="28px"
             borderBottomWidth={isSelected ? '0' : '2px'}

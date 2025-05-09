@@ -25,7 +25,6 @@ import Close from '@/icons/misc/Close'
 import LockIcon from '@/icons/misc/LockIcon'
 import { colors } from '@/theme/cssVariables'
 import { AprData } from '@/features/Clmm/utils/calApr'
-import PoolInfoDrawerFace from './ClmmPositionAccountItemDetail/PoolInfoDrawerFace'
 import { useEvent } from '@/hooks/useEvent'
 import AddressChip from '@/components/AddressChip'
 import TokenAvatar from '@/components/TokenAvatar'
@@ -40,6 +39,9 @@ import { QuestionToolTip } from '@/components/QuestionToolTip'
 import AprMDSwitchWidget from '@/components/AprMDSwitchWidget'
 import Tabs from '@/components/Tabs'
 import { PoolListItemAprLine } from '@/features/Pools/components/PoolListItemAprLine'
+import { panelCard } from '@/theme/cssBlocks'
+
+import PoolInfoDrawerFace from './ClmmPositionAccountItemDetail/PoolInfoDrawerFace'
 
 type DetailProps = {
   poolInfo: FormattedPoolInfoConcentratedItem
@@ -85,14 +87,27 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
     mintList: [poolInfo.mintA.address, poolInfo.mintB.address]
   })
   const positionDetailInfo = getPriceAndAmount({ poolInfo, position })
-  const price = baseIn ? poolInfo.price : new Decimal(1).div(poolInfo.price).toNumber()
-  const timePriceMin = baseIn ? poolInfo.day.priceMin : poolInfo.day.priceMax ? new Decimal(1).div(poolInfo.day.priceMax).toNumber() : 0
-  const timePriceMax = baseIn ? poolInfo.day.priceMax : poolInfo.day.priceMin ? new Decimal(1).div(poolInfo.day.priceMin).toNumber() : 0
 
-  const volumeA = positionDetailInfo.amountA.mul(tokenPrices[poolInfo.mintA.address]?.value || 0)
-  const volumeB = positionDetailInfo.amountB.mul(tokenPrices[poolInfo.mintB.address]?.value || 0)
-  const totalVolume = volumeA.add(volumeB)
+  const [price, timePriceMin, timePriceMax] = useMemo(
+    () =>
+      baseIn
+        ? [poolInfo.price, poolInfo.day.priceMin, poolInfo.day.priceMax]
+        : [
+            new Decimal(1).div(poolInfo.price).toNumber(),
+            poolInfo.day.priceMax ? new Decimal(1).div(poolInfo.day.priceMax).toNumber() : 0,
+            poolInfo.day.priceMin ? new Decimal(1).div(poolInfo.day.priceMin).toNumber() : 0
+          ],
+    [baseIn, poolInfo.day.priceMax, poolInfo.day.priceMin, poolInfo.price]
+  )
+
+  const [volumeA, volumeB, totalVolume] = useMemo(() => {
+    const volA = positionDetailInfo.amountA.mul(tokenPrices[poolInfo.mintA.address]?.value || 0)
+    const volB = positionDetailInfo.amountB.mul(tokenPrices[poolInfo.mintB.address]?.value || 0)
+    return [volA, volB, volA.add(volB)]
+  }, [poolInfo.mintA.address, poolInfo.mintB.address, positionDetailInfo.amountA, positionDetailInfo.amountB, tokenPrices])
+
   const timeBasisIdx = 0
+
   const [priceLower, priceUpper, recommendDecimal] = useMemo(() => {
     if (baseIn)
       return [
@@ -112,12 +127,9 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
       priceUpper.toString(),
       Math.max(poolInfo.recommendDecimal(priceLower), poolInfo.recommendDecimal(priceUpper))
     ]
-  }, [baseIn, positionDetailInfo.priceLower, positionDetailInfo.priceUpper])
+  }, [baseIn, positionDetailInfo.priceLower, positionDetailInfo.priceUpper, poolInfo])
 
   const inRange = new Decimal(priceLower).lt(price) && new Decimal(priceUpper).gt(price)
-  const allVolume = volumeA.add(volumeB)
-  const percentA = allVolume.isZero() ? 0 : new Decimal(volumeA).div(volumeA.add(volumeB)).mul(100).toDecimalPlaces(1).toNumber()
-  const percentB = allVolume.isZero() ? 0 : 100 - percentA
 
   useEffect(() => {
     const fn = debounce(() => setChartTag(Date.now()), 300)
@@ -140,27 +152,18 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
   })
 
   return (
-    <Drawer
-      isOpen
-      variant="popFromBottom"
-      placement="bottom"
-      autoFocus={false}
-      returnFocusOnClose={false}
-      onClose={onClickViewTrigger}
-    >
+    <Drawer isOpen variant="popFromBottom" placement="bottom" autoFocus={false} returnFocusOnClose={false} onClose={onClickViewTrigger}>
       <DrawerOverlay />
       <DrawerContent>
-        <DrawerBody>
+        <DrawerBody py={6}>
           <VStack gap={4}>
             <PoolInfoDrawerFace poolInfo={poolInfo} baseIn={baseIn} position={position} />
-            <Flex direction="column" gap={8} bg={colors.backgroundDark} rounded="xl" justify="center" py={5} px={4} w="full">
+            <Flex direction="column" gap={4} justify="center" py={5} px={4} w="full" {...panelCard} rounded="2xl">
               {/* chart */}
               <Box flex={1}>
-                <HStack justifyContent="center" gap={2} mb={2}>
-                  <Text color={colors.textSecondary} fontSize="xs" opacity={0.5}>
-                    {t('field.current_price')}
-                  </Text>
-                  <Text color={colors.lightPurple} fontSize="xs">
+                <HStack justifyContent="center" gap={2} color={colors.textSubtle}>
+                  <Text fontSize="xs">{t('field.current_price')}</Text>
+                  <Text fontSize="xs">
                     <Text as="span" color={colors.textPrimary} fontWeight="medium">
                       {baseIn
                         ? formatCurrency(poolInfo.price, {
@@ -170,7 +173,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
                             decimalPlaces: poolInfo.recommendDecimal(new Decimal(1).div(poolInfo.price).toString())
                           })}
                     </Text>{' '}
-                    <Text as="span" opacity={0.5}>
+                    <Text as="span">
                       {t('common.per_unit', {
                         subA: poolInfo[baseIn ? 'mintB' : 'mintA'].symbol,
                         subB: poolInfo[baseIn ? 'mintA' : 'mintB'].symbol
@@ -194,92 +197,102 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
                 />
 
                 {/* info head */}
-                <HStack fontSize="sm" justifyContent="space-between" mt={5}>
-                  <HStack>
-                    <Text color={colors.lightPurple}>{t('liquidity.pool_liquidity')}</Text>
+                <HStack fontSize="sm" justifyContent="space-between" mt={4} color={colors.textSubtle}>
+                  <VStack alignItems="flex-start">
+                    <Text>{t('liquidity.pool_liquidity')}</Text>
                     <Text color={colors.textPrimary}>
                       {formatCurrency(poolInfo.tvl, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
                     </Text>
-                  </HStack>
+                  </VStack>
 
-                  <HStack>
-                    <Text color={colors.lightPurple}>
+                  <VStack alignItems="flex-start">
+                    <Text>
                       {getTimeBasis(timeBasisIdx)} {t('common.volume')}
                     </Text>
                     <Text color={colors.textPrimary}>
                       {formatCurrency(poolInfo.day.volume, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
                     </Text>
-                  </HStack>
+                  </VStack>
                 </HStack>
               </Box>
 
               {/* info detail */}
-              <VStack align="stretch" alignSelf={['unset', 'end']} fontSize="sm" flex={1} spacing={4}>
+              <VStack align="stretch" alignSelf={['unset', 'end']} fontSize="sm" flex={1} spacing={4} color={colors.textSubtle}>
                 <VStack align="stretch" spacing={1.5}>
                   <Flex gap={2} justifyContent="space-between">
-                    <HStack gap={1} color={colors.textSecondary}>
+                    <HStack gap={1}>
                       <Text>{t('liquidity.my_position')}</Text>
                       {isLock && <LockIcon />}
                     </HStack>
-                    <Box color={colors.lightPurple}>{formatCurrency(totalVolume.toString(), { symbol: '$', decimalPlaces: 2 })}</Box>
-                  </Flex>
-                  <Flex gap={2} mt={1} justifyContent="space-between">
-                    <HStack>
-                      <TokenAvatar size="sm" token={poolInfo.mintA} />
-                      <Text>{formatCurrency(positionDetailInfo.amountA, { decimalPlaces: poolInfo.mintA.decimals })}</Text>
-                      <Text color={colors.lightPurple}>{poolInfo.mintA.symbol}</Text>
-                    </HStack>
-                    <Text textAlign="right">{formatCurrency(volumeA, { symbol: '$', decimalPlaces: 2 })}</Text>
+                    <Box>{formatCurrency(totalVolume.toString(), { symbol: '$', decimalPlaces: 2 })}</Box>
                   </Flex>
                   <Flex gap={2} justifyContent="space-between">
-                    <HStack>
-                      <TokenAvatar size="sm" token={poolInfo.mintB} />
-                      <Text>{formatCurrency(positionDetailInfo.amountB, { decimalPlaces: poolInfo.mintB.decimals })}</Text>
-                      <Text color={colors.lightPurple}>{poolInfo.mintB.symbol}</Text>
+                    <HStack gap={1}>
+                      <TokenAvatar size="sm" token={poolInfo.mintA} />
+                      <Text color={colors.textPrimary}>
+                        {formatCurrency(positionDetailInfo.amountA, { decimalPlaces: poolInfo.mintA.decimals })}
+                      </Text>
+                      <Text>{poolInfo.mintA.symbol}</Text>
                     </HStack>
-                    <Text textAlign="right">{formatCurrency(volumeB, { symbol: '$', decimalPlaces: 2 })}</Text>
+                    <Text color={colors.textPrimary} textAlign="right">
+                      {formatCurrency(volumeA, { symbol: '$', decimalPlaces: 2 })}
+                    </Text>
+                  </Flex>
+                  <Flex gap={2} justifyContent="space-between">
+                    <HStack gap={1}>
+                      <TokenAvatar size="sm" token={poolInfo.mintB} />
+                      <Text color={colors.textPrimary}>
+                        {formatCurrency(positionDetailInfo.amountB, { decimalPlaces: poolInfo.mintB.decimals })}
+                      </Text>
+                      <Text>{poolInfo.mintB.symbol}</Text>
+                    </HStack>
+                    <Text color={colors.textPrimary} textAlign="right">
+                      {formatCurrency(volumeB, { symbol: '$', decimalPlaces: 2 })}
+                    </Text>
                   </Flex>
                 </VStack>
 
-                <HStack>
-                  <Text color={colors.textSecondary}>{t('clmm.my_range')}</Text>
-                  <Badge variant={inRange ? 'ok' : 'error'}>{t(inRange ? 'clmm.in_range' : 'clmm.out_of_range')}</Badge>
-                </HStack>
+                <VStack align="stretch" spacing={1.5}>
+                  <HStack>
+                    <Text>{t('clmm.my_range')}</Text>
+                    <Badge variant={inRange ? 'ok' : 'error'}>{t(inRange ? 'clmm.in_range' : 'clmm.out_of_range')}</Badge>
+                  </HStack>
 
-                <HStack>
-                  <Text fontWeight="medium">
-                    {formatCurrency(new Decimal(priceLower), { decimalPlaces: recommendDecimal })} -{' '}
-                    {formatCurrency(new Decimal(priceUpper), { decimalPlaces: recommendDecimal })}
-                  </Text>
-                  <Text color={colors.textSecondary} opacity={0.5}>
-                    {poolInfo[baseIn ? 'mintB' : 'mintA'].symbol} per {poolInfo[baseIn ? 'mintA' : 'mintB'].symbol}
-                  </Text>
-                </HStack>
+                  <HStack>
+                    <Text fontWeight="medium" color={colors.textPrimary}>
+                      {formatCurrency(new Decimal(priceLower), { decimalPlaces: recommendDecimal })} -{' '}
+                      {formatCurrency(new Decimal(priceUpper), { decimalPlaces: recommendDecimal })}
+                    </Text>
+                    <Text>
+                      {poolInfo[baseIn ? 'mintB' : 'mintA'].symbol} per {poolInfo[baseIn ? 'mintA' : 'mintB'].symbol}
+                    </Text>
+                  </HStack>
+                </VStack>
 
                 <HStack wordBreak="break-all">
-                  <Text color={colors.textSecondary} opacity={0.5}>
-                    {t('clmm.nft_mint_address')}:{' '}
-                  </Text>
+                  <Text>{t('clmm.nft_mint_address')}: </Text>
                   <AddressChip
                     address={nftMint}
                     canCopy
                     canExternalLink
                     textProps={{
-                      color: colors.lightPurple,
-                      opacity: 0.5
+                      color: colors.primary60,
+                      fontWeight: 600
                     }}
-                    iconProps={{ color: colors.textLink }}
+                    iconProps={{ color: colors.primary60 }}
                   />
                 </HStack>
               </VStack>
             </Flex>
-            <Flex bg={colors.backgroundDark} w="full" rounded="xl" p={4} direction="column" justify="space-between" gap={2} fontSize="sm">
+            <Flex p={4} direction="column" justify="space-between" gap={2} {...panelCard} w="full" rounded="2xl" fontSize="sm">
               <HStack justify="space-between" direction="column" alignItems="start">
                 <HStack spacing={2}>
-                  <Text color={colors.textSecondary}>{t('common.estimated_APR')}</Text>
+                  <Text color={colors.textPrimary} fontWeight={600}>
+                    {t('common.estimated_APR')}
+                  </Text>
                   <AprMDSwitchWidget />
                 </HStack>
-                <Tabs size="xs" items={timeBasisOptions} onChange={onTimeBasisChange} variant="roundedLight" />
+                <Tabs size="xs" items={timeBasisOptions} onChange={onTimeBasisChange} variant="subtle" />
               </HStack>
               <SimpleGrid
                 gridTemplate={`
@@ -289,7 +302,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
                 alignItems="center"
                 columnGap={3}
               >
-                <Text gridArea="value" fontSize="xl" fontWeight="medium" color={colors.textPrimary}>
+                <Text gridArea="value" fontSize="md" fontWeight="600" color={colors.textPrimary}>
                   {formatToRawLocaleStr(toPercentString(aprData.apr))}
                 </Text>
                 <Box gridArea="line">
@@ -302,24 +315,36 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
                 </Box>
               </SimpleGrid>
             </Flex>
-            <Flex bg={colors.backgroundDark} rounded="xl" py={5} px={4} w="full" direction="column" gap={3}>
+            <Flex p={4} direction="column" justify="space-between" gap={2} {...panelCard} w="full" rounded="2xl" fontSize="sm">
               <Text fontSize="sm" color={colors.textSecondary} whiteSpace="nowrap">
                 {t('portfolio.section_positions_clmm_account_pending_yield')}
               </Text>
               <Flex justify="space-between" align="center">
-                <HStack fontSize="xl" fontWeight="medium" spacing={1}>
-                  <Text whiteSpace="nowrap">{formatCurrency(totalPendingYield.toString(), { symbol: '$', decimalPlaces: 2 }) ?? '$0'}</Text>
+                <HStack fontSize="xl" fontWeight="medium" spacing={2}>
+                  <Text whiteSpace="nowrap" color={colors.primary}>
+                    {formatCurrency(totalPendingYield.toString(), { symbol: '$', decimalPlaces: 2 }) ?? '$0'}
+                  </Text>
                   <QuestionToolTip
                     label={t('staking.pending_rewards_tooltip')}
                     iconType="info"
                     iconProps={{
                       width: '18px',
                       height: '18px',
-                      color: colors.lightPurple
+                      color: colors.textSubtle
                     }}
                   />
                 </HStack>
-                <Button isLoading={isLoading} isDisabled={!hasReward} onClick={handleHarvest} size="sm" fontSize="md" variant="outline">
+                <Button
+                  isLoading={isLoading}
+                  isDisabled={!hasReward}
+                  onClick={handleHarvest}
+                  size="sm"
+                  fontSize="md"
+                  variant="outline"
+                  borderColor={colors.primary}
+                  color={colors.primary60}
+                  borderRadius="12px"
+                >
                   {t('portfolio.section_positions_clmm_account_pending_yield_button')}
                 </Button>
               </Flex>
@@ -349,7 +374,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
           </VStack>
         </DrawerBody>
         <DrawerFooter>
-          <Button w="full" variant="ghost" onClick={onClickViewTrigger}>
+          <Button w="full" color={colors.primary} variant="ghost" onClick={onClickViewTrigger}>
             Close
           </Button>
         </DrawerFooter>
@@ -360,24 +385,47 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
 
 function CloseButton(props: { onClick: () => void; isLoading: boolean }) {
   return (
-    <Button flex={1} isLoading={props.isLoading} onClick={props.onClick} variant="outline">
-      <Close width={10} height={10} color={colors.secondary} />
+    <Button
+      flex={1}
+      isLoading={props.isLoading}
+      onClick={props.onClick}
+      variant="outline"
+      borderColor={colors.primary}
+      color={colors.primary60}
+      borderRadius="12px"
+    >
+      <Close width={10} height={10} color={colors.primary60} />
     </Button>
   )
 }
 
 function MinusButton(props: { onClick: () => void; isLoading: boolean }) {
   return (
-    <Button flex={1} isLoading={props.isLoading} onClick={props.onClick} variant="outline">
-      <MinusIcon color={colors.secondary} />
+    <Button
+      flex={1}
+      isLoading={props.isLoading}
+      onClick={props.onClick}
+      variant="outline"
+      borderColor={colors.primary}
+      color={colors.primary60}
+      borderRadius="12px"
+    >
+      <MinusIcon color={colors.primary60} />
     </Button>
   )
 }
 
 function PlusButton(props: { onClick: () => void; isLoading: boolean }) {
   return (
-    <Button flex={1} isLoading={props.isLoading} onClick={props.onClick}>
-      <PlusIcon color={colors.backgroundDark} />
+    <Button
+      flex={1}
+      isLoading={props.isLoading}
+      onClick={props.onClick}
+      borderColor={colors.primary}
+      bg={colors.primary}
+      borderRadius="12px"
+    >
+      <PlusIcon color={colors.backgroundAlt} />
     </Button>
   )
 }

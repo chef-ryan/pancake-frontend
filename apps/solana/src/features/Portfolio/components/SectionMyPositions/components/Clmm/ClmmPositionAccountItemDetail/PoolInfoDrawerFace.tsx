@@ -38,25 +38,22 @@ export default function PoolInfoDrawerFace({
     subB: poolInfo[baseIn ? 'mintA' : 'mintB'].symbol
   })
   return (
-    <VStack spacing={1}>
+    <VStack spacing={3}>
       <TokenAvatarPair size="40px" token1={poolInfo.mintA} token2={poolInfo.mintB} />
 
       {/* pool name */}
       <HStack>
-        <Box fontSize="lg" fontWeight={500} color={colors.textPrimary}>
-          {poolInfo.mintA.symbol}/{poolInfo.mintB.symbol}
+        <Box fontSize="md" fontWeight={600} color={colors.textPrimary}>
+          {poolInfo.mintA.symbol} / {poolInfo.mintB.symbol}
         </Box>
         <Tag size={['sm', 'md']} variant="rounded">
           {formatToRawLocaleStr(toPercentString(poolInfo.feeRate * 100))}
         </Tag>
       </HStack>
 
-      {/* position name */}
       <HStack fontSize="sm" flexWrap="wrap" justify="center">
-        <Text fontWeight="500" whiteSpace="nowrap">
-          {rangeValue}
-        </Text>
-        <Text color={colors.lightPurple} opacity={0.5} whiteSpace="nowrap">
+        <Text whiteSpace="nowrap">{rangeValue}</Text>
+        <Text color={colors.textSubtle} whiteSpace="nowrap">
           {rangeValueUnit}
         </Text>
         <Badge variant={inRange ? 'ok' : 'error'}>{inRange ? t('clmm.in_range') : t('clmm.out_of_range')}</Badge>

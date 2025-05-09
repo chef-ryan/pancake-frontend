@@ -18,6 +18,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   // component color
   background: pcsDarkColors.background,
   backgroundAlt: pcsDarkColors.backgroundAlt,
+  backgroundDisabled: pcsDarkColors.backgroundDisabled,
   gradientBubblegum: pcsDarkColors.gradientBubblegum,
   backgroundDark: '#0b1022',
   backgroundDark50: '#0b102280',
@@ -157,7 +158,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   tokenAvatarBg: 'linear-gradient(127deg, rgba(171, 196, 255, 0.20) 28.69%, rgba(171, 196, 255, 0.00) 100%) #0b102280',
 
   panelCardShadow: '0px 8px 24px rgba(79, 83, 243, 0.12)',
-  panelCardBorder: 'unset',
+  panelCardBorder: 'unset'
 }
 
 export const lightColors: Partial<typeof darkColors> = {
@@ -178,6 +179,7 @@ export const lightColors: Partial<typeof darkColors> = {
   // component color
   background: pcsLightColors.background,
   backgroundAlt: pcsLightColors.backgroundAlt,
+  backgroundDisabled: pcsLightColors.backgroundDisabled,
   backgroundDark: '#EDEDFF',
   backgroundDark50: '#EDEDFF80',
   backgroundMedium: '#EDEDFF',
@@ -319,7 +321,7 @@ export const lightColors: Partial<typeof darkColors> = {
   tokenAvatarBg: 'linear-gradient(127deg, rgba(171, 196, 255, 0.20) 28.69%, rgba(171, 196, 255, 0.00) 100%) #fffe',
 
   panelCardShadow: 'none',
-  panelCardBorder: '1px solid rgba(171, 196, 255, 0.50)',
+  panelCardBorder: '1px solid rgba(171, 196, 255, 0.50)'
 }
 /**
  * note: it is not colors value, but colors css variable
@@ -343,6 +345,7 @@ export const colors = {
   // component color
   background: 'var(--background)',
   backgroundAlt: 'var(--background-alt)',
+  backgroundDisabled: 'var(--background-disabled)',
   backgroundDark: 'var(--background-dark)',
   backgroundDark50: 'var(--background-dark50)',
   backgroundMedium: 'var(--background-medium)',
@@ -483,5 +486,5 @@ export const colors = {
   tokenAvatarBg: 'var(--token-avatar-bg)',
 
   panelCardShadow: 'var(--panel-card-shadow)',
-  panelCardBorder: 'var(--panel-card-border)',
+  panelCardBorder: 'var(--panel-card-border)'
 }

@@ -321,7 +321,7 @@ function TokenInput(props: TokenInputProps) {
   }))
 
   return (
-    <AtomBox>
+    <AtomBox position="relative">
       {disableTotalInputByMask ? (
         <Box
           rounded="inherit"

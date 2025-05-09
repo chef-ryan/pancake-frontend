@@ -173,16 +173,15 @@ export function ClmmPositionItemsCard({
               <Tooltip label={t('portfolio.section_positions_clmm_switch_direction_tooltip')}>
                 <Box
                   onClick={onToggle}
-                  px={['12px', '12px']}
-                  py={['5px', '6px']}
-                  color={colors.secondary}
-                  border="1px solid currentColor"
-                  rounded={['8px', '8px']}
+                  p={1}
+                  color={colors.primary60}
+                  border={`2px solid ${colors.primary}`}
+                  rounded="md"
                   cursor="pointer"
                   display="flex"
                   alignItems="center"
                 >
-                  <SwapHorizontalIcon height={18} width={18} />
+                  <SwapHorizIcon color={colors.primary60} height={18} width={18} />
                 </Box>
               </Tooltip>
             </Box>

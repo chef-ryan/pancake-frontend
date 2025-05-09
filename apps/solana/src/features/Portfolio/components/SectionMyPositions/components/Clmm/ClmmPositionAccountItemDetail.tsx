@@ -1,3 +1,8 @@
+import { Box, Collapse, Divider, Flex, HStack, Text, useDisclosure, VStack } from '@chakra-ui/react'
+import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
+import Decimal from 'decimal.js'
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import AddressChip from '@/components/AddressChip'
 import TokenAvatar from '@/components/TokenAvatar'
 import LiquidityChartRangeInput from '@/features/Clmm/components/LiquidityChartRangeInput'
@@ -10,11 +15,6 @@ import { colors } from '@/theme/cssVariables'
 import { onWindowSizeChange } from '@/utils/dom/onWindowSizeChange'
 import { debounce } from '@/utils/functionMethods'
 import { formatCurrency } from '@/utils/numberish/formatter'
-import { Box, Collapse, Divider, Flex, HStack, Text, useDisclosure, VStack } from '@chakra-ui/react'
-import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
-import Decimal from 'decimal.js'
-import { useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import EstimatedApr from './ClmmPositionAccountItemDetail/EstimatedApr'
 import PendingYield from './ClmmPositionAccountItemDetail/PendingYield'
 
@@ -47,7 +47,7 @@ export default function ClmmPositionAccountItemDetail({
   hasReward,
   rewardInfos,
   onTimeBasisChange,
-  onHarvest,
+  onHarvest
 }: DetailProps) {
   const { isOpen: isLoading, onOpen: onSend, onClose: onFinally } = useDisclosure()
   const { t } = useTranslation()
@@ -55,20 +55,12 @@ export default function ClmmPositionAccountItemDetail({
 
   const { getPriceAndAmount } = useClmmBalance({})
   const { data: tokenPrices } = useTokenPrice({
-    mintList: [poolInfo.mintA.address, poolInfo.mintB.address],
+    mintList: [poolInfo.mintA.address, poolInfo.mintB.address]
   })
   const positionDetailInfo = getPriceAndAmount({ poolInfo, position })
   const price = baseIn ? poolInfo.price : new Decimal(1).div(poolInfo.price).toNumber()
-  const timePriceMin = baseIn
-    ? poolInfo.day.priceMin
-    : poolInfo.day.priceMax
-    ? new Decimal(1).div(poolInfo.day.priceMax).toNumber()
-    : 0
-  const timePriceMax = baseIn
-    ? poolInfo.day.priceMax
-    : poolInfo.day.priceMin
-    ? new Decimal(1).div(poolInfo.day.priceMin).toNumber()
-    : 0
+  const timePriceMin = baseIn ? poolInfo.day.priceMin : poolInfo.day.priceMax ? new Decimal(1).div(poolInfo.day.priceMax).toNumber() : 0
+  const timePriceMax = baseIn ? poolInfo.day.priceMax : poolInfo.day.priceMin ? new Decimal(1).div(poolInfo.day.priceMin).toNumber() : 0
 
   const volumeA = positionDetailInfo.amountA.mul(tokenPrices[poolInfo.mintA.address]?.value || 0)
   const volumeB = positionDetailInfo.amountB.mul(tokenPrices[poolInfo.mintB.address]?.value || 0)
@@ -80,12 +72,12 @@ export default function ClmmPositionAccountItemDetail({
         positionDetailInfo.priceUpper.price.toString(),
         Math.max(
           poolInfo.recommendDecimal(positionDetailInfo.priceLower.price),
-          poolInfo.recommendDecimal(positionDetailInfo.priceUpper.price),
-        ),
+          poolInfo.recommendDecimal(positionDetailInfo.priceUpper.price)
+        )
       ]
     const [priceLower, priceUpper] = [
       new Decimal(1).div(positionDetailInfo.priceUpper.price),
-      new Decimal(1).div(positionDetailInfo.priceLower.price),
+      new Decimal(1).div(positionDetailInfo.priceLower.price)
     ]
     return [priceLower.toString(), priceUpper.toString()]
   }, [baseIn, positionDetailInfo.priceLower, positionDetailInfo.priceUpper])
@@ -99,7 +91,7 @@ export default function ClmmPositionAccountItemDetail({
   const handleHarvest = useEvent(() => {
     onHarvest({
       onSend,
-      onFinally,
+      onFinally
     })
   })
 
@@ -141,7 +133,7 @@ export default function ClmmPositionAccountItemDetail({
               autoZoom
               chartHeight={120}
               containerStyle={{
-                paddingLeft: '1.25rem',
+                paddingLeft: '1.25rem'
               }}
             />
             {/* info head */}
@@ -156,15 +148,15 @@ export default function ClmmPositionAccountItemDetail({
                     <Text as="span" color={colors.textPrimary}>
                       {baseIn
                         ? formatCurrency(poolInfo.price, {
-                            decimalPlaces: poolInfo.recommendDecimal(poolInfo.price),
+                            decimalPlaces: poolInfo.recommendDecimal(poolInfo.price)
                           })
                         : formatCurrency(new Decimal(1).div(poolInfo.price).toString(), {
-                            decimalPlaces: poolInfo.recommendDecimal(new Decimal(1).div(poolInfo.price).toString()),
+                            decimalPlaces: poolInfo.recommendDecimal(new Decimal(1).div(poolInfo.price).toString())
                           })}
                     </Text>{' '}
                     {t('common.per_unit', {
                       subA: poolInfo[baseIn ? 'mintB' : 'mintA'].symbol,
-                      subB: poolInfo[baseIn ? 'mintA' : 'mintB'].symbol,
+                      subB: poolInfo[baseIn ? 'mintA' : 'mintB'].symbol
                     })}
                   </Text>
                 </HStack>
@@ -176,9 +168,9 @@ export default function ClmmPositionAccountItemDetail({
                   </HStack>
                   <Text color={colors.textPrimary} fontWeight="medium">
                     {`[${formatCurrency(timePriceMin, {
-                      decimalPlaces: poolInfo.poolDecimals,
+                      decimalPlaces: poolInfo.poolDecimals
                     })},${formatCurrency(timePriceMax, {
-                      decimalPlaces: poolInfo.poolDecimals,
+                      decimalPlaces: poolInfo.poolDecimals
                     })}]`}
                   </Text>
                 </HStack>
@@ -223,10 +215,10 @@ export default function ClmmPositionAccountItemDetail({
                   canCopy
                   canExternalLink
                   textProps={{
-                    color: colors.primary60,
+                    color: colors.primary60
                   }}
                   iconProps={{
-                    color: colors.primary60,
+                    color: colors.primary60
                   }}
                 />
               </Flex>
@@ -235,9 +227,7 @@ export default function ClmmPositionAccountItemDetail({
             <Flex flex={1} flexDirection="column" w="full" justifyContent="space-between">
               <Flex justifyContent="space-between">
                 <Text color={colors.textSubtle}> {t('liquidity.pool_liquidity')}</Text>
-                <Text color={colors.textPrimary}>
-                  {formatCurrency(poolInfo.tvl, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
-                </Text>
+                <Text color={colors.textPrimary}>{formatCurrency(poolInfo.tvl, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}</Text>
               </Flex>
               <Flex justifyContent="space-between">
                 <Text color={colors.textSubtle}>{t('common.24h_volume')}</Text>

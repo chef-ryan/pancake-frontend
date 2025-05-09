@@ -108,7 +108,7 @@ export default function ClmmPositionAccountItemFace({
     <>
       <Desktop>
         <Flex
-          bg={isViewOpen ? colors.background01 : colors.backgroundDark}
+          bg={colors.inputBg}
           borderRadius="xl"
           borderBottomRadius={isViewOpen ? 'none' : 'xl'}
           justifyContent="space-between"
@@ -131,7 +131,7 @@ export default function ClmmPositionAccountItemFace({
               {rangeValue}
             </Text>
             {isFullRange ? null : (
-              <Text color={colors.lightPurple} whiteSpace="nowrap">
+              <Text color={colors.textSubtle} whiteSpace="nowrap">
                 {rangeValueUnit}
               </Text>
             )}
@@ -139,17 +139,9 @@ export default function ClmmPositionAccountItemFace({
               {inRange ? t('clmm.in_range') : t('clmm.out_of_range')}
             </Badge>
           </Flex>
-          <Divider
-            display={['none', 'none', 'block']}
-            borderWidth="1px"
-            h={6}
-            borderColor={colors.lightPurple}
-            opacity="0.5"
-            orientation="vertical"
-          />
           <Flex flex="1" align="center" justify="space-between">
             <HStack>
-              <Text whiteSpace="nowrap" color={colors.lightPurple}>
+              <Text whiteSpace="nowrap" color={colors.textSubtle}>
                 {t('clmm.position')}
               </Text>
               <Text whiteSpace="nowrap" display="flex" gap="1" alignItems="center" color={colors.textPrimary}>
@@ -158,17 +150,9 @@ export default function ClmmPositionAccountItemFace({
               </Text>
             </HStack>
           </Flex>
-          <Divider
-            display={['none', 'none', 'block']}
-            borderWidth="1px"
-            h={6}
-            borderColor={colors.lightPurple}
-            opacity="0.5"
-            orientation="vertical"
-          />
           <Flex flex="1" align="center" justify="space-between">
             <HStack gap={2}>
-              <Text whiteSpace="nowrap" color={colors.lightPurple}>
+              <Text whiteSpace="nowrap" color={colors.textSubtle}>
                 {t('field.apr')}
               </Text>
               <Text whiteSpace="nowrap" color={colors.textPrimary}>
@@ -264,7 +248,6 @@ function MinusButton(props: { onClick: () => void; isLoading: boolean }) {
       width={9}
       h="26px"
       px={0}
-      borderColor={colors.primary}
       backgroundImage=""
     >
       <MinusIcon color={colors.primary} />
@@ -284,10 +267,6 @@ function PlusButton(props: { onClick: () => void; isLoading: boolean }) {
       w={9}
       h="26px"
       px={0}
-      background={colors.primary}
-      _hover={{
-        background: colors.primary
-      }}
       backgroundImage=""
     >
       <PlusIcon color={colors.buttonSolidText} />
@@ -311,7 +290,7 @@ function CloseButton(props: { onClick: () => void; isLoading: boolean }) {
         h="26px"
         px={0}
       >
-        <Close width={10} height={10} color={colors.secondary} />
+        <Close color={colors.primary} width={10} height={10} />
       </Button>
     </Tooltip>
   )

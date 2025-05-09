@@ -431,7 +431,7 @@ export default function CreatePosition() {
         "chart-panel inputs" auto / 1.5fr 1fr
       `
       ]}
-      gap={[3, 4]}
+      gap={[2, 4]}
       pb={[4, 6]}
     >
       <GridItem area="back">
@@ -445,8 +445,21 @@ export default function CreatePosition() {
 
       <GridItem area="chip">
         <Box>
-          <HStack rounded="xl" color={colors.textPrimary} justifyContent="space-between" py={[4, 4]} gap={[3, 4]}>
-            <Flex direction={['column', 'row']} flex={1} gap="2" fontSize="16px" fontWeight="600">
+          <HStack rounded="xl" color={colors.textPrimary} justifyContent="space-between" py={[0, 4]} gap={[3, 4]}>
+            <Flex
+              direction={['column', 'row']}
+              flex={1}
+              gap="2"
+              fontSize="16px"
+              fontWeight="600"
+              {...(isMobile
+                ? {
+                    ...panelCard,
+                    px: 4,
+                    py: 6
+                  }
+                : {})}
+            >
               <Flex gap="2" alignItems="center">
                 <TokenAvatarPair size="smi" token1={currentPool?.mintA} token2={currentPool?.mintB} />
                 {currentPool?.poolName.replace('-', ' / ')}

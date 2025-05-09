@@ -31,7 +31,7 @@ export default function EstimatedAprInfo({ aprData, value, onChange }: Props) {
           </Text>
           <AprMDSwitchWidget />
         </HStack>
-        <Tabs variant="subtle" tabItemSX={{ fontSize: ['xs', 'sm'] }} value={value} onChange={onChange} items={timeBasisOptions} />
+        <Tabs variant="subtle" scale={isMobile ? 'xs' : 'sm'} value={value} onChange={onChange} items={timeBasisOptions} />
       </Flex>
       <Flex gap="3" alignItems="center">
         {!isMobile && (

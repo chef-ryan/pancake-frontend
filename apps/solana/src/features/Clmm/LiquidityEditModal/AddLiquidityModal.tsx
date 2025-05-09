@@ -38,6 +38,7 @@ import IntervalCircle, { IntervalCircleHandler } from '@/components/IntervalCirc
 import { SlippageAdjuster } from '@/components/SlippageAdjuster'
 import { SlippageSettingField } from '@/components/SlippageAdjuster/SlippageSettingField'
 import { useDisclosure } from '@/hooks/useDelayDisclosure'
+import { panelCard } from '@/theme/cssBlocks'
 import { calRatio } from '../utils/math'
 import CLMMTokenInputGroup, { InputSide } from '../components/TokenInputGroup'
 import { liquidityValidateSchema } from './validateSchema'
@@ -190,25 +191,21 @@ export default function AddLiquidityModal({
     <Modal isOpen={isOpen} onClose={handleCloseModal} size="lg">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader display="flex" gap={[1, 2]} alignItems="center">
+        <ModalHeader fontSize="xl" display="flex" gap={[1, 2]} alignItems="center">
           <Text>{t('clmm.modal_header_add_liquidity_to')}</Text>
           <TokenAvatarPair size={['smi', 'md']} token1={poolInfo.mintA} token2={poolInfo.mintB} />
-          <Text>{poolInfo.poolName}</Text>
+          <Desktop>
+            <Text>{poolInfo.poolName}</Text>
+          </Desktop>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text variant="title">{t('clmm.current_position')}</Text>
-          <Box
-            rounded="xl"
-            border={`1px solid ${colors.backgroundTransparent10}`}
-            bg={colors.backgroundTransparent07}
-            px={[3, 6]}
-            py={[3, 4]}
-            mt="2"
-            mb="5"
-          >
+          <Text variant="subTitle" color={colors.textPrimary}>
+            {t('clmm.current_position')}
+          </Text>
+          <Box rounded="xl" px={[3, 4]} py={[3, 3]} mt="4" mb="5" {...panelCard}>
             <Flex alignItems="center">
-              <Text fontSize={['md', 'xl']} fontWeight="500">
+              <Text fontSize={['md', 'xl']} fontWeight="600">
                 {formatCurrency(priceLowerDecimal.toString(), {
                   decimalPlaces: poolInfo.recommendDecimal(priceLowerDecimal)
                 })}{' '}
@@ -229,28 +226,28 @@ export default function AddLiquidityModal({
             </Text>
             <Flex gap="4" mt="2" justify="space-between">
               <Box>
-                <Text color={colors.textSecondary} fontSize="sm">
+                <Text color={colors.textSubtle} fontSize="sm">
                   {t('liquidity.title')}
                 </Text>
-                <Text fontSize={['md', 'xl']} fontWeight="500">
+                <Text fontSize={['md', 'xl']} fontWeight="600">
                   {formatCurrency(positionTotalVolume.toString(), { symbol: '$', decimalPlaces: 2 })}
                 </Text>
               </Box>
 
               <Box>
-                <Text color={colors.textSecondary} fontSize="sm">
+                <Text color={colors.textSubtle} fontSize="sm">
                   {t('field.current_price')}
                 </Text>
-                <Text fontSize={['md', 'xl']} fontWeight="500">
+                <Text fontSize={['md', 'xl']} fontWeight="600">
                   {formatCurrency(currentPrice.toString(), { symbol: '$', maximumDecimalTrailingZeroes: 5 })}
                 </Text>
               </Box>
 
               <Box>
-                <Text color={colors.textSecondary} fontSize="sm">
+                <Text color={colors.textSubtle} fontSize="sm">
                   {t('clmm.deposit_ratio')}
                 </Text>
-                <HStack fontSize={['md', 'xl']} fontWeight="500">
+                <HStack fontSize={['md', 'xl']} fontWeight="600">
                   <Desktop>
                     <TokenAvatar token={poolInfo.mintA} size="sm" />
                     <Text>{toPercentString(ratioA)}</Text>
@@ -276,7 +273,7 @@ export default function AddLiquidityModal({
           </Box>
 
           <HStack mb="2" gap={2} justifyContent="space-between" alignItems="center" flexWrap="wrap">
-            <Text variant="title" fontSize="md">
+            <Text variant="subTitle" color={colors.textPrimary}>
               {t('liquidity.add_liquidity')}
             </Text>
             <Flex align="center" gap={3}>
@@ -315,22 +312,9 @@ export default function AddLiquidityModal({
             token2Disable={disabledInput[1]}
           />
           <Box mt="4">
-            <Box
-              rounded="xl"
-              border={`1px solid ${colors.backgroundTransparent10}`}
-              bg={colors.backgroundTransparent07}
-              px={[3, 4]}
-              py="2"
-              borderRadius="lg"
-              display="flex"
-              flexDirection="row"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Text variant="title">{t('liquidity.total_deposit')}</Text>
-              <Text variant="title" color={colors.textPrimary} fontSize={['lg', 'xl']}>
-                {formatCurrency(totalDeposited, { symbol: '$', decimalPlaces: 2 })}
-              </Text>
+            <Box px={[3, 4]} py="2" display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" fontSize="sm">
+              <Text color={colors.textSubtle}>{t('liquidity.total_deposit')}</Text>
+              <Text color={colors.textPrimary}>{formatCurrency(totalDeposited, { symbol: '$', decimalPlaces: 2 })}</Text>
             </Box>
           </Box>
         </ModalBody>
@@ -362,7 +346,7 @@ export default function AddLiquidityModal({
           >
             {featureDisabled ? t('common.disabled') : error || t('button.confirm')}
           </Button>
-          <Button w="full" variant="ghost" fontSize="sm" color={colors.textSecondary} onClick={handleCloseModal}>
+          <Button w="full" variant="ghost" onClick={handleCloseModal}>
             {t('button.cancel')}
           </Button>
         </ModalFooter>

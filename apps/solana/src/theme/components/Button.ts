@@ -2,7 +2,7 @@ import { colors } from '../cssVariables'
 
 export const Button = {
   baseStyle: {
-    fontWeight: '500',
+    fontWeight: '600',
     cursor: 'pointer'
   },
   sizes: {
@@ -13,36 +13,39 @@ export const Button = {
     },
     sm: {
       minHeight: '30px',
-      minWidth: '100px'
+      minWidth: '100px',
+      borderRadius: '12px'
     },
     md: {
-      minHeight: '40px',
-      minWidth: '120px'
+      minHeight: '48px',
+      minWidth: '120px',
+      borderRadius: '16px'
     }
   },
   variants: {
     solid: {
-      background: colors.solidButtonBg,
-      color: colors.textRevertPrimary,
+      background: colors.primary,
+      color: colors.invertedContrast,
       _hover: {
-        opacity: '0.9',
-        background: colors.solidButtonBg
+        background: colors.primary,
+        opacity: '0.65'
       },
       _active: {
-        filter: 'brightness(0.7)',
-        opacity: '0.9',
-        background: colors.solidButtonBg
+        opacity: 0.85,
+        transform: `translateY(1px)`,
+        background: colors.primary
       },
       '&:disabled:disabled': {
         opacity: '0.5',
-        background: colors.solidButtonBg
+        background: colors.backgroundDisabled,
+        color: colors.textDisabled
       }
     },
     'solid-dark': {
       background: colors.backgroundDark,
       color: colors.textSecondary,
       _hover: {
-        opacity: '0.9',
+        opacity: '0.65',
         background: colors.backgroundDark50
       },
       '&:disabled:disabled': {
@@ -107,27 +110,25 @@ export const Button = {
       }
     },
     outline: {
-      borderColor: colors.secondary,
-      color: colors.secondary,
+      borderColor: colors.primary,
+      color: colors.primary60,
       _hover: {
-        opacity: '0.9',
-        background: colors.outlineButtonBg
+        opacity: '0.65'
       },
       _active: {
         filter: 'brightness(0.7)',
-        opacity: '0.9',
-        background: colors.outlineButtonBg
+        opacity: '0.9'
       },
       '&:disabled:disabled': {
         opacity: '0.5'
       }
     },
     ghost: {
-      color: colors.secondary,
+      color: colors.textSubtle,
       minWidth: 'revert',
       minHeight: 'revert',
       _hover: {
-        opacity: '0.9',
+        opacity: '0.65',
         background: colors.outlineButtonBg
       },
       _active: {
@@ -140,20 +141,20 @@ export const Button = {
       }
     },
     danger: {
-      background: colors.textPink,
+      background: colors.failure,
       color: colors.buttonSolidText,
       _hover: {
-        opacity: '0.9',
-        background: colors.textPink
+        opacity: '0.65',
+        background: colors.failure
       },
       _active: {
         filter: 'brightness(0.7)',
         opacity: '0.9',
-        background: colors.textPink
+        background: colors.failure
       },
       '&:disabled:disabled': {
         opacity: '0.5',
-        background: colors.textPink
+        background: colors.failure
       }
     },
     primary60: {

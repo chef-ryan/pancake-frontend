@@ -1,16 +1,13 @@
 import { Box, useDisclosure } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
-import { AprKey, timeBasisOptions , FormattedPoolInfoConcentratedItem } from '@/hooks/pool/type'
+import { AprKey, timeBasisOptions, FormattedPoolInfoConcentratedItem } from '@/hooks/pool/type'
 import AddLiquidityModal from '@/features/Clmm/LiquidityEditModal/AddLiquidityModal'
 import RemoveLiquidityModal from '@/features/Clmm/LiquidityEditModal/RemoveLiquidityModal'
 import useFetchClmmRewardInfo from '@/hooks/pool/clmm/useFetchClmmRewardInfo'
 import { PositionWithUpdateFn } from '@/hooks/portfolio/useAllPositionInfo'
 import { getPositionAprCore } from '@/features/Clmm/utils/calApr'
-import ClmmPositionAccountItemDetail from './ClmmPositionAccountItemDetail'
-import ClmmPositionAccountItemDetailMobileDrawer from './ClmmPositionAccountItemDetailMobileDrawer'
-import ClmmPositionAccountItemFace from './ClmmPositionAccountItemFace'
 import useFetchRpcClmmInfo from '@/hooks/pool/clmm/useFetchRpcClmmInfo'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
 import { useEvent } from '@/hooks/useEvent'
@@ -18,6 +15,9 @@ import { useAppStore } from '@/store'
 import { useClmmStore } from '@/store/useClmmStore'
 import { RpcPoolData } from '@/hooks/pool/clmm/useSubscribeClmmInfo'
 import { ClmmLockInfo } from '@/hooks/portfolio/clmm/useClmmBalance'
+import ClmmPositionAccountItemDetail from './ClmmPositionAccountItemDetail'
+import ClmmPositionAccountItemDetailMobileDrawer from './ClmmPositionAccountItemDetailMobileDrawer'
+import ClmmPositionAccountItemFace from './ClmmPositionAccountItemFace'
 
 type ClmmPositionAccountItemProps = {
   poolInfo: FormattedPoolInfoConcentratedItem
@@ -138,9 +138,12 @@ export default function ClmmPositionAccountItem({
     isSending ? onSending() : offSending()
   })
 
+  const positionHash = useMemo(() => position.nftMint.toBase58(), [position.nftMint])
+
   useEffect(() => {
     openCache.set(position.nftMint.toBase58(), isOpen)
-  }, [isOpen, position.nftMint.toBase58()])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, positionHash])
 
   useEffect(() => {
     position.updateClmmPendingYield({
@@ -149,7 +152,7 @@ export default function ClmmPositionAccountItem({
       isEmpty: isEmptyReward,
       rewardInfo: allRewardInfos
     })
-  }, [totalPendingYield, position.nftMint.toBase58(), isEmptyReward])
+  }, [totalPendingYield, positionHash, isEmptyReward])
 
   useEffect(() => {
     return () => {
