@@ -1,12 +1,12 @@
+import { Flex, HStack, Text } from '@chakra-ui/react'
+import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
+import { useTranslation } from 'react-i18next'
 import Button from '@/components/Button'
 import TokenAvatar from '@/components/TokenAvatar'
 import useResponsive from '@/hooks/useResponsive'
 import { colors } from '@/theme/cssVariables'
 import { formatCurrency } from '@/utils/numberish/formatter'
 import { getMintSymbol } from '@/utils/token'
-import { Flex, HStack, Text } from '@chakra-ui/react'
-import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
 
 type PendingYieldProps = {
   pendingYield?: string
@@ -16,13 +16,7 @@ type PendingYieldProps = {
   onHarvest: () => void
 }
 
-export default function PendingYield({
-  isLoading,
-  hasReward,
-  pendingYield,
-  rewardInfos,
-  onHarvest,
-}: PendingYieldProps) {
+export default function PendingYield({ isLoading, hasReward, pendingYield, rewardInfos, onHarvest }: PendingYieldProps) {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useResponsive()
   return (
@@ -45,7 +39,7 @@ export default function PendingYield({
           variant="outline"
           style={{
             borderColor: colors.primary,
-            color: colors.primary,
+            color: colors.primary
           }}
         >
           {t('portfolio.section_positions_clmm_account_pending_yield_button')}
@@ -64,7 +58,7 @@ export default function PendingYield({
                 {formatCurrency(r.amount, {
                   abbreviated: true,
                   decimalPlaces: isTablet ? 2 : 3,
-                  maximumDecimalTrailingZeroes: 2,
+                  maximumDecimalTrailingZeroes: 2
                 })}
               </Text>
               <Text color={colors.textSecondary} display={['block', 'none', 'block']}>
@@ -76,7 +70,7 @@ export default function PendingYield({
                   symbol: '$',
                   abbreviated: true,
                   decimalPlaces: isMobile ? 3 : 2,
-                  maximumDecimalTrailingZeroes: 2,
+                  maximumDecimalTrailingZeroes: 2
                 })}
                 )
               </Text>

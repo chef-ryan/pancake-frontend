@@ -1,6 +1,7 @@
 import React, { useCallback, useImperativeHandle, useRef, useState, ReactNode } from 'react'
 import { Box, Grid, GridItem } from '@chakra-ui/react'
-import { omit, throttle } from 'lodash'
+import omit from 'lodash/omit'
+import throttle from 'lodash/throttle'
 import Pagination from '../Pagination'
 import { PaginationProps } from '../Pagination/interface'
 import Item from './item'
@@ -131,11 +132,12 @@ function List<T>(baseProps: ListProps<T>) {
         while (startNum < currentPageItems.length) {
           const nextStartNum = startNum + rowSize
           const currentRow = ~~(startNum / rowSize)
+          const currentStartNum = startNum
           items.push(
             <Grid key={currentRow} templateColumns="repeat(24, 1fr)" gap={gap} justifyContent={justifyContent} alignItems={alignItems}>
               {currentPageItems.slice(startNum, nextStartNum).map((item, index) => (
                 <GridItem key={`${currentRow}_${index}`} {...colProps} colSpan={colSpan}>
-                  {render ? render(item, startNum + index) : (item as ReactNode)}
+                  {render ? render(item, currentStartNum + index) : (item as ReactNode)}
                 </GridItem>
               ))}
             </Grid>
@@ -187,8 +189,8 @@ function List<T>(baseProps: ListProps<T>) {
           onScroll={needHandleScroll ? throttledScrollHandler : undefined}
         >
           <Box className="list" flex={1} ref={refItemListWrapper}>
-              {listItems as ReactNode[]}
-            </Box>
+            {listItems as ReactNode[]}
+          </Box>
         </Box>
         {paginationElement}
       </Box>

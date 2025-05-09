@@ -17,12 +17,12 @@ import useFarmPositions from '@/hooks/portfolio/farm/useFarmPositions'
 import { useAppStore, useFarmStore, useTokenAccountStore } from '@/store'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
 import { formatCurrency } from '@/utils/numberish/formatter'
-import SelectedFarm from '../../components/SelectedFarm'
-import SelectFarmListItem from '../../components/SelectFarmListItem'
 import IntervalCircle, { IntervalCircleHandler } from '@/components/IntervalCircle'
 import { colors } from '@/theme/cssVariables'
 import { useEvent } from '@/hooks/useEvent'
 import { SlippageAdjuster } from '@/components/SlippageAdjuster'
+import SelectedFarm from '../../components/SelectedFarm'
+import SelectFarmListItem from '../../components/SelectFarmListItem'
 
 export default function UnStakeLiquidity({
   poolInfo,

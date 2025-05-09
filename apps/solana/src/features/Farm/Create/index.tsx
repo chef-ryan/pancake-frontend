@@ -18,7 +18,7 @@ import { useAppStore, useClmmStore, useFarmStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { genCSS2GridTemplateColumns, genCSS3GridTemplateColumns } from '@/theme/detailConfig'
 import { WEEK_SECONDS } from '@/utils/date'
-import { routeBack, setUrlQuery , useRouteQuery } from '@/utils/routeTools'
+import { routeBack, setUrlQuery, useRouteQuery } from '@/utils/routeTools'
 import { RAY_TOKEN_INFO } from '@/utils/token'
 import { TxErrorModal } from '../../../components/Modal/TxErrorModal'
 import RewardAddItem from './components/AddRewards'
@@ -311,8 +311,8 @@ export default function CreateFarm() {
               onClick={addANewRewardInfo}
               color={colors.secondary}
               sx={
-                (selectedPoolType == 'Concentrated' && rewardInfos.length >= 2) ||
-                (selectedPoolType == 'Standard' && rewardInfos.length >= 5)
+                (selectedPoolType === 'Concentrated' && rewardInfos.length >= 2) ||
+                (selectedPoolType === 'Standard' && rewardInfos.length >= 5)
                   ? { opacity: 0.5, pointerEvents: 'none' }
                   : { cursor: 'pointer' }
               }

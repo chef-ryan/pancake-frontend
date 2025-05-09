@@ -19,30 +19,23 @@ import { routeBack, setUrlQuery, useRouteQuery } from '@/utils/routeTools'
 import { wsolToSolToken } from '@/utils/token'
 import useFetchRpcPoolData from '@/hooks/pool/amm/useFetchRpcPoolData'
 import useFetchCpmmRpcPoolData from '@/hooks/pool/amm/useFetchCpmmRpcPoolData'
-import { LiquidityActionModeType, LiquidityTabOptionType, tabValueModeMapping } from '../utils'
+import useFetchFarmByLpMint from '@/hooks/farm/useFetchFarmByLpMint'
+import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
+import toPercentString from '@/utils/numberish/toPercentString'
+import { PoolListItemAprLine } from '@/features/Pools/components/PoolListItemAprLine'
 import AddLiquidity from './Add'
 import Stake from './Stake'
 import PoolInfo from './components/PoolInfo'
 import PoolInfoMobileDrawer from './components/PoolInfoMobileDrawer'
 import PositionBalance from './components/PositionBalance'
 import StakeableHint from './components/StakeableHint'
-import useFetchFarmByLpMint from '@/hooks/farm/useFetchFarmByLpMint'
-import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
-import toPercentString from '@/utils/numberish/toPercentString'
-import { PoolListItemAprLine } from '@/features/Pools/components/PoolListItemAprLine'
-
-export type IncreaseLiquidityPageQuery = {
-  pool_id?: string
-  action?: string
-  mode?: LiquidityActionModeType
-}
-
-export type IncreaseTabOptionType = {
-  value: 'Add Liquidity' | 'Stake Liquidity'
-  label: ReactNode
-  disabled?: boolean
-  tooltipProps?: Omit<TooltipProps, 'children'>
-}
+import {
+  IncreaseLiquidityPageQuery,
+  IncreaseTabOptionType,
+  LiquidityActionModeType,
+  LiquidityTabOptionType
+} from '../Decrease/components/type'
+import { tabValueModeMapping } from '../utils'
 
 export default function Increase() {
   const { pool_id: urlPoolId, mode: urlMode } = useRouteQuery<IncreaseLiquidityPageQuery>()
@@ -145,7 +138,7 @@ export default function Increase() {
       return
     }
     setTabValue(urlMode === 'stake' ? 'Stake Liquidity' : 'Add Liquidity')
-    if (urlMode != mode) {
+    if (urlMode !== mode) {
       setMode(urlMode)
     }
   }, [urlMode])
@@ -196,7 +189,9 @@ export default function Increase() {
           <VStack spacing={4}>
             {!increaseTabOptions[1].disabled && !lpBalance.isZero ? <StakeableHint /> : undefined}
             <Box {...panelCard} bg={colors.backgroundLight30} borderRadius="20px" overflow="hidden" w="full">
+              {/*
               <Tabs isFitted items={tabOptions} size="md" variant="folder" value={tabValue} onChange={handleTabChange} />
+*/}
               {mode === 'add' ? (
                 <AddLiquidity
                   pool={pool}

@@ -1,7 +1,7 @@
-import { colors } from '@/theme/cssVariables'
 import styled from '@emotion/styled'
 import { FlexGap, Text } from '@pancakeswap/uikit'
 import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
+import { colors } from '@/theme/cssVariables'
 import TokenAvatar from '../../TokenAvatar'
 
 export interface TokenSelectDialogProps {

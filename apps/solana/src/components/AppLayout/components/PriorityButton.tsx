@@ -1,3 +1,7 @@
+import { Flex } from '@chakra-ui/react'
+import { Button, Text } from '@pancakeswap/uikit'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useEffect, useRef, useState } from 'react'
 import { useDisclosure } from '@/hooks/useDelayDisclosure'
 import { useEvent } from '@/hooks/useEvent'
 import useResponsive from '@/hooks/useResponsive'
@@ -8,10 +12,6 @@ import PriorityUltraIcon from '@/icons/misc/PriorityUltraIcon'
 import { FEE_KEY, PriorityLevel, PriorityMode, useAppStore } from '@/store/useAppStore'
 import { colors } from '@/theme/cssVariables'
 import { setStorageItem } from '@/utils/localStorage'
-import { Flex } from '@chakra-ui/react'
-import { Button, Text } from '@pancakeswap/uikit'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { useEffect, useRef, useState } from 'react'
 import { PriorityModalContent } from './PriorityModalContent'
 
 export function PriorityButton() {

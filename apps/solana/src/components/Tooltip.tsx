@@ -3,9 +3,9 @@ import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useHover } from '@/hooks/useHover'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { colors } from '@/theme/cssVariables'
-import { useDisclosure } from '../hooks/useDelayDisclosure'
 import { shrinkToValue } from '@/utils/shrinkToValue'
 import { useAppStore } from '@/store'
+import { useDisclosure } from '../hooks/useDelayDisclosure'
 
 export type TooltipHandles = {
   open(): void

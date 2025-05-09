@@ -12,20 +12,20 @@ interface Props {
   balanceB?: string | number
 }
 
-const numberTransform = yup.number().transform((value) => (isNaN(value) ? 0 : value))
+const numberTransform = yup.number().transform((value) => (Number.isNaN(value) ? 0 : value))
 const numberSchema = (errMsg: string) => numberTransform.moreThan(0, errMsg)
 
 const schema = (t: TFunction<'translation', undefined, 'translation'>) =>
   yup.object().shape({
     balanceB: yup
       .number()
-      .transform((value) => (isNaN(value) ? 0 : value))
+      .transform((value) => (Number.isNaN(value) ? 0 : value))
       .test('is-balanceB-enough', t('error.balance_not_enough') ?? '', function (val) {
         return new Decimal(val || 0).gte(this.parent.tokenAmount[1])
       }),
     balanceA: yup
       .number()
-      .transform((value) => (isNaN(value) ? 0 : value))
+      .transform((value) => (Number.isNaN(value) ? 0 : value))
       .test('is-balanceA-enough', t('error.balance_not_enough') ?? '', function (val) {
         return new Decimal(val || 0).gte(this.parent.tokenAmount[0])
       }),

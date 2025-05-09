@@ -19,11 +19,10 @@ import Tabs from '@/components/Tabs'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
 import { colors } from '@/theme/cssVariables'
 import { TimeType } from '@/hooks/pool/useFetchPoolKLine'
-import CandleChart from './CandleChart'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
-
 import SwapMobileIcon from '@/icons/misc/SwapMobileIcon'
+import CandleChart from './CandleChart'
 
 function SwapKlinePanelMobileDrawerContent({
   baseToken,
@@ -82,7 +81,7 @@ function SwapKlinePanelMobileDrawerContent({
               onTimeTypeChange?.(t)
             }}
             tabItemSX={{ minWidth: '3em', fontSize: 'xs' }}
-           />
+          />
         </GridItem>
         <GridItem area="chartwrap" height="100%">
           <Grid

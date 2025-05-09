@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next'
 import useFetchOwnerIdo from '@/hooks/portfolio/useFetchOwnerIdo'
 import useFetchIdoKeys from '@/hooks/portfolio/useFetchIdoKeys'
 import { colors } from '@/theme/cssVariables/colors'
-import IdoRowItem from './components/IdoRowItem'
 import { useAppStore } from '@/store'
+import IdoRowItem from './components/IdoRowItem'
 
 export default function SectionAcceleraytor() {
   const { t } = useTranslation()

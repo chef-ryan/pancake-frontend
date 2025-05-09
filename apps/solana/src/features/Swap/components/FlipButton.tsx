@@ -1,4 +1,3 @@
-import { colors } from '@/theme/cssVariables'
 import { useTheme } from '@pancakeswap/hooks'
 import { AutoColumn, Row, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { SwapUIV2 } from '@pancakeswap/widgets-internal'
@@ -6,6 +5,7 @@ import { LottieRefCurrentProps } from 'lottie-react'
 import dynamic from 'next/dynamic'
 import { CSSProperties, memo, useCallback, useMemo, useRef } from 'react'
 import styled, { keyframes } from 'styled-components'
+import { colors } from '@/theme/cssVariables'
 import ArrowDark from '../../../../public/images/swap/arrow_dark.json' assert { type: 'json' }
 import ArrowLight from '../../../../public/images/swap/arrow_light.json' assert { type: 'json' }
 

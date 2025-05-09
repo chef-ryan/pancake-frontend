@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { formatCurrency } from '@/utils/numberish/formatter'
 
 import { colors } from '@/theme/cssVariables'
-import { DecreaseTabOptionType } from '..'
+import { DecreaseTabOptionType } from './type'
 
 type BalanceInfoProps = {
   currentTab: DecreaseTabOptionType['value'] | undefined

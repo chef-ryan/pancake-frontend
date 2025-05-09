@@ -5,7 +5,7 @@ import TokenAvatar from '@/components/TokenAvatar'
 import { colors } from '@/theme/cssVariables'
 import { formatCurrency } from '@/utils/numberish/formatter'
 import { wSolToSolString } from '@/utils/token'
-import { RewardInfo } from './FarmItem'
+import { RewardInfo } from './type'
 
 type WeeklyRewardsProps = FlexProps & {
   rewardsInfo: RewardInfo[]

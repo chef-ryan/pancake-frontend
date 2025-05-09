@@ -1,7 +1,7 @@
-import { colors } from '@/theme/cssVariables'
 import { MotionFlexGap, Text } from '@pancakeswap/uikit'
 import { memo } from 'react'
 import { styled } from 'styled-components'
+import { colors } from '@/theme/cssVariables'
 
 const Divider = styled.div`
   width: 1px;

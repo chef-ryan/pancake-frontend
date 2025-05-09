@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { useEffect } from 'react'
 import useFetchOwnerIdo from '@/hooks/portfolio/useFetchOwnerIdo'
 import { useAppStore } from '@/store'
-import { AlertChip } from '../../components/AlertChip'
 import { colors } from '@/theme/cssVariables'
+import { AlertChip } from '../../components/AlertChip'
 
 export function AcceleraytorAlertChip() {
   const { t } = useTranslation()

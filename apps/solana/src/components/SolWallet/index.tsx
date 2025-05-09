@@ -1,29 +1,13 @@
-import { WALLET_STORAGE_KEY } from '@/hooks/app/useInitConnection'
-import { useEvent } from '@/hooks/useEvent'
-import useResponsive from '@/hooks/useResponsive'
-import ChevronDownIcon from '@/icons/misc/ChevronDownIcon'
-import { useAppStore } from '@/store/useAppStore'
-import { colors } from '@/theme/cssVariables'
-import { encodeStr } from '@/utils/common'
-import { Box, HStack, Image, Text, useDisclosure } from '@chakra-ui/react'
-import {
-  Button,
-  Flex,
-  LogoutIcon,
-  ModalV2,
-  RefreshIcon,
-  useModal,
-  useModalV2,
-  UserMenu,
-  UserMenuDivider,
-  UserMenuItem,
-  WarningIcon
-} from '@pancakeswap/uikit'
+import { Box, useDisclosure } from '@chakra-ui/react'
+import { Button, Flex, LogoutIcon, ModalV2, useModalV2, UserMenu, UserMenuDivider, UserMenuItem } from '@pancakeswap/uikit'
 import { Wallet, useWallet } from '@solana/wallet-adapter-react'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import WalletRecentTransactionBoard from '../WalletRecentTransactionBoard'
+import { WALLET_STORAGE_KEY } from '@/hooks/app/useInitConnection'
+import { useEvent } from '@/hooks/useEvent'
+import useResponsive from '@/hooks/useResponsive'
+import { useAppStore } from '@/store/useAppStore'
 import SelectWalletModal from './SelectWalletModal'
 import WalletModal, { WalletView } from './WalletModal'
 

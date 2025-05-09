@@ -1,3 +1,6 @@
+import { Box, Flex, HStack, Text } from '@chakra-ui/react'
+import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
+import { useTranslation } from 'react-i18next'
 import Tabs from '@/components/Tabs'
 import { AprData } from '@/features/Clmm/utils/calApr'
 import { aprColors } from '@/features/Pools/components/PoolListItemAprLine'
@@ -5,9 +8,6 @@ import { AprKey, TimeAprData, TimeBasisOptionType, timeBasisOptions } from '@/ho
 import { colors } from '@/theme/cssVariables'
 import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import toPercentString from '@/utils/numberish/toPercentString'
-import { Box, Flex, HStack, Text } from '@chakra-ui/react'
-import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
 
 type EstimatedAprProps = {
   timeBasis: AprKey
@@ -25,13 +25,7 @@ export default function EstimatedApr({ aprData, timeBasis, onTimeBasisChange, po
   const rewards = [{ ...tradeFee, mint: undefined as ApiV3Token | undefined }, ...aprData.rewards]
 
   return (
-    <HStack
-      flex={1}
-      flexDirection={['row', 'column', 'row']}
-      alignItems="stretch"
-      justify="space-between"
-      fontSize="sm"
-    >
+    <HStack flex={1} flexDirection={['row', 'column', 'row']} alignItems="stretch" justify="space-between" fontSize="sm">
       <Flex flexDirection="column" gap={[1, 2]} width="160px">
         {rewards.map(({ percentInTotal: percent, mint }, idx) => (
           <Flex key={mint ? mint.address : `tradefee${poolId}`} justifyContent="space-between">
@@ -44,7 +38,7 @@ export default function EstimatedApr({ aprData, timeBasis, onTimeBasisChange, po
                   left: '0px',
                   top: '6px',
                   background: aprColors[idx],
-                  borderRadius: '10px',
+                  borderRadius: '10px'
                 }}
               />
               <Text ml={1.5} color={colors.lightPurple} whiteSpace="nowrap">

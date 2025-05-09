@@ -1,7 +1,3 @@
-import { useEvent } from '@/hooks/useEvent'
-import { useAppStore, USER_ADDED_KEY, useTokenStore } from '@/store'
-import { colors } from '@/theme/cssVariables'
-import { setStorageItem } from '@/utils/localStorage'
 import { Box, Divider } from '@chakra-ui/react'
 import { useHttpLocations } from '@pancakeswap/hooks'
 import { AutoColumn, Row, RowBetween, RowFixed, Text, Toggle, TokenLogo } from '@pancakeswap/uikit'
@@ -9,6 +5,10 @@ import { JupTokenType } from '@raydium-io/raydium-sdk-v2'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { useEvent } from '@/hooks/useEvent'
+import { useAppStore, USER_ADDED_KEY, useTokenStore } from '@/store'
+import { colors } from '@/theme/cssVariables'
+import { setStorageItem } from '@/utils/localStorage'
 
 export default function TokenListSetting({ onClick }: { onClick: () => void }) {
   const { t } = useTranslation()

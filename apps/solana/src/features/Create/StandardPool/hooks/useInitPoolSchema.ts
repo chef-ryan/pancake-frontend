@@ -9,7 +9,7 @@ import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token'
 import { useTokenAccountStore } from '@/store/useTokenAccountStore'
 import { wSolToSol } from '@/utils/token'
 
-const numberTransform = yup.number().transform((value) => (isNaN(value) ? 0 : value))
+const numberTransform = yup.number().transform((value) => (Number.isNaN(value) ? 0 : value))
 const numberSchema = (errMsg: string) => numberTransform.moreThan(0, errMsg).required(errMsg)
 
 interface Props {

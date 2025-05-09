@@ -7,21 +7,15 @@ import { PublicKey } from '@solana/web3.js'
 import { colors } from '@/theme/cssVariables'
 import useClmmPortfolioData from '@/hooks/portfolio/clmm/useClmmPortfolioData'
 import useAllStandardPoolPosition from '@/hooks/portfolio/useAllStandardPoolPosition'
-import PortfolioIdle from './components/PortfolioIdle'
-import PortfolioInfo from './components/PortfolioInfo'
 import useTokenBalance from '@/hooks/portfolio/useTokenBalance'
 import useFetchStakePools from '@/hooks/pool/useFetchStakePools'
 import useFetchFarmBalance from '@/hooks/farm/useFetchFarmBalance'
 import useFarmPositions from '@/hooks/portfolio/farm/useFarmPositions'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
 import { useAppStore } from '@/store'
-
-export enum AssetType {
-  STANDARD = 'Standard',
-  CONCENTRATED = 'Concentrated',
-  STAKEDRAY = 'STAKEDRAY',
-  ALL = 'All'
-}
+import { AssetType } from './components/type'
+import PortfolioIdle from './components/PortfolioIdle'
+import PortfolioInfo from './components/PortfolioInfo'
 
 const RAYMintStr = RAYMint.toBase58()
 export default function SectionOverview() {

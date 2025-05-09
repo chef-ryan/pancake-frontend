@@ -1,8 +1,8 @@
-import { useSolBalance } from '@/hooks/token/useSolBalance'
-import { useAppStore } from '@/store'
 import { Box, Button, CopyAddress, Flex, InjectedModalProps, ScanLink, Message, Skeleton, Text, AptosIcon } from '@pancakeswap/uikit'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useTranslation } from 'react-i18next'
+import { useSolBalance } from '@/hooks/token/useSolBalance'
+import { useAppStore } from '@/store'
 import AddressChip from '../AddressChip'
 
 interface WalletInfoProps {

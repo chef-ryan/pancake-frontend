@@ -28,11 +28,11 @@ import { useEvent } from '@/hooks/useEvent'
 import { parseDateInfo, toUTC, DAY_SECONDS, WEEK_SECONDS } from '@/utils/date'
 import { getDuration } from '@/utils/duration'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
-import { EditReward } from '../util'
-import useAdjustRewardSchema, { ADJUST_REWARD_ERROR } from '../schema/useAdjustRewardSchema'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { wSolToSolString } from '@/utils/token'
 import useTokenPrice, { TokenPrice } from '@/hooks/token/useTokenPrice'
+import { EditReward } from '../util'
+import useAdjustRewardSchema, { ADJUST_REWARD_ERROR } from '../schema/useAdjustRewardSchema'
 
 /**
  * used in [FarmingRewardItem](./FarmingRewardItem.tsx)
@@ -180,7 +180,7 @@ export default function AdjustRewardDialog({
                       placeholder="7 - 90"
                       value={daysExtend}
                       onChange={setDaysExtend}
-                     />
+                    />
                     <Text color={colors.textTertiary} fontSize="xs" fontWeight={700}>
                       {t('edit_farm.time_day')}
                     </Text>

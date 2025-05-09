@@ -11,21 +11,11 @@ import { colors } from '@/theme/cssVariables'
 import { routeBack, setUrlQuery, useRouteQuery } from '@/utils/routeTools'
 import useFetchRpcPoolData from '@/hooks/pool/amm/useFetchRpcPoolData'
 import useFetchCpmmRpcPoolData from '@/hooks/pool/amm/useFetchCpmmRpcPoolData'
-import { LiquidityActionModeType, tabValueModeMapping } from '../utils'
+import { tabValueModeMapping } from '../utils'
 import BalanceInfo from './components/BalanceInfo'
 import RemoveLiquidity from './components/RemoveLiquidity'
 import UnStakeLiquidity from './components/UnStakeLiquidity'
-
-export type DecreaseTabOptionType = {
-  value: 'Unstake Liquidity' | 'Remove Liquidity'
-  label: string
-}
-
-export type DecreaseLiquidityPageQuery = {
-  mode?: LiquidityActionModeType
-  pool_id?: string
-  farm_id?: string
-}
+import { DecreaseLiquidityPageQuery, DecreaseTabOptionType } from './components/type'
 
 /**
  * unstake/remove liquidity
@@ -37,7 +27,7 @@ export default function Decrease() {
     { value: 'Unstake Liquidity', label: t('liquidity.unstake_liquidity') },
     { value: 'Remove Liquidity', label: t('liquidity.remove_liquidity') }
   ]
-  const { pool_id: poolId = '', mode: queryMode = 'unstake', farm_id } = useRouteQuery<DecreaseLiquidityPageQuery>()
+  const { pool_id: poolId = '', mode: queryMode = 'unstake', farm_id: farmId } = useRouteQuery<DecreaseLiquidityPageQuery>()
   const getTokenBalanceUiAmount = useTokenAccountStore((s) => s.getTokenBalanceUiAmount)
   const fetchTokenAccountAct = useTokenAccountStore((s) => s.fetchTokenAccountAct)
 
@@ -112,7 +102,7 @@ export default function Decrease() {
         <GridItem>
           <VStack spacing={4}>
             <Box bg={colors.backgroundLight30} borderRadius="20px" overflow="hidden" w="full">
-              <Tabs isFitted items={decreaseTabOptions} size="md" variant="folder" value={tabValue} onChange={handleTabChange} />
+              <Tabs items={decreaseTabOptions} size="md" variant="subtle" value={tabValue} onChange={handleTabChange} />
               <BalanceInfo
                 currentTab={tabValue}
                 stakedLiquidity={stakedLiquidity}
@@ -126,7 +116,7 @@ export default function Decrease() {
                 poolInfo={poolInfo}
                 lpPrice={poolInfo?.lpPrice || 0}
                 onStakedChange={handleStakedChange}
-                defaultFarm={farm_id}
+                defaultFarm={farmId}
               />
             ) : (
               <RemoveLiquidity poolInfo={poolInfo} rpcPoolData={rpcPoolData} onRefresh={handleRefresh} />

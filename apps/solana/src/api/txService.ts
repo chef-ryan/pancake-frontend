@@ -1,6 +1,6 @@
 import { parseUserAgent } from 'react-device-detect'
-import axios from './axios'
 import { useAppStore } from '@/store/useAppStore'
+import axios from './axios'
 
 interface CheckTxResponse {
   id: string

@@ -43,6 +43,6 @@ export function getPriceBoundary({ baseIn, poolInfo }: { baseIn: boolean; poolIn
       priceUpper: priceMax
     }
   } catch (err) {
-    
+    //
   }
 }

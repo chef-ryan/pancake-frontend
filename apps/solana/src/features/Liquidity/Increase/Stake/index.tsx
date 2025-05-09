@@ -16,11 +16,11 @@ import { colors } from '@/theme/cssVariables'
 
 import AmountSlider from '@/components/AmountSlider'
 import { formatCurrency } from '@/utils/numberish/formatter'
-import SelectFarmListItem from '../../components/SelectFarmListItem'
-import SelectedFarm from '../../components/SelectedFarm'
 import IntervalCircle, { IntervalCircleHandler } from '@/components/IntervalCircle'
 import { SlippageAdjuster } from '@/components/SlippageAdjuster'
 import { useEvent } from '@/hooks/useEvent'
+import SelectFarmListItem from '../../components/SelectFarmListItem'
+import SelectedFarm from '../../components/SelectedFarm'
 
 interface Props {
   poolInfo?: FormattedPoolInfoStandardItem

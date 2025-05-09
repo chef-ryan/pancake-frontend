@@ -30,14 +30,14 @@ import SubPageNote from '@/components/SubPageNote'
 import ChevronLeftIcon from '@/icons/misc/ChevronLeftIcon'
 import { genCSS2GridTemplateColumns, genCSS3GridTemplateColumns } from '@/theme/detailConfig'
 import { routeBack, routeToPage } from '@/utils/routeTools'
+import useFetchRpcClmmInfo from '@/hooks/pool/clmm/useFetchRpcClmmInfo'
+import useFetchFarmInfoByRpc from '@/hooks/farm/useFetchFarmInfoByRpc'
+import { TxCallbackProps } from '@/types/tx'
 import AddAnotherRewardDialog from './components/AddAnotherRewardDialog'
 import FarmInfoItem from './components/FarmInfoItem'
 import ExistFarmingRewards from './components/FarmingRewards'
 import NewRewards from './components/NewRewards'
 import { EditReward, farmV6RewardToEditReward, poolRewardToEditReward } from './util'
-import useFetchRpcClmmInfo from '@/hooks/pool/clmm/useFetchRpcClmmInfo'
-import useFetchFarmInfoByRpc from '@/hooks/farm/useFetchFarmInfoByRpc'
-import { TxCallbackProps } from '@/types/tx'
 
 interface QueryParams {
   farmId?: string
@@ -407,12 +407,7 @@ export default function FarmEdit() {
       </GridItem>
 
       {isAddAnotherRewardDialogOpen && (
-        <AddAnotherRewardDialog
-          isOpen
-          tokenFilterFn={tokenFilterFn}
-          onSave={handleAddNewReward}
-          onClose={onCloseAddAnotherRewardDialog}
-        />
+        <AddAnotherRewardDialog isOpen tokenFilterFn={tokenFilterFn} onSave={handleAddNewReward} onClose={onCloseAddAnotherRewardDialog} />
       )}
     </Grid>
   )

@@ -1,6 +1,5 @@
 import { isClient } from '@/utils/common'
-import { DecreaseTabOptionType } from './Decrease'
-import { IncreaseTabOptionType } from './Increase'
+import { LiquidityActionModeType, LiquidityTabOptionType } from './Decrease/components/type'
 
 export const SIDE = {
   BASE: 'base',
@@ -32,15 +31,6 @@ export const setPairCache = (params: { key: PoolType } & Partial<PairData>) => {
     })
   )
 }
-
-// type
-export type LiquidityActionModeType = 'add' | 'remove' | 'stake' | 'unstake' | 'init'
-
-export type LiquidityFarmActionModeType = 'select' | 'reward' | 'review' | 'done'
-
-export type CreateFarmType = 'Standard' | 'Concentrated'
-
-export type LiquidityTabOptionType = IncreaseTabOptionType['value'] | DecreaseTabOptionType['value']
 
 export const tabValueModeMapping: { [key in LiquidityTabOptionType]: LiquidityActionModeType } = {
   'Add Liquidity': 'add',

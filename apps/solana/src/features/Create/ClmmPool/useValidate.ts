@@ -15,7 +15,7 @@ interface Props {
   }
 }
 
-const numberTransform = yup.number().transform((value) => (isNaN(value) ? 0 : value))
+const numberTransform = yup.number().transform((value) => (Number.isNaN(value) ? 0 : value))
 const numberSchema = (errMsg: string) => numberTransform.moreThan(0, errMsg)
 
 const schema = (t: TFunction<'translation', undefined, 'translation'>) =>

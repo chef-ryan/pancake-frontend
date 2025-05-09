@@ -6,12 +6,12 @@ import { useTranslation } from 'react-i18next'
 import Button from '@/components/Button'
 import EditIcon from '@/icons/misc/EditIcon'
 import { colors } from '@/theme/cssVariables'
+import useTokenPrice from '@/hooks/token/useTokenPrice'
 
 import PoolReviewItem from './PoolReviewItem'
 import RewardReviewItem from './RewardReviewItem'
 import { NewRewardInfo } from '../../type'
 import { RewardTotalValue } from './RewardTotalValue'
-import useTokenPrice from '@/hooks/token/useTokenPrice'
 
 export default function DetailReview(props: {
   rewardInfos: NewRewardInfo[]

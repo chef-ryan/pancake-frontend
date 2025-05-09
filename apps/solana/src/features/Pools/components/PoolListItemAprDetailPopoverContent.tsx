@@ -7,11 +7,11 @@ import { colors, sizes } from '@/theme/cssVariables'
 import { WeeklyRewardData } from '@/hooks/pool/type'
 import { AprData } from '@/features/Clmm/utils/calApr'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
+import { wSolToSolString } from '@/utils/token'
+import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import { aprColors } from './PoolListItemAprLine'
 import { PoolListItemAprPie } from './PoolListItemAprPie'
-import { wSolToSolString } from '@/utils/token'
 import { toAPRPercent } from '../util'
-import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 
 export default function PoolListItemAprDetailPopoverContent({
   aprData,

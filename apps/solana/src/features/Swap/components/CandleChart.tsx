@@ -1,6 +1,3 @@
-import useFetchPoolKLine, { TimeType } from '@/hooks/pool/useFetchPoolKLine'
-import { colors } from '@/theme/cssVariables/colors'
-import { formatCurrency } from '@/utils/numberish/formatter'
 import { AbsoluteCenter, Box, GridItem, Spinner, Text, useColorMode } from '@chakra-ui/react'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import dayjs from 'dayjs'
@@ -16,6 +13,9 @@ import {
 } from 'lightweight-charts'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import useFetchPoolKLine, { TimeType } from '@/hooks/pool/useFetchPoolKLine'
+import { colors } from '@/theme/cssVariables/colors'
+import { formatCurrency } from '@/utils/numberish/formatter'
 
 interface Props {
   onPriceChange?: (val: { current: number; change: number } | undefined) => void

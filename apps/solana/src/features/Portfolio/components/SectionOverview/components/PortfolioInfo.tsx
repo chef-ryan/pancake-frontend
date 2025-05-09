@@ -7,14 +7,14 @@ import { colors } from '@/theme/cssVariables'
 import { isArray } from '@/utils/judges/judgeType'
 import { Select } from '@/components/Select'
 import Tabs from '@/components/Tabs'
-import PortfolioPieChart, { PORTFOLIO_PIE_COLORS } from './PortfolioPieChart'
 import { panelCard } from '@/theme/cssBlocks'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import ChevronUpIcon from '@/icons/misc/ChevronUpIcon'
 import ChevronDownIcon from '@/icons/misc/ChevronDownIcon'
-import { AssetType } from ".."
 import { Desktop, Mobile } from '@/components/MobileDesktop'
+import PortfolioPieChart, { PORTFOLIO_PIE_COLORS } from './PortfolioPieChart'
+import { AssetType } from './type'
 
 export type AssetsType = {
   key: string
@@ -127,16 +127,7 @@ export default function PortfolioInfo({
         }
       }}
     >
-      <Tabs
-        isFitted
-        items={assetsCategoryOptions}
-        value={tab}
-        size="md"
-        variant="folder"
-        onChange={setTab}
-        tabItemSX={{ whiteSpace: 'normal' }}
-        isLazy
-      />
+      <Tabs items={assetsCategoryOptions} value={tab} size="md" variant="subtle" onChange={setTab} />
 
       <Flex flexWrap="wrap" p={[4, '30px']} pt={[8, '30px']} flexGrow="inherit" bg={colors.backgroundLight}>
         {connected ? (

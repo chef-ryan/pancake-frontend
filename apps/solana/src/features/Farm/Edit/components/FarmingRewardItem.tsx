@@ -10,12 +10,12 @@ import { useAppStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { DAY_SECONDS } from '@/utils/date'
 import { formatCurrency } from '@/utils/numberish/formatter'
+import { wSolToSolString } from '@/utils/token'
+import { TxCallbackProps } from '@/types/tx'
 
 import { EditReward, FarmStatus, getRewardMeta } from '../util'
 import AddMoreRewardDialog from './AddMoreRewardDialog'
 import AdjustRewardDialog from './AdjustRewardDialog'
-import { wSolToSolString } from '@/utils/token'
-import { TxCallbackProps } from '@/types/tx'
 
 export default function ExistFarmingRewardItem({
   reward,

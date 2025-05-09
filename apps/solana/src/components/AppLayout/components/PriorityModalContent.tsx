@@ -1,3 +1,9 @@
+import { Collapse, Divider, Flex, HStack, VStack } from '@chakra-ui/react'
+import { Button, ButtonMenu, ButtonMenuItem, ModalV2, MotionModal, Text } from '@pancakeswap/uikit'
+import { SOLMint } from '@raydium-io/raydium-sdk-v2'
+import Decimal from 'decimal.js'
+import React, { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import DecimalInput from '@/components/DecimalInput'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
@@ -7,12 +13,6 @@ import { PRIORITY_LEVEL_KEY, PRIORITY_MODE_KEY, PriorityLevel, PriorityMode, use
 import { colors } from '@/theme/cssVariables'
 import { setStorageItem } from '@/utils/localStorage'
 import { formatCurrency } from '@/utils/numberish/formatter'
-import { Collapse, Divider, Flex, HStack, VStack } from '@chakra-ui/react'
-import { Button, ButtonMenu, ButtonMenuItem, ModalV2, MotionModal, Text } from '@pancakeswap/uikit'
-import { SOLMint } from '@raydium-io/raydium-sdk-v2'
-import Decimal from 'decimal.js'
-import React, { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 
 export function PriorityModalContent(props: {
   isOpen: boolean

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
 
-const numberTransform = yup.number().transform((value) => (isNaN(value) ? 0 : value))
+const numberTransform = yup.number().transform((value) => (Number.isNaN(value) ? 0 : value))
 const numberSchema = (errMsg: string) => numberTransform.moreThan(0, errMsg).required(errMsg)
 
 export default function useMarketSchema() {

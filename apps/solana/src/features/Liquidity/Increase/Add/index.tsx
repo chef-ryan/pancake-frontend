@@ -16,14 +16,12 @@ import { RpcCpmmPool } from '@/hooks/pool/amm/useFetchCpmmRpcPoolData'
 import { colors } from '@/theme/cssVariables'
 import { formatCurrency } from '@/utils/numberish/formatter'
 import { getMintSymbol, wSolToSolString } from '@/utils/token'
-// import AutoSwapModal from './components/AutoSwapModal'
-import StakeLpModal from './components/StakeLpModal'
 import { SlippageAdjuster } from '@/components/SlippageAdjuster'
 
-// import { QuestionToolTip } from '@/components/QuestionToolTip'
 import { useEvent } from '@/hooks/useEvent'
 import { throttle } from '@/utils/functionMethods'
 import useRefreshEpochInfo from '@/hooks/app/useRefreshEpochInfo'
+import StakeLpModal from './components/StakeLpModal'
 
 const InputWidth = ['100%']
 export default function AddLiquidity({
@@ -241,7 +239,9 @@ export default function AddLiquidity({
           disableSelectToken
           onChange={(v) => handleAmountChange(v, 'base')}
           onTokenChange={(token) => onSelectToken(token, 'base')}
-          onFocus={() => (focusRef.current = 'base')}
+          onFocus={() => {
+            focusRef.current = 'base'
+          }}
         />
       </Flex>
       {/* quote token */}
@@ -255,7 +255,9 @@ export default function AddLiquidity({
           disableSelectToken
           onChange={(v) => handleAmountChange(v, 'quote')}
           onTokenChange={(token) => onSelectToken(token, 'quote')}
-          onFocus={() => (focusRef.current = 'quote')}
+          onFocus={() => {
+            focusRef.current = 'quote'
+          }}
         />
       </Flex>
       {/* total deposit */}

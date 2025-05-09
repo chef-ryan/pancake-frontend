@@ -14,7 +14,7 @@ export default function Entry() {
     <Box>
       <Center>
         <Flex direction={['column', 'row']} justify="center">
-          <img src={EntryPic.src} />
+          <img src={EntryPic.src} alt="entry" />
           <Flex direction="column" justify="flex-end" px={[8, 0]}>
             <Flex direction="column" justify="center" minHeight={280}>
               <Heading fontWeight={500} fontSize="4rem" lineHeight="3.75rem" color="white">

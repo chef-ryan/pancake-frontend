@@ -1,23 +1,10 @@
-import {
-  ButtonMenu,
-  ButtonMenuItem,
-  CloseIcon,
-  Heading,
-  IconButton,
-  InjectedModalProps,
-  ModalBody,
-  ModalWrapper,
-  ModalHeader as UIKitModalHeader,
-  ModalTitle,
-  MotionModal
-} from '@pancakeswap/uikit'
+import { ButtonMenu, ButtonMenuItem, InjectedModalProps, ModalHeader as UIKitModalHeader, MotionModal } from '@pancakeswap/uikit'
 import { useState, useCallback } from 'react'
 import { styled } from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import WalletInfo from './WalletInfo'
-import WalletTransactions from './WalletTransactions'
 import { colors } from '@/theme/cssVariables'
 import useResponsive from '@/hooks/useResponsive'
+import WalletInfo from './WalletInfo'
 
 export enum WalletView {
   WALLET_INFO,

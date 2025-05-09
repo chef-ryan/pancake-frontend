@@ -14,13 +14,13 @@ export default function Header() {
 
   useEffect(() => {
     if (pageYOffset > 600 && !isScrollup) {
-      setHeaderOpacity((p) => {
-        p += 0.1
+      setHeaderOpacity((p_) => {
+        const p = p_ + 0.1
         return p > 1 || pageYOffset > 1200 ? 1 : p
       })
     } else if (pageYOffset < 1200 && isScrollup) {
-      setHeaderOpacity((p) => {
-        p -= 0.1
+      setHeaderOpacity((p_) => {
+        const p = p_ - 0.1
         return p < 0 || pageYOffset < 600 ? 0 : p
       })
     }

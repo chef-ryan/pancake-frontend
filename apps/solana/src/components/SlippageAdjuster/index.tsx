@@ -1,12 +1,12 @@
+import { Box, Flex } from '@chakra-ui/react'
+import { Button } from '@pancakeswap/uikit'
+import Decimal from 'decimal.js'
+import { useEffect, useState } from 'react'
 import { useSwapStore } from '@/features/Swap/useSwapStore'
 import { useDisclosure } from '@/hooks/useDelayDisclosure'
 import MoreListControllers from '@/icons/misc/MoreListControllers'
 import { useLiquidityStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
-import { Box, Flex } from '@chakra-ui/react'
-import { Button } from '@pancakeswap/uikit'
-import Decimal from 'decimal.js'
-import { useEffect, useState } from 'react'
 import { SlippageSettingModal } from './SlippageSettingModal'
 
 export function SlippageAdjuster({ variant = 'swap', onClick }: { variant?: 'swap' | 'liquidity'; onClick?: () => void }) {

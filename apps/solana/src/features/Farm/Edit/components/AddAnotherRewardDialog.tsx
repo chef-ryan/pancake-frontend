@@ -25,9 +25,9 @@ import { useEvent } from '@/hooks/useEvent'
 import { useAppStore, useTokenAccountStore, useTokenStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { parseDateInfo } from '@/utils/date'
+import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import useAddNewRewardSchema from '../schema/useAddNewRewardSchema'
 import { EditReward } from '../util'
-import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
 
 /**
  * used in [FarmingRewardItemm](../FarmingRewardItem.tsx)

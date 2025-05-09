@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/alt-text */
+
 import { Box, Center, Flex, Heading, Wrap, WrapItem } from '@chakra-ui/react'
 
 import { colors } from '@/theme/cssVariables'

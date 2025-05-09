@@ -28,7 +28,7 @@ export default function FeatureCard({ title, desc, linkTitle }: FeatureCardProps
     >
       <Box zIndex={1}>
         <Flex gap="19px">
-          <img src={fig.src} />
+          <img src={fig.src} alt="fig" />
           <Flex direction="column" justify="space-between" align="center">
             <Center flex={1} textAlign="center" color="white" fontSize="1.25rem" lineHeight="1.625rem" fontWeight="500">
               {title}

@@ -1,3 +1,8 @@
+import { Flex, HStack, VStack } from '@chakra-ui/react'
+import { Box, Button, Message, ModalV2, MotionModal, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import Decimal from 'decimal.js'
+import { KeyboardEvent, useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import DecimalInput from '@/components/DecimalInput'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
 import { SWAP_SLIPPAGE_KEY, useSwapStore } from '@/features/Swap/useSwapStore'
@@ -7,11 +12,6 @@ import { colors } from '@/theme/cssVariables'
 import { setStorageItem } from '@/utils/localStorage'
 import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import toPercentString from '@/utils/numberish/toPercentString'
-import { Flex, HStack, VStack } from '@chakra-ui/react'
-import { Box, Button, Message, ModalV2, MotionModal, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
-import Decimal from 'decimal.js'
-import { KeyboardEvent, useCallback, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 
 export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isOpen: boolean; onClose: () => void }) {
   const { t } = useTranslation()

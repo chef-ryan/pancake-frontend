@@ -5,12 +5,12 @@ import { BN } from 'bn.js'
 import ChevronLeftIcon from '@/icons/misc/ChevronLeftIcon'
 import { colors } from '@/theme/cssVariables/colors'
 import { routeBack } from '@/utils/routeTools'
-import LiquidityItem from './components/LiquidityItem'
-import LiquidityLockModal from './components/LiquidityLockModal'
 import LockedNFTModal from '@/features/Liquidity/Lock/components/LockedNFTModal'
 import useAllPositionInfo from '@/hooks/portfolio/useAllPositionInfo'
 import { ClmmPosition } from '@/hooks/portfolio/clmm/useClmmBalance'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
+import LiquidityItem from './components/LiquidityItem'
+import LiquidityLockModal from './components/LiquidityLockModal'
 
 export default function Lock() {
   const { t } = useTranslation()

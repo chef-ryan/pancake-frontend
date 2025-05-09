@@ -19,20 +19,13 @@ import toApr from '@/utils/numberish/toApr'
 import { routeToPage } from '@/utils/routeTools'
 import { encodeStr } from '@/utils/common'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
-import MobileFarmDetailDrawer from './MobileFarmDetailDrawer'
 
+import MobileFarmDetailDrawer from './MobileFarmDetailDrawer'
 import Period from './Period'
 import Tvl from './Tvl'
 import Unemmitted from './Unemitted'
 import WeeklyRewards from './WeeklyRewards'
 
-export type RewardInfo = {
-  weekly: string
-  periodString: string
-  periodDays: number
-  unEmit: string
-  mint: ApiV3Token
-}
 export default function FarmItem({
   id,
   type,

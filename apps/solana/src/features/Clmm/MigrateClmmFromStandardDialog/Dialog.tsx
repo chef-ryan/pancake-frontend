@@ -53,10 +53,10 @@ import { routeToPage } from '@/utils/routeTools'
 import CircleArrowDown from '@/icons/misc/CircleArrowDown'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { wSolToSolString } from '@/utils/token'
+import { MigrateClmmConfig } from '@/hooks/pool/useMigratePoolConfig'
 import EstimatedAprInfo from './AprInfo'
 import RangeInput from './RangeInput'
 import useValidateSchema from './useValidateSchema'
-import { MigrateClmmConfig } from '@/hooks/pool/useMigratePoolConfig'
 
 interface MigrateFromStandardDialogProps {
   isOpen: boolean
@@ -160,7 +160,7 @@ export default function MigrateFromStandardDialog({
 
   const calculateAmount = useEvent(({ priceLowerTick, priceUpperTick }: { priceLowerTick: number; priceUpperTick: number }) => {
     if (!clmmPoolInfo) return
-    const {slippage} = useLiquidityStore.getState()
+    const { slippage } = useLiquidityStore.getState()
 
     const data = getLiquidityFromAmounts({
       poolInfo: clmmPoolInfo,
@@ -327,6 +327,7 @@ export default function MigrateFromStandardDialog({
         <ModalBody mb={5}>
           <VStack gap={[3, 4]} align="stretch">
             <Text fontSize="sm" color={colors.textSecondary}>
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               {t('migrate_clmm.desc')} <Link isExternal>{t('migrate_clmm.desc_link')}</Link>.
             </Text>
 
@@ -646,3 +647,5 @@ function ModeItem({
     </Box>
   )
 }
+
+export { MigrateFromStandardDialog }

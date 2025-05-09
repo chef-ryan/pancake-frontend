@@ -31,7 +31,7 @@ const schema = (t: TFunction<'translation', undefined, 'translation'>) =>
     }),
     amount: yup
       .number()
-      .transform((value) => (isNaN(value) ? 0 : value))
+      .transform((value) => (Number.isNaN(value) ? 0 : value))
       .positive(t('error.enter_token_amount') ?? '')
       .test('is-amount-valid', t('error.insufficient_sub_balance') ?? '', function (val) {
         return new Decimal(this.parent.balance).gte(val || '0')

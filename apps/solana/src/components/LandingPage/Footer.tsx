@@ -97,7 +97,11 @@ export default function Footer() {
         </Box>
       </Center>
       <Logo style={{ position: 'relative', zIndex: 2, margin: '80px auto 80px auto' }} />
-      <img src={FooterBg.src} style={{ minWidth: '1440px', width: '100%', position: 'absolute', top: 0, height: '100%', zIndex: 1 }} />
+      <img
+        src={FooterBg.src}
+        style={{ minWidth: '1440px', width: '100%', position: 'absolute', top: 0, height: '100%', zIndex: 1 }}
+        alt="footer"
+      />
     </Box>
   )
 }

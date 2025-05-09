@@ -29,16 +29,15 @@ import { Select } from '@/components/Select'
 import HorizontalSwitchSmallIcon from '@/icons/misc/HorizontalSwitchSmallIcon'
 import AddLiquidityPlus from '@/icons/misc/AddLiquidityPlus'
 import SubtractIcon from '@/icons/misc/SubtractIcon'
-import { useLiquidityStore, useTokenStore , useCreateMarketStore } from '@/store'
+import { useLiquidityStore, useTokenStore, useCreateMarketStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { wSolToSolString, wsolToSolToken } from '@/utils/token'
 import { TxErrorModal } from '@/components/Modal/TxErrorModal'
 import { percentFormatter } from '@/utils/numberish/formatter'
 import useFetchPoolByMint from '@/hooks/pool/useFetchPoolByMint'
+import useBirdeyeTokenPrice from '@/hooks/token/useBirdeyeTokenPrice'
 import CreateSuccessModal from './CreateSuccessModal'
 import useInitPoolSchema from '../hooks/useInitPoolSchema'
-import useBirdeyeTokenPrice from '@/hooks/token/useBirdeyeTokenPrice'
-
 
 export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
   const { t } = useTranslation()
@@ -105,7 +104,6 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
     const defaultConfig = Object.values(cpmmFeeConfigs || {}).find((c) => c.tradeFeeRate === 2500)
     if (!new Set(existingPools.values()).has(defaultConfig?.id || '')) {
       if (defaultConfig) setCurrentConfig(defaultConfig)
-      
     }
   }, [poolKey, existingPools, cpmmFeeConfigs])
 
@@ -162,7 +160,10 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
         baseAmount: new Decimal(tokenAmount.base).mul(10 ** baseToken!.decimals).toFixed(0),
         quoteAmount: new Decimal(tokenAmount.quote).mul(10 ** quoteToken!.decimals).toFixed(0),
         startTime: startDate,
-        onSent: (data) => (poolId = data.ammId.toBase58()),
+        onSent: (data) => {
+          poolId = data.ammId.toBase58()
+          return poolId
+        },
         onConfirmed: () => setNewPoolId(poolId),
         onError: onTxError,
         onFinally: offLoading
@@ -326,10 +327,9 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
           {t('field.start_time')}:
         </Text>
         <Tabs
-          w="full"
           tabListSX={{ display: 'flex' }}
-          tabItemSX={{ flex: 1, fontWeight: 400, fontSize: '12px', py: '4px' }}
-          variant="squarePanelDark"
+          tabItemSX={{ flex: 1, fontWeight: 400, fontSize: '12px', py: '4px' } as any}
+          variant="subtle"
           value={startDateMode}
           onChange={(val) => {
             setStartDateMode(val)

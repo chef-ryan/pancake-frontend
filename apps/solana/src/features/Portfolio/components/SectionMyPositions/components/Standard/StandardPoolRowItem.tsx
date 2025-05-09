@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import BN from 'bn.js'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import MigrateFromStandardDialog from '@/features/Clmm/MigrateClmmFromStandardDialog/Dialog'
-import { FormattedFarmInfoV6 , FarmBalanceInfo } from '@/hooks/farm/type'
+import { FormattedFarmInfoV6, FarmBalanceInfo } from '@/hooks/farm/type'
 import { FarmPositionInfo } from '@/hooks/portfolio/farm/useFarmPositions'
 import useFetchRpcPoolData from '@/hooks/pool/amm/useFetchRpcPoolData'
 import { FormattedPoolInfoStandardItem } from '@/hooks/pool/type'
@@ -16,6 +16,17 @@ import ChevronRightIcon from '@/icons/misc/ChevronRightIcon'
 import { useFarmStore, useTokenAccountStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { debounce } from '@/utils/functionMethods'
+import { QuestionToolTip } from '@/components/QuestionToolTip'
+import LockPercentCircle from '@/components/LockPercentCircle'
+import TokenAvatarPair from '@/components/TokenAvatarPair'
+import { useEvent } from '@/hooks/useEvent'
+import { panelCard } from '@/theme/cssBlocks'
+import useMigratePoolConfig from '@/hooks/pool/useMigratePoolConfig'
+import { CpmmLockData } from '@/hooks/portfolio/cpmm/useLockCpmmBalance'
+import toApr from '@/utils/numberish/toApr'
+import { formatToRawLocaleStr, formatCurrency } from '@/utils/numberish/formatter'
+import { routeToPage } from '@/utils/routeTools'
+import { Desktop, Mobile } from '@/components/MobileDesktop'
 
 import ActionButtons from './ItemDetail/ActionButtons'
 import ItemName from './ItemDetail/ItemName'
@@ -26,22 +37,11 @@ import LockedPosition from './ItemDetail/LockedPosition'
 import StandardPoolAPR from './ItemDetail/StandardPoolAPR'
 import TokenPooledInfo from './ItemDetail/TokenInfo'
 import { FarmTitleBadge } from './ItemDetail/FarmTitleBadge'
-import { QuestionToolTip } from '@/components/QuestionToolTip'
-import LockPercentCircle from '@/components/LockPercentCircle'
-import TokenAvatarPair from '@/components/TokenAvatarPair'
 import MobileStandardAMMDetailDrawer from './components/MobileStandardAMMDetailDrawer'
 import MobileLockedAMMDetailDrawer from './components/MobileLockedAMMDetailDrawer'
 import StandardPoolRowStakeFarmHoldItem from './components/StandardPoolRowStakeFarmHoldItem'
 import StandardPoolRowStakeFarmItem from './components/StandardPoolRowStakeFarmItem'
 import ClaimFeesModal from './components/ClaimFeesModal'
-import { useEvent } from '@/hooks/useEvent'
-import { panelCard } from '@/theme/cssBlocks'
-import useMigratePoolConfig from '@/hooks/pool/useMigratePoolConfig'
-import { CpmmLockData } from '@/hooks/portfolio/cpmm/useLockCpmmBalance'
-import toApr from '@/utils/numberish/toApr'
-import { formatToRawLocaleStr, formatCurrency } from '@/utils/numberish/formatter'
-import { routeToPage } from '@/utils/routeTools'
-import { Desktop, Mobile } from '@/components/MobileDesktop'
 
 type PoolItemProps = {
   pool?: FormattedPoolInfoStandardItem
@@ -79,9 +79,8 @@ export default function StandardPoolRowItem({ pool, isLoading, position, stakedF
   const stakedFarmList = stakedFarms.map((farm) => stakedFarmMap.get(farm.farmId)).filter((f) => !!f) as FormattedFarmInfoV6[]
 
   const [farmInfo, farmLpAmount] = useMemo(() => {
-    let farm: FormattedFarmInfoV6 | undefined
     let farmLpAmount = '0'
-    farm = stakedFarmList.find((f) =>
+    const farm: FormattedFarmInfoV6 | undefined = stakedFarmList.find((f) =>
       position.data.some((d) => {
         const isFound = new Decimal(d.lpAmount || 0).gt(0) && f.id === d.farmId
         if (isFound) farmLpAmount = d.lpAmount || '0'
@@ -153,10 +152,10 @@ export default function StandardPoolRowItem({ pool, isLoading, position, stakedF
 
   const currentRewardInfo = useMemo(() => {
     const rewardData: Map<string, { mint: ApiV3Token; amount: string }> = new Map()
-    Array.from(allPendingRewards.entries()).map(([farmId, data]) => {
+    Array.from(allPendingRewards.entries()).forEach(([farmId, data]) => {
       const f = stakedFarmList.find((f) => f.id === farmId)
       if (!f) return
-      return data.amount.map((d, idx) => {
+      data.amount.forEach((d, idx) => {
         if (!f.rewardInfos[idx]) return
         const prevData = rewardData.get(f.rewardInfos[idx].mint.address)
         rewardData.set(f.rewardInfos[idx].mint.address, {

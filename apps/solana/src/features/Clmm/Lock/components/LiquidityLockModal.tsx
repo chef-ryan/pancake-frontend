@@ -18,7 +18,7 @@ import { colors } from '@/theme/cssVariables'
 import TokenAvatar from '@/components/TokenAvatar'
 import InfoCircleIcon from '@/icons/misc/InfoCircleIcon'
 import WarningIcon from '@/icons/misc/WarningIcon'
-import { shortenAddress , getMintSymbol } from '@/utils/token'
+import { shortenAddress, getMintSymbol } from '@/utils/token'
 import { formatCurrency } from '@/utils/numberish/formatter'
 import { FormattedPoolInfoConcentratedItem } from '@/hooks/pool/type'
 import useClmmBalance, { ClmmPosition } from '@/hooks/portfolio/clmm/useClmmBalance'
@@ -55,7 +55,7 @@ function LiquidityLockModal({
   }
 
   const poolNft = position.nftMint.toBase58()
-  const {poolName} = poolInfo
+  const { poolName } = poolInfo
 
   const mintAValue = amountA.mul(tokenPrices[poolInfo.mintA.address]?.value || 0)
   const mintBValue = amountB.mul(tokenPrices[poolInfo.mintB.address]?.value || 0)
@@ -188,14 +188,17 @@ function LiquidityLockModal({
           <Button
             variant="danger"
             w="full"
-            loadingText={`${t('liquidity.lock_liquidity')  }...`}
+            loadingText={`${t('liquidity.lock_liquidity')}...`}
             isDisabled={confirmText !== t('liquidity.lock_confirm_text')}
             onClick={() => {
               let nftAddress = ''
               lockPositionAct({
                 poolInfo,
                 position,
-                onSent: (address) => (nftAddress = address.lockNftMint.toBase58()),
+                onSent: (address) => {
+                  nftAddress = address.lockNftMint.toBase58()
+                  return nftAddress
+                },
                 onConfirmed: () => {
                   handleCloseModal()
                   onLockSuccess(nftAddress)

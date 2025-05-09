@@ -36,14 +36,14 @@ import ChevronLeftIcon from '@/icons/misc/ChevronLeftIcon'
 import ChevronRightIcon from '@/icons/misc/ChevronRightIcon'
 import ExternalLinkLargeIcon from '@/icons/misc/ExternalLinkLargeIcon'
 import { useAppStore } from '@/store'
-import ChevronUpDownArrow from './ChevronUpDownArrow'
-import AddressChip from './AddressChip'
-import TokenAvatar from './TokenAvatar'
 import { ToastStatus } from '@/types/tx'
 import { getTxAllRecord } from '@/utils/tx/historyTxStatus'
 import { MoonpaySell } from '@/components/Moonpay'
 import { sendWalletEvent } from '@/api/event'
 import { useEvent } from '@/hooks/useEvent'
+import ChevronUpDownArrow from './ChevronUpDownArrow'
+import AddressChip from './AddressChip'
+import TokenAvatar from './TokenAvatar'
 
 interface WalletMenuProps {
   wallet: Wallet | null

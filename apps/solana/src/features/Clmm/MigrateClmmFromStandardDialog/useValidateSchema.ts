@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import * as yup from 'yup'
 import Decimal from 'decimal.js'
 
-const numberTransform = yup.number().transform((value) => (isNaN(value) ? 0 : value))
+const numberTransform = yup.number().transform((value) => (Number.isNaN(value) ? 0 : value))
 const numberSchema = (errMsg: string) => numberTransform.moreThan(0, errMsg)
 
 export default function useValidateSchema(props: { priceUpper: string; priceLower: string }) {

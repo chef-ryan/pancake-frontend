@@ -16,13 +16,13 @@ import { useTranslation } from 'react-i18next'
 import { FormattedPoolInfoStandardItem } from '@/hooks/pool/type'
 import { colors } from '@/theme/cssVariables'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
+import { formatCurrency } from '@/utils/numberish/formatter'
+import LockIcon from '@/icons/misc/LockIcon'
+import { CpmmLockData } from '@/hooks/portfolio/cpmm/useLockCpmmBalance'
 import PendingFees from '../ItemDetail/PendingFees'
 import TokenPooledInfo from '../ItemDetail/TokenInfo'
 import { FarmTitleBadge } from '../ItemDetail/FarmTitleBadge'
 import StandardPoolAPR from '../ItemDetail/StandardPoolAPR'
-import { formatCurrency } from '@/utils/numberish/formatter'
-import LockIcon from '@/icons/misc/LockIcon'
-import { CpmmLockData } from '@/hooks/portfolio/cpmm/useLockCpmmBalance'
 
 export default function MobileLockedAMMDetailDrawer({
   isOpen,

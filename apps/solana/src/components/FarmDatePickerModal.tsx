@@ -8,8 +8,8 @@ import { useTranslation } from 'react-i18next'
 import Button from '@/components/Button'
 import { DatePick, HourPick, MinutePick } from '@/components/DateTimePicker'
 import { colors } from '@/theme/cssVariables'
-import ResponsiveModal from './ResponsiveModal'
 import { getUTCOffset } from '@/utils/date'
+import ResponsiveModal from './ResponsiveModal'
 
 dayjs.extend(utc)
 
@@ -60,8 +60,8 @@ export default function FarmDatePickerModal({ isOpen, onConfirm, onClose, farmSt
   }, [startHour, startMinute])
 
   useEffect(() => {
-    const today = dayjs();
-      const isToday = today.isSame(startDate, 'day')
+    const today = dayjs()
+    const isToday = today.isSame(startDate, 'day')
     if (isToday) {
       const currentHour = today.hour()
       const hours: string[] = Array.from({ length: 24 - currentHour }, (_, idx) => (idx + currentHour).toString().padStart(2, '0'))
@@ -167,7 +167,7 @@ export default function FarmDatePickerModal({ isOpen, onConfirm, onClose, farmSt
           flex={[1, 'unset']}
           size={['lg', 'md']}
           isDisabled={
-            isNaN(Number(durationDays)) ||
+            Number.isNaN(Number(durationDays)) ||
             Number(durationDays) < 7 ||
             Number(durationDays) > 90 ||
             dayjs(startDate).isBefore(dayjs(), 'minute')

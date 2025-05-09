@@ -15,7 +15,7 @@ import {
   VStack,
   useDisclosure
 } from '@chakra-ui/react'
-import { TokenInfo , ApiV3Token } from '@raydium-io/raydium-sdk-v2'
+import { TokenInfo, ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 
 import dayjs from 'dayjs'
@@ -25,11 +25,11 @@ import { useEvent } from '@/hooks/useEvent'
 import { colors } from '@/theme/cssVariables'
 import { DAY_SECONDS, parseDateInfo, WEEK_SECONDS } from '@/utils/date'
 import { useAppStore, useTokenAccountStore } from '@/store'
-import { EditReward } from '../util'
-import useAddNewRewardSchema from '../schema/useAddNewRewardSchema'
 import DatePickerModal from '@/components/FarmDatePickerModal'
 import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import { wSolToSol, wsolToSolToken } from '@/utils/token'
+import { EditReward } from '../util'
+import useAddNewRewardSchema from '../schema/useAddNewRewardSchema'
 
 /**
  * used in [FarmingRewardItem](../FarmingRewardItem.tsx)

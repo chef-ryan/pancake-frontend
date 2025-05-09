@@ -57,6 +57,7 @@ function CustomCaption(props: CaptionProps) {
   return (
     <Flex justify="space-between" align="center">
       <button
+        type="button"
         className="rdp-button_reset rdp-button rdp-nav_button rdp-nav_button_previous"
         onClick={() => previousMonth && goToMonth(previousMonth)}
       >
@@ -65,6 +66,7 @@ function CustomCaption(props: CaptionProps) {
       <Text fontWeight="medium">{dayjs(props.displayMonth).format('MMMM YYYY')}</Text>
 
       <button
+        type="button"
         className="rdp-button_reset rdp-button rdp-nav_button rdp-nav_button_previous"
         onClick={() => nextMonth && goToMonth(nextMonth)}
       >

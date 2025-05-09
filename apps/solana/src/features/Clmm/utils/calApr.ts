@@ -73,30 +73,29 @@ export function getPositionAprCore({
         percentInTotal: (i / total) * 100,
         mint: poolInfo.rewardDefaultInfos[idx].mint
       })),
-      apr: isNaN(planBApr.apr) ? 0 : planBApr.apr
+      apr: Number.isNaN(planBApr.apr) ? 0 : planBApr.apr
     }
-  } 
-    const planCApr = PoolUtils.estimateAprsForPriceRangeMultiplier({
-      poolInfo,
-      aprType: timeBasis,
-      positionTickLowerIndex: Math.min(positionAccount.tickLower, positionAccount.tickUpper),
-      positionTickUpperIndex: Math.max(positionAccount.tickLower, positionAccount.tickUpper)
-    })
-    const slicedRewardApr = planCApr.rewardsApr.slice(0, poolInfo.rewardDefaultInfos.length)
-    const total = [planCApr.feeApr, ...slicedRewardApr].reduce((a, b) => a + b, 0)
-    return {
-      fee: {
-        apr: planCApr.feeApr,
-        percentInTotal: (planCApr.feeApr / total) * 100
-      },
-      rewards: slicedRewardApr.map((i, idx) => ({
-        apr: i,
-        percentInTotal: (i / total) * 100,
-        mint: poolInfo.rewardDefaultInfos[idx].mint
-      })),
-      apr: isNaN(planCApr.apr) ? 0 : planCApr.apr
-    }
-  
+  }
+  const planCApr = PoolUtils.estimateAprsForPriceRangeMultiplier({
+    poolInfo,
+    aprType: timeBasis,
+    positionTickLowerIndex: Math.min(positionAccount.tickLower, positionAccount.tickUpper),
+    positionTickUpperIndex: Math.max(positionAccount.tickLower, positionAccount.tickUpper)
+  })
+  const slicedRewardApr = planCApr.rewardsApr.slice(0, poolInfo.rewardDefaultInfos.length)
+  const total = [planCApr.feeApr, ...slicedRewardApr].reduce((a, b) => a + b, 0)
+  return {
+    fee: {
+      apr: planCApr.feeApr,
+      percentInTotal: (planCApr.feeApr / total) * 100
+    },
+    rewards: slicedRewardApr.map((i, idx) => ({
+      apr: i,
+      percentInTotal: (i / total) * 100,
+      mint: poolInfo.rewardDefaultInfos[idx].mint
+    })),
+    apr: Number.isNaN(planCApr.apr) ? 0 : planCApr.apr
+  }
 }
 
 interface Props {

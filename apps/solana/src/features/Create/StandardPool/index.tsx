@@ -2,13 +2,13 @@ import { Box, Flex, Grid, GridItem, HStack, Link, Text, VStack } from '@chakra-u
 import { useRouter } from 'next/router'
 import { useTranslation, Trans } from 'react-i18next'
 import { colors } from '@/theme/cssVariables'
-import SubPageNote from '../../../components/SubPageNote'
 import PanelCard from '@/components/PanelCard'
 import ChevronLeftIcon from '@/icons/misc/ChevronLeftIcon'
 import { useAppStore } from '@/store'
 import { genCSS2GridTemplateColumns, genCSS3GridTemplateColumns } from '@/theme/detailConfig'
 import { useRouteQuery } from '@/utils/routeTools'
 import Initialize from './components/Initialize'
+import { SubPageNote } from '../../../components/SubPageNote'
 
 export default function CreatePool() {
   const isMobile = useAppStore((s) => s.isMobile)

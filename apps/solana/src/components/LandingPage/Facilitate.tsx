@@ -12,7 +12,7 @@ export default function Facilitate() {
           <Heading fontWeight={500} fontSize="3rem" lineHeight="3.83rem" color={colors.primary}>
             Facilitating Crosschain Liquidity
           </Heading>
-          <img src={facilitate.src} style={{ marginTop: 58 }} />
+          <img src={facilitate.src} style={{ marginTop: 58 }} alt="facilitate" />
         </Flex>
       </Center>
     </Box>

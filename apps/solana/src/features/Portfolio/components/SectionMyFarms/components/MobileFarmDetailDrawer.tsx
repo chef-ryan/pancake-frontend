@@ -2,7 +2,6 @@ import { Badge, Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerO
 import { useTranslation } from 'react-i18next'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import { colors } from '@/theme/cssVariables'
-import { RewardInfo } from './FarmItem'
 import { FarmCategory } from '@/hooks/portfolio/farm/useCreatedFarmInfo'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
 import TokenAvatar from '@/components/TokenAvatar'
@@ -11,6 +10,7 @@ import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatte
 import toApr from '@/utils/numberish/toApr'
 import { wSolToSolString } from '@/utils/token'
 import { routeToPage } from '@/utils/routeTools'
+import { RewardInfo } from './type'
 
 export default function MobileFarmDetailDrawer({
   isOpen,

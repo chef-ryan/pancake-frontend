@@ -22,11 +22,11 @@ import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatte
 import { routeToPage, useRouteQuery } from '@/utils/routeTools'
 import { wSolToSolString } from '@/utils/token'
 import useTokenPrice from '@/hooks/token/useTokenPrice'
-import { StakingPageQuery } from '../Staking'
-import StakeDialog from './StakeDialog'
-import UnstakeDialog from './UnstakeDialog'
 import { useEvent } from '@/hooks/useEvent'
 import { FarmPositionInfo } from '@/hooks/portfolio/farm/useFarmPositions'
+import StakeDialog from './StakeDialog'
+import UnstakeDialog from './UnstakeDialog'
+import { StakingPageQuery } from '../type'
 
 export default function StakingPoolItem({ pool, apiVaultData }: { pool: ApiStakePool; apiVaultData?: FarmPositionInfo }) {
   const { t } = useTranslation()

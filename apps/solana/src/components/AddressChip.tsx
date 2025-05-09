@@ -1,10 +1,10 @@
+import { Box, Flex, FlexProps, Text, TextProps, useClipboard } from '@chakra-ui/react'
+import { ReactNode } from 'react'
 import CircleCheck from '@/icons/misc/CircleCheck'
 import CopyIcon from '@/icons/misc/CopyIcon'
 import ExternalLink from '@/icons/misc/ExternalLink'
 import { SvgIcon } from '@/icons/type'
 import { supportedExplorers, useAppStore } from '@/store/useAppStore'
-import { Box, Flex, FlexProps, Text, TextProps, useClipboard } from '@chakra-ui/react'
-import { ReactNode } from 'react'
 
 type RawAddressChipProps = {
   address?: string

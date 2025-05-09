@@ -10,8 +10,8 @@ import { useAppStore } from '@/store/useAppStore'
 import { panelCard } from '@/theme/cssBlocks'
 import { colors } from '@/theme/cssVariables'
 import { routeToPage } from '@/utils/routeTools'
-import PortfolioPieChart, { IDLE_TOKENS_COLORS } from './PortfolioPieChart'
 import { formatCurrency } from '@/utils/numberish/formatter'
+import PortfolioPieChart, { IDLE_TOKENS_COLORS } from './PortfolioPieChart'
 
 export type IdleType = {
   token: ApiV3Token | undefined
@@ -82,7 +82,7 @@ export default function PortfolioIdle({ idleBalance, productiveBalance, idleList
                   data={[{ value: 100 - idlePercent }, { value: idlePercent }]}
                   valueDataKey="value"
                   palette={IDLE_TOKENS_COLORS}
-                  roundCenterLabel={`${idlePercent  }%`}
+                  roundCenterLabel={`${idlePercent}%`}
                 />
               </Box>
             </GridItem>

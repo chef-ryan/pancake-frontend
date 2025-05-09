@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next'
 import TokenAvatar from '@/components/TokenAvatar'
 import { colors } from '@/theme/cssVariables'
 
-import { RewardInfo } from './FarmItem'
 import { wSolToSolString } from '@/utils/token'
 import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
+import { RewardInfo } from './type'
 
 type UnemmittedProps = FlexProps & {
   rewardsInfo: RewardInfo[]

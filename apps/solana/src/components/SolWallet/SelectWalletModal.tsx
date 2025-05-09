@@ -122,7 +122,7 @@ export default function SelectWalletModal({ wallets, isOpen, onSelectWallet, onC
                   fontWeight="normal"
                   _hover={{ fontWeight: 'medium', border: `1px solid ${colors.buttonPrimary}` }}
                   onClick={() => {
-                    if (!phantomWallet || phantomWallet.readyState == WalletReadyState.NotDetected) {
+                    if (!phantomWallet || phantomWallet.readyState === WalletReadyState.NotDetected) {
                       window.location.reload()
                     } else {
                       onSelectWallet(phantomWallet)
@@ -176,7 +176,7 @@ export default function SelectWalletModal({ wallets, isOpen, onSelectWallet, onC
                       selectable
                       wallet={wallet}
                       onClick={(wallet) => {
-                        if (wallet.readyState == WalletReadyState.NotDetected && wallet.adapter.name === 'Phantom') {
+                        if (wallet.readyState === WalletReadyState.NotDetected && wallet.adapter.name === 'Phantom') {
                           setIsWalletNotInstalled(true)
                           return
                         }
@@ -284,10 +284,10 @@ function WalletItem({
 function splitWallets(wallets: Wallet[]): { recommendedWallets: Wallet[]; notInstalledWallets: Wallet[] } {
   const supportedWallets = wallets.filter((w) => w.readyState !== WalletReadyState.Unsupported)
   const recommendedWallets = supportedWallets.filter((w) => w.readyState !== WalletReadyState.NotDetected && w.adapter.name !== 'Sollet')
-  const notInstalledWallets = supportedWallets.filter((w) => w.readyState == WalletReadyState.NotDetected && w.adapter.name !== 'Phantom')
+  const notInstalledWallets = supportedWallets.filter((w) => w.readyState === WalletReadyState.NotDetected && w.adapter.name !== 'Phantom')
   const solletWallet = supportedWallets.find((w) => w.adapter.name === 'Sollet')
   solletWallet && notInstalledWallets.push(solletWallet)
   const phantomWallet = supportedWallets.find((w) => w.adapter.name === 'Phantom')
-  phantomWallet && phantomWallet.readyState == WalletReadyState.NotDetected && recommendedWallets.unshift(phantomWallet)
+  phantomWallet && phantomWallet.readyState === WalletReadyState.NotDetected && recommendedWallets.unshift(phantomWallet)
   return { recommendedWallets, notInstalledWallets }
 }

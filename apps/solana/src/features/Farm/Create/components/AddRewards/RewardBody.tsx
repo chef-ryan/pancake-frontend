@@ -9,8 +9,8 @@ import { colors } from '@/theme/cssVariables'
 import { useEvent } from '@/hooks/useEvent'
 import { parseDateInfo } from '@/utils/date'
 import FarmDatePickerModal from '@/components/FarmDatePickerModal'
-import { NewRewardInfo } from '../../type'
 import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
+import { NewRewardInfo } from '../../type'
 
 type RewardBodyProps = {
   rewardInfo: NewRewardInfo
@@ -31,7 +31,7 @@ export default function RewardBody({ rewardInfo, tokenFilterFn, onChange }: Rewa
     onChange({ ...rewardInfo, amount: valNumber, perWeek: newPerWeek })
   })
   const handleRewardTimeChange = useEvent((startTime: number, endTime: number) => {
-    const {amount} = rewardInfo
+    const { amount } = rewardInfo
     const durations = endTime && startTime ? endTime - startTime : undefined
     const newPerWeek = durations && amount ? new Decimal(amount).div(durations / (60 * 60 * 24 * 1000 * 7)).toString() : undefined
     onChange({ ...rewardInfo, farmStart: startTime, farmEnd: endTime, perWeek: newPerWeek })

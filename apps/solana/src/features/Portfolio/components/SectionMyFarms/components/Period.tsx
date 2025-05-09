@@ -1,7 +1,7 @@
 import { Flex, FlexProps, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { colors } from '@/theme/cssVariables'
-import { RewardInfo } from './FarmItem'
+import { RewardInfo } from './type'
 
 type PeriodProps = FlexProps & {
   rewardsInfo: RewardInfo[]

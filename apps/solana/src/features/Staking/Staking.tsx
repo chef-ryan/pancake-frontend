@@ -6,11 +6,6 @@ import useFetchStakePools from '@/hooks/pool/useFetchStakePools'
 import useFarmPositions from '@/hooks/portfolio/farm/useFarmPositions'
 import StakingPoolItem from './components/StakingPoolItem'
 
-export type StakingPageQuery = {
-  dialog?: 'unstake' | 'stake'
-  open?: string // token mint
-}
-
 export default function Staking() {
   const { t } = useTranslation()
   const { activeStakePools, isLoading } = useFetchStakePools({})

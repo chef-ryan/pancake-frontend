@@ -6,12 +6,12 @@ import BN from 'bn.js'
 import ChevronLeftIcon from '@/icons/misc/ChevronLeftIcon'
 import { colors } from '@/theme/cssVariables/colors'
 import { routeBack } from '@/utils/routeTools'
-import LiquidityItem from './components/LiquidityItem'
-import LiquidityLockModal from './components/LiquidityLockModal'
-import LockedNFTModal from './components/LockedNFTModal'
 import useLockableCpmmLp from '@/hooks/portfolio/cpmm/useLockableCpmmLp'
 import { MintData } from '@/hooks/token/useFetchAccLpMint'
 import { useLiquidityStore, useTokenAccountStore } from '@/store'
+import LiquidityItem from './components/LiquidityItem'
+import LiquidityLockModal from './components/LiquidityLockModal'
+import LockedNFTModal from './components/LockedNFTModal'
 
 export default function Lock() {
   const { t } = useTranslation()
@@ -39,7 +39,9 @@ export default function Lock() {
       let nftAddress = ''
       lockCpmmLpAct({
         ...params,
-        onSent: (info: CpmmLockExtInfo) => (nftAddress = info.nftMint.toString()),
+        onSent: (info: CpmmLockExtInfo) => {
+          nftAddress = info.nftMint.toString()
+        },
         onConfirmed: () => {
           onLockSuccess(nftAddress)
           useTokenAccountStore.setState({ refreshCpmmPositionTag: Date.now() })

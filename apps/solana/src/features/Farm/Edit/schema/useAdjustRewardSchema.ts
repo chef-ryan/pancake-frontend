@@ -22,12 +22,12 @@ export const ADJUST_REWARD_ERROR = {
   DAYS_EXTEND: 'error.add_reward_days'
 }
 
-const numberTransform = yup.number().transform((value) => (isNaN(value) ? 0 : value))
+const numberTransform = yup.number().transform((value) => (Number.isNaN(value) ? 0 : value))
 const schema = (t: TFunction<'translation', undefined, 'translation'>) =>
   yup.object().shape({
     amount: yup
       .number()
-      .transform((value) => (isNaN(value) ? 0 : value))
+      .transform((value) => (Number.isNaN(value) ? 0 : value))
       .positive(t('error.enter_token_amount') ?? '')
       .test('is-amount-valid', t('is_amount_valid') ?? '', function () {
         // if (new Decimal(val || 0).gt(this.parent.balance))

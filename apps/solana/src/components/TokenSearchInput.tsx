@@ -7,7 +7,6 @@ import AddressChip from '@/components/AddressChip'
 import Close from '@/icons/misc/Close'
 import { debounce } from '@/utils/functionMethods'
 import useTokenInfo from '@/hooks/token/useTokenInfo'
-import TokenAvatar from './TokenAvatar'
 import { useTokenStore } from '@/store/useTokenStore'
 import { colors } from '@/theme/cssVariables/colors'
 import SearchIcon from '@/icons/misc/SearchIcon'
@@ -15,6 +14,7 @@ import useResizeObserver from '@/hooks/useResizeObserver'
 import { filterTokenFn } from '@/utils/token'
 import { isValidPublicKey } from '@/utils/publicKey'
 import { inputCard } from '@/theme/cssBlocks'
+import TokenAvatar from './TokenAvatar'
 
 type SearchBarProps = {
   value: string

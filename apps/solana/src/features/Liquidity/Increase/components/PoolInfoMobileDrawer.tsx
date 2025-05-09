@@ -1,10 +1,10 @@
 import React from 'react'
 import { Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Text, Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import PoolInfo from './PoolInfo'
-import PositionBalance from './PositionBalance'
 import { FormattedPoolInfoStandardItem } from '@/hooks/pool/type'
 import { AprData } from '@/features/Clmm/utils/calApr'
+import PoolInfo from './PoolInfo'
+import PositionBalance from './PositionBalance'
 
 export default function PoolDetailMobileDrawer({
   isOpen,

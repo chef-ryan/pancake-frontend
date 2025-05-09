@@ -1,8 +1,10 @@
+import { parseUserAgent } from 'react-device-detect'
 import { updateReqHistory } from '@raydium-io/raydium-sdk-v2'
 import axios from 'axios'
 import { toastSubject } from '@/hooks/toast/useGlobalToast'
 import i18n from '@/i18n'
-import { sendNetworkEvent } from './event'
+import { isLocal } from '@/utils/common'
+import { useAppStore } from '@/store'
 
 const axiosInstance = axios.create({ timeout: 60 * 1000 })
 export const retryCount = 5
@@ -10,6 +12,30 @@ export const skipRetryStatus = new Set([400, 403, 404, 500])
 const logCount = 800
 
 const isSkipLogs = (url?: string) => url?.includes('birdeye')
+
+interface EventTypeNetworkError {
+  url: string
+  errorMsg: string
+}
+
+export const sendNetworkEvent = async (props: EventTypeNetworkError) => {
+  if (isLocal()) return
+  try {
+    const deviceInfo = parseUserAgent(window.navigator.userAgent)
+    const deviceType = deviceInfo.device.type || 'pc'
+    axios.post(
+      `${useAppStore.getState().urlConfigs.MONITOR_BASE_HOST}/event`,
+      {
+        type: 'networkError',
+        deviceType,
+        ...props
+      },
+      { skipError: true }
+    )
+  } catch {
+    console.log('send network event error')
+  }
+}
 
 axiosInstance.interceptors.response.use(
   (response) => {

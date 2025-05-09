@@ -1,7 +1,7 @@
-import { useAppStore } from '@/store/useAppStore'
 import { Toggle } from '@pancakeswap/uikit'
 import { TxVersion } from '@raydium-io/raydium-sdk-v2'
 import { useTranslation } from 'react-i18next'
+import { useAppStore } from '@/store/useAppStore'
 import { SettingField } from './SettingField'
 
 export function VersionedTransactionSettingField() {
