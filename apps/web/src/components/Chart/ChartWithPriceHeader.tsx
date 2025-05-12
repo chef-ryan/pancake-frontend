@@ -20,7 +20,7 @@ interface ChartWithPriceHeaderProps {
 
 const Container = styled(Box)`
   width: 100%;
-  height: 100%;
+  height: fit-content;
   border-radius: 16px;
   background: ${({ theme }) => theme.card.background};
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
