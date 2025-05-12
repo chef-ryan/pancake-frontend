@@ -12,9 +12,8 @@ interface TradingViewChartProps {
 }
 
 const ChartContainer = styled.div`
-  padding-top: 70px;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 60px);
   ${({ theme }) => theme.mediaQueries.md} {
     padding-top: 0;
     width: 100%;
