@@ -1,7 +1,7 @@
 import { Currency } from '@pancakeswap/sdk'
-import { Flex, FlexGap, Text } from '@pancakeswap/uikit'
-import { DoubleCurrencyLogo } from 'components/Logo'
-import React from 'react'
+import { Flex, FlexGap, SwapHorizIcon, Text } from '@pancakeswap/uikit'
+import { DoubleCurrencyLogo } from '@pancakeswap/widgets-internal'
+import React, { useState } from 'react'
 import { styled } from 'styled-components'
 
 interface PriceHeaderProps {
@@ -76,17 +76,31 @@ const PriceHeader: React.FC<PriceHeaderProps> = ({
   currency0,
   currency1,
 }) => {
-  // 分割符號以獲取幣種名稱
-  const [baseCurrency, quoteCurrency] = symbol.split('/')
+  const [isReversed, setIsReversed] = useState(false)
 
   return (
     <Container>
-      <TokenSymbol>
-        <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} margin />
-        <Text bold fontSize="18px">
-          {symbol}
-        </Text>
-      </TokenSymbol>
+      <FlexGap gap="8px">
+        <TokenSymbol>
+          <DoubleCurrencyLogo
+            currency0={isReversed ? currency1 : currency0}
+            currency1={isReversed ? currency0 : currency1}
+            size={24}
+            margin
+            innerMargin="-8px"
+          />
+          <Text bold fontSize="18px">
+            {isReversed ? `${currency1?.symbol}/${currency0?.symbol}` : symbol}
+          </Text>
+        </TokenSymbol>
+        <SwapHorizIcon
+          color="primary"
+          width="24px"
+          height="24px"
+          style={{ cursor: 'pointer' }}
+          onClick={() => setIsReversed(!isReversed)}
+        />
+      </FlexGap>
 
       <PriceInfo>
         <FlexGap gap="16px">
