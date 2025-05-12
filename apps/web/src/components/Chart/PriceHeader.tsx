@@ -1,8 +1,8 @@
+import { Currency } from '@pancakeswap/sdk'
+import { Flex, FlexGap, Text } from '@pancakeswap/uikit'
+import { DoubleCurrencyLogo } from 'components/Logo'
 import React from 'react'
 import { styled } from 'styled-components'
-import { Flex, Text, Box, FlexGap } from '@pancakeswap/uikit'
-import { DoubleCurrencyLogo } from 'components/Logo'
-import { Currency } from '@pancakeswap/sdk'
 
 interface PriceHeaderProps {
   symbol?: string
@@ -89,12 +89,13 @@ const PriceHeader: React.FC<PriceHeaderProps> = ({
       </TokenSymbol>
 
       <PriceInfo>
-        <PriceText>{price}</PriceText>
-        <PriceChange isPositive={isPositive}>
-          {priceChange} ({priceChangePercent})
-        </PriceChange>
-
         <FlexGap gap="16px">
+          <StatItem>
+            <Text fontSize="12px" color="textSubtle">
+              24h Change
+            </Text>
+            <PriceChange isPositive={isPositive}>{priceChangePercent}</PriceChange>
+          </StatItem>
           <StatItem>
             <Text fontSize="12px" color="textSubtle">
               24h High
@@ -109,6 +110,7 @@ const PriceHeader: React.FC<PriceHeaderProps> = ({
             <Text bold>{low24h}</Text>
           </StatItem>
         </FlexGap>
+        <PriceText>{price}</PriceText>
       </PriceInfo>
     </Container>
   )
