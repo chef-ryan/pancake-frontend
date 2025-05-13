@@ -1,3 +1,4 @@
+import useTheme from 'hooks/useTheme'
 import React, { useEffect, useRef } from 'react'
 import { styled } from 'styled-components'
 import type { TradingViewWidget, TradingViewWidgetOptions } from './lib/pancakeswap-charting-library.d.ts'
@@ -21,9 +22,10 @@ const ChartContainer = styled.div`
   }
 `
 
-const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol = 'AAPL', theme = 'Dark' }) => {
+const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol = 'AAPL' }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const widgetRef = useRef<TradingViewWidget | null>(null)
+  const { isDark, theme } = useTheme()
 
   useEffect(() => {
     let isMounted = true
@@ -32,20 +34,22 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol = 'AAPL', th
       try {
         await loadTradingViewLibrary()
 
-        if (containerRef.current && !widgetRef.current && isMounted) {
+        if (containerRef.current && !widgetRef.current && isMounted && theme.colors) {
           const options: TradingViewWidgetOptions = {
             symbol,
-            theme,
+            theme: isDark ? 'Dark' : 'Light',
+            supports_marks_on_bars: false,
+            supports_timescale_marks: false,
             overrides: {
-              'mainSeriesProperties.candleStyle.upColor': '#31D0AA',
-              'mainSeriesProperties.candleStyle.downColor': '#ED4B9E',
-              'mainSeriesProperties.candleStyle.borderUpColor': '#31D0AA',
-              'mainSeriesProperties.candleStyle.borderDownColor': '#ED4B9E',
-              'mainSeriesProperties.candleStyle.wickUpColor': '#31D0AA',
-              'mainSeriesProperties.candleStyle.wickDownColor': '#ED4B9E',
-              'paneProperties.background': '#27262C',
+              'mainSeriesProperties.candleStyle.upColor': theme.colors.primary,
+              'mainSeriesProperties.candleStyle.downColor': theme.colors.failure,
+              'mainSeriesProperties.candleStyle.borderUpColor': theme.colors.primary,
+              'mainSeriesProperties.candleStyle.borderDownColor': theme.colors.failure,
+              'mainSeriesProperties.candleStyle.wickUpColor': theme.colors.primary,
+              'mainSeriesProperties.candleStyle.wickDownColor': theme.colors.failure,
+              'paneProperties.background': theme.colors.backgroundAlt,
               'paneProperties.backgroundType': 'solid',
-              headerToolbarBg: '#27262C',
+              headerToolbarBg: theme.colors.backgroundAlt,
             },
             disabled_features: [
               'left_toolbar',
@@ -68,10 +72,18 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol = 'AAPL', th
               'uppercase_instrument_names',
               'study_symbol_ticker_description',
               'auto_enable_symbol_labels',
-              'hide_main_series_symbol_from_indicator_legend',
+              // 禁用圖表上的標記 (earnings, dividends 等)
+              'marks_on_bars',
+              'show_event_marks',
+              'show_earnings_marks',
+              'show_dividend_marks',
+              'show_splits_marks',
+              // 禁用時間軸上的標記
+              'timescale_marks',
               'timeframes_toolbar',
               'legend_widget',
               'display_legend_on_all_charts',
+              'two_character_bar_marks_labels',
             ],
             enabled_features: [
               'hide_left_toolbar_by_default',
