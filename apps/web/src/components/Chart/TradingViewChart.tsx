@@ -1,3 +1,4 @@
+import { tokens } from '@pancakeswap/uikit'
 import useTheme from 'hooks/useTheme'
 import React, { useEffect, useRef } from 'react'
 import { styled } from 'styled-components'
@@ -25,31 +26,46 @@ const ChartContainer = styled.div`
 const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol = 'AAPL' }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const widgetRef = useRef<TradingViewWidget | null>(null)
+  const isInitialized = useRef(false)
   const { isDark, theme } = useTheme()
 
   useEffect(() => {
-    let isMounted = true
-
     async function initChart() {
       try {
         await loadTradingViewLibrary()
 
-        if (containerRef.current && !widgetRef.current && isMounted && theme.colors) {
+        if (containerRef.current && !widgetRef.current && isMounted && !isInitialized.current) {
           const options: TradingViewWidgetOptions = {
             symbol,
             theme: isDark ? 'Dark' : 'Light',
-            supports_marks_on_bars: false,
-            supports_timescale_marks: false,
             overrides: {
-              'mainSeriesProperties.candleStyle.upColor': theme.colors.primary,
-              'mainSeriesProperties.candleStyle.downColor': theme.colors.failure,
-              'mainSeriesProperties.candleStyle.borderUpColor': theme.colors.primary,
-              'mainSeriesProperties.candleStyle.borderDownColor': theme.colors.failure,
-              'mainSeriesProperties.candleStyle.wickUpColor': theme.colors.primary,
-              'mainSeriesProperties.candleStyle.wickDownColor': theme.colors.failure,
-              'paneProperties.background': theme.colors.backgroundAlt,
+              'mainSeriesProperties.candleStyle.upColor': isDark
+                ? tokens.colors.dark.success
+                : tokens.colors.light.success,
+              'mainSeriesProperties.candleStyle.downColor': isDark
+                ? tokens.colors.dark.destructive
+                : tokens.colors.light.destructive,
+              'mainSeriesProperties.candleStyle.borderUpColor': isDark
+                ? tokens.colors.dark.success
+                : tokens.colors.light.success,
+              'mainSeriesProperties.candleStyle.borderDownColor': isDark
+                ? tokens.colors.dark.destructive
+                : tokens.colors.light.destructive,
+              'mainSeriesProperties.candleStyle.wickUpColor': isDark
+                ? tokens.colors.dark.success
+                : tokens.colors.light.success,
+              'mainSeriesProperties.candleStyle.wickDownColor': isDark
+                ? tokens.colors.dark.destructive
+                : tokens.colors.light.destructive,
+              'paneProperties.background': isDark ? tokens.colors.dark.card : tokens.colors.light.card,
               'paneProperties.backgroundType': 'solid',
-              headerToolbarBg: theme.colors.backgroundAlt,
+              'paneProperties.grid.color': isDark ? '#ffffff' : tokens.colors.light.cardBorder,
+              'paneProperties.grid.style': 0,
+              'paneProperties.vertGrid.color': isDark ? '#ffffff' : tokens.colors.light.cardBorder,
+              'paneProperties.vertGrid.style': 0,
+              'paneProperties.horzGrid.color': isDark ? '#ffffff' : tokens.colors.light.cardBorder,
+              'paneProperties.horzGrid.style': 0,
+              headerToolbarBg: isDark ? tokens.colors.dark.backgroundAlt : tokens.colors.light.backgroundAlt,
             },
             disabled_features: [
               'left_toolbar',
@@ -85,17 +101,14 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol = 'AAPL' }) 
               'display_legend_on_all_charts',
               'two_character_bar_marks_labels',
             ],
-            enabled_features: [
-              'hide_left_toolbar_by_default',
-              'use_localstorage_for_settings',
-              'save_chart_properties_to_local_storage',
-            ],
+            enabled_features: ['hide_left_toolbar_by_default'],
             autosize: true,
             height: '100%',
             width: '100%',
           }
 
           widgetRef.current = createTradingViewWidget(containerRef.current, options)
+          isInitialized.current = true
         }
       } catch (error) {
         console.error('Failed to initialize chart:', error)
@@ -103,15 +116,52 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol = 'AAPL' }) 
     }
 
     initChart()
+  }, [symbol, isDark, theme])
 
+  useEffect(() => {
+    console.log('isDark', isDark, widgetRef.current && isInitialized.current)
+    async function changeTheme() {
+      if (widgetRef.current && isInitialized.current) {
+        await widgetRef.current.changeTheme(isDark ? 'Dark' : 'Light')
+        widgetRef.current.applyOverrides({
+          'mainSeriesProperties.candleStyle.upColor': isDark ? tokens.colors.dark.success : tokens.colors.light.success,
+          'mainSeriesProperties.candleStyle.downColor': isDark
+            ? tokens.colors.dark.destructive
+            : tokens.colors.light.destructive,
+          'mainSeriesProperties.candleStyle.borderUpColor': isDark
+            ? tokens.colors.dark.success
+            : tokens.colors.light.success,
+          'mainSeriesProperties.candleStyle.borderDownColor': isDark
+            ? tokens.colors.dark.destructive
+            : tokens.colors.light.destructive,
+          'mainSeriesProperties.candleStyle.wickUpColor': isDark
+            ? tokens.colors.dark.success
+            : tokens.colors.light.success,
+          'mainSeriesProperties.candleStyle.wickDownColor': isDark
+            ? tokens.colors.dark.destructive
+            : tokens.colors.light.destructive,
+          'paneProperties.background': isDark ? tokens.colors.dark.card : tokens.colors.light.card,
+          'paneProperties.backgroundType': 'solid',
+          'paneProperties.grid.color': isDark ? '#ffffff' : tokens.colors.light.cardBorder,
+          'paneProperties.grid.style': 0,
+          'paneProperties.vertGrid.color': isDark ? '#ffffff' : tokens.colors.light.cardBorder,
+          'paneProperties.vertGrid.style': 0,
+          'paneProperties.horzGrid.color': isDark ? '#ffffff' : tokens.colors.light.cardBorder,
+          'paneProperties.horzGrid.style': 0,
+        })
+      }
+    }
+    changeTheme()
+  }, [isDark, theme])
+
+  useEffect(() => {
     return () => {
-      isMounted = false
       if (widgetRef.current?.remove) {
         widgetRef.current.remove()
       }
       widgetRef.current = null
     }
-  }, [symbol, theme])
+  }, [])
 
   return <ChartContainer id="swap-chart" ref={containerRef} />
 }
