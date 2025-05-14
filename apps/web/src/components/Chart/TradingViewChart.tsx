@@ -34,7 +34,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol = 'AAPL' }) 
       try {
         await loadTradingViewLibrary()
 
-        if (containerRef.current && !widgetRef.current && isMounted && !isInitialized.current) {
+        if (containerRef.current && !widgetRef.current && !isInitialized.current) {
           const options: TradingViewWidgetOptions = {
             symbol,
             theme: isDark ? 'Dark' : 'Light',
