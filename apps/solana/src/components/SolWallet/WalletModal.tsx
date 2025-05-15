@@ -54,13 +54,7 @@ const WalletModal: React.FC<React.PropsWithChildren<WalletModalProps>> = ({ init
   }, [])
 
   return (
-    <MotionModal
-      title={t('wallet.your_wallet')}
-      maxWidth={[null, null, '500px']}
-      minHeight={isMobile ? '500px' : undefined}
-      headerPadding="2px 14px 0 24px"
-      onDismiss={onDismiss}
-    >
+    <MotionModal title={t('wallet.your_wallet')} maxWidth={[null, null, '500px']} headerPadding="2px 14px 0 24px" onDismiss={onDismiss}>
       {view === WalletView.WALLET_INFO && <WalletInfo onDismiss={onDismiss} />}
       {/* {view === WalletView.TRANSACTIONS && <WalletTransactions />} */}
     </MotionModal>

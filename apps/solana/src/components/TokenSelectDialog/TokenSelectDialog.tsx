@@ -126,7 +126,7 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
   return (
     <Modal variant="mobileFullPage" isOpen={isOpen} onClose={handleClose} onCloseComplete={onCloseComplete}>
       <ModalOverlay />
-      <ModalContent borderRadius="24px">{renderModalContent()}</ModalContent>
+      <ModalContent borderRadius={[null, '24px']}>{renderModalContent()}</ModalContent>
     </Modal>
   )
 })

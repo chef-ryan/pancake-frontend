@@ -1,9 +1,9 @@
-import { Box, Button, CopyAddress, Flex, InjectedModalProps, ScanLink, Message, Skeleton, Text, AptosIcon } from '@pancakeswap/uikit'
+import { Box, Button, Flex, InjectedModalProps, ScanLink, Message, Skeleton, Text, AptosIcon } from '@pancakeswap/uikit'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useTranslation } from 'react-i18next'
 import { useSolBalance } from '@/hooks/token/useSolBalance'
 import { useAppStore } from '@/store'
-import AddressChip from '../AddressChip'
+import { WalletAddress } from './WalletAddress'
 
 interface WalletInfoProps {
   onDismiss: InjectedModalProps['onDismiss']
@@ -26,8 +26,7 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ onDismiss }) => {
       <Text color="secondary" fontSize="12px" textTransform="uppercase" fontWeight="bold" mb="8px">
         {t('Your Address')}
       </Text>
-      {/* {connected && <CopyAddress tooltipMessage={t('Copied')} account={publicKey?.toBase58()} mb="24px" />} */}
-      {connected && <AddressChip showDigitCount="all" address={publicKey?.toBase58()} mb="24px" />}
+      {connected && <WalletAddress tooltipMessage={t('wallet.copied')} account={publicKey?.toBase58()} mb="24px" />}
       {/* {hasLowNativeBalance && (
         <Message variant="warning" mb="24px">
           <Box>

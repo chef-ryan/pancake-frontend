@@ -78,7 +78,7 @@ export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isO
           </HStack>
         }
         minWidth={[null, null, '470px']}
-        minHeight={isMobile ? '500px' : '240px'}
+        minHeight={isMobile ? null : '240px'}
         headerPadding="24px 24px 0 24px"
         headerBorderColor="transparent"
         onDismiss={props.onClose}

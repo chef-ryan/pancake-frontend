@@ -767,11 +767,8 @@
   },
   "disclaimer": {
     "title": "면책 조항",
-    "text1": "이 웹사이트에서 호스팅되는 사용자 인터페이스(이 \"인터페이스\")는 비중앙집권적이고 커뮤니티 주도의 블록체인 기반의 스마트 계약 및 도구  모음인 Raydium 프로토콜(“Raydium 프로토콜”)로 통하는 오픈 소스 프론트엔드 소프트웨어 포털입니다. 이 인터페이스 및 Raydium 프로토콜은 Raydium Holding Foundation에 의해 제공되지만, 프로토콜에서 수행되는 모든 거래는 관련 허가가 필요없는 스마트 계약에 의해 실행됩니다. 인터페이스는 오픈 소스이고 Raydium 프로토콜 및 관련 스마트 계약은 모든 사용자, 단체 또는 제3자가 접근할 수 있으므로 Raydium 프로토콜과 상호 작용할 수 있는 제3자 웹 및 모바일 사용자 인터페이스가 다수 있습니다.",
-    "text2": "이 인터페이스 및 Raydium 프로토콜은 '있는 그대로', 본인의 위험 부담 하에, 어떤 종류의 보증 없이 제공됩니다. Raydium Holding Foundation은 Raydium 프로토콜 또는 프로토콜에서 수행되는 거래 또는 관련 스마트 계약을 제공, 소유 또는 통제하지 않습니다. 이 인터페이스 또는 Raydium 프로토콜 및 관련 스마트 계약을 사용하거나 접근함으로써, 귀하는 이 인터페이스 또는 Raydium 프로토콜을 생성, 배포 또는 유지 관리하는 데 관여한 개발자나 단체가 이 인터페이스 또는 Raydium 프로토콜의 사용, 사용 불가 또는 다른 사용자와의 상호 작용과 관련된 모든 청구 또는 손해에 대해 책임을 지지 않음을 동의하게 됩니다. 여기에는 직접적, 간접적, 우발적, 특수한, 징벌적, 처벌적 또는 결과적 손해 또는 이익, 디지털 자산, 토큰 또는 기타 모든 가치의 손실이 포함됩니다.",
-    "text3": "Raydium 프로토콜은 벨라루스, 중앙아프리카공화국, 콩고민주공화국, 조선민주주의인민공화국, 우크라이나의 크림, 도네츠크 인민공화국, 루한스크인민공화국 지역, 쿠바, 이란, 리비아, 소말리아, 수단, 남수단, 시리아, 미국, 예멘, 짐바브웨 및 Raydium 프로토콜 접근 또는 사용이 금지된 기타 관할 지역(“금지된 관할 지역”)의 거주자에게는 제공되지 않습니다.",
-    "text4": "이 인터페이스, Raydium 프로토콜 또는 관련 스마트 계약을 사용하거나 접근함으로써, 귀하는 금지된 관할 지역에 위치하지 않으며, 그곳에서 결사, 설립되지 않았으며, 금지된 관할 지역의 시민이나 거주자가 아님을 진술하게 됩니다. 또한 귀하는 제재 하에 있지 않고, 미국 재무부 해외 자산 통제국, 유엔 안전 보장 이사회, 유럽 연합 또는 회원국 또는 기타 정부 당국이 유지하는 금지 또는 제한된 당사자 리스트 또는 제외 또는 거부된 사람 리스트 등에 포함되지 않았음을 진술하게 됩니다.",
+    "text1": "PancakeSwap, or related smart contract, you represent that you are noy located in, incorporated or established in, or a citizen or resident of the Prohibited Jurisdictions. You also represent that you are not subject to sanctions or otherwise designated on any list of prohibited or restricted parties or excluded or denied persons, including but not limited to the lists maintained by the United States’ Department of Tresury’s Office Security Council, the European Union or its Member States, or any other government authority.",
     "agree_terms": "약관에 동의",
-    "enter_raydium": "Raydium 접속"
+    "enter": "접속"
   }
 }

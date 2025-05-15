@@ -43,6 +43,18 @@ const Wrapper = styled(Box)`
   }
 `
 
+const ButtonAndDetailsPanel = styled.div`
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 16px;
+  border-radius: 24px;
+  background-color: ${colors.backgroundAlt};
+  border: 1px solid ${colors.cardBorder01};
+`
+
 export function SwapPanel({
   onInputMintChange,
   onOutputMintChange,
@@ -344,9 +356,35 @@ export function SwapPanel({
             actionRef={tokenBActionRef}
           />
         </Flex>
-        {/* swap info */}
+      </SwapUIV2.InputPanelWrapper>
+      <ButtonAndDetailsPanel>
+        <ConnectedButton
+          disabled={new Decimal(amountIn || 0).isZero() || !!swapError || needPriceUpdatedAlert || swapDisabled}
+          isLoading={isComputing || isSending}
+          loadingText={<div>{isSending ? t('transaction.transaction_initiating') : isComputing ? t('swap.computing') : ''}</div>}
+          onClick={isHighRiskTx ? onHightRiskOpen : handleClickSwap}
+        >
+          <Text>
+            {swapDisabled ? t('common.disabled') : swapError || t('swap.title')}
+            {isPoolNotOpenError ? ` ${dayjs(Number(openTime) * 1000).format('YYYY/M/D HH:mm:ss')}` : null}
+          </Text>
+        </ConnectedButton>
+        {isSolFeeNotEnough ? (
+          <Flex
+            rounded="xl"
+            p="2"
+            fontSize="sm"
+            bg="rgba(255, 78, 163,0.1)"
+            color={colors.semanticError}
+            alignItems="start"
+            justifyContent="center"
+          >
+            <WarningIcon style={{ marginTop: '2px', marginRight: '4px' }} stroke={colors.semanticError} />
+            <Text>{t('swap.error_sol_fee_not_insufficient', { amount: formatToRawLocaleStr(DEFAULT_SOL_RESERVER) })}</Text>
+          </Flex>
+        ) : null}
         <Collapse in={hasValidAmountOut} animateOpacity>
-          <Box mb={[4, 5]}>
+          <Box>
             <SwapInfoBoard
               amountIn={amountIn}
               tokenInput={tokenInput}
@@ -359,26 +397,11 @@ export function SwapPanel({
         </Collapse>
 
         <Collapse in={needPriceUpdatedAlert}>
-          <Box pb={[4, 5]}>
+          <Box>
             <SwapPriceUpdatedAlert onConfirm={onPriceUpdatedConfirm} />
           </Box>
         </Collapse>
-        {isSolFeeNotEnough ? (
-          <Flex
-            rounded="xl"
-            p="2"
-            mt="-2"
-            mb="3"
-            fontSize="sm"
-            bg="rgba(255, 78, 163,0.1)"
-            color={colors.semanticError}
-            alignItems="start"
-            justifyContent="center"
-          >
-            <WarningIcon style={{ marginTop: '2px', marginRight: '4px' }} stroke={colors.semanticError} />
-            <Text>{t('swap.error_sol_fee_not_insufficient', { amount: formatToRawLocaleStr(DEFAULT_SOL_RESERVER) })}</Text>
-          </Flex>
-        ) : null}
+
         {wsolBalance.isZero ? null : (
           <Flex
             rounded="md"
@@ -447,24 +470,14 @@ export function SwapPanel({
             ) : null}
           </Flex>
         ) : null}
-        <ConnectedButton
-          disabled={new Decimal(amountIn || 0).isZero() || !!swapError || needPriceUpdatedAlert || swapDisabled}
-          isLoading={isComputing || isSending}
-          loadingText={<div>{isSending ? t('transaction.transaction_initiating') : isComputing ? t('swap.computing') : ''}</div>}
-          onClick={isHighRiskTx ? onHightRiskOpen : handleClickSwap}
-        >
-          <Text>
-            {swapDisabled ? t('common.disabled') : swapError || t('swap.title')}
-            {isPoolNotOpenError ? ` ${dayjs(Number(openTime) * 1000).format('YYYY/M/D HH:mm:ss')}` : null}
-          </Text>
-        </ConnectedButton>
+
         <HighRiskAlert
           isOpen={isHightRiskOpen}
           onClose={offHightRiskOpen}
           onConfirm={handleHighRiskConfirm}
           percent={computeResult?.priceImpactPct ?? 0}
         />
-      </SwapUIV2.InputPanelWrapper>
+      </ButtonAndDetailsPanel>
     </Wrapper>
   )
 }

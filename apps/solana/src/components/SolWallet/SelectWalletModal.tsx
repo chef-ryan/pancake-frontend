@@ -71,7 +71,7 @@ export default function SelectWalletModal({ wallets, isOpen, onSelectWallet, onC
   return (
     <Modal variant="mobileFullPage" isOpen={isOpen} onClose={onClose} onCloseComplete={handleCloseComplete}>
       <ModalOverlay />
-      <ModalContent color={colors.textPrimary} width={['unset', '36em']} rounded="3xl">
+      <ModalContent color={colors.textPrimary} width={['unset', '36em']} rounded={[null, '3xl']}>
         <ModalHeader>
           <Text bold>{t('wallet_connect_panel.title')}</Text>
         </ModalHeader>
@@ -152,7 +152,7 @@ export default function SelectWalletModal({ wallets, isOpen, onSelectWallet, onC
             <Box overflow="hidden" display="flex" flexDirection="column">
               <Box mb={5} color={colors.textPrimary} fontSize="14px">
                 {t('wallet_connect_panel.desc')}{' '}
-                <Link href="https://raydium.io/docs/disclaimer/" isExternal>
+                <Link href="https://pancakeswap.finance/terms-of-service" isExternal>
                   {t('wallet_connect_panel.desc_link')}
                 </Link>
               </Box>

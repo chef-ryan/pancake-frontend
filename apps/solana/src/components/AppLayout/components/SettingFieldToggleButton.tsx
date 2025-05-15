@@ -22,7 +22,9 @@ export function SettingFieldToggleButton(props: { isOpen?: boolean; renderConten
         </Box>
       ) : (
         <HStack>
-          <Box overflow="hidden">{props.renderContent}</Box>
+          <Box overflow="hidden" maxWidth="75vw">
+            {props.renderContent}
+          </Box>
           <Box p={1}>
             <ChevronDown size="18px" />
           </Box>
