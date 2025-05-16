@@ -25,8 +25,10 @@ const Container = styled(Box)`
   background: ${({ theme }) => theme.card.background};
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+
   ${({ theme }) => theme.mediaQueries.md} {
     height: fit-content;
+    margin-left: 40px;
   }
 `
 
