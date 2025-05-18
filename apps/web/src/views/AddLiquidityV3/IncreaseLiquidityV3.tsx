@@ -184,6 +184,9 @@ export default function IncreaseLiquidityV3({ currencyA: baseCurrency, currencyB
     contract: tokenId && positionManager ? positionManager : undefined,
     functionName: 'ownerOf',
     args: useMemo(() => [tokenIdBigInt], [tokenIdBigInt]),
+    options: {
+      enabled: !!tokenIdBigInt,
+    },
   }).result
 
   const ownsNFT = owner === account || positionDetails?.operator === account
