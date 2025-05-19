@@ -12,6 +12,7 @@ import { cacheByLRU } from '@pancakeswap/utils/cacheByLRU'
 import { NextRequest, NextResponse } from 'next/server'
 import qs from 'qs'
 import { checksumAddress } from 'utils/checksumAddress'
+import { BasePerf, PerfTracker } from 'utils/PerfTracker'
 import { getViemClients } from 'utils/viem.server'
 import { Address } from 'viem/accounts'
 
@@ -21,31 +22,52 @@ export const config = {
 
 const MAX_CACHE_SECONDS = 20
 
+interface Perf extends BasePerf {}
+
+function getPerf() {
+  const perf = new PerfTracker<Perf>(
+    'poolapi',
+    {
+      perf: {},
+      error: '',
+    },
+    Date.now(),
+  )
+  return perf
+}
 const query = cacheByLRU(
   async (addressA: Address, addressB: Address, chainId: ChainId) => {
-    const pools = await InfinityRouter.fetchInfinityPoolsFromApi(addressA, addressB, chainId)
-    const localPools = pools
-      .map((pool) => {
-        return InfinityRouter.toLocalInfinityPool(pool, chainId as keyof typeof hooksList)
-      })
-      .filter((x) => x) as (InfinityClPool | InfinityBinPool)[]
-    const localClPools = localPools.filter((pool) => pool.type === PoolType.InfinityCL)
-    const localBinPools = localPools.filter((pool) => pool.type === PoolType.InfinityBIN)
-    const [poolWithTicks, poolWithBins] = await Promise.all([
-      InfinityRouter.fillClPoolsWithTicks({
-        pools: localClPools,
-        clientProvider: getViemClients as OnChainProvider,
-      }),
-      InfinityRouter.fillPoolsWithBins({
-        pools: localBinPools,
-        clientProvider: getViemClients as OnChainProvider,
-      }),
-    ])
+    const perf = getPerf()
+    perf.track('start')
+    try {
+      const pools = await InfinityRouter.fetchInfinityPoolsFromApi(addressA, addressB, chainId)
+      const localPools = pools
+        .map((pool) => {
+          return InfinityRouter.toLocalInfinityPool(pool, chainId as keyof typeof hooksList)
+        })
+        .filter((x) => x) as (InfinityClPool | InfinityBinPool)[]
+      const localClPools = localPools.filter((pool) => pool.type === PoolType.InfinityCL)
+      const localBinPools = localPools.filter((pool) => pool.type === PoolType.InfinityBIN)
+      perf.track('pool_success')
+      const [poolWithTicks, poolWithBins] = await Promise.all([
+        InfinityRouter.fillClPoolsWithTicks({
+          pools: localClPools,
+          clientProvider: getViemClients as OnChainProvider,
+        }),
+        InfinityRouter.fillPoolsWithBins({
+          pools: localBinPools,
+          clientProvider: getViemClients as OnChainProvider,
+        }),
+      ])
 
-    const result = [...poolWithTicks, ...poolWithBins].map((p) => {
-      return InfinityRouter.toRemoteInfinityPool(p as (InfinityClPool & WithTvl) | (InfinityBinPool & WithTvl))
-    })
-    return result
+      const result = [...poolWithTicks, ...poolWithBins].map((p) => {
+        return InfinityRouter.toRemoteInfinityPool(p as (InfinityClPool & WithTvl) | (InfinityBinPool & WithTvl))
+      })
+      perf.track('success')
+      return result
+    } finally {
+      perf.report('InfinityPoolAPI')
+    }
   },
   {
     ttl: 10_000,
