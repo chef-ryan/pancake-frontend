@@ -76,7 +76,7 @@ export const bestRoutingSDKTradeAtom = atomFamily((option: QuoteQuery) => {
         type: OrderType.PCS_CLASSIC,
         trade: (verifiedTrade || undefined) as InfinityGetBestTradeReturnType | undefined,
       } as InterfaceOrder
-      perf.tracker.success(order)
+      perf.tracker.successWithOrder(order)
       return order
     }, QUOTE_TIMEOUT)
 

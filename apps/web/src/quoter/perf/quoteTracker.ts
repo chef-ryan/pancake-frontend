@@ -4,7 +4,7 @@ import { accountActiveChainAtom } from 'hooks/useAccountActiveChain'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { QuoteQuery } from 'quoter/quoter.types'
-import { getLogger } from 'utils/datadog'
+
 import { BasePerf, PerfTracker } from 'utils/PerfTracker'
 import { InterfaceOrder } from 'views/Swap/utils'
 
@@ -25,8 +25,6 @@ type QuoteTrace = BasePerf & {
   app: string
   quote: string
 }
-
-const logger = getLogger('quote')
 
 const APPS = [
   { regex: /MetaMask/i, app: 'mm' },
@@ -102,7 +100,7 @@ export const quoteTraceAtom = atomFamily(
         error: '',
       }
 
-      const tracker = new RouteTracker(trace, params.createTime)
+      const tracker = new RouteTracker('quote', trace, params.createTime)
       return {
         trace,
         tracker,

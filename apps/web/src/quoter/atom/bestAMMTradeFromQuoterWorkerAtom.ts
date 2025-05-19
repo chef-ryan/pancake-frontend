@@ -92,7 +92,7 @@ export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteQuery) 
         type: OrderType.PCS_CLASSIC,
         trade: parsed as any as InfinityRouter.InfinityTradeWithoutGraph<TradeType>,
       } as InterfaceOrder
-      perf.tracker.success(order)
+      perf.tracker.successWithOrder(order)
       return order
     }, QUOTE_TIMEOUT)
 
