@@ -185,7 +185,11 @@ export default function IncreaseLiquidityV3({ currencyA: baseCurrency, currencyB
     functionName: 'ownerOf',
     args: useMemo(() => [tokenIdBigInt], [tokenIdBigInt]),
     options: {
-      enabled: !!tokenIdBigInt && positionDetails?.operator !== account,
+      enabled: Boolean(
+        tokenIdBigInt && account && positionDetails?.operator !== account && isStakedInMCv3 !== 'loading'
+          ? isStakedInMCv3 !== 'true'
+          : false,
+      ),
     },
   }).result
 
