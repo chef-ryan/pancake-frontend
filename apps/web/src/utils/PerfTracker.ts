@@ -35,7 +35,7 @@ export class PerfTracker<TTraceData extends BasePerf> {
     return records as Record<ExtendTrackKey, number>
   }
 
-  public success() {
+  public success(_?: any) {
     this.track('success' as ExtendTrackKey)
   }
 
@@ -48,13 +48,13 @@ export class PerfTracker<TTraceData extends BasePerf> {
     this.track('fail')
   }
 
-  public report() {
+  public report(key: string) {
     const records = this.getRecords()
     this.trace.perf = records
     const end = this.trace.perf.success || this.trace.perf.fail
     const start = this.trace.perf.start
     const duration = end - start
     this.trace.perf.duration = duration
-    this.logger.log('quote', this.trace)
+    this.logger.log(key, this.trace)
   }
 }

@@ -59,13 +59,17 @@ function detectApp() {
 }
 
 class RouteTracker extends PerfTracker<QuoteTrace> {
-  public successWithOrder(order: InterfaceOrder) {
-    this.success()
+  public success(order: InterfaceOrder) {
+    super.success()
     if (order.trade.tradeType === TradeType.EXACT_INPUT) {
       this.trace.quote = order.trade.outputAmount.toExact()
     } else {
       this.trace.quote = order.trade.inputAmount.toExact()
     }
+  }
+
+  public report() {
+    super.report(`quote-${this.trace.route}`)
   }
 }
 
