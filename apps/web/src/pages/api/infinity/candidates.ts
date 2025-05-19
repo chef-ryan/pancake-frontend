@@ -65,8 +65,11 @@ const query = cacheByLRU(
       })
       perf.track('success')
       return result
+    } catch (ex) {
+      perf.fail(ex)
+      throw ex
     } finally {
-      perf.report('InfinityPoolAPI')
+      perf.report('candidates')
     }
   },
   {

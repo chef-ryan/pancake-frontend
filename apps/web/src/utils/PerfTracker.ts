@@ -1,6 +1,3 @@
-import { Logger } from '@datadog/browser-logs'
-import { getLogger } from 'utils/datadog'
-
 export interface BasePerf {
   perf: Record<string, number>
   error: string
@@ -15,12 +12,21 @@ export class PerfTracker<TTraceData extends BasePerf> {
 
   private start: number
 
-  private logger: Logger
+  private async getLogger() {
+    if (typeof window !== 'undefined') {
+      const i = await import('utils/datadog')
+      return i.getLogger(this.topic)
+    }
+    return {
+      log: (key: string, trace: TTraceData) => {
+        console.log(key, trace)
+      },
+    }
+  }
 
-  constructor(topic: string, trace: TTraceData, start: number) {
+  constructor(private topic: string, trace: TTraceData, start: number) {
     this.trace = trace
     this.start = start
-    this.logger = getLogger(topic)
   }
 
   public track(key: ExtendTrackKey) {
@@ -48,13 +54,14 @@ export class PerfTracker<TTraceData extends BasePerf> {
     this.track('fail')
   }
 
-  public report(key: string) {
+  public async report(key: string) {
     const records = this.getRecords()
     this.trace.perf = records
     const end = this.trace.perf.success || this.trace.perf.fail
     const start = this.trace.perf.start
     const duration = end - start
     this.trace.perf.duration = duration
-    this.logger.log(key, this.trace)
+    const logger = await this.getLogger()
+    logger.log(key, this.trace)
   }
 }
