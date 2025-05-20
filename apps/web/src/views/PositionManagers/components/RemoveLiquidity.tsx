@@ -89,7 +89,10 @@ export const RemoveLiquidity = memo(function RemoveLiquidity({
               .toNumber()
             const avoidDecimalsProblem =
               percent === 100 ? BigInt(bCakeUserInfoAmount?.[0]) : BigInt(Math.floor(withdrawAmount))
-            const estGas = await bCakeWrapperContract.estimateGas.withdrawThenBurn(
+            if (!bCakeWrapperContract.write?.withdrawThenBurn) {
+              throw new Error('withdrawThenBurn is not available')
+            }
+            const estGas = await bCakeWrapperContract.estimateGas?.withdrawThenBurn?.(
               [avoidDecimalsProblem, false, message],
               {
                 account: account ?? '0x',
@@ -98,7 +101,9 @@ export const RemoveLiquidity = memo(function RemoveLiquidity({
             return bCakeWrapperContract.write.withdrawThenBurn([avoidDecimalsProblem, false, message], {
               account: account ?? '0x',
               chain,
-              gas: BigInt(new BigNumber(estGas.toString()).times(1.5).toNumber().toFixed(0)),
+              gas: estGas
+                ? BigInt(new BigNumber(estGas.toString()).times(1.5).toNumber().toFixed(0))
+                : undefined,
             })
           }
         : async () => {
@@ -108,6 +113,9 @@ export const RemoveLiquidity = memo(function RemoveLiquidity({
               .div(100)
               .toNumber()
 
+            if (!wrapperContract.write?.withdrawThenBurn) {
+              throw new Error('withdrawThenBurn is not available')
+            }
             const avoidDecimalsProblem =
               percent === 100 ? BigInt(userInfoAmount?.[0]) : BigInt(Math.floor(withdrawAmount))
             return wrapperContract.write.withdrawThenBurn([avoidDecimalsProblem, '0x'], {
