@@ -34,6 +34,7 @@ export function SlippageAdjuster({ variant = 'swap', onClick }: { variant?: 'swa
           size="xs"
           height="fit-content"
           py={1}
+          px={2}
           borderRadius="12px"
           border={isWarn ? `1px solid ${colors.semanticWarning}` : undefined}
           startIcon={

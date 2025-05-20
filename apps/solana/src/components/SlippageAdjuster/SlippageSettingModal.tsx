@@ -110,7 +110,7 @@ export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isO
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
                 onFocus={handleFocus}
-                inputSx={{ textAlign: 'right', rounded: '40px', h: '36px', w: '50px', py: 0, px: '3' }}
+                inputSx={{ textAlign: 'center', rounded: '40px', h: '36px', w: '40px', py: 0, px: '2' }}
               />
               <Text>%</Text>
             </Flex>

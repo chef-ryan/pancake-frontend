@@ -24,12 +24,16 @@ export const panelCard: SystemProps = {
 export const inputCard: SystemProps = {
   color: colors.textSubtle,
   bg: colors.inputBg,
-  border: `1px solid ${colors.inputBorder}`,
+  // border: `1px solid ${colors.inputBorder}`,
   borderBottomWidth: '2px',
-  borderRadius: '16px',
+  borderRadius: '24px',
   lineHeight: 1.5
 }
 
 export const inputFocusStyle = {
-  boxShadow: `0px 0px 0px 1px ${colors.textSecondary}, 0px 0px 0px 4px rgba(118, 69, 217, 0.20)`
+  boxShadow: `0px 0px 0px 1px #7645D9,0px 0px 0px 4px rgba(118,69,217,0.6)`
+}
+
+export const inputShadowInsetStyle = {
+  boxShadow: `inset 0px 2px 2px -1px rgba(74,74,104,0.1)`
 }

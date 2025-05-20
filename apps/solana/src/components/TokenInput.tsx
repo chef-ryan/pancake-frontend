@@ -21,7 +21,7 @@ import useTokenPrice from '@/hooks/token/useTokenPrice'
 import { useEvent } from '@/hooks/useEvent'
 import useResponsive from '@/hooks/useResponsive'
 import { useAppStore, useTokenAccountStore, useTokenStore } from '@/store'
-import { inputCard, inputFocusStyle } from '@/theme/cssBlocks'
+import { inputCard, inputFocusStyle, inputShadowInsetStyle } from '@/theme/cssBlocks'
 import { colors } from '@/theme/cssVariables'
 import { detectedSeparator, formatCurrency, trimTrailZero } from '@/utils/numberish/formatter'
 import TokenAvatar from './TokenAvatar'
@@ -366,7 +366,7 @@ function TokenInput(props: TokenInputProps) {
         px={sizes.downerUpperGridPx}
         py={2}
         opacity={loading ? 0.8 : 1}
-        boxShadow={isFocus ? inputFocusStyle.boxShadow : 'none'}
+        boxShadow={isFocus ? inputFocusStyle.boxShadow : inputShadowInsetStyle.boxShadow}
       >
         <GridItem area="token" color={colors.textSecondary} fontWeight={600} fontSize={sizes.tokenSymbol}>
           <CurrencySelectButton disableSelectToken={disableSelectToken} onClick={disableSelectToken ? undefined : onOpen}>

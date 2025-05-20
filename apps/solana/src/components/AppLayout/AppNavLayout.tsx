@@ -47,7 +47,7 @@ function AppNavLayout({
         flex="none"
         height={['64px', '56px']}
         px={['20px', '16px']}
-        gap={['4px', '3vw', '6.1vw']}
+        gap={['4px', '3vw', '24px']}
         alignItems="center"
         justifyContent="space-between"
         borderBottom={`1px solid ${colors.cardBorder01}`}
