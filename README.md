@@ -103,7 +103,7 @@ pnpm build:games
 | [sdk](/packages/swap-sdk)                  | An SDK for building applications on top of Pancakeswap                                                      |
 | [aptos-swap-sdk](/packages/aptos-swap-sdk) | Aptos version of Swap SDK                                                                                   |
 | [swap-sdk-core](/packages/swap-sdk-core)   | Swap SDK Shared code                                                                                        |
-| [wagmi](/packages/wagmi)                   | Extension for [wagmi](https://github.com/wagmi-dev/wagmi), including bsc chain and binance wallet connector |
+| [wagmi](/packages/wagmi)                   | Extension for [wagmi](https://github.com/wagmi-dev/wagmi), including bsc chain and binance wallet connector. Includes preliminary [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702) helper hooks |
 | [awgmi](/packages/awgmi)                   | Connect to Aptos with similar wagmi React hooks.                                                            |
 | [smart-router](/packages/smart-router)     | An SDK for getting best trade routes.                                                                       |
 | [multicall](/packages/multicall)           | Enhanced multicall sdk to safely make multicalls within the gas limit.                                      |
