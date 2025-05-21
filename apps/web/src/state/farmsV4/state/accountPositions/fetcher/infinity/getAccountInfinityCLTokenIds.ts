@@ -70,7 +70,7 @@ export const getAccountInfinityCLTokenIdsRecently = async (chainId: number, acco
     functionName: 'nextTokenId',
   })
 
-  const ownerOfCalls = new Array(Number(50)).fill(0).map((_, i) => {
+  const ownerOfCalls = new Array(Number(200)).fill(0).map((_, i) => {
     return {
       abi: CLPositionManagerAbi,
       address: psm,
