@@ -8,8 +8,8 @@ import groupBy from 'lodash/groupBy'
 import intersection from 'lodash/intersection'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { PoolSortBy } from 'state/farmsV4/atom'
-import { useExtendPools, useFarmPools, usePoolsApr } from 'state/farmsV4/hooks'
+import { FetchPoolsProps, PoolSortBy, useExtendPoolsAtom } from 'state/farmsV4/atom'
+import { useExtendPools, useFarmPools, useFetchPools, usePoolsApr } from 'state/farmsV4/hooks'
 import { getCombinedApr } from 'state/farmsV4/state/poolApr/utils'
 import type { InfinityPoolInfo, PoolInfo } from 'state/farmsV4/state/type'
 import styled from 'styled-components'
@@ -68,12 +68,33 @@ export const PoolsPage = () => {
 
   // data source
   const { data: farmList } = useFarmPools()
-  const { extendPools, fetchPoolList, resetExtendPools } = useExtendPools()
+  // const { extendPools, fetchPoolList, resetExtendPools } = useExtendPools()
   const allTokenMap = useAllTokensByChainIds(allChainIds)
   const poolsApr = usePoolsApr()
   // we disabled extend pools in phase 1, we can turn it off later when we need
-  const disabledExtendPools = true
+  const disabledExtendPools = false
   const EMPTY_POOLS = useMemo(() => [], [])
+
+  const [nextPage, setNextPage] = useState(1)
+
+  const poolsQueries = useMemo(
+    () =>
+      ({
+        chains: selectedNetwork,
+        orderBy: PoolSortBy.VOL,
+        protocols: selectedProtocols,
+        pageNo: nextPage,
+      } as FetchPoolsProps),
+    [nextPage, selectedNetwork, selectedProtocols],
+  )
+
+  const {
+    isLoading,
+    data: extendPools,
+    pageNo,
+    resetExtendPools,
+    hasNextPage,
+  } = useFetchPools(poolsQueries, !disabledExtendPools)
 
   const extendPoolList = useMemo(
     () =>
@@ -89,21 +110,9 @@ export const PoolsPage = () => {
           ),
     [disabledExtendPools, isPoolListExtended, extendPools, allTokenMap, EMPTY_POOLS],
   )
-
   const poolList = useMemo(() => farmList.concat(extendPoolList), [farmList, extendPoolList])
 
-  useEffect(() => {
-    if (isIntersecting) {
-      setCursorVisible((numberCurrentlyVisible) => {
-        if (numberCurrentlyVisible <= poolList.length) {
-          return Math.min(numberCurrentlyVisible + NUMBER_OF_FARMS_VISIBLE, poolList.length)
-        }
-        return numberCurrentlyVisible
-      })
-    }
-  }, [isIntersecting, poolList])
-
-  useEffect(() => {
+  /* useEffect(() => {
     // if consumed, fetch from pool/list
     if (cursorVisible >= poolList.length && !disabledExtendPools) {
       fetchPoolList({
@@ -112,7 +121,7 @@ export const PoolsPage = () => {
         orderBy: PoolSortBy.VOL,
       })
     }
-  }, [cursorVisible, poolList, fetchPoolList, selectedProtocols, disabledExtendPools, selectedNetwork])
+  }, [cursorVisible, poolList.length, fetchPoolList, selectedProtocols, disabledExtendPools, selectedNetwork]) */
 
   const handleFilterChange: IPoolsFilterPanelProps['onChange'] = useCallback(
     (newFilters) => {
@@ -189,6 +198,27 @@ export const PoolsPage = () => {
     isSelectAllProtocols,
     isSelectAllFeatures,
   ])
+
+  useEffect(() => {
+    if (isIntersecting) {
+      setCursorVisible((numberCurrentlyVisible) => {
+        if (hasNextPage && filteredData.length < numberCurrentlyVisible) {
+          return filteredData.length
+        }
+        if (numberCurrentlyVisible <= filteredData.length) {
+          return Math.min(numberCurrentlyVisible + NUMBER_OF_FARMS_VISIBLE, filteredData.length)
+        }
+        return numberCurrentlyVisible
+      })
+    }
+  }, [isIntersecting, filteredData, hasNextPage])
+
+  useEffect(() => {
+    if (isLoading) {
+      return
+    }
+    setNextPage((nextPage) => (cursorVisible >= filteredData.length ? nextPage + 1 : nextPage))
+  }, [cursorVisible, filteredData.length, isLoading])
 
   const dataByChain = useMemo(() => {
     return groupBy(filteredData, 'chainId')
