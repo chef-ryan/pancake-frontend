@@ -14,7 +14,7 @@ export function QuestionToolTip(props: {
   /** @default 'question' */
   iconType?: 'question' | 'info'
   // iconSize?: string
-  iconProps?: SvgIcon
+  iconProps?: Omit<SvgIcon, 'ref'>
   textProps?: TextProps
 }) {
   return (
