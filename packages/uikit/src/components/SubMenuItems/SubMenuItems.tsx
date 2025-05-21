@@ -1,4 +1,4 @@
-import { useIsomorphicLayoutEffect } from "framer-motion";
+import { useLayoutEffect } from "react";
 import debounce from "lodash/debounce";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { AtomBox } from "../AtomBox";
@@ -57,7 +57,7 @@ const SubMenuItems: React.FC<React.PropsWithChildren<SubMenuItemsProps>> = ({
     return { hasHighlightedItem: false, highlightedItemColor: "success" as const };
   }, [items]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     layerController();
   }, [layerController, items]);
   return (

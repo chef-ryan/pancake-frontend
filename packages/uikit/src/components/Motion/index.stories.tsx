@@ -1,4 +1,4 @@
-import { domAnimation } from "framer-motion";
+import { domAnimation } from "./AnimatePresence";
 import React from "react";
 import { MotionBox } from "../Box";
 import { Button } from "../Button";
