@@ -29,7 +29,7 @@
   "scripts": {
     "clean": "shx rm -rf .next .swc lib",
     "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev",
-    "build": "next info && next build && next export",
+    "build": "next info && next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --pretty --noEmit"
