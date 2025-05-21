@@ -1,8 +1,7 @@
+// import { getCookie } from 'cookies-next'
 import { ResetCSS } from '@pancakeswap/uikit'
-import { getCookie } from 'cookies-next'
 import Decimal from 'decimal.js'
-import type { AppContext, AppProps } from 'next/app'
-import App from 'next/app'
+import type { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -15,12 +14,15 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 import { DefaultSeo } from 'next-seo'
 import { SEO } from 'next-seo.config'
 import 'react-day-picker/dist/style.css'
-import i18n from '../i18n'
-import { isClient } from '../utils/common'
+// import i18n from '../i18n'
+// import { isClient } from '../utils/common'
+import { Providers } from '@/provider'
+import Content from '@/components/Content'
+import AppNavLayout from '@/components/AppLayout/AppNavLayout'
 
-const DynamicProviders = dynamic(() => import('@/provider').then((mod) => mod.Providers))
-const DynamicContent = dynamic(() => import('@/components/Content'))
-const DynamicAppNavLayout = dynamic(() => import('@/components/AppLayout/AppNavLayout'), { ssr: false })
+// const DynamicProviders = dynamic(() => import('@/provider').then((mod) => mod.Providers))
+// const DynamicContent = dynamic(() => import('@/components/Content'))
+// const DynamicAppNavLayout = dynamic(() => import('@/components/AppLayout/AppNavLayout'), { ssr: false })
 
 const CONTENT_ONLY_PATH = ['/', '404', '/moonpay']
 const OVERFLOW_HIDDEN_PATH = ['/liquidity-pools', '/swap']
@@ -44,34 +46,34 @@ const MyApp = ({ Component, pageProps, ...props }: AppProps) => {
         <title>{pageProps?.title ? `${pageProps.title} PancakeSwap` : 'PancakeSwap'}</title>
       </Head>
       <DefaultSeo {...SEO} />
-      <DynamicProviders>
-        <DynamicContent {...props}>
+      <Providers>
+        <Content {...props}>
           <ResetCSS />
           {onlyContent ? (
             <Component {...pageProps} />
           ) : (
-            <DynamicAppNavLayout overflowHidden={overflowHidden} fullSize={fullSize}>
+            <AppNavLayout overflowHidden={overflowHidden} fullSize={fullSize}>
               <Component {...pageProps} />
-            </DynamicAppNavLayout>
+            </AppNavLayout>
           )}
-        </DynamicContent>
-      </DynamicProviders>
+        </Content>
+      </Providers>
     </>
   )
 }
 
-MyApp.getInitialProps = async (appContext: AppContext) => {
-  if (isClient()) return {}
-  try {
-    const ctx = await App.getInitialProps(appContext)
-    let lng = getCookie('i18nextLng', { req: appContext.ctx.req, res: appContext.ctx.res }) as string
-    lng = lng || 'en'
-    i18n.changeLanguage(lng)
+// MyApp.getInitialProps = async (ctx: NextPageContext) => {
+//   if (isClient()) return {}
+//   try {
+//     const ctx = await App.getInitialProps(ctx)
+//     let lng = getCookie('i18nextLng', { req: ctx.ctx.req, res: ctx.ctx.res }) as string
+//     lng = lng || 'en'
+//     i18n.changeLanguage(lng)
 
-    return ctx
-  } catch (err) {
-    return {}
-  }
-}
+//     return ctx
+//   } catch (err) {
+//     return {}
+//   }
+// }
 
 export default MyApp

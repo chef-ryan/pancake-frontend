@@ -13,6 +13,9 @@ const nextConfig = {
     fallbackNodePolyfills: false,
     optimizePackageImports: ['@pancakeswap/widgets-internal', '@pancakeswap/uikit']
   },
+  compiler: {
+    styledComponents: true
+  },
   trailingSlash: true,
   transpilePackages: [
     '@pancakeswap/widgets-internal',

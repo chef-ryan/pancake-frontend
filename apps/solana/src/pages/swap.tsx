@@ -1,6 +1,8 @@
 import dynamic from 'next/dynamic'
 
-const Swap = dynamic(() => import('@/features/Swap'))
+const Swap = dynamic(() => import('@/features/Swap'), {
+  ssr: false
+})
 
 function SwapPage() {
   return <Swap />
@@ -8,8 +10,8 @@ function SwapPage() {
 
 export default SwapPage
 
-export async function getStaticProps() {
-  return {
-    props: { title: 'Swap' }
-  }
-}
+// export async function getStaticProps() {
+//   return {
+//     props: { title: 'Swap' }
+//   }
+// }
