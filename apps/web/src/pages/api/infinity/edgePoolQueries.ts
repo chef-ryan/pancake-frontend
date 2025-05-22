@@ -61,7 +61,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
   const cacheTime = POOLS_SLOW_REVALIDATE[chainId] as number
   const cacheOption = {
     ttl: cacheTime,
-    requestTimeout: cacheTime,
+    requestTimeout: cacheTime / 2,
     maxCacheSize: 1_000_000,
     maxAge: 300_000, // For stale values
     cacheNextEpochOnHalfTTS: true,
@@ -164,7 +164,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
 
   const cacheOptionForQueryAll: CacheOptions<FN> = {
     ttl: cacheTime,
-    requestTimeout: cacheTime,
+    requestTimeout: cacheTime / 2,
     maxCacheSize: 1_000_000,
     persist: persistOption,
     maxAge: 300_000, // For stale values
