@@ -34,7 +34,7 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
   const TokenListContent = useCallback(
     () => (
       <>
-        <ModalHeader py={7}>
+        <ModalHeader>
           <Text bold>{t('common.select_a_token')}</Text>
         </ModalHeader>
         <ModalCloseButton />
@@ -60,7 +60,7 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
     () => (
       <>
         <ModalHeader>
-          <Grid templateColumns="1fr 3fr 1fr" mb="24px" alignItems="center">
+          <Grid templateColumns="1fr 3fr 1fr" alignItems="center">
             <ModalBackButton onBack={() => setCurrentPage(PageType.TokenList)} />
             <Text bold textAlign="center">
               {t('common.token_list_settings')}
@@ -82,7 +82,7 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
     () => (
       <>
         <ModalHeader>
-          <Grid templateColumns="1fr 3fr 1fr" mb="24px">
+          <Grid templateColumns="1fr 3fr 1fr">
             <GridItem alignSelf="center" cursor="pointer" textAlign="left" onClick={() => setCurrentPage(PageType.TokenListSetting)}>
               <ChevronLeftIcon width="24px" fontWeight={500} />
             </GridItem>

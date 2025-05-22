@@ -132,14 +132,14 @@ function RouteLink({
     >
       <Text
         as="span"
-        textColor={isActive ? colors.textSecondary : colors.textTertiary}
+        textColor={isActive ? colors.textSecondary : colors.textSubtle}
         fontSize="md"
         fontWeight={isActive ? 600 : 400}
         px={4}
         py={2}
         rounded="xl"
         transition="200ms"
-        _hover={{ bg: colors.backgroundLight, color: colors.textSecondary }}
+        _hover={{ bg: colors.backgroundLight }}
       >
         {title}
       </Text>

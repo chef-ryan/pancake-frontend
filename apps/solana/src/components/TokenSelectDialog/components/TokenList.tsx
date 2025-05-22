@@ -202,7 +202,7 @@ export default forwardRef<
         </SimpleGrid>
       </Box>
 
-      <Divider my="10px" color={colors.backgroundTransparent12} />
+      <Divider my="3px" color={colors.backgroundTransparent12} />
 
       <Flex direction="column" flexGrow={1} css={{ contain: 'size' }}>
         <Flex justifyContent="space-between" py="10px">
@@ -261,7 +261,7 @@ export default forwardRef<
         )}
       </Flex>
       {!isUnknownNewToken ? (
-        <Box my="24px">
+        <Box my="12px">
           <Text fontSize="14px" style={{ opacity: 0.5 }}>
             {t('token_selector.token_not_found')}
           </Text>

@@ -93,7 +93,8 @@ export function ListLogo({
   return <StyledListLogo alt={alt} size={size} srcs={srcs} style={style} />
 }
 
-const RowWrapper = styled(Row)<{ active: boolean; hasActiveTokens: boolean }>`
+const RowWrapper = styled.div<{ active: boolean; hasActiveTokens: boolean }>`
+  display: flex;
   background-color: ${({ active }) => (active ? '#31D0AA19' : 'transparent')};
   border: solid 1px;
   border-color: ${({ active }) => (active ? colors.success : colors.tertiary)};
