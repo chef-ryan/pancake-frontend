@@ -13,31 +13,50 @@ import { routingStrategyAtom, StrategyRoute } from './routingStrategy'
 
 const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
   return atom((get) => {
-    function executeRoutes(strategies: StrategyRoute[], option: QuoteQuery, level: number): Loadable<InterfaceOrder> {
+    function executeRoutes(strategies: StrategyRoute[], option: QuoteQuery, level: number) {
       try {
-        const quotes = strategies.map((route) =>
-          get(route.query({ ...option, ...route.overrides, routeKey: route.key })),
-        )
-        const anyPending = quotes.some((x) => x.isPending())
-        const anyFail = quotes.some((x) => x.isFail())
-        const best = findBestQuote(...quotes)
+        const quotes = strategies.map((route) => ({
+          result: get(route.query({ ...option, ...route.overrides, routeKey: route.key })),
+          isShadow: route.isShadow,
+        }))
+        const anyPending = quotes.some((x) => x.result.isPending())
+        const anyFail = quotes.some((x) => x.result.isFail())
+        const best = findBestQuote(...quotes.map((x) => x.result))
+        const anyShadowFail = quotes.some((x) => x.isShadow && x.result.isFail())
         if (!best) {
           if (anyPending) {
-            return Loadable.Pending<InterfaceOrder>()
+            return {
+              quote: Loadable.Pending<InterfaceOrder>(),
+              anyShadowFail,
+            }
           }
-          return anyFail ? Loadable.Fail(new NoValidRouteError()) : Loadable.Nothing<InterfaceOrder>()
+          return {
+            quote: anyFail ? Loadable.Fail(new NoValidRouteError()) : Loadable.Nothing<InterfaceOrder>(),
+            anyShadowFail,
+          }
         }
         const [bestQuote] = best
         if (bestQuote) {
           if (!anyPending) {
             // updateStrategy(strategyHash, routes[bestIndex])
-            return Loadable.Just<InterfaceOrder>(bestQuote)
+            return {
+              quote: Loadable.Just<InterfaceOrder>(bestQuote),
+              anyShadowFail,
+            }
           }
-          return Loadable.Pending<InterfaceOrder>()
+          return {
+            quote: Loadable.Pending<InterfaceOrder>(),
+            anyShadowFail,
+          }
         }
-        return anyFail ? Loadable.Fail(new NoValidRouteError()) : Loadable.Nothing<InterfaceOrder>()
+        return {
+          quote: anyFail ? Loadable.Fail(new NoValidRouteError()) : Loadable.Nothing<InterfaceOrder>(),
+          anyShadowFail,
+        }
       } catch (ex) {
-        return Loadable.Fail<InterfaceOrder>(new NoValidRouteError())
+        return {
+          quote: Loadable.Fail<InterfaceOrder>(new NoValidRouteError()),
+        }
       }
     }
 
@@ -70,11 +89,14 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
       const tests = [p1, p2]
       for (let i = 0; i < tests.length; i++) {
         const strategy = tests[i]
-        const quote = executeRoutes(strategy, option, i)
+        const { quote, anyShadowFail } = executeRoutes(strategy, option, i)
         if (quote.isNothing()) {
           continue
         }
         if (quote.isFail() && i !== tests.length - 1) {
+          continue
+        }
+        if (quote.isJust() && anyShadowFail) {
           continue
         }
         return quote

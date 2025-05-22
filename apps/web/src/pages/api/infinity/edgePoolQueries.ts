@@ -112,10 +112,10 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
     const currencyA = mockCurrency(addressA, chainId)
     const currencyB = mockCurrency(addressB, chainId)
 
-    const pools = await SmartRouter.getV3CandidatePools({
+    const pools = await InfinityRouter.getV3CandidatePools({
       currencyA,
       currencyB,
-      onChainProvider: getProvider(),
+      clientProvider: getProvider(),
     })
 
     return pools.map((pool) => {

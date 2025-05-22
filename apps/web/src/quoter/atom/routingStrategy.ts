@@ -45,6 +45,7 @@ const Strategies = {
 interface StrategyConfig {
   key: keyof typeof Strategies
   priority: number
+  isShadow?: boolean
 }
 
 const defaultRoutingConfig: StrategyConfig[] = [
@@ -52,6 +53,7 @@ const defaultRoutingConfig: StrategyConfig[] = [
   {
     key: 'single',
     priority: 1,
+    isShadow: true,
   },
   // routing-sdk
   {
