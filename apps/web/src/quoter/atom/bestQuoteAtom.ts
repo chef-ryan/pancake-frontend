@@ -19,12 +19,13 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
           get(route.query({ ...option, ...route.overrides, routeKey: route.key })),
         )
         const anyPending = quotes.some((x) => x.isPending())
+        const anyFail = quotes.some((x) => x.isFail())
         const best = findBestQuote(...quotes)
         if (!best) {
           if (anyPending) {
             return Loadable.Pending<InterfaceOrder>()
           }
-          return Loadable.Nothing<InterfaceOrder>()
+          return anyFail ? Loadable.Fail(new NoValidRouteError()) : Loadable.Nothing<InterfaceOrder>()
         }
         const [bestQuote] = best
         if (bestQuote) {
@@ -34,7 +35,7 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
           }
           return Loadable.Pending<InterfaceOrder>()
         }
-        return Loadable.Nothing<InterfaceOrder>()
+        return anyFail ? Loadable.Fail(new NoValidRouteError()) : Loadable.Nothing<InterfaceOrder>()
       } catch (ex) {
         return Loadable.Fail<InterfaceOrder>(new NoValidRouteError())
       }
@@ -70,7 +71,10 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
       for (let i = 0; i < tests.length; i++) {
         const strategy = tests[i]
         const quote = executeRoutes(strategy, option, i)
-        if (quote.isNothing() || quote.isFail()) {
+        if (quote.isNothing()) {
+          continue
+        }
+        if (quote.isFail() && i !== tests.length - 1) {
           continue
         }
         return quote
