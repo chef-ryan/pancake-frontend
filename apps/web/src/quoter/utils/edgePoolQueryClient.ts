@@ -3,9 +3,6 @@ import { InfinityBinPool, InfinityClPool, SmartRouter, StablePool, V2Pool, V3Poo
 
 import { Currency, getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import { cacheByLRU } from '@pancakeswap/utils/cacheByLRU'
-import { takeFirstFulfilled } from '@pancakeswap/utils/promise'
-import { POOLS_FAST_REVALIDATE } from 'config/pools'
-import { poolQueryPersistURL } from 'pages/api/infinity/edgePoolQueries'
 import qs from 'qs'
 import { PoolHashHelper } from './PoolHashHelper'
 
@@ -26,24 +23,9 @@ const _fetchPools = async function <T>(
     protocol: protocols.join(','),
     blockNumber,
   })
-  const currentEpoch = Math.floor(Date.now() / POOLS_FAST_REVALIDATE[chainId])
-  const { url: urlPrevious } = poolQueryPersistURL(addressA, addressB, chainId, protocols, currentEpoch - 1)
-
-  async function fetchCDN(url: string) {
-    const resp = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    if (!resp.ok) {
-      throw new Error(`Failed to fetch pools: ${await resp.text()}`)
-    }
-    return resp.json()
-  }
 
   const queryApi = async () => {
-    const res = await fetch(`/api/infinity/candidates?${query}`)
+    const res = await fetch(`/api/infinity/candidates-cache?${query}`)
 
     if (!res.ok) {
       throw new Error(`Failed to fetch pools: ${await res.text()}`)
@@ -51,7 +33,7 @@ const _fetchPools = async function <T>(
     return res.json()
   }
 
-  const json = (await takeFirstFulfilled([fetchCDN(urlPrevious), fetchCDN(urlPrevious), queryApi()])) as {
+  const json = (await queryApi()) as {
     lastUpdated: number
     data: T
   }

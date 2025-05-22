@@ -14,17 +14,13 @@ import memoize from '@pancakeswap/utils/memoize'
 import { POOLS_FAST_REVALIDATE } from 'config/pools'
 import { v2Clients, v3Clients } from 'utils/graphql'
 import { Address } from 'viem/accounts'
-import { getProvider, mockCurrency } from './util'
+import { getProvider, mockCurrency, Protocol } from './util'
 
 const persistOption: PersistOption = {
   type: 'r2',
   name: 'candidates',
   version: 'v1',
 }
-
-export type Protocol = 'v2' | 'ss' | 'v3' | 'infinity'
-
-export const ALLOWED_PROTOCOLS = ['v2', 'ss', 'v3', 'infinity']
 
 export const poolQueryPersistURL = (
   addressA: Address,
@@ -56,7 +52,7 @@ type FN = (
 
 export const poolQueriesFactory = memoize((chainId: ChainId) => {
   const cacheTime = POOLS_FAST_REVALIDATE[chainId] as number
-  const cacheOption: CacheOptions<any> = {
+  const cacheOption = {
     ttl: cacheTime,
     requestTimeout: 3_000,
     maxCacheSize: 1_000_000,
