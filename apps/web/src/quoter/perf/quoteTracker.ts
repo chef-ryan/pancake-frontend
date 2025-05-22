@@ -99,6 +99,7 @@ export const quoteTraceAtom = atomFamily(
           fail: 0,
           duration: 0,
         },
+        flags: {},
         app: detectApp() || 'web',
         quote: '',
         error: '',
