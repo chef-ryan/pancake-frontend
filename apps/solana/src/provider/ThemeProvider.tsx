@@ -2,16 +2,16 @@ import { ChakraProvider, useColorMode } from '@chakra-ui/react'
 import { Global } from '@emotion/react'
 import { dark, light, UIKitProvider } from '@pancakeswap/uikit'
 import type { FC, ReactNode } from 'react'
-import { ThemeProvider as NextThemeProvider } from 'next-themes'
+import { ThemeProvider as NextThemeProvider, useTheme as useNextTheme } from 'next-themes'
 import { colors } from '@/theme/cssVariables'
 import { theme } from '../theme'
 
 const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { colorMode } = useColorMode()
+  const { resolvedTheme } = useNextTheme()
 
   return (
     <NextThemeProvider>
-      <UIKitProvider theme={colorMode === 'dark' ? dark : light}>
+      <UIKitProvider theme={resolvedTheme === 'dark' ? dark : light}>
         <ChakraProvider theme={theme}>
           {/* through object's styles's global can't inject multi font-face */}
           <Global
