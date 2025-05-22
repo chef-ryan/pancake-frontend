@@ -22,6 +22,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
     ttl: cacheTime,
     requestTimeout: 3_000,
     maxCacheSize: 1_000_000,
+    maxAge: cacheTime * 5, // For stale values
   }
 
   const fetchInfinityPools = cacheByLRU(async (addressA: Address, addressB: Address, chainId: ChainId) => {
