@@ -23,6 +23,7 @@ export type PersistOption = {
   version: string
   type: 'r2'
 }
+
 export type CacheOptions<T extends AsyncFunction<any>> = {
   maxCacheSize?: number
   ttl: number
@@ -34,6 +35,7 @@ export type CacheOptions<T extends AsyncFunction<any>> = {
   usingStaleValue?: boolean
   cacheNextEpochOnHalfTTS?: boolean
   requestTimeout?: number
+  parallelism?: number
 }
 
 function defaultIsValid(val: any) {
@@ -77,10 +79,11 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
     usingStaleValue = true,
     requestTimeout,
     cacheNextEpochOnHalfTTS,
+    parallelism = 1,
   }: CacheOptions<T>,
 ) => {
   cacheInstanceId++
-  const cache = new LRU<string, CacheItem>({
+  const cache = new LRU<string, CacheItem[]>({
     maxAge: Math.max(ttl * 2, maxAge || 0),
     maxSize: maxCacheSize || 1000,
   })
@@ -101,6 +104,49 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
     return promise
   }
 
+  const allowAddCache = (cacheKey: string) => {
+    const items = cache.get(cacheKey)
+    if (!items || items.length === 0) {
+      return true
+    }
+    if (items.length >= parallelism) {
+      return false
+    }
+    const anyResolved = items.some((item) => item.resolved)
+    if (anyResolved) {
+      return false
+    }
+    const latest = Math.max(...items.map((item) => item.createTime))
+    const diff = Date.now() - latest
+    return diff > 1_000
+  }
+
+  const findBestCache = (cacheKey: string) => {
+    const items = cache.get(cacheKey)
+    if (!items || items.length === 0) {
+      return undefined
+    }
+    for (const curr of items) {
+      if (curr.resolved) {
+        return curr
+      }
+    }
+    return items[0]
+  }
+
+  const addToCache = (cacheKey: string, item: CacheItem) => {
+    const best = findBestCache(cacheKey)
+    if (best) {
+      return
+    }
+    const items = cache.get(cacheKey)
+    if (!items) {
+      cache.set(cacheKey, [item])
+      return
+    }
+    items.push(item)
+  }
+
   const epochs: Epoch[] = []
   const cachedFn = async (...args: Parameters<T>): Promise<Awaited<ReturnType<T>>> => {
     const epoch = Date.now() / ttl
@@ -111,27 +157,20 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
 
     const cacheForEpoch = (epochId: number) => {
       const cacheKey = calcCacheKey(keyFunction(args), epochId)
-      if (cache.has(cacheKey)) {
-        return cache.get(cacheKey)!
+      if (!allowAddCache(cacheKey)) {
+        return findBestCache(cacheKey)!
       }
-      const caller = requestTimeout ? withTimeout(fn, requestTimeout) : fn
-      const promise = ensurePersist(cacheKey, caller(...args))
       const item = {
-        promise,
+        promise: Promise.resolve(),
         resolved: undefined,
         createTime: Date.now(),
         epochId,
       }
-      const epoch = {
-        createTime: item.createTime,
-        cacheKey,
-        contentCacheKey,
-      }
-      epochs.push(epoch)
-      cache.set(cacheKey, item)
-
-      item.promise = item.promise
-        .then((result) => {
+      const createPromise = async () => {
+        try {
+          const caller = requestTimeout ? withTimeout(fn, requestTimeout) : fn
+          const promise = ensurePersist(cacheKey, caller(...args))
+          const result = await promise
           if (!result) {
             cache.delete(cacheKey)
             return result
@@ -140,7 +179,6 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
             cache.delete(cacheKey)
             return result
           }
-          item.resolved = result
           if (persist) {
             const jsonResult = stringify(result)
             if (result && jsonResult !== '{}' && jsonResult !== '[]') {
@@ -156,13 +194,25 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
                 })
             }
           }
+          item.resolved = result
           return result
-        })
-        .catch((error) => {
+        } catch (ex) {
           cache.delete(cacheKey)
-          throw error
-        })
+          throw ex
+        }
+      }
+      item.promise = createPromise()
+      addToCache(cacheKey, item)
 
+      const epoch = {
+        createTime: item.createTime,
+        cacheKey,
+        contentCacheKey,
+      }
+      const lastEpoch = epochs[epochs.length - 1]
+      if (lastEpoch?.cacheKey !== cacheKey) {
+        epochs.push(epoch)
+      }
       return item
     }
 
@@ -187,7 +237,7 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
         if (epoch.contentCacheKey !== contentCacheKey) {
           continue
         }
-        const epochCache = cache.get(epoch.cacheKey)
+        const epochCache = findBestCache(epoch.cacheKey)
 
         if (epochCache && epochCache.resolved) {
           return epochCache.promise
