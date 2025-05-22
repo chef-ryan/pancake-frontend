@@ -54,14 +54,13 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
   const cacheTime = POOLS_SLOW_REVALIDATE[chainId] as number
   const cacheOption = {
     ttl: cacheTime,
-    requestTimeout: 5_000,
+    requestTimeout: cacheTime,
     maxCacheSize: 1_000_000,
     maxAge: 300_000, // For stale values
     cacheNextEpochOnHalfTTS: true,
   }
 
   const fetchInfinityPools = cacheByLRU(async (addressA: Address, addressB: Address, chainId: ChainId) => {
-    console.log('[fetchInfinityPools]', addressA, addressB, chainId)
     const pools = await InfinityRouter.fetchInfinityPoolsFromApi(addressA, addressB, chainId)
     const localPools = pools
       .map((pool) => {
@@ -87,7 +86,6 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
     const result = [...poolWithTicks, ...poolWithBins].map((p) => {
       return SmartRouter.Transformer.serializePool(p)
     })
-    console.log('[fetchInfinityPools] succ', result.length)
     return result
   }, cacheOption)
 
@@ -163,7 +161,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
 
   const cacheOptionForQueryAll: CacheOptions<FN> = {
     ttl: cacheTime,
-    requestTimeout: 5_000,
+    requestTimeout: cacheTime,
     maxCacheSize: 1_000_000,
     persist: persistOption,
     maxAge: 300_000, // For stale values

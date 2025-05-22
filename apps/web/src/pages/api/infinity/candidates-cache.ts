@@ -35,7 +35,8 @@ export default async function handler(req: NextRequest) {
     const epoch = Math.floor(Date.now() / POOLS_FAST_REVALIDATE[chainId])
     const { key, cacheKey } = poolQueryPersistURL(addressA, addressB, chainId, protocols as Protocol[], epoch)
     const { url: prev } = poolQueryPersistURL(addressA, addressB, chainId, protocols as Protocol[], epoch - 1)
-    const { result: pools, index } = await takeFirstFulfilled([query(), fetchCDN(prev)])
+    const { url: prev1 } = poolQueryPersistURL(addressA, addressB, chainId, protocols as Protocol[], epoch - 2)
+    const { result: pools, index } = await takeFirstFulfilled([query(), fetchCDN(prev), fetchCDN(prev1)])
 
     return responseJson(pools, {
       epoch: Math.floor(Date.now() / POOLS_FAST_REVALIDATE[chainId]),
