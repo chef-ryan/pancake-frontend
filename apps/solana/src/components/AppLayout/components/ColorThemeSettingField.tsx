@@ -8,18 +8,18 @@ import { SettingField } from './SettingField'
 
 export function ColorThemeSettingField() {
   const { t } = useTranslation()
-  const { colorMode, toggleColorMode } = useColorMode()
-  const { setTheme, theme } = useTheme()
+  const { toggleColorMode } = useColorMode()
+  const { setTheme, isDark } = useTheme()
 
   const handleToggleTheme = () => {
-    setTheme(colorMode === 'dark' ? 'light' : 'dark')
+    setTheme(isDark ? 'light' : 'dark')
     toggleColorMode()
   }
 
   return (
     <SettingField
       fieldName={t('setting_board.color_theme')}
-      renderToggleButton={<ThemeSwitcher isDark={colorMode === 'dark'} toggleTheme={handleToggleTheme} />}
+      renderToggleButton={<ThemeSwitcher isDark={isDark} toggleTheme={handleToggleTheme} />}
     />
   )
 }

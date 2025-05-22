@@ -19,8 +19,9 @@ import 'react-day-picker/dist/style.css'
 import { Providers } from '@/provider'
 import Content from '@/components/Content'
 import AppNavLayout from '@/components/AppLayout/AppNavLayout'
+import useThemeCookie from '@/hooks/useThemeCookie'
 
-// const DynamicProviders = dynamic(() => import('@/provider').then((mod) => mod.Providers))
+// const DynamicProviders = dynamic(() => import('@/provider').then((mod) => mod.Providers), { ssr: false })
 // const DynamicContent = dynamic(() => import('@/components/Content'))
 // const DynamicAppNavLayout = dynamic(() => import('@/components/AppLayout/AppNavLayout'), { ssr: false })
 
@@ -29,6 +30,11 @@ const OVERFLOW_HIDDEN_PATH = ['/liquidity-pools', '/swap']
 const FULL_SIZE_PATH = ['/swap']
 
 Decimal.set({ precision: 1e3 })
+
+const GlobalHooks = () => {
+  useThemeCookie()
+  return null
+}
 
 const MyApp = ({ Component, pageProps, ...props }: AppProps) => {
   const { pathname } = useRouter()
@@ -49,6 +55,7 @@ const MyApp = ({ Component, pageProps, ...props }: AppProps) => {
       <Providers>
         <Content {...props}>
           <ResetCSS />
+          <GlobalHooks />
           {onlyContent ? (
             <Component {...pageProps} />
           ) : (

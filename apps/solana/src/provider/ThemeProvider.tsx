@@ -6,12 +6,19 @@ import { ThemeProvider as NextThemeProvider, useTheme as useNextTheme } from 'ne
 import { colors } from '@/theme/cssVariables'
 import { theme } from '../theme'
 
-const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
+const StyledUIKitProvider: React.FC<React.PropsWithChildren> = ({ children, ...props }) => {
   const { resolvedTheme } = useNextTheme()
-
   return (
-    <NextThemeProvider>
-      <UIKitProvider theme={resolvedTheme === 'dark' ? dark : light}>
+    <UIKitProvider theme={resolvedTheme === 'dark' ? dark : light} {...props}>
+      {children}
+    </UIKitProvider>
+  )
+}
+
+const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  return (
+    <NextThemeProvider storageKey="pcs-theme">
+      <StyledUIKitProvider>
         <ChakraProvider theme={theme}>
           {/* through object's styles's global can't inject multi font-face */}
           <Global
@@ -136,7 +143,7 @@ const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
           />
           {children}
         </ChakraProvider>
-      </UIKitProvider>
+      </StyledUIKitProvider>
     </NextThemeProvider>
   )
 }
