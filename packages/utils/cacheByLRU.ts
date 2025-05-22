@@ -159,7 +159,6 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
           return result
         })
         .catch((error) => {
-          console.error('Cache promise failed', error)
           cache.delete(cacheKey)
           throw error
         })

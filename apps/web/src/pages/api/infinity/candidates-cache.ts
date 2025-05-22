@@ -15,7 +15,10 @@ async function fetchCDN(url: string) {
       'Content-Type': 'application/json',
     },
   })
-  return resp.json()
+  if (resp.ok) {
+    return resp.json()
+  }
+  throw new Error(`fetch cdn error: ${resp.status} ${resp.statusText}`)
 }
 
 export default async function handler(req: NextRequest) {
@@ -41,7 +44,7 @@ export default async function handler(req: NextRequest) {
       route: index === 0 ? 'api' : 'cdn',
     })
   } catch (ex) {
-    console.error('fetch candidates error', ex)
-    return NextResponse.json({ error: `fetch candidates error: ${ex}` }, { status: 400 })
+    console.error(ex)
+    return NextResponse.json({ error: `fetch candidates error ` }, { status: 400 })
   }
 }

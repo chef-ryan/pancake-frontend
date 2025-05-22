@@ -36,7 +36,9 @@ export function withFallback<F extends AnyAsyncFunction>(calls: AsyncCall<F>[]) 
           throw e
         }
         // Fallback to next one
-        console.warn(`Call failed with error %O, try next fallback`, e)
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(`Call failed with error %O, try next fallback`, e)
+        }
       }
     }
     throw new Error('Unexpected end of call')
