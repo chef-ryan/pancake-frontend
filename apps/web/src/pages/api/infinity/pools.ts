@@ -17,7 +17,7 @@ export default async function handler(req: NextRequest) {
   const _protocol = queryParsed.protocol
   const protocols =
     typeof _protocol === 'string' ? [_protocol] : Array.isArray(_protocol) ? (_protocol as string[]) : undefined
-  const chain = queryParsed.chain
+  const { chain } = queryParsed
   const supported = ['infinityCl', 'infinityBin']
   const valid = protocols && protocols.every((p) => supported.includes(p))
   if (!valid) {

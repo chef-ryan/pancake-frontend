@@ -113,7 +113,7 @@ export const routingStrategyAtom = atomFamily(
 function getRoutingStrategy(query: QuoteQuery, tokenSpecificConfig: TokenSpecificRoutingStrategy): StrategyRoute[] {
   const currencyA = query.baseCurrency!
   const currencyB = query.currency!
-  const chainId = currencyA.chainId
+  const { chainId } = currencyA
   const addressA = getCurrencyAddress(currencyA)
   const addressB = getCurrencyAddress(currencyB)
   const config =
