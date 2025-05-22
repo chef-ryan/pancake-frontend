@@ -101,6 +101,38 @@ export const getPoolAddress = (pool: Pool): Address | '' => {
   return ''
 }
 
+export const getPoolCurrency0 = (pool: Pool): Currency => {
+  if (isV2Pool(pool)) {
+    return pool.reserve0.currency
+  }
+  if (isV3Pool(pool)) {
+    return pool.token0
+  }
+  if (isInfinityClPool(pool) || isInfinityBinPool(pool)) {
+    return pool.currency0
+  }
+  if (isStablePool(pool)) {
+    return pool.balances[0].currency
+  }
+  throw new Error('Cannot get currency0 by invalid pool')
+}
+
+export const getPoolCurrency1 = (pool: Pool): Currency => {
+  if (isV2Pool(pool)) {
+    return pool.reserve1.currency
+  }
+  if (isV3Pool(pool)) {
+    return pool.token1
+  }
+  if (isInfinityClPool(pool) || isInfinityBinPool(pool)) {
+    return pool.currency1
+  }
+  if (isStablePool(pool)) {
+    return pool.balances[1].currency
+  }
+  throw new Error('Cannot get currency0 by invalid pool')
+}
+
 export function getTokenPrice(pool: Pool, base: Currency, quote: Currency): Price<Currency, Currency> {
   if (isV3Pool(pool)) {
     const { token0, token1, fee, liquidity, sqrtRatioX96, tick } = pool

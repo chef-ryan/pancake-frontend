@@ -1,12 +1,18 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, getChainName } from '@pancakeswap/chains'
 import { hooksList } from '@pancakeswap/infinity-sdk'
 import {
+  getPoolAddress,
   InfinityBinPool,
   InfinityClPool,
   InfinityPoolWithTvl,
   InfinityRouter,
+  Pool,
   PoolType,
   SmartRouter,
+  StablePoolWithTvl,
+  V2PoolWithTvl,
+  V3PoolWithTvl,
+  WithTvl,
 } from '@pancakeswap/smart-router'
 import { cacheByLRU, CacheOptions, calcCacheKey, persistKey, PersistOption } from '@pancakeswap/utils/cacheByLRU'
 import memoize from '@pancakeswap/utils/memoize'
@@ -14,6 +20,7 @@ import memoize from '@pancakeswap/utils/memoize'
 import { POOLS_SLOW_REVALIDATE } from 'config/pools'
 import { v2Clients, v3Clients } from 'utils/graphql'
 import { Address } from 'viem/accounts'
+import { APIChain, poolTvlMap } from './pools'
 import { getProvider, mockCurrency, Protocol } from './util'
 
 const persistOption: PersistOption = {
@@ -83,10 +90,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
         clientProvider: getProvider(),
       }),
     ])
-    const result = [...poolWithTicks, ...poolWithBins].map((p) => {
-      return SmartRouter.Transformer.serializePool(p)
-    })
-    return result
+    return [...poolWithTicks, ...poolWithBins]
   }, cacheOption)
 
   const fetchV2Pools = cacheByLRU(async (addressA: Address, addressB: Address, chainId: ChainId) => {
@@ -101,9 +105,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
       v2SubgraphProvider: v2Clients[chainId],
       fallbackTimeout: 5_000,
     })
-    return pools.map((pool) => {
-      return SmartRouter.Transformer.serializePool(pool)
-    })
+    return pools
   }, cacheOption)
 
   const fetchV3Pools = cacheByLRU(async (addressA: Address, addressB: Address, chainId: ChainId) => {
@@ -116,13 +118,13 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
       clientProvider: getProvider(),
     })
 
-    return pools.map((pool) => {
-      return SmartRouter.Transformer.serializePool(pool)
-    })
+    const chain = getChainName(chainId)
+    const tvlMap = await poolTvlMap(['v3'], chain as APIChain)
+    const poolsWithTvl = fillTvl(tvlMap, pools) as V3PoolWithTvl[]
+    return SmartRouter.v3PoolTvlSelector(currencyA, currencyB, poolsWithTvl)
   }, cacheOption)
 
   const fetchSSPool = cacheByLRU(async (addressA: Address, addressB: Address, chainId: ChainId) => {
-    console.log('[fetchSSPool]', addressA, addressB, chainId)
     const currencyA = mockCurrency(addressA, chainId)
     const currencyB = mockCurrency(addressB, chainId)
     const client = getProvider()
@@ -135,9 +137,9 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
       blockNumber,
     })
 
-    return pools.map((pool) => {
-      return SmartRouter.Transformer.serializePool(pool)
-    })
+    const chain = getChainName(chainId)
+    const tvlMap = await poolTvlMap(['stable'], chain as APIChain)
+    return fillTvl(tvlMap, pools) as StablePoolWithTvl[]
   }, cacheOption)
 
   const querySingleType = async (chainId: ChainId, protocol: Protocol, addressA: Address, addressB: Address) => {
@@ -174,7 +176,10 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
       const queries = await Promise.all(
         protocols.map((protocol) => querySingleType(chainId, protocol as Protocol, addressA, addressB)),
       )
-      return queries.flat()
+      const pools = queries.flat() as (InfinityPoolWithTvl | V2PoolWithTvl | V3PoolWithTvl | StablePoolWithTvl)[]
+      return pools.map((pool) => {
+        return SmartRouter.Transformer.serializePool(pool as Pool)
+      })
     },
     cacheOptionForQueryAll,
   )
@@ -187,3 +192,14 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
     fetchAllPools: queryAllPools,
   }
 })
+
+function fillTvl(tvlMap: Record<string, string>, pools: Pool[]) {
+  return pools.map((pool) => {
+    const id = getPoolAddress(pool)
+    const tvlUSD = tvlMap[id] || '0'
+    if ('tvlUSD' in pool) {
+      return { ...pool, tvlUSD }
+    }
+    return pool as Pool & WithTvl
+  })
+}

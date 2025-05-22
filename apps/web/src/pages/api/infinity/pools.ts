@@ -7,6 +7,18 @@ export const config = {
 }
 
 const MAX_CACHE_SECONDS = 60 * 60
+const BASE_URL = 'https://explorer.pancakeswap.com/api/cached/pools/list'
+
+export type APIChain =
+  | 'bsc'
+  | 'bsc-testnet'
+  | 'ethereum'
+  | 'base'
+  | 'opbnb'
+  | 'zksync'
+  | 'polygon-zkevm'
+  | 'linea'
+  | 'arbitrum'
 
 export default async function handler(req: NextRequest) {
   const raw = new URL(req.url).search.slice(1)
@@ -27,7 +39,7 @@ export default async function handler(req: NextRequest) {
   try {
     // eslint-disable-next-line no-await-in-loop
     const pools = await fetchAllPools({
-      baseUrl: 'https://explorer.pancakeswap.com/api/cached/pools/list',
+      baseUrl: BASE_URL,
       protocols: protocols as ('infinityBin' | 'infinityCl')[],
       chains: [chain as any],
     })
@@ -198,4 +210,28 @@ async function fetchAllPools({
   }
 
   return allResults
+}
+
+export const poolTvlMap = async (
+  protocols: ('v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable')[],
+  chain: APIChain,
+) => {
+  try {
+    const remotePools = await fetchAllPools({
+      baseUrl: 'https://explorer.pancakeswap.com/api/cached/pools/list',
+      protocols,
+      chains: [chain],
+      orderBy: 'tvlUSD',
+      pageSize: 100,
+    })
+    const tvlMap: Record<string, string> = {}
+    for (const pool of remotePools) {
+      const tvlUSD = pool.tvlUSD
+      const id = pool.id
+      tvlMap[id] = tvlUSD
+    }
+    return tvlMap
+  } catch (ex) {
+    return {}
+  }
 }
