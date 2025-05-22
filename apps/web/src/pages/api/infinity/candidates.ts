@@ -1,19 +1,15 @@
-import { ChainId } from '@pancakeswap/chains'
 import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
+import { POOLS_FAST_REVALIDATE } from 'config/pools'
 import { NextRequest, NextResponse } from 'next/server'
 import qs from 'qs'
 import { checksumAddress } from 'utils/checksumAddress'
 import { Address } from 'viem/accounts'
-import { poolQueriesFactory } from './edgePoolQueries'
+import { ALLOWED_PROTOCOLS, poolQueriesFactory, poolQueryPersistURL, Protocol } from './edgePoolQueries'
 import { responseJson } from './util'
 
 export const config = {
   runtime: 'edge',
 }
-
-type Protocol = 'v2' | 'ss' | 'v3' | 'infinity'
-
-const ALLOWED_PROTOCOLS = ['v2', 'ss', 'v3', 'infinity']
 
 export default async function handler(req: NextRequest) {
   const raw = new URL(req.url).search.slice(1)
@@ -35,33 +31,17 @@ export default async function handler(req: NextRequest) {
   }
 
   try {
-    const queries = await Promise.all(
-      protocols.map((protocol) => query(chainId, protocol as Protocol, addressA, addressB)),
-    )
-    const pools = queries.flat()
-    return responseJson(pools)
+    const poolQueries = poolQueriesFactory(chainId)
+    const epoch = Math.floor(Date.now() / POOLS_FAST_REVALIDATE[chainId])
+    const { key, cacheKey } = poolQueryPersistURL(addressA, addressB, chainId, protocols as Protocol[], epoch)
+    const pools = await poolQueries.fetchAllPools(addressA, addressB, chainId, protocols as Protocol[])
+    return responseJson(pools, {
+      epoch: Math.floor(Date.now() / POOLS_FAST_REVALIDATE[chainId]),
+      url: `${process.env.NEXT_PUBLIC_PROOF_API}/cache/${key}`,
+      cacheKey,
+    })
   } catch (ex) {
     console.error('fetch candidates error', ex)
     return NextResponse.json({ error: `fetch candidates error: ${ex}` }, { status: 400 })
-  }
-}
-
-const query = async (chainId: ChainId, protocol: Protocol, addressA: Address, addressB: Address) => {
-  const poolQueries = poolQueriesFactory(chainId)
-  switch (protocol) {
-    case 'v2': {
-      return poolQueries.fetchV2Pools(addressA, addressB, chainId)
-    }
-    case 'ss': {
-      return poolQueries.fetchSSPool(addressA, addressB, chainId)
-    }
-    case 'v3': {
-      return poolQueries.fetchV3Pools(addressA, addressB, chainId)
-    }
-    case 'infinity': {
-      return poolQueries.fetchInfinityPools(addressA, addressB, chainId)
-    }
-    default:
-      throw new Error('invalid pool')
   }
 }

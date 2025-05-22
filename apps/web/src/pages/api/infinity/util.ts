@@ -18,11 +18,12 @@ export const getProvider = () => {
 }
 
 const MAX_CACHE_SECONDS = 10
-export const responseJson = (val: any) => {
+export const responseJson = (val: any, extra?: any) => {
   return NextResponse.json(
     {
       data: val,
       lastUpdated: Number(Date.now()),
+      ...extra,
     },
     {
       status: 200,

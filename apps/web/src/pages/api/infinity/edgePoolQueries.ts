@@ -8,13 +8,51 @@ import {
   PoolType,
   SmartRouter,
 } from '@pancakeswap/smart-router'
-import { cacheByLRU, CacheOptions } from '@pancakeswap/utils/cacheByLRU'
+import { cacheByLRU, CacheOptions, calcCacheKey, persistKey, PersistOption } from '@pancakeswap/utils/cacheByLRU'
 import memoize from '@pancakeswap/utils/memoize'
 
 import { POOLS_FAST_REVALIDATE } from 'config/pools'
 import { v2Clients, v3Clients } from 'utils/graphql'
 import { Address } from 'viem/accounts'
 import { getProvider, mockCurrency } from './util'
+
+const persistOption: PersistOption = {
+  type: 'r2',
+  name: 'candidates',
+  version: 'v1',
+}
+
+export type Protocol = 'v2' | 'ss' | 'v3' | 'infinity'
+
+export const ALLOWED_PROTOCOLS = ['v2', 'ss', 'v3', 'infinity']
+
+export const poolQueryPersistURL = (
+  addressA: Address,
+  addressB: Address,
+  chainId: ChainId,
+  protocols: Protocol[],
+  epoch: number,
+) => {
+  const cacheKey = calcCacheKey(cacheKeyFn([addressA, addressB, chainId, protocols]) as any, epoch)
+  const key = persistKey(cacheKey, persistOption)
+  return {
+    cacheKey,
+    key,
+    url: `${process.env.NEXT_PUBLIC_PROOF_API}/cache/${key}`,
+  }
+}
+
+const cacheKeyFn = (args: [Address, Address, ChainId, Protocol[]]) => {
+  const sort = [args[0], args[1]].sort()
+  const key = [sort[0], sort[1], args[2], args[3]]
+  return key
+}
+type FN = (
+  addressA: Address,
+  addressB: Address,
+  chainId: ChainId,
+  protocol: Protocol[],
+) => Promise<SmartRouter.Transformer.SerializedPool[]>
 
 export const poolQueriesFactory = memoize((chainId: ChainId) => {
   const cacheTime = POOLS_FAST_REVALIDATE[chainId] as number
@@ -26,6 +64,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
   }
 
   const fetchInfinityPools = cacheByLRU(async (addressA: Address, addressB: Address, chainId: ChainId) => {
+    console.log('[fetchInfinityPools]', addressA, addressB, chainId)
     const pools = await InfinityRouter.fetchInfinityPoolsFromApi(addressA, addressB, chainId)
     const localPools = pools
       .map((pool) => {
@@ -51,6 +90,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
     const result = [...poolWithTicks, ...poolWithBins].map((p) => {
       return SmartRouter.Transformer.serializePool(p)
     })
+    console.log('[fetchInfinityPools] succ', result.length)
     return result
   }, cacheOption)
 
@@ -87,6 +127,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
   }, cacheOption)
 
   const fetchSSPool = cacheByLRU(async (addressA: Address, addressB: Address, chainId: ChainId) => {
+    console.log('[fetchSSPool]', addressA, addressB, chainId)
     const currencyA = mockCurrency(addressA, chainId)
     const currencyB = mockCurrency(addressB, chainId)
     const client = getProvider()
@@ -104,10 +145,49 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
     })
   }, cacheOption)
 
+  const querySingleType = async (chainId: ChainId, protocol: Protocol, addressA: Address, addressB: Address) => {
+    switch (protocol) {
+      case 'v2': {
+        return fetchV2Pools(addressA, addressB, chainId)
+      }
+      case 'ss': {
+        return fetchSSPool(addressA, addressB, chainId)
+      }
+      case 'v3': {
+        return fetchV3Pools(addressA, addressB, chainId)
+      }
+      case 'infinity': {
+        return fetchInfinityPools(addressA, addressB, chainId)
+      }
+      default:
+        throw new Error('invalid pool')
+    }
+  }
+
+  const cacheOptionForQueryAll: CacheOptions<FN> = {
+    ttl: cacheTime,
+    requestTimeout: 5_000,
+    maxCacheSize: 1_000_000,
+    maxAge: POOLS_FAST_REVALIDATE[1] * 5, // For stale values
+    persist: persistOption,
+    key: cacheKeyFn,
+  }
+
+  const queryAllPools = cacheByLRU(
+    async (addressA: Address, addressB: Address, chainId: ChainId, protocols: Protocol[]) => {
+      const queries = await Promise.all(
+        protocols.map((protocol) => querySingleType(chainId, protocol as Protocol, addressA, addressB)),
+      )
+      return queries.flat()
+    },
+    cacheOptionForQueryAll,
+  )
+
   return {
     fetchInfinityPools,
     fetchV2Pools,
     fetchV3Pools,
     fetchSSPool,
+    fetchAllPools: queryAllPools,
   }
 })

@@ -3,6 +3,9 @@ import { InfinityBinPool, InfinityClPool, SmartRouter, StablePool, V2Pool, V3Poo
 
 import { Currency, getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import { cacheByLRU } from '@pancakeswap/utils/cacheByLRU'
+import { takeFirstFulfilled } from '@pancakeswap/utils/promise'
+import { POOLS_FAST_REVALIDATE } from 'config/pools'
+import { poolQueryPersistURL } from 'pages/api/infinity/edgePoolQueries'
 import qs from 'qs'
 import { PoolHashHelper } from './PoolHashHelper'
 
@@ -14,36 +17,47 @@ const _fetchPools = async function <T>(
   protocols: Protocol[],
   blockNumber: number,
 ): Promise<T> {
+  const addressA = getCurrencyAddress(currencyA)
+  const addressB = getCurrencyAddress(currencyB)
   const query = qs.stringify({
-    addressA: getCurrencyAddress(currencyA),
-    addressB: getCurrencyAddress(currencyB),
+    addressA,
+    addressB,
     chainId,
     protocol: protocols.join(','),
     blockNumber,
   })
+  const currentEpoch = Math.floor(Date.now() / POOLS_FAST_REVALIDATE[chainId])
+  const { url: urlPrevious } = poolQueryPersistURL(addressA, addressB, chainId, protocols, currentEpoch - 1)
 
-  const res = await fetch(`/api/infinity/candidates?${query}`)
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch pools: ${await res.text()}`)
+  async function fetchCDN(url: string) {
+    const resp = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    if (!resp.ok) {
+      throw new Error(`Failed to fetch pools: ${await resp.text()}`)
+    }
+    return resp.json()
   }
 
-  const json = (await res.json()) as {
+  const queryApi = async () => {
+    const res = await fetch(`/api/infinity/candidates?${query}`)
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch pools: ${await res.text()}`)
+    }
+    return res.json()
+  }
+
+  const json = (await takeFirstFulfilled([fetchCDN(urlPrevious), fetchCDN(urlPrevious), queryApi()])) as {
     lastUpdated: number
     data: T
   }
+
   return json.data
 }
-
-const fetchPools = cacheByLRU(_fetchPools, {
-  ttl: 3_000,
-  key: (args) => {
-    const [currencyA, currencyB, chainId, protocol, blockNumber] = args
-    const hashc = PoolHashHelper.hashCurrencies(currencyA, currencyB)
-    return `${hashc}-${chainId}-${protocol.join(',')}-${blockNumber}`
-  },
-  usingStaleValue: false,
-})
 
 const getV2CandidatePools = async (currencyA: Currency, currencyB: Currency, chainId: ChainId, blockNumber: number) => {
   const pools = await fetchPools<SmartRouter.Transformer.SerializedV2Pool[]>(
@@ -90,6 +104,16 @@ const getInfinityCandidatePools = async (
   const filtered = pools.map((pool) => SmartRouter.Transformer.parsePool(chainId, pool))
   return filtered as (InfinityClPool | InfinityBinPool)[]
 }
+
+const fetchPools = cacheByLRU(_fetchPools, {
+  ttl: 3_000,
+  key: (args) => {
+    const [currencyA, currencyB, chainId, protocol, blockNumber] = args
+    const hashc = PoolHashHelper.hashCurrencies(currencyA, currencyB)
+    return `${hashc}-${chainId}-${protocol.join(',')}-${blockNumber}`
+  },
+  usingStaleValue: false,
+})
 
 const getAllCandidates = async (
   currencyA: Currency,
