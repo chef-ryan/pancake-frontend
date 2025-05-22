@@ -197,8 +197,6 @@ function SettingsMenuModalContent({ onDismiss }: { onDismiss: () => void }) {
       <ColorThemeSettingField />
       <Divider />
       <RPCConnectionSettingField />
-      <Divider />
-      {/* <AppVersion /> */}
     </MotionModal>
   )
 }
