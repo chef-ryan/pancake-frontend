@@ -74,17 +74,17 @@ export default function AmountSlider({
       <HStack justify="space-between">
         <HStack spacing={sizes.topLeftLabelAndPercentSpace}>
           {isRenderTopLeftLabel && (
-            <Text color={colors.textPrimary} fontSize={sizes.topLeftLabel}>
+            <Text color={colors.textPrimary} fontSize={sizes.topLeftLabel} fontWeight={600}>
               {renderTopLeftLabel()}
             </Text>
           )}
-          <Text color={colors.textPrimary} fontSize={sizes.percentValueText} fontWeight={500}>
+          <Text color={colors.textPrimary} fontSize={sizes.percentValueText} fontWeight={600}>
             {toPercentString(hotPercent, { decimals: 0, alreadyPercented: true })}
           </Text>
         </HStack>
 
         <Desktop>
-          <HStack spacing={sizes.buttonSpace}>
+          <HStack spacing={2}>
             {[25, 50, 75, 100].map((percent) => (
               <Button
                 disabled={isDisabled}

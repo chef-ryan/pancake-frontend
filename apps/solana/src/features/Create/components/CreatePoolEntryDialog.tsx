@@ -228,11 +228,12 @@ function CreateBlock(props: {
     <Box
       backgroundColor={colors.inputBg}
       p={4}
-      borderRadius={8}
+      borderRadius="3xl"
       position="relative"
       cursor="pointer"
-      borderWidth="1.5px"
-      borderColor={props.selected ? colors.secondary : 'transparent'}
+      borderWidth="1px"
+      borderColor={colors.secondary}
+      borderStyle="solid"
       onClick={props.onClick}
     >
       <Flex justify="space-between">
@@ -287,10 +288,10 @@ function PoolTypeItem({
       ref={domRef}
       flexGrow={1}
       color={isActive ? colors.textPrimary : colors.textSubtle}
-      bg={isActive ? colors.backgroundAlt : 'transparent'}
+      bg={isActive ? colors.background : 'transparent'}
       px={4}
       py={2}
-      rounded="md"
+      rounded="2xl"
       position="relative"
       cursor={isDisabled ? 'not-allowed' : 'pointer'}
     >
