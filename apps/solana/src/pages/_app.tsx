@@ -2,7 +2,6 @@
 import { ResetCSS } from '@pancakeswap/uikit'
 import Decimal from 'decimal.js'
 import type { AppProps } from 'next/app'
-import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
@@ -19,7 +18,7 @@ import 'react-day-picker/dist/style.css'
 import { Providers } from '@/provider'
 import Content from '@/components/Content'
 import AppNavLayout from '@/components/AppLayout/AppNavLayout'
-import useThemeCookie from '@/hooks/useThemeCookie'
+import useThemeSync from '@/hooks/useThemeSync'
 
 // const DynamicProviders = dynamic(() => import('@/provider').then((mod) => mod.Providers), { ssr: false })
 // const DynamicContent = dynamic(() => import('@/components/Content'))
@@ -32,7 +31,7 @@ const FULL_SIZE_PATH = ['/swap']
 Decimal.set({ precision: 1e3 })
 
 const GlobalHooks = () => {
-  useThemeCookie()
+  useThemeSync()
   return null
 }
 

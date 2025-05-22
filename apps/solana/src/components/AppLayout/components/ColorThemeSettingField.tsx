@@ -1,20 +1,20 @@
 import { useColorMode } from '@chakra-ui/react'
-
 import { useTranslation } from 'react-i18next'
-
 import { ThemeSwitcher } from '@pancakeswap/uikit'
-import { useTheme } from '@pancakeswap/hooks'
+import { useTheme } from 'next-themes'
+import { useCallback } from 'react'
 import { SettingField } from './SettingField'
 
 export function ColorThemeSettingField() {
   const { t } = useTranslation()
   const { toggleColorMode } = useColorMode()
-  const { setTheme, isDark } = useTheme()
+  const { setTheme, theme } = useTheme()
+  const isDark = theme === 'dark'
 
-  const handleToggleTheme = () => {
+  const handleToggleTheme = useCallback(() => {
     setTheme(isDark ? 'light' : 'dark')
     toggleColorMode()
-  }
+  }, [isDark, setTheme, toggleColorMode])
 
   return (
     <SettingField
