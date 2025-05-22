@@ -1,9 +1,9 @@
 import { getBinPoolTokenPrice } from '@pancakeswap/infinity-sdk'
 import { Currency, Pair, Price } from '@pancakeswap/sdk'
 import { getSwapOutput } from '@pancakeswap/stable-swap-sdk'
+import memoize from '@pancakeswap/utils/memoize'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import { Pool as SDKV3Pool, computePoolAddress } from '@pancakeswap/v3-sdk'
-import memoize from 'lodash/memoize.js'
 import { Address } from 'viem'
 
 import { InfinityBinPool, InfinityClPool, Pool, PoolType, StablePool, V2Pool, V3Pool } from '../types'
