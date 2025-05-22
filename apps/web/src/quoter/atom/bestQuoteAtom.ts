@@ -13,7 +13,14 @@ import { routingStrategyAtom, StrategyRoute } from './routingStrategy'
 
 const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
   return atom((get) => {
-    function executeRoutes(strategies: StrategyRoute[], option: QuoteQuery, level: number) {
+    function executeRoutes(
+      strategies: StrategyRoute[],
+      option: QuoteQuery,
+      level: number,
+    ): {
+      quote: Loadable<InterfaceOrder>
+      anyShadowFail?: boolean
+    } {
       try {
         const quotes = strategies.map((route) => ({
           result: get(route.query({ ...option, ...route.overrides, routeKey: route.key })),
@@ -31,7 +38,9 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
             }
           }
           return {
-            quote: anyFail ? Loadable.Fail(new NoValidRouteError()) : Loadable.Nothing<InterfaceOrder>(),
+            quote: anyFail
+              ? Loadable.Fail<InterfaceOrder>(new NoValidRouteError())
+              : Loadable.Nothing<InterfaceOrder>(),
             anyShadowFail,
           }
         }
@@ -50,7 +59,7 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
           }
         }
         return {
-          quote: anyFail ? Loadable.Fail(new NoValidRouteError()) : Loadable.Nothing<InterfaceOrder>(),
+          quote: anyFail ? Loadable.Fail<InterfaceOrder>(new NoValidRouteError()) : Loadable.Nothing<InterfaceOrder>(),
           anyShadowFail,
         }
       } catch (ex) {
