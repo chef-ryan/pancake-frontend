@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react'
 import { PoolsApiReturn, FetchPoolParams, solToWSol, ApiV3PoolInfoItem, PoolFetchType } from '@raydium-io/raydium-sdk-v2'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import useSWRInfinite from 'swr/infinite'
 import { KeyedMutator } from 'swr'
 import { AxiosResponse } from 'axios'
@@ -9,7 +9,6 @@ import { MINUTE_MILLISECONDS } from '@/utils/date'
 import { useAppStore } from '@/store'
 import { formatPoolData, formatAprData } from './formatter'
 import { ReturnPoolType, ReturnFormattedPoolType } from './type'
-
 
 export default function useFetchPoolByMint<T extends PoolFetchType>(
   props: {
@@ -62,8 +61,7 @@ export default function useFetchPoolByMint<T extends PoolFetchType>(
   const { data, setSize, error, ...swrProps } = useSWRInfinite(
     (index) =>
       url
-        ? `${url 
-          }?mint1=${baseMint}&mint2=${quoteMint}&poolType=${
+        ? `${url}?mint1=${baseMint}&mint2=${quoteMint}&poolType=${
             showFarms ? `${type}Farm` : type
           }&poolSortField=${sort}&sortType=${order}&pageSize=${pageSize}&page=${index + 1}`
         : url,

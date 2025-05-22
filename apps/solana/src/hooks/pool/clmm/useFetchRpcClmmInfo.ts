@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { Connection, PublicKey } from '@solana/web3.js'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import { ApiV3PoolInfoConcentratedItem, PoolInfoLayout, SqrtPriceMath, PoolFarmRewardInfo } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 import { AccountLayout } from '@solana/spl-token'

@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { IdoKeysData } from '@raydium-io/raydium-sdk-v2'
 import useSWR from 'swr'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import axios from '@/api/axios'
 import { useAppStore } from '@/store'
 import { isValidPublicKey } from '@/utils/publicKey'
@@ -17,7 +17,7 @@ export default function useFetchIdoKeys(props: { idList?: (string | undefined)[]
 
   const fetch = shouldFetch && fetchIdList.length > 0
   const [host, idoKeyUrl] = useAppStore((s) => [s.urlConfigs.BASE_HOST, s.urlConfigs.IDO_KEYS], shallow)
-  const url = !fetch ? null : `${host + idoKeyUrl  }?ids=${fetchIdList.join(',')}`
+  const url = !fetch ? null : `${host + idoKeyUrl}?ids=${fetchIdList.join(',')}`
 
   const { data, isLoading, error, ...rest } = useSWR(url, fetcher, {
     dedupingInterval: refreshInterval,

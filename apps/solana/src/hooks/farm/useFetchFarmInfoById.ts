@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import useSWR, { KeyedMutator } from 'swr'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import { AxiosResponse } from 'axios'
 import { FormatFarmInfoOut } from '@raydium-io/raydium-sdk-v2'
 import axios from '@/api/axios'
@@ -38,7 +38,7 @@ export default function useFetchFarmInfoById<T = FormatFarmInfoOut>(props: {
   )
   const url = !readyIdList.length || cacheDataList.length === readyIdList.length || !shouldFetch ? null : host + farmInfoUrl
 
-  const { data, isLoading, error, mutate, ...rest } = useSWR(url ? `${url  }?ids=${readyIdList.join(',')}` : url, fetcher, {
+  const { data, isLoading, error, mutate, ...rest } = useSWR(url ? `${url}?ids=${readyIdList.join(',')}` : url, fetcher, {
     dedupingInterval: refreshInterval,
     focusThrottleInterval: refreshInterval,
     refreshInterval

@@ -1,6 +1,6 @@
 import { TxVersion, solToWSol } from '@raydium-io/raydium-sdk-v2'
 import useSWR from 'swr'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import { useCallback, useEffect, useState } from 'react'
 import Decimal from 'decimal.js'
 import axios from '@/api/axios'

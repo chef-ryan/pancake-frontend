@@ -1,12 +1,11 @@
 import { useMemo, useEffect } from 'react'
 import { FarmPositionData } from '@raydium-io/raydium-sdk-v2'
 import useSWR from 'swr'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import Decimal from 'decimal.js'
 import axios from '@/api/axios'
 import { useAppStore, useTokenAccountStore, useFarmStore } from '@/store'
 import { addAccChangeCbk, removeAccChangeCbk } from '@/hooks/app/useTokenAccountInfo'
-
 
 export type FarmPositionInfo = {
   hasAmount: boolean

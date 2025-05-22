@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback, MouseEvent, KeyboardEvent, u
 import { useTranslation } from 'react-i18next'
 import { Box, BoxProps, Flex, Text, Input, Popover, PopoverAnchor, PopoverContent, PopoverBody, HStack } from '@chakra-ui/react'
 import { ApiV3Token, solToWSol } from '@raydium-io/raydium-sdk-v2'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import AddressChip from '@/components/AddressChip'
 import Close from '@/icons/misc/Close'
 import { debounce } from '@/utils/functionMethods'

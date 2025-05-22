@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import axios from '@/api/axios'
 import { useAppStore } from '@/store'
 import { isValidPublicKey } from '@/utils/publicKey'
@@ -26,7 +26,7 @@ export default function useFetchPoolChartLiquidity(props: {
   const [host, lineUrl] = useAppStore((s) => [s.urlConfigs.BASE_HOST, s.urlConfigs.POOL_LIQUIDITY_LINE], shallow)
   const url = id && shouldFetch && isValidId && !disable ? host + lineUrl : null
 
-  const { data, isLoading, error, ...rest } = useSWR(url ? `${url  }?id=${id}` : url, fetcher, {
+  const { data, isLoading, error, ...rest } = useSWR(url ? `${url}?id=${id}` : url, fetcher, {
     dedupingInterval: refreshInterval,
     focusThrottleInterval: refreshInterval,
     refreshInterval

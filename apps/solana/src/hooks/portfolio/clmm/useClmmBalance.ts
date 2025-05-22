@@ -8,7 +8,7 @@ import {
   PositionUtils,
   LockClPositionLayoutV2
 } from '@raydium-io/raydium-sdk-v2'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import { PublicKey, Connection } from '@solana/web3.js'
 import Decimal from 'decimal.js'
 import BN from 'bn.js'
@@ -28,7 +28,7 @@ let lastRefreshTag = initTokenAccountSate.refreshClmmPositionTag
 
 const fetcher = async ([connection, publicKeyList]: [Connection, string[]]) => {
   logMessage('rpc: get clmm position balance info')
-  const {commitment} = useAppStore.getState()
+  const { commitment } = useAppStore.getState()
 
   const chunkSize = 100
   const keyGroup = []
@@ -53,7 +53,7 @@ export interface ClmmLockInfo {
 
 const lockFetcher = async ([connection, publicKeyList]: [Connection, string[]]) => {
   logMessage('rpc: get clmm lock position info')
-  const {commitment} = useAppStore.getState()
+  const { commitment } = useAppStore.getState()
 
   const chunkSize = 100
   const keyGroup = []
@@ -95,7 +95,7 @@ export default function useClmmBalance({
   useRefreshEpochInfo()
 
   const balanceMints = useMemo(() => {
-    const {tokenMap} = useTokenStore.getState()
+    const { tokenMap } = useTokenStore.getState()
     return tokenAccountRawInfos.filter((acc) => acc.accountInfo.amount.eq(new BN(1)) && !tokenMap.has(acc.accountInfo.mint.toBase58()))
   }, [tokenAccountRawInfos])
 

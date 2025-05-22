@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { getCpLockPda, CpmmLockInfo } from '@raydium-io/raydium-sdk-v2'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import BN from 'bn.js'
 import useSWR from 'swr'
 import { Connection } from '@solana/web3.js'
@@ -22,7 +22,7 @@ let lastRefreshTag = initTokenAccountSate.refreshCpmmPositionTag
 
 const checkCpmmLockId = async ([connection, publicKeyList]: [Connection, string[]]) => {
   logMessage('rpc: check cpmm lock id')
-  const {commitment} = useAppStore.getState()
+  const { commitment } = useAppStore.getState()
 
   const chunkSize = 100
   const keyGroup = []
@@ -48,7 +48,7 @@ const fetcher = async ([connection, host, publicKeyList]: [Connection, string, s
     publicKeyList.map(async (key, idx) => {
       if (!checkRes[idx]) return undefined
       try {
-        const r = await axios.get(`${host  }?id=${key}`)
+        const r = await axios.get(`${host}?id=${key}`)
         return r.data as CpmmLockInfo
       } catch {
         return undefined

@@ -2,7 +2,7 @@ import { Box, Collapse, HStack, SimpleGrid, Text, Tooltip, VStack, useDisclosure
 import { ApiStakePool, ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 import { useTranslation } from 'react-i18next'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from 'bn.js'
 import Button, { ButtonProps } from '@/components/Button'

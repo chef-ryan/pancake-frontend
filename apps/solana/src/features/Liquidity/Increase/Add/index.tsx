@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Decimal from 'decimal.js'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import BN from 'bn.js'
 import Button from '@/components/Button'
 import IntervalCircle, { IntervalCircleHandler } from '@/components/IntervalCircle'

@@ -2,7 +2,7 @@ import { Flex, Input, InputGroup, InputRightElement, Spinner, useDisclosure } fr
 import { Button } from '@pancakeswap/uikit'
 import { KeyboardEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import { useEvent } from '@/hooks/useEvent'
 import { useAppStore } from '@/store'
 import { colors } from '@/theme/cssVariables'

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { MintLayout, RawMint } from '@solana/spl-token'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import useSWR from 'swr'
 import Decimal from 'decimal.js'
 import { useTokenAccountStore, useAppStore } from '@/store'

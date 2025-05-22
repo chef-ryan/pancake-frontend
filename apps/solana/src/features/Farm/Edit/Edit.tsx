@@ -12,7 +12,7 @@ import {
 } from '@raydium-io/raydium-sdk-v2'
 import { PublicKey } from '@solana/web3.js'
 import { useRouter } from 'next/router'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 
 import Decimal from 'decimal.js'
 import { BN } from 'bn.js'
