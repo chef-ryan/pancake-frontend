@@ -11,7 +11,7 @@ import {
 import { cacheByLRU, CacheOptions, calcCacheKey, persistKey, PersistOption } from '@pancakeswap/utils/cacheByLRU'
 import memoize from '@pancakeswap/utils/memoize'
 
-import { POOLS_FAST_REVALIDATE } from 'config/pools'
+import { POOLS_SLOW_REVALIDATE } from 'config/pools'
 import { v2Clients, v3Clients } from 'utils/graphql'
 import { Address } from 'viem/accounts'
 import { getProvider, mockCurrency, Protocol } from './util'
@@ -51,12 +51,13 @@ type FN = (
 ) => Promise<SmartRouter.Transformer.SerializedPool[]>
 
 export const poolQueriesFactory = memoize((chainId: ChainId) => {
-  const cacheTime = POOLS_FAST_REVALIDATE[chainId] as number
+  const cacheTime = POOLS_SLOW_REVALIDATE[chainId] as number
   const cacheOption = {
     ttl: cacheTime,
     requestTimeout: 3_000,
     maxCacheSize: 1_000_000,
     maxAge: 300_000, // For stale values
+    cacheNextEpochOnHalfTTS: true,
   }
 
   const fetchInfinityPools = cacheByLRU(async (addressA: Address, addressB: Address, chainId: ChainId) => {
@@ -167,6 +168,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
     persist: persistOption,
     maxAge: 300_000, // For stale values
     key: cacheKeyFn,
+    cacheNextEpochOnHalfTTS: true,
   }
 
   const queryAllPools = cacheByLRU(
