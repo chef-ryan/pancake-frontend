@@ -70,7 +70,7 @@ export const NetworkSwitcher = () => {
         </>
       }
     >
-      {() => <NetworkSelect />}
+      {({ isOpen }) => (isOpen ? <NetworkSelect /> : null)}
     </UserMenu>
   )
 }
