@@ -1,6 +1,7 @@
 import { keccak256, stringify } from 'viem'
 import { LRU } from './lru'
 import { takeFirstFulfilled } from './promise'
+import { withTimeout } from './withTimeout'
 
 type AsyncFunction<T extends any[]> = (...args: T) => Promise<any>
 
@@ -168,7 +169,7 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
       }
       const createPromise = async () => {
         try {
-          const caller = requestTimeout ? withTimeout(fn, requestTimeout) : fn
+          const caller = requestTimeout ? withTimeout(fn, { ms: requestTimeout }) : fn
           const promise = ensurePersist(cacheKey, caller(...args))
           const result = await promise
           if (!result) {
@@ -291,24 +292,4 @@ async function _fetchR2Cache(key: string) {
     return resp.json()
   }
   throw new Error(`Failed to fetch cache`)
-}
-
-function withTimeout<Args extends any[], Return>(
-  fn: (...args: Args) => Promise<Return>,
-  ms: number,
-): (...args: Args) => Promise<Return> {
-  return async (...args: Args): Promise<Return> => {
-    let timer: ReturnType<typeof setTimeout>
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      timer = setTimeout(() => {
-        reject(new Error(`Operation timed out after ${ms}ms`))
-      }, ms)
-    })
-
-    try {
-      return await Promise.race([fn(...args), timeoutPromise])
-    } finally {
-      clearTimeout(timer!)
-    }
-  }
 }

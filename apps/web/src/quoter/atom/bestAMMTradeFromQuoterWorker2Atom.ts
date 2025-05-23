@@ -8,6 +8,7 @@ import { globalWorkerAtom } from 'hooks/useWorker'
 import { atomFamily } from 'jotai/utils'
 import { createViemPublicClientGetter } from 'utils/viem'
 
+import { withTimeout } from '@pancakeswap/utils/withTimeout'
 import { QUOTE_TIMEOUT } from 'quoter/consts'
 import { quoteTraceAtom } from 'quoter/perf/quoteTracker'
 import { createPoolQuery } from 'quoter/utils/createQuoteQuery'
@@ -16,7 +17,6 @@ import { gasPriceWeiAtom } from 'quoter/utils/gasPriceAtom'
 import { getAllowedPoolTypes } from 'quoter/utils/getAllowedPoolTypes'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { fetchCandidatePoolsLite } from 'quoter/utils/poolQueries'
-import { withTimeout } from 'utils/withTimeout'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { CreateQuoteProviderParams, QuoteQuery } from '../quoter.types'
 import { atomWithLoadable } from './atomWithLoadable'
@@ -36,52 +36,60 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery)
       throw new Error('Quote worker not initialized')
     }
 
-    const query = withTimeout(async () => {
-      perf.tracker.track('start')
+    const query = withTimeout(
+      async () => {
+        perf.tracker.track('start')
 
-      const { poolQuery, poolOptions } = createPoolQuery(option)
-      const candidatePools = await fetchCandidatePoolsLite(poolQuery, poolOptions)
-      perf.tracker.track('pool_success')
+        const { poolQuery, poolOptions } = createPoolQuery(option)
+        const candidatePools = await fetchCandidatePoolsLite(poolQuery, poolOptions)
+        perf.tracker.track('pool_success')
 
-      const filtered = filterPools(candidatePools)
+        const filtered = filterPools(candidatePools)
 
-      const quoteCurrencyUsdPrice = await get(currencyUSDPriceAtom(currency))
-      const nativeCurrency = get(nativeCurrencyAtom(currency.chainId))
-      const nativeCurrencyUsdPrice = await get(currencyUSDPriceAtom(nativeCurrency))
+        const quoteCurrencyUsdPrice = await get(currencyUSDPriceAtom(currency))
+        const nativeCurrency = get(nativeCurrencyAtom(currency.chainId))
+        const nativeCurrencyUsdPrice = await get(currencyUSDPriceAtom(nativeCurrency))
 
-      const gasPriceWei = await get(gasPriceWeiAtom(currency?.chainId))
-      const quoterConfig = (quoteProvider as ReturnType<typeof SmartRouter.createQuoteProvider>)?.getConfig?.()
-      const result = await worker.getBestTrade({
-        chainId: currency.chainId,
-        currency: SmartRouter.Transformer.serializeCurrency(currency),
-        tradeType: tradeType || TradeType.EXACT_INPUT,
-        amount: {
-          currency: SmartRouter.Transformer.serializeCurrency(amount.currency),
-          value: amount.quotient.toString(),
+        const gasPriceWei = await get(gasPriceWeiAtom(currency?.chainId))
+        const quoterConfig = (quoteProvider as ReturnType<typeof SmartRouter.createQuoteProvider>)?.getConfig?.()
+        const result = await worker.getBestTrade({
+          chainId: currency.chainId,
+          currency: SmartRouter.Transformer.serializeCurrency(currency),
+          tradeType: tradeType || TradeType.EXACT_INPUT,
+          amount: {
+            currency: SmartRouter.Transformer.serializeCurrency(amount.currency),
+            value: amount.quotient.toString(),
+          },
+          gasPriceWei: typeof gasPriceWei !== 'function' ? gasPriceWei?.toString() : undefined,
+          maxHops: option.maxHops,
+          maxSplits,
+          poolTypes: getAllowedPoolTypes(option),
+          candidatePools: filtered.map(SmartRouter.Transformer.serializePool),
+          onChainQuoterGasLimit: quoterConfig?.gasLimit?.toString(),
+          quoteCurrencyUsdPrice,
+          nativeCurrencyUsdPrice,
+          signal: option.signal,
+        })
+        const parsed = SmartRouter.Transformer.parseTrade(currency.chainId, result as any) as any as
+          | InfinityRouter.InfinityTradeWithoutGraph<TradeType>
+          | undefined
+        if (parsed) {
+          parsed.quoteQueryHash = option.hash
+        }
+        const order = {
+          type: OrderType.PCS_CLASSIC,
+          trade: parsed,
+        } as InterfaceOrder
+        perf.tracker.success(order)
+        return order
+      },
+      {
+        ms: QUOTE_TIMEOUT,
+        abort: () => {
+          option.controller?.abort()
         },
-        gasPriceWei: typeof gasPriceWei !== 'function' ? gasPriceWei?.toString() : undefined,
-        maxHops: option.maxHops,
-        maxSplits,
-        poolTypes: getAllowedPoolTypes(option),
-        candidatePools: filtered.map(SmartRouter.Transformer.serializePool),
-        onChainQuoterGasLimit: quoterConfig?.gasLimit?.toString(),
-        quoteCurrencyUsdPrice,
-        nativeCurrencyUsdPrice,
-        signal: option.signal,
-      })
-      const parsed = SmartRouter.Transformer.parseTrade(currency.chainId, result as any) as any as
-        | InfinityRouter.InfinityTradeWithoutGraph<TradeType>
-        | undefined
-      if (parsed) {
-        parsed.quoteQueryHash = option.hash
-      }
-      const order = {
-        type: OrderType.PCS_CLASSIC,
-        trade: parsed,
-      } as InterfaceOrder
-      perf.tracker.success(order)
-      return order
-    }, QUOTE_TIMEOUT)
+      },
+    )
 
     try {
       return await query()

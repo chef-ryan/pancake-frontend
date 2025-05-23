@@ -11,7 +11,6 @@ import { PoolQuery, PoolQueryOptions } from 'quoter/quoter.types'
 import { v2Clients, v3Clients } from 'utils/graphql'
 import { getViemClients } from 'utils/viem'
 import { edgePoolQueryClient } from './edgePoolQueryClient'
-import { FetchCandidatePoolsError } from './FetchCandidatePoolsError'
 import { PoolHashHelper } from './PoolHashHelper'
 
 export const poolQueriesFactory = memoize((chainId: ChainId) => {
@@ -232,7 +231,7 @@ export const fetchCandidatePools = async (query: PoolQuery, options: PoolQueryOp
 
   const defaultQuery = async () => {
     const protocols = protocolsFromQuery(options)
-    return edgePoolQueryClient.getAllCandidates(currencyA, currencyB, chainId, blockNumber, protocols)
+    return edgePoolQueryClient.getAllCandidates(currencyA, currencyB, chainId, blockNumber, protocols, options.signal)
   }
 
   const call = createAsyncCallWithFallbacks(defaultQuery, {
@@ -240,12 +239,7 @@ export const fetchCandidatePools = async (query: PoolQuery, options: PoolQueryOp
     fallbackTimeout: 3_000,
   })
 
-  try {
-    return await call()
-  } catch (ex) {
-    console.warn(ex)
-    throw new FetchCandidatePoolsError('fetchCommonPoolsOnChain')
-  }
+  return call()
 }
 
 export const fetchCandidatePoolsLite = async (query: PoolQuery, options: PoolQueryOptions) => {
@@ -275,12 +269,7 @@ export const fetchCandidatePoolsLite = async (query: PoolQuery, options: PoolQue
     fallbackTimeout: 3_000,
   })
 
-  try {
-    return await call()
-  } catch (ex) {
-    console.warn(ex)
-    throw new FetchCandidatePoolsError('commonPoolsLiteAtom')
-  }
+  return call()
 }
 
 const protocolsFromQuery = (query: PoolQueryOptions) => {

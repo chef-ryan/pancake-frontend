@@ -1,11 +1,11 @@
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { Loadable } from '@pancakeswap/utils/Loadable'
+import { TimeoutError } from '@pancakeswap/utils/withTimeout'
 import { getIsWrapping } from 'hooks/useWrapCallback'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { isBetterQuoteTrade } from 'quoter/utils/getBetterQuote'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
-import { TimeoutError } from 'utils/withTimeout'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { NoValidRouteError, QuoteQuery } from '../quoter.types'
 import { activeQuoteHashAtom } from './abortControlAtoms'
@@ -42,6 +42,11 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
         const best = findBestQuote(...quotes.map((x) => x.result))
         const anyShadowFail = quotes.some((x) => x.isShadow && x.result.isFail())
         const anyTimeout = errors.some((x) => x instanceof TimeoutError)
+        console.log(
+          `[error]`,
+          quotes.map((x) => x.result),
+          anyTimeout,
+        )
 
         if (!best) {
           if (anyPending) {

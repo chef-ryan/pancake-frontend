@@ -1,7 +1,12 @@
+interface WithTimeoutOptions {
+  ms: number
+  abort?: () => void
+}
 export function withTimeout<Args extends any[], Return>(
   fn: (...args: Args) => Promise<Return>,
-  ms: number,
+  options: WithTimeoutOptions,
 ): (...args: Args) => Promise<Return> {
+  const { ms, abort } = options
   return async (...args: Args): Promise<Return> => {
     let timer: ReturnType<typeof setTimeout>
     const timeoutPromise = new Promise<never>((_, reject) => {
@@ -12,7 +17,13 @@ export function withTimeout<Args extends any[], Return>(
 
     try {
       return await Promise.race([fn(...args), timeoutPromise])
+    } catch (ex) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('Error in withTimeout:', ex)
+      }
+      throw ex
     } finally {
+      abort?.()
       clearTimeout(timer!)
     }
   }

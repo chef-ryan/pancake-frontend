@@ -13,6 +13,7 @@ const _fetchPools = async function <T>(
   chainId: ChainId,
   protocols: Protocol[],
   blockNumber: number,
+  signal?: AbortSignal,
 ): Promise<T> {
   const addressA = getCurrencyAddress(currencyA)
   const addressB = getCurrencyAddress(currencyB)
@@ -25,7 +26,13 @@ const _fetchPools = async function <T>(
   })
 
   const queryApi = async () => {
-    const res = await fetch(`/api/infinity/candidates-cache?${query}`)
+    const res = await fetch(`/api/infinity/candidates-cache?${query}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal,
+    })
 
     if (!res.ok) {
       throw new Error(`Failed to fetch pools: ${await res.text()}`)
@@ -41,35 +48,56 @@ const _fetchPools = async function <T>(
   return json.data
 }
 
-const getV2CandidatePools = async (currencyA: Currency, currencyB: Currency, chainId: ChainId, blockNumber: number) => {
+const getV2CandidatePools = async (
+  currencyA: Currency,
+  currencyB: Currency,
+  chainId: ChainId,
+  blockNumber: number,
+  abort?: AbortSignal,
+) => {
   const pools = await fetchPools<SmartRouter.Transformer.SerializedV2Pool[]>(
     currencyA,
     currencyB,
     chainId,
     ['v2'],
     blockNumber,
+    abort,
   )
   return pools.map((pool) => SmartRouter.Transformer.parsePool(chainId, pool) as V2Pool)
 }
 
-const getV3CandidatePools = async (currencyA: Currency, currencyB: Currency, chainId: ChainId, blockNumber: number) => {
+const getV3CandidatePools = async (
+  currencyA: Currency,
+  currencyB: Currency,
+  chainId: ChainId,
+  blockNumber: number,
+  abortSignal?: AbortSignal,
+) => {
   const pools = await fetchPools<SmartRouter.Transformer.SerializedV3Pool[]>(
     currencyA,
     currencyB,
     chainId,
     ['v3'],
     blockNumber,
+    abortSignal,
   )
   return pools.map((pool) => SmartRouter.Transformer.parsePool(chainId, pool) as V3Pool)
 }
 
-const getSSCandidatePools = async (currencyA: Currency, currencyB: Currency, chainId: ChainId, blockNumber: number) => {
+const getSSCandidatePools = async (
+  currencyA: Currency,
+  currencyB: Currency,
+  chainId: ChainId,
+  blockNumber: number,
+  abortSignal?: AbortSignal,
+) => {
   const pools = await fetchPools<SmartRouter.Transformer.SerializedStablePool[]>(
     currencyA,
     currencyB,
     chainId,
     ['ss'],
     blockNumber,
+    abortSignal,
   )
   return pools.map((pool) => SmartRouter.Transformer.parsePool(chainId, pool) as StablePool)
 }
@@ -79,10 +107,11 @@ const getInfinityCandidatePools = async (
   currencyB: Currency,
   chainId: ChainId,
   blockNumber: number,
+  abortSignal?: AbortSignal,
 ) => {
   const pools = await fetchPools<
     (SmartRouter.Transformer.SerializedInfinityBinPool | SmartRouter.Transformer.SerializedInfinityClPool)[]
-  >(currencyA, currencyB, chainId, ['infinity'], blockNumber)
+  >(currencyA, currencyB, chainId, ['infinity'], blockNumber, abortSignal)
   const filtered = pools.map((pool) => SmartRouter.Transformer.parsePool(chainId, pool))
   return filtered as (InfinityClPool | InfinityBinPool)[]
 }
@@ -103,6 +132,7 @@ const getAllCandidates = async (
   chainId: ChainId,
   blockNumber: number,
   protocols: string[],
+  abortSignal?: AbortSignal,
 ) => {
   const pools = await fetchPools<SmartRouter.Transformer.SerializedPool[]>(
     currencyA,
@@ -110,6 +140,7 @@ const getAllCandidates = async (
     chainId,
     protocols as Protocol[],
     blockNumber,
+    abortSignal,
   )
   return pools.map((pool) => {
     return SmartRouter.Transformer.parsePool(chainId, pool)
