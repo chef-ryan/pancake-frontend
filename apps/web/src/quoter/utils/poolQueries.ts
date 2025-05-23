@@ -249,7 +249,7 @@ export const fetchCandidatePoolsLite = async (query: PoolQuery, options: PoolQue
 const protocolsFromQuery = (query: PoolQueryOptions) => {
   const protocols: string[] = []
   if (query.stableSwap) {
-    protocols.push('ss')
+    protocols.push('stable')
   }
   if (query.v2Pools) {
     protocols.push('v2')
@@ -258,7 +258,8 @@ const protocolsFromQuery = (query: PoolQueryOptions) => {
     protocols.push('v3')
   }
   if (query.infinity) {
-    protocols.push('infinity')
+    protocols.push('infinityCl')
+    protocols.push('infinityBin')
   }
   return protocols
 }
