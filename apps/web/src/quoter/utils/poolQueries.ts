@@ -187,7 +187,7 @@ export const fetchCandidatePools = async (query: PoolQuery, options: PoolQueryOp
 
   const call = createAsyncCallWithFallbacks(defaultQuery, {
     fallbacks: [fallbackQuery],
-    fallbackTimeout: 3_000,
+    fallbackTimeout: 1_500, // 1.5s waiting for fetch candidate pools remote
   })
 
   return call()
