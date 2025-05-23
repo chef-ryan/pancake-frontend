@@ -15,7 +15,7 @@ export default async function handler(req: NextRequest) {
     const { chainId, addressA, addressB, protocols } = parseCandidatesQuery(raw)
     const pools = await query(addressA, addressB, chainId, protocols)
     const age = POOLS_SLOW_REVALIDATE[chainId] as number
-    const staleAge = age * 6
+    const staleAge = age * 2
     return NextResponse.json(
       {
         data: pools,
