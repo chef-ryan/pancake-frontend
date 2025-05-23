@@ -5,6 +5,7 @@ import { Currency, getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import { cacheByLRU } from '@pancakeswap/utils/cacheByLRU'
 import qs from 'qs'
 import { PoolHashHelper } from './PoolHashHelper'
+import { APIChain } from './edgeQueries.util'
 
 type Protocol = 'v2' | 'ss' | 'v3' | 'infinity'
 const _fetchPools = async function <T>(

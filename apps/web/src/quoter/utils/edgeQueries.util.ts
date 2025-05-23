@@ -66,3 +66,14 @@ export function parseCandidatesQuery(raw: string) {
     chainId,
   }
 }
+
+export type APIChain =
+  | 'bsc'
+  | 'bsc-testnet'
+  | 'ethereum'
+  | 'base'
+  | 'opbnb'
+  | 'zksync'
+  | 'polygon-zkevm'
+  | 'linea'
+  | 'arbitrum'
