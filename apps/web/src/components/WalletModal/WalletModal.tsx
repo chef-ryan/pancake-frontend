@@ -16,12 +16,12 @@ import {
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
+import { ASSETS_CDN } from 'config'
 import { useAddressBalance } from 'hooks/useAddressBalance'
 import useAuth from 'hooks/useAuth'
 import { useRouter } from 'next/router'
 import React from 'react'
 import styled from 'styled-components'
-import { ASSETS_CDN } from 'config'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import { CopyAddress } from './WalletCopyButton'
 
@@ -219,7 +219,7 @@ export const WalletContent = ({
               <Skeleton height="80px" width="100%" />
               <Skeleton height="80px" width="100%" />
             </FlexGap>
-          ) : (
+          ) : topTokens.length === 0 ? null : (
             topTokens.map((asset) => (
               <AssetItem key={asset.id}>
                 <FlexGap alignItems="center">
@@ -288,36 +288,94 @@ export const WalletContent = ({
           )}
         </AssetList>
       </Box>
-      <ActionButtonsContainer>
-        <FlexGap gap="8px" width="100%">
-          <ActionButton
+      {topTokens.length === 0 && !isLoading ? (
+        <Box padding="24px 16px">
+          <Text color="textSubtle" textAlign="center" mb="16px">
+            {t("Looks like it's a new one, get it funded now:")}
+          </Text>
+          <FlexGap gap="16px" justifyContent="center" flexWrap="wrap">
+            <Box
+              background="linear-gradient(180deg, #EFF4F5 0%, #EAE2F5 100%)"
+              borderRadius="24px"
+              padding="24px"
+              width="45%"
+              style={{ textAlign: 'center', cursor: 'pointer' }}
+              onClick={() => {
+                router.push('/buy-crypto')
+                onDismiss()
+              }}
+            >
+              <Box mb="16px" mx="auto" width="80px" height="80px">
+                <img src={`${ASSETS_CDN}/web/landing/trade-buy-crypto.png`} width="80px" alt="Buy Crypto" />
+              </Box>
+              <Text bold color="secondary" fontSize="20px" mb="8px">
+                {t('Buy Crypto')}
+              </Text>
+              <Text fontSize="14px" color="textSubtle">
+                {t('Purchase with credit card.')}
+              </Text>
+            </Box>
+            <Box
+              background="linear-gradient(180deg, #EFF4F5 0%, #EAE2F5 100%)"
+              borderRadius="24px"
+              padding="24px"
+              width="45%"
+              style={{ textAlign: 'center', cursor: 'pointer' }}
+              onClick={() => {
+                onReceiveClick()
+                onDismiss()
+              }}
+            >
+              <Box mb="16px" mx="auto" width="80px" height="80px">
+                <img src={`${ASSETS_CDN}/web/landing/earn-fixed-staking.png`} width="80px" alt="Receive Crypto" />
+              </Box>
+              <Text bold color="secondary" fontSize="20px" mb="8px">
+                {t('Receive Crypto')}
+              </Text>
+              <Text fontSize="14px" color="textSubtle">
+                {t('Transfer crypto from other wallet.')}
+              </Text>
+            </Box>
+          </FlexGap>
+          <FlexGap justifyContent="center" alignItems="center" mt="24px">
+            <Text bold color="primary" fontSize="16px">
+              {t('Bridge Crypto')}
+            </Text>
+            <ArrowForwardIcon color="primary" />
+          </FlexGap>
+        </Box>
+      ) : (
+        <ActionButtonsContainer>
+          <FlexGap gap="8px" width="100%">
+            <ActionButton
+              onClick={() => {
+                router.push('/buy-crypto')
+                onDismiss()
+              }}
+            >
+              {t('Buy Crypto')}
+            </ActionButton>
+            <ActionButton
+              onClick={(e) => {
+                onReceiveClick()
+              }}
+            >
+              {t('Receive')}
+            </ActionButton>
+          </FlexGap>
+
+          <Button
+            variant="text"
             onClick={() => {
-              router.push('/buy-crypto')
+              router.push('/bridge')
               onDismiss()
             }}
           >
-            {t('Buy Crypto')}
-          </ActionButton>
-          <ActionButton
-            onClick={(e) => {
-              onReceiveClick()
-            }}
-          >
-            {t('Receive')}
-          </ActionButton>
-        </FlexGap>
-
-        <Button
-          variant="text"
-          onClick={() => {
-            router.push('/bridge')
-            onDismiss()
-          }}
-        >
-          {t('Bridge Crypto')}
-          <ArrowForwardIcon color="primary" />
-        </Button>
-      </ActionButtonsContainer>{' '}
+            {t('Bridge Crypto')}
+            <ArrowForwardIcon color="primary" />
+          </Button>
+        </ActionButtonsContainer>
+      )}
     </Box>
   )
 }
