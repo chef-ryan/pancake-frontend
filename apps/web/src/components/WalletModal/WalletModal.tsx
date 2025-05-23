@@ -21,6 +21,7 @@ import useAuth from 'hooks/useAuth'
 import { useRouter } from 'next/router'
 import React from 'react'
 import styled from 'styled-components'
+import { ASSETS_CDN } from 'config'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import { CopyAddress } from './WalletCopyButton'
 
@@ -86,20 +87,29 @@ const AssetItem = styled(FlexGap)`
   }
 `
 
-const TokenIcon = styled.div`
+const TokenIcon = styled(Box)`
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
+  margin-right: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 12px;
+  position: relative;
+`
 
-  img {
-    width: 100%;
-    height: 100%;
-  }
+const ChainIconWrapper = styled(Box)`
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: ${({ theme }) => theme.colors.background};
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1;
 `
 
 const ActionButtonsContainer = styled(FlexGap)`
@@ -228,6 +238,14 @@ export const WalletContent = ({
                       }
                       size="40px"
                     />
+                    <ChainIconWrapper>
+                      <img
+                        src={`${ASSETS_CDN}/web/chains/svg/${asset.chainId}.svg`}
+                        alt={getChainName(asset.chainId)}
+                        width="12px"
+                        height="12px"
+                      />
+                    </ChainIconWrapper>
                   </TokenIcon>
                   <Box>
                     <FlexGap alignItems="center">

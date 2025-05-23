@@ -17,6 +17,7 @@ export const SECONDS_PER_YEAR = 31536000 // 60 * 60 * 24 * 365
 export const CAKE_PER_YEAR = CAKE_PER_BLOCK * BLOCKS_PER_YEAR
 export const BASE_URL = 'https://pancakeswap.finance'
 export const BASE_ADD_LIQUIDITY_URL = `${BASE_URL}/add`
+export const ASSETS_CDN = 'https://assets.pancakeswap.finance'
 export const DEFAULT_TOKEN_DECIMAL = getFullDecimalMultiplier(18)
 export const DEFAULT_GAS_LIMIT = 250000n
 export const BOOSTED_FARM_GAS_LIMIT = 500000n
