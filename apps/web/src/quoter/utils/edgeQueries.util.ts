@@ -7,9 +7,9 @@ import { checksumAddress } from 'utils/checksumAddress'
 import { getViemClients } from 'utils/viem.server'
 import { Address } from 'viem/accounts'
 
-export type Protocol = 'v2' | 'ss' | 'v3' | 'infinity'
+export type Protocol = 'v2' | 'stable' | 'v3' | 'infinityCl' | 'infinityBin'
 
-export const ALLOWED_PROTOCOLS = ['v2', 'ss', 'v3', 'infinity']
+export const ALLOWED_PROTOCOLS = ['v2', 'stable', 'v3', 'infinityCl', 'infinityBin']
 
 // This is only for get pools, because get pools dont require symbol and decimals
 export const mockCurrency = (address: Address, chainId: ChainId) => {
@@ -51,7 +51,8 @@ export function parseCandidatesQuery(raw: string) {
   const addressB = checksumAddress(queryParsed.addressB as Address)
   const protocols = ((queryParsed.protocol as string) || '').split(',') as Protocol[]
   const chainId = Number.parseInt(queryParsed.chainId as string)
-  if (!INFINITY_SUPPORTED_CHAINS.includes(chainId) && protocols.includes('infinity')) {
+  const includeInfinity = protocols.includes('infinityBin') || protocols.includes('infinityCl')
+  if (!INFINITY_SUPPORTED_CHAINS.includes(chainId) && includeInfinity) {
     throw new Error('Invalid chainId')
   }
   for (const protocol of protocols) {
@@ -64,6 +65,53 @@ export function parseCandidatesQuery(raw: string) {
     addressB,
     protocols,
     chainId,
+  }
+}
+
+export function parseTvQuery(raw: string) {
+  if (!raw) {
+    throw new Error('Invalid query')
+  }
+  const queryParsed = qs.parse(raw)
+  const protocols = ((queryParsed.protocol as string) || '').split(',') as Protocol[]
+  const chainId = Number.parseInt(queryParsed.chainId as string)
+  const includeInfinity = protocols.includes('infinityBin') || protocols.includes('infinityCl')
+  if (!INFINITY_SUPPORTED_CHAINS.includes(chainId) && includeInfinity) {
+    throw new Error('Invalid chainId')
+  }
+  for (const protocol of protocols) {
+    if (ALLOWED_PROTOCOLS.indexOf(protocol) === -1) {
+      throw new Error('Invalid protocol')
+    }
+  }
+  return {
+    protocols,
+    chainId,
+  }
+}
+
+export function getEdgeChainName(chainId: ChainId): APIChain {
+  switch (chainId) {
+    case ChainId.BSC:
+      return 'bsc'
+    case ChainId.BSC_TESTNET:
+      return 'bsc-testnet'
+    case ChainId.ETHEREUM:
+      return 'ethereum'
+    case ChainId.BASE:
+      return 'base'
+    case ChainId.OPBNB:
+      return 'opbnb'
+    case ChainId.ZKSYNC:
+      return 'zksync'
+    case ChainId.POLYGON_ZKEVM:
+      return 'polygon-zkevm'
+    case ChainId.LINEA:
+      return 'linea'
+    case ChainId.ARBITRUM_ONE:
+      return 'arbitrum'
+    default:
+      throw new Error('Invalid chain id')
   }
 }
 

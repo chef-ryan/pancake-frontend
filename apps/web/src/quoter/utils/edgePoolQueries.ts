@@ -15,12 +15,22 @@ import {
   WithTvl,
 } from '@pancakeswap/smart-router'
 
+import { InfinityPoolTvlReferenceMap } from '@pancakeswap/smart-router/dist/evm/infinity-router/queries/getPoolTvl'
+import {
+  RemotePoolBase,
+  RemotePoolBIN,
+  RemotePoolCL,
+} from '@pancakeswap/smart-router/dist/evm/infinity-router/queries/remotePool.type'
 import { v2Clients, v3Clients } from 'utils/graphql'
 import { Address } from 'viem/accounts'
 import { APIChain, getProvider, mockCurrency, Protocol } from './edgeQueries.util'
 
 const fetchInfinityPools = async (addressA: Address, addressB: Address, chainId: ChainId) => {
-  const pools = await InfinityRouter.fetchInfinityPoolsFromApi(addressA, addressB, chainId)
+  const pools = (await fetchAllPools({
+    baseUrl: 'https://explorer.pancakeswap.com/api/cached/pools/list',
+    protocols: ['infinityBin', 'infinityCl'],
+    chains: [getChainName(chainId) as APIChain],
+  })) as (RemotePoolBIN | RemotePoolCL)[]
   const localPools = pools
     .map((pool) => {
       return InfinityRouter.toLocalInfinityPool(pool, chainId as keyof typeof hooksList)
@@ -99,13 +109,14 @@ const querySingleType = async (chainId: ChainId, protocol: Protocol, addressA: A
     case 'v2': {
       return fetchV2Pools(addressA, addressB, chainId)
     }
-    case 'ss': {
+    case 'stable': {
       return fetchSSPool(addressA, addressB, chainId)
     }
     case 'v3': {
       return fetchV3Pools(addressA, addressB, chainId)
     }
-    case 'infinity': {
+    case 'infinityBin':
+    case 'infinityCl': {
       return fetchInfinityPools(addressA, addressB, chainId)
     }
     default:
@@ -119,7 +130,9 @@ const fetchAllCandidatePools = async (
   protocols: Protocol[],
 ) => {
   const queries = await Promise.all(
-    protocols.map((protocol) => querySingleType(chainId, protocol as Protocol, addressA, addressB)),
+    protocols
+      .filter((x) => x !== 'infinityBin') // For infinity pools fetch together
+      .map((protocol) => querySingleType(chainId, protocol as Protocol, addressA, addressB)),
   )
   const pools = queries.flat() as (InfinityPoolWithTvl | V2PoolWithTvl | V3PoolWithTvl | StablePoolWithTvl)[]
   return pools.map((pool) => {
@@ -127,7 +140,7 @@ const fetchAllCandidatePools = async (
   })
 }
 
-function fillTvl(tvlMap: Record<string, string>, pools: Pool[]) {
+function fillTvl(tvlMap: InfinityPoolTvlReferenceMap, pools: Pool[]) {
   return pools.map((pool) => {
     const id = getPoolAddress(pool)
     const tvlUSD = tvlMap[id] || '0'
@@ -138,10 +151,7 @@ function fillTvl(tvlMap: Record<string, string>, pools: Pool[]) {
   })
 }
 
-export const poolTvlMap = async (
-  protocols: ('v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable')[],
-  chain: APIChain,
-) => {
+export const poolTvlMap = async (protocols: Protocol[], chain: APIChain) => {
   try {
     const remotePools = await fetchAllPools({
       baseUrl: 'https://explorer.pancakeswap.com/api/cached/pools/tvl-refs',
@@ -150,7 +160,7 @@ export const poolTvlMap = async (
       orderBy: 'tvlUSD',
       pageSize: 100,
     })
-    const tvlMap: Record<string, string> = {}
+    const tvlMap: InfinityPoolTvlReferenceMap = {}
     for (const pool of remotePools) {
       const tvlUSD = pool.tvlUSD
       const id = pool.id
@@ -167,25 +177,7 @@ type PaginatedResponse = {
   endCursor?: string
   hasNextPage: boolean
   hasPrevPage: boolean
-  rows: RemotePool[]
-}
-
-type RemotePool = {
-  id: string
-  chainId: number
-  token0Price: string
-  token1Price: string
-  tvlToken0: string
-  tvlToken1: string
-  tvlUSD: string
-  volumeUSD24h: string
-  apr24h: string
-  protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
-  feeTier: number
-  token0: Token
-  token1: Token
-  isDynamicFee?: boolean
-  hookAddress?: string | null
+  rows: RemotePoolBase[]
 }
 
 type Token = {
@@ -222,8 +214,8 @@ async function fetchAllPools({
   tokens = [],
   pageSize = 100,
   maxPages = Infinity,
-}: FetchAllPoolsParams): Promise<RemotePool[]> {
-  const allResults: RemotePool[] = []
+}: FetchAllPoolsParams): Promise<RemotePoolBase[]> {
+  const allResults: RemotePoolBase[] = []
   let cursor: string | null = null
   let hasNextPage = true
   let pageCount = 0
@@ -315,4 +307,5 @@ export const edgeQueries = {
   fetchSSPool,
   fetchInfinityPools,
   querySingleType,
+  poolTvlMap,
 }

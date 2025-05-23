@@ -1,6 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
 import { InfinityRouter, Pool, SmartRouter, V2Pool, V3Pool } from '@pancakeswap/smart-router'
+import { InfinityPoolTvlReferenceMap } from '@pancakeswap/smart-router/dist/evm/infinity-router/queries/getPoolTvl'
 import { cacheByLRU } from '@pancakeswap/utils/cacheByLRU'
 import { createAsyncCallWithFallbacks } from '@pancakeswap/utils/withFallback'
 import { Tick } from '@pancakeswap/v3-sdk'
@@ -11,6 +12,7 @@ import { PoolQuery, PoolQueryOptions } from 'quoter/quoter.types'
 import { v2Clients, v3Clients } from 'utils/graphql'
 import { getViemClients } from 'utils/viem'
 import { edgePoolQueryClient } from './edgePoolQueryClient'
+import { Protocol as EdgeProtocol } from './edgeQueries.util'
 import { PoolHashHelper } from './PoolHashHelper'
 
 export const poolQueriesFactory = memoize((chainId: ChainId) => {
@@ -109,14 +111,35 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
     }))
   }
 
+  const fetchTvMap = cacheByLRU(
+    async (protocol: EdgeProtocol[], chainId: ChainId) => {
+      const url = `/api/pools/tvlref?protocol=${protocol.join(',')}&chainId=${chainId}`
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      if (!res.ok) {
+        throw new Error(`Failed to fetch tvl ref: ${await res.text()}`)
+      }
+      return res.json() as Promise<InfinityPoolTvlReferenceMap>
+    },
+    {
+      ttl: 60_000,
+    },
+  )
+
   const getInfinityCandidatePoolsLight = cacheByLRU(async (query: PoolQuery, options: PoolQueryOptions) => {
     const { currencyA, currencyB, blockNumber } = query
     const queryFunc = async () => {
       const provider = options.provider ?? getViemClients
+      const tvMap = await fetchTvMap(['infinityBin', 'infinityCl'], query.chainId)
       const pools = await InfinityRouter.getInfinityCandidatePoolsLite({
         currencyA,
         currencyB,
         clientProvider: provider,
+        tvlRefMap: tvMap,
       })
       return pools
     }

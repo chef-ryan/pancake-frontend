@@ -5,8 +5,8 @@ import { Currency, getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import { cacheByLRU } from '@pancakeswap/utils/cacheByLRU'
 import qs from 'qs'
 import { PoolHashHelper } from './PoolHashHelper'
+import { Protocol } from './edgeQueries.util'
 
-type Protocol = 'v2' | 'ss' | 'v3' | 'infinity'
 const _fetchPools = async function <T>(
   currencyA: Currency,
   currencyB: Currency,
@@ -24,7 +24,7 @@ const _fetchPools = async function <T>(
   })
 
   const queryApi = async () => {
-    const res = await fetch(`/api/infinity/candidates?${query}`, {
+    const res = await fetch(`/api/pools/candidates?${query}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const getSSCandidatePools = async (
     currencyA,
     currencyB,
     chainId,
-    ['ss'],
+    ['stable'],
     abortSignal,
   )
   return pools.map((pool) => SmartRouter.Transformer.parsePool(chainId, pool) as StablePool)
@@ -98,7 +98,7 @@ const getInfinityCandidatePools = async (
 ) => {
   const pools = await fetchPools<
     (SmartRouter.Transformer.SerializedInfinityBinPool | SmartRouter.Transformer.SerializedInfinityClPool)[]
-  >(currencyA, currencyB, chainId, ['infinity'], abortSignal)
+  >(currencyA, currencyB, chainId, ['infinityCl', 'infinityBin'], abortSignal)
   const filtered = pools.map((pool) => SmartRouter.Transformer.parsePool(chainId, pool))
   return filtered as (InfinityClPool | InfinityBinPool)[]
 }
