@@ -85,7 +85,9 @@ export default forwardRef(function TokenAvatar(
             width="100%"
             height="100%"
           />
-        ) : null}
+        ) : (
+          <DefaultTokenIcon color="disabled" width="100%" height="100%" />
+        )}
         {loadFailed ? <DefaultTokenIcon color="disabled" width="100%" height="100%" /> : null}
       </Box>
     </Box>
