@@ -72,7 +72,7 @@ export function toLocalInfinityPool(remote: RemotePoolCL | RemotePoolBIN, chainI
       tick: remoteClPool.tick,
       ticks: remoteClPool.ticks ? remoteClPool.ticks.map((x) => parseTick(x)) : [],
       tickSpacing: Number(remoteClPool.tickSpacing),
-      liquidity: 0n,
+      liquidity: BigInt(remoteClPool.liquidity),
     } as InfinityClPool
   }
   if (pool.type === PoolType.InfinityBIN) {

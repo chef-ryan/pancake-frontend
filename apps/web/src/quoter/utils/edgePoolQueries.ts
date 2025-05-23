@@ -24,12 +24,18 @@ import { v2Clients, v3Clients } from 'utils/graphql'
 import { Address } from 'viem/accounts'
 import { APIChain, getProvider, mockCurrency, Protocol } from './edgeQueries.util'
 
+async function fetchInfinityPoolsFromApi(addressA: Address, addressB: Address, chainId: ChainId) {
+  const chain = getChainName(chainId)
+  const url = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/candidates/infinity/${chain}/${addressA}/${addressB}`
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Error fetching infinity pools: ${response.statusText}`)
+  }
+  const data = (await response.json()) as (RemotePoolCL | RemotePoolBIN)[]
+  return data
+}
 const fetchInfinityPools = async (addressA: Address, addressB: Address, chainId: ChainId) => {
-  const pools = (await fetchAllPools({
-    baseUrl: 'https://explorer.pancakeswap.com/api/cached/pools/list',
-    protocols: ['infinityBin', 'infinityCl'],
-    chains: [getChainName(chainId) as APIChain],
-  })) as (RemotePoolBIN | RemotePoolCL)[]
+  const pools = await fetchInfinityPoolsFromApi(addressA, addressB, chainId)
   const localPools = pools
     .map((pool) => {
       return InfinityRouter.toLocalInfinityPool(pool, chainId as keyof typeof hooksList)
