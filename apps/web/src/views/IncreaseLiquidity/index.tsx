@@ -32,7 +32,6 @@ import { useInfinityClPositionFromTokenId } from 'hooks/infinity/useInfinityPosi
 import useIsTickAtLimit from 'hooks/infinity/useIsTickAtLimit'
 import { usePositionAmount } from 'hooks/infinity/usePositionAmount'
 import { useCurrencyByChainId } from 'hooks/Tokens'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { ApprovalState } from 'hooks/useApproveCallback'
 import { usePermit2 } from 'hooks/usePermit2'
 import { useStablecoinPrice } from 'hooks/useStablecoinPrice'
@@ -48,8 +47,10 @@ import { V3SubmitButton } from 'views/AddLiquidityV3/components/V3SubmitButton'
 import { LiquidityTitle } from 'views/PositionDetails/components'
 
 import { INITIAL_ALLOWED_SLIPPAGE, useUserSlippage } from '@pancakeswap/utils/user'
+import { useHookByPoolId } from 'hooks/infinity/useHooksList'
 import { calculateSlippageAmount } from 'utils/exchange'
 import { NavBreadcrumbs } from 'views/RemoveLiquidityInfinity/components/NavBreadcrumbs'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useErrorMsg } from './hooks/useErrorMsg'
 import { useIncreaseForm } from './hooks/useIncreaseForm'
 
@@ -92,7 +93,7 @@ export const IncreaseLiquidity = () => {
     t,
     currentLanguage: { locale },
   } = useTranslation()
-  const { account, chainId, isWrongNetwork } = useActiveWeb3React()
+  const { account, chainId, isWrongNetwork } = useAccountActiveChain()
   const { tokenId } = useInfinityClammPositionIdRouteParams()
 
   const { position } = useInfinityClPositionFromTokenId(tokenId, chainId)
@@ -108,6 +109,14 @@ export const IncreaseLiquidity = () => {
     pool,
     poolId,
   } = useExtraInfinityPositionInfo(position)
+
+  const hookData = useHookByPoolId(chainId, poolId)
+  const feeAmount = hookData?.defaultFee ?? fee
+
+  const isOutOfRange = useMemo(() => {
+    if (!pool || typeof tickLower === 'undefined' || typeof tickUpper === 'undefined') return false
+    return pool.tickCurrent < tickLower || pool.tickCurrent > tickUpper
+  }, [])
 
   const [manuallyInverted, setManuallyInverted] = useState(false)
   const { priceLower, priceUpper, base } = useInverter({
@@ -158,6 +167,8 @@ export const IncreaseLiquidity = () => {
     poolKey: position?.poolKey,
     tickLower,
     tickUpper,
+    outOfRange: isOutOfRange,
+    invalidRange,
   })
 
   const parsedAmounts = useMemo(
@@ -173,6 +184,7 @@ export const IncreaseLiquidity = () => {
     currencyB: currency1,
     currencyAAmount: inputAmount,
     currencyBAmount: outputAmount,
+    allowSingleSide: deposit0Disabled !== deposit1Disabled,
   })
 
   const isValid = !(invalidRange || errorMessage)
@@ -180,7 +192,7 @@ export const IncreaseLiquidity = () => {
   const [allowedSlippage] = useUserSlippage() || [INITIAL_ALLOWED_SLIPPAGE]
 
   const { addCLLiquidity, attemptingTx } = useAddCLPoolAndPosition(
-    chainId,
+    chainId ?? 0,
     account ?? zeroAddress,
     currency0Address,
     currency1Address,
@@ -230,18 +242,14 @@ export const IncreaseLiquidity = () => {
   )
 
   const handleIncreaseLiquidity = useCallback(async () => {
-    if (
-      !position ||
-      !tokenId ||
-      !pool ||
-      !currency0 ||
-      !currency1 ||
-      !account ||
-      !inputAmount?.quotient ||
-      !outputAmount?.quotient
-    ) {
+    if (!position || !tokenId || !pool || !currency0 || !currency1 || !account) {
       return
     }
+
+    if (deposit0Disabled && inputAmount?.greaterThan(0)) return
+    if (deposit1Disabled && outputAmount?.greaterThan(0)) return
+    if (inputAmount?.equalTo(0) && outputAmount?.equalTo(0)) return
+
     let permit2Signature0: Permit2Signature | undefined
     let permit2Signature1: Permit2Signature | undefined
 
@@ -263,8 +271,8 @@ export const IncreaseLiquidity = () => {
       tickLower: position.tickLower,
       tickUpper: position.tickUpper,
       sqrtPriceX96: pool.sqrtRatioX96,
-      amount0Desired: inputAmount?.quotient,
-      amount1Desired: outputAmount?.quotient,
+      amount0Desired: inputAmount?.quotient ?? 0n,
+      amount1Desired: outputAmount?.quotient ?? 0n,
       recipient: account,
       amount0Max,
       amount1Max,
@@ -313,7 +321,6 @@ export const IncreaseLiquidity = () => {
       <NavBreadcrumbs currency0={currency0} currency1={currency1}>
         <Text>{t('Increase Liquidity')}</Text>
       </NavBreadcrumbs>
-
       <StyledCard mt="24px" mx="auto">
         <CardBody>
           <Flex alignItems="center">
@@ -324,6 +331,7 @@ export const IncreaseLiquidity = () => {
               protocol={Protocol.InfinityCLAMM}
               currency0={currency0}
               currency1={currency1}
+              isOutOfRange={isOutOfRange}
               chainId={chainId}
               dynamic={dynamic}
               feeTier={fee}
@@ -366,7 +374,10 @@ export const IncreaseLiquidity = () => {
 
             <Flex justifyContent="space-between">
               <Text color="textSubtle">{t('Fee Tier')}</Text>
-              <Text>{(fee ?? 0) / 1e4}%</Text>
+              <Text>
+                {dynamic ? '↕️ ' : null}
+                {(feeAmount ?? 0) / 1e4}%
+              </Text>
             </Flex>
           </LightGreyCard>
           <RowBetween mt="20px">
@@ -414,6 +425,7 @@ export const IncreaseLiquidity = () => {
               value={inputAmountRaw}
               currency={currency0}
               maxAmount={inputBalance}
+              disabled={deposit0Disabled}
               showUSDPrice
               showMaxButton
               showQuickInputButton
@@ -433,6 +445,7 @@ export const IncreaseLiquidity = () => {
               showMaxButton
               showQuickInputButton
               disableCurrencySelect
+              disabled={deposit1Disabled}
             />
           </Box>
           <V3SubmitButton

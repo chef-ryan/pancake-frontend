@@ -9,6 +9,9 @@ import { StatusViewButtons } from 'views/Farms/components/YieldBooster/component
 import { useBCakeBoostLimitAndLockInfo } from 'views/Farms/components/YieldBooster/hooks/bCakeV3/useBCakeV3Info'
 import { useBoostStatusPM } from 'views/Farms/components/YieldBooster/hooks/bCakeV3/useBoostStatus'
 import { useAccount } from 'wagmi'
+import { useAtom } from 'jotai'
+import { disableAddingLiquidityAtom } from 'views/PositionManagers/utils/disableAddingLiquidityAtom'
+import { useActiveChainId } from 'hooks/useActiveChainId'
 import {
   PositionManagerStatus,
   usePMV2SSMaxBoostMultiplier,
@@ -89,6 +92,8 @@ export const LiquidityManagement = memo(function LiquidityManagement({
 }: LiquidityManagementProps) {
   const { colors } = useTheme()
   const { t } = useTranslation()
+  const { chainId } = useActiveChainId()
+  const [disableAddingLiquidity] = useAtom(disableAddingLiquidityAtom({ id, chainId, manager: manager.id }))
   const [addLiquidityModalOpen, setAddLiquidityModalOpen] = useState(false)
   const [removeLiquidityModalOpen, setRemoveLiquidityModalOpen] = useState(false)
   const hasStaked = useMemo(() => Boolean(staked0Amount) || Boolean(staked1Amount), [staked0Amount, staked1Amount])
@@ -112,7 +117,7 @@ export const LiquidityManagement = memo(function LiquidityManagement({
   const isSingleDepositToken0 = isSingleDepositToken && allowDepositToken0
 
   const { status: positionManagerStatus } = usePositionManagerStatus()
-  const { status } = useBoostStatusPM(Boolean(bCakeWrapper), boosterMultiplier, refetch)
+  const { status } = useBoostStatusPM(Boolean(bCakeWrapper), boosterMultiplier)
   const { shouldUpdate, veCakeUserMultiplierBeforeBoosted } = useWrapperBooster(
     boosterContractAddress ?? '0x',
     boosterMultiplier ?? 1,
@@ -147,7 +152,7 @@ export const LiquidityManagement = memo(function LiquidityManagement({
                 isSingleDepositToken0={isSingleDepositToken0}
                 onAdd={showAddLiquidityModal}
                 onRemove={showRemoveLiquidityModal}
-                isDisabled={positionManagerStatus === PositionManagerStatus.FINISHED}
+                isDisabled={disableAddingLiquidity || positionManagerStatus === PositionManagerStatus.FINISHED}
               />
               {!isDesktop && (
                 <AtomBox
@@ -234,7 +239,7 @@ export const LiquidityManagement = memo(function LiquidityManagement({
                   variant="primary"
                   width="100%"
                   onClick={showAddLiquidityModal}
-                  disabled={positionManagerStatus === PositionManagerStatus.FINISHED}
+                  disabled={disableAddingLiquidity || positionManagerStatus === PositionManagerStatus.FINISHED}
                 >
                   {t('Add Liquidity')}
                 </Button>
@@ -302,6 +307,7 @@ export const LiquidityManagement = memo(function LiquidityManagement({
         onStake={onStake}
         isTxLoading={isTxLoading}
         adapterAddress={adapterAddress}
+        disableAddingLiquidity={disableAddingLiquidity}
       />
       <RemoveLiquidity
         isOpen={removeLiquidityModalOpen}

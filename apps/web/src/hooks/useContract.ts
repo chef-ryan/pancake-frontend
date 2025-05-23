@@ -19,6 +19,7 @@ import {
   getBCakeProxyContract,
   getBunnyFactoryContract,
   getCakeFlexibleSideVaultV2Contract,
+  getCakeVaultV1Contract,
   getCakeVaultV2Contract,
   getCalcGaugesVotingContract,
   getChainlinkOracleContract,
@@ -223,6 +224,15 @@ export const useCakeVaultContract = (targetChain?: ChainId) => {
   )
 }
 
+export const useCakeVaultV1Contract = (targetChain?: ChainId) => {
+  const { data: signer } = useWalletClient()
+  const { chainId } = useActiveChainId()
+  return useMemo(
+    () => getCakeVaultV1Contract(signer ?? undefined, targetChain ?? chainId),
+    [signer, chainId, targetChain],
+  )
+}
+
 export const useIfoCreditAddressContract = () => {
   return useMemo(() => getIfoCreditAddressContract(), [])
 }
@@ -387,7 +397,7 @@ export const useInfinityBinPoolManagerContract = (targetChainId: ChainId) => {
   return useMemo(() => getInfinityBinPoolManagerContract(signer ?? undefined, targetChainId), [signer, targetChainId])
 }
 
-export const useInfinityCLPositionManagerContract = (targetChainId: ChainId) => {
+export const useInfinityCLPositionManagerContract = (targetChainId: ChainId | undefined) => {
   const { data: signer } = useWalletClient()
   return useMemo(
     () => getInfinityCLPositionManagerContract(signer ?? undefined, targetChainId),

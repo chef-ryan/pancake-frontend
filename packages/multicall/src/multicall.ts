@@ -2,7 +2,6 @@ import { AbortControl, AbortError, abortInvariant } from '@pancakeswap/utils/abo
 import { toBigInt } from '@pancakeswap/utils/toBigInt'
 import { isViemAbortError } from '@pancakeswap/utils/viem/isAbortError'
 
-import { logStatsInDev } from './CallStats'
 import { getBlockConflictTolerance } from './getBlockConflictTolerance'
 import { GetGasLimitParams, getDefaultGasBuffer, getGasLimit } from './getGasLimit'
 import { getMulticallContract } from './getMulticallContract'
@@ -36,10 +35,10 @@ export async function multicallByGasLimit(
     dropUnexecutedCalls,
     signal,
     retryFailedCallsWithGreaterLimit,
+    account,
     ...rest
   }: CallByGasLimitParams,
 ) {
-  logStatsInDev(calls)
   const gasLimit = await getGasLimit({
     chainId,
     gasBuffer,
@@ -52,6 +51,7 @@ export async function multicallByGasLimit(
     chainId,
     dropUnexecutedCalls,
     signal,
+    account,
   })
   if (!retryFailedCallsWithGreaterLimit) {
     return callResult
@@ -105,7 +105,7 @@ export async function multicallByGasLimit(
 
 type CallParams = Pick<
   CallByGasLimitParams,
-  'chainId' | 'client' | 'gasBuffer' | 'blockConflictTolerance' | 'dropUnexecutedCalls' | 'signal'
+  'chainId' | 'client' | 'gasBuffer' | 'blockConflictTolerance' | 'dropUnexecutedCalls' | 'signal' | 'account'
 >
 
 export type SingleCallResult = {
@@ -147,6 +147,7 @@ async function call(calls: MulticallRequestWithGas[], params: CallParams): Promi
     blockConflictTolerance = getBlockConflictTolerance(chainId),
     dropUnexecutedCalls = false,
     signal,
+    account,
   } = params
   if (!calls.length) {
     return {
@@ -159,7 +160,9 @@ async function call(calls: MulticallRequestWithGas[], params: CallParams): Promi
 
   const contract = getMulticallContract({ chainId, client })
   try {
-    const { result } = await contract.simulate.multicallWithGasLimitation([calls, gasBuffer])
+    const { result } = await contract.simulate.multicallWithGasLimitation([calls, gasBuffer], {
+      account,
+    })
     const { results, lastSuccessIndex, blockNumber } = formatCallReturn(result as CallReturnFromContract)
     if (lastSuccessIndex === calls.length - 1) {
       return {

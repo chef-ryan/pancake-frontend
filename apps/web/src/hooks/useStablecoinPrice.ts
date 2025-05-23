@@ -6,8 +6,10 @@ import { getFullDecimalMultiplier } from '@pancakeswap/utils/getFullDecimalMulti
 import { useCakePrice } from 'hooks/useCakePrice'
 import { useAtomValue } from 'jotai'
 import { bestAMMTradeFromQuoterWorkerAtom } from 'quoter/atom/bestAMMTradeFromQuoterWorkerAtom'
+import { multicallGasLimitAtom } from 'quoter/hook/useMulticallGasLimit'
 import { createQuoteQuery } from 'quoter/utils/createQuoteQuery'
 import { useMemo } from 'react'
+import { useCurrentBlock } from 'state/block/hooks'
 import { warningSeverity } from 'utils/exchange'
 import { multiplyPriceByAmount } from 'utils/prices'
 import { computeTradePriceBreakdown } from 'views/Swap/V3Swap/utils/exchange'
@@ -44,7 +46,7 @@ export function useStablecoinPrice(
     currency && stableCoin && enabled && currentChainId === chainId && !isCake && !isStableCoin,
   )
 
-  const { data: priceFromApi, isLoading } = useCurrencyUsdPrice(currency, {
+  const { data: priceFromApi } = useCurrencyUsdPrice(currency, {
     enabled: shouldEnabled,
   })
 
@@ -53,6 +55,8 @@ export function useStablecoinPrice(
     [stableCoin],
   )
 
+  const blockNumber = useCurrentBlock()
+  const gasLimit = useAtomValue(multicallGasLimitAtom(activeChainId))
   const priceQuoter = createQuoteQuery({
     amount: amountOut,
     currency: currency ?? undefined,
@@ -64,9 +68,12 @@ export function useStablecoinPrice(
     xEnabled: false,
     infinitySwap: false,
     speedQuoteEnabled: true,
+    routeKey: 'stable-coin-price',
+    blockNumber,
+    gasLimit,
   })
-  const { data: quoteResult } = useAtomValue(bestAMMTradeFromQuoterWorkerAtom(priceQuoter))
-  const { trade } = quoteResult || {}
+  const quoteResult = useAtomValue(bestAMMTradeFromQuoterWorkerAtom(priceQuoter))
+  const trade = quoteResult.map((x) => x.trade).unwrapOr(undefined)
 
   const price = useMemo(() => {
     if (!currency || !stableCoin || !enabled) {
@@ -136,5 +143,5 @@ export const useStablecoinPriceAmount = (
       }
     }
     return undefined
-  }, [amount, stablePrice, currency])
+  }, [amount, stablePrice])
 }

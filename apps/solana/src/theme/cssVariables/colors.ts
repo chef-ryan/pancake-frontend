@@ -21,6 +21,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   backgroundAlt: pcsDarkColors.backgroundAlt,
   backgroundDisabled: pcsDarkColors.backgroundDisabled,
   gradientBubblegum: pcsDarkColors.gradientBubblegum,
+  backgroundOverlay: pcsDarkColors.backgroundOverlay,
   backgroundDark: '#0b1022',
   backgroundDark50: '#0b102280',
   backgroundMedium: '#161E32',
@@ -183,6 +184,8 @@ export const lightColors: Partial<typeof darkColors> = {
   background: pcsLightColors.background,
   backgroundAlt: pcsLightColors.backgroundAlt,
   backgroundDisabled: pcsLightColors.backgroundDisabled,
+  gradientBubblegum: pcsLightColors.gradientBubblegum,
+  backgroundOverlay: pcsLightColors.backgroundOverlay,
   backgroundDark: '#EDEDFF',
   backgroundDark50: '#EDEDFF80',
   backgroundMedium: '#EDEDFF',
@@ -192,7 +195,6 @@ export const lightColors: Partial<typeof darkColors> = {
   backgroundTransparent12: 'rgba(171, 196, 255, 0.12)',
   backgroundTransparent07: 'rgba(171, 196, 255, 0.07)',
   backgroundTransparent10: 'rgba(171, 196, 255, 0.1)',
-  gradientBubblegum: pcsLightColors.gradientBubblegum,
 
   // text
   textPrimary: pcsLightColors.text,
@@ -360,6 +362,7 @@ export const colors = {
   backgroundTransparent12: 'var(--background-transparent12)',
   backgroundTransparent07: 'var(--background-transparent07)',
   backgroundTransparent10: 'var(--background-transparent10)',
+  backgroundOverlay: 'var(--background-overlay)',
   gradientBubblegum: 'var(--background-gradient-bubblegum)',
 
   // text

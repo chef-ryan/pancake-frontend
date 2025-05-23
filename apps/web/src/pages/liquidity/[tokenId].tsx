@@ -28,7 +28,14 @@ import {
 import { ConfirmationModalContent, NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 
 import { Trans, useTranslation } from '@pancakeswap/localization'
-import { MasterChefV3, NonfungiblePositionManager, Pool, Position, isPoolTickInRange } from '@pancakeswap/v3-sdk'
+import {
+  MasterChefV3,
+  NonfungiblePositionManager,
+  Pool,
+  Position,
+  isPoolTickInRange,
+  tickToPrice,
+} from '@pancakeswap/v3-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { AppHeader } from 'components/App'
 import { LightGreyCard } from 'components/Card'
@@ -57,7 +64,6 @@ import { usePool } from 'hooks/v3/usePools'
 import { useV3PositionFees } from 'hooks/v3/useV3PositionFees'
 import { useV3PositionFromTokenId, useV3TokenIdsByAccount } from 'hooks/v3/useV3Positions'
 import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
-import getPriceOrderingFromPositionForUI from 'hooks/v3/utils/getPriceOrderingFromPositionForUI'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { NextSeo } from 'next-seo'
 import Link from 'next/link'
@@ -125,7 +131,7 @@ function PositionPriceSection({
   priceLower,
   inverted,
   pool,
-  tickAtLimit,
+  tickAtLimit: _tickAtLimit,
   setManuallyInverted,
   manuallyInverted,
 }) {
@@ -133,6 +139,16 @@ function PositionPriceSection({
     t,
     currentLanguage: { locale },
   } = useTranslation()
+
+  const tickAtLimit = useMemo(() => {
+    if (manuallyInverted) {
+      return {
+        [Bound.LOWER]: _tickAtLimit[Bound.UPPER],
+        [Bound.UPPER]: _tickAtLimit[Bound.LOWER],
+      }
+    }
+    return _tickAtLimit
+  }, [_tickAtLimit, manuallyInverted])
 
   return (
     <>
@@ -246,16 +262,14 @@ export default function PoolPage() {
 
   const tickAtLimit = useIsTickAtLimit(feeAmount, tickLower, tickUpper)
 
-  const pricesFromPosition = getPriceOrderingFromPositionForUI(position)
-
   const [manuallyInverted, setManuallyInverted] = useState(false)
 
   // handle manual inversion
   const { priceLower, priceUpper, base } = useInverter({
-    priceLower: pricesFromPosition.priceLower,
-    priceUpper: pricesFromPosition.priceUpper,
-    quote: pricesFromPosition.quote,
-    base: pricesFromPosition.base,
+    priceLower: position ? tickToPrice(position.pool.token0, position.pool.token1, position.tickLower) : undefined,
+    priceUpper: position ? tickToPrice(position.pool.token0, position.pool.token1, position.tickUpper) : undefined,
+    quote: position?.pool.token1,
+    base: position?.pool.token0,
     invert: manuallyInverted,
   })
 

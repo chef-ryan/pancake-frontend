@@ -1,34 +1,87 @@
-import QuickLRU from 'quick-lru'
 import { keccak256, stringify } from 'viem'
+import { LRU } from './lru'
+import { takeFirstFulfilled } from './promise'
 
 type AsyncFunction<T extends any[]> = (...args: T) => Promise<any>
 
-// Type definitions for the cache.
-type CacheOptions<T extends AsyncFunction<any>> = {
-  maxCacheSize?: number
-  ttl: number
-  persist?: {
-    name: string
-    version: string
-    type: 'r2'
-  }
-  key?: (params: Parameters<T>) => any
+interface CacheItem {
+  promise: Promise<any>
+  resolved: any
+  createTime: number
+  epochId: number
 }
 
-function calcCacheKey(args: any[], epoch: number) {
+interface Epoch {
+  createTime: number
+  cacheKey: string
+  contentCacheKey: string
+}
+
+// Type definitions for the cache.
+export type PersistOption = {
+  name: string
+  version: string
+  type: 'r2'
+}
+export type CacheOptions<T extends AsyncFunction<any>> = {
+  maxCacheSize?: number
+  ttl: number
+  persist?: PersistOption
+  key?: (params: Parameters<T>) => any
+  isValid?: (result: any) => boolean
+  maxAge?: number
+  rejectWhenNoCache?: boolean
+  usingStaleValue?: boolean
+  cacheNextEpochOnHalfTTS?: boolean
+  requestTimeout?: number
+}
+
+function defaultIsValid(val: any) {
+  if (typeof val === 'undefined' || val === '') {
+    return false
+  }
+  if (Array.isArray(val)) {
+    return val.length > 0
+  }
+  if (typeof val === 'object') {
+    return Object.keys(val).length > 0
+  }
+  return true
+}
+
+export function calcCacheKey(args: any[], epoch: number) {
   const json = stringify(args)
   const r = keccak256(`0x${json}@${epoch}`)
   return r
 }
 
+const DAY = 24 * 60 * 60 * 1000
+export function persistKey(cacheKey: string, persist: PersistOption) {
+  const bucket = Math.floor(Date.now() / DAY)
+  return `${bucket}/${persist.name}/${persist.version}/${cacheKey}`
+}
+
 const identity = (args: any) => args
 
+let cacheInstanceId = 1
 export const cacheByLRU = <T extends AsyncFunction<any>>(
   fn: T,
-  { ttl, key, maxCacheSize, persist }: CacheOptions<T>,
+  {
+    ttl,
+    key,
+    maxCacheSize,
+    persist,
+    isValid,
+    maxAge,
+    rejectWhenNoCache,
+    usingStaleValue = true,
+    requestTimeout,
+    cacheNextEpochOnHalfTTS,
+  }: CacheOptions<T>,
 ) => {
-  const cache = new QuickLRU<string, Promise<any>>({
-    maxAge: ttl,
+  cacheInstanceId++
+  const cache = new LRU<string, CacheItem>({
+    maxAge: Math.max(ttl * 2, maxAge || 0),
     maxSize: maxCacheSize || 1000,
   })
   const fetchR2Cache = persist
@@ -37,85 +90,139 @@ export const cacheByLRU = <T extends AsyncFunction<any>>(
       })
     : undefined
 
-  function persistKey() {
-    return `${persist?.name}-${persist?.version}`
-  }
+  const keyFunction = key || identity
 
-  async function ensurePersist(promise: Promise<any>) {
+  async function ensurePersist(cacheKey: string, promise: Promise<any>) {
     if (fetchR2Cache && persist) {
-      const t = Date.now()
-      const r2Promise = fetchR2Cache(persistKey())
-      const value = await Promise.race([r2Promise, promise])
-      console.log('*****time usage****', Date.now() - t)
-      return value ?? promise
+      const r2Promise = fetchR2Cache(persistKey(cacheKey, persist))
+      const { result: value } = await takeFirstFulfilled([r2Promise, promise])
+      return value
     }
     return promise
   }
 
-  const keyFunction = key || identity
-
-  let startTime = 0
-  return async (...args: Parameters<T>): Promise<ReturnType<T>> => {
-    // Start Time
-    if (!startTime) {
-      startTime = Date.now()
-    }
-    const epoch = (Date.now() - startTime) / ttl
-    const halfTTS = epoch % 1 > 0.5
+  const epochs: Epoch[] = []
+  const cachedFn = async (...args: Parameters<T>): Promise<Awaited<ReturnType<T>>> => {
+    const epoch = Date.now() / ttl
     const epochId = Math.floor(epoch)
 
-    // Setup next epoch cache if halfTTS passed
-    if (halfTTS) {
-      const nextKey = calcCacheKey(keyFunction(args), epochId + 1)
-      if (!cache.has(nextKey)) {
-        // @ts-ignore
-        const nextPromise = fn(...args)
-        cache.set(nextKey, nextPromise)
+    // Uniq cache ke related to content
+    const contentCacheKey = calcCacheKey(keyFunction(args), 0)
+
+    const cacheForEpoch = (epochId: number) => {
+      const cacheKey = calcCacheKey(keyFunction(args), epochId)
+      if (cache.has(cacheKey)) {
+        return cache.get(cacheKey)!
+      }
+      const caller = requestTimeout ? withTimeout(fn, requestTimeout) : fn
+      const promise = ensurePersist(cacheKey, caller(...args))
+      const item = {
+        promise,
+        resolved: undefined,
+        createTime: Date.now(),
+        epochId,
+      }
+      const epoch = {
+        createTime: item.createTime,
+        cacheKey,
+        contentCacheKey,
+      }
+      epochs.push(epoch)
+      cache.set(cacheKey, item)
+
+      item.promise = item.promise
+        .then((result) => {
+          if (!result) {
+            cache.delete(cacheKey)
+            return result
+          }
+          if (!(isValid || defaultIsValid)(result)) {
+            cache.delete(cacheKey)
+            return result
+          }
+          item.resolved = result
+          if (persist) {
+            const jsonResult = stringify(result)
+            if (result && jsonResult !== '{}' && jsonResult !== '[]') {
+              const pkey = persistKey(cacheKey, persist)
+              uploadR2(pkey, result)
+                .then((updated) => {
+                  if (updated) {
+                    console.log(`[persist] cache succ: https://proofs.pancakeswap.com/cache/${pkey}, ${cacheKey}`)
+                  }
+                })
+                .catch((ex) => {
+                  console.error(`[persist] Failed to persist cache cache-size=${jsonResult.length}`, ex)
+                })
+            }
+          }
+          return result
+        })
+        .catch((error) => {
+          console.error('Cache promise failed', error)
+          cache.delete(cacheKey)
+          throw error
+        })
+
+      return item
+    }
+
+    const current = cacheForEpoch(epochId)
+    if (cacheNextEpochOnHalfTTS) {
+      const next = epochId + 1
+      const exceedHalfTTS = epoch - epochId > 0.5
+      if (exceedHalfTTS) {
+        cacheForEpoch(next)
       }
     }
 
-    const cacheKey = calcCacheKey(keyFunction(args), epochId)
-    // logger(cacheKey, `exists=${cache.has(cacheKey)}`)
-    if (cache.has(cacheKey)) {
-      return ensurePersist(cache.get(cacheKey)!)
+    if (current.resolved) {
+      return current.promise
     }
-
-    // @ts-ignore
-    const promise = fn(...args)
-
-    cache.set(cacheKey, promise)
-
-    if (epochId > 0) {
-      const prevKey = calcCacheKey(keyFunction(args), epochId - 1)
-      if (cache.has(prevKey)) {
-        return cache.get(prevKey)
-      }
-    }
-
-    try {
-      // Persist to R2 or other storage
-      promise.then((result) => {
-        const jsonResult = stringify(result)
-        if (persist && result && jsonResult !== '{}' && jsonResult !== '[]') {
-          uploadR2(persistKey(), result).catch((ex) => {
-            console.error('Failed to persist cache', ex)
-          })
+    if (usingStaleValue) {
+      for (let i = epochs.length - 2; i >= 0; i--) {
+        const epoch = epochs[i]
+        if (maxAge && epoch.createTime + maxAge < Date.now()) {
+          continue
         }
-      })
+        if (epoch.contentCacheKey !== contentCacheKey) {
+          continue
+        }
+        const epochCache = cache.get(epoch.cacheKey)
 
-      return ensurePersist(promise)
-    } catch (error) {
-      // logger('error', cacheKey, error)
-      cache.delete(cacheKey)
-      throw error
+        if (epochCache && epochCache.resolved) {
+          return epochCache.promise
+        }
+      }
     }
+    if (rejectWhenNoCache) {
+      throw new Error(
+        `No cache found: total=${epochs.length}, current=${current.epochId},  cacheInstanceId=${cacheInstanceId}`,
+      )
+    }
+
+    return current.promise
   }
+  return cachedFn as T
 }
 
+async function existsR2(key: string) {
+  try {
+    const resp = await fetch(`https://obj-cache.pancakeswap.com/cache/${key}`, {
+      method: 'HEAD',
+    })
+    return resp.ok
+  } catch (ex) {
+    return false
+  }
+}
 async function uploadR2(key: string, value: any) {
-  console.info('update homepage cache', key)
   if (!process.env.OBJECT_CACHE_SECRET) {
-    return
+    return false
+  }
+
+  if (await existsR2(key)) {
+    return false
   }
   await fetch(`https://obj-cache.pancakeswap.com`, {
     method: 'POST',
@@ -125,13 +232,34 @@ async function uploadR2(key: string, value: any) {
     },
     body: JSON.stringify({ key, value }),
   })
+  return true
 }
 
 async function _fetchR2Cache(key: string) {
   const resp = await fetch(`https://proofs.pancakeswap.com/cache/${key}`)
-  if (resp.status === 200) {
+  console.log(`[fetch] cache https://proofs.pancakeswap.com/cache/${key}`)
+  if (resp.ok) {
     return resp.json()
   }
-  console.warn(`Failed to fetch cache:https://proofs.pancakeswap.com/cache/${key}`)
-  return undefined
+  throw new Error(`Failed to fetch cache`)
+}
+
+function withTimeout<Args extends any[], Return>(
+  fn: (...args: Args) => Promise<Return>,
+  ms: number,
+): (...args: Args) => Promise<Return> {
+  return async (...args: Args): Promise<Return> => {
+    let timer: ReturnType<typeof setTimeout>
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => {
+        reject(new Error(`Operation timed out after ${ms}ms`))
+      }, ms)
+    })
+
+    try {
+      return await Promise.race([fn(...args), timeoutPromise])
+    } finally {
+      clearTimeout(timer!)
+    }
+  }
 }

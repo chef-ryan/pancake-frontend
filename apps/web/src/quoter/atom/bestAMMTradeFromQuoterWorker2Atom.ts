@@ -5,52 +5,45 @@ import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { currencyUSDPriceAtom } from 'hooks/useCurrencyUsdPrice'
 import { nativeCurrencyAtom } from 'hooks/useNativeCurrency'
 import { globalWorkerAtom } from 'hooks/useWorker'
-import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { createViemPublicClientGetter } from 'utils/viem'
 
+import { QUOTE_TIMEOUT } from 'quoter/consts'
 import { multicallGasLimitAtom } from 'quoter/hook/useMulticallGasLimit'
+import { quoteTraceAtom } from 'quoter/perf/quoteTracker'
+import { createPoolQuery } from 'quoter/utils/createQuoteQuery'
 import { filterPools } from 'quoter/utils/filterPoolsV3'
 import { gasPriceWeiAtom } from 'quoter/utils/gasPriceAtom'
 import { getAllowedPoolTypes } from 'quoter/utils/getAllowedPoolTypes'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
+import { fetchCandidatePoolsLite } from 'quoter/utils/poolQueries'
+import { withTimeout } from 'utils/withTimeout'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { CreateQuoteProviderParams, NoValidRouteError, QuoteQuery } from '../quoter.types'
-import { commonPoolsLiteAtom } from './poolsAtom'
+import { atomWithLoadable } from './atomWithLoadable'
 
 export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery) => {
   const { amount, currency, tradeType, maxSplits, v2Swap, v3Swap } = option
-  return atom(async (get) => {
+  return atomWithLoadable(async (get) => {
     const gasLimit = await get(multicallGasLimitAtom(currency?.chainId))
     if (!amount || !amount.currency || !currency) {
       return undefined
     }
+    const perf = get(quoteTraceAtom(option))
     const quoteProvider = createQuoteProvider2({
       gasLimit,
     })
     const worker = get(globalWorkerAtom)
-
     if (!worker) {
       throw new Error('Quote worker not initialized')
     }
 
-    try {
-      const candidatePools = await get(
-        commonPoolsLiteAtom({
-          quoteHash: option.hash,
-          currencyA: amount.currency,
-          currencyB: currency,
-          chainId: currency.chainId,
-          infinity: option.infinitySwap,
-          v2Pools: Boolean(v2Swap),
-          v3Pools: Boolean(v3Swap),
-          signal: option.signal,
-          provider: option.provider,
-          options: {
-            blockNumber: option.blockNumber,
-          },
-        }),
-      )
+    const query = withTimeout(async () => {
+      perf.tracker.track('start')
+
+      const { poolQuery, poolOptions } = createPoolQuery(option)
+      const candidatePools = await fetchCandidatePoolsLite(poolQuery, poolOptions)
+      perf.tracker.track('pool_success')
 
       const filtered = filterPools(candidatePools)
 
@@ -84,13 +77,22 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery)
       if (parsed) {
         parsed.quoteQueryHash = option.hash
       }
-      return {
+      const order = {
         type: OrderType.PCS_CLASSIC,
         trade: parsed,
       } as InterfaceOrder
+      perf.tracker.success(order)
+      return order
+    }, QUOTE_TIMEOUT)
+
+    try {
+      return await query()
     } catch (ex) {
+      perf.tracker.fail(ex)
       console.warn(`[quote]`, ex)
       throw new NoValidRouteError()
+    } finally {
+      perf.tracker.report()
     }
   })
 }, isEqualQuoteQuery)

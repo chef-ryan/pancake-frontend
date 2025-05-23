@@ -2,11 +2,14 @@ import { getRequestBody, parseQuoteResponse } from '@pancakeswap/price-api-sdk'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { QUOTING_API } from 'config/constants/endpoints'
 import { atomFamily } from 'jotai/utils'
+import { QUOTE_TIMEOUT } from 'quoter/consts'
+import { quoteTraceAtom } from 'quoter/perf/quoteTracker'
 import { QuoteQuery } from 'quoter/quoter.types'
 import { gasPriceWeiAtom } from 'quoter/utils/gasPriceAtom'
 import { getAllowedPoolTypesX } from 'quoter/utils/getAllowedPoolTypes'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { basisPointsToPercent } from 'utils/exchange'
+import { withTimeout } from 'utils/withTimeout'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { atomWithLoadable } from './atomWithLoadable'
 
@@ -22,39 +25,54 @@ export const bestXApiAtom = atomFamily((option: QuoteQuery) => {
     if (!amount || !amount.currency || !currency || !slippage) {
       throw new Error('Invalid amount or currency')
     }
-    const poolTypes = getAllowedPoolTypesX(option)
-    const gasPriceWei = await get(gasPriceWeiAtom(currency.chainId))
+    const perf = get(quoteTraceAtom(option))
+    perf.tracker.track('start')
 
-    const body = getRequestBody({
-      amount,
-      quoteCurrency: currency,
-      tradeType: tradeType || TradeType.EXACT_INPUT,
-      slippage: basisPointsToPercent(slippage),
-      amm: { maxHops, maxSplits, poolTypes, gasPriceWei },
-      x: {
-        useSyntheticQuotes: true,
-        swapper: address,
-      },
-    })
+    const query = withTimeout(async () => {
+      const poolTypes = getAllowedPoolTypesX(option)
+      const gasPriceWei = await get(gasPriceWeiAtom(currency.chainId))
 
-    const serverRes = await fetch(`${QUOTING_API}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    })
-    const serializedRes = await serverRes.json()
+      const body = getRequestBody({
+        amount,
+        quoteCurrency: currency,
+        tradeType: tradeType || TradeType.EXACT_INPUT,
+        slippage: basisPointsToPercent(slippage),
+        amm: { maxHops, maxSplits, poolTypes, gasPriceWei },
+        x: {
+          useSyntheticQuotes: true,
+          swapper: address,
+        },
+      })
 
-    const isExactIn = tradeType === TradeType.EXACT_INPUT
-    const result = parseQuoteResponse(serializedRes, {
-      chainId: currency.chainId,
-      currencyIn: isExactIn ? amount.currency : currency,
-      currencyOut: isExactIn ? currency : amount.currency,
-      tradeType,
-    })
+      const serverRes = await fetch(`${QUOTING_API}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+      const serializedRes = await serverRes.json()
 
-    result.trade.quoteQueryHash = option.hash
-    return result as InterfaceOrder
+      const isExactIn = tradeType === TradeType.EXACT_INPUT
+      const result = parseQuoteResponse(serializedRes, {
+        chainId: currency.chainId,
+        currencyIn: isExactIn ? amount.currency : currency,
+        currencyOut: isExactIn ? currency : amount.currency,
+        tradeType,
+      })
+
+      result.trade.quoteQueryHash = option.hash
+      perf.tracker.success(result)
+      return result as InterfaceOrder
+    }, QUOTE_TIMEOUT)
+
+    try {
+      return await query()
+    } catch (ex) {
+      perf.tracker.fail(ex)
+      throw ex
+    } finally {
+      perf.tracker.report()
+    }
   })
 }, isEqualQuoteQuery)

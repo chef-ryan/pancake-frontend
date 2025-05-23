@@ -20,7 +20,7 @@ import { useFetchPools } from 'state/farmsV4/hooks'
 import type { InfinityPoolInfo } from 'state/farmsV4/state/type'
 import styled from 'styled-components'
 import { getHookByAddress } from 'utils/getHookByAddress'
-import { Address, Chain } from 'viem'
+import { Address, Chain, zeroAddress } from 'viem'
 import { usePoolFeatureAndType, usePoolTypeQuery } from 'views/AddLiquiditySelector/hooks/usePoolTypeQuery'
 import {
   Card,
@@ -35,6 +35,7 @@ import { useOrderChainIds } from 'views/universalFarms/hooks/useMultiChains'
 
 import { ALL_PROTOCOLS, Protocol } from '@pancakeswap/farms'
 import { HOOK_CATEGORY } from '@pancakeswap/infinity-sdk'
+import { isAddressEqual } from 'utils'
 import { TokenFilterContainer } from './styles'
 
 const PoolsContent = styled.div`
@@ -168,31 +169,13 @@ export const PoolList = () => {
     } as FetchPoolsProps
   }, [binOnly, chainId, clOnly, currencyIdA, currencyIdB, nextPage])
 
-  const { isLoading, data: poolList, pageNo, resetExtendPools } = useFetchPools(fetchQueries, !!chainId)
+  const { isLoading, data: poolList, pageNo, resetExtendPools, hasNextPage } = useFetchPools(fetchQueries, !!chainId)
 
   useEffect(() => {
     resetExtendPools()
     // NOTE: ignore exhaustive-deps, we just reset on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  useEffect(() => {
-    if (isIntersecting) {
-      setCursorVisible((numberCurrentlyVisible) => {
-        if (numberCurrentlyVisible <= poolList.length) {
-          return Math.min(numberCurrentlyVisible + NUMBER_OF_FARMS_VISIBLE, poolList.length)
-        }
-        return numberCurrentlyVisible
-      })
-    }
-  }, [isIntersecting, poolList.length])
-
-  useEffect(() => {
-    if (isLoading) {
-      return
-    }
-    setNextPage(cursorVisible >= poolList.length ? pageNo + 1 : pageNo)
-  }, [cursorVisible, poolList.length, pageNo, isLoading])
 
   const handleNetworkChange = useCallback(
     (chain: Chain) => {
@@ -254,17 +237,40 @@ export const PoolList = () => {
           isMatchedProtocol = true
         }
 
+        const hookData = getHookByAddress(chainId, pool.hookAddress)
+        const hasWhitelistHook = !pool.hookAddress || isAddressEqual(pool.hookAddress, zeroAddress) ? true : !!hookData
+
         if (features.length === 0 || isSelectAllFeatures) {
-          return isMatchedChain && isMatchedCurrency && isMatchedProtocol
+          return isMatchedChain && isMatchedCurrency && isMatchedProtocol && hasWhitelistHook
         }
 
-        const hookData = getHookByAddress(chainId, pool.hookAddress)
         const isMatchedPoolFeatures = hookData && features.some((q) => hookData.category?.includes(q as HOOK_CATEGORY))
 
         return isMatchedChain && isMatchedCurrency && isMatchedProtocol && isMatchedPoolFeatures
       }),
     [poolList, currencyIdA, currencyIdB, chainId, features, protocols, isSelectAllFeatures, isSelectAllProtocols],
   )
+
+  useEffect(() => {
+    if (isIntersecting) {
+      setCursorVisible((numberCurrentlyVisible) => {
+        if (hasNextPage && filteredData.length < cursorVisible) {
+          return filteredData.length
+        }
+        if (numberCurrentlyVisible <= filteredData.length) {
+          return Math.min(numberCurrentlyVisible + NUMBER_OF_FARMS_VISIBLE, filteredData.length)
+        }
+        return numberCurrentlyVisible
+      })
+    }
+  }, [isIntersecting, filteredData.length])
+
+  useEffect(() => {
+    if (isLoading) {
+      return
+    }
+    setNextPage(cursorVisible >= filteredData.length ? pageNo + 1 : pageNo)
+  }, [cursorVisible, filteredData.length, pageNo, isLoading])
 
   const dataByChain = useMemo(() => {
     return groupBy(filteredData, 'chainId')

@@ -6,6 +6,7 @@ import ConnectWalletButton from 'components/ConnectWalletButton'
 import ApproveLiquidityTokens from 'components/Liquidity/ApproveLiquidityTokens'
 import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { useCLPriceRange } from 'hooks/infinity/useCLPriceRange'
+import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
 import { usePermit2 } from 'hooks/usePermit2'
 import React, { useMemo } from 'react'
 import { useInverted } from 'state/infinity/shared'
@@ -27,6 +28,21 @@ import { isFeeOutOfRange } from './FieldFeeLevel'
 
 type SubmitCreateButtonProps = BoxProps
 
+export const LowLiquidityMessage = () => {
+  const { t } = useTranslation()
+  return (
+    <Message variant="warning">
+      <RowBetween>
+        <Text ml="12px" fontSize="12px">
+          {t(
+            'New pools with low liquidity can have bigger price swings, increasing the risk of losses. Please proceed carefully.',
+          )}
+        </Text>
+      </RowBetween>
+    </Message>
+  )
+}
+
 export const OutOfRangeMessage = () => {
   const { t } = useTranslation()
   return (
@@ -45,6 +61,21 @@ export const InvalidCLRangeMessage = () => {
   return (
     <Message variant="warning">
       <MessageText>{t('Invalid range selected. The min price must be lower than the max price.')}</MessageText>
+    </Message>
+  )
+}
+
+export const LowTVLMessage = () => {
+  const { t } = useTranslation()
+  return (
+    <Message variant="warning">
+      <RowBetween>
+        <Text ml="12px" fontSize="12px">
+          {t(
+            'Adding liquidity to a low TVL pool carries higher risk of losses from price fluctuations. Proceed with caution.',
+          )}
+        </Text>
+      </RowBetween>
     </Message>
   )
 }
@@ -260,6 +291,22 @@ export const SubmitCreateButton: React.FC<SubmitCreateButtonProps> = ({ ...boxPr
     t,
   ])
 
+  const { data: currency0Price } = useCurrencyUsdPrice(currency0, {
+    enabled: Boolean(currency0),
+  })
+  const { data: currency1Price } = useCurrencyUsdPrice(currency1, {
+    enabled: Boolean(currency1),
+  })
+  const lowLiquidity = useMemo(() => {
+    if (depositCurrencyAmount0?.equalTo(0) || depositCurrencyAmount1?.equalTo(0)) return false
+    if (!currency0Price || !currency1Price) return true
+    return (
+      currency0Price * Number(depositCurrencyAmount0?.toSignificant(6)) +
+        currency1Price * Number(depositCurrencyAmount1?.toSignificant(6)) <
+      1000
+    )
+  }, [currency0Price, currency0Balance, currency1Price, currency1Balance])
+
   return (
     <Box {...boxProps}>
       {/* <pre>
@@ -291,6 +338,7 @@ export const SubmitCreateButton: React.FC<SubmitCreateButtonProps> = ({ ...boxPr
         )}
       </pre> */}
       <AutoColumn gap="8px">
+        {lowLiquidity && <LowLiquidityMessage />}
         {outOfRange && <OutOfRangeMessage />}
         {invalidClRange && <InvalidCLRangeMessage />}
         {invalidBinRange && (

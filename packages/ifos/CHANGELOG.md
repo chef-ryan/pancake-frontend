@@ -1,5 +1,40 @@
 # @pancakeswap/ifos
 
+## 5.0.3
+
+### Patch Changes
+
+- Updated dependencies [87f089f]
+  - @pancakeswap/utils@6.1.3
+  - @pancakeswap/tokens@0.7.4
+
+## 5.0.2
+
+### Patch Changes
+
+- Updated dependencies [1718057]
+  - @pancakeswap/utils@6.1.2
+  - @pancakeswap/tokens@0.7.4
+
+## 5.0.1
+
+### Patch Changes
+
+- Updated dependencies [3de0443]
+  - @pancakeswap/chains@0.5.2
+  - @pancakeswap/sdk@5.8.14
+  - @pancakeswap/tokens@0.7.4
+  - @pancakeswap/utils@6.1.1
+
+## 5.0.0
+
+### Patch Changes
+
+- Updated dependencies [cb44715]
+  - @pancakeswap/utils@6.1.0
+  - @pancakeswap/sdk@5.8.13
+  - @pancakeswap/tokens@0.7.3
+
 ## 4.0.2
 
 ### Patch Changes

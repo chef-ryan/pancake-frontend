@@ -1,25 +1,31 @@
 import { OrderType } from '@pancakeswap/price-api-sdk'
 import { InfinityRouter, SmartRouter } from '@pancakeswap/smart-router'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
+import { accountActiveChainAtom } from 'hooks/useAccountActiveChain'
 import { currencyUSDPriceAtom } from 'hooks/useCurrencyUsdPrice'
 import { nativeCurrencyAtom } from 'hooks/useNativeCurrency'
 import { globalWorkerAtom } from 'hooks/useWorker'
 import { atomFamily } from 'jotai/utils'
+import { QUOTE_TIMEOUT } from 'quoter/consts'
 import { multicallGasLimitAtom } from 'quoter/hook/useMulticallGasLimit'
+import { quoteTraceAtom } from 'quoter/perf/quoteTracker'
 import { NoValidRouteError, QuoteQuery } from 'quoter/quoter.types'
 import { createQuoteProvider } from 'quoter/utils/createQuoteProvider'
+import { createPoolQuery } from 'quoter/utils/createQuoteQuery'
 import { filterPools } from 'quoter/utils/filterPoolsV3'
 import { gasPriceWeiAtom } from 'quoter/utils/gasPriceAtom'
 import { getAllowedPoolTypes } from 'quoter/utils/getAllowedPoolTypes'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
+import { fetchCandidatePoolsLite } from 'quoter/utils/poolQueries'
+import { withTimeout } from 'utils/withTimeout'
 import { InterfaceOrder } from 'views/Swap/utils'
 import { atomWithLoadable } from './atomWithLoadable'
-import { commonPoolsLiteAtom } from './poolsAtom'
 
 export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteQuery) => {
   const { amount, currency, tradeType, maxSplits, v2Swap, v3Swap } = option
   return atomWithLoadable(async (get) => {
     const gasLimit = await get(multicallGasLimitAtom(currency?.chainId))
+    const { account } = get(accountActiveChainAtom)
     if (!amount || !amount.currency || !currency) {
       return undefined
     }
@@ -31,24 +37,12 @@ export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteQuery) 
     if (!worker) {
       throw new Error('Quote worker not initialized')
     }
-
-    try {
-      const candidatePools = await get(
-        commonPoolsLiteAtom({
-          quoteHash: option.hash,
-          currencyA: amount.currency,
-          currencyB: currency,
-          chainId: currency.chainId,
-          infinity: option.infinitySwap,
-          v2Pools: Boolean(v2Swap),
-          v3Pools: Boolean(v3Swap),
-          signal: option.signal,
-          provider: option.provider,
-          options: {
-            blockNumber: option.blockNumber,
-          },
-        }),
-      )
+    const perf = get(quoteTraceAtom(option))
+    perf.tracker.track('start')
+    const query = withTimeout(async () => {
+      const { poolQuery, poolOptions } = createPoolQuery(option)
+      const candidatePools = await fetchCandidatePoolsLite(poolQuery, poolOptions)
+      perf.tracker.track('pool_success')
 
       const filtered = filterPools(candidatePools)
 
@@ -75,16 +69,25 @@ export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteQuery) 
         quoteCurrencyUsdPrice,
         nativeCurrencyUsdPrice,
         signal: option.signal,
+        account,
       })
       const parsed = SmartRouter.Transformer.parseTrade(currency.chainId, result as any)
       parsed.quoteQueryHash = option.hash
-      return {
+      const order = {
         type: OrderType.PCS_CLASSIC,
         trade: parsed as any as InfinityRouter.InfinityTradeWithoutGraph<TradeType>,
       } as InterfaceOrder
+      perf.tracker.success(order)
+      return order
+    }, QUOTE_TIMEOUT)
+
+    try {
+      return await query()
     } catch (ex) {
-      console.warn(`[quote]`, ex)
+      perf.tracker.fail(ex)
       throw new NoValidRouteError()
+    } finally {
+      perf.tracker.report()
     }
   })
 }, isEqualQuoteQuery)

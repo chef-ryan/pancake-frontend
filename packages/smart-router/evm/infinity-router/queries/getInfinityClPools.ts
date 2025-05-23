@@ -43,7 +43,7 @@ export async function getInfinityClCandidatePools({
     currencyB,
     clientProvider,
   })
-  return fillPoolsWithTicks({
+  return fillClPoolsWithTicks({
     pools,
     clientProvider,
     gasLimit,
@@ -190,18 +190,21 @@ function createBitmapIndexListBuilder(tickRange: number) {
 }
 
 // only allow 10% slippage
-const buildBitmapIndexList = createBitmapIndexListBuilder(1000)
+const buildBitmapIndexList = createBitmapIndexListBuilder(10)
 
 type FillPoolsWithTicksParams = {
   pools: InfinityClPool[]
 } & WithClientProvider &
   WithMulticallGasLimit
 
-async function fillPoolsWithTicks({
+export async function fillClPoolsWithTicks({
   pools,
   clientProvider,
   gasLimit,
 }: FillPoolsWithTicksParams): Promise<InfinityClPool[]> {
+  if (pools.length === 0) {
+    return []
+  }
   const chainId: ChainId = pools[0]?.currency0.chainId
   const tickLensAddress = INFI_CL_TICK_LENS_ADDRESSES[chainId]
   const client = clientProvider?.({ chainId })

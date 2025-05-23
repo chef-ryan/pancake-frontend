@@ -6,12 +6,17 @@ import { ASSET_CDN } from 'config/constants/endpoints'
 import { WEEK } from 'config/constants/veCake'
 import { createWriteContractCallback } from 'hooks/createWriteContractCallback'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useCurrentBlockTimestamp } from 'state/block/hooks'
 import styled from 'styled-components'
 import { getRevenueSharingCakePoolAddress, getRevenueSharingVeCakeAddress } from 'utils/addressHelpers'
-import { getCakePoolContract, getRevenueSharingPoolGatewayContract, getVeCakeContract } from 'utils/contractHelpers'
+import {
+  getCakePoolContract,
+  getCakePoolV1Contract,
+  getRevenueSharingPoolGatewayContract,
+  getVeCakeContract,
+} from 'utils/contractHelpers'
 import { formatTime } from 'utils/formatTime'
 import { poolStartWeekCursors } from 'views/CakeStaking/config'
 import { RedeemFaqs } from './components/RedeemFaqs'
@@ -21,6 +26,7 @@ import { useCakeExitInfo } from './hooks/useCakeExitInfo'
 import { useDisplayValue } from './utils/useDisplayValue'
 
 const useWriteCakePoolWithdrawAllCallback = createWriteContractCallback(getCakePoolContract, 'withdrawAll')
+const useWriteCakePoolV1WithdrawAllCallback = createWriteContractCallback(getCakePoolV1Contract, 'withdrawAll')
 const useClaimAll = createWriteContractCallback(getRevenueSharingPoolGatewayContract, 'claimMultiple')
 const useWriteEarlyWithdrawCallback = createWriteContractCallback(getVeCakeContract, 'earlyWithdraw')
 const useWriteWithdrawCallback = createWriteContractCallback(getVeCakeContract, 'withdrawAll')
@@ -41,6 +47,7 @@ export const VeCakeRedeem: React.FC = () => {
     veCakeRewards,
     cakeLockExpired,
     proxyCakeLockedAmount,
+    cakeV1Amount,
     nativeCakeLockedAmount,
     refetchRevenueShareVeCake,
     refetchRevenueShareCake,
@@ -53,13 +60,14 @@ export const VeCakeRedeem: React.FC = () => {
   const userHasRewards = isWalletConnected && (cakePoolRewards.gt(0) || veCakeRewards.gt(0))
   const earlyWithdraw = useWriteEarlyWithdrawCallback()
   const withdrawAll = useWriteCakePoolWithdrawAllCallback()
+  const withdrawV1All = useWriteCakePoolV1WithdrawAllCallback()
   const veCakeWithdrawAll = useWriteWithdrawCallback()
   const currentBlockTimestamp = useCurrentBlockTimestamp()
   const claimAll = useClaimAll()
 
   const proxyCakeLockedAmountDisplay = useDisplayValue(proxyCakeLockedAmount)
+  const cakeV1AmountDisplay = useDisplayValue(cakeV1Amount)
   const nativeCakeDisplay = useDisplayValue(nativeCakeLockedAmount)
-  const cakePoolRewardDisplay = useDisplayValue(cakePoolRewards.plus(veCakeRewards))
 
   const handleClaim = useCallback(async () => {
     if (!account || !chainId || !currentBlockTimestamp) return
@@ -139,43 +147,74 @@ export const VeCakeRedeem: React.FC = () => {
         },
       })
     }
-  }, [proxyCakeLockedAmount, account, chainId, currentBlockTimestamp, withdrawAll])
+  }, [proxyCakeLockedAmount, account, chainId, currentBlockTimestamp, withdrawAll, proxyCakeLockedAmountDisplay, t])
+
+  const handleCakeV1Pool = useCallback(async () => {
+    if (!account || !chainId || !currentBlockTimestamp) return
+    if (cakeV1Amount > 0) {
+      await withdrawV1All.callMethod([], {
+        successToast: {
+          title: t('CAKE Pool Redeem Successfully'),
+          description: `${cakeV1AmountDisplay} ${t('CAKE has been sent to your wallet.')}`,
+        },
+      })
+    }
+  }, [cakeV1Amount, account, chainId, currentBlockTimestamp, withdrawV1All, cakeV1AmountDisplay, t])
   const [expand, setExpand] = useState(false)
 
-  const buttons = [
-    {
-      key: 'cakepool',
-      handler: handleCakePool,
-      enabled: proxyCakeLockedAmount > 0,
-    },
-    {
-      key: 'vecake',
-      handler: handleVeCake,
-      enabled: nativeCakeLockedAmount > 0,
-    },
-    {
-      key: 'claimall',
-      handler: handleClaim,
-      enabled: userHasRewards,
-    },
-  ]
+  const buttons = useMemo(
+    () => [
+      {
+        key: 'cakepoolV1',
+        handler: handleCakeV1Pool,
+        enabled: cakeV1Amount > 0,
+      },
+      {
+        key: 'cakepool',
+        handler: handleCakePool,
+        enabled: proxyCakeLockedAmount > 0,
+      },
+      {
+        key: 'vecake',
+        handler: handleVeCake,
+        enabled: nativeCakeLockedAmount > 0,
+      },
+      {
+        key: 'claimall',
+        handler: handleClaim,
+        enabled: userHasRewards,
+      },
+    ],
+    [
+      handleCakePool,
+      handleCakeV1Pool,
+      proxyCakeLockedAmount,
+      handleVeCake,
+      nativeCakeLockedAmount,
+      handleClaim,
+      userHasRewards,
+      cakeV1Amount,
+    ],
+  )
 
   const [processing, setProcessing] = useState(false)
-  const handleProcessAll = async () => {
+  const handleProcessAll = useCallback(async () => {
     if (buttons.every((button) => !button.enabled)) return
     setProcessing(true)
 
     try {
       for (const button of buttons) {
-        // eslint-disable-next-line
-        await button.handler()
+        if (button.enabled) {
+          // eslint-disable-next-line
+          await button.handler()
+        }
       }
     } catch (ex) {
       console.warn(ex)
     } finally {
       setProcessing(false)
     }
-  }
+  }, [buttons])
 
   const allSettled = buttons.every((button) => !button.enabled)
 

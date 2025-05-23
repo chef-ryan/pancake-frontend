@@ -13,7 +13,7 @@ export class PoolHashHelper {
     }
 
     const sorted = sortCurrencies(list)
-    const str = sorted.map((currency) => getCurrencyAddress(currency)).join(',')
+    const str = sorted.map((currency) => `${getCurrencyAddress(currency)}_${currency.chainId}`).join(',')
     const hash = keccak256(`0x${str}`)
     return hash
   }
@@ -26,14 +26,14 @@ export class PoolHashHelper {
     if (b && !isEqualCurrency(a, b)) {
       list.push(b)
     }
-    const str = list.map((currency) => getCurrencyAddress(currency)).join(',')
+    const str = list.map((currency) => `${getCurrencyAddress(currency)}_${currency.chainId}`).join(',')
     const hash = keccak256(`0x${str}`)
     return hash
   }
 
   static hashPoolQuery = (query: PoolQuery) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { currencyA, currencyB, signal, provider, ...rest } = query
+    const { currencyA, currencyB, ...rest } = query
     try {
       const hash = PoolHashHelper.hashCurrenciesWithSort(currencyA, currencyB)
       const hashRest = keccak256(`0x${stringify(rest)}`)
@@ -46,7 +46,21 @@ export class PoolHashHelper {
 
   static hashQuoteQuery = (query: QuoteQuery) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { amount, currency, slippage, blockNumber, provider, signal, hash, placeholderHash, ...rest } = query
+    const {
+      amount,
+      currency,
+      slippage,
+      controller,
+      blockNumber,
+      gasLimit,
+      provider,
+      signal,
+      createTime,
+      hash,
+      placeholderHash,
+      routeKey,
+      ...rest
+    } = query
     const chainId = query.baseCurrency?.chainId
     const restHash = keccak256(`0x${stringify(rest)}:${chainId}`)
     const hashCurrencies = PoolHashHelper.hashCurrencies(amount?.currency, currency || undefined)

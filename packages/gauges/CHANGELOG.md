@@ -1,5 +1,28 @@
 # @pancakeswap/gauges
 
+## 2.0.11
+
+### Patch Changes
+
+- 36fdc2a: Updated a @pancakeswap/utils dependency. So update all packages related.
+
+## 2.0.10
+
+### Patch Changes
+
+- Updated dependencies [3de0443]
+  - @pancakeswap/chains@0.5.2
+  - @pancakeswap/tokens@0.7.4
+  - @pancakeswap/v3-sdk@3.9.3
+
+## 2.0.9
+
+### Patch Changes
+
+- Updated dependencies [cb44715]
+  - @pancakeswap/v3-sdk@3.9.2
+  - @pancakeswap/tokens@0.7.3
+
 ## 2.0.8
 
 ### Patch Changes

@@ -1,29 +1,27 @@
 import { useDebounce } from '@orbs-network/twap-ui/dist/hooks'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
+import { POOLS_FAST_REVALIDATE } from 'config/pools'
 import { useCurrency } from 'hooks/Tokens'
 import { useInputBasedAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import {
-  abortableViemProviderAtom,
-  abortControllerAtom,
-  abortSignalAtom,
-  activeQuoteHashAtom,
-} from 'quoter/atom/abortControlAtoms'
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { atomFamily } from 'jotai/utils'
+import { activeQuoteHashAtom } from 'quoter/atom/abortControlAtoms'
 import { baseAllTypeBestTradeAtom, pauseAtom, userTypingAtom } from 'quoter/atom/bestTradeUISyncAtom'
 import { updatePlaceholderAtom } from 'quoter/atom/placeholderAtom'
+import { QUOTE_REVALIDATE_TIME } from 'quoter/consts'
 import { QuoteQuery } from 'quoter/quoter.types'
-import { useEffect, useRef } from 'react'
+import { fetchCandidatePools, fetchCandidatePoolsLite } from 'quoter/utils/poolQueries'
+import { useEffect } from 'react'
 import { useCurrentBlock } from 'state/block/hooks'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { useAccount } from 'wagmi'
 import { bestQuoteAtom } from '../atom/bestQuoteAtom'
 import { quoteNonceAtom } from '../atom/revalidateAtom'
-import { createQuoteQuery } from '../utils/createQuoteQuery'
+import { createPoolQuery, createQuoteQuery } from '../utils/createQuoteQuery'
 import { useQuoteContext } from './QuoteContext'
-
-const REVALIDATE_TIME = 10
+import { multicallGasLimitAtom } from './useMulticallGasLimit'
 
 export const useQuoterSync = () => {
   const swapState = useSwapState()
@@ -61,11 +59,10 @@ export const useQuoterSync = () => {
   const { slippageTolerance: slippage } = useInputBasedAutoSlippageWithFallback(amount)
   const blockNumber = useCurrentBlock()
   const setActiveQuoteHash = useSetAtom(activeQuoteHashAtom)
-  const historyHashes = useRef<string[]>([])
-  const abortQuote = useSetAtom(abortSignalAtom)
   const [nonce, setNonce] = useAtom(quoteNonceAtom)
+  const gasLimit = useAtomValue(multicallGasLimitAtom(chainId))
 
-  const quoteQueryInit: QuoteQuery = {
+  const quoteQueryInit = {
     amount,
     currency: dependentCurrency,
     baseCurrency: independentCurrency,
@@ -82,22 +79,22 @@ export const useQuoterSync = () => {
     address,
     blockNumber,
     nonce,
-    hash: '',
+    for: 'main',
+    gasLimit,
   }
 
   const quoteQuery = createQuoteQuery(quoteQueryInit)
+  useAtomValue(prefetchPoolsAtom(quoteQuery))
   const setPlaceholder = useSetAtom(updatePlaceholderAtom)
-  const abortController = useAtomValue(abortControllerAtom(quoteQuery.hash))
-  const viemProvider = useAtomValue(abortableViemProviderAtom(quoteQuery.hash))
-  quoteQuery.signal = abortController.signal
-  quoteQuery.provider = viemProvider
+  const quoteHistory: QuoteQuery[] = []
 
   useEffect(() => {
-    for (let i = 0; i < historyHashes.current.length; i++) {
-      const hash = historyHashes.current[i]
-      abortQuote(hash)
+    while (quoteHistory.length > 0) {
+      const historyQuote = quoteHistory.pop()
+      historyQuote?.controller?.abort()
     }
-    historyHashes.current = [quoteQuery.hash]
+
+    quoteHistory.push(quoteQuery)
     setActiveQuoteHash(quoteQuery.hash)
   }, [quoteQuery.hash])
 
@@ -108,13 +105,13 @@ export const useQuoterSync = () => {
   const quoteResult = useAtomValue(bestQuoteAtom(quoteQuery))
   useEffect(() => {
     let t = 0
-    const pauseTimer = paused || quoteResult.loading
     const interval = setInterval(() => {
-      if (pauseTimer) {
+      const outdated = Date.now() - quoteQuery.createTime! > QUOTE_REVALIDATE_TIME
+      if (paused || (!outdated && quoteResult.loading)) {
         return
       }
       if (t > 0) {
-        if (t % REVALIDATE_TIME === 0) {
+        if (t % QUOTE_REVALIDATE_TIME === 0) {
           setNonce((v) => v + 1)
         }
       }
@@ -128,18 +125,21 @@ export const useQuoterSync = () => {
   }, [quoteQuery.hash, paused, quoteResult.loading])
 
   useEffect(() => {
-    if (quoteResult.data?.trade && quoteResult.placeholderHash) {
-      setPlaceholder(quoteResult.placeholderHash, quoteResult.data)
+    if (quoteResult.isJust() && !quoteResult.hasFlag('placeholder')) {
+      const placeholderHash = quoteResult.getExtra('placeholderHash') as string
+      setPlaceholder(placeholderHash, quoteResult.unwrap())
     }
 
     if (paused) {
       return
     }
 
+    const order = quoteResult.unwrapOr(undefined)
+
     setTrade({
-      bestOrder: quoteResult.data,
-      tradeLoaded: !quoteResult?.loading,
-      tradeError: quoteResult?.error,
+      bestOrder: order,
+      tradeLoaded: !quoteResult.isPending(),
+      tradeError: quoteResult.error,
       refreshDisabled: false,
       refreshOrder: () => {
         setNonce((v) => v + 1)
@@ -155,5 +155,33 @@ export const useQuoterSync = () => {
       },
     })
     setTyping(false)
-  }, [quoteResult.data, quoteResult.loading, quoteResult.error, pauseQuote, setTrade, setTyping, setNonce, paused])
+  }, [quoteResult.value, quoteResult.loading, quoteResult.error, pauseQuote, setTrade, setTyping, setNonce, paused])
 }
+
+const prefetchPoolsAtom = atomFamily(
+  (quoteQuery: QuoteQuery) => {
+    return atom(async () => {
+      if (!quoteQuery.baseCurrency || !quoteQuery.currency) {
+        return
+      }
+      const { poolQuery, poolOptions } = createPoolQuery(quoteQuery)
+      fetchCandidatePools(poolQuery, poolOptions)
+      fetchCandidatePoolsLite(poolQuery, poolOptions)
+    })
+  },
+  (a, b) => {
+    const isEqualQuote = a.hash === b.hash
+    if (!isEqualQuote) {
+      return false
+    }
+
+    const chainId = a.currency?.chainId
+    if (!chainId) {
+      return true
+    }
+    const ttl = POOLS_FAST_REVALIDATE[chainId]
+    const epochA = Math.floor(a.createTime / ttl)
+    const epochB = Math.floor(a.createTime / ttl)
+    return epochB === epochA
+  },
+)

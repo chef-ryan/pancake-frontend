@@ -46,7 +46,6 @@ import { useTranslation } from '@pancakeswap/localization'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
 import { Bound } from 'config/constants/types'
 import { useIsTransactionUnsupported, useIsTransactionWarning } from 'hooks/Trades'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useV3NFTPositionManagerContract } from 'hooks/useContract'
 import { useRouter } from 'next/router'
 import { useTransactionAdder } from 'state/transactions/hooks'
@@ -64,6 +63,7 @@ import { ZapLiquidityWidget } from 'components/ZapLiquidityWidget'
 import { ZAP_V3_POOL_ADDRESSES } from 'config/constants/zapV3'
 import { transactionErrorToUserReadableMessage } from 'utils/transactionErrorToUserReadableMessage'
 import { useDensityChartData } from 'views/AddLiquidityV3/hooks/useDensityChartData'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import LockedDeposit from './components/LockedDeposit'
 import { PositionPreview } from './components/PositionPreview'
 import RangeSelector from './components/RangeSelector'
@@ -137,7 +137,7 @@ export default function V3FormView({
   const expertMode = useIsExpertMode()
 
   const positionManager = useV3NFTPositionManagerContract()
-  const { account, chainId, isWrongNetwork } = useActiveWeb3React()
+  const { account, chainId, isWrongNetwork } = useAccountActiveChain()
   const addTransaction = useTransactionAdder()
 
   // mint state
