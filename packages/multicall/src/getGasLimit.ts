@@ -40,13 +40,9 @@ export function getDefaultGasBuffer(chainId?: ChainId) {
 export type GetGasLimitOnChainParams = Pick<GetGasLimitParams, 'chainId' | 'client'>
 
 export async function getGasLimitOnChain({ chainId, client }: GetGasLimitOnChainParams) {
-  try {
-    const multicall = getMulticallContract({ chainId, client })
-    const gasLeft = (await multicall.read.gasLeft()) as bigint
-    return gasLeft
-  } catch (error) {
-    return 0n // For a app-in-wallet bug where the gasLeft call fails
-  }
+  const multicall = getMulticallContract({ chainId, client })
+  const gasLeft = (await multicall.read.gasLeft()) as bigint
+  return gasLeft
 }
 
 export async function getGasLimit({

@@ -83,7 +83,7 @@ export type QuoteQuery = Options & {
   for?: string
   createTime: number
   routeKey?: string
-  gasLimit: bigint
+  gasLimit?: bigint
 }
 
 export interface StrategyQuery {

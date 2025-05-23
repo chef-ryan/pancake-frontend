@@ -2,7 +2,7 @@ import { ChainId } from '@pancakeswap/chains'
 import { getDefaultGasLimit, getGasLimitOnChain } from '@pancakeswap/multicall'
 import { useQuery } from '@tanstack/react-query'
 import { atom } from 'jotai'
-import { atomFamily } from 'jotai/utils'
+import { atomFamily, unwrap } from 'jotai/utils'
 import { useMemo } from 'react'
 
 import { getViemClients } from 'utils/viem'
@@ -36,14 +36,17 @@ export function useMulticallGasLimit(chainId?: ChainId) {
 }
 
 export const multicallGasLimitAtom = atomFamily((chainId?: ChainId) => {
-  return atom(async () => {
-    const shouldUseDefault = chainId ? CHAINS_TO_USE_DEFAULT.includes(chainId) : true
+  return unwrap(
+    atom(async () => {
+      const shouldUseDefault = chainId ? CHAINS_TO_USE_DEFAULT.includes(chainId) : true
 
-    if (shouldUseDefault || !chainId) {
-      return getDefaultGasLimit(chainId)
-    }
+      if (shouldUseDefault || !chainId) {
+        return getDefaultGasLimit(chainId)
+      }
 
-    const client = getViemClients({ chainId })
-    return getGasLimitOnChain({ chainId, client })
-  })
+      const client = getViemClients({ chainId })
+      return getGasLimitOnChain({ chainId, client })
+    }),
+    (_) => undefined,
+  )
 })
