@@ -35,7 +35,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
   const getV2CandidatePools = cacheByLRU(async (query: PoolQuery, options: PoolQueryOptions) => {
     const { currencyA, currencyB, blockNumber } = query
 
-    const fallback = async () => {
+    const queryFunc = async () => {
       const provider = options.provider ?? getViemClients
       const pools = await SmartRouter.getV2CandidatePools({
         currencyA,
@@ -46,37 +46,21 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
       })
       return pools as V2Pool[]
     }
-    const defaultQuery = async () => {
-      return edgePoolQueryClient.getV2CandidatePools(currencyA!, currencyB!, chainId, blockNumber!)
-    }
 
-    const call = createAsyncCallWithFallbacks(defaultQuery, {
-      fallbacks: [fallback],
-      fallbackTimeout: 3_000,
-    })
-    return call()
+    return queryFunc()
   }, cacheOption)
 
   const getV3CandidatePools = cacheByLRU(async (query: PoolQuery, options: PoolQueryOptions) => {
-    const { currencyA, currencyB, blockNumber } = query
-    const fallback = async () => {
+    const queryFunc = async () => {
       const pools = await getV3CandidatePoolsWithoutTicks(query, options)
       return fillV3Ticks(pools)
     }
-    const defaultQuery = async () => {
-      return edgePoolQueryClient.getV3CandidatePools(currencyA!, currencyB!, chainId, blockNumber!)
-    }
-
-    const call = createAsyncCallWithFallbacks(defaultQuery, {
-      fallbacks: [fallback],
-      fallbackTimeout: 3_000,
-    })
-    return call()
+    return queryFunc()
   }, cacheOption)
 
   const getV3CandidatePoolsWithoutTicks = cacheByLRU(async (query: PoolQuery, options: PoolQueryOptions) => {
     const { currencyA, currencyB, blockNumber } = query
-    const fallbackQuery = async () => {
+    const queryFunc = async () => {
       const provider = options.provider ?? getViemClients
       return SmartRouter.getV3CandidatePools({
         currencyA,
@@ -86,19 +70,13 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
         blockNumber,
       })
     }
-    const defaultQuery = async () => {
-      return edgePoolQueryClient.getV3CandidatePools(currencyA!, currencyB!, chainId, blockNumber!)
-    }
-    const call = createAsyncCallWithFallbacks(defaultQuery, {
-      fallbacks: [fallbackQuery],
-      fallbackTimeout: 3_000,
-    })
-    return call()
+
+    return queryFunc()
   }, cacheOption)
 
   const getV3PoolsWithTicksOnChain = cacheByLRU(async (query: PoolQuery, options: PoolQueryOptions) => {
     const { currencyA, currencyB, blockNumber } = query
-    const fallback = async () => {
+    const queryFunc = async () => {
       const provider = options.provider ?? getViemClients
 
       const res = await InfinityRouter.getV3CandidatePools({
@@ -109,14 +87,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
       })
       return res
     }
-    const defaultQuery = async () => {
-      return edgePoolQueryClient.getV3CandidatePools(currencyA!, currencyB!, chainId, blockNumber!)
-    }
-    const call = createAsyncCallWithFallbacks(defaultQuery, {
-      fallbacks: [fallback],
-      fallbackTimeout: 3_000,
-    })
-    return call()
+    return queryFunc()
   }, cacheOption)
 
   const fillV3Ticks = async (pools: V3Pool[]) => {
@@ -140,7 +111,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
 
   const getInfinityCandidatePoolsLight = cacheByLRU(async (query: PoolQuery, options: PoolQueryOptions) => {
     const { currencyA, currencyB, blockNumber } = query
-    const fallback = async () => {
+    const queryFunc = async () => {
       const provider = options.provider ?? getViemClients
       const pools = await InfinityRouter.getInfinityCandidatePoolsLite({
         currencyA,
@@ -150,20 +121,13 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
       return pools
     }
 
-    const defaultQuery = async () => {
-      return edgePoolQueryClient.getInfinityCandidatePools(currencyA!, currencyB!, chainId, blockNumber!)
-    }
-    const call = createAsyncCallWithFallbacks(defaultQuery, {
-      fallbacks: [fallback],
-      fallbackTimeout: 3_000,
-    })
-    return call()
+    return queryFunc()
   }, cacheOption)
 
   const getInfinityCandidatePools = cacheByLRU(async (query: PoolQuery, options: PoolQueryOptions) => {
     const { currencyA, currencyB, blockNumber } = query
 
-    const fallback = async () => {
+    const queryFunc = async () => {
       const provider = options.provider ?? getViemClients
       const pools = await InfinityRouter.getInfinityCandidatePools({
         currencyA,
@@ -173,33 +137,20 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
 
       return pools
     }
-    const defaultQuery = async () => {
-      return edgePoolQueryClient.getInfinityCandidatePools(currencyA!, currencyB!, chainId, blockNumber!)
-    }
-    const call = createAsyncCallWithFallbacks(defaultQuery, {
-      fallbacks: [fallback],
-      fallbackTimeout: 3_000,
-    })
-    return call()
+    return queryFunc()
   }, cacheOption)
 
   const getStableSwapPools = cacheByLRU(async (query: PoolQuery, options: PoolQueryOptions) => {
     const { currencyA, currencyB, blockNumber } = query
 
-    const fallback = async () => {
+    const queryFunc = async () => {
       const provider = options.provider ?? getViemClients
       const resolvedPairs = await SmartRouter.getPairCombinations(currencyA, currencyB)
       const pools = await SmartRouter.getStablePoolsOnChain(resolvedPairs ?? [], provider, blockNumber)
       return pools
     }
-    const defaultQuery = async () => {
-      return edgePoolQueryClient.getSSCandidatePools(currencyA!, currencyB!, chainId, blockNumber!)
-    }
-    const call = createAsyncCallWithFallbacks(defaultQuery, {
-      fallbacks: [fallback],
-      fallbackTimeout: 3_000,
-    })
-    return call()
+
+    return queryFunc()
   }, cacheOption)
 
   return {
