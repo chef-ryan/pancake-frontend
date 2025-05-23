@@ -15,7 +15,6 @@ import {
   WithTvl,
 } from '@pancakeswap/smart-router'
 
-import { InfinityPoolTvlReferenceMap } from '@pancakeswap/smart-router/dist/evm/infinity-router/queries/getPoolTvl'
 import {
   RemotePoolBase,
   RemotePoolBIN,
@@ -140,12 +139,13 @@ const fetchAllCandidatePools = async (
   })
 }
 
-function fillTvl(tvlMap: InfinityPoolTvlReferenceMap, pools: Pool[]) {
+function fillTvl(tvlMap: Record<`0x${string}`, string>, pools: Pool[]) {
   return pools.map((pool) => {
     const id = getPoolAddress(pool)
-    const tvlUSD = tvlMap[id] || '0'
+    const tvlUSD: string = tvlMap[id] || '0'
+    const bigIntTvlUSD = BigInt(Math.floor(Number(tvlUSD)))
     if ('tvlUSD' in pool) {
-      return { ...pool, tvlUSD }
+      return { ...pool, tvlUSD: bigIntTvlUSD }
     }
     return pool as Pool & WithTvl
   })
@@ -160,7 +160,7 @@ export const poolTvlMap = async (protocols: Protocol[], chain: APIChain) => {
       orderBy: 'tvlUSD',
       pageSize: 100,
     })
-    const tvlMap: InfinityPoolTvlReferenceMap = {}
+    const tvlMap: Record<`0x${string}`, string> = {}
     for (const pool of remotePools) {
       const tvlUSD = pool.tvlUSD
       const id = pool.id
