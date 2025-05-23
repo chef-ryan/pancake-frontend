@@ -94,6 +94,7 @@ export function toRemoteInfinityPool(
 ): RemotePoolCL | RemotePoolBIN {
   const base: RemotePoolBase = {
     id: pool.id,
+    chainId: pool.currency0.chainId,
     feeTier: pool.fee,
     protocolFee: pool.protocolFee || 0,
     token0: {
@@ -106,7 +107,6 @@ export function toRemoteInfinityPool(
       decimals: pool.currency1.decimals,
       symbol: pool.currency1.symbol || '',
     },
-    totalVolumeUSD: '0', // default or populate accordingly if available
     tvlUSD: pool.tvlUSD.toString(),
     hookAddress: pool.hooks as Address | undefined,
     isDynamicFee: false, // Assuming default; adjust based on your logic
