@@ -1,6 +1,6 @@
 import { Currency } from '@pancakeswap/swap-sdk-core'
 import { AutoColumn, Box, Button, Dots, Message, MessageText, Text, useModal } from '@pancakeswap/uikit'
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useTranslation } from '@pancakeswap/localization'
 import { PriceOrder } from '@pancakeswap/price-api-sdk'
@@ -20,6 +20,8 @@ import { BIG_INT_ZERO } from 'config/constants/exchange'
 import { useCurrency } from 'hooks/Tokens'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
+import { useAtomValue } from 'jotai'
+import { baseAllTypeBestTradeAtom } from 'quoter/atom/bestTradeUISyncAtom'
 import { NoValidRouteError } from 'quoter/quoter.types'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
@@ -28,6 +30,7 @@ import { useRoutingSettingChanged } from 'state/user/smartRouter'
 import { useCurrencyBalances } from 'state/wallet/hooks'
 import { logGTMClickSwapConfirmEvent, logGTMClickSwapEvent } from 'utils/customGTMEventTracking'
 import { warningSeverity } from 'utils/exchange'
+import { TimeoutError } from 'utils/withTimeout'
 import { isClassicOrder, isXOrder } from 'views/Swap/utils'
 import { ConfirmSwapModalV2 } from 'views/Swap/V3Swap/containers/ConfirmSwapModalV2'
 import { useAccount, useChainId } from 'wagmi'
@@ -127,6 +130,10 @@ const SwapCommitButtonComp: React.FC<SwapCommitButtonPropsType & CommitButtonPro
 
 export const SwapCommitButton = memo(SwapCommitButtonComp)
 
+function isSupportedErrorType(err: any) {
+  return err instanceof NoValidRouteError || err instanceof TimeoutError
+}
+
 const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   order,
   tradeError,
@@ -204,10 +211,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
     setTradeToConfirm(order)
   }, [order])
 
-  const hasNoValidRouteError = useMemo(
-    () => Boolean(tradeError && tradeError instanceof NoValidRouteError),
-    [tradeError],
-  )
+  const hasNoValidRouteError = useMemo(() => Boolean(tradeError && isSupportedErrorType(tradeError)), [tradeError])
 
   const noRoute = useMemo(
     () => (isClassicOrder(order) && !((order.trade?.routes?.length ?? 0) > 0)) || hasNoValidRouteError,
@@ -289,6 +293,10 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
     )
   }, [isExpertMode, isRecipientEmpty, isRecipientError, priceImpactSeverity, swapInputError, t, tradeLoading])
 
+  if (noRoute && userHasSpecifiedInputOutput && tradeError instanceof TimeoutError) {
+    return <TimeoutButton />
+  }
+
   if (noRoute && userHasSpecifiedInputOutput && (hasNoValidRouteError || !tradeLoading)) {
     return <ResetRoutesButton />
   }
@@ -309,6 +317,56 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   )
 })
 
+const TimeoutButton = () => {
+  const { refreshTrade, pauseQuoting, resumeQuoting } = useAtomValue(baseAllTypeBestTradeAtom)
+  const { t } = useTranslation()
+
+  const [seconds, setSeconds] = useState(3)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    pauseQuoting()
+    timerRef.current = setInterval(() => {
+      setSeconds((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current!)
+          resume()
+          return 3
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, [])
+
+  const resume = () => {
+    resumeQuoting()
+    refreshTrade()
+  }
+
+  const manualRetry = () => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    resume()
+  }
+
+  return (
+    <AutoColumn gap="12px">
+      <Message variant="warning" icon={<></>}>
+        <AutoColumn gap="8px">
+          <MessageText>{t('Routing timeout, will retry in %seconds%s...', { seconds })}</MessageText>
+          <AutoRow gap="4px">
+            <Button variant="text" scale="xs" p="0" onClick={manualRetry}>
+              {t('Manual Retry')}
+            </Button>
+          </AutoRow>
+        </AutoColumn>
+      </Message>
+    </AutoColumn>
+  )
+}
 const ResetRoutesButton = () => {
   const { t } = useTranslation()
   const [isRoutingSettingChange, resetRoutingSetting] = useRoutingSettingChanged()

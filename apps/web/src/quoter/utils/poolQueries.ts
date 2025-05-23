@@ -30,6 +30,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
     key: getCacheKey,
     isValid,
     maxAge: 30_000,
+    requestTimeout: 3_000,
   }
 
   const getV2CandidatePools = cacheByLRU(async (query: PoolQuery, options: PoolQueryOptions) => {

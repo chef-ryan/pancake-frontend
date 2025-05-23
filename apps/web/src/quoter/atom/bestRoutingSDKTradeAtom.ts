@@ -12,7 +12,7 @@ import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { fetchCandidatePools } from 'quoter/utils/poolQueries'
 import { withTimeout } from 'utils/withTimeout'
 import { InterfaceOrder } from 'views/Swap/utils'
-import { InfinityGetBestTradeReturnType, NoValidRouteError, QuoteQuery } from '../quoter.types'
+import { InfinityGetBestTradeReturnType, QuoteQuery } from '../quoter.types'
 import { atomWithLoadable } from './atomWithLoadable'
 
 export const bestRoutingSDKTradeAtom = atomFamily((option: QuoteQuery) => {
@@ -69,7 +69,7 @@ export const bestRoutingSDKTradeAtom = atomFamily((option: QuoteQuery) => {
       return await query()
     } catch (ex) {
       perf.tracker.fail(ex)
-      throw new NoValidRouteError()
+      throw ex
     } finally {
       perf.tracker.report()
     }

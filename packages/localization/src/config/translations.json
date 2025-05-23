@@ -3741,5 +3741,7 @@
   "Previously used": "Previously used",
   "Top Wallets": "Top Wallets",
   "More Wallets": "More Wallets",
-  "Wallets with MEV Protection": "Wallets with MEV Protection"
+  "Wallets with MEV Protection": "Wallets with MEV Protection",
+  "Routing timeout, will retry in %seconds%s...": "Routing timeout, will retry in %seconds%s...",
+  "Manual Retry": "Manual Retry"
 }

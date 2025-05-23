@@ -18,7 +18,7 @@ import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { fetchCandidatePoolsLite } from 'quoter/utils/poolQueries'
 import { withTimeout } from 'utils/withTimeout'
 import { InterfaceOrder } from 'views/Swap/utils'
-import { CreateQuoteProviderParams, NoValidRouteError, QuoteQuery } from '../quoter.types'
+import { CreateQuoteProviderParams, QuoteQuery } from '../quoter.types'
 import { atomWithLoadable } from './atomWithLoadable'
 
 export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery) => {
@@ -87,7 +87,7 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery)
       return await query()
     } catch (ex) {
       perf.tracker.fail(ex)
-      throw new NoValidRouteError()
+      throw ex
     } finally {
       perf.tracker.report()
     }

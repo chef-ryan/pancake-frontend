@@ -8,7 +8,7 @@ import { globalWorkerAtom } from 'hooks/useWorker'
 import { atomFamily } from 'jotai/utils'
 import { QUOTE_TIMEOUT } from 'quoter/consts'
 import { quoteTraceAtom } from 'quoter/perf/quoteTracker'
-import { NoValidRouteError, QuoteQuery } from 'quoter/quoter.types'
+import { QuoteQuery } from 'quoter/quoter.types'
 import { createQuoteProvider } from 'quoter/utils/createQuoteProvider'
 import { createPoolQuery } from 'quoter/utils/createQuoteQuery'
 import { filterPools } from 'quoter/utils/filterPoolsV3'
@@ -83,7 +83,7 @@ export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteQuery) 
       return await query()
     } catch (ex) {
       perf.tracker.fail(ex)
-      throw new NoValidRouteError()
+      throw ex
     } finally {
       perf.tracker.report()
     }

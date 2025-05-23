@@ -6,7 +6,7 @@ export function withTimeout<Args extends any[], Return>(
     let timer: ReturnType<typeof setTimeout>
     const timeoutPromise = new Promise<never>((_, reject) => {
       timer = setTimeout(() => {
-        reject(new Error(`Operation timed out after ${ms}ms`))
+        reject(new TimeoutError(ms))
       }, ms)
     })
 
@@ -15,5 +15,11 @@ export function withTimeout<Args extends any[], Return>(
     } finally {
       clearTimeout(timer!)
     }
+  }
+}
+
+export class TimeoutError extends Error {
+  constructor(ms: number) {
+    super(`Operation timed out after ${ms}ms`)
   }
 }
