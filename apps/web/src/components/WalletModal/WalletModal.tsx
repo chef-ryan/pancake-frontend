@@ -19,16 +19,16 @@ import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { useAddressBalance } from 'hooks/useAddressBalance'
 import useAuth from 'hooks/useAuth'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { formatAmount } from 'utils/formatInfoNumbers'
-import ReceiveModal from './ReceiveModal'
 import { CopyAddress } from './WalletCopyButton'
 
 interface WalletModalProps {
   isOpen: boolean
   account?: string
   onDismiss: () => void
+  onReceiveClick: () => void
 }
 
 const StyledModal = styled(Modal)`
@@ -145,7 +145,7 @@ const DisconnectButton = styled(Button)`
   }
 `
 
-const WalletModal: React.FC<WalletModalProps> = ({ account, onDismiss, isOpen }) => {
+const WalletModal: React.FC<WalletModalProps> = ({ account, onDismiss, isOpen, onReceiveClick }) => {
   // If no account is provided, show a message or redirect
   if (!account) {
     return null
@@ -153,15 +153,23 @@ const WalletModal: React.FC<WalletModalProps> = ({ account, onDismiss, isOpen })
   return (
     <ModalV2 isOpen={isOpen} onDismiss={onDismiss} closeOnOverlayClick>
       <StyledModal title={undefined} onDismiss={onDismiss} hideCloseButton>
-        <WalletContent account={account} onDismiss={onDismiss} />
+        <WalletContent account={account} onDismiss={onDismiss} onReceiveClick={onReceiveClick} />
       </StyledModal>
     </ModalV2>
   )
 }
 
-export const WalletContent = ({ account, onDismiss }: { account: string | undefined; onDismiss: () => void }) => {
+export const WalletContent = ({
+  account,
+  onDismiss,
+  onReceiveClick,
+}: {
+  account: string | undefined
+  onDismiss: () => void
+  onReceiveClick: () => void
+}) => {
   const { t } = useTranslation()
-  const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
+
   const router = useRouter()
   const { isMobile } = useMatchBreakpoints()
   const { logout } = useAuth()
@@ -272,11 +280,15 @@ export const WalletContent = ({ account, onDismiss }: { account: string | undefi
           >
             {t('Buy Crypto')}
           </ActionButton>
-          <ActionButton onClick={() => setIsReceiveModalOpen(true)}>{t('Receive')}</ActionButton>
+          <ActionButton
+            onClick={(e) => {
+              onReceiveClick()
+            }}
+          >
+            {t('Receive')}
+          </ActionButton>
         </FlexGap>
-        {isReceiveModalOpen && account && (
-          <ReceiveModal account={account} onDismiss={() => setIsReceiveModalOpen(false)} isOpen={isReceiveModalOpen} />
-        )}
+
         <Button
           variant="text"
           onClick={() => {

@@ -4,6 +4,7 @@ import ConnectWalletButton from 'components/ConnectWalletButton'
 import useAirdropModalStatus from 'components/GlobalCheckClaimStatus/hooks/useAirdropModalStatus'
 import Trans from 'components/Trans'
 import { WalletContent, WalletModal } from 'components/WalletModal'
+import ReceiveModal from 'components/WalletModal/ReceiveModal'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import useAuth from 'hooks/useAuth'
 import { useDomainNameForAddress } from 'hooks/useDomain'
@@ -13,7 +14,7 @@ import { usePendingTransactions } from 'state/transactions/hooks'
 import { logGTMDisconnectWalletEvent } from 'utils/customGTMEventTracking'
 import { useAccount } from 'wagmi'
 
-const UserMenuItems = () => {
+const UserMenuItems = ({ onReceiveClick }: { onReceiveClick: () => void }) => {
   const { t } = useTranslation()
   const { chainId, isWrongNetwork } = useActiveChainId()
   const { logout } = useAuth()
@@ -33,7 +34,7 @@ const UserMenuItems = () => {
     logout()
   }, [logout, connector?.name, account, chainId])
 
-  return <WalletContent account={account} onDismiss={() => {}} />
+  return <WalletContent account={account} onDismiss={() => {}} onReceiveClick={onReceiveClick} />
 }
 
 const UserMenu = () => {
@@ -49,6 +50,7 @@ const UserMenu = () => {
   const { isMobile } = useMatchBreakpoints()
   // State for mobile modal
   const [showMobileWalletModal, setShowMobileWalletModal] = useState(false)
+  const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
 
   useEffect(() => {
     if (hasPendingTransactions) {
@@ -78,14 +80,20 @@ const UserMenu = () => {
             }
           }}
         >
-          {!isMobile ? ({ isOpen }) => isOpen && <UserMenuItems /> : undefined}
+          {!isMobile
+            ? ({ isOpen }) => isOpen && <UserMenuItems onReceiveClick={() => setIsReceiveModalOpen(true)} />
+            : undefined}
         </UIKitUserMenu>
 
         <WalletModal
           isOpen={showMobileWalletModal}
           account={account}
+          onReceiveClick={() => setIsReceiveModalOpen(true)}
           onDismiss={() => setShowMobileWalletModal(false)}
         />
+        {account && (
+          <ReceiveModal account={account} onDismiss={() => setIsReceiveModalOpen(false)} isOpen={isReceiveModalOpen} />
+        )}
       </>
     )
   }
@@ -93,7 +101,9 @@ const UserMenu = () => {
   if (isWrongNetwork) {
     return (
       <UIKitUserMenu text={t('Network')} variant="danger">
-        {!isMobile ? ({ isOpen }) => isOpen && <UserMenuItems /> : undefined}
+        {!isMobile
+          ? ({ isOpen }) => isOpen && <UserMenuItems onReceiveClick={() => setIsReceiveModalOpen(true)} />
+          : undefined}
       </UIKitUserMenu>
     )
   }
