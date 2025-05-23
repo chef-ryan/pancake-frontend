@@ -9,7 +9,6 @@ import { atomFamily } from 'jotai/utils'
 import { createViemPublicClientGetter } from 'utils/viem'
 
 import { QUOTE_TIMEOUT } from 'quoter/consts'
-import { multicallGasLimitAtom } from 'quoter/hook/useMulticallGasLimit'
 import { quoteTraceAtom } from 'quoter/perf/quoteTracker'
 import { createPoolQuery } from 'quoter/utils/createQuoteQuery'
 import { filterPools } from 'quoter/utils/filterPoolsV3'
@@ -23,9 +22,8 @@ import { CreateQuoteProviderParams, NoValidRouteError, QuoteQuery } from '../quo
 import { atomWithLoadable } from './atomWithLoadable'
 
 export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery) => {
-  const { amount, currency, tradeType, maxSplits, v2Swap, v3Swap } = option
+  const { amount, currency, tradeType, maxSplits, gasLimit } = option
   return atomWithLoadable(async (get) => {
-    const gasLimit = await get(multicallGasLimitAtom(currency?.chainId))
     if (!amount || !amount.currency || !currency) {
       return undefined
     }

@@ -7,7 +7,6 @@ import { nativeCurrencyAtom } from 'hooks/useNativeCurrency'
 import { globalWorkerAtom } from 'hooks/useWorker'
 import { atomFamily } from 'jotai/utils'
 import { QUOTE_TIMEOUT } from 'quoter/consts'
-import { multicallGasLimitAtom } from 'quoter/hook/useMulticallGasLimit'
 import { quoteTraceAtom } from 'quoter/perf/quoteTracker'
 import { NoValidRouteError, QuoteQuery } from 'quoter/quoter.types'
 import { createQuoteProvider } from 'quoter/utils/createQuoteProvider'
@@ -22,9 +21,8 @@ import { InterfaceOrder } from 'views/Swap/utils'
 import { atomWithLoadable } from './atomWithLoadable'
 
 export const bestAMMTradeFromQuoterWorkerAtom = atomFamily((option: QuoteQuery) => {
-  const { amount, currency, tradeType, maxSplits, v2Swap, v3Swap } = option
+  const { amount, currency, tradeType, maxSplits, gasLimit } = option
   return atomWithLoadable(async (get) => {
-    const gasLimit = await get(multicallGasLimitAtom(currency?.chainId))
     const { account } = get(accountActiveChainAtom)
     if (!amount || !amount.currency || !currency) {
       return undefined
