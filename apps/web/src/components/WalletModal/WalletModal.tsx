@@ -6,12 +6,14 @@ import {
   Box,
   Button,
   ButtonMenu,
-  ButtonMenuItem,
   FlexGap,
   Heading,
   Modal,
+  ModalHeader,
+  ModalV2,
   Skeleton,
   Text,
+  useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { useAddressBalance } from 'hooks/useAddressBalance'
@@ -24,71 +26,32 @@ import ReceiveModal from './ReceiveModal'
 import { CopyAddress } from './WalletCopyButton'
 
 interface WalletModalProps {
+  isOpen: boolean
   account?: string
   onDismiss: () => void
 }
 
 const StyledModal = styled(Modal)`
   width: 100%;
-  max-width: 400px;
-  background: #27262c; /* Dark background */
   border-radius: 24px;
   padding: 0;
   overflow: hidden;
-`
-
-const ModalHeader = styled(FlexGap)`
-  padding: 16px;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: none;
-`
-
-const AddressBox = styled(FlexGap)`
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-`
-
-const AddressLabel = styled(Text)`
-  color: #b8a8ee; /* Light purple color */
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 8px;
-`
-
-const AddressContainer = styled(FlexGap)`
-  background-color: #353547; /* Darker background for address */
-  border-radius: 16px;
-  padding: 16px;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 16px;
-`
-
-const WalletIcon = styled.div`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.colors.primary};
-  margin-right: 8px;
-`
-
-const TotalBalanceBox = styled(Box)`
-  padding: 24px;
-  text-align: left;
+  ${ModalHeader} {
+    display: none;
+  }
 `
 
 const TotalBalance = styled(Heading)`
   font-size: 40px;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.secondary};
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+  background: linear-gradient(90deg, #280d5f 0%, #8051d6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  line-height: 1.1;
+  font-family: 'Kanit', sans-serif;
 `
 
 const StyledButtonMenu = styled(ButtonMenu)`
@@ -100,28 +63,14 @@ const StyledButtonMenu = styled(ButtonMenu)`
   border: none;
 `
 
-const StyledButtonMenuItem = styled(ButtonMenuItem)`
-  height: 48px;
-  border-radius: 16px;
-  font-size: 16px;
-  font-weight: 600;
-  color: white;
-  padding: 0 12px;
-
-  &:hover:not(:disabled):not(:active) {
-    background-color: #353547;
-  }
-
-  &.active {
-    background-color: #b8a8ee; /* Light purple when active */
-    color: #27262c; /* Dark text on active tab */
-  }
-`
-
 const AssetList = styled(Box)`
-  max-height: 440px;
+  max-height: 280px;
   overflow-y: auto;
-  padding: 0 8px;
+  padding: 0 4px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    max-height: 440px;
+    padding: 0 8px;
+  }
 `
 
 const AssetItem = styled(FlexGap)`
@@ -132,7 +81,6 @@ const AssetItem = styled(FlexGap)`
   border-radius: 16px;
   cursor: pointer;
   transition: background-color 0.2s;
-
   &:hover {
     background-color: ${({ theme }) => theme.colors.background};
   }
@@ -155,7 +103,7 @@ const TokenIcon = styled.div`
 `
 
 const ActionButtonsContainer = styled(FlexGap)`
-  padding: 16px;
+  padding: 8px 16px 16px 16px;
   justify-content: center;
   flex-direction: column;
   gap: 16px;
@@ -197,15 +145,17 @@ const DisconnectButton = styled(Button)`
   }
 `
 
-const WalletModal: React.FC<WalletModalProps> = ({ account, onDismiss }) => {
+const WalletModal: React.FC<WalletModalProps> = ({ account, onDismiss, isOpen }) => {
   // If no account is provided, show a message or redirect
   if (!account) {
     return null
   }
   return (
-    <StyledModal title="" onDismiss={onDismiss} hideCloseButton>
-      <WalletContent account={account} onDismiss={onDismiss} />
-    </StyledModal>
+    <ModalV2 isOpen={isOpen} onDismiss={onDismiss} closeOnOverlayClick>
+      <StyledModal title={undefined} onDismiss={onDismiss} hideCloseButton>
+        <WalletContent account={account} onDismiss={onDismiss} />
+      </StyledModal>
+    </ModalV2>
   )
 }
 
@@ -213,7 +163,7 @@ export const WalletContent = ({ account, onDismiss }: { account: string | undefi
   const { t } = useTranslation()
   const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
   const router = useRouter()
-
+  const { isMobile } = useMatchBreakpoints()
   const { logout } = useAuth()
 
   // Fetch balances using the hook we created
@@ -238,7 +188,8 @@ export const WalletContent = ({ account, onDismiss }: { account: string | undefi
           </Button>
         </FlexGap>
       </FlexGap>
-      <Box padding="0 16px 16px">
+      <Box padding={isMobile ? '0 8px 8px' : '0 16px 16px'}>
+        <TotalBalance>${formatAmount(totalBalanceUsd)}</TotalBalance>
         <Text fontSize="20px" textTransform="uppercase" fontWeight="bold" mb="8px">
           {t('My Wallet')}
         </Text>
@@ -312,7 +263,7 @@ export const WalletContent = ({ account, onDismiss }: { account: string | undefi
         </AssetList>
       </Box>
       <ActionButtonsContainer>
-        <FlexGap gap="16px" width="100%">
+        <FlexGap gap="8px" width="100%">
           <ActionButton
             onClick={() => {
               router.push('/buy-crypto')

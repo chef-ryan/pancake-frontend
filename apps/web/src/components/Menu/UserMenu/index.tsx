@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Box, UserMenu as UIKitUserMenu, UserMenuVariant, useModal } from '@pancakeswap/uikit'
+import { Box, UserMenu as UIKitUserMenu, UserMenuVariant, useMatchBreakpoints } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import useAirdropModalStatus from 'components/GlobalCheckClaimStatus/hooks/useAirdropModalStatus'
 import Trans from 'components/Trans'
@@ -22,42 +22,18 @@ const UserMenuItems = () => {
   const { isInitialized, isLoading, profile } = useProfile()
   const { shouldShowModal } = useAirdropModalStatus()
 
-  // Use our new WalletModal component
-  const [onPresentWalletModal] = useModal(<WalletModal account={account} onDismiss={() => {}} />)
   const hasProfile = isInitialized && !!profile
 
-  const onClickWalletMenu = useCallback((): void => {
-    onPresentWalletModal()
-  }, [onPresentWalletModal])
+  // Use PancakeSwap's breakpoint system
+  const { isMobile } = useMatchBreakpoints()
+  const isMobileView = isMobile
 
   const handleClickDisconnect = useCallback(() => {
     logGTMDisconnectWalletEvent(chainId, connector?.name, account)
     logout()
   }, [logout, connector?.name, account, chainId])
 
-  return (
-    <>
-      <WalletContent account={account} onDismiss={() => {}} />
-      {/* <WalletUserMenuItem isWrongNetwork={isWrongNetwork} onPresentWalletModal={onClickWalletMenu} />
-      <UserMenuDivider />
-      <NextLink href={`/profile/${account?.toLowerCase()}`} passHref>
-        <UserMenuItem disabled={isWrongNetwork || chainId !== ChainId.BSC}>{t('Your NFTs')}</UserMenuItem>
-      </NextLink>
-      {shouldShowModal && <ClaimYourNFT />}
-      <ProfileUserMenuItem
-        isLoading={isLoading}
-        hasProfile={hasProfile}
-        disabled={isWrongNetwork || chainId !== ChainId.BSC}
-      />
-      <UserMenuDivider />
-      <UserMenuItem as="button" onClick={handleClickDisconnect}>
-        <Flex alignItems="center" justifyContent="space-between" width="100%">
-          {t('Disconnect')}
-          <LogoutIcon />
-        </Flex>
-      </UserMenuItem> */}
-    </>
-  )
+  return <WalletContent account={account} onDismiss={() => {}} />
 }
 
 const UserMenu = () => {
@@ -70,6 +46,9 @@ const UserMenu = () => {
   const avatarSrc = profile?.nft?.image?.thumbnail ?? avatar
   const [userMenuText, setUserMenuText] = useState<string>('')
   const [userMenuVariable, setUserMenuVariable] = useState<UserMenuVariant>('default')
+  const { isMobile } = useMatchBreakpoints()
+  // State for mobile modal
+  const [showMobileWalletModal, setShowMobileWalletModal] = useState(false)
 
   useEffect(() => {
     if (hasPendingTransactions) {
@@ -83,25 +62,38 @@ const UserMenu = () => {
 
   if (account) {
     return (
-      <UIKitUserMenu
-        account={domainName || account}
-        ellipsis={!domainName}
-        avatarSrc={avatarSrc}
-        text={userMenuText}
-        variant={userMenuVariable}
-        popperStyle={{
-          minWidth: '357px',
-        }}
-      >
-        {({ isOpen }) => (isOpen || true ? <UserMenuItems /> : null)}
-      </UIKitUserMenu>
+      <>
+        <UIKitUserMenu
+          account={domainName || account}
+          ellipsis={!domainName}
+          avatarSrc={avatarSrc}
+          text={userMenuText}
+          variant={userMenuVariable}
+          popperStyle={{
+            minWidth: '357px',
+          }}
+          onClick={() => {
+            if (isMobile) {
+              setShowMobileWalletModal(true)
+            }
+          }}
+        >
+          {!isMobile ? ({ isOpen }) => isOpen && <UserMenuItems /> : undefined}
+        </UIKitUserMenu>
+
+        <WalletModal
+          isOpen={showMobileWalletModal}
+          account={account}
+          onDismiss={() => setShowMobileWalletModal(false)}
+        />
+      </>
     )
   }
 
   if (isWrongNetwork) {
     return (
       <UIKitUserMenu text={t('Network')} variant="danger">
-        {({ isOpen }) => (isOpen ? <UserMenuItems /> : null)}
+        {!isMobile ? ({ isOpen }) => isOpen && <UserMenuItems /> : undefined}
       </UIKitUserMenu>
     )
   }
