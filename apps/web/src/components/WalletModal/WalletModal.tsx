@@ -16,10 +16,11 @@ import {
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { useAddressBalance } from 'hooks/useAddressBalance'
 import useAuth from 'hooks/useAuth'
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import { CopyAddress } from './WalletCopyButton'
+import ReceiveModal from './ReceiveModal'
 
 interface WalletModalProps {
   account?: string
@@ -209,6 +210,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ account, onDismiss }) => {
 
 export const WalletContent = ({ account, onDismiss }: { account: string | undefined; onDismiss: () => void }) => {
   const { t } = useTranslation()
+  const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
 
   const { logout } = useAuth()
 
@@ -300,8 +302,11 @@ export const WalletContent = ({ account, onDismiss }: { account: string | undefi
       <ActionButtonsContainer>
         <FlexGap gap="16px" width="100%">
           <ActionButton>{t('Buy Crypto')}</ActionButton>
-          <ActionButton>{t('Receive')}</ActionButton>
+          <ActionButton onClick={() => setIsReceiveModalOpen(true)}>{t('Receive')}</ActionButton>
         </FlexGap>
+        {isReceiveModalOpen && account && (
+          <ReceiveModal account={account} onDismiss={() => setIsReceiveModalOpen(false)} isOpen={isReceiveModalOpen} />
+        )}
         <Button variant="text">
           {t('Bridge Crypto')}
           <ArrowForwardIcon color="primary" />
