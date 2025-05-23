@@ -14,7 +14,6 @@ import {
   V3PoolWithTvl,
   WithTvl,
 } from '@pancakeswap/smart-router'
-import { cacheByLRU, CacheOptions, calcCacheKey, persistKey, PersistOption } from '@pancakeswap/utils/cacheByLRU'
 import memoize from '@pancakeswap/utils/memoize'
 
 import { POOLS_SLOW_REVALIDATE } from 'config/pools'
@@ -22,40 +21,6 @@ import { v2Clients, v3Clients } from 'utils/graphql'
 import { Address } from 'viem/accounts'
 import { APIChain, poolTvlMap } from './pools'
 import { getProvider, mockCurrency, Protocol } from './util'
-
-const persistOption: PersistOption = {
-  type: 'r2',
-  name: 'candidates',
-  version: 'v1',
-}
-
-export const poolQueryPersistURL = (
-  addressA: Address,
-  addressB: Address,
-  chainId: ChainId,
-  protocols: Protocol[],
-  epoch: number,
-) => {
-  const cacheKey = calcCacheKey(cacheKeyFn([addressA, addressB, chainId, protocols]) as any, epoch)
-  const key = persistKey(cacheKey, persistOption)
-  return {
-    cacheKey,
-    key,
-    url: `${process.env.NEXT_PUBLIC_PROOF_API}/cache/${key}`,
-  }
-}
-
-const cacheKeyFn = (args: [Address, Address, ChainId, Protocol[]]) => {
-  const sort = [args[0], args[1]].sort()
-  const key = [sort[0], sort[1], args[2], args[3]]
-  return key
-}
-type FN = (
-  addressA: Address,
-  addressB: Address,
-  chainId: ChainId,
-  protocol: Protocol[],
-) => Promise<SmartRouter.Transformer.SerializedPool[]>
 
 export const poolQueriesFactory = memoize((chainId: ChainId) => {
   const cacheTime = POOLS_SLOW_REVALIDATE[chainId] as number
@@ -68,7 +33,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
     parallelism: 5,
   }
 
-  const fetchInfinityPools = cacheByLRU(async (addressA: Address, addressB: Address, chainId: ChainId) => {
+  const fetchInfinityPools = async (addressA: Address, addressB: Address, chainId: ChainId) => {
     const pools = await InfinityRouter.fetchInfinityPoolsFromApi(addressA, addressB, chainId)
     const localPools = pools
       .map((pool) => {
@@ -92,9 +57,9 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
       }),
     ])
     return [...poolWithTicks, ...poolWithBins]
-  }, cacheOption)
+  }
 
-  const fetchV2Pools = cacheByLRU(async (addressA: Address, addressB: Address, chainId: ChainId) => {
+  const fetchV2Pools = async (addressA: Address, addressB: Address, chainId: ChainId) => {
     const currencyA = mockCurrency(addressA, chainId)
     const currencyB = mockCurrency(addressB, chainId)
 
@@ -107,9 +72,9 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
       fallbackTimeout: 5_000,
     })
     return pools
-  }, cacheOption)
+  }
 
-  const fetchV3Pools = cacheByLRU(async (addressA: Address, addressB: Address, chainId: ChainId) => {
+  const fetchV3Pools = async (addressA: Address, addressB: Address, chainId: ChainId) => {
     const currencyA = mockCurrency(addressA, chainId)
     const currencyB = mockCurrency(addressB, chainId)
 
@@ -123,9 +88,9 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
     const tvlMap = await poolTvlMap(['v3'], chain as APIChain)
     const poolsWithTvl = fillTvl(tvlMap, pools) as V3PoolWithTvl[]
     return SmartRouter.v3PoolTvlSelector(currencyA, currencyB, poolsWithTvl)
-  }, cacheOption)
+  }
 
-  const fetchSSPool = cacheByLRU(async (addressA: Address, addressB: Address, chainId: ChainId) => {
+  const fetchSSPool = async (addressA: Address, addressB: Address, chainId: ChainId) => {
     const currencyA = mockCurrency(addressA, chainId)
     const currencyB = mockCurrency(addressB, chainId)
     const client = getProvider()
@@ -141,7 +106,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
     const chain = getChainName(chainId)
     const tvlMap = await poolTvlMap(['stable'], chain as APIChain)
     return fillTvl(tvlMap, pools) as StablePoolWithTvl[]
-  }, cacheOption)
+  }
 
   const querySingleType = async (chainId: ChainId, protocol: Protocol, addressA: Address, addressB: Address) => {
     switch (protocol) {
@@ -161,29 +126,15 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
         throw new Error('invalid pool')
     }
   }
-
-  const cacheOptionForQueryAll: CacheOptions<FN> = {
-    ttl: cacheTime,
-    requestTimeout: cacheTime / 2,
-    maxCacheSize: 1_000_000,
-    persist: persistOption,
-    maxAge: 300_000, // For stale values
-    key: cacheKeyFn,
-    cacheNextEpochOnHalfTTS: true,
+  const queryAllPools = async (addressA: Address, addressB: Address, chainId: ChainId, protocols: Protocol[]) => {
+    const queries = await Promise.all(
+      protocols.map((protocol) => querySingleType(chainId, protocol as Protocol, addressA, addressB)),
+    )
+    const pools = queries.flat() as (InfinityPoolWithTvl | V2PoolWithTvl | V3PoolWithTvl | StablePoolWithTvl)[]
+    return pools.map((pool) => {
+      return SmartRouter.Transformer.serializePool(pool as Pool)
+    })
   }
-
-  const queryAllPools = cacheByLRU(
-    async (addressA: Address, addressB: Address, chainId: ChainId, protocols: Protocol[]) => {
-      const queries = await Promise.all(
-        protocols.map((protocol) => querySingleType(chainId, protocol as Protocol, addressA, addressB)),
-      )
-      const pools = queries.flat() as (InfinityPoolWithTvl | V2PoolWithTvl | V3PoolWithTvl | StablePoolWithTvl)[]
-      return pools.map((pool) => {
-        return SmartRouter.Transformer.serializePool(pool as Pool)
-      })
-    },
-    cacheOptionForQueryAll,
-  )
 
   return {
     fetchInfinityPools,
