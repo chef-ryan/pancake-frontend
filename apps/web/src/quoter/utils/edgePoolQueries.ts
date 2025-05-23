@@ -144,7 +144,7 @@ export const poolTvlMap = async (
 ) => {
   try {
     const remotePools = await fetchAllPools({
-      baseUrl: 'https://explorer.pancakeswap.com/api/cached/pools/list',
+      baseUrl: 'https://explorer.pancakeswap.com/api/cached/pools/tvl-refs',
       protocols,
       chains: [chain],
       orderBy: 'tvlUSD',
