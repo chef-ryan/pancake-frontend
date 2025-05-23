@@ -2,7 +2,7 @@ import { ChainId } from '@pancakeswap/chains'
 import { POOLS_SLOW_REVALIDATE } from 'config/pools'
 import { NextRequest, NextResponse } from 'next/server'
 import { Address } from 'viem/accounts'
-import { poolQueriesFactory } from './edgePoolQueries'
+import { fetchAllPools } from './edgePoolQueries'
 import { parseCandidatesQuery, Protocol } from './util'
 
 export const config = {
@@ -36,9 +36,8 @@ export default async function handler(req: NextRequest) {
 }
 
 const query = async (addressA: Address, addressB: Address, chainId: ChainId, protocols: Protocol[]) => {
-  const poolQueries = poolQueriesFactory(chainId)
   const query = async () => {
-    const pools = await poolQueries.fetchAllPools(addressA, addressB, chainId, protocols as Protocol[])
+    const pools = await fetchAllPools(addressA, addressB, chainId, protocols as Protocol[])
     return pools
   }
   const pools = query()
