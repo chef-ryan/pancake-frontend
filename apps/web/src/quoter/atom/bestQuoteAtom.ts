@@ -42,11 +42,6 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
         const best = findBestQuote(...quotes.map((x) => x.result))
         const anyShadowFail = quotes.some((x) => x.isShadow && x.result.isFail())
         const anyTimeout = errors.some((x) => x instanceof TimeoutError)
-        console.log(
-          `[error]`,
-          quotes.map((x) => x.result),
-          { anyTimeout, anyPending },
-        )
 
         if (!best) {
           if (anyPending) {
