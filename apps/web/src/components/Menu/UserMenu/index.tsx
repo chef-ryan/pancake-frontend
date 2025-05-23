@@ -1,32 +1,17 @@
-import { ChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
-import {
-  Box,
-  Flex,
-  LogoutIcon,
-  RefreshIcon,
-  UserMenu as UIKitUserMenu,
-  UserMenuDivider,
-  UserMenuItem,
-  UserMenuVariant,
-  useModal,
-} from '@pancakeswap/uikit'
+import { Box, UserMenu as UIKitUserMenu, UserMenuVariant, useModal } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import useAirdropModalStatus from 'components/GlobalCheckClaimStatus/hooks/useAirdropModalStatus'
 import Trans from 'components/Trans'
+import { WalletContent, WalletModal } from 'components/WalletModal'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import useAuth from 'hooks/useAuth'
 import { useDomainNameForAddress } from 'hooks/useDomain'
-import NextLink from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { useProfile } from 'state/profile/hooks'
 import { usePendingTransactions } from 'state/transactions/hooks'
-import { useAccount } from 'wagmi'
 import { logGTMDisconnectWalletEvent } from 'utils/customGTMEventTracking'
-import ClaimYourNFT from './ClaimYourNFT'
-import ProfileUserMenuItem from './ProfileUserMenuItem'
-import WalletModal, { WalletView } from './WalletModal'
-import WalletUserMenuItem from './WalletUserMenuItem'
+import { useAccount } from 'wagmi'
 
 const UserMenuItems = () => {
   const { t } = useTranslation()
@@ -37,18 +22,13 @@ const UserMenuItems = () => {
   const { isInitialized, isLoading, profile } = useProfile()
   const { shouldShowModal } = useAirdropModalStatus()
 
-  const [onPresentWalletModal] = useModal(<WalletModal initialView={WalletView.WALLET_INFO} />)
-  const [onPresentTransactionModal] = useModal(<WalletModal initialView={WalletView.TRANSACTIONS} />)
-  const [onPresentWrongNetworkModal] = useModal(<WalletModal initialView={WalletView.WRONG_NETWORK} />)
+  // Use our new WalletModal component
+  const [onPresentWalletModal] = useModal(<WalletModal account={account} onDismiss={() => {}} />)
   const hasProfile = isInitialized && !!profile
 
   const onClickWalletMenu = useCallback((): void => {
-    if (isWrongNetwork) {
-      onPresentWrongNetworkModal()
-    } else {
-      onPresentWalletModal()
-    }
-  }, [isWrongNetwork, onPresentWalletModal, onPresentWrongNetworkModal])
+    onPresentWalletModal()
+  }, [onPresentWalletModal])
 
   const handleClickDisconnect = useCallback(() => {
     logGTMDisconnectWalletEvent(chainId, connector?.name, account)
@@ -57,11 +37,8 @@ const UserMenuItems = () => {
 
   return (
     <>
-      <WalletUserMenuItem isWrongNetwork={isWrongNetwork} onPresentWalletModal={onClickWalletMenu} />
-      <UserMenuItem as="button" disabled={isWrongNetwork} onClick={onPresentTransactionModal}>
-        {t('Recent Transactions')}
-        {hasPendingTransactions && <RefreshIcon spin />}
-      </UserMenuItem>
+      <WalletContent account={account} onDismiss={() => {}} />
+      {/* <WalletUserMenuItem isWrongNetwork={isWrongNetwork} onPresentWalletModal={onClickWalletMenu} />
       <UserMenuDivider />
       <NextLink href={`/profile/${account?.toLowerCase()}`} passHref>
         <UserMenuItem disabled={isWrongNetwork || chainId !== ChainId.BSC}>{t('Your NFTs')}</UserMenuItem>
@@ -78,7 +55,7 @@ const UserMenuItems = () => {
           {t('Disconnect')}
           <LogoutIcon />
         </Flex>
-      </UserMenuItem>
+      </UserMenuItem> */}
     </>
   )
 }
@@ -112,8 +89,11 @@ const UserMenu = () => {
         avatarSrc={avatarSrc}
         text={userMenuText}
         variant={userMenuVariable}
+        popperStyle={{
+          minWidth: '357px',
+        }}
       >
-        {({ isOpen }) => (isOpen ? <UserMenuItems /> : null)}
+        {({ isOpen }) => (isOpen || true ? <UserMenuItems /> : null)}
       </UIKitUserMenu>
     )
   }
