@@ -45,7 +45,7 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
         console.log(
           `[error]`,
           quotes.map((x) => x.result),
-          anyTimeout,
+          { anyTimeout, anyPending },
         )
 
         if (!best) {
@@ -120,6 +120,11 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
       for (let i = 0; i < tests.length; i++) {
         const strategy = tests[i]
         const { quote, anyShadowFail, anyTimeout } = executeRoutes(strategy, option, i)
+
+        if (quote.isJust() && !anyShadowFail) {
+          return quote
+        }
+
         if (anyTimeout) {
           return quote
         }

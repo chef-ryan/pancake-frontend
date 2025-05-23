@@ -35,12 +35,13 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery)
     if (!worker) {
       throw new Error('Quote worker not initialized')
     }
+    const controller = new AbortController()
 
     const query = withTimeout(
       async () => {
         perf.tracker.track('start')
 
-        const { poolQuery, poolOptions } = createPoolQuery(option)
+        const { poolQuery, poolOptions } = createPoolQuery(option, controller)
         const candidatePools = await fetchCandidatePoolsLite(poolQuery, poolOptions)
         perf.tracker.track('pool_success')
 
@@ -68,7 +69,7 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery)
           onChainQuoterGasLimit: quoterConfig?.gasLimit?.toString(),
           quoteCurrencyUsdPrice,
           nativeCurrencyUsdPrice,
-          signal: option.signal,
+          signal: controller.signal,
         })
         const parsed = SmartRouter.Transformer.parseTrade(currency.chainId, result as any) as any as
           | InfinityRouter.InfinityTradeWithoutGraph<TradeType>
@@ -86,7 +87,7 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery)
       {
         ms: QUOTE_TIMEOUT,
         abort: () => {
-          option.controller?.abort()
+          controller?.abort()
         },
       },
     )
@@ -95,6 +96,7 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery)
       return await query()
     } catch (ex) {
       perf.tracker.fail(ex)
+      controller.abort()
       throw ex
     } finally {
       perf.tracker.report()

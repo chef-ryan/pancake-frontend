@@ -53,7 +53,6 @@ const defaultRoutingConfig: StrategyConfig[] = [
   {
     key: 'single',
     priority: 1,
-    isShadow: true,
   },
   // routing-sdk
   {

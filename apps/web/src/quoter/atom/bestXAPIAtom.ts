@@ -25,6 +25,7 @@ export const bestXApiAtom = atomFamily((option: QuoteQuery) => {
     if (!amount || !amount.currency || !currency || !slippage) {
       throw new Error('Invalid amount or currency')
     }
+    const controller = new AbortController()
     const perf = get(quoteTraceAtom(option))
     perf.tracker.track('start')
 
@@ -69,7 +70,7 @@ export const bestXApiAtom = atomFamily((option: QuoteQuery) => {
       {
         ms: QUOTE_TIMEOUT,
         abort: () => {
-          option.controller?.abort()
+          controller.abort()
         },
       },
     )
@@ -78,6 +79,7 @@ export const bestXApiAtom = atomFamily((option: QuoteQuery) => {
       return await query()
     } catch (ex) {
       perf.tracker.fail(ex)
+      controller.abort()
       throw ex
     } finally {
       perf.tracker.report()
