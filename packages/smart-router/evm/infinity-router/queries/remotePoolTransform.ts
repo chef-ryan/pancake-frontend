@@ -68,11 +68,11 @@ export function toLocalInfinityPool(remote: RemotePoolCL | RemotePoolBIN, chainI
     return {
       ...pool,
       type: PoolType.InfinityCL,
-      liquidity: BigInt(remoteClPool.liquidity),
       sqrtRatioX96: BigInt(remoteClPool.sqrtPrice),
       tick: remoteClPool.tick,
       ticks: remoteClPool.ticks ? remoteClPool.ticks.map((x) => parseTick(x)) : [],
       tickSpacing: Number(remoteClPool.tickSpacing),
+      liquidity: 0n,
     } as InfinityClPool
   }
   if (pool.type === PoolType.InfinityBIN) {
@@ -117,7 +117,6 @@ export function toRemoteInfinityPool(
     const ticks = pool.ticks ? pool.ticks.map((x) => serializeTick(x)) : []
     return {
       ...base,
-      liquidity: pool.liquidity.toString(),
       sqrtPrice: pool.sqrtRatioX96.toString(),
       tick: pool.tick,
       ticks,
