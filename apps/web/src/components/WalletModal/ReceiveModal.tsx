@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Box, Flex, LogoIcon, Modal, ModalV2, Text } from '@pancakeswap/uikit'
+import { Box, Flex, LogoIcon, Modal, ModalV2 } from '@pancakeswap/uikit'
 
 import { QRCodeSVG } from 'qrcode.react'
 import { styled } from 'styled-components'
@@ -12,7 +12,7 @@ interface ReceiveModalProps {
 }
 
 const QRCodeWrapper = styled(Box)`
-  background-color: ${({ theme }) => theme.colors.backgroundAlt};
+  background-color: ${({ theme }) => theme.colors.tertiary};
   border-radius: 16px;
   padding: 24px;
   display: flex;
@@ -20,7 +20,6 @@ const QRCodeWrapper = styled(Box)`
   align-items: center;
   margin: 24px 0;
   position: relative;
-  border: 1px solid ${({ theme }) => theme.colors.cardBorder};
 `
 
 const QRCode = styled(Box)`
@@ -28,19 +27,11 @@ const QRCode = styled(Box)`
   height: 262px;
   background-color: white;
   border-radius: 16px;
-  padding: 8px;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.colors.cardBorder};
-`
-
-const QRCodeSize = styled(Text)`
-  position: absolute;
-  bottom: -32px;
-  color: ${({ theme }) => theme.colors.textSubtle};
-  font-size: 14px;
+  border: 1px solid ${({ theme }) => theme.colors.secondary};
 `
 
 const ReceiveModal: React.FC<React.PropsWithChildren<ReceiveModalProps>> = ({ account, onDismiss, isOpen }) => {
@@ -73,9 +64,8 @@ const ReceiveModal: React.FC<React.PropsWithChildren<ReceiveModalProps>> = ({ ac
                   left="50%"
                   style={{ transform: 'translate(-50%, -50%)' }}
                   background="white"
-                  padding="8px"
                 >
-                  <LogoIcon width="32px" />
+                  <LogoIcon width="40px" />
                 </Box>
               </Box>
             </QRCode>
