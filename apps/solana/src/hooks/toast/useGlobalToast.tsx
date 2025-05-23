@@ -1,6 +1,6 @@
 import { ToastId, ToastPosition, useToast, UseToastOptions } from '@chakra-ui/react'
 import { ReactNode, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Subject } from 'rxjs'
 import { v4 as uuid } from 'uuid'
 
@@ -86,7 +86,7 @@ function useGlobalToast() {
                 state={{
                   ...toastConfig,
                   ...data,
-                  title: data.title ? `${data.title} ${t('transaction.failed')}` : t('transaction.failed'),
+                  title: data.title ? `${data.title} ${t('Failed')}` : t('Failed'),
                   description: errorMsg || data.description,
                   status: 'error'
                 }}

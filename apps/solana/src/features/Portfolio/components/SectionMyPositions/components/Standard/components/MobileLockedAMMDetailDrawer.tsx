@@ -12,7 +12,7 @@ import {
   HStack,
   Text
 } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { FormattedPoolInfoStandardItem } from '@/hooks/pool/type'
 import { colors } from '@/theme/cssVariables'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
@@ -72,7 +72,7 @@ export default function MobileLockedAMMDetailDrawer({
               <Flex direction="column" justify="space-between" py={1}>
                 <HStack gap={1} color={colors.textSecondary} mb={[2, '18px']}>
                   <Text fontSize="sm" color={colors.textSecondary}>
-                    {t('liquidity.locked_position')}
+                    {t('Locked position')}
                   </Text>
                   <LockIcon color={colors.lightPurple} />
                 </HStack>
@@ -102,7 +102,7 @@ export default function MobileLockedAMMDetailDrawer({
         </DrawerBody>
         <DrawerFooter bg="transparent">
           <Button variant="ghost" w="full" h="20px" onClick={onClose}>
-            {t('button.close')}
+            {t('Close')}
           </Button>
         </DrawerFooter>
       </DrawerContent>

@@ -1,30 +1,25 @@
-import { Trans } from 'react-i18next'
-import { Text } from '@chakra-ui/react'
-import i18n from '@/i18n'
-import { colors } from '@/theme/cssVariables/colors'
+import { Trans } from '@pancakeswap/localization'
 
-const MARKET_TX_MSG = {
+const MARKET_TX_MSG = (props?: Record<string, unknown>) => ({
   create: {
-    title: 'create_market.title',
-    desc: 'create_market.desc',
-    txHistoryTitle: 'create_market.title',
-    txHistoryDesc: 'create_market.desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans {...props}>Create Market</Trans>,
+    desc: <Trans {...props}>Create %pair% Market</Trans>,
+    txHistoryTitle: <Trans {...props}>Create Market</Trans>,
+    txHistoryDesc: <Trans {...props}>Create %pair% Market</Trans>
   },
   createPool: {
-    title: 'transaction_history.create_pool',
-    desc: 'liquidity.create_pool_tx_desc',
-    txHistoryTitle: 'transaction_history.create_pool',
-    txHistoryDesc: 'liquidity.create_pool_tx_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans {...props}>Create pool</Trans>,
+    desc: <Trans {...props}>create %mintA% - %mintB% pool</Trans>,
+    txHistoryTitle: <Trans {...props}>Create pool</Trans>,
+    txHistoryDesc: <Trans {...props}>create %mintA% - %mintB% pool</Trans>
   }
-}
+})
 
-export const getTxMeta = ({ action, values }: { action: keyof typeof MARKET_TX_MSG; values: Record<string, unknown> }) => {
-  const meta = MARKET_TX_MSG[action]
+export const getTxMeta = ({ action, values }: { action: keyof ReturnType<typeof MARKET_TX_MSG>; values: Record<string, unknown> }) => {
+  const meta = MARKET_TX_MSG(values)[action]
   return {
-    title: i18n.t(meta.title, values),
-    description: <Trans i18nKey={meta.desc} values={values} components={meta.components} />,
+    title: meta.title,
+    description: meta.desc,
     txHistoryTitle: meta.txHistoryTitle || meta.title,
     txHistoryDesc: meta.txHistoryDesc || meta.desc,
     txValues: values

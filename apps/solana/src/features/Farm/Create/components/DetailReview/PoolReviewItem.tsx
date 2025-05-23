@@ -1,6 +1,6 @@
 import { Box, HStack, Text } from '@chakra-ui/react'
 import { ApiV3PoolInfoItem } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
@@ -44,7 +44,7 @@ function RewardPoolItemHeadLabel(props: { poolInfo: ApiV3PoolInfoItem }) {
     <HStack>
       <TokenAvatarPair token1={props.poolInfo.mintA} token2={props.poolInfo.mintB} />
       <Text fontSize="xl">{getPoolName(props.poolInfo)}</Text>
-      <QuestionToolTip label={t('create_farm.item_reward_tooltip')} iconProps={{ color: colors.textTertiary }} />
+      <QuestionToolTip label={t('🤖')} iconProps={{ color: colors.textTertiary }} />
     </HStack>
   )
 }

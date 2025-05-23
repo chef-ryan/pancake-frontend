@@ -18,7 +18,7 @@ import {
 import { ApiV3Token, TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 import React from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { panelCard } from '@/theme/cssBlocks'
 import TokenAvatar from '@/components/TokenAvatar'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
@@ -125,7 +125,7 @@ export default function PoolDetailMobileDrawer({
                     value: fees
                   },
                   {
-                    label: t('common.tvl'),
+                    label: t('TVL'),
                     value: tvl
                   }
                 ].map(({ label, value }) => (
@@ -145,7 +145,7 @@ export default function PoolDetailMobileDrawer({
                 <Flex flex={1} justify="space-between" align="center">
                   <Flex direction="column" gap="6px">
                     <Text fontSize="xs" color={colors.textSubtle} textTransform="uppercase">
-                      {t('field.total_apr')}
+                      {t('Total APR')}
                     </Text>
                     <Text fontSize="md" fontWeight="600">
                       {toAPRPercent(aprData.apr)}
@@ -157,7 +157,7 @@ export default function PoolDetailMobileDrawer({
                   <Flex w="full" gap={4} justify="space-between" align="center">
                     <Flex fontSize="xs" fontWeight="normal" color={colors.textSubtle} justify="flex-start" align="center">
                       <Box rounded="full" bg={aprColors[0]} w="7px" h="7px" mr="8px" />
-                      {t('field.trade_fees')}
+                      {t('Trade fees')}
                     </Flex>
                     <Box fontSize="xs" color={colors.textPrimary}>
                       {toAPRPercent(aprData.fee.apr)}
@@ -181,9 +181,9 @@ export default function PoolDetailMobileDrawer({
               <ContentCard>
                 <Flex gap="2" alignItems="center">
                   <Text fontSize="xs" color={colors.textSubtle} textTransform="uppercase">
-                    {t('field.weekly_rewards')}
+                    {t('Weekly Rewards')}
                   </Text>
-                  {isEcosystem ? <Badge variant="crooked">{t('badge.ecosystem')}</Badge> : null}
+                  {isEcosystem ? <Badge variant="crooked">{t('Ecosystem')}</Badge> : null}
                 </Flex>
                 <SimpleGrid templateColumns="repeat(2, 1fr)" columnGap={2}>
                   {weeklyRewards.map((reward) => (
@@ -223,7 +223,7 @@ export default function PoolDetailMobileDrawer({
         </DrawerBody>
         <DrawerFooter bg="transparent">
           <Button onClick={onDeposit} width="100%" variant="primary">
-            {t('button.deposit')}
+            {t('Deposit')}
           </Button>
         </DrawerFooter>
       </DrawerContent>

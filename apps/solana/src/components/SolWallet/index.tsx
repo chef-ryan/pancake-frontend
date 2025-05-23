@@ -3,7 +3,7 @@ import { Button, Flex, LogoutIcon, ModalV2, useModalV2, UserMenu, UserMenuDivide
 import { Wallet, useWallet } from '@solana/wallet-adapter-react'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { WALLET_STORAGE_KEY } from '@/hooks/app/useInitConnection'
 import { useEvent } from '@/hooks/useEvent'
 import useResponsive from '@/hooks/useResponsive'
@@ -89,8 +89,8 @@ export default function SolWallet() {
   return (
     <Box>
       <Button isLoading={connecting} onClick={handleOpen} scale="sm" width="auto">
-        <Box display={['none', null, null, 'block']}>{t('button.connect_wallet')}</Box>
-        <Box display={['block', null, null, 'none']}>{t('button.connect')}</Box>
+        <Box display={['none', null, null, 'block']}>{t('Connect Wallet')}</Box>
+        <Box display={['block', null, null, 'none']}>{t('Connect')}</Box>
       </Button>
       <SelectWalletModal wallets={wallets} isOpen={visible} onClose={handleClose} onSelectWallet={handleSelectWallet} />
     </Box>

@@ -1,6 +1,6 @@
 import { Box, Skeleton } from '@chakra-ui/react'
 
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import PageHeroTitle from '@/components/PageHeroTitle'
 import useFetchStakePools from '@/hooks/pool/useFetchStakePools'
 import useFarmPositions from '@/hooks/portfolio/farm/useFarmPositions'
@@ -14,7 +14,7 @@ export default function Staking() {
   return (
     <Box>
       <Box mb={[4, 8]}>
-        <PageHeroTitle title={t('staking.title')} description={t('staking.staking_desc') || ''} />
+        <PageHeroTitle title={t('Staking')} description={t('Stake RAY to earn additional RAY yield.') || ''} />
       </Box>
       {isLoading ? (
         <Skeleton width="80%" height="20px" />

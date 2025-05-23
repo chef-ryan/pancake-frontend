@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import {
   Box,
   Flex,
@@ -125,16 +125,21 @@ export default function AdjustRewardDialog({
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('edit_farm.box_header_adjust_rewards')}</ModalHeader>
+        <ModalHeader>{t('Adjust rewards')}</ModalHeader>
         <ModalCloseButton />
 
         <ModalBody mb={5} overflow="visible">
           <VStack spacing={4} align="stretch">
-            <CalloutNote header={t('edit_farm.please_note_title')} content={t('edit_farm.please_note_content')} />
+            <CalloutNote
+              header={t('Please note')}
+              content={t(
+                'You can add more tokens and/or extend the farming period. Any action that will decrease the reward rate can only be done within 72 hours of current farm end time, and the period must be extended by at least 7 days.'
+              )}
+            />
 
             <Box>
               <Heading fontSize="md" color={colors.textSecondary} fontWeight={500} mb={3}>
-                {t('edit_farm.box_header_current_rewards_period')}
+                {t('Current rewards period')}
               </Heading>
               <RewardInfoItem
                 tokenPrices={tokenPrices}
@@ -148,7 +153,7 @@ export default function AdjustRewardDialog({
 
             <Box>
               <Heading fontSize="md" color={colors.textSecondary} fontWeight={500} mb={3}>
-                {t('edit_farm.box_header_rewards_adjustment')}
+                {t('Rewards adjustment')}
               </Heading>
               <HStack align="stretch">
                 <TokenInput
@@ -160,7 +165,7 @@ export default function AdjustRewardDialog({
                 />
                 <VStack bg={colors.backgroundDark} p={3} rounded="md" align="start">
                   <Text fontSize="xs" color={colors.textTertiary}>
-                    {t('edit_farm.days_extends')}
+                    {t('Days Extends')}
                   </Text>
                   <Spacer />
                   <HStack>
@@ -182,7 +187,7 @@ export default function AdjustRewardDialog({
                       onChange={setDaysExtend}
                     />
                     <Text color={colors.textTertiary} fontSize="xs" fontWeight={700}>
-                      {t('edit_farm.time_day')}
+                      {t('Days')}
                     </Text>
                   </HStack>
                 </VStack>
@@ -192,7 +197,7 @@ export default function AdjustRewardDialog({
             {!invalid ? (
               <Box>
                 <Heading fontSize="md" color={colors.textSecondary} fontWeight={500} mb={3}>
-                  {t('edit_farm.box_header_updated_rewards')}
+                  {t('Updated rewards')}
                 </Heading>
                 <RewardInfoItem
                   tokenPrices={tokenPrices}
@@ -210,10 +215,10 @@ export default function AdjustRewardDialog({
         <ModalFooter mt={4}>
           <HStack w="full" justify="space-between">
             <Button variant="outline" onClick={onClose}>
-              {t('button.cancel')}
+              {t('Cancel')}
             </Button>
             <Button minW="16rem" onClick={handleSave} isDisabled={invalid}>
-              {t('button.save')}
+              {t('Save')}
             </Button>
           </HStack>
         </ModalFooter>
@@ -235,7 +240,7 @@ function RewardInfoItem(props: {
     <Flex overflow="hidden" align="stretch" rounded="20px" fontSize="sm">
       <Flex direction="column" flexGrow={1}>
         <Box bg={colors.backgroundDark} py={3} px={6}>
-          <Text color={colors.textTertiary}>{t('edit_farm.box_header_remaining_amount')}</Text>
+          <Text color={colors.textTertiary}>{t('Remaining amount')}</Text>
         </Box>
         <Box flexGrow={1} bg={colors.backgroundTransparent12} py={4} px={6}>
           <Text fontSize="md" fontWeight={500} color={colors.textPrimary} mb={3}>
@@ -251,31 +256,31 @@ function RewardInfoItem(props: {
       </Flex>
       <Flex direction="column" flexGrow={1}>
         <Box bg={colors.backgroundDark} py={3} px={6}>
-          <Text color={colors.textTertiary}>{t('edit_farm.farming_end')}</Text>
+          <Text color={colors.textTertiary}>{t('Farming ends')}</Text>
         </Box>
         <Box flexGrow={1} bg={colors.backgroundTransparent12} py={4} px={6}>
           <Text fontSize="md" fontWeight={500} color={colors.textPrimary} mb={3}>
             {toUTC(props.endTime)}
           </Text>
           <Text fontSize="xs" color={colors.textSecondary}>
-            {t('edit_farm.remaining_days', { days: parseDateInfo(getDuration(props.endTime, Date.now())).day })}
+            {t('%days%D remaining', { days: parseDateInfo(getDuration(props.endTime, Date.now())).day })}
           </Text>
         </Box>
       </Flex>
       <Flex direction="column" flexGrow={1}>
         <Box bg={colors.backgroundDark} py={3} px={6}>
-          <Text color={colors.textTertiary}>{t('edit_farm.rate')}</Text>
+          <Text color={colors.textTertiary}>{t('Rate')}</Text>
         </Box>
         <Box flexGrow={1} bg={colors.backgroundTransparent12} py={4} px={6}>
           <Text fontSize="md" fontWeight={500} color={colors.textPrimary} mb={3}>
             {formatCurrency(props.perWeek, { decimalPlaces: props.mint.decimals })}
             <Text display="inline" ml="2" color={colors.textSecondary}>
               {wSolToSolString(props.mint.symbol)}
-              {t('edit_farm.per_week')}
+              {t('/week')}
             </Text>
           </Text>
           <Text fontSize="xs" color={colors.textSecondary}>
-            {formatToRawLocaleStr(toPercentString(props.apr))} {t('edit_farm.APR')}
+            {formatToRawLocaleStr(toPercentString(props.apr))} {t('APR')}
           </Text>
         </Box>
       </Flex>

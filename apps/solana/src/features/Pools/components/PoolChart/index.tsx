@@ -1,6 +1,6 @@
 import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from '@chakra-ui/react'
 import { ReactNode, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Tabs from '@/components/Tabs'
 import useFetchPoolChartData from '@/hooks/pool/useFetchPoolChartData'
 import { useAppStore } from '@/store'

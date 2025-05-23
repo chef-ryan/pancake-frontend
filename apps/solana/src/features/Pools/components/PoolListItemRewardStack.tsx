@@ -1,5 +1,5 @@
 import { Badge, Flex, Grid, GridItem, HStack, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Decimal from 'decimal.js'
 import AddressChip from '@/components/AddressChip'
 import TokenAvatar from '@/components/TokenAvatar'
@@ -24,7 +24,7 @@ export function PoolListItemRewardStack(props: { rewards: WeeklyRewardData }) {
           label={
             <Flex overflow="hidden" rounded="inherit" py={3} px={4} position="relative" direction="column">
               <Badge variant="crooked" position="absolute" left="-4px" top="0" px={3} borderRadius="0px 0px 24px 0px">
-                {t('badge.ecosystem')}
+                {t('Ecosystem')}
               </Badge>
               <Flex direction="column" pt="15px" px={0} minW="230px">
                 <Grid
@@ -43,7 +43,7 @@ export function PoolListItemRewardStack(props: { rewards: WeeklyRewardData }) {
                   <GridItem area="volume">
                     <Flex h="100%" gap={4} fontSize="sm" color={colors.textPrimary} justify="space-between" alignItems="center">
                       <Text>
-                        {formatCurrency(reward.amount, { decimalPlaces: 0 })} {reward.token?.symbol}/{t('common.week')}
+                        {formatCurrency(reward.amount, { decimalPlaces: 0 })} {reward.token?.symbol}/{t('Week')}
                       </Text>
                       <Text>
                         {formatCurrency(new Decimal(reward.amount || 0).mul(tokenPrices[reward.token.address]?.value || 0).toString(), {
@@ -55,7 +55,7 @@ export function PoolListItemRewardStack(props: { rewards: WeeklyRewardData }) {
                   </GridItem>
                   {/* <GridItem area="duration">
                     <Flex h="100%" gap={4} fontSize="sm" color={colors.textSecondary} justify={'space-between'} alignItems="center">
-                      <Text>{t('common.week')}</Text>
+                      <Text>{t('Week')}</Text>
                       <Text>{reward.duration}</Text>
                     </Flex>
                   </GridItem> */}

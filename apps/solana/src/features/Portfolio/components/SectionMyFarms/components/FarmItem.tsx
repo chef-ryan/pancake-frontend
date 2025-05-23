@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Badge, Box, Flex, HStack, Text, useClipboard, useDisclosure, Tag } from '@chakra-ui/react'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 
@@ -73,7 +73,7 @@ export default function FarmItem({
                 routeToPage('edit-farm', { queryProps: isStandard ? { farmId: data.id } : { clmmId: data.id } })
               }}
             >
-              {t('portfolio.section_my_created_farms_item_edit_farm_button')}
+              {t('Edit Farm')}
             </Button>
           </HStack>
           <AddressChip
@@ -95,7 +95,7 @@ export default function FarmItem({
             <Flex direction="column" gap={2}>
               <Flex justify="flex-start" align="flex-start" gap={2}>
                 <Text fontSize="sm" color={colors.textTertiary}>
-                  {t('common.tvl')}
+                  {t('TVL')}
                 </Text>
                 <Text fontSize="sm" color={colors.textPrimary} fontWeight="medium">
                   {formatCurrency(data.tvl, {
@@ -106,7 +106,7 @@ export default function FarmItem({
               </Flex>
               <Flex justify="flex-start" align="flex-start" gap={2}>
                 <Text fontSize="sm" color={colors.textTertiary}>
-                  {t('field.apr')}
+                  {t('APR')}
                 </Text>
                 <Text fontSize="sm" color={colors.textPrimary} fontWeight="medium">
                   {formatToRawLocaleStr(toApr({ val: apr }))}
@@ -150,7 +150,7 @@ export default function FarmItem({
           />
           <Flex color={colors.textPrimary} direction="column" justify="flex-start" align="flex-start" gap={1}>
             <Text fontSize="sm" color={colors.textTertiary}>
-              {t('field.apr')}
+              {t('APR')}
             </Text>
             <Text fontSize="sm" color={colors.textPrimary}>
               {formatToRawLocaleStr(toApr({ val: apr }))}
@@ -168,7 +168,7 @@ export default function FarmItem({
                   routeToPage('edit-farm', { queryProps: isStandard ? { farmId: data.id } : { clmmId: data.id } })
                 }}
               >
-                {t('portfolio.section_my_created_farms_item_edit_farm_button')}
+                {t('Edit Farm')}
               </Button>
             </Flex>
           </Flex>
@@ -213,7 +213,7 @@ function FarmItemHeader({ name, baseToken, quoteToken, id, type, feeRate }: Farm
       <HStack spacing={0} ml="auto">
         <Desktop>
           <Text mr={8} fontSize="xs" color={colors.textSecondary}>
-            {t('farm.farm_id')}: {encodeStr(id, 8, 3)}
+            {t('Farm ID')}: {encodeStr(id, 8, 3)}
           </Text>
         </Desktop>
         <Mobile>

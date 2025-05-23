@@ -1,5 +1,5 @@
 import { Flex, HStack, Link, Text, useClipboard } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { toastSubject } from '@/hooks/toast/useGlobalToast'
 import CopyIcon from '@/icons/misc/CopyIcon'
 import ExternalLinkLargeIcon from '@/icons/misc/ExternalLinkLargeIcon'
@@ -19,7 +19,7 @@ export default function NftMintAddress({ nftMintAddress }: NftMintAddressProps) 
   return (
     <Flex flex={3} bg={colors.backgroundDark} w="full" rounded="xl" p={4} direction="column" gap={2} fontSize="sm">
       <Flex justify="space-between" align="center">
-        <Text color={colors.textSecondary}>{t('clmm.nft_mint_address')}</Text>
+        <Text color={colors.textSecondary}>{t('NFT Mint Address')}</Text>
       </Flex>
       <HStack spacing={3}>
         <Text color={colors.textPrimary}>{address}</Text>
@@ -31,8 +31,8 @@ export default function NftMintAddress({ nftMintAddress }: NftMintAddressProps) 
               onCopy()
               toastSubject.next({
                 status: 'success',
-                title: t('common.copy_success'),
-                description: t('common.copied_desc', { subject: `${t('common.nft_address')}: ${address}` })
+                title: t('Copied successfully!'),
+                description: t('%subject% has been copied to clipboard', { subject: `${t('NFT address')}: ${address}` })
               })
             }}
           />

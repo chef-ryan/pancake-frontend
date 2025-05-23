@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import {
   Box,
   Flex,
@@ -148,10 +148,10 @@ export default function AddMoreRewardDialog({
                 <>
                   <Flex justify="space-between" mb={2}>
                     <Text fontSize="xs" fontWeight={300} color={colors.textTertiary}>
-                      {t('edit_farm.farming_start')}
+                      {t('Farming starts')}
                     </Text>
                     <Text fontSize="xs" fontWeight={300} color={colors.textTertiary}>
-                      {t('edit_farm.farming_end')}
+                      {t('Farming ends')}
                     </Text>
                   </Flex>
                   <Flex
@@ -164,7 +164,7 @@ export default function AddMoreRewardDialog({
                     py={2}
                   >
                     <Text fontWeight="medium" fontSize="xl">
-                      {t('edit_farm.open_date_picker')}
+                      {t('Select')}
                     </Text>
                   </Flex>
                 </>
@@ -172,7 +172,7 @@ export default function AddMoreRewardDialog({
                 <HStack justifyContent="space-between">
                   <Box cursor="pointer" onClick={onOpenDatePicker}>
                     <Text fontSize="xs" fontWeight={300} color={colors.textTertiary}>
-                      {t('edit_farm.farming_start')}
+                      {t('Farming starts')}
                     </Text>
                     <Text fontSize="md" fontWeight={500} color={colors.textPrimary} my={1} mb={2}>
                       {`${farmOpenTimeInfo.year}/${farmOpenTimeInfo.month}/${farmOpenTimeInfo.day}`}
@@ -194,7 +194,7 @@ export default function AddMoreRewardDialog({
                   ) : null}
                   <Box textAlign="right">
                     <Text fontSize="xs" fontWeight={300} color={colors.textTertiary}>
-                      {t('edit_farm.farming_end')}
+                      {t('Farming ends')}
                     </Text>
                     <Text fontSize="md" fontWeight={500} color={colors.textSecondary} my={1} mb={2}>
                       {`${farmEndTimeInfo.year}/${farmEndTimeInfo.month}/${farmEndTimeInfo.day}`}
@@ -208,7 +208,7 @@ export default function AddMoreRewardDialog({
             </Box>
             <HStack justify="space-between" borderRadius="12px" bg={colors.backgroundDark} py={3} px={6}>
               <Text color={colors.textTertiary} fontSize="xs">
-                {t('edit_farm.estimated_rewards_week')}
+                {t('Estimated rewards / week')}
               </Text>
               <Text color={colors.textSecondary} fontSize="xl" fontWeight={500} mt={1}>
                 {rewardInfo.perWeek
@@ -242,10 +242,10 @@ export default function AddMoreRewardDialog({
         <ModalFooter>
           <HStack w="full" justify="space-between">
             <Button variant="outline" onClick={onClose}>
-              {t('button.cancel')}
+              {t('Cancel')}
             </Button>
             <Button minW="16rem" isDisabled={!!error} onClick={() => onSave(rewardInfo)}>
-              {t('button.save')}
+              {t('Save')}
             </Button>
           </HStack>
         </ModalFooter>

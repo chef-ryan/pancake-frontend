@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import * as yup from 'yup'
 import Decimal from 'decimal.js'
-import { TFunction } from 'i18next'
-import { useTranslation } from 'react-i18next'
+import { useTranslation, type TranslateFunction } from '@pancakeswap/localization'
 import { EditReward } from '../util'
 
 interface Props {
@@ -23,7 +22,7 @@ export const ADJUST_REWARD_ERROR = {
 }
 
 const numberTransform = yup.number().transform((value) => (Number.isNaN(value) ? 0 : value))
-const schema = (t: TFunction<'translation', undefined, 'translation'>) =>
+const schema = (t: TranslateFunction) =>
   yup.object().shape({
     amount: yup
       .number()

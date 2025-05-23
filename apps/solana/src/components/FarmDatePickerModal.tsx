@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SelectSingleEventHandler } from 'react-day-picker'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import Button from '@/components/Button'
 import { DatePick, HourPick, MinutePick } from '@/components/DateTimePicker'
@@ -72,7 +72,7 @@ export default function FarmDatePickerModal({ isOpen, onConfirm, onClose, farmSt
   }, [startDate])
 
   return (
-    <ResponsiveModal size="2xl" title={t('date_picker.farm_period')} isOpen={isOpen} onClose={onClose}>
+    <ResponsiveModal size="2xl" title={t('Farm period')} isOpen={isOpen} onClose={onClose}>
       <Grid
         gridTemplate={[
           `
@@ -92,7 +92,7 @@ export default function FarmDatePickerModal({ isOpen, onConfirm, onClose, farmSt
       >
         <GridItem area="calendar">
           <SimpleGrid autoFlow="row" gap={[4, 3]}>
-            <Title value={t('date_picker.start_on')} />
+            <Title value={t('Start on')} />
             <Box bg={colors.backgroundDark} rounded="12px">
               <DatePick mode="single" selected={startDate} onSelect={onDateSelect} required />
             </Box>
@@ -101,7 +101,7 @@ export default function FarmDatePickerModal({ isOpen, onConfirm, onClose, farmSt
 
         <GridItem area="time">
           <SimpleGrid autoFlow={['column', 'row']} templateColumns={['20% 1fr', 'unset']} gap={[4, 3]} alignItems="center">
-            <Title value={t('date_picker.start_at')} />
+            <Title value={t('Start at')} />
             <HStack spacing={3}>
               <HourPick sx={{ flex: 1 }} value={startHour} defaultValues={hours} onChange={setStartHour} />
               <MinutePick sx={{ flex: 1 }} value={startMinute} onChange={setStartMinute} />
@@ -111,7 +111,7 @@ export default function FarmDatePickerModal({ isOpen, onConfirm, onClose, farmSt
 
         <GridItem area="duration">
           <SimpleGrid autoFlow={['column', 'row']} templateColumns={['20% 1fr', 'unset']} gap={[4, 3]} alignItems="center">
-            <Title value={t('date_picker.duration')} />
+            <Title value={t('Duration')} />
             <Flex borderRadius="12px" bg={colors.backgroundDark} p="16px 20px 16px 20px">
               <NumberInput variant="clean" min={7} max={90} step={1} value={durationDays} onChange={onDurationChange}>
                 <NumberInputField placeholder="7-90 Days" _placeholder={{ color: colors.textSecondary, fontSize: '20px', opacity: 0.5 }} />
@@ -144,7 +144,7 @@ export default function FarmDatePickerModal({ isOpen, onConfirm, onClose, farmSt
             ]}
           >
             <Text gridArea="label" textAlign="center" fontSize="sm" color={colors.textTertiary}>
-              {t('date_picker.farm_will_end_at')}
+              {t('Farm will end at')}
             </Text>
             <Text gridArea="date" width="max-content" textAlign={['right', 'center']}>
               {endDate}
@@ -161,7 +161,7 @@ export default function FarmDatePickerModal({ isOpen, onConfirm, onClose, farmSt
 
       <Flex justifyContent="space-between" mt={8} mb={4} gap={3}>
         <Button size={['lg', 'md']} onClick={onClose} variant="outline">
-          {t('button.cancel')}
+          {t('Cancel')}
         </Button>
         <Button
           flex={[1, 'unset']}
@@ -174,7 +174,7 @@ export default function FarmDatePickerModal({ isOpen, onConfirm, onClose, farmSt
           }
           onClick={handleConfirm}
         >
-          {t('button.confirm')}
+          {t('Confirm')}
         </Button>
       </Flex>
     </ResponsiveModal>

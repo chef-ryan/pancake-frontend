@@ -1,5 +1,5 @@
 import { Flex, Text, HStack } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import { colors } from '@/theme/cssVariables'
 import { formatCurrency } from '@/utils/numberish/formatter'
@@ -17,13 +17,15 @@ export default function LockedPosition({ positionUsd, burnPercent }: MyPositionP
     <Flex direction="column" justify="space-between" py={1}>
       <HStack align="end">
         <Text fontSize="sm" color={colors.textSecondary} maxWidth="60px">
-          {t('liquidity.locked_liquidity')}
+          {t('Locked Liquidity')}
         </Text>
         <Flex mb={1}>
           <QuestionToolTip
             label={
               <Text as="span" fontSize="sm">
-                {t('liquidity.locked_liquidity_tooltip')}
+                {t(
+                  'You previously permanently locked the LP tokens for this position, however trading fees earned are still fully claimable.'
+                )}
               </Text>
             }
             iconType="info"

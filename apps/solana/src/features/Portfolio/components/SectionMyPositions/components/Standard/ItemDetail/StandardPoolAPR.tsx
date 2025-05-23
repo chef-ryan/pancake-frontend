@@ -1,6 +1,6 @@
 import { Flex, HStack, Text } from '@chakra-ui/react'
 
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
 import { colors } from '@/theme/cssVariables'
 import toApr from '@/utils/numberish/toApr'
@@ -17,7 +17,7 @@ export default function StandardPoolAPR({ positionAPR, center, isLocked = false 
   return (
     <Flex direction="column" justify="space-between" py={1}>
       <Text textAlign={center ? 'center' : undefined} fontSize="sm" color={colors.textSecondary} mb={[2, '18px']}>
-        {t('liquidity.APR')}
+        {t('APR')}
       </Text>
       <HStack>
         <Text fontSize="lg" color={colors.textPrimary} lineHeight={1} fontWeight="medium">
@@ -31,7 +31,7 @@ export default function StandardPoolAPR({ positionAPR, center, isLocked = false 
               fill: colors.textSecondary
             }}
             iconType="info"
-            label={t('liquidity.APR_tooltip')}
+            label={t('Estimated APR based on trading fees earned by the pool in the past 24H')}
           />
         )}
       </HStack>

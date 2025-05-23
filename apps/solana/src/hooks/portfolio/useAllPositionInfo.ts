@@ -5,6 +5,7 @@ import { FormatFarmInfoOutV6, ApiV3PoolInfoConcentratedItem, ApiV3Token, getATAA
 import Decimal from 'decimal.js'
 import { AccountState, NATIVE_MINT } from '@solana/spl-token'
 
+import { useTranslation } from '@pancakeswap/localization'
 import { useTokenAccountStore, useFarmStore, useClmmStore, useAppStore } from '@/store'
 import useFarmPositions from '@/hooks/portfolio/farm/useFarmPositions'
 import useFetchMultipleFarmInfo from '@/hooks/farm/useFetchMultipleFarmInfo'
@@ -39,6 +40,7 @@ export type ClmmDataWithUpdateFn = Map<string, PositionWithUpdateFn[]>
 export type PositionTabValues = 'concentrated' | 'standard' | 'staked RAY'
 
 export default function useAllPositionInfo({ shouldFetch = true }: { shouldFetch?: boolean }) {
+  const { t } = useTranslation()
   const harvestAllFarmAct = useFarmStore((s) => s.harvestAllAct)
   const harvestAllClmmAct = useClmmStore((s) => s.harvestAllAct)
   const owner = useAppStore((s) => s.publicKey)
@@ -323,6 +325,7 @@ export default function useAllPositionInfo({ shouldFetch = true }: { shouldFetch
       // ),
 
       await harvestAllFarmAct({
+        t,
         farmInfoList,
         onConfirmed: handleRefreshFarm
       })
@@ -330,6 +333,7 @@ export default function useAllPositionInfo({ shouldFetch = true }: { shouldFetch
 
     if (tab === 'staked RAY' && rewardState['staked RAY'].isReady && stakingFarmList.length) {
       await harvestAllFarmAct({
+        t,
         farmInfoList: stakingFarmList.filter(
           (farm) => !!allFarmBalances.find((f) => f.id === farm.id)?.pendingRewards.some((r) => !new Decimal(r || 0).isZero())
         ),
@@ -350,6 +354,7 @@ export default function useAllPositionInfo({ shouldFetch = true }: { shouldFetch
         noneZeroPos[key] = readyList
       })
       await harvestAllClmmAct({
+        t,
         allPoolInfo: clmmData.reduce(
           (acc, cur) =>
             cur?.id

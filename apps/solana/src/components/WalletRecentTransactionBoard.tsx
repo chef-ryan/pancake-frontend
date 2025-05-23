@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import {
   Box,
   Collapse,
@@ -128,15 +128,18 @@ export default function WalletRecentTransactionBoard({ wallet, address, isOpen =
   const recentTransactions: RecentTransaction[] = address
     ? allRecords
         .filter((r) => r.owner && r.owner === address)
-        .map((record) => ({
-          txId: record.txId,
-          name: (record.isMultiSig ? `(${t('transaction.multisig_wallet')}) ` : '') + t(record.title, record.txValues || {}),
-          status: record.status,
-          description: t(record.description, record.txValues || {}).replaceAll(/(<([^>]+)>)/gi, ''),
-          date: record.time,
-          relatedTokens: record.mintInfo || [],
-          sub: record.subTx
-        }))
+        .map(
+          (record) =>
+            ({
+              txId: record.txId,
+              name: (record.isMultiSig ? `(${t('Multisig Wallet')}) ` : '') + t(record.title! as string, record.txValues || {}),
+              status: record.status,
+              description: t(record.description! as string, record.txValues || {}).replaceAll(/(<([^>]+)>)/gi, ''),
+              date: record.time,
+              relatedTokens: record.mintInfo || [],
+              sub: record.subTx
+            } as RecentTransaction)
+        )
     : []
 
   const normalDrawerBody = (
@@ -169,7 +172,7 @@ export default function WalletRecentTransactionBoard({ wallet, address, isOpen =
       {/* {evmWalletInfo && (
         <Box>
           <HStack fontWeight={500} my={3} fontSize="xs" justify="space-between" color={colors.textSecondary}>
-            <Text>{t('recent_transaction.another_wallet')}</Text>
+            <Text>{t('Another wallet')}</Text>
           </HStack>
           <AnotherWalletCard wallet={evmWalletInfo} />
         </Box>
@@ -181,9 +184,9 @@ export default function WalletRecentTransactionBoard({ wallet, address, isOpen =
       {/* Recent Transaction Cards */}
       <Box>
         <HStack fontWeight={500} my={3} fontSize="sm" justify="space-between" color={colors.textSecondary}>
-          <Text>{t('recent_transaction.recent_transactions')}</Text>
+          <Text>{t('Recent transactions')}</Text>
           <HStack spacing={0.5} cursor="pointer" onClick={turnOn}>
-            <Text>{t('recent_transaction.view_all')}</Text> <ChevronRightIcon width="14px" height="14px" />
+            <Text>{t('View all')}</Text> <ChevronRightIcon width="14px" height="14px" />
           </HStack>
         </HStack>
         <VStack spacing={3} align="stretch">
@@ -199,7 +202,7 @@ export default function WalletRecentTransactionBoard({ wallet, address, isOpen =
     <Box>
       <HStack fontWeight={500} py={2} justify="space-between" color={colors.textSecondary}>
         <HStack spacing={0.5} cursor="pointer" onClick={turnOff}>
-          <ChevronLeftIcon /> <Text>{t('common.back')}</Text>
+          <ChevronLeftIcon /> <Text>{t('Back')}</Text>
         </HStack>
       </HStack>
       <VStack spacing={3} align="stretch">
@@ -216,12 +219,12 @@ export default function WalletRecentTransactionBoard({ wallet, address, isOpen =
       <DrawerContent>
         <DrawerCloseButton />
         {/* hidden transaction */}
-        <DrawerHeader display="none">{t('recent_transaction.recent_transactions')}</DrawerHeader>
+        <DrawerHeader display="none">{t('Recent transactions')}</DrawerHeader>
         <DrawerBody>{isRecentTransactionDetailView ? recentTransactionDetailView : normalDrawerBody}</DrawerBody>
         <DrawerFooter bg="transparent" p={[0, 0]}>
           <VStack w="full" gap={4}>
             <Flex justifyContent="center" alignItems="center" color={colors.lightPurple}>
-              <Text fontSize="xs">{t('wallet_connect_panel.sell_crypto')}</Text>
+              <Text fontSize="xs">{t('Off ramp to fiat with ')}</Text>
               <MoonpaySell>
                 <HStack gap={0}>
                   <MoonPayIconWithText />
@@ -239,7 +242,7 @@ export default function WalletRecentTransactionBoard({ wallet, address, isOpen =
               onClick={handleDisConnect}
               cursor="pointer"
             >
-              {t('wallet_connect_panel.disconnect')}
+              {t('Disconnect')}
             </Text>
           </VStack>
         </DrawerFooter>
@@ -362,7 +365,7 @@ function RecentTransactionCard({ transaction }: { transaction: RecentTransaction
                         _hover={{ textDecoration: subTransaction.txId ? 'underline' : 'none' }}
                         whiteSpace="nowrap"
                       >
-                        {t(subTransaction.name) || `${t('transaction.title')} ${idx + 1}`}
+                        {t(subTransaction.name) || `${t('Transaction')} ${idx + 1}`}
                       </Box>
                       {subTransaction.txId && (
                         <ExternalLinkLargeIcon

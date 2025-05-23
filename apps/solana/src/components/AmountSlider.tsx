@@ -1,7 +1,7 @@
 import { Slider } from '@pancakeswap/uikit'
 import { Button, Box, BoxProps, HStack, Text } from '@chakra-ui/react'
 import { ReactNode, RefObject, useEffect, useState, useImperativeHandle } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { colors } from '@/theme/cssVariables'
 import { useSyncSignal } from '@/hooks/useSyncSignalState'
@@ -35,7 +35,7 @@ export default function AmountSlider({
   ...restBoxProps
 }: AmountSliderProps) {
   const { t } = useTranslation()
-  const renderTopLeftLabel = _renderTopLeftLabel ?? (() => t('common.amount'))
+  const renderTopLeftLabel = _renderTopLeftLabel ?? (() => t('Amount'))
   const sizes = {
     percentValueText: ['2xl', '3xl'],
     topLeftLabel: ['sm', 'md'],

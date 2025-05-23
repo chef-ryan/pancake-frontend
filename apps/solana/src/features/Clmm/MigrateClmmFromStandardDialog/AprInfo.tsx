@@ -1,5 +1,5 @@
 import { Box, Flex, HStack, SimpleGrid, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import AprMDSwitchWidget from '@/components/AprMDSwitchWidget'
 import Tabs from '@/components/Tabs'
@@ -28,7 +28,7 @@ export default function AprInfo({ aprData, totalApr, value, onChange }: Props) {
       <Flex justifyContent="space-between" alignItems="center">
         <HStack>
           <Text fontSize="md" fontWeight="500" color={colors.textPrimary}>
-            {t('common.estimated_APR')}
+            {t('Estimated APR')}
           </Text>
           <AprMDSwitchWidget />
         </HStack>
@@ -83,7 +83,7 @@ export default function AprInfo({ aprData, totalApr, value, onChange }: Props) {
         {data.map((d, idx) => (
           <Flex key={d.token?.address || 'fees'} alignItems="center" gap={[1.5, 2]} fontSize="sm" color={colors.textTertiary}>
             <Box w="7px" h="7px" bg={PORTFOLIO_PIE_COLORS[idx % PORTFOLIO_PIE_COLORS.length]} rounded="full" />
-            {d.isTradingFee ? t('field.trade_fees') : d.token!.symbol}{' '}
+            {d.isTradingFee ? t('Trade fees') : d.token!.symbol}{' '}
             <Text color={colors.textPrimary} fontWeight="500">
               {formatToRawLocaleStr(toPercentString(d.apr))}
             </Text>

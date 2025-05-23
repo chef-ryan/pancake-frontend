@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { HStack, Text, VStack } from '@chakra-ui/react'
 import { ApiV3PoolInfoConcentratedItem } from '@raydium-io/raydium-sdk-v2'
 
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
 import TokenAvatar from '@/components/TokenAvatar'
@@ -149,14 +149,14 @@ export default function TokenAmountPairInputs({ tempCreatedPool, baseIn, onConfi
       />
       <VStack mt={4} align="stretch" rounded="xl" p={3} gap={1}>
         <HStack justify="space-between">
-          <Text fontSize="sm">{t('clmm.total_deposit')}</Text>
+          <Text fontSize="sm">{t('Total Deposit')}</Text>
           <Text fontSize="sm" color={colors.textPrimary}>
             {formatCurrency(totalVolume.toString(), { symbol: '$', decimalPlaces: 2 })}
           </Text>
         </HStack>
 
         <HStack justify="space-between">
-          <Text fontSize="sm">{t('clmm.deposit_ratio')}</Text>
+          <Text fontSize="sm">{t('Deposit Ratio')}</Text>
           <HStack>
             <Text color={colors.positive60}>{formatToRawLocaleStr(toPercentString(ratioA, { decimals: 1 }))}</Text>
             <TokenAvatar token={wsolToSolToken(tempCreatedPool![baseIn ? 'mintA' : 'mintB'])} size="sm" />
@@ -167,7 +167,7 @@ export default function TokenAmountPairInputs({ tempCreatedPool, baseIn, onConfi
         </HStack>
       </VStack>
       <Button mt={isMobile ? '16px' : '24px'} disabled={!!error} onClick={handleConfirm}>
-        {error ? t(error.key, error.props || {}) : t('liquidity.preview_pool')}
+        {error ? t(error.key, error.props || {}) : t('Preview Pool')}
       </Button>
     </>
   )

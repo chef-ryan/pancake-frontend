@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import Decimal from 'decimal.js'
-import { useTranslation, Trans } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { ApiV3PoolInfoStandardItemCpmm } from '@raydium-io/raydium-sdk-v2'
 import BN from 'bn.js'
 import { colors } from '@/theme/cssVariables'
@@ -62,20 +62,19 @@ function LiquidityLockModal({
         <Flex flexDirection="column" justifyContent="center" alignItems="center" gap={5} mt={2}>
           <InfoCircleIcon width={32} height={32} color={colors.textPink} />
           <Text fontSize={['lg', 'xl']} fontWeight="medium">
-            {t('liquidity.lock_liquidity_permanently')}
+            {t('Lock Liquidity Permanently?')}
           </Text>
         </Flex>
         <ModalCloseButton />
         <ModalBody mt={[5, 6]}>
           <Text color={colors.lightPurple} lineHeight="20px" fontSize={['sm', 'md']}>
-            <Trans i18nKey="liquidity.lock_desc4">
-              <Text as="span" fontWeight="bold" />
-              <Text as="span" fontWeight="bold" />
-            </Trans>
+            {t(
+              'Are you sure you want to permanently lock/burn liquidity? You will be unable to access or withdraw underlying position assets, only trading fees earned will remain claimable.'
+            )}
           </Text>
           <Box rounded="xl" border={`1px solid ${colors.selectInactive}`} bg={colors.modalContainerBg} px={[3, 4]} py={2} my={[5, 6]}>
             <Text color={colors.lightPurple} fontSize={['sm', 'md']} mb={2}>
-              {t('liquidity.lock_cpmm_set_amount')}
+              {t('Set amount of position to lock:')}
             </Text>
             <Flex bg={colors.backgroundDark} rounded="xl" align="center" justifyContent="space-between" px={4} py={2} gap={1} mb={2}>
               <Flex align="center" gap={3}>
@@ -129,7 +128,9 @@ function LiquidityLockModal({
               <WarningIcon stroke={colors.textPink} width="16" height="16" />
             </Text>
             <Text color={colors.textPink} fontSize="sm" fontWeight="medium">
-              {t('liquidity.lock_agree_text')}
+              {t(
+                'By confirming below, I agree to permanently lock liquidity. I understand access to the underlying assets will be lost forever.'
+              )}
             </Text>
           </Flex>
           <Flex
@@ -144,9 +145,9 @@ function LiquidityLockModal({
             gap={2}
             mt={6}
           >
-            <Text color={colors.lightPurple}>{t('liquidity.lock_to_confirm')}</Text>
+            <Text color={colors.lightPurple}>{t('To confirm, type the following:')}</Text>
             <Text color={colors.lightPurple} fontWeight="medium" userSelect="none">
-              {t('liquidity.lock_confirm_text')}
+              {t('I confirm, permanently lock my liquidity forever')}
             </Text>
             <Input
               variant="filledDark"
@@ -162,7 +163,7 @@ function LiquidityLockModal({
                 }
               }}
               onChange={(e) => setConfirmText(e.currentTarget.value)}
-              placeholder={t('clmm.type_confirm_text') || ''}
+              placeholder={t('Type confirmation text here') || ''}
             />
           </Flex>
         </ModalBody>
@@ -170,8 +171,8 @@ function LiquidityLockModal({
           <Button
             variant="danger"
             w="full"
-            loadingText={`${t('liquidity.lock_liquidity')  }...`}
-            isDisabled={confirmText !== t('liquidity.lock_confirm_text')}
+            loadingText={`${t('Lock Liquidity')}...`}
+            isDisabled={confirmText !== t('I confirm, permanently lock my liquidity forever')}
             onClick={() => {
               onConfirm({
                 poolInfo,
@@ -179,10 +180,10 @@ function LiquidityLockModal({
               })
             }}
           >
-            {t('liquidity.confirm_lock_liquidity_permanently')}
+            {t('Confirm, Lock Liquidity Permanently')}
           </Button>
           <Button w="full" variant="ghost" fontSize="sm" color={colors.buttonPrimary} onClick={handleCloseModal}>
-            {t('button.cancel')}
+            {t('Cancel')}
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -3,7 +3,7 @@ import Decimal from 'decimal.js'
 import dayjs from 'dayjs'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 export default function useRewardSchema() {
   const { t } = useTranslation()

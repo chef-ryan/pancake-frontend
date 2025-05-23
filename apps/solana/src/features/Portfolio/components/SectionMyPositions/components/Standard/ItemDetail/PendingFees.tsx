@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Button, Flex, HStack, Text, Tooltip, VStack } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
 import InfoCircleIcon from '@/icons/misc/InfoCircleIcon'
 import { colors } from '@/theme/cssVariables'
 import TokenAvatar from '@/components/TokenAvatar'
-import { formatCurrency , getFirstNonZeroDecimal } from '@/utils/numberish/formatter'
+import { formatCurrency, getFirstNonZeroDecimal } from '@/utils/numberish/formatter'
 import { FormattedPoolInfoStandardItem } from '@/hooks/pool/type'
 import { CpmmLockData } from '@/hooks/portfolio/cpmm/useLockCpmmBalance'
 
@@ -31,7 +31,7 @@ export default function PendingFees({ pendingFee, poolInfo, lockData, onHarvest 
     <Flex justify="space-between" bg={colors.backgroundDark} rounded="lg" py={2.5} px={4} gap={8}>
       <VStack align="flex-start" justifyContent="space-between">
         <Text fontSize="sm" color={colors.textTertiary}>
-          {t('liquidity.pending_fees')}
+          {t('Pending fees')}
         </Text>
         <HStack color={colors.textSecondary}>
           <Text fontSize="sm" fontWeight="medium">
@@ -41,12 +41,12 @@ export default function PendingFees({ pendingFee, poolInfo, lockData, onHarvest 
             label={
               <Flex direction="column" gap={2} fontSize="sm">
                 <Flex justifyContent="space-between" color={colors.lightPurple} gap={5}>
-                  <Text opacity={0.6}>{t('liquidity.approx_lp_fees')}</Text>
+                  <Text opacity={0.6}>{t('Approx LP Fees')}</Text>
                   <Text>
                     {formatCurrency(lpFees, { decimalPlaces: lpDecimal })} {poolInfo.poolName.replace(' - ', '/')}
                   </Text>
                 </Flex>
-                <Text opacity={0.6}>{t('liquidity.approx_fee_breakdown')}</Text>
+                <Text opacity={0.6}>{t('Approx Fee breakdown')}</Text>
                 <Flex justifyContent="space-between" align="center">
                   <Flex gap={1}>
                     <TokenAvatar size="sm" token={poolInfo.mintA} />
@@ -90,7 +90,7 @@ export default function PendingFees({ pendingFee, poolInfo, lockData, onHarvest 
           rounded="8px"
           onClick={() => onHarvest(lockData)}
         >
-          {t('button.harvest')}
+          {t('Harvest')}
         </Button>
       </VStack>
     </Flex>

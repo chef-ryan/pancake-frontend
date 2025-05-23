@@ -11,6 +11,7 @@ import { PublicKey, Transaction, VersionedTransaction, TransactionMessage, Syste
 import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token'
 import BN from 'bn.js'
 import { v4 as uuidv4 } from 'uuid'
+import { TranslateFunction } from '@pancakeswap/localization'
 import { toastSubject } from '@/hooks/toast/useGlobalToast'
 import { TxCallbackProps, TxCallbackPropsGeneric } from '@/types/tx'
 import ToPublicKey, { isValidPublicKey } from '@/utils/publicKey'
@@ -30,6 +31,7 @@ interface CreateMarketState {
   checkMarketAct: (marketId: string) => Promise<{ isValid: boolean; mintA?: string; mintB?: string }>
   createMarketAct: (
     params: {
+      t: TranslateFunction
       baseToken: ApiV3Token
       quoteToken: ApiV3Token
       orderSize: string | number
@@ -38,6 +40,7 @@ interface CreateMarketState {
   ) => Promise<{ txId: string[]; marketId: string }>
   createMarketAndPoolAct: (
     params: {
+      t: TranslateFunction
       baseToken: ApiV3Token
       quoteToken: ApiV3Token
       baseAmount: string
@@ -150,7 +153,7 @@ export const useCreateMarketStore = createStore<CreateMarketState>(
         mintB: quoteMint.toString()
       }
     },
-    createMarketAct: async ({ baseToken, quoteToken, orderSize, priceTick, ...txProps }) => {
+    createMarketAct: async ({ t, baseToken, quoteToken, orderSize, priceTick, ...txProps }) => {
       const { raydium, programIdConfig, connection, txVersion } = useAppStore.getState()
       if (!raydium || !connection) return { txId: [], marketId: '' }
 
@@ -188,6 +191,7 @@ export const useCreateMarketStore = createStore<CreateMarketState>(
         onTxUpdate: (data) => {
           handleMultiTxRetry(data)
           handleMultiTxToast({
+            t,
             toastId,
             processedId: transformProcessData({ processedId, data }),
             txLength,
@@ -199,6 +203,7 @@ export const useCreateMarketStore = createStore<CreateMarketState>(
       })
         .then((r) => {
           handleMultiTxToast({
+            t,
             toastId,
             processedId: transformProcessData({ processedId, data: [] }),
             txLength,
@@ -215,7 +220,7 @@ export const useCreateMarketStore = createStore<CreateMarketState>(
         })
         .finally(txProps.onFinally)
     },
-    createMarketAndPoolAct: async ({ baseToken, quoteToken, baseAmount, quoteAmount, startTime, ...txProps }) => {
+    createMarketAndPoolAct: async ({ t, baseToken, quoteToken, baseAmount, quoteAmount, startTime, ...txProps }) => {
       const { raydium, connection, txVersion, publicKey } = useAppStore.getState()
       if (!raydium || !connection || !publicKey) return { txId: [], marketId: '' }
 
@@ -305,6 +310,7 @@ export const useCreateMarketStore = createStore<CreateMarketState>(
         onTxUpdate: (data) => {
           handleMultiTxRetry(data)
           handleMultiTxToast({
+            t,
             toastId,
             processedId: transformProcessData({ processedId, data }),
             txLength,
@@ -316,6 +322,7 @@ export const useCreateMarketStore = createStore<CreateMarketState>(
       })
         .then((r) => {
           handleMultiTxToast({
+            t,
             toastId,
             processedId: transformProcessData({ processedId, data: [] }),
             txLength,

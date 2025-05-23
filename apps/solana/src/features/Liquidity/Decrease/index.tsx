@@ -1,7 +1,7 @@
 import { Box, Grid, GridItem, HStack, Text, VStack } from '@chakra-ui/react'
 import { ApiV3PoolInfoStandardItem, CREATE_CPMM_POOL_PROGRAM } from '@raydium-io/raydium-sdk-v2'
 import { useCallback, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Tabs from '@/components/Tabs'
 import useFetchPoolById from '@/hooks/pool/useFetchPoolById'
 import { useEvent } from '@/hooks/useEvent'
@@ -24,8 +24,8 @@ export default function Decrease() {
   const { t } = useTranslation()
 
   const decreaseTabOptions: DecreaseTabOptionType[] = [
-    { value: 'Unstake Liquidity', label: t('liquidity.unstake_liquidity') },
-    { value: 'Remove Liquidity', label: t('liquidity.remove_liquidity') }
+    { value: 'Unstake Liquidity', label: t('Unstake Liquidity') },
+    { value: 'Remove Liquidity', label: t('Remove Liquidity') }
   ]
   const { pool_id: poolId = '', mode: queryMode = 'unstake', farm_id: farmId } = useRouteQuery<DecreaseLiquidityPageQuery>()
   const getTokenBalanceUiAmount = useTokenAccountStore((s) => s.getTokenBalanceUiAmount)
@@ -94,7 +94,7 @@ export default function Decrease() {
           >
             <ChevronLeftIcon />
             <Text fontWeight="500" fontSize={['md', 'xl']}>
-              {t('common.back')}
+              {t('Back')}
             </Text>
           </HStack>
         </GridItem>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, MouseEvent, KeyboardEvent, useRef, useDeferredValue, forwardRef } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Box, BoxProps, Flex, Text, Input, Popover, PopoverAnchor, PopoverContent, PopoverBody, HStack } from '@chakra-ui/react'
 import { ApiV3Token, solToWSol } from '@raydium-io/raydium-sdk-v2'
 import { shallow } from 'zustand/shallow'
@@ -247,7 +247,7 @@ export default forwardRef(function TokenSearchInput(
               value={value}
               onChange={(e) => onChange(e.currentTarget.value)}
               onKeyDown={handleKeyDown}
-              placeholder={selectedList.length ? '' : t('common.search_all')!}
+              placeholder={selectedList.length ? '' : t('Search')!}
               h={['34px', 10]}
               borderRadius="100px"
               disabled={selectedList.length === 2}
@@ -327,7 +327,7 @@ export default forwardRef(function TokenSearchInput(
               ))
             ) : (
               <Text variant="label" fontSize="sm">
-                {searchValue ? t('error.no_matches') : t('input.enter_search_token')}
+                {searchValue ? t('No matches.') : t('Search for token or paste mint address.')}
               </Text>
             )}
           </PopoverBody>

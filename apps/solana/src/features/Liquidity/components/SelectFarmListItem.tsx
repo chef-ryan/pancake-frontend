@@ -2,7 +2,7 @@ import { Badge, Box, Flex, HStack, SimpleGrid, Text } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import TokenAvatar from '@/components/TokenAvatar'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
 import CircleCheckFill from '@/icons/misc/CircleCheckFill'
@@ -38,11 +38,7 @@ export default function SelectFarmListItem({ farm, currentSelectedId }: SelectFa
         </Box>
         <Box>
           <Badge variant="crooked">
-            {farm.type === FarmType.Ecosystem
-              ? t('badge.ecosystem')
-              : farm.type === FarmType.Fusion
-              ? t('badge.fusion')
-              : t('badge.raydium')}
+            {farm.type === FarmType.Ecosystem ? t('Ecosystem') : farm.type === FarmType.Fusion ? t('Fusion') : t('Raydium')}
           </Badge>
         </Box>
       </Box>

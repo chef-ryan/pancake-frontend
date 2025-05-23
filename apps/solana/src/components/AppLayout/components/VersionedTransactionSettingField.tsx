@@ -1,6 +1,6 @@
 import { Toggle } from '@pancakeswap/uikit'
 import { TxVersion } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { useAppStore } from '@/store/useAppStore'
 import { SettingField } from './SettingField'
 
@@ -18,8 +18,10 @@ export function VersionedTransactionSettingField() {
   }
   return (
     <SettingField
-      fieldName={t('setting_board.versioned_transaction')}
-      tooltip={t('setting_board.versioned_transaction_tooltip')}
+      fieldName={t('Versioned Transaction')}
+      tooltip={t(
+        'Versioned Tx is a significant upgrade that allows for additional functionality, including advanced swap routing. Before turning on Vers. Tx, ensure that your wallet is compatible.'
+      )}
       renderToggleButton={<Toggle scale="md" checked={txVersion === TxVersion.V0} onChange={handleChange} />}
     />
   )

@@ -1,5 +1,5 @@
 import { Button, HStack, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import { colors } from '@/theme/cssVariables/colors'
 import toPercentString from '@/utils/numberish/toPercentString'
@@ -37,7 +37,7 @@ export default ({ options, selected, onClick }: Props) => {
       })}
       <Button onClick={() => onClick(0)} variant="unstyled" size="xs">
         <Text color={colors.primary60} fontWeight={600}>
-          {t('button.reset')}
+          {t('Reset')}
         </Text>
       </Button>
     </HStack>

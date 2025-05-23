@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { Badge, Box, Button, Divider, Flex, Grid, GridItem, HStack, SimpleGrid, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Decimal from 'decimal.js'
 import { ApiV3Token, ApiV3PoolInfoConcentratedItem, PoolFetchType } from '@raydium-io/raydium-sdk-v2'
 import TokenAvatar from '@/components/TokenAvatar'
@@ -88,30 +88,30 @@ export default function StandardPoolRowStakeFarmItem({
                   <TokenAvatar key={`${farmId}-${r.mint.address}`} token={r.mint} ml={-1 * idx * 2} size="smi" />
                 ))}
               </HStack>
-              {pool?.rewardDefaultPoolInfos === 'Ecosystem' && <Badge variant="crooked">{t('badge.ecosystem')}</Badge>}
+              {pool?.rewardDefaultPoolInfos === 'Ecosystem' && <Badge variant="crooked">{t('Ecosystem')}</Badge>}
             </HStack>
             <Button
               variant="outline"
               size="sm"
               onClick={() => routeToPage('decrease-liquidity', { queryProps: { mode: 'unstake', pool_id: poolId, farm_id: farm.id } })}
             >
-              {t('button.unstake')}
+              {t('Unstake')}
             </Button>
           </Flex>
           <HStack height={6} mb={3}>
             <HStack>
-              <Text color={colors.textSecondary}>{t('amm.staked')}</Text>
+              <Text color={colors.textSecondary}>{t('Staked')}</Text>
               <Text>{formatCurrency(new Decimal(deposited).mul(lpPrice).toString(), { symbol: '$', decimalPlaces: 2 })}</Text>
             </HStack>
             <Divider orientation="vertical" alignSelf="stretch" />
             <HStack>
-              <Text color={colors.textSecondary}>{t('liquidity.APR')}</Text>
+              <Text color={colors.textSecondary}>{t('APR')}</Text>
               <Text>{formatToRawLocaleStr(toAPRPercent(farm.apr * 100))}</Text>
             </HStack>
             <Divider orientation="vertical" alignSelf="stretch" />
           </HStack>
           <HStack>
-            <Text color={colors.textSecondary}>{t('amm.pending_reward')}</Text>
+            <Text color={colors.textSecondary}>{t('Pending rewards')}</Text>
             <Text>{formatCurrency(pendingReward, { symbol: '$', decimalPlaces: 2 })}</Text>
           </HStack>
         </Box>
@@ -149,28 +149,28 @@ export default function StandardPoolRowStakeFarmItem({
                   <TokenAvatar key={`${farmId}-${r.mint.address}`} token={r.mint} ml={-1 * idx * 2} size="smi" />
                 ))}
               </HStack>
-              {pool?.rewardDefaultPoolInfos === 'Ecosystem' && <Badge variant="crooked">{t('badge.ecosystem')}</Badge>}
+              {pool?.rewardDefaultPoolInfos === 'Ecosystem' && <Badge variant="crooked">{t('Ecosystem')}</Badge>}
             </HStack>
           </GridItem>
 
           <GridItem area="infos" justifySelf="stretch" fontSize={['sm', 'md']}>
             <SimpleGrid columnGap={[2, 8]} templateColumns="1fr auto auto auto 1fr">
               <HStack justifyContent="right">
-                <Text color={colors.textSecondary}>{t('amm.staked')}</Text>
+                <Text color={colors.textSecondary}>{t('Staked')}</Text>
                 <Text>{formatCurrency(new Decimal(deposited).mul(lpPrice).toString(), { symbol: '$', decimalPlaces: 2 })}</Text>
               </HStack>
 
               <Divider orientation="vertical" alignSelf="stretch" />
 
               <HStack width={['84px', '100px']} justifyContent="center">
-                <Text color={colors.textSecondary}>{t('liquidity.APR')}</Text>
+                <Text color={colors.textSecondary}>{t('APR')}</Text>
                 <Text>{formatToRawLocaleStr(toAPRPercent(farm.apr * 100))}</Text>
               </HStack>
 
               <Divider orientation="vertical" alignSelf="stretch" />
 
               <HStack justifyContent="left">
-                <Text color={colors.textSecondary}>{t('amm.pending_reward')}</Text>
+                <Text color={colors.textSecondary}>{t('Pending rewards')}</Text>
                 <Text>{formatCurrency(pendingReward, { symbol: '$', decimalPlaces: 2 })}</Text>
               </HStack>
             </SimpleGrid>
@@ -182,7 +182,7 @@ export default function StandardPoolRowStakeFarmItem({
               size="sm"
               onClick={() => routeToPage('decrease-liquidity', { queryProps: { mode: 'unstake', pool_id: poolId, farm_id: farm.id } })}
             >
-              {t('button.unstake')}
+              {t('Unstake')}
             </Button>
           </GridItem>
         </Grid>

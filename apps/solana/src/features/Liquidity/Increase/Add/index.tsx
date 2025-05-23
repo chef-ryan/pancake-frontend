@@ -1,7 +1,7 @@
 import { Flex, HStack, Text, useDisclosure } from '@chakra-ui/react'
 import { ApiV3PoolInfoStandardItem, ApiV3Token, TokenInfo, ApiV3PoolInfoStandardItemCpmm } from '@raydium-io/raydium-sdk-v2'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import Decimal from 'decimal.js'
 import { shallow } from 'zustand/shallow'
@@ -220,12 +220,12 @@ export default function AddLiquidity({
       {/* TODO: currently auto-swap can't enabled */}
       {/* <Flex w="full" flexGrow={1} justify="space-between">
         <HStack spacing={2}>
-          <Text color={colors.textTertiary}>{t('liquidity.auto_swap')}</Text>
+          <Text color={colors.textTertiary}>{t('Auto-swap')}</Text>
           <Box onClick={onOpenAutoSwapModal}>
             <Switch isChecked={autoSwap} />
             <Switch isChecked={false} disabled />
           </Box>
-          <QuestionToolTip label={<Box>{t('liquidity.auto_swap_hint')}</Box>} iconProps={{ color: colors.textTertiary }} />
+          <QuestionToolTip label={<Box>{t('When auto-swap is on, token amounts will be automatically swapped to the deposit ratio needed to create your position.')}</Box>} iconProps={{ color: colors.textTertiary }} />
         </HStack>
       </Flex> */}
       {/* base token */}
@@ -273,7 +273,7 @@ export default function AddLiquidity({
         py={4}
       >
         <Text fontSize="sm" color={colors.textSecondary} opacity={0.6}>
-          {t('liquidity.total_deposit')}
+          {t('Total Deposit')}
         </Text>
         <Text fontSize="xl" color={colors.textPrimary} fontWeight="medium">
           {formatCurrency(new Decimal(pool?.lpPrice ?? 0).mul(computedLpRef.current.div(10 ** (pool?.lpMint.decimals ?? 0))).toString(), {
@@ -315,10 +315,10 @@ export default function AddLiquidity({
         w="full"
         isDisabled={poolNotFound || !pool || !!error}
         isLoading={isTxSending}
-        loadingText={`${t('liquidity.add_liquidity')}...`}
+        loadingText={`${t('Add Liquidity')}...`}
         onClick={handleClickAdd}
       >
-        {error ? t(error.key, error.props) : poolNotFound ? t('liquidity.pool_not_found') : t('liquidity.add_liquidity')}
+        {error ? t(error.key, error.props) : poolNotFound ? t('Pool Not Found') : t('Add Liquidity')}
       </Button>
 
       <StakeLpModal isOpen={isStakeLpOpen} onClose={onCloseStakeLp} />

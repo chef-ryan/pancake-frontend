@@ -1,5 +1,5 @@
 import { Modal, ModalOverlay, ModalContent, ModalFooter, ModalBody, Flex, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { routeToPage } from '@/utils/routeTools'
 import Button from '@/components/Button'
 import { colors } from '@/theme/cssVariables'
@@ -15,19 +15,19 @@ export default function CreateSuccessWithLockModal({ isOpen, onClose }: { isOpen
           <Flex flexDirection="column" alignItems="center">
             <CircleCheck width={32} height={32} color={colors.secondary} />
             <Text variant="dialogTitle" mt="4" mb="2" textAlign="center">
-              {t('create_pool.clmm_create_pool_fullrange_success_title')}
+              {t('Pool and position created successfully')}
             </Text>
             <Text color={colors.lightPurple} textAlign="center">
-              {t('create_pool.clmm_create_pool_fullrange_success_content')}
+              {t('Token creators can now burn/lock liquidity permanently while trading fees earned remain fully claimable.')}
             </Text>
           </Flex>
         </ModalBody>
         <ModalFooter flexDirection="column" gap="2">
           <Button w="100%" onClick={() => routeToPage('pools')}>
-            {t('common.got_it')}
+            {t('Got it')}
           </Button>
           <Button variant="ghost" w="100%" fontSize="sm" onClick={() => routeToPage('clmm-lock')}>
-            {t('liquidity.lock_my_liquidity')}
+            {t('Lock my liquidity')}
           </Button>
         </ModalFooter>
       </ModalContent>

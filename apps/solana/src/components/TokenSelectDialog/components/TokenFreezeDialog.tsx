@@ -1,5 +1,5 @@
 import { TokenInfo, ApiV3Token } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Button, Flex, Text, Modal, ModalBody, ModalContent, ModalOverlay } from '@chakra-ui/react'
 import { useEvent } from '@/hooks/useEvent'
 import { colors } from '@/theme/cssVariables'
@@ -37,10 +37,10 @@ export default function TokenFreezeDialog({ onConfirm, isOpen, onClose, token }:
           >
             <WarningIcon width="27" height="27" />
             <Text fontWeight="bold" fontSize="xl" pt={3}>
-              {t('token_selector.token_freeze_warning')}
+              {t('Freeze Authority Warning')}
             </Text>
             <Text fontWeight="bold" fontSize="md" color={colors.semanticWarning} pt={5}>
-              {t('token_selector.token_has_freeze')}
+              {t('This token has freeze authority enabled and could prevent you from transferring or trading the token later.')}
             </Text>
             <Button
               width="full"
@@ -50,7 +50,7 @@ export default function TokenFreezeDialog({ onConfirm, isOpen, onClose, token }:
                 onConfirm(token)
               }}
             >
-              {t('button.confirm_understand')}
+              {t('I understand, confirm')}
             </Button>
             <Text
               mt={4}
@@ -62,7 +62,7 @@ export default function TokenFreezeDialog({ onConfirm, isOpen, onClose, token }:
                 onClose()
               }}
             >
-              {t('button.cancel')}
+              {t('Cancel')}
             </Text>
           </Flex>
         </ModalBody>

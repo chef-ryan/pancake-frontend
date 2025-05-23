@@ -2,6 +2,7 @@ import { PublicKey, VersionedTransaction, Transaction, SignatureResult } from '@
 import { TxVersion, txToBase64, SOL_INFO } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { TranslateFunction } from '@pancakeswap/localization'
 import { createStore, useAppStore, useTokenAccountStore, useTokenStore } from '@/store'
 import { toastSubject } from '@/hooks/toast/useGlobalToast'
 import { txStatusSubject, TOAST_DURATION } from '@/hooks/toast/useTxStatus'
@@ -9,7 +10,6 @@ import { isSolWSol, getMintSymbol } from '@/utils/token'
 import axios from '@/api/axios'
 import { formatLocaleStr, trimTailingZero } from '@/utils/numberish/formatter'
 import { TxCallbackProps } from '@/types/tx'
-import i18n from '@/i18n'
 import { fetchComputePrice } from '@/utils/tx/computeBudget'
 import { getDefaultToastData, handleMultiTxToast, transformProcessData } from '@/hooks/toast/multiToastUtil'
 import { handleMultiTxRetry } from '@/hooks/toast/retryTx'
@@ -40,9 +40,21 @@ const getSwapComputePrice = async () => {
 interface SwapStore {
   slippage: number
   swapTokenAct: (
-    props: { swapResponse: ApiSwapV1OutSuccess; wrapSol?: boolean; unwrapSol?: boolean; onCloseToast?: () => void } & TxCallbackProps
+    props: {
+      t: TranslateFunction
+      swapResponse: ApiSwapV1OutSuccess
+      wrapSol?: boolean
+      unwrapSol?: boolean
+      onCloseToast?: () => void
+    } & TxCallbackProps
   ) => Promise<string | string[] | undefined>
-  unWrapSolAct: (props: { amount: string; onClose?: () => void; onSent?: () => void; onError?: () => void }) => Promise<string | undefined>
+  unWrapSolAct: (props: {
+    t: TranslateFunction
+    amount: string
+    onClose?: () => void
+    onSent?: () => void
+    onError?: () => void
+  }) => Promise<string | undefined>
   wrapSolAct: (amount: string) => Promise<string | undefined>
 }
 
@@ -61,7 +73,7 @@ export const useSwapStore = createStore<SwapStore>(
   () => ({
     ...initSwapState,
 
-    swapTokenAct: async ({ swapResponse, wrapSol, unwrapSol = false, onCloseToast, ...txProps }) => {
+    swapTokenAct: async ({ t, swapResponse, wrapSol, unwrapSol = false, onCloseToast, ...txProps }) => {
       const { publicKey, raydium, txVersion, connection, signAllTransactions, urlConfigs } = useAppStore.getState()
       if (!raydium || !connection) {
         console.error('no connection')
@@ -143,7 +155,7 @@ export const useSwapStore = createStore<SwapStore>(
         })
 
         const swapMeta = getTxMeta({
-          action: 'swap',
+          // action: 'swap',
           values: {
             amountA: formatLocaleStr(
               new Decimal(swapResponse.data.inputAmount).div(10 ** (inputToken.decimals || 0)).toString(),
@@ -205,13 +217,16 @@ export const useSwapStore = createStore<SwapStore>(
             handleMultiTxRetry(processedId)
             const isSlippageError = isSwapSlippageError(signatureResult)
             handleMultiTxToast({
+              t,
               toastId,
               processedId: processedId.map((p) => ({ ...p, status: p.status === 'sent' ? 'info' : p.status })),
               txLength,
               meta: {
                 ...swapMeta,
-                title: isSlippageError ? i18n.t('error.error.swap_slippage_error_title')! : swapMeta.title,
-                description: isSlippageError ? i18n.t('error.error.swap_slippage_error_desc')! : swapMeta.description
+                title: isSlippageError ? t('Swap failed due to slippage error!')! : swapMeta.title,
+                description: isSlippageError
+                  ? t('Slippage has exceeded user settings. Try again or adjust your slippage tolerance.')!
+                  : swapMeta.description
               },
               isSwap: true,
               handler,
@@ -246,6 +261,7 @@ export const useSwapStore = createStore<SwapStore>(
 
           handleMultiTxRetry(processedId)
           handleMultiTxToast({
+            t,
             toastId,
             processedId: processedId.map((p) => ({ ...p, status: p.status === 'sent' ? 'info' : p.status })),
             txLength,
@@ -273,7 +289,7 @@ export const useSwapStore = createStore<SwapStore>(
       return ''
     },
 
-    unWrapSolAct: async ({ amount, onSent, onError, ...txProps }): Promise<string | undefined> => {
+    unWrapSolAct: async ({ t, amount, onSent, onError, ...txProps }): Promise<string | undefined> => {
       const { raydium } = useAppStore.getState()
       const { txVersion } = useAppStore.getState()
       if (!raydium) return
@@ -293,19 +309,20 @@ export const useSwapStore = createStore<SwapStore>(
         })
 
         const meta = {
-          title: i18n.t('swap.unwrap_all_wsol'),
-          description: i18n.t('swap.unwrap_all_wsol_desc_no_amount'),
-          txHistoryTitle: 'swap.unwrap_all_wsol',
-          txHistoryDesc: 'swap.unwrap_all_wsol_desc_no_amount',
+          title: t('Unwrapped all WSOL'),
+          description: t('Unwrapped WSOL to SOL'),
+          txHistoryTitle: t('Unwrapped all WSOL'),
+          txHistoryDesc: t('Unwrapped WSOL to SOL'),
           txValues: {}
         }
 
-        const getSubTxTitle = () => 'swap.unwrap_all_wsol_desc_no_amount'
+        const getSubTxTitle = () => t('Unwrapped WSOL to SOL')
         multiExecute({
           sequentially: true,
           onTxUpdate: (data) => {
             handleMultiTxRetry(data)
             handleMultiTxToast({
+              t,
               toastId,
               processedId: transformProcessData({ processedId, data }),
               txLength,
@@ -317,6 +334,7 @@ export const useSwapStore = createStore<SwapStore>(
         })
           .then(() => {
             handleMultiTxToast({
+              t,
               toastId,
               processedId: transformProcessData({ processedId, data: [] }),
               txLength,
@@ -337,10 +355,10 @@ export const useSwapStore = createStore<SwapStore>(
 
       const values = { amount: trimTailingZero(new Decimal(amount).div(10 ** SOL_INFO.decimals).toFixed(SOL_INFO.decimals)) }
       const meta = {
-        title: i18n.t('swap.unwrap_all_wsol', values),
-        description: i18n.t('swap.unwrap_all_wsol_desc', values),
-        txHistoryTitle: 'swap.unwrap_all_wsol',
-        txHistoryDesc: 'swap.unwrap_all_wsol_desc',
+        title: t('Unwrapped all WSOL'),
+        description: t('Unwrapped total %amount% WSOL', values),
+        txHistoryTitle: t('Unwrapped all WSOL'),
+        txHistoryDesc: t('Unwrapped total %amount% WSOL', values),
         txValues: values
       }
 

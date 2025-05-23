@@ -1,6 +1,6 @@
 import { Button } from '@pancakeswap/uikit'
 import Link from 'next/link'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Box, Flex, Text } from '@chakra-ui/react'
 import { ApiV3PoolInfoConcentratedItem } from '@raydium-io/raydium-sdk-v2'
 import { useEffect, useMemo, memo } from 'react'
@@ -111,10 +111,10 @@ const ClmmMyPositionTabContent = memo(
             borderRadius="xl"
           >
             <Text variant="title" fontSize="sm">
-              {t('clmm.no_clmm_positions')}
+              {t('You don’t have any concentrated liquidity positions.')}
             </Text>
             <Link href="/liquidity-pools">
-              <Button>{t('common.go_to_pools')}</Button>
+              <Button>{t('Go to pools')}</Button>
             </Link>
           </Flex>
         )}

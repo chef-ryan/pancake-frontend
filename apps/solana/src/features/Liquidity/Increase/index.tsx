@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useEffect, useState, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Box, Flex, Grid, GridItem, HStack, Text, TooltipProps, VStack, useDisclosure } from '@chakra-ui/react'
 import { ApiV3PoolInfoStandardItem, ApiV3Token, TokenInfo, CREATE_CPMM_POOL_PROGRAM } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
@@ -42,8 +42,8 @@ export default function Increase() {
   const { t } = useTranslation()
 
   const increaseTabOptions: IncreaseTabOptionType[] = [
-    { value: 'Add Liquidity', label: t('liquidity.add_liquidity') },
-    { value: 'Stake Liquidity', label: t('liquidity.stake_liquidity') }
+    { value: 'Add Liquidity', label: t('Add Liquidity') },
+    { value: 'Stake Liquidity', label: t('Stake Liquidity') }
   ]
   const getTokenBalanceUiAmount = useTokenAccountStore((s) => s.getTokenBalanceUiAmount)
   const fetchTokenAccountAct = useTokenAccountStore((s) => s.fetchTokenAccountAct)
@@ -89,7 +89,7 @@ export default function Increase() {
   const hasFarmInfo = pool ? pool.farmOngoingCount > 0 || pool.farmUpcomingCount > 0 || !!farms.find((f) => f.isOngoing) : false
 
   increaseTabOptions[1].disabled = !hasFarmInfo
-  increaseTabOptions[1].tooltipProps = !hasFarmInfo ? { label: t('liquidity.no_active_farm'), hasArrow: false } : undefined
+  increaseTabOptions[1].tooltipProps = !hasFarmInfo ? { label: t('There is no active farm for this pool.'), hasArrow: false } : undefined
 
   const [tabOptions, setTabOptions] = useState<TabItem[]>([])
   const [tabValue, setTabValue] = useState<LiquidityTabOptionType | undefined>(undefined)
@@ -180,7 +180,7 @@ export default function Increase() {
           >
             <ChevronLeftIcon />
             <Text fontWeight="500" fontSize={['md', 'xl']}>
-              {t('common.back')}
+              {t('Back')}
             </Text>
           </HStack>
         </GridItem>
@@ -240,7 +240,7 @@ export default function Increase() {
               <Flex justify="space-between">
                 <Box>
                   <Text fontSize="sm" color={colors.textSecondary} opacity={0.5}>
-                    {t('liquidity.total_apr_7d')}
+                    {t('Total APR 7D')}
                   </Text>
                   <HStack mt={1}>
                     <Text fontSize="lg" fontWeight={500} color={colors.textPrimary}>
@@ -251,7 +251,7 @@ export default function Increase() {
                 </Box>
                 <Box>
                   <Text color={colors.textSecondary} fontSize="sm" opacity={0.5}>
-                    {t('liquidity.pool_liquidity')}
+                    {t('Pool Liquidity')}
                   </Text>
                   <Text color={colors.textSecondary} fontSize="sm" textAlign="right" mt={1}>
                     {pool ? `$${formatCurrency(new Decimal(pool.lpAmount).mul(pool.lpPrice).toString())}` : '-'}
@@ -262,7 +262,7 @@ export default function Increase() {
                 <HStack gap={1}>
                   <LockIcon color={colors.textSecondary} />
                   <Text color={colors.textSecondary} opacity={0.6} fontSize="xs">
-                    {t('liquidity.locked_percent', {
+                    {t('%percent% permanently locked', {
                       percent: formatToRawLocaleStr(toPercentString(pool.burnPercent || 0, { alreadyPercented: true }))
                     })}
                   </Text>
@@ -270,7 +270,7 @@ export default function Increase() {
               )}
               <HStack justify="center">
                 <Text fontWeight="medium" fontSize="xs" color={colors.lightPurple}>
-                  {t('liquidity.show_more')}
+                  {t('Show more')}
                 </Text>
                 <ExpandLeftTopIcon />
               </HStack>

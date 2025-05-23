@@ -3,7 +3,7 @@ import { Box, Flex, HStack, Text, VStack, useDisclosure, Skeleton } from '@chakr
 import { shallow } from 'zustand/shallow'
 import FocusTrap from 'focus-trap-react'
 import { usePopper } from 'react-popper'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { PublicKey } from '@solana/web3.js'
 import {
   ApiV3Token,
@@ -155,6 +155,7 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
     if (isAmmV4) {
       let poolId = ''
       createMarketAndPoolAct({
+        t,
         baseToken: solToWSolToken(baseToken!),
         quoteToken: solToWSolToken(quoteToken!),
         baseAmount: new Decimal(tokenAmount.base).mul(10 ** baseToken!.decimals).toFixed(0),
@@ -189,12 +190,12 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
       {/* initial liquidity */}
       <Flex direction="column" w="full" align="flex-start" gap={4}>
         <Text fontWeight="medium" fontSize="sm">
-          {t('create_standard_pool.initial_liquidity')}
+          {t('Initial liquidity')}
         </Text>
         <Flex direction="column" w="full" align="center">
           <TokenInput
             ctrSx={{ w: '100%', textColor: colors.textTertiary }}
-            topLeftLabel={t('common.base_token')}
+            topLeftLabel={t('Base token')}
             token={baseToken ? wsolToSolToken(baseToken) : undefined}
             value={tokenAmount.base}
             onChange={(val) => setTokenAmount((prev) => ({ ...prev, base: val }))}
@@ -205,7 +206,7 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
           </Box>
           <TokenInput
             ctrSx={{ w: '100%', textColor: colors.textTertiary }}
-            topLeftLabel={t('common.quote_token')}
+            topLeftLabel={t('Quote token')}
             token={quoteToken ? wsolToSolToken(quoteToken) : undefined}
             value={tokenAmount.quote}
             onChange={(val) => setTokenAmount((prev) => ({ ...prev, quote: val }))}
@@ -217,9 +218,14 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
       <Flex direction="column" w="full" align="flex-start" gap={3}>
         <HStack gap={1}>
           <Text fontWeight="medium" fontSize="sm">
-            {t('clmm.initial_price')}
+            {t('Initial price')}
           </Text>
-          <QuestionToolTip iconType="question" label={t('create_standard_pool.initial_price_tooltip')} />
+          <QuestionToolTip
+            iconType="question"
+            label={t(
+              'Initial price is set by the ratio of tokens deposited for initial liquidity. If the token is already trading on Raydium, initial price will be auto-filled with the current price.'
+            )}
+          />
         </HStack>
         <DecimalInput
           postFixInField
@@ -237,7 +243,7 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
         />
         <HStack spacing={1}>
           <Text fontWeight="400" fontSize="sm" color={colors.textTertiary}>
-            {t('create_standard_pool.current_price')}:
+            {t('Current price')}:
           </Text>
           <Text pl={1} fontSize="sm" color={colors.textSecondary} fontWeight="medium" display="flex" alignItems="center" gap={1}>
             1 {baseIn ? baseSymbol : quoteSymbol} ≈ {isPriceLoading ? <Skeleton width={14} height={4} /> : currentPrice || '-'}{' '}
@@ -258,7 +264,7 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
       {isAmmV4 ? null : (
         <Flex direction="column" w="full" align="flex-start" gap={3}>
           <Text fontWeight="medium" fontSize="sm">
-            {t('field.fee_tier')}
+            {t('Fee Tier')}
           </Text>
           <Flex w="full" gap="2">
             <Select
@@ -324,7 +330,7 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
       {/* start time */}
       <Flex direction="column" w="full" gap={3}>
         <Text fontWeight="medium" textAlign="left" fontSize="sm">
-          {t('field.start_time')}:
+          {t('Start time')}:
         </Text>
         <Tabs
           tabListSX={{ display: 'flex' }}
@@ -339,11 +345,11 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
           items={[
             {
               value: 'now',
-              label: t('create_standard_pool.start_now')
+              label: t('Start Now')
             },
             {
               value: 'custom',
-              label: t('create_standard_pool.custom')
+              label: t('Custom')
             }
           ]}
         />
@@ -420,7 +426,7 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
                   </Flex>
                   <Flex bg={colors.backgroundDark} px="10px" justifyContent="flex-end" borderRadius="0 0 10px 10px">
                     <Button variant="outline" size="sm" onClick={closePopper}>
-                      {t('button.confirm')}
+                      {t('Confirm')}
                     </Button>
                   </Flex>
                 </Box>
@@ -431,13 +437,19 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
         <HStack color={colors.semanticWarning}>
           <Text fontWeight="medium" fontSize="sm" my="-2">
             {isAmmV4
-              ? t('create_standard_pool.pool_creation_fee_note', { subject: '~0.45' })
-              : t('create_standard_pool.pool_creation_fee_note', { subject: '~0.2' })}
+              ? t('Note: A creation fee of %subject% SOL is required for new pools.', { subject: '~0.45' })
+              : t('Note: A creation fee of %subject% SOL is required for new pools.', { subject: '~0.2' })}
           </Text>
           <QuestionToolTip
             iconType="question"
             label={
-              isAmmV4 ? t('create_standard_pool.pool_ammv4_creation_fee_tooltip') : t('create_standard_pool.pool_creation_fee_tooltip')
+              isAmmV4
+                ? t(
+                    'A pool creation fee of 0.15 SOL is currently reserved to support front and backend infrastructure. Approximately 0.3 SOL is required for OpenBook Market rent and program account creation.'
+                  )
+                : t(
+                    'A pool creation fee of 0.15 SOL is currently reserved to support front and backend infrastructure. Approximately 0.05 SOL is required for program account creation and network fees.'
+                  )
             }
           />
         </HStack>
@@ -447,7 +459,7 @@ export default function Initialize({ isAmmV4 }: { isAmmV4: boolean }) {
       </Flex>
       <HStack w="full" spacing={4} mt={2}>
         <Button w="full" isLoading={isLoading} isDisabled={!!error} onClick={onInitializeClick}>
-          {t('create_standard_pool.button_initialize_liquidity_pool')}
+          {t('Initialize Liquidity Pool')}
         </Button>
       </HStack>
       {newCreatedPool || newPoolId ? <CreateSuccessModal ammId={newCreatedPool ? newCreatedPool.poolId.toString() : newPoolId!} /> : null}

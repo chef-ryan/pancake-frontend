@@ -1,7 +1,7 @@
 import { Flex, HStack, Text } from '@chakra-ui/react'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Decimal from 'decimal.js'
 import TokenAvatar from '@/components/TokenAvatar'
 import { colors } from '@/theme/cssVariables'
@@ -24,7 +24,7 @@ export default function TokenPooledInfo({ base, quote }: TokenInfoProps) {
     <Flex direction="column" justify="space-between" bg={colors.backgroundDark} rounded="lg" py={[4, 3]} px={4} gap={[4, 0]}>
       <Flex justify="space-between" align="center">
         <Text fontSize="sm" color={colors.textTertiary}>
-          {t('amm.pooled_token', { token: base.token?.symbol })}
+          {t('Pooled %token%', { token: base.token?.symbol })}
         </Text>
         <HStack>
           <Text fontSize="sm" color={colors.textSecondary} fontWeight="medium">
@@ -35,7 +35,7 @@ export default function TokenPooledInfo({ base, quote }: TokenInfoProps) {
       </Flex>
       <Flex justify="space-between" align="center">
         <Text fontSize="sm" color={colors.textTertiary}>
-          {t('amm.pooled_token', { token: quote.token?.symbol })}
+          {t('Pooled %token%', { token: quote.token?.symbol })}
         </Text>
         <HStack>
           <Text fontSize="sm" color={colors.textSecondary} fontWeight="medium">

@@ -1,6 +1,6 @@
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { SimpleGrid } from '@chakra-ui/react'
 import { PriceRangeInputBox, Side } from '@/features/Create/ClmmPool/components/SetPriceAndRange'
 
@@ -24,7 +24,7 @@ export default function RangeInput(props: Props) {
     <SimpleGrid gridTemplate="repeat(auto-fill, 1fr)" gridAutoFlow={['row', 'column']} gap={[3, 4]} mb="4">
       <PriceRangeInputBox
         side={Side.Left}
-        topLabel={t('field.min')}
+        topLabel={t('Min')}
         disabled={disabled}
         currentPriceRangeValue={priceRange[0]}
         decimals={Math.max(8, decimals)}
@@ -37,7 +37,7 @@ export default function RangeInput(props: Props) {
       />
       <PriceRangeInputBox
         side={Side.Right}
-        topLabel={t('field.max')}
+        topLabel={t('Max')}
         disabled={disabled}
         currentPriceRangeValue={priceRange[1]}
         decimals={Math.max(8, decimals)}

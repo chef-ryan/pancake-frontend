@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react'
 import { useState, useCallback, useEffect } from 'react'
 import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { useTokenAccountStore, useTokenStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import List from '@/components/List'
@@ -94,7 +94,7 @@ function TokenRowItem({
               >
                 <RemoveTokenIcon />
                 <Text fontSize="sm" lineHeight="16px" pl={1} fontWeight="medium" color={colors.textSeptenary}>
-                  {t('common.remove_token')}
+                  {t('Remove token')}
                 </Text>
               </Box>
             </Box>

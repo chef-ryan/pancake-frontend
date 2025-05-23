@@ -1,6 +1,6 @@
 import { Card } from '@pancakeswap/uikit'
 import { Box, HStack, Image, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import { colors } from '@/theme/cssVariables'
 import { appLayoutPaddingX } from '@/theme/detailConfig'
@@ -10,8 +10,8 @@ export default function TVLInfoPanel({ tvl, volume }: { tvl: string | number; vo
   const { t } = useTranslation()
   return (
     <HStack spacing={5}>
-      <TVLInfoItem name={t('common.tvl')} value={tvl} decoratorImageSrc="/images/tvl-lock.svg" />
-      <TVLInfoItem name={t('common.24h_volume')} value={volume} decoratorImageSrc="/images/volume-total.svg" />
+      <TVLInfoItem name={t('TVL')} value={tvl} decoratorImageSrc="/images/tvl-lock.svg" />
+      <TVLInfoItem name={t('24h Volume')} value={volume} decoratorImageSrc="/images/volume-total.svg" />
     </HStack>
   )
 }
@@ -45,7 +45,7 @@ export function TVLInfoPanelMobile({ tvl, volume }: { tvl: string | number; volu
     >
       <HStack>
         <Text color={colors.textSubtle} fontSize="xs">
-          {t('common.tvl')}
+          {t('TVL')}
         </Text>
         <Text fontSize="md" fontWeight={600}>
           {formatCurrency(tvl, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
@@ -54,7 +54,7 @@ export function TVLInfoPanelMobile({ tvl, volume }: { tvl: string | number; volu
 
       <HStack>
         <Text color={colors.textSubtle} fontSize="xs" fontWeight={400}>
-          {t('common.vol_24h')}
+          {t('Vol. 24h')}
         </Text>
         <Text fontSize="md" fontWeight={600}>
           {formatCurrency(volume, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}

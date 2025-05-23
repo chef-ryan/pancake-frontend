@@ -1,7 +1,7 @@
 import { Flex, HStack, Text } from '@chakra-ui/react'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Button from '@/components/Button'
 import PlusCircleIcon from '@/icons/misc/PlusCircleIcon'
 import { useAppStore } from '@/store'
@@ -47,16 +47,16 @@ export default function RewardAddItem(props: {
         <HStack align="center" onClick={props.onAddAnotherReward} cursor="pointer" pb={3}>
           <PlusCircleIcon width="14px" height="14px" />
           <Text color={colors.buttonPrimary} fontSize="sm" fontWeight="500">
-            {t('create_farm.add_another_button_text_2')}
+            {t('Add another reward token')}
           </Text>
         </HStack>
       )}
       <Flex justify="space-between" align="center" gap={3}>
         <Button variant="outline" flexBasis="120px" onClick={props.onClickBackButton}>
-          {t('button.back')}
+          {t('Back')}
         </Button>
         <Button isDisabled={hasError} flexBasis="300px" onClick={props.onClickNextStepButton}>
-          {t('button.next_step')}
+          {t('Next Step')}
         </Button>
       </Flex>
     </Flex>

@@ -4,7 +4,7 @@ import { VStack, useClipboard } from '@chakra-ui/react'
 import { RAYMint, SOLMint } from '@raydium-io/raydium-sdk-v2'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import { SlippageAdjuster } from '@/components/SlippageAdjuster'
 import { TimeType } from '@/hooks/pool/useFetchPoolKLine'
@@ -126,7 +126,7 @@ export default function Swap() {
           <FlexGap justifyContent="flex-end" width="100%" alignItems="center" gap="10px">
             <SlippageAdjuster />
             {/* <Tooltip
-              label={t('swap.blink_referral_desc', {
+              label={t('Copy your custom referral link and earn 1% rewards when it's used on Twitter with Blink!', {
                 symbol: outputMint === solMintAddress ? tokenMap.get(inputMint)?.symbol : tokenMap.get(outputMint)?.symbol
               })}
             >
@@ -138,7 +138,7 @@ export default function Swap() {
                     onCopy()
                     toastSubject.next({
                       status: 'success',
-                      title: t('common.copy_success')
+                      title: t('Copied successfully!')
                     })
                   }
                 }}

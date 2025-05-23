@@ -1,6 +1,6 @@
 import { Button, Box, VStack, Flex } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { ModalV2, MotionModal, useMatchBreakpoints, useModalV2, Text, Checkbox } from '@pancakeswap/uikit'
 import { colors } from '@/theme/cssVariables'
 import { setStorageItem, getStorageItem } from '@/utils/localStorage'
@@ -28,7 +28,7 @@ function DisclaimerModal() {
   return (
     <ModalV2 isOpen={isOpen} onDismiss={onDismiss} closeOnOverlayClick>
       <MotionModal
-        title={t('disclaimer.title')}
+        title={t('Disclaimer')}
         onDismiss={onDismiss}
         minWidth={[null, null, '370px']}
         maxWidth={['100%', '100%', '370px']}
@@ -49,14 +49,16 @@ function DisclaimerModal() {
               maxH={{ base: '20rem', md: '28rem' }}
             >
               <Text mb="3" fontSize="14px">
-                {t('disclaimer.text1')}
+                {t(
+                  'PancakeSwap, or related smart contract, you represent that you are noy located in, incorporated or established in, or a citizen or resident of the Prohibited Jurisdictions. You also represent that you are not subject to sanctions or otherwise designated on any list of prohibited or restricted parties or excluded or denied persons, including but not limited to the lists maintained by the United States’ Department of Tresury’s Office Security Council, the European Union or its Member States, or any other government authority.'
+                )}
               </Text>
             </Box>
           </Box>
           <label htmlFor="disclaimer-checkbox" style={{ display: 'block', cursor: 'pointer', width: '100%' }}>
             <Flex width="full" justifyContent="space-between" alignItems="center">
               <Text fontSize="sm" fontWeight="medium" color={colors.textPrimary}>
-                {t('disclaimer.agree_terms')}
+                {t('Agree to terms')}
               </Text>
               <Checkbox scale="sm" id="disclaimer-checkbox" checked={userHaveAgree} onChange={(e) => setUserHaveAgree(e.target.checked)} />
             </Flex>
@@ -64,7 +66,7 @@ function DisclaimerModal() {
 
           <Flex width="full" justifyContent="center">
             <Button width="full" onClick={confirmDisclaimer} isDisabled={!userHaveAgree}>
-              {t('disclaimer.enter')}
+              {t('Enter')}
             </Button>
           </Flex>
         </VStack>

@@ -1,58 +1,49 @@
-import { Trans } from 'react-i18next'
-import { Text } from '@chakra-ui/react'
-import i18n from '@/i18n'
-import { colors } from '@/theme/cssVariables/colors'
+import { Trans } from '@pancakeswap/localization'
 
-const FARM_TX_MSG = {
+const FARM_TX_MSG = (props?: Record<string, unknown>) => ({
   deposit: {
-    title: 'liquidity.tx_message.staked_successfully',
-    desc: 'liquidity.tx_message.staked_desc',
-    txHistoryTitle: 'transaction_history.liquidity_staked_title',
-    txHistoryDesc: 'transaction_history.liquidity_staked_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans {...props}>Staked %symbol%</Trans>,
+    desc: <Trans {...props}>You staked %amount% %symbol%</Trans>,
+    txHistoryTitle: <Trans {...props}>Liquidity Staked</Trans>,
+    txHistoryDesc: <Trans {...props}>Staked %amount% %symbol%</Trans>
   },
   withdraw: {
-    title: 'liquidity.tx_message.unStaked_successfully',
-    desc: 'liquidity.tx_message.unStaked_desc',
-    txHistoryTitle: 'liquidity.tx_message.unStaked_successfully',
-    txHistoryDesc: 'liquidity.tx_message.unStaked_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans {...props}>Unstaked %symbol%</Trans>,
+    desc: <Trans {...props}>You Unstaked %amount% %symbol%</Trans>,
+    txHistoryTitle: <Trans {...props}>Unstaked %symbol%</Trans>,
+    txHistoryDesc: <Trans {...props}>You Unstaked %amount% %symbol%</Trans>
   },
   claimIdo: {
-    title: 'portfolio.acceleraytor_tx_title',
-    desc: 'portfolio.acceleraytor_tx_desc',
-    txHistoryTitle: 'portfolio.acceleraytor_tx_title',
-    txHistoryDesc: 'portfolio.acceleraytor_tx_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans {...props}>AccelerRaytor Claim</Trans>,
+    desc: <Trans {...props}>Claim %amountA% %symbolA%</Trans>,
+    txHistoryTitle: <Trans {...props}>AccelerRaytor Claim</Trans>,
+    txHistoryDesc: <Trans {...props}>Claim %amountA% %symbolA%</Trans>
   },
   claimIdo1: {
-    title: 'portfolio.acceleraytor_tx_title',
-    desc: 'portfolio.acceleraytor_tx_1_desc',
-    txHistoryTitle: 'portfolio.acceleraytor_tx_title',
-    txHistoryDesc: 'portfolio.acceleraytor_tx_1_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans {...props}>AccelerRaytor Claim</Trans>,
+    desc: <Trans {...props}>Claim %amountA% %symbolA% and %amountB% %symbolB%</Trans>,
+    txHistoryTitle: <Trans {...props}>AccelerRaytor Claim</Trans>,
+    txHistoryDesc: <Trans {...props}>Claim %amountA% %symbolA% and %amountB% %symbolB%</Trans>
   },
   harvest: {
-    title: 'transaction_history.harvest_rewards',
-    desc: 'transaction_history.harvest_farm_reward_desc',
-    txHistoryTitle: 'transaction_history.harvest_reward_title',
-    txHistoryDesc: 'transaction_history.harvest_farm_reward_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans {...props}>Harvested Rewards</Trans>,
+    desc: <Trans {...props}>Harvest Farm Rewards</Trans>,
+    txHistoryTitle: <Trans {...props}>Harvest Rewards</Trans>,
+    txHistoryDesc: <Trans {...props}>Harvest Farm Rewards</Trans>
   },
   updateRewards: {
-    title: 'transaction_history.update_reward_title',
-    desc: 'transaction_history.update_reward_desc',
-    txHistoryTitle: 'transaction_history.update_reward_title',
-    txHistoryDesc: 'transaction_history.update_reward_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans {...props}>Update rewards</Trans>,
+    desc: <Trans {...props}>Update rewards in %pool%</Trans>,
+    txHistoryTitle: <Trans {...props}>Update rewards</Trans>,
+    txHistoryDesc: <Trans {...props}>Update rewards in %pool%</Trans>
   }
-}
+})
 
-export const getTxMeta = ({ action, values }: { action: keyof typeof FARM_TX_MSG; values: Record<string, unknown> }) => {
-  const meta = FARM_TX_MSG[action]
+export const getTxMeta = ({ action, values }: { action: keyof ReturnType<typeof FARM_TX_MSG>; values: Record<string, unknown> }) => {
+  const meta = FARM_TX_MSG(values)[action]
   return {
-    title: i18n.t(meta.title, values),
-    description: <Trans i18nKey={meta.desc} values={values} components={meta.components} />,
+    title: meta.title,
+    description: meta.desc,
     txHistoryTitle: meta.txHistoryTitle || meta.title,
     txHistoryDesc: meta.txHistoryDesc || meta.desc,
     txValues: values

@@ -2,7 +2,7 @@ import { Flex } from '@chakra-ui/react'
 import { Box, Button, Input, Message, Text } from '@pancakeswap/uikit'
 import Decimal from 'decimal.js'
 import { KeyboardEvent, useCallback, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import styled from 'styled-components'
 import { SWAP_SLIPPAGE_KEY, useSwapStore } from '@/features/Swap/useSwapStore'
 import { useEvent } from '@/hooks/useEvent'
@@ -73,9 +73,13 @@ export function SlippageToleranceSettingField({ variant = 'swap' }: { variant?: 
 
   return (
     <SettingField
-      fieldName={isSwap ? t('setting_board.slippage_tolerance_swap') : t('setting_board.slippage_tolerance_liquidity')}
+      fieldName={isSwap ? t('Swap slippage tolerance') : t('Liquidity slippage tolerance')}
       isCollapseDefaultOpen
-      tooltip={isSwap ? t('setting_board.slippage_tolerance_tooltip_swap') : t('setting_board.slippage_tolerance_tooltip_liquidity')}
+      tooltip={
+        isSwap
+          ? t('Set your slippage tolerance for swap transactions.')
+          : t('Set tolerance for changes in the quote/base token deposit ratio.')
+      }
       renderToggleButton={
         isMobile
           ? (isOpen) => <SettingFieldToggleButton isOpen={isOpen} renderContent={`${new Decimal(slippage).mul(100).toFixed()}%`} />
@@ -101,7 +105,7 @@ export function SlippageToleranceSettingField({ variant = 'swap' }: { variant?: 
             </Flex>
             <Flex alignItems="center" rounded="full">
               <Text fontSize={14} mr="10px">
-                {t('setting_board.custom')}
+                {t('Custom')}
               </Text>
               <Flex alignItems="center">
                 <Box position="relative" width="82px">
@@ -130,7 +134,7 @@ export function SlippageToleranceSettingField({ variant = 'swap' }: { variant?: 
           {isSwap && new Decimal(currentSlippage || 0).gt('0.5') ? (
             <Box maxWidth="500px">
               <Message mt="2" variant="warning">
-                <Text>{t('setting_board.slippage_tolerance_forerun')}</Text>
+                <Text>{t('Your transaction may be frontrun and result in an unfavorable trade')}</Text>
               </Message>
             </Box>
           ) : null}

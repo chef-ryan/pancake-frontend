@@ -1,5 +1,5 @@
 import { Grid, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import ExclaimationOctagon from '@/icons/misc/ExclaimationOctagon'
 import { colors } from '@/theme/cssVariables'
@@ -19,7 +19,7 @@ export default function StakeableHint() {
     >
       <ExclaimationOctagon style={{ marginTop: '4px' }} />
       <Text fontSize="sm" fontWeight="medium">
-        {t('liquidity.stakeable_hint')}
+        {t('You have unstaked LP tokens for this pool. You can stake them directly on the Stake Liquidity tab.')}
       </Text>
     </Grid>
   )

@@ -2,7 +2,7 @@ import { Box, Flex, Text, VStack } from '@chakra-ui/react'
 import { ApiV3PoolInfoConcentratedItem, WSOLMint } from '@raydium-io/raydium-sdk-v2'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import TokenInput from '@/components/TokenInput'
 import { useEvent } from '@/hooks/useEvent'
 import AddLiquidityPlus from '@/icons/misc/AddLiquidityPlus'
@@ -94,7 +94,7 @@ export default function CLMMTokenInputGroup(props: Props) {
           renderMaskContent={
             <VStack px={16} fontSize="xs" color={colors.textPrimary}>
               <InputLockIcon />
-              <Text align="center">{t('clmm.input_lock_desc')}</Text>
+              <Text align="center">{t('The market price is outside your specified price range. Single asset deposit only.')}</Text>
             </VStack>
           }
           disableSelectToken={disableSelectToken}
@@ -119,7 +119,7 @@ export default function CLMMTokenInputGroup(props: Props) {
           renderMaskContent={
             <VStack px={16} fontSize="xs" color={colors.textPrimary}>
               <InputLockIcon />
-              <Text align="center">{t('clmm.input_lock_desc')}</Text>
+              <Text align="center">{t('The market price is outside your specified price range. Single asset deposit only.')}</Text>
             </VStack>
           }
           disableSelectToken={disableSelectToken}

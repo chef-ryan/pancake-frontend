@@ -1,5 +1,5 @@
 import { Button, HStack, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, VStack } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import AddressChip from '@/components/AddressChip'
 import CircleCheck from '@/icons/misc/CircleCheck'
 import { colors } from '@/theme/cssVariables'
@@ -11,16 +11,16 @@ export function TxSuccessModal(props: { farmId: string; isOpen: boolean; onClose
     <Modal isOpen={props.isOpen} onClose={props.onClose} size="sm">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader display="none">{t('farm.title_farm_created_success')}</ModalHeader>
+        <ModalHeader display="none">{t('Create Farm TX success!!')}</ModalHeader>
         <ModalBody>
           <VStack pt={3} spacing={3}>
             <CircleCheck width={32} height={32} color={colors.semanticSuccess} />
-            <Text variant="dialogTitle">{t('farm.info_farm_created_success')}</Text>
+            <Text variant="dialogTitle">{t('Farm created successfully!')}</Text>
             <HStack bg={colors.backgroundDark} rounded="md" p={4} w="full" justify="center">
               <AddressChip
                 renderLabel={
                   <Text fontSize="sm" color={colors.textSecondary}>
-                    {t('farm.farm_id')}:
+                    {t('Farm ID')}:
                   </Text>
                 }
                 color={colors.buttonSecondary}
@@ -36,7 +36,7 @@ export function TxSuccessModal(props: { farmId: string; isOpen: boolean; onClose
               routeToPage('portfolio')
             }}
           >
-            {t('farm.to_my_created_farms')}
+            {t('Go to My Created Farms')}
           </Button>
         </ModalFooter>
       </ModalContent>

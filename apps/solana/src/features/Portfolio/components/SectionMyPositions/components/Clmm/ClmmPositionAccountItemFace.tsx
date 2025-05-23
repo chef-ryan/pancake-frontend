@@ -1,6 +1,6 @@
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Badge, Button, Divider, Flex, HStack, Text, Tooltip, useDisclosure } from '@chakra-ui/react'
 import AprMDSwitchWidget from '@/components/AprMDSwitchWidget'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
@@ -77,7 +77,7 @@ export default function ClmmPositionAccountItemFace({
     position.tickUpper === parseInt((443636 / poolInfo.config.tickSpacing).toString()) * poolInfo.config.tickSpacing
 
   const rangeValue = isFullRange
-    ? t('clmm.full_range')
+    ? t('Full Range')
     : baseIn
     ? `${formatCurrency(priceLower.price, {
         decimalPlaces: 6
@@ -90,7 +90,7 @@ export default function ClmmPositionAccountItemFace({
         decimalPlaces: 6
       })}`
 
-  const rangeValueUnit = t(isMobile ? 'common.per_unit_2' : 'common.per_unit', {
+  const rangeValueUnit = t(isMobile ? '%subA%/%subB%' : '%subA% per %subB%', {
     subA: poolInfo[baseIn ? 'mintB' : 'mintA'].symbol,
     subB: poolInfo[baseIn ? 'mintA' : 'mintB'].symbol
   })
@@ -136,13 +136,13 @@ export default function ClmmPositionAccountItemFace({
               </Text>
             )}
             <Badge mr={['auto', 'unset']} variant={inRange ? 'ok' : 'error'}>
-              {inRange ? t('clmm.in_range') : t('clmm.out_of_range')}
+              {inRange ? t('In Range') : t('Out of Range')}
             </Badge>
           </Flex>
           <Flex flex="1" align="center" justify="space-between">
             <HStack>
               <Text whiteSpace="nowrap" color={colors.textSubtle}>
-                {t('clmm.position')}
+                {t('Position')}
               </Text>
               <Text whiteSpace="nowrap" display="flex" gap="1" alignItems="center" color={colors.textPrimary}>
                 {formatCurrency(totalVolume.toString(), { symbol: '$', decimalPlaces: 2 })}
@@ -153,7 +153,7 @@ export default function ClmmPositionAccountItemFace({
           <Flex flex="1" align="center" justify="space-between">
             <HStack gap={2}>
               <Text whiteSpace="nowrap" color={colors.textSubtle}>
-                {t('field.apr')}
+                {t('APR')}
               </Text>
               <Text whiteSpace="nowrap" color={colors.textPrimary}>
                 {formatToRawLocaleStr(toAPRPercent(apr.apr))}
@@ -173,7 +173,7 @@ export default function ClmmPositionAccountItemFace({
                   fontSize="md"
                   variant="outline"
                 >
-                  {t('portfolio.section_positions_clmm_account_pending_yield_button')}
+                  {t('Harvest')}
                 </Button>
               ) : (
                 <>
@@ -207,7 +207,7 @@ export default function ClmmPositionAccountItemFace({
           onClick={onClickViewTrigger}
         >
           <HStack justifyContent="space-between">
-            <Badge variant={inRange ? 'ok' : 'error'}>{inRange ? t('clmm.in_range') : t('clmm.out_of_range')}</Badge>
+            <Badge variant={inRange ? 'ok' : 'error'}>{inRange ? t('In Range') : t('Out of Range')}</Badge>
             <ChevronRightIcon color={colors.textSubtle} />
           </HStack>
           <HStack justifyContent="space-between">
@@ -217,14 +217,14 @@ export default function ClmmPositionAccountItemFace({
             {isFullRange ? null : <Text whiteSpace="nowrap">{rangeValueUnit}</Text>}
           </HStack>
           <HStack justifyContent="space-between">
-            <Text>{t('clmm.position')}</Text>
+            <Text>{t('Position')}</Text>
             <Text whiteSpace="nowrap" display="flex" gap="1" alignItems="center" color={colors.textPrimary} fontWeight={600}>
               {formatCurrency(totalVolume.toString(), { symbol: '$', decimalPlaces: 2 })}
               {isLock ? <LockIcon /> : null}
             </Text>
           </HStack>
           <HStack justifyContent="space-between">
-            <Text whiteSpace="nowrap">{t('field.apr')}</Text>
+            <Text whiteSpace="nowrap">{t('APR')}</Text>
             <Text whiteSpace="nowrap" color={colors.textPrimary}>
               {formatToRawLocaleStr(toAPRPercent(apr.apr))}
             </Text>
@@ -277,7 +277,7 @@ function PlusButton(props: { onClick: () => void; isLoading: boolean }) {
 function CloseButton(props: { onClick: () => void; isLoading: boolean }) {
   const { t } = useTranslation()
   return (
-    <Tooltip label={t('clmm.close_position')}>
+    <Tooltip label={t('Close Position')}>
       <Button
         onClick={(e) => {
           e.stopPropagation()

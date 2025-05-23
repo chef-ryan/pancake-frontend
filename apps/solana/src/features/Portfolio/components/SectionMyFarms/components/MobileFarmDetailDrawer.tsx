@@ -1,5 +1,5 @@
 import { Badge, Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerOverlay, Flex, HStack, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import { colors } from '@/theme/cssVariables'
 import { FarmCategory } from '@/hooks/portfolio/farm/useCreatedFarmInfo'
@@ -62,11 +62,11 @@ export default function MobileFarmDetailDrawer({
           </Flex>
           <Flex justify="space-between" bg={colors.backgroundDark} rounded="xl" py={4} px={6} pr={16} mb={3} fontSize="sm">
             <Flex direction="column" justify="flex-start" align="flex-start" gap={1}>
-              <Text color={colors.textTertiary}>{t('common.tvl')}</Text>
+              <Text color={colors.textTertiary}>{t('TVL')}</Text>
               <Text color={colors.textPrimary}>~{formatCurrency(tvl, { symbol: '$', decimalPlaces: decimals })}</Text>
             </Flex>
             <Flex direction="column" justify="flex-start" align="flex-start" gap={1}>
-              <Text color={colors.textTertiary}>{t('field.apr')}</Text>
+              <Text color={colors.textTertiary}>{t('APR')}</Text>
               <Text color={colors.textPrimary}>{formatToRawLocaleStr(toApr({ val: apr }))}</Text>
             </Flex>
           </Flex>
@@ -83,7 +83,7 @@ export default function MobileFarmDetailDrawer({
             gap={1}
           >
             <Text fontSize="sm" color={colors.textTertiary}>
-              {t('create_farm.weekly_rewards')}
+              {t('Weekly Rewards')}
             </Text>
             <Flex direction="column" fontSize="sm" color={colors.textPrimary} gap={2} width="100%">
               {rewardsInfo.length
@@ -119,7 +119,7 @@ export default function MobileFarmDetailDrawer({
             gap={1}
           >
             <Text fontSize="sm" color={colors.textTertiary}>
-              {t('create_farm.unemmitted_rewards')}
+              {t('Unemmitted Rewards')}
             </Text>
             <Flex direction="column" fontSize="sm" color={colors.textPrimary} gap={2}>
               {rewardsInfo.length
@@ -146,10 +146,10 @@ export default function MobileFarmDetailDrawer({
               routeToPage('edit-farm', { queryProps: isStandard ? { farmId: id } : { clmmId: id } })
             }}
           >
-            {t('portfolio.section_my_created_farms_item_edit_farm_button')}
+            {t('Edit Farm')}
           </Button>
           <Button variant="ghost" width="100%" size="sm" onClick={onClose}>
-            {t('button.close')}
+            {t('Close')}
           </Button>
         </DrawerFooter>
       </DrawerContent>

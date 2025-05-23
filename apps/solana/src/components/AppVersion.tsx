@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import { Modal, ModalBody, ModalOverlay, ModalHeader, ModalContent, ModalFooter, Button } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { useAppStore, PRIORITY_LEVEL_KEY, PRIORITY_MODE_KEY, PriorityLevel, PriorityMode } from '@/store/useAppStore'
 import { getStorageItem } from '@/utils/localStorage'
 
@@ -30,14 +30,14 @@ export default function AppVersion() {
     <Modal isOpen={needRefresh} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('common.app_version_available')}</ModalHeader>
-        <ModalBody>{t('common.refresh_update')}</ModalBody>
+        <ModalHeader>{t('New version available')}</ModalHeader>
+        <ModalBody>{t('Refresh the page to update and use the app.')}</ModalBody>
         <ModalFooter mt="4" justifyContent="space-between" gap="2">
           <Button flex="1" onClick={() => window.location.reload()}>
-            {t('common.refresh')}
+            {t('Refresh')}
           </Button>
           <Button flex="1" variant="outline" onClick={onClose}>
-            {t('common.update_later')}
+            {t('Update later')}
           </Button>
         </ModalFooter>
       </ModalContent>

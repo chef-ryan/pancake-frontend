@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Heading, SimpleGrid } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { RAYMint } from '@raydium-io/raydium-sdk-v2'
 import { PublicKey } from '@solana/web3.js'
 import { colors } from '@/theme/cssVariables'
@@ -79,7 +79,7 @@ export default function SectionOverview() {
   return (
     <>
       <Heading id="overview" fontSize={['lg', 'xl']} fontWeight="500" mb={[2, 4]} mt={[3, 6]} color={colors.textPrimary}>
-        {t('portfolio.section_overview')}
+        {t('Overview')}
       </Heading>
       <SimpleGrid templateColumns={['', '1fr 1fr']} gap={[3, 8]} overflow={['scroll']} mx={[-5, 0]} px={[5, 0]} scrollSnapType="x">
         <PortfolioInfo

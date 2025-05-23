@@ -1,6 +1,6 @@
 import { Badge, Box, HStack, Tag, Text, VStack } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
 import { FormattedPoolInfoConcentratedItem } from '@/hooks/pool/type'
 import useClmmBalance, { ClmmPosition } from '@/hooks/portfolio/clmm/useClmmBalance'
@@ -33,7 +33,7 @@ export default function PoolInfoDrawerFace({
       })} - ${formatCurrency(new Decimal(1).div(priceLower.price), {
         decimalPlaces: decimals
       })}`
-  const rangeValueUnit = t('common.per_unit_2', {
+  const rangeValueUnit = t('%subA%/%subB%', {
     subA: poolInfo[baseIn ? 'mintB' : 'mintA'].symbol,
     subB: poolInfo[baseIn ? 'mintA' : 'mintB'].symbol
   })
@@ -56,7 +56,7 @@ export default function PoolInfoDrawerFace({
         <Text color={colors.textSubtle} whiteSpace="nowrap">
           {rangeValueUnit}
         </Text>
-        <Badge variant={inRange ? 'ok' : 'error'}>{inRange ? t('clmm.in_range') : t('clmm.out_of_range')}</Badge>
+        <Badge variant={inRange ? 'ok' : 'error'}>{inRange ? t('In Range') : t('Out of Range')}</Badge>
       </HStack>
     </VStack>
   )

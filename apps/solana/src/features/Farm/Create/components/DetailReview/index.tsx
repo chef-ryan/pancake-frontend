@@ -2,7 +2,7 @@ import { Box, Flex, HStack, Spacer, Text, VStack } from '@chakra-ui/react'
 import { ApiV3PoolInfoItem, solToWSol } from '@raydium-io/raydium-sdk-v2'
 
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Button from '@/components/Button'
 import EditIcon from '@/icons/misc/EditIcon'
 import { colors } from '@/theme/cssVariables'
@@ -38,7 +38,7 @@ export default function DetailReview(props: {
       <Flex direction="column" w="full" gap={6}>
         <Box>
           <HStack mb={2}>
-            <Text>{t('create_farm.pool')}</Text>
+            <Text>{t('Pool')}</Text>
             <Spacer />
             <Box cursor="pointer" onClick={props.onJumpToStepSelect}>
               <EditIcon />
@@ -49,7 +49,7 @@ export default function DetailReview(props: {
 
         <Box>
           <HStack mb={2}>
-            <Text>{t('create_farm.farming_rewards')}</Text>
+            <Text>{t('Farming rewards')}</Text>
             <Spacer />
             <Box cursor="pointer" onClick={props.onJumpToStepReward}>
               <EditIcon />
@@ -66,19 +66,21 @@ export default function DetailReview(props: {
         {/* alert text */}
         <Box fontSize="sm" fontWeight={500}>
           <Text color={colors.semanticError} display="inline">
-            {t('create_farm.please_note')}:{' '}
+            {t('Please Note')}:{' '}
           </Text>
           <Text color={colors.textTertiary} display="inline">
-            {t('create_farm.please_note_des')}
+            {t(
+              'Rewards allocated to farms cannot be withdrawn after farming starts. Newly created farms generally appear on Raydium 10-30 minutes after creation, depending on Solana network status.'
+            )}
           </Text>
         </Box>
 
         <Flex justify="space-between" align="center" mt={7} gap={3}>
           <Button size={['lg', 'md']} variant="outline" flexBasis="120px" onClick={props.onClickBackButton}>
-            {t('button.back')}
+            {t('Back')}
           </Button>
           <Button size={['lg', 'md']} flexBasis="300px" isLoading={props.isSending} onClick={props.onClickCreateFarmButton}>
-            {t('create_farm.button_create_farm')}
+            {t('Create Farm')}
           </Button>
         </Flex>
       </Flex>

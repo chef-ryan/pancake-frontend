@@ -1,6 +1,6 @@
 import { Flex, FlexProps, Text } from '@chakra-ui/react'
 
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import TokenAvatar from '@/components/TokenAvatar'
 import { colors } from '@/theme/cssVariables'
 import { formatCurrency } from '@/utils/numberish/formatter'
@@ -16,7 +16,7 @@ export default function WeeklyRewards({ rewardsInfo, ...rest }: WeeklyRewardsPro
   return (
     <Flex color={colors.textPrimary} direction="column" justify="flex-start" align="flex-start" gap={1} {...rest}>
       <Text fontSize="sm" color={colors.textTertiary}>
-        {t('create_farm.weekly_rewards')}
+        {t('Weekly Rewards')}
       </Text>
       <Flex direction="column" fontSize="sm" color={colors.textPrimary} gap="6px">
         {rewardsInfo.length

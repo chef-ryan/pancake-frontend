@@ -1,7 +1,7 @@
 import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import Decimal from 'decimal.js'
 import Button from '@/components/Button'
@@ -111,7 +111,7 @@ export default function Stake({ poolInfo, disabled, onRefresh }: Props) {
     <Flex direction="column" w="full" px="24px" pt={4} pb="40px" bg={colors.backgroundLight}>
       <Flex mb={3} justifyContent="space-between" alignItems="center">
         <Text fontSize="xl" fontWeight="medium" color={colors.textPrimary}>
-          {t('liquidity.select_farm')}
+          {t('Select Farm')}
         </Text>
         <Flex align="center" gap={3}>
           <SlippageAdjuster variant="liquidity" />
@@ -140,7 +140,7 @@ export default function Stake({ poolInfo, disabled, onRefresh }: Props) {
         hasBorder
       />
       <Text fontSize="xl" fontWeight="medium" color={colors.textPrimary} mt={5} mb={3}>
-        {t('liquidity.stake_liquidity')}
+        {t('Stake Liquidity')}
       </Text>
       <Flex
         justifyContent="space-between"
@@ -174,7 +174,7 @@ export default function Stake({ poolInfo, disabled, onRefresh }: Props) {
         mt={10}
       />
       <Button mt={10} isLoading={isSending} isDisabled={featureDisabled || readyStakeAmount.isZero()} onClick={handleDeposit}>
-        {featureDisabled ? t('common.disabled') : t('liquidity.stake_liquidity')}
+        {featureDisabled ? t('Disabled') : t('Stake Liquidity')}
       </Button>
     </Flex>
   )

@@ -3,7 +3,7 @@ import { Box, Flex, Grid, GridItem, HStack, Tag, Text, useDisclosure } from '@ch
 import { ApiV3PoolInfoConcentratedItem, ApiV3Token, PoolFetchType, solToWSol } from '@raydium-io/raydium-sdk-v2'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
 
@@ -393,6 +393,7 @@ export default function CreatePosition() {
       new Decimal(tokenAmountRef.current[baseIn ? 1 : 0]).mul(10 ** (currentPool?.mintB.decimals ?? 0)).toFixed(0)
     ]
     openPositionAct({
+      t,
       poolInfo: currentPool!,
       base: focusPoolARef.current ? 'MintA' : 'MintB',
       baseAmount: focusPoolARef.current ? mintAAmount : mintBAmount,
@@ -438,7 +439,7 @@ export default function CreatePosition() {
         <Flex>
           <HStack cursor="pointer" onClick={routeBack} color={colors.primary60} fontWeight="400" fontSize="md">
             <ChevronLeftIcon color={colors.textTertiary} />
-            <Text>{t('common.back')}</Text>
+            <Text>{t('Back')}</Text>
           </HStack>
         </Flex>
       </GridItem>
@@ -471,7 +472,7 @@ export default function CreatePosition() {
                 <Flex alignItems="center" gap={1}>
                   <LockIcon />
                   <Text opacity={0.6} fontSize="xs" color={colors.textSubtle}>
-                    {t('liquidity.locked_percent', {
+                    {t('%percent% permanently locked', {
                       percent: formatToRawLocaleStr(toPercentString(currentPool.burnPercent || 0, { alreadyPercented: true }))
                     })}
                   </Text>
@@ -482,9 +483,9 @@ export default function CreatePosition() {
             <Desktop>
               <Flex gap="24px" justifyContent="space-between" whiteSpace="nowrap">
                 {[
-                  { label: t('liquidity.title'), value: currentPool?.tvl },
-                  { label: t('field.24h_volume'), value: currentPool?.day.volume },
-                  { label: t('field.24h_fees'), value: currentPool?.day.volumeFee }
+                  { label: t('Liquidity'), value: currentPool?.tvl },
+                  { label: t('Volume 24H'), value: currentPool?.day.volume },
+                  { label: t('Fees 24H'), value: currentPool?.day.volumeFee }
                 ].map(({ label, value }) => (
                   <Flex gap="2" alignItems="center">
                     <Text color={colors.textSubtle}>{label}</Text>
@@ -522,7 +523,7 @@ export default function CreatePosition() {
           {...panelCard}
         >
           <GridItem gridArea="section-title">
-            <Text variant="title">{t('clmm.set_price_range')}</Text>
+            <Text variant="title">{t('Set Price Range')}</Text>
           </GridItem>
           <GridItem gridArea="chart-window">
             <Grid
@@ -567,7 +568,7 @@ export default function CreatePosition() {
               <GridItem gridArea="info" placeSelf="center">
                 <ChartPriceLabel
                   currentPrice={formatCurrency(currentPriceStr, { decimalPlaces: currentPool?.poolDecimals }) || ''}
-                  currentPriceLabel={t('common.per_unit', {
+                  currentPriceLabel={t('%subA% per %subB%', {
                     subA: currentPool?.[baseIn ? 'mintB' : 'mintA'].symbol,
                     subB: currentPool?.[baseIn ? 'mintA' : 'mintB'].symbol
                   })}
@@ -611,7 +612,7 @@ export default function CreatePosition() {
       <GridItem area="inputs">
         <Flex rounded="xl" p={[3, '20px']} gap={[2, 4]} {...panelCard} w="full" flexDirection="column" justifyContent="space-between">
           <Flex alignItems="center" justifyContent="space-between" mb="3">
-            <Text variant="title">{t('clmm.add_deposit_amount')}</Text>
+            <Text variant="title">{t('Add Deposit Amount')}</Text>
             <Flex align="center" gap={3}>
               <SlippageAdjuster variant="liquidity" />
               <IntervalCircle
@@ -642,7 +643,7 @@ export default function CreatePosition() {
           <Box>
             <HStack justifyContent="space-between">
               <Text fontSize="sm" color={colors.textSubtle}>
-                {t('clmm.total_deposit')}
+                {t('Total Deposit')}
               </Text>
               <Text fontSize="sm">
                 {tokenAmount[0] && tokenAmount[1] ? formatCurrency(totalPrice.toString(), { symbol: '$', decimalPlaces: 2 }) : '--'}
@@ -650,7 +651,7 @@ export default function CreatePosition() {
             </HStack>
             <HStack justifyContent="space-between" mt={1.5}>
               <Text fontSize="sm" color={colors.textSubtle}>
-                {t('clmm.deposit_ratio')}
+                {t('Deposit Ratio')}
               </Text>
               <Flex alignItems="center" gap="2" fontSize="sm" color={colors.positive60}>
                 <Text>
@@ -675,12 +676,18 @@ export default function CreatePosition() {
                   <WarningIcon stroke={poolPriceDiff > 5 ? colors.textPink : colors.text01} />
                 </Text>
                 <Text>
-                  {t('clmm.price_away_from_market', {
+                  {t('Pool price is %percent% away from market', {
                     percent: `${poolPriceDiff}%`
                   })}
                 </Text>
                 <QuestionToolTip
-                  label={<Text>{t('clmm.price_away_from_market_tooltip')}</Text>}
+                  label={
+                    <Text>
+                      {t(
+                        'The pool price is imbalanced for this pair. Adding a small amount of liquidity in a wide range can bring the price closer to the current market price.'
+                      )}
+                    </Text>
+                  }
                   iconProps={{ color: poolPriceDiff > 5 ? colors.textPink : colors.text01 }}
                 />
               </HStack>
@@ -698,9 +705,11 @@ export default function CreatePosition() {
                   whiteSpace="pre-wrap"
                   overflow="hidden"
                 >
-                  {t('clmm.low_liquidity')}
+                  {t('Low Liquidity: ')}
                   <Text fontWeight="normal" as="span">
-                    {t('clmm.low_liquidity_desc')}
+                    {t(
+                      'Your deposit is large relative to current liquidity in the pool, which may lead to arbitrage on your position. If the quoted price is far from market price, this risk may be magnified.'
+                    )}
                   </Text>
                 </Text>
               </MessageText>
@@ -715,7 +724,7 @@ export default function CreatePosition() {
               onOpen()
             }}
           >
-            {featureDisabled ? t('common.disabled') : isIdPoolLoading ? t('liquidity.loading_pool') : error || t('liquidity.create_lp')}
+            {featureDisabled ? t('Disabled') : isIdPoolLoading ? t('Loading pool') : error || t('Create Position')}
           </ConnectedButton>
         </Flex>
       </GridItem>

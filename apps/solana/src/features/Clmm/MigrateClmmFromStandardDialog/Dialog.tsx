@@ -32,7 +32,7 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { PublicKey } from '@solana/web3.js'
 import { AprKey } from '@/hooks/pool/type'
 
@@ -288,6 +288,7 @@ export default function MigrateFromStandardDialog({
       .eq(new Decimal(clmmAmount.amountB).mul(10 ** mintBDecimal).toDecimalPlaces(0))
 
     migrateToClmmAct({
+      t,
       poolInfo,
       clmmPoolInfo: {
         ...clmmPoolInfo,
@@ -321,30 +322,30 @@ export default function MigrateFromStandardDialog({
     <Modal isOpen={isOpen} onClose={onClose} size="2xl">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader fontSize={['sm', 'md']}>{t('migrate_clmm.title')}</ModalHeader>
+        <ModalHeader fontSize={['sm', 'md']}>{t('Migrate to Concentrated Liquidity pool')}</ModalHeader>
         <ModalCloseButton />
 
         <ModalBody mb={5}>
           <VStack gap={[3, 4]} align="stretch">
             <Text fontSize="sm" color={colors.textSecondary}>
               {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-              {t('migrate_clmm.desc')} <Link isExternal>{t('migrate_clmm.desc_link')}</Link>.
+              {t('Migrate below or learn more about CLMM pools and risks')} <Link isExternal>{t('here')}</Link>.
             </Text>
 
             {/* mode switcher */}
             <HStack flexDirection={['column', 'row']} spacing={3} alignItems="stretch">
               <ModeItem
                 selected={mode === 'quick'}
-                title={t('migrate_clmm.quick_migration')}
-                description={t('migrate_clmm.quick_migration_desc')}
+                title={t('Quick migration')}
+                description={t('Very wide price range for a more passive strategy.')}
                 onClick={() => {
                   setMode('quick')
                 }}
               />
               <ModeItem
                 selected={mode === 'custom'}
-                title={t('migrate_clmm.custom_migration')}
-                description={t('migrate_clmm.custom_migration_desc')}
+                title={t('Custom migration')}
+                description={t('Set a custom price range for higher capital efficiency.')}
                 onClick={() => {
                   setMode('custom')
                 }}
@@ -354,7 +355,7 @@ export default function MigrateFromStandardDialog({
             {/* CLMM Pool */}
             <Box>
               <Heading mb={3} fontSize="md" fontWeight={500} color={colors.textPrimary}>
-                {t('migrate_clmm.heading_clmm_pool')}
+                {t('CLMM Pool')}
               </Heading>
               <Flex
                 rounded="xl"
@@ -368,7 +369,7 @@ export default function MigrateFromStandardDialog({
               >
                 <HStack gap={2}>
                   <Text color={colors.textSecondary} fontWeight={500} fontSize="md">
-                    {t('common.per_unit_2', { subA: baseToken?.symbol ?? '--', subB: quoteToken?.symbol ?? '--' })}
+                    {t('%subA%/%subB%', { subA: baseToken?.symbol ?? '--', subB: quoteToken?.symbol ?? '--' })}
                   </Text>
                   <Box
                     bg={colors.backgroundTransparent12}
@@ -379,21 +380,21 @@ export default function MigrateFromStandardDialog({
                     px={2}
                     fontWeight={500}
                   >
-                    {t('field.fee')}{' '}
+                    {t('Fee')}{' '}
                     {formatToRawLocaleStr(toPercentString((clmmPoolInfo?.config.tradeFeeRate ?? 0) / 10000, { alreadyPercented: true }))}
                   </Box>
                 </HStack>
                 <HStack gap={2}>
                   <Text color={colors.textTertiary} fontWeight={500} fontSize="sm">
-                    {t('migrate_clmm.current_price')}:
+                    {t('Current price')}:
                   </Text>
                   <Text color={colors.textSecondary} fontSize="md" fontWeight={500}>
                     {formatCurrency(baseIn ? clmmPoolInfo?.price ?? 0 : new Decimal(1).div(clmmPoolInfo?.price ?? 1), { decimalPlaces: 2 })}
                   </Text>
                   <Text color={colors.textTertiary} fontWeight={500} fontSize="sm">
                     {baseIn
-                      ? t('common.per_unit', { subA: quoteToken?.symbol ?? '--', subB: baseToken?.symbol ?? '--' })
-                      : t('common.per_unit', { subA: baseToken?.symbol ?? '--', subB: quoteToken?.symbol ?? '--' })}
+                      ? t('%subA% per %subB%', { subA: quoteToken?.symbol ?? '--', subB: baseToken?.symbol ?? '--' })
+                      : t('%subA% per %subB%', { subA: baseToken?.symbol ?? '--', subB: quoteToken?.symbol ?? '--' })}
                   </Text>
                 </HStack>
               </Flex>
@@ -403,7 +404,7 @@ export default function MigrateFromStandardDialog({
             <Box>
               <HStack mb={1} justify="space-between">
                 <Heading display="flex" gap="2" alignItems="center" fontSize="md" fontWeight={500} color={colors.textPrimary}>
-                  {t('migrate_clmm.heading_price_range')}
+                  {t('Price Range')}
                   <IntervalCircle
                     componentRef={refreshCircleRef}
                     duration={60 * 1000}
@@ -419,10 +420,10 @@ export default function MigrateFromStandardDialog({
                 <Tabs variant="roundedLight" bg={colors.backgroundDark} onChange={(index) => setBaseIn(index === 0)}>
                   <TabList>
                     <Tab sx={{ _selected: { bg: colors.dividerBg, rounded: 'lg' } }}>
-                      {t('common.token_price', { token: wSolToSolString(baseToken?.symbol) })}
+                      {t('%token% price', { token: wSolToSolString(baseToken?.symbol) })}
                     </Tab>
                     <Tab sx={{ _selected: { bg: colors.dividerBg, rounded: 'lg' } }}>
-                      {t('common.token_price', { token: wSolToSolString(quoteToken?.symbol) })}
+                      {t('%token% price', { token: wSolToSolString(quoteToken?.symbol) })}
                     </Tab>
                   </TabList>
                 </Tabs>
@@ -478,7 +479,7 @@ export default function MigrateFromStandardDialog({
                   <ResultPanel
                     borderStyle="solid"
                     hasTokenSymbol
-                    title={t('migrate_clmm.current_position')}
+                    title={t('Current position')}
                     tokenInfo={[
                       { token: baseToken, amount: pooledAmountA },
                       { token: quoteToken, amount: pooledAmountB }
@@ -492,7 +493,7 @@ export default function MigrateFromStandardDialog({
                   <HStack spacing={[2, 4]} pt={[6, 'revert']}>
                     <ResultPanel
                       borderStyle="dashed"
-                      title={t('migrate_clmm.clmm_pool')}
+                      title={t('CLMM Pool')}
                       tokenInfo={[
                         { token: baseToken, amount: clmmAmount.amountA },
                         { token: quoteToken, amount: clmmAmount.amountB }
@@ -503,7 +504,7 @@ export default function MigrateFromStandardDialog({
                     </Box>
                     <ResultPanel
                       borderStyle="dashed"
-                      title={t('migrate_clmm.wallet')}
+                      title={t('Wallet')}
                       tokenInfo={[
                         {
                           token: baseToken,
@@ -526,13 +527,13 @@ export default function MigrateFromStandardDialog({
               </Grid>
               {currentRewardInfo.length > 0 ? (
                 <Flex gap={1} mt={[4, 2]} color={colors.textSecondary} flexWrap="wrap" fontSize="sm">
-                  {t('migrate_clmm.footer_note')}
+                  {t('* Migrate will also harvest')}
                   {currentRewardInfo.map((data) => (
                     <Text as="span" key={data.mint.address} fontWeight="600">
                       {formatCurrency(data.amount, { decimalPlaces: isMobile ? undefined : data.mint.decimals })} {data.mint.symbol}
                     </Text>
                   ))}
-                  {t('migrate_clmm.footer_note_2')}
+                  {t('in pending rewards.')}
                 </Flex>
               ) : null}
             </Box>
@@ -552,7 +553,7 @@ export default function MigrateFromStandardDialog({
               isLoading={loading}
               onClick={handleConfirm}
             >
-              {lpNotEnough ? t('error.liquidity_not_enough') : t('button.migrate')}
+              {lpNotEnough ? t('Liquidity not enough') : t('Migrate')}
             </Button>
           </VStack>
         </ModalFooter>

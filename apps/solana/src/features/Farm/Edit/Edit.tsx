@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Box, Flex, Grid, GridItem, HStack, Heading, Link, Skeleton, Text, VStack, useDisclosure } from '@chakra-ui/react'
 import {
   ApiV3PoolInfoConcentratedItem,
@@ -257,8 +257,8 @@ export default function FarmEdit() {
   })
 
   if (!isLoading) {
-    if (!hasData) return <div>{t('edit_farm.loading_text_no_farm')}</div>
-    if (!isValidData) return <div>{t('edit_farm.loading_text_farm_not_editable')}</div>
+    if (!hasData) return <div>{t('Farm not found')}</div>
+    if (!isValidData) return <div>{t('Farm is not editable')}</div>
   }
 
   return (
@@ -293,7 +293,7 @@ export default function FarmEdit() {
         <Flex mb={[0, 4]}>
           <HStack cursor="pointer" onClick={routeBack} color={colors.textTertiary} fontWeight="500" fontSize={['md', 'xl']}>
             <ChevronLeftIcon />
-            <Text>{t('common.back')}</Text>
+            <Text>{t('Back')}</Text>
           </HStack>
         </Flex>
       </GridItem>
@@ -301,12 +301,20 @@ export default function FarmEdit() {
       <GridItem area="note">
         <Box w={['unset', 'clamp(300px, 100%, 500px)']}>
           <SubPageNote
-            title={t('edit_farm.tour_note_title')}
+            title={t('How to add more rewards?')}
             description={
               <VStack gap={2}>
-                <Text>{t('edit_farm.tour_note_des_1')}</Text>
-                <Text>{t('edit_farm.tour_note_des_2')}</Text>
-                <Text>{t('edit_farm.tour_note_des_3')}</Text>
+                <Text>{t('1. Rewards allocated to farms cannot be withdrawn after farming starts.')}</Text>
+                <Text>
+                  {t(
+                    '2. If you want to increase the reward rate, additional rewards can be added while a farm is still running. The period must be extended by at least 7 days.'
+                  )}
+                </Text>
+                <Text>
+                  {t(
+                    '3. If you want to increase or decrease the emissions rate, you must wait until the current rewards period ends before starting a new period and then adjusting the rewards amount and emissions rate.'
+                  )}
+                </Text>
               </VStack>
             }
           />
@@ -317,21 +325,21 @@ export default function FarmEdit() {
         <Flex flexDirection="column" gap="2">
           <HStack gap={4}>
             <Heading color={colors.textSecondary} fontSize="20px">
-              {t('edit_farm.title')}
+              {t('Edit Farm')}
             </Heading>
             {id && (
               <Text color={colors.textTertiary} fontSize="sm">
-                {t('edit_farm.farm_id')}: {id?.slice(0, 6)}...{id.slice(-6)}
+                {t('Farm id')}: {id?.slice(0, 6)}...{id.slice(-6)}
               </Text>
             )}
           </HStack>
           <Text fontSize="sm" color={colors.textSecondary}>
-            {t('edit_farm.title_des')}{' '}
+            {t('Before creating a farm, make sure to check the')}{' '}
             <Link
               href="https://docs.raydium.io/raydium/pool-creation/creating-a-constant-product-pool/creating-an-ecosystem-farm"
               isExternal
             >
-              {t('edit_farm.title_des_link')}
+              {t('detailed guide')}
             </Link>
           </Text>
         </Flex>
@@ -339,7 +347,7 @@ export default function FarmEdit() {
 
       <GridItem area="pool">
         <VStack align="stretch">
-          <Heading fontSize="md">{t('edit_farm.subtitle_pool')}</Heading>
+          <Heading fontSize="md">{t('Pool')}</Heading>
           {isLoading ? (
             <Skeleton height="60px" />
           ) : (
@@ -351,7 +359,7 @@ export default function FarmEdit() {
       <GridItem area="rewards">
         <VStack align="stretch">
           <HStack justifyContent="space-between">
-            <Heading fontSize="md">{t('edit_farm.subtitle_farm_reward')}</Heading>
+            <Heading fontSize="md">{t('Farm reward')}</Heading>
             <HStack
               align="center"
               opacity={remainRewardsCount ? 1 : 0.5}
@@ -360,7 +368,7 @@ export default function FarmEdit() {
             >
               <PlusCircleIcon width="14px" height="14px" />
               <Text color={colors.priceFloatingUp} fontSize="16px" fontWeight="500">
-                {t('create_farm.add_another_button_text')}
+                {t('Add another')}
               </Text>
             </HStack>
           </HStack>
@@ -401,7 +409,7 @@ export default function FarmEdit() {
             onClick={handleSubmitEdit}
             isDisabled={!hasRewardsData}
           >
-            {t('button.confirm')}
+            {t('Confirm')}
           </Button>
         </Flex>
       </GridItem>

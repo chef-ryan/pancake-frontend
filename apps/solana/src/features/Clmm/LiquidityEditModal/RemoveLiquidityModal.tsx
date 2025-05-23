@@ -16,7 +16,7 @@ import {
 import { ApiV3PoolInfoConcentratedItem } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 import { useCallback, useEffect, useRef, useState, ChangeEvent, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import AmountSlider from '@/components/AmountSlider'
 import TokenAvatar from '@/components/TokenAvatar'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
@@ -234,7 +234,7 @@ export default function RemoveLiquidityModal({
   return (
     <ModalV2 isOpen={isOpen} onDismiss={handleCloseModal} closeOnOverlayClick>
       <MotionModal
-        title={t('clmm.modal_header_remove_liquidity')}
+        title={t('Remove Liquidity')}
         minWidth={[null, null, '500px']}
         headerPadding="12px 24px"
         headerBorderColor="transparent"
@@ -283,12 +283,14 @@ export default function RemoveLiquidityModal({
                 <HStack gap={1} alignItems="center">
                   <Checkbox scale="xs" checked={!closePosition} onChange={handleClosePositionChange} />
                   <Text fontSize="sm" color={colors.textSubtle}>
-                    {t('liquidity.keep_my_position_open')}
+                    {t('Keep my position open')}
                   </Text>
                   <QuestionToolTip
                     iconType="info"
                     iconProps={{ color: colors.primary60 }}
-                    label={t('liquidity.keep_my_position_open_tip')}
+                    label={t(
+                      'You can remove all your tokens and still keep your position open in order to  add position seamless next time.'
+                    )}
                   />
                 </HStack>
               )}
@@ -311,13 +313,13 @@ export default function RemoveLiquidityModal({
             </Collapse>
             <Flex {...panelCard} bg={colors.background} p={4} flexDirection="column" gap="2">
               <Text variant="subTitle" fontSize="xs" textTransform="uppercase">
-                {t('clmm.you_will_receive')}
+                {t('You will receive:')}
               </Text>
 
               <Flex {...innerCardStyle}>
                 <Flex alignItems="center" gap="2">
                   <Text fontSize="sm" color={colors.textSubtle}>
-                    {t('clmm.pooled_assets')}
+                    {t('Pooled assets')}
                   </Text>
                   <TokenAvatarPair size={['smi', 'smi']} token1={poolInfo.mintA} token2={poolInfo.mintB} />
                 </Flex>
@@ -333,7 +335,7 @@ export default function RemoveLiquidityModal({
               <Flex {...innerCardStyle}>
                 <Flex alignItems="center" gap="2">
                   <Text fontSize="sm" color={colors.textSubtle}>
-                    {t('portfolio.section_positions_clmm_account_pending_yield')}
+                    {t('Pending Yield')}
                   </Text>
                   <Flex>
                     {allRewardInfos
@@ -379,13 +381,13 @@ export default function RemoveLiquidityModal({
             {sending
               ? `${t(position.liquidity.isZero() ? 'clmm.close_position' : 'liquidity.withdraw_liquidity')}...`
               : featureDisabled
-              ? t('common.disabled')
+              ? t('Disabled')
               : position.liquidity.isZero()
-              ? t('clmm.close_position')
-              : error || t('button.confirm')}
+              ? t('Close Position')
+              : error || t('Confirm')}
           </Button>
           <Button width="100%" variant="text" onClick={handleCloseModal}>
-            <Text color={colors.textSubtle}>{t('button.cancel')}</Text>
+            <Text color={colors.textSubtle}>{t('Cancel')}</Text>
           </Button>
         </VStack>
       </MotionModal>

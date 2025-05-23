@@ -1,6 +1,6 @@
 import { Box, Flex, HStack, Text } from '@chakra-ui/react'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Tabs from '@/components/Tabs'
 import { AprData } from '@/features/Clmm/utils/calApr'
 import { aprColors } from '@/features/Pools/components/PoolListItemAprLine'
@@ -42,7 +42,7 @@ export default function EstimatedApr({ aprData, timeBasis, onTimeBasisChange, po
                 }}
               />
               <Text ml={1.5} color={colors.lightPurple} whiteSpace="nowrap">
-                {mint ? mint.symbol : t('field.trade_fees')}
+                {mint ? mint.symbol : t('Trade fees')}
               </Text>
             </Flex>
             <Text color={colors.textPrimary}>{formatToRawLocaleStr(toPercentString(percent))}</Text>

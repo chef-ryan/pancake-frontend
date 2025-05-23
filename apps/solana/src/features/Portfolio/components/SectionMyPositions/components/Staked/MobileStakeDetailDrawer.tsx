@@ -1,5 +1,5 @@
 import { Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerOverlay, Flex, HStack, Spacer, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import { colors } from '@/theme/cssVariables'
 import TokenAvatar from '@/components/TokenAvatar'
@@ -44,14 +44,14 @@ export default function MobileStakeDetailDrawer({
             <TokenAvatar size="lg" token={token} />
             <HStack spacing={2}>
               <Text color={colors.textPrimary} fontWeight="500" fontSize="20px" whiteSpace="nowrap">
-                {t('portfolio.section_positions_tab_staking')}
+                {t('Staked RAY')}
               </Text>
             </HStack>
           </Flex>
           <Flex justify="space-between" bg={colors.backgroundDark} rounded="xl" py={4} px={6} pr={16} mb={3} fontSize="sm">
             <Flex flex={1} direction="column" justify="space-between" gap={1}>
               <Text color={colors.textSecondary} opacity={0.5}>
-                {t('staking.my_staked_ray')}
+                {t('My Staked RAY')}
               </Text>
               <Text color={colors.textPrimary}>{formatCurrency(positionUsd, { symbol: '$', decimalPlaces: 2 })}</Text>
               <Text fontSize="xs" color={colors.lightPurple} opacity={0.5}>
@@ -60,7 +60,7 @@ export default function MobileStakeDetailDrawer({
             </Flex>
             <Flex flex={1} direction="column" justify="space-between" gap={1}>
               <Text color={colors.textSecondary} opacity={0.5}>
-                {t('field.apr')}
+                {t('APR')}
               </Text>
               <Text color={colors.textPrimary}>{formatToRawLocaleStr(apr)}</Text>
               <Spacer />
@@ -68,15 +68,18 @@ export default function MobileStakeDetailDrawer({
           </Flex>
           <Flex bg={colors.backgroundDark} rounded="lg" direction="column" py={3} px={4} gap={4}>
             <Text fontSize="sm" color={colors.textSecondary} opacity={0.5}>
-              {t('staking.pending_rewards')}
+              {t('Pending Rewards')}
             </Text>
             <Flex justify="space-between" align="center">
               <HStack fontSize="sm" color={colors.textSecondary} fontWeight="500" spacing={1}>
                 <Text>{formatCurrency(pendingReward, { symbol: '$', decimalPlaces: 6 })}</Text>
-                <QuestionToolTip label={t('staking.pending_rewards_tooltip')} iconType="info" />
+                <QuestionToolTip
+                  label={t('Pending rewards are calculated based on the current pool size and the time since the last harvest.')}
+                  iconType="info"
+                />
               </HStack>
               <Button variant="outline" size="sm" isDisabled={!harvestable} isLoading={isLoading} onClick={onHarvest}>
-                {t('staking.pending_rewards_button')}
+                {t('Harvest')}
               </Button>
             </Flex>
           </Flex>
@@ -104,7 +107,7 @@ export default function MobileStakeDetailDrawer({
             </Button>
           </Flex>
           <Button variant="ghost" width="100%" size="sm" onClick={onClose}>
-            {t('button.close')}
+            {t('Close')}
           </Button>
         </DrawerFooter>
       </DrawerContent>

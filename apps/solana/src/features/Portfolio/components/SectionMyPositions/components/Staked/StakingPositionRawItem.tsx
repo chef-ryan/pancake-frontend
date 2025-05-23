@@ -1,6 +1,6 @@
 import { Box, Flex, Grid, GridItem, Text, useDisclosure } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { ApiV3Token, ApiStakePool } from '@raydium-io/raydium-sdk-v2'
 
 import { colors } from '@/theme/cssVariables'
@@ -78,7 +78,7 @@ export default function StakingPositionRawItem({ pool, staked, apr, onConfirmed 
               </Flex>
               <Flex alignItems="center" gap={1}>
                 <Text fontSize="xs" color={colors.lightPurple}>
-                  {t('field.apr')}:
+                  {t('APR')}:
                 </Text>
                 <Text fontSize="xs" fontWeight="medium">
                   {formatToRawLocaleStr(apr)}
@@ -120,13 +120,13 @@ export default function StakingPositionRawItem({ pool, staked, apr, onConfirmed 
           >
             <Flex direction="column" gap={2} fontSize="sm">
               <Flex justify="flex-start" align="flex-start" gap={2}>
-                <Text color={colors.textSecondary}>{t('staking.my_staked_ray')}</Text>
+                <Text color={colors.textSecondary}>{t('My Staked RAY')}</Text>
                 <Text color={colors.textPrimary} fontWeight="medium">
                   {formatCurrency(positionUsd, { symbol: '$', decimalPlaces: 2 })}
                 </Text>
               </Flex>
               <Flex justify="flex-start" align="flex-start" gap={2}>
-                <Text color={colors.textSecondary}>{t('staking.pending_rewards')}</Text>
+                <Text color={colors.textSecondary}>{t('Pending Rewards')}</Text>
                 <Text color={colors.textPrimary} fontWeight="medium">
                   {formatCurrency(pendingAmountInUSD, { symbol: '$', decimalPlaces: 6 })}
                 </Text>

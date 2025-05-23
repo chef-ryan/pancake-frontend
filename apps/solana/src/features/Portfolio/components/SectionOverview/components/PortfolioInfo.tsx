@@ -1,7 +1,7 @@
 import { Box, Flex, Grid, GridItem, HStack, Text, useDisclosure } from '@chakra-ui/react'
 import { useMemo, useState } from 'react'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { useAppStore } from '@/store/useAppStore'
 import { colors } from '@/theme/cssVariables'
 import { isArray } from '@/utils/judges/judgeType'
@@ -45,11 +45,11 @@ export default function PortfolioInfo({
   const assetsCategoryOptions: AssetsCategoryType[] = [
     {
       value: 'Assets by pool',
-      label: t('portfolio.assets_by_pool')
+      label: t('Assets by pool')
     },
     {
       value: 'Assets by token',
-      label: t('portfolio.assets_by_token')
+      label: t('Assets by token')
     }
   ]
   const [tab, setTab] = useState<AssetsCategoryType['value']>(assetsCategoryOptions[0].value)
@@ -141,10 +141,10 @@ export default function PortfolioInfo({
                         variant="filledFlowDark"
                         sx={{ minWidth: '120px' }}
                         items={[
-                          { value: AssetType.ALL, label: t('portfolio.section_department_tab_all') },
-                          { value: AssetType.CONCENTRATED, label: t('portfolio.section_department_tab_clmm') },
-                          { value: AssetType.STANDARD, label: t('portfolio.section_department_tab_standard') },
-                          { value: AssetType.STAKEDRAY, label: t('portfolio.section_department_tab_staked_ray') }
+                          { value: AssetType.ALL, label: t('All Type') },
+                          { value: AssetType.CONCENTRATED, label: t('CLMM') },
+                          { value: AssetType.STANDARD, label: t('Standard') },
+                          { value: AssetType.STAKEDRAY, label: t('Staked RAY') }
                         ]}
                         value={currentType}
                         onChange={(t) => onTypeChange?.(t)}
@@ -182,7 +182,7 @@ export default function PortfolioInfo({
                     color={colors.textLink}
                     onClick={isMorePoolAssets ? onCloseMorePoolAssets : onOpenMorePoolAssets}
                   >
-                    <Text fontSize="sm">{isMorePoolAssets ? t('common.view_less') : t('common.view_more')}</Text>
+                    <Text fontSize="sm">{isMorePoolAssets ? t('View less') : t('View more')}</Text>
                     {isMorePoolAssets ? <ChevronUpIcon width={10} height={10} /> : <ChevronDownIcon width={10} height={10} />}
                   </HStack>
                 </Box>
@@ -219,7 +219,7 @@ export default function PortfolioInfo({
                     color={colors.textLink}
                     onClick={isMoreTokenAssets ? onCloseMoreTokenAssets : onOpenMoreTokenAssets}
                   >
-                    <Text fontSize="sm">{isMoreTokenAssets ? t('common.view_less') : t('common.view_more')}</Text>
+                    <Text fontSize="sm">{isMoreTokenAssets ? t('View less') : t('View more')}</Text>
                     {isMoreTokenAssets ? <ChevronUpIcon width={10} height={10} /> : <ChevronDownIcon width={10} height={10} />}
                   </HStack>
                 </Box>
@@ -263,10 +263,10 @@ export default function PortfolioInfo({
                       variant="filledFlowDark"
                       sx={{ minWidth: '160px' }}
                       items={[
-                        { value: AssetType.ALL, label: t('portfolio.section_department_tab_all') },
-                        { value: AssetType.CONCENTRATED, label: t('portfolio.section_department_tab_clmm') },
-                        { value: AssetType.STANDARD, label: t('portfolio.section_department_tab_standard') },
-                        { value: AssetType.STAKEDRAY, label: t('portfolio.section_department_tab_staked_ray') }
+                        { value: AssetType.ALL, label: t('All Type') },
+                        { value: AssetType.CONCENTRATED, label: t('CLMM') },
+                        { value: AssetType.STANDARD, label: t('Standard') },
+                        { value: AssetType.STAKEDRAY, label: t('Staked RAY') }
                       ]}
                       value={currentType}
                       onChange={(t) => onTypeChange(t as AssetType)}
@@ -283,7 +283,7 @@ export default function PortfolioInfo({
         ) : (
           <Flex direction="column" justify="space-around" align="center" flex={1} py={8}>
             <Text textAlign="center" color={colors.textTertiary}>
-              {t('wallet.connected_hint.portfolio_info')}
+              {t('Connect wallet to see your asset distribution.')}
             </Text>
           </Flex>
         )}

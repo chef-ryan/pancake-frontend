@@ -16,6 +16,7 @@ import {
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
+import { TranslateFunction } from '@pancakeswap/localization'
 import { toastSubject } from '@/hooks/toast/useGlobalToast'
 import { txStatusSubject } from '@/hooks/toast/useTxStatus'
 import { getDefaultToastData, transformProcessData, handleMultiTxToast } from '@/hooks/toast/multiToastUtil'
@@ -94,6 +95,7 @@ interface LiquidityStore {
 
   migrateToClmmAct: (
     params: {
+      t: TranslateFunction
       poolInfo: ApiV3PoolInfoStandardItem
       clmmPoolInfo: ApiV3PoolInfoConcentratedItem
       removeLpAmount: BN
@@ -413,7 +415,7 @@ export const useLiquidityStore = createStore<LiquidityStore>(
         .finally(onFinally)
     },
 
-    migrateToClmmAct: async ({ onSent, onError, onFinally, onConfirmed, ...params }) => {
+    migrateToClmmAct: async ({ t, onSent, onError, onFinally, onConfirmed, ...params }) => {
       const { raydium, txVersion, wallet, connection } = useAppStore.getState()
       if (!raydium || !connection) return ''
 
@@ -454,6 +456,7 @@ export const useLiquidityStore = createStore<LiquidityStore>(
         onTxUpdate: (data) => {
           handleMultiTxRetry(data)
           handleMultiTxToast({
+            t,
             toastId,
             processedId: transformProcessData({ processedId, data }),
             txLength,
@@ -465,6 +468,7 @@ export const useLiquidityStore = createStore<LiquidityStore>(
       })
         .then(({ txIds }) => {
           handleMultiTxToast({
+            t,
             toastId,
             processedId: transformProcessData({ processedId, data: [] }),
             txLength,

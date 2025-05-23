@@ -3,7 +3,7 @@ import { useHttpLocations } from '@pancakeswap/hooks'
 import { AutoColumn, Row, RowBetween, RowFixed, Text, Toggle, TokenLogo } from '@pancakeswap/uikit'
 import { JupTokenType } from '@raydium-io/raydium-sdk-v2'
 import { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import styled from 'styled-components'
 import { useEvent } from '@/hooks/useEvent'
 import { useAppStore, USER_ADDED_KEY, useTokenStore } from '@/store'
@@ -38,7 +38,7 @@ export default function TokenListSetting({ onClick }: { onClick: () => void }) {
   return (
     <Box height="50vh">
       <TokenListRowItem
-        name={`Raydium ${t('common.token_list')}`}
+        name={`Raydium ${t('Token List')}`}
         logoUrl="https://img-v1.raydium.io/icon/4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R.png"
         tokenCount={raydiumTokenListTokenCount}
         isOpen={isRaydiumTokenListSwitchOn}
@@ -46,7 +46,7 @@ export default function TokenListSetting({ onClick }: { onClick: () => void }) {
       />
       <Divider my="10px" color={colors.backgroundTransparent12} />
       <TokenListRowItem
-        name={`Jupiter ${t('common.token_list')}`}
+        name={`Jupiter ${t('Token List')}`}
         logoUrl="https://jup.ag/_next/image?url=%2Fsvg%2Fjupiter-logo.png&w=96&q=75"
         tokenCount={jupiterTokenListTokenCount}
         isOpen={isJuiterTokenListSwitchOn}
@@ -61,7 +61,7 @@ export default function TokenListSetting({ onClick }: { onClick: () => void }) {
       />
       <Divider my="10px" color={colors.backgroundTransparent12} />
       <TokenListRowItem
-        name={`${t('common.user_added')} ${t('common.token_list')}`}
+        name={`${t('User Added')} ${t('Token List')}`}
         tokenCount={userAddedTokenListTokenCount}
         isOpen={isUserAddedTokenListSwitchOn}
         onOpen={() => handleSwitchChange('userAdded', true)}

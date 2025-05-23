@@ -1,7 +1,7 @@
 import { ButtonMenu, ButtonMenuItem, InjectedModalProps, ModalHeader as UIKitModalHeader, MotionModal } from '@pancakeswap/uikit'
 import { useState, useCallback } from 'react'
 import { styled } from 'styled-components'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { colors } from '@/theme/cssVariables'
 import useResponsive from '@/hooks/useResponsive'
 import WalletInfo from './WalletInfo'
@@ -37,8 +37,8 @@ const TabsComponent: React.FC<React.PropsWithChildren<TabsComponentProps>> = ({ 
   return (
     <Tabs>
       <ButtonMenu scale="sm" variant="subtle" onItemClick={handleClick} activeIndex={view} fullWidth>
-        <ButtonMenuItem>{t('wallet.Wallet')}</ButtonMenuItem>
-        <ButtonMenuItem>{t('wallet.Transactions')}</ButtonMenuItem>
+        <ButtonMenuItem>{t('Wallet')}</ButtonMenuItem>
+        <ButtonMenuItem>{t('Transactions')}</ButtonMenuItem>
       </ButtonMenu>
     </Tabs>
   )
@@ -54,7 +54,7 @@ const WalletModal: React.FC<React.PropsWithChildren<WalletModalProps>> = ({ init
   }, [])
 
   return (
-    <MotionModal title={t('wallet.your_wallet')} maxWidth={[null, null, '500px']} headerPadding="2px 14px 0 24px" onDismiss={onDismiss}>
+    <MotionModal title={t('Your Wallet')} maxWidth={[null, null, '500px']} headerPadding="2px 14px 0 24px" onDismiss={onDismiss}>
       {view === WalletView.WALLET_INFO && <WalletInfo onDismiss={onDismiss} />}
       {/* {view === WalletView.TRANSACTIONS && <WalletTransactions />} */}
     </MotionModal>

@@ -2,7 +2,7 @@ import { Box, Grid, GridItem, Heading, Modal, ModalBody, ModalCloseButton, Modal
 import { ModalBackButton, Text } from '@pancakeswap/uikit'
 import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import { forwardRef, useCallback, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { useEvent } from '@/hooks/useEvent'
 import ChevronLeftIcon from '@/icons/misc/ChevronLeftIcon'
 import { colors } from '@/theme/cssVariables'
@@ -35,7 +35,7 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
     () => (
       <>
         <ModalHeader>
-          <Text bold>{t('common.select_a_token')}</Text>
+          <Text bold>{t('common.Select a token')}</Text>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody display="flex" flexDirection="column" px={7} overflow="visible">
@@ -63,7 +63,7 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
           <Grid templateColumns="1fr 3fr 1fr" alignItems="center">
             <ModalBackButton onBack={() => setCurrentPage(PageType.TokenList)} />
             <Text bold textAlign="center">
-              {t('common.token_list_settings')}
+              {t('Token List Settings')}
             </Text>
             <GridItem textAlign="right" />
           </Grid>
@@ -88,7 +88,7 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
             </GridItem>
             <GridItem textAlign="center">
               <Heading fontSize="xl" fontWeight={500} color={colors.textPrimary}>
-                {t('swap.user_added_token_list')}
+                {t('User Added Token List')}
               </Heading>
             </GridItem>
             <GridItem textAlign="right" />

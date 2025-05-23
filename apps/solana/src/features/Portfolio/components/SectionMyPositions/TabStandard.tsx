@@ -1,7 +1,7 @@
 import { Button } from '@pancakeswap/uikit'
 import { RAYMint } from '@raydium-io/raydium-sdk-v2'
 import { Flex, Text, Link, Skeleton } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { useMemo } from 'react'
 import { FormattedFarmInfoV6, FarmBalanceInfo } from '@/hooks/farm/type'
 import { FarmPositionInfo, EMPTY_FARM_POS } from '@/hooks/portfolio/farm/useFarmPositions'
@@ -115,10 +115,10 @@ export default function MyPositionTabStandard({
           borderRadius="xl"
         >
           <Text variant="title" fontSize="sm">
-            {t('portfolio.no_standard_positions')}
+            {t('You don’t have any standard liquidity positions.')}
           </Text>
           <Link href="/liquidity-pools">
-            <Button>{t('common.go_to_pools')}</Button>
+            <Button>{t('Go to pools')}</Button>
           </Link>
         </Flex>
       ) : null}

@@ -2,7 +2,7 @@ import { Flex, HStack, VStack } from '@chakra-ui/react'
 import { Box, Button, Message, ModalV2, MotionModal, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import Decimal from 'decimal.js'
 import { KeyboardEvent, useCallback, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import DecimalInput from '@/components/DecimalInput'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
 import { SWAP_SLIPPAGE_KEY, useSwapStore } from '@/features/Swap/useSwapStore'
@@ -61,7 +61,11 @@ export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isO
   const isForerun = slippageDecimal.gt('3')
   const isFailrun = slippageDecimal.lt('0.5')
   const isWarn = isSwap && (isForerun || isFailrun)
-  const warnText = isForerun ? t('setting_board.slippage_tolerance_forerun') : isFailrun ? t('setting_board.slippage_tolerance_fail') : ''
+  const warnText = isForerun
+    ? t('Your transaction may be frontrun and result in an unfavorable trade')
+    : isFailrun
+    ? t('Your transaction may fail')
+    : ''
 
   const { isMobile } = useMatchBreakpoints()
 
@@ -70,9 +74,13 @@ export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isO
       <MotionModal
         title={
           <HStack spacing="6px" alignItems="center">
-            <Text bold>{isSwap ? t('setting_board.slippage_tolerance_swap') : t('setting_board.slippage_tolerance_liquidity')}</Text>
+            <Text bold>{isSwap ? t('Swap slippage tolerance') : t('Liquidity slippage tolerance')}</Text>
             <QuestionToolTip
-              label={isSwap ? t('setting_board.slippage_tolerance_tooltip_swap') : t('setting_board.slippage_tolerance_tooltip_liquidity')}
+              label={
+                isSwap
+                  ? t('Set your slippage tolerance for swap transactions.')
+                  : t('Set tolerance for changes in the quote/base token deposit ratio.')
+              }
               iconProps={{ color: colors.textSecondary }}
             />
           </HStack>
@@ -99,7 +107,7 @@ export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isO
               ))}
             </Flex>
             <Flex alignItems="center" rounded="full" gap="10px">
-              <Text>{t('setting_board.custom')}</Text>
+              <Text>{t('Custom')}</Text>
               <DecimalInput
                 variant="filledDark"
                 value={isFirstFocused ? '' : currentSlippage}
@@ -123,7 +131,7 @@ export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isO
             </Box>
           ) : null}
           <Button disabled={Number(currentSlippage) < 0} onClick={handleSaveFee} width="100%">
-            {t('button.save')}
+            {t('Save')}
           </Button>
         </VStack>
       </MotionModal>

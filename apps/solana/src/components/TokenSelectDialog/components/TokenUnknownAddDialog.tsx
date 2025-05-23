@@ -1,5 +1,5 @@
 import { TokenInfo, ApiV3Token } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Flex, Text, Box, Button, Modal, ModalBody, ModalContent, ModalOverlay } from '@chakra-ui/react'
 import { useEvent } from '@/hooks/useEvent'
 import { colors } from '@/theme/cssVariables'
@@ -51,13 +51,13 @@ export default function TokenUnknownAddDialog({ onConfirm, isOpen, onClose, toke
           >
             <WarningIcon width="27" height="27" />
             <Text fontWeight="bold" fontSize="xl" pt={3}>
-              {t('common.confirm_token')}
+              {t('Confirm Token')}
             </Text>
             <Text fontWeight="bold" fontSize="md" color={colors.semanticWarning} pt={5}>
-              {t('swap.info_not_default_token')}
+              {t('This token is not on the default token lists.')}
             </Text>
             <Text fontWeight="normal" fontSize="md" color={colors.textSecondary} pt={2}>
-              {t('swap.info_add_not_default_token')}
+              {t('By clicking below, you understand that you are fully responsible for confirming the token you are trading.')}
             </Text>
             <Flex
               w="full"
@@ -89,7 +89,7 @@ export default function TokenUnknownAddDialog({ onConfirm, isOpen, onClose, toke
                 onConfirm(tokenInfo)
               }}
             >
-              {t('button.confirm_understand')}
+              {t('I understand, confirm')}
             </Button>
             <Text
               mt={4}
@@ -101,7 +101,7 @@ export default function TokenUnknownAddDialog({ onConfirm, isOpen, onClose, toke
                 onClose()
               }}
             >
-              {t('button.cancel')}
+              {t('Cancel')}
             </Text>
           </Flex>
         </ModalBody>

@@ -13,7 +13,7 @@ import {
   Text,
   VStack
 } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import { FormattedPoolInfoStandardItem } from '@/hooks/pool/type'
 import { FarmPositionInfo } from '@/hooks/portfolio/farm/useFarmPositions'
@@ -120,7 +120,7 @@ export default function MobileStandardAMMDetailDrawer({
 
             <GridItem area="subs">
               <Text fontSize="sm" mt={1} mb={3} color={colors.textSecondary}>
-                {t('liquidity_pools.farms')}
+                {t('Farms')}
               </Text>
               {hasStakeFarm && (
                 <Box>
@@ -158,7 +158,7 @@ export default function MobileStandardAMMDetailDrawer({
         </DrawerBody>
         <DrawerFooter bg="transparent">
           <Button variant="ghost" w="full" h="20px" onClick={onClose}>
-            {t('button.close')}
+            {t('Close')}
           </Button>
         </DrawerFooter>
       </DrawerContent>

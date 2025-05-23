@@ -13,7 +13,7 @@ import {
   Input
 } from '@chakra-ui/react'
 import { useState } from 'react'
-import { useTranslation, Trans } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { colors } from '@/theme/cssVariables'
 import TokenAvatar from '@/components/TokenAvatar'
 import InfoCircleIcon from '@/icons/misc/InfoCircleIcon'
@@ -68,16 +68,15 @@ function LiquidityLockModal({
         <Flex flexDirection="column" justifyContent="center" alignItems="center" gap={5} mt={2}>
           <InfoCircleIcon width={32} height={32} color={colors.textPink} />
           <Text fontSize={['lg', 'xl']} fontWeight="medium">
-            {t('liquidity.lock_liquidity_permanently')}
+            {t('Lock Liquidity Permanently?')}
           </Text>
         </Flex>
         <ModalCloseButton />
         <ModalBody mt={[5, 6]}>
           <Text color={colors.lightPurple} lineHeight="20px" fontSize={['sm', 'md']}>
-            <Trans i18nKey="liquidity.lock_desc4">
-              <Text as="span" fontWeight="bold" />
-              <Text as="span" fontWeight="bold" />
-            </Trans>
+            {t(
+              'Are you sure you want to permanently lock/burn liquidity? You will be unable to access or withdraw underlying position assets, only trading fees earned will remain claimable.'
+            )}
           </Text>
           <Box
             rounded="xl"
@@ -90,12 +89,12 @@ function LiquidityLockModal({
           >
             <Flex alignItems="center" gap={1} justifyContent="space-between" fontSize={['sm', 'md']} color={colors.lightPurple} mb={[1, 2]}>
               <Text>
-                {poolName} {t('liquidity.pool_position_nft')}
+                {poolName} {t(' position NFT:')}
               </Text>
               <Text>{shortenAddress(poolNft, 5)}</Text>
             </Flex>
             <Flex alignItems="center" gap={1} justifyContent="space-between" fontSize={['sm', 'md']} color={colors.lightPurple} mb={[1, 2]}>
-              <Text>{t('clmm.position')}: </Text>
+              <Text>{t('Position')}: </Text>
               <Text>
                 {formatCurrency(positionAmount, {
                   symbol: '$',
@@ -148,7 +147,9 @@ function LiquidityLockModal({
               <WarningIcon stroke={colors.textPink} width="16" height="16" />
             </Text>
             <Text color={colors.textPink} fontSize="sm" fontWeight="medium">
-              {t('liquidity.lock_agree_text')}
+              {t(
+                'By confirming below, I agree to permanently lock liquidity. I understand access to the underlying assets will be lost forever.'
+              )}
             </Text>
           </Flex>
           <Flex
@@ -163,9 +164,9 @@ function LiquidityLockModal({
             mt={[4, 6]}
             fontSize={['sm', 'md']}
           >
-            <Text color={colors.lightPurple}>{t('liquidity.lock_to_confirm')}</Text>
+            <Text color={colors.lightPurple}>{t('To confirm, type the following:')}</Text>
             <Text color={colors.lightPurple} fontWeight="medium" userSelect="none">
-              {t('liquidity.lock_confirm_text')}
+              {t('I confirm, permanently lock my liquidity forever')}
             </Text>
             <Input
               variant="filledDark"
@@ -180,7 +181,7 @@ function LiquidityLockModal({
                 }
               }}
               onChange={(e) => setConfirmText(e.currentTarget.value)}
-              placeholder={t('clmm.type_confirm_text') || ''}
+              placeholder={t('Type confirmation text here') || ''}
             />
           </Flex>
         </ModalBody>
@@ -188,8 +189,8 @@ function LiquidityLockModal({
           <Button
             variant="danger"
             w="full"
-            loadingText={`${t('liquidity.lock_liquidity')}...`}
-            isDisabled={confirmText !== t('liquidity.lock_confirm_text')}
+            loadingText={`${t('Lock Liquidity')}...`}
+            isDisabled={confirmText !== t('I confirm, permanently lock my liquidity forever')}
             onClick={() => {
               let nftAddress = ''
               lockPositionAct({
@@ -206,10 +207,10 @@ function LiquidityLockModal({
               })
             }}
           >
-            {t('liquidity.confirm_lock_liquidity_permanently')}
+            {t('Confirm, Lock Liquidity Permanently')}
           </Button>
           <Button w="full" variant="ghost" fontSize="sm" color={colors.buttonPrimary} onClick={handleCloseModal}>
-            {t('button.cancel')}
+            {t('Cancel')}
           </Button>
         </ModalFooter>
       </ModalContent>

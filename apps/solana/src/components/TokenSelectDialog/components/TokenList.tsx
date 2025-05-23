@@ -4,7 +4,7 @@ import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import { PublicKey } from '@solana/web3.js'
 import Decimal from 'decimal.js'
 import { ChangeEvent, forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import AddressChip from '@/components/AddressChip'
 import List, { ListPropController } from '@/components/List'
 import TokenAvatar from '@/components/TokenAvatar'
@@ -183,7 +183,7 @@ export default forwardRef<
         <Input
           autoComplete="off"
           scale="lg"
-          placeholder={t('token_selector.search_placeholder') ?? undefined}
+          placeholder={t('Search by token or paste address') ?? undefined}
           value={search}
           onChange={handleSearchChange}
         />
@@ -191,7 +191,7 @@ export default forwardRef<
 
       <Box pb="8px" my="12px">
         <Text fontSize="14px" py="12px">
-          {t('common.popular_tokens')}
+          {t('Popular tokens')}
         </Text>
 
         <SimpleGrid gridTemplateColumns="repeat(auto-fill, minmax(80px, 1fr))" gap={3}>
@@ -206,9 +206,9 @@ export default forwardRef<
 
       <Flex direction="column" flexGrow={1} css={{ contain: 'size' }}>
         <Flex justifyContent="space-between" py="10px">
-          <Text fontSize="14px">{t('common.token')}</Text>
+          <Text fontSize="14px">{t('Token')}</Text>
           <Text fontSize="14px">
-            {t('common.balance')}/{t('common.address')}
+            {t('Balance')}/{t('Address')}
           </Text>
         </Flex>
         {isUnknownNewToken ? (
@@ -218,7 +218,7 @@ export default forwardRef<
               <InputGroup>
                 <Input
                   p="8px 16px"
-                  placeholder={t('token_selector.input_token_symbol') ?? undefined}
+                  placeholder={t('input a symbol for this token') ?? undefined}
                   defaultValue={`${newToken?.symbol}`}
                   onChange={(e) => {
                     customTokenInfo.current.symbol = e.currentTarget.value
@@ -231,7 +231,7 @@ export default forwardRef<
               <InputGroup>
                 <Input
                   p="8px 16px"
-                  placeholder={t('token_selector.input_token_name') ?? undefined}
+                  placeholder={t('input a name for this token (optional)') ?? undefined}
                   defaultValue={newToken?.name}
                   onChange={(e) => {
                     customTokenInfo.current.name = e.currentTarget.value
@@ -249,7 +249,7 @@ export default forwardRef<
                 customTokenInfo.current = {}
               }}
             >
-              {t('token_selector.add_user_token')}
+              {t('Add User Token')}
             </Button>
           </Box>
         ) : (
@@ -263,13 +263,13 @@ export default forwardRef<
       {!isUnknownNewToken ? (
         <Box my="12px">
           <Text fontSize="14px" style={{ opacity: 0.5 }}>
-            {t('token_selector.token_not_found')}
+            {t('Can’t find the token you’re looking for? Try entering the mint address or check token list settings below.')}
           </Text>
         </Box>
       ) : null}
 
       <Button variant="tertiary" width="full" onClick={() => onOpenTokenList()}>
-        {t('common.view_token_list')}
+        {t('View Token List')}
       </Button>
     </Flex>
   )
@@ -326,7 +326,7 @@ function TokenRowItem({
                 >
                   {!isTrusted ? <AddTokenIcon /> : <RemoveTokenIcon />}
                   <Text fontSize="sm" lineHeight="16px" pl={1} fontWeight="medium" color={colors.textSeptenary}>
-                    {!isTrusted ? t('common.add_token') : t('common.remove_token')}
+                    {!isTrusted ? t('Add token') : t('Remove token')}
                   </Text>
                 </Box>
               ) : null}

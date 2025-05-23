@@ -1,7 +1,7 @@
 import { Box, HStack, Text } from '@chakra-ui/react'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { colors } from '@/theme/cssVariables'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
@@ -36,16 +36,16 @@ export default function StandardPoolRowStakeFarmHoldItem({
       flexWrap="wrap"
     >
       <Text>
-        {t('amm.farm_unstaked')}: {formatCurrency(new Decimal(unStaked.amount).toString(), { decimalPlaces: lpMint.decimals })}
+        {t('Unstaked LP')}: {formatCurrency(new Decimal(unStaked.amount).toString(), { decimalPlaces: lpMint.decimals })}
       </Text>
       <HStack spacing={8}>
         <HStack>
-          <Text color={colors.textSecondary}>{t('amm.position')}</Text>
+          <Text color={colors.textSecondary}>{t('Position')}</Text>
           <Text>{formatCurrency(new Decimal(unStaked.amount).mul(lpPrice).toString(), { symbol: '$', decimalPlaces: 2 })}</Text>
         </HStack>
 
         <HStack>
-          <Text color={colors.textSecondary}>{t('liquidity.APR')}</Text>
+          <Text color={colors.textSecondary}>{t('APR')}</Text>
           <Text>{formatToRawLocaleStr(toPercentString(apr))}</Text>
         </HStack>
       </HStack>

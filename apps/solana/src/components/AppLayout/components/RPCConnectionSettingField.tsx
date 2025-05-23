@@ -1,7 +1,7 @@
 import { Flex, Input, InputGroup, InputRightElement, Spinner, useDisclosure } from '@chakra-ui/react'
 import { Button } from '@pancakeswap/uikit'
 import { KeyboardEvent, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { shallow } from 'zustand/shallow'
 import { useEvent } from '@/hooks/useEvent'
 import { useAppStore } from '@/store'
@@ -35,8 +35,8 @@ export function RPCConnectionSettingField() {
 
   return (
     <SettingField
-      fieldName={t('setting_board.rpc_connection')}
-      tooltip={t('setting_board.rpc_connection_tooltip')}
+      fieldName={t('RPC Connection')}
+      tooltip={t('Select preferred RPC endpoint')}
       renderToggleButton={
         isMobile ? (isOpen) => <SettingFieldToggleButton isOpen={isOpen} renderContent={defaultRpc ? defaultRpc.name : rpcNodeUrl} /> : null
       }
@@ -65,7 +65,7 @@ export function RPCConnectionSettingField() {
                 handleSwitchCustomRpc()
               }}
             >
-              <Flex gap={1.5}>{t('setting_board.custom')}</Flex>
+              <Flex gap={1.5}>{t('Custom')}</Flex>
             </Button>
           </Flex>
           <InputGroup mt={4}>

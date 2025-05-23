@@ -1,5 +1,5 @@
 import { Flex, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 
 import { colors } from '@/theme/cssVariables'
@@ -18,7 +18,7 @@ export default function StakedValue({ positionUsd, staked }: StakedValueProps) {
   return (
     <Flex flex={2} direction="column" justify="space-between" gap={[1, 2]}>
       <Text fontSize="sm" color={colors.textSecondary}>
-        {t('staking.my_staked_ray')}
+        {t('My Staked RAY')}
       </Text>
       <Text fontSize="lg" color={colors.textPrimary} fontWeight="500">
         {formatCurrency(staked.amount)} {staked.token?.symbol}

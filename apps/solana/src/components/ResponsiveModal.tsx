@@ -19,7 +19,7 @@ import {
   SystemStyleObject,
   VStack
 } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import { colors } from '@/theme/cssVariables'
 
@@ -78,11 +78,11 @@ export default function ResponsiveModal({
                       if (closeOnClickConfirmButton) onClose?.()
                     }}
                   >
-                    {confirmText ?? t('button.confirm')}
+                    {confirmText ?? t('Confirm')}
                   </Button>
                   {hasSecondaryButton && (
                     <Button width="100%" variant="text" color={colors.textSeptenary} onClick={onClose}>
-                      {cancelText ?? t('button.cancel')}
+                      {cancelText ?? t('Cancel')}
                     </Button>
                   )}
                 </VStack>
@@ -108,11 +108,11 @@ export default function ResponsiveModal({
                       if (closeOnClickConfirmButton) onClose?.()
                     }}
                   >
-                    {confirmText ?? t('button.confirm')}
+                    {confirmText ?? t('Confirm')}
                   </Button>
                   {hasSecondaryButton && (
                     <Button width="100%" variant="text" color={colors.textSeptenary} onClick={onClose}>
-                      {cancelText ?? t('button.cancel')}
+                      {cancelText ?? t('Cancel')}
                     </Button>
                   )}
                 </VStack>

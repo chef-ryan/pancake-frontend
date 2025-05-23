@@ -1,5 +1,5 @@
 import { useEffect, ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { SignatureResult, Context, VersionedTransaction, Transaction, TransactionError } from '@solana/web3.js'
 import { Flex, Box } from '@chakra-ui/react'
 import { ApiV3Token, TxVersion } from '@raydium-io/raydium-sdk-v2'
@@ -22,8 +22,9 @@ import { toastSubject } from './useGlobalToast'
 export interface TxMeta {
   title?: string | ReactNode
   description?: string | ReactNode
-  txHistoryTitle?: string
-  txHistoryDesc?: string
+  txHistoryTitle?: string | ReactNode
+  txHistoryDesc?: string | ReactNode
+  txValues?: Record<string, any>
 }
 
 export const txStatusSubject = new Subject<
@@ -110,7 +111,7 @@ function useTxStatus() {
                 cursor="pointer"
                 opacity={status ? 1 : 0.5}
               >
-                {t('transaction.view_detail')}
+                {t('View transaction details')}
                 <ExternalLink cursor="pointer" />
               </Flex>
             )
@@ -119,10 +120,10 @@ function useTxStatus() {
           // show initial tx send toast
           toastSubject.next({
             id: txId,
-            title: title || `${t('transaction.title')} ${t('transaction.sent')}`,
+            title: title || `${t('Transaction')} ${t('Sent')}`,
             description: isMultisigWallet ? (
               <>
-                {description} {t('transaction.multisig_wallet_initiation')}
+                {description} {t('Transaction initiation')}
               </>
             ) : (
               description || `${explorerUrl}/tx/${txId}`
@@ -137,7 +138,7 @@ function useTxStatus() {
 
           setTxRecord({
             status: status || 'info',
-            title: txHistoryTitle || 'transaction.title',
+            title: txHistoryTitle || t('Transaction'),
             description: txHistoryDesc || '',
             txId,
             owner,
@@ -170,18 +171,20 @@ function useTxStatus() {
                 id: txId,
                 update: true,
                 title: isSlippageError
-                  ? t('error.swap_slippage_error_title')
+                  ? t('Swap failed due to slippage error!')
                   : `${
                       isMultisigWallet ? (
                         <>
-                          {title} {t('transaction.multisig_wallet_initiation')}
+                          {title} {t('Transaction initiation')}
                         </>
                       ) : (
                         title
                       )
-                    } ${t('transaction.failed')}`,
+                    } ${t('Failed')}`,
                 status: 'error',
-                description: isSlippageError ? t('error.swap_slippage_error_desc') : description || `${explorerUrl}/tx/${txId}`,
+                description: isSlippageError
+                  ? t('Slippage has exceeded user settings. Try again or adjust your slippage tolerance.')
+                  : description || `${explorerUrl}/tx/${txId}`,
                 detail: renderDetail('error'),
                 onClose
               })
@@ -203,10 +206,10 @@ function useTxStatus() {
               toastSubject.next({
                 id: txId,
                 update: true,
-                title: isMultisigWallet
-                  ? t('transaction.multisig_wallet_initiated')
-                  : `${title || t('transaction.title')} ${t('transaction.confirmed')}`,
-                description: isMultisigWallet ? t('transaction.multisig_wallet_desc') : description || `${explorerUrl}/tx/${txId}`,
+                title: isMultisigWallet ? t('Transaction initiated.') : `${title || t('Transaction')} ${t('Confirmed')}`,
+                description: isMultisigWallet
+                  ? t('You can now cast votes for this proposal on the Squads app.')
+                  : description || `${explorerUrl}/tx/${txId}`,
                 detail: renderDetail('success'),
                 status: 'success',
                 onClose
@@ -260,7 +263,7 @@ function useTxStatus() {
             cancelRetryTx(txId)
             connection.removeSignatureListener(subId)
             toastSubject.next({
-              title: t('transaction.send_timeout'),
+              title: t('Send transaction timeout'),
               description,
               status: 'warning',
               duration: 8 * 1000,
@@ -311,7 +314,7 @@ function useTxStatus() {
           const renderDetail = () => {
             return (
               <Flex flexDirection="column" gap="3">
-                {subTxIds.map(({ txId, title = t('transaction.title') }, idx) => (
+                {subTxIds.map(({ txId, title = t('Transaction') }, idx) => (
                   <Box
                     key={txId || `${toastId}-${idx}`}
                     bg={colors.backgroundDark}
@@ -338,17 +341,17 @@ function useTxStatus() {
                         whiteSpace="pre-wrap"
                         overflow="hidden"
                       >
-                        {title || t('transaction.title')}
+                        {title || t('Transaction')}
                         {isMultisigWallet
                           ? txStatus[txId] === 'success'
-                            ? `${t('transaction.multisig_wallet_initiated')} ${t('transaction.multisig_wallet_desc')}`
-                            : t('transaction.multisig_wallet_initiation')
+                            ? `${t('Transaction initiated.')} ${t('You can now cast votes for this proposal on the Squads app.')}`
+                            : t('Transaction initiation')
                           : null}
                       </Box>
                     </Flex>
                     {isMultisigWallet ? null : (
                       <Flex gap="1" alignItems="center" opacity="0.5">
-                        {t('transaction.view_detail')}
+                        {t('View transaction details')}
                         <ExternalLink cursor="pointer" />
                       </Flex>
                     )}
@@ -361,7 +364,7 @@ function useTxStatus() {
           toastSubject.next({
             id: toastId,
             update,
-            title: title || `${t('transaction.title')} ${t('transaction.sent')}`,
+            title: title || `${t('Transaction')} ${t('Sent')}`,
             description,
             detail: renderDetail(),
             status: status || 'info',
@@ -397,7 +400,7 @@ function useTxStatus() {
                 })
                 subTxIds.forEach(({ txId }) => cancelRetryTx(txId))
                 toastSubject.next({
-                  title: t('transaction.send_timeout'),
+                  title: t('Send transaction timeout'),
                   detail: renderDetail(),
                   status: 'warning',
                   duration: 5 * 1000,
@@ -429,16 +432,18 @@ function useTxStatus() {
                     id: toastId,
                     update: true,
                     title: isSlippageError
-                      ? t('error.swap_slippage_error_title')
+                      ? t('Swap failed due to slippage error!')
                       : (isMultisigWallet ? (
                           <>
-                            {title} {t('transaction.multisig_wallet_initiation')}
+                            {title} {t('Transaction initiation')}
                           </>
                         ) : (
-                          title || t('transaction.title')
-                        )) + t('transaction.failed'),
+                          title || t('Transaction')
+                        )) + t('Failed'),
                     status: 'error',
-                    description: isSlippageError ? t('error.swap_slippage_error_desc') : description,
+                    description: isSlippageError
+                      ? t('Slippage has exceeded user settings. Try again or adjust your slippage tolerance.')
+                      : description,
                     detail: renderDetail(),
                     onClose
                   })
@@ -470,10 +475,10 @@ function useTxStatus() {
                     id: toastId,
                     update: true,
                     title: isMultisigWallet
-                      ? t('transaction.multisig_wallet_initiated')
+                      ? t('Transaction initiated.')
                       : title
-                      ? `${title} ${t('transaction.confirmed')}`
-                      : `${t('transaction.title')} ${t('transaction.confirmed')}`,
+                      ? `${title} ${t('Confirmed')}`
+                      : `${t('Transaction')} ${t('Confirmed')}`,
                     description,
                     detail: renderDetail(),
                     status: isAllSuccess ? 'success' : 'info',

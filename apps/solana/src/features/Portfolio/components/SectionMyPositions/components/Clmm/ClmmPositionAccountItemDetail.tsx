@@ -2,7 +2,7 @@ import { Box, Collapse, Divider, Flex, HStack, Text, useDisclosure, VStack } fro
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 import { useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import AddressChip from '@/components/AddressChip'
 import TokenAvatar from '@/components/TokenAvatar'
 import LiquidityChartRangeInput from '@/features/Clmm/components/LiquidityChartRangeInput'
@@ -142,7 +142,7 @@ export default function ClmmPositionAccountItemDetail({
                 <HStack width="100%" justifyContent="space-between" color={colors.textSubtle}>
                   <HStack>
                     <Divider borderColor={colors.backgroundApp} opacity="1" width="6px" borderBottomWidth="2px" />
-                    <Text>{t('field.current_price')}: </Text>
+                    <Text>{t('Current Price')}: </Text>
                   </HStack>
                   <Text fontWeight="medium">
                     <Text as="span" color={colors.textPrimary}>
@@ -154,7 +154,7 @@ export default function ClmmPositionAccountItemDetail({
                             decimalPlaces: poolInfo.recommendDecimal(new Decimal(1).div(poolInfo.price).toString())
                           })}
                     </Text>{' '}
-                    {t('common.per_unit', {
+                    {t('%subA% per %subB%', {
                       subA: poolInfo[baseIn ? 'mintB' : 'mintA'].symbol,
                       subB: poolInfo[baseIn ? 'mintA' : 'mintB'].symbol
                     })}
@@ -164,7 +164,7 @@ export default function ClmmPositionAccountItemDetail({
                 <HStack width="100%" justifyContent="space-between" color={colors.textSubtle}>
                   <HStack>
                     <Divider borderColor={colors.textPurple} opacity="1" width="6px" borderBottomWidth="2px" />
-                    <Text>{t('clmm.time_price_range', { time: '24h' })}: </Text>
+                    <Text>{t('%time% Price Range', { time: '24h' })}: </Text>
                   </HStack>
                   <Text color={colors.textPrimary} fontWeight="medium">
                     {`[${formatCurrency(timePriceMin, {
@@ -209,7 +209,7 @@ export default function ClmmPositionAccountItemDetail({
                 gap={0.5}
                 pt={1}
               >
-                <Text color={colors.textSubtle}>{t('clmm.nft_mint_address')}: </Text>
+                <Text color={colors.textSubtle}>{t('NFT Mint Address')}: </Text>
                 <AddressChip
                   address={nftMint}
                   canCopy
@@ -226,17 +226,17 @@ export default function ClmmPositionAccountItemDetail({
             <Divider borderWidth="1px" borderColor={colors.textSubtle} opacity="0.2" />
             <Flex flex={1} flexDirection="column" w="full" justifyContent="space-between">
               <Flex justifyContent="space-between">
-                <Text color={colors.textSubtle}> {t('liquidity.pool_liquidity')}</Text>
+                <Text color={colors.textSubtle}> {t('Pool Liquidity')}</Text>
                 <Text color={colors.textPrimary}>{formatCurrency(poolInfo.tvl, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}</Text>
               </Flex>
               <Flex justifyContent="space-between">
-                <Text color={colors.textSubtle}>{t('common.24h_volume')}</Text>
+                <Text color={colors.textSubtle}>{t('24h Volume')}</Text>
                 <Text color={colors.textPrimary}>
                   {formatCurrency(poolInfo.day.volume, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
                 </Text>
               </Flex>
               <Flex justifyContent="space-between">
-                <Text color={colors.textSubtle}>{t('common.24h_pool_fee')}</Text>
+                <Text color={colors.textSubtle}>{t('24h Pool Fee')}</Text>
                 <Text color={colors.textPrimary}>
                   {formatCurrency(poolInfo.day.volumeFee, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
                 </Text>

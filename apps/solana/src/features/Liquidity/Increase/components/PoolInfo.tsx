@@ -14,7 +14,7 @@ import {
   PopoverBody,
   useClipboard
 } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Decimal from 'decimal.js'
 import TokenAvatar from '@/components/TokenAvatar'
 import { aprColors, PoolListItemAprLine } from '@/features/Pools/components/PoolListItemAprLine'
@@ -40,7 +40,7 @@ export default function PoolInfo({ pool, aprData }: { pool?: FormattedPoolInfoSt
   const onCopySuccess = useCallback((content: string) => {
     toastSubject.next({
       status: 'success',
-      title: t('common.copy_success'),
+      title: t('Copied successfully!'),
       description: content
     })
   }, [])
@@ -50,7 +50,7 @@ export default function PoolInfo({ pool, aprData }: { pool?: FormattedPoolInfoSt
       <Flex justify="space-between" align="center">
         <Box>
           <Text fontSize={['xs', 'sm']} color={colors.textTertiary}>
-            {t('liquidity.total_apr_7d')}
+            {t('Total APR 7D')}
           </Text>
           <Text mt={1} mb="6px" fontSize={['md', 'lg']} fontWeight={500} color={colors.textPrimary}>
             {formatToRawLocaleStr(toPercentString(pool?.week.apr))}
@@ -73,11 +73,9 @@ export default function PoolInfo({ pool, aprData }: { pool?: FormattedPoolInfoSt
                 {quoteToken && (
                   <InfoRowItem symbol={wSolToSolString(quoteToken.symbol)} address={quoteToken.address} onCopySuccess={onCopySuccess} />
                 )}
-                {pool?.lpMint?.address && (
-                  <InfoRowItem symbol={t('common.lp')} address={pool.lpMint.address} onCopySuccess={onCopySuccess} />
-                )}
-                {pool?.id && <InfoRowItem symbol={t('common.amm_id')} address={pool.id} onCopySuccess={onCopySuccess} />}
-                {pool?.marketId && <InfoRowItem symbol={t('common.market_id')} address={pool.marketId} onCopySuccess={onCopySuccess} />}
+                {pool?.lpMint?.address && <InfoRowItem symbol={t('LP')} address={pool.lpMint.address} onCopySuccess={onCopySuccess} />}
+                {pool?.id && <InfoRowItem symbol={t('AMM ID')} address={pool.id} onCopySuccess={onCopySuccess} />}
+                {pool?.marketId && <InfoRowItem symbol={t('Market ID')} address={pool.marketId} onCopySuccess={onCopySuccess} />}
               </Grid>
             </PopoverBody>
           </PopoverContent>
@@ -94,7 +92,7 @@ export default function PoolInfo({ pool, aprData }: { pool?: FormattedPoolInfoSt
             <Flex fontWeight="normal" color={colors.textSecondary} justify="flex-start" align="center">
               <Box rounded="full" bg={aprColors[idx]} w="7px" h="7px" mr="10px" />
               <Text color={colors.textTertiary} fontSize="sm" mr={1}>
-                {isTradingFee ? t('common.fees') : t('common.reward')}
+                {isTradingFee ? t('Fees') : t('Reward')}
               </Text>
               {token && (
                 <HStack spacing="-2px">
@@ -111,7 +109,7 @@ export default function PoolInfo({ pool, aprData }: { pool?: FormattedPoolInfoSt
 
       <Flex justify="space-between" align="center" mt="33px" mb={1}>
         <Text color={colors.textSecondary} fontSize="sm">
-          {t('liquidity.pool_liquidity')}
+          {t('Pool Liquidity')}
         </Text>
         <Text color={colors.textSecondary} fontSize="sm" opacity={0.6}>
           {pool ? `$${formatCurrency(new Decimal(pool.lpAmount).mul(pool.lpPrice).toString())}` : '-'}
@@ -120,7 +118,7 @@ export default function PoolInfo({ pool, aprData }: { pool?: FormattedPoolInfoSt
       <Flex mt={2} justify="space-between" align="center">
         <HStack spacing="6px">
           <Text color={colors.textSecondary} fontSize="sm" opacity={0.6}>
-            {t('liquidity.pooled')} {wSolToSolString(baseToken?.symbol)}
+            {t('Pooled')} {wSolToSolString(baseToken?.symbol)}
           </Text>
           <TokenAvatar token={baseToken} size="sm" />
         </HStack>
@@ -131,7 +129,7 @@ export default function PoolInfo({ pool, aprData }: { pool?: FormattedPoolInfoSt
       <Flex mt={2} justify="space-between" align="center">
         <HStack spacing="6px">
           <Text color={colors.textSecondary} fontSize="sm" opacity={0.6}>
-            {t('liquidity.pooled')} {wSolToSolString(quoteToken?.symbol)}
+            {t('Pooled')} {wSolToSolString(quoteToken?.symbol)}
           </Text>
           <TokenAvatar token={quoteToken} size="sm" />
         </HStack>
@@ -144,7 +142,7 @@ export default function PoolInfo({ pool, aprData }: { pool?: FormattedPoolInfoSt
           <HStack gap={1}>
             <LockIcon color={colors.textSecondary} />
             <Text color={colors.textSecondary} opacity={0.6} fontSize="xs">
-              {t('liquidity.locked_percent', {
+              {t('%percent% permanently locked', {
                 percent: formatToRawLocaleStr(toPercentString(Math.abs(pool.burnPercent || 0), { alreadyPercented: true }))
               })}
             </Text>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Text, Flex } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { FormattedPoolInfoStandardItem } from '@/hooks/pool/type'
 import { AprData } from '@/features/Clmm/utils/calApr'
 import PoolInfo from './PoolInfo'
@@ -32,7 +32,7 @@ export default function PoolDetailMobileDrawer({
         <DrawerBody p="20px">
           <Flex flexDirection="column" gap={3}>
             <Text fontSize="lg" fontWeight="medium" mb={2}>
-              {t('liquidity.pool_detail')}
+              {t('Pool detail')}
             </Text>
             <PoolInfo pool={pool} aprData={aprData} />
             <PositionBalance myPosition={myPosition} staked={staked} unstaked={unstaked} />

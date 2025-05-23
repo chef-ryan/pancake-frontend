@@ -1,7 +1,7 @@
 import { Box, Grid, GridItem, HStack, Text } from '@chakra-ui/react'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { useEffect, useRef } from 'react'
 import { ColorType, IChartApi, ISeriesApi, createChart } from 'lightweight-charts'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
@@ -123,7 +123,7 @@ export function SwapKlinePanelMobileThumbnail({
       </Grid>
       <HStack justify="center">
         <Text fontWeight="bold" fontSize="12px" color={colors.textSecondary}>
-          {t('swap.show_chart')}
+          {t('Show chart')}
         </Text>
         <ExpandLeftTopIcon />
       </HStack>

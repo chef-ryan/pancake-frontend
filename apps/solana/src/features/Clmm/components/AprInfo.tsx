@@ -1,5 +1,5 @@
 import { Box, Flex, HStack, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Cell, Label, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import AprMDSwitchWidget from '@/components/AprMDSwitchWidget'
 import Tabs from '@/components/Tabs'
@@ -27,7 +27,7 @@ export default function EstimatedAprInfo({ aprData, value, onChange }: Props) {
       <Flex justifyContent="space-between" alignItems="flex-start">
         <HStack>
           <Text variant="title" fontSize={['sm', 'md']} color={colors.textPrimary}>
-            {t('common.estimated_APR')}
+            {t('Estimated APR')}
           </Text>
           <AprMDSwitchWidget />
         </HStack>
@@ -73,7 +73,7 @@ export default function EstimatedAprInfo({ aprData, value, onChange }: Props) {
           {aprData?.fee ? (
             <Flex alignItems="center" gap="2" fontSize="sm" color={colors.textSubtle}>
               <Box w="7px" h="7px" bg={PORTFOLIO_PIE_COLORS[0]} rounded="full" />
-              {t('field.trade_fees')}{' '}
+              {t('Trade fees')}{' '}
               <Text color={colors.textPrimary} fontWeight="600">
                 {formatToRawLocaleStr(toPercentString(aprData.fee.apr || 0))}
               </Text>

@@ -1,64 +1,60 @@
-import { Trans } from 'react-i18next'
-import { Text } from '@chakra-ui/react'
-import i18n from '@/i18n'
-import { colors } from '@/theme/cssVariables/colors'
+import { Trans } from '@pancakeswap/localization'
 
-const LIQUIDITY_TX_MSG = {
+const LIQUIDITY_TX_MSG = (props?: Record<string, unknown>) => ({
   addLiquidity: {
-    title: 'transaction_history.name_add_liquidity',
-    desc: 'transaction_history.add_liquidity_desc',
-    txHistoryTitle: 'transaction_history.name_add_liquidity',
-    txHistoryDesc: 'transaction_history.add_liquidity_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans {...props}>Add Liquidity</Trans>,
+    desc: <Trans {...props}>Added %amountA% %symbolA% and %amountB% %symbolB%.</Trans>,
+    txHistoryTitle: <Trans {...props}>Add Liquidity</Trans>,
+    txHistoryDesc: <Trans {...props}>Added %amountA% %symbolA% and %amountB% %symbolB%.</Trans>
   },
   removeLiquidity: {
-    title: 'transaction_history.name_remove_liquidity',
-    desc: 'transaction_history.remove_liquidity_desc',
-    txHistoryTitle: 'transaction_history.name_remove_liquidity',
-    txHistoryDesc: 'transaction_history.remove_liquidity_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans {...props}>Remove Liquidity</Trans>,
+    desc: <Trans {...props}>Removed %amountA% %symbolA% and %amountB% %symbolB%.</Trans>,
+    txHistoryTitle: <Trans {...props}>Remove Liquidity</Trans>,
+    txHistoryDesc: <Trans {...props}>Removed %amountA% %symbolA% and %amountB% %symbolB%.</Trans>
   },
   createPool: {
-    title: 'liquidity.create_pool_tx_title',
-    desc: 'liquidity.create_pool_tx_desc',
+    title: <Trans {...props}>Create pool</Trans>,
+    desc: <Trans {...props}>create %mintA% - %mintB% pool</Trans>,
     txHistoryTitle: '',
-    txHistoryDesc: '',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    txHistoryDesc: ''
   },
   removeLpBeforeMigrate: {
-    title: 'transaction_history.name_remove_liquidity',
-    desc: 'transaction_history.name_remove_liquidity',
+    title: <Trans {...props}>Remove Liquidity</Trans>,
+    desc: <Trans {...props}>Remove Liquidity</Trans>,
     txHistoryTitle: '',
-    txHistoryDesc: '',
-    components: {}
+    txHistoryDesc: ''
   },
   migrateToClmm: {
-    title: 'migrate_clmm.migrate_clmm_tx_title',
-    desc: 'migrate_clmm.migrate_clmm_tx_desc',
+    title: <Trans {...props}>Migrate to CLMM</Trans>,
+    desc: <Trans {...props}>Migrate %mint% to CLMM position.</Trans>,
     txHistoryTitle: '',
-    txHistoryDesc: '',
-    components: {}
+    txHistoryDesc: ''
   },
   lockLp: {
-    title: 'transaction_history.lock_position',
-    desc: 'transaction_history.position_locked',
-    txHistoryTitle: 'transaction_history.lock_position',
-    txHistoryDesc: 'transaction_history.position_locked',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans {...props}>Lock Position</Trans>,
+    desc: <Trans {...props}>Position %position% locked</Trans>,
+    txHistoryTitle: <Trans {...props}>Lock Position</Trans>,
+    txHistoryDesc: <Trans {...props}>Position %position% locked</Trans>
   },
   harvestLock: {
-    title: 'transaction_history.harvest_rewards',
-    desc: 'transaction_history.harvest_lock_reward_desc',
-    txHistoryTitle: 'transaction_history.harvest_rewards',
-    txHistoryDesc: 'transaction_history.harvest_lock_reward_desc',
-    components: {}
+    title: <Trans {...props}>Harvested Rewards</Trans>,
+    desc: <Trans {...props}>Harvest Locked Position Rewards</Trans>,
+    txHistoryTitle: <Trans {...props}>Harvested Rewards</Trans>,
+    txHistoryDesc: <Trans {...props}>Harvest Locked Position Rewards</Trans>
   }
-}
-export const getTxMeta = ({ action, values = {} }: { action: keyof typeof LIQUIDITY_TX_MSG; values?: Record<string, unknown> }) => {
-  const meta = LIQUIDITY_TX_MSG[action]
+})
+export const getTxMeta = ({
+  action,
+  values = {}
+}: {
+  action: keyof ReturnType<typeof LIQUIDITY_TX_MSG>
+  values?: Record<string, unknown>
+}) => {
+  const meta = LIQUIDITY_TX_MSG(values)[action]
   return {
-    title: i18n.t(meta.title, values),
-    description: <Trans i18nKey={meta.desc} values={values} components={meta.components} />,
+    title: meta.title,
+    description: meta.desc,
     txHistoryTitle: meta.txHistoryTitle || meta.title,
     txHistoryDesc: meta.txHistoryDesc || meta.desc,
     txValues: values

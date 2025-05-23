@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useRef } from 'react'
 import { Flex, InputGroup, InputLeftElement, NumberInput, NumberInputField } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import { colors } from '@/theme/cssVariables/colors'
 import { numberRegExp } from '@/utils/numberish/regex'
@@ -24,7 +24,7 @@ export default function RangeInput({ priceRange, priceError, onPriceChange, onBl
     <Flex gap={[2, 4]} mt={[2, 0]} flexDirection={['column', 'row']}>
       <InputGroup w="full">
         <InputLeftElement whiteSpace="nowrap" left="2" color={colors.textSecondary} pointerEvents="none">
-          {t('field.min')}
+          {t('Min')}
         </InputLeftElement>
         <NumberInput
           value={priceRange[0]}
@@ -55,7 +55,7 @@ export default function RangeInput({ priceRange, priceError, onPriceChange, onBl
 
       <InputGroup>
         <InputLeftElement whiteSpace="nowrap" left="2" color={colors.textSecondary} pointerEvents="none">
-          {t('field.max')}
+          {t('Max')}
         </InputLeftElement>
         <NumberInput
           value={priceRange[1]}

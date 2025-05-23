@@ -1,5 +1,5 @@
 import { HStack, Text, useDisclosure } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { useEffect } from 'react'
 import useFetchOwnerIdo from '@/hooks/portfolio/useFetchOwnerIdo'
 import { useAppStore } from '@/store'
@@ -26,9 +26,11 @@ export function AcceleraytorAlertChip() {
       onClose={onClose}
       alertContent={
         <HStack>
-          <Text>{t('portfolio.acceleraytor_banner_desc')}</Text>
+          <Text>
+            {t('You have unclaimed funds in AcceleRaytor. Check details at the bottom of this page and claim funds with one click.')}
+          </Text>
           <Text color={colors.textLink} cursor="pointer" onClick={() => scrollToHeading('acceleraytor')}>
-            {t('common.route_go')}
+            {t('Go>>')}
           </Text>
         </HStack>
       }

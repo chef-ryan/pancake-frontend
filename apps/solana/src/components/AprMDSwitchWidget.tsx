@@ -1,7 +1,7 @@
 import { Box, Button, HStack, SimpleGrid, Text, VStack } from '@chakra-ui/react'
 import { SwapHorizIcon } from '@pancakeswap/uikit'
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import CircleCheck from '@/icons/misc/CircleCheck'
 import SquareDIcon from '@/icons/misc/SquareDIcon'
 import SquareMIcon from '@/icons/misc/SquareMIcon'
@@ -27,12 +27,12 @@ export default function AprMDSwitchWidget(props: SvgIcon) {
 
   const text = {
     D: {
-      title: t('apr_dialog.mode_D_title'),
-      description: t('apr_dialog.mode_D_desc_brief')
+      title: t('Delta Method'),
+      description: t('Estimated APR is calculated by the Delta Method. Click the ‘D’ icon to switch to the Multiplier Method or')
     },
     M: {
-      title: t('apr_dialog.mode_M_title'),
-      description: t('apr_dialog.mode_M_desc_brief')
+      title: t('Multiplier Method'),
+      description: t('Estimated APR is calculated by the Multiplier Method. Click the ‘M’ icon to switch to the Delta Method or')
     }
   }
   return (
@@ -44,7 +44,7 @@ export default function AprMDSwitchWidget(props: SvgIcon) {
             <Button variant="ghost" size="sm" justifySelf="end" width="fit-content" onClick={toggleAprMode}>
               <HStack color={colors.primary60}>
                 <SwapHorizIcon color={colors.primary60} />
-                <Text>{t('button.switch')}</Text>
+                <Text>{t('Switch')}</Text>
               </HStack>
             </Button>
             <Box gridColumn="span 2">
@@ -61,7 +61,7 @@ export default function AprMDSwitchWidget(props: SvgIcon) {
                     handlers?.close?.()
                   }}
                 >
-                  {t('common.learn_more')}
+                  {t('Learn more')}
                 </Text>
               </Text>
             </Box>
@@ -98,27 +98,35 @@ export function AprCalcDialog(props: { isOpen: boolean; onClose(): void }) {
   }[] = [
     {
       aprCalcMethod: 'D',
-      title: t('apr_dialog.mode_D_title'),
-      description: t('apr_dialog.mode_D_desc')
+      title: t('Delta Method'),
+      description: t(
+        'This method uses the implied change (delta) in pool liquidity, as determined by the user’s price range and position size, to calculate estimated APR.'
+      )
     },
     {
       aprCalcMethod: 'M',
-      title: t('apr_dialog.mode_M_title'),
-      description: t('apr_dialog.mode_M_desc')
+      title: t('Multiplier Method'),
+      description: t(
+        'This method applies a multiplier, determined by the intersection of user price range and the historical price range of the pool, to calculate estimated APR.'
+      )
     }
   ]
   return (
     <ResponsiveModal
       size="lg"
-      title={t('apr_dialog.modal_title')}
+      title={t('APR Calculation Method')}
       showFooter
       hasSecondaryButton={false}
       isOpen={props.isOpen}
       onClose={props.onClose}
     >
       <Box color={colors.textPrimary}>
-        <Text>{t('apr_dialog.desc')}</Text>
-        <Text color={colors.semanticWarning}>{t('apr_dialog.warning_note')}</Text>
+        <Text>
+          {t(
+            'Two methods for calculating estimated APR are available, based on historical trade fees and emissions. Only positions in range earn yield. Past performance is not indicative of future results.'
+          )}
+        </Text>
+        <Text color={colors.semanticWarning}>{t('Calculations are an estimate and only for reference.')}</Text>
       </Box>
 
       <VStack alignItems="stretch" spacing={2} my={4}>

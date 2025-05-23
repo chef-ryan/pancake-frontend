@@ -1,5 +1,5 @@
 import { SwapHorizIcon } from '@pancakeswap/uikit'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Button } from '@chakra-ui/react'
 import { colors } from '@/theme/cssVariables/colors'
 
@@ -17,7 +17,7 @@ export default function PriceSwitchButton(props: { priceLabel: string; onClickSw
       color={colors.textSubtle}
       onClick={props.onClickSwitch}
     >
-      {props.priceLabel} {t('common.price')}{' '}
+      {props.priceLabel} {t('Price')}{' '}
       <SwapHorizIcon
         color={colors.primary60}
         style={{

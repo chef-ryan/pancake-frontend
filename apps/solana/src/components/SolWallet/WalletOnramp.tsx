@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { Box, Button } from '@chakra-ui/react'
 import { Wallet, useWallet } from '@solana/wallet-adapter-react'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { useEvent } from '@/hooks/useEvent'
 import { colors } from '@/theme/cssVariables'
 import { MoonpayBuy } from '@/components/Moonpay'
@@ -43,7 +43,7 @@ export default function WalletOnramp() {
               color={colors.text02}
               leftIcon={<MoonPayIcon width="16px" height="16px" color={colors.text02} />}
             >
-              {t('button.deposit')}
+              {t('Deposit')}
             </Button>
           </Box>
         </MoonpayBuy>
@@ -52,7 +52,7 @@ export default function WalletOnramp() {
   return (
     <Box>
       <Button isLoading={connecting} loadingText="Connecting.." onClick={handleOpen}>
-        {t('button.connect_wallet')}
+        {t('Connect Wallet')}
       </Button>
       <SelectWalletModal wallets={wallets} isOpen={visible} onClose={handleClose} onSelectWallet={handleSelectWallet} />
     </Box>

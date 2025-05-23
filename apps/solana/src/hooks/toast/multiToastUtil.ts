@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid'
-import i18n from '@/i18n'
+import { TranslateFunction } from '@pancakeswap/localization'
+import { ReactNode } from 'react'
 import { ToastStatus, TxCallbackProps } from '@/types/tx'
 import { txStatusSubject, multiTxStatusSubject } from './useTxStatus'
 
@@ -31,16 +32,17 @@ export const handleMultiTxToast = (
     toastId: string
     processedId: ProcessedId
     txLength: number
+    t: TranslateFunction
     meta: {
-      title: string | JSX.Element
-      description: string | JSX.Element
-      txHistoryTitle: string
-      txHistoryDesc: string
+      title: string | ReactNode
+      description: string | ReactNode
+      txHistoryTitle: string | ReactNode
+      txHistoryDesc: string | ReactNode
       txValues: Record<string, unknown>
     }
     skipWatchSignature?: boolean
     isSwap?: boolean
-    getSubTxTitle: (idx: number) => string
+    getSubTxTitle: (idx: number) => string | ReactNode
     handler: (
       processedId: {
         txId: string
@@ -50,7 +52,7 @@ export const handleMultiTxToast = (
     onCloseToast?: () => void
   } & TxCallbackProps
 ) => {
-  const { toastId, txLength, processedId, meta, skipWatchSignature, isSwap, getSubTxTitle, handler, ...txProps } = props
+  const { t, toastId, txLength, processedId, meta, skipWatchSignature, isSwap, getSubTxTitle, handler, ...txProps } = props
   if (txLength <= 1) {
     if (processedId[0].txId) {
       txStatusSubject.next({
@@ -79,14 +81,14 @@ export const handleMultiTxToast = (
     status: isError ? 'error' : isSuccess ? 'success' : 'info',
     ...meta,
     isSwap,
-    title: meta.title + (isError && !isSwap ? ` ${i18n.t('transaction.failed')}` : ''),
+    title: meta.title + (isError && !isSwap ? ` ${t('Failed')}` : ''),
     duration: isError || isSuccess ? 8000 : undefined,
     subTxIds: processedId.map((tx, idx) => {
       const titleKey = getSubTxTitle(idx)
       return {
         txId: tx.txId,
         status: tx.status,
-        title: i18n.t(titleKey),
+        title: typeof titleKey === 'string' ? t(titleKey) : titleKey,
         txHistoryTitle: titleKey
       }
     })
@@ -95,6 +97,7 @@ export const handleMultiTxToast = (
 }
 
 export default function showMultiToast({
+  t,
   toastId,
   processedId,
   meta,
@@ -102,6 +105,7 @@ export default function showMultiToast({
   txLength,
   onClose
 }: {
+  t: TranslateFunction
   toastId: string
   processedId: {
     txId: string
@@ -127,7 +131,7 @@ export default function showMultiToast({
     update: true,
     status: isError ? 'error' : isSuccess ? 'success' : 'info',
     ...meta,
-    title: meta.title + (isError ? ` ${i18n.t('transaction.failed')}` : ''),
+    title: meta.title + (isError ? ` ${t('Failed')}` : ''),
     duration: isError || isSuccess ? 8000 : undefined,
     onClose,
     subTxIds: processedId.map((tx, idx) => {
@@ -135,7 +139,7 @@ export default function showMultiToast({
       return {
         txId: tx.txId,
         status: tx.status,
-        title: i18n.t(titleKey),
+        title: t(titleKey),
         txHistoryTitle: titleKey
       }
     })

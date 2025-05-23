@@ -3,7 +3,7 @@ import { Box, Flex, HStack, SystemStyleObject, Tag, Text, TextProps, useDisclosu
 import { ApiClmmConfigInfo, ApiV3Token, PoolFetchType, TokenInfo, solToWSol } from '@raydium-io/raydium-sdk-v2'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronDown } from 'react-feather'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import PanelCard from '@/components/PanelCard'
 import TokenAvatar from '@/components/TokenAvatar'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
@@ -154,8 +154,8 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
     [currentConfig?.id, existingPools]
   )
 
-  let error = tokens.token1 ? (tokens.token2 ? undefined : 'common.quote_token') : 'common.base_token'
-  error = error || (currentConfig ? undefined : 'field.fee_tier')
+  let error = tokens.token1 ? (tokens.token2 ? undefined : t('Quote token')) : t('Base token')
+  error = error || (currentConfig ? undefined : t('Fee Tier'))
 
   if (!show) return null
   if (completed) {
@@ -168,7 +168,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
               {tokens.token1?.symbol} / {tokens.token2?.symbol}
             </Text>
             <Tag size="sm" variant="rounded" bg={colors.primary10} color={colors.primary60} border={`1px solid ${colors.primary20}`}>
-              {t('field.fee')} {percentFormatter.format((currentConfig?.tradeFeeRate || 0) / 1000000)}
+              {t('Fee')} {percentFormatter.format((currentConfig?.tradeFeeRate || 0) / 1000000)}
             </Tag>
           </Flex>
           <EditIcon cursor="pointer" onClick={() => onEdit(0)} />
@@ -179,12 +179,12 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
   return (
     <PanelCard p={[3, 6]}>
       <Text {...titleProps} mb="4">
-        {t('common.tokens')}
+        {t('Tokens')}
       </Text>
       <Flex gap="2" alignItems="center" mb="6">
         <Box {...inputCard} data-side="token1" flex="1" onClick={handleClick} sx={SelectBoxSx}>
           <Text variant="label" color={colors.textSubtle} mb="2">
-            {t('common.base_token')}
+            {t('Base token')}
           </Text>
           <Flex gap="2" alignItems="center" justifyContent="space-between">
             {tokens.token1 ? (
@@ -196,7 +196,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
               </Flex>
             ) : (
               <Text {...titleProps} color={colors.textSubtle} fontSize="lg" opacity="0.5">
-                {t('common.select')}
+                {t('Select')}
               </Text>
             )}
             <ChevronDown color={colors.textSecondary} opacity="0.5" />
@@ -204,7 +204,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
         </Box>
         <Box {...inputCard} data-side="token2" flex="1" onClick={handleClick} sx={SelectBoxSx}>
           <Text variant="label" color={colors.textSubtle} mb="2">
-            {t('common.quote_token')}
+            {t('Quote token')}
           </Text>
           <Flex gap="2" alignItems="center" justifyContent="space-between">
             {tokens.token2 ? (
@@ -216,7 +216,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
               </Flex>
             ) : (
               <Text {...titleProps} color={colors.textSubtle} fontSize="lg" opacity="0.5">
-                {t('common.select')}
+                {t('Select')}
               </Text>
             )}
             <ChevronDown color={colors.textSubtle} opacity="0.5" />
@@ -226,7 +226,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
       <TokenSelectDialog onClose={onClose} isOpen={isOpen} filterFn={filterFn} onSelectValue={handleSelect} />
 
       <Text {...titleProps} mb="4">
-        {t('field.fee_tier')}
+        {t('Fee Tier')}
       </Text>
       <Flex w="full" gap="2">
         <Select
@@ -276,7 +276,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
         />
       </Flex>
       <ConnectedButton mt="2rem" disabled={!!error || !currentConfig} isLoading={isLoading || isExistingLoading} onClick={handleConfirm}>
-        {error ? `${t('common.select')} ${t(error)}` : t('button.continue')}
+        {error ? `${t('Select')} ${t(error)}` : t('Continue')}
       </ConnectedButton>
     </PanelCard>
   )

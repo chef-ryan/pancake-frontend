@@ -1,7 +1,7 @@
 import { HStack } from '@chakra-ui/react'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Button from '@/components/Button'
 import MinusIcon from '@/icons/misc/MinusIcon'
 import { colors } from '@/theme/cssVariables'
@@ -36,7 +36,7 @@ export default function ActionButtons({ id, stakedToken }: ActionButtonsProps) {
           routeToPage('staking', { queryProps: { dialog: 'stake', open: id } })
         }}
       >
-        {t('button.stake')} {stakedToken?.symbol}
+        {t('Stake')} {stakedToken?.symbol}
       </Button>
     </HStack>
   )

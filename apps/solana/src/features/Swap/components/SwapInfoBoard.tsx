@@ -4,7 +4,7 @@ import { Box, Collapse, Flex, HStack, Skeleton, Text } from '@chakra-ui/react'
 import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 import { Fragment, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import AddressChip from '@/components/AddressChip'
 import { IntervalCircleHandler } from '@/components/IntervalCircle'
 import TokenAvatar from '@/components/TokenAvatar'
@@ -71,13 +71,20 @@ export function SwapInfoBoard({
         </HStack>
         <HStack gap={4} py={1} justifyContent="space-between">
           <ItemLabel
-            name={isBaseOut ? t('swap.info_maximum_input') : t('swap.info_minimum_received')}
-            tooltip={isBaseOut ? t('swap.info_maximum_input_tooltip') : t('swap.info_minimum_received_tooltip')}
+            name={isBaseOut ? t('Maximum Input') : t('Minimum Received')}
+            tooltip={
+              isBaseOut
+                ? t('The maximum number of tokens you will input on this trade')
+                : t('The minimum number of tokens you will receive. This is determined by your slippage tolerance.')
+            }
           />
           <MinimumReceiveValue tokenOutput={isBaseOut ? tokenInput : tokenOutput} amount={computedSwapResult?.otherAmountThreshold || ''} />
         </HStack>
         <HStack gap={4} py={1} justifyContent="space-between">
-          <ItemLabel name={t('swap.info_price_impact')} tooltip={t('swap.info_price_impact_tooltip')} />
+          <ItemLabel
+            name={t('Price Impact')}
+            tooltip={t('The difference between the current market price and estimated price due to trade size')}
+          />
           <Text
             fontSize="14px"
             color={isHighRiskPrice ? colors.semanticError : priceImpact > 1 ? colors.semanticWarning : colors.positive60}
@@ -89,12 +96,12 @@ export function SwapInfoBoard({
         </HStack>
         <Collapse in={showMoreSwapInfo} animateOpacity>
           <HStack gap={4} py={1} justifyContent="space-between">
-            <ItemLabel name={t('swap.info_order_routing')} tooltip={t('swap.info_order_routing_tooltip')} />
+            <ItemLabel name={t('Order Routing')} tooltip={t('This route gave the best price for your trade')} />
             {routeTokens && <RoutingValue routePlan={computedSwapResult?.routePlan || []} />}
           </HStack>
 
           <HStack gap={4} py={1} justifyContent="space-between">
-            <ItemLabel name={t('swap.info_estimated_fees')} tooltip={t('swap.info_estimated_fees_tooltip')} />
+            <ItemLabel name={t('Estimated Fees')} tooltip={t('Swap fees go to LPs, RAY buybacks, and treasury.')} />
             <Box textAlign="end" fontSize="xs" color={colors.textPrimary}>
               {computedSwapResult?.routePlan.map((route) => (
                 <FeeItem key={route.poolId} route={route} />
@@ -104,7 +111,7 @@ export function SwapInfoBoard({
         </Collapse>
         <HStack color={colors.textSecondary} fontSize="xs" spacing={0.5} justify="center" onClick={() => setShowMoreSwapInfo((b) => !b)}>
           <Text align="center" cursor="pointer" fontSize="14px" color={colors.textPrimary}>
-            {showMoreSwapInfo ? t('common.less_info') : t('common.more_info')}
+            {showMoreSwapInfo ? t('Less info') : t('More_info')}
           </Text>
           {/* arrow */}
           <Box transform={`rotate(${showMoreSwapInfo ? `${180}deg` : 0})`} transition="300ms">

@@ -1,5 +1,5 @@
 import { Flex } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Button from '@/components/Button'
 import FullExpandIcon from '@/icons/misc/FullExpandIcon'
 import MinusIcon from '@/icons/misc/MinusIcon'
@@ -82,7 +82,7 @@ export default function ActionButtons({
           flex={isMobile ? undefined : '1 1 auto'}
           onClick={onClickViewMore}
         >
-          {t('common.view_more')}
+          {t('View more')}
         </Button>
       )}
       <Flex gap={[variant === 'drawer-face' ? 1 : 2, 3]} flex={1} justifyContent={variant === 'drawer-face' ? 'space-between' : 'flex-end'}>
@@ -111,11 +111,11 @@ export default function ActionButtons({
         {!isLocked ? (
           canMigrate ? (
             <Button size="sm" onClick={onMigrateOpen}>
-              {t('portfolio.stake_item_migrate_button')}
+              {t('Migrate')}
             </Button>
           ) : (
             <Button size="sm" isDisabled={!canStake} onClick={onStake}>
-              {t('portfolio.stake_item_stake_button')}
+              {t('Stake')}
             </Button>
           )
         ) : null}

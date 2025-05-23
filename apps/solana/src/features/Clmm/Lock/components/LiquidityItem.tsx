@@ -1,5 +1,5 @@
 import { Box, Flex, HStack, Tag, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { FormattedPoolInfoConcentratedItem } from '@/hooks/pool/type'
 import { colors } from '@/theme/cssVariables'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
@@ -32,7 +32,7 @@ export default function LiquidityItem({
     position.tickUpper === parseInt((443636 / poolInfo.config.tickSpacing).toString()) * poolInfo.config.tickSpacing
 
   const rangeValue = isFullRange
-    ? t('clmm.full_range')
+    ? t('Full Range')
     : `${formatCurrency(priceLower.price, { decimalPlaces: 6 })} - ${formatCurrency(priceUpper.price, { decimalPlaces: 6 })}`
   const rangeValueUnit = `${poolInfo.mintB.symbol} per ${poolInfo.mintA.symbol}`
   const totalVolume = amountA
@@ -73,10 +73,10 @@ export default function LiquidityItem({
           <Mobile>
             <Flex flexDirection="column" color={colors.lightPurple} textAlign={['left', 'right']} wordBreak="break-all" gap={2}>
               <Text fontSize="md" lineHeight="20px">
-                {t('clmm.position')}: {formatCurrency(totalVolume.toString(), { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
+                {t('Position')}: {formatCurrency(totalVolume.toString(), { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
               </Text>
               <Text fontSize="xs" lineHeight="16px" opacity={0.5}>
-                {`${t('liquidity.nft_mint')} ${shortenAddress(position.nftMint.toBase58(), 6)}`}
+                {`${t('NFT Mint:')} ${shortenAddress(position.nftMint.toBase58(), 6)}`}
               </Text>
             </Flex>
           </Mobile>
@@ -86,10 +86,10 @@ export default function LiquidityItem({
         <HStack justify="space-between">
           <Flex flexDirection="column" color={colors.lightPurple} textAlign={['left', 'right']} wordBreak="break-all" gap={2}>
             <Text fontSize="md" lineHeight="20px">
-              {t('clmm.position')}: {formatCurrency(totalVolume.toString(), { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
+              {t('Position')}: {formatCurrency(totalVolume.toString(), { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
             </Text>
             <Text fontSize="xs" lineHeight="16px" opacity={0.5}>
-              {`${t('liquidity.nft_mint')} ${shortenAddress(position.nftMint.toBase58(), 6)}`}
+              {`${t('NFT Mint:')} ${shortenAddress(position.nftMint.toBase58(), 6)}`}
             </Text>
           </Flex>
           {isSelected ? <CircleCheck width={16} height={16} fill={colors.secondary} /> : <Box width="16px" height="16px" opacity="0" />}

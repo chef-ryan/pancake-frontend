@@ -3,7 +3,7 @@ import { Box, ColorMode, SimpleGrid, Text, VStack, useColorMode } from '@chakra-
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import PortfolioPageThumbnailIcon from '@/icons/pageNavigation/PortfolioPageThumbnailIcon'
 import { colors } from '@/theme/cssVariables'
@@ -32,19 +32,19 @@ export function MobileBottomNavbar() {
     >
       <BottomNavbarItem
         href={PAGE_URLS.SWAP}
-        text={t('swap.title')}
+        text={t('Swap')}
         icon={() => <SwapHorizIcon color={isSwapActive ? colors.secondary : colors.textSubtle} />}
         isActive={isSwapActive}
       />
       <BottomNavbarItem
         href={PAGE_URLS.LIQUIDITY}
-        text={t('liquidity.title')}
+        text={t('Liquidity')}
         icon={() => <WaterIcon color={isLiquidityActive ? colors.secondary : colors.textSubtle} />}
         isActive={isLiquidityActive}
       />
       <BottomNavbarItem
         href={PAGE_URLS.POSITIONS}
-        text={t('portfolio.title')}
+        text={t('My Positions')}
         icon={(colorMode) => <PortfolioPageThumbnailIcon colorMode={colorMode} isActive={isPortfolioActive} />}
         isActive={isPortfolioActive}
       />

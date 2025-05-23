@@ -2,7 +2,7 @@ import { Box, Flex, Grid, GridItem, SimpleGrid, Text } from '@chakra-ui/react'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Button from '@/components/Button'
 import TokenAvatar from '@/components/TokenAvatar'
 import ChevronRightIcon from '@/icons/misc/ChevronRightIcon'
@@ -54,7 +54,7 @@ export default function PortfolioIdle({ idleBalance, productiveBalance, idleList
       }}
     >
       <Box bg={colors.backgroundMedium} fontWeight="medium" h="48px" pl="24px" py="13px">
-        {t('portfolio.idle_tokens')}
+        {t('Idle tokens')}
       </Box>
 
       <Flex flexWrap="wrap" flexGrow={1} bg={colors.backgroundLight} py="30px" px={['20px', '30px']}>
@@ -99,7 +99,7 @@ export default function PortfolioIdle({ idleBalance, productiveBalance, idleList
           </Grid>
         ) : (
           <Flex direction="column" justify="space-around" align="center" flex={1} py={8}>
-            <Text color={colors.textTertiary}>{t('wallet.connected_hint.portfolio_idle')}</Text>
+            <Text color={colors.textTertiary}>{t('Connect wallet to see your deposited assets.')}</Text>
           </Flex>
         )}
       </Flex>
@@ -156,7 +156,7 @@ function AssetsList(props: { idleList?: IdleType[] }) {
                 minWidth="none"
                 onClick={() => routeToPage('pools', { queryProps: { token: idle.token!.address } })}
               >
-                {t('common.pools')}
+                {t('Pools')}
                 <Box width={[3, 4]} height={[3, 4]} ml={[0.5, 1]}>
                   <ChevronRightIcon width="100%" height="100%" />
                 </Box>

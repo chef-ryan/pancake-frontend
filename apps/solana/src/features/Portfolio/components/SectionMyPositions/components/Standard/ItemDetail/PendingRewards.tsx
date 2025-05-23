@@ -1,6 +1,6 @@
 import { Badge, Box, Button, Flex, HStack, Text, Tooltip, VStack } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import ExclaimationTriangle from '@/icons/misc/ExclaimationTriangle'
 import InfoCircleIcon from '@/icons/misc/InfoCircleIcon'
@@ -20,15 +20,15 @@ type PendingRewardsProps = {
 export default function PendingRewards({ pendingReward, positionStatus, rewardInfo, isLoading, onHarvest }: PendingRewardsProps) {
   const { t } = useTranslation()
   const positionStandardPoolsStatusTags = {
-    unstaked: t('amm.farm_unstaked'),
-    ended: t('amm.farm_ended')
+    unstaked: t('Unstaked LP'),
+    ended: t('Farm Inactive')
   }
   const isEmpty = !rewardInfo.some((r) => !new Decimal(r.amount).isZero())
   return (
     <Flex justify="space-between" bg={colors.backgroundDark} rounded="lg" py={[4, 2.5]} px={4} gap={8}>
       <VStack align="flex-start" justifyContent="space-between">
         <Text fontSize="sm" color={colors.textTertiary}>
-          {t('amm.pending_reward')}
+          {t('Pending rewards')}
         </Text>
         <HStack color={colors.textSecondary}>
           <Text fontSize="sm" fontWeight="medium">
@@ -66,7 +66,7 @@ export default function PendingRewards({ pendingReward, positionStatus, rewardIn
             label={
               <Box>
                 <Text fontSize="sm" color={colors.textSecondary}>
-                  {t('amm.pending_alert')}
+                  {t('You have unstaked LP tokens that could be staked in a farm. Stake now')}
                 </Text>
               </Box>
             }
@@ -77,7 +77,7 @@ export default function PendingRewards({ pendingReward, positionStatus, rewardIn
               </Box>
 
               {positionStatus === 'ended' ? (
-                <Tooltip label={t('liquidity.no_active_farm_desc')}>
+                <Tooltip label={t('Rewards have ended for this farm. You can unstake your LP tokens.')}>
                   <Text whiteSpace="break-spaces" textAlign="center">
                     {positionStandardPoolsStatusTags[positionStatus as keyof typeof positionStandardPoolsStatusTags]}
                   </Text>
@@ -102,7 +102,7 @@ export default function PendingRewards({ pendingReward, positionStatus, rewardIn
           rounded="8px"
           onClick={onHarvest}
         >
-          {t('amm.pending_reward_button')}
+          {t('Harvest')}
         </Button>
       </VStack>
     </Flex>

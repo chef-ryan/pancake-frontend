@@ -5,7 +5,7 @@ import { ApiV3PoolInfoConcentratedItem, ApiV3Token, solToWSol } from '@raydium-i
 import { Box, Text, Flex, HStack, VStack, SimpleGrid, Skeleton } from '@chakra-ui/react'
 import { shallow } from 'zustand/shallow'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import DecimalInput from '@/components/DecimalInput'
 import PanelCard from '@/components/PanelCard'
@@ -277,11 +277,11 @@ export default function SetPriceAndRange({
           <VStack align="stretch">
             <HStack color={colors.textPrimary}>
               <Text variant="label" fontSize="sm" color={colors.textSubtle}>
-                {t('clmm.initial_price')}:
+                {t('Initial price')}:
               </Text>
               <Text>{formatCurrency(currentPrice, { decimalPlaces: Math.max(token1.decimals, token2.decimals) })}</Text>
               <Text>
-                {t('common.per_unit', {
+                {t('%subA% per %subB%', {
                   subA: wSolToSolString(tempCreatedPool?.[baseIn ? 'mintB' : 'mintA'].symbol),
                   subB: wSolToSolString(tempCreatedPool?.[baseIn ? 'mintA' : 'mintB'].symbol)
                 })}
@@ -289,7 +289,7 @@ export default function SetPriceAndRange({
             </HStack>
             <HStack color={colors.textPrimary}>
               <Text variant="label" fontSize="sm" color={colors.textSubtle}>
-                {t('clmm.price_range')}:
+                {t('Price range')}:
               </Text>
               <Text>
                 {isFullRange
@@ -303,7 +303,7 @@ export default function SetPriceAndRange({
                   : `${formatToRawLocaleStr(priceRange[0])} - ${formatToRawLocaleStr(priceRange[1])}`}
               </Text>
               <Text>
-                {t('common.per_unit', {
+                {t('%subA% per %subB%', {
                   subA: wSolToSolString(tempCreatedPool?.[baseIn ? 'mintB' : 'mintA'].symbol),
                   subB: wSolToSolString(tempCreatedPool?.[baseIn ? 'mintA' : 'mintB'].symbol)
                 })}
@@ -320,7 +320,7 @@ export default function SetPriceAndRange({
       <Desktop>
         <Flex mb={3} justifyContent="space-between" alignItems="center">
           <Text variant="subTitle" fontSize="xl">
-            {t('clmm.price_setting')}
+            {t('Price Setting')}
           </Text>
           <Tabs
             onChange={handleSwitchBase}
@@ -329,18 +329,18 @@ export default function SetPriceAndRange({
             items={[
               {
                 value: 'base',
-                label: t('common.subject_price', { subject: wSolToSolString(tempCreatedPool?.mintA.symbol || token1.symbol) })
+                label: t('%subject% price', { subject: wSolToSolString(tempCreatedPool?.mintA.symbol || token1.symbol) })
               },
               {
                 value: 'quote',
-                label: t('common.subject_price', { subject: wSolToSolString(tempCreatedPool?.mintB.symbol || token2.symbol) })
+                label: t('%subject% price', { subject: wSolToSolString(tempCreatedPool?.mintB.symbol || token2.symbol) })
               }
             ]}
           />
         </Flex>
       </Desktop>
       <Text mb="2" variant="subTitle">
-        {t('clmm.initial_price')}
+        {t('Initial price')}
       </Text>
       <DecimalInput
         decimals={decimals}
@@ -350,7 +350,7 @@ export default function SetPriceAndRange({
           <>
             <Desktop>
               <Text variant="label" size="sm" whiteSpace="nowrap" px={4}>
-                {t('common.per_unit', {
+                {t('%subA% per %subB%', {
                   subA: wSolToSolString(tokenBase.symbol),
                   subB: wSolToSolString(tokenQuote.symbol)
                 })}
@@ -359,7 +359,7 @@ export default function SetPriceAndRange({
             <Mobile>
               <Button variant="text" onClick={() => handleSwitchBase(baseIn ? 'quote' : 'base')} scale="sm">
                 <Text variant="label" size="sm" whiteSpace="nowrap" px={4}>
-                  {t('common.per_unit', {
+                  {t('%subA% per %subB%', {
                     subA: wSolToSolString(tokenBase.symbol),
                     subB: wSolToSolString(tokenQuote.symbol)
                   })}
@@ -373,16 +373,18 @@ export default function SetPriceAndRange({
       />
       <Flex alignItems="center" gap="2" mt="2" mb={['6', '4']}>
         <Text variant="label" fontSize="sm" color={colors.textSubtle}>
-          {t('field.current_price')}:
+          {t('Current Price')}:
         </Text>
         <QuestionToolTip
           iconProps={{ color: colors.primary60 }}
           iconType="question"
-          label={t('create_standard_pool.current_price_tooltip')}
+          label={t(
+            'This is the current price of an existing pool on Raydium. You can still enter a different initial price but be aware this may lead to arbitrage if the price difference is large.'
+          )}
         />
         <Text color={colors.textSubtle} fontWeight={600} fontSize="sm" display="flex" alignItems="center" gap="1">
           {isPriceLoading ? <Skeleton width={16} height={4} /> : formatToRawLocaleStr(onlinePrice)}
-          {t('common.per_unit', {
+          {t('%subA% per %subB%', {
             subA: wSolToSolString(priceReverse ? tokenQuote.symbol : tokenBase.symbol),
             subB: wSolToSolString(priceReverse ? tokenBase.symbol : tokenQuote.symbol)
           })}
@@ -393,7 +395,7 @@ export default function SetPriceAndRange({
       </Flex>
 
       <Text mb="2" variant="subTitle" userSelect="none">
-        {t('clmm.price_range')}
+        {t('Price range')}
       </Text>
       <Tabs
         mb="3"
@@ -404,11 +406,11 @@ export default function SetPriceAndRange({
         items={[
           {
             value: 'full',
-            label: t('clmm.full_range')
+            label: t('Full Range')
           },
           {
             value: 'custom',
-            label: t('clmm.custom')
+            label: t('Custom')
           }
         ]}
       />
@@ -416,7 +418,7 @@ export default function SetPriceAndRange({
         <SimpleGrid gridTemplate="repeat(auto-fill, 1fr)" gridAutoFlow={['row', 'column']} gap={[3, 4]} mb="4">
           <PriceRangeInputBox
             side={Side.Left}
-            topLabel={t('field.min')}
+            topLabel={t('Min')}
             currentPriceRangeValue={priceRange[0]}
             decimals={Math.max(8, decimals)}
             base={tokenBase}
@@ -429,7 +431,7 @@ export default function SetPriceAndRange({
           />
           <PriceRangeInputBox
             side={Side.Right}
-            topLabel={t('field.max')}
+            topLabel={t('Max')}
             currentPriceRangeValue={priceRange[1]}
             decimals={Math.max(8, decimals)}
             base={tokenBase}
@@ -458,7 +460,7 @@ export default function SetPriceAndRange({
           })
         }}
       >
-        {error || t('button.continue')}
+        {error || t('Continue')}
       </Button>
     </PanelCard>
   )
@@ -509,7 +511,7 @@ export function PriceRangeInputBox(props: {
             />
             {props.base?.symbol && props.quote?.symbol ? (
               <Text variant="label" userSelect="none">
-                {t('common.per_unit', {
+                {t('%subA% per %subB%', {
                   subA: wSolToSolString(props.base.symbol),
                   subB: wSolToSolString(props.quote.symbol)
                 })}
@@ -539,7 +541,7 @@ export function PriceRangeInputBox(props: {
             />
             {props.base?.symbol && props.quote?.symbol ? (
               <Text variant="label" userSelect="none" whiteSpace="nowrap">
-                {t('common.per_unit', {
+                {t('%subA% per %subB%', {
                   subA: wSolToSolString(props.base.symbol),
                   subB: wSolToSolString(props.quote.symbol)
                 })}

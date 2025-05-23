@@ -15,6 +15,7 @@ import {
 import { PublicKey } from '@solana/web3.js'
 import Decimal from 'decimal.js'
 import BN from 'bn.js'
+import { TranslateFunction } from '@pancakeswap/localization'
 import { toastSubject } from '@/hooks/toast/useGlobalToast'
 import { txStatusSubject } from '@/hooks/toast/useTxStatus'
 import { OwnerFullData } from '@/hooks/portfolio/useFetchOwnerIdo'
@@ -37,7 +38,11 @@ export interface FarmStore {
   refreshIdoTag: number
 
   harvestAllAct: (
-    props: { farmInfoList: FormatFarmInfoOut[]; execute?: boolean } & TxCallbackProps
+    props: {
+      t: TranslateFunction
+      farmInfoList: FormatFarmInfoOut[]
+      execute?: boolean
+    } & TxCallbackProps
   ) => Promise<{ txIds: string[]; buildData?: MultiTxBuildData | MultiTxV0BuildData }>
 
   withdrawFarmAct: (
@@ -84,7 +89,7 @@ export const useFarmStore = createStore<FarmStore>(
   (set, get) => ({
     ...initFarmSate,
 
-    harvestAllAct: async ({ farmInfoList, execute = true, ...txProps }) => {
+    harvestAllAct: async ({ t, farmInfoList, execute = true, ...txProps }) => {
       const { raydium, txVersion } = useAppStore.getState()
       if (!raydium) return { txIds: [] }
       const data = await raydium.farm.harvestAllRewards({
@@ -117,6 +122,7 @@ export const useFarmStore = createStore<FarmStore>(
             onTxUpdate: (data) => {
               handleMultiTxRetry(data)
               handleMultiTxToast({
+                t,
                 toastId,
                 processedId: transformProcessData({ processedId, data }),
                 txLength,
@@ -128,6 +134,7 @@ export const useFarmStore = createStore<FarmStore>(
           })
           .then(({ txIds }) => {
             handleMultiTxToast({
+              t,
               toastId,
               processedId: transformProcessData({ processedId, data: [] }),
               txLength,

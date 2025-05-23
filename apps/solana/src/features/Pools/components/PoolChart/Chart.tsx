@@ -1,7 +1,7 @@
 import { AbsoluteCenter, Box, Center, HStack, Spinner, Text } from '@chakra-ui/react'
 import { ReactNode } from 'react'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from 'recharts'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { useAppStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { panelCard } from '@/theme/cssBlocks'
@@ -48,8 +48,8 @@ export default function Chart<T = any>({
           {isEmpty && !isActionRunning && (
             <AbsoluteCenter>
               <Box fontSize="xs" color={colors.textTertiary} whiteSpace="nowrap" textAlign="center">
-                <Text mb={2}>{t('error.no_chart_data')}</Text>
-                <Text>{t('error.no_chart_data_hint')}</Text>
+                <Text mb={2}>{t('No data for this chart.')}</Text>
+                <Text>{t('Please wait for a moment or try refreshing the page.')}</Text>
               </Box>
             </AbsoluteCenter>
           )}

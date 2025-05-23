@@ -1,5 +1,5 @@
 import { Button } from '@pancakeswap/uikit'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { ApiV3PoolInfoConcentratedItem } from '@raydium-io/raydium-sdk-v2'
 import {
   Box,
@@ -76,7 +76,7 @@ export default function PreviewDepositModal({
     <Modal size="lg" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent color={colors.textPrimary} border={`1px solid ${colors.backgroundDark}`}>
-        <ModalHeader>{t('clmm.preview_deposit')}</ModalHeader>
+        <ModalHeader>{t('Preview Deposit')}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Box fontSize="sm">
@@ -86,12 +86,12 @@ export default function PreviewDepositModal({
                 {getPoolName(pool).replace(' - ', ' / ')}
               </Text>
               <Badge ml="4" variant={inRange ? 'ok' : 'error'}>
-                {inRange ? t('clmm.in_range') : t('clmm.out_of_range')}
+                {inRange ? t('In Range') : t('Out of Range')}
               </Badge>
             </Flex>
 
             <PanelCard my={['3', '4']} py={['3', '2']} px="4" bg={colors.background}>
-              <SubTitle>{t('liquidity.my_position')}</SubTitle>
+              <SubTitle>{t('My Position')}</SubTitle>
               <Flex mt="2" alignItems="center" justifyContent="space-between">
                 <Flex alignItems="center" gap="2">
                   <TokenAvatar size="smi" token={pool.mintA} />
@@ -117,7 +117,7 @@ export default function PreviewDepositModal({
                 {symbolB}
               </Flex>
               <Flex mt="2" justifyContent="space-between">
-                <Text color={colors.textSubtle}>{t('field.fee_tier')}</Text>
+                <Text color={colors.textSubtle}>{t('Fee Tier')}</Text>
                 <Text color={colors.positive60}>
                   {formatToRawLocaleStr(toPercentString(isCreatePool ? pool.feeRate / 10000 : pool.feeRate * 100))}
                 </Text>
@@ -126,13 +126,13 @@ export default function PreviewDepositModal({
 
             <PanelCard py="3" px="4" bg={colors.background}>
               <Flex mb="2" justifyContent="space-between">
-                <SubTitle>{t('field.current_price')}</SubTitle>
+                <SubTitle>{t('Current Price')}</SubTitle>
                 <Flex fontSize="sm" gap="1" alignItems="center">
                   {formatCurrency(currentPrice, {
                     decimalPlaces: decimals
                   })}
                   <Text color={colors.textSubtle}>
-                    {t('common.per_unit', {
+                    {t('%subA% per %subB%', {
                       subA: baseIn ? symbolB : symbolA,
                       subB: baseIn ? symbolA : symbolB
                     })}
@@ -140,11 +140,11 @@ export default function PreviewDepositModal({
                 </Flex>
               </Flex>
 
-              <SubTitle mb="2">{t('clmm.selected_range')}</SubTitle>
+              <SubTitle mb="2">{t('Selected Range')}</SubTitle>
 
               <Flex gap="4">
                 <Flex {...panelCard} flexDirection="column" justifyContent="center" px={[3, 6]} py="3" w="48%" textAlign="center">
-                  <SubTitle color={colors.textSubtle}>{t('clmm.min_price')}</SubTitle>
+                  <SubTitle color={colors.textSubtle}>{t('Min Price')}</SubTitle>
                   <Text fontSize={['md', 'xl']} fontWeight="600" color={colors.textPrimary}>
                     {price0Decimal > decimals
                       ? formatCurrency(new Decimal(priceRange[0]).toFixed(24), { maximumDecimalTrailingZeroes: 5 })
@@ -153,7 +153,7 @@ export default function PreviewDepositModal({
                         })}
                   </Text>
                   <Text variant="subTitle" fontWeight={400} color={colors.textSubtle}>
-                    {t('common.per_unit', {
+                    {t('%subA% per %subB%', {
                       subA: baseIn ? symbolB : symbolA,
                       subB: baseIn ? symbolA : symbolB
                     })}
@@ -161,7 +161,7 @@ export default function PreviewDepositModal({
                 </Flex>
 
                 <Flex {...panelCard} flexDirection="column" justifyContent="center" px={[3, 6]} py="3" w="48%" textAlign="center">
-                  <SubTitle color={colors.textSubtle}>{t('clmm.max_price')}</SubTitle>
+                  <SubTitle color={colors.textSubtle}>{t('Max Price')}</SubTitle>
                   <Text fontSize={['md', 'xl']} fontWeight="600" color={colors.textPrimary}>
                     {price1Decimal > decimals
                       ? formatCurrency(new Decimal(priceRange[1]).toFixed(24), { maximumDecimalTrailingZeroes: 5, abbreviated: true })
@@ -171,7 +171,7 @@ export default function PreviewDepositModal({
                         })}
                   </Text>
                   <Text variant="subTitle" fontWeight={400} color={colors.textSubtle}>
-                    {t('common.per_unit', {
+                    {t('%subA% per %subB%', {
                       subA: baseIn ? symbolB : symbolA,
                       subB: baseIn ? symbolA : symbolB
                     })}
@@ -182,7 +182,7 @@ export default function PreviewDepositModal({
 
             <PanelCard my={[3, '4']} py="2" px="4" bg={colors.background}>
               <Flex justifyContent="space-between" alignItems="center">
-                <SubTitle>{t('liquidity.total_deposit')}</SubTitle>
+                <SubTitle>{t('Total Deposit')}</SubTitle>
                 <Text fontSize="md" fontWeight="600">
                   {formatCurrency(totalDeposit.toString(), {
                     symbol: '$',
@@ -195,7 +195,7 @@ export default function PreviewDepositModal({
         </ModalBody>
         <ModalFooter px="0" py="0" mt="4" mb="2">
           <Button width="100%" onClick={onConfirm} isLoading={isSending}>
-            {isSending ? t('transaction.transaction_initiating') : t('clmm.confirm_deposit')}
+            {isSending ? t('Transaction initiating') : t('Confirm Deposit')}
           </Button>
         </ModalFooter>
       </ModalContent>

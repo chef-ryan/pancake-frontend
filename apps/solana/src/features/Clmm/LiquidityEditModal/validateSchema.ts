@@ -1,10 +1,10 @@
 import * as yup from 'yup'
 import Decimal from 'decimal.js'
-import { TFunction } from 'i18next'
+import { type TranslateFunction } from '@pancakeswap/localization'
 
 const numberTransform = yup.number().transform((value) => (Number.isNaN(value) ? 0 : value))
 
-export const liquidityValidateSchema = (t: TFunction<'translation', undefined, 'translation'>) =>
+export const liquidityValidateSchema = (t: TranslateFunction) =>
   yup.object().shape({
     balanceB: yup
       .number()
@@ -27,7 +27,7 @@ export const liquidityValidateSchema = (t: TFunction<'translation', undefined, '
       })
   })
 
-export const removeValidateSchema = (t: TFunction<'translation', undefined, 'translation'>) =>
+export const removeValidateSchema = (t: TranslateFunction) =>
   yup.object().shape({
     positionAmountB: yup
       .number()

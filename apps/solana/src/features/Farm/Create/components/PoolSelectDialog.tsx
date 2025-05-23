@@ -17,7 +17,7 @@ import {
 import { ApiV3Token, PoolFetchType } from '@raydium-io/raydium-sdk-v2'
 import { useCallback, useState } from 'react'
 
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { FormattedPoolInfoItem } from '@/hooks/pool/type'
 import useFetchPoolById from '@/hooks/pool/useFetchPoolById'
 import useFetchPoolByMint from '@/hooks/pool/useFetchPoolByMint'
@@ -76,7 +76,7 @@ export default function PoolSelectDialog(props: PoolSelectDialogProps) {
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('input.search_amm_title')}</ModalHeader>
+        <ModalHeader>{t('Search for a pair or paste AMM ID')}</ModalHeader>
         <ModalCloseButton top="25px" />
         <ModalBody mt="10px">
           <Flex mb="16px" borderRadius="20px" w="full" py={2}>
@@ -93,8 +93,8 @@ export default function PoolSelectDialog(props: PoolSelectDialogProps) {
           ) : list.length ? (
             <Box>
               <Flex color={colors.textPrimary} justifyContent="space-between" mb="10px">
-                <Heading size="sm">{t('create_farm.pool')}</Heading>
-                <Heading size="sm">{t('input.placeholder_input_amm_id')}</Heading>
+                <Heading size="sm">{t('Pool')}</Heading>
+                <Heading size="sm">{t('input AmmId / TVL')}</Heading>
               </Flex>
               <List maxHeight="50vh" gap={4} items={list} getItemKey={(pool) => pool.id}>
                 {renderPoolRowItem}
@@ -111,7 +111,7 @@ export default function PoolSelectDialog(props: PoolSelectDialogProps) {
 
 function EmptyTokeSearchResult() {
   const { t } = useTranslation()
-  return <Text>{t('error.cannot_find_pool')}</Text>
+  return <Text>{t('Can’t find the pool you’re looking for? Try entering the token address or check the pool lists below.')}</Text>
 }
 
 export function PoolRowItem({ pool, onClick }: { pool: FormattedPoolInfoItem; onClick: (pool: FormattedPoolInfoItem) => void }) {

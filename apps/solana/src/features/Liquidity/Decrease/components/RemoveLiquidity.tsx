@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from '@chakra-ui/react'
 import { useState, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import Decimal from 'decimal.js'
 import { getTransferAmountFeeV2 } from '@raydium-io/raydium-sdk-v2'
@@ -160,7 +160,7 @@ export default function UnStakeLiquidity({
       </Flex>
       <Box bg={colors.backgroundDark} borderRadius="12px" py={3} px={6}>
         <Text fontSize="md" fontWeight="medium" mb="2" color={colors.textSecondary}>
-          {t('liquidity.assets_to_received')}:
+          {t('Assets to be received')}:
         </Text>
         <Flex alignItems="center" gap="1" fontSize="sm">
           <TokenAvatarPair mr="1" token1={poolInfo?.mintA} token2={poolInfo?.mintB} />
@@ -178,7 +178,7 @@ export default function UnStakeLiquidity({
         </Flex>
       </Box>
       <Button mt={10} isLoading={isTxSending} isDisabled={featureDisabled || !poolInfo || removeAmount.isZero()} onClick={handleRemove}>
-        {featureDisabled ? t('common.disabled') : t('liquidity.remove_liquidity')}
+        {featureDisabled ? t('Disabled') : t('Remove Liquidity')}
       </Button>
     </Flex>
   )

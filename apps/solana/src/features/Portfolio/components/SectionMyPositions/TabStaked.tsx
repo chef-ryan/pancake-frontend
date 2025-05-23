@@ -1,5 +1,5 @@
 import { Flex, Text, Button, Skeleton } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Decimal from 'decimal.js'
 import { PublicKey } from '@solana/web3.js'
 import { routeToPage } from '@/utils/routeTools'
@@ -70,9 +70,9 @@ export default function MyPositionTabStaked({
           ) : (
             <>
               <Text variant="title" fontSize="sm">
-                {t('portfolio.no_staked_farm')}
+                {t('You don’t have any staked RAY.')}
               </Text>
-              <Button onClick={() => routeToPage('staking')}>{t('common.go_to_staking')}</Button>
+              <Button onClick={() => routeToPage('staking')}>{t('Go to Staking')}</Button>
             </>
           )}
         </Flex>

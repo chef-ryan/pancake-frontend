@@ -18,11 +18,11 @@ import {
   UnorderedList,
   useColorMode
 } from '@chakra-ui/react'
-import { Text, Toggle, WalletFilledIcon } from '@pancakeswap/uikit'
+import { LinkExternal, Text, Toggle, WalletFilledIcon } from '@pancakeswap/uikit'
 import { WalletReadyState } from '@solana/wallet-adapter-base'
 import { Wallet } from '@solana/wallet-adapter-react'
 import { useCallback, useState } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from '@pancakeswap/localization'
 // import TealCircleCheckBadge from '@/icons/misc/TealCircleCheckBadge'
 // import AvalancheNetworkIcon from '@/icons/networks/AvalancheNetworkIcon'
 // import BinanceNetworkIcon from '@/icons/networks/BinanceNetworkIcon'
@@ -73,14 +73,14 @@ export default function SelectWalletModal({ wallets, isOpen, onSelectWallet, onC
       <ModalOverlay />
       <ModalContent color={colors.textPrimary} width={['unset', '36em']} rounded={[null, '3xl']}>
         <ModalHeader>
-          <Text bold>{t('wallet_connect_panel.title')}</Text>
+          <Text bold>{t('Connect your wallet to Raydium')}</Text>
         </ModalHeader>
         <ModalCloseButton />
         {isWalletNotInstalled ? (
           <ModalBody display="grid">
             <Box overflow="hidden" display="flex" flexDirection="column">
               <Box color={colors.semanticWarning} bg={colors.warnButtonLightBg} p={3} fontSize={['xs', 'sm']} rounded="md">
-                {t('wallet_connect_panel.phantom_wallet_not_installed')}
+                {t('Oops... Looks like you don’t have Phantom installed!')}
               </Box>
               <Flex justify="center" mt={10}>
                 <Image src={phantomWallet?.adapter.icon} w={100} h={100} />
@@ -88,29 +88,29 @@ export default function SelectWalletModal({ wallets, isOpen, onSelectWallet, onC
               <Flex justify="center" textAlign="center" mt={6}>
                 <Link href="https://phantom.com" isExternal>
                   <Button fontWeight="medium" gap={1}>
-                    {t('wallet_connect_panel.install_phantom')}
+                    {t('Install Phantom')}
                     <ExternalLink cursor="pointer" width="14" height="14" color={colors.buttonSolidText} />
                   </Button>
                 </Link>
               </Flex>
               <Flex align="start" flexDirection="column" color={colors.textSecondary} px={3} mt={12}>
-                <Text>{t('wallet_connect_panel.how_to_install_phantom')}</Text>
+                <Text>{t('How to install Phantom?')}</Text>
                 <Flex flexDirection="column" align="flex-start" justify="flex-start" pl={1} textAlign="start" mt={5} fontSize="14px">
                   <HStack>
                     <MobileIcon />
-                    <Text fontWeight="medium">{t('wallet_connect_panel.on_mobile')}</Text>
+                    <Text fontWeight="medium">{t('On mobile:')}</Text>
                   </HStack>
                   <UnorderedList mt={1} pl={10}>
-                    <ListItem>{t('wallet_connect_panel.mobile_open_wallet')}</ListItem>
+                    <ListItem>{t('Download and open the wallet app instead')}</ListItem>
                   </UnorderedList>
                 </Flex>
                 <Flex flexDirection="column" align="flex-start" justify="flex-start" pl={1} textAlign="start" mt={5} fontSize="14px">
                   <HStack>
                     <DesktopIcon />
-                    <Text fontWeight="medium">{t('wallet_connect_panel.on_desktop')}</Text>
+                    <Text fontWeight="medium">{t('On desktop:')}</Text>
                   </HStack>
                   <UnorderedList mt={1} pl={10}>
-                    <ListItem>{t('wallet_connect_panel.install_refresh_page')}</ListItem>
+                    <ListItem>{t('Install at link above then refresh this page')}</ListItem>
                   </UnorderedList>
                 </Flex>
               </Flex>
@@ -130,7 +130,7 @@ export default function SelectWalletModal({ wallets, isOpen, onSelectWallet, onC
                     }
                   }}
                 >
-                  {t('wallet_connect_panel.wallet_installed_refresh_page')}
+                  {t('I’ve already Installed, Refresh page')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -142,7 +142,7 @@ export default function SelectWalletModal({ wallets, isOpen, onSelectWallet, onC
                     setIsWalletNotInstalled(false)
                   }}
                 >
-                  {t('wallet_connect_panel.goback')}
+                  {t('Go back')}
                 </Button>
               </Flex>
             </Box>
@@ -151,19 +151,19 @@ export default function SelectWalletModal({ wallets, isOpen, onSelectWallet, onC
           <ModalBody display="grid">
             <Box overflow="hidden" display="flex" flexDirection="column">
               <Box mb={5} color={colors.textPrimary} fontSize="14px">
-                {t('wallet_connect_panel.desc')}{' '}
+                {t('By connecting your wallet, you acknowledge that you have read, understand and accept the terms in the')}{' '}
                 <Link href="https://pancakeswap.finance/terms-of-service" isExternal>
-                  {t('wallet_connect_panel.desc_link')}
+                  {t('disclaimer')}
                 </Link>
               </Box>
               <Box mb={6} flex="1" overflowY="scroll">
                 <HStack justifyContent="space-between">
                   <Text fontSize="16px" color={colors.textPrimary} bold mb={2}>
-                    {t('wallet_connect_panel.choose_wallet')}
+                    {t('Choose wallet')}
                   </Text>
                   {isMobile && (
                     <Flex color={colors.textSecondary} fontSize="sm" fontWeight={500} justify="space-between" gap={1} mb={4}>
-                      <Text>{t('wallet_connect_panel.show_uninstalled')}</Text>
+                      <Text>{t('Show uninstalled')}</Text>
                       <Switch checked={canShowUninstalledWallets} onChange={() => setCanShowUninstalledWallets((b) => !b)} />
                     </Flex>
                   )}
@@ -214,7 +214,7 @@ export default function SelectWalletModal({ wallets, isOpen, onSelectWallet, onC
                 >
                   <HStack>
                     <WalletFilledIcon width="24px" height="24px" color="textSubtle" />
-                    <Text>{t('wallet_connect_panel.show_uninstalled_wallets')}</Text>
+                    <Text>{t('Show uninstalled wallets')}</Text>
                   </HStack>
                   <Toggle checked={canShowUninstalledWallets} scale="sm" onChange={() => setCanShowUninstalledWallets((b) => !b)} />
                 </Flex>
@@ -257,13 +257,16 @@ function WalletItem({
       {wallet.adapter.name === 'Phantom' && (
         <HStack gap={1} backgroundColor={colors.backgroundAlt} px={2} py={1} borderRadius="8px">
           <Text fontSize="12px" color={colors.textPurple}>
-            {t('wallet_connect_panel.auto_confirm')}
+            {t('Auto Confirm')}
           </Text>
           <QuestionToolTip
             label={
-              <Trans i18nKey="wallet_connect_panel.auto_confirm_tip">
-                <Link href="https://phantom.com/learn/blog/auto-confirm" isExternal />
-              </Trans>
+              <>
+                {t('Auto-confirm is now available for all transactions on Raydium.')}
+                <LinkExternal href="https://phantom.com/learn/blog/auto-confirm" color={colors.textPurple} fontWeight="bold">
+                  {t('Learn more')}
+                </LinkExternal>
+              </>
             }
             iconProps={{ color: colors.textPurple }}
           />
@@ -272,9 +275,12 @@ function WalletItem({
       {wallet.adapter.name === 'Solflare' && (
         <HStack gap={1} backgroundColor={colors.backgroundAlt} px={2} py={1} borderRadius="8px">
           <Text fontSize="12px" color={colors.textPurple}>
-            {t('wallet_connect_panel.auto_approve')}
+            {t('Auto Approve')}
           </Text>
-          <QuestionToolTip label={t('wallet_connect_panel.auto_approve_tip_solflare')} iconProps={{ color: colors.textPurple }} />
+          <QuestionToolTip
+            label={t('Auto-approve is now available for all transactions on Raydium.')}
+            iconProps={{ color: colors.textPurple }}
+          />
         </HStack>
       )}
     </Flex>

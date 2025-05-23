@@ -3,7 +3,7 @@ import { CogIcon, LogoIcon, LogoWithTextIcon, ModalV2, MotionModal, useMatchBrea
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { colors } from '@/theme/cssVariables'
 import { appLayoutPaddingX } from '@/theme/detailConfig'
 import { PAGE_URLS } from '@/utils/config/routers'
@@ -64,9 +64,9 @@ function AppNavLayout({
         {/* nav routes */}
         <Desktop>
           <HStack flexGrow={1} justify="start" overflow={['auto', 'visible']} gap={[0, 0, '15px']}>
-            <RouteLink href={PAGE_URLS.SWAP} isActive={pathname === '/swap'} title={t('swap.title')} />
-            <RouteLink href={PAGE_URLS.LIQUIDITY} isActive={pathname.includes('/liquidity')} title={t('liquidity.title')} />
-            <RouteLink href={PAGE_URLS.POSITIONS} isActive={pathname === '/positions'} title={t('portfolio.title')} />
+            <RouteLink href={PAGE_URLS.SWAP} isActive={pathname === '/swap'} title={t('Swap')} />
+            <RouteLink href={PAGE_URLS.LIQUIDITY} isActive={pathname.includes('/liquidity')} title={t('Liquidity')} />
+            <RouteLink href={PAGE_URLS.POSITIONS} isActive={pathname === '/positions'} title={t('My Positions')} />
           </HStack>
         </Desktop>
 
@@ -178,7 +178,7 @@ function SettingsMenuModalContent({ onDismiss }: { onDismiss: () => void }) {
   const { t } = useTranslation()
   return (
     <MotionModal
-      title={t('setting_board.panel_title')}
+      title={t('Settings')}
       minWidth={[null, null, '500px']}
       minHeight={isMobile ? '500px' : undefined}
       headerPadding="2px 14px 0 24px"

@@ -1,6 +1,6 @@
 import { Flex, HStack, Text } from '@chakra-ui/react'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Button from '@/components/Button'
 import TokenAvatar from '@/components/TokenAvatar'
 import useResponsive from '@/hooks/useResponsive'
@@ -24,7 +24,7 @@ export default function PendingYield({ isLoading, hasReward, pendingYield, rewar
       <HStack justifyContent="space-between">
         <HStack>
           <Text color={colors.textSecondary} whiteSpace="nowrap">
-            {t('portfolio.section_positions_clmm_account_pending_yield')}
+            {t('Pending Yield')}
           </Text>
           <Text color={colors.textPrimary} whiteSpace="nowrap">
             ({pendingYield ?? '$0'})
@@ -42,7 +42,7 @@ export default function PendingYield({ isLoading, hasReward, pendingYield, rewar
             color: colors.primary
           }}
         >
-          {t('portfolio.section_positions_clmm_account_pending_yield_button')}
+          {t('Harvest')}
         </Button>
       </HStack>
 

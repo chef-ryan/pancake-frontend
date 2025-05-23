@@ -1,5 +1,5 @@
 import { Flex, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 
 import { colors } from '@/theme/cssVariables'
@@ -17,7 +17,7 @@ export default function PositionBalance({ myPosition = '345.02', staked = '256.4
     <Flex {...panelCard} py="22px" px="24px" bg={[colors.backgroundDark, colors.backgroundLight]} borderRadius="20px" direction="column">
       <Flex justify="space-between" align="center">
         <Text color={colors.textSecondary} fontSize="sm">
-          {t('liquidity.my_position')}
+          {t('My Position')}
         </Text>
         <Text color={colors.textSecondary} fontSize="sm" opacity={0.5}>
           {formatCurrency(myPosition, { symbol: '$' })}
@@ -25,12 +25,12 @@ export default function PositionBalance({ myPosition = '345.02', staked = '256.4
       </Flex>
       <Flex mt={4}>
         <Text color={colors.textSecondary} fontSize="sm">
-          {t('liquidity.lp_token_balance')}
+          {t('LP Token Balances')}
         </Text>
       </Flex>
       <Flex justify="space-between" align="center" mt="10px">
         <Text color={colors.textSecondary} fontSize="sm" opacity={0.5}>
-          {t('liquidity.staked')}
+          {t('Staked')}
         </Text>
         <Text color={colors.textSecondary} fontSize="sm" fontWeight="medium">
           {formatCurrency(staked)}
@@ -38,7 +38,7 @@ export default function PositionBalance({ myPosition = '345.02', staked = '256.4
       </Flex>
       <Flex justify="space-between" align="center" mt={2}>
         <Text color={colors.textSecondary} fontSize="sm" opacity={0.5}>
-          {t('liquidity.unstaked')}
+          {t('Unstaked')}
         </Text>
         <Text color={colors.textSecondary} fontSize="sm" fontWeight="medium">
           {formatToRawLocaleStr(unstaked)}

@@ -1,7 +1,7 @@
 import { Box, Center, Flex, Grid, GridItem, Highlight, HStack, Image, Tag, Text, useDisclosure, VStack } from '@chakra-ui/react'
 import router from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { wSolToSol } from '@/utils/token'
 import AddressChip from '@/components/AddressChip'
 import Button from '@/components/Button'
@@ -134,7 +134,7 @@ export default function PoolListItem({
       <Flex width="252px" gap="8px" flexDir="column">
         <AddressChip
           address={pool.id}
-          renderLabel={`${t('common.pool_id')}`}
+          renderLabel={`${t('Pool id')}`}
           mb="2"
           textProps={{ fontSize: 'xs', color: colors.primary }}
           iconProps={{ color: colors.primary }}
@@ -176,7 +176,7 @@ export default function PoolListItem({
   const aprToolTipLabel = useMemo(
     () => (
       <PoolListItemAprDetailPopoverContent
-        rewardType={pool.rewardDefaultPoolInfos === 'Ecosystem' ? t('badge.ecosystem') : ''}
+        rewardType={pool.rewardDefaultPoolInfos === 'Ecosystem' ? t('Ecosystem') : ''}
         aprData={aprData}
         weeklyRewards={pool.weeklyRewards}
       />
@@ -326,7 +326,7 @@ export default function PoolListItem({
           <Desktop>
             <HStack justify="flex-end">
               <Box>
-                <Tooltip label={t('liquidity_pools.view_chart_tooltip')}>
+                <Tooltip label={t('View pool charts')}>
                   <Box
                     display="grid"
                     placeItems="center"
@@ -342,7 +342,7 @@ export default function PoolListItem({
                 </Tooltip>
               </Box>
               <Box>
-                <Tooltip label={t('swap.title')}>
+                <Tooltip label={t('Swap')}>
                   <Box
                     display="grid"
                     placeItems="center"
@@ -371,7 +371,7 @@ export default function PoolListItem({
                 height="32px"
                 onClick={onClickDeposit}
               >
-                {t('button.deposit')}
+                {t('Deposit')}
               </Button>
             </HStack>
           </Desktop>
@@ -412,7 +412,7 @@ export default function PoolListItem({
                         <Flex minW="260px" direction="column" py={2} px={3} gap={4}>
                           <Flex justify="space-between">
                             <Text fontSize="sm" color={colors.textSecondary}>
-                              {t('field.total_apr')}
+                              {t('Total APR')}
                             </Text>
                             <Text fontSize="sm" color={colors.textPrimary}>
                               {formatToRawLocaleStr(toAPRPercent(pool.totalApr[field]))}
@@ -456,7 +456,7 @@ export default function PoolListItem({
                     >
                       <Flex align="center" gap={1} w="full" justify="center">
                         <Text fontSize="xl" fontWeight="500" color={colors.secondary}>
-                          {formatToRawLocaleStr(toAPRPercent(pool.totalApr[field]))} {t('field.apr')}
+                          {formatToRawLocaleStr(toAPRPercent(pool.totalApr[field]))} {t('APR')}
                         </Text>
                         <QuestionCircleIcon opacity={1} color={colors.textSecondary} />
                       </Flex>
@@ -467,14 +467,14 @@ export default function PoolListItem({
                 <VStack spacing={2} w="full">
                   <HStack justify="space-between" w="full">
                     <Text fontSize="sm" color={colors.textSecondary}>
-                      {t('field.fee_tier')}
+                      {t('Fee Tier')}
                     </Text>
                     <Tooltip
                       label={
                         <Flex maxW="216px">
                           <Text color={colors.textSecondary} fontSize="sm">
                             <Highlight query="concentrated" styles={{ fontWeight: '700', color: `${colors.textSecondary}` }}>
-                              {t('liquidity.pool_fee_desc', {
+                              {t('This is a %feeRate%% fee tier %type% liquidity pool', {
                                 feeRate: formatToRawLocaleStr(pool.feeRate * 100),
                                 type: t(`liquidity.${pool.type}`)
                               }) || 'liquidity.pool_fee_desc'}
@@ -506,7 +506,7 @@ export default function PoolListItem({
                   </HStack>
                   <HStack justify="space-between" w="full">
                     <Text fontSize="sm" color={colors.textSecondary}>
-                      {t(`common.tvl`)}
+                      {t(`TVL`)}
                     </Text>
                     <Text fontSize="sm" color={colors.textPrimary}>
                       {formatCurrency(pool.tvl, { symbol: '$', decimalPlaces: 2 })}
@@ -514,7 +514,7 @@ export default function PoolListItem({
                   </HStack>
                   <HStack justify="space-between" w="full">
                     <Text fontSize="sm" color={colors.textSecondary}>
-                      {t(`common.rewards`)}
+                      {t(`Rewards`)}
                     </Text>
                     <PoolListItemRewardStack rewards={pool.weeklyRewards} />
                   </HStack>
@@ -525,7 +525,7 @@ export default function PoolListItem({
                     <Button variant="ghost" display="block" width="100%" onClick={handleOpenChart}>
                       <HStack>
                         <Text fontSize="md" fontWeight="500">
-                          {t('common.view_chart')}
+                          {t('View Chart')}
                         </Text>
                         <PulseIcon />
                       </HStack>
@@ -533,14 +533,14 @@ export default function PoolListItem({
                     <Button variant="ghost" display="block" width="100%" onClick={onClickSwap}>
                       <HStack>
                         <Text fontSize="md" fontWeight="500">
-                          {t('swap.title')}
+                          {t('Swap')}
                         </Text>
                         <SwapPoolItemIcon color={colors.textSubtle} />
                       </HStack>
                     </Button>
                   </HStack>
                   <Button display="block" width="100%" onClick={onClickDeposit}>
-                    {t('button.deposit')}
+                    {t('Deposit')}
                   </Button>
                 </VStack>
               </VStack>
@@ -599,7 +599,7 @@ export default function PoolListItem({
               <Flex py={4} justify="space-between">
                 <Flex flex={3} direction="column">
                   <Text fontSize="xs" color={colors.textTertiary}>
-                    {t('liquidity.title')}
+                    {t('Liquidity')}
                   </Text>
                   <Text fontSize="sm" color={colors.textSecondary}>
                     {formatCurrency(pool.tvl, { symbol: '$', decimalPlaces: 0 })}

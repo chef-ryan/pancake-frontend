@@ -1,5 +1,5 @@
 import { Box, Heading, Text, VStack } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import useFetchOwnerIdo from '@/hooks/portfolio/useFetchOwnerIdo'
 import useFetchIdoKeys from '@/hooks/portfolio/useFetchIdoKeys'
 import { colors } from '@/theme/cssVariables/colors'
@@ -19,10 +19,10 @@ export default function SectionAcceleraytor() {
   return (
     <Box pt="20px">
       <Heading id="acceleraytor" fontSize={['lg', 'xl']} fontWeight="500" mb={[3, 4]} mt={6} color={colors.textPrimary}>
-        {t('portfolio.acceleraytor')}
+        {t('Acceleraytor')}
       </Heading>
       <Text color={colors.textSecondary} fontSize={['sm', 'md']} mb={2}>
-        {t('portfolio.acceleraytor_desc')}
+        {t('You have unclaimed funds from AcceleRaytor. Remaining funds can be claimed below.')}
       </Text>
       <VStack align="stretch" spacing={3}>
         {formattedData.map((data) => (

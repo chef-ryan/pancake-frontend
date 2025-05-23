@@ -2,7 +2,7 @@ import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, 
 import { ApiStakePool } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { BN } from 'bn.js'
 import AmountSlider from '@/components/AmountSlider'
 import TokenInput from '@/components/TokenInput'
@@ -59,7 +59,7 @@ export default function UnstakeDialog({ isOpen, onClose, depositedAmount, userAu
     <Modal isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('staking.unstake_modal_header', { symbol: wSolToSolString(token?.symbol) })}</ModalHeader>
+        <ModalHeader>{t('Unstake %symbol%', { symbol: wSolToSolString(token?.symbol) })}</ModalHeader>
         <ModalCloseButton />
 
         <ModalBody mb={5} overflow="visible">
@@ -100,10 +100,10 @@ export default function UnstakeDialog({ isOpen, onClose, depositedAmount, userAu
         <ModalFooter>
           <VStack width="full" spacing={0} alignItems="flex-start">
             <Button w="full" isDisabled={!isAbleToStake || featureDisabled} isLoading={loading} onClick={handleConfirm}>
-              {featureDisabled ? t('common.disabled') : t('staking.unstake_modal_confirm_text', { symbol: wSolToSolString(token?.symbol) })}
+              {featureDisabled ? t('Disabled') : t('Unstake %symbol%', { symbol: wSolToSolString(token?.symbol) })}
             </Button>
             <Button w="full" variant="ghost" onClick={onClose}>
-              {t('button.cancel')}
+              {t('Cancel')}
             </Button>
           </VStack>
         </ModalFooter>

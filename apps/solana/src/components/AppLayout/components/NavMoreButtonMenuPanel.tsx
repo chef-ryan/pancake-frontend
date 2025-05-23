@@ -1,6 +1,6 @@
 import { Box, Flex, HStack, MenuDivider, MenuItem, MenuList, Text, Link } from '@chakra-ui/react'
 import NextLink from 'next/link'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import DiscardMediaIcon from '@/icons/media/DiscardMediaIcon'
 import TelegrameMediaIcon from '@/icons/media/TelegrameMediaIcon'
 import TwitterMediaIcon from '@/icons/media/TwitterMediaIcon'
@@ -12,7 +12,6 @@ import BridgePageThumbnailIcon from '@/icons/pageNavigation/BridgePageThumbnailI
 import DisclaimerThumbnailIcon from '@/icons/pageNavigation/DisclaimerThumbnailIcon'
 import { colors } from '@/theme/cssVariables'
 
-
 export function NavMoreButtonMenuPanel() {
   const { t } = useTranslation()
   return (
@@ -22,7 +21,7 @@ export function NavMoreButtonMenuPanel() {
           <Link as={NextLink} _hover={{ textDecoration: 'none' }} w="full" href="/staking">
             <HStack>
               <StakingPageThumbnailIcon />
-              <Text>{t('staking.title')}</Text>
+              <Text>{t('Staking')}</Text>
             </HStack>
           </Link>
         </MenuItem>
@@ -30,7 +29,7 @@ export function NavMoreButtonMenuPanel() {
           <Link as={NextLink} _hover={{ textDecoration: 'none' }} w="full" href="/bridge">
             <HStack>
               <BridgePageThumbnailIcon />
-              <Text>{t('bridge.title')}</Text>
+              <Text>{t('Bridge')}</Text>
             </HStack>
           </Link>
         </MenuItem>
@@ -39,7 +38,7 @@ export function NavMoreButtonMenuPanel() {
           <Link as={NextLink} href="/docs/disclaimer" _hover={{ textDecoration: 'none' }} w="full" isExternal>
             <HStack>
               <DisclaimerThumbnailIcon />
-              <Text>{t('disclaimer.title')}</Text>
+              <Text>{t('Disclaimer')}</Text>
               <ExternalLink color={colors.textSecondary} />
             </HStack>
           </Link>
@@ -48,7 +47,7 @@ export function NavMoreButtonMenuPanel() {
           <Link as={NextLink} href="https://docs.raydium.io/raydium/" _hover={{ textDecoration: 'none' }} w="full" isExternal>
             <HStack>
               <DocThumbnailIcon />
-              <Text>{t('common.nav_text_docs')}</Text>
+              <Text>{t('Docs')}</Text>
               <ExternalLink color={colors.textSecondary} />
             </HStack>
           </Link>
@@ -57,7 +56,7 @@ export function NavMoreButtonMenuPanel() {
           <Link as={NextLink} href="https://tally.so/r/n9WZZV" _hover={{ textDecoration: 'none' }} w="full" isExternal>
             <HStack>
               <FeedbackThumbnailIcon />
-              <Text>{t('common.nav_text_feedback')}</Text>
+              <Text>{t('Feedback')}</Text>
               <ExternalLink color={colors.textSecondary} />
             </HStack>
           </Link>

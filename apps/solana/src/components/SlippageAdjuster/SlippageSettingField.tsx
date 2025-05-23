@@ -1,6 +1,6 @@
 import { Button } from '@pancakeswap/uikit'
 import { Flex, Text, HStack, Spacer } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { KeyboardEvent, useCallback, useState } from 'react'
 import Decimal from 'decimal.js'
 import DecimalInput from '@/components/DecimalInput'
@@ -28,7 +28,11 @@ export function SlippageSettingField({ variant = 'liquidity', onClose }: { varia
   const isForerun = slippageDecimal.gt('3')
   const isFailrun = slippageDecimal.lt('0.5')
   const isWarn = isSwap && (isForerun || isFailrun)
-  const warnText = isForerun ? t('setting_board.slippage_tolerance_forerun') : isFailrun ? t('setting_board.slippage_tolerance_fail') : ''
+  const warnText = isForerun
+    ? t('Your transaction may be frontrun and result in an unfavorable trade')
+    : isFailrun
+    ? t('Your transaction may fail')
+    : ''
   const handleChange = useEvent((val: string | number) => {
     setIsFirstFocused(false)
     setCurrentSlippage(String(val))
@@ -59,11 +63,13 @@ export function SlippageSettingField({ variant = 'liquidity', onClose }: { varia
   return (
     <PanelCard flexDirection="column" gap="4" my="2" p="4" rounded="xl">
       <HStack alignItems="center" flexWrap={['wrap', 'nowrap']}>
-        <Text variant="subTitle">
-          {isSwap ? t('setting_board.slippage_tolerance_swap') : t('setting_board.slippage_tolerance_liquidity')}
-        </Text>
+        <Text variant="subTitle">{isSwap ? t('Swap slippage tolerance') : t('Liquidity slippage tolerance')}</Text>
         <QuestionToolTip
-          label={isSwap ? t('setting_board.slippage_tolerance_tooltip_swap') : t('setting_board.slippage_tolerance_tooltip_liquidity')}
+          label={
+            isSwap
+              ? t('Set your slippage tolerance for swap transactions.')
+              : t('Set tolerance for changes in the quote/base token deposit ratio.')
+          }
           iconProps={{ color: colors.textSubtle }}
         />
         <Spacer />
@@ -89,7 +95,7 @@ export function SlippageSettingField({ variant = 'liquidity', onClose }: { varia
         </Flex>
         <Flex alignItems="center" rounded="full" gap={2}>
           <Text fontSize="xs" whiteSpace="nowrap" color={colors.textSubtle}>
-            {t('setting_board.custom')}
+            {t('Custom')}
           </Text>
           <DecimalInput
             value={isFirstFocused ? '' : currentSlippage}

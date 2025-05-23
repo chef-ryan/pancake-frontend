@@ -1,11 +1,10 @@
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import * as yup from 'yup'
 
 const numberTransform = yup.number().transform((value) => (Number.isNaN(value) ? 0 : value))
 const numberSchema = (errMsg: string) => numberTransform.moreThan(0, errMsg).required(errMsg)
 
 export default function useMarketSchema() {
-  // prepare for i18n usage
   const { t } = useTranslation()
   return yup.object().shape({
     baseToken: yup.mixed().required(t('error.select_base_token') ?? ''),

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Box, Flex, Grid, GridItem, HStack, Heading, SimpleGrid, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { useRouter } from 'next/router'
 import Button from '@/components/Button'
 import Tabs from '@/components/Tabs'
@@ -33,11 +33,11 @@ export default function SectionMyPositions() {
   }[] = [
     {
       value: 'concentrated',
-      label: t('portfolio.section_positions_tab_clmm')
+      label: t('v3')
     },
     {
       value: 'standard',
-      label: t('portfolio.section_positions_tab_standard')
+      label: t('v2')
     }
   ]
   const connected = useAppStore((s) => s.connected)
@@ -131,7 +131,7 @@ export default function SectionMyPositions() {
         <GridItem area="title">
           <Flex gap="2" alignItems="center">
             <Heading id="my-position" fontSize="xl" fontWeight="600" color={colors.textSecondary}>
-              {t('portfolio.section_positions')}
+              {t('My positions')}
             </Heading>
             <IntervalCircle
               componentRef={circleRef}
@@ -173,7 +173,7 @@ export default function SectionMyPositions() {
                 <Flex gap={[0, 2]} direction={['column', 'row']} fontSize={['xs', 'sm']} align={['start', 'center']}>
                   <HStack gap={1}>
                     <Text whiteSpace="nowrap" color={colors.textSecondary}>
-                      {t('portfolio.harvest_all_label')}
+                      {t('Pending Yield')}
                     </Text>
                     {isMobile && currentRewardState.rewardInfo.length > 0 && (
                       <QuestionToolTip
@@ -233,7 +233,7 @@ export default function SectionMyPositions() {
                   isDisabled={!currentRewardState.isReady}
                   onClick={() => handleHarvest({ tab: currentTab as PositionTabValues, zeroClmmPos: noRewardClmmPos.current })}
                 >
-                  {t('portfolio.harvest_all_button')}
+                  {t('Harvest All')}
                 </Button>
               </HStack>
             </Box>
@@ -263,7 +263,7 @@ export default function SectionMyPositions() {
       ) : (
         <SimpleGrid {...panelCard} placeItems="center" bg={colors.backgroundLight} borderRadius="12px" py={12}>
           <Text my={8} color={colors.textTertiary} fontSize={['sm', 'md']}>
-            {t('wallet.connected_hint.portfolio_position')}
+            {t('Connect wallet to see your positions.')}
           </Text>
         </SimpleGrid>
       )}

@@ -1,5 +1,5 @@
 import { Flex, FlexProps, Text } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import TokenAvatar from '@/components/TokenAvatar'
 import { colors } from '@/theme/cssVariables'
 
@@ -16,7 +16,7 @@ export default function Unemmitted({ rewardsInfo, ...rest }: UnemmittedProps) {
   return (
     <Flex color={colors.textPrimary} direction="column" justify="flex-start" align="flex-start" gap={1} {...rest}>
       <Text fontSize="sm" color={colors.textTertiary}>
-        {t('create_farm.unemmitted_rewards')}
+        {t('Unemmitted Rewards')}
       </Text>
       <Flex direction="column" fontSize="sm" color={colors.textPrimary} gap="6px">
         {rewardsInfo.length

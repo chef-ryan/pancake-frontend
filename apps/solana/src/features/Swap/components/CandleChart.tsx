@@ -12,7 +12,7 @@ import {
   createChart
 } from 'lightweight-charts'
 import { useEffect, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import useFetchPoolKLine, { TimeType } from '@/hooks/pool/useFetchPoolKLine'
 import { colors } from '@/theme/cssVariables/colors'
 import { formatCurrency } from '@/utils/numberish/formatter'
@@ -250,8 +250,8 @@ export default function CandleChart({ onPriceChange, baseMint, quoteMint, timeTy
       {isEmptyResult ? (
         <AbsoluteCenter>
           <Box fontSize="sm" color={colors.textTertiary} whiteSpace="nowrap" textAlign="center">
-            <Text mb={2}>{t('error.no_chart_data')}</Text>
-            <Text>{t('error.no_chart_data_hint')}</Text>
+            <Text mb={2}>{t('No data for this chart.')}</Text>
+            <Text>{t('Please wait for a moment or try refreshing the page.')}</Text>
           </Box>
         </AbsoluteCenter>
       ) : null}

@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { PublicKey } from '@solana/web3.js'
 import Decimal from 'decimal.js'
-import { useTranslation, Trans } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Steps, { StepsRef } from '@/components/Steps'
 import SubPageNote from '@/components/SubPageNote'
 import useFetchPoolById from '@/hooks/pool/useFetchPoolById'
@@ -198,7 +198,7 @@ export default function CreateFarm() {
     }
   }, [defaultPool?.id])
 
-  if (currentStep === 'done') return <div>{t('create_farm.done')}</div>
+  if (currentStep === 'done') return <div>{t('done')}</div>
 
   return (
     <Grid
@@ -248,7 +248,7 @@ export default function CreateFarm() {
           fontSize={['md', 'xl']}
         >
           <ChevronLeftIcon />
-          <Text>{t('common.back')}</Text>
+          <Text>{t('Back')}</Text>
         </HStack>
       </GridItem>
 
@@ -257,9 +257,9 @@ export default function CreateFarm() {
           currentIndex={currentStepIndex}
           variant={isMobile ? 'row-title' : 'column-list'}
           steps={[
-            { title: t('create_farm.step_1'), description: t('create_farm.step_1_name') },
-            { title: t('create_farm.step_2'), description: t('create_farm.step_2_name') },
-            { title: t('create_farm.step_3'), description: t('create_farm.step_3_name') }
+            { title: t('Step 1'), description: t('Select Pool') },
+            { title: t('Step 2'), description: t('Add Rewards') },
+            { title: t('Step 3'), description: t('Review Farm Detail') }
           ]}
           onChange={(idx) => {
             if (idx === 0 && idx !== currentStepIndex) routeToStepSelect()
@@ -273,20 +273,12 @@ export default function CreateFarm() {
       <GridItem area="note">
         <Box>
           <SubPageNote
-            title={t('create_farm.please_note')}
+            title={t('Please Note')}
             description={
               <Text fontSize="sm" color={isMobile ? colors.textSecondary : colors.textTertiary}>
-                <Trans i18nKey="create_farm.note_des">
-                  <Link href="https://docs.raydium.io/raydium/pool-creation/creating-a-clmm-pool-and-farm" isExternal>
-                    CLMM
-                  </Link>
-                  <Link
-                    href="https://docs.raydium.io/raydium/pool-creation/creating-a-standard-amm-pool/creating-an-ecosystem-farm"
-                    isExternal
-                  >
-                    Standard
-                  </Link>
-                </Trans>
+                {t(
+                  'A farm can be created for any pool that is already live. For detailed instructions, read the guide for CLMM or Standard farms.'
+                )}
               </Text>
             }
           />
@@ -298,13 +290,13 @@ export default function CreateFarm() {
         {currentStep === 'select' ? (
           <Box>
             <Text w="fit-content" color={colors.textSecondary} fontWeight="500" fontSize="xl">
-              {t('create_farm.step_1_sentence')}
+              {t('First, select a pool for farm rewards')}
             </Text>
           </Box>
         ) : currentStep === 'reward' ? (
           <Flex justify="space-between" w="full" align="center">
             <Text w="fit-content" color={colors.textSecondary} fontWeight="500" fontSize="xl">
-              {t('create_farm.step_2_sentence')}
+              {t('Next, enter rewards for the farm')}
             </Text>
             <HStack
               align="center"
@@ -319,14 +311,14 @@ export default function CreateFarm() {
             >
               <PlusCircleIcon width="14px" height="14px" />
               <Text fontSize="16px" fontWeight="500">
-                {t('create_farm.add_another_button_text')}
+                {t('Add another')}
               </Text>
             </HStack>
           </Flex>
         ) : (
           <Box>
             <Text w="fit-content" color={colors.textSecondary} fontWeight="500" fontSize="xl">
-              {t('create_farm.step_3_name')}
+              {t('Review Farm Detail')}
             </Text>
           </Box>
         )}

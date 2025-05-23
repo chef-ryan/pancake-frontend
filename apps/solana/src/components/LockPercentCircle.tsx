@@ -1,5 +1,5 @@
 import { CircularProgress, CircularProgressLabel, CircularProgressProps } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Tooltip from '@/components/Tooltip'
 import LiquidityLockIcon from '@/icons/misc/LiquidityLockIcon'
 import { colors } from '@/theme/cssVariables'
@@ -19,7 +19,7 @@ export default function LockPercentCircle({
   const { t } = useTranslation()
   return (
     <Tooltip
-      label={t('liquidity.total_locked_position', {
+      label={t('Total locked liquidity in this pool: %percent%', {
         percent: formatToRawLocaleStr(toPercentString(value, { alreadyPercented: true }))
       })}
     >

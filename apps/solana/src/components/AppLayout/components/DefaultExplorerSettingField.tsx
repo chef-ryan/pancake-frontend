@@ -1,6 +1,6 @@
 import { Flex, HStack, Image, Text } from '@chakra-ui/react'
 import { Button } from '@pancakeswap/uikit'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { useEvent } from '@/hooks/useEvent'
 import { EXPLORER_KEY, supportedExplorers, useAppStore } from '@/store'
 import { setStorageItem } from '@/utils/localStorage'
@@ -21,8 +21,8 @@ export function DefaultExplorerSettingField() {
 
   return (
     <SettingField
-      fieldName={t('setting_board.default_explorer')}
-      tooltip={t('setting_board.default_explorer_tooltip')}
+      fieldName={t('Default Explorer')}
+      tooltip={t('Select preferred block explorer')}
       renderToggleButton={
         isMobile
           ? (isOpen) => (

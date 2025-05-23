@@ -24,6 +24,7 @@ import {
 import { PublicKey, VersionedTransaction } from '@solana/web3.js'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
+import { TranslateFunction } from '@pancakeswap/localization'
 import createStore from '@/store/createStore'
 import { useAppStore, useTokenAccountStore, useLiquidityStore } from '@/store'
 import { isSolWSol, getMintSymbol, shortenAddress } from '@/utils/token'
@@ -52,6 +53,7 @@ interface ClmmState {
 
   harvestAllAct: (
     props: {
+      t: TranslateFunction
       allPoolInfo: Record<string, ApiV3PoolInfoConcentratedItem>
       allPositions: Record<string, ClmmPositionLayout[]>
       lockInfo: ClmmLockInfo
@@ -61,6 +63,7 @@ interface ClmmState {
   ) => Promise<{ txId: string; buildData?: MakeMultiTxData<TxVersion> }>
   openPositionAct: (
     props: {
+      t: TranslateFunction
       poolInfo: ApiV3PoolInfoConcentratedItem
       poolKeys?: ClmmKeys
       tickLower: number
@@ -205,7 +208,7 @@ const clmmInitState = {
 export const useClmmStore = createStore<ClmmState>(
   (set, get) => ({
     ...clmmInitState,
-    harvestAllAct: async ({ allPoolInfo, allPositions, lockInfo, programId, execute, ...txProps }) => {
+    harvestAllAct: async ({ t, allPoolInfo, allPositions, lockInfo, programId, execute, ...txProps }) => {
       const { raydium, txVersion } = useAppStore.getState()
       if (!raydium) {
         toastSubject.next({ noRpc: true })
@@ -243,6 +246,7 @@ export const useClmmStore = createStore<ClmmState>(
             onTxUpdate: (data) => {
               handleMultiTxRetry(data)
               handleMultiTxToast({
+                t,
                 toastId,
                 processedId: transformProcessData({ processedId, data }),
                 txLength,
@@ -254,6 +258,7 @@ export const useClmmStore = createStore<ClmmState>(
           })
           .then(() => {
             handleMultiTxToast({
+              t,
               toastId,
               processedId: transformProcessData({ processedId, data: [] }),
               txLength,
@@ -277,6 +282,7 @@ export const useClmmStore = createStore<ClmmState>(
     },
 
     openPositionAct: async ({
+      t,
       poolInfo,
       poolKeys,
       base,
@@ -366,6 +372,7 @@ export const useClmmStore = createStore<ClmmState>(
             onTxUpdate: (data) => {
               handleMultiTxRetry(data)
               handleMultiTxToast({
+                t,
                 toastId,
                 processedId: transformProcessData({ processedId, data }),
                 txLength,
@@ -377,6 +384,7 @@ export const useClmmStore = createStore<ClmmState>(
           })
             .then(() => {
               handleMultiTxToast({
+                t,
                 toastId,
                 processedId: transformProcessData({ processedId, data: [] }),
                 txLength,

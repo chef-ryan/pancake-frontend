@@ -1,8 +1,9 @@
 import { Box, Button, Flex, Link, Grid, GridItem, HStack, Skeleton, Text, useDisclosure } from '@chakra-ui/react'
 import { useState, useCallback, useEffect } from 'react'
-import { useTranslation, Trans } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { ApiV3PoolInfoStandardItemCpmm, CpmmLockExtInfo } from '@raydium-io/raydium-sdk-v2'
 import BN from 'bn.js'
+import { LinkExternal } from '@pancakeswap/uikit'
 import ChevronLeftIcon from '@/icons/misc/ChevronLeftIcon'
 import { colors } from '@/theme/cssVariables/colors'
 import { routeBack } from '@/utils/routeTools'
@@ -84,7 +85,7 @@ export default function Lock() {
               fontSize={['md', 'xl']}
             >
               <ChevronLeftIcon />
-              <Text>{t('common.back')}</Text>
+              <Text>{t('Back')}</Text>
             </HStack>
           </Flex>
         </GridItem>
@@ -106,21 +107,24 @@ export default function Lock() {
               lineHeight="26px"
               mb={3}
             >
-              {t('liquidity.lock_cpmm_title')}
+              {t('Burn/Lock Liquidity for standard AMM position')}
             </Text>
             <Box color={colors.lightPurple} fontSize={['sm', 'md']} lineHeight="20px" mb={[4, 7]}>
-              <Text mb={[4, 7]}>{t('liquidity.lock_cpmm_desc1')}</Text>
+              <Text mb={[4, 7]}>
+                {t(
+                  'Token teams can permanently lock liquidity. The LP tokens representing your position is sent to a locked token account. Fees auto-compound to the original position, but remain claimable.'
+                )}
+              </Text>
               <Text mb={[4, 7]} color={colors.semanticWarning}>
-                <Trans i18nKey="liquidity.lock_cpmm_desc4">
-                  <Link href="https://docs.raydium.io/raydium/pool-creation/burn-and-earn" isExternal />
-                </Trans>
+                {t('NOTE: This feature only supports CPMM pools created on the UI. Older V4 pools are not supported at this time.')}
+                <LinkExternal href="#">{t('Learn more here.')}</LinkExternal>
               </Text>
               <Text mb={[4, 7]}>
-                <Trans i18nKey="liquidity.lock_cpmm_desc2">
-                  <Text as="span" fontWeight="bold" />
-                </Trans>
+                {t(
+                  'To start, select a standard AMM position below to lock. Ensure that position value and LP balance match the position you want to lock!'
+                )}
               </Text>
-              <Text>{t('liquidity.lock_cpmm_desc3')}</Text>
+              <Text>{t('Note: Technically, your LP tokens are not burned but permanently locked.')}</Text>
             </Box>
             <Flex flexDirection="column" gap={3} mb={[4, 7]}>
               {isLoading ? (
@@ -132,7 +136,7 @@ export default function Lock() {
                 </Flex>
               ) : data.length === 0 ? (
                 <Box textAlign="center" fontSize="sm" color={colors.lightPurple} bg={colors.backgroundDark} rounded="md" py={7}>
-                  {t('liquidity.lock_cpmm_positions_empty')}
+                  {t('You do not currently have any open standard AMM positions')}
                 </Box>
               ) : (
                 data.map((lpMint) => {
@@ -150,7 +154,7 @@ export default function Lock() {
               )}
             </Flex>
             <Button isDisabled={selectedPosition === null} width="100%" onClick={onOpen}>
-              {t('liquidity.lock_liquidity')}
+              {t('Lock Liquidity')}
             </Button>
           </Flex>
         </GridItem>

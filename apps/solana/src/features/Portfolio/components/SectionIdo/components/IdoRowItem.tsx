@@ -1,7 +1,7 @@
 import { IdoKeysData } from '@raydium-io/raydium-sdk-v2'
 import { Box, Button, Divider, Flex, Grid, GridItem, HStack, Stack, Text, useDisclosure } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Desktop } from '@/components/MobileDesktop'
 import TokenAvatar from '@/components/TokenAvatar'
 import { OwnerFullData } from '@/hooks/portfolio/useFetchOwnerIdo'
@@ -74,7 +74,7 @@ export default function IdoRowItem(ownerInfo: OwnerFullData & { idoKeys: IdoKeys
         <Flex direction="column" gap="0.2">
           <Box m="0 auto">
             <Text variant="label">
-              {t('acceleraytor.unclaim')} {getMintSymbol({ mint: projectInfo.mint, transformSol: true })}
+              {t('Unclaim')} {getMintSymbol({ mint: projectInfo.mint, transformSol: true })}
             </Text>
             <Text>
               {formatCurrency(new Decimal(coin).div(10 ** projectInfo.mint.decimals).toString(), {
@@ -89,7 +89,7 @@ export default function IdoRowItem(ownerInfo: OwnerFullData & { idoKeys: IdoKeys
         <Flex direction="column" gap="0.2">
           <Box m="0 auto">
             <Text variant="label">
-              {t('acceleraytor.unclaim')} {getMintSymbol({ mint: buyInfo.mint, transformSol: true })}
+              {t('Unclaim')} {getMintSymbol({ mint: buyInfo.mint, transformSol: true })}
             </Text>
             <Text>
               {formatCurrency(new Decimal(pc).div(10 ** buyInfo.mint.decimals).toString(), {
@@ -102,7 +102,7 @@ export default function IdoRowItem(ownerInfo: OwnerFullData & { idoKeys: IdoKeys
 
       <GridItem area="action" justifySelf={['center', 'end']}>
         <Button size="sm" w={['12em', 'fit-content']} variant="outline" isLoading={isLoading} onClick={onClick}>
-          {t('button.claim')}
+          {t('Claim')}
         </Button>
       </GridItem>
     </Grid>

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import {
   Box,
   Badge,
@@ -192,7 +192,7 @@ export default function AddLiquidityModal({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader fontSize="xl" display="flex" gap={[1, 2]} alignItems="center">
-          <Text>{t('clmm.modal_header_add_liquidity_to')}</Text>
+          <Text>{t('Add Liquidity to')}</Text>
           <TokenAvatarPair size={['smi', 'md']} token1={poolInfo.mintA} token2={poolInfo.mintB} />
           <Desktop>
             <Text>{poolInfo.poolName}</Text>
@@ -201,7 +201,7 @@ export default function AddLiquidityModal({
         <ModalCloseButton />
         <ModalBody>
           <Text variant="subTitle" color={colors.textPrimary}>
-            {t('clmm.current_position')}
+            {t('Current position')}
           </Text>
           <Box rounded="xl" px={[3, 4]} py={[3, 3]} mt="4" mb="5" {...panelCard}>
             <Flex alignItems="center">
@@ -215,11 +215,11 @@ export default function AddLiquidityModal({
                 })}
               </Text>
               <Badge ml="4" variant={inRange ? 'ok' : 'error'}>
-                {inRange ? t('clmm.in_range') : t('clmm.out_of_range')}
+                {inRange ? t('In Range') : t('Out of Range')}
               </Badge>
             </Flex>
             <Text variant="label">
-              {t('common.per_unit', {
+              {t('%subA% per %subB%', {
                 subA: poolInfo[baseIn ? 'mintB' : 'mintA'].symbol,
                 subB: poolInfo[baseIn ? 'mintA' : 'mintB'].symbol
               })}
@@ -227,7 +227,7 @@ export default function AddLiquidityModal({
             <Flex gap="4" mt="2" justify="space-between">
               <Box>
                 <Text color={colors.textSubtle} fontSize="sm">
-                  {t('liquidity.title')}
+                  {t('Liquidity')}
                 </Text>
                 <Text fontSize={['md', 'xl']} fontWeight="600">
                   {formatCurrency(positionTotalVolume.toString(), { symbol: '$', decimalPlaces: 2 })}
@@ -236,7 +236,7 @@ export default function AddLiquidityModal({
 
               <Box>
                 <Text color={colors.textSubtle} fontSize="sm">
-                  {t('field.current_price')}
+                  {t('Current Price')}
                 </Text>
                 <Text fontSize={['md', 'xl']} fontWeight="600">
                   {formatCurrency(currentPrice.toString(), { symbol: '$', maximumDecimalTrailingZeroes: 5 })}
@@ -245,7 +245,7 @@ export default function AddLiquidityModal({
 
               <Box>
                 <Text color={colors.textSubtle} fontSize="sm">
-                  {t('clmm.deposit_ratio')}
+                  {t('Deposit Ratio')}
                 </Text>
                 <HStack fontSize={['md', 'xl']} fontWeight="600">
                   <Desktop>
@@ -274,7 +274,7 @@ export default function AddLiquidityModal({
 
           <HStack mb="2" gap={2} justifyContent="space-between" alignItems="center" flexWrap="wrap">
             <Text variant="subTitle" color={colors.textPrimary}>
-              {t('liquidity.add_liquidity')}
+              {t('Add Liquidity')}
             </Text>
             <Flex align="center" gap={3}>
               <SlippageAdjuster variant="liquidity" onClick={onToggleSlippage} />
@@ -292,8 +292,8 @@ export default function AddLiquidityModal({
             {/* TODO not need now */}
             {/* <HStack justifySelf={'end'} fontSize="sm" color={colors.textTertiary}>
               <HStack>
-                <Text>{t('clmm.match_deposit_ratio')}</Text>
-                <QuestionToolTip iconType="info" label={t('clmm.match_deposit_ratio_tooltip')} />
+                <Text>{t('Match Deposit Ratio')}</Text>
+                <QuestionToolTip iconType="info" label={t('When turned on, token amounts will be automatically swapped to the deposit ratio needed to create your position')} />
               </HStack>
               <Switch name="matchDepositRatio" defaultChecked={true} />
             </HStack> */}
@@ -313,7 +313,7 @@ export default function AddLiquidityModal({
           />
           <Box mt="4">
             <Box px={[3, 4]} py="2" display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" fontSize="sm">
-              <Text color={colors.textSubtle}>{t('liquidity.total_deposit')}</Text>
+              <Text color={colors.textSubtle}>{t('Total Deposit')}</Text>
               <Text color={colors.textPrimary}>{formatCurrency(totalDeposited, { symbol: '$', decimalPlaces: 2 })}</Text>
             </Box>
           </Box>
@@ -322,7 +322,7 @@ export default function AddLiquidityModal({
           <Button
             w="full"
             isLoading={sending}
-            loadingText={`${t('liquidity.add_liquidity')}...`}
+            loadingText={`${t('Add Liquidity')}...`}
             isDisabled={!!error || featureDisabled}
             onClick={() => {
               setIsSending(true)
@@ -344,10 +344,10 @@ export default function AddLiquidityModal({
               })
             }}
           >
-            {featureDisabled ? t('common.disabled') : error || t('button.confirm')}
+            {featureDisabled ? t('Disabled') : error || t('Confirm')}
           </Button>
           <Button w="full" variant="ghost" onClick={handleCloseModal}>
-            {t('button.cancel')}
+            {t('Cancel')}
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -2,7 +2,7 @@ import { Box, Flex, HStack, Text, useDisclosure } from '@chakra-ui/react'
 import { ApiV3Token, TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import { useMemo } from 'react'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import TokenInput from '@/components/TokenInput'
 import { colors } from '@/theme/cssVariables'
 
@@ -43,7 +43,7 @@ export default function RewardBody({ rewardInfo, tokenFilterFn, onChange }: Rewa
   return (
     <Box>
       <Text fontWeight="500" fontSize={['sm', 'md']} color={colors.textTertiary} mt={[1, 2]}>
-        {t('create_farm.add_reward_token')}
+        {t('You can add up to 3 reward tokens.')}
       </Text>
       <Flex direction="column" gap={4} mt={[4, 7]}>
         <TokenInput
@@ -59,10 +59,10 @@ export default function RewardBody({ rewardInfo, tokenFilterFn, onChange }: Rewa
             <>
               <Flex justify="space-between" mb={2}>
                 <Text fontSize="xs" fontWeight={300} color={colors.textTertiary}>
-                  {t('edit_farm.farming_start')}
+                  {t('Farming starts')}
                 </Text>
                 <Text fontSize="xs" fontWeight={300} color={colors.textTertiary}>
-                  {t('edit_farm.farming_end')}
+                  {t('Farming ends')}
                 </Text>
               </Flex>
               <Flex
@@ -75,7 +75,7 @@ export default function RewardBody({ rewardInfo, tokenFilterFn, onChange }: Rewa
                 py={2}
               >
                 <Text fontWeight="medium" fontSize="xl">
-                  {t('common.select')}
+                  {t('Select')}
                 </Text>
               </Flex>
             </>
@@ -83,7 +83,7 @@ export default function RewardBody({ rewardInfo, tokenFilterFn, onChange }: Rewa
             <HStack justifyContent="space-between">
               <Box cursor="pointer" onClick={onOpen}>
                 <Text fontSize="xs" fontWeight={300} color={colors.textTertiary}>
-                  {t('edit_farm.farming_start')}
+                  {t('Farming starts')}
                 </Text>
                 <Text fontSize="md" fontWeight={500} color={colors.textPrimary} my={1} mb={2}>
                   {`${farmStartTimeInfo.year}/${farmStartTimeInfo.month}/${farmStartTimeInfo.day}`}
@@ -97,7 +97,7 @@ export default function RewardBody({ rewardInfo, tokenFilterFn, onChange }: Rewa
                   <Box flexGrow={1} height="1px" color={colors.backgroundLight} bg={colors.dividerDashGradient} />
                   <Box rounded="md" bg={colors.backgroundLight} py={1.5} px={[4, 10]} cursor="pointer" onClick={onOpen}>
                     <Text fontWeight="500" fontSize="sm">
-                      {(rewardInfo.farmEnd - rewardInfo.farmStart) / (60 * 60 * 24 * 1000)} {t('common.days')}
+                      {(rewardInfo.farmEnd - rewardInfo.farmStart) / (60 * 60 * 24 * 1000)} {t('Days')}
                     </Text>
                   </Box>
                   <Box flexGrow={1} height="1px" color={colors.backgroundLight} bg={colors.dividerDashGradient} />
@@ -105,7 +105,7 @@ export default function RewardBody({ rewardInfo, tokenFilterFn, onChange }: Rewa
               ) : null}
               <Box textAlign="right">
                 <Text fontSize="xs" fontWeight={300} color={colors.textTertiary}>
-                  {t('edit_farm.farming_end')}
+                  {t('Farming ends')}
                 </Text>
                 <Text fontSize="md" fontWeight={500} color={colors.textSecondary} my={1} mb={2}>
                   {`${farmEndTimeInfo.year}/${farmEndTimeInfo.month}/${farmEndTimeInfo.day}`}
@@ -127,7 +127,7 @@ export default function RewardBody({ rewardInfo, tokenFilterFn, onChange }: Rewa
           px={[4, 6]}
         >
           <Text color={colors.textTertiary} fontSize="xs">
-            {t('create_farm.estimated_rewards_week')}
+            {t('Estimated rewards / week')}
           </Text>
           <Text color={colors.textSecondary} fontSize="xl" fontWeight={500} mt={1}>
             {formatToRawLocaleStr(

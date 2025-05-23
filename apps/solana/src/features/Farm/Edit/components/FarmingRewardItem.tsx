@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Badge, Box, Button, Flex, Grid, GridItem, HStack, SimpleGrid, Tag, Text, VStack, useDisclosure } from '@chakra-ui/react'
 import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
 
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Decimal from 'decimal.js'
 import TokenAvatar from '@/components/TokenAvatar'
 import { useEvent } from '@/hooks/useEvent'
@@ -59,22 +59,22 @@ export default function ExistFarmingRewardItem({
   const statusInfo = {
     ongoing: {
       color: colors.semanticSuccess,
-      text: t('badge.ongoing'),
+      text: t('Ongoing'),
       indicators: ['badge']
     },
     ended: {
       color: colors.semanticError,
-      text: t('badge.ended'),
+      text: t('Ended'),
       indicators: ['badge', 'top-line']
     },
     updated: {
       color: colors.badgePurple,
-      text: t('badge.updated'),
+      text: t('Updated'),
       indicators: ['tag', 'top-line']
     },
     new: {
       color: colors.badgeBlue,
-      text: t('badge.new'),
+      text: t('New'),
       indicators: ['tag', 'top-line']
     }
   }
@@ -174,7 +174,7 @@ export default function ExistFarmingRewardItem({
             <Text>{formatCurrency(reward.total, { decimalPlaces: 2 })}</Text>
             <HStack fontSize="sm">
               <Text color={colors.textSecondary}>{formatCurrency(reward.perWeek, { decimalPlaces: 2 })}</Text>
-              <Text color={colors.textTertiary}>{t('edit_farm.per_week')}</Text>
+              <Text color={colors.textTertiary}>{t('/week')}</Text>
             </HStack>
           </Box>
         </GridItem>
@@ -222,7 +222,7 @@ export default function ExistFarmingRewardItem({
             <Text>{formatCurrency(currentReward.total, { decimalPlaces: 2 })}</Text>
             <HStack fontSize="sm">
               <Text color={colors.textSecondary}>{formatCurrency(currentReward.perWeek, { decimalPlaces: 2 })}</Text>
-              <Text color={colors.textTertiary}>{t('edit_farm.per_week')}</Text>
+              <Text color={colors.textTertiary}>{t('/week')}</Text>
             </HStack>
           </Box>
 
@@ -252,7 +252,7 @@ export default function ExistFarmingRewardItem({
         {claimableRewardAmount && (
           <Button variant="outline" size="sm" isLoading={isOpen} onClick={onClaim}>
             <HStack>
-              <Text>{t('edit_farm.claim_unemmitted_rewards')}</Text>
+              <Text>{t('Claim Unemmitted Rewards')}</Text>
               <Text color={colors.textSecondary} fontSize="xs">
                 {formatCurrency(claimableRewardAmount, { decimalPlaces: reward.mint.decimals })} {wSolToSolString(rewardToken.symbol)}
               </Text>
@@ -261,13 +261,13 @@ export default function ExistFarmingRewardItem({
         )}
         {isUpdated && (
           <Button size="sm" variant="outline" onClick={onReset}>
-            {t('button.reset')}
+            {t('Reset')}
           </Button>
         )}
         {!isRewardEnded && !isEcosystem && !isNewRewards && !isUpdated && (
           <>
             <Button size="sm" isDisabled={!canAddMoreRewards} onClick={onOpenAdjustRewardDialog}>
-              {t('edit_farm.button_adjust_rewards')}
+              {t('Adjust rewards')}
             </Button>
             <AdjustRewardDialog
               key={rewardTag}
@@ -283,7 +283,7 @@ export default function ExistFarmingRewardItem({
         {(isRewardEnded || isEcoSystemAddMore) && !isUpdated && (
           <>
             <Button size="sm" onClick={onOpenAddMoreRewardDialog}>
-              {t('edit_farm.button_add_more_rewards')}
+              {t('Add More Rewards')}
             </Button>
             {isAddMoreRewardDialogOpen && (
               <AddMoreRewardDialog
@@ -301,18 +301,18 @@ export default function ExistFarmingRewardItem({
 
         {isNewRewards && (
           <Button size="sm" variant="outline" onClick={onDeleteNewReward}>
-            {t('button.delete')}
+            {t('Delete')}
           </Button>
         )}
         {isNewRewards && (
           <>
             <Button size="sm" onClick={onOpenEditDialog}>
-              {t('button.edit')}
+              {t('Edit')}
             </Button>
             <AddMoreRewardDialog
               key={rewardTag}
               tokenFilterFn={filterFn}
-              header={t('button.edit')}
+              header={t('Edit')}
               defaultRewardInfo={reward}
               isOpen={isEditDialogOpen}
               onSave={onSave}

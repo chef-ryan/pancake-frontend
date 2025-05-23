@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react'
 import { ApiV3Token, FetchPoolParams, PoolFetchType } from '@raydium-io/raydium-sdk-v2'
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation, Trans } from '@pancakeswap/localization'
 
 import Button from '@/components/Button'
 import List, { ListPropController } from '@/components/List'
@@ -48,7 +48,6 @@ import { revertAppLayoutPaddingX } from '@/theme/detailConfig'
 import { isValidPublicKey } from '@/utils/publicKey'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
-import i18n from '@/i18n'
 import { setUrlQuery, useRouteQuery } from '@/utils/routeTools'
 import { urlToMint, mintToUrl } from '@/utils/token'
 import { useEffectWithUrl, useStateWithUrl } from '../../hooks/useStateWithUrl'
@@ -85,37 +84,37 @@ export const FILED_KEY: Record<TimeBase, AprKey> = {
 const SORT_ITEMS = [
   {
     name: 'default',
-    label: i18n.t('liquidity.default'),
+    label: <Trans>default</Trans>,
     value: 'default'
   },
   {
     name: 'tvl_dsc',
-    label: i18n.t('liquidity.tvl_dsc'),
+    label: <Trans>Trading Volume (dsc)</Trans>,
     value: 'volume_desc'
   },
   {
     name: 'tvl_asc',
-    label: i18n.t('liquidity.tvl_asc'),
+    label: <Trans>Trading Volume (asc)</Trans>,
     value: 'volume_asc'
   },
   {
     name: 'lp_dsc',
-    label: i18n.t('liquidity.lp_dsc'),
+    label: <Trans>Liquidity (dsc)</Trans>,
     value: 'liquidity_desc'
   },
   {
     name: 'lp_asc',
-    label: i18n.t('liquidity.lp_asc'),
+    label: <Trans>Liquidity (asc)</Trans>,
     value: 'liquidity_asc'
   },
   {
     name: 'apr_dsc',
-    label: i18n.t('liquidity.yield_dsc'),
+    label: <Trans>Yield (dsc)</Trans>,
     value: 'apr_desc'
   },
   {
     name: 'apr_asc',
-    label: i18n.t('liquidity.yield_asc'),
+    label: <Trans>Yield (asc)</Trans>,
     value: 'apr_asc'
   }
 ]
@@ -126,11 +125,11 @@ const LAYOUT_ITEMS = [
 ]
 
 export default function Pools() {
-  const { t, i18n: i18n_ } = useTranslation()
+  const { t, currentLanguage } = useTranslation()
   const query = useRouteQuery()
   const currentQuery = useRef(query)
   currentQuery.current = query || {}
-  const isEN = i18n_.language === 'en'
+  const isEN = currentLanguage.locale === 'en'
   const isMobile = useAppStore((s) => s.isMobile)
 
   const tabItems: PoolTabItem[] = useMemo(
@@ -147,7 +146,7 @@ export default function Pools() {
       },
       {
         name: 'All',
-        label: isEN && isMobile ? 'ALL' : t('common.all'),
+        label: isEN && isMobile ? 'ALL' : t('All'),
         value: PoolFetchType.All
       }
     ],
@@ -425,7 +424,7 @@ export default function Pools() {
         <Box {...titleContainerProps} display={['none', 'block']} flexShrink={0}>
           <Desktop>
             <HStack justify="space-between" w="full" py={8}>
-              <PageHeroTitle title={t('liquidity.pools')} description={t('liquidity.pools_desc') || ''} />
+              <PageHeroTitle title={t('Liquidity Pools')} description={t('Provide liquidity, earn yield.') || ''} />
               <TVLInfoPanel tvl={tvl} volume={volume} />
             </HStack>
           </Desktop>
@@ -554,7 +553,7 @@ export default function Pools() {
                     <Box>
                       <FormControl display="flex" alignItems="center">
                         <FormLabel color={colors.textSubtle} minW={['80px', 'unset']}>
-                          {t('common.layout')}
+                          {t('Layout')}
                         </FormLabel>
 
                         <ButtonMenu scale="sm" activeIndex={layoutStyle} onItemClick={handleLayoutStyleChange} variant="subtle">
@@ -570,7 +569,7 @@ export default function Pools() {
                     <Box>
                       <FormControl display="flex" alignItems="center">
                         <FormLabel color={colors.textSubtle} minW={['80px', 'unset']}>
-                          {t('common.time_base')}
+                          {t('Time base')}
                         </FormLabel>
                         <ButtonMenu scale="sm" activeIndex={timeBaseIdx} onItemClick={handleTimeBaseChange} variant="subtle">
                           {Object.keys(FILED_KEY)
@@ -590,7 +589,7 @@ export default function Pools() {
                     <Flex alignItems="center">
                       <FormControl display="flex" alignItems="center">
                         <FormLabel color={colors.textSubtle} minW={['80px', 'unset']}>
-                          {t('liquidity.show_farms')}
+                          {t('Show Farms')}
                         </FormLabel>
                         <Switch defaultChecked={showFarms} onChange={handleSwitchFarmChange} />
                       </FormControl>
@@ -599,7 +598,7 @@ export default function Pools() {
                     {currentLayoutStyle === 'grid' ? (
                       <Flex alignItems="center">
                         <FormControl display="flex" alignItems="center">
-                          <FormLabel minW={['80px', 'unset']}>{t('common.sort_by')}</FormLabel>
+                          <FormLabel minW={['80px', 'unset']}>{t('Sort By')}</FormLabel>
                           <Select
                             sx={({ isPanelOpen }) => ({
                               height: '34px',
@@ -637,7 +636,7 @@ export default function Pools() {
           <Box {...listContainerStyle} flexGrow="1" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
             <NotFound />
             <Text mt="4" fontSize="sm" color={colors.textSecondary}>
-              {t('error.no_pools_found')}
+              {t('No pools found')}
             </Text>
           </Box>
         ) : (
@@ -692,8 +691,8 @@ export default function Pools() {
             poolAddress={chartPoolInfo?.id}
             baseMint={chartPoolInfo?.mintA.address}
             categories={[
-              { label: t('liquidity_pools.chart_tab_volume'), value: 'volume' },
-              { label: t('liquidity_pools.chart_tab_liquidity'), value: 'liquidity' }
+              { label: t('Volume'), value: 'volume' },
+              { label: t('Liquidity'), value: 'liquidity' }
             ]}
             isOpen={isChartOpen}
             onClose={closeChart}

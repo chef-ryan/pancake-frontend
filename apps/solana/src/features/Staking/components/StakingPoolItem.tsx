@@ -1,7 +1,7 @@
 import { Box, Collapse, HStack, SimpleGrid, Text, Tooltip, VStack, useDisclosure } from '@chakra-ui/react'
 import { ApiStakePool, ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { shallow } from 'zustand/shallow'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from 'bn.js'
@@ -139,7 +139,7 @@ export default function StakingPoolItem({ pool, apiVaultData }: { pool: ApiStake
             onClick={onCollapse}
           >
             <Text fontSize="xs" fontWeight={500}>
-              {t('common.more_info')}
+              {t('More_info')}
             </Text>
             <ChevronDownIcon width={12} height={12} />
           </HStack>
@@ -203,7 +203,7 @@ export default function StakingPoolItem({ pool, apiVaultData }: { pool: ApiStake
             <HStack py={1} mt={1} position="relative">
               <HStack flex={1} justify="center" color={colors.buttonPrimary} spacing={0.5} onClick={onCollapse}>
                 <Text fontSize="xs" fontWeight={500}>
-                  {t('common.less_info')}
+                  {t('Less info')}
                 </Text>
                 <ChevronUpIcon width={12} height={12} />
               </HStack>
@@ -244,7 +244,7 @@ function HarvestButton(props: { pendingAmount: string; isLoading: boolean; onCli
       isDisabled={new Decimal(props.pendingAmount).lte(0)}
       onClick={props.onClick}
     >
-      {t('button.harvest')}
+      {t('Harvest')}
     </Button>
   )
 }
@@ -254,7 +254,7 @@ function PendingRewards(props: { token: ApiV3Token; pendingAmount: number | stri
   return (
     <VStack align="start" spacing={[0, 2]}>
       <Text fontSize="sm" color={colors.textTertiary}>
-        {t('clmm.pending_rewards')}
+        {t('Pending rewards')}
       </Text>
       <Text fontWeight={500} color={colors.textPrimary}>
         {formatCurrency(props.pendingAmount, { decimalPlaces: props.token.decimals })} {wSolToSolString(props.token.symbol)}
@@ -294,7 +294,7 @@ function AvailableStakeTokenButtons(props: {
               props.onClickStake()
             }}
           >
-            {depositDisabled ? t('common.disabled') : t('button.stake')}
+            {depositDisabled ? t('Disabled') : t('Stake')}
           </Button>
         </Tooltip>
       ) : (
@@ -317,12 +317,12 @@ function AvailableStakeTokenButtons(props: {
               props.onClickStake()
             }}
           >
-            {depositDisabled ? t('common.disabled') : t('button.stake')}
+            {depositDisabled ? t('Disabled') : t('Stake')}
           </Button>
           <Box position="absolute" top="100%" left="50%" transform="auto" translateX="-50%">
             <Collapse in={isMobile && isCollapseOpen && !props.canStake}>
               <Text fontSize="xs" color={colors.semanticWarning} whiteSpace="nowrap">
-                {t('staking.alert_empty_token')}
+                {t('Insufficient RAY balance')}
               </Text>
             </Collapse>
           </Box>
@@ -336,7 +336,7 @@ function AvailableStakeTokenButtons(props: {
         px={4}
         minWidth="unset"
       >
-        {withdrawDisabled ? t('common.disabled') : '-'}
+        {withdrawDisabled ? t('Disabled') : '-'}
       </Button>
     </HStack>
   )
@@ -347,7 +347,7 @@ function AvailableStakeTokenInfoBox(props: { token: ApiV3Token; stakedVolume: st
   return (
     <VStack align="start" spacing={[0, 2]}>
       <Text fontSize="sm" color={colors.textTertiary}>
-        {t('staking.available', { symbol: wSolToSolString(props.token.symbol) })}
+        {t('Available %symbol%', { symbol: wSolToSolString(props.token.symbol) })}
       </Text>
       <Text fontWeight={500} color={colors.textPrimary}>
         {formatCurrency(props.balance, { decimalPlaces: props.token.decimals })} {wSolToSolString(props.token.symbol)}
@@ -372,7 +372,7 @@ function StakePendingRewardFaceInfo(props: { token: ApiV3Token; pendingAmount: n
   const { t } = useTranslation()
   return (
     <VStack align="start">
-      <Text color={colors.textTertiary}>{t('staking.pending_reward')}</Text>
+      <Text color={colors.textTertiary}>{t('Pending Rewards')}</Text>
       <Text>
         {formatCurrency(props.pendingAmount, { decimalPlaces: props.token.decimals })} {wSolToSolString(props.token.symbol)}
       </Text>
@@ -385,7 +385,7 @@ function StakeStakedFaceInfo(props: { token: ApiV3Token; deposited: string | num
   return (
     <VStack align="start">
       <Text fontSize={['xs', 'sm']} color={colors.textTertiary}>
-        {t('staking.staked')}
+        {t('Staked')}
       </Text>
       <Text fontSize={['sm', 'md']}>
         {formatCurrency(props.deposited, { decimalPlaces: props.token.decimals })} {wSolToSolString(props.token.symbol)}
@@ -399,7 +399,7 @@ function StakeAPRFaceInfo(props: { apr: number }) {
   return (
     <VStack align="start">
       <Text fontSize={['xs', 'sm']} color={colors.textTertiary}>
-        {t('staking.APR')}
+        {t('APR')}
       </Text>
       <Text fontSize={['sm', 'md']}>{formatToRawLocaleStr(toPercentString(props.apr * 100))}</Text>
     </VStack>
@@ -411,7 +411,7 @@ function StakeLiquidityFaceInfo(props: { tvl: number }) {
   return (
     <VStack align="start">
       <Text fontSize={['xs', 'sm']} color={colors.textTertiary}>
-        {t('staking.liquidity')}
+        {t('Liquidity')}
       </Text>
       <Text fontSize={['sm', 'md']}>{formatCurrency(props.tvl, { symbol: '$', decimalPlaces: 2 })}</Text>
     </VStack>

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Box, Flex, HStack, Link, Spacer, Text, VStack, useDisclosure } from '@chakra-ui/react'
 import { ApiV3PoolInfoItem, ApiV3PoolInfoConcentratedItem, PoolFetchType } from '@raydium-io/raydium-sdk-v2'
 import NextLink from 'next/link'
@@ -40,19 +40,19 @@ export default function SelectPool(props: SelectPoolProps) {
     <Flex {...panelCard} direction="column" borderRadius="20px" w="full" bg={colors.backgroundLight} p={[4, 6]}>
       <Desktop>
         <Text mb={4} fontWeight="500" fontSize="xl">
-          {t('create_farm.select_pool')}
+          {t('Select Pool')}
         </Text>
       </Desktop>
 
       <HStack flexDirection={['column', 'row']} align={['stretch', 'center']} mb={4}>
         <PoolTypeTabItem
           isActive={props.selectedPoolType === 'Concentrated'}
-          name={t('create_farm.concentrated_liquidity')}
+          name={t('Concentrated Liquidity')}
           onSelect={() => props.onSelectPoolType?.('Concentrated')}
         />
         <PoolTypeTabItem
           isActive={props.selectedPoolType === 'Standard'}
-          name={t('create_farm.standard_amm')}
+          name={t('Standard AMM')}
           onSelect={() => props.onSelectPoolType?.('Standard')}
         />
       </HStack>
@@ -74,7 +74,7 @@ export default function SelectPool(props: SelectPoolProps) {
       </Box>
 
       <Button isDisabled={!props.selectedPool} onClick={() => props.onClickContinue?.()}>
-        {t('button.continue')}
+        {t('Continue')}
       </Button>
     </Flex>
   )
@@ -134,7 +134,7 @@ function SelectPoolStandardContent(props: {
           >
             <>
               <Text color={colors.textSecondary} fontSize="sm" opacity={0.5} cursor="pointer">
-                {t('input.search_for_a_pair_or_enter_amm_id')}
+                {t('Search for a pair or enter AMM ID')}
               </Text>
               <SearchIcon />
             </>
@@ -143,10 +143,10 @@ function SelectPoolStandardContent(props: {
       </Box>
 
       <HStack fontSize="sm">
-        <Text color={colors.textTertiary}>{t('create_farm.foot_note')}</Text>
+        <Text color={colors.textTertiary}>{t("Can't find what you want?")}</Text>
         <Link as={NextLink} href="/liquidity/create-pool">
           <Text cursor="pointer" color={colors.textSeptenary} textDecoration="underline">
-            {t('create_farm.foot_note_link')}
+            {t('Create a new pool')}
           </Text>
         </Link>
       </HStack>
@@ -193,7 +193,7 @@ function SelectPoolStandardContentSelectedPool({
 
       <HStack fontSize="sm" alignSelf="end">
         <Text cursor="pointer" color={colors.textSeptenary} textDecoration="underline" onClick={onDeleteStandardValue}>
-          {t('button.reset')}
+          {t('Reset')}
         </Text>
       </HStack>
     </VStack>
@@ -209,8 +209,8 @@ function SelectPoolConcentratedContent(props: {
   return (
     <Box>
       <HStack mb={4} color={colors.textSecondary} fontSize="sm">
-        <Text>{t('create_farm.select_from_your_created_pools')}:</Text>
-        {/* <QuestionToolTip label={t('create_farm.select_from_your_created_pools_tooltip')} iconProps={{ color: colors.textSecondary }} /> */}
+        <Text>{t('Select from your created pools')}:</Text>
+        {/* <QuestionToolTip label={t('The farm will be created for the selected pool')} iconProps={{ color: colors.textSecondary }} /> */}
       </HStack>
 
       <VStack spacing={3} mb={[3, 5]} align="stretch">
@@ -225,9 +225,9 @@ function SelectPoolConcentratedContent(props: {
       </VStack>
 
       <HStack fontSize="sm">
-        <Text color={colors.textTertiary}>{t('create_farm.foot_note')}</Text>
+        <Text color={colors.textTertiary}>{t("Can't find what you want?")}</Text>
         <Link as={NextLink} href="/clmm/create-pool">
-          {t('create_farm.foot_note_link')}
+          {t('Create a new pool')}
         </Link>
       </HStack>
     </Box>

@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { Box, Button, Collapse, Flex, GridItem, HStack, Text, VStack, useDisclosure, Skeleton } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import BN from 'bn.js'
 import { ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import MigrateFromStandardDialog from '@/features/Clmm/MigrateClmmFromStandardDialog/Dialog'
@@ -119,6 +119,7 @@ export default function StandardPoolRowItem({ pool, isLoading, position, stakedF
   const handleHarvest = useEvent(() => {
     onHarvesting()
     harvestAllFarmAct({
+      t,
       farmInfoList: stakedFarmList,
       onFinally: offHarvesting
     })
@@ -270,7 +271,7 @@ export default function StandardPoolRowItem({ pool, isLoading, position, stakedF
                 </Button>
                 {canMigrate ? (
                   <Button size="xs" w={16} h={6} onClick={onMigrateOpen}>
-                    {t('portfolio.stake_item_migrate_button')}
+                    {t('Migrate')}
                   </Button>
                 ) : (
                   <Button
@@ -287,14 +288,14 @@ export default function StandardPoolRowItem({ pool, isLoading, position, stakedF
                       })
                     }}
                   >
-                    {t('portfolio.stake_item_stake_button')}
+                    {t('Stake')}
                   </Button>
                 )}
               </Flex>
             </Flex>
             <Flex alignItems="center" gap={1}>
               <Text fontSize="xs" color={colors.lightPurple} opacity={0.5}>
-                {t('field.apr')}:
+                {t('APR')}:
               </Text>
               <Text fontSize="xs" color={colors.textPrimary} fontWeight="medium">
                 ~{formatToRawLocaleStr(toApr({ val: pool.day.apr, multiply: false }))}
@@ -304,7 +305,7 @@ export default function StandardPoolRowItem({ pool, isLoading, position, stakedF
                   fill: colors.lightPurple
                 }}
                 iconType="info"
-                label={t('liquidity.APR_tooltip')}
+                label={t('Estimated APR based on trading fees earned by the pool in the past 24H')}
               />
             </Flex>
           </Flex>
@@ -321,9 +322,7 @@ export default function StandardPoolRowItem({ pool, isLoading, position, stakedF
           >
             <Flex direction="column" gap={2} fontSize="sm">
               <Flex justify="flex-start" align="flex-start" gap={2}>
-                <Text color={colors.textSecondary}>
-                  {isAllLiquidityLocked ? t('liquidity.locked_position') : t('liquidity.my_position')}
-                </Text>
+                <Text color={colors.textSecondary}>{isAllLiquidityLocked ? t('Locked position') : t('My Position')}</Text>
                 <Text color={colors.textPrimary} fontWeight="medium">
                   {formatCurrency(isAllLiquidityLocked ? lockInfo[0].positionInfo.usdValue : lpAmountUSD, {
                     symbol: '$',
@@ -342,7 +341,7 @@ export default function StandardPoolRowItem({ pool, isLoading, position, stakedF
                 )}
               </Flex>
               <Flex justify="flex-start" align="flex-start" gap={2}>
-                <Text color={colors.textSecondary}>{t('amm.pending_reward')}</Text>
+                <Text color={colors.textSecondary}>{t('Pending rewards')}</Text>
                 <Text color={colors.textPrimary} fontWeight="medium">
                   {formatCurrency(isAllLiquidityLocked ? lockInfo[0].positionInfo.unclaimedFee.usdValue : totalPending.toString(), {
                     symbol: '$',
@@ -371,7 +370,7 @@ export default function StandardPoolRowItem({ pool, isLoading, position, stakedF
               >
                 <Flex direction="column" gap={2} fontSize="sm">
                   <Flex justify="flex-start" align="flex-start" gap={2}>
-                    <Text color={colors.textSecondary}>{t('liquidity.locked_position')}</Text>
+                    <Text color={colors.textSecondary}>{t('Locked position')}</Text>
                     <Text color={colors.textPrimary} fontWeight="medium">
                       {formatCurrency(info.positionInfo.usdValue, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
                     </Text>
@@ -386,7 +385,7 @@ export default function StandardPoolRowItem({ pool, isLoading, position, stakedF
                     )}
                   </Flex>
                   <Flex justify="flex-start" align="flex-start" gap={2}>
-                    <Text color={colors.textSecondary}>{t('amm.pending_reward')}</Text>
+                    <Text color={colors.textSecondary}>{t('Pending rewards')}</Text>
                     <Text color={colors.textPrimary} fontWeight="medium">
                       {formatCurrency(info.positionInfo.unclaimedFee.usdValue, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
                     </Text>
@@ -560,7 +559,7 @@ export default function StandardPoolRowItem({ pool, isLoading, position, stakedF
               </Box>
               <HStack mt={3} pb={[2, 3]} justifyItems="center" position="relative" zIndex={1}>
                 <Button mx="auto" rightIcon={<ExpandUpIcon />} variant="ghost" size="sm" onClick={onClose}>
-                  {t('common.view_less')}
+                  {t('View less')}
                 </Button>
               </HStack>
             </Collapse>

@@ -1,7 +1,7 @@
 import { Box, Flex, Grid, GridItem, Heading, HStack, Text, useDisclosure } from '@chakra-ui/react'
 import { Button } from '@pancakeswap/uikit'
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
 import { CreatePoolEntryDialog } from '@/features/Create/components/CreatePoolEntryDialog'
 import useFetchFarmInfoById from '@/hooks/farm/useFetchFarmInfoById'
@@ -46,9 +46,9 @@ export default function SectionMyCreatedFarms() {
     <Box pt="20px">
       <Mobile>
         <HStack justifyContent="space-between" mt={6}>
-          <Text>{t('portfolio.section_my_created_farms')}</Text>
+          <Text>{t('My created farms')}</Text>
           <Button onClick={openCreatePoolDialog} size="xs" height="1.5rem" minHeight="1.5rem" px={3}>
-            {t('farm.create')}
+            {t('Create Farm')}
           </Button>
           <CreatePoolEntryDialog isOpen={isCreatePoolDialogOpen} onClose={closeCreatePoolDialog} defaultType="standard-farm" />
         </HStack>
@@ -74,13 +74,13 @@ export default function SectionMyCreatedFarms() {
         >
           <GridItem area="title">
             <Heading id="my-created-farm" fontSize={['lg', 'xl']} fontWeight="500" color={colors.textPrimary}>
-              {t('portfolio.section_my_created_farms')}
+              {t('My created farms')}
             </Heading>
           </GridItem>
           <GridItem area="action" justifySelf="right">
             <>
               <Button onClick={openCreatePoolDialog} size={['sm', 'md']}>
-                {t('farm.create')}
+                {t('Create Farm')}
               </Button>
               <CreatePoolEntryDialog isOpen={isCreatePoolDialogOpen} onClose={closeCreatePoolDialog} defaultType="standard-farm" />
             </>

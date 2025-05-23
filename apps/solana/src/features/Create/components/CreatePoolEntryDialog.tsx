@@ -24,7 +24,7 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { colors } from '@/theme/cssVariables'
 import CircleCheck from '@/icons/misc/CircleCheck'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
@@ -105,7 +105,7 @@ function CreatePoolEntryModal({ isOpen, onClose, onConfirm, children }: CreatePo
       <ModalOverlay />
       <ModalContent gap="24px">
         <ModalHeader py="24px" fontSize="16px" fontWeight={600}>
-          {t('create_pool.modal_title')}
+          {t('I want to...')}
           <ModalCloseButton />
         </ModalHeader>
 
@@ -114,10 +114,10 @@ function CreatePoolEntryModal({ isOpen, onClose, onConfirm, children }: CreatePo
         <ModalFooter>
           <VStack w="full">
             <Button width="100%" variant="primary" onClick={onConfirm}>
-              {t('button.continue')}
+              {t('Continue')}
             </Button>
             <Button width="100%" variant="text" onClick={onClose}>
-              {t('button.cancel')}
+              {t('Cancel')}
             </Button>
           </VStack>
         </ModalFooter>
@@ -143,15 +143,15 @@ function CreatePoolEntryMobileDrawer({
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton size="sm" />
-        <DrawerHeader fontSize="md">{t('create_pool.modal_title')}</DrawerHeader>
+        <DrawerHeader fontSize="md">{t('I want to...')}</DrawerHeader>
         <DrawerBody mt={4}>{children}</DrawerBody>
         <DrawerFooter mt={4}>
           <VStack w="full">
             <Button width="100%" variant="primary" onClick={onConfirm}>
-              {t('button.continue')}
+              {t('Continue')}
             </Button>
             <Button width="100%" variant="text" onClick={onClose}>
-              {t('button.cancel')}
+              {t('Cancel')}
             </Button>
           </VStack>
         </DrawerFooter>
@@ -166,7 +166,7 @@ export function CreatePoolEntryDialogBody({ type, onChange }: { type: CreateTarg
   return (
     <Flex direction="column" gap={4}>
       <CreateBlock
-        title={t('create_pool.modal_section_header_pool')}
+        title={t('Create pool')}
         description=""
         renderPoolType={
           isCreatePool
@@ -178,10 +178,10 @@ export function CreatePoolEntryDialogBody({ type, onChange }: { type: CreateTarg
                       content={
                         <Box lineHeight="1.5">
                           <Text whiteSpace="nowrap" fontSize="md" fontWeight={600}>
-                            {t('create_pool.modal_tab_concentrated')}
+                            {t('V3 Pools')}
                           </Text>
                           <Text fontSize="xs" color={colors.textSubtle}>
-                            {t('create_pool.modal_tab_concentrated_desc')}
+                            {t('Custom ranges, increased capital efficiency')}
                           </Text>
                         </Box>
                       }
@@ -194,14 +194,14 @@ export function CreatePoolEntryDialogBody({ type, onChange }: { type: CreateTarg
                         <Box lineHeight="1.5">
                           <Flex alignItems="flex-end" gap="2px">
                             <Text whiteSpace="nowrap" fontSize="md" fontWeight={600}>
-                              {t('create_pool.modal_tab_standard_amm')}
+                              {t('V2 Pools')}
                             </Text>
                             <Text fontSize="sm" color={colors.textSubtle}>
                               Coming Soon
                             </Text>
                           </Flex>
                           <Text fontSize="xs" color={colors.textSubtle}>
-                            {t('create_pool.modal_tab_standard_amm_desc')}
+                            {t('Newest CPMM, cheaper, supports Token 2022')}
                           </Text>
                         </Box>
                       }
@@ -297,7 +297,7 @@ function PoolTypeItem({
     >
       {isSuggested && (
         <Box position="absolute" top={0} right={2} transform="auto" translateY="-50%">
-          <Badge variant="crooked">{t('badge.suggested')}</Badge>
+          <Badge variant="crooked">{t('Suggested')}</Badge>
         </Box>
       )}
       {content}

@@ -2,7 +2,7 @@ import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, 
 import { ApiStakePool } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import TokenInput from '@/components/TokenInput'
 import { useFarmStore } from '@/store/useFarmStore'
 import { useTokenAccountStore } from '@/store/useTokenAccountStore'
@@ -27,7 +27,7 @@ function StakeDialog({ isOpen, onClose, pool, userAuxiliaryLedgers }: Props) {
   const [value, setValue] = useState('')
 
   const error = new Decimal(value || 0).gt(getTokenBalanceUiAmount({ mint: token?.address || '', decimals: token?.decimals }).amount)
-    ? t('error.balance_not_enough')
+    ? t('Insufficent balance')
     : undefined
 
   useEffect(() => {
@@ -58,7 +58,7 @@ function StakeDialog({ isOpen, onClose, pool, userAuxiliaryLedgers }: Props) {
     <Modal isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('staking.stake_modal_header', { symbol: wSolToSolString(token?.symbol) })}</ModalHeader>
+        <ModalHeader>{t('Stake %symbol%', { symbol: wSolToSolString(token?.symbol) })}</ModalHeader>
         <ModalCloseButton />
 
         <ModalBody mb={5}>
@@ -73,12 +73,10 @@ function StakeDialog({ isOpen, onClose, pool, userAuxiliaryLedgers }: Props) {
               isLoading={loading}
               onClick={handleConfirm}
             >
-              {featureDisabled
-                ? t('common.disabled')
-                : error || t('staking.stake_modal_confirm_text', { symbol: wSolToSolString(token?.symbol) })}
+              {featureDisabled ? t('Disabled') : error || t('Stake %symbol%', { symbol: wSolToSolString(token?.symbol) })}
             </Button>
             <Button w="full" variant="ghost" onClick={onClose}>
-              {t('button.cancel')}
+              {t('Cancel')}
             </Button>
           </VStack>
         </ModalFooter>

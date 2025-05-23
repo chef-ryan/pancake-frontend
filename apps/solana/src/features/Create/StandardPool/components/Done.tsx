@@ -2,7 +2,7 @@ import { Box, Flex, Highlight, Image, Text, useClipboard, VStack } from '@chakra
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import Button from '@/components/Button'
 import CopyIcon from '@/icons/misc/CopyIcon'
 import { colors } from '@/theme/cssVariables'
@@ -47,7 +47,7 @@ export default function Done() {
       <Image src="/images/done.png" />
       <Box mt={8}>
         <Text fontSize="sm" color={colors.textSecondary} textAlign="center">
-          {t('create_standard_pool.note_done')}
+          {t('Your pool has been created successfully!')}
         </Text>
         <Flex justify="center" align="center" gap={1}>
           <Text fontSize="sm" color="#8C6EEF" fontWeight="medium">
@@ -59,14 +59,14 @@ export default function Done() {
         </Flex>
       </Box>
       <Text mt={4} fontSize="sm" color={colors.textSecondary} textAlign="center">
-        {t('create_standard_pool.note_done_2')}
+        {t('You can now create a farm or go back')}
       </Text>
       <VStack mt="44px">
         <Button minW="220px" size="lg" onClick={onCreateFarmClick}>
-          {t('create_standard_pool.button_create_farm')}
+          {t('Create Farm')}
         </Button>
         <Button variant="ghost" size="lg" onClick={onBackToPoolsClick}>
-          {t('create_standard_pool.button_to_my_pools')}
+          {t('Back to My Pools')}
         </Button>
       </VStack>
     </Flex>

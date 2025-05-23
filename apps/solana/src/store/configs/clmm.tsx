@@ -1,7 +1,4 @@
-import { Trans } from 'react-i18next'
-import { Text } from '@chakra-ui/react'
-import i18n from '@/i18n'
-import { colors } from '@/theme/cssVariables/colors'
+import { Trans } from '@pancakeswap/localization'
 
 export const CLMM_FEE_CONFIGS = {
   '9iFER3bpjf1PTTCQCfTRu17EJgvsxo9pVyA9QWwEuX4x': {
@@ -56,86 +53,78 @@ export const CLMM_FEE_CONFIGS = {
 
 export const CREATE_POS_DEVIATION = 0.985 // ask Rudy for detail
 
+type localeProps = Record<string, unknown>
+
 const CLMM_TX_MSG = {
   harvest: {
-    title: 'transaction_history.harvest_rewards',
-    desc: 'transaction_history.harvest_clmm_reward_desc',
-    txHistoryTitle: 'transaction_history.harvest_rewards',
-    txHistoryDesc: 'transaction_history.harvest_clmm_reward_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans>harvest_rewards</Trans>,
+    desc: () => <Trans>Harvest Clmm Rewards</Trans>,
+    txHistoryTitle: <Trans>harvest_rewards</Trans>,
+    txHistoryDesc: () => <Trans>Harvest Clmm Rewards</Trans>
   },
   openPosition: {
-    title: 'transaction_history.name_add_liquidity',
-    desc: 'transaction_history.add_liquidity_desc',
-    txHistoryTitle: 'transaction_history.name_add_liquidity',
-    txHistoryDesc: 'transaction_history.add_liquidity_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans>Add Liquidity</Trans>,
+    desc: (props: localeProps) => <Trans {...props}>Added %amountA% %symbolA% and %amountB% %symbolB%.</Trans>,
+    txHistoryTitle: <Trans>Add Liquidity</Trans>,
+    txHistoryDesc: (props: localeProps) => <Trans {...props}>Added %amountA% %symbolA% and %amountB% %symbolB%.</Trans>
   },
   closePosition: {
-    title: 'clmm.position_closed',
-    desc: 'clmm.close_mint_position',
-    txHistoryTitle: 'clmm.position_closed',
-    txHistoryDesc: 'clmm.close_mint_position',
-    components: {}
+    title: <Trans>Position Closed</Trans>,
+    desc: (props: localeProps) => <Trans {...props}>Close %mint% position.</Trans>,
+    txHistoryTitle: <Trans>Position Closed</Trans>,
+    txHistoryDesc: (props: localeProps) => <Trans {...props}>Close %mint% position.</Trans>
   },
   increaseLiquidity: {
-    title: 'transaction_history.name_add_liquidity',
-    desc: 'transaction_history.add_liquidity_desc',
-    txHistoryTitle: 'transaction_history.name_add_liquidity',
-    txHistoryDesc: 'transaction_history.add_liquidity_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans>Add Liquidity</Trans>,
+    desc: (props: localeProps) => <Trans {...props}>Added %amountA% %symbolA% and %amountB% %symbolB%.</Trans>,
+    txHistoryTitle: <Trans>Add Liquidity</Trans>,
+    txHistoryDesc: (props: localeProps) => <Trans {...props}>Added %amountA% %symbolA% and %amountB% %symbolB%.</Trans>
   },
   removeLiquidity: {
-    title: 'transaction_history.name_remove_liquidity',
-    desc: 'transaction_history.remove_liquidity_desc',
-    txHistoryTitle: 'transaction_history.name_remove_liquidity',
-    txHistoryDesc: 'transaction_history.remove_liquidity_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans>Remove Liquidity</Trans>,
+    desc: (props: localeProps) => <Trans {...props}>Removed %amountA% %symbolA% and %amountB% %symbolB%.</Trans>,
+    txHistoryTitle: <Trans>Remove Liquidity</Trans>,
+    txHistoryDesc: (props: localeProps) => <Trans {...props}>Removed %amountA% %symbolA% and %amountB% %symbolB%.</Trans>
   },
   updateRewards: {
-    title: 'transaction_history.update_reward_title',
-    desc: 'transaction_history.update_reward_desc',
-    txHistoryTitle: 'transaction_history.update_reward_title',
-    txHistoryDesc: 'transaction_history.update_reward_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans>Update rewards</Trans>,
+    desc: (props: localeProps) => <Trans {...props}>Update rewards in %pool%.</Trans>,
+    txHistoryTitle: <Trans>Update rewards</Trans>,
+    txHistoryDesc: (props: localeProps) => <Trans {...props}>Update rewards in %pool%.</Trans>
   },
   createPool: {
-    title: 'transaction_history.create_pool',
-    desc: 'transaction_history.create_clmm_pool',
-    txHistoryTitle: 'transaction_history.create_pool',
-    txHistoryDesc: 'transaction_history.create_clmm_pool',
-    components: {}
+    title: <Trans>Create Pool</Trans>,
+    desc: (props: localeProps) => <Trans {...props}>create clmm pool</Trans>,
+    txHistoryTitle: <Trans>Create Pool</Trans>,
+    txHistoryDesc: (props: localeProps) => <Trans {...props}>create clmm pool</Trans>
   },
   createFarm: {
-    title: 'transaction_history.create_farm',
-    desc: 'transaction_history.create_clmm_farm_desc',
-    txHistoryTitle: 'transaction_history.create_farm',
-    txHistoryDesc: 'transaction_history.create_clmm_farm_desc',
-    components: {}
+    title: <Trans>Create new farm</Trans>,
+    desc: (props: localeProps) => <Trans {...props}>ID: %poolId%</Trans>,
+    txHistoryTitle: <Trans>Create new farm</Trans>,
+    txHistoryDesc: (props: localeProps) => <Trans {...props}>ID: %poolId%</Trans>
   },
   harvestAll: {
-    title: 'transaction_history.harvest_rewards',
-    desc: 'transaction_history.harvest_rewards_desc',
-    txHistoryTitle: 'transaction_history.harvest_rewards',
-    txHistoryDesc: 'transaction_history.harvest_rewards_desc',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans>Harvest Rewards</Trans>,
+    desc: (props: localeProps) => <Trans {...props}>Harvested: %symbol%</Trans>,
+    txHistoryTitle: <Trans>Harvest Rewards</Trans>,
+    txHistoryDesc: (props: localeProps) => <Trans {...props}>Harvested: %symbol%</Trans>
   },
   lockPosition: {
-    title: 'transaction_history.lock_position',
-    desc: 'transaction_history.position_locked',
-    txHistoryTitle: 'transaction_history.lock_position',
-    txHistoryDesc: 'transaction_history.position_locked',
-    components: { sub: <Text as="span" color={colors.textSecondary} fontWeight="700" /> }
+    title: <Trans>Lock Position</Trans>,
+    desc: (props: localeProps) => <Trans {...props}>Position %position% locked</Trans>,
+    txHistoryTitle: <Trans>Lock Position</Trans>,
+    txHistoryDesc: (props: localeProps) => <Trans {...props}>Position %position% locked</Trans>
   }
 }
 
 export const getTxMeta = ({ action, values }: { action: keyof typeof CLMM_TX_MSG; values: Record<string, unknown> }) => {
   const meta = CLMM_TX_MSG[action]
   return {
-    title: i18n.t(meta.title, values),
-    description: <Trans i18nKey={meta.desc} values={values} components={meta.components} />,
+    title: meta.title,
+    description: meta.desc(values),
     txHistoryTitle: meta.txHistoryTitle || meta.title,
-    txHistoryDesc: meta.txHistoryDesc || meta.desc,
+    txHistoryDesc: meta.txHistoryDesc ? meta.txHistoryDesc(values) : meta.desc(values),
     txValues: values
   }
 }

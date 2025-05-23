@@ -16,7 +16,7 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { FormattedPoolInfoConcentratedItem, AprKey, timeBasisOptions } from '@/hooks/pool/type'
 import useClmmBalance, { ClmmPosition } from '@/hooks/portfolio/clmm/useClmmBalance'
 import MinusIcon from '@/icons/misc/MinusIcon'
@@ -162,7 +162,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
               {/* chart */}
               <Box flex={1}>
                 <HStack justifyContent="center" gap={2} color={colors.textSubtle}>
-                  <Text fontSize="xs">{t('field.current_price')}</Text>
+                  <Text fontSize="xs">{t('Current Price')}</Text>
                   <Text fontSize="xs">
                     <Text as="span" color={colors.textPrimary} fontWeight="medium">
                       {baseIn
@@ -174,7 +174,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
                           })}
                     </Text>{' '}
                     <Text as="span">
-                      {t('common.per_unit', {
+                      {t('%subA% per %subB%', {
                         subA: poolInfo[baseIn ? 'mintB' : 'mintA'].symbol,
                         subB: poolInfo[baseIn ? 'mintA' : 'mintB'].symbol
                       })}
@@ -199,7 +199,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
                 {/* info head */}
                 <HStack fontSize="sm" justifyContent="space-between" mt={4} color={colors.textSubtle}>
                   <VStack alignItems="flex-start">
-                    <Text>{t('liquidity.pool_liquidity')}</Text>
+                    <Text>{t('Pool Liquidity')}</Text>
                     <Text color={colors.textPrimary}>
                       {formatCurrency(poolInfo.tvl, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
                     </Text>
@@ -207,7 +207,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
 
                   <VStack alignItems="flex-start">
                     <Text>
-                      {getTimeBasis(timeBasisIdx)} {t('common.volume')}
+                      {getTimeBasis(timeBasisIdx)} {t('Volume')}
                     </Text>
                     <Text color={colors.textPrimary}>
                       {formatCurrency(poolInfo.day.volume, { symbol: '$', abbreviated: true, decimalPlaces: 2 })}
@@ -221,7 +221,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
                 <VStack align="stretch" spacing={1.5}>
                   <Flex gap={2} justifyContent="space-between">
                     <HStack gap={1}>
-                      <Text>{t('liquidity.my_position')}</Text>
+                      <Text>{t('My Position')}</Text>
                       {isLock && <LockIcon />}
                     </HStack>
                     <Box>{formatCurrency(totalVolume.toString(), { symbol: '$', decimalPlaces: 2 })}</Box>
@@ -254,7 +254,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
 
                 <VStack align="stretch" spacing={1.5}>
                   <HStack>
-                    <Text>{t('clmm.my_range')}</Text>
+                    <Text>{t('My Range')}</Text>
                     <Badge variant={inRange ? 'ok' : 'error'}>{t(inRange ? 'clmm.in_range' : 'clmm.out_of_range')}</Badge>
                   </HStack>
 
@@ -270,7 +270,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
                 </VStack>
 
                 <HStack wordBreak="break-all">
-                  <Text>{t('clmm.nft_mint_address')}: </Text>
+                  <Text>{t('NFT Mint Address')}: </Text>
                   <AddressChip
                     address={nftMint}
                     canCopy
@@ -288,7 +288,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
               <HStack justify="space-between" direction="column" alignItems="start">
                 <HStack spacing={2}>
                   <Text color={colors.textPrimary} fontWeight={600}>
-                    {t('common.estimated_APR')}
+                    {t('Estimated APR')}
                   </Text>
                   <AprMDSwitchWidget />
                 </HStack>
@@ -317,7 +317,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
             </Flex>
             <Flex p={4} direction="column" justify="space-between" gap={2} {...panelCard} w="full" rounded="2xl" fontSize="sm">
               <Text fontSize="sm" color={colors.textSecondary} whiteSpace="nowrap">
-                {t('portfolio.section_positions_clmm_account_pending_yield')}
+                {t('Pending Yield')}
               </Text>
               <Flex justify="space-between" align="center">
                 <HStack fontSize="xl" fontWeight="medium" spacing={2}>
@@ -325,7 +325,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
                     {formatCurrency(totalPendingYield.toString(), { symbol: '$', decimalPlaces: 2 }) ?? '$0'}
                   </Text>
                   <QuestionToolTip
-                    label={t('staking.pending_rewards_tooltip')}
+                    label={t('Pending rewards are calculated based on the current pool size and the time since the last harvest.')}
                     iconType="info"
                     iconProps={{
                       width: '18px',
@@ -345,7 +345,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
                   color={colors.primary60}
                   borderRadius="12px"
                 >
-                  {t('portfolio.section_positions_clmm_account_pending_yield_button')}
+                  {t('Harvest')}
                 </Button>
               </Flex>
             </Flex>

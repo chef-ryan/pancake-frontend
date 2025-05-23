@@ -1,6 +1,6 @@
 import { Box, Flex, HStack, SimpleGrid, Text, useDisclosure } from '@chakra-ui/react'
 import { useEffect, useState, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 
 import Decimal from 'decimal.js'
 import { Select } from '@/components/Select'
@@ -116,7 +116,7 @@ export default function UnStakeLiquidity({
     <Flex borderRadius="24px" direction="column" w="full" px="24px" py="32px" mb="10" bg={colors.backgroundLight}>
       <Flex mb={3} justifyContent="space-between" alignItems="center">
         <Text fontSize="xl" fontWeight="medium" color={colors.textPrimary}>
-          {t('liquidity.select_farm')}
+          {t('Select Farm')}
         </Text>
       </Flex>
       <Select<FormattedFarmInfo>
@@ -132,7 +132,7 @@ export default function UnStakeLiquidity({
         hasBorder
       />
       <Text fontSize="xl" fontWeight="medium" color={colors.textPrimary} mt="4" mb="2">
-        {t('liquidity.unstake_liquidity')}
+        {t('Unstake Liquidity')}
       </Text>
       <Flex justifyContent="space-between" align="center" py="6" px="4" bg={colors.backgroundDark} borderRadius="12px">
         <Flex gap="2" alignItems="center">
@@ -167,7 +167,7 @@ export default function UnStakeLiquidity({
       </Flex>
       <Box bg={colors.backgroundDark} borderRadius="12px" py={3} px={6}>
         <Text fontSize="md" fontWeight="medium" color={colors.textSecondary}>
-          {t('liquidity.rewards_to_be_harvested')}
+          {t('Rewards to be harvested')}
         </Text>
         <SimpleGrid columns={[1, 2]} rowGap="6px" columnGap="44px">
           {pendingRewards.map((rewardAmount, idx) => {
@@ -201,7 +201,7 @@ export default function UnStakeLiquidity({
         isLoading={isSending}
         onClick={handleClickUnStake}
       >
-        {featureDisabled ? t('common.disabled') : t('liquidity.unstake_liquidity')}
+        {featureDisabled ? t('Disabled') : t('Unstake Liquidity')}
       </Button>
     </Flex>
   )

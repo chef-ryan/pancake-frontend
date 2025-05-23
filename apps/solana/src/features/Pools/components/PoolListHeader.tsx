@@ -1,5 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import SortUpDownArrow from '@/components/SortUpDownArrow'
 import { colors } from '@/theme/cssVariables'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
@@ -37,7 +37,7 @@ export function PoolListHeader({
       sx={poolListGrid}
       fontSize="12px"
     >
-      <Box pl={[0, 4 + 6]}>{t('liquidity.pool')}</Box>
+      <Box pl={[0, 4 + 6]}>{t('Pool')}</Box>
       <Desktop>
         <Flex
           justifyContent="end"
@@ -48,7 +48,7 @@ export function PoolListHeader({
           justify="flex-start"
           pr="30px"
         >
-          {t('liquidity.title')}
+          {t('Liquidity')}
           {sortKey === POOL_SORT_KEY.liquidity ? <SortUpDownArrow width="12px" height="12px" isDown={Boolean(order)} /> : null}
         </Flex>
         <Flex justifyContent="end" alignItems="center" gap="1" cursor="pointer" onClick={() => handleClickSort('volume')}>
@@ -66,7 +66,7 @@ export function PoolListHeader({
       </Desktop>
       <Mobile>
         <Flex alignItems="center" gap="1" cursor="pointer" onClick={() => handleClickSort('volume')}>
-          {t('common.volume')}/{t(`field.${timeBase}_apr`)}
+          {t('Volume')}/{t(`field.${timeBase}_apr`)}
           {sortKey === POOL_SORT_KEY.volume ? <SortUpDownArrow width="12px" height="12px" isDown={Boolean(order)} /> : null}
         </Flex>
       </Mobile>

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { Box, Flex, Image, Text, useColorMode, useMediaQuery } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets'
 import { WalletReadyState } from '@solana/wallet-adapter-base'
 import RaydiumLogo from '@/icons/RaydiumLogo'
@@ -102,13 +102,17 @@ export default function MoonpayPage() {
                 </Flex>
               </Flex>
               <Text as="h1" fontFamily="chillax" fontSize={['24px', '40px', '40px']} color={colors.text02} mt={6} mb={8}>
-                {t('moonpay.deposit_using')}
+                {t('Deposit using ')}
                 <Text as="span" fontWeight="semibold">
-                  {t('moonpay.title')}
+                  {t('MoonPay')}
                 </Text>
               </Text>
               <Box {...(isMobile ? { mb: '4', mt: '4', order: 2 } : {})}>
-                {isPhantomInstalled ? <WalletOnramp /> : <Text fontSize="sm">{t('moonpay.phantom_wallet_not_installed')}</Text>}
+                {isPhantomInstalled ? (
+                  <WalletOnramp />
+                ) : (
+                  <Text fontSize="sm">{t('Install Phantom and connect your wallet to log in.')}</Text>
+                )}
               </Box>
               <Flex
                 maxW="728px"

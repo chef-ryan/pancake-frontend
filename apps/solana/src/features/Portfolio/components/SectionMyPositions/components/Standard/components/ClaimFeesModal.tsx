@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
 import { useCallback, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { ApiV3PoolInfoStandardItemCpmm } from '@raydium-io/raydium-sdk-v2'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
@@ -21,7 +21,7 @@ import Button from '@/components/Button'
 import TokenAvatar from '@/components/TokenAvatar'
 import { useLiquidityStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
-import { formatCurrency , getFirstNonZeroDecimal } from '@/utils/numberish/formatter'
+import { formatCurrency, getFirstNonZeroDecimal } from '@/utils/numberish/formatter'
 import { FormattedPoolInfoStandardItem } from '@/hooks/pool/type'
 import { CpmmLockData } from '@/hooks/portfolio/cpmm/useLockCpmmBalance'
 
@@ -65,11 +65,11 @@ export default function ClaimFeesModal({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader display="flex" gap="2" alignItems="center">
-          {t('liquidity.claim_fees')}
+          {t('Claim Fees')}
         </ModalHeader>
         <ModalCloseButton top="25px" />
         <ModalBody mt={[3, 4]}>
-          <Text color={colors.lightPurple}> {t('liquidity.total_fees_locked_liquidity')}</Text>
+          <Text color={colors.lightPurple}> {t('Total fees from locked liquidity:')}</Text>
           <Flex bg={colors.backgroundDark} rounded="xl" align="center" justifyContent="space-between" p={4} mt={4} mb={6}>
             <Text fontSize={['md', 'xl']} fontWeight="500">
               {formatCurrency(lpFeeValue, {
@@ -104,7 +104,7 @@ export default function ClaimFeesModal({
             bg={colors.backgroundTransparent07}
             rounded="xl"
           >
-            <Text variant="title">{t('clmm.you_will_receive')}</Text>
+            <Text variant="title">{t('You will receive:')}</Text>
             <HStack mt={2} gap={1}>
               <TokenAvatar mr="-1" size="smi" token={poolInfo.mintA} />
               <Text fontSize="sm">
@@ -150,7 +150,7 @@ export default function ClaimFeesModal({
               })
             }}
           >
-            {t('liquidity.claim_fee')}
+            {t('Claim Fee')}
           </Button>
         </ModalFooter>
       </ModalContent>

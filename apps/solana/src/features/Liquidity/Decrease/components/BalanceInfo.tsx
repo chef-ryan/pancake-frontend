@@ -1,5 +1,5 @@
 import { Flex, Text, VStack } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { formatCurrency } from '@/utils/numberish/formatter'
 
 import { colors } from '@/theme/cssVariables'
@@ -18,7 +18,7 @@ export default function BalanceInfo({ currentTab, stakedLiquidity, unstakedLiqui
     <Flex borderBottomRadius="24px" direction="column" w="full" px="24px" py="24px" bg={colors.backgroundLight}>
       <VStack w="full" align="flex-start" spacing={3}>
         <Text fontSize="sm" color={colors.textSecondary}>
-          {t('liquidity.my_lp_balance')}
+          {t('My LP balance')}
         </Text>
         <Flex
           w="full"
@@ -27,7 +27,7 @@ export default function BalanceInfo({ currentTab, stakedLiquidity, unstakedLiqui
           fontWeight={currentTab === 'Unstake Liquidity' ? 'medium' : 'normal'}
           fontSize="sm"
         >
-          <Text>{t('liquidity.staked_liquidity')}</Text>
+          <Text>{t('Staked Liquidity')}</Text>
           <Text>{formatCurrency(stakedLiquidity)}</Text>
         </Flex>
 
@@ -38,7 +38,7 @@ export default function BalanceInfo({ currentTab, stakedLiquidity, unstakedLiqui
           fontWeight={currentTab === 'Remove Liquidity' ? 'medium' : 'normal'}
           fontSize="sm"
         >
-          <Text>{t('liquidity.unstaked_liquidity')}</Text>
+          <Text>{t('Unstaked Liquidity')}</Text>
           <Text>{formatCurrency(unstakedLiquidity)}</Text>
         </Flex>
       </VStack>

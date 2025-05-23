@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ApiClmmConfigInfo, TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import * as yup from 'yup'
-import { TFunction } from 'i18next'
-import { useTranslation } from 'react-i18next'
+import { useTranslation, type TranslateFunction } from '@pancakeswap/localization'
 
 interface Props {
   config?: ApiClmmConfigInfo
@@ -18,21 +17,21 @@ interface Props {
 const numberTransform = yup.number().transform((value) => (Number.isNaN(value) ? 0 : value))
 const numberSchema = (errMsg: string) => numberTransform.moreThan(0, errMsg)
 
-const schema = (t: TFunction<'translation', undefined, 'translation'>) =>
+const schema = (t: TranslateFunction) =>
   yup.object().shape({
     tokenAmount: yup
       .array()
       .of(numberTransform)
-      .test('is-tokenAmount-valid', t('error.enter_token_amount') ?? '', (value: any) => {
+      .test('is-tokenAmount-valid', t('Enter token amount') ?? '', (value: any) => {
         if ((value as number[]).some((val) => val > 0)) return true
         return false
       }),
-    upperPrice: numberSchema(t('error.enter_upper_price')),
-    lowerPrice: numberSchema(t('error.enter_lower_price')),
-    currentPrice: numberSchema(t('error.enter_current_price')),
-    config: yup.mixed().required(t('error.select_pool_fee') ?? ''),
-    token2: yup.mixed().required(t('error.select_pool_token_2') ?? ''),
-    token1: yup.mixed().required(t('error.select_pool_token_1') ?? '')
+    upperPrice: numberSchema(t('Enter upper price')),
+    lowerPrice: numberSchema(t('Enter lower price')),
+    currentPrice: numberSchema(t('Enter current price')),
+    config: yup.mixed().required(t('Select pool fee tier') ?? ''),
+    token2: yup.mixed().required(t('Select pool token 2') ?? ''),
+    token1: yup.mixed().required(t('Select pool token 1') ?? '')
   })
 
 export default function useValidate(props: Props) {
@@ -57,25 +56,17 @@ export default function useValidate(props: Props) {
   return error
 }
 
-const priceRangeSchema = (t: TFunction<'translation', undefined, 'translation'>) =>
+const priceRangeSchema = (t: TranslateFunction) =>
   yup.object().shape({
-    minPrice: numberSchema(t('error.enter_min_price')).test(
-      'is-minPrice-valid',
-      t('error.invalid_min_price') as string,
-      function (value?: number) {
-        if (this.parent.focusMintA && (value ?? 0) > this.parent.maxPrice) return false
-        return true
-      }
-    ),
-    maxPrice: numberSchema(t('error.enter_max_price')).test(
-      'is-maxOrice-valid',
-      t('error.invalid_max_price') as string,
-      function (value?: number) {
-        if (!this.parent.focusMintA && (value ?? 0) < this.parent.minPrice) return false
-        return true
-      }
-    ),
-    currentPrice: numberSchema(t('error.enter_current_price'))
+    minPrice: numberSchema(t('Enter min price')).test('is-minPrice-valid', t('Invalid min price') as string, function (value?: number) {
+      if (this.parent.focusMintA && (value ?? 0) > this.parent.maxPrice) return false
+      return true
+    }),
+    maxPrice: numberSchema(t('Enter max price')).test('is-maxPrice-valid', t('Invalid max price') as string, function (value?: number) {
+      if (!this.parent.focusMintA && (value ?? 0) < this.parent.minPrice) return false
+      return true
+    }),
+    currentPrice: numberSchema(t('Enter current price'))
   })
 
 export function usePriceRangeValidate(props: { currentPrice: string; priceRange: string[]; focusMintA: boolean }) {

@@ -1,7 +1,7 @@
 import { Flex, HStack, Spacer, StyleProps, Text, useDisclosure } from '@chakra-ui/react'
 import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import { ReactNode, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { colors } from '@/theme/cssVariables'
 import ChevronDownIcon from '@/icons/misc/ChevronDownIcon'
 import TokenAvatar from './TokenAvatar'
@@ -30,7 +30,7 @@ export default function TokenSelectBox({ token, label, placeholder: _placeholder
 
   const placeholder = _placeholder ?? (
     <Text as="span" color={colors.textTertiary}>
-      {t('common.select')}
+      {t('Select')}
     </Text>
   )
   const handleSelectValue = useCallback(

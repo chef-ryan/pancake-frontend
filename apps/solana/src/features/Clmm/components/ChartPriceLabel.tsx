@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Flex, Box, Text } from '@chakra-ui/react'
 import { colors } from '@/theme/cssVariables/colors'
 
@@ -18,7 +18,7 @@ export default function ChartPriceLabel({ currentPrice, currentPriceLabel, timeP
           <Flex flexDirection="row" gap="4px" alignItems="center">
             <Box width="8px" height="8px" bg={colors.secondary} rounded="full" />
             <Text fontSize="xs" color={colors.textSubtle}>
-              {t('field.current_price')}
+              {t('Current Price')}
             </Text>
           </Flex>
           <Text fontSize="xs" fontWeight="600">
@@ -35,7 +35,7 @@ export default function ChartPriceLabel({ currentPrice, currentPriceLabel, timeP
           <Flex flexDirection="row" gap="4px" alignItems="center">
             <Box width="8px" height="8px" bg={colors.textSubtle} rounded="full" />
             <Text fontSize="xs" color={colors.textSubtle}>
-              {t('clmm.time_price_range', {
+              {t('%time% Price Range', {
                 time: t(`clmm.timebasis_${timeBase}_label`)
               })}
             </Text>

@@ -1,6 +1,6 @@
 import { SwapHorizIcon } from '@pancakeswap/uikit'
 import { useCallback, useState, useEffect, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@pancakeswap/localization'
 import { Box, Flex, Grid, GridItem, HStack, Tag, Text, Skeleton, useDisclosure } from '@chakra-ui/react'
 import Link from 'next/link'
 import { PublicKey } from '@solana/web3.js'
@@ -104,7 +104,7 @@ export function ClmmPositionItemsCard({
           <Tooltip
             label={
               <Box py={0.5}>
-                <AddressChip address={poolInfo.id} renderLabel={`${t('common.pool_id')}:`} mb="2" textProps={{ fontSize: 'xs' }} />
+                <AddressChip address={poolInfo.id} renderLabel={`${t('Pool id')}:`} mb="2" textProps={{ fontSize: 'xs' }} />
                 <AddressChip
                   address={poolInfo.mintA.address}
                   renderLabel={<TokenAvatar token={poolInfo.mintA} size="xs" />}
@@ -140,7 +140,7 @@ export function ClmmPositionItemsCard({
                 minWidth="4rem"
                 px={2}
               >
-                {t('button.create')}
+                {t('Create')}
               </Button>
             </Link>
           )}
@@ -150,7 +150,7 @@ export function ClmmPositionItemsCard({
       <GridItem area="price" justifySelf={['stretch', 'left']}>
         <Flex gap={2} justify={['start', 'space-between']} alignItems="center">
           <Text color={colors.textSubtle} fontSize={isMobile ? 'xs' : 'md'}>
-            {t('field.current_price')}:{' '}
+            {t('Current Price')}:{' '}
             <Text as="span" color={colors.textPrimary}>
               {baseIn
                 ? formatCurrency(poolInfo.price, {
@@ -160,7 +160,7 @@ export function ClmmPositionItemsCard({
                     decimalPlaces: poolInfo.recommendDecimal(new Decimal(1).div(poolInfo.price).toString())
                   })}
             </Text>{' '}
-            {t('common.per_unit', {
+            {t('%subA% per %subB%', {
               subA: poolInfo[baseIn ? 'mintB' : 'mintA'].symbol,
               subB: poolInfo[baseIn ? 'mintA' : 'mintB'].symbol
             })}
@@ -170,7 +170,7 @@ export function ClmmPositionItemsCard({
             <SwapHorizIcon onClick={onToggle} color={colors.primary60} />
           ) : (
             <Box alignSelf="center" ml={[0, 2]}>
-              <Tooltip label={t('portfolio.section_positions_clmm_switch_direction_tooltip')}>
+              <Tooltip label={t('Base/quote tokens have been switched to simplify data display.')}>
                 <Box
                   onClick={onToggle}
                   p={1}
@@ -193,7 +193,7 @@ export function ClmmPositionItemsCard({
         {isMobile ? null : (
           <Link href={`/clmm/create-position?pool_id=${poolInfo.id}`}>
             <Button size="sm" variant="outline">
-              {t('clmm.create_new_position')}
+              {t('Create New Position')}
             </Button>
           </Link>
         )}
@@ -219,12 +219,14 @@ export function ClmmPositionItemsCard({
           <Flex flexDir="column" mt={[0, 3]} gap={3}>
             <HStack gap={1}>
               <Text fontSize={['sm', 'md']} fontWeight="medium" color={colors.lightPurple} pl={1}>
-                {t('liquidity.locked_positions')}
+                {t('Locked positions')}
               </Text>
               <QuestionToolTip
                 label={
                   <Text as="span" fontSize="sm">
-                    {t('liquidity.locked_positions_tip_info')}
+                    {t(
+                      'You previously permanently locked the NFT for this position, however trading fees earned are still fully claimable.'
+                    )}
                   </Text>
                 }
                 iconType="info"
@@ -259,7 +261,7 @@ export function ClmmPositionItemsCard({
           onClick={() => loadMore()}
           display={pageCurrent < pageTotal ? 'flex' : 'none'}
         >
-          <Text cursor="pointer">{t('portfolio.load_more')}</Text>
+          <Text cursor="pointer">{t('Load More')}</Text>
           <ChevronDoubleDownIcon cursor="pointer" width={16} height={16} color={colors.textSeptenary} />
         </Flex>
       </GridItem>
