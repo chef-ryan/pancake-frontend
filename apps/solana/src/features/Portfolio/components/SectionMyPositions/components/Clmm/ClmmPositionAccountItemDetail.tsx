@@ -139,12 +139,12 @@ export default function ClmmPositionAccountItemDetail({
             {/* info head */}
             <Flex fontSize="xs" justifyContent="center" mt={3}>
               <VStack align="start" gap={1} flex={1} pl="1.25rem">
-                <HStack width="100%" justifyContent="space-between">
+                <HStack width="100%" justifyContent="space-between" color={colors.textSubtle}>
                   <HStack>
                     <Divider borderColor={colors.backgroundApp} opacity="1" width="6px" borderBottomWidth="2px" />
-                    <Text color={colors.textSubtle}>{t('field.current_price')}: </Text>
+                    <Text>{t('field.current_price')}: </Text>
                   </HStack>
-                  <Text color={colors.lightPurple} fontWeight="medium">
+                  <Text fontWeight="medium">
                     <Text as="span" color={colors.textPrimary}>
                       {baseIn
                         ? formatCurrency(poolInfo.price, {
@@ -161,10 +161,10 @@ export default function ClmmPositionAccountItemDetail({
                   </Text>
                 </HStack>
 
-                <HStack width="100%" justifyContent="space-between">
+                <HStack width="100%" justifyContent="space-between" color={colors.textSubtle}>
                   <HStack>
                     <Divider borderColor={colors.textPurple} opacity="1" width="6px" borderBottomWidth="2px" />
-                    <Text color={colors.textSubtle}>{t('clmm.time_price_range', { time: '24h' })}: </Text>
+                    <Text>{t('clmm.time_price_range', { time: '24h' })}: </Text>
                   </HStack>
                   <Text color={colors.textPrimary} fontWeight="medium">
                     {`[${formatCurrency(timePriceMin, {
@@ -177,7 +177,7 @@ export default function ClmmPositionAccountItemDetail({
               </VStack>
             </Flex>
           </Box>
-          <Divider borderWidth="1px" borderColor={colors.lightPurple} opacity="0.2" orientation="vertical" />
+          <Divider borderWidth="1px" borderColor={colors.textSubtle} opacity="0.2" orientation="vertical" />
           {/* info detail */}
           <VStack fontSize="sm" flex={[1, 1, 1]} spacing={3} py={[0, 0, 3]}>
             <Flex flexDirection="column" flex={1} w="full" gap={3} justifyContent="space-between">
@@ -185,7 +185,7 @@ export default function ClmmPositionAccountItemDetail({
                 <HStack>
                   <TokenAvatar size="sm" token={poolInfo.mintA} />
                   <Text>{formatCurrency(positionDetailInfo.amountA, { decimalPlaces: poolInfo.mintA.decimals })}</Text>
-                  <Text color={colors.lightPurple}>{poolInfo.mintA.symbol}</Text>
+                  <Text color={colors.textSubtle}>{poolInfo.mintA.symbol}</Text>
                 </HStack>
                 <Text textAlign="right" minW="79px">
                   {formatCurrency(volumeA, { symbol: '$', decimalPlaces: 2 })}
@@ -195,7 +195,7 @@ export default function ClmmPositionAccountItemDetail({
                 <HStack>
                   <TokenAvatar size="sm" token={poolInfo.mintB} />
                   <Text>{formatCurrency(positionDetailInfo.amountB, { decimalPlaces: poolInfo.mintB.decimals })}</Text>
-                  <Text color={colors.lightPurple}>{poolInfo.mintB.symbol}</Text>
+                  <Text color={colors.textSubtle}>{poolInfo.mintB.symbol}</Text>
                 </HStack>
                 <Text textAlign="right" minW="79px">
                   {formatCurrency(volumeB, { symbol: '$', decimalPlaces: 2 })}
@@ -223,7 +223,7 @@ export default function ClmmPositionAccountItemDetail({
                 />
               </Flex>
             </Flex>
-            <Divider borderWidth="1px" borderColor={colors.lightPurple} opacity="0.2" />
+            <Divider borderWidth="1px" borderColor={colors.textSubtle} opacity="0.2" />
             <Flex flex={1} flexDirection="column" w="full" justifyContent="space-between">
               <Flex justifyContent="space-between">
                 <Text color={colors.textSubtle}> {t('liquidity.pool_liquidity')}</Text>
@@ -243,7 +243,7 @@ export default function ClmmPositionAccountItemDetail({
               </Flex>
             </Flex>
           </VStack>
-          <Divider borderWidth="1px" borderColor={colors.lightPurple} opacity="0.2" orientation="vertical" />
+          <Divider borderWidth="1px" borderColor={colors.textSubtle} opacity="0.2" orientation="vertical" />
           <Flex direction="column" flex={[1, 1, 1]} gap={[0, 0, 4]} py={[0, 0, 3]} w="full" overflow="hidden">
             <EstimatedApr
               timeAprData={poolInfo.allApr}

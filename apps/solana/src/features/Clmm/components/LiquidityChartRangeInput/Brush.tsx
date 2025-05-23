@@ -9,7 +9,7 @@ const Handle = styled.path<{ color: string }>`
   cursor: ew-resize;
   pointer-events: none;
 
-  stroke-width: 3;
+  stroke-width: 1;
   stroke: ${({ color }) => color};
   fill: ${({ color }) => color};
 `

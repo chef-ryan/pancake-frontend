@@ -20,13 +20,13 @@ export const brushHandlePath = (height: number) =>
     `v ${height}`, // vertical line
     'm 1 0', // move 1px to the right
     `V 0`, // second vertical line
-    `M 0 1`, // move to origin
+    `M 0 0`, // move to origin
 
     // head
     'h 12', // horizontal line
-    'q 2 0, 2 2', // rounded corner
+    'q 4 0, 4 4', // rounded corner
     'v 22', // vertical line
-    'q 0 2 -2 2', // rounded corner
+    'q 0 4 -4 4', // rounded corner
     'h -12', // horizontal line
     `z` // close path
   ].join(' ')

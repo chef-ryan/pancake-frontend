@@ -5,7 +5,7 @@ import { colors } from '../cssVariables'
 const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(modalAnatomy.keys)
 const baseStyle = definePartsStyle({
   overlay: {
-    bg: '#443e5899'
+    bg: colors.backgroundOverlay
   },
   closeButton: {
     top: ['12px', '16px'],

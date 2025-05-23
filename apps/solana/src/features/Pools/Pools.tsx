@@ -469,9 +469,9 @@ export default function Pools() {
             <GridItem area="tabs">
               <Desktop>
                 <ButtonMenu scale="sm" activeIndex={activeTabIdx} onItemClick={onPoolValueChange} variant="subtle">
-                  {tabItems.map(({ label, value }, idx) => (
+                  {tabItems.map(({ label, value }) => (
                     <ButtonMenuItem key={value} height="38px">
-                      <Text fontWeight={idx === activeTabIdx ? '600' : '400'}>{label}</Text>
+                      {label}
                     </ButtonMenuItem>
                   ))}
                 </ButtonMenu>

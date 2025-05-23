@@ -541,7 +541,7 @@ export default function CreatePosition() {
               gap="10"
               position="relative"
               {...panelCard}
-              bg={colors.background}
+              bg={colors.cardSecondary}
             >
               <GridItem gridArea="chart">
                 <LiquidityChartRangeInput

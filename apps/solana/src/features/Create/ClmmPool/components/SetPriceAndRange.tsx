@@ -484,7 +484,14 @@ export function PriceRangeInputBox(props: {
         <Flex justifyContent="center" gap="1" sx={{ ...inputCard, alignItems: 'center', p: '8px' }}>
           <Minus style={IconStyle} onClick={props.onMinus} />
           <Box textAlign="center" justifyContent="center" minWidth="120px" width="fit-content">
-            <Text textTransform="uppercase" whiteSpace="nowrap" variant="label" userSelect="none" color={colors.textSecondary}>
+            <Text
+              fontWeight={600}
+              textTransform="uppercase"
+              whiteSpace="nowrap"
+              variant="label"
+              userSelect="none"
+              color={colors.textSecondary}
+            >
               {props.topLabel}
             </Text>
             <DecimalInput
@@ -514,7 +521,7 @@ export function PriceRangeInputBox(props: {
       </Desktop>
       <Mobile>
         <HStack>
-          <Text variant="label" userSelect="none" width="3em">
+          <Text fontWeight={600} variant="label" userSelect="none" width="3em">
             {props.topLabel}
           </Text>
           <HStack sx={{ bg: colors.inputBg, alignItems: 'center', borderRadius: 'xl', p: '8px' }}>

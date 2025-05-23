@@ -215,8 +215,8 @@
     "fee": "Fee",
     "current_price": "Current Price",
     "apr": "APR",
-    "min": "Min",
-    "max": "Max",
+    "min": "Min Price",
+    "max": "Max Price",
     "start_time": "Start time",
     "total_value": "Total value"
   },

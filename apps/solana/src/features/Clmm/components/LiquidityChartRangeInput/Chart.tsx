@@ -145,10 +145,12 @@ export function Chart({
       <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'hidden' }}>
         <defs>
           <linearGradient id="green-gradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="100%" stopColor={colors.secondary} stopOpacity={1} />
+            <stop offset="5%" stopColor={colors.success} stopOpacity={1} />
+            <stop offset="100%" stopColor={colors.success} stopOpacity={0.2} />
           </linearGradient>
           <linearGradient id="red-gradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="100%" stopColor={colors.secondary} stopOpacity={1} />
+            <stop offset="5%" stopColor={colors.failure} stopOpacity={1} />
+            <stop offset="100%" stopColor={colors.failure} stopOpacity={0.2} />
           </linearGradient>
         </defs>
         <defs>
@@ -229,8 +231,8 @@ export function Chart({
             innerWidth={innerWidth}
             innerHeight={innerHeight}
             onBrushDomainChange={onBrushDomainChange}
-            westHandleColor={colors.secondary60}
-            eastHandleColor={colors.secondary60}
+            westHandleColor={styles.brush.handle.west}
+            eastHandleColor={styles.brush.handle.east}
             onClickArrow={onClickArrow}
           />
         </g>

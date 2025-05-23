@@ -15,7 +15,6 @@ export const panelCard: SystemProps = {
   bg: colors.cardBg,
   border: `1px solid ${colors.cardBorder01}`,
   borderBottomWidth: '2px',
-  boxShadow: colors.panelCardShadow,
   borderRadius: '24px',
   overflow: 'hidden',
   lineHeight: 1.5

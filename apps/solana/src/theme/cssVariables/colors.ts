@@ -134,6 +134,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   // card
   cardBorder01: pcsDarkColors.cardBorder,
   cardBg: pcsDarkColors.card,
+  cardSecondary: pcsDarkColors.cardSecondary,
 
   // customize (by V3 frontend coder)
   backgroundApp: pcsDarkColors.background,
@@ -299,6 +300,7 @@ export const lightColors: Partial<typeof darkColors> = {
   // card
   cardBorder01: pcsLightColors.cardBorder,
   cardBg: pcsLightColors.card,
+  cardSecondary: pcsLightColors.cardSecondary,
 
   // customize (by V3 frontend coder)
   backgroundApp: pcsLightColors.background,
@@ -468,6 +470,7 @@ export const colors = {
   // card
   cardBorder01: 'var(--card-border-01)',
   cardBg: 'var(--card-bg)',
+  cardSecondary: 'var(--card-secondary)',
 
   // customize (by V3 frontend coder)
   backgroundApp: 'var(--background-app)',
