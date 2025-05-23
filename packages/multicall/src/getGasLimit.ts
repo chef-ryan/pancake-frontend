@@ -45,7 +45,7 @@ export async function getGasLimitOnChain({ chainId, client }: GetGasLimitOnChain
     const gasLeft = (await multicall.read.gasLeft()) as bigint
     return gasLeft
   } catch (error) {
-    return 0n
+    return 0n // For a app-in-wallet bug where the gasLeft call fails
   }
 }
 
