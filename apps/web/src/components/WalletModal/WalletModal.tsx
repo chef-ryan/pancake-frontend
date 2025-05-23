@@ -17,10 +17,11 @@ import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { useAddressBalance } from 'hooks/useAddressBalance'
 import useAuth from 'hooks/useAuth'
 import React, { useState } from 'react'
+import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import { formatAmount } from 'utils/formatInfoNumbers'
-import { CopyAddress } from './WalletCopyButton'
 import ReceiveModal from './ReceiveModal'
+import { CopyAddress } from './WalletCopyButton'
 
 interface WalletModalProps {
   account?: string
@@ -211,6 +212,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ account, onDismiss }) => {
 export const WalletContent = ({ account, onDismiss }: { account: string | undefined; onDismiss: () => void }) => {
   const { t } = useTranslation()
   const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
+  const router = useRouter()
 
   const { logout } = useAuth()
 
@@ -301,13 +303,26 @@ export const WalletContent = ({ account, onDismiss }: { account: string | undefi
       </Box>
       <ActionButtonsContainer>
         <FlexGap gap="16px" width="100%">
-          <ActionButton>{t('Buy Crypto')}</ActionButton>
+          <ActionButton
+            onClick={() => {
+              router.push('/buy-crypto')
+              onDismiss()
+            }}
+          >
+            {t('Buy Crypto')}
+          </ActionButton>
           <ActionButton onClick={() => setIsReceiveModalOpen(true)}>{t('Receive')}</ActionButton>
         </FlexGap>
         {isReceiveModalOpen && account && (
           <ReceiveModal account={account} onDismiss={() => setIsReceiveModalOpen(false)} isOpen={isReceiveModalOpen} />
         )}
-        <Button variant="text">
+        <Button
+          variant="text"
+          onClick={() => {
+            router.push('/bridge')
+            onDismiss()
+          }}
+        >
           {t('Bridge Crypto')}
           <ArrowForwardIcon color="primary" />
         </Button>
