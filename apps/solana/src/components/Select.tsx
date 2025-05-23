@@ -15,7 +15,7 @@ import { ReactNode, useRef } from 'react'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import ChevronDownIcon from '@/icons/misc/ChevronDownIcon'
 import ChevronUpIcon from '@/icons/misc/ChevronUpIcon'
-import { colors } from '@/theme/cssVariables'
+import { colors, shadows } from '@/theme/cssVariables'
 import { isObject } from '@/utils/judges/judgeType'
 import { MayFn, shrinkToValue } from '@/utils/shrinkToValue'
 import { inputCard } from '@/theme/cssBlocks'
@@ -160,11 +160,12 @@ export function Select<T>({
     <Popover strategy="fixed" isOpen={isOpen} onOpen={onOpen} onClose={onClose} autoFocus={false} placement={placement}>
       <PopoverTrigger>{Trigger()}</PopoverTrigger>
       <PopoverContent
-        bg={colors.inputBg}
+        bg={colors.input}
+        boxShadow={shadows.focus}
         ref={panelRef}
         sx={shrinkToValue(popoverContentSx, [{ isPanelOpen: isOpen }])}
         minW={triggerRef.current?.clientWidth}
-        maxHeight="8lh" // sometimes, content may be too large, like date-picker's hour/minute picker
+        maxHeight="20lh" // sometimes, content may be too large, like date-picker's hour/minute picker
         overflowY="auto"
         py="8px"
         _focus={{ boxShadow: 'none' }}
@@ -181,16 +182,16 @@ export function Select<T>({
               <Box
                 cursor="pointer"
                 _hover={{
-                  bg: colors.backgroundLight
+                  bg: colors.secondary20
                 }}
                 onClick={() => {
                   onChange?.(itemValue)
                   onClose()
                 }}
-                fontSize={['md']}
-                py={1}
-                px="8px"
-                color={isFaceLight ? colors.textTertiary : colors.textSecondary}
+                fontSize="md"
+                py={2}
+                px={4}
+                color={colors.textPrimary}
                 sx={shrinkToValue(popoverItemSx)}
               >
                 {renderItem ? renderItem(itemValue, idx) : itemLabel}

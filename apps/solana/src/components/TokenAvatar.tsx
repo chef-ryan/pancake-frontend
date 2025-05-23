@@ -30,7 +30,7 @@ export type TokenAvatarProps = RawTokenAvatarProps & Omit<AvatarProps, keyof Raw
 const sizeMap = {
   xs: '16px',
   sm: '20px',
-  smi: '24px',
+  smi: '28px',
   md: '32px',
   lg: '40px',
   '2xl': '80px'

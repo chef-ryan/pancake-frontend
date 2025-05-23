@@ -13,6 +13,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   positive60: pcsDarkColors.positive60,
   secondary: pcsDarkColors.secondary,
   secondary10: 'rgba(34, 209, 248, 0.1)',
+  secondary20: pcsDarkColors.secondary20,
   secondary60: pcsDarkColors.secondary60,
 
   // component color
@@ -123,6 +124,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
   dividerBg: 'rgba(171, 196, 255, 0.12)',
 
   // input
+  input: pcsDarkColors.input,
   inputMask: '#0B102266',
   inputBorder: pcsDarkColors.inputSecondary,
   inputBg: pcsDarkColors.input,
@@ -174,6 +176,7 @@ export const lightColors: Partial<typeof darkColors> = {
   positive60: pcsLightColors.positive60,
   secondary: pcsLightColors.secondary,
   secondary10: 'rgba(34, 209, 248, 0.1)',
+  secondary20: pcsLightColors.secondary20,
   secondary60: pcsLightColors.secondary60,
 
   // component color
@@ -284,6 +287,7 @@ export const lightColors: Partial<typeof darkColors> = {
   dividerBg: 'rgba(171, 196, 255, 0.3)',
 
   // input
+  input: pcsLightColors.input,
   inputMask: '#fff3',
   inputBorder: pcsLightColors.inputSecondary,
   inputBg: pcsLightColors.input,
@@ -340,6 +344,7 @@ export const colors = {
   positive60: 'var(--positive60)',
   secondary: 'var(--secondary)',
   secondary10: 'var(--secondary10)',
+  secondary20: 'var(--secondary20)',
   secondary60: 'var(--secondary60)',
 
   // component color
@@ -451,6 +456,7 @@ export const colors = {
   dividerBg: 'var(--divider-bg)',
 
   // input
+  input: 'var(--input)',
   inputMask: 'var(--input-mask)',
   inputBorder: 'var(--input-border)',
   inputBg: 'var(--input-bg)',

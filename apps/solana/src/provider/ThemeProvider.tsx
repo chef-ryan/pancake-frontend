@@ -52,9 +52,6 @@ const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
           --chakra-shadows-outline: none !important;
           /* user-select: none; disable user-select so it is like a web app not web document */
         }
-        :focus-visible {
-          box-shadow: var(--chakra-shadows-outline);
-        }
         input {
           font-weight: inherit;
         }
@@ -72,73 +69,10 @@ const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
           vertical-align: middle;
           line-height: 1;
         }
-
-
-        @media (min-width: 48rem) {  
+        div,section {
           ::-webkit-scrollbar {
-            background-color: transparent;
             width: 6px;
-            height: 6px;
           }
-          ::-webkit-scrollbar-thumb {
-            background-color: ${colors.scrollbarThumb};
-            border-radius: 8px;
-          }
-          ::-webkit-scrollbar-corner {
-            background-color: transparent;
-          }
-        }
-
-        @font-face {
-          font-family: 'Space Grotesk';
-          src: url('/SpaceGrotesk[wght].woff2') format('woff2');
-          font-weight: 300;
-        }
-        @font-face {
-          font-family: 'Space Grotesk';
-          src: url('/SpaceGrotesk[wght].woff2') format('woff2');
-          font-weight: 400;
-        }
-        @font-face {
-          font-family: 'Space Grotesk';
-          src: url('/SpaceGrotesk[wght].woff2') format('woff2');
-          font-weight: 500;
-        }
-        @font-face {
-          font-family: 'Space Grotesk';
-          src: url('/SpaceGrotesk[wght].woff2') format('woff2');
-          font-weight: 700;
-        }
-        @font-face {
-            font-family: chillax;
-            src: url(/Chillax-Regular.woff2) format("woff2"),
-            font-weight: 400;
-            font-display: swap;
-            font-style: normal
-        }
-
-        @font-face {
-            font-family: chillax;
-            src: url(/Chillax-Regular.woff2) format("woff2")
-            font-weight: 500;
-            font-display: swap;
-            font-style: normal
-        }
-
-        @font-face {
-            font-family: chillax;
-            src: url(/assets/Chillax-Semibold.woff2) format("woff2")
-            font-weight: 600;
-            font-display: swap;
-            font-style: normal
-        }
-
-        @font-face {
-            font-family: chillax;
-            src: url(/assets/Chillax-Semibold.woff2) format("woff2")
-            font-weight: 700;
-            font-display: swap;
-            font-style: normal
         }
         `}
           />

@@ -34,14 +34,12 @@ import { PoolListItemRewardStack } from './PoolListItemRewardStack'
 
 export default function PoolListItem({
   styleType = 'list',
-  index,
   timeBase,
   pool,
   field,
   onOpenChart
 }: {
   styleType?: string
-  index: number
   timeBase: TimeBase
   pool: FormattedPoolInfoItem
   field: AprKey
@@ -189,7 +187,7 @@ export default function PoolListItem({
   return (
     <>
       {styleType === 'list' ? (
-        <Box pl={[0, 6]} px={4} py={3} background={index % 2 ? colors.backgroundTransparent07 : ''} sx={poolListGrid} onClick={onPoolClick}>
+        <Box borderBottom={`1px solid ${colors.cardBorder01}`} pl={[0, 6]} px={[4, 6]} py={3} sx={poolListGrid} onClick={onPoolClick}>
           <Flex align="center" gap={[2, 4]}>
             <Desktop>
               <Center width={6} height={6}>
@@ -226,12 +224,12 @@ export default function PoolListItem({
                   "a t" auto / auto 1fr`
                 ]}
                 columnGap={[1, 2]}
-                rowGap={[1, 0]}
+                rowGap={[1, 1]}
                 alignItems="center"
               >
                 {/* token pair avatar */}
                 <GridItem area="a">
-                  <TokenAvatarPair token1={baseToken} token2={quoteToken} size={['sm', 'smi', 'md']} />
+                  <TokenAvatarPair token1={baseToken} token2={quoteToken} size={['sm', 'smi']} />
                 </GridItem>
 
                 {/* name */}
@@ -336,7 +334,7 @@ export default function PoolListItem({
                     rounded="full"
                     bgColor={colors.tertiary}
                     px={3}
-                    py={1}
+                    py={2}
                     onClick={handleOpenChart}
                   >
                     <ChartInfoIcon strokeWidth={2} color={colors.textSubtle} />
@@ -352,7 +350,7 @@ export default function PoolListItem({
                     rounded="full"
                     bgColor={colors.tertiary}
                     px={3}
-                    py={1}
+                    py={2}
                     onClick={onClickSwap}
                   >
                     <SwapPoolItemIcon strokeWidth="2" color={colors.textSubtle} />

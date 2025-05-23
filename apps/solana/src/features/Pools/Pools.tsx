@@ -383,7 +383,6 @@ export default function Pools() {
     (info: FormattedPoolInfoItem, idx: number) => (
       <PoolListItem
         styleType={currentLayoutStyle}
-        index={idx}
         timeBase={timeBase}
         field={FILED_KEY[timeBase]}
         pool={info}
@@ -412,13 +411,16 @@ export default function Pools() {
             borderTopRadius: '0',
             mb: [4, 10]
           }
-        : {},
+        : {
+            pr: '5px',
+            mr: '-5px'
+          },
     [currentLayoutStyle]
   )
 
   return (
     <>
-      <Flex flexDirection="column" height="100%" flexGrow={1} {...containerProps}>
+      <Flex flexDirection="column" height="100%" flexGrow={1} lineHeight={1.5} {...containerProps}>
         {/* Title Part */}
         <Box {...titleContainerProps} display={['none', 'block']} flexShrink={0}>
           <Desktop>
@@ -462,7 +464,7 @@ export default function Pools() {
               "coll coll coll  coll" auto / auto auto auto 1fr
             `
             ]}
-            backgroundColor={['transparent', colors.backgroundLight30]}
+            backgroundColor="transparent"
           >
             <GridItem area="tabs">
               <Desktop>
@@ -606,9 +608,7 @@ export default function Pools() {
                               borderColor: isPanelOpen ? 'currentcolor' : 'transparent',
                               fontSize: '14px'
                             })}
-                            popoverContentSx={{
-                              bg: colors.tooltipBg
-                            }}
+                            popoverContentSx={{}}
                             value={sortKey === 'default' ? 'default' : `${sortKey}_${order ? 'desc' : 'asc'}`}
                             items={SORT_ITEMS}
                             onChange={(value) => {

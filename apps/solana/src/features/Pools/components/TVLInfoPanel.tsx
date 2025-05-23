@@ -19,11 +19,11 @@ export default function TVLInfoPanel({ tvl, volume }: { tvl: string | number; vo
 function TVLInfoItem({ name, value }: { name: string; value: string | number; decoratorImageSrc?: string }) {
   return (
     <Card>
-      <Box px={3} py={2}>
+      <Box px={3} py={4}>
         <Text fontSize="xs" color={colors.textSubtle}>
           {name}
         </Text>
-        <Text fontSize="24px" fontWeight={600} color={colors.textPrimary}>
+        <Text fontSize="24px" fontWeight={600} color={colors.textPrimary} lineHeight={1.5}>
           {formatCurrency(value, { symbol: '$', decimalPlaces: 2 })}
         </Text>
       </Box>

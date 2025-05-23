@@ -29,7 +29,7 @@ export default function CreatePoolButton() {
         </HStack>
       </Mobile>
       <Desktop>
-        <Button onClick={onOpen} variant="primary" p="18px" scale="sm">
+        <Button onClick={onOpen} variant="primary" px="18px" scale="md">
           {t('liquidity.create_pool')}
         </Button>
       </Desktop>

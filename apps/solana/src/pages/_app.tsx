@@ -1,4 +1,3 @@
-// import { getCookie } from 'cookies-next'
 import { ResetCSS } from '@pancakeswap/uikit'
 import Decimal from 'decimal.js'
 import type { AppProps } from 'next/app'
@@ -67,19 +66,5 @@ const MyApp = ({ Component, pageProps, ...props }: AppProps) => {
     </>
   )
 }
-
-// MyApp.getInitialProps = async (ctx: NextPageContext) => {
-//   if (isClient()) return {}
-//   try {
-//     const ctx = await App.getInitialProps(ctx)
-//     let lng = getCookie('i18nextLng', { req: ctx.ctx.req, res: ctx.ctx.res }) as string
-//     lng = lng || 'en'
-//     i18n.changeLanguage(lng)
-
-//     return ctx
-//   } catch (err) {
-//     return {}
-//   }
-// }
 
 export default MyApp

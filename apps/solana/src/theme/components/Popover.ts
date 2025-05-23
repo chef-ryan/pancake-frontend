@@ -19,15 +19,15 @@ export const Popover = {
       color: colors.textSecondary
     },
     content: {
-      bg: colors.popoverBg,
+      bg: colors.input,
       border: 'none',
       width: 'fit-content',
       maxWidth: '300px'
     },
     arrow: {
       boxShadow: 'none !important',
-      borderColor: colors.popoverBg,
-      bg: `${colors.popoverBg} !important`
+      borderColor: colors.input,
+      bg: `${colors.input} !important`
     }
   }
 }
