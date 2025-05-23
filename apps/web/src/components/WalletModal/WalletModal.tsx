@@ -16,8 +16,8 @@ import {
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { useAddressBalance } from 'hooks/useAddressBalance'
 import useAuth from 'hooks/useAuth'
-import React, { useState } from 'react'
 import { useRouter } from 'next/router'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import ReceiveModal from './ReceiveModal'
@@ -239,7 +239,7 @@ export const WalletContent = ({ account, onDismiss }: { account: string | undefi
         </FlexGap>
       </FlexGap>
       <Box padding="0 16px 16px">
-        <Text color="secondary" fontSize="12px" textTransform="uppercase" fontWeight="bold" mb="8px">
+        <Text fontSize="20px" textTransform="uppercase" fontWeight="bold" mb="8px">
           {t('My Wallet')}
         </Text>
         <AssetList>
@@ -275,7 +275,17 @@ export const WalletContent = ({ account, onDismiss }: { account: string | undefi
                       <Text bold fontSize="16px">
                         {asset.token.symbol}
                       </Text>
-                      <Text ml="8px" color="textSubtle" fontSize="14px">
+                      <Text
+                        ml="8px"
+                        color="textSubtle"
+                        fontSize="14px"
+                        style={{
+                          maxWidth: '120px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
                         {asset.token.name}
                       </Text>
                     </FlexGap>

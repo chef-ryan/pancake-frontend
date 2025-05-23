@@ -18,7 +18,6 @@ const QRCodeWrapper = styled(Box)`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 24px 0;
   position: relative;
 `
 
