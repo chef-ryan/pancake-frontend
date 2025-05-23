@@ -72,7 +72,7 @@ const UserMenu = () => {
           text={userMenuText}
           variant={userMenuVariable}
           popperStyle={{
-            minWidth: '357px',
+            minWidth: '380px',
           }}
           onClick={() => {
             if (isMobile) {

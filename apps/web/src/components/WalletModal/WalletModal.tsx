@@ -297,7 +297,7 @@ export const WalletContent = ({
             <Box
               background="linear-gradient(180deg, #EFF4F5 0%, #EAE2F5 100%)"
               borderRadius="24px"
-              padding="24px"
+              padding="16px"
               width="45%"
               style={{ textAlign: 'center', cursor: 'pointer' }}
               onClick={() => {
@@ -305,10 +305,10 @@ export const WalletContent = ({
                 onDismiss()
               }}
             >
-              <Box mb="16px" mx="auto" width="80px" height="80px">
-                <img src={`${ASSETS_CDN}/web/landing/trade-buy-crypto.png`} width="80px" alt="Buy Crypto" />
+              <Box mb="16px" mx="auto" width="60px" height="60px">
+                <img src={`${ASSETS_CDN}/web/landing/trade-buy-crypto.png`} width="60px" alt="Buy Crypto" />
               </Box>
-              <Text bold color="secondary" fontSize="20px" mb="8px">
+              <Text bold color="secondary" fontSize="16px" mb="8px">
                 {t('Buy Crypto')}
               </Text>
               <Text fontSize="14px" color="textSubtle">
@@ -318,7 +318,7 @@ export const WalletContent = ({
             <Box
               background="linear-gradient(180deg, #EFF4F5 0%, #EAE2F5 100%)"
               borderRadius="24px"
-              padding="24px"
+              padding="16px"
               width="45%"
               style={{ textAlign: 'center', cursor: 'pointer' }}
               onClick={() => {
@@ -326,10 +326,10 @@ export const WalletContent = ({
                 onDismiss()
               }}
             >
-              <Box mb="16px" mx="auto" width="80px" height="80px">
-                <img src={`${ASSETS_CDN}/web/landing/earn-fixed-staking.png`} width="80px" alt="Receive Crypto" />
+              <Box mb="16px" mx="auto" width="60px" height="60px">
+                <img src={`${ASSETS_CDN}/web/landing/earn-fixed-staking.png`} width="60px" alt="Receive Crypto" />
               </Box>
-              <Text bold color="secondary" fontSize="20px" mb="8px">
+              <Text bold color="secondary" fontSize="16px" mb="8px">
                 {t('Receive Crypto')}
               </Text>
               <Text fontSize="14px" color="textSubtle">
