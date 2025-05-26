@@ -35,9 +35,9 @@ export const SERVER_NODES = {
     'https://bsc.publicnode.com',
     'https://binance.llamarpc.com',
     'https://bsc-dataseed1.defibit.io',
-    'https://bsc-dataseed1.binance.org',
+    'https://bsc-dataseed1.bnbchain.org',
   ].filter(Boolean),
-  [ChainId.BSC_TESTNET]: ['https://data-seed-prebsc-1-s1.binance.org:8545'],
+  [ChainId.BSC_TESTNET]: ['https://data-seed-prebsc-1-s1.bnbchain.org:8545'],
   [ChainId.ETHEREUM]: [
     getNodeRealUrl(ChainId.ETHEREUM, process.env.SERVER_NODE_REAL_API_ETH) || '',
     'https://ethereum.publicnode.com',
@@ -100,9 +100,9 @@ export const PUBLIC_NODES = {
     'https://bsc.publicnode.com',
     'https://binance.llamarpc.com',
     'https://bsc-dataseed1.defibit.io',
-    'https://bsc-dataseed1.binance.org',
+    'https://bsc-dataseed1.bnbchain.org',
   ].filter(Boolean),
-  [ChainId.BSC_TESTNET]: ['https://data-seed-prebsc-1-s1.binance.org:8545'],
+  [ChainId.BSC_TESTNET]: ['https://data-seed-prebsc-1-s1.bnbchain.org:8545'],
   [ChainId.ETHEREUM]: [
     getNodeRealUrl(ChainId.ETHEREUM, process.env.NEXT_PUBLIC_NODE_REAL_API_ETH) || '',
     process.env.NEXT_PUBLIC_NODIES_ETH || '',
