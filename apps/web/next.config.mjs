@@ -213,7 +213,17 @@ const config = {
         source: '/images/tokens/:address',
         destination: 'https://tokens.pancakeswap.finance/images/:address',
         permanent: false,
-      }
+      },
+      {
+        source: '/gauges-voting',
+        destination: '/cake-staking/redeem',
+        permanent: true,
+      },
+      {
+        source: '/cake-staking',
+        destination: '/cake-staking/redeem',
+        permanent: true,
+      },
     ]
   },
   webpack: (webpackConfig, { webpack, isServer }) => {
