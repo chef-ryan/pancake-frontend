@@ -110,7 +110,7 @@ export default function ClmmPositionAccountItemDetail({
           flexDirection={['column', 'row']}
           w="full"
           gap={[2, 4]}
-          bg={colors.backgroundLight}
+          bg={colors.backgroundAlt}
           borderRadius="xl"
           justify="center"
           py={[3]}

@@ -154,7 +154,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
   return (
     <Drawer isOpen variant="popFromBottom" placement="bottom" autoFocus={false} returnFocusOnClose={false} onClose={onClickViewTrigger}>
       <DrawerOverlay />
-      <DrawerContent>
+      <DrawerContent bg={colors.backgroundAlt}>
         <DrawerBody py={6}>
           <VStack gap={4}>
             <PoolInfoDrawerFace poolInfo={poolInfo} baseIn={baseIn} position={position} />
