@@ -83,40 +83,7 @@ export default function AmountSlider({
           </Text>
         </HStack>
 
-        <Desktop>
-          <HStack spacing={2}>
-            {[25, 50, 75, 100].map((percent) => (
-              <Button
-                disabled={isDisabled}
-                height="28px"
-                px="8px"
-                variant="primary60"
-                size="xs"
-                onClick={() => {
-                  setHotPercent(percent)
-                  setPercent(percent)
-                }}
-              >
-                {percent}%
-              </Button>
-            ))}
-          </HStack>
-        </Desktop>
-      </HStack>
-      <Box>
-        <Slider
-          name="lp-amount"
-          disabled={isDisabled}
-          min={0}
-          max={100}
-          value={hotPercent}
-          onValueChanged={(percent_) => {
-            setHotPercent(percent_)
-          }}
-        />
-      </Box>
-      <Mobile>
-        <HStack spacing={sizes.buttonSpace}>
+        <HStack spacing={2}>
           {[25, 50, 75, 100].map((percent) => (
             <Button
               disabled={isDisabled}
@@ -133,7 +100,19 @@ export default function AmountSlider({
             </Button>
           ))}
         </HStack>
-      </Mobile>
+      </HStack>
+      <Box>
+        <Slider
+          name="lp-amount"
+          disabled={isDisabled}
+          min={0}
+          max={100}
+          value={hotPercent}
+          onValueChanged={(percent_) => {
+            setHotPercent(percent_)
+          }}
+        />
+      </Box>
     </PanelCard>
   )
 }
