@@ -1,15 +1,53 @@
-import { AnimatePresence, AnimatePresenceProps, LazyMotion, LazyProps, domAnimation } from "framer-motion";
-import { FC } from "react";
+import React, { useEffect, useRef, FC } from 'react';
+import anime from 'animejs';
 
-// optimized export for building animated framer components
-const LazyAnimatePresence: FC<React.PropsWithChildren<LazyProps & AnimatePresenceProps>> = (props) => {
+interface AnimePresenceProps {
+  isVisible?: boolean;
+  onExitComplete?: () => void;
+  features?: unknown;
+  mode?: string;
+}
+
+const LazyAnimatePresence: FC<React.PropsWithChildren<AnimePresenceProps>> = ({
+  children,
+  isVisible = true,
+  onExitComplete,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [show, setShow] = React.useState(isVisible);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    if (isVisible) {
+      setShow(true);
+      anime({
+        targets: containerRef.current,
+        opacity: [0, 1],
+        duration: 300,
+        easing: 'easeInOutQuad',
+      });
+    } else {
+      anime({
+        targets: containerRef.current,
+        opacity: [1, 0],
+        duration: 300,
+        easing: 'easeInOutQuad',
+        complete: () => {
+          setShow(false);
+          onExitComplete?.();
+        },
+      });
+    }
+  }, [isVisible, onExitComplete]);
+
+  if (!show) return null;
+
   return (
-    <LazyMotion features={props.features} strict={props.strict}>
-      <AnimatePresence {...props}>{props.children}</AnimatePresence>
-    </LazyMotion>
+    <div ref={containerRef} style={{ opacity: 0 }}>
+      {children}
+    </div>
   );
 };
 
-export { domAnimation };
-
+export const domAnimation = {};
 export default LazyAnimatePresence;

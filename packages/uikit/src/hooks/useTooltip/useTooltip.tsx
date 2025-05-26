@@ -1,4 +1,4 @@
-import { AnimatePresence, LazyMotion, Variants, domAnimation } from "framer-motion";
+import anime from "animejs";
 import debounce from "lodash/debounce";
 import React, { useCallback, useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
@@ -10,17 +10,6 @@ import isTouchDevice from "../../util/isTouchDevice";
 import { Arrow, StyledTooltip } from "./StyledTooltip";
 import { DeviceAction, Devices, TooltipOptions, TooltipRefs } from "./types";
 
-const animationVariants: Variants = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-};
-
-const animationMap = {
-  initial: "initial",
-  animate: "animate",
-  exit: "exit",
-};
 
 const deviceActions: { [device in Devices]: DeviceAction } = {
   [Devices.touchDevice]: {
@@ -206,24 +195,23 @@ const useTooltip = (content: React.ReactNode, options?: TooltipOptions): Tooltip
   }, []);
 
   const AnimatedTooltip = visible ? (
-    <LazyMotion features={domAnimation}>
-      <AnimatePresence>
-        <StyledTooltip
-          onClick={stopPropagation}
-          data-theme={isDark ? "light" : "dark"}
-          {...animationMap}
-          variants={animationVariants}
-          transition={{ duration: 0.3 }}
-          ref={setTooltipElement}
-          style={styles.popper}
-          {...attributes.popper}
-        >
-          {content}
-          <Arrow ref={setArrowElement} style={styles.arrow} />
-        </StyledTooltip>
-      </AnimatePresence>
-    </LazyMotion>
+    <StyledTooltip
+      onClick={stopPropagation}
+      data-theme={isDark ? "light" : "dark"}
+      ref={setTooltipElement}
+      style={{ ...styles.popper, opacity: 0 }}
+      {...attributes.popper}
+    >
+      {content}
+      <Arrow ref={setArrowElement} style={styles.arrow} />
+    </StyledTooltip>
   ) : null;
+
+  useEffect(() => {
+    if (visible && tooltipElement) {
+      anime({ targets: tooltipElement, opacity: [0, 1], duration: 300, easing: "easeInOutQuad" });
+    }
+  }, [visible, tooltipElement]);
 
   const portal = visible && isInPortal && getPortalRoot();
   const tooltipInPortal = visible && isInPortal && portal ? createPortal(AnimatedTooltip, portal) : null;

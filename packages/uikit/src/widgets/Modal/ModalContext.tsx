@@ -1,7 +1,7 @@
 import { DismissableLayer } from "@radix-ui/react-dismissable-layer";
-import { AnimatePresence, LazyMotion, m } from "framer-motion";
+import anime from "animejs";
+import React, { createContext, useCallback, useMemo, useRef, useState, useEffect } from "react";
 import get from "lodash/get";
-import React, { createContext, useCallback, useMemo, useRef, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { createPortal } from "react-dom";
 import { styled } from "styled-components";
@@ -19,8 +19,6 @@ import { mountAnimation, unmountAnimation } from "./BottomDrawer/styles";
 import { ModalContainer } from "./styles";
 import { Handler } from "./types";
 
-const DomMax = () => import("./motionDomMax").then((mod) => mod.default);
-const DomAnimation = () => import("./motionDomAnimation").then((mod) => mod.default);
 
 interface ModalsContext {
   isOpen: boolean;
@@ -31,7 +29,7 @@ interface ModalsContext {
   onDismiss: Handler;
 }
 
-export const StyledModalWrapper = styled(m.div)`
+export const StyledModalWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -62,7 +60,46 @@ export const StyledModalWrapper = styled(m.div)`
       }
     }
   }
-` as typeof m.div;
+`;
+
+const AnimePresence: React.FC<{
+  children: React.ReactNode;
+  isVisible: boolean;
+  onExitComplete?: () => void;
+}> = ({ children, isVisible, onExitComplete }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      if (isVisible) {
+        anime({
+          targets: containerRef.current,
+          opacity: [0, 1],
+          duration: 300,
+          easing: "easeInOutQuad",
+        });
+      } else if (containerRef.current.style.opacity !== "0") {
+        anime({
+          targets: containerRef.current,
+          opacity: [1, 0],
+          duration: 300,
+          easing: "easeInOutQuad",
+          complete: onExitComplete,
+        });
+      }
+    }
+  }, [isVisible, onExitComplete]);
+
+  if (!isVisible && containerRef.current?.style.opacity === "0") {
+    return null;
+  }
+
+  return (
+    <div ref={containerRef} style={{ opacity: 0 }}>
+      {children}
+    </div>
+  );
+};
 
 export const Context = createContext<ModalsContext>({
   isOpen: false,
@@ -129,32 +166,30 @@ const ModalProvider: React.FC<
       <NestProvider>
         {portal &&
           createPortal(
-            <LazyMotion features={isMobile ? DomMax : DomAnimation}>
-              <AnimatePresence>
-                {isOpen && (
-                  <DismissableLayer
-                    role="dialog"
-                    disableOutsidePointerEvents={false}
-                    onEscapeKeyDown={handleOverlayDismiss}
+            isOpen && (
+              <DismissableLayer
+                role="dialog"
+                disableOutsidePointerEvents={false}
+                onEscapeKeyDown={handleOverlayDismiss}
+              >
+                <AnimePresence isVisible={isOpen}>
+                  <StyledModalWrapper
+                    ref={animationRef}
+                    onAnimationStart={handleAnimationStart}
+                    {...animationMap}
+                    variants={animationVariants}
+                    transition={{ duration: 0.3 }}
                   >
-                    <StyledModalWrapper
-                      ref={animationRef}
-                      onAnimationStart={handleAnimationStart}
-                      {...animationMap}
-                      variants={animationVariants}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Overlay onClick={handleOverlayDismiss} />
-                      {React.isValidElement(modalNode) &&
-                        React.cloneElement(modalNode, {
-                          // @ts-ignore
-                          onDismiss: handleDismiss,
-                        })}
-                    </StyledModalWrapper>
-                  </DismissableLayer>
-                )}
-              </AnimatePresence>
-            </LazyMotion>,
+                    <Overlay onClick={handleOverlayDismiss} />
+                    {React.isValidElement(modalNode) &&
+                      React.cloneElement(modalNode, {
+                        // @ts-ignore
+                        onDismiss: handleDismiss,
+                      })}
+                  </StyledModalWrapper>
+                </AnimePresence>
+              </DismissableLayer>
+            ),
             portal
           )}
         {children}

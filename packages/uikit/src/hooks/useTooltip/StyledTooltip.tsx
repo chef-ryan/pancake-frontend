@@ -1,5 +1,4 @@
 import { styled } from "styled-components";
-import { m as Motion } from "framer-motion";
 
 export const Arrow = styled.div`
   &,
@@ -18,7 +17,7 @@ export const Arrow = styled.div`
   }
 `;
 
-export const StyledTooltip = styled(Motion.div)`
+export const StyledTooltip = styled.div`
   padding: 16px;
   font-size: 16px;
   line-height: 130%;
@@ -44,4 +43,4 @@ export const StyledTooltip = styled(Motion.div)`
   &[data-popper-placement^="right"] > ${Arrow} {
     left: -4px;
   }
-` as typeof Motion.div;
+`;

@@ -1,4 +1,4 @@
-import { Variants } from "framer-motion";
+import anime from "animejs";
 import { keyframes } from "styled-components";
 
 export const appearAnimation = keyframes`
@@ -26,16 +26,38 @@ export const animationHandler = (element: HTMLElement | null, shouldDisappear?: 
   }
 };
 
-export const animationVariants: Variants = {
-  initial: { transform: "translateX(0px)" },
-  animate: { transform: "translateX(0px)" },
-  exit: { transform: "translateX(0px)" },
+export const animationVariants = {
+  initial: {
+    opacity: 0,
+    translateX: 0,
+  },
+  animate: {
+    opacity: 1,
+    translateX: 0,
+  },
+  exit: {
+    opacity: 0,
+    translateX: 0,
+  },
 };
 
 export const animationMap = {
   initial: "initial",
   animate: "animate",
   exit: "exit",
+};
+
+export const createAnimation = (
+  element: HTMLElement,
+  variant: keyof typeof animationVariants,
+  duration = 300
+) => {
+  return anime({
+    targets: element,
+    ...animationVariants[variant],
+    duration,
+    easing: "easeInOutQuad",
+  });
 };
 
 export const promotedGradient = keyframes`
