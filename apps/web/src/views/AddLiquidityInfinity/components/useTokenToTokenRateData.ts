@@ -157,7 +157,18 @@ const usePoolRateData = ({ chainId, poolId, protocol, period }: IRateDataProps) 
       low: Number(d.low),
     }))
     return generateDateSequence(period).map((seqPoint) => {
-      const before = resp?.findLast((d) => +d.time <= +seqPoint.time)
+      const before = resp?.reduce<
+        | {
+            time: Date
+            open: number
+            close: number
+            high: number
+            low: number
+          }
+        | undefined
+      >((acc, item) => {
+        return +item.time <= +seqPoint.time ? item : acc
+      }, undefined)
       const after = resp?.find((d) => +d.time > +seqPoint.time)
 
       if (before && +before.time === +seqPoint.time) {
