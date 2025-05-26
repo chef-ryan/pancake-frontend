@@ -34,16 +34,8 @@ function TVLInfoItem({ name, value }: { name: string; value: string | number; de
 export function TVLInfoPanelMobile({ tvl, volume }: { tvl: string | number; volume: string | number }) {
   const { t } = useTranslation()
   return (
-    <HStack
-      justifyContent="space-between"
-      background={colors.backgroundLight}
-      py={2}
-      color={colors.textPrimary}
-      px={appLayoutPaddingX}
-      lineHeight={1}
-      fontWeight={600}
-    >
-      <HStack>
+    <HStack justifyContent="space-between" py={2} color={colors.textPrimary} px={appLayoutPaddingX} lineHeight={1.5} fontWeight={600}>
+      <HStack px={4}>
         <Text color={colors.textSubtle} fontSize="xs">
           {t('TVL')}
         </Text>
@@ -52,7 +44,7 @@ export function TVLInfoPanelMobile({ tvl, volume }: { tvl: string | number; volu
         </Text>
       </HStack>
 
-      <HStack>
+      <HStack px={4}>
         <Text color={colors.textSubtle} fontSize="xs" fontWeight={400}>
           {t('Vol. 24h')}
         </Text>

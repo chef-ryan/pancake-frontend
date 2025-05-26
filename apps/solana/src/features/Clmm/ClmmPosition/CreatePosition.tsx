@@ -518,7 +518,7 @@ export default function CreatePosition() {
           ]}
           rounded="xl"
           p={[3, '20px']}
-          gap={[2, 4]}
+          gap={[4, 4]}
           alignItems="center"
           {...panelCard}
         >

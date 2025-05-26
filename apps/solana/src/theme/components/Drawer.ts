@@ -5,6 +5,9 @@ import { colors } from '../cssVariables'
 const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(drawerAnatomy.keys)
 
 const baseStyle = definePartsStyle({
+  overlay: {
+    bg: colors.backgroundOverlay
+  },
   dialog: {
     borderRadius: ['18px', '12px']
   },

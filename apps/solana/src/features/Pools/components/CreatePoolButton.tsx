@@ -17,8 +17,8 @@ export default function CreatePoolButton() {
     <>
       <Mobile>
         <HStack
-          width={10}
-          height="100%"
+          width="48px"
+          height="48px"
           border={`1px solid ${colors.primary}`}
           bg={colors.primary}
           borderRadius="2xl"

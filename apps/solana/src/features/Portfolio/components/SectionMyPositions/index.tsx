@@ -3,12 +3,9 @@ import { Box, Flex, Grid, GridItem, HStack, Heading, SimpleGrid, Text } from '@c
 import { useTranslation } from '@pancakeswap/localization'
 import { useRouter } from 'next/router'
 import Button from '@/components/Button'
-import Tabs from '@/components/Tabs'
 import { colors } from '@/theme/cssVariables'
 import { useAppStore } from '@/store/useAppStore'
 import { QuestionToolTip } from '@/components/QuestionToolTip'
-import { Desktop, Mobile } from '@/components/MobileDesktop'
-import { Select } from '@/components/Select'
 import { useStateWithUrl } from '@/hooks/useStateWithUrl'
 import IntervalCircle, { IntervalCircleHandler } from '@/components/IntervalCircle'
 import useAllPositionInfo, { PositionTabValues } from '@/hooks/portfolio/useAllPositionInfo'
@@ -17,7 +14,6 @@ import { formatCurrency } from '@/utils/numberish/formatter'
 import { useEvent } from '@/hooks/useEvent'
 import TokenAvatar from '@/components/TokenAvatar'
 import { getMintSymbol } from '@/utils/token'
-import Tooltip from '@/components/Tooltip'
 import MyPositionTabStaked from './TabStaked'
 import MyPositionTabStandard from './TabStandard'
 import { ClmmMyPositionTabContent } from './TabClmm'
@@ -144,27 +140,6 @@ export default function SectionMyPositions() {
               onEnd={handleRefreshAll}
             />
           </Flex>
-        </GridItem>
-        <GridItem area="tabs" justifySelf={['right', 'left']}>
-          <Desktop>
-            <Tabs
-              size="sm"
-              renderItem={(_, i: number) => {
-                const tab = tabs[i]
-                if (tab.value === 'standard') {
-                  return <Tooltip label="Coming soon">V2</Tooltip>
-                }
-                return tab.label
-              }}
-              variant="subtle"
-              items={tabs}
-              onChange={onTabChange}
-              value={currentTab}
-            />
-          </Desktop>
-          <Mobile>
-            <Select items={tabs} onChange={onTabChange} value={currentTab} />
-          </Mobile>
         </GridItem>
         <GridItem area="action" justifySelf={['stretch', 'stretch', 'right']}>
           {enableFarm && connected ? (

@@ -464,6 +464,7 @@ export default function Pools() {
             `
             ]}
             backgroundColor="transparent"
+            alignItems="center"
           >
             <GridItem area="tabs">
               <Desktop>
@@ -479,7 +480,7 @@ export default function Pools() {
                 <Select
                   sx={({ isPanelOpen }) => ({
                     borderRadius: 'full',
-                    height: '34px',
+                    height: '40px',
                     minWidth: '102px',
                     border: `1px solid ${colors.inputBorder}`,
                     borderColor: isPanelOpen ? 'currentcolor' : colors.inputBorder
@@ -518,7 +519,7 @@ export default function Pools() {
                     background={colors.inputBg}
                     onClick={openMobileSearch}
                     variant="capsule"
-                    height="34px"
+                    height="40px"
                     pl={4}
                     pr={2}
                   >
@@ -531,7 +532,7 @@ export default function Pools() {
                   borderBottomWidth="2px"
                   onClick={toggleSubcontrollers}
                   variant="capsule"
-                  height={['34px', '40px']}
+                  height="40px"
                   paddingInline="3"
                   isActive={isCollapseOpen}
                 >

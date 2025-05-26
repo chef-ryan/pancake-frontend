@@ -331,6 +331,7 @@ function TokenInput(props: TokenInputProps) {
           display="grid"
           placeContent="center"
           backdropFilter="blur(13px)"
+          m="-5px"
           {...renderMaskProps}
         >
           {renderMaskContent}

@@ -43,7 +43,7 @@ export const IconStyle = {
 
 export const RangeInputStyle = {
   ctr: { border: 'none', borderRadius: 'none', userSelect: 'none' },
-  input: { h: '24px', textAlign: ['left', 'center'], fontWeight: 500, fontSize: 'sm' },
+  input: { h: '24px', textAlign: 'center', fontWeight: 500, fontSize: 'sm' },
   inputGroup: {
     display: 'flex',
     h: '24px',
@@ -481,75 +481,35 @@ export function PriceRangeInputBox(props: {
 }) {
   const { t } = useTranslation()
   return (
-    <>
-      <Desktop>
-        <Flex justifyContent="center" gap="1" sx={{ ...inputCard, alignItems: 'center', p: '8px' }}>
-          <Minus style={IconStyle} onClick={props.onMinus} />
-          <Box textAlign="center" justifyContent="center" minWidth="120px" width="fit-content">
-            <Text
-              fontWeight={600}
-              textTransform="uppercase"
-              whiteSpace="nowrap"
-              variant="label"
-              userSelect="none"
-              color={colors.textSecondary}
-            >
-              {props.topLabel}
-            </Text>
-            <DecimalInput
-              variant="filledDark"
-              ctrSx={RangeInputStyle.ctr}
-              inputSx={RangeInputStyle.input}
-              inputGroupSx={RangeInputStyle.inputGroup}
-              disabled={props.disabled}
-              side={props.side}
-              value={props.currentPriceRangeValue}
-              decimals={props.decimals}
-              onFocus={props.onFocus}
-              onBlur={props.onInputBlur}
-              onChange={props.onInputChange}
-            />
-            {props.base?.symbol && props.quote?.symbol ? (
-              <Text variant="label" userSelect="none">
-                {t('%subA% per %subB%', {
-                  subA: wSolToSolString(props.base.symbol),
-                  subB: wSolToSolString(props.quote.symbol)
-                })}
-              </Text>
-            ) : null}
-          </Box>
-          <Plus style={IconStyle} cursor="pointer" onClick={props.onAdd} />
-        </Flex>
-      </Desktop>
-      <Mobile>
-        <HStack>
-          <Text fontWeight={600} variant="label" userSelect="none" width="3em">
-            {props.topLabel}
+    <Flex justifyContent="center" gap="1" sx={{ ...inputCard, alignItems: 'center', p: '8px' }}>
+      <Minus style={IconStyle} onClick={props.onMinus} />
+      <Box textAlign="center" justifyContent="center" minWidth="120px" width="fit-content">
+        <Text fontWeight={600} textTransform="uppercase" whiteSpace="nowrap" variant="label" userSelect="none" color={colors.textSecondary}>
+          {props.topLabel}
+        </Text>
+        <DecimalInput
+          variant="filledDark"
+          ctrSx={RangeInputStyle.ctr}
+          inputSx={RangeInputStyle.input}
+          inputGroupSx={RangeInputStyle.inputGroup}
+          disabled={props.disabled}
+          side={props.side}
+          value={props.currentPriceRangeValue}
+          decimals={props.decimals}
+          onFocus={props.onFocus}
+          onBlur={props.onInputBlur}
+          onChange={props.onInputChange}
+        />
+        {props.base?.symbol && props.quote?.symbol ? (
+          <Text variant="label" userSelect="none">
+            {t('%subA% per %subB%', {
+              subA: wSolToSolString(props.base.symbol),
+              subB: wSolToSolString(props.quote.symbol)
+            })}
           </Text>
-          <HStack sx={{ bg: colors.inputBg, alignItems: 'center', borderRadius: 'xl', p: '8px' }}>
-            <DecimalInput
-              variant="unstyled"
-              ctrSx={RangeInputStyle.ctr}
-              inputSx={RangeInputStyle.input}
-              inputGroupSx={RangeInputStyle.inputGroup}
-              side={props.side}
-              value={props.currentPriceRangeValue}
-              decimals={props.decimals}
-              onFocus={props.onFocus}
-              onBlur={props.onInputBlur}
-              onChange={props.onInputChange}
-            />
-            {props.base?.symbol && props.quote?.symbol ? (
-              <Text variant="label" userSelect="none" whiteSpace="nowrap">
-                {t('%subA% per %subB%', {
-                  subA: wSolToSolString(props.base.symbol),
-                  subB: wSolToSolString(props.quote.symbol)
-                })}
-              </Text>
-            ) : null}
-          </HStack>
-        </HStack>
-      </Mobile>
-    </>
+        ) : null}
+      </Box>
+      <Plus style={IconStyle} cursor="pointer" onClick={props.onAdd} />
+    </Flex>
   )
 }

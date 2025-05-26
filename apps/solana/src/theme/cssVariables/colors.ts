@@ -126,7 +126,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
 
   // input
   input: pcsDarkColors.input,
-  inputMask: '#0B102266',
+  inputMask: 'rgba(39, 38, 44, 0.35)',
   inputBorder: pcsDarkColors.inputSecondary,
   inputBg: pcsDarkColors.input,
   inputSecondary: pcsDarkColors.inputSecondary,
