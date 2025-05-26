@@ -90,9 +90,8 @@ export default function CLMMTokenInputGroup(props: Props) {
           ctrSx={{ w: '100%' }}
           sx={{ rounded: 24 }}
           disableTotalInputByMask={token1Disable}
-          renderMaskProps={{ bg: colors.inputMask }}
           renderMaskContent={
-            <VStack px={16} fontSize="xs" color={colors.textPrimary}>
+            <VStack px={16} fontSize="sm" color={colors.textPrimary} bg="transparent">
               <InputLockIcon />
               <Text align="center">{t('The market price is outside your specified price range. Single asset deposit only.')}</Text>
             </VStack>
@@ -115,9 +114,8 @@ export default function CLMMTokenInputGroup(props: Props) {
           ctrSx={{ w: '100%' }}
           sx={{ rounded: 24 }}
           disableTotalInputByMask={token2Disable}
-          renderMaskProps={{ bg: colors.inputMask }}
           renderMaskContent={
-            <VStack px={16} fontSize="xs" color={colors.textPrimary}>
+            <VStack px={16} fontSize="sm" color={colors.textPrimary}>
               <InputLockIcon />
               <Text align="center">{t('The market price is outside your specified price range. Single asset deposit only.')}</Text>
             </VStack>

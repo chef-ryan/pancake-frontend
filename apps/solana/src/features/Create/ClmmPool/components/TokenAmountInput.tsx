@@ -112,14 +112,14 @@ export default function TokenAmountPairInputs({ tempCreatedPool, baseIn, onConfi
 
   const error = useMemo(() => {
     if (!disabledInput[0]) {
-      if (!tokenAmount[0] || new Decimal(tokenAmount[0] || 0).isZero()) return { key: 'error.enter_token_amount' }
+      if (!tokenAmount[0] || new Decimal(tokenAmount[0] || 0).isZero()) return { key: 'Enter token amount' }
       if (new Decimal(tokenAmount[0]).gt(balanceA))
-        return { key: 'error.insufficient_sub_balance', props: { token: getMintSymbol({ mint: mintA, transformSol: true }) } }
+        return { key: 'Insufficient sub balance', props: { token: getMintSymbol({ mint: mintA, transformSol: true }) } }
     }
     if (!disabledInput[1] || new Decimal(tokenAmount[1] || 0).isZero()) {
-      if (!tokenAmount[1]) return { key: 'error.enter_token_amount' }
+      if (!tokenAmount[1]) return { key: 'Enter token amount' }
       if (new Decimal(tokenAmount[1]).gt(balanceB))
-        return { key: 'error.insufficient_sub_balance', props: { token: getMintSymbol({ mint: mintB, transformSol: true }) } }
+        return { key: 'Insufficient sub balance', props: { token: getMintSymbol({ mint: mintB, transformSol: true }) } }
     }
     return undefined
   }, [balanceA, balanceB, disabledInput, mintA, mintB, tokenAmount])

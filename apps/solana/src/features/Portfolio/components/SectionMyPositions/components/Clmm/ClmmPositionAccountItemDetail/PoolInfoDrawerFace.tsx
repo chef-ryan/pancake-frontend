@@ -7,6 +7,7 @@ import useClmmBalance, { ClmmPosition } from '@/hooks/portfolio/clmm/useClmmBala
 import { colors } from '@/theme/cssVariables'
 import toPercentString from '@/utils/numberish/toPercentString'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
+import { Mobile } from '@/components/MobileDesktop'
 
 export default function PoolInfoDrawerFace({
   poolInfo,
@@ -56,6 +57,9 @@ export default function PoolInfoDrawerFace({
         <Text color={colors.textSubtle} whiteSpace="nowrap">
           {rangeValueUnit}
         </Text>
+        <Mobile>
+          <br />
+        </Mobile>
         <Badge variant={inRange ? 'ok' : 'error'}>{inRange ? t('In Range') : t('Out of Range')}</Badge>
       </HStack>
     </VStack>

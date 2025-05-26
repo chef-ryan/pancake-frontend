@@ -255,7 +255,7 @@ export default function ClmmPositionAccountItemDetailMobileDrawer({
                 <VStack align="stretch" spacing={1.5}>
                   <HStack>
                     <Text>{t('My Range')}</Text>
-                    <Badge variant={inRange ? 'ok' : 'error'}>{t(inRange ? 'clmm.in_range' : 'clmm.out_of_range')}</Badge>
+                    <Badge variant={inRange ? 'ok' : 'error'}>{inRange ? t('In Range') : t('Out of Range')}</Badge>
                   </HStack>
 
                   <HStack>

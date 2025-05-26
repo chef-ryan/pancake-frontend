@@ -134,7 +134,7 @@ export default function AddLiquidity({
   let error =
     new Decimal(pairAmount.base || '0').lte(0) || new Decimal(pairAmount.quote || '0').lte(0)
       ? {
-          key: 'error.enter_token_amount',
+          key: 'Enter token amount',
           props: {}
         }
       : undefined
@@ -142,7 +142,7 @@ export default function AddLiquidity({
     error ||
     (!isBalanceAEnough || !isBalanceBEnough
       ? {
-          key: 'error.insufficient_sub_balance',
+          key: 'Insufficient sub balance',
           props: {
             token: isBalanceAEnough
               ? getMintSymbol({ mint: tokenPair.quote!, transformSol: true })

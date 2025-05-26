@@ -393,7 +393,6 @@ export default function PoolListItem({
                 onClick={onFavoriteClick}
                 style={{ position: 'absolute', top: '25px', right: '20px', cursor: 'pointer' }}
               />
-              <Image src="/images/liquidity-pool-card-title-bg.svg" position="absolute" pointerEvents="none" left={0} top={0} alt="" />
               <VStack w="full" spacing={4}>
                 {/* Header part */}
                 <VStack w="full" spacing={2}>

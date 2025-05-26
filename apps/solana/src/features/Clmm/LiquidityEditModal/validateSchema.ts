@@ -9,19 +9,19 @@ export const liquidityValidateSchema = (t: TranslateFunction) =>
     balanceB: yup
       .number()
       .transform((value) => (Number.isNaN(value) ? 0 : value))
-      .test('is-balanceB-enough', t('error.balance_not_enough') ?? '', function (val) {
+      .test('is-balanceB-enough', t('balance not enough') ?? '', function (val) {
         return new Decimal(val || 0).gte(this.parent.tokenAmount[1])
       }),
     balanceA: yup
       .number()
       .transform((value) => (Number.isNaN(value) ? 0 : value))
-      .test('is-balanceA-enough', t('error.balance_not_enough') ?? '', function (val) {
+      .test('is-balanceA-enough', t('balance not enough') ?? '', function (val) {
         return new Decimal(val || 0).gte(this.parent.tokenAmount[0])
       }),
     tokenAmount: yup
       .array()
       .of(numberTransform)
-      .test('is-tokenAmount-valid', t('error.enter_token_amount') ?? '', (value: any) => {
+      .test('is-tokenAmount-valid', t('Enter token amount') ?? '', (value: any) => {
         if ((value as number[]).some((val) => val > 0)) return true
         return false
       })
@@ -44,7 +44,7 @@ export const removeValidateSchema = (t: TranslateFunction) =>
     tokenAmount: yup
       .array()
       .of(numberTransform)
-      .test('is-tokenAmount-valid', t('error.enter_token_amount') ?? '', (value: any) => {
+      .test('is-tokenAmount-valid', t('Enter token amount') ?? '', (value: any) => {
         if ((value as number[]).some((val) => val > 0)) return true
         return false
       })

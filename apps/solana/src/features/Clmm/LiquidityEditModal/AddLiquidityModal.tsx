@@ -1,20 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from '@pancakeswap/localization'
-import {
-  Box,
-  Badge,
-  Collapse,
-  Flex,
-  Text,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalOverlay,
-  HStack
-} from '@chakra-ui/react'
+import { FlexGap, ModalV2, MotionModal, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Box, Badge, Collapse, Flex, Text, HStack } from '@chakra-ui/react'
 import { solToWSol } from '@raydium-io/raydium-sdk-v2'
 import { shallow } from 'zustand/shallow'
 
@@ -61,6 +48,7 @@ export default function AddLiquidityModal({
   position: ClmmPosition
 }) {
   const { t } = useTranslation()
+  const { isMobile } = useMatchBreakpoints()
   const featureDisabled = useAppStore((s) => s.featureDisabled.addConcentratedPosition)
   const getTokenBalanceUiAmount = useTokenAccountStore((s) => s.getTokenBalanceUiAmount)
   const { getPriceAndAmount } = useClmmBalance({})
@@ -188,18 +176,23 @@ export default function AddLiquidityModal({
   }, [sending, onSyncSending])
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseModal} size="lg">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader fontSize="xl" display="flex" gap={[1, 2]} alignItems="center">
-          <Text>{t('Add Liquidity to')}</Text>
-          <TokenAvatarPair size={['smi', 'md']} token1={poolInfo.mintA} token2={poolInfo.mintB} />
-          <Desktop>
-            <Text>{poolInfo.poolName}</Text>
-          </Desktop>
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
+    <ModalV2 isOpen={isOpen} onDismiss={handleCloseModal}>
+      <MotionModal
+        title={
+          <FlexGap alignItems="center" gap="10px">
+            <Text>{t('Add Liquidity to')}</Text>
+            <TokenAvatarPair size={['smi', 'md']} token1={poolInfo.mintA} token2={poolInfo.mintB} />
+            <Desktop>
+              <Text>{poolInfo.poolName}</Text>
+            </Desktop>
+          </FlexGap>
+        }
+        minWidth={[null, null, null, '512px']}
+        maxWidth={['100%', '100%', '100%', '512px']}
+        minHeight={isMobile ? '500px' : undefined}
+        headerPadding="2px 14px 0 24px"
+      >
+        <div style={{ flex: 1 }}>
           <Text variant="subTitle" color={colors.textPrimary}>
             {t('Current position')}
           </Text>
@@ -226,7 +219,7 @@ export default function AddLiquidityModal({
             </Text>
             <Flex gap="4" mt="2" justify="space-between">
               <Box>
-                <Text color={colors.textSubtle} fontSize="sm">
+                <Text color={colors.textPrimary} fontSize="sm">
                   {t('Liquidity')}
                 </Text>
                 <Text fontSize={['md', 'xl']} fontWeight="600">
@@ -235,7 +228,7 @@ export default function AddLiquidityModal({
               </Box>
 
               <Box>
-                <Text color={colors.textSubtle} fontSize="sm">
+                <Text color={colors.textPrimary} fontSize="sm">
                   {t('Current Price')}
                 </Text>
                 <Text fontSize={['md', 'xl']} fontWeight="600">
@@ -244,7 +237,7 @@ export default function AddLiquidityModal({
               </Box>
 
               <Box>
-                <Text color={colors.textSubtle} fontSize="sm">
+                <Text color={colors.textPrimary} fontSize="sm">
                   {t('Deposit Ratio')}
                 </Text>
                 <HStack fontSize={['md', 'xl']} fontWeight="600">
@@ -256,16 +249,17 @@ export default function AddLiquidityModal({
                     <Text>{toPercentString(ratioB)}</Text>
                   </Desktop>
                   <Mobile>
-                    <Box>
-                      <HStack>
+                    <HStack flexWrap="nowrap" gap="1">
+                      <HStack gap="1">
                         <TokenAvatar token={poolInfo.mintA} size="sm" />
                         <Text>{toPercentString(ratioA)}</Text>
                       </HStack>
-                      <HStack>
+                      <Text>/</Text>
+                      <HStack gap="1">
                         <TokenAvatar token={poolInfo.mintB} size="sm" />
                         <Text>{toPercentString(ratioB)}</Text>
                       </HStack>
-                    </Box>
+                    </HStack>
                   </Mobile>
                 </HStack>
               </Box>
@@ -317,8 +311,8 @@ export default function AddLiquidityModal({
               <Text color={colors.textPrimary}>{formatCurrency(totalDeposited, { symbol: '$', decimalPlaces: 2 })}</Text>
             </Box>
           </Box>
-        </ModalBody>
-        <ModalFooter mt="8" flexDirection="column" gap="2">
+        </div>
+        <FlexGap mt="15px" flexDirection="column" gap="2">
           <Button
             w="full"
             isLoading={sending}
@@ -349,8 +343,8 @@ export default function AddLiquidityModal({
           <Button w="full" variant="ghost" onClick={handleCloseModal}>
             {t('Cancel')}
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </FlexGap>
+      </MotionModal>
+    </ModalV2>
   )
 }

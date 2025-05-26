@@ -7,9 +7,9 @@ const numberSchema = (errMsg: string) => numberTransform.moreThan(0, errMsg).req
 export default function useMarketSchema() {
   const { t } = useTranslation()
   return yup.object().shape({
-    baseToken: yup.mixed().required(t('error.select_base_token') ?? ''),
-    quoteToken: yup.mixed().required(t('error.select_quote_token') ?? ''),
-    orderSize: numberSchema(t('error.enter_order_size') ?? ''),
-    priceTick: numberSchema(t('error.enter_price_tick') ?? '')
+    baseToken: yup.mixed().required(t('Select base token') ?? ''),
+    quoteToken: yup.mixed().required(t('Select quote token') ?? ''),
+    orderSize: numberSchema(t('Enter order size') ?? ''),
+    priceTick: numberSchema(t('Enter price tick') ?? '')
   })
 }

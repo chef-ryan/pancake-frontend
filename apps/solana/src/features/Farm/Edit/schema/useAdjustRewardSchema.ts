@@ -15,10 +15,10 @@ interface Props {
 }
 
 export const ADJUST_REWARD_ERROR = {
-  BALANCE_INSUFFICIENT: 'error.insufficient_sub_balance',
-  DECREASE: 'error.decrease_reward',
-  DECREASE_72h: 'error.decrease_reward_72h',
-  DAYS_EXTEND: 'error.add_reward_days'
+  BALANCE_INSUFFICIENT: 'Insufficient sub balance',
+  DECREASE: 'Decrease reward',
+  DECREASE_72h: 'Decrease reward within 72 hours',
+  DAYS_EXTEND: 'Add reward days'
 }
 
 const numberTransform = yup.number().transform((value) => (Number.isNaN(value) ? 0 : value))
@@ -27,8 +27,8 @@ const schema = (t: TranslateFunction) =>
     amount: yup
       .number()
       .transform((value) => (Number.isNaN(value) ? 0 : value))
-      .positive(t('error.enter_token_amount') ?? '')
-      .test('is-amount-valid', t('is_amount_valid') ?? '', function () {
+      .positive(t('Enter token amount') ?? '')
+      .test('is-amount-valid', t('Invalid amount') ?? '', function () {
         // if (new Decimal(val || 0).gt(this.parent.balance))
         //   return this.createError({
         //     message: ADJUST_REWARD_ERROR.BALANCE_INSUFFICIENT
