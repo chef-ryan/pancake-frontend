@@ -1,5 +1,5 @@
 import { Flex } from '@chakra-ui/react'
-import { Box, Button, Input, Message, Text } from '@pancakeswap/uikit'
+import { Box, Button, ButtonMenu, ButtonMenuItem, Input, Message, Text } from '@pancakeswap/uikit'
 import Decimal from 'decimal.js'
 import { KeyboardEvent, useCallback, useState } from 'react'
 import { useTranslation } from '@pancakeswap/localization'
@@ -70,6 +70,8 @@ export function SlippageToleranceSettingField({ variant = 'swap' }: { variant?: 
   const handleFocus = useEvent(() => {
     setIsFirstFocused(true)
   })
+  const slippageList = isSwap ? [0.1, 0.5, 1] : [1, 2.5, 3.5]
+  const currentSlippageValue = new Decimal(slippage || 0).div(100)
 
   return (
     <SettingField
@@ -88,21 +90,21 @@ export function SlippageToleranceSettingField({ variant = 'swap' }: { variant?: 
       renderWidgetContent={
         <>
           <Flex rowGap={2} flexWrap={['wrap', 'unset']} justifyContent="space-between">
-            <Flex gap="2" alignItems="center">
-              {(isSwap ? [0.1, 0.5, 1] : [1, 2.5, 3.5]).map((v) => (
-                <Button
-                  key={v}
-                  scale="sm"
-                  variant={new Decimal(slippage).mul(100).eq(v) ? 'primary' : 'tertiary'}
-                  onClick={() => {
-                    handleChange(String(v))
-                    handleUpdateSlippage(v)
-                  }}
-                >
-                  {formatToRawLocaleStr(toPercentString(v))}
-                </Button>
+            <ButtonMenu
+              paddingX="2px"
+              style={{ borderRadius: '30px' }}
+              activeIndex={slippageList.findIndex((v) => new Decimal(slippage).mul(100).eq(v))}
+              onItemClick={(index) => {
+                const value = slippageList[index]
+                handleChange(String(value))
+                handleUpdateSlippage(value)
+              }}
+              scale="sm"
+            >
+              {slippageList.map((v) => (
+                <ButtonMenuItem key={v}>{formatToRawLocaleStr(toPercentString(v))}</ButtonMenuItem>
               ))}
-            </Flex>
+            </ButtonMenu>
             <Flex alignItems="center" rounded="full">
               <Text fontSize={14} mr="10px">
                 {t('Custom')}
