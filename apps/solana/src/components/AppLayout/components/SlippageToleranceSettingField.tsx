@@ -71,7 +71,6 @@ export function SlippageToleranceSettingField({ variant = 'swap' }: { variant?: 
     setIsFirstFocused(true)
   })
   const slippageList = isSwap ? [0.1, 0.5, 1] : [1, 2.5, 3.5]
-  const currentSlippageValue = new Decimal(slippage || 0).div(100)
 
   return (
     <SettingField
