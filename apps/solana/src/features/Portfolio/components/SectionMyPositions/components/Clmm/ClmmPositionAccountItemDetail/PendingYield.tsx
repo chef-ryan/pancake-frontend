@@ -34,12 +34,16 @@ export default function PendingYield({ isLoading, hasReward, pendingYield, rewar
           isLoading={isLoading}
           isDisabled={!hasReward}
           onClick={onHarvest}
-          size="sm"
+          width={['69px']}
+          height="9"
+          borderRadius="xl"
+          size="xs"
+          px={1}
           fontSize="md"
           variant="outline"
           style={{
-            borderColor: colors.primary,
-            color: colors.primary
+            borderColor: colors.primary60,
+            color: colors.primary60
           }}
         >
           {t('Harvest')}

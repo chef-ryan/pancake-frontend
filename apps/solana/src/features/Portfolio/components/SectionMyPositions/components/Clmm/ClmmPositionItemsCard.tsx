@@ -93,10 +93,10 @@ export function ClmmPositionItemsCard({
         "items items items  " auto / 3fr 3fr 1fr
       `
       ]}
-      py={[4, 5]}
-      px={[3, 8]}
+      py={[4, 3]}
+      px={[3, 6]}
       gap={[2, 4]}
-      borderRadius="xl"
+      borderRadius="3xl"
       alignItems="center"
     >
       <GridItem area="face" justifySelf={['stretch', 'left']}>
@@ -119,8 +119,8 @@ export function ClmmPositionItemsCard({
             }
           >
             <HStack>
-              <TokenAvatarPair size={['smi', 'md']} token1={poolInfo.mintA} token2={poolInfo.mintB} />
-              <Text fontSize={['md', '20px']} fontWeight="600">
+              <TokenAvatarPair size="smi" token1={poolInfo.mintA} token2={poolInfo.mintB} />
+              <Text fontSize="md" fontWeight="600">
                 {poolInfo.poolName.replace('-', ' / ')}
               </Text>
               <Tag size={['sm', 'md']} variant="rounded">

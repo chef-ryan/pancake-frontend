@@ -15,6 +15,7 @@ import { colors } from '@/theme/cssVariables'
 import { onWindowSizeChange } from '@/utils/dom/onWindowSizeChange'
 import { debounce } from '@/utils/functionMethods'
 import { formatCurrency } from '@/utils/numberish/formatter'
+import { panelCard } from '@/theme/cssBlocks'
 import EstimatedApr from './ClmmPositionAccountItemDetail/EstimatedApr'
 import PendingYield from './ClmmPositionAccountItemDetail/PendingYield'
 
@@ -99,25 +100,16 @@ export default function ClmmPositionAccountItemDetail({
     <Collapse in={isViewOpen} animateOpacity unmountOnExit>
       <Flex
         p={2}
-        bg={colors.modalContainerBg}
+        bg={colors.cardSecondary}
         border={`1px solid ${colors.cardBorder01}`}
         borderTop="none"
         borderRadius="xl"
         borderTopRadius="none"
         height="250px"
       >
-        <Flex
-          flexDirection={['column', 'row']}
-          w="full"
-          gap={[2, 4]}
-          bg={colors.backgroundAlt}
-          borderRadius="xl"
-          justify="center"
-          py={[3]}
-          px={[3]}
-        >
+        <Flex flexDirection={['column', 'row']} w="full" gap={[2, 4]} borderRadius="xl" justify="center">
           {/* chart */}
-          <Box flex={[1, 1, 1.5]} py={3}>
+          <Box {...panelCard} flex={[1, 1, 1.5]} py={2} px={4}>
             <LiquidityChartRangeInput
               key={chartTag}
               poolId={poolInfo.id}
@@ -132,16 +124,22 @@ export default function ClmmPositionAccountItemDetail({
               baseIn={baseIn}
               autoZoom
               chartHeight={120}
-              containerStyle={{
-                paddingLeft: '1.25rem'
-              }}
             />
             {/* info head */}
             <Flex fontSize="xs" justifyContent="center" mt={3}>
-              <VStack align="start" gap={1} flex={1} pl="1.25rem">
+              <VStack align="start" gap={1} flex={1}>
                 <HStack width="100%" justifyContent="space-between" color={colors.textSubtle}>
                   <HStack>
-                    <Divider borderColor={colors.backgroundApp} opacity="1" width="6px" borderBottomWidth="2px" />
+                    <Box
+                      style={{
+                        width: '7px',
+                        height: '7px',
+                        left: '0px',
+                        top: '6px',
+                        background: colors.success,
+                        borderRadius: '10px'
+                      }}
+                    />
                     <Text>{t('Current Price')}: </Text>
                   </HStack>
                   <Text fontWeight="medium">
@@ -163,13 +161,22 @@ export default function ClmmPositionAccountItemDetail({
 
                 <HStack width="100%" justifyContent="space-between" color={colors.textSubtle}>
                   <HStack>
-                    <Divider borderColor={colors.textPurple} opacity="1" width="6px" borderBottomWidth="2px" />
+                    <Box
+                      style={{
+                        width: '7px',
+                        height: '7px',
+                        left: '0px',
+                        top: '6px',
+                        background: colors.primary,
+                        borderRadius: '10px'
+                      }}
+                    />
                     <Text>{t('%time% Price Range', { time: '24h' })}: </Text>
                   </HStack>
                   <Text color={colors.textPrimary} fontWeight="medium">
                     {`[${formatCurrency(timePriceMin, {
                       decimalPlaces: poolInfo.poolDecimals
-                    })},${formatCurrency(timePriceMax, {
+                    })}, ${formatCurrency(timePriceMax, {
                       decimalPlaces: poolInfo.poolDecimals
                     })}]`}
                   </Text>
@@ -244,7 +251,7 @@ export default function ClmmPositionAccountItemDetail({
             </Flex>
           </VStack>
           <Divider borderWidth="1px" borderColor={colors.textSubtle} opacity="0.2" orientation="vertical" />
-          <Flex direction="column" flex={[1, 1, 1]} gap={[0, 0, 4]} py={[0, 0, 3]} w="full" overflow="hidden">
+          <Flex direction="column" flex={[1, 1, 1]} gap={[0, 0, 4]} py={[0, 0, 3]} pr={[0, 0, 3]} w="full" overflow="hidden">
             <EstimatedApr
               timeAprData={poolInfo.allApr}
               aprData={aprData}

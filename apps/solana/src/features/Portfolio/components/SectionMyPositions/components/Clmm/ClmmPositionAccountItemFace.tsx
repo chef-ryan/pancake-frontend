@@ -108,7 +108,7 @@ export default function ClmmPositionAccountItemFace({
     <>
       <Desktop>
         <Flex
-          bg={colors.inputBg}
+          bg={colors.input}
           borderRadius="xl"
           borderBottomRadius={isViewOpen ? 'none' : 'xl'}
           justifyContent="space-between"
@@ -121,7 +121,6 @@ export default function ClmmPositionAccountItemFace({
           borderBottomColor="transparent"
           _hover={{
             border: `1px solid ${colors.cardBorder01}`,
-            bg: colors.background01,
             borderBottomColor: isViewOpen ? 'transparent' : colors.cardBorder01
           }}
           direction={['column', 'row']}
@@ -187,9 +186,9 @@ export default function ClmmPositionAccountItemFace({
               )}
 
               {isViewOpen ? (
-                <ChevronUpIcon className="up" width={24} height={24} color={colors.textSecondary} />
+                <ChevronUpIcon className="up" width={24} height={24} color={colors.textSubtle} />
               ) : (
-                <ChevronDownIcon className="down" width={24} height={24} color={colors.textSecondary} />
+                <ChevronDownIcon className="down" width={24} height={24} color={colors.textSubtle} />
               )}
             </HStack>
           </Flex>
