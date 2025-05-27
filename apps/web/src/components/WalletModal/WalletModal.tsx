@@ -185,7 +185,7 @@ export const WalletContent = ({
   const { logout } = useAuth()
 
   // Fetch balances using the hook we created
-  const { balances, isLoading, totalBalanceUsd, getTopBalances } = useAddressBalance(account, {
+  const { balances, isLoading, totalBalanceUsd } = useAddressBalance(account, {
     includeSpam: false,
     onlyWithPrice: true,
   })
