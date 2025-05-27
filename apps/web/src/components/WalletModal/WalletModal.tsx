@@ -236,6 +236,7 @@ export const WalletContent = ({
                           asset.token.name,
                         )
                       }
+                      src={asset.token.logoURI}
                       size="40px"
                     />
                     <ChainIconWrapper>

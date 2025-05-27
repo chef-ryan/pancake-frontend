@@ -18,6 +18,7 @@ interface LogoProps {
   currency?: Currency
   size?: string
   style?: React.CSSProperties
+  src?: string
 }
 
 export function FiatLogo({ currency, size = '24px', style }: LogoProps) {
@@ -31,7 +32,7 @@ export function FiatLogo({ currency, size = '24px', style }: LogoProps) {
   )
 }
 
-export default function CurrencyLogo({ currency, size = '24px', style }: LogoProps) {
+export default function CurrencyLogo({ currency, size = '24px', style, src }: LogoProps) {
   const uriLocations = useHttpLocations(currency instanceof WrappedTokenInfo ? currency.logoURI : undefined)
 
   const srcs: string[] = useMemo(() => {
@@ -59,5 +60,7 @@ export default function CurrencyLogo({ currency, size = '24px', style }: LogoPro
     )
   }
 
-  return <StyledLogo size={size} srcs={srcs} alt={`${currency?.symbol ?? 'token'} logo`} style={style} />
+  return (
+    <StyledLogo size={size} srcs={[...srcs, src || '']} alt={`${currency?.symbol ?? 'token'} logo`} style={style} />
+  )
 }
