@@ -12,13 +12,13 @@ import { useAtomValue } from 'jotai'
 import { Suspense } from 'react'
 import styled from 'styled-components'
 import SimpleSwapForHomePage from 'views/SwapSimplify/SimpleSwapForHomePage'
+import { handleHomepageSnapDown } from 'views/HomeV2/util/handleHomepageSnapDown'
 import { homePageDataAtom } from './atom/homePageDataAtom'
 import { ScrollDownArrow } from './cards/component/ScrollDownArrow'
 import { FeaturesCard } from './cards/FeaturesCard'
 import { RowLayout } from './component/RowLayout'
 import { ScrollableFullScreen } from './component/ScrollableFullScreen'
 import { FavoriteDEXBanner } from './FavoriteDEXBanner'
-import { snapToNext } from './hook/useScrollToNearestSnap'
 import { PancakeBanner } from './PancakeBanner'
 import { SwapWithBestPriceCard } from './cards/SwapWithBestPriceCard'
 import { EarnTradingFeesCard } from './cards/EarnTradingFeesCard'
@@ -117,14 +117,7 @@ const HomeV2Inner = () => {
             mt="25px"
             mb="35px"
           >
-            <ScrollDownArrow
-              id="arrow-abc"
-              isMobile={isMobile}
-              isTablet={isTablet}
-              onClick={() => {
-                snapToNext('down', 'homepage-snap', window.innerHeight * 0.1)
-              }}
-            >
+            <ScrollDownArrow id="arrow-abc" isMobile={isMobile} isTablet={isTablet} onClick={handleHomepageSnapDown}>
               {/* <ChevronDownIcon width="32px" color="textSubtle" /> */}
               <ArrowDownIcon width="24px" color="textSubtle" />
             </ScrollDownArrow>
