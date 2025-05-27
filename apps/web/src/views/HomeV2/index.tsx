@@ -13,7 +13,7 @@ import { Suspense } from 'react'
 import styled from 'styled-components'
 import SimpleSwapForHomePage from 'views/SwapSimplify/SimpleSwapForHomePage'
 import { homePageDataAtom } from './atom/homePageDataAtom'
-import { BridgeCryptoCard, EarnTradingFeesCard, SwapWithBestPriceCard, VoteForEmissionCard } from './cards'
+import { BridgeCryptoCard, EarnTradingFeesCard, SwapWithBestPriceCard } from './cards'
 import { ScrollDownArrow } from './cards/component/ScrollDownArrow'
 import { FeaturesCard } from './cards/FeaturesCard'
 import { RowLayout } from './component/RowLayout'
@@ -76,8 +76,7 @@ export const HomeV2 = () => {
   )
 }
 const HomeV2Inner = () => {
-  const { tokens, chains, pools, currencies, cakeRelated } = useAtomValue(homePageDataAtom)
-  const cakeToken = tokens.find((x) => x.symbol === 'CAKE')!
+  const { tokens, chains, pools, currencies } = useAtomValue(homePageDataAtom)
 
   const { isMobile, isTablet } = useMatchBreakpoints()
   const Container = isTablet || isMobile ? MobileContainer : ScrollableFullScreen
@@ -151,7 +150,6 @@ const HomeV2Inner = () => {
         }}
       >
         <BridgeCryptoCard chains={chains} currencies={currencies} />
-        <VoteForEmissionCard cakeToken={cakeToken} figures={cakeRelated} />
       </RowLayout>
 
       <FeaturesCard />
