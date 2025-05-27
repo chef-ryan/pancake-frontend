@@ -291,7 +291,10 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
 
       // Refresh balances
       if (refreshBalances) {
-        refreshBalances()
+        // delay refresh balances
+        setTimeout(() => {
+          refreshBalances()
+        }, 15000)
       }
     }
   }, [confirmState, txHash, refreshBalances])
