@@ -191,7 +191,7 @@ export const WalletContent = ({
   })
 
   // Get top tokens by value
-  const topTokens = getTopBalances(10)
+  const topTokens = balances
   const handleLogout = () => {
     logout()
     onDismiss()
@@ -249,7 +249,16 @@ export const WalletContent = ({
                   </TokenIcon>
                   <Box>
                     <FlexGap alignItems="center">
-                      <Text bold fontSize="16px">
+                      <Text
+                        bold
+                        fontSize="16px"
+                        style={{
+                          maxWidth: '100px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
                         {asset.token.symbol}
                       </Text>
                       <Text
