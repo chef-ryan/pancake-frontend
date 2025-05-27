@@ -13,7 +13,6 @@ import { Suspense } from 'react'
 import styled from 'styled-components'
 import SimpleSwapForHomePage from 'views/SwapSimplify/SimpleSwapForHomePage'
 import { homePageDataAtom } from './atom/homePageDataAtom'
-import { BridgeCryptoCard, EarnTradingFeesCard, SwapWithBestPriceCard } from './cards'
 import { ScrollDownArrow } from './cards/component/ScrollDownArrow'
 import { FeaturesCard } from './cards/FeaturesCard'
 import { RowLayout } from './component/RowLayout'
@@ -21,6 +20,9 @@ import { ScrollableFullScreen } from './component/ScrollableFullScreen'
 import { FavoriteDEXBanner } from './FavoriteDEXBanner'
 import { snapToNext } from './hook/useScrollToNearestSnap'
 import { PancakeBanner } from './PancakeBanner'
+import { SwapWithBestPriceCard } from './cards/SwapWithBestPriceCard'
+import { EarnTradingFeesCard } from './cards/EarnTradingFeesCard'
+import { BridgeCryptoCard } from './cards/BridgeCryptoCard'
 
 const MobileContainer = styled(Box)`
   scroll-snap-align: start;
