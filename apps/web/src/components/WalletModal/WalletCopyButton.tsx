@@ -55,7 +55,7 @@ export const CopyAddress: React.FC<React.PropsWithChildren<CopyAddressProps>> = 
   }
 
   return (
-    <Box position="relative" {...props}>
+    <Box position="relative" {...props} onClick={(e) => e.stopPropagation()}>
       <Wrapper>
         <WalletIcon>
           <Image src="/images/wallets/metamask.png" width={40} height={40} alt="Wallet" />
