@@ -358,7 +358,15 @@ export const WalletContent = ({
               </Text>
             </OptionBox>
           </FlexGap>
-          <FlexGap justifyContent="center" alignItems="center" mt="24px">
+          <FlexGap
+            justifyContent="center"
+            alignItems="center"
+            mt="24px"
+            onClick={() => {
+              router.push('/bridge')
+            }}
+            style={{ cursor: 'pointer' }}
+          >
             <Text bold color="primary" fontSize="16px">
               {t('Bridge Crypto')}
             </Text>
