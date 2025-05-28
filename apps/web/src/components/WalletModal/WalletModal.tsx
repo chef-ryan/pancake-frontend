@@ -7,7 +7,6 @@ import {
   Button,
   ButtonMenu,
   FlexGap,
-  Heading,
   Modal,
   ModalHeader,
   ModalV2,
@@ -19,8 +18,9 @@ import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { ASSETS_CDN } from 'config'
 import { useAddressBalance } from 'hooks/useAddressBalance'
 import useAuth from 'hooks/useAuth'
+import useTheme from 'hooks/useTheme'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import { CopyAddress } from './WalletCopyButton'
@@ -42,17 +42,16 @@ const StyledModal = styled(Modal)`
   }
 `
 
-const TotalBalance = styled(Heading)`
+const TotalBalanceInteger = styled(Text)`
   font-size: 40px;
   font-weight: 600;
-  margin-bottom: 16px;
-  background: linear-gradient(90deg, #280d5f 0%, #8051d6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-  line-height: 1.1;
-  font-family: 'Kanit', sans-serif;
+  color: ${({ theme }) => theme.colors.text};
+`
+
+const TotalBalanceDecimal = styled(Text)`
+  font-size: 40px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.secondary};
 `
 
 const StyledButtonMenu = styled(ButtonMenu)`
@@ -156,6 +155,16 @@ const DisconnectButton = styled(Button)`
   }
 `
 
+const OptionBox = styled(Box)`
+  background: ${({ theme }) => theme.colors.input};
+  border-radius: 24px;
+  padding: 16px;
+  width: 45%;
+  border: 1px solid ${({ theme }) => theme.colors.inputSecondary};
+  text-align: center;
+  cursor: pointer;
+`
+
 const WalletModal: React.FC<WalletModalProps> = ({ account, onDismiss, isOpen, onReceiveClick }) => {
   // If no account is provided, show a message or redirect
   if (!account) {
@@ -184,12 +193,20 @@ export const WalletContent = ({
   const router = useRouter()
   const { isMobile } = useMatchBreakpoints()
   const { logout } = useAuth()
+  const { theme } = useTheme()
 
   // Fetch balances using the hook we created
   const { balances, isLoading, totalBalanceUsd } = useAddressBalance(account, {
     includeSpam: false,
     onlyWithPrice: true,
   })
+  const balanceDisplay = useMemo(() => {
+    const display = formatAmount(totalBalanceUsd)?.split('.')
+    return {
+      integer: display?.[0] || '',
+      decimal: display?.[1] || '',
+    }
+  }, [totalBalanceUsd])
 
   // Get top tokens by value
   const topTokens = balances
@@ -208,7 +225,10 @@ export const WalletContent = ({
         </FlexGap>
       </FlexGap>
       <Box padding={isMobile ? '0 8px 8px' : '0 16px 16px'}>
-        <TotalBalance>${formatAmount(totalBalanceUsd)}</TotalBalance>
+        <FlexGap alignItems="center" gap="3px">
+          <TotalBalanceInteger>${balanceDisplay.integer}</TotalBalanceInteger>
+          <TotalBalanceDecimal>.{balanceDisplay.decimal}</TotalBalanceDecimal>
+        </FlexGap>
         <Text fontSize="20px" textTransform="uppercase" fontWeight="bold" mb="8px">
           {t('My Wallet')}
         </Text>
@@ -305,12 +325,7 @@ export const WalletContent = ({
             {t("Looks like it's a new one, get it funded now:")}
           </Text>
           <FlexGap gap="16px" justifyContent="center" flexWrap="wrap">
-            <Box
-              background="linear-gradient(180deg, #EFF4F5 0%, #EAE2F5 100%)"
-              borderRadius="24px"
-              padding="16px"
-              width="45%"
-              style={{ textAlign: 'center', cursor: 'pointer' }}
+            <OptionBox
               onClick={() => {
                 router.push('/buy-crypto')
                 onDismiss()
@@ -325,13 +340,8 @@ export const WalletContent = ({
               <Text fontSize="14px" color="textSubtle">
                 {t('Purchase with credit card.')}
               </Text>
-            </Box>
-            <Box
-              background="linear-gradient(180deg, #EFF4F5 0%, #EAE2F5 100%)"
-              borderRadius="24px"
-              padding="16px"
-              width="45%"
-              style={{ textAlign: 'center', cursor: 'pointer' }}
+            </OptionBox>
+            <OptionBox
               onClick={() => {
                 onReceiveClick()
                 onDismiss()
@@ -346,7 +356,7 @@ export const WalletContent = ({
               <Text fontSize="14px" color="textSubtle">
                 {t('Transfer crypto from other wallet.')}
               </Text>
-            </Box>
+            </OptionBox>
           </FlexGap>
           <FlexGap justifyContent="center" alignItems="center" mt="24px">
             <Text bold color="primary" fontSize="16px">
