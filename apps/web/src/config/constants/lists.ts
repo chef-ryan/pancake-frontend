@@ -2,7 +2,8 @@ import { ChainId } from '@pancakeswap/chains'
 
 export const PANCAKE_EXTENDED = 'https://tokens.pancakeswap.finance/pancakeswap-extended.json'
 
-const COINGECKO = 'https://tokens.pancakeswap.finance/coingecko.json'
+const COINGECKO_BSC = 'https://tokens.coingecko.com/binance-smart-chain/all.json'
+const COINGECKO_ARB = 'https://tokens.coingecko.com/arbitrum-one/all.json'
 export const PANCAKE_ETH_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-eth-default.json'
 export const PANCAKE_ZKSYNC_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-zksync-default.json'
 export const PANCAKE_POLYGON_ZKEVM_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-polygon-zkevm-default.json'
@@ -20,16 +21,12 @@ const COINGECKO_ETH = 'https://tokens.coingecko.com/uniswap/all.json'
 // export const CMC = 'https://tokens.pancakeswap.finance/cmc.json' // not updated for a while
 
 const ETH_URLS = [PANCAKE_ETH_DEFAULT, PANCAKE_ETH_MM, COINGECKO_ETH]
-const BSC_URLS = [PANCAKE_EXTENDED, COINGECKO, PANCAKE_BSC_MM]
+const BSC_URLS = [PANCAKE_EXTENDED, COINGECKO_BSC, PANCAKE_BSC_MM]
 const POLYGON_ZKEVM_URLS = [
   PANCAKE_POLYGON_ZKEVM_DEFAULT,
   // 'https://tokens.coingecko.com/polygon-zkevm/all.json'
 ]
-const ARBITRUM_URLS = [
-  PANCAKE_ARB_DEFAULT,
-  PANCAKE_ARB_MM,
-  // 'https://tokens.coingecko.com/arbitrum-one/all.json'
-]
+const ARBITRUM_URLS = [PANCAKE_ARB_DEFAULT, PANCAKE_ARB_MM, COINGECKO_ARB]
 const LINEA_URLS = [PANCAKE_LINEA_DEFAULT, 'https://tokens.coingecko.com/linea/all.json']
 const ZKSYNC_URLS = [
   PANCAKE_ZKSYNC_DEFAULT,
@@ -78,7 +75,7 @@ export const DEFAULT_ACTIVE_LIST_URLS: string[] = [
   PANCAKE_BASE_DEFAULT,
   PANCAKE_OPBNB_DEFAULT,
   OP_SUPER_CHAIN_URL,
-  COINGECKO,
+  COINGECKO_BSC,
   COINGECKO_ETH,
   PANCAKE_MONAD_TESTNET_DEFAULT,
 ]
