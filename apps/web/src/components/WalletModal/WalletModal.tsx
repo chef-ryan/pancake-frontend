@@ -322,7 +322,7 @@ export const WalletContent = ({
       {topTokens.length === 0 && !isLoading ? (
         <Box padding="24px 16px">
           <Text color="textSubtle" textAlign="center" mb="16px">
-            {t("Looks like it's a new one, get it funded now:")}
+            {t('This wallet looks new — choose an option below to add crypto and start trading')}
           </Text>
           <FlexGap gap="16px" justifyContent="center" flexWrap="wrap">
             <OptionBox
@@ -338,7 +338,7 @@ export const WalletContent = ({
                 {t('Buy')}
               </Text>
               <Text fontSize="14px" color="textSubtle">
-                {t('Purchase with credit card.')}
+                {t('Purchase with credit card, Apple Pay, or Google Pay.')}
               </Text>
             </OptionBox>
             <OptionBox
@@ -354,7 +354,7 @@ export const WalletContent = ({
                 {t('Receive')}
               </Text>
               <Text fontSize="14px" color="textSubtle">
-                {t('Transfer crypto from other wallet.')}
+                {t('Receive crypto from another wallet.')}
               </Text>
             </OptionBox>
           </FlexGap>
