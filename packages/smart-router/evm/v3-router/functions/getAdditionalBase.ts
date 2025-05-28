@@ -30,7 +30,6 @@ const fetchConfig = memoize(async () => {
         table[chainId][src] = to
       }
     })
-    console.log(`[routing]`, table)
     return table
   } catch (ex) {
     return ADDITIONAL_BASES
