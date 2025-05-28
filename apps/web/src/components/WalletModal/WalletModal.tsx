@@ -220,7 +220,7 @@ export const WalletContent = ({
         <CopyAddress tooltipMessage={t('Copied')} account={account || ''} />
         <FlexGap>
           <Button scale="sm" variant="tertiary" onClick={handleLogout}>
-            {t('Logout')}
+            {t('Disconnect')}
           </Button>
         </FlexGap>
       </FlexGap>
@@ -335,7 +335,7 @@ export const WalletContent = ({
                 <img src={`${ASSETS_CDN}/web/landing/trade-buy-crypto.png`} width="60px" alt="Buy Crypto" />
               </Box>
               <Text bold color="secondary" fontSize="16px" mb="8px">
-                {t('Buy Crypto')}
+                {t('Buy')}
               </Text>
               <Text fontSize="14px" color="textSubtle">
                 {t('Purchase with credit card.')}
@@ -351,7 +351,7 @@ export const WalletContent = ({
                 <img src={`${ASSETS_CDN}/web/landing/earn-fixed-staking.png`} width="60px" alt="Receive Crypto" />
               </Box>
               <Text bold color="secondary" fontSize="16px" mb="8px">
-                {t('Receive Crypto')}
+                {t('Receive')}
               </Text>
               <Text fontSize="14px" color="textSubtle">
                 {t('Transfer crypto from other wallet.')}
@@ -374,7 +374,7 @@ export const WalletContent = ({
                 onDismiss()
               }}
             >
-              {t('Buy Crypto')}
+              {t('Buy')}
             </ActionButton>
             <ActionButton
               onClick={(e) => {
