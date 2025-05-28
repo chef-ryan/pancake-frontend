@@ -1,27 +1,15 @@
 import { Protocol } from '@pancakeswap/farms'
-import { Flex } from '@pancakeswap/uikit'
-import {
-  INetworkProps,
-  IPoolTypeFilterProps,
-  IProtocolMenuProps,
-  ITokenProps,
-  NetworkFilter,
-  PoolTypeFilter,
-  ProtocolMenu,
-  TokenFilter as TokenFilterWidget,
-} from '@pancakeswap/widgets-internal'
+import { Flex, Input, InputGroup, SearchIcon } from '@pancakeswap/uikit'
+import { INetworkProps, IProtocolMenuProps, NetworkFilter, ProtocolMenu } from '@pancakeswap/widgets-internal'
 import { useActiveChainId } from 'hooks/useActiveChainId'
+import debounce from 'lodash/debounce'
 import isEmpty from 'lodash/isEmpty'
 import isUndefined from 'lodash/isUndefined'
-import React, { useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { UpdaterByChainId } from 'state/lists/updater'
 import styled from 'styled-components'
-import { getCurrencySymbol } from 'utils/getTokenAlias'
-import { usePoolTypeQuery } from 'views/AddLiquiditySelector/hooks/usePoolTypeQuery'
-import { usePoolProtocols, usePoolTypes } from '../constants'
+import { usePoolProtocols } from '../constants'
 import { MAINNET_CHAINS, useAllChainsOpts } from '../hooks/useMultiChains'
-import { useMultiChainsTokens } from '../hooks/useMultiChainsTokens'
-import { getChainFullName } from '../utils'
 
 const PoolsFilterContainer = styled(Flex)<{ $childrenCount: number }>`
   flex-wrap: wrap;
@@ -70,55 +58,29 @@ export const useSelectedProtocols = (selectedIndex: number): Protocol[] => {
   }, [selectedIndex, allProtocols])
 }
 
-export const TokenFilter = ({
-  selectedNetwork,
-  selectedTokens,
-  ...others
-}: {
-  selectedNetwork: INetworkProps['value']
-  selectedTokens: ITokenProps['value']
-} & Omit<ITokenProps, 'data' | 'value' | 'getChainName'>) => {
-  const allTokens = useMultiChainsTokens()
-  const filteredTokens = useMemo(
-    () => allTokens.filter((token) => selectedNetwork.includes(token.chainId)),
-    [selectedNetwork, allTokens],
-  )
-
-  return <TokenFilterWidget data={filteredTokens} value={selectedTokens} getChainName={getChainFullName} {...others} />
-}
-
 export interface IPoolsFilterPanelProps {
   value: {
     selectedProtocolIndex?: IProtocolMenuProps['activeIndex']
     selectedNetwork?: INetworkProps['value']
-    selectedTokens?: ITokenProps['value']
+    search?: string
   }
   onChange: (value: Partial<IPoolsFilterPanelProps['value']>) => void
-  showTokenFilter?: boolean
   showNetworkFilter?: boolean
-  showPoolFilter?: boolean
   showProtocolMenu?: boolean
 }
 export const PoolsFilterPanel: React.FC<React.PropsWithChildren<IPoolsFilterPanelProps>> = ({
   value,
   children,
   onChange,
-  showTokenFilter = true,
   showNetworkFilter = true,
-  showPoolFilter = true,
   showProtocolMenu = true,
 }) => {
   const { chainId: activeChainId } = useActiveChainId()
-  const { selectedTokens, selectedNetwork, selectedProtocolIndex: selectedType } = value
+  const { search, selectedNetwork, selectedProtocolIndex: selectedType } = value
   const allChainsOpts = useAllChainsOpts()
-  const { poolType, setPoolType } = usePoolTypeQuery()
 
   const handleProtocolIndexChange: IProtocolMenuProps['onChange'] = (index) => {
     onChange({ selectedProtocolIndex: index })
-  }
-
-  const handlePoolFeatureChange: IPoolTypeFilterProps['onChange'] = (e) => {
-    setPoolType(e.value)
   }
 
   const handleNetworkChange: INetworkProps['onChange'] = (network, e) => {
@@ -130,14 +92,22 @@ export const PoolsFilterPanel: React.FC<React.PropsWithChildren<IPoolsFilterPane
     }
   }
 
-  const handleTokensChange: ITokenProps['onChange'] = (e) => {
-    onChange({ selectedTokens: e.value })
-  }
+  const [searchText, setSearchText] = useState(value.search ?? '')
+  const debouncedOnChange = useMemo(() => debounce((val: string) => onChange({ search: val }), 500), [onChange])
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchText(e.target.value)
+      debouncedOnChange(e.target.value)
+    },
+    [debouncedOnChange],
+  )
+
+  useEffect(() => {
+    setSearchText(value.search ?? '')
+  }, [value.search])
 
   const protocols = usePoolProtocols()
-  const poolTypeData = usePoolTypes()
-
-  const childrenCount = useMemo(() => 3 + React.Children.count(children), [children])
+  const childrenCount = useMemo(() => 2 + React.Children.count(children), [children])
 
   return (
     <>
@@ -148,15 +118,9 @@ export const PoolsFilterPanel: React.FC<React.PropsWithChildren<IPoolsFilterPane
         {showNetworkFilter && !isUndefined(selectedNetwork) && (
           <NetworkFilter data={allChainsOpts} value={selectedNetwork} onChange={handleNetworkChange} />
         )}
-        {showTokenFilter && !isUndefined(selectedNetwork) && (
-          <TokenFilter
-            getCurrencySymbol={getCurrencySymbol}
-            selectedNetwork={selectedNetwork}
-            selectedTokens={selectedTokens}
-            onChange={handleTokensChange}
-          />
-        )}
-        {showPoolFilter && <PoolTypeFilter data={poolTypeData} value={poolType} onChange={handlePoolFeatureChange} />}
+        <InputGroup startIcon={<SearchIcon color="textSubtle" />}>
+          <Input placeholder="Search" value={searchText} onChange={handleSearchChange} />
+        </InputGroup>
         {showProtocolMenu && !isUndefined(selectedType) && (
           <Flex alignSelf="flex-start">
             <ProtocolMenu data={protocols} activeIndex={selectedType} onChange={handleProtocolIndexChange} />

@@ -1,15 +1,16 @@
 import { useIntersectionObserver, useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { Button, InfoIcon, SORT_ORDER, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
-import { toTokenValueByCurrency } from '@pancakeswap/widgets-internal'
+import latinise from '@pancakeswap/utils/latinise'
+import { getCurrencyAddress, toTokenValueByCurrency } from '@pancakeswap/widgets-internal'
 import { useAllTokensByChainIds } from 'hooks/Tokens'
 import flatMap from 'lodash/flatMap'
 import groupBy from 'lodash/groupBy'
 import intersection from 'lodash/intersection'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { FetchPoolsProps, PoolSortBy, useExtendPoolsAtom } from 'state/farmsV4/atom'
-import { useExtendPools, useFarmPools, useFetchPools, usePoolsApr } from 'state/farmsV4/hooks'
+import { FetchPoolsProps, PoolSortBy } from 'state/farmsV4/atom'
+import { fetchFarmData, useFetchPools, usePoolsApr } from 'state/farmsV4/hooks'
 import { getCombinedApr } from 'state/farmsV4/state/poolApr/utils'
 import type { InfinityPoolInfo, PoolInfo } from 'state/farmsV4/state/type'
 import styled from 'styled-components'
@@ -17,6 +18,9 @@ import { getHookByAddress } from 'utils/getHookByAddress'
 import { isInfinityProtocol } from 'utils/protocols'
 import { usePoolFeatureAndType } from 'views/AddLiquiditySelector/hooks/usePoolTypeQuery'
 
+import { atom } from 'jotai'
+import { atomFamily } from 'jotai/utils'
+import { userShowTestnetAtom } from 'state/user/hooks/useUserShowTestnet'
 import {
   Card,
   CardBody,
@@ -41,6 +45,14 @@ const PoolsContent = styled.div`
 
 const NUMBER_OF_FARMS_VISIBLE = 20
 
+const poolsWithFilterAtom = atomFamily(() => {
+  return atom(async (get) => {
+    const showTestnet = get(userShowTestnetAtom)
+    const farmPools = fetchFarmData(showTestnet)
+    return farmPools
+  })
+})
+
 export const PoolsPage = () => {
   const nextRouter = useRouter()
   const { t } = useTranslation()
@@ -52,13 +64,15 @@ export const PoolsPage = () => {
   const { selectedProtocolIndex, selectedNetwork, selectedTokens, sortOrder, sortField, replaceURLQueriesByFilter } =
     useFilterToQueries()
 
+  const [search, setSearch] = useState('')
   const poolsFilter = useMemo(
     () => ({
       selectedProtocolIndex,
       selectedNetwork,
       selectedTokens,
+      search,
     }),
-    [selectedProtocolIndex, selectedNetwork, selectedTokens],
+    [selectedProtocolIndex, selectedNetwork, selectedTokens, search],
   )
 
   const selectedProtocols = useSelectedProtocols(selectedProtocolIndex)
@@ -126,12 +140,16 @@ export const PoolsPage = () => {
   const handleFilterChange: IPoolsFilterPanelProps['onChange'] = useCallback(
     (newFilters) => {
       resetExtendPools()
-      replaceURLQueriesByFilter({
-        ...poolsFilter,
-        sortOrder,
-        sortField,
-        ...newFilters,
-      })
+      if (Object.prototype.hasOwnProperty.call(newFilters, 'search')) {
+        setSearch(newFilters.search ?? '')
+      } else {
+        replaceURLQueriesByFilter({
+          ...poolsFilter,
+          sortOrder,
+          sortField,
+          ...newFilters,
+        })
+      }
     },
     [resetExtendPools, replaceURLQueriesByFilter, poolsFilter, sortOrder, sortField],
   )
@@ -199,30 +217,61 @@ export const PoolsPage = () => {
     isSelectAllFeatures,
   ])
 
+  const searchFilteredData = useMemo(() => {
+    if (!search) return filteredData
+    const q = latinise(search.toLowerCase())
+    return filteredData.filter((farm) => {
+      const tokenMatch = [farm.token0, farm.token1].some((t) => {
+        const symbol = 'symbol' in t ? (t as any).symbol : t.wrapped.symbol
+        const addr = getCurrencyAddress(t)
+        return (
+          (typeof symbol === 'string' && latinise(symbol.toLowerCase()).startsWith(q)) ||
+          addr?.toLowerCase().startsWith(q)
+        )
+      })
+
+      const protocolTag =
+        farm.protocol === Protocol.InfinityCLAMM ? 'clamm' : farm.protocol === Protocol.InfinityBIN ? 'lbamm' : ''
+      const protocolMatch = protocolTag.startsWith(q)
+
+      const featuresMatch = isInfinityProtocol(farm.protocol)
+        ? getHookByAddress(farm.chainId, (farm as InfinityPoolInfo).hookAddress)?.category?.some((c) =>
+            c.toLowerCase().startsWith(q),
+          )
+        : false
+
+      const poolId = (farm as InfinityPoolInfo).poolId
+      const poolAddressMatch =
+        farm.lpAddress.toLowerCase().startsWith(q) || (poolId ? poolId.toLowerCase().startsWith(q) : false)
+
+      return tokenMatch || protocolMatch || featuresMatch || poolAddressMatch
+    })
+  }, [filteredData, search])
+
   useEffect(() => {
     if (isIntersecting) {
       setCursorVisible((numberCurrentlyVisible) => {
-        if (hasNextPage && filteredData.length < numberCurrentlyVisible) {
-          return filteredData.length
+        if (hasNextPage && searchFilteredData.length < numberCurrentlyVisible) {
+          return searchFilteredData.length
         }
-        if (numberCurrentlyVisible <= filteredData.length) {
-          return Math.min(numberCurrentlyVisible + NUMBER_OF_FARMS_VISIBLE, filteredData.length)
+        if (numberCurrentlyVisible <= searchFilteredData.length) {
+          return Math.min(numberCurrentlyVisible + NUMBER_OF_FARMS_VISIBLE, searchFilteredData.length)
         }
         return numberCurrentlyVisible
       })
     }
-  }, [isIntersecting, filteredData, hasNextPage])
+  }, [isIntersecting, searchFilteredData, hasNextPage])
 
   useEffect(() => {
     if (isLoading) {
       return
     }
-    setNextPage((nextPage) => (cursorVisible >= filteredData.length ? nextPage + 1 : nextPage))
-  }, [cursorVisible, filteredData.length, isLoading])
+    setNextPage((nextPage) => (cursorVisible >= searchFilteredData.length ? nextPage + 1 : nextPage))
+  }, [cursorVisible, searchFilteredData.length, isLoading])
 
   const dataByChain = useMemo(() => {
-    return groupBy(filteredData, 'chainId')
-  }, [filteredData])
+    return groupBy(searchFilteredData, 'chainId')
+  }, [searchFilteredData])
 
   const { orderedChainIds, activeChainId, othersChains } = useOrderChainIds()
 
@@ -254,7 +303,7 @@ export const PoolsPage = () => {
     if (sortField === null || sortOrder === SORT_ORDER.NULL) {
       return defaultSortedData
     }
-    return [...filteredData].sort((a, b) => {
+    return [...searchFilteredData].sort((a, b) => {
       if (sortField === 'lpApr') {
         const aprOfA = getCombinedApr(poolsApr, a.chainId, a.lpAddress)
         const aprOfB = getCombinedApr(poolsApr, b.chainId, b.lpAddress)
@@ -262,7 +311,7 @@ export const PoolsPage = () => {
       }
       return sortOrder * Number(a[sortField]) + -1 * sortOrder * Number(b[sortField])
     })
-  }, [defaultSortedData, sortOrder, sortField, filteredData, poolsApr]) as IDataType[]
+  }, [defaultSortedData, sortOrder, sortField, searchFilteredData, poolsApr]) as IDataType[]
 
   const renderData = useMemo(() => sortedData.slice(0, cursorVisible), [cursorVisible, sortedData])
 
@@ -302,4 +351,24 @@ export const PoolsPage = () => {
       )}
     </Card>
   )
+}
+
+export const sortPools = (
+  pools: PoolInfo[],
+  sortField: string | null,
+  sortOrder: SORT_ORDER,
+  defaultSortedData: PoolInfo[],
+  poolsApr: Record<string, number>,
+) => {
+  if (sortField === null || sortOrder === SORT_ORDER.NULL) {
+    return defaultSortedData
+  }
+  return [...pools].sort((a, b) => {
+    if (sortField === 'lpApr') {
+      const aprOfA = getCombinedApr(poolsApr, a.chainId, a.lpAddress)
+      const aprOfB = getCombinedApr(poolsApr, b.chainId, b.lpAddress)
+      return sortOrder * aprOfA + -1 * sortOrder * aprOfB
+    }
+    return sortOrder * Number(a[sortField]) + -1 * sortOrder * Number(b[sortField])
+  })
 }
