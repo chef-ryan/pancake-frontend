@@ -2,7 +2,7 @@ import { Box, useDisclosure } from '@chakra-ui/react'
 import { Button, Flex, LogoutIcon, ModalV2, useModalV2, UserMenu, UserMenuDivider, UserMenuItem } from '@pancakeswap/uikit'
 import { Wallet, useWallet } from '@solana/wallet-adapter-react'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useTranslation } from '@pancakeswap/localization'
 import { WALLET_STORAGE_KEY } from '@/hooks/app/useInitConnection'
 import { useEvent } from '@/hooks/useEvent'
@@ -41,12 +41,10 @@ const UserMenuItems: React.FC<{
 }
 
 export default function SolWallet() {
-  const { wallets, select, disconnect, connected, connecting, wallet } = useWallet()
+  const { wallets, select, connected, connecting } = useWallet()
   const { t } = useTranslation()
   const publicKey = useAppStore((s) => s.publicKey)
-  const { isMobile } = useResponsive()
   const { setVisible, visible } = useWalletModal()
-  const { isOpen: isWalletDrawerShown, onOpen, onClose } = useDisclosure()
 
   const handleClose = useCallback(() => setVisible(false), [setVisible])
   const handleOpen = useCallback(() => setVisible(true), [setVisible])
@@ -63,10 +61,15 @@ export default function SolWallet() {
   const { isOpen: isTransactionModalOpen, setIsOpen: setTransactionModalOpen, onDismiss: dismissTransactionModal } = useModalV2()
   const { isOpen: isWalletModalOpen, setIsOpen: setWalletModalOpen, onDismiss: dismissWalletModal } = useModalV2()
 
+  const accountText = useMemo(() => {
+    const account = publicKey?.toBase58()
+    return account ? `${account.substring(0, 2)}...${account.substring(account.length - 2)}` : null
+  }, [publicKey])
+
   if (connected)
     return (
       <>
-        <UserMenu account={publicKey?.toBase58()} variant="default">
+        <UserMenu text={accountText} account={publicKey?.toBase58()} variant="default">
           {({ isOpen }) =>
             isOpen ? (
               <UserMenuItems

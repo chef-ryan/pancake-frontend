@@ -3,6 +3,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import SortUpDownArrow from '@/components/SortUpDownArrow'
 import { colors } from '@/theme/cssVariables'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
+import useResponsive from '@/hooks/useResponsive'
 
 import { poolListGrid } from '../cssBlocks'
 import { TimeBase, POOL_SORT_KEY } from '../util'
@@ -19,6 +20,7 @@ export function PoolListHeader({
   timeBase: TimeBase
 }) {
   const { t } = useTranslation()
+  const { isTablet } = useResponsive()
 
   return (
     <Flex
@@ -40,6 +42,7 @@ export function PoolListHeader({
       <Box pl={[0, 4 + 6]}>{t('Pool')}</Box>
       <Desktop>
         <Flex
+          display={isTablet ? 'none' : 'flex'}
           justifyContent="end"
           alignItems="center"
           gap="1"
@@ -55,7 +58,14 @@ export function PoolListHeader({
           {t(`Volume %timeBase%`, { timeBase })}
           {sortKey === POOL_SORT_KEY.volume ? <SortUpDownArrow width="12px" height="12px" isDown={Boolean(order)} /> : null}
         </Flex>
-        <Flex justifyContent="end" alignItems="center" gap="1" cursor="pointer" onClick={() => handleClickSort('fee')}>
+        <Flex
+          display={isTablet ? 'none' : 'flex'}
+          justifyContent="end"
+          alignItems="center"
+          gap="1"
+          cursor="pointer"
+          onClick={() => handleClickSort('fee')}
+        >
           {t(`Fees %timeBase%`, { timeBase })}
           {sortKey === POOL_SORT_KEY.fee ? <SortUpDownArrow width="12px" height="12px" isDown={Boolean(order)} /> : null}
         </Flex>

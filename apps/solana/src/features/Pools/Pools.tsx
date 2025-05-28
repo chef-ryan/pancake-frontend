@@ -379,7 +379,7 @@ export default function Pools() {
     [openChart]
   )
   const renderPoolListItem = useCallback(
-    (info: FormattedPoolInfoItem, idx: number) => (
+    (info: FormattedPoolInfoItem) => (
       <PoolListItem
         styleType={currentLayoutStyle}
         timeBase={timeBase}

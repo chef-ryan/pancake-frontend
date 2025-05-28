@@ -7,6 +7,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { colors } from '@/theme/cssVariables'
 import { appLayoutPaddingX } from '@/theme/detailConfig'
 import { PAGE_URLS } from '@/utils/config/routers'
+import useResponsive from '@/hooks/useResponsive'
 
 import { Desktop, Mobile } from '../MobileDesktop'
 import { NetworkSwitcher } from '../NetworkSwitcher'
@@ -39,6 +40,7 @@ function AppNavLayout({
 }) {
   const { t } = useTranslation()
   const { pathname } = useRouter()
+  const { isMobile, isTablet } = useResponsive()
 
   return (
     <Flex direction="column" id="app-layout" height="full" overflow={overflowHidden ? 'hidden' : 'auto'}>
@@ -54,12 +56,7 @@ function AppNavLayout({
         bgColor={colors.cardBg}
       >
         {/* logo */}
-        <Desktop>
-          <LogoWithTextIcon width="160px" className="desktop-icon" />
-        </Desktop>
-        <Mobile>
-          <LogoIcon className="mobile-icon" />
-        </Mobile>
+        {isMobile || isTablet ? <LogoIcon className="mobile-icon" /> : <LogoWithTextIcon width="160px" className="desktop-icon" />}
 
         {/* nav routes */}
         <Desktop>

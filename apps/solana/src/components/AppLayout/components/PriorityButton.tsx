@@ -16,7 +16,7 @@ import { PriorityModalContent } from './PriorityModalContent'
 
 export function PriorityButton() {
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { isMobile } = useResponsive()
+  const { isMobile, isTablet } = useResponsive()
   const { connected } = useWallet()
   const transactionFee = useAppStore((s) => s.transactionFee)
   const feeConfig = useAppStore((s) => s.feeConfig)
@@ -60,7 +60,7 @@ export function PriorityButton() {
   return (
     <>
       <Flex align="center" onClick={() => onOpen()} ref={triggerRef}>
-        {isMobile ? (
+        {isMobile || isTablet ? (
           connected && (
             <Flex color={colors.textSubtle} cursor="pointer">
               <PriorityIcon />

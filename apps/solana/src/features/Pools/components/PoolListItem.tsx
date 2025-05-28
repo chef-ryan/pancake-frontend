@@ -1,4 +1,4 @@
-import { Box, Center, Flex, Grid, GridItem, Highlight, HStack, Image, Tag, Text, useDisclosure, VStack } from '@chakra-ui/react'
+import { Box, Center, Flex, Grid, GridItem, Highlight, HStack, Tag, Text, useDisclosure, VStack } from '@chakra-ui/react'
 import router from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from '@pancakeswap/localization'
@@ -17,11 +17,11 @@ import OpenBookIcon from '@/icons/misc/OpenBookIcon'
 import PulseIcon from '@/icons/misc/PulseIcon'
 import QuestionCircleIcon from '@/icons/misc/QuestionCircleIcon'
 import StarIcon from '@/icons/misc/StarIcon'
-import { useAppStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import toPercentString from '@/utils/numberish/toPercentString'
 import LockPercentCircle from '@/components/LockPercentCircle'
+import useResponsive from '@/hooks/useResponsive'
 
 import { poolListGrid } from '../cssBlocks'
 import { type TimeBase } from '../Pools'
@@ -46,7 +46,7 @@ export default function PoolListItem({
   onOpenChart?(pool: FormattedPoolInfoItem): void
 }) {
   const { t } = useTranslation()
-  const isMobile = useAppStore((s) => s.isMobile)
+  const { isTablet, isMobile } = useResponsive()
   const [isFavorite, setIsFavoriteState] = useState(getFavoritePoolCache().has(pool.id))
 
   const handleOpenChart = useCallback(() => {
@@ -217,8 +217,8 @@ export default function PoolListItem({
                   "a n" auto
                   "t t" auto / auto 1fr`,
                   `
-                  "a t" auto
-                  "n n" auto / auto 1fr`,
+                  "a n" auto
+                  "a t" auto / auto 1fr`,
                   `
                   "a n" auto
                   "a t" auto / auto 1fr`
@@ -258,7 +258,7 @@ export default function PoolListItem({
           </Flex>
 
           <Desktop>
-            <HStack justify="flex-end" gap={2}>
+            <HStack justify="flex-end" gap={2} display={isTablet ? 'none' : 'flex'}>
               <Text fontSize={['sm', 'lg']} textAlign="right">
                 {formatCurrency(pool.tvl, { symbol: '$', decimalPlaces: 0 })}
               </Text>
@@ -279,7 +279,7 @@ export default function PoolListItem({
             </Text>
           </Desktop>
           <Desktop>
-            <Text as="span" fontSize={['sm', 'lg']} textAlign="right">
+            <Text as="span" fontSize={['sm', 'lg']} textAlign="right" display={isTablet ? 'none' : 'block'}>
               {formatCurrency(timeData.volumeFee, { symbol: '$', decimalPlaces: 0 })}
             </Text>
           </Desktop>
@@ -538,7 +538,7 @@ export default function PoolListItem({
             </PanelCard>
           </Desktop>
           <Mobile>
-            <PanelCard overflow="hidden" bg={colors.backgroundLight} borderRadius="12px" px={4} py={0}>
+            <PanelCard overflow="hidden" borderRadius="12px" px={4} py={0}>
               <Flex justify="space-between" py={4}>
                 <Box>
                   <HStack spacing={2}>
