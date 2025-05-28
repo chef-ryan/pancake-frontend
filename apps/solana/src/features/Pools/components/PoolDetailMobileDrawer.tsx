@@ -119,9 +119,12 @@ export default function PoolDetailMobileDrawer({
             <ContentCard>
               <HStack justify="space-between">
                 {[
-                  { label: t(`field.${timeBase}_volume`), value: volume },
                   {
-                    label: t(`field.${timeBase}_fees`),
+                    label: t(`Volume %timeBase%`, { timeBase }),
+                    value: volume
+                  },
+                  {
+                    label: t(`Fees %timeBase%`, { timeBase }),
                     value: fees
                   },
                   {

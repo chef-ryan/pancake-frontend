@@ -379,15 +379,7 @@ export default function PoolListItem({
       ) : (
         <Box display="block" onClick={onPoolClick}>
           <Desktop>
-            <PanelCard
-              background={colors.backgroundLight}
-              borderRadius="16px"
-              pt="16px"
-              pb="20px"
-              px="20px"
-              position="relative"
-              overflow="hidden"
-            >
+            <PanelCard borderRadius="16px" pt="16px" pb="20px" px="20px" position="relative" overflow="hidden">
               <StarIcon
                 selected={isFavorite}
                 onClick={onFavoriteClick}
@@ -403,7 +395,7 @@ export default function PoolListItem({
                     </Text>
                   </VStack>
                   {/* APR part */}
-                  <Flex align="center" bg={colors.backgroundTransparent07} borderRadius="lg" w="full" justify="center" minH="36px">
+                  <Flex align="center" borderRadius="lg" w="full" justify="center" minH="36px">
                     <Tooltip
                       isContentCard
                       variant="card"
@@ -465,17 +457,17 @@ export default function PoolListItem({
                 {/* Body part */}
                 <VStack spacing={2} w="full">
                   <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" color={colors.textSecondary}>
+                    <Text fontSize="sm" color={colors.textSubtle}>
                       {t('Fee Tier')}
                     </Text>
                     <Tooltip
                       label={
                         <Flex maxW="216px">
-                          <Text color={colors.textSecondary} fontSize="sm">
+                          <Text fontSize="sm">
                             <Highlight query="concentrated" styles={{ fontWeight: '700', color: `${colors.textSecondary}` }}>
                               {t('This is a %feeRate%% fee tier %type% liquidity pool', {
                                 feeRate: formatToRawLocaleStr(pool.feeRate * 100),
-                                type: t(`liquidity.${pool.type}`)
+                                type: pool.type
                               }) || 'liquidity.pool_fee_desc'}
                             </Highlight>
                           </Text>
@@ -488,23 +480,23 @@ export default function PoolListItem({
                     </Tooltip>
                   </HStack>
                   <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" color={colors.textSecondary}>
-                      {t(`field.${timeBase}_volume`)}
+                    <Text fontSize="sm" color={colors.textSubtle}>
+                      {t(`Volume %timeBase%`, { timeBase })}
                     </Text>
                     <Text fontSize="sm" color={colors.textPrimary}>
                       {formatCurrency(timeData.volume, { symbol: '$', decimalPlaces: 2 })}
                     </Text>
                   </HStack>
                   <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" color={colors.textSecondary}>
-                      {t(`field.${timeBase}_fees`)}
+                    <Text fontSize="sm" color={colors.textSubtle}>
+                      {t(`Fees %timeBase%`, { timeBase })}
                     </Text>
                     <Text fontSize="sm" color={colors.textPrimary}>
                       {formatCurrency(timeData.volumeFee, { symbol: '$', decimalPlaces: 2 })}
                     </Text>
                   </HStack>
                   <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" color={colors.textSecondary}>
+                    <Text fontSize="sm" color={colors.textSubtle}>
                       {t(`TVL`)}
                     </Text>
                     <Text fontSize="sm" color={colors.textPrimary}>
@@ -512,7 +504,7 @@ export default function PoolListItem({
                     </Text>
                   </HStack>
                   <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" color={colors.textSecondary}>
+                    <Text fontSize="sm" color={colors.textSubtle}>
                       {t(`Rewards`)}
                     </Text>
                     <PoolListItemRewardStack rewards={pool.weeklyRewards} />
@@ -600,23 +592,23 @@ export default function PoolListItem({
                   <Text fontSize="xs" color={colors.textTertiary}>
                     {t('Liquidity')}
                   </Text>
-                  <Text fontSize="sm" color={colors.textSecondary}>
+                  <Text fontSize="sm" color={colors.textSubtle}>
                     {formatCurrency(pool.tvl, { symbol: '$', decimalPlaces: 0 })}
                   </Text>
                 </Flex>
                 <Flex flex={3} direction="column">
                   <Text fontSize="xs" color={colors.textTertiary}>
-                    {t(`field.${timeBase}_volume`)}
+                    {t(`Volume %timeBase%`, { timeBase })}
                   </Text>
-                  <Text fontSize="sm" color={colors.textSecondary}>
+                  <Text fontSize="sm" color={colors.textSubtle}>
                     {formatCurrency(timeData.volume, { decimalPlaces: 0 })}
                   </Text>
                 </Flex>
                 <Flex flex={2} direction="column">
                   <Text fontSize="xs" color={colors.textTertiary}>
-                    {t(`field.${timeBase}_fees`)}
+                    {t(`Fees %timeBase%`, { timeBase })}
                   </Text>
-                  <Text fontSize="sm" color={colors.textSecondary}>
+                  <Text fontSize="sm" color={colors.textSubtle}>
                     {formatCurrency(timeData.volumeFee, { decimalPlaces: 0 })}
                   </Text>
                 </Flex>

@@ -52,21 +52,21 @@ export function PoolListHeader({
           {sortKey === POOL_SORT_KEY.liquidity ? <SortUpDownArrow width="12px" height="12px" isDown={Boolean(order)} /> : null}
         </Flex>
         <Flex justifyContent="end" alignItems="center" gap="1" cursor="pointer" onClick={() => handleClickSort('volume')}>
-          {t(`field.${timeBase}_volume`)}
+          {t(`Volume %timeBase%`, { timeBase })}
           {sortKey === POOL_SORT_KEY.volume ? <SortUpDownArrow width="12px" height="12px" isDown={Boolean(order)} /> : null}
         </Flex>
         <Flex justifyContent="end" alignItems="center" gap="1" cursor="pointer" onClick={() => handleClickSort('fee')}>
-          {t(`field.${timeBase}_fees`)}
+          {t(`Fees %timeBase%`, { timeBase })}
           {sortKey === POOL_SORT_KEY.fee ? <SortUpDownArrow width="12px" height="12px" isDown={Boolean(order)} /> : null}
         </Flex>
         <Flex justifyContent="end" alignItems="center" gap="1" cursor="pointer" onClick={() => handleClickSort('apr')}>
-          {t(`field.${timeBase}_apr`)}
+          {t('APR %timeBase%', { timeBase })}
           {sortKey === POOL_SORT_KEY.apr ? <SortUpDownArrow width="12px" height="12px" isDown={Boolean(order)} /> : null}
         </Flex>
       </Desktop>
       <Mobile>
         <Flex alignItems="center" gap="1" cursor="pointer" onClick={() => handleClickSort('volume')}>
-          {t('Volume')}/{t(`field.${timeBase}_apr`)}
+          {t('Volume')}/{t('APR %timeBase%', { timeBase })}
           {sortKey === POOL_SORT_KEY.volume ? <SortUpDownArrow width="12px" height="12px" isDown={Boolean(order)} /> : null}
         </Flex>
       </Mobile>

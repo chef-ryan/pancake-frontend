@@ -33,7 +33,7 @@ export default function useInitPoolSchema({ startTime, baseToken, quoteToken, to
 
   const schema = (t: TranslateFunction) =>
     yup.object().shape({
-      ...(isAmmV4 ? {} : { feeConfig: yup.mixed().required(t('Select') + t('field.fee_tier')) }),
+      ...(isAmmV4 ? {} : { feeConfig: yup.mixed().required(t('Select') + t('fee tier')) }),
       ...(isAmmV4
         ? {
             liquidity: yup

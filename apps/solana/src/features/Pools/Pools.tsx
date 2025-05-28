@@ -520,8 +520,6 @@ export default function Pools() {
                     onClick={openMobileSearch}
                     variant="capsule"
                     height="40px"
-                    pl={4}
-                    pr={2}
                   >
                     <SearchIcon color={colors.textSubtle} opacity={0.5} width="16px" height="16px" />
                   </Button>

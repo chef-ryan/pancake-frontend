@@ -40,7 +40,7 @@ export default function useRewardSchema() {
     token: yup
       .mixed()
       .required('Select reward token')
-      .test('is-token-valid', t('error.farm_not_support_2022') || 'Farm does not support token 2022', function (val: ApiV3Token) {
+      .test('is-token-valid', t('Farm does not support token 2022') || 'Farm does not support token 2022', function (val: ApiV3Token) {
         return val.programId === TOKEN_PROGRAM_ID.toBase58()
       })
   })

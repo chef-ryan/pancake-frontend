@@ -268,7 +268,12 @@ export default forwardRef<
         </Box>
       ) : null}
 
-      <Button variant="tertiary" width="full" onClick={() => onOpenTokenList()}>
+      <Button
+        style={{ boxShadow: `0px -2px 0px 0px rgba(0, 0, 0, 0.10) inset` }}
+        variant="tertiary"
+        width="full"
+        onClick={() => onOpenTokenList()}
+      >
         {t('View Token List')}
       </Button>
     </Flex>

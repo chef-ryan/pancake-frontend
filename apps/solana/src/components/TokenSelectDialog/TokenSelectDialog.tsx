@@ -35,7 +35,7 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
     () => (
       <>
         <ModalHeader>
-          <Text bold>{t('common.Select a token')}</Text>
+          <Text bold>{t('Select a token')}</Text>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody display="flex" flexDirection="column" px={7} overflow="visible">

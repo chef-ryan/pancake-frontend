@@ -17,7 +17,7 @@ export default ({ options, selected, onClick }: Props) => {
   const displayOptions = options || OPTIONS
 
   return (
-    <HStack flexWrap="wrap" spacing={[2, 3]} justifyContent={['space-between', 'flex-start']}>
+    <HStack flexWrap="wrap" spacing={[2, 2]} justifyContent={['space-between', 'flex-start']}>
       {displayOptions.map((val) => {
         const isSelected = selected === val
         return (

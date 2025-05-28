@@ -400,6 +400,7 @@ export default function SetPriceAndRange({
       <Tabs
         mb="3"
         tabListSX={{ display: 'flex' }}
+        tabItemSX={{ height: '40px' }}
         defaultValue={rangeMode}
         value={rangeMode}
         onChange={setRangeMode}

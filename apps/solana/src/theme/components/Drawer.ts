@@ -9,6 +9,7 @@ const baseStyle = definePartsStyle({
     bg: colors.backgroundOverlay
   },
   dialog: {
+    bg: colors.cardBg,
     borderRadius: ['18px', '12px']
   },
   header: {
