@@ -182,7 +182,8 @@ export function Select<T>({
               <Box
                 cursor="pointer"
                 _hover={{
-                  bg: colors.secondary20
+                  bg: colors.textSubtle,
+                  color: colors.backgroundAlt
                 }}
                 onClick={() => {
                   onChange?.(itemValue)

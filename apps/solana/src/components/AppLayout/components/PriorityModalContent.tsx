@@ -77,7 +77,9 @@ export function PriorityModalContent(props: {
       <MotionModal
         title={
           <HStack spacing="6px" alignItems="center">
-            <Text bold>{t('Transaction Priority Fee')}</Text>
+            <Text bold fontSize="24px">
+              {t('Transaction Priority Fee')}
+            </Text>
             <QuestionToolTip
               label={t(
                 'The priority fee is paid to the Solana network. This additional fee boosts transaction prioritization, resulting in faster execution times. Note that the fee is taken even if a transaction ultimately fails.'
@@ -86,10 +88,11 @@ export function PriorityModalContent(props: {
             />
           </HStack>
         }
-        minWidth={[null, null, null, '370px']}
+        minWidth={[null, null, null, '480px']}
         minHeight={isMobile ? '500px' : '240px'}
-        maxWidth={[null, null, null, '370px']}
-        headerPadding="24px 24px 0 24px"
+        maxWidth={[null, null, null, '480px']}
+        headerPadding="16px 24px 0 24px"
+        bodyPadding="0 24px 24px"
         headerBorderColor="transparent"
         onDismiss={props.onClose}
       >
@@ -100,20 +103,19 @@ export function PriorityModalContent(props: {
             <VStack width="full" align="flex-start">
               <Text fontSize="14px">{t('Priority Level')}</Text>
               <ButtonMenu scale="sm" variant="subtle" onItemClick={handlePriorityLevelChange} activeIndex={priorityLevel} fullWidth>
-                <ButtonMenuItem> {t('Fast')} </ButtonMenuItem>
-                <ButtonMenuItem> {t('Turbo')} </ButtonMenuItem>
-                <ButtonMenuItem> {t('Ultra')} </ButtonMenuItem>
+                <ButtonMenuItem height="40px"> {t('Fast')} </ButtonMenuItem>
+                <ButtonMenuItem height="40px"> {t('Turbo')} </ButtonMenuItem>
+                <ButtonMenuItem height="40px"> {t('Ultra')} </ButtonMenuItem>
               </ButtonMenu>
             </VStack>
-            <Divider />
           </Collapse>
           <VStack width="full" align="stretch" gap={3}>
             <Flex justify="space-between" align="center">
               <Text fontSize="14px">{t('Priority Mode')}</Text>
 
               <ButtonMenu scale="sm" variant="subtle" onItemClick={handlePriorityModeChange} activeIndex={priorityMode}>
-                <ButtonMenuItem> {t('Max Cap')} </ButtonMenuItem>
-                <ButtonMenuItem> {t('Exact Fee')} </ButtonMenuItem>
+                <ButtonMenuItem height="40px"> {t('Max Cap')} </ButtonMenuItem>
+                <ButtonMenuItem height="40px"> {t('Exact Fee')} </ButtonMenuItem>
               </ButtonMenu>
             </Flex>
             <Text fontSize="14px" color="textSubtle">
@@ -130,14 +132,11 @@ export function PriorityModalContent(props: {
             <DecimalInput
               postFixInField
               width="100%"
-              variant="filledDark"
               value={currentFee === undefined ? '' : String(currentFee)}
               placeholder={t('Enter custom value') ?? undefined}
               onChange={onChangeFee}
               onKeyDown={handleKeyDown}
-              inputSx={{ textAlign: 'right', rounded: '40px', h: '34px', w: '12 0px', py: 0, px: '3' }}
-              ctrSx={{ bg: colors.backgroundDark, borderRadius: '32px' }}
-              inputGroupSx={{ w: '100%', bg: colors.backgroundDark, alignItems: 'center', borderRadius: '32px' }}
+              inputGroupSx={{ alignItems: 'center' }}
               postfix={<Text>SOL</Text>}
             />
           </VStack>

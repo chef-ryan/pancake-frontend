@@ -5,6 +5,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { useAppStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { panelCard } from '@/theme/cssBlocks'
+import { Mobile } from '@/components/MobileDesktop'
 
 import ChartTooltip from './ChartTooltip'
 
@@ -34,7 +35,9 @@ export default function Chart<T = any>({
       {renderTabs && !isMobile && <Box mb={2}>{renderTabs}</Box>}
       <Box {...panelCard} bg={colors.background} mt={[0, '6']} px={['4', '6']} py="4">
         <HStack mb={['8px', '20px']} justify="center">
-          <Box>{isMobile && renderTabs}</Box>
+          <Mobile>
+            <Box>{renderTabs}</Box>
+          </Mobile>
           <Box>{renderTimeTypeTabs}</Box>
         </HStack>
 

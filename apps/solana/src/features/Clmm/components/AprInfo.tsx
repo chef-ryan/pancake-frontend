@@ -38,33 +38,35 @@ export default function EstimatedAprInfo({ aprData, value, onChange }: Props) {
           <Text fontWeight="600" fontSize="sm">
             {formatToRawLocaleStr(toPercentString(aprData?.apr || 0))}
           </Text>
-          <Box>
-            <ResponsiveContainer width={isMobile ? 48 : 60} height={isMobile ? 48 : 60}>
-              <PieChart>
-                <Pie
-                  data={aprData ? [aprData.fee, ...aprData.rewards] : []}
-                  innerRadius={isMobile ? '75%' : '60%'}
-                  outerRadius="100%"
-                  fill="#8884d8"
-                  paddingAngle={0}
-                  dataKey="percentInTotal"
-                  startAngle={90}
-                  endAngle={450}
-                  stroke=""
-                >
-                  {aprData &&
-                    aprData.rewards.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={PORTFOLIO_PIE_COLORS[index % PORTFOLIO_PIE_COLORS.length]} stroke="" />
-                    ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-          </Box>
+          {aprData?.apr ? (
+            <Box>
+              <ResponsiveContainer width={isMobile ? 48 : 60} height={isMobile ? 48 : 60}>
+                <PieChart>
+                  <Pie
+                    data={aprData ? [aprData.fee, ...aprData.rewards] : []}
+                    innerRadius={isMobile ? '75%' : '60%'}
+                    outerRadius="100%"
+                    fill="#8884d8"
+                    paddingAngle={0}
+                    dataKey="percentInTotal"
+                    startAngle={90}
+                    endAngle={450}
+                    stroke=""
+                  >
+                    {aprData &&
+                      aprData.rewards.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={PORTFOLIO_PIE_COLORS[index % PORTFOLIO_PIE_COLORS.length]} stroke="" />
+                      ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </Box>
+          ) : null}
         </Flex>
 
-        <Flex flexWrap="wrap" columnGap={[2, 4]} rowGap={1}>
+        <Flex flexWrap="wrap" columnGap={[2, 4, 6]} rowGap={1}>
           {aprData?.fee ? (
-            <Flex alignItems="center" gap="2" fontSize="sm" color={colors.textSubtle}>
+            <Flex alignItems="center" fontSize="sm" color={colors.textSubtle} gap="1">
               <Box w="7px" h="7px" bg={PORTFOLIO_PIE_COLORS[0]} rounded="full" />
               {t('Trade fees')}{' '}
               <Text color={colors.textPrimary} fontWeight="600">
@@ -73,7 +75,7 @@ export default function EstimatedAprInfo({ aprData, value, onChange }: Props) {
             </Flex>
           ) : null}
           {aprData?.rewards.map((d, idx) => (
-            <Flex key={d.mint?.address || 'fees'} alignItems="center" gap="6" fontSize="sm" color={colors.textSubtle}>
+            <Flex key={d.mint?.address || 'fees'} alignItems="center" gap="1" fontSize="sm" color={colors.textSubtle}>
               <Box w="7px" h="7px" bg={PORTFOLIO_PIE_COLORS[(idx + 1) % PORTFOLIO_PIE_COLORS.length]} rounded="full" />
               <Text color={colors.textPrimary} fontWeight="600">
                 {formatToRawLocaleStr(toPercentString(d.apr))}

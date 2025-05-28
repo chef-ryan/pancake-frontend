@@ -531,7 +531,7 @@ export default function Pools() {
                   onClick={toggleSubcontrollers}
                   variant="capsule"
                   height="40px"
-                  paddingInline="3"
+                  paddingInline="4"
                   isActive={isCollapseOpen}
                 >
                   <MoreListControllers color={colors.textSubtle} width={listControllerIconSize} height={listControllerIconSize} />
@@ -597,7 +597,9 @@ export default function Pools() {
                     {currentLayoutStyle === 'grid' ? (
                       <Flex alignItems="center">
                         <FormControl display="flex" alignItems="center">
-                          <FormLabel minW={['80px', 'unset']}>{t('Sort By')}</FormLabel>
+                          <FormLabel color={colors.textSubtle} minW={['80px', 'unset']}>
+                            {t('Sort By')}
+                          </FormLabel>
                           <Select
                             sx={({ isPanelOpen }) => ({
                               height: '34px',
