@@ -51,7 +51,7 @@ const TotalBalanceInteger = styled(Text)`
 const TotalBalanceDecimal = styled(Text)`
   font-size: 40px;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.secondary};
+  color: ${({ theme }) => theme.colors.textSubtle};
 `
 
 const StyledButtonMenu = styled(ButtonMenu)`
