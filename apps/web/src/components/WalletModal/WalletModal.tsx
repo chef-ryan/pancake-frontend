@@ -306,7 +306,7 @@ export const WalletContent = ({
                 <Box style={{ textAlign: 'right' }}>
                   <Text bold fontSize="14px">
                     {parseFloat(asset.quantity).toLocaleString(undefined, {
-                      maximumFractionDigits: 2,
+                      maximumFractionDigits: 4,
                       minimumFractionDigits: 2,
                     })}
                   </Text>
