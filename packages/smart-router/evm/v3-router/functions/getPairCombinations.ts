@@ -105,10 +105,6 @@ const resolver = (currencyA?: Currency, currencyB?: Currency) => {
   return `${token0.chainId}_${token0.address}_${token1.address}`
 }
 
-type TokenBases = {
-  [tokenAddress: Address]: Token[]
-}
-
 async function getAdditionalCheckAgainstBaseTokens(currencyA?: Currency, currencyB?: Currency): Promise<Token[]> {
   const chainId: ChainId | undefined = currencyA?.chainId
   const additionalBases = await getAdditionalBases(chainId)
