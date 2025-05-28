@@ -31,7 +31,7 @@ const fetchConfig = memoize(async () => {
       }
     })
     return table
-  } catch (ex) {
+  } catch {
     return ADDITIONAL_BASES
   }
 })

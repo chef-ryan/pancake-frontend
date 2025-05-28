@@ -32,7 +32,7 @@ export function createViemPublicClients({ transportSignal }: CreatePublicClientP
                 }),
               ),
               {
-                rank: false,
+                rank: true,
               },
             ),
         batch: {
