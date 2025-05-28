@@ -81,6 +81,7 @@ const AssetItem = styled(FlexGap)`
   justify-content: space-between;
   border-radius: 16px;
   cursor: pointer;
+  overflow: hidden;
   transition: background-color 0.2s;
   &:hover {
     background-color: ${({ theme }) => theme.colors.background};
@@ -254,7 +255,7 @@ export const WalletContent = ({
                         bold
                         fontSize="16px"
                         style={{
-                          maxWidth: '100px',
+                          maxWidth: '70px',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           whiteSpace: 'nowrap',
@@ -267,7 +268,7 @@ export const WalletContent = ({
                         color="textSubtle"
                         fontSize="14px"
                         style={{
-                          maxWidth: '120px',
+                          maxWidth: '60px',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           whiteSpace: 'nowrap',
@@ -283,7 +284,7 @@ export const WalletContent = ({
                   </Box>
                 </FlexGap>
                 <Box style={{ textAlign: 'right' }}>
-                  <Text bold fontSize="16px">
+                  <Text bold fontSize="14px">
                     {parseFloat(asset.quantity).toLocaleString(undefined, {
                       maximumFractionDigits: 2,
                       minimumFractionDigits: 2,
