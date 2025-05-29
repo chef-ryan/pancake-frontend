@@ -139,7 +139,7 @@ export default function StakingPoolItem({ pool, apiVaultData }: { pool: ApiStake
             onClick={onCollapse}
           >
             <Text fontSize="xs" fontWeight={500}>
-              {t('More_info')}
+              {t('More info')}
             </Text>
             <ChevronDownIcon width={12} height={12} />
           </HStack>

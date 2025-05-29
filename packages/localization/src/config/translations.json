@@ -4130,7 +4130,7 @@
   "Connect wallet to see your asset distribution.": "Connect wallet to see your asset distribution.",
   "Stake RAY to earn additional RAY yield.": "Stake RAY to earn additional RAY yield.",
   "Insufficent balance": "Insufficent balance",
-  "More_info": "More_info",
+  "More info": "More info",
   "Less info": "Less info",
   "Insufficient RAY balance": "Insufficient RAY balance",
   "Available %symbol%": "Available %symbol%",
@@ -4227,5 +4227,9 @@
   "Create Pool": "Create Pool",
   "Create new farm": "Create new farm",
   "Harvest Rewards": "Harvest Rewards",
-  "Lock Position": "Lock Position"
+  "Lock Position": "Lock Position",
+  "Price Impact Warning": "Price Impact Warning",
+  "Low Price Impact": "Low Price Impact",
+  "Setup": "Setup",
+  "Cleanup": "Cleanup"
 }

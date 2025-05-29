@@ -1,11 +1,16 @@
-import { Trans } from '@pancakeswap/localization'
+import { type TranslateFunction } from '@pancakeswap/localization'
 
-export const getTxMeta = ({ values = {} }: { values?: Record<string, unknown> }) => {
+export const getTxMeta = ({ values = {}, t }: { values?: Record<string, unknown>; t: TranslateFunction }) => {
+  // Filter values to only allow string, number, or undefined
+  const filteredValues = Object.fromEntries(
+    Object.entries(values).filter(([, v]) => typeof v === 'string' || typeof v === 'number' || typeof v === 'undefined')
+  ) as Record<string, string | number | undefined>
+
   return {
-    title: <Trans>Swap</Trans>,
-    description: <Trans {...values}>Swap %amountA% %symbolA% for %amountB% %symbolB%.</Trans>,
-    txHistoryTitle: <Trans>Swap</Trans>,
-    txHistoryDesc: <Trans {...values}>Swap %amountA% %symbolA% for %amountB% %symbolB%.</Trans>,
+    title: t('Swap'),
+    description: t('Swap %amountA% %symbolA% for %amountB% %symbolB%.', { ...filteredValues }),
+    txHistoryTitle: t('Swap'),
+    txHistoryDesc: t('Swap %amountA% %symbolA% for %amountB% %symbolB%.', { ...filteredValues }),
     txValues: values
   }
 }

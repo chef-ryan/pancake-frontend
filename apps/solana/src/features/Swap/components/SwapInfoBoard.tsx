@@ -50,7 +50,7 @@ export function SwapInfoBoard({
       <Box
         position="relative"
         boxShadow={isHighRiskPrice ? `0px 0px 12px 6px rgba(255, 78, 163, 0.15)` : 'none'}
-        bg={isHighRiskPrice ? 'rgba(255, 78, 163,0.1)' : colors.backgroundTransparent07}
+        bg={isHighRiskPrice ? 'rgba(255, 78, 163,0.1)' : undefined}
         borderWidth="1px"
         borderStyle="solid"
         borderColor={isHighRiskPrice ? colors.semanticError : colors.backgroundTransparent12}
@@ -111,7 +111,7 @@ export function SwapInfoBoard({
         </Collapse>
         <HStack color={colors.textSecondary} fontSize="xs" spacing={0.5} justify="center" onClick={() => setShowMoreSwapInfo((b) => !b)}>
           <Text align="center" cursor="pointer" fontSize="14px" color={colors.textPrimary}>
-            {showMoreSwapInfo ? t('Less info') : t('More_info')}
+            {showMoreSwapInfo ? t('Less info') : t('More info')}
           </Text>
           {/* arrow */}
           <Box transform={`rotate(${showMoreSwapInfo ? `${180}deg` : 0})`} transition="300ms">
@@ -182,14 +182,14 @@ function PriceDetector({
                 : formatCurrency(price, { decimalPlaces: tokenOutput?.decimals || 0 })}
             </Text>
           ) : (
-            <Skeleton width={`${12 * ((reverse ? tokenInput?.decimals : tokenOutput?.decimals) || 1)}px`} height="24px" />
+            <Skeleton rounded="2xl" width={`${12 * ((reverse ? tokenInput?.decimals : tokenOutput?.decimals) || 1)}px`} height="24px" />
           )}
           <Text as="div" fontSize="14px">
             {reverse ? tokenInput?.symbol : tokenOutput?.symbol}
           </Text>
         </Flex>
       </Text>
-      <Tooltip label={t(`swap.price_impact_${priceImpact}_tooltip`)}>
+      <Tooltip label={priceImpact === 'low' ? t('Low Price Impact') : t('Price Impact Warning')}>
         {priceImpact === 'low' ? (
           <CircleCheckBreaker />
         ) : priceImpact === 'warning' ? (
@@ -371,7 +371,16 @@ function RoutingValue({ routePlan }: { routePlan: ApiSwapV1OutSuccess['data']['r
           <Tooltip label={<AddressChip address={inputMint} textProps={{ fontSize: 'xs' }} canExternalLink />}>
             <TokenAvatar tokenMint={inputMint} size="sm" />
           </Tooltip>
-          <Tooltip label={<AddressChip address={poolId} renderLabel="AMM ID:" textProps={{ fontSize: 'xs' }} canExternalLink />}>
+          <Tooltip
+            label={
+              <AddressChip
+                address={poolId}
+                renderLabel={<Text fontSize="xs">AMM ID:</Text>}
+                textProps={{ fontSize: 'xs' }}
+                canExternalLink
+              />
+            }
+          >
             <Text fontSize="2xs" color={colors.textSecondary}>
               {formatToRawLocaleStr(toPercentString(feeRate / 100))}
             </Text>

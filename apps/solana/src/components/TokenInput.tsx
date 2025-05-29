@@ -391,7 +391,7 @@ function TokenInput(props: TokenInputProps) {
             decimalSeparator={detectedSeparator}
             allowNegative={false}
             valueIsNumericString
-            placeholder=""
+            placeholder="0.0"
             name={name}
             onFocus={handleFocus}
             onBlur={handleBlur}

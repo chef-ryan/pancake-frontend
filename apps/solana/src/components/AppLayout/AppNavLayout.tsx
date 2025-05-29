@@ -1,9 +1,19 @@
 import { Box, Flex, HStack, Text } from '@chakra-ui/react'
-import { CogIcon, LogoIcon, LogoWithTextIcon, ModalV2, MotionModal, useMatchBreakpoints, useModalV2 } from '@pancakeswap/uikit'
+import {
+  CogIcon,
+  LangSelector,
+  LanguageIcon,
+  LogoIcon,
+  LogoWithTextIcon,
+  ModalV2,
+  MotionModal,
+  useMatchBreakpoints,
+  useModalV2
+} from '@pancakeswap/uikit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { ReactNode } from 'react'
-import { useTranslation } from '@pancakeswap/localization'
+import { languageList, useTranslation } from '@pancakeswap/localization'
 import { colors } from '@/theme/cssVariables'
 import { appLayoutPaddingX } from '@/theme/detailConfig'
 import { PAGE_URLS } from '@/utils/config/routers'
@@ -70,6 +80,7 @@ function AppNavLayout({
         {/* wallet button */}
         <Flex gap={[0.5, 2]} align="center">
           <PriorityButton />
+          <LangSwitcher />
           <SettingsMenu />
           <NetworkSwitcher />
           <SolWallet />
@@ -189,12 +200,24 @@ function SettingsMenuModalContent({ onDismiss }: { onDismiss: () => void }) {
       <Divider />
       <DefaultExplorerSettingField />
       <Divider />
-      <LanguageSettingField />
-      <Divider />
+      {/* <LanguageSettingField /> */}
+      {/* <Divider /> */}
       <ColorThemeSettingField />
       <Divider />
       <RPCConnectionSettingField />
     </MotionModal>
+  )
+}
+
+function LangSwitcher() {
+  const { currentLanguage, setLanguage, t } = useTranslation()
+  const currentLang = currentLanguage.code
+  return (
+    <Box w={10} h={10} _hover={{ bg: colors.backgroundLight }} rounded="full" display="grid" placeContent="center" cursor="pointer">
+      <LangSelector currentLang={currentLang} langs={languageList} setLang={setLanguage} buttonScale="xs" color="textSubtle" hideLanguage>
+        <LanguageIcon color="textSubtle" width="24px" />
+      </LangSelector>
+    </Box>
   )
 }
 

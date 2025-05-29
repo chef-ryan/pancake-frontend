@@ -155,6 +155,7 @@ export const useSwapStore = createStore<SwapStore>(
         })
 
         const swapMeta = getTxMeta({
+          t,
           // action: 'swap',
           values: {
             amountA: formatLocaleStr(
@@ -177,11 +178,7 @@ export const useSwapStore = createStore<SwapStore>(
         }[] = []
 
         const getSubTxTitle = (idx: number) => {
-          return idx === 0
-            ? 'transaction_history.set_up'
-            : idx === processedId.length - 1 && processedId.length > 2
-            ? 'transaction_history.clean_up'
-            : 'transaction_history.name_swap'
+          return idx === 0 ? t('Setup') : idx === processedId.length - 1 && processedId.length > 2 ? t('Cleanup') : t('Swap')
         }
 
         let i = 0

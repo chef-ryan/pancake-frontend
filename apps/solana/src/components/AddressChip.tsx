@@ -54,7 +54,7 @@ export default function AddressChip({
     <Flex alignItems="center" gap={2} {...restProps}>
       {renderLabel}
 
-      <Flex gap="5px">
+      <Flex gap="5px" align="center">
         <Text {...textProps}>
           {showDigitCount === 'all' ? address : `${address?.slice(0, showDigitCount)}...${address?.slice(-1 * showDigitCount)}`}
         </Text>
