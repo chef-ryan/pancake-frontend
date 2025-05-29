@@ -35,6 +35,7 @@ const fillFarmByChain = async (chainId: ChainId, farms: FarmInfo[]) => {
     return undefined // place holder
   })
 
+  // Onchain calls
   const calls = tasks
     .map((task) => {
       const farm = task.farm
@@ -60,6 +61,9 @@ const fillFarmByChain = async (chainId: ChainId, farms: FarmInfo[]) => {
     const filler = poolInfoFillers[task.farm.protocol].filler
     filler(task.farm, resultsSlice)
     list[task.index] = task.farm
+  }
+
+  for (const task of tasks) {
     cache.set(cacheKey(task.farm), task.farm)
   }
   return list as FarmInfo[]

@@ -1,4 +1,5 @@
 import { PoolType, SmartRouter } from '@pancakeswap/smart-router'
+import BigNumber from 'bignumber.js'
 import { FarmQuery } from 'edge/farm/edgeFarmQueries'
 import { FarmInfo, SerializedFarmInfo } from 'edge/farm/farm.util'
 import { fillFarmData } from 'edge/farm/fillFarmData'
@@ -41,17 +42,27 @@ export const farmsSearchAtom = atomFamily((query: FarmQuery) => {
         data: SerializedFarmInfo[]
         lastUpdated: number
       }
-      const pools = resp.data.map((pool) => {
+      const pools = resp.data.map((farm) => {
+        const cakeApr = farm.cakeApr
+          ? {
+              value: farm.cakeApr.value as `${number}`,
+              cakePerYear: BigNumber(farm.cakeApr.cakePerYear || '0'),
+              poolWeight: BigNumber(farm.cakeApr.poolWeight || '0'),
+            }
+          : undefined
         return {
-          id: pool.id,
-          chainId: pool.chainId,
-          pool: SmartRouter.Transformer.parsePool(pool.chainId, pool.pool),
-          lpApr: 0,
+          id: farm.id,
+          chainId: farm.chainId,
+          pool: SmartRouter.Transformer.parsePool(farm.chainId, farm.pool),
+          lpApr: farm.lpApr,
+          merklApr: '0',
+          cakeApr,
           feeTier: 10,
+          tvlUSD: Number(farm.tvlUSD) || 0,
           vol24hUsd: 0,
           tvlUsd: 0,
           feeTierBase: 1e6,
-          protocol: typeToProtocol(pool.pool.type as PoolType),
+          protocol: typeToProtocol(farm.pool.type as PoolType),
         } as FarmInfo
       })
 

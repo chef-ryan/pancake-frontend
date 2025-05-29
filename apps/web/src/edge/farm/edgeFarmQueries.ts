@@ -1,18 +1,37 @@
-import { chainNamesInKebabCase } from '@pancakeswap/chains'
+import { ChainId, chainNamesInKebabCase } from '@pancakeswap/chains'
 import { FarmV4SupportedChainId, fetchAllUniversalFarms, Protocol, UniversalFarmConfig } from '@pancakeswap/farms'
 import { getCurrencyAddress, Pair } from '@pancakeswap/sdk'
 import { InfinityBinPool, InfinityClPool, InfinityRouter, SmartRouter } from '@pancakeswap/smart-router'
 
+import { chainlinkOracleCAKE } from '@pancakeswap/prediction'
 import uniqBy from '@pancakeswap/utils/uniqBy'
+import { formatUnits } from '@pancakeswap/utils/viem/formatUnits'
 import { computePoolAddress, DEPLOYER_ADDRESSES } from '@pancakeswap/v3-sdk'
+import BigNumber from 'bignumber.js'
+import { chainlinkOracleABI } from 'config/abi/chainlinkOracle'
 import { edgeQueries } from 'edge/edgePoolQueries'
 import { getEdgeChainName } from 'edge/edgeQueries.util'
+import { fetchAllCampaignsByChainId } from 'hooks/infinity/useCampaigns'
+import { getInfinityCakeAPR } from 'hooks/infinity/useInfinityCakeAPR'
+import groupBy from 'lodash/groupBy'
+import { CakeAprValue } from 'state/farmsV4/atom'
 import { DEFAULT_PROTOCOLS } from 'state/farmsV4/state/farmPools/fetcher'
+import { getAllNetworkMerklApr, getCakeApr, getLpApr } from 'state/farmsV4/state/poolApr/fetcher'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { explorerApiClient } from 'state/info/api/client'
+import { safeGetAddress } from 'utils'
 import { isInfinityProtocol } from 'utils/protocols'
+import { getViemClients } from 'utils/viem.server'
 import { Address } from 'viem/accounts'
-import { FarmInfo, getFarmTokens, isDynamic } from './farm.util'
+import {
+  FarmInfo,
+  FarmProps,
+  farmPropsToPoolInfoBase,
+  getFarmTokens,
+  getSerializedFarmTokens,
+  isDynamic,
+  SerializedFarmInfo,
+} from './farm.util'
 import { farmFilters } from './filters'
 
 export interface FarmQuery {
@@ -139,6 +158,7 @@ async function fetchExplorerFarmPools(protocols: Protocol[], chainIds: number[])
       },
     },
   })
+
   return (resp.data || []) as InfinityRouter.RemotePoolBase[]
 }
 
@@ -174,6 +194,16 @@ function toRemotePool(farm: UniversalFarmConfig) {
   return poolBase
 }
 
+const sortWithPid = (a: FarmProps, b: FarmProps) => {
+  if (a.pid && !b.pid) {
+    return -1
+  }
+  if (!a.pid && b.pid) {
+    return 1
+  }
+  return 0
+}
+
 async function queryFarms(query: FarmQuery) {
   const { protocols = [], chains = [], pageNo = 1 } = query
   try {
@@ -182,9 +212,32 @@ async function queryFarms(query: FarmQuery) {
       fetchAllUniversalFarms(),
       fetchAllExplorerPools(protocols, chains),
     ])
+    const pidsMaps = universalFarms.reduce((acc, farm) => {
+      const id = getPoolId(farm)
+      return {
+        ...acc,
+        [`${farm.chainId}:${id}`]: farm.pid,
+      }
+    }, {} as Record<Address, number | undefined>)
+    console.log(pidsMaps)
     const universalFarmPools = universalFarms.map((x) => toRemotePool(x))
 
-    const allPools = uniqBy([...pools, ...universalFarmPools, ...extendPools], (p) => p.id)
+    // Ensure Checksum id
+    const all = [...pools, ...universalFarmPools, ...extendPools]
+      .map((pool) => {
+        if (pool.id) {
+          const id = safeGetAddress(pool.id)
+          if (!id) {
+            return null
+          }
+          // eslint-disable-next-line no-param-reassign
+          pool.id = id
+        }
+        return pool
+      })
+      .filter((x) => x) as InfinityRouter.RemotePoolBase[]
+
+    const allPools = uniqBy(all, (p) => `${p.chainId}:${p.id}`)
       .filter(farmFilters.chainFilter(chains))
       .filter(farmFilters.protocolFilter(protocols))
       .map((pool) => {
@@ -192,24 +245,25 @@ async function queryFarms(query: FarmQuery) {
         // @ts-ignore
         if (typeof remotePool.tvlUSD !== 'undefined') {
           // @ts-ignore
-          delete remotePool.tvlUSD
+          remotePool.tvlUSD = remotePool.tvlUSD.toString()
         }
 
         return {
           pool: SmartRouter.Transformer.serializePool(remotePool),
           id: pool.id,
           chainId: pool.chainId,
-        } as FarmInfo
+          protocol: pool.protocol,
+          // @ts-ignore
+          tvlUSD: pool.tvlUSD?.toString() || 0,
+          pid: pidsMaps[`${pool.chainId}:${pool.id}`],
+        } as SerializedFarmInfo
       })
-    // for (const pool of allPools) {
-    //   try {
-    //     JSON.stringify(pool)
-    //   } catch {
-    //     console.log(pool)
-    //   }
-    // }
+      .slice(0, 100)
 
-    return allPools.slice(0, 100)
+    await fillLpAprData(allPools)
+    await fillMerklAprData(allPools)
+    await fillCakeApr(allPools)
+    return allPools
   } catch (ex) {
     console.error('Error fetching farms:', ex)
     return []
@@ -230,6 +284,114 @@ async function fetchAllExplorerPools(protocols: Protocol[], chains: FarmV4Suppor
   }
   const pools = await edgeQueries.fetchAllPools(query)
   return pools
+}
+
+async function fillLpAprData(farms: SerializedFarmInfo[]) {
+  const lpAprs = await Promise.all(
+    farms.map((farm) =>
+      getLpApr(
+        {
+          protocol: farm.protocol,
+          chainId: farm.chainId,
+          lpAddress: farm.id,
+          poolId: farm.id,
+        },
+        true,
+      ).catch((ex) => {
+        // console.error(`Failed to fetch LP APR for farm ${farm.protocol} ${farm.chainId} ${farm.id}`, ex)
+      }),
+    ),
+  )
+
+  farms.forEach((farm, index) => {
+    const lpApr = lpAprs[index]
+    // eslint-disable-next-line no-param-reassign
+    farm.lpApr = `${lpApr || '0'}`
+  })
+}
+
+async function fillMerklAprData(farms: SerializedFarmInfo[]) {
+  const aprs = await getAllNetworkMerklApr()
+  farms.forEach((farm) => {
+    const key = `${farm.chainId}-${farm.id}`
+    const merklApr = aprs[key] || '0'
+    // eslint-disable-next-line no-param-reassign
+    farm.merklApr = merklApr
+  })
+}
+
+async function fillCakeApr(farms: SerializedFarmInfo[]) {
+  const cakePrice = BigNumber(await getCakePriceFromOracle())
+  const groups = groupBy(farms, (farm) => farm.chainId)
+  const allCampaigns = await Promise.all(
+    Object.keys(groups).map((chainId) => {
+      return fetchAllCampaignsByChainId({
+        chainId: Number(chainId),
+      })
+    }),
+  )
+
+  const cakeAprCalls: SerializedFarmInfo[] = []
+  // Infinity cake Apr
+  for (const [i, farms] of Object.entries(groups)) {
+    const campaigns = allCampaigns[i]
+    for (const farm of farms) {
+      if (isInfinityProtocol(farm.protocol)) {
+        const cakeApr = getInfinityCakeAPR({
+          chainId: Number(farm.chainId),
+          poolId: farm.id,
+          cakePrice,
+          campaigns,
+          tvlUSD: `${farm.tvlUSD}`,
+        })
+        // eslint-disable-next-line no-param-reassign
+        farm.cakeApr = {
+          value: cakeApr.value,
+          cakePerYear: cakeApr.cakePerYear?.toString(),
+          poolWeight: cakeApr.poolWeight?.toString(),
+          userTvlUsd: cakeApr.userTvlUsd?.toString(),
+        }
+        continue
+      }
+      cakeAprCalls.push(farm)
+    }
+  }
+  console.log(`cake price: ${cakePrice.toString()}`)
+  // Other cake apr
+  const results = await Promise.all(
+    cakeAprCalls.map(async (farm) => {
+      const tokens = getSerializedFarmTokens(farm)
+      const pool = farmPropsToPoolInfoBase(farm, tokens[0], tokens[1]) as PoolInfo
+      return getCakeApr(pool, cakePrice)
+    }),
+  )
+  console.log(`num=${cakeAprCalls.length}`, `find:${results.length}`)
+  results.forEach((cakeApr, index) => {
+    const farm = cakeAprCalls[index]
+    const key = `${farm.chainId}:${farm.id}`
+    if (cakeApr[key]) {
+      const apr = cakeApr[key] as CakeAprValue
+      // eslint-disable-next-line no-param-reassign
+      farm.cakeApr = {
+        value: apr.value,
+        cakePerYear: apr.cakePerYear?.toString(),
+        boost: apr.boost,
+        poolWeight: apr.poolWeight?.toString(),
+        userTvlUsd: apr.userTvlUsd?.toString(),
+        totalSupply: apr.totalSupply?.toString(),
+      }
+    }
+  })
+}
+
+const getCakePriceFromOracle = async () => {
+  const data = await getViemClients({ chainId: ChainId.BSC }).readContract({
+    abi: chainlinkOracleABI,
+    address: chainlinkOracleCAKE[ChainId.BSC],
+    functionName: 'latestAnswer',
+  })
+
+  return formatUnits(data, 8)
 }
 
 export default {

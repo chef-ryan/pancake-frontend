@@ -10,12 +10,12 @@ import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem'
 
 import { InfinityBinPool, InfinityClPool } from '@pancakeswap/smart-router'
-import { FarmInfo, getFarmTokens } from 'edge/farm/farm.util'
+import { FarmInfo, farmToPoolInfo, getFarmTokens } from 'edge/farm/farm.util'
 import { getCurrencySymbol } from 'utils/getTokenAlias'
 import { getChainFullName } from '../utils'
 import { RewardStatusDisplay } from './FarmStatusDisplay'
 import { checkHasReward } from './FarmStatusDisplay/hooks'
-import { PoolGlobalAprButton } from './PoolAprButton'
+import { PoolGlobalAprButtonV2 } from './PoolAprButtonV2/PoolGlobalAprButtonV2'
 import { PoolListItemAction } from './PoolListItemAction'
 
 export const FeeTierComponent = ({ farm }: { farm: FarmInfo }) => {
@@ -46,7 +46,12 @@ export const useAPRConfig = () => {
         render: (value, info) =>
           value ? (
             <Box style={{ maxWidth: '220px', overflow: 'hidden' }}>
-              <PoolGlobalAprButton farm={info} />
+              <PoolGlobalAprButtonV2
+                pool={farmToPoolInfo(info)}
+                lpApr={info.lpApr}
+                merklApr={info.merklApr}
+                cakeApr={info.cakeApr}
+              />
             </Box>
           ) : (
             <Skeleton width={60} />
