@@ -129,12 +129,15 @@ export class Loadable<T> {
     throw new Error('Cannot unwrap Pending')
   }
 
-  unwrapOr(defaultValue: T | undefined): T | undefined {
+  unwrapOr<U extends T | undefined>(defaultValue: U): U {
     if (this.isJust()) {
-      return this.value
+      return this.value as U
     }
     if (this.isNothing() || defaultValue === undefined || defaultValue === null) {
-      return undefined
+      return defaultValue
+    }
+    if (this.isPending()) {
+      return defaultValue
     }
     if (this.isFail()) {
       throw new Error(`Cannot unwrapOr Fail: ${this.error}`)

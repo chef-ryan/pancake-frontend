@@ -87,9 +87,6 @@ export const useFilterToQueries = () => {
         params.network = filters.selectedNetwork.map((i) => i.toString())
       }
       // Tokens might be too long, so keep them at the end to prevent other queries from being cut off by the browser.
-      if (filters.selectedTokens?.length) {
-        params.token = filters.selectedTokens
-      }
       nextRouter.replace(
         {
           query: {
@@ -140,16 +137,10 @@ export const useFilterToQueries = () => {
       queriesReset.farmsOnly = farmsOnly
     }
 
-    const queryTokens = Array.isArray(queryTokenParams) ? queryTokenParams : queryTokenParams ? [queryTokenParams] : []
-    if (queryTokens.length !== selectedTokens.length) {
-      queriesReset.selectedTokens = selectedTokens
-    }
-
     if (Object.keys(queriesReset).length) {
       replaceURLQueriesByFilter({
         selectedProtocolIndex,
         selectedNetwork,
-        selectedTokens,
         sortOrder,
         sortField,
         positionStatus,

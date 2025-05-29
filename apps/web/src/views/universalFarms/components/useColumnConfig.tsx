@@ -1,25 +1,16 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Percent } from '@pancakeswap/swap-sdk-core'
-import {
-  BasicDataType,
-  Box,
-  Grid,
-  IColumnsType,
-  ITableViewProps,
-  Skeleton,
-  Text,
-  useMatchBreakpoints,
-} from '@pancakeswap/uikit'
+import { Box, Grid, IColumnsType, ITableViewProps, Skeleton, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { FeeTierTooltip, FiatNumberDisplay, Liquidity, TokenOverview } from '@pancakeswap/widgets-internal'
-import { InfinityFeeTierBreakdown } from 'components/FeeTierBreakdown'
+import { InfinityFeeTierBreakdownWithPool } from 'components/FeeTierBreakdown'
 import { TokenPairLogo } from 'components/TokenImage'
 import { useMemo } from 'react'
-import type { PoolInfo } from 'state/farmsV4/state/type'
 import { getHookByAddress } from 'utils/getHookByAddress'
 import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem'
 
-import { useHookByPoolId } from 'hooks/infinity/useHooksList'
+import { InfinityBinPool, InfinityClPool } from '@pancakeswap/smart-router'
+import { FarmInfo, getFarmTokens } from 'edge/farm/farm.util'
 import { getCurrencySymbol } from 'utils/getTokenAlias'
 import { getChainFullName } from '../utils'
 import { RewardStatusDisplay } from './FarmStatusDisplay'
@@ -27,31 +18,20 @@ import { checkHasReward } from './FarmStatusDisplay/hooks'
 import { PoolGlobalAprButton } from './PoolAprButton'
 import { PoolListItemAction } from './PoolListItemAction'
 
-export const FeeTierComponent = <T extends BasicDataType>({
-  dynamic,
-  fee,
-  item,
-}: {
-  dynamic?: boolean
-  fee: number
-  item: T
-}) => {
-  const percent = useMemo(() => new Percent(fee ?? 0, item.feeTierBase || 1), [fee, item.feeTierBase])
-  const hookData = useHookByPoolId(
-    item.chainId,
-    isInfinityProtocol(item.protocol) ? (item as { poolId?: `0x${string}` })?.poolId : undefined,
-  )
-  if (isInfinityProtocol(item.protocol)) {
+export const FeeTierComponent = ({ farm }: { farm: FarmInfo }) => {
+  const { protocol, pool, chainId, feeTier: fee, feeTierBase } = farm
+  const percent = useMemo(() => new Percent(fee ?? 0, feeTierBase || 1), [fee])
+  if (isInfinityProtocol(protocol)) {
     return (
-      <InfinityFeeTierBreakdown
-        poolId={item.poolId}
-        chainId={item.chainId}
-        hookData={hookData}
+      <InfinityFeeTierBreakdownWithPool
+        chainId={chainId}
+        pool={pool as InfinityClPool | InfinityBinPool}
         infoIconVisible={false}
       />
     )
   }
-  return <FeeTierTooltip type={item.protocol} percent={percent} dynamic={dynamic} />
+
+  return <FeeTierTooltip type={farm.protocol} percent={percent} dynamic={false} />
 }
 
 export const useAPRConfig = () => {
@@ -66,12 +46,12 @@ export const useAPRConfig = () => {
         render: (value, info) =>
           value ? (
             <Box style={{ maxWidth: '220px', overflow: 'hidden' }}>
-              <PoolGlobalAprButton pool={info} />
+              <PoolGlobalAprButton farm={info} />
             </Box>
           ) : (
             <Skeleton width={60} />
           ),
-      } as IColumnsType<PoolInfo>),
+      } as IColumnsType<FarmInfo>),
     [t],
   )
 }
@@ -84,8 +64,8 @@ export const useFeeConfig = () => {
         title: t('Fee Tier'),
         dataIndex: 'feeTier',
         key: 'feeTier',
-        render: (fee, item) => <FeeTierComponent dynamic={item?.isDynamicFee ?? false} fee={fee} item={item} />,
-      } as IColumnsType<PoolInfo>),
+        render: (fee, item) => <FeeTierComponent farm={item} />,
+      } as IColumnsType<FarmInfo>),
     [t],
   )
 }
@@ -101,7 +81,7 @@ export const useVol24Config = () => {
         minWidth: '125px',
         render: (value) =>
           value ? <FiatNumberDisplay value={value} showFullDigitsTooltip={false} /> : <Skeleton width={60} />,
-      } as IColumnsType<PoolInfo>),
+      } as IColumnsType<FarmInfo>),
     [t],
   )
 }
@@ -117,7 +97,7 @@ export const useTVLConfig = () => {
         minWidth: '125px',
         render: (value) =>
           value ? <FiatNumberDisplay value={value} showFullDigitsTooltip={false} /> : <Skeleton width={60} />,
-      } as IColumnsType<PoolInfo>),
+      } as IColumnsType<FarmInfo>),
     [t],
   )
 }
@@ -135,7 +115,7 @@ export const usePoolTypeConfig = () => {
             <Liquidity.PoolFeaturesBadge showPoolType showLabel={false} poolType={value} short />
           </Box>
         ),
-      } as IColumnsType<PoolInfo>),
+      } as IColumnsType<FarmInfo>),
     [t],
   )
 }
@@ -149,7 +129,7 @@ export const usePoolFeatureConfig = (showPoolType = true) => {
         dataIndex: 'hookAddress',
         key: 'hookAddress',
         minWidth: '140px',
-        render: (value: Address, item: PoolInfo) => {
+        render: (value: Address, item: FarmInfo) => {
           const hookData = getHookByAddress(item.chainId, value)
           return (
             <Grid gridGap="4px">
@@ -165,39 +145,32 @@ export const usePoolFeatureConfig = (showPoolType = true) => {
             </Grid>
           )
         },
-      } as unknown as IColumnsType<PoolInfo>),
+      } as unknown as IColumnsType<FarmInfo>),
     [t, showPoolType],
   )
 }
 
-export const PoolTokenOverview = <T extends PoolInfo = PoolInfo>({ data }: { data: T }) => {
-  const showReward = checkHasReward(data.chainId, data.lpAddress)
+export const PoolTokenOverview = ({ data }: { data: FarmInfo }) => {
+  const showReward = checkHasReward(data.chainId, data.id)
 
+  const [token0, token1] = getFarmTokens(data)
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <TokenOverview
         isReady
-        token={data.token0}
-        quoteToken={data.token1}
+        token={token0}
+        quoteToken={token1}
         iconWidth="48px"
         getChainName={getChainFullName}
         getCurrencySymbol={getCurrencySymbol}
-        icon={
-          <TokenPairLogo
-            width={44}
-            height={44}
-            variant="inverted"
-            primaryToken={data.token0}
-            secondaryToken={data.token1}
-          />
-        }
+        icon={<TokenPairLogo width={44} height={44} variant="inverted" primaryToken={token0} secondaryToken={token1} />}
       />
       {showReward && <RewardStatusDisplay />}
     </div>
   )
 }
 
-export const useColumnConfig = <T extends PoolInfo = PoolInfo>(): ITableViewProps<T>['columns'] => {
+export const useColumnConfig = <T extends FarmInfo = FarmInfo>(): ITableViewProps<T>['columns'] => {
   const { t } = useTranslation()
   const mediaQueries = useMatchBreakpoints()
   const vol24hUsdConf = useVol24Config()
@@ -254,7 +227,7 @@ export const useColumnConfig = <T extends PoolInfo = PoolInfo>(): ITableViewProp
   )
 }
 
-export const useColumnMobileConfig = (): ITableViewProps<PoolInfo>['columns'] => {
+export const useColumnMobileConfig = (): ITableViewProps<FarmInfo>['columns'] => {
   const vol24hUsdConf = useVol24Config()
   const TVLUsdConf = useTVLConfig()
   const feeTierConf = useFeeConfig()

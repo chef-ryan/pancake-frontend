@@ -1,7 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
+import { edgeQueries } from 'edge/edgePoolQueries'
+import { getEdgeChainName, parseTvQuery } from 'edge/edgeQueries.util'
 import { NextRequest, NextResponse } from 'next/server'
-import { edgeQueries } from 'quoter/utils/edgePoolQueries'
-import { getEdgeChainName, parseTvQuery } from 'quoter/utils/edgeQueries.util'
 
 export const config = {
   runtime: 'edge',

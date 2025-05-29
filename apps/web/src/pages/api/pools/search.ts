@@ -1,7 +1,6 @@
-import { POOLS_SLOW_REVALIDATE } from 'config/pools'
+import { parseFarmSearchQuery } from 'edge/edgeQueries.util'
+import edgeFarmQueries from 'edge/farm/edgeFarmQueries'
 import { NextRequest, NextResponse } from 'next/server'
-import { edgeQueries } from 'quoter/utils/edgePoolQueries'
-import { parseCandidatesQuery } from 'quoter/utils/edgeQueries.util'
 
 export const config = {
   runtime: 'edge',
@@ -10,10 +9,9 @@ export const config = {
 export default async function handler(req: NextRequest) {
   const raw = new URL(req.url).search.slice(1)
   try {
-    const { chainId, addressA, addressB, protocols } = parseCandidatesQuery(raw)
-    const pools = await edgeQueries.fetchAllCandidatePools(addressA, addressB, chainId, protocols)
-    const age = Math.floor((POOLS_SLOW_REVALIDATE[chainId] as number) / 1000)
-    const staleAge = age * 2
+    const query = parseFarmSearchQuery(raw)
+    const pools = await edgeFarmQueries.queryFarms(query)
+
     return NextResponse.json(
       {
         data: pools,
@@ -22,13 +20,13 @@ export default async function handler(req: NextRequest) {
       {
         status: 200,
         headers: {
-          'Cache-Control': `public, s-maxage=${age}, stale-while-revalidate=${staleAge}`,
+          'Cache-Control': `public, s-maxage=120, stale-while-revalidate=180`,
           'Content-Type': 'application/json',
         },
       },
     )
   } catch (ex) {
     console.error(ex)
-    return NextResponse.json({ error: `fetch candidates error ` }, { status: 400 })
+    return NextResponse.json({ error: `search farms error ` }, { status: 400 })
   }
 }

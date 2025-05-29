@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Percent } from '@pancakeswap/sdk'
+import { ChainId, Currency, CurrencyAmount, Percent } from '@pancakeswap/sdk'
 import { FeeAmount, Tick } from '@pancakeswap/v3-sdk'
 import { Address, Hex } from 'viem'
 
@@ -101,3 +101,7 @@ export type V2PoolWithTvl = V2Pool & WithTvl
 export type StablePoolWithTvl = StablePool & WithTvl
 
 export type InfinityPoolWithTvl = (InfinityClPool | InfinityBinPool) & WithTvl
+
+export type WithChain = {
+  chainId: ChainId
+}

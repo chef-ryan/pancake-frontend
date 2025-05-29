@@ -1,4 +1,5 @@
 import { ChainId } from '@pancakeswap/chains'
+import { FarmV4SupportedChainId, supportedChainIdV4 } from '@pancakeswap/farms'
 import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
 import { OnChainProvider, SmartRouter } from '@pancakeswap/smart-router'
 import { NextResponse } from 'next/server'
@@ -6,6 +7,7 @@ import qs from 'qs'
 import { checksumAddress } from 'utils/checksumAddress'
 import { getViemClients } from 'utils/viem.server'
 import { Address } from 'viem/accounts'
+import { FarmQuery } from './edgeFarmQueries'
 
 export type Protocol = 'v2' | 'stable' | 'v3' | 'infinityCl' | 'infinityBin'
 
@@ -40,6 +42,44 @@ export const responseJson = (val: any, extra?: any) => {
       },
     },
   )
+}
+
+export function parseFarmSearchQuery(raw: string) {
+  if (!raw) {
+    throw new Error('Invalid query')
+  }
+
+  const queryParsed = qs.parse(raw) as FarmQuery
+  const { chains: _chains, protocols, pageNo, keywords } = queryParsed
+  if (!_chains || _chains.length === 0) {
+    throw new Error('Invalid chainId')
+  }
+
+  const chains = _chains.map((c) => Number(c) as ChainId)
+  for (const chainId of chains) {
+    if (!supportedChainIdV4.includes(chainId as FarmV4SupportedChainId)) {
+      throw new Error('Unsupported chainId')
+    }
+  }
+
+  if (!protocols || protocols.length === 0) {
+    throw new Error('Invalid protocol')
+  }
+  for (const protocol of protocols) {
+    if (!ALLOWED_PROTOCOLS.includes(protocol)) {
+      throw new Error('Invalid protocol')
+    }
+  }
+  if (pageNo && (Number.isNaN(pageNo) || pageNo < 0)) {
+    throw new Error('Invalid pageNo')
+  }
+  if (keywords && typeof keywords !== 'string') {
+    throw new Error('Invalid keywords')
+  }
+  return {
+    ...queryParsed,
+    chains: chains as FarmV4SupportedChainId[],
+  }
 }
 
 export function parseCandidatesQuery(raw: string) {

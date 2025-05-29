@@ -1,26 +1,17 @@
 import { useIntersectionObserver, useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { Button, InfoIcon, SORT_ORDER, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
-import latinise from '@pancakeswap/utils/latinise'
-import { getCurrencyAddress, toTokenValueByCurrency } from '@pancakeswap/widgets-internal'
 import { useAllTokensByChainIds } from 'hooks/Tokens'
-import flatMap from 'lodash/flatMap'
-import groupBy from 'lodash/groupBy'
-import intersection from 'lodash/intersection'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { FetchPoolsProps, PoolSortBy } from 'state/farmsV4/atom'
-import { fetchFarmData, useFetchPools, usePoolsApr } from 'state/farmsV4/hooks'
-import { getCombinedApr } from 'state/farmsV4/state/poolApr/utils'
-import type { InfinityPoolInfo, PoolInfo } from 'state/farmsV4/state/type'
+import { Suspense, useCallback, useMemo, useState } from 'react'
+import { usePoolsApr } from 'state/farmsV4/hooks'
+import type { PoolInfo } from 'state/farmsV4/state/type'
 import styled from 'styled-components'
-import { getHookByAddress } from 'utils/getHookByAddress'
-import { isInfinityProtocol } from 'utils/protocols'
-import { usePoolFeatureAndType } from 'views/AddLiquiditySelector/hooks/usePoolTypeQuery'
 
-import { atom } from 'jotai'
-import { atomFamily } from 'jotai/utils'
-import { userShowTestnetAtom } from 'state/user/hooks/useUserShowTestnet'
+import { ChainId } from '@pancakeswap/chains'
+import { FarmInfo } from 'edge/farm/farm.util'
+import { useAtomValue } from 'jotai'
+import { farmsSearchAtom } from './atom/farmsSearchAtom'
 import {
   Card,
   CardBody,
@@ -35,23 +26,13 @@ import {
 } from './components'
 import { AddLiquidityButton } from './components/AddLiquidityButton'
 import { useFilterToQueries } from './hooks/useFilterToQueries'
-import { useAllChainIds, useOrderChainIds } from './hooks/useMultiChains'
-
-type IDataType = PoolInfo
+import { useAllChainIds } from './hooks/useMultiChains'
 
 const PoolsContent = styled.div`
   min-height: calc(100vh - 64px - 56px);
 `
 
 const NUMBER_OF_FARMS_VISIBLE = 20
-
-const poolsWithFilterAtom = atomFamily(() => {
-  return atom(async (get) => {
-    const showTestnet = get(userShowTestnetAtom)
-    const farmPools = fetchFarmData(showTestnet)
-    return farmPools
-  })
-})
 
 export const PoolsPage = () => {
   const nextRouter = useRouter()
@@ -81,7 +62,6 @@ export const PoolsPage = () => {
   const [isPoolListExtended, setIsPoolListExtended] = useState(false)
 
   // data source
-  const { data: farmList } = useFarmPools()
   // const { extendPools, fetchPoolList, resetExtendPools } = useExtendPools()
   const allTokenMap = useAllTokensByChainIds(allChainIds)
   const poolsApr = usePoolsApr()
@@ -90,41 +70,6 @@ export const PoolsPage = () => {
   const EMPTY_POOLS = useMemo(() => [], [])
 
   const [nextPage, setNextPage] = useState(1)
-
-  const poolsQueries = useMemo(
-    () =>
-      ({
-        chains: selectedNetwork,
-        orderBy: PoolSortBy.VOL,
-        protocols: selectedProtocols,
-        pageNo: nextPage,
-      } as FetchPoolsProps),
-    [nextPage, selectedNetwork, selectedProtocols],
-  )
-
-  const {
-    isLoading,
-    data: extendPools,
-    pageNo,
-    resetExtendPools,
-    hasNextPage,
-  } = useFetchPools(poolsQueries, !disabledExtendPools)
-
-  const extendPoolList = useMemo(
-    () =>
-      disabledExtendPools
-        ? EMPTY_POOLS
-        : isPoolListExtended
-        ? extendPools
-        : extendPools.filter(
-            (pool) =>
-              // non farming list need to do a whitelist filter
-              pool.token0.wrapped.address in allTokenMap[pool.chainId] &&
-              pool.token1.wrapped.address in allTokenMap[pool.chainId],
-          ),
-    [disabledExtendPools, isPoolListExtended, extendPools, allTokenMap, EMPTY_POOLS],
-  )
-  const poolList = useMemo(() => farmList.concat(extendPoolList), [farmList, extendPoolList])
 
   /* useEffect(() => {
     // if consumed, fetch from pool/list
@@ -139,19 +84,14 @@ export const PoolsPage = () => {
 
   const handleFilterChange: IPoolsFilterPanelProps['onChange'] = useCallback(
     (newFilters) => {
-      resetExtendPools()
-      if (Object.prototype.hasOwnProperty.call(newFilters, 'search')) {
-        setSearch(newFilters.search ?? '')
-      } else {
-        replaceURLQueriesByFilter({
-          ...poolsFilter,
-          sortOrder,
-          sortField,
-          ...newFilters,
-        })
-      }
+      replaceURLQueriesByFilter({
+        ...poolsFilter,
+        sortOrder,
+        sortField,
+        ...newFilters,
+      })
     },
-    [resetExtendPools, replaceURLQueriesByFilter, poolsFilter, sortOrder, sortField],
+    [replaceURLQueriesByFilter, poolsFilter, sortOrder, sortField],
   )
 
   const handleToggleListExpand = useCallback(() => {
@@ -178,142 +118,18 @@ export const PoolsPage = () => {
     [nextRouter],
   )
 
-  const getRowKey = useCallback((item: PoolInfo) => {
-    return [item.chainId, item.protocol, item.pid, item.lpAddress].join(':')
+  const getRowKey = useCallback((item: FarmInfo) => {
+    return [item.chainId, item.id]
   }, [])
 
-  const { features, protocols, isSelectAllFeatures, isSelectAllProtocols } = usePoolFeatureAndType()
-
-  const filteredData = useMemo(() => {
-    return poolList.filter((farm) => {
-      return (
-        // network filter
-        selectedNetwork.includes(farm.chainId) &&
-        // tokens filter
-        (!selectedTokens?.length ||
-          selectedTokens?.find(
-            (token) => token === toTokenValueByCurrency(farm.token0) || token === toTokenValueByCurrency(farm.token1),
-          )) &&
-        // protocol filter
-        selectedProtocols.includes(farm.protocol) &&
-        // pool type and pool feature filter
-        (isSelectAllProtocols || !protocols.length || protocols.includes(farm.protocol)) &&
-        (isSelectAllFeatures ||
-          !features.length ||
-          (isInfinityProtocol(farm.protocol) &&
-            (farm as InfinityPoolInfo).hookAddress &&
-            intersection(features, getHookByAddress(farm.chainId, (farm as InfinityPoolInfo).hookAddress)?.category)
-              .length))
-      )
-    })
-  }, [
-    poolList,
-    selectedTokens,
-    selectedNetwork,
-    selectedProtocols,
-    features,
-    protocols,
-    isSelectAllProtocols,
-    isSelectAllFeatures,
-  ])
-
-  const searchFilteredData = useMemo(() => {
-    if (!search) return filteredData
-    const q = latinise(search.toLowerCase())
-    return filteredData.filter((farm) => {
-      const tokenMatch = [farm.token0, farm.token1].some((t) => {
-        const symbol = 'symbol' in t ? (t as any).symbol : t.wrapped.symbol
-        const addr = getCurrencyAddress(t)
-        return (
-          (typeof symbol === 'string' && latinise(symbol.toLowerCase()).startsWith(q)) ||
-          addr?.toLowerCase().startsWith(q)
-        )
-      })
-
-      const protocolTag =
-        farm.protocol === Protocol.InfinityCLAMM ? 'clamm' : farm.protocol === Protocol.InfinityBIN ? 'lbamm' : ''
-      const protocolMatch = protocolTag.startsWith(q)
-
-      const featuresMatch = isInfinityProtocol(farm.protocol)
-        ? getHookByAddress(farm.chainId, (farm as InfinityPoolInfo).hookAddress)?.category?.some((c) =>
-            c.toLowerCase().startsWith(q),
-          )
-        : false
-
-      const poolId = (farm as InfinityPoolInfo).poolId
-      const poolAddressMatch =
-        farm.lpAddress.toLowerCase().startsWith(q) || (poolId ? poolId.toLowerCase().startsWith(q) : false)
-
-      return tokenMatch || protocolMatch || featuresMatch || poolAddressMatch
-    })
-  }, [filteredData, search])
-
-  useEffect(() => {
-    if (isIntersecting) {
-      setCursorVisible((numberCurrentlyVisible) => {
-        if (hasNextPage && searchFilteredData.length < numberCurrentlyVisible) {
-          return searchFilteredData.length
-        }
-        if (numberCurrentlyVisible <= searchFilteredData.length) {
-          return Math.min(numberCurrentlyVisible + NUMBER_OF_FARMS_VISIBLE, searchFilteredData.length)
-        }
-        return numberCurrentlyVisible
-      })
-    }
-  }, [isIntersecting, searchFilteredData, hasNextPage])
-
-  useEffect(() => {
-    if (isLoading) {
-      return
-    }
-    setNextPage((nextPage) => (cursorVisible >= searchFilteredData.length ? nextPage + 1 : nextPage))
-  }, [cursorVisible, searchFilteredData.length, isLoading])
-
-  const dataByChain = useMemo(() => {
-    return groupBy(searchFilteredData, 'chainId')
-  }, [searchFilteredData])
-
-  const { orderedChainIds, activeChainId, othersChains } = useOrderChainIds()
-
-  // default sorting logic: https://linear.app/pancakeswap/issue/PAN-3669/default-sorting-logic-update-for-pair-list
-  const defaultSortedData = useMemo(() => {
-    // active Farms: current chain -> other chains
-    // ordered by farm config list
-    const activeFarms = flatMap(orderedChainIds, (chainId) =>
-      dataByChain[chainId]?.filter((pool) => !!pool.isActiveFarm),
-    )
-    // inactive Farms: current chain
-    // ordered by tvlUsd
-    const inactiveFarmsOfActiveChain =
-      dataByChain[activeChainId]
-        ?.filter((pool) => !pool.isActiveFarm)
-        .sort((a, b) =>
-          'tvlUsd' in a && 'tvlUsd' in b && b.tvlUsd && a.tvlUsd ? Number(b.tvlUsd) - Number(a.tvlUsd) : 1,
-        ) ?? []
-    // inactive Farms: other chains
-    // ordered by tvlUsd
-    const inactiveFarmsOfOthers = flatMap(othersChains, (chainId) =>
-      dataByChain[chainId]?.filter((pool) => !pool.isActiveFarm),
-    ).sort((a, b) => ('tvlUsd' in a && 'tvlUsd' in b && b.tvlUsd && a.tvlUsd ? Number(b.tvlUsd) - Number(a.tvlUsd) : 1))
-
-    return [...activeFarms, ...inactiveFarmsOfActiveChain, ...inactiveFarmsOfOthers].filter(Boolean)
-  }, [orderedChainIds, activeChainId, othersChains, dataByChain])
-
-  const sortedData = useMemo(() => {
-    if (sortField === null || sortOrder === SORT_ORDER.NULL) {
-      return defaultSortedData
-    }
-    return [...searchFilteredData].sort((a, b) => {
-      if (sortField === 'lpApr') {
-        const aprOfA = getCombinedApr(poolsApr, a.chainId, a.lpAddress)
-        const aprOfB = getCombinedApr(poolsApr, b.chainId, b.lpAddress)
-        return sortOrder * aprOfA + -1 * sortOrder * aprOfB
-      }
-      return sortOrder * Number(a[sortField]) + -1 * sortOrder * Number(b[sortField])
-    })
-  }, [defaultSortedData, sortOrder, sortField, searchFilteredData, poolsApr]) as IDataType[]
-
-  const renderData = useMemo(() => sortedData.slice(0, cursorVisible), [cursorVisible, sortedData])
+  // const renderData = useMemo(() => sortedData.slice(0, cursorVisible), [cursorVisible, sortedData])
+  console.log('[query]', selectedProtocols)
+  const list = useAtomValue(
+    farmsSearchAtom({
+      chains: [ChainId.BSC],
+      protocols: selectedProtocols,
+    }),
+  )
 
   return (
     <Card>
@@ -322,23 +138,28 @@ export const PoolsPage = () => {
           {(isMobile || isMd) && <AddLiquidityButton height="40px" scale="sm" width="100%" />}
         </PoolsFilterPanel>
       </CardHeader>
-      <CardBody>
-        <PoolsContent>
-          {isMobile ? (
-            <ListView data={renderData} onRowClick={handleRowClick} />
-          ) : (
-            <TableView
-              getRowKey={getRowKey}
-              columns={columns}
-              data={renderData}
-              onSort={handleSort}
-              sortOrder={sortOrder}
-              sortField={sortField}
-              onRowClick={handleRowClick}
-            />
-          )}
-        </PoolsContent>
-        {poolList.length > 0 && <div ref={observerRef} />}
+      <CardBody
+        style={{
+          opacity: list.isPending() ? 0.5 : 1,
+        }}
+      >
+        <Suspense>
+          <PoolsContent>
+            {isMobile ? (
+              <ListView data={list.unwrapOr([])} onRowClick={handleRowClick} />
+            ) : (
+              <TableView
+                getRowKey={getRowKey}
+                columns={columns}
+                data={list.unwrapOr([])}
+                onSort={handleSort}
+                sortOrder={sortOrder}
+                sortField={sortField}
+                onRowClick={handleRowClick}
+              />
+            )}
+          </PoolsContent>
+        </Suspense>
       </CardBody>
       {disabledExtendPools ? null : (
         <CardFooter>
@@ -351,24 +172,4 @@ export const PoolsPage = () => {
       )}
     </Card>
   )
-}
-
-export const sortPools = (
-  pools: PoolInfo[],
-  sortField: string | null,
-  sortOrder: SORT_ORDER,
-  defaultSortedData: PoolInfo[],
-  poolsApr: Record<string, number>,
-) => {
-  if (sortField === null || sortOrder === SORT_ORDER.NULL) {
-    return defaultSortedData
-  }
-  return [...pools].sort((a, b) => {
-    if (sortField === 'lpApr') {
-      const aprOfA = getCombinedApr(poolsApr, a.chainId, a.lpAddress)
-      const aprOfB = getCombinedApr(poolsApr, b.chainId, b.lpAddress)
-      return sortOrder * aprOfA + -1 * sortOrder * aprOfB
-    }
-    return sortOrder * Number(a[sortField]) + -1 * sortOrder * Number(b[sortField])
-  })
 }

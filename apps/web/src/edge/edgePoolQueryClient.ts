@@ -4,7 +4,7 @@ import { InfinityBinPool, InfinityClPool, SmartRouter, StablePool, V2Pool, V3Poo
 import { Currency, getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import { cacheByLRU } from '@pancakeswap/utils/cacheByLRU'
 import qs from 'qs'
-import { PoolHashHelper } from './PoolHashHelper'
+import { PoolHashHelper } from 'quoter/utils/PoolHashHelper'
 import { Protocol } from './edgeQueries.util'
 
 const _fetchPools = async function <T>(
