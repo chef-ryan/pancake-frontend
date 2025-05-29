@@ -19,6 +19,7 @@ export default function LockPercentCircle({
   const { t } = useTranslation()
   return (
     <Tooltip
+      usePortal
       label={t('Total locked liquidity in this pool: %percent%', {
         percent: formatToRawLocaleStr(toPercentString(value, { alreadyPercented: true }))
       })}

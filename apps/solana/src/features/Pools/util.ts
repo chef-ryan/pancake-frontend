@@ -5,7 +5,7 @@ import { formatLocaleStr } from '@/utils/numberish/formatter'
 import toPercentString, { ToPercentStringOptions, toTotalPercent } from '@/utils/numberish/toPercentString'
 import { transformSymbol } from '@/utils/pool/nameFormat'
 
-const POOL_CACHE_KEY = '_ray_favorite_pool_'
+const POOL_CACHE_KEY = '_pancake_favorite_pool_'
 
 const favoritePoolCache =
   typeof window !== 'undefined' ? new Set<string>(JSON.parse(localStorage.getItem(POOL_CACHE_KEY) || '[]')) : new Set<string>()
@@ -22,7 +22,7 @@ export const setFavoritePoolCache = (values: string | string[]) => {
       else favoritePoolCache.add(v)
     })
   } else if (favoritePoolCache.has(values)) favoritePoolCache.delete(values)
-    else favoritePoolCache.add(values)
+  else favoritePoolCache.add(values)
   localStorage.setItem(POOL_CACHE_KEY, JSON.stringify(Array.from(favoritePoolCache)))
   return favoritePoolCache
 }

@@ -33,13 +33,11 @@ import { PoolListItemAprPie } from './PoolListItemAprPie'
 import { PoolListItemRewardStack } from './PoolListItemRewardStack'
 
 export default function PoolListItem({
-  styleType = 'list',
   timeBase,
   pool,
   field,
   onOpenChart
 }: {
-  styleType?: string
   timeBase: TimeBase
   pool: FormattedPoolInfoItem
   field: AprKey
@@ -115,508 +113,248 @@ export default function PoolListItem({
     [feeApr?.apr, feeApr?.percent, rewardApr]
   )
 
-  const pairName = useMemo(() => {
-    const [token0Name, token1Name] = pool.poolName.replaceAll(/\s+/g, '').split('-')
-    if (!token0Name || !token1Name) {
-      return pool.poolName
-    }
-    return (
-      <Flex gap="4px" fontWeight={600} fontSize="16px">
-        <Text color={colors.textPrimary}>{token0Name}</Text>
-        <Text color={colors.textSubtle}>/</Text>
-        <Text color={colors.textPrimary}>{token1Name}</Text>
-      </Flex>
-    )
-  }, [pool.poolName])
-
-  const infoToolTipLabel = useMemo(
-    () => (
-      <Flex width="252px" gap="8px" flexDir="column">
-        <AddressChip
-          address={pool.id}
-          renderLabel={`${t('Pool id')}`}
-          mb="2"
-          textProps={{ fontSize: 'xs', color: colors.primary }}
-          iconProps={{ color: colors.primary }}
-          color={colors.textSubtle}
-          justifyContent="space-between"
-          fontSize="16px"
-        />
-        <AddressChip
-          address={baseToken.address}
-          renderLabel={
-            <Flex gap="8px" justifyContent="flex-start" alignItems="center">
-              <TokenAvatar token={baseToken} size="xs" />
-              {baseToken.symbol}
-            </Flex>
-          }
-          textProps={{ fontSize: 'xs', color: colors.primary }}
-          iconProps={{ color: colors.primary }}
-          color={colors.textSubtle}
-          justifyContent="space-between"
-        />
-        <AddressChip
-          address={quoteToken.address}
-          renderLabel={
-            <Flex gap="8px" justifyContent="flex-start" alignItems="center">
-              <TokenAvatar token={quoteToken} size="xs" />
-              {quoteToken.symbol}
-            </Flex>
-          }
-          textProps={{ fontSize: 'xs', color: colors.primary }}
-          iconProps={{ color: colors.primary }}
-          color={colors.textSubtle}
-          justifyContent="space-between"
-        />
-      </Flex>
-    ),
-    [baseToken, pool.id, quoteToken, t]
-  )
-
-  const aprToolTipLabel = useMemo(
-    () => (
-      <PoolListItemAprDetailPopoverContent
-        rewardType={pool.rewardDefaultPoolInfos === 'Ecosystem' ? t('Ecosystem') : ''}
-        aprData={aprData}
-        weeklyRewards={pool.weeklyRewards}
-      />
-    ),
-    [aprData, pool.rewardDefaultPoolInfos, pool.weeklyRewards, t]
-  )
-
   return (
     <>
-      {styleType === 'list' ? (
-        <Box borderBottom={`1px solid ${colors.cardBorder01}`} pl={[0, 6]} px={[4, 6]} py={3} sx={poolListGrid} onClick={onPoolClick}>
-          <Flex align="center" gap={[2, 4]}>
-            <Desktop>
-              <Center width={6} height={6}>
-                <StarIcon selected={isFavorite} onClick={onFavoriteClick} style={{ cursor: 'pointer', minWidth: '16px' }} />
-              </Center>
-            </Desktop>
-            <Mobile>
-              <Box position="relative">
-                <Box
-                  bg={isFavorite ? colors.selectActiveSecondary : 'transparent'}
-                  borderRadius="0px 8px 8px 0px"
-                  position="absolute"
-                  top="50%"
-                  left={-4}
-                  width="2.5px"
-                  height={5}
-                  transform="auto"
-                  translateY="-50%"
-                />
-              </Box>
-            </Mobile>
-
-            <Tooltip variant="card" label={infoToolTipLabel}>
-              <Grid
-                gridTemplate={[
-                  `
-                  "a n" auto
-                  "t t" auto / auto 1fr`,
-                  `
-                  "a n" auto
-                  "a t" auto / auto 1fr`,
-                  `
-                  "a n" auto
-                  "a t" auto / auto 1fr`
-                ]}
-                columnGap={[1, 2]}
-                rowGap={[1, 1]}
-                alignItems="center"
-              >
-                {/* token pair avatar */}
-                <GridItem area="a">
-                  <TokenAvatarPair token1={baseToken} token2={quoteToken} size={['sm', 'smi']} />
-                </GridItem>
-
-                {/* name */}
-                <GridItem area="n">{pairName}</GridItem>
-
-                {/* tags */}
-                <GridItem area="t">
-                  <HStack align="center">
+      <Box display="block" onClick={onPoolClick}>
+        <Desktop>
+          <PanelCard borderRadius="16px" pt="16px" pb="20px" px="20px" position="relative" overflow="hidden">
+            <StarIcon
+              selected={isFavorite}
+              onClick={onFavoriteClick}
+              style={{ position: 'absolute', top: '25px', right: '20px', cursor: 'pointer' }}
+            />
+            <VStack w="full" spacing={4}>
+              {/* Header part */}
+              <VStack w="full" spacing={2}>
+                <VStack spacing={0}>
+                  <TokenAvatarPair token1={baseToken} token2={quoteToken} size="lg" flexShrink={0} />
+                  <Text fontSize="24px" fontWeight="500" color={colors.textPrimary}>
+                    {pool.poolName}
+                  </Text>
+                </VStack>
+                {/* APR part */}
+                <Flex align="center" borderRadius="lg" w="full" justify="center" minH="36px">
+                  <Tooltip
+                    isContentCard
+                    variant="card"
+                    label={
+                      <Flex minW="260px" direction="column" py={2} px={3} gap={4}>
+                        <Flex justify="space-between">
+                          <Text fontSize="sm" color={colors.textSecondary}>
+                            {t('Total APR')}
+                          </Text>
+                          <Text fontSize="sm" color={colors.textPrimary}>
+                            {formatToRawLocaleStr(toAPRPercent(pool.totalApr[field]))}
+                          </Text>
+                        </Flex>
+                        <Grid templateColumns="60px 1fr" gap={8}>
+                          <GridItem>
+                            <PoolListItemAprPie aprs={aprData} />
+                          </GridItem>
+                          <GridItem>
+                            <Flex flexGrow={2} justify="space-between" align="center">
+                              <VStack flex={3}>
+                                {pool.allApr[field].slice(0, 3).map(({ apr, isTradingFee, token }, idx) => (
+                                  <Flex
+                                    w="full"
+                                    key={`reward-${isTradingFee ? 'Trade Fees' : token?.symbol}`}
+                                    justify="space-between"
+                                    align="center"
+                                  >
+                                    <Flex
+                                      fontSize="xs"
+                                      fontWeight="normal"
+                                      color={colors.textSecondary}
+                                      justify="flex-start"
+                                      align="center"
+                                    >
+                                      <Box rounded="full" bg={aprColors[idx]} w="7px" h="7px" mr="8px" />
+                                      {isTradingFee ? 'Trade Fees' : token?.symbol}
+                                    </Flex>
+                                    <Box fontSize="xs" color={colors.textPrimary}>
+                                      {formatToRawLocaleStr(toAPRPercent(Number(apr)))}
+                                    </Box>
+                                  </Flex>
+                                ))}
+                              </VStack>
+                            </Flex>
+                          </GridItem>
+                        </Grid>
+                      </Flex>
+                    }
+                  >
+                    <Flex align="center" gap={1} w="full" justify="center">
+                      <Text fontSize="xl" fontWeight="500" color={colors.secondary}>
+                        {formatToRawLocaleStr(toAPRPercent(pool.totalApr[field]))} {t('APR')}
+                      </Text>
+                      <QuestionCircleIcon opacity={1} color={colors.textSecondary} />
+                    </Flex>
+                  </Tooltip>
+                </Flex>
+              </VStack>
+              {/* Body part */}
+              <VStack spacing={2} w="full">
+                <HStack justify="space-between" w="full">
+                  <Text fontSize="sm" color={colors.textSubtle}>
+                    {t('Fee Tier')}
+                  </Text>
+                  <Tooltip
+                    label={
+                      <Flex maxW="216px">
+                        <Text fontSize="sm">
+                          <Highlight query="concentrated" styles={{ fontWeight: '700', color: `${colors.textSecondary}` }}>
+                            {t('This is a %feeRate%% fee tier %type% liquidity pool', {
+                              feeRate: formatToRawLocaleStr(pool.feeRate * 100),
+                              type: t(`liquidity.${pool.type}`)
+                            })}
+                          </Highlight>
+                        </Text>
+                      </Flex>
+                    }
+                  >
                     <Tag size="sm" variant="rounded">
                       {formatToRawLocaleStr(toPercentString(pool.feeRate * 100))}
                     </Tag>
-
-                    {pool.isOpenBook && (
-                      <Tooltip label="This pool shares liquidity to the OpenBook order-book">
-                        <Flex alignItems="center">
-                          <Tag size="sm" variant="rounded">
-                            <OpenBookIcon />
-                          </Tag>
-                        </Flex>
-                      </Tooltip>
-                    )}
-                  </HStack>
-                </GridItem>
-              </Grid>
-            </Tooltip>
-          </Flex>
-
-          <Desktop>
-            <HStack justify="flex-end" gap={2} display={isTablet ? 'none' : 'flex'}>
-              <Text fontSize={['sm', 'lg']} textAlign="right">
-                {formatCurrency(pool.tvl, { symbol: '$', decimalPlaces: 0 })}
-              </Text>
-              <Box minWidth="22px">
-                {Math.abs(pool.burnPercent || 0) > 5 && (
-                  <LockPercentCircle
-                    value={Math.abs(pool.burnPercent || 0)}
-                    circularProps={{
-                      size: '22px',
-                      thickness: '8px'
-                    }}
-                  />
-                )}
-              </Box>
-            </HStack>
-            <Text as="span" fontSize="lg" textAlign="right">
-              {formatCurrency(timeData.volume, { symbol: '$', abbreviated: isMobile, decimalPlaces: 0 })}
-            </Text>
-          </Desktop>
-          <Desktop>
-            <Text as="span" fontSize={['sm', 'lg']} textAlign="right" display={isTablet ? 'none' : 'block'}>
-              {formatCurrency(timeData.volumeFee, { symbol: '$', decimalPlaces: 0 })}
-            </Text>
-          </Desktop>
-          <Tooltip variant="card" placement="top-end" label={aprToolTipLabel}>
-            <Desktop>
-              <HStack justifyContent="flex-end">
-                <Box width={['unset', '80px', '100px']} textAlign="right">
-                  <Text fontSize={['md', 'lg', 'xl']} fontWeight={500} whiteSpace="nowrap" textAlign="right">
-                    {formatToRawLocaleStr(toAPRPercent(timeData.apr))}
+                  </Tooltip>
+                </HStack>
+                <HStack justify="space-between" w="full">
+                  <Text fontSize="sm" color={colors.textSubtle}>
+                    {t(`Volume ${timeBase}`)}
                   </Text>
-                  <PoolListItemAprLine aprData={aprData} />
-                </Box>
-              </HStack>
-            </Desktop>
-            <Mobile>
-              <VStack justifyContent="space-between">
-                <HStack gap={1} justifyContent="flex-end">
-                  {pool.burnPercent > 5 && (
-                    <LockPercentCircle
-                      value={pool.burnPercent}
-                      circularProps={{
-                        size: '16px'
-                      }}
-                      iconProps={{
-                        width: 10,
-                        height: 10
-                      }}
-                    />
-                  )}
-                  <Text as="span" fontWeight={600} textAlign="right">
-                    {formatCurrency(timeData.volume, { symbol: '$', decimalPlaces: 0 })}
+                  <Text fontSize="sm" color={colors.textPrimary}>
+                    {formatCurrency(timeData.volume, { symbol: '$', decimalPlaces: 2 })}
                   </Text>
                 </HStack>
-                <HStack gap={1} justifyContent="flex-end">
-                  <Text fontSize="sm" whiteSpace="nowrap" align="revert" color={colors.textSubtle}>
-                    {formatToRawLocaleStr(toAPRPercent(timeData.apr))}
+                <HStack justify="space-between" w="full">
+                  <Text fontSize="sm" color={colors.textSubtle}>
+                    {t(`Fees ${timeBase}`)}
                   </Text>
-                  <PoolListItemAprLine aprData={aprData} />
+                  <Text fontSize="sm" color={colors.textPrimary}>
+                    {formatCurrency(timeData.volumeFee, { symbol: '$', decimalPlaces: 2 })}
+                  </Text>
+                </HStack>
+                <HStack justify="space-between" w="full">
+                  <Text fontSize="sm" color={colors.textSubtle}>
+                    {t(`TVL`)}
+                  </Text>
+                  <Text fontSize="sm" color={colors.textPrimary}>
+                    {formatCurrency(pool.tvl, { symbol: '$', decimalPlaces: 2 })}
+                  </Text>
+                </HStack>
+                <HStack justify="space-between" w="full">
+                  <Text fontSize="sm" color={colors.textSecondary}>
+                    {t(`Rewards`)}
+                  </Text>
+                  <PoolListItemRewardStack rewards={pool.weeklyRewards} />
                 </HStack>
               </VStack>
-            </Mobile>
-          </Tooltip>
 
-          <Desktop>
-            <HStack justify="flex-end">
+              <VStack w="full" spacing={1}>
+                <HStack justify="center" align="center" color={colors.secondary}>
+                  <Button variant="ghost" display="block" width="100%" onClick={handleOpenChart}>
+                    <HStack>
+                      <Text fontSize="md" fontWeight="500">
+                        {t('View Chart')}
+                      </Text>
+                      <PulseIcon />
+                    </HStack>
+                  </Button>
+                  <Button variant="ghost" display="block" width="100%" onClick={onClickSwap}>
+                    <HStack>
+                      <Text fontSize="md" fontWeight="500">
+                        {t('Swap')}
+                      </Text>
+                      <SwapPoolItemIcon color={colors.textSubtle} />
+                    </HStack>
+                  </Button>
+                </HStack>
+                <Button display="block" width="100%" onClick={onClickDeposit}>
+                  {t('Deposit')}
+                </Button>
+              </VStack>
+            </VStack>
+          </PanelCard>
+        </Desktop>
+        <Mobile>
+          <PanelCard overflow="hidden" borderRadius="12px" px={4} py={0}>
+            <Flex justify="space-between" py={4}>
               <Box>
-                <Tooltip label={t('View pool charts')}>
-                  <Box
-                    display="grid"
-                    placeItems="center"
-                    cursor="pointer"
-                    rounded="full"
-                    bgColor={colors.tertiary}
-                    px={3}
-                    py={2}
-                    onClick={handleOpenChart}
-                  >
-                    <ChartInfoIcon strokeWidth={2} color={colors.textSubtle} />
-                  </Box>
-                </Tooltip>
-              </Box>
-              <Box>
-                <Tooltip label={t('Swap')}>
-                  <Box
-                    display="grid"
-                    placeItems="center"
-                    cursor="pointer"
-                    rounded="full"
-                    bgColor={colors.tertiary}
-                    px={3}
-                    py={2}
-                    onClick={onClickSwap}
-                  >
-                    <SwapPoolItemIcon strokeWidth="2" color={colors.textSubtle} />
-                  </Box>
-                </Tooltip>
-              </Box>
-
-              <Button
-                variant="outline"
-                size="xs"
-                color={colors.primary60}
-                fontWeight={600}
-                fontSize="16px"
-                borderColor={colors.primary}
-                borderWidth="2px"
-                borderRadius="12px"
-                paddingInline="8px"
-                height="32px"
-                onClick={onClickDeposit}
-              >
-                {t('Deposit')}
-              </Button>
-            </HStack>
-          </Desktop>
-        </Box>
-      ) : (
-        <Box display="block" onClick={onPoolClick}>
-          <Desktop>
-            <PanelCard borderRadius="16px" pt="16px" pb="20px" px="20px" position="relative" overflow="hidden">
-              <StarIcon
-                selected={isFavorite}
-                onClick={onFavoriteClick}
-                style={{ position: 'absolute', top: '25px', right: '20px', cursor: 'pointer' }}
-              />
-              <VStack w="full" spacing={4}>
-                {/* Header part */}
-                <VStack w="full" spacing={2}>
-                  <VStack spacing={0}>
-                    <TokenAvatarPair token1={baseToken} token2={quoteToken} size="lg" flexShrink={0} />
-                    <Text fontSize="24px" fontWeight="500" color={colors.textPrimary}>
-                      {pool.poolName}
-                    </Text>
-                  </VStack>
-                  {/* APR part */}
-                  <Flex align="center" borderRadius="lg" w="full" justify="center" minH="36px">
-                    <Tooltip
-                      isContentCard
-                      variant="card"
-                      label={
-                        <Flex minW="260px" direction="column" py={2} px={3} gap={4}>
-                          <Flex justify="space-between">
-                            <Text fontSize="sm" color={colors.textSecondary}>
-                              {t('Total APR')}
-                            </Text>
-                            <Text fontSize="sm" color={colors.textPrimary}>
-                              {formatToRawLocaleStr(toAPRPercent(pool.totalApr[field]))}
-                            </Text>
-                          </Flex>
-                          <Grid templateColumns="60px 1fr" gap={8}>
-                            <GridItem>
-                              <PoolListItemAprPie aprs={aprData} />
-                            </GridItem>
-                            <GridItem>
-                              <Flex flexGrow={2} justify="space-between" align="center">
-                                <VStack flex={3}>
-                                  {pool.allApr[field].slice(0, 3).map(({ apr, isTradingFee, token }, idx) => (
-                                    <Flex
-                                      w="full"
-                                      key={`reward-${isTradingFee ? 'Trade Fees' : token?.symbol}`}
-                                      justify="space-between"
-                                      align="center"
-                                    >
-                                      <Flex
-                                        fontSize="xs"
-                                        fontWeight="normal"
-                                        color={colors.textSecondary}
-                                        justify="flex-start"
-                                        align="center"
-                                      >
-                                        <Box rounded="full" bg={aprColors[idx]} w="7px" h="7px" mr="8px" />
-                                        {isTradingFee ? 'Trade Fees' : token?.symbol}
-                                      </Flex>
-                                      <Box fontSize="xs" color={colors.textPrimary}>
-                                        {formatToRawLocaleStr(toAPRPercent(Number(apr)))}
-                                      </Box>
-                                    </Flex>
-                                  ))}
-                                </VStack>
-                              </Flex>
-                            </GridItem>
-                          </Grid>
-                        </Flex>
-                      }
-                    >
-                      <Flex align="center" gap={1} w="full" justify="center">
-                        <Text fontSize="xl" fontWeight="500" color={colors.secondary}>
-                          {formatToRawLocaleStr(toAPRPercent(pool.totalApr[field]))} {t('APR')}
-                        </Text>
-                        <QuestionCircleIcon opacity={1} color={colors.textSecondary} />
-                      </Flex>
-                    </Tooltip>
-                  </Flex>
-                </VStack>
-                {/* Body part */}
-                <VStack spacing={2} w="full">
-                  <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" color={colors.textSubtle}>
-                      {t('Fee Tier')}
-                    </Text>
-                    <Tooltip
-                      label={
-                        <Flex maxW="216px">
-                          <Text fontSize="sm">
-                            <Highlight query="concentrated" styles={{ fontWeight: '700', color: `${colors.textSecondary}` }}>
-                              {t('This is a %feeRate%% fee tier %type% liquidity pool', {
-                                feeRate: formatToRawLocaleStr(pool.feeRate * 100),
-                                type: pool.type
-                              }) || 'liquidity.pool_fee_desc'}
-                            </Highlight>
-                          </Text>
-                        </Flex>
-                      }
-                    >
+                <HStack spacing={2}>
+                  <TokenAvatarPair token1={baseToken} token2={quoteToken} size="md" />
+                  <Flex direction="column" gap={1}>
+                    <HStack spacing={1}>
+                      <Text fontWeight="500">
+                        {baseToken?.symbol}/{quoteToken?.symbol}
+                      </Text>
+                      <StarIcon
+                        selected={isFavorite}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onFavoriteClick()
+                        }}
+                      />
+                    </HStack>
+                    <HStack spacing="6px">
                       <Tag size="sm" variant="rounded">
                         {formatToRawLocaleStr(toPercentString(pool.feeRate * 100))}
                       </Tag>
-                    </Tooltip>
-                  </HStack>
-                  <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" color={colors.textSubtle}>
-                      {t(`Volume %timeBase%`, { timeBase })}
-                    </Text>
-                    <Text fontSize="sm" color={colors.textPrimary}>
-                      {formatCurrency(timeData.volume, { symbol: '$', decimalPlaces: 2 })}
-                    </Text>
-                  </HStack>
-                  <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" color={colors.textSubtle}>
-                      {t(`Fees %timeBase%`, { timeBase })}
-                    </Text>
-                    <Text fontSize="sm" color={colors.textPrimary}>
-                      {formatCurrency(timeData.volumeFee, { symbol: '$', decimalPlaces: 2 })}
-                    </Text>
-                  </HStack>
-                  <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" color={colors.textSubtle}>
-                      {t(`TVL`)}
-                    </Text>
-                    <Text fontSize="sm" color={colors.textPrimary}>
-                      {formatCurrency(pool.tvl, { symbol: '$', decimalPlaces: 2 })}
-                    </Text>
-                  </HStack>
-                  <HStack justify="space-between" w="full">
-                    <Text fontSize="sm" color={colors.textSubtle}>
-                      {t(`Rewards`)}
-                    </Text>
-                    <PoolListItemRewardStack rewards={pool.weeklyRewards} />
-                  </HStack>
-                </VStack>
-
-                <VStack w="full" spacing={1}>
-                  <HStack justify="center" align="center" color={colors.secondary}>
-                    <Button variant="ghost" display="block" width="100%" onClick={handleOpenChart}>
-                      <HStack>
-                        <Text fontSize="md" fontWeight="500">
-                          {t('View Chart')}
-                        </Text>
-                        <PulseIcon />
-                      </HStack>
-                    </Button>
-                    <Button variant="ghost" display="block" width="100%" onClick={onClickSwap}>
-                      <HStack>
-                        <Text fontSize="md" fontWeight="500">
-                          {t('Swap')}
-                        </Text>
-                        <SwapPoolItemIcon color={colors.textSubtle} />
-                      </HStack>
-                    </Button>
-                  </HStack>
-                  <Button display="block" width="100%" onClick={onClickDeposit}>
-                    {t('Deposit')}
-                  </Button>
-                </VStack>
-              </VStack>
-            </PanelCard>
-          </Desktop>
-          <Mobile>
-            <PanelCard overflow="hidden" borderRadius="12px" px={4} py={0}>
-              <Flex justify="space-between" py={4}>
-                <Box>
-                  <HStack spacing={2}>
-                    <TokenAvatarPair token1={baseToken} token2={quoteToken} size="md" />
-                    <Flex direction="column" gap={1}>
-                      <HStack spacing={1}>
-                        <Text fontWeight="500">
-                          {baseToken?.symbol}/{quoteToken?.symbol}
-                        </Text>
-                        <StarIcon
-                          selected={isFavorite}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onFavoriteClick()
-                          }}
-                        />
-                      </HStack>
-                      <HStack spacing="6px">
+                      {pool.isOpenBook ? (
                         <Tag size="sm" variant="rounded">
-                          {formatToRawLocaleStr(toPercentString(pool.feeRate * 100))}
+                          <OpenBookIcon />
                         </Tag>
-                        {pool.isOpenBook ? (
-                          <Tag size="sm" variant="rounded">
-                            <OpenBookIcon />
-                          </Tag>
-                        ) : null}
-                      </HStack>
-                    </Flex>
-                  </HStack>
-                </Box>
-                <Box minW="85px" mr={4}>
-                  <Flex flexWrap="wrap" mb={2}>
-                    <Text overflowWrap="break-word" wordBreak="break-word" fontWeight="500">
-                      {formatToRawLocaleStr(toAPRPercent(timeData.apr))}
-                    </Text>
-                    <HStack ml={1} spacing="-7%">
-                      {pool.weeklyRewards.map((reward) => (
-                        <TokenAvatar key={`pool-list-item-reward-${reward.token.address}`} token={reward.token} size="xs" />
-                      ))}
+                      ) : null}
                     </HStack>
                   </Flex>
+                </HStack>
+              </Box>
+              <Box minW="85px" mr={4}>
+                <Flex flexWrap="wrap" mb={2}>
+                  <Text overflowWrap="break-word" wordBreak="break-word" fontWeight="500">
+                    {formatToRawLocaleStr(toAPRPercent(timeData.apr))}
+                  </Text>
+                  <HStack ml={1} spacing="-7%">
+                    {pool.weeklyRewards.map((reward) => (
+                      <TokenAvatar key={`pool-list-item-reward-${reward.token.address}`} token={reward.token} size="xs" />
+                    ))}
+                  </HStack>
+                </Flex>
 
-                  <PoolListItemAprLine aprData={aprData} />
-                </Box>
+                <PoolListItemAprLine aprData={aprData} />
+              </Box>
+            </Flex>
+
+            <Box flexGrow={1} height="1px" color={colors.textTertiary} opacity={0.2} bg={colors.dividerDashGradient} />
+
+            <Flex py={4} justify="space-between">
+              <Flex flex={3} direction="column">
+                <Text fontSize="xs" color={colors.textTertiary}>
+                  {t('Liquidity')}
+                </Text>
+                <Text fontSize="sm" color={colors.textSubtle}>
+                  {formatCurrency(pool.tvl, { symbol: '$', decimalPlaces: 0 })}
+                </Text>
               </Flex>
-
-              <Box flexGrow={1} height="1px" color={colors.textTertiary} opacity={0.2} bg={colors.dividerDashGradient} />
-
-              <Flex py={4} justify="space-between">
-                <Flex flex={3} direction="column">
-                  <Text fontSize="xs" color={colors.textTertiary}>
-                    {t('Liquidity')}
-                  </Text>
-                  <Text fontSize="sm" color={colors.textSubtle}>
-                    {formatCurrency(pool.tvl, { symbol: '$', decimalPlaces: 0 })}
-                  </Text>
-                </Flex>
-                <Flex flex={3} direction="column">
-                  <Text fontSize="xs" color={colors.textTertiary}>
-                    {t(`Volume %timeBase%`, { timeBase })}
-                  </Text>
-                  <Text fontSize="sm" color={colors.textSubtle}>
-                    {formatCurrency(timeData.volume, { decimalPlaces: 0 })}
-                  </Text>
-                </Flex>
-                <Flex flex={2} direction="column">
-                  <Text fontSize="xs" color={colors.textTertiary}>
-                    {t(`Fees %timeBase%`, { timeBase })}
-                  </Text>
-                  <Text fontSize="sm" color={colors.textSubtle}>
-                    {formatCurrency(timeData.volumeFee, { decimalPlaces: 0 })}
-                  </Text>
-                </Flex>
+              <Flex flex={3} direction="column">
+                <Text fontSize="xs" color={colors.textTertiary}>
+                  {t(`Volume ${timeBase}`)}
+                </Text>
+                <Text fontSize="sm" color={colors.textSubtle}>
+                  {formatCurrency(timeData.volume, { decimalPlaces: 0 })}
+                </Text>
               </Flex>
-            </PanelCard>
-          </Mobile>
-        </Box>
-      )}
+              <Flex flex={2} direction="column">
+                <Text fontSize="xs" color={colors.textTertiary}>
+                  {t(`Fees ${timeBase}`)}
+                </Text>
+                <Text fontSize="sm" color={colors.textSubtle}>
+                  {formatCurrency(timeData.volumeFee, { decimalPlaces: 0 })}
+                </Text>
+              </Flex>
+            </Flex>
+          </PanelCard>
+        </Mobile>
+      </Box>
+
       <Mobile>
         <PoolDetailMobileDrawer
           poolId={pool.id}

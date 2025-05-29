@@ -21,6 +21,8 @@ import { ApiV3Token, FetchPoolParams, PoolFetchType } from '@raydium-io/raydium-
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation, Trans } from '@pancakeswap/localization'
 
+import { AllCommunityModule, ColDef, ModuleRegistry, themeQuartz } from 'ag-grid-community'
+import { AgGridReact } from 'ag-grid-react'
 import Button from '@/components/Button'
 import List, { ListPropController } from '@/components/List'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
@@ -40,16 +42,17 @@ import GridIcon from '@/icons/misc/GridIcon'
 import ListIcon from '@/icons/misc/ListIcon'
 import SearchIcon from '@/icons/misc/SearchIcon'
 import MoreListControllers from '@/icons/misc/MoreListControllers'
-import NotFound from '@/icons/misc/NotFound'
 import OpenBookIcon from '@/icons/misc/OpenBookIcon'
 import { useAppStore, useTokenStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { revertAppLayoutPaddingX } from '@/theme/detailConfig'
 import { isValidPublicKey } from '@/utils/publicKey'
 import toPercentString from '@/utils/numberish/toPercentString'
-import { formatToRawLocaleStr } from '@/utils/numberish/formatter'
+import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import { setUrlQuery, useRouteQuery } from '@/utils/routeTools'
 import { urlToMint, mintToUrl } from '@/utils/token'
+import { ASSET_CDN } from '@/utils/config/endpoint'
+import useResponsive from '@/hooks/useResponsive'
 import { useEffectWithUrl, useStateWithUrl } from '../../hooks/useStateWithUrl'
 import CreatePoolButton from './components/CreatePoolButton'
 import PoolChartModal from './components/PoolChart'
@@ -59,6 +62,12 @@ import PoolListItem from './components/PoolListItem'
 import TVLInfoPanel, { TVLInfoPanelMobile } from './components/TVLInfoPanel'
 import { useScrollTitleCollapse } from './useScrollTitleCollapse'
 import { getFavoritePoolCache, POOL_SORT_KEY } from './util'
+import { ColumnPoolName } from './components/PoolTableColumns/ColumnsPoolName'
+import { ColumnPoolApr } from './components/PoolTableColumns/ColumnsPoolApr'
+import { ColumnsPoolActions } from './components/PoolTableColumns/ColumnsPoolActions'
+import { ColumnsPoolLiquidity } from './components/PoolTableColumns/ColumnsPoolLiquidity'
+
+ModuleRegistry.registerModules([AllCommunityModule])
 
 export type PoolPageQuery = {
   token?: string
@@ -124,13 +133,45 @@ const LAYOUT_ITEMS = [
   { value: 'grid', label: <GridIcon key="grid-icon" /> }
 ]
 
+const EmptyRow = () => {
+  const { t } = useTranslation()
+  return (
+    <Box flexGrow="1" display="flex" flexDirection="column" justifyContent="center" alignItems="center" role="presentation">
+      <img width={156} height={179} alt="empty placeholder" src={`${ASSET_CDN}/web/universalFarms/empty_list_bunny.png`} />
+      <Text mt="4" fontSize="sm" color={colors.textSecondary}>
+        {t('No pools found')}
+      </Text>
+    </Box>
+  )
+}
+
 export default function Pools() {
   const { t, currentLanguage } = useTranslation()
   const query = useRouteQuery()
   const currentQuery = useRef(query)
   currentQuery.current = query || {}
   const isEN = currentLanguage.locale === 'en'
-  const isMobile = useAppStore((s) => s.isMobile)
+  const { isTablet, isMobile } = useResponsive()
+
+  const gridTheme = useMemo(
+    () =>
+      themeQuartz.withParams({
+        wrapperBorder: true,
+        wrapperBorderRadius: '24px',
+        headerFontSize: '12px',
+        headerTextColor: colors.secondary,
+        headerFontWeight: 600,
+        headerBackgroundColor: colors.cardBg,
+        headerHeight: '43px',
+        rowHeight: 75,
+        dataFontSize: '18px',
+        pinnedColumnBorder: false,
+        borderColor: colors.cardBorder01,
+        backgroundColor: colors.cardBg,
+        foregroundColor: colors.textPrimary
+      }),
+    [colors.secondary]
+  )
 
   const tabItems: PoolTabItem[] = useMemo(
     () => [
@@ -213,6 +254,181 @@ export default function Pools() {
     fromUrl: (u) => u as TimeBase,
     toUrl: (v) => v
   })
+
+  const handleOpenChart = useCallback(
+    (info: FormattedPoolInfoItem) => {
+      openChart()
+      setChartPoolInfo(info)
+    },
+    [openChart]
+  )
+
+  const defaultColumnDefs: ColDef<FormattedPoolInfoItem> = useMemo(() => {
+    return {
+      headerStyle: {
+        textTransform: 'uppercase'
+      }
+    }
+  }, [])
+
+  const columnDefs: ColDef<FormattedPoolInfoItem>[] = useMemo(() => {
+    if (isMobile) {
+      return [
+        {
+          headerName: t('Pool'),
+          flex: 1.5,
+          field: 'poolName',
+          cellRenderer: ColumnPoolName,
+          cellRendererParams: {
+            timeBase
+          },
+          headerStyle: {
+            textTransform: 'uppercase'
+          }
+        },
+        {
+          headerName: t('APR %timeBase%', { timeBase }),
+          flex: 1,
+          field: 'poolName',
+          headerStyle: {
+            textTransform: 'uppercase'
+          },
+          type: 'centerAligned',
+          resizable: false,
+          cellRenderer: ColumnPoolApr,
+          cellRendererParams: {
+            timeBase
+          }
+        }
+      ] satisfies ColDef<FormattedPoolInfoItem>[]
+    }
+
+    if (isTablet) {
+      return [
+        {
+          headerName: t('Pool'),
+          flex: 1,
+          field: 'poolName',
+          cellRenderer: ColumnPoolName,
+          cellRendererParams: {
+            timeBase
+          }
+        },
+        {
+          headerName: t('Volume %timeBase%', { timeBase }),
+          flex: 1,
+          field: `${FILED_KEY[timeBase]}.volume`,
+          valueFormatter: ({ value }) => formatCurrency(value, { symbol: '$', decimalPlaces: 0 })
+        },
+        {
+          headerName: t('APR %timeBase% ', { timeBase }),
+          flex: 1,
+          field: `${FILED_KEY[timeBase]}.apr`,
+          resizable: false,
+          cellRenderer: ColumnPoolApr,
+          cellRendererParams: {
+            timeBase
+          },
+          headerStyle: {
+            paddingRight: '20px',
+            paddingLeft: '1px'
+          },
+          type: 'rightAligned'
+        },
+        {
+          colId: 'op',
+          resizable: false,
+          cellRenderer: ColumnsPoolActions,
+          pinned: 'right',
+          cellRendererParams: {
+            onOpenChart: handleOpenChart
+          }
+        }
+      ] satisfies ColDef<FormattedPoolInfoItem>[]
+    }
+    return [
+      {
+        headerName: t('Pool'),
+        headerStyle: {
+          paddingLeft: '56px',
+          paddingRight: '0'
+        },
+        flex: 2,
+        field: 'poolName',
+        cellRenderer: ColumnPoolName,
+        cellRendererParams: {
+          timeBase
+        }
+      },
+      {
+        headerName: t('Liquidity'),
+        field: 'tvl',
+        flex: 1,
+        cellRenderer: ColumnsPoolLiquidity,
+        headerStyle: {
+          paddingRight: '47px',
+          paddingLeft: '1px'
+        },
+        type: 'rightAligned'
+      },
+      {
+        headerName: t('Volume %timeBase%', { timeBase }),
+        flex: 1,
+        field: `${FILED_KEY[timeBase]}.volume`,
+        valueFormatter: ({ value }) => formatCurrency(value, { symbol: '$', decimalPlaces: 0 }),
+        headerStyle: {
+          paddingRight: '47px',
+          paddingLeft: '1px'
+        },
+        cellStyle: {
+          paddingRight: '47px'
+        },
+        type: 'rightAligned'
+      },
+      {
+        headerName: t('Fees %timeBase%', { timeBase }),
+        flex: 1,
+        field: `${FILED_KEY[timeBase]}.volumeFee`,
+        valueFormatter: ({ value }) => formatCurrency(value, { symbol: '$', decimalPlaces: 0 }),
+        headerStyle: {
+          paddingRight: '47px',
+          paddingLeft: '1px'
+        },
+        cellStyle: {
+          paddingRight: '47px'
+        },
+        type: 'rightAligned'
+      },
+      {
+        headerName: t('APR %timeBase%', { timeBase }),
+        flex: 1,
+        field: `${FILED_KEY[timeBase]}.apr`,
+        cellRenderer: ColumnPoolApr,
+        cellRendererParams: {
+          timeBase
+        },
+        headerStyle: {
+          paddingRight: '47px',
+          paddingLeft: '1px'
+        },
+        cellStyle: {
+          paddingRight: '47px'
+        },
+        type: 'rightAligned',
+        resizable: false
+      },
+      {
+        colId: 'op',
+        resizable: false,
+        cellRenderer: ColumnsPoolActions,
+        pinned: 'right',
+        cellRendererParams: {
+          onOpenChart: handleOpenChart
+        }
+      }
+    ] satisfies ColDef<FormattedPoolInfoItem>[]
+  }, [timeBase, isMobile, isTablet, handleOpenChart, t])
+
   const [timeBaseIdx, handleTimeBaseChange] = useMemo(
     () => [
       Object.keys(FILED_KEY).indexOf(timeBase),
@@ -371,22 +587,9 @@ export default function Pools() {
 
   const [tvl, volume] = infoData ? [infoData.tvl, infoData.volume24] : ['0', '0']
 
-  const handleOpenChart = useCallback(
-    (info: FormattedPoolInfoItem) => {
-      openChart()
-      setChartPoolInfo(info)
-    },
-    [openChart]
-  )
   const renderPoolListItem = useCallback(
     (info: FormattedPoolInfoItem) => (
-      <PoolListItem
-        styleType={currentLayoutStyle}
-        timeBase={timeBase}
-        field={FILED_KEY[timeBase]}
-        pool={info}
-        onOpenChart={handleOpenChart}
-      />
+      <PoolListItem timeBase={timeBase} field={FILED_KEY[timeBase]} pool={info} onOpenChart={handleOpenChart} />
     ),
     [handleOpenChart, currentLayoutStyle, timeBase]
   )
@@ -401,20 +604,11 @@ export default function Pools() {
   })
 
   const listContainerStyle = useMemo(
-    () =>
-      currentLayoutStyle === 'list'
-        ? {
-            backgroundColor: colors.cardBg,
-            border: `1px solid ${colors.cardBorder01}`,
-            borderRadius: '0 0 24px 24px',
-            borderTopRadius: '0',
-            mb: [4, 10]
-          }
-        : {
-            pr: '5px',
-            mr: '-5px'
-          },
-    [currentLayoutStyle]
+    () => ({
+      pr: '5px',
+      mr: '-5px'
+    }),
+    []
   )
 
   return (
@@ -609,7 +803,7 @@ export default function Pools() {
                               fontSize: '14px'
                             })}
                             popoverContentSx={{}}
-                            value={sortKey === 'default' ? 'default' : `${sortKey}_${order ? 'desc' : 'asc'}`}
+                            value={sortKey === 'default' ? t('default') : t(`${sortKey}_${order ? 'desc' : 'asc'}`)}
                             items={SORT_ITEMS}
                             onChange={(value) => {
                               const [key, order_] = value.split('_')
@@ -627,45 +821,55 @@ export default function Pools() {
           </Grid>
         </Box>
 
-        {/* List Header */}
-        {currentLayoutStyle === 'list' && (
-          <PoolListHeader order={order} timeBase={timeBase} sortKey={sortKey} handleClickSort={handleClickSort} />
-        )}
-
-        {/* List Content */}
-        {isNotFound ? (
-          <Box {...listContainerStyle} flexGrow="1" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-            <NotFound />
-            <Text mt="4" fontSize="sm" color={colors.textSecondary}>
-              {t('No pools found')}
-            </Text>
-          </Box>
+        {currentLayoutStyle === 'list' ? (
+          <div style={{ minHeight: '45vh', flex: 1, paddingBottom: '20px' }}>
+            <AgGridReact
+              loading={isLoading}
+              theme={gridTheme}
+              rowData={sortedData}
+              columnDefs={columnDefs}
+              defaultColDef={defaultColumnDefs}
+              noRowsOverlayComponent={EmptyRow}
+            />
+          </div>
         ) : (
           <>
-            {isLoading ? (
-              <Box {...listContainerStyle} px="24px" py="12px">
-                <PoolItemLoadingSkeleton isGrid={currentLayoutStyle === 'grid'} />
+            {isNotFound ? (
+              <Box {...listContainerStyle} flexGrow="1" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+                <img width={156} height={179} alt="empty placeholder" src={`${ASSET_CDN}/web/universalFarms/empty_list_bunny.png`} />
+                <Text mt="4" fontSize="sm" color={colors.textSecondary}>
+                  {t('No pools found')}
+                </Text>
               </Box>
             ) : (
-              <List
-                controllerRef={listControllerRef}
-                {...scrollBodyProps}
-                increaseRenderCount={showFarms ? 100 : 50}
-                initRenderCount={30}
-                reachBottomMargin={showFarms ? 200 : 150}
-                preventResetOnChange={search === prevSearch}
-                gridSlotCount={currentLayoutStyle === 'grid' && isMobile ? 1 : undefined}
-                gridSlotItemMinWidth={currentLayoutStyle === 'grid' ? gridCardSize : undefined}
-                haveLoadAll={isLoadEnded}
-                onLoadMore={loadMore}
-                items={sortedData}
-                getItemKey={(item) => item.id}
-                gap={currentLayoutStyle === 'grid' ? gridCardGap : undefined}
-                zIndex={1}
-                {...listContainerStyle}
-              >
-                {renderPoolListItem}
-              </List>
+              <>
+                {isLoading ? (
+                  <Box {...listContainerStyle} px="24px" py="12px">
+                    <PoolItemLoadingSkeleton isGrid />
+                  </Box>
+                ) : (
+                  <List
+                    id="iil-li"
+                    controllerRef={listControllerRef}
+                    {...scrollBodyProps}
+                    increaseRenderCount={showFarms ? 100 : 50}
+                    initRenderCount={30}
+                    reachBottomMargin={showFarms ? 200 : 150}
+                    preventResetOnChange={search === prevSearch}
+                    gridSlotCount={isMobile ? 1 : undefined}
+                    gridSlotItemMinWidth={gridCardSize}
+                    haveLoadAll={isLoadEnded}
+                    onLoadMore={loadMore}
+                    items={sortedData}
+                    getItemKey={(item) => item.id}
+                    gap={gridCardGap}
+                    zIndex={1}
+                    {...listContainerStyle}
+                  >
+                    {renderPoolListItem}
+                  </List>
+                )}
+              </>
             )}
           </>
         )}
