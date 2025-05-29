@@ -5,7 +5,6 @@ import { useAllTokensByChainIds } from 'hooks/Tokens'
 import { useRouter } from 'next/router'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { usePoolsApr } from 'state/farmsV4/hooks'
-import type { PoolInfo } from 'state/farmsV4/state/type'
 import styled from 'styled-components'
 
 import { ChainId } from '@pancakeswap/chains'
@@ -111,8 +110,8 @@ export const PoolsPage = () => {
   )
 
   const handleRowClick = useCallback(
-    async (pool: PoolInfo) => {
-      const data = await getPoolDetailPageLink(pool)
+    async (farm: FarmInfo) => {
+      const data = await getPoolDetailPageLink(farm.poolInfo!)
       nextRouter.push(data)
     },
     [nextRouter],

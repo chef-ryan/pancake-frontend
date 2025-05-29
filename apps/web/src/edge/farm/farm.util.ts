@@ -9,6 +9,7 @@ import { Address } from 'viem/accounts'
 
 export type FarmInfo = FarmProps & {
   pool: Pool
+  poolInfo?: PoolInfo
 } & {
   cakeApr: CakeAprValue
 }

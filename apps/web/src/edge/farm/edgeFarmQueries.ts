@@ -255,6 +255,8 @@ async function queryFarms(query: FarmQuery) {
           protocol: pool.protocol,
           // @ts-ignore
           tvlUSD: pool.tvlUSD?.toString() || 0,
+          // @ts-ignore
+          vol24hUsd: pool.volumeUSD24h?.toString() || '0',
           pid: pidsMaps[`${pool.chainId}:${pool.id}`],
         } as SerializedFarmInfo
       })

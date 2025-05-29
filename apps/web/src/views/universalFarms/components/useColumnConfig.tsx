@@ -97,7 +97,7 @@ export const useTVLConfig = () => {
     () =>
       ({
         title: t('TVL'),
-        dataIndex: 'tvlUsd',
+        dataIndex: 'tvlUSD',
         key: 'tvl',
         minWidth: '125px',
         render: (value) =>
