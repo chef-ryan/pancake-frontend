@@ -1,12 +1,13 @@
-import { useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { NotFound } from '@pancakeswap/uikit'
+import { NextSeo } from 'next-seo'
+import Link from 'next/link'
 
-export default function Page404() {
-  const router = useRouter()
+const NotFoundPage = () => (
+  <NotFound LinkComp={Link}>
+    <NextSeo title="404" />
+  </NotFound>
+)
 
-  useEffect(() => {
-    router.push('/')
-  }, [])
+NotFoundPage.chains = []
 
-  return null
-}
+export default NotFoundPage

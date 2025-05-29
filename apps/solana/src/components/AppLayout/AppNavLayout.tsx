@@ -71,9 +71,9 @@ function AppNavLayout({
         {/* nav routes */}
         <Desktop>
           <HStack flexGrow={1} justify="start" overflow={['auto', 'visible']} gap={[0, 0, '15px']}>
-            <RouteLink href={PAGE_URLS.SWAP} isActive={pathname === '/swap'} title={t('Swap')} />
-            <RouteLink href={PAGE_URLS.LIQUIDITY} isActive={pathname.includes('/liquidity')} title={t('Liquidity')} />
-            <RouteLink href={PAGE_URLS.POSITIONS} isActive={pathname === '/positions'} title={t('My Positions')} />
+            <RouteLink href={PAGE_URLS.JUPITER_SWAP} isActive={pathname === PAGE_URLS.JUPITER_SWAP} title={t('Swap')} />
+            <RouteLink href={PAGE_URLS.LIQUIDITY} isActive={pathname.includes(PAGE_URLS.LIQUIDITY)} title={t('Liquidity')} />
+            <RouteLink href={PAGE_URLS.POSITIONS} isActive={pathname === PAGE_URLS.POSITIONS} title={t('My Positions')} />
           </HStack>
         </Desktop>
 

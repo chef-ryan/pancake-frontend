@@ -6,6 +6,7 @@ import WalletProvider from './WalletProvider'
 import ThemeProvider from './ThemeProvider'
 import GlobalColorProvider from './GlobalColorProvider'
 import { ListContext } from './ListProvider'
+import { QueryClientProvider } from './QueryClientProvider'
 
 export { WalletProvider, ThemeProvider, GlobalColorProvider, ListContext }
 
@@ -29,9 +30,11 @@ export const Providers = ({ children }: { children: ReactNode }) => {
         }}
       >
         <ThemeProvider>
-          <GlobalColorProvider>
-            <WalletProvider>{children}</WalletProvider>
-          </GlobalColorProvider>
+          <QueryClientProvider>
+            <GlobalColorProvider>
+              <WalletProvider>{children}</WalletProvider>
+            </GlobalColorProvider>
+          </QueryClientProvider>
         </ThemeProvider>
       </SWRConfig>
     </LanguageProvider>

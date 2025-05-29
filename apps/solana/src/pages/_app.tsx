@@ -16,14 +16,15 @@ import { Providers } from '@/provider'
 import Content from '@/components/Content'
 import AppNavLayout from '@/components/AppLayout/AppNavLayout'
 import useThemeSync from '@/hooks/useThemeSync'
+import { PAGE_URLS } from '@/utils/config/routers'
 
 // const DynamicProviders = dynamic(() => import('@/provider').then((mod) => mod.Providers), { ssr: false })
 // const DynamicContent = dynamic(() => import('@/components/Content'))
 // const DynamicAppNavLayout = dynamic(() => import('@/components/AppLayout/AppNavLayout'), { ssr: false })
 
 const CONTENT_ONLY_PATH = ['/', '404', '/moonpay']
-const OVERFLOW_HIDDEN_PATH = ['/liquidity-pools', '/swap']
-const FULL_SIZE_PATH = ['/swap']
+const OVERFLOW_HIDDEN_PATH = [PAGE_URLS.LIQUIDITY, PAGE_URLS.SWAP, PAGE_URLS.JUPITER_SWAP]
+const FULL_SIZE_PATH = [PAGE_URLS.SWAP, PAGE_URLS.JUPITER_SWAP]
 
 Decimal.set({ precision: 1e3 })
 
