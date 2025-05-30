@@ -1,12 +1,8 @@
 import { getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import { useModalV2 } from '@pancakeswap/uikit'
-import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
-import BigNumber from 'bignumber.js'
 import { useCurrencyByChainId } from 'hooks/Tokens'
-import { useEffect, useMemo } from 'react'
 import { InfinityPoolInfo, PoolInfo } from 'state/farmsV4/state/type'
 import { isInfinityProtocol } from 'utils/protocols'
-import { useMyPositions } from 'views/PoolDetail/components/MyPositionsContext'
 
 import { CakeAprValue } from 'state/farmsV4/atom'
 import { APRBreakdownModal } from '../PoolAprButton/AprBreakdownModal'
@@ -27,30 +23,9 @@ export const PoolGlobalAprButtonV2: React.FC<PoolGlobalAprButtonProps> = ({
   cakeApr,
   detailMode,
 }) => {
-  const key = useMemo(() => `${pool.chainId}:${pool.lpAddress}` as const, [pool.chainId, pool.lpAddress])
-  const numerator = useMemo(() => {
-    const lpAprNumerator = new BigNumber(lpApr).times(cakeApr?.userTvlUsd ?? BIG_ZERO)
-    return lpAprNumerator
-  }, [lpApr, cakeApr?.userTvlUsd])
-  const denominator = useMemo(() => {
-    return cakeApr?.userTvlUsd ?? BIG_ZERO
-  }, [cakeApr?.userTvlUsd])
-
   const { chainId, token0, token1 } = pool
   const currency0 = useCurrencyByChainId(getCurrencyAddress(token0), chainId)
   const currency1 = useCurrencyByChainId(getCurrencyAddress(token1), chainId)
-
-  const { totalApr, updateTotalApr } = useMyPositions()
-
-  useEffect(() => {
-    if (
-      detailMode &&
-      (pool.protocol === 'v2' || pool.protocol === 'stable') &&
-      (totalApr[key]?.numerator !== numerator || totalApr[key]?.denominator !== denominator)
-    ) {
-      updateTotalApr(key, numerator, denominator)
-    }
-  }, [cakeApr, denominator, detailMode, key, lpApr, merklApr, numerator, pool.protocol, updateTotalApr, totalApr])
 
   const APRBreakdownModalState = useModalV2()
 

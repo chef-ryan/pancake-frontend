@@ -2,9 +2,11 @@ import { ChainId } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
 import { DYNAMIC_FEE_FLAG } from '@pancakeswap/infinity-sdk'
 import { InfinityBinPool, InfinityClPool, Pool, SmartRouter } from '@pancakeswap/smart-router'
+import { RemotePoolBase } from '@pancakeswap/smart-router/dist/evm/infinity-router'
 import { Currency } from '@pancakeswap/swap-sdk-core'
 import { CakeAprValue } from 'state/farmsV4/atom'
 import { BasePoolInfo, PoolInfo } from 'state/farmsV4/state/type'
+import { safeGetAddress } from 'utils'
 import { Address } from 'viem/accounts'
 
 export type FarmInfo = FarmProps & {
@@ -94,4 +96,15 @@ export const farmToPoolInfo = (farm: FarmInfo): PoolInfo => {
   }
 
   return base as PoolInfo
+}
+
+export const normalizeAddress = (pool: RemotePoolBase) => {
+  if (pool.id) {
+    const id = safeGetAddress(pool.id)
+    if (id) {
+      // eslint-disable-next-line no-param-reassign
+      pool.id = id
+    }
+  }
+  return pool
 }

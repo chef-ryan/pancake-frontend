@@ -1,8 +1,8 @@
 import { PoolType, SmartRouter } from '@pancakeswap/smart-router'
-import BigNumber from 'bignumber.js'
-import { FarmQuery } from 'edge/farm/edgeFarmQueries'
+import edgeFarmQueries, { FarmQuery } from 'edge/farm/edgeFarmQueries'
 import { FarmInfo, farmToPoolInfo, SerializedFarmInfo } from 'edge/farm/farm.util'
 import { fillFarmData } from 'edge/farm/fillFarmData'
+import { farmFilters } from 'edge/farm/filters'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
 import qs from 'qs'
@@ -24,56 +24,79 @@ const typeToProtocol = (type: PoolType) => {
       return 'Unknown'
   }
 }
+
+async function fetchFarmList(extend: boolean) {
+  const queryStr = qs.stringify({
+    extend: extend ? 1 : undefined,
+  })
+  const url = `/api/farm/list?${queryStr}`
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+  if (!response.ok) {
+    throw new Error(`Failed to fetch farms: ${response.statusText}`)
+  }
+  const resp = (await response.json()) as {
+    data: SerializedFarmInfo[]
+    lastUpdated: number
+  }
+  return resp.data
+}
+
+const farmListAtom = atomWithLoadable<SerializedFarmInfo[]>(async () => {
+  return fetchFarmList(false)
+})
+
+const extendListAtom = atomWithLoadable<SerializedFarmInfo[]>(async () => {
+  return fetchFarmList(true)
+})
+
 export const farmsSearchAtom = atomFamily((query: FarmQuery) => {
   return atomWithLoadable(async (get) => {
     try {
-      const queryStr = qs.stringify(query)
-      const url = `/api/pools/search?${queryStr}`
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      if (!response.ok) {
-        throw new Error(`Failed to fetch farms: ${response.statusText}`)
-      }
-      const resp = (await response.json()) as {
-        data: SerializedFarmInfo[]
-        lastUpdated: number
-      }
-      const farms = resp.data.map((farm) => {
-        const cakeApr = farm.cakeApr
-          ? {
-              value: farm.cakeApr.value as `${number}`,
-              cakePerYear: BigNumber(farm.cakeApr.cakePerYear || '0'),
-              poolWeight: BigNumber(farm.cakeApr.poolWeight || '0'),
-            }
-          : undefined
-        const farmInfo = {
-          id: farm.id,
-          chainId: farm.chainId,
-          pool: SmartRouter.Transformer.parsePool(farm.chainId, farm.pool),
-          lpApr: farm.lpApr,
-          merklApr: '0',
-          cakeApr,
-          feeTier: 10,
-          tvlUSD: Number(farm.tvlUSD) || 0,
-          vol24hUsd: Number(farm.vol24hUsd) || 0,
-          tvlUsd: 0,
-          feeTierBase: 1e6,
-          protocol: typeToProtocol(farm.pool.type as PoolType),
-        } as FarmInfo
+      const { protocols, chains } = query
+      const lists = await Promise.all([get(farmListAtom), get(extendListAtom)])
+      const farms = lists
+        .filter((x) => x.isJust())
+        .map((x) => x.unwrap())
+        .flat()
+        .map((farm) => {
+          const farmInfo = {
+            id: farm.id,
+            chainId: farm.chainId,
+            pool: SmartRouter.Transformer.parsePool(farm.chainId, farm.pool),
+            lpApr: farm.lpApr,
+            merklApr: '0',
+            cakeApr: {
+              value: '0', // Fill later
+            },
+            feeTier: 10,
+            tvlUSD: Number(farm.tvlUSD) || 0,
+            vol24hUsd: Number(farm.vol24hUsd) || 0,
+            tvlUsd: 0,
+            feeTierBase: 1e6,
+            protocol: typeToProtocol(farm.pool.type as PoolType),
+          } as FarmInfo
 
-        // Compatibility with old farm data
+          // Compatibility with old farm data
 
-        farmInfo.poolInfo = farmToPoolInfo(farmInfo)
-        return farmInfo
-      })
+          farmInfo.poolInfo = farmToPoolInfo(farmInfo)
+          return farmInfo
+        })
+      const filtered = farms.filter(farmFilters.chainFilter(chains)).filter(farmFilters.protocolFilter(protocols))
+      const sliced = filtered.slice(0, 20)
+      await Promise.all([
+        edgeFarmQueries.fillCakeApr(sliced),
+        edgeFarmQueries.fillLpAprData(sliced),
+        edgeFarmQueries.fillMerklAprData(sliced),
+      ])
 
-      const filtered = farms.slice(0, 20)
-      const filled = await fillFarmData(filtered)
-      console.log(`[farms]`, filled)
+      // const filtered = farms.slice(0, 20)
+      const filled = await fillFarmData(sliced)
+      console.log(`[farms]`, protocols, filled)
 
       return filled
     } catch (ex) {

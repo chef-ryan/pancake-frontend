@@ -10,7 +10,7 @@ export default async function handler(req: NextRequest) {
   const raw = new URL(req.url).search.slice(1)
   try {
     const query = parseFarmSearchQuery(raw)
-    const pools = await edgeFarmQueries.queryFarms(query)
+    const pools = await edgeFarmQueries.queryFarms(query.extend)
 
     return NextResponse.json(
       {

@@ -7,7 +7,6 @@ import { Suspense, useCallback, useMemo, useState } from 'react'
 import { usePoolsApr } from 'state/farmsV4/hooks'
 import styled from 'styled-components'
 
-import { ChainId } from '@pancakeswap/chains'
 import { FarmInfo } from 'edge/farm/farm.util'
 import { useAtomValue } from 'jotai'
 import { farmsSearchAtom } from './atom/farmsSearchAtom'
@@ -125,7 +124,8 @@ export const PoolsPage = () => {
   console.log('[query]', selectedProtocols)
   const list = useAtomValue(
     farmsSearchAtom({
-      chains: [ChainId.BSC],
+      keywords: '',
+      chains: selectedNetwork,
       protocols: selectedProtocols,
     }),
   )
