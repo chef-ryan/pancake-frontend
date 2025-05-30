@@ -28,6 +28,7 @@ export type Pending<T> = Loadable<T> & {
   loading: true
 }
 
+type UnwrapOr<T, U> = T extends Array<infer A> ? T : U extends undefined ? T | undefined : T | U
 export class Loadable<T> {
   type: LoadableTypeNames
 
@@ -129,20 +130,14 @@ export class Loadable<T> {
     throw new Error('Cannot unwrap Pending')
   }
 
-  unwrapOr<U extends T | undefined>(defaultValue: U): U {
+  unwrapOr<U>(defaultValue: U): UnwrapOr<T, U> {
     if (this.isJust()) {
-      return this.value as U
-    }
-    if (this.isNothing() || defaultValue === undefined || defaultValue === null) {
-      return defaultValue
-    }
-    if (this.isPending()) {
-      return defaultValue
+      return this.value as UnwrapOr<T, U>
     }
     if (this.isFail()) {
       throw new Error(`Cannot unwrapOr Fail: ${this.error}`)
     }
-    throw new Error('Cannot unwrapOr Pending')
+    return defaultValue as UnwrapOr<T, U>
   }
 
   public setFlag(flag: string) {
