@@ -22,3 +22,5 @@ const parseRPCConf = () => {
 }
 
 export const rpcs = parseRPCConf()
+
+export const quoteApi = 'http://localhost:3001'

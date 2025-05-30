@@ -1,3 +1,54 @@
+export type SwapType = 'exactIn' | 'exactOut'
+
+export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse
+
+export type ApiSuccessResponse<T> = {
+  success: true
+  data: T
+}
+export type ApiErrorResponse = {
+  success: false
+  msg: string
+}
+
+export interface QuoteRequest {
+  inputMint: string
+  outputMint: string
+  amount: string
+  slippageBps: number
+  swapType: SwapType
+}
+
+export type RoutePlanItem = {
+  poolId: string
+  inputMint: string
+  outputMint: string
+  feeMint: string
+  feeRate: number
+  feeAmount: string
+  splitPercent: number
+  routeIndex: number
+}
+
+export type RouteStats = {
+  numSubRoutes: number
+  totalHops: number
+  avgHopsPerRoute: number
+}
+export type QuoteResponseData = {
+  swapType: SwapType
+  inputMint: string
+  inputAmount: string
+  outputMint: string
+  outputAmount: string
+  slippageBps: number
+  priceImpactPct: number
+  otherAmountThreshold?: string
+  routePlan: RoutePlanItem[]
+  routeStats: RouteStats
+}
+export type QuoteResponse = ApiResponse<QuoteResponseData>
+
 export interface ApiSwapV1OutError {
   id: string
   success: false

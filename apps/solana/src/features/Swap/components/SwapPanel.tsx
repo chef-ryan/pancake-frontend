@@ -26,7 +26,7 @@ import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatte
 import ToPublicKey, { isValidPublicKey } from '@/utils/publicKey'
 import { setUrlQuery, useRouteQuery } from '@/utils/routeTools'
 import { getMintPriority, getMintSymbol, isSolWSol, mintToUrl, urlToMint } from '@/utils/token'
-import { ApiSwapV1OutSuccess } from '../type'
+import { ApiSuccessResponse, ApiSwapV1OutSuccess, QuoteResponse, QuoteResponseData, SwapType } from '../type'
 import useSwap from '../useSwap'
 import { useSwapStore } from '../useSwapStore'
 import { getSwapPairCache, setSwapPairCache } from '../util'
@@ -81,11 +81,11 @@ export function SwapPanel({
   const { isOpen: isSending, onOpen: onSending, onClose: offSending } = useDisclosure()
   const { isOpen: isUnWrapping, onOpen: onUnWrapping, onClose: offUnWrapping } = useDisclosure()
   const { isOpen: isHightRiskOpen, onOpen: onHightRiskOpen, onClose: offHightRiskOpen } = useDisclosure()
-  const sendingResult = useRef<ApiSwapV1OutSuccess | undefined>()
+  const sendingResult = useRef<ApiSuccessResponse<QuoteResponseData> | undefined>()
   const wsolBalance = getTokenBalanceUiAmount({ mint: NATIVE_MINT.toBase58(), decimals: SOL_INFO.decimals })
 
   const [inputMint, setInputMint] = useState<string>(PublicKey.default.toBase58())
-  const [swapType, setSwapType] = useState<'BaseIn' | 'BaseOut'>('BaseIn')
+  const [swapType, setSwapType] = useState<SwapType>('exactIn')
 
   const [outputMint, setOutputMint] = useState<string>(RAYMint.toBase58())
   const [tokenInput, tokenOutput] = [tokenMap.get(inputMint), tokenMap.get(outputMint)]
@@ -154,12 +154,12 @@ export function SwapPanel({
     })
   })
 
-  const isSwapBaseIn = swapType === 'BaseIn'
-  const { response, data, isLoading, isValidating, error, openTime, mutate } = useSwap({
+  const isSwapExactIn = swapType === 'exactIn'
+  const { response, data, isLoading, isValidating, error, mutate } = useSwap({
     inputMint,
     outputMint,
     amount: new Decimal(amountIn || 0)
-      .mul(10 ** ((isSwapBaseIn ? tokenInput?.decimals : tokenOutput?.decimals) || 0))
+      .mul(10 ** ((isSwapExactIn ? tokenInput?.decimals : tokenOutput?.decimals) || 0))
       .toFixed(0, Decimal.ROUND_FLOOR),
     swapType,
     refreshInterval: isSending || isHightRiskOpen ? 3 * 60 * 1000 : 1000 * 30
@@ -167,10 +167,10 @@ export function SwapPanel({
 
   const onPriceUpdatedConfirm = useEvent(() => {
     setNeedPriceUpdatedAlert(false)
-    sendingResult.current = response as ApiSwapV1OutSuccess
+    sendingResult.current = response
   })
 
-  const computeResult = needPriceUpdatedAlert ? sendingResult.current?.data : data
+  const computeResult = needPriceUpdatedAlert ? sendingResult.current?.data : data?.data
   const isComputing = isLoading || isValidating
   const isHighRiskTx = (computeResult?.priceImpactPct || 0) > 5
 
@@ -218,12 +218,12 @@ export function SwapPanel({
   }, [debounceUpdate, outputAmount, isComputing])
 
   const handleInputChange = useCallback((val: string) => {
-    setSwapType('BaseIn')
+    setSwapType('exactIn')
     setAmountIn(val)
   }, [])
 
   const handleInput2Change = useCallback((val: string) => {
-    setSwapType('BaseOut')
+    setSwapType('exactOut')
     setAmountIn(val)
   }, [])
 
@@ -265,7 +265,8 @@ export function SwapPanel({
   const balanceNotEnough = balanceAmount.lt(inputAmount || 0) ? t('Insufficent balance') : undefined
   const isSolFeeNotEnough = inputAmount && isSolWSol(inputMint || '') && balanceAmount.sub(inputAmount || 0).lt(DEFAULT_SOL_RESERVER)
   const swapError = error || balanceNotEnough
-  const isPoolNotOpenError = !!swapError && !!openTime
+  // const isPoolNotOpenError = !!swapError && !!openTime
+  const isPoolNotOpenError = !!swapError
 
   const handleHighRiskConfirm = useEvent(() => {
     offHightRiskOpen()
@@ -294,7 +295,7 @@ export function SwapPanel({
     })
   }
 
-  const getCtrSx = (type: 'BaseIn' | 'BaseOut') => {
+  const getCtrSx = (type: SwapType) => {
     if (!new Decimal(amountIn || 0).isZero() && swapType === type) {
       return {
         border: `1px solid ${colors.semanticFocus}`,
@@ -330,10 +331,10 @@ export function SwapPanel({
           <TokenInput
             name="swap"
             topLeftLabel={t('From')}
-            ctrSx={getCtrSx('BaseIn')}
+            ctrSx={getCtrSx('exactIn')}
             token={tokenInput}
-            value={isSwapBaseIn ? amountIn : inputAmount}
-            readonly={swapDisabled || (!isSwapBaseIn && isComputing)}
+            value={isSwapExactIn ? amountIn : inputAmount}
+            readonly={swapDisabled || (!isSwapExactIn && isComputing)}
             disableClickBalance={swapDisabled}
             onChange={(v) => handleInputChange(v)}
             filterFn={inputFilterFn}
@@ -347,10 +348,10 @@ export function SwapPanel({
           <TokenInput
             name="swap"
             topLeftLabel={t('To')}
-            ctrSx={getCtrSx('BaseOut')}
+            ctrSx={getCtrSx('exactOut')}
             token={tokenOutput}
-            value={isSwapBaseIn ? outputAmount : amountIn}
-            readonly={swapDisabled || (isSwapBaseIn && isComputing)}
+            value={isSwapExactIn ? outputAmount : amountIn}
+            readonly={swapDisabled || (isSwapExactIn && isComputing)}
             onChange={handleInput2Change}
             filterFn={outputFilterFn}
             onTokenChange={(token) => handleSelectToken(token, 'output')}
@@ -368,7 +369,7 @@ export function SwapPanel({
         >
           <Text>
             {swapDisabled ? t('Disabled') : swapError || t('Swap')}
-            {isPoolNotOpenError ? ` ${dayjs(Number(openTime) * 1000).format('YYYY/M/D HH:mm:ss')}` : null}
+            {/* {isPoolNotOpenError ? ` ${dayjs(Number(openTime) * 1000).format('YYYY/M/D HH:mm:ss')}` : null} */}
           </Text>
         </ConnectedButton>
         {isSolFeeNotEnough ? (
