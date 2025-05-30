@@ -21,7 +21,6 @@ import { isInfinityProtocol } from 'utils/protocols'
 import { publicClient } from 'utils/viem'
 import { type Address } from 'viem'
 
-import { RemotePoolBase } from '@pancakeswap/smart-router/dist/evm/infinity-router/queries/remotePool.type'
 import uniqWith from 'lodash/uniqWith'
 import { InfinityPoolInfo, PoolInfo } from '../type'
 import { parseFarmPools } from '../utils'
@@ -145,7 +144,6 @@ export const fetchExplorerFarmPools = async (
   },
   signal?: AbortSignal,
 ): Promise<PoolInfo[]> => {
-  console.log('[farm]fetch explorer farm pools')
   let chains = Array.isArray(args?.chainId) ? args.chainId ?? [] : [args?.chainId]
   chains = chains.filter(Boolean)
 
@@ -163,8 +161,6 @@ export const fetchExplorerFarmPools = async (
       },
     },
   })
-  const pools: RemotePoolBase[] = resp.data || []
-  console.log('[farm] 01 finish fetch explorer farm pools')
 
   if (!resp.data) {
     return []
@@ -198,7 +194,7 @@ export const fetchFarmPools = async (
     chainId: DEFAULT_CHAINS,
   },
   signal?: AbortSignal,
-): Promise<PoolInfo[]> => {
+) => {
   let remotePools: PoolInfo[] | undefined
   try {
     remotePools = await fetchExplorerFarmPools(args, signal)
