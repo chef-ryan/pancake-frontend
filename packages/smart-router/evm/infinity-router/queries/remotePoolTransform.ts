@@ -190,6 +190,7 @@ export function toRemoteInfinityPool(
     },
     tvlUSD: pool.tvlUSD.toString(),
     apr24h: '0',
+    volumeUSD24h: '0',
     hookAddress: pool.hooks as Address | undefined,
     isDynamicFee: false, // Assuming default; adjust based on your logic
     protocol: pool.type === PoolType.InfinityCL ? 'infinityCl' : 'infinityBin',
