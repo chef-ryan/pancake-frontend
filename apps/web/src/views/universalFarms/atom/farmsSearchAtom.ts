@@ -88,7 +88,7 @@ export const farmsSearchAtom = atomFamily((query: FarmQuery) => {
             return farmInfo
           })
         const filtered = farms.filter(farmFilters.chainFilter(chains)).filter(farmFilters.protocolFilter(protocols))
-        const sorted = farmFilters.sortFunction(filtered, sortBy, sortOrder)
+        const sorted = farmFilters.sortFunction(filtered, sortBy)
         const sliced = sorted.slice(0, 20)
 
         // const filtered = farms.slice(0, 20)
@@ -98,11 +98,6 @@ export const farmsSearchAtom = atomFamily((query: FarmQuery) => {
           return farmToPoolInfo(x)
         })
         await Promise.all([fillCakeApr(poolInfos), fillLpAprData(poolInfos), fillMerklAprData(poolInfos)])
-
-        console.log(
-          `[pool]`,
-          poolInfos.map((x) => x.farm!.cakeApr),
-        )
 
         return poolInfos
       } catch (ex) {

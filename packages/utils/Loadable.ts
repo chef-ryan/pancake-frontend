@@ -28,7 +28,7 @@ export type Pending<T> = Loadable<T> & {
   loading: true
 }
 
-type UnwrapOr<T, U> = T extends Array<infer A> ? T : U extends undefined ? T | undefined : T | U
+type UnwrapOr<T, U> = T extends Array<any> ? T : U extends undefined ? T | undefined : T | U
 export class Loadable<T> {
   type: LoadableTypeNames
 
