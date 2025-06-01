@@ -14,6 +14,7 @@ import { zeroAddress } from '@pancakeswap/price-api-sdk'
 import { InfinityBinPool, InfinityClPool, InfinityRouter, Pool, PoolType, SmartRouter } from '@pancakeswap/smart-router'
 import { Currency } from '@pancakeswap/swap-sdk-core'
 import { InfinityFeeTierPoolParams } from 'hooks/infinity/useInfinityFeeTier'
+import qs from 'qs'
 import { CakeAprValue } from 'state/farmsV4/atom'
 import { AprInfo } from 'state/farmsV4/hooks'
 import { BasePoolInfo, PoolInfo } from 'state/farmsV4/state/type'
@@ -223,3 +224,10 @@ export const parseSlot0 = <
 export const isValidPoolKeyResult = (
   result?: ContractFunctionReturnType<typeof CLPoolManagerAbi, 'view', 'poolIdToPoolKey'>,
 ) => result && result.length === 6 && result[3] !== zeroAddress
+
+export function parseFarmSearchQuery(raw: string) {
+  const queryParsed = qs.parse(raw)
+  return {
+    extend: Boolean(queryParsed.extend),
+  }
+}

@@ -169,7 +169,8 @@ export const poolTvlMap = async (protocols: Protocol[], chain: APIChain) => {
     })
     const tvlMap: Record<`0x${string}`, string> = {}
     for (const pool of remotePools) {
-      const { tvlUSD, id } = pool
+      const tvlUSD = pool.tvlUSD
+      const id = pool.id
       tvlMap[id] = tvlUSD
     }
     return tvlMap
@@ -184,6 +185,13 @@ type PaginatedResponse = {
   hasNextPage: boolean
   hasPrevPage: boolean
   rows: RemotePoolBase[]
+}
+
+type Token = {
+  id: string
+  symbol: string
+  name: string
+  decimals: number
 }
 
 type FetchAllPoolsParams = {

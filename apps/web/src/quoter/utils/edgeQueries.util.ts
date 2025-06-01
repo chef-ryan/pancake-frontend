@@ -42,13 +42,6 @@ export const responseJson = (val: any, extra?: any) => {
   )
 }
 
-export function parseFarmSearchQuery(raw: string) {
-  const queryParsed = qs.parse(raw)
-  return {
-    extend: Boolean(queryParsed.extend),
-  }
-}
-
 export function parseCandidatesQuery(raw: string) {
   if (!raw) {
     throw new Error('Invalid query')
