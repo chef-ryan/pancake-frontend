@@ -1,8 +1,8 @@
 import { useIntersectionObserver, useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { Button, InfoIcon, SORT_ORDER, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { SORT_ORDER, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 
 import { useAtomValue, useSetAtom } from 'jotai'
@@ -12,7 +12,6 @@ import { farmsSearchAtom, farmsSearchPagingAtom } from './atom/farmsSearchAtom'
 import {
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   getPoolDetailPageLink,
   IPoolsFilterPanelProps,
@@ -38,10 +37,16 @@ export const PoolsPage = () => {
   const { isMobile, isMd } = useMatchBreakpoints()
 
   const columns = useColumnConfig()
-  const { selectedProtocolIndex, selectedNetwork, selectedTokens, sortOrder, sortField, replaceURLQueriesByFilter } =
-    useFilterToQueries()
+  const {
+    search,
+    selectedProtocolIndex,
+    selectedNetwork,
+    selectedTokens,
+    sortOrder,
+    sortField,
+    replaceURLQueriesByFilter,
+  } = useFilterToQueries()
 
-  const [search] = useState('')
   const poolsFilter = useMemo(
     () => ({
       selectedProtocolIndex,
@@ -54,8 +59,6 @@ export const PoolsPage = () => {
 
   const selectedProtocols = useSelectedProtocols(selectedProtocolIndex)
   const { observerRef, isIntersecting } = useIntersectionObserver()
-  const [cursorVisible, setCursorVisible] = useState(NUMBER_OF_FARMS_VISIBLE)
-  const [isPoolListExtended, setIsPoolListExtended] = useState(false)
 
   // data source
   // const { extendPools, fetchPoolList, resetExtendPools } = useExtendPools()
@@ -85,10 +88,6 @@ export const PoolsPage = () => {
     [replaceURLQueriesByFilter, poolsFilter, sortOrder, sortField],
   )
 
-  const handleToggleListExpand = useCallback(() => {
-    setIsPoolListExtended(!isPoolListExtended)
-  }, [isPoolListExtended])
-
   const handleSort = useCallback(
     ({ order, dataIndex }) => {
       replaceURLQueriesByFilter({
@@ -114,10 +113,8 @@ export const PoolsPage = () => {
     return `${farm.chainId}:${farm.id}`
   }, [])
 
-  // const renderData = useMemo(() => sortedData.slice(0, cursorVisible), [cursorVisible, sortedData])
-
   const query = {
-    keywords: '',
+    keywords: search,
     chains: selectedNetwork,
     protocols: selectedProtocols,
     sortBy: sortField,
@@ -169,15 +166,6 @@ export const PoolsPage = () => {
             {list.unwrapOr([]).length > 0 && <div ref={observerRef} />}
           </Suspense>
         </CardBody>
-        {disabledExtendPools ? null : (
-          <CardFooter>
-            {isPoolListExtended ? <InfoIcon width="18px" color={theme.colors.textSubtle} /> : null}
-            {isPoolListExtended ? t('Search has been extended') : t('Don’t see expected pools?')}
-            <Button variant="text" scale="xs" onClick={handleToggleListExpand}>
-              {isPoolListExtended ? t('Reset') : t('Extend the search')}
-            </Button>
-          </CardFooter>
-        )}
       </Card>
     </FarmSearchContextProvider>
   )

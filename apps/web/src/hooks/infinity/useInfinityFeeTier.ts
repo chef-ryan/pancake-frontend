@@ -1,6 +1,5 @@
-import { ChainId } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
-import { DYNAMIC_FEE_FLAG, HookData } from '@pancakeswap/infinity-sdk'
+import { HookData } from '@pancakeswap/infinity-sdk'
 import { Percent } from '@pancakeswap/swap-sdk-core'
 import { useMemo } from 'react'
 import { calculateInfiFeePercent } from 'views/Swap/V3Swap/utils/exchange'
@@ -41,16 +40,4 @@ function getInfinityFeeTier(pool: InfinityFeeTierPoolParams | null): InfinityFee
     dynamic: pool?.dynamic,
     hasPool: !!pool,
   }
-}
-
-export function getInfinityFeeTierForPool(chainId: ChainId, pool: InfinityFeeTierPoolParams) {
-  const { fee, protocolFee, hookData, poolType } = pool
-  const hookDefaultFee = hookData?.defaultFee
-  const lpFee = hookDefaultFee ?? fee
-  return getInfinityFeeTier({
-    protocolFee: protocolFee ?? 0,
-    fee: lpFee,
-    poolType,
-    dynamic: pool.fee === DYNAMIC_FEE_FLAG,
-  })
 }

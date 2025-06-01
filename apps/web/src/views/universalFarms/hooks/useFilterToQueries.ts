@@ -15,6 +15,7 @@ type filtersParams = Partial<
     sortField: keyof PoolInfo | null
     positionStatus: POSITION_STATUS
     farmsOnly: boolean
+    search: string
   }
 >
 
@@ -29,6 +30,7 @@ export const useFilterToQueries = () => {
     sort,
     status,
     farmsOnly: queryFarmsOnly,
+    search,
     ...othersQueries
   } = nextRouter.query
 
@@ -85,6 +87,9 @@ export const useFilterToQueries = () => {
       }
       if (filters.selectedNetwork && filters.selectedNetwork.length !== allChainIds.length) {
         params.network = filters.selectedNetwork.map((i) => i.toString())
+      }
+      if (filters.search) {
+        params.search = filters.search
       }
       // Tokens might be too long, so keep them at the end to prevent other queries from being cut off by the browser.
       nextRouter.replace(
@@ -174,6 +179,7 @@ export const useFilterToQueries = () => {
     sortField,
     positionStatus,
     farmsOnly,
+    search: search as string,
     replaceURLQueriesByFilter,
   }
 }

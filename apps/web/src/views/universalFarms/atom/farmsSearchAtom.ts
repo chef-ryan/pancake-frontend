@@ -1,13 +1,21 @@
 import { PoolType, SmartRouter } from '@pancakeswap/smart-router'
-import { fillCakeApr, fillLpAprData, fillMerklAprData, fillOnchainPoolData } from 'edge/farm/batchFarmDataFiller'
+import uniqBy from '@pancakeswap/utils/uniqBy'
+import {
+  batchGetCakeApr,
+  batchGetLpAprData,
+  batchGetMerklAprData,
+  fillOnchainPoolData,
+} from 'edge/farm/batchFarmDataFiller'
 import { FarmQuery } from 'edge/farm/edgeFarmQueries'
 import { FarmInfo, farmToPoolInfo, SerializedFarmInfo } from 'edge/farm/farm.util'
 import { farmFilters } from 'edge/farm/filters'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
+import keyBy from 'lodash/keyBy'
 import qs from 'qs'
 import { atomWithLoadable } from 'quoter/atom/atomWithLoadable'
+import { PoolInfo } from 'state/farmsV4/state/type'
 
 const typeToProtocol = (type: PoolType) => {
   switch (type) {
@@ -63,35 +71,46 @@ const searchAtom = atomFamily((query: FarmQuery) => {
   return atomWithLoadable(
     async (get) => {
       try {
-        const { protocols, chains, sortBy, sortOrder } = query
+        const { protocols, chains, sortBy } = query
         const lists = await Promise.all([get(farmListAtom), get(extendListAtom)])
-        const farms = lists
-          .filter((x) => x.isJust())
-          .map((x) => x.unwrap())
-          .flat()
-          .map((farm) => {
-            const farmInfo = {
-              id: farm.id,
-              chainId: farm.chainId,
-              pid: farm.pid,
-              pool: SmartRouter.Transformer.parsePool(farm.chainId, farm.pool),
-              lpApr: farm.lpApr,
-              apr24h: farm.apr24h,
-              merklApr: '0',
-              cakeApr: {
-                value: '0', // Fill later
-              },
-              feeTier: 10,
-              tvlUSD: Number(farm.tvlUSD) || 0,
-              vol24hUsd: Number(farm.vol24hUsd) || 0,
-              tvlUsd: 0,
-              feeTierBase: 1e6,
-              protocol: typeToProtocol(farm.pool.type as PoolType),
-            } as FarmInfo
 
-            return farmInfo
-          })
-        const filtered = farms.filter(farmFilters.chainFilter(chains)).filter(farmFilters.protocolFilter(protocols))
+        const farms = uniqBy(
+          lists
+            .filter((x) => x.isJust())
+            .map((x) => x.unwrap())
+            .flat(),
+          (item) => `${item.chainId}:${item.id}`,
+        ).map((farm) => {
+          const farmInfo = {
+            id: farm.id,
+            chainId: farm.chainId,
+            pid: farm.pid,
+            pool: SmartRouter.Transformer.parsePool(farm.chainId, farm.pool),
+            lpApr: farm.lpApr,
+            apr24h: farm.apr24h,
+            merklApr: '0',
+            cakeApr: {
+              value: '0', // Fill later
+            },
+            feeTier: farm.feeTier,
+            tvlUSD: Number(farm.tvlUSD) || 0,
+            vol24hUsd: Number(farm.vol24hUsd) || 0,
+            tvlUsd: 0,
+            feeTierBase: 1e6,
+            protocol: typeToProtocol(farm.pool.type as PoolType),
+            isDynamicFee: farm.isDynamicFee,
+          } as FarmInfo
+
+          return farmInfo
+        })
+        console.log(
+          `[search]`,
+          farms.filter((x) => x.protocol === 'infinityCl').map((x) => x.feeTier),
+        )
+        const filtered = farms
+          .filter(farmFilters.chainFilter(chains))
+          .filter(farmFilters.protocolFilter(protocols))
+          .filter(farmFilters.searchFilter(query.keywords))
         const sorted = farmFilters.sortFunction(filtered, sortBy)
         return sorted
       } catch (ex) {
@@ -105,20 +124,65 @@ const searchAtom = atomFamily((query: FarmQuery) => {
   )
 }, isEqual)
 
-export const farmsSearchAtom = atomFamily((query) => {
+const farmsWithPagingAtom = atomFamily((query) => {
   return atomWithLoadable(async (get) => {
     const sorted = get(searchAtom(query))
     const paging = get(farmsSearchPagingAtom(query))
     return sorted.mapAsync(async (farms) => {
       const sliced = farms.slice(0, 20 * (paging + 1))
-
-      const poolInfos = sliced.map((x) => {
+      await Promise.all(farms.map(fillOnchainPoolData))
+      return sliced.map((x) => {
         return farmToPoolInfo(x)
       })
-      await Promise.all(sliced.map(fillOnchainPoolData))
-      await Promise.all([fillCakeApr(poolInfos), fillLpAprData(poolInfos), fillMerklAprData(poolInfos)])
-
-      return poolInfos
     })
+  })
+}, isEqual)
+
+const farmsWithFilledDataAtom = atomFamily((query) => {
+  return atomWithLoadable(async (get) => {
+    const sliced = get(farmsWithPagingAtom(query))
+
+    return sliced.mapAsync(async (poolInfos) => {
+      const [cakeAprs, lpAprs, merklAprs] = await Promise.all([
+        batchGetCakeApr(poolInfos),
+        batchGetLpAprData(poolInfos),
+        batchGetMerklAprData(poolInfos),
+      ])
+
+      const aggCakeAprs = keyBy(cakeAprs, 'id')
+      const aggLpAprs = keyBy(lpAprs, 'id')
+      const aggMerklAprs = keyBy(merklAprs, 'id')
+
+      return poolInfos.map((poolInfo) => {
+        const { farm, ...others } = poolInfo
+        const id = `${farm!.chainId}:${farm!.id}`
+        const cakeApr = aggCakeAprs[id]?.value || '0'
+        const lpApr = aggLpAprs[id]?.value || '0'
+        const merklApr = aggMerklAprs[id]?.value || '0'
+
+        return {
+          ...others,
+          farm: {
+            ...farm,
+            cakeApr,
+            lpApr,
+            merklApr,
+          },
+          lpApr,
+        } as PoolInfo
+      })
+    })
+  })
+}, isEqual)
+
+export const farmsSearchAtom = atomFamily((query) => {
+  return atom(async (get) => {
+    const sliced = get(farmsWithPagingAtom(query))
+    const withFilledData = get(farmsWithFilledDataAtom(query))
+
+    if (withFilledData.isPending()) {
+      return sliced
+    }
+    return withFilledData
   })
 }, isEqual)

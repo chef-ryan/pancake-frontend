@@ -160,6 +160,8 @@ function toRemotePool(farm: UniversalFarmConfig) {
       decimals: farm.token1.decimals,
       symbol: farm.token1.symbol,
     },
+    // @ts-ignore
+    feeTier: farm.feeAmount,
   }
   if (farm.protocol === 'v2') {
     return poolBase as InfinityRouter.RemotePoolV2
@@ -217,6 +219,7 @@ async function queryFarms(extend: boolean) {
         vol24hUsd: Number(pool.volumeUSD24h || '0'),
         pid: pidsMaps[`${pool.chainId}:${pool.id}`],
         apr24h: Number(pool.apr24h || 0),
+        isDynamicFee: pool.isDynamicFee,
       } as SerializedFarmInfo
     })
     return allPools

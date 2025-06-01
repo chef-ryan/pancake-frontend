@@ -194,6 +194,7 @@ export function toRemoteInfinityPool(
     hookAddress: pool.hooks as Address | undefined,
     isDynamicFee: false, // Assuming default; adjust based on your logic
     protocol: pool.type === PoolType.InfinityCL ? 'infinityCl' : 'infinityBin',
+    feeTier: pool.fee,
   }
 
   if (pool.type === PoolType.InfinityCL) {

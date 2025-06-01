@@ -17,6 +17,11 @@ import { Address } from 'viem/accounts'
 import { createBatchProcessor, multicallBatcher } from './batchProcessor'
 import { FarmInfo, isValidPoolKeyResult, parsePoolKeyResult, parseSlot0 } from './farm.util'
 
+interface FillItem<T> {
+  id: string
+  value: T
+}
+
 const fetchAllCampaigns = memoizeAsync(
   (chains: ChainId[]) => {
     return Promise.all(
@@ -38,9 +43,10 @@ const getCakePrice = memoizeAsync(async () => {
   return BigNumber(await getCakePriceFromOracle())
 })
 
-async function batchFillInfinityCakeApr(pools: PoolInfo[]) {
+async function batchGetInfinityCakeApr(pools: PoolInfo[]) {
   const chains = Array.from(new Set(pools.map((pool) => Number(pool.farm!.chainId))))
   const [allCampaigns, cakePrice] = await Promise.all([fetchAllCampaigns(chains), , getCakePrice()])
+  const result: FillItem<CakeAprValue>[] = []
   for (const pool of pools) {
     const farm = pool.farm!
     const chainId = Number(farm.chainId)
@@ -52,12 +58,15 @@ async function batchFillInfinityCakeApr(pools: PoolInfo[]) {
       campaigns,
       tvlUSD: `${farm.tvlUSD}`,
     })
-    farm.cakeApr = cakeApr
+    result.push({
+      id: `${farm.chainId}:${farm.id}`,
+      value: cakeApr,
+    })
   }
-  return pools
+  return result
 }
 
-async function batchFillCakeApr(pools: PoolInfo[]) {
+async function batchGetOtherCakeApr(pools: PoolInfo[]) {
   const cakePrice = await getCakePrice()
   const aprs = await Promise.all(
     pools.map(async (pool) => {
@@ -69,26 +78,33 @@ async function batchFillCakeApr(pools: PoolInfo[]) {
     const key = `${farm.chainId}:${farm.id}`
     const result = aprs[index]
     const apr = result[key] as CakeAprValue
-    farm.cakeApr = apr
-    return pool
+    return {
+      id: `${farm.chainId}:${farm.id}`,
+      value: apr,
+    } as FillItem<CakeAprValue>
   })
 }
 
-export const fillCakeApr = createBatchProcessor<PoolInfo, PoolInfo>({
+export const batchGetCakeApr = createBatchProcessor<PoolInfo, FillItem<CakeAprValue>>({
   groupBy: (pools: PoolInfo[]) => {
     return groupBy(pools, (pool) => (isInfinityProtocol(pool.farm!.protocol) ? 'infinity' : 'other'))
   },
   groups: {
-    infinity: batchFillInfinityCakeApr,
-    other: batchFillCakeApr,
+    infinity: batchGetInfinityCakeApr,
+    other: batchGetOtherCakeApr,
   },
 })
 
-export async function fillLpAprData(pools: PoolInfo[]) {
+const cachedGetLpApr = memoizeAsync(getLpApr, {
+  resolver: (params) => {
+    return `${params.protocol}:${params.chainId}:${params.lpAddress}:${params.poolId}`
+  },
+})
+export async function batchGetLpAprData(pools: PoolInfo[]) {
   const lpAprs = await Promise.allSettled(
     pools.map((pool) => {
       const farm = pool.farm!
-      return getLpApr(
+      return cachedGetLpApr(
         {
           protocol: farm.protocol,
           chainId: farm.chainId,
@@ -100,22 +116,30 @@ export async function fillLpAprData(pools: PoolInfo[]) {
     }),
   )
 
-  pools.forEach((pool, index) => {
+  return pools.map((pool, index) => {
     const result = lpAprs[index]
     const farm = pool.farm!
-
     farm.lpApr = result.status === 'fulfilled' ? `${result.value}` : '0'
+    return {
+      id: `${farm.chainId}:${farm.id}`,
+      value: farm.lpApr,
+    }
   })
 }
 
-export async function fillMerklAprData(pools: PoolInfo[]) {
-  const aprs = await getAllNetworkMerklApr()
-  pools.forEach((pool) => {
+const cachedGetAllNetworkMerklApr = memoizeAsync(getAllNetworkMerklApr, {
+  resolver: () => '',
+})
+export async function batchGetMerklAprData(pools: PoolInfo[]) {
+  const aprs = await cachedGetAllNetworkMerklApr()
+  return pools.map((pool) => {
     const farm = pool.farm!
     const key = `${farm.chainId}-${farm.id}`
     const merklApr = aprs[key] || '0'
-    // eslint-disable-next-line no-param-reassign
-    farm.merklApr = merklApr
+    return {
+      id: `${farm.chainId}:${farm.id}`,
+      value: merklApr,
+    }
   })
 }
 

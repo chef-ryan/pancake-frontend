@@ -51,6 +51,7 @@ export type FarmProps = {
   protocol: Protocol
   feeTierBase: number
   pid?: number
+  isDynamicFee?: boolean
 }
 
 export type SerializedFarmInfo = FarmProps & {
@@ -83,9 +84,9 @@ export const farmPropsToPoolInfoBase = (farm: FarmProps, token0: Currency, token
     protocol: farm.protocol,
     token0,
     token1: token1.asToken,
-    lpApr: `${farm.lpApr}` as `${number}`,
-    tvlUsd: `${farm.tvlUSD}` as `${number}`,
-    vol24hUsd: `${farm.vol24hUsd}` as `${number}`,
+    lpApr: `${farm.lpApr || ''}` as `${number}`,
+    tvlUsd: `${farm.tvlUSD || ''}` as `${number}`,
+    vol24hUsd: `${farm.vol24hUsd || ''}` as `${number}`,
     feeTier: farm.feeTier,
     feeTierBase: farm.feeTierBase,
     isFarming: false,
@@ -116,11 +117,12 @@ export const getPoolInfoForInfiFee = (farm: FarmInfo) => {
   const pool = farm.pool as InfinityClPool | InfinityBinPool
 
   const hookData = pool.hooks ? findHook(pool.hooks, farm.chainId) : undefined
+  const isDynamic = pool.fee === DYNAMIC_FEE_FLAG
   return {
     protocolFee: pool.protocolFee!,
-    fee: pool.fee!,
+    fee: isDynamic ? hookData?.defaultFee ?? pool.fee! : pool.fee,
     poolType: pool.type === PoolType.InfinityCL ? 'CL' : 'Bin',
-    dynamic: pool.fee === DYNAMIC_FEE_FLAG,
+    dynamic: isDynamic,
     hookData,
   } as InfinityFeeTierPoolParams
 }

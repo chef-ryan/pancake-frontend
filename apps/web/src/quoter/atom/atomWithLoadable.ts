@@ -1,8 +1,8 @@
 import { isLoadable, Loadable } from '@pancakeswap/utils/Loadable'
-import { atom, Getter } from 'jotai'
+import { Atom, atom, Getter } from 'jotai'
 import { unwrap } from 'jotai/utils'
 
-type AsyncFN<T> = (get: Getter) => Promise<T | undefined>
+type AsyncFN<T> = (get: Getter) => Promise<T | Loadable<T> | undefined>
 type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
 interface LoadableOption<T> {
   isValid?: (result: UnwrapPromise<ReturnType<AsyncFN<T>>>) => boolean
@@ -16,11 +16,11 @@ export const atomWithLoadable = <T>(
     placeHolderBehavior: 'pending',
   },
 ) => {
-  const baseAtom = atom<Promise<Loadable<T>>>(async (get) => {
+  const baseAtom = atom(async (get) => {
     try {
       const result = await asyncFn(get)
       if (isLoadable(result)) {
-        return result as Loadable<T>
+        return result
       }
       if (typeof result === 'undefined' || result === null) {
         return Loadable.Nothing<T>()
@@ -41,5 +41,5 @@ export const atomWithLoadable = <T>(
       }
     }
     return Loadable.Pending<T>()
-  })
+  }) as Atom<Loadable<T>>
 }

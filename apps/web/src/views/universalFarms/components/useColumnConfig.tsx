@@ -60,14 +60,15 @@ export const useAPRConfig = () => {
         dataIndex: 'lpApr',
         key: 'apr',
         minWidth: '160px',
-        render: (value, info) =>
-          value ? (
+        render: (value, info) => {
+          return value ? (
             <Box style={{ maxWidth: '220px', overflow: 'hidden' }}>
               <PoolGlobalAprButton pool={info} aprInfo={getFarmAprInfo(info.farm)} />
             </Box>
           ) : (
             <Skeleton width={60} />
-          ),
+          )
+        },
       } as IColumnsType<PoolInfo>),
     [t],
   )

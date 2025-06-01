@@ -1,5 +1,8 @@
 import { ChainId } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
+import { Native } from '@pancakeswap/sdk'
+import { PoolType, SmartRouter } from '@pancakeswap/smart-router'
+import { getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { FarmInfo } from './farm.util'
 
@@ -21,6 +24,83 @@ const protocolFilter = (protocols: Protocol[]) => {
       return true
     }
     return false
+  }
+}
+
+function getAllPairs(A: string[], B: string[]): [string, string][] {
+  const pairs: [string, string][] = []
+
+  A.forEach((a) => {
+    B.forEach((b) => {
+      pairs.push([a, b], [b, a])
+    })
+  })
+
+  return pairs
+}
+
+const searchFilter = (_search: string) => {
+  return (farm: FarmInfo): boolean => {
+    if (!_search || _search.trim() === '') return true
+    const search = _search.toLowerCase().trim()
+
+    const [token0, token1] = SmartRouter.getCurrenciesOfPool(farm.pool)
+    const isAddress = Boolean(search.match(/^0x[a-z0-9]+$/))
+    if (isAddress) {
+      const list = [
+        farm.id.toLowerCase(),
+        getCurrencyAddress(token0).toLowerCase(),
+        getCurrencyAddress(token1).toLowerCase(),
+      ]
+      return list.some((item) => item.startsWith(search))
+    }
+
+    const { pool } = farm
+
+    // Token0 handling
+    const symbol0List: string[] = []
+    symbol0List.push(token0.symbol.toLowerCase())
+    if (token0.isNative && token0.wrapped?.symbol) {
+      symbol0List.push(token0.wrapped.symbol.toLowerCase())
+    } else if (Native.onChain(farm.chainId).wrapped.equals(token0)) {
+      symbol0List.push(Native.onChain(farm.chainId).symbol.toLowerCase())
+    }
+
+    // Token1 handling
+    const symbol1List: string[] = []
+    symbol1List.push(token1.symbol.toLowerCase())
+    if (token1.isNative) {
+      symbol1List.push(token1.wrapped.symbol.toLowerCase())
+    } else if (Native.onChain(farm.chainId).wrapped.equals(token1)) {
+      symbol1List.push(Native.onChain(farm.chainId).symbol.toLowerCase())
+    }
+    const pairs = getAllPairs(symbol0List, symbol1List)
+
+    const clamm = pool.type === PoolType.InfinityCL ? 'clamm' : ''
+    const lbamm = pool.type === PoolType.InfinityBIN ? 'lbamm' : ''
+    const isInfinity = pool.type === PoolType.InfinityCL || pool.type === PoolType.InfinityBIN
+    const dynamic = isInfinity && farm.isDynamicFee
+    const infinity = isInfinity ? 'infinity' : ''
+
+    const tags = [
+      ...symbol0List,
+      ...symbol1List,
+      ...pairs.map((x) => {
+        return `${x[0]}/${x[1]}`
+      }),
+      clamm,
+      lbamm,
+      dynamic ? 'dynamic' : '',
+      infinity,
+    ].filter((x) => x)
+    const prts = search
+      .split(/[\s,]/g)
+      .filter((x) => x.trim())
+      .filter((x) => x)
+
+    return prts.every((prt) => {
+      return tags.some((tag) => tag.startsWith(prt))
+    })
   }
 }
 
@@ -83,4 +163,5 @@ export const farmFilters = {
   chainFilter,
   protocolFilter,
   sortFunction,
+  searchFilter,
 }
