@@ -5,8 +5,8 @@ import { InfinityBinPool, InfinityClPool, InfinityRouter, SmartRouter } from '@p
 
 import uniqBy from '@pancakeswap/utils/uniqBy'
 import { computePoolAddress, DEPLOYER_ADDRESSES } from '@pancakeswap/v3-sdk'
-import { edgeQueries } from 'edge/edgePoolQueries'
-import { getEdgeChainName } from 'edge/edgeQueries.util'
+import { edgeQueries } from 'quoter/utils/edgePoolQueries'
+import { getEdgeChainName } from 'quoter/utils/edgeQueries.util'
 import { DEFAULT_CHAINS, DEFAULT_PROTOCOLS } from 'state/farmsV4/state/farmPools/fetcher'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { explorerApiClient } from 'state/info/api/client'

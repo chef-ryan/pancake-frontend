@@ -1,6 +1,6 @@
-import { parseFarmSearchQuery } from 'edge/edgeQueries.util'
-import edgeFarmQueries from 'edge/farm/edgeFarmQueries'
 import { NextRequest, NextResponse } from 'next/server'
+import { parseFarmSearchQuery } from 'quoter/utils/edgeQueries.util'
+import edgeFarmQueries from 'views/universalFarms/search/edgeFarmQueries'
 
 export const config = {
   runtime: 'edge',
