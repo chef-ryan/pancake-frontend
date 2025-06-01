@@ -4,7 +4,7 @@ export default function memoize<T extends (...args: any[]) => any>(
 ): T & { cache: Map<any, ReturnType<T>> } {
   const cache = new Map<any, ReturnType<T>>()
 
-  const memoized = function (...args: Parameters<T>): ReturnType<T> {
+  const memoized = (...args: Parameters<T>): ReturnType<T> => {
     const key = resolver ? resolver(...args) : args[0]
     if (cache.has(key)) {
       return cache.get(key)!
