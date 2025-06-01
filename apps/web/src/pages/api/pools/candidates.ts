@@ -1,7 +1,7 @@
 import { POOLS_SLOW_REVALIDATE } from 'config/pools'
-import { edgeQueries } from 'edge/edgePoolQueries'
-import { parseCandidatesQuery } from 'edge/edgeQueries.util'
 import { NextRequest, NextResponse } from 'next/server'
+import { edgeQueries } from 'quoter/utils/edgePoolQueries'
+import { parseCandidatesQuery } from 'quoter/utils/edgeQueries.util'
 
 export const config = {
   runtime: 'edge',

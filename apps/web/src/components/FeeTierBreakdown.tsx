@@ -3,12 +3,12 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Percent } from '@pancakeswap/sdk'
 import { Flex, InfoIcon, Text, useModal } from '@pancakeswap/uikit'
 import { FeeTierTooltip, Liquidity } from '@pancakeswap/widgets-internal'
-import { getPoolInfoForInfiFee } from 'edge/farm/farm.util'
 import { InfinityFeeTier, InfinityFeeTierPoolParams, useInfinityFeeTier } from 'hooks/infinity/useInfinityFeeTier'
 import { usePoolById } from 'hooks/infinity/usePool'
 import { useCallback, useMemo } from 'react'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { Address } from 'viem'
+import { getPoolInfoForInfiFee } from 'views/universalFarms/search/farm.util'
 
 interface FeeTierBreakdownProps {
   poolId?: Address
