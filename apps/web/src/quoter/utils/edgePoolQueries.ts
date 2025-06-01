@@ -285,7 +285,6 @@ async function fetchAllPools({
       hasNextPage = data.hasNextPage
       cursor = data.endCursor || null
       pageCount++
-      console.log(`Fetched page ${pageCount}, results so far: ${allResults.length}`)
     } catch (error) {
       console.error('Error fetching data:', error)
       throw error
