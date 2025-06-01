@@ -2,36 +2,53 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Percent } from '@pancakeswap/swap-sdk-core'
 import { Box, Grid, IColumnsType, ITableViewProps, Skeleton, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { FeeTierTooltip, FiatNumberDisplay, Liquidity, TokenOverview } from '@pancakeswap/widgets-internal'
-import { InfinityFeeTierBreakdownWithPool } from 'components/FeeTierBreakdown'
+import { InfinityFeeTierBreakdown } from 'components/FeeTierBreakdown'
 import { TokenPairLogo } from 'components/TokenImage'
 import { useMemo } from 'react'
+import type { PoolInfo } from 'state/farmsV4/state/type'
 import { getHookByAddress } from 'utils/getHookByAddress'
 import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem'
 
-import { InfinityBinPool, InfinityClPool } from '@pancakeswap/smart-router'
-import { FarmInfo, farmToPoolInfo, getFarmTokens } from 'edge/farm/farm.util'
-import { getCurrencySymbol } from 'utils/getTokenAlias'
+import { getFarmAprInfo, getFarmHookData } from 'edge/farm/farm.util'
+import { useHookByPoolId } from 'hooks/infinity/useHooksList'
 import { getChainFullName } from '../utils'
 import { RewardStatusDisplay } from './FarmStatusDisplay'
 import { checkHasReward } from './FarmStatusDisplay/hooks'
-import { PoolGlobalAprButtonV2 } from './PoolAprButtonV2/PoolGlobalAprButtonV2'
+import { PoolGlobalAprButton } from './PoolAprButton'
 import { PoolListItemAction } from './PoolListItemAction'
 
-export const FeeTierComponent = ({ farm }: { farm: FarmInfo }) => {
-  const { protocol, pool, chainId, feeTier: fee, feeTierBase } = farm
-  const percent = useMemo(() => new Percent(fee ?? 0, feeTierBase || 1), [fee])
-  if (isInfinityProtocol(protocol)) {
+export const FeeTierComponent = <T extends PoolInfo>({
+  dynamic,
+  fee,
+  item,
+}: {
+  dynamic?: boolean
+  fee: number
+  item: T
+}) => {
+  const percent = useMemo(() => new Percent(fee ?? 0, item.feeTierBase || 1), [fee, item.feeTierBase])
+  const farmHookData = getFarmHookData(item.farm)
+  const hookData_ = useHookByPoolId(
+    item.chainId,
+    isInfinityProtocol(item.protocol) ? (item as { poolId?: `0x${string}` })?.poolId : undefined,
+  )
+  const hookData = farmHookData || hookData_
+
+  if (isInfinityProtocol(item.protocol)) {
+    // @ts-ignore
+    const id = item.farm?.id || item.poolId
     return (
-      <InfinityFeeTierBreakdownWithPool
-        chainId={chainId}
-        pool={pool as InfinityClPool | InfinityBinPool}
+      <InfinityFeeTierBreakdown
+        poolInfo={item as any as PoolInfo}
+        poolId={id}
+        chainId={item.chainId}
+        hookData={hookData}
         infoIconVisible={false}
       />
     )
   }
-
-  return <FeeTierTooltip type={farm.protocol} percent={percent} dynamic={false} />
+  return <FeeTierTooltip type={item.protocol} percent={percent} dynamic={dynamic} />
 }
 
 export const useAPRConfig = () => {
@@ -43,21 +60,15 @@ export const useAPRConfig = () => {
         dataIndex: 'lpApr',
         key: 'apr',
         minWidth: '160px',
-        render: (value, info) => {
-          return value ? (
+        render: (value, info) =>
+          value ? (
             <Box style={{ maxWidth: '220px', overflow: 'hidden' }}>
-              <PoolGlobalAprButtonV2
-                pool={farmToPoolInfo(info)}
-                lpApr={info.lpApr}
-                merklApr={info.merklApr}
-                cakeApr={info.cakeApr}
-              />
+              <PoolGlobalAprButton pool={info} aprInfo={getFarmAprInfo(info.farm)} />
             </Box>
           ) : (
             <Skeleton width={60} />
-          )
-        },
-      } as IColumnsType<FarmInfo>),
+          ),
+      } as IColumnsType<PoolInfo>),
     [t],
   )
 }
@@ -70,8 +81,8 @@ export const useFeeConfig = () => {
         title: t('Fee Tier'),
         dataIndex: 'feeTier',
         key: 'feeTier',
-        render: (fee, item) => <FeeTierComponent farm={item} />,
-      } as IColumnsType<FarmInfo>),
+        render: (fee, item) => <FeeTierComponent dynamic={item?.isDynamicFee ?? false} fee={fee} item={item} />,
+      } as IColumnsType<PoolInfo>),
     [t],
   )
 }
@@ -87,7 +98,7 @@ export const useVol24Config = () => {
         minWidth: '125px',
         render: (value) =>
           value ? <FiatNumberDisplay value={value} showFullDigitsTooltip={false} /> : <Skeleton width={60} />,
-      } as IColumnsType<FarmInfo>),
+      } as IColumnsType<PoolInfo>),
     [t],
   )
 }
@@ -98,12 +109,12 @@ export const useTVLConfig = () => {
     () =>
       ({
         title: t('TVL'),
-        dataIndex: 'tvlUSD',
+        dataIndex: 'tvlUsd',
         key: 'tvl',
         minWidth: '125px',
         render: (value) =>
           value ? <FiatNumberDisplay value={value} showFullDigitsTooltip={false} /> : <Skeleton width={60} />,
-      } as IColumnsType<FarmInfo>),
+      } as IColumnsType<PoolInfo>),
     [t],
   )
 }
@@ -121,7 +132,7 @@ export const usePoolTypeConfig = () => {
             <Liquidity.PoolFeaturesBadge showPoolType showLabel={false} poolType={value} short />
           </Box>
         ),
-      } as IColumnsType<FarmInfo>),
+      } as IColumnsType<PoolInfo>),
     [t],
   )
 }
@@ -135,7 +146,7 @@ export const usePoolFeatureConfig = (showPoolType = true) => {
         dataIndex: 'hookAddress',
         key: 'hookAddress',
         minWidth: '140px',
-        render: (value: Address, item: FarmInfo) => {
+        render: (value: Address, item: PoolInfo) => {
           const hookData = getHookByAddress(item.chainId, value)
           return (
             <Grid gridGap="4px">
@@ -151,32 +162,38 @@ export const usePoolFeatureConfig = (showPoolType = true) => {
             </Grid>
           )
         },
-      } as unknown as IColumnsType<FarmInfo>),
+      } as unknown as IColumnsType<PoolInfo>),
     [t, showPoolType],
   )
 }
 
-export const PoolTokenOverview = ({ data }: { data: FarmInfo }) => {
-  const showReward = checkHasReward(data.chainId, data.id)
+export const PoolTokenOverview = <T extends PoolInfo = PoolInfo>({ data }: { data: T }) => {
+  const showReward = checkHasReward(data.chainId, data.lpAddress)
 
-  const [token0, token1] = getFarmTokens(data)
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <TokenOverview
         isReady
-        token={token0}
-        quoteToken={token1}
+        token={data.token0}
+        quoteToken={data.token1}
         iconWidth="48px"
         getChainName={getChainFullName}
-        getCurrencySymbol={getCurrencySymbol}
-        icon={<TokenPairLogo width={44} height={44} variant="inverted" primaryToken={token0} secondaryToken={token1} />}
+        icon={
+          <TokenPairLogo
+            width={44}
+            height={44}
+            variant="inverted"
+            primaryToken={data.token0}
+            secondaryToken={data.token1}
+          />
+        }
       />
       {showReward && <RewardStatusDisplay />}
     </div>
   )
 }
 
-export const useColumnConfig = <T extends FarmInfo = FarmInfo>(): ITableViewProps<T>['columns'] => {
+export const useColumnConfig = <T extends PoolInfo = PoolInfo>(): ITableViewProps<T>['columns'] => {
   const { t } = useTranslation()
   const mediaQueries = useMatchBreakpoints()
   const vol24hUsdConf = useVol24Config()
@@ -233,7 +250,7 @@ export const useColumnConfig = <T extends FarmInfo = FarmInfo>(): ITableViewProp
   )
 }
 
-export const useColumnMobileConfig = (): ITableViewProps<FarmInfo>['columns'] => {
+export const useColumnMobileConfig = (): ITableViewProps<PoolInfo>['columns'] => {
   const vol24hUsdConf = useVol24Config()
   const TVLUsdConf = useTVLConfig()
   const feeTierConf = useFeeConfig()

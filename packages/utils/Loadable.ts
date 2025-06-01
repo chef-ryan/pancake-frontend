@@ -61,8 +61,8 @@ export class Loadable<T> {
     return new Loadable<T>(LoadableTypeNames.Fail, undefined, error, false) as Fail<T>
   }
 
-  static Pending<T>(): Pending<T> {
-    return new Loadable<T>(LoadableTypeNames.Pending, undefined, undefined, true) as Pending<T>
+  static Pending<T>(value?: T): Pending<T> {
+    return new Loadable<T>(LoadableTypeNames.Pending, value, undefined, true) as Pending<T>
   }
 
   isJust(): this is Just<T> {
@@ -79,6 +79,10 @@ export class Loadable<T> {
 
   isPending(): this is Pending<T> {
     return this.type === LoadableTypeNames.Pending
+  }
+
+  hasValue() {
+    return this.isJust() || this.value // has stale value
   }
 
   map<U>(fn: (value: T) => U): Loadable<U> {
@@ -136,6 +140,11 @@ export class Loadable<T> {
     }
     if (this.isFail()) {
       throw new Error(`Cannot unwrapOr Fail: ${this.error}`)
+    }
+    if (this.isPending()) {
+      if (this.value) {
+        return this.value as UnwrapOr<T, U>
+      }
     }
     return defaultValue as UnwrapOr<T, U>
   }

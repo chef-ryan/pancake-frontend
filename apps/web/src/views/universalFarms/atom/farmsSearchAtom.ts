@@ -1,7 +1,7 @@
 import { PoolType, SmartRouter } from '@pancakeswap/smart-router'
-import edgeFarmQueries, { FarmQuery } from 'edge/farm/edgeFarmQueries'
+import { fillCakeApr, fillLpAprData, fillMerklAprData, fillOnchainPoolData } from 'edge/farm/batchFarmDataFiller'
+import { FarmQuery } from 'edge/farm/edgeFarmQueries'
 import { FarmInfo, farmToPoolInfo, SerializedFarmInfo } from 'edge/farm/farm.util'
-import { fillFarmData } from 'edge/farm/fillFarmData'
 import { farmFilters } from 'edge/farm/filters'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
@@ -55,53 +55,63 @@ const extendListAtom = atomWithLoadable<SerializedFarmInfo[]>(async () => {
 })
 
 export const farmsSearchAtom = atomFamily((query: FarmQuery) => {
-  return atomWithLoadable(async (get) => {
-    try {
-      const { protocols, chains } = query
-      const lists = await Promise.all([get(farmListAtom), get(extendListAtom)])
-      const farms = lists
-        .filter((x) => x.isJust())
-        .map((x) => x.unwrap())
-        .flat()
-        .map((farm) => {
-          const farmInfo = {
-            id: farm.id,
-            chainId: farm.chainId,
-            pool: SmartRouter.Transformer.parsePool(farm.chainId, farm.pool),
-            lpApr: farm.lpApr,
-            merklApr: '0',
-            cakeApr: {
-              value: '0', // Fill later
-            },
-            feeTier: 10,
-            tvlUSD: Number(farm.tvlUSD) || 0,
-            vol24hUsd: Number(farm.vol24hUsd) || 0,
-            tvlUsd: 0,
-            feeTierBase: 1e6,
-            protocol: typeToProtocol(farm.pool.type as PoolType),
-          } as FarmInfo
+  return atomWithLoadable(
+    async (get) => {
+      try {
+        const { protocols, chains, sortBy, sortOrder } = query
+        console.log(`[pool] --start-- ${protocols.join(',')}`)
+        const lists = await Promise.all([get(farmListAtom), get(extendListAtom)])
+        const farms = lists
+          .filter((x) => x.isJust())
+          .map((x) => x.unwrap())
+          .flat()
+          .map((farm) => {
+            const farmInfo = {
+              id: farm.id,
+              chainId: farm.chainId,
+              pid: farm.pid,
+              pool: SmartRouter.Transformer.parsePool(farm.chainId, farm.pool),
+              lpApr: farm.lpApr,
+              apr24h: farm.apr24h,
+              merklApr: '0',
+              cakeApr: {
+                value: '0', // Fill later
+              },
+              feeTier: 10,
+              tvlUSD: Number(farm.tvlUSD) || 0,
+              vol24hUsd: Number(farm.vol24hUsd) || 0,
+              tvlUsd: 0,
+              feeTierBase: 1e6,
+              protocol: typeToProtocol(farm.pool.type as PoolType),
+            } as FarmInfo
 
-          // Compatibility with old farm data
+            return farmInfo
+          })
+        const filtered = farms.filter(farmFilters.chainFilter(chains)).filter(farmFilters.protocolFilter(protocols))
+        const sorted = farmFilters.sortFunction(filtered, sortBy, sortOrder)
+        const sliced = sorted.slice(0, 20)
 
-          farmInfo.poolInfo = farmToPoolInfo(farmInfo)
-          return farmInfo
+        // const filtered = farms.slice(0, 20)
+        await Promise.all(sliced.map(fillOnchainPoolData))
+
+        const poolInfos = sliced.map((x) => {
+          return farmToPoolInfo(x)
         })
-      const filtered = farms.filter(farmFilters.chainFilter(chains)).filter(farmFilters.protocolFilter(protocols))
-      const sliced = filtered.slice(0, 20)
-      await Promise.all([
-        edgeFarmQueries.fillCakeApr(sliced),
-        edgeFarmQueries.fillLpAprData(sliced),
-        edgeFarmQueries.fillMerklAprData(sliced),
-      ])
+        await Promise.all([fillCakeApr(poolInfos), fillLpAprData(poolInfos), fillMerklAprData(poolInfos)])
 
-      // const filtered = farms.slice(0, 20)
-      const filled = await fillFarmData(sliced)
-      console.log(`[farms]`, protocols, filled)
+        console.log(
+          `[pool]`,
+          poolInfos.map((x) => x.farm!.cakeApr),
+        )
 
-      return filled
-    } catch (ex) {
-      console.error('Error fetching farms:', ex)
-      throw ex
-    }
-  })
+        return poolInfos
+      } catch (ex) {
+        console.error('Error fetching farms:', ex)
+        throw ex
+      }
+    },
+    {
+      placeHolderBehavior: 'stale',
+    },
+  )
 }, isEqual)

@@ -5,6 +5,8 @@ export type RemotePoolBase = {
   id: Address
   chainId: number
   tvlUSD: string
+  volumeUSD24h: string
+  apr24h: string
   protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
   token0: RemoteToken
   token1: RemoteToken

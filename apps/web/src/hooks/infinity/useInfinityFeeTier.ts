@@ -1,24 +1,35 @@
 import { ChainId } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
-import { DYNAMIC_FEE_FLAG, findHook } from '@pancakeswap/infinity-sdk'
-import { InfinityBinPool, InfinityClPool, PoolType } from '@pancakeswap/smart-router'
+import { DYNAMIC_FEE_FLAG, HookData } from '@pancakeswap/infinity-sdk'
 import { Percent } from '@pancakeswap/swap-sdk-core'
 import { useMemo } from 'react'
 import { calculateInfiFeePercent } from 'views/Swap/V3Swap/utils/exchange'
 
-type PoolParams = {
+export type InfinityFeeTierPoolParams = {
   protocolFee: number
   fee: number
   poolType: 'Bin' | 'CL' | undefined
   dynamic?: boolean
+  hookData?: HookData
 }
-export const useInfinityFeeTier = (pool: PoolParams | null) => {
+export const useInfinityFeeTier = (pool: InfinityFeeTierPoolParams | null) => {
   return useMemo(() => {
     return getInfinityFeeTier(pool)
   }, [pool])
 }
 
-function getInfinityFeeTier(pool: PoolParams | null) {
+export type InfinityFeeTier = {
+  protocol: 'Infinity LBAMM' | 'Infinity CLAMM'
+  type: Protocol.InfinityBIN | Protocol.InfinityCLAMM
+  percent: Percent
+  lpFee: Percent
+  protocolFee: Percent
+  dynamic?: boolean
+  hasPool: boolean
+  hookData?: HookData
+}
+
+function getInfinityFeeTier(pool: InfinityFeeTierPoolParams | null): InfinityFeeTier {
   const { totalFee, lpFee, protocolFee } = calculateInfiFeePercent(pool?.fee ?? 0, pool?.protocolFee)
 
   return {
@@ -32,16 +43,14 @@ function getInfinityFeeTier(pool: PoolParams | null) {
   }
 }
 
-export function getInfinityFeeTierForPool(chainId: ChainId, pool: InfinityClPool | InfinityBinPool) {
-  const { fee, protocolFee } = pool
-  const hook = pool.hooks
-  const hookData = hook ? findHook(hook, chainId) : undefined
+export function getInfinityFeeTierForPool(chainId: ChainId, pool: InfinityFeeTierPoolParams) {
+  const { fee, protocolFee, hookData, poolType } = pool
   const hookDefaultFee = hookData?.defaultFee
   const lpFee = hookDefaultFee ?? fee
   return getInfinityFeeTier({
     protocolFee: protocolFee ?? 0,
     fee: lpFee,
-    poolType: pool.type === PoolType.InfinityCL ? 'CL' : 'Bin',
+    poolType,
     dynamic: pool.fee === DYNAMIC_FEE_FLAG,
   })
 }

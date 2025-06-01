@@ -1,17 +1,29 @@
 import { ChainId } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
-import { DYNAMIC_FEE_FLAG } from '@pancakeswap/infinity-sdk'
-import { InfinityBinPool, InfinityClPool, Pool, SmartRouter } from '@pancakeswap/smart-router'
-import { RemotePoolBase } from '@pancakeswap/smart-router/dist/evm/infinity-router'
+import {
+  BinPoolManagerAbi,
+  CLPoolManagerAbi,
+  decodePoolKey,
+  DYNAMIC_FEE_FLAG,
+  findHook,
+  PoolType as IPoolType,
+  PoolKey,
+  Slot0,
+} from '@pancakeswap/infinity-sdk'
+import { zeroAddress } from '@pancakeswap/price-api-sdk'
+import { InfinityBinPool, InfinityClPool, InfinityRouter, Pool, PoolType, SmartRouter } from '@pancakeswap/smart-router'
 import { Currency } from '@pancakeswap/swap-sdk-core'
+import { InfinityFeeTierPoolParams } from 'hooks/infinity/useInfinityFeeTier'
 import { CakeAprValue } from 'state/farmsV4/atom'
+import { AprInfo } from 'state/farmsV4/hooks'
 import { BasePoolInfo, PoolInfo } from 'state/farmsV4/state/type'
 import { safeGetAddress } from 'utils'
+import { ContractFunctionReturnType } from 'viem'
 import { Address } from 'viem/accounts'
+import { Prettify } from 'viem/chains'
 
 export type FarmInfo = FarmProps & {
   pool: Pool
-  poolInfo?: PoolInfo
 } & {
   cakeApr: CakeAprValue
 }
@@ -33,6 +45,7 @@ export type FarmProps = {
   merklApr: `${number}`
   // cakeApr: CakeAprValue
   feeTier: number
+  apr24h: number
   vol24hUsd: number
   tvlUSD: number
   protocol: Protocol
@@ -47,7 +60,7 @@ export type SerializedFarmInfo = FarmProps & {
 }
 
 export const getFarmTokens = (farm: FarmInfo): Currency[] => {
-  const pool = farm.pool
+  const { pool } = farm
   const currencies = SmartRouter.getCurrenciesOfPool(pool)
   return currencies
 }
@@ -78,6 +91,7 @@ export const farmPropsToPoolInfoBase = (farm: FarmProps, token0: Currency, token
     isFarming: false,
     isActiveFarm: false,
     pid: farm.pid,
+    farm: farm as FarmInfo,
   }
   return base
 }
@@ -98,7 +112,42 @@ export const farmToPoolInfo = (farm: FarmInfo): PoolInfo => {
   return base as PoolInfo
 }
 
-export const normalizeAddress = (pool: RemotePoolBase) => {
+export const getPoolInfoForInfiFee = (farm: FarmInfo) => {
+  const pool = farm.pool as InfinityClPool | InfinityBinPool
+
+  const hookData = pool.hooks ? findHook(pool.hooks, farm.chainId) : undefined
+  return {
+    protocolFee: pool.protocolFee!,
+    fee: pool.fee!,
+    poolType: pool.type === PoolType.InfinityCL ? 'CL' : 'Bin',
+    dynamic: pool.fee === DYNAMIC_FEE_FLAG,
+    hookData,
+  } as InfinityFeeTierPoolParams
+}
+
+export const getFarmHookData = (farm?: FarmInfo) => {
+  if (!farm) {
+    return undefined
+  }
+  const pool = farm.pool as InfinityClPool | InfinityBinPool
+  const hookData = pool.hooks ? findHook(pool.hooks, farm.chainId) : undefined
+  return hookData
+}
+
+export const getFarmAprInfo = (farm?: FarmInfo) => {
+  if (!farm) {
+    return undefined
+  }
+
+  const aprInfo: AprInfo = {
+    lpApr: farm.lpApr,
+    cakeApr: farm.cakeApr,
+    merklApr: farm.merklApr,
+  }
+  return aprInfo
+}
+
+export const normalizeAddress = (pool: InfinityRouter.RemotePoolBase) => {
   if (pool.id) {
     const id = safeGetAddress(pool.id)
     if (id) {
@@ -108,3 +157,67 @@ export const normalizeAddress = (pool: RemotePoolBase) => {
   }
   return pool
 }
+
+export const parsePoolKeyResult = <
+  TPoolType extends IPoolType,
+  TResult extends TPoolType extends 'CL'
+    ? Prettify<ContractFunctionReturnType<typeof CLPoolManagerAbi, 'view', 'poolIdToPoolKey'>>
+    : Prettify<ContractFunctionReturnType<typeof BinPoolManagerAbi, 'view', 'poolIdToPoolKey'>>,
+>(
+  poolType: TPoolType,
+  result: TResult,
+): PoolKey<TPoolType> => {
+  const [currency0, currency1, hooks, poolManager, fee, parameters] = result
+
+  return decodePoolKey(
+    {
+      currency0,
+      currency1,
+      hooks,
+      poolManager,
+      fee,
+      parameters,
+    },
+    poolType,
+  )
+}
+
+export const parseSlot0 = <
+  TPoolType extends IPoolType,
+  TSlot0 extends TPoolType extends 'CL'
+    ? ContractFunctionReturnType<typeof CLPoolManagerAbi, 'view', 'getSlot0'>
+    : ContractFunctionReturnType<typeof BinPoolManagerAbi, 'view', 'getSlot0'>,
+>(
+  poolType: TPoolType,
+  slot0: TSlot0,
+): Slot0<TPoolType> => {
+  if (poolType === 'CL') {
+    const [sqrtPriceX96, tick, protocolFee, lpFee] = slot0 as ContractFunctionReturnType<
+      typeof CLPoolManagerAbi,
+      'view',
+      'getSlot0'
+    >
+    return {
+      sqrtPriceX96,
+      tick,
+      protocolFee,
+      lpFee,
+    } as Slot0<TPoolType>
+  }
+
+  const [activeId, protocolFee, lpFee] = slot0 as ContractFunctionReturnType<
+    typeof BinPoolManagerAbi,
+    'view',
+    'getSlot0'
+  >
+  return {
+    activeId,
+    protocolFee,
+    lpFee,
+    dynamic: lpFee === DYNAMIC_FEE_FLAG,
+  } as Slot0<TPoolType>
+}
+
+export const isValidPoolKeyResult = (
+  result?: ContractFunctionReturnType<typeof CLPoolManagerAbi, 'view', 'poolIdToPoolKey'>,
+) => result && result.length === 6 && result[3] !== zeroAddress

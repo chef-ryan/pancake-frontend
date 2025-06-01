@@ -3,23 +3,14 @@ import { FarmV4SupportedChainId, fetchAllUniversalFarms, Protocol, UniversalFarm
 import { getCurrencyAddress, Pair } from '@pancakeswap/sdk'
 import { InfinityBinPool, InfinityClPool, InfinityRouter, SmartRouter } from '@pancakeswap/smart-router'
 
-import { chainlinkOracleCAKE } from '@pancakeswap/prediction'
 import uniqBy from '@pancakeswap/utils/uniqBy'
-import { formatUnits } from '@pancakeswap/utils/viem/formatUnits'
 import { computePoolAddress, DEPLOYER_ADDRESSES } from '@pancakeswap/v3-sdk'
-import BigNumber from 'bignumber.js'
-import { chainlinkOracleABI } from 'config/abi/chainlinkOracle'
 import { edgeQueries } from 'edge/edgePoolQueries'
 import { getEdgeChainName } from 'edge/edgeQueries.util'
-import { fetchAllCampaignsByChainId } from 'hooks/infinity/useCampaigns'
-import { getInfinityCakeAPR } from 'hooks/infinity/useInfinityCakeAPR'
-import groupBy from 'lodash/groupBy'
-import { CakeAprValue } from 'state/farmsV4/atom'
 import { DEFAULT_CHAINS, DEFAULT_PROTOCOLS } from 'state/farmsV4/state/farmPools/fetcher'
-import { getAllNetworkMerklApr, getCakeApr, getLpApr } from 'state/farmsV4/state/poolApr/fetcher'
+import { PoolInfo } from 'state/farmsV4/state/type'
 import { explorerApiClient } from 'state/info/api/client'
 import { isInfinityProtocol } from 'utils/protocols'
-import { getViemClients } from 'utils/viem.server'
 import { Address } from 'viem/accounts'
 import { FarmInfo, getFarmTokens, isDynamic, normalizeAddress, SerializedFarmInfo } from './farm.util'
 
@@ -27,6 +18,8 @@ export interface FarmQuery {
   keywords: string
   chains: ChainId[]
   protocols: Protocol[]
+  sortBy: keyof PoolInfo | null
+  sortOrder: number
 }
 
 function getPoolId(farm: UniversalFarmConfig) {
@@ -149,12 +142,13 @@ async function fetchExplorerFarmPools(protocols: Protocol[], chainIds: number[])
 }
 
 function toRemotePool(farm: UniversalFarmConfig) {
-  const token0 = farm.token0
-  const token1 = farm.token1
+  const { token0, token1 } = farm
   const poolBase: InfinityRouter.RemotePoolBase = {
     id: getPoolId(farm),
     chainId: farm.chainId,
     tvlUSD: '0',
+    apr24h: '0',
+    volumeUSD24h: '0',
     protocol: farm.protocol,
     token0: {
       id: getCurrencyAddress(token0),
@@ -191,10 +185,8 @@ async function fetchFarms(extend?: boolean) {
 
 async function queryFarms(extend: boolean) {
   try {
-    const t = Date.now()
     const [pools, universalFarms] = await Promise.all([fetchFarms(extend), fetchAllUniversalFarms()])
 
-    console.log('finish fetch pools', Date.now() - t, 'ms')
     const pidsMaps = universalFarms.reduce((acc, farm) => {
       const id = getPoolId(farm)
       return {
@@ -221,16 +213,15 @@ async function queryFarms(extend: boolean) {
         id: pool.id,
         chainId: pool.chainId,
         protocol: pool.protocol,
-        // @ts-ignore
-        tvlUSD: pool.tvlUSD?.toString() || 0,
-        // @ts-ignore
-        vol24hUsd: pool.volumeUSD24h?.toString() || '0',
+        tvlUSD: Number(pool.tvlUSD || '0'),
+        vol24hUsd: Number(pool.volumeUSD24h || '0'),
         pid: pidsMaps[`${pool.chainId}:${pool.id}`],
+        apr24h: Number(pool.apr24h || 0),
       } as SerializedFarmInfo
     })
     return allPools
   } catch (ex) {
-    console.error('Error fetching farms:', ex)
+    console.warn('Error fetching farms:', ex)
     return []
   }
 }
@@ -246,102 +237,7 @@ async function fetchAllExplorerPools(protocols: Protocol[], chains: FarmV4Suppor
   return pools
 }
 
-async function fillLpAprData(farms: FarmInfo[]) {
-  const lpAprs = await Promise.all(
-    farms.map((farm) =>
-      getLpApr(
-        {
-          protocol: farm.protocol,
-          chainId: farm.chainId,
-          lpAddress: farm.id,
-          poolId: farm.id,
-        },
-        true,
-      ).catch((ex) => {
-        // console.error(`Failed to fetch LP APR for farm ${farm.protocol} ${farm.chainId} ${farm.id}`, ex)
-      }),
-    ),
-  )
-
-  farms.forEach((farm, index) => {
-    const lpApr = lpAprs[index]
-    // eslint-disable-next-line no-param-reassign
-    farm.lpApr = `${lpApr || '0'}`
-  })
-}
-
-async function fillMerklAprData(farms: FarmInfo[]) {
-  const aprs = await getAllNetworkMerklApr()
-  farms.forEach((farm) => {
-    const key = `${farm.chainId}-${farm.id}`
-    const merklApr = aprs[key] || '0'
-    // eslint-disable-next-line no-param-reassign
-    farm.merklApr = merklApr
-  })
-}
-
-async function fillCakeApr(farms: FarmInfo[]) {
-  const cakePrice = BigNumber(await getCakePriceFromOracle())
-  const groups = groupBy(farms, (farm) => farm.chainId)
-  const allCampaigns = await Promise.all(
-    Object.keys(groups).map((chainId) => {
-      return fetchAllCampaignsByChainId({
-        chainId: Number(chainId),
-      })
-    }),
-  )
-
-  const cakeAprCalls: FarmInfo[] = []
-  // Infinity cake Apr
-  for (const [i, farms] of Object.entries(groups)) {
-    const campaigns = allCampaigns[i]
-    for (const farm of farms) {
-      if (isInfinityProtocol(farm.protocol)) {
-        const cakeApr = getInfinityCakeAPR({
-          chainId: Number(farm.chainId),
-          poolId: farm.id,
-          cakePrice,
-          campaigns,
-          tvlUSD: `${farm.tvlUSD}`,
-        })
-        // eslint-disable-next-line no-param-reassign
-        farm.cakeApr = cakeApr
-        continue
-      }
-      cakeAprCalls.push(farm)
-    }
-  }
-  // Other cake apr
-  const results = await Promise.all(
-    cakeAprCalls.map(async (farm) => {
-      return getCakeApr(farm.poolInfo!, cakePrice)
-    }),
-  )
-  results.forEach((cakeApr, index) => {
-    const farm = cakeAprCalls[index]
-    const key = `${farm.chainId}:${farm.id}`
-    if (cakeApr[key]) {
-      const apr = cakeApr[key] as CakeAprValue
-      // eslint-disable-next-line no-param-reassign
-      farm.cakeApr = apr
-    }
-  })
-}
-
-const getCakePriceFromOracle = async () => {
-  const data = await getViemClients({ chainId: ChainId.BSC }).readContract({
-    abi: chainlinkOracleABI,
-    address: chainlinkOracleCAKE[ChainId.BSC],
-    functionName: 'latestAnswer',
-  })
-
-  return formatUnits(data, 8)
-}
-
 export default {
   queryFarms,
   filterKeywords,
-  fillLpAprData,
-  fillMerklAprData,
-  fillCakeApr,
 }
