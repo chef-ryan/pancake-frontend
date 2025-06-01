@@ -1,4 +1,4 @@
-import { Loadable } from '@pancakeswap/utils/Loadable'
+import { isLoadable, Loadable } from '@pancakeswap/utils/Loadable'
 import { atom, Getter } from 'jotai'
 import { unwrap } from 'jotai/utils'
 
@@ -19,6 +19,9 @@ export const atomWithLoadable = <T>(
   const baseAtom = atom<Promise<Loadable<T>>>(async (get) => {
     try {
       const result = await asyncFn(get)
+      if (isLoadable(result)) {
+        return result as Loadable<T>
+      }
       if (typeof result === 'undefined' || result === null) {
         return Loadable.Nothing<T>()
       }

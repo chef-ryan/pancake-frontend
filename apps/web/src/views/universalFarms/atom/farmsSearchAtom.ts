@@ -3,6 +3,7 @@ import { fillCakeApr, fillLpAprData, fillMerklAprData, fillOnchainPoolData } fro
 import { FarmQuery } from 'edge/farm/edgeFarmQueries'
 import { FarmInfo, farmToPoolInfo, SerializedFarmInfo } from 'edge/farm/farm.util'
 import { farmFilters } from 'edge/farm/filters'
+import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
 import qs from 'qs'
@@ -54,12 +55,15 @@ const extendListAtom = atomWithLoadable<SerializedFarmInfo[]>(async () => {
   return fetchFarmList(true)
 })
 
-export const farmsSearchAtom = atomFamily((query: FarmQuery) => {
+export const farmsSearchPagingAtom = atomFamily((_: FarmQuery) => {
+  return atom(0)
+}, isEqual)
+
+const searchAtom = atomFamily((query: FarmQuery) => {
   return atomWithLoadable(
     async (get) => {
       try {
         const { protocols, chains, sortBy, sortOrder } = query
-        console.log(`[pool] --start-- ${protocols.join(',')}`)
         const lists = await Promise.all([get(farmListAtom), get(extendListAtom)])
         const farms = lists
           .filter((x) => x.isJust())
@@ -89,17 +93,7 @@ export const farmsSearchAtom = atomFamily((query: FarmQuery) => {
           })
         const filtered = farms.filter(farmFilters.chainFilter(chains)).filter(farmFilters.protocolFilter(protocols))
         const sorted = farmFilters.sortFunction(filtered, sortBy)
-        const sliced = sorted.slice(0, 20)
-
-        // const filtered = farms.slice(0, 20)
-        await Promise.all(sliced.map(fillOnchainPoolData))
-
-        const poolInfos = sliced.map((x) => {
-          return farmToPoolInfo(x)
-        })
-        await Promise.all([fillCakeApr(poolInfos), fillLpAprData(poolInfos), fillMerklAprData(poolInfos)])
-
-        return poolInfos
+        return sorted
       } catch (ex) {
         console.error('Error fetching farms:', ex)
         throw ex
@@ -109,4 +103,22 @@ export const farmsSearchAtom = atomFamily((query: FarmQuery) => {
       placeHolderBehavior: 'stale',
     },
   )
+}, isEqual)
+
+export const farmsSearchAtom = atomFamily((query) => {
+  return atomWithLoadable(async (get) => {
+    const sorted = get(searchAtom(query))
+    const paging = get(farmsSearchPagingAtom(query))
+    return sorted.mapAsync(async (farms) => {
+      const sliced = farms.slice(0, 20 * (paging + 1))
+
+      const poolInfos = sliced.map((x) => {
+        return farmToPoolInfo(x)
+      })
+      await Promise.all(sliced.map(fillOnchainPoolData))
+      await Promise.all([fillCakeApr(poolInfos), fillLpAprData(poolInfos), fillMerklAprData(poolInfos)])
+
+      return poolInfos
+    })
+  })
 }, isEqual)

@@ -125,102 +125,124 @@ type CLPoolCallsResult = [
   ContractFunctionReturnType<typeof CLPoolManagerAbi, 'view', 'getLiquidity'>,
 ]
 
-export const fillClPoolData = async (farm: FarmInfo) => {
-  const chainId = farm.chainId as ChainId
-  const poolId = farm.id as Address
-  const poolManagerAddress = getPoolManagerAddress('CL', chainId)
-  const contracts = [
-    {
-      address: poolManagerAddress,
-      functionName: 'poolIdToPoolKey',
-      abi: CLPoolManagerAbi,
-      args: [poolId],
-    },
-    {
-      address: poolManagerAddress,
-      functionName: 'getSlot0',
-      abi: CLPoolManagerAbi,
-      args: [poolId],
-    },
-    {
-      address: poolManagerAddress,
-      functionName: 'getLiquidity',
-      abi: CLPoolManagerAbi,
-      args: [poolId],
-    },
-  ]
-  const results = await multicallBatcher.fetch({
-    chainId,
-    params: {
-      contracts,
-      allowFailure: false,
-    },
-  })
-
-  const [poolKey, slot0, liquidity] = results as CLPoolCallsResult
-  const pool = farm.pool as InfinityClPool
-  const parsedPoolKey = parsePoolKeyResult('CL', poolKey)
-  const slot0Info = parseSlot0('CL', slot0)
-  pool.fee = parsedPoolKey.fee
-  pool.protocolFee = slot0Info.protocolFee
-  pool.liquidity = liquidity
-  pool.hooks = parsedPoolKey.hooks
-  // eslint-disable-next-line no-param-reassign
-  farm.feeTier = pool.fee
-  return farm
+const resolveFarm = (farm: FarmInfo) => {
+  return `${farm.chainId}:${farm.id}`
 }
+
+export const fillClPoolData = memoizeAsync(
+  async (farm: FarmInfo) => {
+    const chainId = farm.chainId as ChainId
+    const poolId = farm.id as Address
+    const poolManagerAddress = getPoolManagerAddress('CL', chainId)
+    const contracts = [
+      {
+        address: poolManagerAddress,
+        functionName: 'poolIdToPoolKey',
+        abi: CLPoolManagerAbi,
+        args: [poolId],
+      },
+      {
+        address: poolManagerAddress,
+        functionName: 'getSlot0',
+        abi: CLPoolManagerAbi,
+        args: [poolId],
+      },
+      {
+        address: poolManagerAddress,
+        functionName: 'getLiquidity',
+        abi: CLPoolManagerAbi,
+        args: [poolId],
+      },
+    ]
+    const results = await multicallBatcher.fetch({
+      chainId,
+      params: {
+        contracts,
+        allowFailure: false,
+      },
+    })
+
+    const [poolKey, slot0, liquidity] = results as CLPoolCallsResult
+    const pool = farm.pool as InfinityClPool
+    const parsedPoolKey = parsePoolKeyResult('CL', poolKey)
+    const slot0Info = parseSlot0('CL', slot0)
+    pool.fee = parsedPoolKey.fee
+    pool.protocolFee = slot0Info.protocolFee
+    pool.liquidity = liquidity
+    pool.hooks = parsedPoolKey.hooks
+    // eslint-disable-next-line no-param-reassign
+    farm.feeTier = pool.fee
+    return farm
+  },
+  {
+    resolver: resolveFarm,
+  },
+)
 
 type BinPoolCallsResult = [
   ContractFunctionReturnType<typeof BinPoolManagerAbi, 'view', 'poolIdToPoolKey'>,
   ContractFunctionReturnType<typeof BinPoolManagerAbi, 'view', 'getSlot0'>,
 ]
 
-export const fillBinPoolData = async (farm: FarmInfo) => {
-  const chainId = farm.chainId as ChainId
-  const poolId = farm.id as Address
-  const poolManagerAddress = getPoolManagerAddress('Bin', chainId)
-  const calls = [
-    {
-      address: poolManagerAddress,
-      functionName: 'poolIdToPoolKey',
-      abi: BinPoolManagerAbi,
-      args: [poolId],
-    },
-    {
-      address: poolManagerAddress,
-      functionName: 'getSlot0',
-      abi: BinPoolManagerAbi,
-      args: [poolId],
-    },
-  ]
-  const results = await multicallBatcher.fetch({
-    chainId,
-    params: {
-      contracts: calls,
-      allowFailure: false,
-    },
-  })
+export const fillBinPoolData = memoizeAsync(
+  async (farm: FarmInfo) => {
+    const chainId = farm.chainId as ChainId
+    const poolId = farm.id as Address
+    const poolManagerAddress = getPoolManagerAddress('Bin', chainId)
+    const calls = [
+      {
+        address: poolManagerAddress,
+        functionName: 'poolIdToPoolKey',
+        abi: BinPoolManagerAbi,
+        args: [poolId],
+      },
+      {
+        address: poolManagerAddress,
+        functionName: 'getSlot0',
+        abi: BinPoolManagerAbi,
+        args: [poolId],
+      },
+    ]
+    const results = await multicallBatcher.fetch({
+      chainId,
+      params: {
+        contracts: calls,
+        allowFailure: false,
+      },
+    })
 
-  const newFarm = farm
-  const [poolKey, slot0] = results as BinPoolCallsResult
-  const pool = farm.pool as InfinityBinPool
+    const newFarm = farm
+    const [poolKey, slot0] = results as BinPoolCallsResult
+    const pool = farm.pool as InfinityBinPool
 
-  if (!isValidPoolKeyResult(poolKey)) throw new Error('Invalid pool key result')
+    if (!isValidPoolKeyResult(poolKey)) throw new Error('Invalid pool key result')
 
-  const parsedPoolKey = parsePoolKeyResult('Bin', poolKey)
-  const slot0Info = parseSlot0('Bin', slot0)
+    const parsedPoolKey = parsePoolKeyResult('Bin', poolKey)
+    const slot0Info = parseSlot0('Bin', slot0)
 
-  pool.fee = parsedPoolKey.fee
-  pool.hooks = parsedPoolKey.hooks
-  newFarm.feeTier = pool.fee
-  pool.protocolFee = slot0Info.protocolFee
-  return newFarm
-}
+    pool.fee = parsedPoolKey.fee
+    pool.hooks = parsedPoolKey.hooks
+    newFarm.feeTier = pool.fee
+    pool.protocolFee = slot0Info.protocolFee
+    return newFarm
+  },
+  {
+    resolver: resolveFarm,
+  },
+)
 
-export const fillOnchainPoolData = (farm: FarmInfo) => {
-  if (farm.protocol === 'infinityCl') {
-    fillClPoolData(farm)
-  } else if (farm.protocol === 'infinityBin') {
-    fillBinPoolData(farm)
-  }
-}
+export const fillOnchainPoolData = memoizeAsync(
+  async (farm: FarmInfo) => {
+    if (farm.protocol === 'infinityCl') {
+      return fillClPoolData(farm)
+    }
+    if (farm.protocol === 'infinityBin') {
+      return fillBinPoolData(farm)
+    }
+    return farm
+  },
+  {
+    resolver: resolveFarm,
+    isValid: () => true,
+  },
+)

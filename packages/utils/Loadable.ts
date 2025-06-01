@@ -167,3 +167,7 @@ export class Loadable<T> {
     return this.extra[key]
   }
 }
+
+export const isLoadable = <T>(value: any): value is Loadable<T> => {
+  return value instanceof Loadable
+}

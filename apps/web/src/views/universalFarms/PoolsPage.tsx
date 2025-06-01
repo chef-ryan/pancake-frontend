@@ -1,14 +1,14 @@
-import { useTheme } from '@pancakeswap/hooks'
+import { useIntersectionObserver, useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { Button, InfoIcon, SORT_ORDER, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
-import { Suspense, useCallback, useMemo, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import LoadingTable from 'views/LimitOrders/components/LimitOrderTable/LoadingTable'
-import { farmsSearchAtom } from './atom/farmsSearchAtom'
+import { farmsSearchAtom, farmsSearchPagingAtom } from './atom/farmsSearchAtom'
 import {
   Card,
   CardBody,
@@ -28,6 +28,8 @@ import { useFilterToQueries } from './hooks/useFilterToQueries'
 const PoolsContent = styled.div`
   min-height: calc(100vh - 64px - 56px);
 `
+
+const NUMBER_OF_FARMS_VISIBLE = 20
 
 export const PoolsPage = () => {
   const nextRouter = useRouter()
@@ -51,6 +53,8 @@ export const PoolsPage = () => {
   )
 
   const selectedProtocols = useSelectedProtocols(selectedProtocolIndex)
+  const { observerRef, isIntersecting } = useIntersectionObserver()
+  const [cursorVisible, setCursorVisible] = useState(NUMBER_OF_FARMS_VISIBLE)
   const [isPoolListExtended, setIsPoolListExtended] = useState(false)
 
   // data source
@@ -112,15 +116,21 @@ export const PoolsPage = () => {
 
   // const renderData = useMemo(() => sortedData.slice(0, cursorVisible), [cursorVisible, sortedData])
 
-  const list = useAtomValue(
-    farmsSearchAtom({
-      keywords: '',
-      chains: selectedNetwork,
-      protocols: selectedProtocols,
-      sortBy: sortField,
-      sortOrder,
-    }),
-  )
+  const query = {
+    keywords: '',
+    chains: selectedNetwork,
+    protocols: selectedProtocols,
+    sortBy: sortField,
+    sortOrder,
+  }
+  const setPaging = useSetAtom(farmsSearchPagingAtom(query))
+  const list = useAtomValue(farmsSearchAtom(query))
+
+  useEffect(() => {
+    if (isIntersecting) {
+      setPaging((v) => v + 1)
+    }
+  }, [isIntersecting, setPaging])
 
   return (
     <FarmSearchContextProvider>
@@ -156,6 +166,7 @@ export const PoolsPage = () => {
               )}
               {!list.hasValue() && <StyledLoadingTable lines={20} />}
             </PoolsContent>
+            {list.unwrapOr([]).length > 0 && <div ref={observerRef} />}
           </Suspense>
         </CardBody>
         {disabledExtendPools ? null : (
