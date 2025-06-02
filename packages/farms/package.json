@@ -21,7 +21,6 @@
     "@pancakeswap/swap-sdk-core": "workspace:*",
     "@pancakeswap/token-lists": "workspace:*",
     "@pancakeswap/tokens": "workspace:*",
-    "@pancakeswap/utils": "workspace:*",
     "@pancakeswap/v3-sdk": "workspace:*",
     "bignumber.js": "^9.0.0",
     "dayjs": "^1.11.10",

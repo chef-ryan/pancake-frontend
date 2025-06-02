@@ -1,5 +1,11 @@
 import { ChainId, chainNamesInKebabCase } from '@pancakeswap/chains'
-import { FarmV4SupportedChainId, fetchAllUniversalFarms, Protocol, UniversalFarmConfig } from '@pancakeswap/farms'
+import {
+  FarmV4SupportedChainId,
+  fetchAllUniversalFarms,
+  Protocol,
+  supportedChainIdV4,
+  UniversalFarmConfig,
+} from '@pancakeswap/farms'
 import { getCurrencyAddress, Pair } from '@pancakeswap/sdk'
 import { InfinityBinPool, InfinityClPool, InfinityRouter, SmartRouter } from '@pancakeswap/smart-router'
 
@@ -7,13 +13,14 @@ import uniqBy from '@pancakeswap/utils/uniqBy'
 import { computePoolAddress, DEPLOYER_ADDRESSES } from '@pancakeswap/v3-sdk'
 import { edgeQueries } from 'quoter/utils/edgePoolQueries'
 import { getEdgeChainName } from 'quoter/utils/edgeQueries.util'
-import { DEFAULT_CHAINS, DEFAULT_PROTOCOLS } from 'state/farmsV4/state/farmPools/fetcher'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { explorerApiClient } from 'state/info/api/client'
 import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem/accounts'
 import { FarmInfo, getFarmTokens, isDynamic, normalizeAddress, SerializedFarmInfo } from './farm.util'
 
+const DEFAULT_PROTOCOLS: Protocol[] = Object.values(Protocol)
+const DEFAULT_CHAINS: FarmV4SupportedChainId[] = Object.values(supportedChainIdV4)
 export interface FarmQuery {
   keywords: string
   chains: ChainId[]

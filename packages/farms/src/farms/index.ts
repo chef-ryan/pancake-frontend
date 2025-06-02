@@ -39,7 +39,8 @@ export const fetchAllUniversalFarmsMap = async (): Promise<Record<string, Univer
     const farmConfig = await fetchAllUniversalFarms()
 
     return farmConfig.reduce((acc, farm) => {
-      set(acc, getFarmConfigKey(farm), farm)
+      const key = getFarmConfigKey(farm)
+      set(acc, key, farm)
       return acc
     }, {} as Record<string, UniversalFarmConfig>)
   } catch (error) {

@@ -18,10 +18,10 @@ import qs from 'qs'
 import { CakeAprValue } from 'state/farmsV4/atom'
 import { AprInfo } from 'state/farmsV4/hooks'
 import { BasePoolInfo, PoolInfo } from 'state/farmsV4/state/type'
-import { safeGetAddress } from 'utils'
-import { ContractFunctionReturnType } from 'viem'
-import { Address } from 'viem/accounts'
-import { Prettify } from 'viem/chains'
+import { checksumAddress } from 'utils/checksumAddress'
+import type { ContractFunctionReturnType } from 'viem'
+import type { Address } from 'viem/accounts'
+import type { Prettify } from 'viem/chains'
 
 export type FarmInfo = FarmProps & {
   pool: Pool
@@ -148,6 +148,14 @@ export const getFarmAprInfo = (farm?: FarmInfo) => {
     merklApr: farm.merklApr,
   }
   return aprInfo
+}
+
+const safeGetAddress = (address: Address) => {
+  try {
+    return checksumAddress(address)
+  } catch (error) {
+    return undefined
+  }
 }
 
 export const normalizeAddress = (pool: InfinityRouter.RemotePoolBase) => {
