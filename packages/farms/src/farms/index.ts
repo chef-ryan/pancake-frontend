@@ -1,5 +1,4 @@
 import { ChainId } from '@pancakeswap/chains'
-import set from 'lodash/set'
 import { fetchUniversalFarms } from '../fetchUniversalFarms'
 import { UniversalFarmConfig } from '../types'
 import { getFarmConfigKey } from '../utils'
@@ -20,16 +19,13 @@ const chainIds: ChainId[] = [
 ]
 
 export const fetchAllUniversalFarms = async (): Promise<UniversalFarmConfig[]> => {
-  console.log(`[farm] fetch universal farm`)
   try {
     const farmPromises = chainIds.map((chainId) => fetchUniversalFarms(chainId))
     const allFarms = await Promise.all(farmPromises)
     const combinedFarms = allFarms.flat()
 
-    console.log(`[farm] 02 finish fetch universal farm, total farms: ${combinedFarms.length}`)
     return combinedFarms
   } catch (error) {
-    console.error('Failed to fetch universal farms:', error)
     return []
   }
 }
@@ -40,7 +36,8 @@ export const fetchAllUniversalFarmsMap = async (): Promise<Record<string, Univer
 
     return farmConfig.reduce((acc, farm) => {
       const key = getFarmConfigKey(farm)
-      set(acc, key, farm)
+      // eslint-disable-next-line no-param-reassign
+      acc[key] = farm
       return acc
     }, {} as Record<string, UniversalFarmConfig>)
   } catch (error) {

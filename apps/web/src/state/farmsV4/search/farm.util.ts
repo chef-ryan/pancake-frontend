@@ -1,5 +1,4 @@
 import { ChainId } from '@pancakeswap/chains'
-import { Protocol } from '@pancakeswap/farms'
 import {
   BinPoolManagerAbi,
   CLPoolManagerAbi,
@@ -22,6 +21,14 @@ import { checksumAddress } from 'utils/checksumAddress'
 import type { ContractFunctionReturnType } from 'viem'
 import type { Address } from 'viem/accounts'
 import type { Prettify } from 'viem/chains'
+
+enum Protocol {
+  V2 = 'v2',
+  V3 = 'v3',
+  STABLE = 'stable',
+  InfinityBIN = 'infinityBin',
+  InfinityCLAMM = 'infinityCl',
+}
 
 export type FarmInfo = FarmProps & {
   pool: Pool
