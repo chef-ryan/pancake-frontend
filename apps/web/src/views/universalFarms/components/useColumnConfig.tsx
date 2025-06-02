@@ -11,7 +11,7 @@ import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem'
 
 import { useHookByPoolId } from 'hooks/infinity/useHooksList'
-import { getFarmAprInfo, getFarmHookData } from '../search/farm.util'
+import { getFarmAprInfo, getFarmHookData } from 'state/farmsV4/search/farm.util'
 import { getChainFullName } from '../utils'
 import { RewardStatusDisplay } from './FarmStatusDisplay'
 import { checkHasReward } from './FarmStatusDisplay/hooks'

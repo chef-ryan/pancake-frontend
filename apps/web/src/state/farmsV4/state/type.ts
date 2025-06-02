@@ -1,8 +1,8 @@
 import { Protocol } from '@pancakeswap/farms'
 import { HookData } from '@pancakeswap/infinity-sdk'
 import { Currency, Token } from '@pancakeswap/swap-sdk-core'
-import { FarmInfo } from 'edge/farm/farm.util'
 import { Address } from 'viem'
+import { FarmInfo } from '../search/farm.util'
 
 type Prettify<T> = {
   [K in keyof T]: T[K]
@@ -71,6 +71,7 @@ export type InfinityBinPoolInfo = Prettify<
   BasePoolInfo &
     InfinityAdditionalPoolInfo & {
       protocol: Protocol.InfinityBIN
+      feeAmount?: number
     }
 >
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import edgeFarmQueries from 'views/universalFarms/search/edgeFarmQueries'
-import { parseFarmSearchQuery } from 'views/universalFarms/search/farm.util'
+import edgeFarmQueries from 'state/farmsV4/search/edgeFarmQueries'
+import { parseFarmSearchQuery } from 'state/farmsV4/search/farm.util'
 
 export const config = {
   runtime: 'edge',

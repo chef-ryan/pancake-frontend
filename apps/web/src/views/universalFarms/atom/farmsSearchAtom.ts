@@ -6,16 +6,16 @@ import isEqual from 'lodash/isEqual'
 import keyBy from 'lodash/keyBy'
 import qs from 'qs'
 import { atomWithLoadable } from 'quoter/atom/atomWithLoadable'
-import { PoolInfo } from 'state/farmsV4/state/type'
 import {
   batchGetCakeApr,
   batchGetLpAprData,
   batchGetMerklAprData,
   fillOnchainPoolData,
-} from '../search/batchFarmDataFiller'
-import { FarmQuery } from '../search/edgeFarmQueries'
-import { FarmInfo, farmToPoolInfo, SerializedFarmInfo } from '../search/farm.util'
-import { farmFilters } from '../search/filters'
+} from 'state/farmsV4/search/batchFarmDataFiller'
+import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
+import { FarmInfo, farmToPoolInfo, SerializedFarmInfo } from 'state/farmsV4/search/farm.util'
+import { farmFilters } from 'state/farmsV4/search/filters'
+import { PoolInfo } from 'state/farmsV4/state/type'
 
 const typeToProtocol = (type: PoolType) => {
   switch (type) {

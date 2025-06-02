@@ -6,9 +6,9 @@ import { FeeTierTooltip, Liquidity } from '@pancakeswap/widgets-internal'
 import { InfinityFeeTier, InfinityFeeTierPoolParams, useInfinityFeeTier } from 'hooks/infinity/useInfinityFeeTier'
 import { usePoolById } from 'hooks/infinity/usePool'
 import { useCallback, useMemo } from 'react'
+import { getPoolInfoForInfiFee } from 'state/farmsV4/search/farm.util'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { Address } from 'viem'
-import { getPoolInfoForInfiFee } from 'views/universalFarms/search/farm.util'
 
 interface FeeTierBreakdownProps {
   poolId?: Address
