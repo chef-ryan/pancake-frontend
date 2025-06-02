@@ -12,7 +12,7 @@ export type RemotePoolBase = {
   token1: RemoteToken
   isDynamicFee?: boolean
   hookAddress?: Address | null
-  feeTier?: number
+  feeTier: number
 }
 
 export type RemoteCLProps = {
