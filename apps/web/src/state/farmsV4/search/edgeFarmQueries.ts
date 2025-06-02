@@ -227,6 +227,7 @@ async function queryFarms(extend: boolean) {
         pid: pidsMaps[`${pool.chainId}:${pool.id}`],
         apr24h: Number(pool.apr24h || 0),
         isDynamicFee: pool.isDynamicFee,
+        feeTier: pool.feeTier,
       } as SerializedFarmInfo
     })
     return allPools

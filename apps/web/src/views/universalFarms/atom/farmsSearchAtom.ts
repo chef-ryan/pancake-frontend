@@ -103,10 +103,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
 
           return farmInfo
         })
-        console.log(
-          `[search]`,
-          farms.filter((x) => x.protocol === 'infinityCl').map((x) => x.feeTier),
-        )
+
         const filtered = farms
           .filter(farmFilters.chainFilter(chains))
           .filter(farmFilters.protocolFilter(protocols))

@@ -138,9 +138,7 @@ export class Loadable<T> {
     if (this.isJust()) {
       return this.value as UnwrapOr<T, U>
     }
-    if (this.isFail()) {
-      throw new Error(`Cannot unwrapOr Fail: ${this.error}`)
-    }
+
     if (this.isPending()) {
       if (this.value) {
         return this.value as UnwrapOr<T, U>
