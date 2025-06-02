@@ -1,6 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { BinPoolManagerAbi, CLPoolManagerAbi } from '@pancakeswap/infinity-sdk'
 import { InfinityBinPool, InfinityClPool } from '@pancakeswap/smart-router'
+import { fetchStableSwapData } from '@pancakeswap/stable-swap-sdk'
 import { memoizeAsync } from '@pancakeswap/utils/memoize'
 import BigNumber from 'bignumber.js'
 import { fetchAllCampaignsByChainId } from 'hooks/infinity/useCampaigns'
@@ -104,15 +105,13 @@ export async function batchGetLpAprData(pools: PoolInfo[]) {
   const lpAprs = await Promise.allSettled(
     pools.map((pool) => {
       const farm = pool.farm!
-      return cachedGetLpApr(
-        {
-          protocol: farm.protocol,
-          chainId: farm.chainId,
-          lpAddress: farm.id,
-          poolId: farm.id,
-        },
-        true,
-      )
+
+      return cachedGetLpApr({
+        protocol: farm.protocol,
+        chainId: farm.chainId,
+        lpAddress: farm.lpAddress,
+        poolId: farm.id,
+      })
     }),
   )
 
@@ -255,6 +254,16 @@ export const fillBinPoolData = memoizeAsync(
   },
 )
 
+const fillStablePoolData = async (farm: FarmInfo) => {
+  const stablePools = await fetchStableSwapData(farm.chainId)
+  const relatedPool = stablePools.find((x) => x.stableSwapAddress === farm.id)
+  if (relatedPool) {
+    // eslint-disable-next-line no-param-reassign
+    farm.feeTier = relatedPool.stableTotalFee * 1_000_000
+  }
+  return farm
+}
+
 export const fillOnchainPoolData = memoizeAsync(
   async (farm: FarmInfo) => {
     if (farm.protocol === 'infinityCl') {
@@ -262,6 +271,9 @@ export const fillOnchainPoolData = memoizeAsync(
     }
     if (farm.protocol === 'infinityBin') {
       return fillBinPoolData(farm)
+    }
+    if (farm.protocol === 'stable') {
+      return fillStablePoolData(farm)
     }
     return farm
   },

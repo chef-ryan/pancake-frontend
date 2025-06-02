@@ -122,6 +122,7 @@ export const PoolsPage = () => {
   }
   const setPaging = useSetAtom(farmsSearchPagingAtom(query))
   const list = useAtomValue(farmsSearchAtom(query))
+  console.log('PoolsPage list', list.unwrapOr([]))
 
   useEffect(() => {
     if (isIntersecting) {

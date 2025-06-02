@@ -196,11 +196,14 @@ async function queryFarms(extend: boolean) {
   try {
     const [pools, universalFarms] = await Promise.all([fetchFarms(extend), fetchAllUniversalFarms()])
 
-    const pidsMaps = universalFarms.reduce((acc, farm) => {
+    const farmMaps = universalFarms.reduce((acc, farm) => {
       const id = getPoolId(farm)
       return {
         ...acc,
-        [`${farm.chainId}:${id}`]: farm.pid,
+        [`${farm.chainId}:${id}`]: {
+          pid: farm.pid,
+          lpAddress: farm.lpAddress,
+        },
       }
     }, {} as Record<Address, number | undefined>)
     const universalFarmPools = universalFarms.map((x) => toRemotePool(x))
@@ -208,6 +211,7 @@ async function queryFarms(extend: boolean) {
     const all = (extend ? [...pools, ...universalFarmPools] : pools)
       .map(normalizeAddress)
       .filter((x) => x) as InfinityRouter.RemotePoolBase[]
+    console.log(all[0])
 
     const allPools = uniqBy(all, (p) => `${p.chainId}:${p.id}`).map((pool) => {
       const remotePool = InfinityRouter.parseRemotePool(pool as InfinityRouter.RemotePool)
@@ -217,6 +221,9 @@ async function queryFarms(extend: boolean) {
         remotePool.tvlUSD = remotePool.tvlUSD.toString()
       }
 
+      const farmInfo = farmMaps[`${pool.chainId}:${pool.id}`]
+      const pid = farmInfo ? farmInfo.pid : undefined
+      const lpAddress = farmInfo ? farmInfo.lpAddress : undefined
       return {
         pool: SmartRouter.Transformer.serializePool(remotePool),
         id: pool.id,
@@ -224,10 +231,11 @@ async function queryFarms(extend: boolean) {
         protocol: pool.protocol,
         tvlUSD: Number(pool.tvlUSD || '0'),
         vol24hUsd: Number(pool.volumeUSD24h || '0'),
-        pid: pidsMaps[`${pool.chainId}:${pool.id}`],
+        pid,
         apr24h: Number(pool.apr24h || 0),
         isDynamicFee: pool.isDynamicFee,
         feeTier: pool.feeTier,
+        lpAddress,
       } as SerializedFarmInfo
     })
     return allPools

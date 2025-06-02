@@ -99,6 +99,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
             feeTierBase: 1e6,
             protocol: typeToProtocol(farm.pool.type as PoolType),
             isDynamicFee: farm.isDynamicFee,
+            lpAddress: farm.lpAddress,
           } as FarmInfo
 
           return farmInfo

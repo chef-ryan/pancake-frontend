@@ -13,6 +13,7 @@ export type RemotePoolBase = {
   isDynamicFee?: boolean
   hookAddress?: Address | null
   feeTier: number
+  lpAddress?: Address
 }
 
 export type RemoteCLProps = {

@@ -50,6 +50,7 @@ export type FarmProps = {
   id: Address
   chainId: ChainId
   lpApr: `${number}`
+  lpAddress?: `0x${string}`
   merklApr: `${number}`
   // cakeApr: CakeAprValue
   feeTier: number
@@ -88,7 +89,7 @@ export const isDynamic = (pool?: InfinityClPool | InfinityBinPool) => {
 export const farmPropsToPoolInfoBase = (farm: FarmProps, token0: Currency, token1: Currency): BasePoolInfo => {
   const base: BasePoolInfo = {
     chainId: farm.chainId,
-    lpAddress: farm.id,
+    lpAddress: farm.lpAddress || '0x',
     protocol: farm.protocol,
     token0,
     token1: token1.asToken,
