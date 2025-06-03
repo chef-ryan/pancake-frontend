@@ -244,12 +244,16 @@ export const isValidPoolKeyResult = (
 
 export function parseFarmSearchQuery(raw: string) {
   const queryParsed = qs.parse(raw)
-  const protocol = queryParsed.protocol as Protocol | undefined
-  if (protocol && !ALLOWED_PROTOCOLS.includes(protocol)) {
-    throw new Error(`Unsupported protocol: ${protocol}`)
+  const protocols = ((queryParsed.protocols as string) || '').split(',').filter((x) => x) as Protocol[]
+  console.log(protocols)
+  for (const protocol of protocols) {
+    if (ALLOWED_PROTOCOLS.indexOf(protocol) === -1) {
+      throw new Error('Invalid protocol')
+    }
   }
+
   return {
     extend: Boolean(queryParsed.extend),
-    protocol,
+    protocols,
   }
 }

@@ -187,18 +187,19 @@ function toRemotePool(farm: UniversalFarmConfig) {
   return poolBase
 }
 
-async function fetchFarms(query: { extend: boolean; protocol?: Protocol }) {
-  const protocols = DEFAULT_PROTOCOLS
-  const { extend, protocol } = query
+async function fetchFarms(query: { extend: boolean; protocols: Protocol[] }) {
+  // const protocols = DEFAULT_PROTOCOLS
+  const { extend, protocols: _protocols } = query
+  const protocols = _protocols.length > 0 ? _protocols : DEFAULT_PROTOCOLS
   if (!extend) {
     return fetchExplorerFarmPools(protocols, supportedChainIdV4)
   }
-  return fetchAllExplorerPools(protocol ? [protocol] : protocols, supportedChainIdV4)
+  return fetchAllExplorerPools(protocols, supportedChainIdV4)
 }
 
-async function queryFarms(extend: boolean, protocol?: Protocol) {
+async function queryFarms(extend: boolean, protocols: Protocol[]) {
   try {
-    const [pools, universalFarms] = await Promise.all([fetchFarms({ extend, protocol }), fetchAllUniversalFarms()])
+    const [pools, universalFarms] = await Promise.all([fetchFarms({ extend, protocols }), fetchAllUniversalFarms()])
 
     const farmMaps = universalFarms.reduce((acc, farm) => {
       const id = getPoolId(farm)

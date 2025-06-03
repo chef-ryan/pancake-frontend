@@ -21,10 +21,10 @@ import { farmFilters } from 'state/farmsV4/search/filters'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { userShowTestnetAtom } from 'state/user/hooks/useUserShowTestnet'
 
-async function fetchFarmList(extend: boolean, protocol?: Protocol) {
+async function fetchFarmList(extend: boolean, protocols?: Protocol[]) {
   const queryStr = qs.stringify({
     extend: extend ? 1 : undefined,
-    protocol,
+    protocols: protocols ? protocols.join(',') : undefined,
   })
   const url = `/api/farm/list?${queryStr}`
   const response = await fetch(url, {
@@ -47,11 +47,21 @@ const farmListAtom = atomWithLoadable<SerializedFarmInfo[]>(async () => {
   return fetchFarmList(false)
 })
 
-const extendListAtom = atomFamily((protocol?: Protocol) => {
-  return atomWithLoadable<SerializedFarmInfo[]>(async () => {
-    return fetchFarmList(true, protocol)
-  })
-})
+const hashProtocol = (protocols: Protocol[]) => {
+  const list = [...protocols]
+  list.sort()
+  return list.join(',')
+}
+const extendListAtom = atomFamily(
+  (protocols: Protocol[]) => {
+    return atomWithLoadable<SerializedFarmInfo[]>(async () => {
+      return fetchFarmList(true, protocols)
+    })
+  },
+  (a, b) => {
+    return hashProtocol(a) === hashProtocol(b)
+  },
+)
 
 export const farmsSearchPagingAtom = atomFamily((_: FarmQuery) => {
   return atom(0)
@@ -70,8 +80,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
           return true
         })
 
-        const protocol = protocols.length === 1 ? protocols[0] : undefined
-        const lists = await Promise.all([get(farmListAtom), get(extendListAtom(protocol))])
+        const lists = await Promise.all([get(farmListAtom), get(extendListAtom(protocols))])
         const allPending = lists.every((x) => x.isPending())
         if (allPending) {
           return Loadable.Pending<FarmInfo[]>()
