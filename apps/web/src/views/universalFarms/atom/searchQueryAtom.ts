@@ -39,10 +39,13 @@ export const updateFilterAtom = atom(null, (_, set, filter: UpdateFilterParams) 
 
 export const updateSortAtom = atom(null, (_, set, sort: { order: SORT_ORDER; dataIndex: string }) => {
   set(_searchQueryAtom, (prev) => {
+    const sortOrder = sort.order === SORT_ORDER.DESC ? sort.order : 0
+    const sortBy = (sortOrder === SORT_ORDER.DESC ? sort.dataIndex : '') as FarmQuery['sortBy']
+
     return {
       ...prev,
-      sortBy: sort.dataIndex as FarmQuery['sortBy'],
-      sortOrder: sort.order,
+      sortBy,
+      sortOrder,
     }
   })
 })
