@@ -1,5 +1,6 @@
 import { Protocol } from '@pancakeswap/farms'
-import { Flex, Input, InputGroup, SearchIcon } from '@pancakeswap/uikit'
+import { useTranslation } from '@pancakeswap/localization'
+import { Flex, Input, InputGroup, QuestionHelper, SearchIcon } from '@pancakeswap/uikit'
 import { INetworkProps, IProtocolMenuProps, NetworkFilter, ProtocolMenu } from '@pancakeswap/widgets-internal'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import debounce from 'lodash/debounce'
@@ -77,6 +78,7 @@ export const PoolsFilterPanel: React.FC<React.PropsWithChildren<IPoolsFilterPane
 }) => {
   const { chainId: activeChainId } = useActiveChainId()
   const { search, selectedNetwork, selectedProtocolIndex: selectedType } = value
+  const { t } = useTranslation()
   const allChainsOpts = useAllChainsOpts()
 
   const handleProtocolIndexChange: IProtocolMenuProps['onChange'] = (index) => {
@@ -119,9 +121,18 @@ export const PoolsFilterPanel: React.FC<React.PropsWithChildren<IPoolsFilterPane
         {showNetworkFilter && !isUndefined(selectedNetwork) && (
           <NetworkFilter data={allChainsOpts} value={selectedNetwork} onChange={handleNetworkChange} />
         )}
-        <InputGroup startIcon={<SearchIcon color="textSubtle" />}>
-          <Input placeholder="Search" value={searchText} onChange={handleSearchChange} />
-        </InputGroup>
+        <Flex alignItems="center">
+          <InputGroup startIcon={<SearchIcon color="textSubtle" />}>
+            <Input placeholder="Search" value={searchText} onChange={handleSearchChange} />
+          </InputGroup>
+          <QuestionHelper
+            text={t(
+              "Search by token name/address, pool type (e.g. clamm, lbamm), features (e.g. dynamic fees), or pool address. Example: 'bnb usdt infinity clamm'",
+            )}
+            placement="bottom-start"
+            ml="4px"
+          />
+        </Flex>
         {showProtocolMenu && !isUndefined(selectedType) && (
           <Flex alignSelf="flex-start">
             <ProtocolMenu data={protocols} activeIndex={selectedType} onChange={handleProtocolIndexChange} />
