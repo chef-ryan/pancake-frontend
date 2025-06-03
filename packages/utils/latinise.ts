@@ -5,6 +5,7 @@ const Latinise = {
   latin_map: {
     τ: 't',
     Τ: 'T',
+    '₮': 'T',
   },
 }
 

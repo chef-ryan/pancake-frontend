@@ -3,6 +3,7 @@ import { Protocol } from '@pancakeswap/farms'
 import { Native } from '@pancakeswap/sdk'
 import { PoolType, SmartRouter } from '@pancakeswap/smart-router'
 import { getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
+import latinise from '@pancakeswap/utils/latinise'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { getCurrencySymbol } from 'utils/getTokenAlias'
 import { FarmInfo } from './farm.util'
@@ -128,7 +129,10 @@ const searchFilter = (_search: string) => {
       stable,
       v2,
       v3,
-    ].filter((x) => x)
+    ]
+      .filter((x) => x)
+      .map((x) => latinise(x))
+      .map((x) => x.toLowerCase())
     const prts = search
       .split(/[\s,]/g)
       .filter((x) => x.trim())
