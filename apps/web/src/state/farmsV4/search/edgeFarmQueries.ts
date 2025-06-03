@@ -18,10 +18,9 @@ import { PoolInfo } from 'state/farmsV4/state/type'
 import { explorerApiClient } from 'state/info/api/client'
 import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem/accounts'
-import { FarmInfo, getFarmTokens, isDynamic, normalizeAddress, SerializedFarmInfo } from './farm.util'
+import { FarmInfo, getFarmTokens, isDynamic, normalizeAddress, safeGetAddress, SerializedFarmInfo } from './farm.util'
 
 const DEFAULT_PROTOCOLS: Protocol[] = Object.values(Protocol)
-const DEFAULT_CHAINS: FarmV4SupportedChainId[] = Object.values(supportedChainIdV4)
 export interface FarmQuery {
   keywords: string
   chains: ChainId[]
@@ -207,7 +206,7 @@ async function queryFarms(extend: boolean, protocol?: Protocol) {
         ...acc,
         [`${farm.chainId}:${id}`]: {
           pid: farm.pid,
-          lpAddress: farm.lpAddress,
+          lpAddress: safeGetAddress(farm.lpAddress),
         },
       }
     }, {} as Record<Address, number | undefined>)

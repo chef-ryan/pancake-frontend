@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { ChainId } from '@pancakeswap/chains'
 import { BinPoolManagerAbi, CLPoolManagerAbi } from '@pancakeswap/infinity-sdk'
 import { InfinityBinPool, InfinityClPool } from '@pancakeswap/smart-router'
@@ -24,14 +25,18 @@ interface FillItem<T> {
 }
 
 const fetchAllCampaigns = memoizeAsync(
-  (chains: ChainId[]) => {
-    return Promise.all(
+  async (chains: ChainId[]) => {
+    const list = await Promise.all(
       chains.map((chainId) => {
         return fetchAllCampaignsByChainId({
           chainId: Number(chainId),
         })
       }),
     )
+    return list.reduce((acc, campaigns, index) => {
+      acc[chains[index]] = campaigns
+      return acc
+    }, {})
   },
   {
     resolver: (chains) => {
@@ -46,12 +51,13 @@ const getCakePrice = memoizeAsync(async () => {
 
 async function batchGetInfinityCakeApr(pools: PoolInfo[]) {
   const chains = Array.from(new Set(pools.map((pool) => Number(pool.farm!.chainId))))
-  const [allCampaigns, cakePrice] = await Promise.all([fetchAllCampaigns(chains), , getCakePrice()])
+  const [allCampaigns, cakePrice] = await Promise.all([fetchAllCampaigns(chains), getCakePrice()])
   const result: FillItem<CakeAprValue>[] = []
   for (const pool of pools) {
     const farm = pool.farm!
     const chainId = Number(farm.chainId)
     const campaigns = allCampaigns[chainId]
+
     const cakeApr = getInfinityCakeAPR({
       chainId: Number(farm.chainId),
       poolId: farm.id,
@@ -106,12 +112,15 @@ export async function batchGetLpAprData(pools: PoolInfo[]) {
     pools.map((pool) => {
       const farm = pool.farm!
 
-      return cachedGetLpApr({
-        protocol: farm.protocol,
-        chainId: farm.chainId,
-        lpAddress: farm.lpAddress,
-        poolId: farm.id,
-      })
+      return cachedGetLpApr(
+        {
+          protocol: farm.protocol,
+          chainId: farm.chainId,
+          lpAddress: farm.lpAddress,
+          poolId: farm.id,
+        },
+        true,
+      )
     }),
   )
 
@@ -211,7 +220,6 @@ export const fillBinPoolData = memoizeAsync(
   async (farm: FarmInfo) => {
     const chainId = farm.chainId as ChainId
     const poolId = farm.id as Address
-    console.log(`[fill]`, farm.id)
     const poolManagerAddress = getPoolManagerAddress('Bin', chainId)
     const calls = [
       {

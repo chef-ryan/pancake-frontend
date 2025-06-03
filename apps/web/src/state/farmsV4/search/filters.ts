@@ -80,7 +80,7 @@ const searchFilter = (_search: string) => {
       ]
       return {
         full: list.some((item) => item.startsWith(search)),
-        partial: true,
+        partial: false,
         farm,
       }
     }

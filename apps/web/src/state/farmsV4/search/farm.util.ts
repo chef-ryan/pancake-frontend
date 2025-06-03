@@ -159,7 +159,7 @@ export const getFarmAprInfo = (farm?: FarmInfo) => {
   return aprInfo
 }
 
-const safeGetAddress = (address: Address) => {
+export const safeGetAddress = (address: Address) => {
   try {
     return checksumAddress(address)
   } catch (error) {

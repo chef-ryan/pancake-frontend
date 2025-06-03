@@ -132,13 +132,13 @@ const farmsWithFilledDataAtom = atomFamily((query) => {
           batchGetMerklAprData(poolInfos),
         ])
 
-        const aggCakeAprs = keyBy(cakeAprs, 'id')
-        const aggLpAprs = keyBy(lpAprs, 'id')
-        const aggMerklAprs = keyBy(merklAprs, 'id')
+        const aggCakeAprs = keyBy(cakeAprs, (x) => x.id.toLowerCase())
+        const aggLpAprs = keyBy(lpAprs, (x) => x.id.toLowerCase())
+        const aggMerklAprs = keyBy(merklAprs, (x) => x.id.toLowerCase())
 
         return poolInfos.map((poolInfo) => {
           const { farm, ...others } = poolInfo
-          const id = `${farm!.chainId}:${farm!.id}`
+          const id = `${farm!.chainId}:${farm!.id}`.toLowerCase()
           const cakeApr = aggCakeAprs[id]?.value || '0'
           const lpApr = aggLpAprs[id]?.value || '0'
           const merklApr = aggMerklAprs[id]?.value || '0'
