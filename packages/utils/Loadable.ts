@@ -82,6 +82,7 @@ export class Loadable<T> {
   }
 
   hasValue() {
+    console.log(`[page] value`, this.value)
     return this.isJust() || this.value // has stale value
   }
 

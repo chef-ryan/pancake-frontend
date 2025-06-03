@@ -120,51 +120,57 @@ const farmsWithPagingAtom = atomFamily((query) => {
   return atomWithLoadable(async (get) => {
     const sorted = get(searchAtom(query))
     const paging = get(farmsSearchPagingAtom(query))
-    return sorted.mapAsync(async (farms) => {
+    const r = await sorted.mapAsync(async (farms) => {
       const sliced = farms.slice(0, 20 * (paging + 1))
       await Promise.all(farms.map(fillOnchainPoolData))
       return sliced.map((x) => {
         return farmToPoolInfo(x)
       })
     })
+    return r
   })
 }, isEqual)
 
 const farmsWithFilledDataAtom = atomFamily((query) => {
-  return atomWithLoadable(async (get) => {
-    const sliced = get(farmsWithPagingAtom(query))
+  return atomWithLoadable(
+    async (get) => {
+      const sliced = get(farmsWithPagingAtom(query))
 
-    return sliced.mapAsync(async (poolInfos) => {
-      const [cakeAprs, lpAprs, merklAprs] = await Promise.all([
-        batchGetCakeApr(poolInfos),
-        batchGetLpAprData(poolInfos),
-        batchGetMerklAprData(poolInfos),
-      ])
+      return sliced.mapAsync(async (poolInfos) => {
+        const [cakeAprs, lpAprs, merklAprs] = await Promise.all([
+          batchGetCakeApr(poolInfos),
+          batchGetLpAprData(poolInfos),
+          batchGetMerklAprData(poolInfos),
+        ])
 
-      const aggCakeAprs = keyBy(cakeAprs, 'id')
-      const aggLpAprs = keyBy(lpAprs, 'id')
-      const aggMerklAprs = keyBy(merklAprs, 'id')
+        const aggCakeAprs = keyBy(cakeAprs, 'id')
+        const aggLpAprs = keyBy(lpAprs, 'id')
+        const aggMerklAprs = keyBy(merklAprs, 'id')
 
-      return poolInfos.map((poolInfo) => {
-        const { farm, ...others } = poolInfo
-        const id = `${farm!.chainId}:${farm!.id}`
-        const cakeApr = aggCakeAprs[id]?.value || '0'
-        const lpApr = aggLpAprs[id]?.value || '0'
-        const merklApr = aggMerklAprs[id]?.value || '0'
+        return poolInfos.map((poolInfo) => {
+          const { farm, ...others } = poolInfo
+          const id = `${farm!.chainId}:${farm!.id}`
+          const cakeApr = aggCakeAprs[id]?.value || '0'
+          const lpApr = aggLpAprs[id]?.value || '0'
+          const merklApr = aggMerklAprs[id]?.value || '0'
 
-        return {
-          ...others,
-          farm: {
-            ...farm,
-            cakeApr,
+          return {
+            ...others,
+            farm: {
+              ...farm,
+              cakeApr,
+              lpApr,
+              merklApr,
+            },
             lpApr,
-            merklApr,
-          },
-          lpApr,
-        } as PoolInfo
+          } as PoolInfo
+        })
       })
-    })
-  })
+    },
+    {
+      placeHolderBehavior: 'stale',
+    },
+  )
 }, isEqual)
 
 export const farmsSearchAtom = atomFamily((query) => {

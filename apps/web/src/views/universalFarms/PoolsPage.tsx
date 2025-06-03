@@ -1,5 +1,5 @@
 import { useIntersectionObserver } from '@pancakeswap/hooks'
-import { Loading, SORT_ORDER, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { SORT_ORDER, Spinner, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
 import { Suspense, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
@@ -103,13 +103,16 @@ export const PoolsPage = () => {
     activeChainId: chainId,
   }
   const setPaging = useSetAtom(farmsSearchPagingAtom(query))
-  const list = useAtomValue(farmsSearchAtom(query))
+  const _list = useAtomValue(farmsSearchAtom(query))
 
   useEffect(() => {
     if (isIntersecting) {
       setPaging((v) => v + 1)
     }
   }, [isIntersecting, setPaging])
+
+  const list = _list.unwrapOr([])
+  const pending = _list.isPending() && list.length === 0
 
   return (
     <FarmSearchContextProvider>
@@ -121,20 +124,20 @@ export const PoolsPage = () => {
         </CardHeader>
         <CardBody
           style={{
-            opacity: list.isPending() ? 0.2 : 1,
+            opacity: _list.isPending() ? 0.2 : 1,
           }}
         >
           <Suspense>
             <PoolsContent>
-              {list.hasValue() && (
+              {!pending && (
                 <>
                   {isMobile ? (
-                    <ListView data={list.unwrapOr([])} onRowClick={handleRowClick} />
+                    <ListView data={list} onRowClick={handleRowClick} />
                   ) : (
                     <TableView
                       getRowKey={getRowKey}
                       columns={columns}
-                      data={list.unwrapOr([])}
+                      data={list}
                       onSort={handleSort}
                       sortOrder={sortOrder}
                       sortField={sortField}
@@ -143,9 +146,9 @@ export const PoolsPage = () => {
                   )}
                 </>
               )}
-              {!list.hasValue() && <Loading />}
+              {pending && <Spinner />}
             </PoolsContent>
-            {list.unwrapOr([]).length > 0 && <div ref={observerRef} />}
+            {list.length > 0 && <div ref={observerRef} />}
           </Suspense>
         </CardBody>
       </Card>
