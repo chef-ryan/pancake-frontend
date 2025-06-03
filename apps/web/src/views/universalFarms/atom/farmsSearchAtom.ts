@@ -1,4 +1,5 @@
-import { PoolType, SmartRouter } from '@pancakeswap/smart-router'
+import { SmartRouter } from '@pancakeswap/smart-router'
+import { Loadable } from '@pancakeswap/utils/Loadable'
 import uniqBy from '@pancakeswap/utils/uniqBy'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
@@ -17,23 +18,6 @@ import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
 import { FarmInfo, farmToPoolInfo, SerializedFarmInfo } from 'state/farmsV4/search/farm.util'
 import { farmFilters } from 'state/farmsV4/search/filters'
 import { PoolInfo } from 'state/farmsV4/state/type'
-
-const typeToProtocol = (type: PoolType) => {
-  switch (type) {
-    case PoolType.InfinityCL:
-      return 'infinityCl'
-    case PoolType.InfinityBIN:
-      return 'infinityBin'
-    case PoolType.V3:
-      return 'v3'
-    case PoolType.V2:
-      return 'v2'
-    case PoolType.STABLE:
-      return 'stable'
-    default:
-      return 'Unknown'
-  }
-}
 
 async function fetchFarmList(extend: boolean, protocol?: Protocol) {
   const queryStr = qs.stringify({
@@ -78,6 +62,10 @@ const searchAtom = atomFamily((query: FarmQuery) => {
         const { protocols, chains, sortBy, activeChainId } = query
         const protocol = protocols.length === 1 ? protocols[0] : undefined
         const lists = await Promise.all([get(farmListAtom), get(extendListAtom(protocol))])
+        const allPending = lists.every((x) => x.isPending())
+        if (allPending) {
+          return Loadable.Pending<FarmInfo[]>()
+        }
 
         const farms = uniqBy(
           lists
@@ -175,7 +163,7 @@ const farmsWithFilledDataAtom = atomFamily((query) => {
 }, isEqual)
 
 export const farmsSearchAtom = atomFamily((query) => {
-  return atom(async (get) => {
+  return atom((get) => {
     const sliced = get(farmsWithPagingAtom(query))
     const withFilledData = get(farmsWithFilledDataAtom(query))
 

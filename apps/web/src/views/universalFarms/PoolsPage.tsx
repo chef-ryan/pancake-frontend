@@ -1,14 +1,13 @@
 import { useIntersectionObserver } from '@pancakeswap/hooks'
-import { SORT_ORDER, Spinner, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { Flex, Spinner, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
 import { Suspense, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { PoolInfo } from 'state/farmsV4/state/type'
-import LoadingTable from 'views/LimitOrders/components/LimitOrderTable/LoadingTable'
 import { farmsSearchAtom, farmsSearchPagingAtom } from './atom/farmsSearchAtom'
+import { searchQueryAtom, updateFilterAtom, updateSortAtom } from './atom/searchQueryAtom'
 import {
   Card,
   CardBody,
@@ -18,11 +17,10 @@ import {
   ListView,
   PoolsFilterPanel,
   useColumnConfig,
-  useSelectedProtocols,
 } from './components'
 import { AddLiquidityButton } from './components/AddLiquidityButton'
 import { FarmSearchContextProvider } from './hooks/useFarmSearchContext'
-import { useFilterToQueries } from './hooks/useFilterToQueries'
+import { farmQueryToUrlParams, getIndexByProtocols } from './utils/queryParser'
 
 const PoolsContent = styled.div`
   min-height: calc(100vh - 64px - 56px);
@@ -31,55 +29,69 @@ const PoolsContent = styled.div`
 export const PoolsPage = () => {
   const nextRouter = useRouter()
   const { isMobile, isMd } = useMatchBreakpoints()
-  const { chainId } = useActiveChainId()
 
-  const columns = useColumnConfig()
-  const {
-    search,
-    selectedProtocolIndex,
-    selectedNetwork,
-    selectedTokens,
-    sortOrder,
-    sortField,
-    replaceURLQueriesByFilter,
-  } = useFilterToQueries()
+  const updateFilter = useSetAtom(updateFilterAtom)
+  const query = useAtomValue(searchQueryAtom)
 
-  const poolsFilter = useMemo(
-    () => ({
-      selectedProtocolIndex,
-      selectedNetwork,
-      selectedTokens,
-      search,
-    }),
-    [selectedProtocolIndex, selectedNetwork, selectedTokens, search],
-  )
-
-  const selectedProtocols = useSelectedProtocols(selectedProtocolIndex)
-  const { observerRef, isIntersecting } = useIntersectionObserver()
+  useEffect(() => {
+    const params = farmQueryToUrlParams(query)
+    nextRouter.replace({
+      pathname: nextRouter.pathname,
+      query: params,
+    })
+  }, [query])
 
   const handleFilterChange: IPoolsFilterPanelProps['onChange'] = useCallback(
     (newFilters) => {
-      replaceURLQueriesByFilter({
-        ...poolsFilter,
-        sortOrder,
-        sortField,
-        ...newFilters,
-      })
+      updateFilter(newFilters)
     },
-    [replaceURLQueriesByFilter, poolsFilter, sortOrder, sortField, selectedProtocolIndex],
+    [updateFilter],
   )
 
-  const handleSort = useCallback(
-    ({ order, dataIndex }) => {
-      replaceURLQueriesByFilter({
-        ...poolsFilter,
-        // we don't need asc sort, so reset it to null
-        sortField: order === SORT_ORDER.ASC ? null : dataIndex,
-        sortOrder: order === SORT_ORDER.ASC ? SORT_ORDER.NULL : order,
-      })
-    },
-    [replaceURLQueriesByFilter, poolsFilter],
+  const poolsFilter = useMemo(
+    () => ({
+      selectedProtocolIndex: getIndexByProtocols(query.protocols),
+      selectedNetwork: query.chains,
+      search: query.keywords,
+    }),
+    [query],
   )
+
+  return (
+    <FarmSearchContextProvider>
+      <Card>
+        <CardHeader p={isMobile ? '16px' : undefined}>
+          <PoolsFilterPanel onChange={handleFilterChange} value={poolsFilter}>
+            {(isMobile || isMd) && <AddLiquidityButton height="40px" scale="sm" width="100%" />}
+          </PoolsFilterPanel>
+        </CardHeader>
+        <CardBody>
+          <Suspense fallback={null}>
+            <List />
+          </Suspense>
+        </CardBody>
+      </Card>
+    </FarmSearchContextProvider>
+  )
+}
+
+const List = () => {
+  const nextRouter = useRouter()
+  const { isMobile } = useMatchBreakpoints()
+
+  const columns = useColumnConfig()
+
+  const query = useAtomValue(searchQueryAtom)
+  const updateSort = useSetAtom(updateSortAtom)
+  const { observerRef, isIntersecting } = useIntersectionObserver()
+
+  useEffect(() => {
+    const params = farmQueryToUrlParams(query)
+    nextRouter.replace({
+      pathname: nextRouter.pathname,
+      query: params,
+    })
+  }, [query])
 
   const handleRowClick = useCallback(
     async (pool: PoolInfo) => {
@@ -94,16 +106,17 @@ export const PoolsPage = () => {
     return `${farm.chainId}:${farm.id}`
   }, [])
 
-  const query = {
-    keywords: search,
-    chains: selectedNetwork,
-    protocols: selectedProtocols,
-    sortBy: sortField,
-    sortOrder,
-    activeChainId: chainId,
-  }
   const setPaging = useSetAtom(farmsSearchPagingAtom(query))
   const _list = useAtomValue(farmsSearchAtom(query))
+  const handleSort = useCallback(
+    ({ order, dataIndex }) => {
+      updateSort({
+        order,
+        dataIndex,
+      })
+    },
+    [query],
+  )
 
   useEffect(() => {
     if (isIntersecting) {
@@ -115,47 +128,41 @@ export const PoolsPage = () => {
   const pending = _list.isPending() && list.length === 0
 
   return (
-    <FarmSearchContextProvider>
-      <Card>
-        <CardHeader p={isMobile ? '16px' : undefined}>
-          <PoolsFilterPanel onChange={handleFilterChange} value={poolsFilter}>
-            {(isMobile || isMd) && <AddLiquidityButton height="40px" scale="sm" width="100%" />}
-          </PoolsFilterPanel>
-        </CardHeader>
-        <CardBody
-          style={{
-            opacity: _list.isPending() ? 0.2 : 1,
-          }}
-        >
-          <Suspense>
-            <PoolsContent>
-              {!pending && (
-                <>
-                  {isMobile ? (
-                    <ListView data={list} onRowClick={handleRowClick} />
-                  ) : (
-                    <TableView
-                      getRowKey={getRowKey}
-                      columns={columns}
-                      data={list}
-                      onSort={handleSort}
-                      sortOrder={sortOrder}
-                      sortField={sortField}
-                      onRowClick={handleRowClick}
-                    />
-                  )}
-                </>
-              )}
-              {pending && <Spinner />}
-            </PoolsContent>
-            {list.length > 0 && <div ref={observerRef} />}
-          </Suspense>
-        </CardBody>
-      </Card>
-    </FarmSearchContextProvider>
+    <>
+      <PoolsContent
+        style={{
+          opacity: _list.isPending() ? 0.2 : 1,
+        }}
+      >
+        {!pending && (
+          <>
+            {isMobile ? (
+              <ListView data={list} onRowClick={handleRowClick} />
+            ) : (
+              <TableView
+                getRowKey={getRowKey}
+                columns={columns}
+                data={list}
+                onSort={handleSort}
+                sortOrder={query.sortOrder}
+                sortField={query.sortBy}
+                onRowClick={handleRowClick}
+              />
+            )}
+          </>
+        )}
+        {pending && (
+          <StyledLoadingTable justifyContent="center" alignItems="center">
+            <Spinner />
+          </StyledLoadingTable>
+        )}
+      </PoolsContent>
+      {list.length > 0 && <div ref={observerRef} />}
+    </>
   )
 }
 
-const StyledLoadingTable = styled(LoadingTable)`
-  min-height: calc(100vh - 64px - 56px);
+const StyledLoadingTable = styled(Flex)`
+  padding-top: 40px
+  maxheight: 100%;
 `

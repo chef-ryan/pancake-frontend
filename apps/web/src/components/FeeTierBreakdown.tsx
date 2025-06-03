@@ -30,7 +30,6 @@ export const InfinityFeeTierBreakdown = ({
   const farm = poolInfo?.farm
 
   const info = farm ? getPoolInfoForInfiFee(farm) : pool
-  console.log(`[page]`, { info, pool })
   if (!info) {
     return null
   }

@@ -9,6 +9,7 @@ import {
 import { getCurrencyAddress, Pair } from '@pancakeswap/sdk'
 import { InfinityBinPool, InfinityClPool, InfinityRouter, SmartRouter } from '@pancakeswap/smart-router'
 
+import { SORT_ORDER } from '@pancakeswap/uikit'
 import uniqBy from '@pancakeswap/utils/uniqBy'
 import { computePoolAddress, DEPLOYER_ADDRESSES } from '@pancakeswap/v3-sdk'
 import { edgeQueries } from 'quoter/utils/edgePoolQueries'
@@ -26,7 +27,7 @@ export interface FarmQuery {
   chains: ChainId[]
   protocols: Protocol[]
   sortBy: keyof PoolInfo | null
-  sortOrder: number
+  sortOrder: SORT_ORDER
   activeChainId?: ChainId
 }
 
@@ -135,7 +136,7 @@ const filterKeywords = (keywordRaw?: string) => {
 
 export type ChainNameKebab = (typeof chainNamesInKebabCase)[keyof typeof chainNamesInKebabCase]
 
-async function fetchExplorerFarmPools(protocols: Protocol[], chainIds: number[]) {
+async function fetchExplorerFarmPools(protocols: Protocol[], chainIds: typeof supportedChainIdV4) {
   const chains = chainIds.map((chainId) => getEdgeChainName(chainId as FarmV4SupportedChainId))
   const resp = await explorerApiClient.GET('/cached/pools/farming', {
     params: {
@@ -143,6 +144,9 @@ async function fetchExplorerFarmPools(protocols: Protocol[], chainIds: number[])
         protocols: protocols ?? DEFAULT_PROTOCOLS,
         chains,
       },
+    },
+    headers: {
+      EXPLORER_API_KEY: process.env.EXPLORER_API_KEY,
     },
   })
 
@@ -186,12 +190,11 @@ function toRemotePool(farm: UniversalFarmConfig) {
 
 async function fetchFarms(query: { extend: boolean; protocol?: Protocol }) {
   const protocols = DEFAULT_PROTOCOLS
-  const chains = DEFAULT_CHAINS
   const { extend, protocol } = query
   if (!extend) {
-    return fetchExplorerFarmPools(protocols, chains)
+    return fetchExplorerFarmPools(protocols, supportedChainIdV4)
   }
-  return fetchAllExplorerPools(protocol ? [protocol] : protocols, chains)
+  return fetchAllExplorerPools(protocol ? [protocol] : protocols, supportedChainIdV4)
 }
 
 async function queryFarms(extend: boolean, protocol?: Protocol) {
@@ -246,7 +249,7 @@ async function queryFarms(extend: boolean, protocol?: Protocol) {
   }
 }
 
-async function fetchAllExplorerPools(protocols: Protocol[], chains: FarmV4SupportedChainId[]) {
+async function fetchAllExplorerPools(protocols: Protocol[], chains: typeof supportedChainIdV4) {
   const query = {
     baseUrl: `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`,
     protocols,

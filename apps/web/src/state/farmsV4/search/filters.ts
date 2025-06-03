@@ -4,6 +4,7 @@ import { Native } from '@pancakeswap/sdk'
 import { PoolType, SmartRouter } from '@pancakeswap/smart-router'
 import { getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import { PoolInfo } from 'state/farmsV4/state/type'
+import { getCurrencySymbol } from 'utils/getTokenAlias'
 import { FarmInfo } from './farm.util'
 
 const chainFilter = (chains: ChainId[]) => {
@@ -61,18 +62,18 @@ const searchFilter = (_search: string) => {
     const symbol0List: string[] = []
     symbol0List.push(token0.symbol.toLowerCase())
     if (token0.isNative && token0.wrapped?.symbol) {
-      symbol0List.push(token0.wrapped.symbol.toLowerCase())
+      symbol0List.push(getCurrencySymbol(token0.wrapped).toLowerCase())
     } else if (Native.onChain(farm.chainId).wrapped.equals(token0)) {
-      symbol0List.push(Native.onChain(farm.chainId).symbol.toLowerCase())
+      symbol0List.push(getCurrencySymbol(Native.onChain(farm.chainId)).toLowerCase())
     }
 
     // Token1 handling
     const symbol1List: string[] = []
     symbol1List.push(token1.symbol.toLowerCase())
     if (token1.isNative) {
-      symbol1List.push(token1.wrapped.symbol.toLowerCase())
+      symbol1List.push(getCurrencySymbol(token1.wrapped).toLowerCase())
     } else if (Native.onChain(farm.chainId).wrapped.equals(token1)) {
-      symbol1List.push(Native.onChain(farm.chainId).symbol.toLowerCase())
+      symbol1List.push(getCurrencyAddress(Native.onChain(farm.chainId)).toLowerCase())
     }
     const pairs = getAllPairs(symbol0List, symbol1List)
 
@@ -98,7 +99,7 @@ const searchFilter = (_search: string) => {
       .filter((x) => x.trim())
       .filter((x) => x)
 
-    return prts.every((prt) => {
+    return prts.some((prt) => {
       return tags.some((tag) => tag.startsWith(prt))
     })
   }
