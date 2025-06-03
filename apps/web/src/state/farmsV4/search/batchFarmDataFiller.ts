@@ -256,7 +256,8 @@ export const fillBinPoolData = memoizeAsync(
 
 const fillStablePoolData = async (farm: FarmInfo) => {
   const stablePools = await fetchStableSwapData(farm.chainId)
-  const relatedPool = stablePools.find((x) => x.stableSwapAddress === farm.id)
+  const relatedPool = stablePools.find((x) => x.stableSwapAddress.toLowerCase() === farm.id.toLowerCase())
+
   if (relatedPool) {
     // eslint-disable-next-line no-param-reassign
     farm.feeTier = relatedPool.stableTotalFee * 1_000_000
