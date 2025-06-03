@@ -56,8 +56,8 @@ export type FarmProps = {
   // cakeApr: CakeAprValue
   feeTier: number
   apr24h: number
-  vol24hUsd: number
-  tvlUSD: number
+  vol24hUsd: `${number}`
+  tvlUSD: `${number}`
   protocol: Protocol
   feeTierBase: number
   pid?: number
@@ -95,7 +95,7 @@ export const farmPropsToPoolInfoBase = (farm: FarmProps, token0: Currency, token
     token0,
     token1: token1.asToken,
     lpApr: `${farm.lpApr || ''}` as `${number}`,
-    tvlUsd: `${farm.tvlUSD || ''}` as `${number}`,
+    tvlUsd: farm.tvlUSD || '0',
     vol24hUsd: `${farm.vol24hUsd || ''}` as `${number}`,
     feeTier: farm.feeTier,
     feeTierBase: farm.feeTierBase,

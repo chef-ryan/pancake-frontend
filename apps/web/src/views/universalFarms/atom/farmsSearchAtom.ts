@@ -98,8 +98,8 @@ const searchAtom = atomFamily((query: FarmQuery) => {
               value: '0', // Fill later
             },
             feeTier: farm.feeTier,
-            tvlUSD: Number(farm.tvlUSD) || 0,
-            vol24hUsd: Number(farm.vol24hUsd) || 0,
+            tvlUSD: farm.tvlUSD,
+            vol24hUsd: farm.vol24hUsd,
             tvlUsd: 0,
             feeTierBase: 1e6,
             protocol: typeToProtocol(farm.pool.type as PoolType),
