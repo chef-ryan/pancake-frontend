@@ -127,10 +127,10 @@ export async function batchGetLpAprData(pools: PoolInfo[]) {
   return pools.map((pool, index) => {
     const result = lpAprs[index]
     const farm = pool.farm!
-    farm.lpApr = result.status === 'fulfilled' ? `${result.value}` : '0'
+    const apr = result.status === 'fulfilled' ? `${result.value}` : '0'
     return {
       id: `${farm.chainId}:${farm.id}`,
-      value: farm.lpApr,
+      value: Number(apr),
     }
   })
 }
@@ -268,7 +268,7 @@ const fillStablePoolData = async (farm: FarmInfo) => {
   const relatedPool = stablePools.find((x) => x.stableSwapAddress.toLowerCase() === farm.id.toLowerCase())
 
   if (relatedPool) {
-    // eslint-disable-next-line no-param-reassign
+    farm.lpAddress = relatedPool.lpAddress
     farm.feeTier = relatedPool.stableTotalFee * 1_000_000
   }
   return farm

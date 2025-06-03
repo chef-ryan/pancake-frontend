@@ -50,9 +50,9 @@ type CakeAprItem = {
 export type FarmProps = {
   id: Address
   chainId: ChainId
-  lpApr: `${number}`
+  lpApr?: `${number}`
   lpAddress?: `0x${string}`
-  merklApr: `${number}`
+  merklApr?: `${number}`
   // cakeApr: CakeAprValue
   feeTier: number
   apr24h: number
@@ -152,9 +152,9 @@ export const getFarmAprInfo = (farm?: FarmInfo) => {
   }
 
   const aprInfo: AprInfo = {
-    lpApr: farm.lpApr,
+    lpApr: farm.lpApr || '0',
     cakeApr: farm.cakeApr,
-    merklApr: farm.merklApr,
+    merklApr: farm.merklApr || '0',
   }
   return aprInfo
 }

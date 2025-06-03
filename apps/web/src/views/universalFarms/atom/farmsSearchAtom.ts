@@ -140,7 +140,7 @@ const farmsWithFilledDataAtom = atomFamily((query) => {
           const { farm, ...others } = poolInfo
           const id = `${farm!.chainId}:${farm!.id}`.toLowerCase()
           const cakeApr = aggCakeAprs[id]?.value || '0'
-          const lpApr = aggLpAprs[id]?.value || '0'
+          const lpApr = `${aggLpAprs[id]?.value || farm?.apr24h || '0'}`
           const merklApr = aggMerklAprs[id]?.value || '0'
 
           return {
