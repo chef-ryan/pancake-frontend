@@ -1,15 +1,9 @@
-import { useAtom } from 'jotai'
-import flatMap from 'lodash/flatMap'
-import uniqWith from 'lodash/uniqWith'
-import { useMemo } from 'react'
-import { selectorByUrlsAtom } from 'state/lists/hooks'
-import { SUGGESTED_BASES } from 'config/constants/exchange'
 import { ChainId, ERC20Token, Native } from '@pancakeswap/sdk'
 import type { TokenInfo } from '@pancakeswap/token-lists'
+import { SUGGESTED_BASES } from 'config/constants/exchange'
 import {
   PANCAKE_ARB_DEFAULT,
   PANCAKE_BASE_DEFAULT,
-  PANCAKE_BSC_MM,
   PANCAKE_ETH_DEFAULT,
   PANCAKE_ETH_MM,
   PANCAKE_EXTENDED,
@@ -18,9 +12,14 @@ import {
   PANCAKE_POLYGON_ZKEVM_DEFAULT,
   PANCAKE_ZKSYNC_DEFAULT,
 } from 'config/constants/lists'
+import { useAtom } from 'jotai'
+import flatMap from 'lodash/flatMap'
+import uniqWith from 'lodash/uniqWith'
+import { useMemo } from 'react'
+import { selectorByUrlsAtom } from 'state/lists/hooks'
 import { useOrderChainIds } from './useMultiChains'
 
-const BSC_URLS = [PANCAKE_EXTENDED, PANCAKE_BSC_MM]
+const BSC_URLS = [PANCAKE_EXTENDED]
 const ETH_URLS = [PANCAKE_ETH_DEFAULT, PANCAKE_ETH_MM]
 const ZKSYNC_URLS = [PANCAKE_ZKSYNC_DEFAULT]
 const POLYGON_ZKEVM_URLS = [PANCAKE_POLYGON_ZKEVM_DEFAULT]
