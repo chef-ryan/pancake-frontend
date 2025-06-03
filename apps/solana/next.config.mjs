@@ -36,7 +36,7 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/swap/',
+        destination: '/jupiter-swap/',
         permanent: false
       }
     ]

@@ -8,7 +8,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import PortfolioPageThumbnailIcon from '@/icons/pageNavigation/PortfolioPageThumbnailIcon'
 import { colors } from '@/theme/cssVariables'
 import { shrinkToValue } from '@/utils/shrinkToValue'
-import { PAGE_URLS } from '@/utils/config/routers'
+import { pageRoutePathnames } from '@/utils/config/routers'
 
 /** only used is Mobile */
 export function MobileBottomNavbar() {
@@ -16,9 +16,9 @@ export function MobileBottomNavbar() {
   const { colorMode } = useColorMode()
   const isLight = colorMode === 'light'
   const { pathname } = useRouter()
-  const isSwapActive = pathname === PAGE_URLS.SWAP
-  const isLiquidityActive = pathname === PAGE_URLS.LIQUIDITY
-  const isPortfolioActive = pathname === PAGE_URLS.POSITIONS
+  const isSwapActive = pathname === pageRoutePathnames.swap
+  const isLiquidityActive = pathname === pageRoutePathnames.pools
+  const isPortfolioActive = pathname === pageRoutePathnames.portfolio
 
   return (
     <SimpleGrid
@@ -31,19 +31,19 @@ export function MobileBottomNavbar() {
       borderTop={isLight ? `1px solid rgba(171, 196, 255, 0.2)` : `1px solid transparent`}
     >
       <BottomNavbarItem
-        href={PAGE_URLS.SWAP}
+        href={pageRoutePathnames.swap}
         text={t('Swap')}
         icon={() => <SwapHorizIcon color={isSwapActive ? colors.secondary : colors.textSubtle} />}
         isActive={isSwapActive}
       />
       <BottomNavbarItem
-        href={PAGE_URLS.LIQUIDITY}
+        href={pageRoutePathnames.pools}
         text={t('Liquidity')}
         icon={() => <WaterIcon color={isLiquidityActive ? colors.secondary : colors.textSubtle} />}
         isActive={isLiquidityActive}
       />
       <BottomNavbarItem
-        href={PAGE_URLS.POSITIONS}
+        href={pageRoutePathnames.portfolio}
         text={t('My Positions')}
         icon={(colorMode) => <PortfolioPageThumbnailIcon colorMode={colorMode} isActive={isPortfolioActive} />}
         isActive={isPortfolioActive}

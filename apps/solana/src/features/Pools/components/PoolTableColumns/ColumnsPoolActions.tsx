@@ -8,6 +8,7 @@ import ChartInfoIcon from '@/icons/misc/ChartInfoIcon'
 import SwapPoolItemIcon from '@/icons/misc/SwapPoolItemIcon'
 import { colors } from '@/theme/cssVariables'
 import { wSolToSol } from '@/utils/token'
+import { pageRoutePathnames } from '@/utils/config/routers'
 
 export const ColumnsPoolActions: React.FC<{
   data: FormattedPoolInfoItem
@@ -24,7 +25,7 @@ export const ColumnsPoolActions: React.FC<{
   const onClickSwap = useCallback(() => {
     const [inputMint, outputMint] = [wSolToSol(pool.mintA.address), wSolToSol(pool.mintB.address)]
     router.push({
-      pathname: '/swap',
+      pathname: pageRoutePathnames.swap,
       query: {
         inputMint,
         outputMint

@@ -1,4 +1,6 @@
 import { AdSlide, Priority } from '@pancakeswap/widgets-internal'
+import { pageRoutePathnames } from '@/utils/config/routers'
+
 import { AdPCSxSolana } from './ads/AdPCSxSolana'
 
 export const adList: Array<AdSlide> = [
@@ -9,4 +11,4 @@ export const adList: Array<AdSlide> = [
   }
 ]
 
-export const commonLayoutWhitelistedPages = ['/swap']
+export const commonLayoutWhitelistedPages = [pageRoutePathnames.swap]

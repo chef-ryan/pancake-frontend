@@ -1,9 +1,8 @@
-import { Box, Center, Flex, Grid, GridItem, Highlight, HStack, Tag, Text, useDisclosure, VStack } from '@chakra-ui/react'
+import { Box, Flex, Grid, GridItem, Highlight, HStack, Tag, Text, useDisclosure, VStack } from '@chakra-ui/react'
 import router from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from '@pancakeswap/localization'
 import { wSolToSol } from '@/utils/token'
-import AddressChip from '@/components/AddressChip'
 import Button from '@/components/Button'
 import { Desktop, Mobile } from '@/components/MobileDesktop'
 import PanelCard from '@/components/PanelCard'
@@ -11,7 +10,6 @@ import TokenAvatar from '@/components/TokenAvatar'
 import TokenAvatarPair from '@/components/TokenAvatarPair'
 import Tooltip from '@/components/Tooltip'
 import { AprKey, FormattedPoolInfoItem } from '@/hooks/pool/type'
-import ChartInfoIcon from '@/icons/misc/ChartInfoIcon'
 import SwapPoolItemIcon from '@/icons/misc/SwapPoolItemIcon'
 import OpenBookIcon from '@/icons/misc/OpenBookIcon'
 import PulseIcon from '@/icons/misc/PulseIcon'
@@ -20,14 +18,12 @@ import StarIcon from '@/icons/misc/StarIcon'
 import { colors } from '@/theme/cssVariables'
 import { formatCurrency, formatToRawLocaleStr } from '@/utils/numberish/formatter'
 import toPercentString from '@/utils/numberish/toPercentString'
-import LockPercentCircle from '@/components/LockPercentCircle'
 import useResponsive from '@/hooks/useResponsive'
+import { pageRoutePathnames } from '@/utils/config/routers'
 
-import { poolListGrid } from '../cssBlocks'
 import { type TimeBase } from '../Pools'
 import { getFavoritePoolCache, setFavoritePoolCache, toAPRPercent } from '../util'
 import PoolDetailMobileDrawer from './PoolDetailMobileDrawer'
-import PoolListItemAprDetailPopoverContent from './PoolListItemAprDetailPopoverContent'
 import { aprColors, PoolListItemAprLine } from './PoolListItemAprLine'
 import { PoolListItemAprPie } from './PoolListItemAprPie'
 import { PoolListItemRewardStack } from './PoolListItemRewardStack'
@@ -44,7 +40,7 @@ export default function PoolListItem({
   onOpenChart?(pool: FormattedPoolInfoItem): void
 }) {
   const { t } = useTranslation()
-  const { isTablet, isMobile } = useResponsive()
+  const { isMobile } = useResponsive()
   const [isFavorite, setIsFavoriteState] = useState(getFavoritePoolCache().has(pool.id))
 
   const handleOpenChart = useCallback(() => {
@@ -86,7 +82,7 @@ export default function PoolListItem({
   const onClickSwap = useCallback(() => {
     const [inputMint, outputMint] = [wSolToSol(pool.mintA.address), wSolToSol(pool.mintB.address)]
     router.push({
-      pathname: '/swap',
+      pathname: pageRoutePathnames.swap,
       query: {
         inputMint,
         outputMint

@@ -16,7 +16,7 @@ import React, { ReactNode } from 'react'
 import { languageList, useTranslation } from '@pancakeswap/localization'
 import { colors } from '@/theme/cssVariables'
 import { appLayoutPaddingX } from '@/theme/detailConfig'
-import { PAGE_URLS } from '@/utils/config/routers'
+import { pageRoutePathnames } from '@/utils/config/routers'
 import useResponsive from '@/hooks/useResponsive'
 
 import { Desktop, Mobile } from '../MobileDesktop'
@@ -26,7 +26,6 @@ import { MobileBottomNavbar } from './MobileBottomNavbar'
 import { ColorThemeSettingField } from './components/ColorThemeSettingField'
 import { DefaultExplorerSettingField } from './components/DefaultExplorerSettingField'
 import DisclaimerModal from './components/DisclaimerModal'
-import { LanguageSettingField } from './components/LanguageSettingField'
 import { PriorityButton } from './components/PriorityButton'
 import { RPCConnectionSettingField } from './components/RPCConnectionSettingField'
 import { Divider } from './components/SettingFieldDivider'
@@ -71,9 +70,9 @@ function AppNavLayout({
         {/* nav routes */}
         <Desktop>
           <HStack flexGrow={1} justify="start" overflow={['auto', 'visible']} gap={[0, 0, '15px']}>
-            <RouteLink href={PAGE_URLS.JUPITER_SWAP} isActive={pathname === PAGE_URLS.JUPITER_SWAP} title={t('Swap')} />
-            <RouteLink href={PAGE_URLS.LIQUIDITY} isActive={pathname.includes(PAGE_URLS.LIQUIDITY)} title={t('Liquidity')} />
-            <RouteLink href={PAGE_URLS.POSITIONS} isActive={pathname === PAGE_URLS.POSITIONS} title={t('My Positions')} />
+            <RouteLink href={pageRoutePathnames.swap} isActive={pathname === pageRoutePathnames.swap} title={t('Swap')} />
+            <RouteLink href={pageRoutePathnames.pools} isActive={pathname.includes(pageRoutePathnames.pools)} title={t('Liquidity')} />
+            <RouteLink href={pageRoutePathnames.portfolio} isActive={pathname === pageRoutePathnames.portfolio} title={t('My Positions')} />
           </HStack>
         </Desktop>
 
@@ -210,7 +209,7 @@ function SettingsMenuModalContent({ onDismiss }: { onDismiss: () => void }) {
 }
 
 function LangSwitcher() {
-  const { currentLanguage, setLanguage, t } = useTranslation()
+  const { currentLanguage, setLanguage } = useTranslation()
   const currentLang = currentLanguage.code
   return (
     <Box w={10} h={10} _hover={{ bg: colors.backgroundLight }} rounded="full" display="grid" placeContent="center" cursor="pointer">
