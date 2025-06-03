@@ -14,6 +14,7 @@ import { InfinityBinPool, InfinityClPool, InfinityRouter, Pool, PoolType, SmartR
 import { Currency } from '@pancakeswap/swap-sdk-core'
 import { InfinityFeeTierPoolParams } from 'hooks/infinity/useInfinityFeeTier'
 import qs from 'qs'
+import { ALLOWED_PROTOCOLS } from 'quoter/utils/edgeQueries.util'
 import { CakeAprValue } from 'state/farmsV4/atom'
 import { AprInfo } from 'state/farmsV4/hooks'
 import { BasePoolInfo, PoolInfo } from 'state/farmsV4/state/type'
@@ -243,7 +244,12 @@ export const isValidPoolKeyResult = (
 
 export function parseFarmSearchQuery(raw: string) {
   const queryParsed = qs.parse(raw)
+  const protocol = queryParsed.protocol as Protocol | undefined
+  if (protocol && !ALLOWED_PROTOCOLS.includes(protocol)) {
+    throw new Error(`Unsupported protocol: ${protocol}`)
+  }
   return {
     extend: Boolean(queryParsed.extend),
+    protocol,
   }
 }

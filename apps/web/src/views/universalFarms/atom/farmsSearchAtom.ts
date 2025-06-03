@@ -6,6 +6,7 @@ import isEqual from 'lodash/isEqual'
 import keyBy from 'lodash/keyBy'
 import qs from 'qs'
 import { atomWithLoadable } from 'quoter/atom/atomWithLoadable'
+import { Protocol } from 'quoter/utils/edgeQueries.util'
 import {
   batchGetCakeApr,
   batchGetLpAprData,
@@ -34,9 +35,10 @@ const typeToProtocol = (type: PoolType) => {
   }
 }
 
-async function fetchFarmList(extend: boolean) {
+async function fetchFarmList(extend: boolean, protocol?: Protocol) {
   const queryStr = qs.stringify({
     extend: extend ? 1 : undefined,
+    protocol,
   })
   const url = `/api/farm/list?${queryStr}`
   const response = await fetch(url, {
@@ -59,8 +61,10 @@ const farmListAtom = atomWithLoadable<SerializedFarmInfo[]>(async () => {
   return fetchFarmList(false)
 })
 
-const extendListAtom = atomWithLoadable<SerializedFarmInfo[]>(async () => {
-  return fetchFarmList(true)
+const extendListAtom = atomFamily((protocol?: Protocol) => {
+  return atomWithLoadable<SerializedFarmInfo[]>(async () => {
+    return fetchFarmList(true, protocol)
+  })
 })
 
 export const farmsSearchPagingAtom = atomFamily((_: FarmQuery) => {
@@ -72,7 +76,8 @@ const searchAtom = atomFamily((query: FarmQuery) => {
     async (get) => {
       try {
         const { protocols, chains, sortBy } = query
-        const lists = await Promise.all([get(farmListAtom), get(extendListAtom)])
+        const protocol = protocols.length === 1 ? protocols[0] : undefined
+        const lists = await Promise.all([get(farmListAtom), get(extendListAtom(protocol))])
 
         const farms = uniqBy(
           lists

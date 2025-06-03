@@ -22,9 +22,9 @@ type filtersParams = Partial<
 export const useFilterToQueries = () => {
   const nextRouter = useRouter()
   const allChainIds = useAllChainIds()
-
+  const urlQuery = new URLSearchParams(window.location.search)
   const {
-    type,
+    type: _type,
     network,
     token: queryTokenParams,
     sort,
@@ -33,6 +33,7 @@ export const useFilterToQueries = () => {
     search,
     ...othersQueries
   } = nextRouter.query
+  const type = _type || urlQuery.get('type')
 
   const positionStatus = useMemo(
     () => (status ? Number(Array.isArray(status) ? status[0] : status) : POSITION_STATUS.ACTIVE),
