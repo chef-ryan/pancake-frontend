@@ -27,6 +27,7 @@ export interface FarmQuery {
   protocols: Protocol[]
   sortBy: keyof PoolInfo | null
   sortOrder: number
+  activeChainId?: ChainId
 }
 
 function getPoolId(farm: UniversalFarmConfig) {

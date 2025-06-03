@@ -75,7 +75,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
   return atomWithLoadable(
     async (get) => {
       try {
-        const { protocols, chains, sortBy } = query
+        const { protocols, chains, sortBy, activeChainId } = query
         const protocol = protocols.length === 1 ? protocols[0] : undefined
         const lists = await Promise.all([get(farmListAtom), get(extendListAtom(protocol))])
 
@@ -84,27 +84,16 @@ const searchAtom = atomFamily((query: FarmQuery) => {
             .filter((x) => x.isJust())
             .map((x) => x.unwrap())
             .flat(),
-          (item) => `${item.chainId}:${item.id}`,
+          (item) => `${item.chainId}:${item.id}`.toLowerCase(),
         ).map((farm) => {
+          const { pool, chainId, vol24hUsd, ...rest } = farm
           const farmInfo = {
-            id: farm.id,
             chainId: farm.chainId,
-            pid: farm.pid,
-            pool: SmartRouter.Transformer.parsePool(farm.chainId, farm.pool),
-            lpApr: farm.lpApr,
-            apr24h: farm.apr24h,
-            merklApr: '0',
-            cakeApr: {
-              value: '0', // Fill later
-            },
-            feeTier: farm.feeTier,
-            tvlUSD: farm.tvlUSD,
-            vol24hUsd: farm.vol24hUsd,
             tvlUsd: 0,
+            ...rest,
             feeTierBase: 1e6,
-            protocol: typeToProtocol(farm.pool.type as PoolType),
-            isDynamicFee: farm.isDynamicFee,
-            lpAddress: farm.lpAddress,
+            vol24hUsd: farm.vol24hUsd,
+            pool: SmartRouter.Transformer.parsePool(farm.chainId, farm.pool),
           } as FarmInfo
 
           return farmInfo
@@ -114,7 +103,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
           .filter(farmFilters.chainFilter(chains))
           .filter(farmFilters.protocolFilter(protocols))
           .filter(farmFilters.searchFilter(query.keywords))
-        const sorted = farmFilters.sortFunction(filtered, sortBy)
+        const sorted = farmFilters.sortFunction(filtered, sortBy, activeChainId)
         return sorted
       } catch (ex) {
         console.error('Error fetching farms:', ex)

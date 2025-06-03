@@ -1,10 +1,10 @@
-import { useIntersectionObserver, useTheme } from '@pancakeswap/hooks'
-import { useTranslation } from '@pancakeswap/localization'
-import { SORT_ORDER, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { useIntersectionObserver } from '@pancakeswap/hooks'
+import { Loading, SORT_ORDER, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
 import { Suspense, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 
+import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import LoadingTable from 'views/LimitOrders/components/LimitOrderTable/LoadingTable'
@@ -28,13 +28,10 @@ const PoolsContent = styled.div`
   min-height: calc(100vh - 64px - 56px);
 `
 
-const NUMBER_OF_FARMS_VISIBLE = 20
-
 export const PoolsPage = () => {
   const nextRouter = useRouter()
-  const { t } = useTranslation()
-  const { theme } = useTheme()
   const { isMobile, isMd } = useMatchBreakpoints()
+  const { chainId } = useActiveChainId()
 
   const columns = useColumnConfig()
   const {
@@ -59,22 +56,6 @@ export const PoolsPage = () => {
 
   const selectedProtocols = useSelectedProtocols(selectedProtocolIndex)
   const { observerRef, isIntersecting } = useIntersectionObserver()
-
-  // data source
-  // const { extendPools, fetchPoolList, resetExtendPools } = useExtendPools()
-  // we disabled extend pools in phase 1, we can turn it off later when we need
-  const disabledExtendPools = false
-
-  /* useEffect(() => {
-    // if consumed, fetch from pool/list
-    if (cursorVisible >= poolList.length && !disabledExtendPools) {
-      fetchPoolList({
-        chains: selectedNetwork,
-        protocols: selectedProtocols,
-        orderBy: PoolSortBy.VOL,
-      })
-    }
-  }, [cursorVisible, poolList.length, fetchPoolList, selectedProtocols, disabledExtendPools, selectedNetwork]) */
 
   const handleFilterChange: IPoolsFilterPanelProps['onChange'] = useCallback(
     (newFilters) => {
@@ -119,10 +100,10 @@ export const PoolsPage = () => {
     protocols: selectedProtocols,
     sortBy: sortField,
     sortOrder,
+    activeChainId: chainId,
   }
   const setPaging = useSetAtom(farmsSearchPagingAtom(query))
   const list = useAtomValue(farmsSearchAtom(query))
-  console.log('PoolsPage list', list.unwrapOr([]))
 
   useEffect(() => {
     if (isIntersecting) {
@@ -162,7 +143,7 @@ export const PoolsPage = () => {
                   )}
                 </>
               )}
-              {!list.hasValue() && <StyledLoadingTable lines={20} />}
+              {!list.hasValue() && <Loading />}
             </PoolsContent>
             {list.unwrapOr([]).length > 0 && <div ref={observerRef} />}
           </Suspense>

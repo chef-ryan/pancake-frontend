@@ -120,13 +120,13 @@ interface Weighted<T> {
   weight: number
 }
 
-const sortFunction = (farms: FarmInfo[], sortField: keyof PoolInfo | null) => {
+const sortFunction = (farms: FarmInfo[], sortField: keyof PoolInfo | null, activeChainId?: ChainId) => {
   if (farms.length === 0) return []
   const order = 1
 
   switch (sortField) {
     case 'tvlUsd': {
-      farms.sort((a, b) => b.tvlUSD - a.tvlUSD)
+      farms.sort((a, b) => Number(b.tvlUSD) - Number(a.tvlUSD))
       return farms
     }
     case 'lpApr': {
@@ -134,20 +134,23 @@ const sortFunction = (farms: FarmInfo[], sortField: keyof PoolInfo | null) => {
       return farms
     }
     case 'vol24hUsd': {
-      farms.sort((a, b) => order * ((b.vol24hUsd || 0) - (a.vol24hUsd || 0)))
+      farms.sort((a, b) => order * (Number(b.vol24hUsd || 0) - Number(a.vol24hUsd || 0)))
       return farms
     }
     default:
   }
-  const avgTvl = farms.reduce((sum, farm) => sum + (farm.tvlUSD || 0), 0) / farms.length
+  const avgTvl = farms.reduce((sum, farm) => sum + Number(farm.tvlUSD || 0), 0) / farms.length
   const avgApr = farms.reduce((sum, farm) => sum + (farm.apr24h || 0), 0) / farms.length
-  const avgVol = farms.reduce((sum, farm) => sum + (farm.vol24hUsd || 0), 0) / farms.length
+  const avgVol = farms.reduce((sum, farm) => sum + Number(farm.vol24hUsd || 0), 0) / farms.length
 
   const weight = (farm: FarmInfo) => {
-    const tvlWeight = sigmoidTvl(farm.tvlUSD || 0, avgTvl)
-    const aprWeight = sigmoidApr(farm.apr24h || 0, avgApr)
-    const volWeight = sigmoidVol(farm.vol24hUsd || 0, avgVol)
-    return aprWeight * 0.1 + tvlWeight * 0.3 + volWeight * 0.6 // Adjust weights as needed
+    const tvlWeight = sigmoidTvl(Number(farm.tvlUSD || 0), avgTvl)
+    const aprWeight = sigmoidApr(Number(farm.apr24h || 0), avgApr)
+    const volWeight = sigmoidVol(Number(farm.vol24hUsd || 0), avgVol)
+    const sameChain = farm.chainId === activeChainId ? 1 : 0
+    const w = aprWeight * 0.1 + tvlWeight * 0.3 + volWeight * 0.6 // Adjust weights as needed
+
+    return w * 0.2 + sameChain * 80 // Boost weight for active chain
   }
 
   const weightedFarms: Weighted<FarmInfo>[] = farms.map((farm) => ({
