@@ -46,6 +46,21 @@ declare global {
     ethereum: Ethereumish
     BinanceChain?: any
     coin98?: boolean
+    Jupiter: {
+      init: (config: {
+        displayMode: string
+        integratedTargetId: string
+        endpoint: string
+        refetchIntervalForTokenAccounts?: number
+        formProps?: any
+        enableWalletPassthrough?: boolean
+        passthroughWalletContextState?: any
+        onRequestConnectWallet?: () => void
+        strictTokenList?: boolean
+        defaultExplorer?: string
+      }) => void
+      syncProps: (props: { passthroughWalletContextState: any }) => void
+    }
   }
   declare const __DEV__: string
 }

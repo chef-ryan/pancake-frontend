@@ -1,6 +1,6 @@
-import React, { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+// import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
 import { GlowWalletAdapter } from '@solana/wallet-adapter-glow'
@@ -23,7 +23,7 @@ import {
 } from '@solana/wallet-adapter-wallets'
 import { registerMoonGateWallet } from '@moongate/moongate-adapter'
 import { TipLinkWalletAdapter } from '@tiplink/wallet-adapter'
-import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
+// import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
 
 import { type Adapter, type WalletError } from '@solana/wallet-adapter-base'
 import { sendWalletEvent } from '@/api/event'
@@ -34,7 +34,7 @@ import { useAppStore, defaultNetWork, defaultEndpoint } from '../store/useAppSto
 initialize()
 
 const App: FC<PropsWithChildren<any>> = ({ children }) => {
-  const [network] = useState<WalletAdapterNetwork>(defaultNetWork)
+  // const [network] = useState<WalletAdapterNetwork>(defaultNetWork)
   const rpcNodeUrl = useAppStore((s) => s.rpcNodeUrl)
   const wsNodeUrl = useAppStore((s) => s.wsNodeUrl)
   // const [endpoint] = useState<string>(defaultEndpoint)
@@ -53,29 +53,6 @@ const App: FC<PropsWithChildren<any>> = ({ children }) => {
     position: 'top-right'
   })
 
-  const _walletConnect = useMemo(() => {
-    const connectWallet: WalletConnectWalletAdapter[] = []
-    try {
-      /* connectWallet.push(
-        new WalletConnectWalletAdapter({
-          network: network as WalletAdapterNetwork.Mainnet,
-          options: {
-            projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PJ_ID,
-            metadata: {
-              name: 'Raydium',
-              description: 'Raydium',
-              url: 'https://raydium.io/',
-              icons: ['https://raydium.io/logo/logo-only-icon.svg']
-            }
-          }
-        })
-      ) */
-    } catch (e) {
-      // console.error('WalletConnect error', e)
-    }
-    return connectWallet
-  }, [network])
-
   const wallets = useMemo(
     () => [
       new PhantomWalletAdapter(),
@@ -83,7 +60,7 @@ const App: FC<PropsWithChildren<any>> = ({ children }) => {
       new SlopeWalletAdapter({ endpoint }),
       new TorusWalletAdapter(),
       new LedgerWalletAdapter(),
-      ..._walletConnect,
+      // ..._walletConnect,
       new GlowWalletAdapter(),
       new TrustWalletAdapter(),
       new MathWalletAdapter({ endpoint }),
@@ -101,7 +78,7 @@ const App: FC<PropsWithChildren<any>> = ({ children }) => {
         theme: 'system'
       }) as unknown as Adapter
     ],
-    [network, endpoint]
+    [endpoint]
   )
 
   useEffect(() => {
