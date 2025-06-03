@@ -40,9 +40,34 @@ function getAllPairs(A: string[], B: string[]): [string, string][] {
   return pairs
 }
 
+const search = (farms: FarmInfo[], search: string): FarmInfo[] => {
+  if (!search) {
+    return farms
+  }
+  const filter = searchFilter(search)
+  const filterResults = farms.map((x) => filter(x))
+  const fullMatches = filterResults.filter((x) => x.full).map((x) => x.farm)
+  if (fullMatches.length > 0) {
+    return fullMatches
+  }
+  const partialMatch = filterResults.filter((x) => x.partial).map((x) => x.farm)
+  return partialMatch
+}
+
 const searchFilter = (_search: string) => {
-  return (farm: FarmInfo): boolean => {
-    if (!_search || _search.trim() === '') return true
+  return (
+    farm: FarmInfo,
+  ): {
+    full: boolean
+    partial: boolean
+    farm: FarmInfo
+  } => {
+    if (!_search || _search.trim() === '')
+      return {
+        full: false,
+        partial: false,
+        farm,
+      }
     const search = _search.toLowerCase().trim()
 
     const [token0, token1] = SmartRouter.getCurrenciesOfPool(farm.pool)
@@ -53,14 +78,18 @@ const searchFilter = (_search: string) => {
         getCurrencyAddress(token0).toLowerCase(),
         getCurrencyAddress(token1).toLowerCase(),
       ]
-      return list.some((item) => item.startsWith(search))
+      return {
+        full: list.some((item) => item.startsWith(search)),
+        partial: true,
+        farm,
+      }
     }
 
     const { pool } = farm
 
     // Token0 handling
     const symbol0List: string[] = []
-    symbol0List.push(token0.symbol.toLowerCase())
+    symbol0List.push(getCurrencySymbol(token0).toLowerCase())
     if (token0.isNative && token0.wrapped?.symbol) {
       symbol0List.push(getCurrencySymbol(token0.wrapped).toLowerCase())
     } else if (Native.onChain(farm.chainId).wrapped.equals(token0)) {
@@ -69,7 +98,7 @@ const searchFilter = (_search: string) => {
 
     // Token1 handling
     const symbol1List: string[] = []
-    symbol1List.push(token1.symbol.toLowerCase())
+    symbol1List.push(getCurrencySymbol(token1).toLowerCase())
     if (token1.isNative) {
       symbol1List.push(getCurrencySymbol(token1.wrapped).toLowerCase())
     } else if (Native.onChain(farm.chainId).wrapped.equals(token1)) {
@@ -82,6 +111,9 @@ const searchFilter = (_search: string) => {
     const isInfinity = pool.type === PoolType.InfinityCL || pool.type === PoolType.InfinityBIN
     const dynamic = isInfinity && farm.isDynamicFee
     const infinity = isInfinity ? 'infinity' : ''
+    const stable = pool.type === PoolType.STABLE ? 'stable' : ''
+    const v2 = pool.type === PoolType.V2 ? 'v2' : ''
+    const v3 = pool.type === PoolType.V3 ? 'v3' : ''
 
     const tags = [
       ...symbol0List,
@@ -93,15 +125,26 @@ const searchFilter = (_search: string) => {
       lbamm,
       dynamic ? 'dynamic' : '',
       infinity,
+      stable,
+      v2,
+      v3,
     ].filter((x) => x)
     const prts = search
       .split(/[\s,]/g)
       .filter((x) => x.trim())
       .filter((x) => x)
 
-    return prts.some((prt) => {
+    const erveryMatched = prts.every((prt) => {
       return tags.some((tag) => tag.startsWith(prt))
     })
+    const someMatched = prts.some((prt) => {
+      return tags.some((tag) => tag.startsWith(prt))
+    })
+    return {
+      full: erveryMatched,
+      partial: someMatched,
+      farm,
+    }
   }
 }
 
@@ -167,5 +210,5 @@ export const farmFilters = {
   chainFilter,
   protocolFilter,
   sortFunction,
-  searchFilter,
+  search,
 }

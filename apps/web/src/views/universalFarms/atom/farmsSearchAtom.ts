@@ -87,10 +87,10 @@ const searchAtom = atomFamily((query: FarmQuery) => {
           return farmInfo
         })
 
-        const filtered = farms
-          .filter(farmFilters.chainFilter(chains))
-          .filter(farmFilters.protocolFilter(protocols))
-          .filter(farmFilters.searchFilter(query.keywords))
+        const filtered = farmFilters.search(
+          farms.filter(farmFilters.chainFilter(chains)).filter(farmFilters.protocolFilter(protocols)),
+          query.keywords,
+        )
         const sorted = farmFilters.sortFunction(filtered, sortBy, activeChainId)
         return sorted
       } catch (ex) {
