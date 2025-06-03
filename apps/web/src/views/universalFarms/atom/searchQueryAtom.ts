@@ -30,9 +30,9 @@ export const updateFilterAtom = atom(null, (_, set, filter: UpdateFilterParams) 
   set(_searchQueryAtom, (prev) => {
     return {
       ...prev,
-      keywords: search || '',
-      protocols,
-      chains,
+      keywords: typeof search === 'undefined' ? prev.keywords : search || '',
+      protocols: typeof selectedProtocolIndex === 'undefined' ? prev.protocols : protocols,
+      chains: typeof selectedNetwork === 'undefined' ? prev.chains : chains,
     }
   })
 })
@@ -41,7 +41,8 @@ export const updateSortAtom = atom(null, (_, set, sort: { order: SORT_ORDER; dat
   set(_searchQueryAtom, (prev) => {
     return {
       ...prev,
-      sortField: sort.dataIndex,
+      sortBy: sort.dataIndex as FarmQuery['sortBy'],
+      sortOrder: sort.order,
     }
   })
 })
