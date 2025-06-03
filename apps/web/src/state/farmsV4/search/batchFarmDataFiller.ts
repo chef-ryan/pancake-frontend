@@ -149,7 +149,7 @@ type CLPoolCallsResult = [
 ]
 
 const resolveFarm = (farm: FarmInfo) => {
-  return `${farm.chainId}:${farm.id}`
+  return `${farm.chainId}:${farm.id}`.toLowerCase()
 }
 
 export const fillClPoolData = memoizeAsync(
@@ -211,6 +211,7 @@ export const fillBinPoolData = memoizeAsync(
   async (farm: FarmInfo) => {
     const chainId = farm.chainId as ChainId
     const poolId = farm.id as Address
+    console.log(`[fill]`, farm.id)
     const poolManagerAddress = getPoolManagerAddress('Bin', chainId)
     const calls = [
       {

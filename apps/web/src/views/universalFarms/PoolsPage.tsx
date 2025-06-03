@@ -113,6 +113,7 @@ export const PoolsPage = () => {
 
   const list = _list.unwrapOr([])
   const pending = _list.isPending() && list.length === 0
+  console.log(`[page]`, list)
 
   return (
     <FarmSearchContextProvider>

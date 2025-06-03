@@ -29,10 +29,11 @@ export const InfinityFeeTierBreakdown = ({
   const [, pool] = usePoolById(poolId, chainId, enabled)
   const farm = poolInfo?.farm
 
-  if (!pool && !farm) {
+  const info = farm ? getPoolInfoForInfiFee(farm) : pool
+  console.log(`[page]`, { info, pool })
+  if (!info) {
     return null
   }
-  const info = farm ? getPoolInfoForInfiFee(farm) : pool
   return (
     <InfinityFeeTierBreakdownDisplay
       pool={info!}
