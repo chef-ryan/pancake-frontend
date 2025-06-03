@@ -208,10 +208,9 @@ async function queryFarms(extend: boolean) {
     }, {} as Record<Address, number | undefined>)
     const universalFarmPools = universalFarms.map((x) => toRemotePool(x))
 
-    const all = (extend ? [...pools, ...universalFarmPools] : pools)
+    const all = (extend ? [...pools] : [...pools, ...universalFarmPools])
       .map(normalizeAddress)
       .filter((x) => x) as InfinityRouter.RemotePoolBase[]
-    console.log(all[0])
 
     const allPools = uniqBy(all, (p) => `${p.chainId}:${p.id}`).map((pool) => {
       const remotePool = InfinityRouter.parseRemotePool(pool as InfinityRouter.RemotePool)
@@ -235,7 +234,7 @@ async function queryFarms(extend: boolean) {
         apr24h: Number(pool.apr24h || 0),
         isDynamicFee: pool.isDynamicFee,
         feeTier: pool.feeTier,
-        lpAddress,
+        lpAddress: lpAddress || pool.id,
       } as SerializedFarmInfo
     })
     return allPools
@@ -250,7 +249,7 @@ async function fetchAllExplorerPools(protocols: Protocol[], chains: FarmV4Suppor
     baseUrl: `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`,
     protocols,
     chains: chains.map((chain) => getEdgeChainName(chain)),
-    maxPages: 10,
+    maxPages: 5,
   }
   const pools = await edgeQueries.fetchAllPools(query)
   return pools
