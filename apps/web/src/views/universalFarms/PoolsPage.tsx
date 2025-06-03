@@ -66,7 +66,7 @@ export const PoolsPage = () => {
         ...newFilters,
       })
     },
-    [replaceURLQueriesByFilter, poolsFilter, sortOrder, sortField],
+    [replaceURLQueriesByFilter, poolsFilter, sortOrder, sortField, selectedProtocolIndex],
   )
 
   const handleSort = useCallback(
@@ -113,7 +113,6 @@ export const PoolsPage = () => {
 
   const list = _list.unwrapOr([])
   const pending = _list.isPending() && list.length === 0
-  console.log(`[page]`, list)
 
   return (
     <FarmSearchContextProvider>
