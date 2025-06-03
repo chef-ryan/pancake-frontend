@@ -1,3 +1,4 @@
+import { isTestnetChainId } from '@pancakeswap/chains'
 import { SmartRouter } from '@pancakeswap/smart-router'
 import { Loadable } from '@pancakeswap/utils/Loadable'
 import uniqBy from '@pancakeswap/utils/uniqBy'
@@ -18,6 +19,7 @@ import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
 import { FarmInfo, farmToPoolInfo, SerializedFarmInfo } from 'state/farmsV4/search/farm.util'
 import { farmFilters } from 'state/farmsV4/search/filters'
 import { PoolInfo } from 'state/farmsV4/state/type'
+import { userShowTestnetAtom } from 'state/user/hooks/useUserShowTestnet'
 
 async function fetchFarmList(extend: boolean, protocol?: Protocol) {
   const queryStr = qs.stringify({
@@ -59,7 +61,15 @@ const searchAtom = atomFamily((query: FarmQuery) => {
   return atomWithLoadable(
     async (get) => {
       try {
-        const { protocols, chains, sortBy, activeChainId } = query
+        const { protocols, chains: _chains, sortBy, activeChainId } = query
+        const useShowTestnet = get(userShowTestnetAtom)
+        const chains = _chains.filter((chain) => {
+          if (isTestnetChainId(chain) && !useShowTestnet) {
+            return false
+          }
+          return true
+        })
+
         const protocol = protocols.length === 1 ? protocols[0] : undefined
         const lists = await Promise.all([get(farmListAtom), get(extendListAtom(protocol))])
         const allPending = lists.every((x) => x.isPending())
@@ -87,6 +97,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
           return farmInfo
         })
 
+        console.log(`[query]`, chains)
         const filtered = farmFilters.search(
           farms.filter(farmFilters.chainFilter(chains)).filter(farmFilters.protocolFilter(protocols)),
           query.keywords,
