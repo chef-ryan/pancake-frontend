@@ -101,6 +101,14 @@ export class Loadable<T> {
     if (this.isNothing()) {
       return Loadable.Nothing<U>()
     }
+    if (this.value !== undefined) {
+      try {
+        const newValue = fn(this.value)
+        return Loadable.Pending(newValue)
+      } catch (error) {
+        return Loadable.Fail<U>(error)
+      }
+    }
     return Loadable.Pending<U>()
   }
 
@@ -118,6 +126,14 @@ export class Loadable<T> {
     }
     if (this.isNothing()) {
       return Loadable.Nothing<U>()
+    }
+    if (this.value !== undefined) {
+      try {
+        const newValue = await fn(this.value)
+        return Loadable.Pending(newValue)
+      } catch (error) {
+        return Loadable.Fail<U>(error)
+      }
     }
     return Loadable.Pending<U>()
   }

@@ -21,10 +21,11 @@ import { farmFilters } from 'state/farmsV4/search/filters'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { userShowTestnetAtom } from 'state/user/hooks/useUserShowTestnet'
 
-async function fetchFarmList(extend: boolean, protocols?: Protocol[]) {
+async function fetchFarmList(extend: boolean, protocols?: Protocol[], address?: string) {
   const queryStr = qs.stringify({
     extend: extend ? 1 : undefined,
     protocols: protocols ? protocols.join(',') : undefined,
+    address,
   })
   const url = `/api/farm/list?${queryStr}`
   const response = await fetch(url, {
@@ -53,13 +54,14 @@ const hashProtocol = (protocols: Protocol[]) => {
   return list.join(',')
 }
 const extendListAtom = atomFamily(
-  (protocols: Protocol[]) => {
+  (params: { protocols: Protocol[]; address?: string }) => {
+    const { protocols, address } = params
     return atomWithLoadable<SerializedFarmInfo[]>(async () => {
-      return fetchFarmList(true, protocols)
+      return fetchFarmList(true, protocols, address)
     })
   },
   (a, b) => {
-    return hashProtocol(a) === hashProtocol(b)
+    return hashProtocol(a.protocols) === hashProtocol(b.protocols) && a.address === b.address
   },
 )
 
@@ -67,61 +69,71 @@ export const farmsSearchPagingAtom = atomFamily((_: FarmQuery) => {
   return atom(0)
 }, isEqual)
 
+const IS_ADDRESS_REG = /^0x[a-fA-F0-9]{40,64}$/
+
 const searchAtom = atomFamily((query: FarmQuery) => {
-  return atomWithLoadable(
-    async (get) => {
-      try {
-        const { protocols, chains: _chains, sortBy, activeChainId } = query
-        const useShowTestnet = get(userShowTestnetAtom)
-        const chains = _chains.filter((chain) => {
-          if (isTestnetChainId(chain) && !useShowTestnet) {
-            return false
-          }
-          return true
-        })
-
-        const lists = await Promise.all([get(farmListAtom), get(extendListAtom(protocols))])
-        const allPending = lists.every((x) => x.isPending())
-        if (allPending) {
-          return Loadable.Pending<FarmInfo[]>()
-        }
-
-        const farms = uniqBy(
-          lists
-            .filter((x) => x.isJust())
-            .map((x) => x.unwrap())
-            .flat(),
-          (item) => `${item.chainId}:${item.id}`.toLowerCase(),
-        ).map((farm) => {
-          const { pool, chainId, vol24hUsd, ...rest } = farm
-          const farmInfo = {
-            chainId: farm.chainId,
-            tvlUsd: 0,
-            ...rest,
-            feeTierBase: 1e6,
-            vol24hUsd: farm.vol24hUsd,
-            pool: SmartRouter.Transformer.parsePool(farm.chainId, farm.pool),
-          } as FarmInfo
-
-          return farmInfo
-        })
-
-        console.log(`[query]`, chains)
-        const filtered = farmFilters.search(
-          farms.filter(farmFilters.chainFilter(chains)).filter(farmFilters.protocolFilter(protocols)),
-          query.keywords,
-        )
-        const sorted = farmFilters.sortFunction(filtered, sortBy, activeChainId)
-        return sorted
-      } catch (ex) {
-        console.error('Error fetching farms:', ex)
-        throw ex
+  return atom((get) => {
+    const { protocols, chains: _chains, sortBy, activeChainId, keywords } = query
+    const useShowTestnet = get(userShowTestnetAtom)
+    const chains = _chains.filter((chain) => {
+      if (isTestnetChainId(chain) && !useShowTestnet) {
+        return false
       }
-    },
-    {
-      placeHolderBehavior: 'stale',
-    },
-  )
+      return true
+    })
+
+    const lists = [
+      get(farmListAtom),
+      get(
+        extendListAtom({
+          protocols,
+        }),
+      ),
+    ]
+    if (IS_ADDRESS_REG.test(keywords.trim())) {
+      lists.push(
+        get(
+          extendListAtom({
+            protocols,
+            address: keywords.trim(),
+          }),
+        ),
+      )
+    }
+
+    const farms = uniqBy(
+      lists
+        .filter((x) => x.hasValue())
+        .map((x) => x.unwrapOr([]))
+        .flat(),
+      (item) => `${item.chainId}:${item.id}`.toLowerCase(),
+    ).map((farm) => {
+      const { pool, chainId, vol24hUsd, ...rest } = farm
+      const farmInfo = {
+        chainId: farm.chainId,
+        tvlUsd: 0,
+        ...rest,
+        feeTierBase: 1e6,
+        vol24hUsd: farm.vol24hUsd,
+        pool: SmartRouter.Transformer.parsePool(farm.chainId, farm.pool),
+      } as FarmInfo
+
+      return farmInfo
+    })
+
+    const filtered = farmFilters.search(
+      farms.filter(farmFilters.chainFilter(chains)).filter(farmFilters.protocolFilter(protocols)),
+      query.keywords,
+    )
+    const sorted = farmFilters.sortFunction(filtered, sortBy, activeChainId)
+
+    const hasPending = lists.some((x) => x.isPending())
+
+    if (hasPending) {
+      return Loadable.Pending(sorted)
+    }
+    return Loadable.Just(sorted)
+  })
 }, isEqual)
 
 const farmsWithPagingAtom = atomFamily((query) => {

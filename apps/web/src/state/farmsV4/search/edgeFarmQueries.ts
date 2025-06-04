@@ -260,7 +260,7 @@ async function fetchAllExplorerPools(protocols: Protocol[], chains: typeof suppo
     baseUrl: `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`,
     protocols,
     chains: chains.map((chain) => getEdgeChainName(chain)),
-    maxPages: 5,
+    maxPages: 3, // Max check 3 pages for random extending
   }
   const pools = await edgeQueries.fetchAllPools(query)
   return pools
