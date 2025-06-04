@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { getFarmKey } from 'state/farmsV4/search/farm.util'
 import { PoolInfo } from 'state/farmsV4/state/type'
+import { useListStateReady } from 'state/lists/lists'
 import { farmsSearchAtom, farmsSearchPagingAtom } from './atom/farmsSearchAtom'
 import { searchQueryAtom, updateFilterAtom, updateSortAtom } from './atom/searchQueryAtom'
 import {
@@ -33,6 +34,7 @@ export const PoolsPage = () => {
 
   const updateFilter = useSetAtom(updateFilterAtom)
   const query = useAtomValue(searchQueryAtom)
+  const isReady = useListStateReady()
 
   useEffect(() => {
     const params = farmQueryToUrlParams(query)
@@ -67,9 +69,11 @@ export const PoolsPage = () => {
           </PoolsFilterPanel>
         </CardHeader>
         <CardBody>
-          <Suspense fallback={null}>
-            <List />
-          </Suspense>
+          {isReady && (
+            <Suspense fallback={null}>
+              <List />
+            </Suspense>
+          )}
         </CardBody>
       </Card>
     </FarmSearchContextProvider>

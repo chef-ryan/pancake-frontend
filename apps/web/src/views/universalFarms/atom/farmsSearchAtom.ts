@@ -1,5 +1,6 @@
 import { ChainId, isTestnetChainId } from '@pancakeswap/chains'
 import { SmartRouter } from '@pancakeswap/smart-router'
+import { TokenInfo } from '@pancakeswap/token-lists'
 import { Loadable } from '@pancakeswap/utils/Loadable'
 import uniqBy from '@pancakeswap/utils/uniqBy'
 import { atom } from 'jotai'
@@ -19,6 +20,7 @@ import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
 import { FarmInfo, farmToPoolInfo, getFarmKey, SerializedFarmInfo } from 'state/farmsV4/search/farm.util'
 import { farmFilters } from 'state/farmsV4/search/filters'
 import { PoolInfo } from 'state/farmsV4/state/type'
+import { tokenBySymbolAtom } from 'state/lists/lists'
 import { userShowTestnetAtom } from 'state/user/hooks/useUserShowTestnet'
 
 async function fetchFarmList(extend: boolean, protocols?: Protocol[], address?: string) {
@@ -74,6 +76,13 @@ const searchAtom = atomFamily((query: FarmQuery) => {
 
     const lists = [get(farmListAtom)]
     if (activeChainId) {
+      const token: TokenInfo = get(
+        tokenBySymbolAtom({
+          symbol: keywords.trim(),
+          chainId: activeChainId,
+        }),
+      )
+      console.log(`[token]`, token)
       lists.push(
         get(
           extendListAtom({
@@ -82,6 +91,18 @@ const searchAtom = atomFamily((query: FarmQuery) => {
           }),
         ),
       )
+
+      if (token) {
+        lists.push(
+          get(
+            extendListAtom({
+              protocols,
+              chains: [activeChainId],
+              address: token.address as string,
+            }),
+          ),
+        )
+      }
 
       if (IS_ADDRESS_REG.test(keywords.trim())) {
         lists.push(
