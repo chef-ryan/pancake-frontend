@@ -80,7 +80,7 @@ const Page = styled(Page_)`
   }
 `
 
-const UniversalFarms: React.FC<PropsWithChildren> = () => {
+export const UniversalFarms: React.FC<PropsWithChildren> = () => {
   const { t } = useTranslation()
   const { tabIdx } = usePageInfo()
   const { isMobile, isMd } = useMatchBreakpoints()
@@ -133,5 +133,3 @@ const UniversalFarms: React.FC<PropsWithChildren> = () => {
     </>
   )
 }
-
-export default UniversalFarms
