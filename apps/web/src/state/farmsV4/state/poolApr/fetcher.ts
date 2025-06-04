@@ -171,7 +171,7 @@ const getV3PoolsCakeAprByChainId = async (pools: V3PoolInfo[], chainId: number, 
   if (!masterChefV3 || !client) return {}
 
   const validPools = pools.filter((pool) => {
-    return pool.pid && pool.chainId === chainId
+    return pool.pid && pool.chainId === chainId && pool.pid > 0
   })
 
   if (!validPools?.length) return {}
