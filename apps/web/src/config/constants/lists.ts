@@ -4,6 +4,7 @@ export const PANCAKE_EXTENDED = 'https://tokens.pancakeswap.finance/pancakeswap-
 
 const COINGECKO_BSC = 'https://tokens.coingecko.com/binance-smart-chain/all.json'
 const COINGECKO_ARB = 'https://tokens.coingecko.com/arbitrum-one/all.json'
+const COINGECKO_BASE = 'https://tokens.coingecko.com/base/all.json'
 export const PANCAKE_ETH_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-eth-default.json'
 export const PANCAKE_ZKSYNC_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-zksync-default.json'
 export const PANCAKE_POLYGON_ZKEVM_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-polygon-zkevm-default.json'
@@ -31,7 +32,7 @@ const ZKSYNC_URLS = [
 ]
 const OP_SUPER_CHAIN_URL =
   'https://raw.githubusercontent.com/ethereum-optimism/ethereum-optimism.github.io/master/optimism.tokenlist.json'
-const BASE_URLS = [PANCAKE_BASE_DEFAULT, OP_SUPER_CHAIN_URL, 'https://tokens.coingecko.com/base/all.json']
+const BASE_URLS = [PANCAKE_BASE_DEFAULT, OP_SUPER_CHAIN_URL, COINGECKO_BASE]
 const OPBNB_URLS = [PANCAKE_OPBNB_DEFAULT]
 const MONAD_TESTNET_URLS = [PANCAKE_MONAD_TESTNET_DEFAULT]
 
@@ -70,6 +71,8 @@ export const DEFAULT_ACTIVE_LIST_URLS: string[] = [
   OP_SUPER_CHAIN_URL,
   COINGECKO_BSC,
   COINGECKO_ETH,
+  COINGECKO_ARB,
+  COINGECKO_BASE,
   PANCAKE_MONAD_TESTNET_DEFAULT,
 ]
 
