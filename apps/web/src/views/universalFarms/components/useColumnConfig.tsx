@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Percent } from '@pancakeswap/swap-sdk-core'
+import { getCurrencyAddress, Percent } from '@pancakeswap/swap-sdk-core'
 import { Box, Grid, IColumnsType, ITableViewProps, Skeleton, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { FeeTierTooltip, FiatNumberDisplay, Liquidity, TokenOverview } from '@pancakeswap/widgets-internal'
 import { InfinityFeeTierBreakdown } from 'components/FeeTierBreakdown'
@@ -11,6 +11,7 @@ import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem'
 
 import { useHookByPoolId } from 'hooks/infinity/useHooksList'
+import { useTokenByChainId } from 'hooks/Tokens'
 import { getFarmAprInfo, getFarmHookData } from 'state/farmsV4/search/farm.util'
 import { getCurrencySymbol } from 'utils/getTokenAlias'
 import { getChainFullName } from '../utils'
@@ -170,26 +171,22 @@ export const usePoolFeatureConfig = (showPoolType = true) => {
 }
 
 export const PoolTokenOverview = <T extends PoolInfo = PoolInfo>({ data }: { data: T }) => {
+  const token0 = useTokenByChainId(getCurrencyAddress(data.token0), data.chainId) || data.token0
+  const token1 = useTokenByChainId(getCurrencyAddress(data.token1), data.chainId) || data.token1
+  console.log(`[token]`, token0, token1)
+
   const showReward = checkHasReward(data.chainId, data.lpAddress)
 
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <TokenOverview
         isReady
-        token={data.token0}
-        quoteToken={data.token1}
+        token={token0}
+        quoteToken={token1}
         iconWidth="48px"
         getChainName={getChainFullName}
         getCurrencySymbol={getCurrencySymbol}
-        icon={
-          <TokenPairLogo
-            width={44}
-            height={44}
-            variant="inverted"
-            primaryToken={data.token0}
-            secondaryToken={data.token1}
-          />
-        }
+        icon={<TokenPairLogo width={44} height={44} variant="inverted" primaryToken={token0} secondaryToken={token1} />}
       />
       {showReward && <RewardStatusDisplay />}
     </div>
