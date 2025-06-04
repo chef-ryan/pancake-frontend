@@ -110,29 +110,6 @@ const parseKeywords = (keywordStr: string) => {
     .map((k) => k.toLowerCase())
 }
 
-const filterKeywords = (keywordRaw?: string) => {
-  const keywords = parseKeywords(keywordRaw || '')
-  const matchedAddrKw = addressFilter.matcher(keywords)
-  const isMatchTag = tagFilter.matcher(keywords)
-  const isMatchSymbol = symbolFilter.matcher(keywords)
-
-  return (farm: FarmInfo) => {
-    if (!keywordRaw) return true
-
-    let match = false
-    if (matchedAddrKw) {
-      match = addressFilter.selector(farm, matchedAddrKw)
-    }
-    if (!match && isMatchTag) {
-      match = tagFilter.filter(farm, isMatchTag)
-    }
-    if (!match && isMatchSymbol) {
-      match = symbolFilter.filter(farm, isMatchSymbol)
-    }
-    return match
-  }
-}
-
 export type ChainNameKebab = (typeof chainNamesInKebabCase)[keyof typeof chainNamesInKebabCase]
 
 async function fetchExplorerFarmPools(protocols: Protocol[], chainIds: typeof supportedChainIdV4) {
@@ -301,5 +278,4 @@ async function fetchAllExplorerPoolsByAddress(chains: typeof supportedChainIdV4,
 
 export default {
   queryFarms,
-  filterKeywords,
 }
