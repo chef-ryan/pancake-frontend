@@ -158,15 +158,15 @@ const farmsWithFilledDataAtom = atomFamily((query) => {
       const sliced = get(farmsWithPagingAtom(query))
 
       return sliced.mapAsync(async (poolInfos) => {
-        const [cakeAprs, lpAprs, merklAprs] = await Promise.all([
+        const [cakeAprs, lpAprs, merklAprs] = await Promise.allSettled([
           batchGetCakeApr(poolInfos),
           batchGetLpAprData(poolInfos),
           batchGetMerklAprData(poolInfos),
         ])
 
-        const aggCakeAprs = keyBy(cakeAprs, (x) => x.id.toLowerCase())
-        const aggLpAprs = keyBy(lpAprs, (x) => x.id.toLowerCase())
-        const aggMerklAprs = keyBy(merklAprs, (x) => x.id.toLowerCase())
+        const aggCakeAprs = keyBy(cakeAprs.status === 'fulfilled' ? cakeAprs.value : [], (x) => x.id.toLowerCase())
+        const aggLpAprs = keyBy(lpAprs.status === 'fulfilled' ? lpAprs.value : [], (x) => x.id.toLowerCase())
+        const aggMerklAprs = keyBy(merklAprs.status === 'fulfilled' ? merklAprs.value : [], (x) => x.id.toLowerCase())
 
         return poolInfos.map((poolInfo) => {
           const { farm, ...others } = poolInfo
