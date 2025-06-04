@@ -46,7 +46,7 @@ const _getCurrencyLogoSrcs = (currency: Currency & { logoURI?: string | undefine
   const imageUrls = getImageUrlsFromToken(currency)
   const basicTokenImage = getBasicTokensImage(currency)
 
-  if (currency?.isNative) return []
+  if (currency?.isNative) return [getImageUrlFromToken(currency)]
   if (currency?.isToken) {
     const tokenLogoURL = getTokenLogoURL(currency as Token)
     if (currency instanceof WrappedTokenInfo) {
