@@ -167,6 +167,10 @@ export const safeGetAddress = (address: Address) => {
   }
 }
 
+export const getFarmKey = (farm: Pick<FarmProps, 'chainId' | 'id'>) => {
+  return `${farm.chainId}:${farm.id}`.toLowerCase()
+}
+
 export const normalizeAddress = (pool: InfinityRouter.RemotePoolBase) => {
   if (pool.id) {
     const id = safeGetAddress(pool.id)

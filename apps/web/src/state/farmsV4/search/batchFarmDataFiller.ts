@@ -17,7 +17,7 @@ import { isInfinityProtocol } from 'utils/protocols'
 import { ContractFunctionReturnType } from 'viem'
 import { Address } from 'viem/accounts'
 import { createBatchProcessor, multicallBatcher } from './batchProcessor'
-import { FarmInfo, isValidPoolKeyResult, parsePoolKeyResult, parseSlot0 } from './farm.util'
+import { FarmInfo, getFarmKey, isValidPoolKeyResult, parsePoolKeyResult, parseSlot0 } from './farm.util'
 
 interface FillItem<T> {
   id: string
@@ -66,7 +66,7 @@ async function batchGetInfinityCakeApr(pools: PoolInfo[]) {
       tvlUSD: `${farm.tvlUSD}`,
     })
     result.push({
-      id: `${farm.chainId}:${farm.id}`,
+      id: getFarmKey(farm),
       value: cakeApr,
     })
   }
@@ -82,11 +82,11 @@ async function batchGetOtherCakeApr(pools: PoolInfo[]) {
   )
   return pools.map((pool, index) => {
     const farm = pool.farm!
-    const key = `${farm.chainId}:${farm.id}`
+    const key = getFarmKey(farm)
     const result = aprs[index]
     const apr = result[key] as CakeAprValue
     return {
-      id: `${farm.chainId}:${farm.id}`,
+      id: getFarmKey(farm),
       value: apr,
     } as FillItem<CakeAprValue>
   })
@@ -129,7 +129,7 @@ export async function batchGetLpAprData(pools: PoolInfo[]) {
     const farm = pool.farm!
     const apr = result.status === 'fulfilled' ? `${result.value}` : '0'
     return {
-      id: `${farm.chainId}:${farm.id}`,
+      id: getFarmKey(farm),
       value: Number(apr),
     }
   })
@@ -145,7 +145,7 @@ export async function batchGetMerklAprData(pools: PoolInfo[]) {
     const key = `${farm.chainId}-${farm.id}`
     const merklApr = aprs[key] || '0'
     return {
-      id: `${farm.chainId}:${farm.id}`,
+      id: getFarmKey(farm),
       value: merklApr,
     }
   })
@@ -158,7 +158,7 @@ type CLPoolCallsResult = [
 ]
 
 const resolveFarm = (farm: FarmInfo) => {
-  return `${farm.chainId}:${farm.id}`.toLowerCase()
+  return getFarmKey(farm)
 }
 
 export const fillClPoolData = memoizeAsync(

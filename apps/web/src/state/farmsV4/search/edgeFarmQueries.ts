@@ -7,7 +7,7 @@ import {
   UniversalFarmConfig,
 } from '@pancakeswap/farms'
 import { getCurrencyAddress, Pair } from '@pancakeswap/sdk'
-import { InfinityBinPool, InfinityClPool, InfinityRouter, SmartRouter } from '@pancakeswap/smart-router'
+import { InfinityRouter, SmartRouter } from '@pancakeswap/smart-router'
 
 import { SORT_ORDER } from '@pancakeswap/uikit'
 import uniqBy from '@pancakeswap/utils/uniqBy'
@@ -16,9 +16,8 @@ import { edgeQueries } from 'quoter/utils/edgePoolQueries'
 import { APIChain, getEdgeChainName } from 'quoter/utils/edgeQueries.util'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { explorerApiClient } from 'state/info/api/client'
-import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem/accounts'
-import { FarmInfo, getFarmTokens, isDynamic, normalizeAddress, safeGetAddress, SerializedFarmInfo } from './farm.util'
+import { normalizeAddress, safeGetAddress, SerializedFarmInfo } from './farm.util'
 
 const DEFAULT_PROTOCOLS: Protocol[] = Object.values(Protocol)
 export interface FarmQuery {
@@ -52,62 +51,6 @@ function getPoolId(farm: UniversalFarmConfig) {
     return farm.poolId
   }
   throw new Error(`Unsupported protocol: ${farm.protocol}`)
-}
-
-const addressFilter = {
-  matcher: (keywords: string[]) => {
-    return keywords.find((keyword) => keyword.match(/^0x/) && keyword.length > 6)
-  },
-  selector: (farm: FarmInfo, keyword: string) => {
-    const [token0, token1] = getFarmTokens(farm)
-    const addresses = [farm.id, getCurrencyAddress(token0), getCurrencyAddress(token1)]
-    return addresses.some((address) => address.toLowerCase().includes(keyword))
-  },
-}
-
-const tagFilter = {
-  matcher: (keywords: string[]) => {
-    const tags = ['dynamic', 'clamm', 'cbamm']
-    return keywords.find((kw) => {
-      return tags.some((tag) => tag.startsWith(kw))
-    })
-  },
-  filter: (farm: FarmInfo, keyword: string) => {
-    if (!isInfinityProtocol(farm.protocol)) {
-      return false
-    }
-    const { pool } = farm
-
-    if ('dynamic'.startsWith(keyword)) {
-      return isDynamic(pool as InfinityClPool | InfinityBinPool)
-    }
-    if ('clamm'.startsWith(keyword)) {
-      return farm.protocol === 'infinityCl'
-    }
-    if ('cbamm'.startsWith(keyword)) {
-      return farm.protocol === 'infinityBin'
-    }
-    return false
-  },
-}
-
-const symbolFilter = {
-  matcher: (keywords: string[]) => {
-    return keywords.find((kw) => kw.match(/^[a-zA-Z0-9/]+$/))
-  },
-  filter: (farm: FarmInfo, keyword: string) => {
-    const [token0, token1] = getFarmTokens(farm)
-    const symbol = [token0.symbol, token1.symbol].join('/')
-    return symbol.toLowerCase().includes(keyword.toLowerCase())
-  },
-}
-
-const parseKeywords = (keywordStr: string) => {
-  return keywordStr
-    .split(/[,\s]/)
-    .map((x) => x.trim())
-    .filter((x) => x)
-    .map((k) => k.toLowerCase())
 }
 
 export type ChainNameKebab = (typeof chainNamesInKebabCase)[keyof typeof chainNamesInKebabCase]

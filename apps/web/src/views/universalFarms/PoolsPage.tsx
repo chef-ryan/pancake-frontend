@@ -5,6 +5,7 @@ import { Suspense, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 
 import { useAtomValue, useSetAtom } from 'jotai'
+import { getFarmKey } from 'state/farmsV4/search/farm.util'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { farmsSearchAtom, farmsSearchPagingAtom } from './atom/farmsSearchAtom'
 import { searchQueryAtom, updateFilterAtom, updateSortAtom } from './atom/searchQueryAtom'
@@ -103,7 +104,7 @@ const List = () => {
 
   const getRowKey = useCallback((item: PoolInfo) => {
     const farm = item.farm!
-    return `${farm.chainId}:${farm.id}`
+    return getFarmKey(farm)
   }, [])
 
   const setPaging = useSetAtom(farmsSearchPagingAtom(query))

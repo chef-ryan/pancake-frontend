@@ -16,7 +16,7 @@ import {
   fillOnchainPoolData,
 } from 'state/farmsV4/search/batchFarmDataFiller'
 import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
-import { FarmInfo, farmToPoolInfo, SerializedFarmInfo } from 'state/farmsV4/search/farm.util'
+import { FarmInfo, farmToPoolInfo, getFarmKey, SerializedFarmInfo } from 'state/farmsV4/search/farm.util'
 import { farmFilters } from 'state/farmsV4/search/filters'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { userShowTestnetAtom } from 'state/user/hooks/useUserShowTestnet'
@@ -170,7 +170,7 @@ const farmsWithFilledDataAtom = atomFamily((query) => {
 
         return poolInfos.map((poolInfo) => {
           const { farm, ...others } = poolInfo
-          const id = `${farm!.chainId}:${farm!.id}`.toLowerCase()
+          const id = getFarmKey(farm!)
           const cakeApr = aggCakeAprs[id]?.value || '0'
           const lpApr = `${aggLpAprs[id]?.value || farm?.apr24h || '0'}`
           const merklApr = aggMerklAprs[id]?.value || '0'
