@@ -244,6 +244,10 @@ export const isValidPoolKeyResult = (
 
 export function parseFarmSearchQuery(raw: string) {
   const queryParsed = qs.parse(raw)
+  let address = queryParsed.address as string | undefined
+  if (address && !/^0x[a-fA-F0-9]+$/.test(address)) {
+    address = undefined
+  }
   const protocols = ((queryParsed.protocols as string) || '').split(',').filter((x) => x) as Protocol[]
   console.log(protocols)
   for (const protocol of protocols) {
@@ -255,5 +259,6 @@ export function parseFarmSearchQuery(raw: string) {
   return {
     extend: Boolean(queryParsed.extend),
     protocols,
+    address,
   }
 }
