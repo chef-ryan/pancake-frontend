@@ -55,8 +55,8 @@ function getPoolId(farm: UniversalFarmConfig) {
 
 export type ChainNameKebab = (typeof chainNamesInKebabCase)[keyof typeof chainNamesInKebabCase]
 
-async function fetchExplorerFarmPools(protocols: Protocol[], chainIds: typeof supportedChainIdV4) {
-  const chains = chainIds.map((chainId) => getEdgeChainName(chainId as FarmV4SupportedChainId))
+async function fetchExplorerFarmPools(protocols: Protocol[], chainIds: FarmV4SupportedChainId[]) {
+  const chains = chainIds.map((chainId) => getEdgeChainName(chainId))
   const resp = await explorerApiClient.GET('/cached/pools/farming', {
     params: {
       query: {
@@ -107,25 +107,34 @@ function toRemotePool(farm: UniversalFarmConfig) {
   return poolBase
 }
 
-async function fetchFarms(query: { extend: boolean; protocols: Protocol[]; address?: string }) {
+async function fetchFarms(query: {
+  extend: boolean
+  protocols: Protocol[]
+  chains: FarmV4SupportedChainId[]
+  address?: string
+}) {
   // const protocols = DEFAULT_PROTOCOLS
-  const { extend, protocols: _protocols, address } = query
+  const { extend, protocols: _protocols, address, chains } = query
   const protocols = _protocols.length > 0 ? _protocols : DEFAULT_PROTOCOLS
+  const chainIds = chains.length > 0 ? chains : supportedChainIdV4
   if (!extend) {
-    return fetchExplorerFarmPools(protocols, supportedChainIdV4)
+    return fetchExplorerFarmPools(protocols, Array.from(chainIds))
   }
   if (address) {
-    return fetchAllExplorerPoolsByAddress(supportedChainIdV4, address)
+    return fetchAllExplorerPoolsByAddress(Array.from(chainIds), address)
   }
-  return fetchAllExplorerPools(protocols, supportedChainIdV4)
+  return fetchAllExplorerPools(protocols, Array.from(chainIds))
 }
 
-async function queryFarms(extend: boolean, protocols: Protocol[], address?: string) {
+async function queryFarms(query: {
+  extend: boolean
+  protocols: Protocol[]
+  chains: FarmV4SupportedChainId[]
+  address?: string
+}) {
   try {
-    const [pools, universalFarms] = await Promise.all([
-      fetchFarms({ extend, protocols, address }),
-      fetchAllUniversalFarms(),
-    ])
+    const { extend } = query
+    const [pools, universalFarms] = await Promise.all([fetchFarms(query), fetchAllUniversalFarms()])
 
     const farmMaps = universalFarms.reduce((acc, farm) => {
       const id = getPoolId(farm)
@@ -175,18 +184,25 @@ async function queryFarms(extend: boolean, protocols: Protocol[], address?: stri
   }
 }
 
-async function fetchAllExplorerPools(protocols: Protocol[], chains: typeof supportedChainIdV4) {
-  const query = {
+async function fetchAllExplorerPools(protocols: Protocol[], chains: FarmV4SupportedChainId[]) {
+  const queries = protocols.map((protocol) => ({
     baseUrl: `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`,
-    protocols,
+    protocols: [protocol],
     chains: chains.map((chain) => getEdgeChainName(chain)),
-    maxPages: 3, // Max check 3 pages for random extending
-  }
-  const pools = await edgeQueries.fetchAllPools(query)
-  return pools
+    maxPages: 1, // Max check 3 pages for random extending
+  }))
+  const poolQueries = queries.map((query) => edgeQueries.fetchAllPools(query))
+  const pools = await Promise.allSettled(poolQueries)
+  const poolResults = pools
+    .filter((result) => result.status === 'fulfilled')
+    .flatMap((result) => (result as PromiseFulfilledResult<InfinityRouter.RemotePoolBase[]>).value)
+    .map(normalizeAddress)
+    .filter((x) => x) as InfinityRouter.RemotePoolBase[]
+
+  return uniqBy(poolResults, (p) => `${p.chainId}:${p.id}`)
 }
 
-async function fetchAllExplorerPoolsByAddress(chains: typeof supportedChainIdV4, address: string) {
+async function fetchAllExplorerPoolsByAddress(chains: FarmV4SupportedChainId[], address: string) {
   const baseUrl = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`
   const protocolsSet = [
     ['v2', 'v3', 'stable'],

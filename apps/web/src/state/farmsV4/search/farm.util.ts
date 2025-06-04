@@ -15,6 +15,7 @@ import { Currency } from '@pancakeswap/swap-sdk-core'
 import { InfinityFeeTierPoolParams } from 'hooks/infinity/useInfinityFeeTier'
 import qs from 'qs'
 import { ALLOWED_PROTOCOLS } from 'quoter/utils/edgeQueries.util'
+import { supportedChainIdV4 } from '@pancakeswap/farms'
 import { CakeAprValue } from 'state/farmsV4/atom'
 import { AprInfo } from 'state/farmsV4/hooks'
 import { BasePoolInfo, PoolInfo } from 'state/farmsV4/state/type'
@@ -249,14 +250,25 @@ export const isValidPoolKeyResult = (
 export function parseFarmSearchQuery(raw: string) {
   const queryParsed = qs.parse(raw)
   let address = queryParsed.address as string | undefined
-  if (address && !/^0x[a-fA-F0-9]+$/.test(address)) {
+  if (address && !/^0x[a-fA-F0-9]{40}$/.test(address)) {
     address = undefined
   }
   const protocols = ((queryParsed.protocols as string) || '').split(',').filter((x) => x) as Protocol[]
-  console.log(protocols)
   for (const protocol of protocols) {
     if (ALLOWED_PROTOCOLS.indexOf(protocol) === -1) {
       throw new Error('Invalid protocol')
+    }
+  }
+
+  const chains = ((queryParsed.chains as string) || '')
+    .split(',')
+    .filter((x) => x)
+    .map((c) => Number(c))
+    .filter((c) => !Number.isNaN(c)) as ChainId[]
+
+  for (const chainId of chains) {
+    if (!supportedChainIdV4.includes(chainId as any)) {
+      throw new Error('Invalid chainId')
     }
   }
 
@@ -264,5 +276,6 @@ export function parseFarmSearchQuery(raw: string) {
     extend: Boolean(queryParsed.extend),
     protocols,
     address,
+    chains,
   }
 }

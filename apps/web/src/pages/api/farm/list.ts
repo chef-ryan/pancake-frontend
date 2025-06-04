@@ -11,7 +11,12 @@ export default async function handler(req: NextRequest) {
   try {
     const query = parseFarmSearchQuery(raw)
 
-    const pools = await edgeFarmQueries.queryFarms(query.extend, query.protocols || [], query.address)
+    const pools = await edgeFarmQueries.queryFarms({
+      extend: query.extend,
+      protocols: query.protocols || [],
+      address: query.address,
+      chains: query.chains,
+    })
 
     return NextResponse.json(
       {

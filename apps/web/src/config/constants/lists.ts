@@ -5,6 +5,7 @@ export const PANCAKE_EXTENDED = 'https://tokens.pancakeswap.finance/pancakeswap-
 const COINGECKO_BSC = 'https://tokens.coingecko.com/binance-smart-chain/all.json'
 const COINGECKO_ARB = 'https://tokens.coingecko.com/arbitrum-one/all.json'
 const COINGECKO_BASE = 'https://tokens.coingecko.com/base/all.json'
+const COINGECKO_LINEA = 'https://tokens.coingecko.com/linea/all.json'
 export const PANCAKE_ETH_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-eth-default.json'
 export const PANCAKE_ZKSYNC_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-zksync-default.json'
 export const PANCAKE_POLYGON_ZKEVM_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-polygon-zkevm-default.json'
@@ -25,7 +26,7 @@ const POLYGON_ZKEVM_URLS = [
   // 'https://tokens.coingecko.com/polygon-zkevm/all.json'
 ]
 const ARBITRUM_URLS = [PANCAKE_ARB_DEFAULT, COINGECKO_ARB]
-const LINEA_URLS = [PANCAKE_LINEA_DEFAULT, 'https://tokens.coingecko.com/linea/all.json']
+const LINEA_URLS = [PANCAKE_LINEA_DEFAULT, COINGECKO_LINEA]
 const ZKSYNC_URLS = [
   PANCAKE_ZKSYNC_DEFAULT,
   // 'https://tokens.coingecko.com/zksync/all.json'
@@ -74,6 +75,7 @@ export const DEFAULT_ACTIVE_LIST_URLS: string[] = [
   COINGECKO_ARB,
   COINGECKO_BASE,
   PANCAKE_MONAD_TESTNET_DEFAULT,
+  COINGECKO_LINEA,
 ]
 
 export const MULTI_CHAIN_LIST_URLS: { [chainId: number]: string[] } = {

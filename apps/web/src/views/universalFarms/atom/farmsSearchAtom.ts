@@ -1,4 +1,4 @@
-import { isTestnetChainId } from '@pancakeswap/chains'
+import { ChainId, isTestnetChainId } from '@pancakeswap/chains'
 import { SmartRouter } from '@pancakeswap/smart-router'
 import { Loadable } from '@pancakeswap/utils/Loadable'
 import uniqBy from '@pancakeswap/utils/uniqBy'
@@ -48,22 +48,12 @@ const farmListAtom = atomWithLoadable<SerializedFarmInfo[]>(async () => {
   return fetchFarmList(false)
 })
 
-const hashProtocol = (protocols: Protocol[]) => {
-  const list = [...protocols]
-  list.sort()
-  return list.join(',')
-}
-const extendListAtom = atomFamily(
-  (params: { protocols: Protocol[]; address?: string }) => {
-    const { protocols, address } = params
-    return atomWithLoadable<SerializedFarmInfo[]>(async () => {
-      return fetchFarmList(true, protocols, address)
-    })
-  },
-  (a, b) => {
-    return hashProtocol(a.protocols) === hashProtocol(b.protocols) && a.address === b.address
-  },
-)
+const extendListAtom = atomFamily((params: { protocols: Protocol[]; chains: ChainId[]; address?: string }) => {
+  const { protocols, address } = params
+  return atomWithLoadable<SerializedFarmInfo[]>(async () => {
+    return fetchFarmList(true, protocols, address)
+  })
+}, isEqual)
 
 export const farmsSearchPagingAtom = atomFamily((_: FarmQuery) => {
   return atom(0)
@@ -82,23 +72,28 @@ const searchAtom = atomFamily((query: FarmQuery) => {
       return true
     })
 
-    const lists = [
-      get(farmListAtom),
-      get(
-        extendListAtom({
-          protocols,
-        }),
-      ),
-    ]
-    if (IS_ADDRESS_REG.test(keywords.trim())) {
+    const lists = [get(farmListAtom)]
+    if (activeChainId) {
       lists.push(
         get(
           extendListAtom({
             protocols,
-            address: keywords.trim(),
+            chains: [activeChainId],
           }),
         ),
       )
+
+      if (IS_ADDRESS_REG.test(keywords.trim())) {
+        lists.push(
+          get(
+            extendListAtom({
+              protocols,
+              address: keywords.trim(),
+              chains: [activeChainId],
+            }),
+          ),
+        )
+      }
     }
 
     const farms = uniqBy(
