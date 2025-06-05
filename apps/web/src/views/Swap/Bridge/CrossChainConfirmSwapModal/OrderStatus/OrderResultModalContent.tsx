@@ -234,7 +234,15 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
         maxWidth={[null, null, null, '420px']}
       >
         {displayInfo && bridgeStatus && resultCurrencyAmount && (
-          <Message variant={displayInfo.status === BridgeStatus.SUCCESS ? 'success' : 'danger'}>
+          <Message
+            variant={
+              displayInfo.status === BridgeStatus.SUCCESS
+                ? 'success'
+                : displayInfo.status === BridgeStatus.PARTIAL_SUCCESS
+                ? 'secondary'
+                : 'danger'
+            }
+          >
             <Description
               currencyAmount={resultCurrencyAmount}
               description={
