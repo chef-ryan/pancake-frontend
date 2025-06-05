@@ -24,7 +24,9 @@ const _fetchPools = async function <T>(
   })
 
   const queryApi = async () => {
-    const res = await fetch(`/api/pools/candidates?${query}`, {
+    const endpoint = process.env.NEXT_PUBLIC_CANDIDATES_ENDPOINT || ''
+    const api = `${endpoint}/api/pools/candidates`
+    const res = await fetch(`${api}?${query}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
