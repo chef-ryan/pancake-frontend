@@ -24,7 +24,7 @@ const _fetchPools = async function <T>(
   })
 
   const queryApi = async () => {
-    const endpoint = process.env.NEXT_PUBLIC_CANDIDATES_ENDPOINT || ''
+    const endpoint = process.env.NEXT_PUBLIC_EDGE_ENDPOINT || ''
     const api = `${endpoint}/api/pools/candidates`
     const res = await fetch(`${api}?${query}`, {
       method: 'GET',

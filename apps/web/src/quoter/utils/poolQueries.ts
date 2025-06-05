@@ -113,7 +113,7 @@ export const poolQueriesFactory = memoize((chainId: ChainId) => {
 
   const fetchTvMap = cacheByLRU(
     async (protocol: EdgeProtocol[], chainId: ChainId) => {
-      const endpoint = process.env.NEXT_PUBLIC_CANDIDATES_ENDPOINT || ''
+      const endpoint = process.env.NEXT_PUBLIC_EDGE_ENDPOINT || ''
       const api = `${endpoint}/api/pools/tvlref`
       const url = `${api}?protocol=${protocol.join(',')}&chainId=${chainId}`
       const res = await fetch(url, {
