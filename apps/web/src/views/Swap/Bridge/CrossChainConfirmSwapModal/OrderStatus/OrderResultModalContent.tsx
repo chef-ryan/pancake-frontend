@@ -172,7 +172,7 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
   }, [bridgeStatus, order?.trade.outputAmount])
 
   const middleIcon = useMemo(() => {
-    switch (bridgeStatus?.status || metadata?.status) {
+    switch (bridgeStatus?.status) {
       case BridgeStatus.SUCCESS:
         return (
           <IconContainer>
