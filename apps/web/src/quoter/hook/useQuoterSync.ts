@@ -1,4 +1,5 @@
 import { useDebounce } from '@orbs-network/twap-ui/dist/hooks'
+import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import { POOLS_FAST_REVALIDATE } from 'config/pools'
@@ -7,6 +8,7 @@ import { useInputBasedAutoSlippageWithFallback } from 'hooks/useAutoSlippageWith
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { activeQuoteHashAtom } from 'quoter/atom/abortControlAtoms'
+import { bestCrossChainQuoteAtom } from 'quoter/atom/bestCrossChainAtom'
 import { baseAllTypeBestTradeAtom, pauseAtom, userTypingAtom } from 'quoter/atom/bestTradeUISyncAtom'
 import { updatePlaceholderAtom } from 'quoter/atom/placeholderAtom'
 import { QUOTE_REVALIDATE_TIME } from 'quoter/consts'
@@ -17,7 +19,6 @@ import { useCurrentBlock } from 'state/block/hooks'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { useAccount } from 'wagmi'
-import { bestQuoteAtom } from '../atom/bestQuoteAtom'
 import { quoteNonceAtom } from '../atom/revalidateAtom'
 import { createPoolQuery, createQuoteQuery } from '../utils/createQuoteQuery'
 import { useQuoteContext } from './QuoteContext'
@@ -29,12 +30,12 @@ export const useQuoterSync = () => {
   const {
     independentField,
     typedValue,
-    [Field.INPUT]: { currencyId: inputCurrencyId },
-    [Field.OUTPUT]: { currencyId: outputCurrencyId },
+    [Field.INPUT]: { currencyId: inputCurrencyId, chainId: inputCurrencyChainId },
+    [Field.OUTPUT]: { currencyId: outputCurrencyId, chainId: outputCurrencyChainId },
   } = debouncedSwapState
   const { address } = useAccount()
-  const inputCurrency = useCurrency(inputCurrencyId)
-  const outputCurrency = useCurrency(outputCurrencyId)
+  const inputCurrency = useCurrency(inputCurrencyId, inputCurrencyChainId)
+  const outputCurrency = useCurrency(outputCurrencyId, outputCurrencyChainId)
   const isExactIn = independentField === Field.INPUT
   const independentCurrency = isExactIn ? inputCurrency : outputCurrency
   const dependentCurrency = isExactIn ? outputCurrency : inputCurrency
@@ -58,9 +59,14 @@ export const useQuoterSync = () => {
 
   const { slippageTolerance: slippage } = useInputBasedAutoSlippageWithFallback(amount)
   const blockNumber = useCurrentBlock()
+  const destinationBlockNumber = useCurrentBlock(outputCurrencyChainId)
   const setActiveQuoteHash = useSetAtom(activeQuoteHashAtom)
   const [nonce, setNonce] = useAtom(quoteNonceAtom)
   const gasLimit = useAtomValue(multicallGasLimitAtom(chainId))
+  const gasLimitDestinationChain = useAtomValue(multicallGasLimitAtom(outputCurrencyChainId))
+
+  // NOTE: move support infinity check here so we could extends to cross chain swap
+  const infinitySupportByChain = INFINITY_SUPPORTED_CHAINS.includes(chainId)
 
   const quoteQueryInit = {
     amount,
@@ -71,13 +77,15 @@ export const useQuoterSync = () => {
     maxSplits: split ? undefined : 0,
     v2Swap,
     v3Swap,
-    infinitySwap,
+    infinitySwap: Boolean(infinitySupportByChain && infinitySwap),
     stableSwap,
     speedQuoteEnabled,
     xEnabled,
     slippage,
     address,
     blockNumber,
+    destinationBlockNumber,
+    gasLimitDestinationChain,
     nonce,
     for: 'main',
     gasLimit,
@@ -95,7 +103,10 @@ export const useQuoterSync = () => {
     setTyping(true)
   }, [typedValue, setTyping])
 
-  const quoteResult = useAtomValue(bestQuoteAtom(quoteQuery))
+  const quoteResult = useAtomValue(bestCrossChainQuoteAtom(quoteQuery))
+
+  console.log('quoteResult', quoteResult)
+
   useEffect(() => {
     let t = 0
     const interval = setInterval(() => {

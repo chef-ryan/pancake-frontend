@@ -1,4 +1,4 @@
-import { findHook, HOOK_CATEGORY } from '@pancakeswap/infinity-sdk'
+import { HOOK_CATEGORY, findHook } from '@pancakeswap/infinity-sdk'
 import { OrderType } from '@pancakeswap/price-api-sdk'
 import {
   Currency,
@@ -10,24 +10,21 @@ import {
   TradeType,
   ZERO,
 } from '@pancakeswap/sdk'
-import { InfinityRouter, Route, SmartRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
+import { Route, SmartRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
 import { formatPrice, parseNumberToFraction } from '@pancakeswap/utils/formatFractions'
 import { FeeAmount } from '@pancakeswap/v3-sdk'
+import { displaySymbolWithChainName } from '@pancakeswap/widgets-internal'
 
 import { BIPS_BASE, INPUT_FRACTION_AFTER_FEE } from 'config/constants/exchange'
 import { Field } from 'state/swap/actions'
 import { isAddressEqual } from 'utils'
 import { basisPointsToPercent } from 'utils/exchange'
 import { zeroAddress } from 'viem'
-import { InterfaceOrder } from 'views/Swap/utils'
+import { BridgeOrderFee } from 'views/Swap/Bridge/utils'
+import { BridgeOrderWithCommands, InterfaceOrder, isBridgeOrder } from 'views/Swap/utils'
 
 export type SlippageAdjustedAmounts = {
   [field in Field]?: CurrencyAmount<Currency> | null
-}
-
-// Helper function to check if a trade is V4Trade
-const isV4Trade = (trade: any): trade is InfinityRouter.InfinityTradeWithoutGraph<TradeType> => {
-  return trade && 'gasUseEstimate' in trade
 }
 
 // computes the minimum amount out and maximum amount in for a trade given a user specified allowed slippage in bips
@@ -42,13 +39,31 @@ export function computeSlippageAdjustedAmounts(
     }
   }
 
-  const pct = basisPointsToPercent(allowedSlippage)
   const trade = order?.trade
+
+  if (!trade) {
+    return {
+      [Field.INPUT]: undefined,
+      [Field.OUTPUT]: undefined,
+    }
+  }
+
+  const isBridgeOnly = order && isBridgeOrder(order) && (order as BridgeOrderWithCommands)?.commands?.length === 1
+
+  if (isBridgeOnly || isBridgeOrder(order)) {
+    return {
+      [Field.INPUT]: order.trade.inputAmount,
+      // NOTE: Slippaged is already applied in constructing the bridge order
+      [Field.OUTPUT]: order.trade.outputAmount,
+    }
+  }
+
+  const pct = basisPointsToPercent(allowedSlippage)
 
   // For regular SmartRouterTrade
   return {
-    [Field.INPUT]: order?.trade && SmartRouter.maximumAmountIn(order.trade, pct),
-    [Field.OUTPUT]: order?.trade && SmartRouter.minimumAmountOut(order.trade, pct),
+    [Field.INPUT]: trade && SmartRouter.maximumAmountIn(trade, pct),
+    [Field.OUTPUT]: trade && SmartRouter.minimumAmountOut(trade, pct),
   }
 }
 
@@ -56,11 +71,13 @@ export type TradeEssentialForPriceBreakdown = Pick<SmartRouterTrade<TradeType>, 
   routes: Pick<Route, 'percent' | 'pools' | 'path' | 'inputAmount'>[]
 }
 
-// computes price breakdown for the trade
-export function computeTradePriceBreakdown(trade?: TradeEssentialForPriceBreakdown | null): {
+export interface TradePriceBreakdown {
   priceImpactWithoutFee?: Percent | null
   lpFeeAmount?: CurrencyAmount<Currency> | null
-} {
+}
+
+// computes price breakdown for the trade
+export function computeTradePriceBreakdown(trade?: TradeEssentialForPriceBreakdown | null): TradePriceBreakdown {
   if (!trade) {
     return {
       priceImpactWithoutFee: undefined,
@@ -140,9 +157,18 @@ export function formatExecutionPrice(
   if (!executionPrice || !inputAmount || !outputAmount) {
     return ''
   }
+
+  const isBridge = inputAmount.currency.chainId !== outputAmount.currency.chainId
+
   return inverted
-    ? `${formatPrice(executionPrice.invert(), 6)} ${inputAmount.currency.symbol} / ${outputAmount.currency.symbol}`
-    : `${formatPrice(executionPrice, 6)} ${outputAmount.currency.symbol} / ${inputAmount.currency.symbol}`
+    ? `${formatPrice(executionPrice.invert(), 6)} ${displaySymbolWithChainName(
+        inputAmount.currency,
+        isBridge,
+      )} / ${displaySymbolWithChainName(outputAmount.currency, isBridge)}`
+    : `${formatPrice(executionPrice, 6)} ${displaySymbolWithChainName(
+        outputAmount.currency,
+        isBridge,
+      )} / ${displaySymbolWithChainName(inputAmount.currency, isBridge)}`
 }
 
 export function v3FeeToPercent(fee: FeeAmount): Percent {
@@ -158,4 +184,22 @@ export function calculateInfiFeePercent(lpFee: number, protocolFee?: number) {
     lpFee,
     protocolFee: protocolFee1,
   }
+}
+
+// Helper function to find the highest price impact from multiple breakdowns
+export function findHighestPriceImpact(breakdowns: BridgeOrderFee[]): Percent | null | undefined {
+  return breakdowns.reduce((highest, breakdown) => {
+    // Skip if current breakdown has no price impact
+    if (!breakdown.priceImpactWithoutFee) return highest
+
+    // If no highest value yet, use current one
+    if (!highest) return breakdown.priceImpactWithoutFee
+
+    // Compare and keep the higher value
+    if (highest.lessThan(breakdown.priceImpactWithoutFee)) {
+      return breakdown.priceImpactWithoutFee
+    }
+
+    return highest
+  }, null as Percent | null)
 }

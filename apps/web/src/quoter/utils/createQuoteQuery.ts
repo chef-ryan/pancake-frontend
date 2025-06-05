@@ -7,6 +7,7 @@ const PLACE_HOLDER_TIME = 1000 * 120 // 2 minutes
 const cache = new Map<string, QuoteQuery>()
 export function createQuoteQuery(query: Omit<QuoteQuery, 'hash' | 'createTime'>): QuoteQuery {
   const hash = PoolHashHelper.hashQuoteQuery(query as QuoteQuery)
+
   if (cache.has(hash)) {
     return cache.get(hash) as QuoteQuery
   }

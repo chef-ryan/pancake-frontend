@@ -8,8 +8,8 @@ import { AdvancedDetailsFooter } from 'views/Swap/components/AdvancedSwapDetails
 import { PriceOrder } from '@pancakeswap/price-api-sdk'
 import { GasTokenSelector } from 'components/Paymaster/GasTokenSelector'
 import { usePaymaster } from 'hooks/usePaymaster'
-import { isClassicOrder, isXOrder } from 'views/Swap/utils'
-import { RoutesBreakdown, XRoutesBreakdown } from '../components'
+import { isBridgeOrder, isClassicOrder, isXOrder } from 'views/Swap/utils'
+import { RouteDisplayEssentials, RoutesBreakdown, XRoutesBreakdown } from '../components'
 import { useIsWrapping, useSlippageAdjustedAmounts } from '../hooks'
 import { computeTradePriceBreakdown } from '../utils/exchange'
 
@@ -22,7 +22,7 @@ export const TradeDetails = memo(function TradeDetails({ loaded, order }: Props)
   const slippageAdjustedAmounts = useSlippageAdjustedAmounts(order)
   const isWrapping = useIsWrapping()
   const { priceImpactWithoutFee, lpFeeAmount } = useMemo(
-    () => computeTradePriceBreakdown(isXOrder(order) ? order.ammTrade : order?.trade),
+    () => computeTradePriceBreakdown(isBridgeOrder(order) || isXOrder(order) ? undefined : order?.trade),
     [order],
   )
   const hasStablePool = useMemo(
@@ -57,7 +57,16 @@ export const TradeDetails = memo(function TradeDetails({ loaded, order }: Props)
             isPaymasterAvailable && inputAmount && <GasTokenSelector inputCurrency={inputAmount.currency} />
           }
         />
-        {isXOrder(order) ? <XRoutesBreakdown /> : <RoutesBreakdown routes={order?.trade?.routes} />}
+        {isXOrder(order) ? (
+          <XRoutesBreakdown />
+        ) : (
+          <RoutesBreakdown
+            routes={
+              // TODO: remove when bridge is implemented
+              order?.trade?.routes as RouteDisplayEssentials[]
+            }
+          />
+        )}
       </AutoColumn>
     </AdvancedDetailsFooter>
   )
