@@ -18,6 +18,7 @@ import { SwapUIV2 } from '@pancakeswap/widgets-internal'
 import { LottieRefCurrentProps } from 'lottie-react'
 
 import { CHAIN_QUERY_NAME } from 'config/chains'
+import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import ArrowDark from '../../../../public/images/swap/arrow_dark.json' assert { type: 'json' }
 import ArrowLight from '../../../../public/images/swap/arrow_light.json' assert { type: 'json' }
@@ -84,6 +85,7 @@ export const FlipButton = memo(function FlipButton({
   const { isDark } = useTheme()
   const { isDesktop } = useMatchBreakpoints()
   const { canSwitch, switchNetworkAsync } = useSwitchNetwork()
+  const { chainId: activeChainId } = useActiveChainId()
 
   const animationData = useMemo(() => (isDark ? ArrowDark : ArrowLight), [isDark])
 
@@ -99,7 +101,7 @@ export const FlipButton = memo(function FlipButton({
     if (replaceBrowser) {
       // If cross-chain swap, switch network to new Input Currency's chain
 
-      if (outputChainId && inputChainId !== outputChainId && canSwitch) {
+      if (outputChainId && activeChainId !== outputChainId && canSwitch) {
         await switchNetworkAsync(outputChainId)
       }
 
@@ -114,7 +116,7 @@ export const FlipButton = memo(function FlipButton({
           }),
       })
     }
-  }, [onSwitchTokens, inputCurrencyId, outputCurrencyId])
+  }, [onSwitchTokens, inputCurrencyId, outputCurrencyId, activeChainId])
 
   const handleAnimatedButtonClick = useCallback(() => {
     onFlip()

@@ -394,7 +394,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
         variant={isValid && priceImpactSeverity > 2 && !errorMessage ? 'danger' : 'primary'}
         disabled={disabled}
         onClick={handleSwap}
-        checkChainId={inputCurrency?.chainId}
+        checkChainId={isValid ? inputCurrency?.chainId : undefined}
       >
         {buttonText}
       </CommitButton>
