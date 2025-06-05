@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic'
-import { CSSProperties, memo, useCallback, useMemo, useRef } from 'react'
+import { CSSProperties, memo, useCallback, useMemo, useRef, useState } from 'react'
 
 import { AutoColumn, Button, useMatchBreakpoints } from '@pancakeswap/uikit'
 
@@ -87,6 +87,7 @@ export const FlipButton = memo(function FlipButton({
   const { switchNetworkAsync, isLoading } = useSwitchNetwork()
   const { chainId: activeChainId } = useActiveChainId()
 
+  const [isSwitching, setIsSwitching] = useState(false)
   const animationData = useMemo(() => (isDark ? ArrowDark : ArrowLight), [isDark])
 
   const { onSwitchTokens } = useSwapActionHandlers()
@@ -96,6 +97,7 @@ export const FlipButton = memo(function FlipButton({
   } = useSwapState()
 
   const onFlip = useCallback(async () => {
+    setIsSwitching(true)
     onSwitchTokens()
 
     if (replaceBrowser) {
@@ -116,15 +118,18 @@ export const FlipButton = memo(function FlipButton({
           }),
       })
     }
-  }, [onSwitchTokens, inputCurrencyId, outputCurrencyId, activeChainId])
+    setIsSwitching(false)
+  }, [onSwitchTokens, inputCurrencyId, outputCurrencyId, activeChainId, isLoading, setIsSwitching])
 
   const handleAnimatedButtonClick = useCallback(() => {
+    if (isSwitching) return
+
     onFlip()
 
     if (flipButtonRef.current && !flipButtonRef.current.classList.contains('switch-animation')) {
       flipButtonRef.current.classList.add('switch-animation')
     }
-  }, [onFlip])
+  }, [onFlip, isSwitching])
 
   const handleAnimationEnd = useCallback(() => {
     flipButtonRef.current?.classList.remove('switch-animation')

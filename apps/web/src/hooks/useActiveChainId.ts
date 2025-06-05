@@ -29,8 +29,13 @@ queryChainIdAtom.onMount = (set) => {
 
 export function useLocalNetworkChain() {
   const [queryChainId, setQueryChainId] = useAtom(queryChainIdAtom)
+
+  console.log('queryChainId', queryChainId)
+
   const { query } = useRouter()
   const chainId = +(getChainId(query.chain as string) || queryChainId)
+
+  console.log('useLocalNetworkChain', chainId)
 
   useEffect(() => {
     if (chainId) {
@@ -53,6 +58,9 @@ export const useActiveChainId = (checkChainId?: number) => {
   const chainId = localChainId ?? wagmiChainId ?? (queryChainId >= 0 ? ChainId.BSC : undefined)
 
   const isNotMatched = useDeferredValue(wagmiChainId && localChainId && wagmiChainId !== localChainId)
+
+  console.log('isWrongNetwork', wagmiChainId, localChainId)
+
   const isWrongNetwork = useMemo(
     () =>
       Boolean(
