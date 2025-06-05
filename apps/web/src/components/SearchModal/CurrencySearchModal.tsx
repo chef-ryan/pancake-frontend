@@ -283,9 +283,7 @@ export default function CurrencySearchModal({
             setListUrl={setListUrl}
             chainId={selectedChainId}
           />
-        ) : (
-          ''
-        )}
+        ) : null}
         {modalView === CurrencyModalView.search && (
           <Footer>
             <ManageTokenButton

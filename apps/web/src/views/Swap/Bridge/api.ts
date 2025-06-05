@@ -283,17 +283,6 @@ export const postMetadata = async (params: GetMetadataParams): Promise<MetadataS
   return resp.json()
 }
 
-export const getMetadata = async (params: GetMetadataParams): Promise<MetadataSuccessResponse> => {
-  const stringParams = Object.fromEntries(
-    Object.entries(params)
-      .filter(([_, value]) => value !== undefined && value !== '')
-      .map(([key, value]) => [key, value?.toString()]),
-  )
-  const resp = await fetch(`${BRIDGE_API_ENDPOINT}/v1/metadata?${new URLSearchParams(stringParams).toString()}`)
-
-  return resp.json()
-}
-
 export const getBridgeStatus = async (chainId: number, txHash: string): Promise<BridgeStatusResponse> => {
   const resp = await fetch(
     `${BRIDGE_API_ENDPOINT}/v1/status/${chainIdToExplorerInfoChainName[chainId]}?txHash=${txHash}`,
