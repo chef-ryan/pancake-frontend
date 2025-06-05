@@ -48,21 +48,26 @@ export function computeSlippageAdjustedAmounts(
     }
   }
 
-  const isBridgeOnly = order && isBridgeOrder(order) && (order as BridgeOrderWithCommands)?.commands?.length === 1
+  const pct = basisPointsToPercent(allowedSlippage)
 
-  if (isBridgeOnly || isBridgeOrder(order)) {
-    return {
-      [Field.INPUT]: order.trade.inputAmount,
-      // NOTE: Slippaged is already applied in constructing the bridge order
-      [Field.OUTPUT]: order.trade.outputAmount,
+  const bridgeOrder = order as BridgeOrderWithCommands
+  const length = bridgeOrder?.commands?.length
+
+  if (isBridgeOrder(order) && bridgeOrder.commands && length) {
+    const isBridgeOnly = length === 1
+    const isEndWithBridge = bridgeOrder.commands[length - 1].type === OrderType.PCS_BRIDGE
+
+    if (isBridgeOnly || !isEndWithBridge) {
+      return {
+        [Field.INPUT]: trade.inputAmount,
+        [Field.OUTPUT]: trade.outputAmount,
+      }
     }
   }
 
-  const pct = basisPointsToPercent(allowedSlippage)
-
-  // For regular SmartRouterTrade
   return {
     [Field.INPUT]: trade && SmartRouter.maximumAmountIn(trade, pct),
+    // NOTE: slippaged both regular and bridge order
     [Field.OUTPUT]: trade && SmartRouter.minimumAmountOut(trade, pct),
   }
 }
