@@ -3,7 +3,7 @@ import { ApiV3PoolInfoItem, TickUtils, ApiV3PoolInfoConcentratedItem } from '@ra
 import Decimal from 'decimal.js'
 import dayjs from 'dayjs'
 import { getPoolName } from '@/features/Pools/util'
-import { wSolToSolString , getMintSymbol } from '@/utils/token'
+import { wSolToSolString, getMintSymbol } from '@/utils/token'
 import { toTotalPercent } from '@/utils/numberish/toPercentString'
 import { trimTrailZero } from '@/utils/numberish/formatter'
 import { useAppStore } from '@/store/useAppStore'
@@ -14,19 +14,25 @@ export const formatAprData = (data: ApiV3PoolInfoItem): ApiV3PoolInfoItem => {
     ...data,
     day: {
       ...data.day,
+      rewardApr: data.day.rewardApr ?? [],
       apr: data.day.apr ?? 0,
       feeApr: data.day.feeApr ?? 0
     },
     week: {
       ...data.week,
+      rewardApr: data.week.rewardApr ?? [],
       apr: data.week.apr ?? 0,
       feeApr: data.week.feeApr ?? 0
     },
     month: {
       ...data.month,
+      rewardApr: data.month.rewardApr ?? [],
       apr: data.month.apr ?? 0,
       feeApr: data.month.feeApr ?? 0
-    }
+    },
+    rewardDefaultPoolInfos: data.rewardDefaultPoolInfos ?? 'Clmm',
+    rewardDefaultInfos: data.rewardDefaultInfos ?? [],
+    pooltype: data.pooltype ?? []
   }
 }
 
@@ -45,13 +51,13 @@ export function formatPoolData(pool: ApiV3PoolInfoItem): FormattedPoolInfoItem {
             percent: toTotalPercent(aprData.feeApr ?? 0, aprData.apr ?? 0),
             isTradingFee: true
           },
-          ...aprData.rewardApr
-            .filter((_, idx) => !!pool.rewardDefaultInfos[idx] && isRewardValid(pool.rewardDefaultInfos[idx].endTime))
+          ...(aprData.rewardApr
+            ?.filter((_, idx) => !!pool.rewardDefaultInfos[idx] && isRewardValid(pool.rewardDefaultInfos[idx].endTime))
             .map((r, idx) => ({
               apr: r,
               percent: toTotalPercent(r, aprData.apr ?? 0),
               token: { ...pool.rewardDefaultInfos[idx].mint }
-            }))
+            })) ?? [])
         ]
       }
     },

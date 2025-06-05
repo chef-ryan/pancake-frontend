@@ -1,21 +1,43 @@
 import { useCallback, useMemo } from 'react'
 import useSWRInfinite from 'swr/infinite'
 import { KeyedMutator } from 'swr'
-import { AxiosResponse } from 'axios'
 import { shallow } from 'zustand/shallow'
-import { PoolsApiReturn, ApiV3PoolInfoItem, PoolFetchType } from '@raydium-io/raydium-sdk-v2'
+import { ApiV3PoolInfoItem, PoolFetchType } from '@raydium-io/raydium-sdk-v2'
 import axios from '@/api/axios'
 import { useAppStore } from '@/store'
 import { MINUTE_MILLISECONDS } from '@/utils/date'
 import { formatPoolData, formatAprData } from './formatter'
 import { ReturnPoolType, ReturnFormattedPoolType } from './type'
 
+type Pagination = {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+}
+
+interface PoolsApiReturnType {
+  data: ApiV3PoolInfoItem[]
+  pagination: Pagination
+}
+
+type FetcherReturnType = Awaited<ReturnType<typeof fetcher>>
+
 let refreshTag = Date.now()
 export const refreshPoolCache = () => {
   refreshTag = Date.now()
 }
 
-const fetcher = ([url]: [url: string]) => axios.get<PoolsApiReturn>(url)
+const fetcher = ([url]: [url: string]) =>
+  axios.get<PoolsApiReturnType, PoolsApiReturnType>(url).then((res) => {
+    return {
+      data: {
+        data: res?.data ?? [],
+        count: res?.data.length,
+        hasNextPage: res?.pagination.totalPages > res?.pagination.page
+      }
+    }
+  })
 
 const PAGE_SIZE = 100
 
@@ -31,10 +53,11 @@ export default function useFetchPoolList<T extends PoolFetchType>(props?: {
   data: ReturnPoolType<T>[]
   formattedData: ReturnFormattedPoolType<T>[]
   isLoadEnded: boolean
-  setSize: (size: number | ((_size: number) => number)) => Promise<AxiosResponse<PoolsApiReturn, any>[] | undefined>
+  setSize: (size: number | ((_size: number) => number)) => Promise<FetcherReturnType[] | undefined>
+
   size: number
   loadMore: () => void
-  mutate: KeyedMutator<AxiosResponse<PoolsApiReturn, any>[]>
+  mutate: KeyedMutator<FetcherReturnType[]>
   isValidating: boolean
   isLoading: boolean
   isEmpty: boolean
@@ -77,6 +100,7 @@ export default function useFetchPoolList<T extends PoolFetchType>(props?: {
   const isLoadEnded = !lastData || !lastData.data.hasNextPage || lastData.data.data.length < pageSize || !!error
   const loadMore = useCallback(() => setSize((s) => s + 1), [type, sort, order])
   const isEmpty = isLoadEnded && (!data || !data.length)
+
   return {
     ...swrProps,
     setSize,

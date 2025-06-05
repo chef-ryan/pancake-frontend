@@ -585,7 +585,7 @@ export default function Pools() {
   const { containerProps, titleContainerProps, scrollBodyProps } = useScrollTitleCollapse()
   const { isOpen: isCollapseOpen, onToggle: toggleSubcontrollers } = useDisclosure()
 
-  const [tvl, volume] = infoData ? [infoData.tvl, infoData.volume24] : ['0', '0']
+  const [tvl, volume] = infoData ? [infoData.tvl, infoData.totalVolume24h] : ['0', '0']
 
   const renderPoolListItem = useCallback(
     (info: FormattedPoolInfoItem) => (

@@ -23,6 +23,7 @@ import { rpcs } from '@/utils/config/endpoint'
 import createStore from './createStore'
 // eslint-disable-next-line import/no-cycle
 import { blackJupMintSet, useTokenStore } from './useTokenStore'
+import { urlConfigs } from './configs/urls'
 
 export const defaultNetWork = WalletAdapterNetwork.Mainnet // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
 export const defaultEndpoint = clusterApiUrl(defaultNetWork) // You can also provide a custom RPC endpoint
@@ -139,7 +140,7 @@ const appInitState = {
   isDesktop: false,
   aprMode: 'M' as 'M' | 'D',
   rpcs: [],
-  urlConfigs: API_URLS,
+  urlConfigs,
   programIdConfig: ALL_PROGRAM_ID,
   jupTokenType: JupTokenType.Strict,
   displayTokenSettings: {
@@ -174,15 +175,12 @@ export const useAppStore = createStore<AppState>(
       if (initialing || !rpcNodeUrl) return
       const connection = payload.connection || new Connection(rpcNodeUrl)
       set({ initialing: true }, false, action)
-      const isDev = window.location.host === 'localhost:3002'
+      const isDev = window.location.host.match(/^localhost:\d+/)
 
       const raydium = await Raydium.load({
         ...payload,
         connection,
-        urlConfigs: {
-          ...urlConfigs,
-          BASE_HOST: !isProdEnv() ? getStorageItem('_r_api_host_') || urlConfigs.BASE_HOST : urlConfigs.BASE_HOST
-        },
+        urlConfigs,
         jupTokenType,
         logRequests: !isDev,
         disableFeatureCheck: true,

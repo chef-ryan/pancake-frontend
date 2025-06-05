@@ -3,7 +3,11 @@ import { shallow } from 'zustand/shallow'
 import axios from '@/api/axios'
 import { useAppStore } from '@/store'
 
-const fetcher = (url: string) => axios.get<{ tvl: number; volume24: number }>(url, { skipError: true })
+interface OverviewResponse {
+  tvl: number
+  totalVolume24h: string
+}
+const fetcher = (url: string) => axios.get<OverviewResponse, OverviewResponse>(url, { skipError: true })
 
 export default function useFetchMainInfo(props: { refreshInterval?: number }) {
   const { refreshInterval = 1000 * 60 * 15 } = props || {}
@@ -18,7 +22,7 @@ export default function useFetchMainInfo(props: { refreshInterval?: number }) {
   const isEmptyResult = !isLoading && !(data && !error)
 
   return {
-    data: data?.data,
+    data,
     isLoading,
     error,
     isEmptyResult,
