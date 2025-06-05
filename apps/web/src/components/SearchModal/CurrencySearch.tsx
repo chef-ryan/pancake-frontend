@@ -274,7 +274,13 @@ function CurrencySearch({
           <Text fontSize="20px" mr="16px" bold>
             {headerTitle}
           </Text>
-          <CurrencySearchInput inputRef={inputRef} handleEnter={handleEnter} onInput={handleOnInput} compact />
+          <CurrencySearchInput
+            autoFocus={false}
+            inputRef={inputRef}
+            handleEnter={handleEnter}
+            onInput={handleOnInput}
+            compact
+          />
 
           <Box mr="-16px">
             <ModalCloseButton onDismiss={onDismiss} padding="0" />

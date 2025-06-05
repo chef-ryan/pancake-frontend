@@ -8,6 +8,7 @@ interface CurrencySearchInputProps extends InputProps {
   inputRef?: ReturnType<typeof useRef<HTMLInputElement>> | null
   handleEnter?: (event: React.KeyboardEvent<HTMLInputElement>) => void
   onInput?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  autoFocus?: boolean
 }
 
 export const CurrencySearchInput = ({
@@ -16,6 +17,7 @@ export const CurrencySearchInput = ({
   compact = false,
   handleEnter,
   onInput,
+  autoFocus = true,
   ...props
 }: CurrencySearchInputProps) => {
   const { t } = useTranslation()
@@ -30,7 +32,7 @@ export const CurrencySearchInput = ({
       ref={inputRef as RefObject<HTMLInputElement>}
       onChange={onInput}
       onKeyDown={handleEnter}
-      autoFocus
+      autoFocus={autoFocus}
       {...props}
     />
   )
