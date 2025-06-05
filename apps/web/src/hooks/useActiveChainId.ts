@@ -45,7 +45,7 @@ export function useLocalNetworkChain() {
   return undefined
 }
 
-export const useActiveChainId = () => {
+export const useActiveChainId = (checkChainId?: number) => {
   const localChainId = useLocalNetworkChain()
   const queryChainId = useAtomValue(queryChainIdAtom)
 
@@ -54,8 +54,13 @@ export const useActiveChainId = () => {
 
   const isNotMatched = useDeferredValue(wagmiChainId && localChainId && wagmiChainId !== localChainId)
   const isWrongNetwork = useMemo(
-    () => Boolean(((wagmiChainId && !isChainSupported(wagmiChainId)) ?? false) || isNotMatched),
-    [wagmiChainId, isNotMatched],
+    () =>
+      Boolean(
+        ((wagmiChainId && !isChainSupported(wagmiChainId)) ?? false) ||
+          isNotMatched ||
+          (checkChainId && checkChainId !== wagmiChainId),
+      ),
+    [wagmiChainId, isNotMatched, checkChainId],
   )
 
   return {
