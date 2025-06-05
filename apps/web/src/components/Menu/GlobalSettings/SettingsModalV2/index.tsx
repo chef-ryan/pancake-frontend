@@ -200,7 +200,7 @@ export function RoutingSettingsButton({
 
   return (
     <>
-      <AtomBox textAlign="center" pt="12px">
+      <AtomBox textAlign="center">
         <NotificationDot show={isRoutingSettingChange && showRedDot}>
           <Button variant="text" onClick={() => setIsOpen(true)} scale="sm" {...buttonProps}>
             {children || t('Customize Routing')}
