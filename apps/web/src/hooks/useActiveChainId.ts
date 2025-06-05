@@ -65,9 +65,12 @@ export const useActiveChainId = (checkChainId?: number) => {
     [wagmiChainId, isNotMatched, checkChainId],
   )
 
-  return {
-    chainId: chainId && isChainSupported(chainId) ? chainId : ChainId.BSC,
-    isWrongNetwork,
-    isNotMatched,
-  }
+  return useMemo(
+    () => ({
+      chainId: chainId && isChainSupported(chainId) ? chainId : ChainId.BSC,
+      isWrongNetwork,
+      isNotMatched,
+    }),
+    [chainId, isWrongNetwork, isNotMatched],
+  )
 }
