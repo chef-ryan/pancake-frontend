@@ -50,6 +50,8 @@ export const NetworkModal = ({ pageSupportedChains = SUPPORT_ONLY_BSC }: { pageS
 
   const switchNetworkModal = Boolean(isWrongNetwork && !isPageNotSupported && mustSwitchNetworkModal)
 
+  console.log('switchNetworkModal', isWrongNetwork, isPageNotSupported, mustSwitchNetworkModal)
+
   if (switchNetworkModal) {
     const nextChain = Object.values(viemClients)
       .map((client) => client.chain)
