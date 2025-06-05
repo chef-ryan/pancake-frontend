@@ -84,7 +84,7 @@ export const FlipButton = memo(function FlipButton({
   const lottieRef = useRef<LottieRefCurrentProps | null>(null)
   const { isDark } = useTheme()
   const { isDesktop } = useMatchBreakpoints()
-  const { canSwitch, switchNetworkAsync } = useSwitchNetwork()
+  const { switchNetworkAsync, isLoading } = useSwitchNetwork()
   const { chainId: activeChainId } = useActiveChainId()
 
   const animationData = useMemo(() => (isDark ? ArrowDark : ArrowLight), [isDark])
@@ -101,7 +101,7 @@ export const FlipButton = memo(function FlipButton({
     if (replaceBrowser) {
       // If cross-chain swap, switch network to new Input Currency's chain
 
-      if (outputChainId && activeChainId !== outputChainId && canSwitch) {
+      if (outputChainId && activeChainId !== outputChainId && !isLoading) {
         await switchNetworkAsync(outputChainId)
       }
 
