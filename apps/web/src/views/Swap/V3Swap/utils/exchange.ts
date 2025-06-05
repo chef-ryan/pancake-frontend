@@ -57,7 +57,7 @@ export function computeSlippageAdjustedAmounts(
     const isBridgeOnly = length === 1
     const isEndWithBridge = bridgeOrder.commands[length - 1].type === OrderType.PCS_BRIDGE
 
-    if (isBridgeOnly || !isEndWithBridge) {
+    if (isBridgeOnly || isEndWithBridge) {
       return {
         [Field.INPUT]: trade.inputAmount,
         [Field.OUTPUT]: trade.outputAmount,
