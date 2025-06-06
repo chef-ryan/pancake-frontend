@@ -53,16 +53,24 @@ export const useBridgeStatus = (
   }, [outputCurrency, data?.outputAmount])
 
   const feesBreakdown = useMemo(() => {
+    if (!data?.data?.length) return { totalFeesUSD: 0, swapFeesUSD: 0, bridgeFeesUSD: 0 }
+
+    const bridgeFeesUSD = Number(data.data.find((item) => item.command === Command.BRIDGE)?.metadata?.fee) || 0
+
+    const swapNotReadyYet = data.data.some((item) => item.command === Command.SWAP && Number(item.metadata?.fee) === 0)
+
+    const swapFeesUSD = swapNotReadyYet
+      ? null
+      : Number(
+          data.data
+            .filter((item) => item.command === Command.SWAP)
+            .reduce((prev, curr) => prev + Number(curr.metadata?.fee), 0),
+        ) || 0
+
     return {
-      totalFeesUSD:
-        data && data.data?.reduce((prev, curr) => (curr.metadata?.fee ? prev + Number(curr.metadata.fee) : prev), 0),
-      swapFeesUSD:
-        data &&
-        data.data?.reduce(
-          (prev, curr) => prev + (curr.command === Command.SWAP ? Number(curr.metadata?.fee || 0) : 0),
-          0,
-        ),
-      bridgeFeesUSD: data && Number(data.data?.find((item) => item.command === Command.BRIDGE)?.metadata?.fee || 0),
+      totalFeesUSD: (bridgeFeesUSD || 0) + (swapFeesUSD || 0),
+      swapFeesUSD,
+      bridgeFeesUSD,
     }
   }, [data])
 

@@ -197,7 +197,8 @@ const BridgeFeesBreakdown = ({
   const [isOpen, setIsOpen] = useState(false)
 
   // NOTE: bridgeFeesUSD should always be > 0; if not, it meants the API is not ready yet
-  const isDataReady = Boolean(feesBreakdown?.bridgeFeesUSD)
+  // swapFeesUSD is null if swap fee is not loaded yet or returned as 0 in the bridge order having swap
+  const isDataReady = Boolean(feesBreakdown?.bridgeFeesUSD && feesBreakdown?.swapFeesUSD !== null)
 
   return (
     <SwapUIV2.Collapse

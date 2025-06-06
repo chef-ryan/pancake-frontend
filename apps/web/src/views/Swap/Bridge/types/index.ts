@@ -134,9 +134,10 @@ export interface BridgeStatusData extends BridgeStatusResponse {
   inputCurrencyAmount?: CurrencyAmount<Currency> | null
   outputCurrencyAmount?: CurrencyAmount<Currency> | null
   feesBreakdown?: {
-    totalFeesUSD?: number
-    swapFeesUSD?: number
-    bridgeFeesUSD?: number
+    totalFeesUSD: number
+    // in case of having swap in the bridge order, swapFeesUSD is null if swap fee is not loaded yet or returned as 0
+    swapFeesUSD: number | null
+    bridgeFeesUSD: number
   }
 }
 
