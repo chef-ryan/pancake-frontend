@@ -44,6 +44,8 @@ interface SendTransactionModalProps {
   onConfirm: () => void
   currency?: Currency
   chainId?: ChainId
+  estimatedFee?: string | null
+  estimatedFeeUsd?: string | null
 }
 
 // Confirm Transaction Screen
@@ -52,11 +54,15 @@ export function ConfirmTransactionContent({
   amount,
   recipient,
   onConfirm,
+  estimatedFee,
+  estimatedFeeUsd,
 }: {
   asset: BalanceData
   amount: string
   recipient: string
   onConfirm: () => void
+  estimatedFee?: string | null
+  estimatedFeeUsd?: string | null
 }) {
   const { t } = useTranslation()
   const currency = new Token(
@@ -104,7 +110,14 @@ export function ConfirmTransactionContent({
 
           <Flex justifyContent="space-between" width="100%" mb="24px">
             <Text color="textSubtle">{t('Network Fee')}</Text>
-            <Text>$0.01254</Text>
+            <Box style={{ textAlign: 'right' }}>
+              <Text>{estimatedFee ? `~${parseFloat(estimatedFee).toFixed(8)} ${chainName}` : '-'}</Text>
+              {estimatedFeeUsd && (
+                <Text fontSize="12px" color="textSubtle">
+                  ${estimatedFeeUsd} USD
+                </Text>
+              )}
+            </Box>
           </Flex>
 
           <Button onClick={isChainMatched ? onConfirm : () => switchNetworkAsync(asset.chainId)} width="100%">
@@ -217,6 +230,8 @@ const SendTransactionContent: React.FC<React.PropsWithChildren<SendTransactionMo
   pendingText,
   onConfirm,
   chainId,
+  estimatedFee,
+  estimatedFeeUsd,
 }) => {
   const { t } = useTranslation()
 
@@ -240,7 +255,14 @@ const SendTransactionContent: React.FC<React.PropsWithChildren<SendTransactionMo
           recipient={recipient}
         />
       ) : (
-        <ConfirmTransactionContent asset={asset} amount={amount} recipient={recipient} onConfirm={onConfirm} />
+        <ConfirmTransactionContent
+          asset={asset}
+          amount={amount}
+          recipient={recipient}
+          onConfirm={onConfirm}
+          estimatedFee={estimatedFee}
+          estimatedFeeUsd={estimatedFeeUsd}
+        />
       )}
     </Box>
   )

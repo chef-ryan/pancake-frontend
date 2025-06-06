@@ -1,16 +1,18 @@
 import { ChainId, getChainName } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
-import { Token } from '@pancakeswap/sdk'
+import { Currency, Token } from '@pancakeswap/sdk'
 import { BalanceInput, Box, Button, CloseIcon, FlexGap, IconButton, Input, Text } from '@pancakeswap/uikit'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import { BalanceData } from 'hooks/useAddressBalance'
 import { useERC20 } from 'hooks/useContract'
-import { useCallback, useMemo, useState } from 'react'
+import useNativeCurrency from 'hooks/useNativeCurrency'
+import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { zeroAddress } from 'viem'
-import { useSendTransaction } from 'wagmi'
+import { formatUnits, zeroAddress } from 'viem'
+import { useAccount, usePublicClient, useSendTransaction } from 'wagmi'
 import { ActionButton } from './ActionButton'
 import SendTransactionFlow from './SendTransactionFlow'
 
@@ -69,11 +71,19 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
   const [amount, setAmount] = useState('')
   const [addressError, setAddressError] = useState('')
   const [activePercentage, setActivePercentage] = useState<number | null>(null)
+  const [estimatedFee, setEstimatedFee] = useState<string | null>(null)
+  const [estimatedFeeUsd, setEstimatedFeeUsd] = useState<string | null>(null)
 
   // Transaction state
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [txHash, setTxHash] = useState<string | undefined>(undefined)
+  const { address: accountAddress } = useAccount()
+  const publicClient = usePublicClient({ chainId: asset.chainId })
+
+  // Get native currency for fee calculation
+  const nativeCurrency = useNativeCurrency(asset.chainId)
+  const { data: nativeCurrencyPrice } = useCurrencyUsdPrice(nativeCurrency)
   const currency = useMemo(
     () =>
       new Token(
@@ -88,6 +98,58 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
   const isNativeToken = asset.token.address === zeroAddress
   const erc20Contract = useERC20(asset.token.address as `0x${string}`, { chainId: asset.chainId })
   const { sendTransactionAsync } = useSendTransaction()
+
+  const estimateTransactionFee = useCallback(async () => {
+    if (!address || !amount || !publicClient || !accountAddress) return
+
+    const amounts = tryParseAmount(amount, currency)
+
+    try {
+      let gasEstimate: bigint
+
+      if (isNativeToken) {
+        // Estimate gas for native token transfer
+        gasEstimate = await publicClient.estimateGas({
+          account: accountAddress,
+          to: address as `0x${string}`,
+          value: amounts?.quotient ?? 0n,
+        })
+      } else {
+        // Estimate gas for ERC20 token transfer
+        const transferData = {
+          to: address as `0x${string}`,
+          amount: amounts?.quotient ?? 0n,
+        }
+        gasEstimate =
+          (await erc20Contract?.estimateGas?.transfer([transferData.to, transferData.amount], {
+            account: erc20Contract.account!,
+          })) ?? 0n
+      }
+
+      // Get gas price
+      const gasPrice = await publicClient.getGasPrice()
+
+      // Calculate fee
+      const fee = gasEstimate * gasPrice
+
+      // Convert to readable format (in native token units)
+      const formattedFee = formatUnits(fee, 18)
+
+      setEstimatedFee(formattedFee)
+
+      // Calculate USD value if price is available
+      if (nativeCurrencyPrice) {
+        const feeUsd = parseFloat(formattedFee) * nativeCurrencyPrice
+        setEstimatedFeeUsd(feeUsd.toFixed(2))
+      } else {
+        setEstimatedFeeUsd(null)
+      }
+    } catch (error) {
+      console.error('Error estimating fee:', error)
+      setEstimatedFee(null)
+      setEstimatedFeeUsd(null)
+    }
+  }, [address, amount, publicClient, accountAddress, isNativeToken, currency, asset.token.address, nativeCurrencyPrice])
 
   const sendAsset = useCallback(async () => {
     const amounts = tryParseAmount(amount, currency)
@@ -146,6 +208,15 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
 
   const chainName = asset.chainId === ChainId.BSC ? 'BNB' : getChainName(asset.chainId)
   const price = asset.price?.usd ?? 0
+
+  // Effect to estimate fee when address and amount are valid
+  useEffect(() => {
+    if (address && amount && !addressError) {
+      estimateTransactionFee()
+    } else {
+      setEstimatedFee(null)
+    }
+  }, [address, amount, addressError, estimateTransactionFee])
   if (showConfirmModal) {
     return (
       <SendTransactionFlow
@@ -160,6 +231,8 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
         attemptingTxn={attemptingTxn}
         txHash={txHash}
         chainId={asset.chainId}
+        estimatedFee={estimatedFee}
+        estimatedFeeUsd={estimatedFeeUsd}
         onConfirm={async () => {
           // In a real implementation, this would be the actual transaction submission
           setAttemptingTxn(true)
@@ -229,6 +302,14 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
           placeholder="0.0"
           unit={asset.token.symbol}
         />
+        {estimatedFee && address && !addressError && (
+          <Box mt="8px">
+            <Text fontSize="14px" color="textSubtle">
+              {t('Estimated network fee')}: {parseFloat(estimatedFee).toFixed(8)} {chainName}
+              {estimatedFeeUsd && ` (~$${estimatedFeeUsd} USD)`}
+            </Text>
+          </Box>
+        )}
         <FlexGap gap="8px" justifyContent="center" mt="8px">
           <Button
             variant="tertiary"
