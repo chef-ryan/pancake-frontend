@@ -3753,6 +3753,8 @@
   "Via %poolTypes% Pool": "Via %poolTypes% Pool",
   "%percent%%": "%percent%%",
   "MY CAKE": "MY CAKE",
+  "Applied on both source and destination chain swaps based on pool fee tiers. Check routing details for more info.": "Applied on both source and destination chain swaps based on pool fee tiers. Check routing details for more info.",
+  "Paid to relayers for bridging the assets.": "Paid to relayers for bridging the assets.",
   "Your voting power is determined by your CAKE balance at the snapshot block, which represents how much weight your vote carries.": "Your voting power is determined by your CAKE balance at the snapshot block, which represents how much weight your vote carries.",
   "Cake Balance": "Cake Balance",
   "Not enough CAKE": "Not enough CAKE",

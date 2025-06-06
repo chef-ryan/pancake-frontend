@@ -28,6 +28,7 @@ import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 
 import { formatScientificToDecimal } from '@pancakeswap/utils/formatNumber'
 import { SwapUIV2 } from '@pancakeswap/widgets-internal'
+import { BridgeFeeToolTip, TradingFeeToolTip } from '../../components/FeeToolTip'
 import { useBridgeStatus } from '../../hooks'
 import { ActiveBridgeOrderMetadata, BridgeStatus, BridgeStatusData } from '../../types'
 import { Timeline } from '../components/Timeline'
@@ -249,18 +250,23 @@ const BridgeFeesBreakdown = ({
       content={
         <FeePanelCard mt="4px" padding="8px 16px">
           <RowBetween>
-            <Text fontSize="14px" color="textSubtle">
-              {t('Bridge Fee')}
-            </Text>
+            <QuestionHelperV2 text={<BridgeFeeToolTip />}>
+              <DetailsTitle fontSize="14px" color="textSubtle">
+                {t('Bridge Fee')}
+              </DetailsTitle>
+            </QuestionHelperV2>
+
             <Text fontSize="14px" textAlign="right">
               {`${formatDollarAmount(feesBreakdown?.bridgeFeesUSD || 0, 3)}`}
             </Text>
           </RowBetween>
           {Number(feesBreakdown?.swapFeesUSD || 0) > 0 ? (
             <RowBetween>
-              <Text fontSize="14px" color="textSubtle">
-                {t('Trading Fee')}
-              </Text>
+              <QuestionHelperV2 text={<TradingFeeToolTip />}>
+                <DetailsTitle fontSize="14px" color="textSubtle">
+                  {t('Trading Fee')}
+                </DetailsTitle>
+              </QuestionHelperV2>
               <Text fontSize="14px" textAlign="right">
                 {`${formatDollarAmount(feesBreakdown?.swapFeesUSD || 0, 3)}`}
               </Text>

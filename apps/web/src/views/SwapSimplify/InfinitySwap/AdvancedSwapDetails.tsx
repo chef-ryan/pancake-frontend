@@ -15,7 +15,7 @@ import { currenciesUSDPriceAtom } from 'hooks/useCurrencyUsdPrice'
 import { useAtomValue } from 'jotai'
 import { Field } from 'state/swap/actions'
 import { styled } from 'styled-components'
-import { TotalFeeToolTip } from 'views/Swap/Bridge/components/FeeToolTip'
+import { BridgeFeeToolTip, TotalFeeToolTip, TradingFeeToolTip } from 'views/Swap/Bridge/components/FeeToolTip'
 import { BridgeOrderFee, getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import { EstimatedTime } from '../../Swap/Bridge/CrossChainConfirmSwapModal/components/EstimatedTime'
@@ -114,19 +114,28 @@ const BridgeTradingViewSection = ({ priceBreakdown }: { priceBreakdown: BridgeOr
       content={
         <LightGreyCard mt="4px" padding="8px 16px">
           {/** display grouped fees */}
-          {Object.values(groupedFees).map((fee, index) => (
-            <RowBetween key={fee.label}>
-              <Text fontSize="14px" color="textSubtle">
-                {fee.label}
-              </Text>
-              <Text fontSize="14px" textAlign="right">
-                {`${
-                  // if key of groupedFees is OrderType.PCS_CLASSIC, then it's a dynamic fee
-                  Object.keys(groupedFees)[index] === OrderType.PCS_CLASSIC ? '~' : ''
-                }${formatDollarAmount(fee.amount.toNumber(), 3)}`}
-              </Text>
-            </RowBetween>
-          ))}
+          {Object.values(groupedFees).map((fee, index) => {
+            const type = Object.keys(groupedFees)[index]
+
+            return (
+              <RowBetween key={fee.label}>
+                <QuestionHelperV2
+                  text={type === OrderType.PCS_BRIDGE ? <BridgeFeeToolTip /> : <TradingFeeToolTip />}
+                  placement="top"
+                >
+                  <DetailsTitle fontSize="14px" color="textSubtle">
+                    {fee.label}
+                  </DetailsTitle>
+                </QuestionHelperV2>
+                <Text fontSize="14px" textAlign="right">
+                  {`${
+                    // if key of groupedFees is OrderType.PCS_CLASSIC, then it's a dynamic fee
+                    type === OrderType.PCS_CLASSIC ? '~' : ''
+                  }${formatDollarAmount(fee.amount.toNumber(), 3)}`}
+                </Text>
+              </RowBetween>
+            )
+          })}
         </LightGreyCard>
       }
     />

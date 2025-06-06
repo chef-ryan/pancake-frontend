@@ -31,3 +31,21 @@ export function TotalFeeToolTip() {
     </>
   )
 }
+
+export function BridgeFeeToolTip() {
+  const { t } = useTranslation()
+
+  return <Text>{t('Paid to relayers for bridging the assets.')}</Text>
+}
+
+export function TradingFeeToolTip() {
+  const { t } = useTranslation()
+
+  return (
+    <Text>
+      {t(
+        'Applied on both source and destination chain swaps based on pool fee tiers. Check routing details for more info.',
+      )}
+    </Text>
+  )
+}
