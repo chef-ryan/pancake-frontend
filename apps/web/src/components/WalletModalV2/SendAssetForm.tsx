@@ -201,7 +201,7 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
       </Box>
 
       <Box mb="16px">
-        <FlexGap alignItems="center" gap="8px">
+        <FlexGap alignItems="center" gap="8px" mb="8px">
           <AssetContainer>
             <CurrencyLogo currency={currency} size="40px" />
             <ChainIconWrapper>
@@ -217,7 +217,7 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
             <Text fontWeight="bold" fontSize="20px">
               {asset.token.symbol}
             </Text>
-            <Text color="textSubtle" fontSize="12px" mt="-14px">{`${chainName.toUpperCase()} ${t('Chain')}`}</Text>
+            <Text color="textSubtle" fontSize="12px" mt="-4px">{`${chainName.toUpperCase()} ${t('Chain')}`}</Text>
           </FlexGap>
         </FlexGap>
 
