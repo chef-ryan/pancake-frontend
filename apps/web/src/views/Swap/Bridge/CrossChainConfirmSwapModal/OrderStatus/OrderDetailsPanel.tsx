@@ -263,14 +263,16 @@ const BridgeFeesBreakdown = ({
               {`${formatDollarAmount(feesBreakdown?.bridgeFeesUSD || 0, 3)}`}
             </Text>
           </RowBetween>
-          <RowBetween>
-            <Text fontSize="14px" color="textSubtle">
-              {t('Trading Fee')}
-            </Text>
-            <Text fontSize="14px" textAlign="right">
-              {`${formatDollarAmount(feesBreakdown?.swapFeesUSD || 0, 3)}`}
-            </Text>
-          </RowBetween>
+          {feesBreakdown?.swapFeesUSD ? (
+            <RowBetween>
+              <Text fontSize="14px" color="textSubtle">
+                {t('Trading Fee')}
+              </Text>
+              <Text fontSize="14px" textAlign="right">
+                {`${formatDollarAmount(feesBreakdown?.swapFeesUSD || 0, 3)}`}
+              </Text>
+            </RowBetween>
+          ) : null}
         </FeePanelCard>
       }
     />
