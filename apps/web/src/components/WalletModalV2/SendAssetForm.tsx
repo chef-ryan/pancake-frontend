@@ -9,6 +9,7 @@ import { BalanceData } from 'hooks/useAddressBalance'
 import { useERC20 } from 'hooks/useContract'
 import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { useSendTransaction } from 'wagmi'
 import { ActionButton } from './ActionButton'
 import SendTransactionFlow from './SendTransactionFlow'
 
@@ -83,21 +84,34 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
       ),
     [asset],
   )
+  const isNativeToken = asset.token.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
   const erc20Contract = useERC20(asset.token.address as `0x${string}`, { chainId: asset.chainId })
+  const { sendTransactionAsync } = useSendTransaction()
 
   const sendAsset = useCallback(async () => {
     const amounts = tryParseAmount(amount, currency)
     try {
-      const result = await erc20Contract?.write?.transfer([address as `0x${string}`, amounts?.quotient ?? 0n], {
-        account: erc20Contract.account!,
-        chain: erc20Contract.chain!,
-      })
+      let result
+      if (isNativeToken) {
+        // Handle native token transfer
+        result = await sendTransactionAsync({
+          to: address as `0x${string}`,
+          value: amounts?.quotient ?? 0n,
+          chainId: asset.chainId,
+        })
+      } else {
+        // Handle ERC20 token transfer
+        result = await erc20Contract?.write?.transfer([address as `0x${string}`, amounts?.quotient ?? 0n], {
+          account: erc20Contract.account!,
+          chain: erc20Contract.chain!,
+        })
+      }
       setTxHash(result)
       console.log(result)
     } catch (error) {
       console.error(error)
     }
-  }, [address, amount, erc20Contract])
+  }, [address, amount, erc20Contract, isNativeToken, sendTransactionAsync, asset.chainId])
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -187,7 +201,7 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
       </Box>
 
       <Box mb="16px">
-        <FlexGap alignItems="center">
+        <FlexGap alignItems="center" gap="8px">
           <AssetContainer>
             <CurrencyLogo currency={currency} size="40px" />
             <ChainIconWrapper>
@@ -199,9 +213,11 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
               />
             </ChainIconWrapper>
           </AssetContainer>
-          <FlexGap alignItems="center" flexDirection="column">
-            <Text fontWeight="bold">{asset.token.symbol}</Text>
-            <Text color="textSubtle">{chainName.toLowerCase()}</Text>
+          <FlexGap flexDirection="column">
+            <Text fontWeight="bold" fontSize="20px">
+              {asset.token.symbol}
+            </Text>
+            <Text color="textSubtle" fontSize="12px" mt="-14px">{`${chainName.toUpperCase()} ${t('Chain')}`}</Text>
           </FlexGap>
         </FlexGap>
 
