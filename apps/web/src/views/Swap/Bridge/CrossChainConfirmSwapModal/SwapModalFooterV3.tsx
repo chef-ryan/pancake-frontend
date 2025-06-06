@@ -8,7 +8,6 @@ import {
   Button,
   DottedHelpText,
   Flex,
-  Link,
   QuestionHelperV2,
   Text,
   WarningIcon,
@@ -33,6 +32,7 @@ import { SlippageButton } from 'views/Swap/components/SlippageButton'
 import { StyledBalanceMaxMini, SwapCallbackError } from 'views/Swap/components/styleds'
 import { InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
 
+import { OrderType } from '@pancakeswap/price-api-sdk'
 import BigNumber from 'bignumber.js'
 import { DISPLAY_PRECISION } from 'config/constants/formatting'
 import dayjs from 'dayjs'
@@ -42,6 +42,7 @@ import { useAtomValue } from 'jotai'
 import { notEmpty } from 'utils/notEmpty'
 import { BridgeOrderFee, getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
+import { TotalFeeToolTip } from '../components/FeeToolTip'
 import { EstimatedTime } from './components/EstimatedTime'
 
 dayjs.extend(relativeTime)
@@ -96,7 +97,7 @@ function TotalBridgeFee({ priceBreakdown }: { priceBreakdown: BridgeOrderFee[] }
 
   return (
     <Text fontSize="14px" textAlign="right">
-      {priceBreakdown.some((p) => p.hasDynamicFee) ? '~' : ''}
+      {priceBreakdown.some((p) => p.type === OrderType.PCS_CLASSIC) ? '~' : ''}
       {formatDollarAmount(currencyUsdPrices.reduce((acc, curr) => acc.plus(curr), new BigNumber(0)).toNumber(), 3)}
     </Text>
   )
@@ -243,24 +244,7 @@ export const SwapModalFooterV3 = memo(function SwapModalFooterV3({
 
         <RowBetween mt="2px">
           <RowFixed>
-            <QuestionHelperV2
-              ml="4px"
-              placement="top"
-              text={
-                <>
-                  <Text mt="12px">
-                    <Link
-                      style={{ display: 'inline' }}
-                      ml="4px"
-                      external
-                      href="https://docs.pancakeswap.finance/products/pancakeswap-exchange/faq#what-will-be-the-trading-fee-breakdown-for-v3-exchange"
-                    >
-                      {t('Fee Breakdown and Tokenomics')}
-                    </Link>
-                  </Text>
-                </>
-              }
-            >
+            <QuestionHelperV2 ml="4px" placement="top" text={<TotalFeeToolTip />}>
               <DottedHelpText fontSize="14px">{t('Total Fee')}</DottedHelpText>
             </QuestionHelperV2>
           </RowFixed>

@@ -15,6 +15,7 @@ import { currenciesUSDPriceAtom } from 'hooks/useCurrencyUsdPrice'
 import { useAtomValue } from 'jotai'
 import { Field } from 'state/swap/actions'
 import { styled } from 'styled-components'
+import { TotalFeeToolTip } from 'views/Swap/Bridge/components/FeeToolTip'
 import { BridgeOrderFee, getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import { EstimatedTime } from '../../Swap/Bridge/CrossChainConfirmSwapModal/components/EstimatedTime'
@@ -62,7 +63,7 @@ const BridgeTradingViewSection = ({ priceBreakdown }: { priceBreakdown: BridgeOr
     return priceBreakdown
       .filter((p) => p.lpFeeAmount)
       .reduce((acc, curr, index) => {
-        const type = curr.type === OrderType.PCS_BRIDGE ? 'bridge' : 'trading'
+        const type = curr.type
         const existingFee = acc[type] || {
           label: curr.type === OrderType.PCS_BRIDGE ? t('Bridge Fee') : t('Trading Fee'),
           amount: new BigNumber(0),
@@ -77,7 +78,7 @@ const BridgeTradingViewSection = ({ priceBreakdown }: { priceBreakdown: BridgeOr
         }
 
         return acc
-      }, {} as Record<string, DisplayFee>)
+      }, {} as Record<OrderType, DisplayFee>)
   }, [currencyUsdPrices, priceBreakdown, t])
 
   return (
@@ -87,35 +88,7 @@ const BridgeTradingViewSection = ({ priceBreakdown }: { priceBreakdown: BridgeOr
       title={
         <RowBetween>
           <RowFixed>
-            <QuestionHelperV2
-              text={
-                <>
-                  <Text mb="12px">
-                    <Text bold display="inline-block">
-                      {t('AMM')}
-                    </Text>
-                    : {t('Trading fee varies by pool fee tier. Check it via the magnifier icon under "Route."')}
-                  </Text>
-                  <Text mt="12px">
-                    <Link
-                      style={{ display: 'inline' }}
-                      ml="4px"
-                      external
-                      href="https://docs.pancakeswap.finance/products/pancakeswap-exchange/faq#what-will-be-the-trading-fee-breakdown-for-v3-exchange"
-                    >
-                      {t('Fee Breakdown and Tokenomics')}
-                    </Link>
-                  </Text>
-                  <Text mt="10px">
-                    <Text bold display="inline-block">
-                      {t('X')}
-                    </Text>
-                    : {t('No fee when trading through PancakeSwap X (subject to change).')}
-                  </Text>
-                </>
-              }
-              placement="top"
-            >
+            <QuestionHelperV2 text={<TotalFeeToolTip />} placement="top">
               <DetailsTitle fontSize="14px" color="textSubtle">
                 {t('Total Fee')}
               </DetailsTitle>
@@ -129,7 +102,7 @@ const BridgeTradingViewSection = ({ priceBreakdown }: { priceBreakdown: BridgeOr
             isDataReady={lpFeeAmounts.length > 0}
           >
             <Text fontSize="14px" textAlign="right">
-              {priceBreakdown.some((p) => p.hasDynamicFee) ? '~' : ''}
+              {priceBreakdown.some((p) => p.type === OrderType.PCS_CLASSIC) ? '~' : ''}
               {formatDollarAmount(
                 currencyUsdPrices.reduce((acc, curr) => acc.plus(curr), new BigNumber(0)).toNumber(),
                 3,
@@ -141,13 +114,16 @@ const BridgeTradingViewSection = ({ priceBreakdown }: { priceBreakdown: BridgeOr
       content={
         <LightGreyCard mt="4px" padding="8px 16px">
           {/** display grouped fees */}
-          {Object.values(groupedFees).map((fee) => (
+          {Object.values(groupedFees).map((fee, index) => (
             <RowBetween key={fee.label}>
               <Text fontSize="14px" color="textSubtle">
                 {fee.label}
               </Text>
               <Text fontSize="14px" textAlign="right">
-                {`${fee.hasDynamicFee ? '~' : ''}${formatDollarAmount(fee.amount.toNumber(), 3)}`}
+                {`${
+                  // if key of groupedFees is OrderType.PCS_CLASSIC, then it's a dynamic fee
+                  Object.keys(groupedFees)[index] === OrderType.PCS_CLASSIC ? '~' : ''
+                }${formatDollarAmount(fee.amount.toNumber(), 3)}`}
               </Text>
             </RowBetween>
           ))}
