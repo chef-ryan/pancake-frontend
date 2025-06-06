@@ -1,0 +1,247 @@
+import { ChainId } from '@pancakeswap/chains'
+import { useTranslation } from '@pancakeswap/localization'
+import { Currency, Token } from '@pancakeswap/sdk'
+import {
+  ArrowUpIcon,
+  AutoColumn,
+  Box,
+  Button,
+  CheckmarkCircleIcon,
+  ColumnCenter,
+  Flex,
+  InjectedModalProps,
+  Link,
+  Modal,
+  Spinner,
+  Text,
+} from '@pancakeswap/uikit'
+import { ConfirmationPendingContent } from '@pancakeswap/widgets-internal'
+import CurrencyLogo from 'components/Logo/CurrencyLogo'
+import { useCallback } from 'react'
+import { styled } from 'styled-components'
+import { getBlockExploreLink, getBlockExploreName } from 'utils'
+import { BalanceData } from 'hooks/useAddressBalance'
+
+const Wrapper = styled.div`
+  width: 100%;
+`
+const Section = styled(AutoColumn)`
+  padding: 24px;
+`
+
+const ConfirmedIcon = styled(ColumnCenter)`
+  padding: 24px 0;
+`
+
+interface SendTransactionModalProps {
+  asset: BalanceData
+  amount: string
+  recipient: string
+  onDismiss?: () => void
+  txHash?: string
+  attemptingTxn: boolean
+  pendingText?: string
+  errorMessage?: string
+  onConfirm: () => void
+  currency?: Currency
+  chainId?: ChainId
+}
+
+// Confirm Transaction Screen
+export function ConfirmTransactionContent({
+  asset,
+  amount,
+  recipient,
+  onConfirm,
+}: {
+  asset: BalanceData
+  amount: string
+  recipient: string
+  onConfirm: () => void
+}) {
+  const { t } = useTranslation()
+  const currency = new Token(
+    asset.chainId,
+    asset.token.address as `0x${string}`,
+    asset.token.decimals,
+    asset.token.symbol,
+    asset.token.name,
+  )
+  const price = asset.price?.usd ?? 0
+  const usdValue = parseFloat(amount) * price
+
+  return (
+    <Wrapper>
+      <Section>
+        <ColumnCenter>
+          <Text fontSize="20px" bold mb="16px">
+            {t('Confirm transaction')}
+          </Text>
+          <Box position="relative" mb="16px">
+            <CurrencyLogo currency={currency} size="80px" />
+          </Box>
+          <Text fontSize="32px" bold>
+            {amount} {asset.token.symbol}
+          </Text>
+          <Text fontSize="16px" color="textSubtle" mb="24px">
+            ~${usdValue.toFixed(2)} USD
+          </Text>
+
+          <Flex justifyContent="space-between" width="100%" mb="8px">
+            <Text color="textSubtle">{t('To')}</Text>
+            <Text>
+              {recipient.slice(0, 6)}...{recipient.slice(-4)}
+            </Text>
+          </Flex>
+
+          <Flex justifyContent="space-between" width="100%" mb="8px">
+            <Text color="textSubtle">{t('Network')}</Text>
+            <Text>{asset.chainId === ChainId.BSC ? 'BNB Chain' : 'Unknown'}</Text>
+          </Flex>
+
+          <Flex justifyContent="space-between" width="100%" mb="24px">
+            <Text color="textSubtle">{t('Network Fee')}</Text>
+            <Text>$0.01254</Text>
+          </Flex>
+
+          <Button onClick={onConfirm} width="100%">
+            {t('Send')}
+          </Button>
+        </ColumnCenter>
+      </Section>
+    </Wrapper>
+  )
+}
+
+// Transaction Submitted Screen
+export function TransactionSubmittedContent({
+  chainId,
+  hash,
+  onDismiss,
+}: {
+  onDismiss?: () => void
+  hash: string | undefined
+  chainId?: ChainId
+}) {
+  const { t } = useTranslation()
+
+  return (
+    <Wrapper>
+      <Section>
+        <ConfirmedIcon>
+          <Spinner size={96} />
+        </ConfirmedIcon>
+        <AutoColumn gap="12px" justify="center">
+          <Text fontSize="20px">{t('Transaction submitted')}</Text>
+          {chainId && hash && (
+            <Link external small href={getBlockExploreLink(hash, 'transaction', chainId)}>
+              {t('View on %site%', {
+                site: getBlockExploreName(chainId),
+              })}
+            </Link>
+          )}
+          {onDismiss && (
+            <Button onClick={onDismiss} mt="20px">
+              {t('Close')}
+            </Button>
+          )}
+        </AutoColumn>
+      </Section>
+    </Wrapper>
+  )
+}
+
+// Transaction Completed Screen
+export function TransactionCompletedContent({
+  chainId,
+  hash,
+  onDismiss,
+  asset,
+  amount,
+  recipient,
+}: {
+  onDismiss?: () => void
+  hash: string | undefined
+  chainId?: ChainId
+  asset: BalanceData
+  amount: string
+  recipient: string
+}) {
+  const { t } = useTranslation()
+
+  return (
+    <Wrapper>
+      <Section>
+        <ConfirmedIcon>
+          <CheckmarkCircleIcon color="success" width="90px" />
+        </ConfirmedIcon>
+        <AutoColumn gap="12px" justify="center">
+          <Box>
+            <Text fontSize="20px" textAlign="center" bold>
+              {t('Transaction completed')}
+            </Text>
+          </Box>
+          <Box background="backgroundAlt" padding="16px" borderRadius="16px" width="100%">
+            <Text textAlign="center">
+              {amount} {asset.token.symbol} {t('has been sent to')} {recipient.slice(0, 6)}...{recipient.slice(-4)}
+            </Text>
+          </Box>
+          {chainId && hash && (
+            <Link external small href={getBlockExploreLink(hash, 'transaction', chainId)}>
+              {t('View on %site%', {
+                site: getBlockExploreName(chainId),
+              })}
+            </Link>
+          )}
+          {onDismiss && (
+            <Button onClick={onDismiss} mt="20px" width="100%">
+              {t('Done')}
+            </Button>
+          )}
+        </AutoColumn>
+      </Section>
+    </Wrapper>
+  )
+}
+
+const SendTransactionModal: React.FC<React.PropsWithChildren<InjectedModalProps & SendTransactionModalProps>> = ({
+  asset,
+  amount,
+  recipient,
+  onDismiss,
+  txHash,
+  attemptingTxn,
+  pendingText,
+  errorMessage,
+  onConfirm,
+  chainId,
+}) => {
+  const { t } = useTranslation()
+
+  const handleDismiss = useCallback(() => {
+    onDismiss?.()
+  }, [onDismiss])
+
+  if (!chainId) return null
+
+  return (
+    <Modal title="" headerBackground="gradientCardHeader" onDismiss={handleDismiss}>
+      {attemptingTxn ? (
+        <ConfirmationPendingContent pendingText={pendingText || t('Sending tokens')} />
+      ) : txHash ? (
+        <TransactionCompletedContent
+          chainId={chainId}
+          hash={txHash}
+          onDismiss={handleDismiss}
+          asset={asset}
+          amount={amount}
+          recipient={recipient}
+        />
+      ) : (
+        <ConfirmTransactionContent asset={asset} amount={amount} recipient={recipient} onConfirm={onConfirm} />
+      )}
+    </Modal>
+  )
+}
+
+export default SendTransactionModal
