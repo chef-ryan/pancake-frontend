@@ -33,6 +33,7 @@ import { useSlippageAdjustedAmounts } from 'views/Swap/V3Swap/hooks'
 import { ConfirmAction } from 'views/Swap/V3Swap/hooks/useConfirmModalState'
 import { AllowedAllowanceState } from 'views/Swap/V3Swap/types'
 import { useBridgeStatus } from '../hooks'
+import { customBridgeStatus } from '../utils'
 import { getBridgeTitle } from '../utils/bridgeTitle'
 import ConfirmSwapModalV3Container from './ConfirmSwapModalV3Container'
 import { OrderStatusModalContent } from './OrderStatus/OrderStatusModalContent'
@@ -153,7 +154,7 @@ export const ConfirmSwapModalV3: React.FC<ConfirmSwapModalV3Props> = ({
       case ConfirmModalState.REVIEWING:
         return hasError ? '' : t('Confirm Swap')
       case ConfirmModalState.ORDER_SUBMITTED:
-        return getBridgeTitle(t, bridgeStatus?.status)
+        return getBridgeTitle(t, customBridgeStatus(bridgeStatus))
       default:
         return ''
     }

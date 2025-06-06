@@ -32,6 +32,7 @@ import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { OrderResultModalContent } from 'views/Swap/Bridge/CrossChainConfirmSwapModal/OrderStatus/OrderResultModalContent'
 import { bridgeStatusQueryKey } from 'views/Swap/Bridge/hooks/useBridgeStatus'
 import { ActiveBridgeOrderMetadata, BridgeStatus, UserBridgeOrder } from 'views/Swap/Bridge/types'
+import { customBridgeStatus } from 'views/Swap/Bridge/utils'
 import { getBridgeTitle } from 'views/Swap/Bridge/utils/bridgeTitle'
 
 const StyledChainLogo = styled(ChainLogo)`
@@ -184,7 +185,7 @@ export function CrossChainTransaction({ order }: { order: UserBridgeOrder }) {
         <MotionModal
           title={
             <Flex alignItems="center">
-              {getBridgeTitle(t, order.status)}
+              {getBridgeTitle(t, customBridgeStatus(order))}
               {isBridgeStatusLoading && <SwapLoading size="24px" ml="8px" />}
             </Flex>
           }

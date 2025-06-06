@@ -59,10 +59,10 @@ export function computeBridgeOrderFee(order: BridgeOrderWithCommands): BridgeOrd
 }
 
 export function customBridgeStatus(bridgeStatus: BridgeStatusData | undefined) {
-  if (!bridgeStatus) return BridgeStatus.PENDING
+  if (!bridgeStatus || !bridgeStatus?.data) return BridgeStatus.PENDING
 
   // if bridgeStatus?.data.length <= 1, use bridgeStatus.status
-  if (!bridgeStatus?.data || bridgeStatus.data.length <= 1) {
+  if (bridgeStatus.data.length <= 1) {
     return bridgeStatus.status
   }
 
