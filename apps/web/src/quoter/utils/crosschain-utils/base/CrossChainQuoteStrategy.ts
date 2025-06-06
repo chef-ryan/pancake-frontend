@@ -24,7 +24,10 @@ export abstract class CrossChainQuoteStrategy {
 
   abstract executeQuote(): Loadable<InterfaceOrder>
 
-  protected constructFinalQuote(commands: InterfaceOrder[]): BridgeOrderWithCommands {
+  protected constructFinalQuote(
+    commands: InterfaceOrder[],
+    noSlippageCommand?: InterfaceOrder,
+  ): BridgeOrderWithCommands {
     const commandsWithSlippage = commands.map((command) => {
       if (command.type === OrderType.PCS_BRIDGE) {
         return command
@@ -49,7 +52,7 @@ export abstract class CrossChainQuoteStrategy {
         inputAmount: first(commands)!.trade.inputAmount,
         // NOTE: Show output amount without slippage.
         // Minimum output received (with slippage) is different from ouputAmount
-        outputAmount: last(commands)!.trade.outputAmount,
+        outputAmount: noSlippageCommand ? noSlippageCommand.trade.outputAmount : last(commands)!.trade.outputAmount,
         tradeType: TradeType.EXACT_INPUT,
         routes,
       },
@@ -139,10 +142,10 @@ export abstract class CrossChainQuoteStrategy {
   }
 
   protected getWhitelistedOriginBridgeCurrencies(): Currency[] {
-    const chainId = this.context.baseCurrencyAmount.currency.chainId
+    const { chainId } = this.context.baseCurrencyAmount.currency
 
     const tokenMapWithoutUrls = mapWithoutUrls(this.context.tokenMap, chainId)
-    const whitelistTokens = WHITELIST_TOKEN_MAP[chainId.toString()] || []
+    const whitelistTokens = WHITELIST_TOKEN_MAP[chainId] || []
 
     return this.context.routes
       .filter((route) => route.originChainId === chainId && whitelistTokens.includes(route.originToken))

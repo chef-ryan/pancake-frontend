@@ -24,6 +24,24 @@ export class SwapToBridgeStrategy extends CrossChainQuoteStrategy {
 
     const swapOrder = CrossChainQuoteStrategy.validateQuoteResult(swapOrderLoadable, 'No swap order')
 
+    const bridgeQuoteNoSlippageLoadable = this.context.atomGetters.getBridgeQuote({
+      inputAmount: swapOrder.trade.outputAmount,
+      outputCurrency: this.context.quoteCurrency,
+    })
+
+    if (bridgeQuoteNoSlippageLoadable.isPending()) {
+      return Loadable.Pending<InterfaceOrder>()
+    }
+
+    if (bridgeQuoteNoSlippageLoadable.isFail()) {
+      return Loadable.Fail<InterfaceOrder>(bridgeQuoteNoSlippageLoadable.error)
+    }
+
+    const bridgeQuoteNoSlippage = CrossChainQuoteStrategy.validateQuoteResult(
+      bridgeQuoteNoSlippageLoadable,
+      'No bridge quote',
+    )
+
     const slippagedOutputAmount =
       computeSlippageAdjustedAmounts(swapOrder, this.context.userSlippage)[Field.OUTPUT] || swapOrder.trade.outputAmount
 
@@ -43,7 +61,7 @@ export class SwapToBridgeStrategy extends CrossChainQuoteStrategy {
 
     const bridgeQuote = CrossChainQuoteStrategy.validateQuoteResult(bridgeQuoteLoadable, 'No bridge quote')
 
-    const finalQuote = this.constructFinalQuote([swapOrder, bridgeQuote])
+    const finalQuote = this.constructFinalQuote([swapOrder, bridgeQuote], bridgeQuoteNoSlippage)
 
     return Loadable.Just(finalQuote)
   }

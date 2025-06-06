@@ -34,13 +34,6 @@ import { Timeline } from '../components/Timeline'
 import { useTimelineItems } from '../hooks/useTimelineItems'
 import { activeBridgeOrderMetadataAtom } from '../state/orderDataState'
 
-const AnimatedContainer = styled.div<{ expanded: boolean }>`
-  overflow: hidden;
-  max-height: ${({ expanded }) => (expanded ? '1000px' : '0')};
-  opacity: ${({ expanded }) => (expanded ? 1 : 0)};
-  transition: all 0.2s ease;
-`
-
 const ProgressPill = styled(Box)<{ $color: string }>`
   width: 16px;
   height: 4px;
@@ -263,7 +256,7 @@ const BridgeFeesBreakdown = ({
               {`${formatDollarAmount(feesBreakdown?.bridgeFeesUSD || 0, 3)}`}
             </Text>
           </RowBetween>
-          {feesBreakdown?.swapFeesUSD ? (
+          {Number(feesBreakdown?.swapFeesUSD || 0) > 0 ? (
             <RowBetween>
               <Text fontSize="14px" color="textSubtle">
                 {t('Trading Fee')}

@@ -63,7 +63,27 @@ export class SwapToBridgeToSwapStrategy extends CrossChainQuoteStrategy {
       basisPointsToPercent(this.context.userSlippage),
     )
 
-    // 4. Refetch bridge quote with postbridge calldata fee
+    // 4.1 Refetch bridge quote without slippage
+    const bridgeQuoteNoSlippageLoadable = this.context.atomGetters.getBridgeQuote({
+      inputAmount: originSwapOrder.trade.outputAmount,
+      outputCurrency: destinationSwapOrder.trade.inputAmount.currency,
+      commands: [destinationSwapCommand],
+    })
+
+    if (bridgeQuoteNoSlippageLoadable.isPending()) {
+      return Loadable.Pending<InterfaceOrder>()
+    }
+
+    if (bridgeQuoteNoSlippageLoadable.isFail()) {
+      return Loadable.Fail<InterfaceOrder>(bridgeQuoteNoSlippageLoadable.error)
+    }
+
+    const bridgeQuoteNoSlippage = CrossChainQuoteStrategy.validateQuoteResult(
+      bridgeQuoteNoSlippageLoadable,
+      'No bridge quote',
+    )
+
+    // 4.2 Refetch bridge quote with postbridge calldata fee
     const bridgeQuoteWithPostbridgeCalldataFee = this.context.atomGetters.getBridgeQuote({
       inputAmount: slippagedOriginSwapOrderOutputAmount,
       outputCurrency: destinationSwapOrder.trade.inputAmount.currency,
@@ -79,7 +99,23 @@ export class SwapToBridgeToSwapStrategy extends CrossChainQuoteStrategy {
       'No final bridge quote found',
     )
 
-    // 5. Refetch swap quote with postbridge calldata fee
+    // 5.1 Refetch swap quote without slippage
+
+    const finalDestinationSwapOrderNoSlippageLoadable = this.context.atomGetters.getSwapQuote({
+      baseCurrency: bridgeQuoteNoSlippage.trade.outputAmount.currency,
+      amount: bridgeQuoteNoSlippage.trade.outputAmount,
+    })
+
+    if (finalDestinationSwapOrderNoSlippageLoadable.isPending()) {
+      return Loadable.Pending<InterfaceOrder>()
+    }
+
+    const finalDestinationSwapOrderNoSlippage = CrossChainQuoteStrategy.validateQuoteResult(
+      finalDestinationSwapOrderNoSlippageLoadable,
+      'No final swap order',
+    )
+
+    // 5.2 Refetch swap quote with postbridge calldata fee
     const finalDestinationSwapOrderLoadable = this.context.atomGetters.getSwapQuote({
       baseCurrency: finalBridgeQuote.trade.outputAmount.currency,
       amount: finalBridgeQuote.trade.outputAmount,
@@ -94,7 +130,10 @@ export class SwapToBridgeToSwapStrategy extends CrossChainQuoteStrategy {
       'No final swap order',
     )
 
-    const finalQuote = this.constructFinalQuote([originSwapOrder, finalBridgeQuote, finalDestinationSwapOrder])
+    const finalQuote = this.constructFinalQuote(
+      [originSwapOrder, finalBridgeQuote, finalDestinationSwapOrder],
+      finalDestinationSwapOrderNoSlippage,
+    )
 
     return Loadable.Just(finalQuote)
   }

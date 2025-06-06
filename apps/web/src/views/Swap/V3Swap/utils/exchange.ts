@@ -16,6 +16,7 @@ import { FeeAmount } from '@pancakeswap/v3-sdk'
 import { displaySymbolWithChainName } from '@pancakeswap/widgets-internal'
 
 import { BIPS_BASE, INPUT_FRACTION_AFTER_FEE } from 'config/constants/exchange'
+import last from 'lodash/last'
 import { Field } from 'state/swap/actions'
 import { isAddressEqual } from 'utils'
 import { basisPointsToPercent } from 'utils/exchange'
@@ -55,12 +56,20 @@ export function computeSlippageAdjustedAmounts(
 
   if (isBridgeOrder(order) && bridgeOrder.commands && length) {
     const isBridgeOnly = length === 1
-    const isEndWithBridge = bridgeOrder.commands[length - 1].type === OrderType.PCS_BRIDGE
+    const isBridgeToSwap = length === 2 && bridgeOrder.commands[length - 1].type === OrderType.PCS_CLASSIC
 
-    if (isBridgeOnly || isEndWithBridge) {
+    if (isBridgeOnly) {
       return {
         [Field.INPUT]: trade.inputAmount,
         [Field.OUTPUT]: trade.outputAmount,
+      }
+    }
+
+    if (!isBridgeToSwap) {
+      return {
+        [Field.INPUT]: trade.inputAmount,
+        // last command is swap order, and is already slippaged
+        [Field.OUTPUT]: last(bridgeOrder.commands)!.trade.outputAmount,
       }
     }
   }
