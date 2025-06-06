@@ -3,6 +3,7 @@ import { Percent } from '@pancakeswap/swap-sdk-core'
 import { BridgeOrderWithCommands, isXOrder } from 'views/Swap/utils'
 import { computeTradePriceBreakdown, TradePriceBreakdown } from 'views/Swap/V3Swap/utils/exchange'
 import { detectHasDynamicHook } from 'views/SwapSimplify/hooks/useHasDynamicHook'
+import { BridgeStatus, BridgeStatusData } from '../types'
 
 export interface BridgeOrderFee extends TradePriceBreakdown {
   type: OrderType
@@ -55,4 +56,27 @@ export function computeBridgeOrderFee(order: BridgeOrderWithCommands): BridgeOrd
       type: command.type,
     }
   })
+}
+
+export function customBridgeStatus(bridgeStatus: BridgeStatusData | undefined) {
+  if (!bridgeStatus) return BridgeStatus.PENDING
+
+  // if bridgeStatus?.data.length <= 1, use bridgeStatus.status
+  if (!bridgeStatus?.data || bridgeStatus.data.length <= 1) {
+    return bridgeStatus.status
+  }
+
+  // if bridgeStatus?.data.length > 1,
+  // bridge status will be the last command's status
+  const lastCommand = bridgeStatus.data[bridgeStatus.data.length - 1]
+
+  // if the last command is failed, and other commands are success, return PARTIAL_SUCCESS
+  if (lastCommand.status.code === BridgeStatus.FAILED) {
+    const successCommands = bridgeStatus.data.filter((command) => command.status.code === BridgeStatus.SUCCESS)
+    if (successCommands.length > 0) {
+      return BridgeStatus.PARTIAL_SUCCESS
+    }
+  }
+
+  return lastCommand.status.code
 }

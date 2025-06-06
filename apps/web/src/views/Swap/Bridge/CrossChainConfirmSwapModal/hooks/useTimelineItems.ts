@@ -12,6 +12,7 @@ import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { publicClient } from 'utils/wagmi'
 import { Address, erc20Abi } from 'viem'
 import { BridgeStatus, BridgeStatusData, Command } from '../../types'
+import { customBridgeStatus } from '../../utils'
 import { TimelineItemStatus } from '../components/Timeline'
 import { CrossChainAPIErrorCode, useBridgeErrorMessages } from './useBridgeErrorMessages'
 
@@ -128,6 +129,8 @@ export const useTimelineItems = ({ bridgeStatus, order }: UseTimelineItemsProps)
     notifyOnChangeProps: ['data'],
   })
 
+  const cstBridgeStatus = customBridgeStatus(bridgeStatus)
+
   const timelineItems = useMemo(() => {
     return (
       bridgeStatus?.data?.map((step, i) => {
@@ -163,6 +166,11 @@ export const useTimelineItems = ({ bridgeStatus, order }: UseTimelineItemsProps)
 
         const getStatus = (): TimelineItemStatus => {
           const stepStatus = step.status.code
+
+          // Mark everything is completed if custom bridge status is success
+          if (cstBridgeStatus === BridgeStatus.SUCCESS) {
+            return 'completed'
+          }
 
           // If previous step is not completed or unsuccessful, then this step is not started
           if (
@@ -241,7 +249,7 @@ export const useTimelineItems = ({ bridgeStatus, order }: UseTimelineItemsProps)
         }
       }) ?? []
     )
-  }, [bridgeStatus, order, t, tokenMapping])
+  }, [bridgeStatus, cstBridgeStatus, order, t, tokenMapping])
 
   return timelineItems
 }

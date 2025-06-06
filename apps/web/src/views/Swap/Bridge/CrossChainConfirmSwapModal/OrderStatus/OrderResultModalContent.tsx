@@ -28,6 +28,7 @@ import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { shortenAddress } from 'views/V3Info/utils'
 import { useBridgeStatus } from '../../hooks/useBridgeStatus'
 import { ActiveBridgeOrderMetadata, BridgeResponseStatusData, BridgeStatus, Command } from '../../types'
+import { customBridgeStatus } from '../../utils'
 import { activeBridgeOrderMetadataAtom } from '../state/orderDataState'
 import { OrderDetailsPanel } from './OrderDetailsPanel'
 
@@ -171,8 +172,10 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
     return minOutputAmount || bridgeStatus?.outputCurrencyAmount || order?.trade.outputAmount
   }, [bridgeStatus, order?.trade.outputAmount])
 
+  const status = customBridgeStatus(bridgeStatus)
+
   const middleIcon = useMemo(() => {
-    switch (bridgeStatus?.status) {
+    switch (status) {
       case BridgeStatus.SUCCESS:
         return (
           <IconContainer>
@@ -186,40 +189,20 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
             <ArrowForwardIcon width="24px" ml="4px" color="textSubtle" />
           </FlexGap>
         )
-      default:
+      case BridgeStatus.BRIDGE_PENDING:
+      case BridgeStatus.PENDING:
         return (
           <IconContainer>
             <ArrowForwardIcon width="24px" ml="4px" color="textSubtle" />
             <SwapLoading style={{ position: 'absolute', top: '2px', left: '7px', scale: '2.5' }} />
           </IconContainer>
         )
+      default:
+        return undefined
     }
-  }, [bridgeStatus?.status])
+  }, [status])
 
-  const displayInfo = useMemo(() => {
-    if (!bridgeStatus || !bridgeStatus.data) return undefined
-
-    let status = bridgeStatus?.status
-    let isRefundCase = false
-
-    // Refund case: If swap on origin chain is successful but bridging has failed
-    if (
-      bridgeStatus?.data.length >= 2 &&
-      bridgeStatus?.data[0].status.code === BridgeStatus.SUCCESS &&
-      bridgeStatus.data[0].command === Command.SWAP &&
-      bridgeStatus.data[1].command === Command.BRIDGE &&
-      (bridgeStatus?.data[1].status.code === BridgeStatus.FAILED ||
-        bridgeStatus?.data[1].status.code === BridgeStatus.PARTIAL_SUCCESS)
-    ) {
-      isRefundCase = true
-      status = BridgeStatus.PARTIAL_SUCCESS
-    }
-
-    return {
-      status,
-      isRefundCase,
-    }
-  }, [bridgeStatus])
+  const isRefundCase = status === BridgeStatus.PARTIAL_SUCCESS
 
   return (
     <Box {...props}>
@@ -233,30 +216,34 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
         }}
         maxWidth={[null, null, null, '420px']}
       >
-        {displayInfo && bridgeStatus && resultCurrencyAmount && (
-          <Message
-            variant={
-              displayInfo.status === BridgeStatus.SUCCESS
-                ? 'success'
-                : displayInfo.status === BridgeStatus.PARTIAL_SUCCESS
-                ? 'secondary'
-                : 'danger'
-            }
-          >
-            <Description
-              currencyAmount={resultCurrencyAmount}
-              description={
-                displayInfo.isRefundCase
-                  ? t(' is being refunded to %address% on ', {
-                      address: shortenAddress(recipientOnDestChain || ''),
-                    })
-                  : t(' has been sent to  %address% on ', {
-                      address: shortenAddress(recipientOnDestChain || ''),
-                    })
+        {status &&
+          [BridgeStatus.SUCCESS, BridgeStatus.PARTIAL_SUCCESS, BridgeStatus.FAILED].includes(status) &&
+          resultCurrencyAmount && (
+            <Message
+              variant={
+                status === BridgeStatus.SUCCESS
+                  ? 'success'
+                  : status === BridgeStatus.PARTIAL_SUCCESS
+                  ? 'secondary'
+                  : 'danger'
               }
-            />
-          </Message>
-        )}
+            >
+              <Description
+                currencyAmount={resultCurrencyAmount}
+                description={
+                  isRefundCase
+                    ? t(' is being refunded to %address% on ', {
+                        address: shortenAddress(recipientOnDestChain || ''),
+                      })
+                    : status === BridgeStatus.FAILED
+                    ? t('Your bridge transaction failed. You will be refunded shortly.')
+                    : t(' has been sent to  %address% on ', {
+                        address: shortenAddress(recipientOnDestChain || ''),
+                      })
+                }
+              />
+            </Message>
+          )}
       </Box>
       <DualCurrencyDisplay
         inputCurrency={bridgeStatus?.inputCurrencyAmount?.currency || orderInputCurrency}
@@ -266,10 +253,8 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
         inputChainName={getFullChainNameById(bridgeStatus?.originChainId || orderInputCurrency?.chainId)}
         outputChainName={getFullChainNameById(bridgeStatus?.destinationChainId || orderOutputCurrency?.chainId)}
         overrideIcon={middleIcon}
-        textRightOpacity={
-          bridgeStatus && [BridgeStatus.FAILED, BridgeStatus.PARTIAL_SUCCESS].includes(bridgeStatus.status) ? 0.5 : 1
-        }
-        textLeftOpacity={bridgeStatus && [BridgeStatus.SUCCESS].includes(bridgeStatus.status) ? 0.5 : 1}
+        textRightOpacity={status && [BridgeStatus.FAILED, BridgeStatus.PARTIAL_SUCCESS].includes(status) ? 0.5 : 1}
+        textLeftOpacity={status && [BridgeStatus.SUCCESS].includes(status) ? 0.5 : 1}
       />
       <Box mt="24px">
         {bridgeStatus && bridgeStatus.data && bridgeStatus.data.length > 0 ? (

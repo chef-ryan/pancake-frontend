@@ -202,8 +202,8 @@ const BridgeFeesBreakdown = ({
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
-  // NOTE: totalFeesUSD should always be > 0; if not, it meants the API is not ready yet
-  const isDataReady = Boolean(feesBreakdown?.totalFeesUSD)
+  // NOTE: bridgeFeesUSD should always be > 0; if not, it meants the API is not ready yet
+  const isDataReady = Boolean(feesBreakdown?.bridgeFeesUSD)
 
   return (
     <SwapUIV2.Collapse
