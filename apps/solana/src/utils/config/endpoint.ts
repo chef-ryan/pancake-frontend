@@ -31,4 +31,4 @@ const parseRPCConf = (): RPCConfType[] => {
 
 export const rpcs = parseRPCConf()
 
-export const quoteApi = 'http://localhost:3001'
+export const quoteApi = 'https://sol-quoter-api-dev-aoa6p.ondigitalocean.app'
