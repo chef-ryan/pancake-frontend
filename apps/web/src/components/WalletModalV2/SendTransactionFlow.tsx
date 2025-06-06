@@ -1,26 +1,25 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, getChainName } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency, Token } from '@pancakeswap/sdk'
 import {
-  ArrowUpIcon,
   AutoColumn,
   Box,
   Button,
   CheckmarkCircleIcon,
   ColumnCenter,
   Flex,
-  InjectedModalProps,
   Link,
-  Modal,
   Spinner,
   Text,
 } from '@pancakeswap/uikit'
 import { ConfirmationPendingContent } from '@pancakeswap/widgets-internal'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
+import { useActiveChainId } from 'hooks/useActiveChainId'
+import { BalanceData } from 'hooks/useAddressBalance'
+import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { useCallback } from 'react'
 import { styled } from 'styled-components'
 import { getBlockExploreLink, getBlockExploreName } from 'utils'
-import { BalanceData } from 'hooks/useAddressBalance'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -69,6 +68,10 @@ export function ConfirmTransactionContent({
   )
   const price = asset.price?.usd ?? 0
   const usdValue = parseFloat(amount) * price
+  const chainName = asset.chainId === ChainId.BSC ? 'BNB' : getChainName(asset.chainId)
+  const { chainId } = useActiveChainId()
+  const isChainMatched = chainId === asset.chainId
+  const { switchNetworkAsync } = useSwitchNetwork()
 
   return (
     <Wrapper>
@@ -96,7 +99,7 @@ export function ConfirmTransactionContent({
 
           <Flex justifyContent="space-between" width="100%" mb="8px">
             <Text color="textSubtle">{t('Network')}</Text>
-            <Text>{asset.chainId === ChainId.BSC ? 'BNB Chain' : 'Unknown'}</Text>
+            <Text>{chainName}</Text>
           </Flex>
 
           <Flex justifyContent="space-between" width="100%" mb="24px">
@@ -104,8 +107,8 @@ export function ConfirmTransactionContent({
             <Text>$0.01254</Text>
           </Flex>
 
-          <Button onClick={onConfirm} width="100%">
-            {t('Send')}
+          <Button onClick={isChainMatched ? onConfirm : () => switchNetworkAsync(asset.chainId)} width="100%">
+            {isChainMatched ? t('Send') : t('Switch Network')}
           </Button>
         </ColumnCenter>
       </Section>
@@ -204,7 +207,7 @@ export function TransactionCompletedContent({
   )
 }
 
-const SendTransactionModal: React.FC<React.PropsWithChildren<InjectedModalProps & SendTransactionModalProps>> = ({
+const SendTransactionContent: React.FC<React.PropsWithChildren<SendTransactionModalProps>> = ({
   asset,
   amount,
   recipient,
@@ -212,7 +215,6 @@ const SendTransactionModal: React.FC<React.PropsWithChildren<InjectedModalProps 
   txHash,
   attemptingTxn,
   pendingText,
-  errorMessage,
   onConfirm,
   chainId,
 }) => {
@@ -225,7 +227,7 @@ const SendTransactionModal: React.FC<React.PropsWithChildren<InjectedModalProps 
   if (!chainId) return null
 
   return (
-    <Modal title="" headerBackground="gradientCardHeader" onDismiss={handleDismiss}>
+    <Box>
       {attemptingTxn ? (
         <ConfirmationPendingContent pendingText={pendingText || t('Sending tokens')} />
       ) : txHash ? (
@@ -240,8 +242,8 @@ const SendTransactionModal: React.FC<React.PropsWithChildren<InjectedModalProps 
       ) : (
         <ConfirmTransactionContent asset={asset} amount={amount} recipient={recipient} onConfirm={onConfirm} />
       )}
-    </Modal>
+    </Box>
   )
 }
 
-export default SendTransactionModal
+export default SendTransactionContent

@@ -2,12 +2,15 @@ import { ChainId, getChainName } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { Token } from '@pancakeswap/sdk'
 import { BalanceInput, Box, Button, CloseIcon, FlexGap, IconButton, Input, Text } from '@pancakeswap/uikit'
+import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
+import { ASSET_CDN } from 'config/constants/endpoints'
 import { BalanceData } from 'hooks/useAddressBalance'
-import { useState } from 'react'
+import { useERC20 } from 'hooks/useContract'
+import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { ActionButton } from './ActionButton'
-import SendTransactionModal from './SendTransactionModal'
+import SendTransactionFlow from './SendTransactionFlow'
 
 const FormContainer = styled(Box)`
   display: flex;
@@ -16,9 +19,25 @@ const FormContainer = styled(Box)`
 `
 
 const AssetContainer = styled(Box)`
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
+`
+
+const ChainIconWrapper = styled(Box)`
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: ${({ theme }) => theme.colors.background};
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1;
 `
 
 // No longer need these styled components since we're using CurrencyInputPanelSimplify
@@ -44,7 +63,7 @@ export interface SendAssetFormProps {
 
 export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }) => {
   const { t } = useTranslation()
-  const [address, setAddress] = useState('')
+  const [address, setAddress] = useState<string | null>(null)
   const [amount, setAmount] = useState('')
   const [addressError, setAddressError] = useState('')
   const [activePercentage, setActivePercentage] = useState<number | null>(null)
@@ -53,6 +72,32 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [txHash, setTxHash] = useState<string | undefined>(undefined)
+  const currency = useMemo(
+    () =>
+      new Token(
+        asset.chainId,
+        asset.token.address as `0x${string}`,
+        asset.token.decimals,
+        asset.token.symbol,
+        asset.token.name,
+      ),
+    [asset],
+  )
+  const erc20Contract = useERC20(asset.token.address as `0x${string}`, { chainId: asset.chainId })
+
+  const sendAsset = useCallback(async () => {
+    const amounts = tryParseAmount(amount, currency)
+    try {
+      const result = await erc20Contract?.write?.transfer([address as `0x${string}`, amounts?.quotient ?? 0n], {
+        account: erc20Contract.account!,
+        chain: erc20Contract.chain!,
+      })
+      setTxHash(result)
+      console.log(result)
+    } catch (error) {
+      console.error(error)
+    }
+  }, [address, amount, erc20Contract])
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -85,26 +130,38 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
   }
 
   const chainName = asset.chainId === ChainId.BSC ? 'BNB' : getChainName(asset.chainId)
-  const currency = new Token(
-    asset.chainId,
-    asset.token.address as `0x${string}`,
-    asset.token.decimals,
-    asset.token.symbol,
-    asset.token.name,
-  )
   const price = asset.price?.usd ?? 0
+  if (showConfirmModal) {
+    return (
+      <SendTransactionFlow
+        asset={asset}
+        amount={amount}
+        recipient={address ?? ''}
+        onDismiss={() => {
+          setShowConfirmModal(false)
+          setAttemptingTxn(false)
+          setTxHash(undefined)
+        }}
+        attemptingTxn={attemptingTxn}
+        txHash={txHash}
+        chainId={asset.chainId}
+        onConfirm={async () => {
+          // In a real implementation, this would be the actual transaction submission
+          setAttemptingTxn(true)
 
+          sendAsset().then(() => {
+            setAttemptingTxn(false)
+          })
+        }}
+      />
+    )
+  }
   return (
     <FormContainer>
       <FlexGap alignItems="center" justifyContent="space-between">
         <Text fontSize="20px" fontWeight="bold">
           {t('Send')}
         </Text>
-        <AssetContainer>
-          <CurrencyLogo currency={currency} size="24px" />
-          <Text fontWeight="bold">{asset.token.symbol}</Text>
-          <Text color="textSubtle">{chainName}</Text>
-        </AssetContainer>
       </FlexGap>
 
       <Box>
@@ -113,14 +170,15 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
         </Text>
         <AddressInputWrapper>
           <Box position="relative">
-            <Input value={address} onChange={handleAddressChange} placeholder="0x" height="64px" />
+            <Input value={address ?? ''} onChange={handleAddressChange} placeholder="0x" style={{ height: '64px' }} />
             {address && (
               <ClearButton
                 scale="sm"
                 onClick={handleClearAddress}
                 style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)' }}
+                variant="tertiary"
               >
-                <CloseIcon color="primary" />
+                <CloseIcon color="textSubtle" />
               </ClearButton>
             )}
           </Box>
@@ -129,9 +187,24 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
       </Box>
 
       <Box mb="16px">
-        <Text fontSize="12px" textTransform="uppercase" color="textSubtle" fontWeight="bold" mb="8px">
-          {t('Amount')}
-        </Text>
+        <FlexGap alignItems="center">
+          <AssetContainer>
+            <CurrencyLogo currency={currency} size="40px" />
+            <ChainIconWrapper>
+              <img
+                src={`${ASSET_CDN}/web/chains/${asset.chainId}.png`}
+                alt={`${chainName}-logo`}
+                width="12px"
+                height="12px"
+              />
+            </ChainIconWrapper>
+          </AssetContainer>
+          <FlexGap alignItems="center" flexDirection="column">
+            <Text fontWeight="bold">{asset.token.symbol}</Text>
+            <Text color="textSubtle">{chainName.toLowerCase()}</Text>
+          </FlexGap>
+        </FlexGap>
+
         <BalanceInput
           value={amount}
           onUserInput={handleAmountChange}
@@ -180,33 +253,6 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
           {t('Next')}
         </ActionButton>
       </FlexGap>
-
-      {showConfirmModal && (
-        <SendTransactionModal
-          asset={asset}
-          amount={amount}
-          recipient={address}
-          onDismiss={() => {
-            setShowConfirmModal(false)
-            setAttemptingTxn(false)
-            setTxHash(undefined)
-          }}
-          attemptingTxn={attemptingTxn}
-          txHash={txHash}
-          chainId={asset.chainId}
-          onConfirm={async () => {
-            // In a real implementation, this would be the actual transaction submission
-            setAttemptingTxn(true)
-
-            // Simulate transaction processing
-            setTimeout(() => {
-              // Generate a mock transaction hash
-              setTxHash('0x0960a...989c')
-              setAttemptingTxn(false)
-            }, 2000)
-          }}
-        />
-      )}
     </FormContainer>
   )
 }
