@@ -9,6 +9,7 @@ import { BalanceData } from 'hooks/useAddressBalance'
 import { useERC20 } from 'hooks/useContract'
 import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { zeroAddress } from 'viem'
 import { useSendTransaction } from 'wagmi'
 import { ActionButton } from './ActionButton'
 import SendTransactionFlow from './SendTransactionFlow'
@@ -84,7 +85,7 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
       ),
     [asset],
   )
-  const isNativeToken = asset.token.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+  const isNativeToken = asset.token.address === zeroAddress
   const erc20Contract = useERC20(asset.token.address as `0x${string}`, { chainId: asset.chainId })
   const { sendTransactionAsync } = useSendTransaction()
 
