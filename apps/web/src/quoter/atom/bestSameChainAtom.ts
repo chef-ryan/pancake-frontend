@@ -7,7 +7,7 @@ import { atomFamily } from 'jotai/utils'
 import { isBetterQuoteTrade } from 'quoter/utils/getBetterQuote'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { warningSeverity } from 'utils/exchange'
-import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
+import { InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
 import { computeTradePriceBreakdown } from 'views/Swap/V3Swap/utils/exchange'
 import { NoValidRouteError, QuoteQuery } from '../quoter.types'
 import { activeQuoteHashAtom } from './abortControlAtoms'
@@ -120,6 +120,12 @@ export const bestSameChainWithoutPlaceHolderAtom = atomFamily((_option: QuoteQue
 
         if (quote.isJust()) {
           const order = quote.unwrap()
+
+          // NOTE: refactor so it doesn't need to check for bridge order
+          if (isBridgeOrder(order)) {
+            continue
+          }
+
           if (i !== tests.length - 1) {
             const { priceImpactWithoutFee } = computeTradePriceBreakdown(isXOrder(order) ? order.ammTrade : order.trade)
             const isHighImpact = warningSeverity(priceImpactWithoutFee) >= 3
