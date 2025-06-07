@@ -3,7 +3,18 @@ import { useTranslation } from '@pancakeswap/localization'
 /* eslint-disable no-restricted-syntax */
 import { ChainId, Currency, getTokenComparator, Token } from '@pancakeswap/sdk'
 import { createFilterToken, WrappedTokenInfo } from '@pancakeswap/token-lists'
-import { AutoColumn, Box, Column, ModalCloseButton, ModalTitle, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import {
+  AutoColumn,
+  Box,
+  CogIcon,
+  Column,
+  Flex,
+  IconButton,
+  ModalCloseButton,
+  ModalTitle,
+  Text,
+  useMatchBreakpoints,
+} from '@pancakeswap/uikit'
 import { useAudioPlay } from '@pancakeswap/utils/user'
 import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FixedSizeList } from 'react-window'
@@ -19,7 +30,7 @@ import { useAllTokenBalances } from 'state/wallet/hooks'
 import { getTokenAddressFromSymbolAlias } from 'utils/getTokenAlias'
 import { useAllTokens, useIsUserAddedToken, useToken } from '../../hooks/Tokens'
 import Row from '../Layout/Row'
-import CommonBases from './CommonBases'
+import CommonBases, { BaseWrapper } from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { CurrencySearchInput } from './CurrencySearchInput'
 import ImportRow from './ImportRow'
@@ -45,6 +56,7 @@ interface CurrencySearchProps {
   selectedChainId?: ChainId
   mode?: string
   supportCrossChain?: boolean
+  onSettingsClick?: () => void
 }
 
 function useSearchInactiveTokenLists(search: string | undefined, minResults = 10): WrappedTokenInfo[] {
@@ -112,6 +124,7 @@ function CurrencySearch({
   selectedChainId,
   mode,
   supportCrossChain = false,
+  onSettingsClick,
 }: CurrencySearchProps) {
   const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState<string>('')
@@ -270,21 +283,32 @@ function CurrencySearch({
       {selectedChainId ? <UpdaterByChainId chainId={selectedChainId} /> : null}
 
       {showSearchHeader && (
-        <ModalTitle my="12px" justifyContent="space-between">
-          <Text fontSize="20px" mr="16px" bold>
-            {headerTitle}
-          </Text>
-          <CurrencySearchInput
-            autoFocus={false}
-            inputRef={inputRef}
-            handleEnter={handleEnter}
-            onInput={handleOnInput}
-            compact
-          />
+        <ModalTitle my="12px" display="flex" flexDirection="column">
+          <Flex justifyContent="space-between" alignItems="center" width="100%">
+            <Text fontSize="20px" mr="16px" bold>
+              {headerTitle}
+            </Text>
+            <Box mr="-16px">
+              <ModalCloseButton onDismiss={onDismiss} padding="0" />
+            </Box>
+          </Flex>
+          <Flex width="100%" alignItems="center">
+            <CurrencySearchInput
+              autoFocus={false}
+              inputRef={inputRef}
+              handleEnter={handleEnter}
+              onInput={handleOnInput}
+              compact
+            />
 
-          <Box mr="-16px">
-            <ModalCloseButton onDismiss={onDismiss} padding="0" />
-          </Box>
+            {onSettingsClick && (
+              <IconButton onClick={onSettingsClick} variant="text" scale="sm" ml="8px">
+                <BaseWrapper style={{ padding: '6px' }}>
+                  <CogIcon height={24} width={24} color="textSubtle" />
+                </BaseWrapper>
+              </IconButton>
+            )}
+          </Flex>
         </ModalTitle>
       )}
       <AutoColumn gap="16px">

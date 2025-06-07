@@ -4,7 +4,6 @@ import { ChainId, Currency, Token } from '@pancakeswap/sdk'
 import { TokenList, WrappedTokenInfo } from '@pancakeswap/token-lists'
 import { enableList, removeList, useFetchListCallback } from '@pancakeswap/token-lists/react'
 import {
-  Button,
   CopyButton,
   FlexGap,
   InjectedModalProps,
@@ -31,11 +30,6 @@ import ImportToken from './ImportToken'
 import Manage from './Manage'
 import { CurrencyModalView } from './types'
 
-const Footer = styled.div`
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.backgroundAlt};
-  text-align: center;
-`
 const StyledModalContainer = styled(ModalContainer)`
   width: 100%;
   min-width: 320px;
@@ -61,10 +55,6 @@ const StyledModalBody = styled(ModalBody)`
   &::-webkit-scrollbar {
     display: none;
   }
-`
-
-const ManageTokenButton = styled(Button)`
-  color: ${({ theme }) => theme.colors.primary60};
 `
 
 export interface CurrencySearchModalProps extends InjectedModalProps {
@@ -158,7 +148,8 @@ export default function CurrencySearchModal({
 
   useEffect(() => {
     if (!wrapperRef.current) return
-    setHeight(wrapperRef.current.offsetHeight - 360)
+
+    setHeight(wrapperRef.current.offsetHeight)
   }, [])
 
   return (
@@ -245,6 +236,7 @@ export default function CurrencySearchModal({
       <StyledModalBody>
         {modalView === CurrencyModalView.search ? (
           <CurrencySearch
+            onSettingsClick={() => setModalView(CurrencyModalView.manage)}
             supportCrossChain={supportCrossChain}
             onCurrencySelect={handleCurrencySelect}
             selectedCurrency={selectedCurrency}
@@ -284,18 +276,6 @@ export default function CurrencySearchModal({
             chainId={selectedChainId}
           />
         ) : null}
-        {modalView === CurrencyModalView.search && (
-          <Footer>
-            <ManageTokenButton
-              scale="sm"
-              variant="text"
-              onClick={() => setModalView(CurrencyModalView.manage)}
-              className="list-token-manage-button"
-            >
-              {t('Manage Tokens')}
-            </ManageTokenButton>
-          </Footer>
-        )}
       </StyledModalBody>
     </StyledModalContainer>
   )
