@@ -1,6 +1,15 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { ButtonMenu, ButtonMenuItem, Text, TooltipText, useMatchBreakpoints, useTooltip } from '@pancakeswap/uikit'
+import {
+  ButtonMenu,
+  ButtonMenuItem,
+  FlexGap,
+  Text,
+  TooltipText,
+  useMatchBreakpoints,
+  useTooltip,
+} from '@pancakeswap/uikit'
 import GlobalSettings from 'components/Menu/GlobalSettings'
+import RecentTransactionsButton from 'components/Menu/GlobalSettings/RecentTransactionsButton'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
@@ -167,13 +176,16 @@ export const SwapSelection = ({
         </ColoredIconButton>
       )} */}
       {withToolkit && (
-        <GlobalSettings
-          color="textSubtle"
-          mr="0"
-          mode={SettingsMode.SWAP_LIQUIDITY}
-          data-dd-action-name="Swap settings button"
-          width="24px"
-        />
+        <FlexGap alignItems="center" gap="4px">
+          <RecentTransactionsButton />
+          <GlobalSettings
+            color="textSubtle"
+            mr="0"
+            mode={SettingsMode.SWAP_LIQUIDITY}
+            data-dd-action-name="Swap settings button"
+            width="24px"
+          />
+        </FlexGap>
       )}
     </SwapSelectionWrapper>
   )

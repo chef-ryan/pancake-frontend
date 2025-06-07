@@ -7,6 +7,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import replaceBrowserHistoryMultiple from '@pancakeswap/utils/replaceBrowserHistoryMultiple'
 
 import { AutoRow } from 'components/Layout/Row'
+
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
@@ -15,10 +16,12 @@ import { keyframes, styled } from 'styled-components'
 import { useTheme } from '@pancakeswap/hooks'
 import { SwapUIV2 } from '@pancakeswap/widgets-internal'
 import { LottieRefCurrentProps } from 'lottie-react'
-import { useAllowRecipient } from '../../Swap/V3Swap/hooks'
 
+import { CHAIN_QUERY_NAME } from 'config/chains'
+import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import ArrowDark from '../../../../public/images/swap/arrow_dark.json' assert { type: 'json' }
 import ArrowLight from '../../../../public/images/swap/arrow_light.json' assert { type: 'json' }
+import { useAllowRecipient } from '../../Swap/V3Swap/hooks'
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false })
 
@@ -80,21 +83,35 @@ export const FlipButton = memo(function FlipButton({
   const lottieRef = useRef<LottieRefCurrentProps | null>(null)
   const { isDark } = useTheme()
   const { isDesktop } = useMatchBreakpoints()
+  const { canSwitch, switchNetworkAsync } = useSwitchNetwork()
 
   const animationData = useMemo(() => (isDark ? ArrowDark : ArrowLight), [isDark])
 
   const { onSwitchTokens } = useSwapActionHandlers()
   const {
-    [Field.INPUT]: { currencyId: inputCurrencyId },
-    [Field.OUTPUT]: { currencyId: outputCurrencyId },
+    [Field.INPUT]: { currencyId: inputCurrencyId, chainId: inputChainId },
+    [Field.OUTPUT]: { currencyId: outputCurrencyId, chainId: outputChainId },
   } = useSwapState()
 
-  const onFlip = useCallback(() => {
+  const onFlip = useCallback(async () => {
     onSwitchTokens()
+
     if (replaceBrowser) {
+      // If cross-chain swap, switch network to new Input Currency's chain
+
+      if (outputChainId && inputChainId !== outputChainId && canSwitch) {
+        await switchNetworkAsync(outputChainId)
+      }
+
       replaceBrowserHistoryMultiple({
         inputCurrency: outputCurrencyId,
         outputCurrency: inputCurrencyId,
+        ...(inputChainId &&
+          outputChainId &&
+          inputChainId !== outputChainId && {
+            chainOut: CHAIN_QUERY_NAME[inputChainId],
+            chain: CHAIN_QUERY_NAME[outputChainId],
+          }),
       })
     }
   }, [onSwitchTokens, inputCurrencyId, outputCurrencyId])

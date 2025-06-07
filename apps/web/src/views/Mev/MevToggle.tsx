@@ -84,7 +84,7 @@ export const MevToggle: React.FC<{ size?: 'sm' | 'md' }> = ({ size = 'md' }) => 
           </Text>
           {tooltipVisible && tooltip}
         </FlexGap>
-        <Toggle scale={size} checked={isMEVEnabled} onClick={onOpen} />
+        <Toggle scale="md" checked={isMEVEnabled} onClick={onOpen} defaultColor={theme.isDark ? 'disabled' : 'input'} />
       </ToggleWrapper>
       <MevModal isOpen={isOpen} onDismiss={onDismiss} />
     </>

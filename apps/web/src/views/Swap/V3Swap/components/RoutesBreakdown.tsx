@@ -8,7 +8,8 @@ import { styled } from 'styled-components'
 import { RowBetween } from 'components/Layout/Row'
 import SwapRoute from 'views/Swap/components/SwapRoute'
 import { useWallchainStatus } from '../hooks/useWallchain'
-import { RouteDisplayEssentials, RouteDisplayModal } from './RouteDisplayModal'
+import { RouteDisplayEssentials } from './RouteDisplay/types'
+import { RouteDisplayModal } from './RouteDisplayModal'
 
 interface Props {
   routes?: RouteDisplayEssentials[]

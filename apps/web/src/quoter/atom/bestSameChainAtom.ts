@@ -12,7 +12,7 @@ import { computeTradePriceBreakdown } from 'views/Swap/V3Swap/utils/exchange'
 import { NoValidRouteError, QuoteQuery } from '../quoter.types'
 import { activeQuoteHashAtom } from './abortControlAtoms'
 import { placeholderAtom } from './placeholderAtom'
-import { routingStrategyAtom, StrategyRoute } from './routingStrategy'
+import { StrategyRoute, routingStrategyAtom } from './routingStrategy'
 
 function getFailReason(errors: any[]) {
   const someTimeout = errors.find((x) => x instanceof TimeoutError)
@@ -22,7 +22,7 @@ function getFailReason(errors: any[]) {
   return new NoValidRouteError()
 }
 
-const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
+export const bestSameChainWithoutPlaceHolderAtom = atomFamily((_option: QuoteQuery) => {
   return atom((get) => {
     function executeRoutes(
       strategies: StrategyRoute[],
@@ -155,9 +155,9 @@ const bestQuoteWithoutHashAtom = atomFamily((_option: QuoteQuery) => {
   })
 }, isEqualQuoteQuery)
 
-export const bestQuoteAtom = atomFamily((_option: QuoteQuery) => {
+export const bestSameChainAtom = atomFamily((_option: QuoteQuery) => {
   return atom((get) => {
-    const result = get(bestQuoteWithoutHashAtom(_option))
+    const result = get(bestSameChainWithoutPlaceHolderAtom(_option))
 
     if (result.isPending()) {
       const placeHolder = get(placeholderAtom(_option.placeholderHash || ''))
