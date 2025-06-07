@@ -6,7 +6,7 @@ import { getTokenList } from './getTokenList'
 
 function useFetchListCallback(
   dispatch: (action?: unknown) => void,
-): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList | undefined> {
+): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
   // note: prevent dispatch if using for list search or unsupported list
   return useCallback(
     async (listUrl: string, sendDispatch = true) => {
@@ -16,6 +16,10 @@ function useFetchListCallback(
       }
       return getTokenList(listUrl)
         .then((tokenList) => {
+          if (!tokenList) {
+            throw new Error('Token list not found')
+          }
+
           if (sendDispatch) {
             dispatch(fetchTokenList.fulfilled({ url: listUrl, tokenList, requestId }))
           }
