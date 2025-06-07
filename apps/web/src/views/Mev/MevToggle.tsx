@@ -51,7 +51,7 @@ export const MevToggle: React.FC<{ size?: 'sm' | 'md' }> = ({ size = 'md' }) => 
   const { theme } = useTheme()
   const isSmall = size === 'sm'
   const { tooltip, tooltipVisible, targetRef } = useTooltip(
-    t('PancakeSwap MEV Guard protects you from frontrunning and sandwich attacks when Swapping.'),
+    t('PancakeSwap MEV Guard protects you from frontrunning and sandwich attacks when swapping on BNB Chain.'),
     {
       placement: 'auto',
       trigger: 'hover',
