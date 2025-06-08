@@ -2,25 +2,21 @@ import { useDebounce } from '@orbs-network/twap-ui/dist/hooks'
 import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
-import { POOLS_FAST_REVALIDATE } from 'config/pools'
 import { useCurrency } from 'hooks/Tokens'
 import { useInputBasedAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
-import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { atomFamily } from 'jotai/utils'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { activeQuoteHashAtom } from 'quoter/atom/abortControlAtoms'
 import { bestCrossChainQuoteAtom } from 'quoter/atom/bestCrossChainAtom'
 import { baseAllTypeBestTradeAtom, pauseAtom, userTypingAtom } from 'quoter/atom/bestTradeUISyncAtom'
 import { updatePlaceholderAtom } from 'quoter/atom/placeholderAtom'
 import { QUOTE_REVALIDATE_TIME } from 'quoter/consts'
-import { QuoteQuery } from 'quoter/quoter.types'
-import { fetchCandidatePools, fetchCandidatePoolsLite } from 'quoter/utils/poolQueries'
 import { useEffect } from 'react'
 import { useCurrentBlock } from 'state/block/hooks'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { useAccount } from 'wagmi'
 import { quoteNonceAtom } from '../atom/revalidateAtom'
-import { createPoolQuery, createQuoteQuery } from '../utils/createQuoteQuery'
+import { createQuoteQuery } from '../utils/createQuoteQuery'
 import { useQuoteContext } from './QuoteContext'
 import { multicallGasLimitAtom } from './useMulticallGasLimit'
 
@@ -77,7 +73,7 @@ export const useQuoterSync = () => {
     maxSplits: split ? undefined : 0,
     v2Swap,
     v3Swap,
-    infinitySwap: Boolean(infinitySupportByChain && infinitySwap),
+    infinitySwap: Boolean(infinitySwap), // chain support is check inner
     stableSwap,
     speedQuoteEnabled,
     xEnabled,
@@ -92,7 +88,6 @@ export const useQuoterSync = () => {
   }
 
   const quoteQuery = createQuoteQuery(quoteQueryInit)
-  useAtomValue(prefetchPoolsAtom(quoteQuery))
   const setPlaceholder = useSetAtom(updatePlaceholderAtom)
 
   useEffect(() => {
@@ -161,31 +156,3 @@ export const useQuoterSync = () => {
     setTyping(false)
   }, [quoteResult.value, quoteResult.loading, quoteResult.error, pauseQuote, setTrade, setTyping, setNonce, paused])
 }
-
-const prefetchPoolsAtom = atomFamily(
-  (quoteQuery: QuoteQuery) => {
-    return atom(async () => {
-      if (!quoteQuery.baseCurrency || !quoteQuery.currency) {
-        return
-      }
-      const { poolQuery, poolOptions } = createPoolQuery(quoteQuery)
-      fetchCandidatePools(poolQuery, poolOptions)
-      fetchCandidatePoolsLite(poolQuery, poolOptions)
-    })
-  },
-  (a, b) => {
-    const isEqualQuote = a.hash === b.hash
-    if (!isEqualQuote) {
-      return false
-    }
-
-    const chainId = a.currency?.chainId
-    if (!chainId) {
-      return true
-    }
-    const ttl = POOLS_FAST_REVALIDATE[chainId]
-    const epochA = Math.floor(a.createTime / ttl)
-    const epochB = Math.floor(b.createTime / ttl)
-    return epochB === epochA
-  },
-)

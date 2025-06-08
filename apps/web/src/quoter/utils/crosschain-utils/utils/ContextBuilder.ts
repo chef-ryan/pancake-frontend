@@ -1,4 +1,5 @@
 import { ChainId } from '@pancakeswap/chains'
+import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
 import { TokenAddressMap } from '@pancakeswap/token-lists'
 import { Loadable } from '@pancakeswap/utils/Loadable'
 import { userSlippageAtomWithLocalStorage } from '@pancakeswap/utils/user/slippage'
@@ -84,9 +85,7 @@ export class ContextBuilder {
             gasLimit: isDestinationSwap && gasLimitDestinationChain ? gasLimitDestinationChain : _option.gasLimit,
             hash: '',
             placeholderHash: '',
-            // NOTE: disable infinity swap for destination swap for now
-            // Because to do it correctly, we need to refactor the prefetchPoolsAtom logic to support cross chain swap
-            infinitySwap: isDestinationSwap ? false : infinitySwap,
+            infinitySwap: infinitySwap && INFINITY_SUPPORTED_CHAINS.includes(quoteCurrency.chainId),
             // Disable stable swap for cross chain swap
             // Due to stable swap and v3 swap are not compatiable in terms of amountIn and balanceOf
             stableSwap: false,
