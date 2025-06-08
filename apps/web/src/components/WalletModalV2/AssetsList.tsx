@@ -18,8 +18,10 @@ const AssetListContainer = styled(Box)`
   width: calc(100% + ${SCROLLBAR_SHIFT_PX}px);
   margin-right: -${SCROLLBAR_SHIFT_PX}px;
   padding-right: ${SCROLLBAR_SHIFT_PX}px;
+  min-height: 250px;
   ${({ theme }) => theme.mediaQueries.md} {
     max-height: 340px;
+    min-height: 300px;
   }
 `
 
