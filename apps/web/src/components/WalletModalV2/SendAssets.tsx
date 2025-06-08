@@ -1,12 +1,11 @@
-import { ChainId, getChainName } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { Token } from '@pancakeswap/sdk'
 import { Box, FlexGap, Text } from '@pancakeswap/uikit'
-import { ASSET_CDN } from 'config/constants/endpoints'
 
 import { NetworkFilter, TokenFilter, toTokenValue } from '@pancakeswap/widgets-internal'
 import { BalanceData } from 'hooks/useAddressBalance'
 import { useCallback, useMemo, useState } from 'react'
+import { useAllChainsOpts } from 'views/universalFarms/hooks/useMultiChains'
 import { ActionButton } from './ActionButton'
 import { AssetsList } from './AssetsList'
 import { SendAssetForm } from './SendAssetForm'
@@ -39,14 +38,11 @@ export const SendAssets: React.FC<SendAssetsProps> = ({ assets, isLoading, onDis
   }, [])
 
   // Get unique networks from assets
+  const allChainsOpts = useAllChainsOpts()
   const networkFilterData = useMemo(() => {
     if (assets.length === 0) return []
-    const uniqueChainIds = [...new Set(assets.map((asset) => asset.chainId))]
-    return uniqueChainIds.map((chainId) => ({
-      icon: `${ASSET_CDN}/web/chains/${chainId}.png`,
-      label: getChainName(chainId as ChainId).toUpperCase(),
-      value: chainId,
-    }))
+    const uniqueChain = [...new Set(assets.map((asset) => asset.chainId))]
+    return allChainsOpts.filter((chain) => uniqueChain.includes(chain.value))
   }, [assets])
 
   const tokenFilterData = useMemo(() => {
@@ -91,7 +87,7 @@ export const SendAssets: React.FC<SendAssetsProps> = ({ assets, isLoading, onDis
       <FlexGap gap="16px" flexDirection="column" mb="16px">
         <Box>
           <NetworkFilter
-            data={networkFilterData}
+            data={allChainsOpts}
             value={selectedNetworks}
             onChange={(value) => setSelectedNetworks(value)}
             multiple
