@@ -102,17 +102,20 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewState
   const { data: nativeCurrencyPrice } = useCurrencyUsdPrice(nativeCurrency)
   const currency = useMemo(
     () =>
-      new Token(
-        asset.chainId,
-        asset.token.address as `0x${string}`,
-        asset.token.decimals,
-        asset.token.symbol,
-        asset.token.name,
-      ),
+      asset.token.address === zeroAddress
+        ? nativeCurrency
+        : new Token(
+            asset.chainId,
+            asset.token.address as `0x${string}`,
+            asset.token.decimals,
+            asset.token.symbol,
+            asset.token.name,
+          ),
     [asset],
   )
 
   const tokenBalance = tryParseAmount(asset.quantity, currency)
+
   const maxAmountInput = useMemo(() => maxAmountSpend(tokenBalance), [tokenBalance])
   const isNativeToken = asset.token.address === zeroAddress
   const erc20Contract = useERC20(asset.token.address as `0x${string}`, { chainId: asset.chainId })
