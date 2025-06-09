@@ -1,4 +1,5 @@
 import { ChainId, getChainName } from '@pancakeswap/chains'
+import { useDebounce } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { Percent, Token } from '@pancakeswap/sdk'
 import {
@@ -23,7 +24,7 @@ import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
-import { formatUnits, zeroAddress } from 'viem'
+import { formatUnits, isAddress, zeroAddress } from 'viem'
 import { useUserInsufficientBalanceLight } from 'views/SwapSimplify/hooks/useUserInsufficientBalance'
 import { useAccount, usePublicClient, useSendTransaction } from 'wagmi'
 import { ActionButton } from './ActionButton'
@@ -83,6 +84,7 @@ export interface SendAssetFormProps {
 export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewStateChange, viewState }) => {
   const { t } = useTranslation()
   const [address, setAddress] = useState<string | null>(null)
+  const debouncedAddress = useDebounce(address, 500)
   const [amount, setAmount] = useState('')
   const [addressError, setAddressError] = useState('')
   const [activePercentage, setActivePercentage] = useState<number | null>(null)
@@ -197,14 +199,16 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewState
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setAddress(value)
+  }
 
-    // Basic validation - more complex validation would be implemented in a real app
-    if (value && !value.startsWith('0x')) {
+  // Use debounced address for validation to avoid checking on every keystroke
+  useEffect(() => {
+    if (debouncedAddress && !isAddress(debouncedAddress)) {
       setAddressError(t('Invalid wallet address'))
     } else {
       setAddressError('')
     }
-  }
+  }, [debouncedAddress, t])
 
   const handleClearAddress = () => {
     setAddress('')
