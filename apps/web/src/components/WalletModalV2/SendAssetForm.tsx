@@ -113,7 +113,6 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewState
   )
 
   const tokenBalance = tryParseAmount(asset.quantity, currency)
-  console.log(tokenBalance, '????')
   const maxAmountInput = useMemo(() => maxAmountSpend(tokenBalance), [tokenBalance])
   const isNativeToken = asset.token.address === zeroAddress
   const erc20Contract = useERC20(asset.token.address as `0x${string}`, { chainId: asset.chainId })

@@ -1,8 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Token } from '@pancakeswap/sdk'
-import { Box, FlexGap, Text } from '@pancakeswap/uikit'
+import { Box, FlexGap, SearchInput, Text } from '@pancakeswap/uikit'
 
-import { NetworkFilter, TokenFilter, toTokenValue } from '@pancakeswap/widgets-internal'
+import { NetworkFilter } from '@pancakeswap/widgets-internal'
 import { BalanceData } from 'hooks/useAddressBalance'
 import { useCallback, useMemo, useState } from 'react'
 import { useAllChainsOpts } from 'views/universalFarms/hooks/useMultiChains'
@@ -22,7 +21,7 @@ interface SendAssetsProps {
 // Convert balances to Asset type for AssetsList component
 
 export const SendAssets: React.FC<SendAssetsProps> = ({ assets, isLoading, onBack, viewState, onViewStateChange }) => {
-  const [selectedTokens, setSelectedTokens] = useState<string[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
   const [selectedNetworks, setSelectedNetworks] = useState<number[]>([])
   const [selectedAsset, setSelectedAsset] = useState<BalanceData | null>(null)
   const { t } = useTranslation()
@@ -48,39 +47,23 @@ export const SendAssets: React.FC<SendAssetsProps> = ({ assets, isLoading, onBac
     return allChainsOpts.filter((chain) => uniqueChain.includes(chain.value))
   }, [assets])
 
-  const tokenFilterData = useMemo(() => {
-    if (assets.length === 0) return []
-
-    return assets.map((asset) => {
-      return new Token(
-        asset.chainId,
-        asset.token.address as `0x${string}`,
-        asset.token.decimals,
-        asset.token.symbol,
-        asset.token.name,
-      )
-    })
-  }, [assets])
-
   const filteredTokens = useMemo(() => {
     // First filter by networks if any are selected
     const networkFilteredBalances =
       selectedNetworks.length === 0 ? assets : assets.filter((asset) => selectedNetworks.includes(asset.chainId))
 
-    // Then filter by tokens if any are selected
-    const tokenFilteredBalances =
-      selectedTokens.length === 0
-        ? networkFilteredBalances
-        : networkFilteredBalances.filter((asset) => {
-            const tokenValue = toTokenValue({
-              chainId: asset.chainId,
-              address: asset.token.address as `0x${string}`,
-            })
-            return selectedTokens.includes(tokenValue)
-          })
+    // Then filter by search query if provided
+    const searchFilteredBalances = searchQuery
+      ? networkFilteredBalances.filter(
+          (asset) =>
+            asset.token.symbol?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            asset.token.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            asset.token.address.toLowerCase().includes(searchQuery.toLowerCase()),
+        )
+      : networkFilteredBalances
 
-    return convertBalancesToAssets(tokenFilteredBalances)
-  }, [assets, selectedNetworks, selectedTokens, convertBalancesToAssets])
+    return convertBalancesToAssets(searchFilteredBalances)
+  }, [assets, selectedNetworks, searchQuery, convertBalancesToAssets])
   if (viewState >= ViewState.SEND_FORM && selectedAsset)
     return <SendAssetForm asset={selectedAsset} onViewStateChange={onViewStateChange} viewState={viewState} />
   return (
@@ -98,11 +81,10 @@ export const SendAssets: React.FC<SendAssetsProps> = ({ assets, isLoading, onBac
           />
         </Box>
         <Box>
-          <TokenFilter
-            data={tokenFilterData}
-            value={selectedTokens}
-            onChange={(e) => setSelectedTokens(e.value)}
-            multiple
+          <SearchInput
+            placeholder="Search by name or paste address"
+            onChange={(e) => setSearchQuery(e.target.value)}
+            initialValue={searchQuery}
           />
         </Box>
       </FlexGap>
