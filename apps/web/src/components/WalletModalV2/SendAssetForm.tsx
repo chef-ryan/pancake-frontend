@@ -5,6 +5,7 @@ import { Percent, Token } from '@pancakeswap/sdk'
 import {
   BalanceInput,
   Box,
+  Button,
   CloseIcon,
   FlexGap,
   IconButton,
@@ -377,14 +378,14 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewState
         <ActionButton onClick={() => onViewStateChange(ViewState.SEND_ASSETS)} variant="tertiary">
           {t('Close')}
         </ActionButton>
-        <ActionButton
+        <Button
           onClick={() => {
             onViewStateChange(ViewState.CONFIRM_TRANSACTION)
           }}
           disabled={!address || !amount || !!addressError}
         >
           {t('Next')}
-        </ActionButton>
+        </Button>
       </FlexGap>
     </FormContainer>
   )
