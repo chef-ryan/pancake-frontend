@@ -14,6 +14,7 @@ import {
   Text,
 } from '@pancakeswap/uikit'
 import { ConfirmationPendingContent } from '@pancakeswap/widgets-internal'
+import { ChainLogo } from 'components/Logo/ChainLogo'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { BalanceData } from 'hooks/useAddressBalance'
@@ -27,7 +28,7 @@ const Wrapper = styled.div`
   width: 100%;
 `
 const Section = styled(AutoColumn)`
-  padding: 24px;
+  padding: 0px;
 `
 
 const ConfirmedIcon = styled(ColumnCenter)`
@@ -116,11 +117,14 @@ export function ConfirmTransactionContent({
             </Box>
           </Flex>
 
-          <Flex justifyContent="space-between" width="100%" mb="8px">
+          <Flex justifyContent="space-between" width="100%" mb="8px" alignItems="center">
             <Text color="textSubtle">{t('Network')}</Text>
-            <Text>
-              {chainName} {t('Chain')}
-            </Text>
+            <FlexGap alignItems="center" gap="3px">
+              <Text ml="4px">
+                {chainName} {t('Chain')}
+              </Text>
+              <ChainLogo chainId={asset.chainId} width={20} height={20} />
+            </FlexGap>
           </Flex>
 
           <Flex justifyContent="space-between" width="100%" mb="24px">
