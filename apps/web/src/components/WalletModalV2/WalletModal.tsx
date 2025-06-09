@@ -207,7 +207,7 @@ export const WalletContent = ({
           </FlexGap>
         )}
       </FlexGap>
-      <Box padding={isMobile ? '0' : '0 16px 16px'} minHeight="208px">
+      <Box padding={isMobile ? '0' : '0 16px 16px'}>
         {viewState >= ViewState.SEND_ASSETS ? (
           <SendAssets
             assets={balances}
