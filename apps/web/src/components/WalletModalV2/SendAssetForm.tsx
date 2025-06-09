@@ -240,7 +240,7 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewState
     handlePercentInput(100)
   }, [handlePercentInput])
 
-  const isInsufficientBalance = useUserInsufficientBalanceLight(currency, amount)
+  const isInsufficientBalance = useUserInsufficientBalanceLight(currency, tokenBalance, amount)
 
   const chainName = asset.chainId === ChainId.BSC ? 'BNB' : getChainName(asset.chainId)
   const price = asset.price?.usd ?? 0
@@ -301,6 +301,7 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewState
               onChange={handleAddressChange}
               placeholder="Recipient address"
               style={{ height: '64px' }}
+              isError={Boolean(addressError)}
             />
             {address && (
               <ClearButton
@@ -364,13 +365,10 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewState
           placeholder="0.0"
           unit={asset.token.symbol}
         />
-        {estimatedFee && address && !addressError && (
-          <Box mt="8px">
-            <Text fontSize="14px" color="textSubtle">
-              {t('Estimated network fee')}: {parseFloat(estimatedFee).toFixed(8)} {chainName}
-              {estimatedFeeUsd && ` (~$${estimatedFeeUsd} USD)`}
-            </Text>
-          </Box>
+        {isInsufficientBalance && amount && (
+          <Text color="failure" fontSize="14px" mt="8px">
+            {t('Insufficient balance')}
+          </Text>
         )}
       </Box>
 
@@ -379,10 +377,11 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewState
           {t('Close')}
         </ActionButton>
         <Button
+          width="100%"
           onClick={() => {
             onViewStateChange(ViewState.CONFIRM_TRANSACTION)
           }}
-          disabled={!address || !amount || !!addressError}
+          disabled={!address || !amount || !!addressError || isInsufficientBalance}
         >
           {t('Next')}
         </Button>

@@ -17,6 +17,7 @@ import { ConfirmationPendingContent } from '@pancakeswap/widgets-internal'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { BalanceData } from 'hooks/useAddressBalance'
+import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { useCallback } from 'react'
 import { styled } from 'styled-components'
@@ -77,9 +78,10 @@ export function ConfirmTransactionContent({
   )
   const price = asset.price?.usd ?? 0
   const usdValue = parseFloat(amount) * price
-  const chainName = asset.chainId === ChainId.BSC ? 'BNB' : getChainName(asset.chainId)
+  const chainName = (asset.chainId === ChainId.BSC ? 'BNB' : getChainName(asset.chainId)).toUpperCase()
   const { chainId } = useActiveChainId()
   const isChainMatched = chainId === asset.chainId
+  const nativeCurrency = useNativeCurrency(asset.chainId)
   const { switchNetworkAsync } = useSwitchNetwork()
 
   return (
@@ -97,28 +99,34 @@ export function ConfirmTransactionContent({
             <CurrencyLogo currency={currency} size="80px" />
           </Box>
           <Text fontSize="32px" bold>
-            {amount} {asset.token.symbol}
+            {parseFloat(amount).toLocaleString(undefined, {
+              maximumFractionDigits: 6,
+              minimumFractionDigits: 0,
+            })}{' '}
+            {asset.token.symbol}
           </Text>
           <Text fontSize="16px" color="textSubtle" mb="24px">
-            ~${usdValue.toFixed(2)} USD
+            ~${usdValue.toFixed(6)} USD
           </Text>
 
-          <Flex justifyContent="space-between" width="100%" mb="8px">
+          <Flex justifyContent="space-between" width="100%" mb="8px" alignItems="flex-start">
             <Text color="textSubtle">{t('To')}</Text>
-            <Text>
-              {recipient.slice(0, 6)}...{recipient.slice(-4)}
-            </Text>
+            <Box maxWidth="70%" style={{ wordBreak: 'break-all', textAlign: 'right' }}>
+              <Text>{recipient}</Text>
+            </Box>
           </Flex>
 
           <Flex justifyContent="space-between" width="100%" mb="8px">
             <Text color="textSubtle">{t('Network')}</Text>
-            <Text>{chainName}</Text>
+            <Text>
+              {chainName} {t('Chain')}
+            </Text>
           </Flex>
 
           <Flex justifyContent="space-between" width="100%" mb="24px">
             <Text color="textSubtle">{t('Network Fee')}</Text>
             <Box style={{ textAlign: 'right' }}>
-              <Text>{estimatedFee ? `~${parseFloat(estimatedFee).toFixed(8)} ${chainName}` : '-'}</Text>
+              <Text>{estimatedFee ? `~${parseFloat(estimatedFee).toFixed(8)} ${nativeCurrency.symbol}` : '-'}</Text>
               {estimatedFeeUsd && (
                 <Text fontSize="12px" color="textSubtle">
                   ${estimatedFeeUsd} USD
