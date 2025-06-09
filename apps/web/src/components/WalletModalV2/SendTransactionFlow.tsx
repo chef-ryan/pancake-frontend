@@ -8,6 +8,7 @@ import {
   CheckmarkCircleIcon,
   ColumnCenter,
   Flex,
+  FlexGap,
   Link,
   Spinner,
   Text,
@@ -37,6 +38,7 @@ interface SendTransactionModalProps {
   amount: string
   recipient: string
   onDismiss?: () => void
+  onBack?: () => void
   txHash?: string
   attemptingTxn: boolean
   pendingText?: string
@@ -63,6 +65,7 @@ export function ConfirmTransactionContent({
   onConfirm: () => void
   estimatedFee?: string | null
   estimatedFeeUsd?: string | null
+  onBack?: () => void
 }) {
   const { t } = useTranslation()
   const currency = new Token(
@@ -83,9 +86,13 @@ export function ConfirmTransactionContent({
     <Wrapper>
       <Section>
         <ColumnCenter>
-          <Text fontSize="20px" bold mb="16px">
-            {t('Confirm transaction')}
-          </Text>
+          <FlexGap width="100%" alignItems="center" position="relative" mb="16px" gap="8px" flexDirection="column">
+            <Box width="100%" style={{ textAlign: 'center' }}>
+              <Text fontSize="20px" bold>
+                {t('Confirm transaction')}
+              </Text>
+            </Box>
+          </FlexGap>
           <Box position="relative" mb="16px">
             <CurrencyLogo currency={currency} size="80px" />
           </Box>

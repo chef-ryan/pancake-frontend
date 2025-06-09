@@ -28,6 +28,7 @@ import { useUserInsufficientBalanceLight } from 'views/SwapSimplify/hooks/useUse
 import { useAccount, usePublicClient, useSendTransaction } from 'wagmi'
 import { ActionButton } from './ActionButton'
 import SendTransactionFlow from './SendTransactionFlow'
+import { ViewState } from './type'
 
 const FormContainer = styled(Box)`
   display: flex;
@@ -75,10 +76,11 @@ const ErrorMessage = styled(Text)`
 
 export interface SendAssetFormProps {
   asset: BalanceData
-  onDismiss: () => void
+  onViewStateChange: (viewState: ViewState) => void
+  viewState: ViewState
 }
 
-export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }) => {
+export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewStateChange, viewState }) => {
   const { t } = useTranslation()
   const [address, setAddress] = useState<string | null>(null)
   const [amount, setAmount] = useState('')
@@ -88,8 +90,6 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
   const [estimatedFeeUsd, setEstimatedFeeUsd] = useState<string | null>(null)
   const [isInputFocus, setIsInputFocus] = useState(false)
 
-  // Transaction state
-  const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [txHash, setTxHash] = useState<string | undefined>(undefined)
   const { address: accountAddress } = useAccount()
@@ -229,13 +229,6 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
     [maxAmountInput, handleAmountChange],
   )
 
-  const handlePercentageClick = useCallback(
-    (percentage: number) => {
-      handlePercentInput(percentage)
-    },
-    [handlePercentInput],
-  )
-
   const handleMaxInput = useCallback(() => {
     handlePercentInput(100)
   }, [handlePercentInput])
@@ -253,15 +246,15 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
       setEstimatedFee(null)
     }
   }, [address, amount, addressError, estimateTransactionFee])
-  if (showConfirmModal) {
+
+  const renderConfirmationModal = () => {
     return (
       <SendTransactionFlow
         asset={asset}
         amount={amount}
-        recipient={address ?? ''}
+        recipient={address as string}
         onDismiss={() => {
-          setShowConfirmModal(false)
-          setAttemptingTxn(false)
+          onViewStateChange(ViewState.SEND_ASSETS)
           setTxHash(undefined)
         }}
         attemptingTxn={attemptingTxn}
@@ -272,7 +265,6 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
         onConfirm={async () => {
           // In a real implementation, this would be the actual transaction submission
           setAttemptingTxn(true)
-
           sendAsset().then(() => {
             setAttemptingTxn(false)
           })
@@ -280,12 +272,18 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
       />
     )
   }
+
+  if (viewState >= ViewState.CONFIRM_TRANSACTION) {
+    return renderConfirmationModal()
+  }
   return (
     <FormContainer>
       <FlexGap alignItems="center" justifyContent="space-between">
-        <Text fontSize="20px" fontWeight="bold">
-          {t('Send')}
-        </Text>
+        <FlexGap alignItems="center" gap="8px" flexDirection="column">
+          <Text fontSize="20px" fontWeight="bold">
+            {t('Send')}
+          </Text>
+        </FlexGap>
       </FlexGap>
 
       <Box>
@@ -370,12 +368,12 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
       </Box>
 
       <FlexGap gap="16px" mt="16px">
-        <ActionButton onClick={onDismiss} variant="tertiary">
+        <ActionButton onClick={() => onViewStateChange(ViewState.SEND_ASSETS)} variant="tertiary">
           {t('Close')}
         </ActionButton>
         <ActionButton
           onClick={() => {
-            setShowConfirmModal(true)
+            onViewStateChange(ViewState.CONFIRM_TRANSACTION)
           }}
           disabled={!address || !amount || !!addressError}
         >

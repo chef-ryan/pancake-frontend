@@ -1,6 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Token } from '@pancakeswap/sdk'
 import {
+  ArrowBackIcon,
   ArrowForwardIcon,
   Box,
   Button,
@@ -16,6 +17,7 @@ import {
 
 import { RecentTransactions } from 'components/App/Transactions/TransactionsModal'
 
+import { useTheme } from '@pancakeswap/hooks'
 import { TabsComponent, WalletView } from 'components/Menu/UserMenu/WalletModal'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import { useAddressBalance } from 'hooks/useAddressBalance'
@@ -27,6 +29,7 @@ import { ActionButton } from './ActionButton'
 import { AssetsList } from './AssetsList'
 import { SendAssets } from './SendAssets'
 import { CopyAddress } from './WalletCopyButton'
+import { ViewState } from './type'
 
 interface WalletModalProps {
   isOpen: boolean
@@ -140,7 +143,8 @@ export const WalletContent = ({
   const { t } = useTranslation()
   const router = useRouter()
   const { isMobile } = useMatchBreakpoints()
-  const [isinSendFlow, setIsInSendFlow] = useState(false)
+  const [viewState, setViewState] = useState(ViewState.WALLET_INFO)
+  const { theme } = useTheme()
 
   // Fetch balances using the hook we created
   const { balances, isLoading, totalBalanceUsd } = useAddressBalance(account, {
@@ -180,17 +184,38 @@ export const WalletContent = ({
       maxHeight={isMobile ? 'auto' : 'calc(100vh - 80px)'}
       overflowY={isMobile ? undefined : 'auto'}
     >
-      <FlexGap mb="10px" gap="8px" justifyContent="space-between" alignItems="center" paddingRight="16px">
+      <FlexGap mb="10px" gap="8px" justifyContent="space-between" alignItems="center" paddingRight="16px" mt="8px">
+        {viewState > ViewState.SEND_ASSETS && (
+          <Button
+            variant="tertiary"
+            style={{ width: '34px', height: '34px', padding: '6px', borderRadius: '12px' }}
+            onClick={() => {
+              setViewState((prevState) => prevState - 1)
+            }}
+            ml={isMobile ? '8px' : '16px'}
+          >
+            <ArrowBackIcon fontSize="24px" color={theme.colors.primary60} />
+          </Button>
+        )}
+
         <CopyAddress tooltipMessage={t('Copied')} account={account || ''} />
-        <FlexGap>
-          <DisconnectButton scale="xs" onClick={onDisconnect}>
-            {t('Disconnect')}
-          </DisconnectButton>
-        </FlexGap>
+        {viewState <= ViewState.SEND_ASSETS && (
+          <FlexGap>
+            <DisconnectButton scale="xs" onClick={onDisconnect}>
+              {t('Disconnect')}
+            </DisconnectButton>
+          </FlexGap>
+        )}
       </FlexGap>
       <Box padding={isMobile ? '0' : '0 16px 16px'} minHeight="208px">
-        {isinSendFlow ? (
-          <SendAssets assets={balances} isLoading={isLoading} onDismiss={() => setIsInSendFlow(false)} />
+        {viewState >= ViewState.SEND_ASSETS ? (
+          <SendAssets
+            assets={balances}
+            isLoading={isLoading}
+            onViewStateChange={setViewState}
+            viewState={viewState}
+            onBack={() => setViewState((prevState) => ViewState.WALLET_INFO)}
+          />
         ) : (
           <>
             <FlexGap alignItems="center" gap="3px">
@@ -227,7 +252,7 @@ export const WalletContent = ({
           </>
         )}
       </Box>
-      {!isinSendFlow && (
+      {viewState === ViewState.WALLET_INFO && (
         <>
           {noAssets ? (
             <Box padding="8px 16px">
@@ -297,7 +322,7 @@ export const WalletContent = ({
                 </ActionButton>
                 <ActionButton
                   onClick={() => {
-                    setIsInSendFlow(true)
+                    setViewState(ViewState.SEND_ASSETS)
                   }}
                   variant="tertiary"
                 >

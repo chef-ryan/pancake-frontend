@@ -9,16 +9,19 @@ import { useAllChainsOpts } from 'views/universalFarms/hooks/useMultiChains'
 import { ActionButton } from './ActionButton'
 import { AssetsList } from './AssetsList'
 import { SendAssetForm } from './SendAssetForm'
+import { ViewState } from './type'
 
 interface SendAssetsProps {
   assets: BalanceData[]
   isLoading: boolean
-  onDismiss: () => void
+  onBack: () => void
+  viewState: ViewState
+  onViewStateChange: (viewState: ViewState) => void
 }
 
 // Convert balances to Asset type for AssetsList component
 
-export const SendAssets: React.FC<SendAssetsProps> = ({ assets, isLoading, onDismiss }) => {
+export const SendAssets: React.FC<SendAssetsProps> = ({ assets, isLoading, onBack, viewState, onViewStateChange }) => {
   const [selectedTokens, setSelectedTokens] = useState<string[]>([])
   const [selectedNetworks, setSelectedNetworks] = useState<number[]>([])
   const [selectedAsset, setSelectedAsset] = useState<BalanceData | null>(null)
@@ -78,7 +81,8 @@ export const SendAssets: React.FC<SendAssetsProps> = ({ assets, isLoading, onDis
 
     return convertBalancesToAssets(tokenFilteredBalances)
   }, [assets, selectedNetworks, selectedTokens, convertBalancesToAssets])
-  if (selectedAsset) return <SendAssetForm asset={selectedAsset} onDismiss={() => setSelectedAsset(null)} />
+  if (viewState >= ViewState.SEND_FORM && selectedAsset)
+    return <SendAssetForm asset={selectedAsset} onViewStateChange={onViewStateChange} viewState={viewState} />
   return (
     <>
       <Text fontSize="20px" fontWeight="bold" mb="16px">
@@ -102,11 +106,18 @@ export const SendAssets: React.FC<SendAssetsProps> = ({ assets, isLoading, onDis
           />
         </Box>
       </FlexGap>
-      <AssetsList assets={filteredTokens} isLoading={isLoading} onRowClick={(asset) => setSelectedAsset(asset)} />
+      <AssetsList
+        assets={filteredTokens}
+        isLoading={isLoading}
+        onRowClick={(asset) => {
+          setSelectedAsset(asset)
+          onViewStateChange(ViewState.SEND_FORM)
+        }}
+      />
       <FlexGap gap="16px" mt="16px">
         <ActionButton
           onClick={() => {
-            onDismiss()
+            onBack()
           }}
           variant="tertiary"
         >
