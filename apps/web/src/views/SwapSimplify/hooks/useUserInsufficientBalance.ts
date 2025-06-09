@@ -1,4 +1,6 @@
 import { PriceOrder } from '@pancakeswap/price-api-sdk'
+import { Currency } from '@pancakeswap/sdk'
+import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import { useAllTypeBestTrade } from 'quoter/hook/useAllTypeBestTrade'
 import { useMemo } from 'react'
 import { Field } from 'state/swap/actions'
@@ -33,6 +35,28 @@ export function useUserInsufficientBalance(order: PriceOrder | undefined): boole
     }
     return false
   }, [account, relevantTokenBalances, order, tradeLoaded])
+
+  return isInsufficientBalance
+}
+
+export function useUserInsufficientBalanceLight(token: Currency, inputText: string): boolean {
+  const { address: account } = useAccount()
+  const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [token ?? undefined])
+
+  const isInsufficientBalance = useMemo(() => {
+    const currencyBalances = relevantTokenBalances[0]
+    if (!account || !inputText) {
+      return false
+    }
+
+    const actualInputAmount = tryParseAmount(inputText, token)
+    const balanceIn = currencyBalances
+
+    if (balanceIn && actualInputAmount && balanceIn.lessThan(actualInputAmount)) {
+      return true
+    }
+    return false
+  }, [account, relevantTokenBalances, inputText, token])
 
   return isInsufficientBalance
 }

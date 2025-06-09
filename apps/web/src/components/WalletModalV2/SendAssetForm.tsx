@@ -1,17 +1,30 @@
 import { ChainId, getChainName } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Token } from '@pancakeswap/sdk'
-import { BalanceInput, Box, Button, CloseIcon, FlexGap, IconButton, Input, Text } from '@pancakeswap/uikit'
+import { Percent, Token } from '@pancakeswap/sdk'
+import {
+  BalanceInput,
+  Box,
+  CloseIcon,
+  FlexGap,
+  IconButton,
+  Input,
+  LazyAnimatePresence,
+  Text,
+  domAnimation,
+} from '@pancakeswap/uikit'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
+import { SwapUIV2 } from '@pancakeswap/widgets-internal'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import { BalanceData } from 'hooks/useAddressBalance'
 import { useERC20 } from 'hooks/useContract'
-import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
+import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { formatUnits, zeroAddress } from 'viem'
+import { useUserInsufficientBalanceLight } from 'views/SwapSimplify/hooks/useUserInsufficientBalance'
 import { useAccount, usePublicClient, useSendTransaction } from 'wagmi'
 import { ActionButton } from './ActionButton'
 import SendTransactionFlow from './SendTransactionFlow'
@@ -73,6 +86,7 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
   const [activePercentage, setActivePercentage] = useState<number | null>(null)
   const [estimatedFee, setEstimatedFee] = useState<string | null>(null)
   const [estimatedFeeUsd, setEstimatedFeeUsd] = useState<string | null>(null)
+  const [isInputFocus, setIsInputFocus] = useState(false)
 
   // Transaction state
   const [showConfirmModal, setShowConfirmModal] = useState(false)
@@ -95,6 +109,10 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
       ),
     [asset],
   )
+
+  const tokenBalance = tryParseAmount(asset.quantity, currency)
+  console.log(tokenBalance, '????')
+  const maxAmountInput = useMemo(() => maxAmountSpend(tokenBalance), [tokenBalance])
   const isNativeToken = asset.token.address === zeroAddress
   const erc20Contract = useERC20(asset.token.address as `0x${string}`, { chainId: asset.chainId })
   const { sendTransactionAsync } = useSendTransaction()
@@ -193,18 +211,36 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
     setAddressError('')
   }
 
-  const handleAmountChange = (value: string) => {
+  const handleAmountChange = useCallback((value: string) => {
     setAmount(value)
     setActivePercentage(null)
-  }
+  }, [])
 
-  const handlePercentageClick = (percentage: number) => {
-    // In a real implementation, this would calculate the exact amount based on the asset balance
-    setActivePercentage(percentage)
-    // Use value from the asset instead of token.amount
-    const calculatedAmount = ((parseFloat(asset.quantity) * percentage) / 100).toFixed(2)
-    setAmount(calculatedAmount)
-  }
+  const handleUserInputBlur = useCallback(() => {
+    setTimeout(() => setIsInputFocus(false), 300)
+  }, [])
+
+  const handlePercentInput = useCallback(
+    (percent: number) => {
+      if (maxAmountInput) {
+        handleAmountChange(maxAmountInput.multiply(new Percent(percent, 100)).toExact())
+      }
+    },
+    [maxAmountInput, handleAmountChange],
+  )
+
+  const handlePercentageClick = useCallback(
+    (percentage: number) => {
+      handlePercentInput(percentage)
+    },
+    [handlePercentInput],
+  )
+
+  const handleMaxInput = useCallback(() => {
+    handlePercentInput(100)
+  }, [handlePercentInput])
+
+  const isInsufficientBalance = useUserInsufficientBalanceLight(currency, amount)
 
   const chainName = asset.chainId === ChainId.BSC ? 'BNB' : getChainName(asset.chainId)
   const price = asset.price?.usd ?? 0
@@ -253,12 +289,14 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
       </FlexGap>
 
       <Box>
-        <Text fontSize="14px" color="textSubtle" mb="8px">
-          {t('Recipient address')}
-        </Text>
         <AddressInputWrapper>
           <Box position="relative">
-            <Input value={address ?? ''} onChange={handleAddressChange} placeholder="0x" style={{ height: '64px' }} />
+            <Input
+              value={address ?? ''}
+              onChange={handleAddressChange}
+              placeholder="Recipient address"
+              style={{ height: '64px' }}
+            />
             {address && (
               <ClearButton
                 scale="sm"
@@ -275,29 +313,48 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
       </Box>
 
       <Box mb="16px">
-        <FlexGap alignItems="center" gap="8px" mb="8px">
-          <AssetContainer>
-            <CurrencyLogo currency={currency} size="40px" />
-            <ChainIconWrapper>
-              <img
-                src={`${ASSET_CDN}/web/chains/${asset.chainId}.png`}
-                alt={`${chainName}-logo`}
-                width="12px"
-                height="12px"
-              />
-            </ChainIconWrapper>
-          </AssetContainer>
-          <FlexGap flexDirection="column">
-            <Text fontWeight="bold" fontSize="20px">
-              {asset.token.symbol}
-            </Text>
-            <Text color="textSubtle" fontSize="12px" mt="-4px">{`${chainName.toUpperCase()} ${t('Chain')}`}</Text>
+        <FlexGap alignItems="center" gap="8px" justifyContent="space-between" position="relative">
+          <FlexGap alignItems="center" gap="8px" mb="8px">
+            <AssetContainer>
+              <CurrencyLogo currency={currency} size="40px" />
+              <ChainIconWrapper>
+                <img
+                  src={`${ASSET_CDN}/web/chains/${asset.chainId}.png`}
+                  alt={`${chainName}-logo`}
+                  width="12px"
+                  height="12px"
+                />
+              </ChainIconWrapper>
+            </AssetContainer>
+            <FlexGap flexDirection="column">
+              <Text fontWeight="bold" fontSize="20px">
+                {asset.token.symbol}
+              </Text>
+              <Text color="textSubtle" fontSize="12px" mt="-4px">{`${chainName.toUpperCase()} ${t('Chain')}`}</Text>
+            </FlexGap>
           </FlexGap>
+          <Box position="relative">
+            <LazyAnimatePresence mode="wait" features={domAnimation}>
+              {tokenBalance ? (
+                !isInputFocus ? (
+                  <SwapUIV2.WalletAssetDisplay
+                    isUserInsufficientBalance={isInsufficientBalance}
+                    balance={tokenBalance.toSignificant(6)}
+                    onMax={handleMaxInput}
+                  />
+                ) : (
+                  <SwapUIV2.AssetSettingButtonList onPercentInput={handlePercentInput} />
+                )
+              ) : null}
+            </LazyAnimatePresence>
+          </Box>
         </FlexGap>
 
         <BalanceInput
           value={amount}
           onUserInput={handleAmountChange}
+          onFocus={() => setIsInputFocus(true)}
+          onBlur={handleUserInputBlur}
           currencyValue={amount ? `~${(parseFloat(amount) * price).toFixed(2)} USD` : ''}
           placeholder="0.0"
           unit={asset.token.symbol}
@@ -310,32 +367,6 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onDismiss }
             </Text>
           </Box>
         )}
-        <FlexGap gap="8px" justifyContent="center" mt="8px">
-          <Button
-            variant="tertiary"
-            scale="sm"
-            onClick={() => handlePercentageClick(25)}
-            style={activePercentage === 25 ? { backgroundColor: 'primary', color: 'white' } : {}}
-          >
-            25%
-          </Button>
-          <Button
-            variant="tertiary"
-            scale="sm"
-            onClick={() => handlePercentageClick(50)}
-            style={activePercentage === 50 ? { backgroundColor: 'primary', color: 'white' } : {}}
-          >
-            50%
-          </Button>
-          <Button
-            variant="tertiary"
-            scale="sm"
-            onClick={() => handlePercentageClick(100)}
-            style={activePercentage === 100 ? { backgroundColor: 'primary', color: 'white' } : {}}
-          >
-            MAX
-          </Button>
-        </FlexGap>
       </Box>
 
       <FlexGap gap="16px" mt="16px">
