@@ -44,7 +44,7 @@ export default function useTokenPrice(props: { mintList: (string | PublicKey | u
   const shouldFetch = startFetch && prepareFetchList.size > 0
 
   const { data, isLoading, error, ...rest } = useSWR(
-    shouldFetch ? [`${BASE_HOST}${MINT_PRICE}?mints=${Array.from(prepareFetchList).slice(0, 49).join(',')}`, fetchRefreshTag] : null,
+    shouldFetch ? [`${BASE_HOST}${MINT_PRICE}?ids=${Array.from(prepareFetchList).slice(0, 49).join(',')}`, fetchRefreshTag] : null,
     fetcher,
     {
       refreshInterval,
