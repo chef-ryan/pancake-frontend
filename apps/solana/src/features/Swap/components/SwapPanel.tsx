@@ -275,11 +275,11 @@ export function SwapPanel({
 
   const handleClickSwap = () => {
     if (!response) return
-    sendingResult.current = response as ApiSwapV1OutSuccess
+    sendingResult.current = response
     onSending()
     swapTokenAct({
       t,
-      swapResponse: response as ApiSwapV1OutSuccess,
+      swapResponse: response,
       wrapSol: tokenInput?.address === PublicKey.default.toString(),
       unwrapSol: tokenOutput?.address === PublicKey.default.toString(),
       onCloseToast: offSending,

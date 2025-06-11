@@ -19,6 +19,15 @@ export interface QuoteRequest {
   swapType: SwapType
 }
 
+export type SwapCalldataRequest = {
+  computeUnitPriceMicroLamports?: number
+  outputAccount?: string
+  swapResponse: QuoteResponseData
+  unwrapSol?: boolean
+  wrapSol?: boolean
+  wallet: string
+}
+
 export type RoutePlanItem = {
   poolId: string
   inputMint: string

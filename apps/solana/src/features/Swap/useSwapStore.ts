@@ -14,8 +14,9 @@ import { fetchComputePrice } from '@/utils/tx/computeBudget'
 import { getDefaultToastData, handleMultiTxToast, transformProcessData } from '@/hooks/toast/multiToastUtil'
 import { handleMultiTxRetry } from '@/hooks/toast/retryTx'
 import { isSwapSlippageError } from '@/utils/tx/swapError'
+import { quoteApi } from '@/utils/config/endpoint'
 import { getTxMeta } from './swapMeta'
-import { ApiSwapV1OutSuccess } from './type'
+import { ApiSuccessResponse, ApiSwapV1OutSuccess, QuoteResponseData } from './type'
 
 const getSwapComputePrice = async () => {
   const transactionFee = useAppStore.getState().getPriorityFee()
@@ -42,7 +43,7 @@ interface SwapStore {
   swapTokenAct: (
     props: {
       t: TranslateFunction
-      swapResponse: ApiSwapV1OutSuccess
+      swapResponse: ApiSuccessResponse<QuoteResponseData>
       wrapSol?: boolean
       unwrapSol?: boolean
       onCloseToast?: () => void
@@ -107,29 +108,24 @@ export const useSwapStore = createStore<SwapStore>(
 
         const computeData = await getSwapComputePrice()
 
-        const isV0Tx = txVersion === TxVersion.V0
         const {
           data,
           success
         }: {
-          id: string
+          // id: string
           success: true
-          version: 'V1'
-          msg?: string
-          data?: { transaction: string }[]
-        } = await axios.post(
-          `${urlConfigs.SWAP_HOST}${urlConfigs.SWAP_TX}${swapResponse.data.swapType === 'BaseIn' ? 'swap-base-in' : 'swap-base-out'}`,
-          {
-            wallet: publicKey.toBase58(),
-            computeUnitPriceMicroLamports: new Decimal(computeData?.microLamports || 0).toFixed(0),
-            swapResponse,
-            txVersion: isV0Tx ? 'V0' : 'LEGACY',
-            wrapSol: isInputSol,
-            unwrapSol,
-            inputAccount: isInputSol ? undefined : inputTokenAcc?.toBase58(),
-            outputAccount: isOutputSol ? undefined : outputTokenAcc?.toBase58()
-          }
-        )
+          // version: 'V1'
+          message?: string
+          data?: [{ transaction: string }]
+        } = await axios.post(`${quoteApi}/v1/calldata`, {
+          wallet: publicKey.toBase58(),
+          computeUnitPriceMicroLamports: new Decimal(computeData?.microLamports || 0).toFixed(0),
+          swapResponse,
+          wrapSol: isInputSol,
+          unwrapSol,
+          inputAccount: isInputSol ? undefined : inputTokenAcc?.toBase58(),
+          outputAccount: isOutputSol ? undefined : outputTokenAcc?.toBase58()
+        })
         if (!success) {
           toastSubject.next({
             title: 'Make Transaction Error',
@@ -142,7 +138,7 @@ export const useSwapStore = createStore<SwapStore>(
 
         const swapTransactions = data || []
         const allTxBuf = swapTransactions.map((tx) => Buffer.from(tx.transaction, 'base64'))
-        const allTx = allTxBuf.map((txBuf) => (isV0Tx ? VersionedTransaction.deserialize(txBuf as any) : Transaction.from(txBuf)))
+        const allTx = allTxBuf.map((txBuf) => Transaction.from(txBuf))
 
         const signedTxs = await signAllTransactions(allTx)
 
@@ -185,9 +181,8 @@ export const useSwapStore = createStore<SwapStore>(
         const checkSendTx = async (): Promise<void> => {
           if (!signedTxs[i]) return
           const tx = signedTxs[i]
-          const txId = !isV0Tx
-            ? await connection.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 0 })
-            : await connection.sendTransaction(tx as VersionedTransaction, { skipPreflight: true, maxRetries: 0 })
+          const txId = await connection.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 0 })
+          // : await connection.sendTransaction(tx as VersionedTransaction, { skipPreflight: true, maxRetries: 0 })
           processedId.push({ txId, signedTx: tx, status: 'sent' })
 
           if (signedTxs.length === 1) {
