@@ -1,0 +1,88 @@
+import { useActiveChainId } from 'hooks/useActiveChainId'
+import { atom, useAtomValue } from 'jotai'
+import { atomFamily } from 'jotai/utils'
+import isEqual from 'lodash/isEqual'
+import { atomWithLoadable } from 'quoter/atom/atomWithLoadable'
+import { Address, createWalletClient, custom } from 'viem'
+import { eip5792Actions } from 'viem/experimental'
+import { useAccount, type Connector } from 'wagmi'
+
+interface ChainCapabilities {
+  atomic?: {
+    status: 'ready' | 'supported' | 'unsupported'
+  }
+}
+
+interface WalletCapabilities {
+  [chainId: number]: ChainCapabilities
+}
+
+interface FetchParams {
+  address: string | undefined
+  connector: Connector | undefined
+  chainId: number | undefined
+}
+
+const fetchCapabilities = async ({ address, connector }: FetchParams): Promise<WalletCapabilities | null> => {
+  if (!connector || !address) {
+    return null
+  }
+
+  try {
+    const provider = await connector.getProvider()
+    const client = createWalletClient({
+      transport: custom(provider as any),
+    }).extend(eip5792Actions())
+
+    const capabilities = await client.getCapabilities({
+      account: address as Address,
+    })
+
+    return capabilities
+  } catch (error) {
+    console.error('Error checking EIP-5792 support:', error)
+    return null
+  }
+}
+
+const isSupported = (capabilities: WalletCapabilities | null | undefined, chainId?: number) => {
+  if (!capabilities) return false
+
+  return chainId
+    ? capabilities[chainId]?.atomic?.status === 'ready' || capabilities[chainId]?.atomic?.status === 'supported'
+    : Object.values(capabilities).some(
+        (chain) => chain?.atomic?.status === 'ready' || chain?.atomic?.status === 'supported',
+      )
+}
+
+const eip5792CapabilitiesAtom = atomFamily((params: FetchParams) => {
+  return atomWithLoadable(async () => {
+    if (!params.address || !params.connector) {
+      return null
+    }
+    return fetchCapabilities(params)
+  })
+}, isEqual)
+
+const eip5792SupportAtom = atomFamily((params: FetchParams) => {
+  return atom((get) => {
+    if (!params.address || !params.connector) {
+      return false
+    }
+    const capabilities = get(eip5792CapabilitiesAtom(params))
+    return capabilities.map((data) => isSupported(data, params.chainId))
+  })
+}, isEqual)
+
+export const useIsEIP5792Supported = () => {
+  const { chainId } = useActiveChainId()
+  const { connector, address } = useAccount()
+
+  const params = {
+    address,
+    connector,
+    chainId,
+  }
+
+  return useAtomValue(eip5792SupportAtom(params))
+}
