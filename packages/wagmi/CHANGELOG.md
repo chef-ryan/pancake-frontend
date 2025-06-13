@@ -1,5 +1,13 @@
 # @pancakeswap/wagmi
 
+## 3.0.5
+
+### Patch Changes
+
+- feat: expose `useSendTransactionEIP7702` hook as a placeholder for upcoming EIP-7702 support.
+
+# @pancakeswap/wagmi
+
 ## 3.0.4
 
 ### Patch Changes
