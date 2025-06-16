@@ -45,14 +45,15 @@ const fetchCapabilities = async ({ address, connector }: FetchParams): Promise<W
   }
 }
 
+// According to the EIP‑5792 spec, `atomic.status` will be `'supported'` when the
+// wallet can upgrade the account but the user has not yet done so. An account is
+// considered ready for batching only when the status is `'ready'`.
 const isSupported = (capabilities: WalletCapabilities | null | undefined, chainId?: number) => {
   if (!capabilities) return false
 
-  return chainId
-    ? capabilities[chainId]?.atomic?.status === 'ready' || capabilities[chainId]?.atomic?.status === 'supported'
-    : Object.values(capabilities).some(
-        (chain) => chain?.atomic?.status === 'ready' || chain?.atomic?.status === 'supported',
-      )
+  const check = (chain: ChainCapabilities | undefined) => chain?.atomic?.status === 'ready'
+
+  return chainId ? check(capabilities[chainId]) : Object.values(capabilities).some(check)
 }
 
 const eip5792CapabilitiesAtom = atomFamily((params: FetchParams) => {
