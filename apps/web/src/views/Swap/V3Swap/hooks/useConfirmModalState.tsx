@@ -10,6 +10,7 @@ import { ToastDescriptionWithTx } from 'components/Toast'
 import { BLOCK_CONFIRMATION } from 'config/confirmation'
 import { ALLOWED_PRICE_IMPACT_HIGH, PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN } from 'config/constants/exchange'
 import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useIsEIP5792Supported } from 'hooks/useIsEIP5792Supported'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useNativeWrap } from 'hooks/useNativeWrap'
 import { Calldata, usePermit2 } from 'hooks/usePermit2'
@@ -35,11 +36,10 @@ import {
   hexToBigInt,
 } from 'viem'
 import { eip5792Actions } from 'viem/experimental'
-import { useAccount, useWalletClient, useSendTransaction } from 'wagmi'
-import { useIsEIP5792Supported } from 'hooks/useIsEIP5792Supported'
 import { BridgeOrderWithCommands, isBridgeOrder, isClassicOrder, isXOrder } from 'views/Swap/utils'
 import { waitForXOrderReceipt } from 'views/Swap/x/api'
 import { useSendXOrder } from 'views/Swap/x/useSendXOrder'
+import { useAccount, useSendTransaction, useWalletClient } from 'wagmi'
 
 import { useSetAtom } from 'jotai'
 import { calculateGasMargin } from 'utils'
@@ -53,9 +53,9 @@ import { activeBridgeOrderMetadataAtom } from 'views/Swap/Bridge/CrossChainConfi
 import { Permit2Schema } from 'views/Swap/Bridge/types'
 import { computeBridgeOrderFee, getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import { computeTradePriceBreakdown } from '../utils/exchange'
+import { isZero } from '../utils/isZero'
 import { userRejectedError } from './useSendSwapTransaction'
 import { useSwapCallback } from './useSwapCallback'
-import { isZero } from '../utils/isZero'
 
 export interface ConfirmAction {
   step: ConfirmModalState
@@ -815,6 +815,7 @@ export const useConfirmModalState = (
   const { data: walletClient } = useWalletClient({ chainId })
   const { connector } = useAccount()
   const isEIP5792Supported = useIsEIP5792Supported()
+  console.log('[5792]', isEIP5792Supported)
   const { toastError } = useToast()
   const { t } = useTranslation()
 

@@ -71,7 +71,7 @@ const eip5792SupportAtom = atomFamily((params: FetchParams) => {
       return false
     }
     const capabilities = get(eip5792CapabilitiesAtom(params))
-    return capabilities.map((data) => isSupported(data, params.chainId))
+    return capabilities.map((data) => isSupported(data, params.chainId)).unwrapOr(false)
   })
 }, isEqual)
 
