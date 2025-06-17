@@ -7,9 +7,11 @@ import { Address, createWalletClient, custom } from 'viem'
 import { eip5792Actions } from 'viem/experimental'
 import { useAccount, type Connector } from 'wagmi'
 
+export type AtomicStatus = 'ready' | 'supported' | 'unsupported'
+
 interface ChainCapabilities {
   atomic?: {
-    status: 'ready' | 'supported' | 'unsupported'
+    status: AtomicStatus
   }
 }
 
@@ -56,6 +58,12 @@ const isSupported = (capabilities: WalletCapabilities | null | undefined, chainI
   return chainId ? check(capabilities[chainId]) : Object.values(capabilities).some(check)
 }
 
+const getStatus = (capabilities: WalletCapabilities | null | undefined, chainId?: number): AtomicStatus => {
+  if (!capabilities) return 'unsupported'
+  const chain = chainId ? capabilities[chainId] : undefined
+  return chain?.atomic?.status ?? 'unsupported'
+}
+
 const eip5792CapabilitiesAtom = atomFamily((params: FetchParams) => {
   return atomWithLoadable(async () => {
     if (!params.address || !params.connector) {
@@ -75,6 +83,16 @@ const eip5792SupportAtom = atomFamily((params: FetchParams) => {
   })
 }, isEqual)
 
+const eip5792StatusAtom = atomFamily((params: FetchParams) => {
+  return atom((get) => {
+    if (!params.address || !params.connector) {
+      return 'unsupported' as AtomicStatus
+    }
+    const capabilities = get(eip5792CapabilitiesAtom(params))
+    return capabilities.map((data) => getStatus(data, params.chainId)).unwrapOr('unsupported' as AtomicStatus)
+  })
+}, isEqual)
+
 export const useIsEIP5792Supported = () => {
   const { chainId } = useActiveChainId()
   const { connector, address } = useAccount()
@@ -86,4 +104,17 @@ export const useIsEIP5792Supported = () => {
   }
 
   return useAtomValue(eip5792SupportAtom(params))
+}
+
+export const useEIP5792Status = (): AtomicStatus => {
+  const { chainId } = useActiveChainId()
+  const { connector, address } = useAccount()
+
+  const params = {
+    address,
+    connector,
+    chainId,
+  }
+
+  return useAtomValue(eip5792StatusAtom(params))
 }

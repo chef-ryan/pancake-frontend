@@ -10,7 +10,7 @@ import { ToastDescriptionWithTx } from 'components/Toast'
 import { BLOCK_CONFIRMATION } from 'config/confirmation'
 import { ALLOWED_PRICE_IMPACT_HIGH, PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN } from 'config/constants/exchange'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useIsEIP5792Supported } from 'hooks/useIsEIP5792Supported'
+import { useEIP5792Status } from 'hooks/useIsEIP5792Supported'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useNativeWrap } from 'hooks/useNativeWrap'
 import { Calldata, usePermit2 } from 'hooks/usePermit2'
@@ -56,7 +56,7 @@ import { Permit2Schema } from 'views/Swap/Bridge/types'
 import { computeBridgeOrderFee, getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import { computeTradePriceBreakdown } from '../utils/exchange'
 import { isZero } from '../utils/isZero'
-import { userRejectedError } from './useSendSwapTransaction'
+import { eip5792UserRejectUpgradeError, userRejectedError } from './useSendSwapTransaction'
 import { useSwapCallback } from './useSwapCallback'
 
 export interface ConfirmAction {
@@ -825,7 +825,8 @@ export const useConfirmModalState = (
   const { chainId } = useActiveChainId()
   const { data: walletClient } = useWalletClient({ chainId })
   const { connector } = useAccount()
-  const isEIP5792Supported = useIsEIP5792Supported()
+  const eip5792Status = useEIP5792Status()
+  const isEIP5792Supported = eip5792Status === 'ready'
   const { toastError } = useToast()
   const { t } = useTranslation()
 
@@ -920,7 +921,7 @@ export const useConfirmModalState = (
         console.warn('Error sending batched transaction:', error)
         if (userRejectedError(error)) {
           showError('Transaction rejected')
-        } else {
+        } else if (!eip5792UserRejectUpgradeError(error)) {
           const errorMsg = typeof error === 'string' ? error : (error as any)?.message
           showError(errorMsg)
           toastError(t('Failed'), errorMsg)
@@ -979,7 +980,7 @@ export const useConfirmModalState = (
       if (!walletClient?.transport || !spender) {
         return false
       }
-      if (!isEIP5792Supported || steps.length <= 1) {
+      if (eip5792Status === 'unsupported' || steps.length <= 1) {
         return false
       }
       const calls = getBatchedTransaction(steps)
@@ -988,7 +989,7 @@ export const useConfirmModalState = (
       }
       return true
     },
-    [isEIP5792Supported, getBatchedTransaction, walletClient?.transport, spender],
+    [eip5792Status, getBatchedTransaction, walletClient?.transport, spender],
   )
 
   const callActionBatched = useCallback(
@@ -1034,7 +1035,10 @@ export const useConfirmModalState = (
           setConfirmState(ConfirmModalState.COMPLETED)
         }
       } catch (error) {
-        console.error('Failed to send batched transaction:', error)
+        if (userRejectedError(error) || eip5792UserRejectUpgradeError(error)) {
+          throw error
+        }
+        console.warn('Failed to send batched transaction:', error)
       }
     },
     [setConfirmState, resetState, setTxHash, getBatchedTransaction, sendBatchedTransaction, walletType],
@@ -1051,7 +1055,19 @@ export const useConfirmModalState = (
 
     const canCallBatch = canCallActionBatched(steps)
     if (canCallBatch) {
-      callActionBatched(steps)
+      try {
+        await callActionBatched(steps)
+      } catch (error) {
+        if (eip5792UserRejectUpgradeError(error)) {
+          const stepActions = steps.map((step) => actions[step])
+          const nextStep = steps[1] ?? undefined
+          performStep({
+            nextStep,
+            stepActions,
+            state: steps[0],
+          })
+        }
+      }
     } else {
       // Use existing sequential execution
       const stepActions = steps.map((step) => actions[step])
