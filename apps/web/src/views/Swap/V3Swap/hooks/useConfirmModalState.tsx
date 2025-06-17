@@ -906,7 +906,7 @@ export const useConfirmModalState = (
 
         return { id: result.id, client } as const
       } catch (error) {
-        console.error('Error sending batched transaction:', error)
+        console.warn('Error sending batched transaction:', error)
         if (userRejectedError(error)) {
           showError('Transaction rejected')
         } else {
