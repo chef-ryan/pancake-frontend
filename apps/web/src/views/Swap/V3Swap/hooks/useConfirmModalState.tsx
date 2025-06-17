@@ -815,7 +815,6 @@ export const useConfirmModalState = (
   const { data: walletClient } = useWalletClient({ chainId })
   const { connector } = useAccount()
   const isEIP5792Supported = useIsEIP5792Supported()
-  console.log('[5792]', isEIP5792Supported)
   const { toastError } = useToast()
   const { t } = useTranslation()
 
