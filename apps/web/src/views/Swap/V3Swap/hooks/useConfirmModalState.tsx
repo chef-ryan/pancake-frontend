@@ -36,6 +36,8 @@ import {
   hexToBigInt,
 } from 'viem'
 import { eip5792Actions } from 'viem/experimental'
+import { useWalletType } from 'views/Mev/hooks'
+import { WalletType } from 'views/Mev/types'
 import { BridgeOrderWithCommands, isBridgeOrder, isClassicOrder, isXOrder } from 'views/Swap/utils'
 import { waitForXOrderReceipt } from 'views/Swap/x/api'
 import { useSendXOrder } from 'views/Swap/x/useSendXOrder'
@@ -180,6 +182,7 @@ const useConfirmActions = (
   const { mutateAsync: sendXOrder } = useSendXOrder()
 
   const { sendTransactionAsync } = useSendTransaction()
+  const { walletType } = useWalletType()
 
   const [confirmState, setConfirmState] = useState<ConfirmModalState>(ConfirmModalState.REVIEWING)
   const [txHash, setTxHash] = useState<Hex | undefined>(undefined)
@@ -552,9 +555,12 @@ const useConfirmActions = (
               })
 
             if (result) {
+              logGTMSwapTxSentEvent({
+                walletType: WalletType[walletType],
+                isBatched: false,
+              })
               const hash = await safeTxHashTransformer(result)
               setTxHash(hash)
-              logGTMSwapTxSentEvent()
 
               setConfirmState(ConfirmModalState.ORDER_SUBMITTED)
 
@@ -628,10 +634,14 @@ const useConfirmActions = (
         }
 
         try {
+          logGTMSwapTxSentEvent({
+            walletType: WalletType[walletType],
+            isBatched: false,
+          })
           const result = await swap()
           if (result?.hash) {
             const hash = await safeTxHashTransformer(result.hash)
-            logGTMSwapTxSentEvent()
+
             setTxHash(hash)
 
             await retryWaitForTransaction({ hash })
@@ -811,6 +821,7 @@ export const useConfirmModalState = (
         : computeTradePriceBreakdown(isXOrder(order) ? undefined : order?.trade),
     [order],
   )
+  const { walletType } = useWalletType()
   const { chainId } = useActiveChainId()
   const { data: walletClient } = useWalletClient({ chainId })
   const { connector } = useAccount()
@@ -990,6 +1001,10 @@ export const useConfirmModalState = (
         return
       }
       try {
+        logGTMSwapTxSentEvent({
+          walletType: WalletType[walletType],
+          isBatched: true,
+        })
         const result = await sendBatchedTransaction(calls)
         if (!result?.id || !result.client) {
           return
@@ -1015,7 +1030,6 @@ export const useConfirmModalState = (
 
         const status = await statusPromise
         if (status.status === 'success') {
-          logGTMSwapTxSentEvent()
           setTxHash(status.receipts?.[0]?.transactionHash)
           setConfirmState(ConfirmModalState.COMPLETED)
         }
@@ -1023,7 +1037,7 @@ export const useConfirmModalState = (
         console.error('Failed to send batched transaction:', error)
       }
     },
-    [setConfirmState, resetState, setTxHash, getBatchedTransaction, sendBatchedTransaction],
+    [setConfirmState, resetState, setTxHash, getBatchedTransaction, sendBatchedTransaction, walletType],
   )
 
   const callToAction = useCallback(async () => {
