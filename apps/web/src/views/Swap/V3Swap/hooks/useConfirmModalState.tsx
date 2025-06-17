@@ -17,7 +17,7 @@ import { Calldata, usePermit2 } from 'hooks/usePermit2'
 import { usePermit2Requires } from 'hooks/usePermit2Requires'
 import { useSafeTxHashTransformer } from 'hooks/useSafeTxHashTransformer'
 import { useTransactionDeadline } from 'hooks/useTransactionDeadline'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { RetryableError, retry } from 'state/multicall/retry'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { logGTMSwapTxSentEvent } from 'utils/customGTMEventTracking'
@@ -829,6 +829,7 @@ export const useConfirmModalState = (
   const isEIP5792Supported = eip5792Status === 'ready'
   const { toastError } = useToast()
   const { t } = useTranslation()
+  const performEip5792Lock = useRef(false)
 
   const getBatchedTransaction = useCallback(
     (steps: ConfirmModalState[]) => {
@@ -1044,31 +1045,35 @@ export const useConfirmModalState = (
     [setConfirmState, resetState, setTxHash, getBatchedTransaction, sendBatchedTransaction, walletType],
   )
 
-  const callToAction = useCallback(async () => {
-    const steps = await createSteps()
+  const callToAction = useCallback(
+    async (skipBatch: boolean = false) => {
+      const steps = await createSteps()
 
-    setConfirmSteps(steps)
+      setConfirmSteps(steps)
 
-    if (!(await swapPreflightCheck())) {
-      return
-    }
+      if (!(await swapPreflightCheck())) {
+        return
+      }
 
-    const canCallBatch = canCallActionBatched(steps)
-    if (canCallBatch) {
-      try {
-        await callActionBatched(steps)
-      } catch (error) {
-        if (eip5792UserRejectUpgradeError(error)) {
-          const stepActions = steps.map((step) => actions[step])
-          const nextStep = steps[1] ?? undefined
-          performStep({
-            nextStep,
-            stepActions,
-            state: steps[0],
-          })
+      if (!skipBatch) {
+        const canCallBatch = canCallActionBatched(steps)
+        if (canCallBatch) {
+          try {
+            performEip5792Lock.current = true
+            await callActionBatched(steps)
+            return
+          } catch (error) {
+            if (eip5792UserRejectUpgradeError(error)) {
+              setTimeout(() => {
+                callToAction(true)
+              })
+            }
+          } finally {
+            performEip5792Lock.current = false
+          }
+          return
         }
       }
-    } else {
       // Use existing sequential execution
       const stepActions = steps.map((step) => actions[step])
       const nextStep = steps[1] ?? undefined
@@ -1077,8 +1082,9 @@ export const useConfirmModalState = (
         stepActions,
         state: steps[0],
       })
-    }
-  }, [canCallActionBatched, callActionBatched, actions, createSteps, performStep, swapPreflightCheck])
+    },
+    [canCallActionBatched, callActionBatched, actions, createSteps, performStep, swapPreflightCheck],
+  )
 
   // auto perform the next step
   useEffect(() => {
@@ -1086,13 +1092,13 @@ export const useConfirmModalState = (
       preConfirmState !== confirmState &&
       preConfirmState !== ConfirmModalState.REVIEWING &&
       confirmActions?.some((step) => step.step === confirmState) &&
-      !isEIP5792Supported
+      !performEip5792Lock.current
     ) {
       const nextStep = confirmActions.findIndex((step) => step.step === confirmState)
       const nextStepState = confirmActions[nextStep + 1]?.step ?? ConfirmModalState.PENDING_CONFIRMATION
       performStep({ nextStep: nextStepState, stepActions: confirmActions, state: confirmState })
     }
-  }, [isEIP5792Supported, confirmActions, confirmState, performStep, preConfirmState])
+  }, [performEip5792Lock, confirmActions, confirmState, performStep, preConfirmState])
 
   return {
     callToAction,
