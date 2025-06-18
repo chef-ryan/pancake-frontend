@@ -3,7 +3,7 @@ import { Box } from '@pancakeswap/uikit'
 import PageLoader from 'components/Loader/PageLoader'
 import { PositionIdRoute } from 'dynamicRoute'
 import { usePositionIdRoute } from 'hooks/dynamicRoute/usePositionIdRoute'
-import { GetStaticPaths, GetStaticProps } from 'next'
+import dynamic from 'next/dynamic'
 import NotFoundPage from 'pages/404'
 import { CHAIN_IDS } from 'utils/wagmi'
 import { IncreaseLiquidity } from 'views/IncreaseLiquidity'
@@ -52,17 +52,6 @@ const LiquidityPage = () => {
 
 LiquidityPage.chains = CHAIN_IDS
 
-export default LiquidityPage
-
-export const getStaticPaths: GetStaticPaths = () => {
-  return {
-    paths: [],
-    fallback: true,
-  }
-}
-
-export const getStaticProps: GetStaticProps = async () => {
-  return {
-    props: {},
-  }
-}
+export default dynamic(() => Promise.resolve(LiquidityPage), {
+  ssr: false,
+})
