@@ -826,10 +826,13 @@ export const useConfirmModalState = (
   const { data: walletClient } = useWalletClient({ chainId })
   const { connector } = useAccount()
   const eip5792Status = useEIP5792Status()
-  const isEIP5792Supported = eip5792Status === 'ready'
   const { toastError } = useToast()
   const { t } = useTranslation()
   const performEip5792Lock = useRef(false)
+
+  useEffect(() => {
+    console.log('[5792] status', eip5792Status)
+  }, [eip5792Status])
 
   const getBatchedTransaction = useCallback(
     (steps: ConfirmModalState[]) => {
@@ -1036,10 +1039,10 @@ export const useConfirmModalState = (
           setConfirmState(ConfirmModalState.COMPLETED)
         }
       } catch (error) {
+        console.warn('[5792] Failed to call batched action:', error)
         if (userRejectedError(error) || eip5792UserRejectUpgradeError(error)) {
           throw error
         }
-        console.warn('Failed to send batched transaction:', error)
       }
     },
     [setConfirmState, resetState, setTxHash, getBatchedTransaction, sendBatchedTransaction, walletType],
@@ -1060,10 +1063,12 @@ export const useConfirmModalState = (
         if (canCallBatch) {
           try {
             performEip5792Lock.current = true
+            console.log('[5792] calling batched action', steps)
             await callActionBatched(steps)
             return
           } catch (error) {
             if (eip5792UserRejectUpgradeError(error)) {
+              console.log('[5792] User rejected upgrade, falling back to sequential execution')
               setTimeout(() => {
                 callToAction(true)
               })
