@@ -25,7 +25,7 @@ const CreateLiquidityPage = () => {
 
 const Page = dynamic(() => Promise.resolve(CreateLiquidityPage), {
   ssr: false,
-})
+}) as any
 Page.chains = CHAIN_IDS
 Page.screen = true
 
