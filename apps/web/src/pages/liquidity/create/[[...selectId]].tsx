@@ -1,4 +1,5 @@
 import { Box } from '@pancakeswap/uikit'
+import dynamic from 'next/dynamic'
 import PageLoader from 'components/Loader/PageLoader'
 import { SelectIdRoute } from 'dynamicRoute'
 import { useDefaultSelectIdRoute, useSelectIdRoute } from 'hooks/dynamicRoute/useSelectIdRoute'
@@ -25,4 +26,6 @@ const CreateLiquidityPage = () => {
 CreateLiquidityPage.chains = CHAIN_IDS
 CreateLiquidityPage.screen = true
 
-export default CreateLiquidityPage
+export default dynamic(() => Promise.resolve(CreateLiquidityPage), {
+  ssr: false,
+})

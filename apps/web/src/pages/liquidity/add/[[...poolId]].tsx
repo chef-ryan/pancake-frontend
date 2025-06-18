@@ -7,6 +7,7 @@ import { PoolIdRoute } from 'dynamicRoute'
 import { usePoolIdRoute } from 'hooks/dynamicRoute/usePoolIdRoute'
 import NextLink from 'next/link'
 import NotFoundPage from 'pages/404'
+import dynamic from 'next/dynamic'
 import { CHAIN_IDS } from 'utils/wagmi'
 import { AddLiquidityInfinityForm } from 'views/AddLiquidityInfinity'
 
@@ -48,4 +49,6 @@ const AddLiquiditySelectorPage = () => {
 AddLiquiditySelectorPage.screen = true
 AddLiquiditySelectorPage.chains = CHAIN_IDS
 
-export default AddLiquiditySelectorPage
+export default dynamic(() => Promise.resolve(AddLiquiditySelectorPage), {
+  ssr: false,
+})

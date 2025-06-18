@@ -18,6 +18,7 @@ import {
   useModal,
 } from '@pancakeswap/uikit'
 import { Liquidity, NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
+import dynamic from 'next/dynamic'
 import { AppBody, AppHeader } from 'components/App'
 import TransactionsModal from 'components/App/Transactions/TransactionsModal'
 import { RangeTag } from 'components/RangeTag'
@@ -75,7 +76,7 @@ function useHideClosePosition() {
   return useAtom(hideClosePositionAtom)
 }
 
-export default function PoolListPage() {
+function PoolListPage() {
   const { t } = useTranslation()
   const router = useRouter()
   const { account, chainId } = useAccountActiveChain()
@@ -367,3 +368,7 @@ export default function PoolListPage() {
 }
 
 PoolListPage.chains = CHAIN_IDS
+
+export default dynamic(() => Promise.resolve(PoolListPage), {
+  ssr: false,
+})
