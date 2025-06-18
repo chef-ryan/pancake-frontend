@@ -7,7 +7,7 @@ packages:
   - 'scripts'
 
 catalog:
-  viem: ^2.30.6
+  viem: 2.29.4
   wagmi: ^2.14.11
   react: ^18.2.0
   react-dom: ^18.2.0
