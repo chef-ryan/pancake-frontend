@@ -55,7 +55,7 @@ const config = {
   experimental: {
     scrollRestoration: true,
     fallbackNodePolyfills: false,
-    optimizePackageImports: ['@pancakeswap/widgets-internal', '@pancakeswap/uikit'],
+    optimizePackageImports: ['@pancakeswap/widgets-internal', '@pancakeswap/uikit', 'viem'],
   },
   outputFileTracingRoot: path.join(__dirname, '../../'),
   outputFileTracingExcludes: {
