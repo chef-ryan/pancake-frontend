@@ -3,8 +3,8 @@ import { Breadcrumbs, Container } from '@pancakeswap/uikit'
 import PageLoader from 'components/Loader/PageLoader'
 import { SelectIdRoute } from 'dynamicRoute'
 import { useDefaultSelectIdRoute, useSelectIdRoute } from 'hooks/dynamicRoute/useSelectIdRoute'
-import NextLink from 'next/link'
 import dynamic from 'next/dynamic'
+import NextLink from 'next/link'
 import { CHAIN_IDS } from 'utils/wagmi'
 import { AddLiquiditySelector } from 'views/AddLiquiditySelector'
 
@@ -30,9 +30,10 @@ const LiquiditySelectPage = () => {
   )
 }
 
-LiquiditySelectPage.screen = true
-LiquiditySelectPage.chains = CHAIN_IDS
-
-export default dynamic(() => Promise.resolve(LiquiditySelectPage), {
+const Page = dynamic(() => Promise.resolve(LiquiditySelectPage), {
   ssr: false,
-})
+}) as any
+Page.screen = true
+Page.chains = CHAIN_IDS
+
+export default Page

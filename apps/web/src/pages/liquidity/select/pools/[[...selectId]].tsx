@@ -1,10 +1,11 @@
 import { useTranslation } from '@pancakeswap/localization'
+
 import { Breadcrumbs, Container } from '@pancakeswap/uikit'
 import PageLoader from 'components/Loader/PageLoader'
 import { SelectIdRoute } from 'dynamicRoute'
 import { useDefaultSelectIdRoute, useSelectIdRoute } from 'hooks/dynamicRoute/useSelectIdRoute'
-import NextLink from 'next/link'
 import dynamic from 'next/dynamic'
+import NextLink from 'next/link'
 import { CHAIN_IDS } from 'utils/wagmi'
 import { PoolList } from 'views/AddLiquidityInfinity/components/PoolList'
 
@@ -30,9 +31,10 @@ const PoolListPage = () => {
   )
 }
 
-PoolListPage.screen = true
-PoolListPage.chains = CHAIN_IDS
-
-export default dynamic(() => Promise.resolve(PoolListPage), {
+const Page = dynamic(() => Promise.resolve(PoolListPage), {
   ssr: false,
-})
+}) as any
+Page.screen = true
+Page.chains = CHAIN_IDS
+
+export default Page

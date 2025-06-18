@@ -1,8 +1,8 @@
 import { Box } from '@pancakeswap/uikit'
-import dynamic from 'next/dynamic'
 import PageLoader from 'components/Loader/PageLoader'
 import { SelectIdRoute } from 'dynamicRoute'
 import { useDefaultSelectIdRoute, useSelectIdRoute } from 'hooks/dynamicRoute/useSelectIdRoute'
+import dynamic from 'next/dynamic'
 import { CHAIN_IDS } from 'utils/wagmi'
 import { CreateLiquidityInfinityForm } from 'views/CreateLiquidityPool'
 
@@ -23,9 +23,10 @@ const CreateLiquidityPage = () => {
   )
 }
 
-CreateLiquidityPage.chains = CHAIN_IDS
-CreateLiquidityPage.screen = true
-
-export default dynamic(() => Promise.resolve(CreateLiquidityPage), {
+const Page = dynamic(() => Promise.resolve(CreateLiquidityPage), {
   ssr: false,
 })
+Page.chains = CHAIN_IDS
+Page.screen = true
+
+export default Page

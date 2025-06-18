@@ -1,14 +1,11 @@
-import { CHAINS } from 'config/chains'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
+import { CHAIN_IDS } from 'utils/wagmi'
+import { LiquidityView } from 'views/Liquidity/LiquidityView'
 import { PageWithoutFAQ } from 'views/Page'
 
-const LiquidityView = dynamic(() => import('views/Liquidity/LiquidityView').then((mod) => mod.LiquidityView), {
-  ssr: false,
-})
-
-export default function PoolPage() {
+const PoolPage = () => {
   const router = useRouter()
   const { tokenId } = router.query
 
@@ -23,6 +20,12 @@ export default function PoolPage() {
   return <LiquidityView />
 }
 
-PoolPage.chains = CHAINS.map((chain) => chain.id)
-PoolPage.screen = true
-PoolPage.Layout = PageWithoutFAQ
+const Page = dynamic(() => Promise.resolve(PoolPage), {
+  ssr: false,
+}) as any
+
+Page.chains = CHAIN_IDS
+Page.screen = true
+Page.Layout = PageWithoutFAQ
+
+export default Page

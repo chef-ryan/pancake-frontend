@@ -50,8 +50,10 @@ const LiquidityPage = () => {
   return <InfinityBinPosition />
 }
 
-LiquidityPage.chains = CHAIN_IDS
-
-export default dynamic(() => Promise.resolve(LiquidityPage), {
+const Page = dynamic(() => Promise.resolve(LiquidityPage), {
   ssr: false,
-})
+}) as any
+
+Page.chains = CHAIN_IDS
+
+export default Page

@@ -18,7 +18,6 @@ import {
   useModal,
 } from '@pancakeswap/uikit'
 import { Liquidity, NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
-import dynamic from 'next/dynamic'
 import { AppBody, AppHeader } from 'components/App'
 import TransactionsModal from 'components/App/Transactions/TransactionsModal'
 import { RangeTag } from 'components/RangeTag'
@@ -27,6 +26,7 @@ import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import useV2PairsByAccount from 'hooks/useV2Pairs'
 import { useV3Positions } from 'hooks/v3/useV3Positions'
 import { useAtom } from 'jotai'
+import dynamic from 'next/dynamic'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import React, { ReactNode, useCallback, useMemo, useState } from 'react'
@@ -367,8 +367,10 @@ function PoolListPage() {
   )
 }
 
-PoolListPage.chains = CHAIN_IDS
-
-export default dynamic(() => Promise.resolve(PoolListPage), {
+const Page = dynamic(() => Promise.resolve(PoolListPage), {
   ssr: false,
 })
+
+Page.chains = CHAIN_IDS
+
+export default Page
