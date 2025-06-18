@@ -49,6 +49,7 @@ import { getViemClients } from 'utils/viem'
 import { getBridgeCalldata } from 'views/Swap/Bridge/api'
 import { useBridgeCheckApproval } from 'views/Swap/Bridge/hooks'
 
+import { ChainId } from '@pancakeswap/chains'
 import { useUserSlippage } from '@pancakeswap/utils/user'
 import { useSwapState } from 'state/swap/hooks'
 import { activeBridgeOrderMetadataAtom } from 'views/Swap/Bridge/CrossChainConfirmSwapModal/state/orderDataState'
@@ -209,9 +210,7 @@ const useConfirmActions = (
   const retryWaitForTransaction = useCallback(
     async ({ hash, confirmations }: { hash?: Hex; confirmations?: number }) => {
       if (hash && chainId) {
-        let retryTimes = 0
         const getReceipt = async () => {
-          console.info('retryWaitForTransaction', hash, retryTimes++)
           try {
             return await publicClient({ chainId }).waitForTransactionReceipt({
               hash,
@@ -555,10 +554,6 @@ const useConfirmActions = (
               })
 
             if (result) {
-              logGTMSwapTxSentEvent({
-                walletType: WalletType[walletType],
-                isBatched: false,
-              })
               const hash = await safeTxHashTransformer(result)
               setTxHash(hash)
 
@@ -634,10 +629,6 @@ const useConfirmActions = (
         }
 
         try {
-          logGTMSwapTxSentEvent({
-            walletType: WalletType[walletType],
-            isBatched: false,
-          })
           const result = await swap()
           if (result?.hash) {
             const hash = await safeTxHashTransformer(result.hash)
@@ -830,10 +821,6 @@ export const useConfirmModalState = (
   const { t } = useTranslation()
   const performEip5792Lock = useRef(false)
 
-  useEffect(() => {
-    console.log('[5792] status', eip5792Status)
-  }, [eip5792Status])
-
   const getBatchedTransaction = useCallback(
     (steps: ConfirmModalState[]) => {
       const calls: Call[] = []
@@ -981,6 +968,9 @@ export const useConfirmModalState = (
 
   const canCallActionBatched = useCallback(
     (steps: ConfirmModalState[]) => {
+      if (chainId !== ChainId.BSC) {
+        return false
+      }
       if (!walletClient?.transport || !spender) {
         return false
       }
@@ -1006,10 +996,6 @@ export const useConfirmModalState = (
         return
       }
       try {
-        logGTMSwapTxSentEvent({
-          walletType: WalletType[walletType],
-          isBatched: true,
-        })
         const result = await sendBatchedTransaction(calls)
         if (!result?.id || !result.client) {
           return
@@ -1062,13 +1048,17 @@ export const useConfirmModalState = (
         const canCallBatch = canCallActionBatched(steps)
         if (canCallBatch) {
           try {
+            logGTMSwapTxSentEvent({
+              walletType: WalletType[walletType],
+              txType: 'batch',
+              chainId,
+              symbol: amountToApprove?.currency.symbol,
+            })
             performEip5792Lock.current = true
-            console.log('[5792] calling batched action', steps)
             await callActionBatched(steps)
             return
           } catch (error) {
             if (eip5792UserRejectUpgradeError(error)) {
-              console.log('[5792] User rejected upgrade, falling back to sequential execution')
               setTimeout(() => {
                 callToAction(true)
               })
@@ -1079,6 +1069,12 @@ export const useConfirmModalState = (
           return
         }
       }
+      logGTMSwapTxSentEvent({
+        walletType: WalletType[walletType],
+        txType: 'normal',
+        chainId,
+        symbol: amountToApprove?.currency.symbol,
+      })
       // Use existing sequential execution
       const stepActions = steps.map((step) => actions[step])
       const nextStep = steps[1] ?? undefined
