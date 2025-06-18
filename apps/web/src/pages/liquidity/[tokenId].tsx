@@ -1,8 +1,7 @@
-import { Card } from '@pancakeswap/uikit'
-import { GetStaticPaths, GetStaticProps } from 'next'
+import { CHAINS } from 'config/chains'
 import dynamic from 'next/dynamic'
-import styled from 'styled-components'
-import { CHAIN_IDS } from 'utils/wagmi'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import { PageWithoutFAQ } from 'views/Page'
 
 const LiquidityView = dynamic(() => import('views/Liquidity/LiquidityView').then((mod) => mod.LiquidityView), {
@@ -10,35 +9,20 @@ const LiquidityView = dynamic(() => import('views/Liquidity/LiquidityView').then
 })
 
 export default function PoolPage() {
+  const router = useRouter()
+  const { tokenId } = router.query
+
+  useEffect(() => {
+    const isNumberReg = /^\d+$/
+
+    if (tokenId && typeof tokenId === 'string' && !tokenId.match(isNumberReg)) {
+      router.replace('/add')
+    }
+  }, [tokenId, router])
+
   return <LiquidityView />
 }
 
-PoolPage.chains = CHAIN_IDS
+PoolPage.chains = CHAINS.map((chain) => chain.id)
 PoolPage.screen = true
 PoolPage.Layout = PageWithoutFAQ
-
-export const getStaticPaths: GetStaticPaths = () => {
-  return {
-    paths: [],
-    fallback: true,
-  }
-}
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const tokenId = params?.tokenId
-
-  const isNumberReg = /^\d+$/
-
-  if (tokenId && !(tokenId as string)?.match(isNumberReg)) {
-    return {
-      redirect: {
-        statusCode: 307,
-        destination: '/add',
-      },
-    }
-  }
-
-  return {
-    props: {},
-  }
-}
