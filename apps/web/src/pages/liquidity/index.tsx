@@ -369,7 +369,7 @@ function PoolListPage() {
 
 const Page = dynamic(() => Promise.resolve(PoolListPage), {
   ssr: false,
-})
+}) as any
 
 Page.chains = CHAIN_IDS
 
