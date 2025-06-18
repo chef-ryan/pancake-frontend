@@ -367,10 +367,10 @@ function PoolListPage() {
   )
 }
 
-const Page = dynamic(() => Promise.resolve(PoolListPage), {
+const LiquidityPage = dynamic(() => Promise.resolve(PoolListPage), {
   ssr: false,
 }) as any
 
-Page.chains = CHAIN_IDS
+LiquidityPage.chains = CHAIN_IDS
 
-export default Page
+export default LiquidityPage
