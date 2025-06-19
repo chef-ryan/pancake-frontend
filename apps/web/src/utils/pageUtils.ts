@@ -1,7 +1,7 @@
 import unsupportedTokens from 'config/constants/tokenLists/pancake-unsupported.tokenlist.json'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { isAddress } from 'viem'
 
 export const getTokenStaticPaths = (): GetStaticPaths => {
@@ -58,16 +58,6 @@ export const useTokenParams = () => {
   const parsedAddress = useMemo(() => (typeof address === 'string' ? address.toLowerCase() : undefined), [address])
 
   const parsedChain = useMemo(() => (typeof chain === 'string' ? chain : undefined), [chain])
-
-  useEffect(() => {
-    if (
-      !parsedAddress ||
-      !isAddress(parsedAddress) ||
-      unsupportedTokens.tokens.some((t) => t.address.toLowerCase() === parsedAddress)
-    ) {
-      router.replace('/')
-    }
-  }, [parsedAddress, router])
 
   return { address: parsedAddress, chain: parsedChain }
 }
