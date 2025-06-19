@@ -12,8 +12,8 @@ import {
 } from '@pancakeswap/uikit'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 import { AppHeader } from 'components/App'
-import { useMemo } from 'react'
 import dynamic from 'next/dynamic'
+import { useMemo } from 'react'
 import { NextPageWithLayout } from 'utils/page.types'
 
 import { useRouter } from 'next/router'
@@ -305,10 +305,10 @@ function StablePoolPage() {
   )
 }
 
-const Page = dynamic(() => Promise.resolve(StablePoolPage), {
+const StablePage = dynamic(() => Promise.resolve(StablePoolPage), {
   ssr: false,
 }) as NextPageWithLayout
 
-Page.chains = CHAIN_IDS
+StablePage.chains = CHAIN_IDS
 
 export default Page
