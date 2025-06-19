@@ -6,6 +6,7 @@ import { SettingsMode } from 'components/Menu/GlobalSettings/types'
 import { PoolIdRoute } from 'dynamicRoute'
 import { usePoolIdRoute } from 'hooks/dynamicRoute/usePoolIdRoute'
 import dynamic from 'next/dynamic'
+import { NextPageWithLayout } from 'pages/type'
 import NextLink from 'next/link'
 import NotFoundPage from 'pages/404'
 import { CHAIN_IDS } from 'utils/wagmi'
@@ -48,7 +49,7 @@ const AddLiquiditySelectorPage = () => {
 
 const Page = dynamic(() => Promise.resolve(AddLiquiditySelectorPage), {
   ssr: false,
-}) as any
+}) as NextPageWithLayout
 
 Page.screen = true
 Page.chains = CHAIN_IDS

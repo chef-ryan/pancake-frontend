@@ -3,6 +3,7 @@ import PageLoader from 'components/Loader/PageLoader'
 import { SelectIdRoute } from 'dynamicRoute'
 import { useDefaultSelectIdRoute, useSelectIdRoute } from 'hooks/dynamicRoute/useSelectIdRoute'
 import dynamic from 'next/dynamic'
+import { NextPageWithLayout } from 'pages/type'
 import { CHAIN_IDS } from 'utils/wagmi'
 import { CreateLiquidityInfinityForm } from 'views/CreateLiquidityPool'
 
@@ -25,7 +26,7 @@ const CreateLiquidityPage = () => {
 
 const Page = dynamic(() => Promise.resolve(CreateLiquidityPage), {
   ssr: false,
-}) as any
+}) as NextPageWithLayout
 Page.chains = CHAIN_IDS
 Page.screen = true
 

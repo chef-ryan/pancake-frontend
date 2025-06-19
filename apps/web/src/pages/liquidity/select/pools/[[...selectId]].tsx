@@ -5,6 +5,7 @@ import PageLoader from 'components/Loader/PageLoader'
 import { SelectIdRoute } from 'dynamicRoute'
 import { useDefaultSelectIdRoute, useSelectIdRoute } from 'hooks/dynamicRoute/useSelectIdRoute'
 import dynamic from 'next/dynamic'
+import { NextPageWithLayout } from 'pages/type'
 import NextLink from 'next/link'
 import { CHAIN_IDS } from 'utils/wagmi'
 import { PoolList } from 'views/AddLiquidityInfinity/components/PoolList'
@@ -33,7 +34,7 @@ const PoolListPage = () => {
 
 const Page = dynamic(() => Promise.resolve(PoolListPage), {
   ssr: false,
-}) as any
+}) as NextPageWithLayout
 Page.screen = true
 Page.chains = CHAIN_IDS
 

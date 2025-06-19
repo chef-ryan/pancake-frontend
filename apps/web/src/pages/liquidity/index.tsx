@@ -27,6 +27,7 @@ import useV2PairsByAccount from 'hooks/useV2Pairs'
 import { useV3Positions } from 'hooks/v3/useV3Positions'
 import { useAtom } from 'jotai'
 import dynamic from 'next/dynamic'
+import { NextPageWithLayout } from 'pages/type'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import React, { ReactNode, useCallback, useMemo, useState } from 'react'
@@ -369,7 +370,7 @@ function PoolListPage() {
 
 const LiquidityPage = dynamic(() => Promise.resolve(PoolListPage), {
   ssr: false,
-}) as any
+}) as NextPageWithLayout
 
 LiquidityPage.chains = CHAIN_IDS
 
