@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { NextPageWithLayout } from 'pages/type'
+import { NextPageWithLayout } from 'utils/page.types'
 import { useEffect } from 'react'
 import { CHAIN_IDS } from 'utils/wagmi'
 import { LiquidityView } from 'views/Liquidity/LiquidityView'

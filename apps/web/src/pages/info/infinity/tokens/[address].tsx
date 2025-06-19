@@ -1,6 +1,6 @@
 import { InfinityProvider } from 'hooks/infinity/useInfinityContext'
 import dynamic from 'next/dynamic'
-import { NextPageWithLayout } from 'pages/type'
+import { NextPageWithLayout } from 'utils/page.types'
 import { useTokenParams } from 'utils/pageUtils'
 import { InfoPageLayout } from 'views/InfinityInfo/components/Layout'
 import TokenInfo from 'views/InfinityInfo/components/Tokens/TokenInfo'

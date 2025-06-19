@@ -3,7 +3,7 @@ import PageLoader from 'components/Loader/PageLoader'
 import { SelectIdRoute } from 'dynamicRoute'
 import { useDefaultSelectIdRoute, useSelectIdRoute } from 'hooks/dynamicRoute/useSelectIdRoute'
 import dynamic from 'next/dynamic'
-import { NextPageWithLayout } from 'pages/type'
+import { NextPageWithLayout } from 'utils/page.types'
 import { CHAIN_IDS } from 'utils/wagmi'
 import { CreateLiquidityInfinityForm } from 'views/CreateLiquidityPool'
 

@@ -1,6 +1,6 @@
 import { Flex, Spinner } from '@pancakeswap/uikit'
 import dynamic from 'next/dynamic'
-import { NextPageWithLayout } from 'pages/type'
+import { NextPageWithLayout } from 'utils/page.types'
 import { Suspense } from 'react'
 import { useTokenParams } from 'utils/pageUtils'
 import { InfoPageLayout } from 'views/V3Info/components/Layout'

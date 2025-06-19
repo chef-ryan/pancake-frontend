@@ -45,7 +45,7 @@ import { SEO } from '../../next-seo.config'
 import Providers from '../Providers'
 import Menu, { SharedComponentWithOutMenu } from '../components/Menu'
 import GlobalStyle from '../style/Global'
-import { NextPageWithLayout } from './type'
+import { NextPageWithLayout } from '../utils/page.types'
 
 const EasterEgg = dynamic(() => import('components/EasterEgg'), { ssr: false })
 

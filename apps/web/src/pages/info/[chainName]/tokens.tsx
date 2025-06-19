@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic'
-import { NextPageWithLayout } from 'pages/type'
+import { NextPageWithLayout } from 'utils/page.types'
 import { InfoPageLayout } from 'views/Info'
 import Tokens from 'views/Info/Tokens'
 

@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { NextPageWithLayout } from 'pages/type'
+import { NextPageWithLayout } from 'utils/page.types'
 import { InfoPageLayout } from 'views/V3Info/components/Layout'
 import Pool from 'views/V3Info/views/PoolPage'
 

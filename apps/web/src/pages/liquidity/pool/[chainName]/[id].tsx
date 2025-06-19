@@ -1,6 +1,6 @@
 import { SUPPORT_FARMS } from 'config/constants/supportChains'
 import dynamic from 'next/dynamic'
-import { NextPageWithLayout } from 'pages/type'
+import { NextPageWithLayout } from 'utils/page.types'
 import { PoolDetail } from 'views/PoolDetail'
 
 const PoolDetailPage = () => <PoolDetail />
