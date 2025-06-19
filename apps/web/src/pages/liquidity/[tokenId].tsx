@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
+import { NextPageWithLayout } from 'pages/type'
 import { useEffect } from 'react'
 import { CHAIN_IDS } from 'utils/wagmi'
 import { LiquidityView } from 'views/Liquidity/LiquidityView'
@@ -22,7 +23,7 @@ const PoolPage = () => {
 
 const Page = dynamic(() => Promise.resolve(PoolPage), {
   ssr: false,
-}) as any
+}) as NextPageWithLayout
 
 Page.chains = CHAIN_IDS
 Page.screen = true
