@@ -5,6 +5,7 @@ import isEqual from 'lodash/isEqual'
 import { PoolData, TokenChartEntry, TokenData, Transaction, TvlChartEntry, VolumeChartEntry } from 'state/info/types'
 import { atomWithAsyncRetry } from 'utils/atomWithAsyncRetry'
 import { BasePerf, PerfTracker } from 'utils/PerfTracker'
+import { queryTokenInfo } from './tokenInfo'
 
 interface TokenInfoParams {
   address: string
@@ -42,11 +43,13 @@ export const tokenInfoPageDataAtom = atomFamily((params: TokenInfoParams) => {
         Date.now(),
       )
       try {
-        const resp = await fetch(`/api/token/${params.type}/${params.chain}/${params.address}`)
-        if (!resp.ok) throw new Error('Fetch error')
-        const json = await resp.json()
-        perf.success()
-        return json as TokenQueryResponse
+        const resp = await queryTokenInfo(params.chain, params.address, params.type)
+        return resp as TokenQueryResponse
+        // const resp = await fetch(`/api/token/${params.type}/${params.chain}/${params.address}`)
+        // if (!resp.ok) throw new Error('Fetch error')
+        // const json = await resp.json()
+        // perf.success()
+        // return json as TokenQueryResponse
       } catch (ex) {
         perf.fail(ex)
         throw ex
