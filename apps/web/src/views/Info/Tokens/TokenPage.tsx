@@ -173,10 +173,12 @@ const TokenPage: React.FC<React.PropsWithChildren<{ routeAddress: string }>> = (
               </Text>
             </Flex>
             <Flex mt="8px" ml="46px" alignItems="center">
-              <Text mr="16px" bold fontSize="24px">
-                ${formatAmount(tokenData?.priceUSD, { notation: 'standard' })}
-              </Text>
-              <Percent value={tokenData?.priceUSDChange} fontWeight={600} />
+              {tokenData?.priceUSD && (
+                <Text mr="16px" bold fontSize="24px">
+                  ${formatAmount(tokenData?.priceUSD, { notation: 'standard' })}
+                </Text>
+              )}
+              {tokenData?.priceUSDChange && <Percent value={tokenData?.priceUSDChange} fontWeight={600} />}
             </Flex>
           </Flex>
           <Flex>
@@ -193,7 +195,7 @@ const TokenPage: React.FC<React.PropsWithChildren<{ routeAddress: string }>> = (
 
         {/* data on the right side of chart */}
         <ContentLayout>
-          {tokenData && (
+          {tokenData && tokenData.liquidityUSD && (
             <Card>
               <Box p="24px">
                 <Text bold small color="secondary" fontSize="12px" textTransform="uppercase">
@@ -228,11 +230,7 @@ const TokenPage: React.FC<React.PropsWithChildren<{ routeAddress: string }>> = (
               </Box>
             </Card>
           )}
-          {!tokenData && (
-            <Card>
-              <Skeleton />
-            </Card>
-          )}
+          {!tokenData && <Skeleton borderRadius="40px" />}
           {/* charts card */}
           <ChartCard
             variant="token"

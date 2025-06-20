@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 
 import { ChainId, getChainIdByChainName } from '@pancakeswap/chains'
+import { getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
@@ -17,6 +18,7 @@ import { fetchPoolsForToken } from 'state/info/queries/tokens/fetchPoolsForToken
 import { fetchTokenChartData } from 'state/info/queries/tokens/fetchTokenChartData'
 import { fetchedTokenData } from 'state/info/queries/tokens/fetchTokenData'
 import { PoolDataForView } from 'state/info/types'
+import { mockCurrency } from 'utils/mockCurrency'
 import { fetchTokenTransactions } from 'views/V3Info/data/token/transactions'
 
 interface TokenInfoParams {
@@ -56,13 +58,29 @@ const chainNameForQuery = (chain: string) => {
   }
 }
 
+const basicTokenInfoAtom = atomFamily((params: TokenInfoParams) => {
+  return atomWithLoadable(async () => {
+    const chainId = getChainIdByChainName(params.chain)
+    if (!chainId) {
+      return undefined
+    }
+    const currency = await mockCurrency(params.address as `0x${string}`, Number(chainId))
+    return {
+      name: currency?.symbol,
+      symbol: currency?.symbol,
+      decimals: currency?.decimals,
+      address: getCurrencyAddress(currency),
+    }
+  })
+})
 const v2TokenDataAtom = atomFamily((params: TokenInfoParams) => {
   return atomWithLoadable(async () => {
     if (params.type !== 'swap' && params.type !== 'stableSwap') {
       return undefined
     }
     const query = buildV2Query(params)
-    return fetchV2TokenData(query)
+    const tokenInfo = await fetchV2TokenData(query)
+    return tokenInfo
   })
 }, isEqual)
 
@@ -123,6 +141,7 @@ const v3TokenDataAtom = atomFamily((params: TokenInfoParams) => {
     }
     const chainName = chainNameForQuery(params.chain)
     const res = await fetchedTokenData(chainName as any, params.address)
+
     return res.data
   })
 }, isEqual)
@@ -151,13 +170,15 @@ const v3ChartDataAtom = atomFamily((params: TokenInfoParams) => {
 
 export const tokenInfoV2PageDataAtom = atomFamily((params: TokenInfoParams) => {
   return atom((get) => {
-    const token = get(v2TokenDataAtom(params)).unwrapOr(undefined)
+    const token = get(v2TokenDataAtom(params))
     const pool = get(v2PoolsForTokenAtom(params)).unwrapOr(undefined)
     const transactions = get(v2TransactionDataAtom(params)).unwrapOr(undefined)
     const chartVolume = get(v2ChartVolumeDataAtom(params)).unwrapOr(undefined)
     const chartTvl = get(v2ChartTvlDataAtom(params)).unwrapOr(undefined)
+    const tokenData = token.unwrapOr(undefined)
+    const basicTokenInfo = get(basicTokenInfoAtom(params)).unwrapOr(undefined) as typeof tokenData
     return {
-      token,
+      token: token.isJust() ? tokenData : basicTokenInfo,
       pool,
       transactions,
       chartVolume,
@@ -169,12 +190,14 @@ export const tokenInfoV2PageDataAtom = atomFamily((params: TokenInfoParams) => {
 
 export const tokenInfoV3PageDataAtom = atomFamily((params: TokenInfoParams) => {
   return atom((get) => {
-    const token = get(v3TokenDataAtom(params)).unwrapOr(undefined)
+    const token = get(v3TokenDataAtom(params))
     const pool = get(v3PoolsForTokenAtom(params)).unwrapOr(undefined) as PoolDataForView[] | undefined
     const transactions = get(v3TransactionsAtom(params)).unwrapOr(undefined)
     const charts = get(v3ChartDataAtom(params)).unwrapOr(undefined)
+    const tokenData = token.unwrapOr(undefined)
+    const basicTokenInfo = get(basicTokenInfoAtom(params)).unwrapOr(undefined) as typeof tokenData | undefined
     return {
-      token,
+      token: token.isJust() ? token.unwrap() : basicTokenInfo,
       pool,
       transactions,
       charts,

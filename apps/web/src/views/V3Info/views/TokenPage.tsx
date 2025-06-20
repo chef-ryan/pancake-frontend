@@ -214,12 +214,12 @@ const TokenPage: React.FC<{ address: string; chain?: string }> = ({ address, cha
                 </Text>
               </Flex>
               <Flex mt="8px" ml="46px" alignItems="center">
-                {tokenData && (
+                {tokenData?.priceUSD && (
                   <Text mr="16px" bold fontSize="24px">
                     ${formatAmount(tokenData.priceUSD, { notation: 'standard' })}
                   </Text>
                 )}
-                {tokenData && <Percent value={tokenData.priceUSDChange} fontWeight={600} />}
+                {tokenData?.priceUSDChange && <Percent value={tokenData.priceUSDChange} fontWeight={600} />}
               </Flex>
             </Flex>
             <Flex>
@@ -242,7 +242,7 @@ const TokenPage: React.FC<{ address: string; chain?: string }> = ({ address, cha
           </Message>
         )}
         <ContentLayout>
-          {tokenData && (
+          {tokenData && tokenData.tvlUSD && (
             <Card>
               <Box p="24px">
                 <Text bold small color="secondary" fontSize="12px" textTransform="uppercase">
@@ -277,7 +277,7 @@ const TokenPage: React.FC<{ address: string; chain?: string }> = ({ address, cha
               </Box>
             </Card>
           )}
-          {!tokenData && <Skeleton />}
+          {!tokenData?.tvlUSD && <Skeleton borderRadius="40px" />}
           <Card>
             <TabToggleGroup>
               <TabToggle isActive={view === ChartView.VOL} onClick={() => setView(ChartView.VOL)}>
