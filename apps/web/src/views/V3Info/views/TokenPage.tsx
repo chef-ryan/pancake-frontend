@@ -32,7 +32,7 @@ import { formatAmount } from 'utils/formatInfoNumbers'
 import { chainNames } from '@pancakeswap/chains'
 import isUndefinedOrNull from '@pancakeswap/utils/isUndefinedOrNull'
 import truncateHash from '@pancakeswap/utils/truncateHash'
-import { tokenInfoPageDataAtom } from 'edge/tokenInfoPageDataAtom'
+import { tokenInfoV3PageDataAtom } from 'edge/tokenInfoPageDataAtom'
 import { useAtomValue } from 'jotai'
 import { ChainLinkSupportChains, multiChainId, multiChainScan } from 'state/info/constant'
 import { useChainNameByQuery, useMultiChainPath, useStableSwapPath } from 'state/info/hooks'
@@ -98,7 +98,7 @@ const TokenPage: React.FC<{ address: string; chain?: string }> = ({ address, cha
     transactions,
     charts: chartData,
   } = useAtomValue(
-    tokenInfoPageDataAtom({
+    tokenInfoV3PageDataAtom({
       address,
       chain,
       type: 'v3',

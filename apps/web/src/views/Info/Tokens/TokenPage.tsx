@@ -25,7 +25,7 @@ import { CHAIN_QUERY_NAME } from 'config/chains'
 import { ONE_HOUR_SECONDS } from 'config/constants/info'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import { tokenInfoPageDataAtom } from 'edge/tokenInfoPageDataAtom'
+import { tokenInfoV2PageDataAtom } from 'edge/tokenInfoPageDataAtom'
 import { useAtomValue } from 'jotai'
 import { ChainLinkSupportChains, checkIsStableSwap, multiChainId, multiChainScan } from 'state/info/constant'
 import {
@@ -105,7 +105,7 @@ const TokenPage: React.FC<React.PropsWithChildren<{ routeAddress: string }>> = (
     transactions,
     chartVolume: volumeChartData,
     chartTvl: tvlChartData,
-  } = useAtomValue(tokenInfoPageDataAtom({ address, chain: CHAIN_QUERY_NAME[chainId], type }))
+  } = useAtomValue(tokenInfoV2PageDataAtom({ address, chain: CHAIN_QUERY_NAME[chainId], type }))
 
   // pricing data
   const priceData = useTokenPriceDataQuery(address, ONE_HOUR_SECONDS, DEFAULT_TIME_WINDOW)
