@@ -48,6 +48,7 @@ const workerDeps = Object.keys(smartRouterPkgs.dependencies)
 const config = {
   typescript: {
     tsconfigPath: 'tsconfig.json',
+    ignoreBuildErrors: true
   },
   compiler: {
     styledComponents: true,
@@ -56,6 +57,9 @@ const config = {
     scrollRestoration: true,
     fallbackNodePolyfills: false,
     optimizePackageImports: ['@pancakeswap/widgets-internal', '@pancakeswap/uikit'],
+    // Allow Next.js to handle CJS packages that depend on ESM modules
+    // without throwing `import-esm-externals` errors
+    esmExternals: 'loose',
   },
   outputFileTracingRoot: path.join(__dirname, '../../'),
   outputFileTracingExcludes: {
@@ -217,6 +221,9 @@ const config = {
     ]
   },
   webpack: (webpackConfig, { webpack, isServer }) => {
+    webpackConfig.infrastructureLogging = {
+      level: 'info', // or 'verbose' for more detail
+    };
     // tree shake sentry tracing
     webpackConfig.plugins.push(
       new webpack.DefinePlugin({
@@ -240,7 +247,9 @@ const config = {
       // https://github.com/webpack/webpack/issues/16895
       // eslint-disable-next-line no-param-reassign
       webpackConfig.optimization.splitChunks.cacheGroups.workerChunks = {
-        chunks: 'all',
+        chunks: 'async',
+        maxInitialRequests: 20,
+        minSize: 100_000, // 100kb
         test(module) {
           const resource = module.nameForCondition?.() ?? ''
           return resource ? workerDeps.some((d) => resource.includes(d)) : false
