@@ -249,7 +249,7 @@ const config = {
       // eslint-disable-next-line no-param-reassign
       webpackConfig.optimization.splitChunks.cacheGroups.workerChunks = {
         chunks: 'async',
-        maxInitialRequests: 20,
+        maxInitialRequests: 10,
         minSize: 100_000, // 100kb
         test(module) {
           const resource = module.nameForCondition?.() ?? ''
