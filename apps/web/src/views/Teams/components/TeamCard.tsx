@@ -1,9 +1,9 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, CardHeader, CommunityIcon, Heading, PrizeIcon, Skeleton, Text } from '@pancakeswap/uikit'
-import { useQuery } from '@tanstack/react-query'
 import { ASSET_CDN } from 'config/constants/endpoints'
-import { getTeam } from 'state/teams/helpers'
+import { useAtomValue } from 'jotai'
 import { styled } from 'styled-components'
+import { teamAtom } from '../atom/teamAtom'
 import ComingSoon from './ComingSoon'
 import IconStatBox from './IconStatBox'
 
@@ -76,12 +76,18 @@ const StatRow = styled.div`
 const TeamCard: React.FC<React.PropsWithChildren<TeamCardProps>> = ({ id }) => {
   const { t } = useTranslation()
   const idNumber = Number(id)
-  const { data: team, status } = useQuery({
-    queryKey: ['team', id],
-    queryFn: async () => getTeam(idNumber),
-  })
+  const team = useAtomValue(teamAtom(idNumber))
 
-  if (!team) return null
+  if (!team)
+    return (
+      <Wrapper>
+        <StyledCard>
+          <CardBody>
+            <Skeleton width="100px" />
+          </CardBody>
+        </StyledCard>
+      </Wrapper>
+    )
 
   return (
     <Wrapper>
@@ -97,11 +103,7 @@ const TeamCard: React.FC<React.PropsWithChildren<TeamCardProps>> = ({ id }) => {
         </StyledCardHeader>
         <CardBody>
           <StatRow>
-            {status !== 'success' ? (
-              <Skeleton width="100px" />
-            ) : (
-              <IconStatBox icon={CommunityIcon} title={team.users} subtitle={t('Active Members')} />
-            )}
+            <IconStatBox icon={CommunityIcon} title={team.users} subtitle={t('Active Members')} />
             <IconStatBox icon={PrizeIcon} title={t('Coming Soon')} subtitle={t('Team Points')} isDisabled />
           </StatRow>
           <Heading as="h3">{t('Team Achievements')}</Heading>

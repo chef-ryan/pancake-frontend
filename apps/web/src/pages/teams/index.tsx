@@ -1,34 +1,6 @@
-import { dehydrate, QueryClient } from '@tanstack/react-query'
-import { GetStaticProps } from 'next'
-import { getTeams } from 'state/teams/helpers'
-import { teamsById } from 'utils/teamsById'
+import dynamic from 'next/dynamic'
 import Teams from '../../views/Teams'
 
-const TeamsPage = () => {
-  return <Teams />
-}
+const Page = dynamic(() => Promise.resolve(Teams), { ssr: false })
 
-export const getStaticProps: GetStaticProps = async () => {
-  const queryClient = new QueryClient()
-
-  const fetchedTeams = await queryClient.fetchQuery({ queryKey: ['teams'], queryFn: getTeams })
-
-  if (fetchedTeams) {
-    await queryClient.prefetchQuery({ queryKey: ['teams'], queryFn: () => teamsById })
-    return {
-      props: {
-        dehydratedState: dehydrate(queryClient),
-      },
-      revalidate: 1,
-    }
-  }
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-    revalidate: 60 * 60 * 12,
-  }
-}
-
-export default TeamsPage
+export default Page
