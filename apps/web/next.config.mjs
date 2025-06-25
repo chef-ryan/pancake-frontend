@@ -1,4 +1,3 @@
-import os from 'os'
 import path from 'path'
 import { fileURLToPath } from 'url'
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -61,6 +60,7 @@ const config = {
     // Allow Next.js to handle CJS packages that depend on ESM modules
     // without throwing `import-esm-externals` errors
     esmExternals: 'loose',
+    webpackBuildWorker: true
   },
   outputFileTracingRoot: path.join(__dirname, '../../'),
   outputFileTracingExcludes: {
@@ -261,28 +261,6 @@ const config = {
       }
     }
 
-    const addThreadLoader = (rules) => {
-      rules.forEach((rule) => {
-        if (rule.oneOf) {
-          addThreadLoader(rule.oneOf)
-        } else if (rule.use) {
-          const uses = Array.isArray(rule.use) ? [...rule.use] : [rule.use]
-          const idx = uses.findIndex((u) => {
-            if (typeof u === 'string') return u.includes('next-swc-loader')
-            return typeof u === 'object' && u.loader && u.loader.includes('next-swc-loader')
-          })
-          if (idx !== -1) {
-            uses.splice(idx, 0, {
-              loader: 'thread-loader',
-              options: { workers: Math.max(1, os.cpus().length - 1) },
-            })
-            rule.use = uses
-          }
-        }
-      })
-    }
-
-    addThreadLoader(webpackConfig.module.rules)
     return webpackConfig
   },
 }
