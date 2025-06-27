@@ -314,7 +314,6 @@ export const SubmitCreateButton: React.FC<SubmitCreateButtonProps> = ({ ...boxPr
     {
       enabled: Boolean(depositCurrencyAmount0),
     },
-    chainId,
   )
   const currency1UsdValue = useStablecoinPriceAmount(
     currency1,
@@ -322,7 +321,6 @@ export const SubmitCreateButton: React.FC<SubmitCreateButtonProps> = ({ ...boxPr
     {
       enabled: Boolean(depositCurrencyAmount1),
     },
-    chainId,
   )
   const lowLiquidity = useMemo(() => {
     if (depositCurrencyAmount0?.equalTo(0) || depositCurrencyAmount1?.equalTo(0)) return false
