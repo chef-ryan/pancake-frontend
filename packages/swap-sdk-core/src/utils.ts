@@ -2,7 +2,6 @@ import invariant from 'tiny-invariant'
 import { ONE, THREE, TWO, VMType, VM_TYPE_MAXIMA, ZERO, ZERO_ADDRESS } from './constants'
 import { Currency } from './currency'
 import { CurrencyAmount, Percent, Price } from './fractions'
-import { NativeCurrency } from './nativeCurrency'
 import { Token } from './token'
 
 export function validateVMTypeInstance(value: bigint, vmType: VMType): void {
