@@ -1,9 +1,12 @@
-import { Currency, getCurrencyAddress, NativeCurrency, Token } from '@pancakeswap/swap-sdk-core'
+import { Currency, getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 
 function isCurrency(a: any): a is Currency {
-  return a instanceof NativeCurrency || a instanceof Token
+  if (a == null || typeof a !== 'object') return false
+  if (Object.prototype.hasOwnProperty.call(a, 'isNative') || Object.prototype.hasOwnProperty.call(a, 'address')) {
+    return true
+  }
+  return false
 }
-
 export function isEqual(a: any, b: any): boolean {
   if (a === b) return true
 
