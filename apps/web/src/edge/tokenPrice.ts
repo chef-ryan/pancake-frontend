@@ -30,13 +30,8 @@ function parseQueryParams(params: {
   return undefined
 }
 
-export async function queryTokenPrice(params: {
-  chainId: ChainId
-  address?: Address
-  isNative?: boolean
-  hideIfPriceImpactTooHigh?: boolean
-}) {
-  const { chainId, address, isNative, hideIfPriceImpactTooHigh } = params
+export async function queryTokenPrice(params: { chainId: ChainId; address?: Address; isNative?: boolean }) {
+  const { chainId, address, isNative } = params
   const currencyParams = parseQueryParams(params)
 
   if (!isNative && !address) {
@@ -121,14 +116,11 @@ export async function queryTokenPrice(params: {
       return undefined
     }
 
-    // if price impact is too high, don't show price
-    if (hideIfPriceImpactTooHigh) {
-      // @ts-ignore
-      const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade as unknown as SmartRouterTrade<TradeType>)
+    // @ts-ignore
+    const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade as unknown as SmartRouterTrade<TradeType>)
 
-      if (!priceImpactWithoutFee || warningSeverity(priceImpactWithoutFee) > 2) {
-        return undefined
-      }
+    if (!priceImpactWithoutFee || warningSeverity(priceImpactWithoutFee) > 2) {
+      return undefined
     }
 
     const input = Number(trade.inputAmount.toExact())

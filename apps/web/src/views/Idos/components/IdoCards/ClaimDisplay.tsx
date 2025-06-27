@@ -28,7 +28,6 @@ export const ClaimDisplay: React.FC<{
     offeringCurrency ?? undefined,
     claimableAmount !== undefined && Number.isFinite(+claimableAmount) ? +claimableAmount : undefined,
     {
-      hideIfPriceImpactTooHigh: true,
       enabled: Boolean(claimableAmount !== undefined && Number.isFinite(+claimableAmount)),
     },
   )
@@ -39,7 +38,6 @@ export const ClaimDisplay: React.FC<{
     stakeCurrency ?? undefined,
     refundAmount !== undefined && Number.isFinite(+refundAmount) ? +refundAmount : undefined,
     {
-      hideIfPriceImpactTooHigh: true,
       enabled: Boolean(refundAmount !== undefined && Number.isFinite(+refundAmount)),
     },
   )

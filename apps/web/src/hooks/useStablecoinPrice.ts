@@ -13,11 +13,9 @@ import { multiplyPriceByAmount } from 'utils/prices'
 
 type UseStablecoinPriceConfig = {
   enabled?: boolean
-  hideIfPriceImpactTooHigh?: boolean
 }
 const DEFAULT_CONFIG: UseStablecoinPriceConfig = {
   enabled: true,
-  hideIfPriceImpactTooHigh: false,
 }
 
 const queryStablecoinPrice = async (currency: Currency, overrideChainId?: number) => {

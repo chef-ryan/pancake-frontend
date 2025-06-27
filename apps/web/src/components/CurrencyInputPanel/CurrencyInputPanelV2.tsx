@@ -111,7 +111,6 @@ const CurrencyInputPanelV2 = memo(function CurrencyInputPanelV2({
     showUSDPrice ? currency ?? undefined : undefined,
     value !== undefined && Number.isFinite(+value) ? +value : undefined,
     {
-      hideIfPriceImpactTooHigh: true,
       enabled: Boolean(value !== undefined && Number.isFinite(+value)),
     },
   )
