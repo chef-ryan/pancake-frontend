@@ -1,10 +1,10 @@
 import { NotificationBell as BellIcon, Box, Flex, ModalV2, ModalWrapper, useMatchBreakpoints } from '@pancakeswap/uikit'
 // import { useNotifications } from '@web3inbox/react'
 import React, { ReactNode, memo, useCallback, useEffect, useRef, useState } from 'react'
-import useSendPushNotification from 'views/Notifications/hooks/sendPushNotification'
-import useNotificationHistory from 'views/Notifications/hooks/useNotificationHistory'
-import { BellIconContainer, Menu } from 'views/Notifications/styles'
-import { PAGE_VIEW } from 'views/Notifications/types'
+import useSendPushNotification from '../../hooks/sendPushNotification'
+import useNotificationHistory from '../../hooks/useNotificationHistory'
+import { BellIconContainer, Menu } from '../../styles'
+import { PAGE_VIEW } from '../../types'
 
 interface InotificationBellProps {
   unread: number

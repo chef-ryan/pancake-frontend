@@ -5,7 +5,7 @@ import { useNotificationTypes } from '@web3inbox/react'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useHasUnreadNotification } from 'state/notifications/hooks'
-import useNotificationHistory from 'views/Notifications/hooks/useNotificationHistory'
+import useNotificationHistory from '../../hooks/useNotificationHistory'
 import {
   ContentsContainer,
   Description,
@@ -15,10 +15,10 @@ import {
   NotificationsWrapper,
   StyledLink,
   StyledNotificationWrapper,
-} from 'views/Notifications/styles'
-import { SubsctiptionType } from 'views/Notifications/types'
-import { formatTime } from 'views/Notifications/utils/date'
-import { getLinkText } from 'views/Notifications/utils/textHelpers'
+} from '../../styles'
+import { SubsctiptionType } from '../../types'
+import { formatTime } from '../../utils/date'
+import { getLinkText } from '../../utils/textHelpers'
 import { NotificationBadge, NotificationImage, formatStringWithNewlines } from './NotificationItemImage'
 
 interface INotificationprops {

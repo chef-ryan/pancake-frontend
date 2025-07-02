@@ -38,13 +38,18 @@
     "styled-components": "*",
     "lodash": "*",
     "bignumber.js": "*",
-    "@tanstack/react-query": "*"
+    "@tanstack/react-query": "*",
+    "@web3inbox/react": "*",
+    "dayjs": "*",
+    "@walletconnect/notify-client": "*"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "4.2.1",
     "vite": "5.0.12",
     "vite-plugin-dts": "^3.5.3",
     "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.0.6"
+    "@types/react-dom": "^18.0.6",
+    "@types/styled-system": "^5.1.17",
+    "@types/lodash": "^4.14.178"
   }
 }
