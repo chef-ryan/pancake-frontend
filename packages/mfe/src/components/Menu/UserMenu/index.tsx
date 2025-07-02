@@ -5,7 +5,7 @@ import useAirdropModalStatus from 'components/GlobalCheckClaimStatus/hooks/useAi
 import Trans from 'components/Trans'
 import { WalletContent, WalletModalV2 } from 'components/WalletModalV2'
 import ReceiveModal from 'components/WalletModalV2/ReceiveModal'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useAuth from 'hooks/useAuth'
 import { useDomainNameForAddress } from 'hooks/useDomain'
 import { useCallback, useEffect, useRef, useState } from 'react'

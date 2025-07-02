@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Button, Card, CardBody, FlexGap, Text } from '@pancakeswap/uikit'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useIDOCurrencies } from 'views/Idos/hooks/ido/useIDOCurrencies'
 import { IDOUserStatus } from 'views/Idos/hooks/ido/useIDOUserStatus'
 import { useChainId } from 'wagmi'

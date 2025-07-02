@@ -2,7 +2,7 @@ import { Box, Text, Skeleton, Balance } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { useAccount } from 'wagmi'
 import { useTranslation } from '@pancakeswap/localization'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { usePotteryData } from 'state/pottery/hook'
 import { getBalanceAmount } from '@pancakeswap/utils/formatBalance'
 

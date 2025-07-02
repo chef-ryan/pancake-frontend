@@ -1,4 +1,4 @@
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo, useRef } from 'react'
 import { warningSeverity } from 'utils/exchange'
 import { InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'

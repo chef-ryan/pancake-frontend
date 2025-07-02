@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { ColorType, createChart, IChartApi } from 'lightweight-charts'
 import { darken } from 'polished'
 import React, { Dispatch, ReactNode, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'

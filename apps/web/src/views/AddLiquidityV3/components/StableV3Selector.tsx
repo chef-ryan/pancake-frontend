@@ -10,7 +10,7 @@ import { PoolState } from 'hooks/v3/types'
 import { useFeeTierDistribution } from 'hooks/v3/useFeeTierDistribution'
 import { usePools } from 'hooks/v3/usePools'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { FeeOption } from '../formViews/V3FormView/components/FeeOption'
 import { FEE_AMOUNT_DETAIL, SelectContainer } from '../formViews/V3FormView/components/shared'
 import { HandleFeePoolSelectFn, SELECTOR_TYPE } from '../types'

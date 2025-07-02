@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AtomBox, Box, Button, HelpIcon, Link, Svg, SvgProps, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import styled from 'styled-components'
 import { useCakeLockStatus } from '../hooks/useVeCakeUserInfo'
 import { CakeLockStatus } from '../types'

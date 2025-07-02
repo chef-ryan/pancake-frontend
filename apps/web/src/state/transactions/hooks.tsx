@@ -14,7 +14,7 @@ import { Token } from '@pancakeswap/swap-sdk-core'
 import { FeeAmount } from '@pancakeswap/v3-sdk'
 import { useTranslation } from '@pancakeswap/localization'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useSafeTxHashTransformer } from 'hooks/useSafeTxHashTransformer'

@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AutoColumn, BscScanIcon, Modal, ModalProps, ModalV2, ScanLink, UseModalV2Props } from '@pancakeswap/uikit'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { ApproveAndLockStatus } from 'state/vecake/atoms'
 import { getBlockExploreLink } from 'utils'
 import { TxErrorModalContent } from 'views/CakeStaking/components/ApproveAndLockModal/TxErrorModalContent'

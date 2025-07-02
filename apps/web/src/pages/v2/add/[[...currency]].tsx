@@ -1,5 +1,5 @@
 import { CAKE, USDC } from '@pancakeswap/tokens'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'

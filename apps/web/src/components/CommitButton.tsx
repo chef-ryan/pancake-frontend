@@ -1,5 +1,5 @@
 import { Button, ButtonProps } from '@pancakeswap/uikit'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useSwitchNetworkLoading } from 'hooks/useSwitchNetworkLoading'
 import { useSetAtom } from 'jotai'
 import { mustSwitchNetworkModalAtom } from './NetworkModal'

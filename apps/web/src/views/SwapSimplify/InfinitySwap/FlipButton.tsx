@@ -18,7 +18,7 @@ import { SwapUIV2 } from '@pancakeswap/widgets-internal'
 import { LottieRefCurrentProps } from 'lottie-react'
 
 import { CHAIN_QUERY_NAME } from 'config/chains'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { useRouter } from 'next/router'
 import ArrowDark from '../../../../public/images/swap/arrow_dark.json' assert { type: 'json' }

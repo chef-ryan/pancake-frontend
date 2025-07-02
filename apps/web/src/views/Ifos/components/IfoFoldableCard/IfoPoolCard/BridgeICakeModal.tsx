@@ -20,7 +20,7 @@ import { SpaceProps } from 'styled-system'
 import { ChainId, Currency, CurrencyAmount } from '@pancakeswap/sdk'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 import { useChainName } from '../../../hooks/useChainNames'
 import { BridgeState, BRIDGE_STATE, useBridgeMessageUrl, useBridgeSuccessTxUrl } from '../../../hooks/useBridgeICake'

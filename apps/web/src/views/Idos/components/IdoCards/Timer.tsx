@@ -2,7 +2,7 @@ import { useCountdown } from '@pancakeswap/hooks'
 import { IfoStatus } from '@pancakeswap/ifos'
 import { useTranslation } from '@pancakeswap/localization'
 import { Flex, Skeleton, Text } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { styled } from 'styled-components'
 
 interface Props {

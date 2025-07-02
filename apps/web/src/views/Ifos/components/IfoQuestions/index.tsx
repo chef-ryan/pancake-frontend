@@ -4,7 +4,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { ChainId } from '@pancakeswap/sdk'
 import { Card, CardBody, CardHeader, Container, Flex, Heading, Image, Text } from '@pancakeswap/uikit'
 import FoldableText from 'components/FoldableSection/FoldableText'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { styled } from 'styled-components'
 

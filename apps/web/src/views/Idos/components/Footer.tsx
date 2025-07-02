@@ -1,5 +1,5 @@
 import { BscScanIcon, CardBody, FlexGap, LanguageIcon, Link, Text } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useCurrentIDOConfig } from '../hooks/ido/useCurrentIDOConfig'
 import { useIDOContract } from '../hooks/ido/useIDOContract'
 

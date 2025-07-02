@@ -13,7 +13,7 @@ import {
 } from '@pancakeswap/uikit'
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import BigNumber from 'bignumber.js'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import chunk from 'lodash/chunk'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ApiResponseCollectionTokens, NftToken } from 'state/nftMarket/types'

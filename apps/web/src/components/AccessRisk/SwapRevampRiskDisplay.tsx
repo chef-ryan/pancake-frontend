@@ -18,7 +18,7 @@ import { keyframes, styled } from 'styled-components'
 
 import { useUserSlippage } from '@pancakeswap/utils/user'
 import { DEFAULT_SLIPPAGE_TOLERANCE } from 'components/Menu/GlobalSettings/TransactionSettings'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useAutoSlippageEnabled } from 'hooks/useAutoSlippageWithFallback'
 import { TOKEN_RISK, TOKEN_RISK_T, useTokenRisk } from './index'
 

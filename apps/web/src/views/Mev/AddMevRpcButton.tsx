@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { ArrowDownIcon, Button, CheckmarkCircleFillIcon, LinkExternal, SwapLoading } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useAddMevRpc, useIsMEVEnabled, useShouldShowMEVToggle, useWalletType } from './hooks'

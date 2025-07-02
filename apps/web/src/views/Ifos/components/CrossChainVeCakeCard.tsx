@@ -7,8 +7,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useActiveChainId, useCakePrice } from '@pancakeswap/mfe'
 
 // TODO should be common hooks
 import { useIsMigratedToVeCake } from 'views/CakeStaking/hooks/useIsMigratedToVeCake'

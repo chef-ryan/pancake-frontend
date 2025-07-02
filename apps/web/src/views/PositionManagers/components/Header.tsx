@@ -9,7 +9,7 @@ import {
   Text,
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { memo, useCallback } from 'react'
 
 export const Header = memo(function Header() {

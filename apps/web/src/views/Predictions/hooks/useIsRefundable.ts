@@ -1,4 +1,4 @@
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useEffect, useState } from 'react'
 import { getPredictionsV2Contract } from 'utils/contractHelpers'
 import { useAccount } from 'wagmi'

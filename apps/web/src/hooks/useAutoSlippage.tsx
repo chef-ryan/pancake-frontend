@@ -5,7 +5,7 @@ import { InfinityRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
 import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { BigNumber } from 'bignumber.js'
 import { L2_CHAIN_IDS } from 'config/chains'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 
 import { BridgeTrade } from '@pancakeswap/price-api-sdk'

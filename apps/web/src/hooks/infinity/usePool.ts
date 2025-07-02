@@ -3,7 +3,7 @@ import { BinPool, Pool as CLPool, findHook, PoolType } from '@pancakeswap/infini
 import { Token } from '@pancakeswap/swap-sdk-core'
 import { useQuery } from '@tanstack/react-query'
 import { useCurrencyByChainId } from 'hooks/Tokens'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { PoolState } from 'hooks/v3/types'
 import { useMemo } from 'react'
 import { fetchPoolInfo } from 'state/farmsV4/state/accountPositions/fetcher/infinity/getPoolInfo'

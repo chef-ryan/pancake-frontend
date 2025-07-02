@@ -1,6 +1,6 @@
 import { Box, Text, PageSection } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 
 const Decorations = styled(Box)`
   position: absolute;

@@ -26,7 +26,7 @@ import {
   useAmountsByUsdValue,
   useRoi,
 } from '@pancakeswap/widgets-internal/roi'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
 import { styled } from 'styled-components'

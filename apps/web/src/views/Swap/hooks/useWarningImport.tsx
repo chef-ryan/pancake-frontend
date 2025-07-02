@@ -12,7 +12,7 @@ import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { safeGetAddress } from 'utils'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import SwapWarningModal from '../components/SwapWarningModal'
 
 export default function useWarningImport() {

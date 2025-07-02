@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, FlexGap, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { useAccount } from 'wagmi'

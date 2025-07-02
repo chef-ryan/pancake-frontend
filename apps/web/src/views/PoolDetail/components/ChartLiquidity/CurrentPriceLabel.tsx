@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AutoColumn, Box, Text } from '@pancakeswap/uikit'
 import { RowFixed } from 'components/Layout/Row'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { styled } from 'styled-components'
 import { LiquidityChartData } from './type'

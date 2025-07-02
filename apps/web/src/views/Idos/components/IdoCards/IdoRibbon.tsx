@@ -4,7 +4,7 @@ import { ReactNode } from 'react'
 import { styled } from 'styled-components'
 
 import { IfoStatus } from '@pancakeswap/ifos'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { PublicIfoData } from '../../types'
 import LiveTimer, { SoonTimer } from './Timer'
 

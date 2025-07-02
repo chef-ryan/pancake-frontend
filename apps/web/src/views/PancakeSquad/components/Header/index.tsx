@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, Flex, lightColors, Spinner, Text, Timeline } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useBSCCakeBalance } from 'hooks/useTokenBalance'
 import Link from 'next/link'
 import { StyledWaveContainer } from 'views/PancakeSquad/styles'

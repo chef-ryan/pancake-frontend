@@ -18,12 +18,11 @@ import {
 } from '@pancakeswap/uikit'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 
+import { useActiveChainId, useTheme } from '@pancakeswap/mfe'
 import Page from 'components/Layout/Page'
 import { TabToggle, TabToggleGroup } from 'components/TabToggle'
 import { CHAIN_QUERY_NAME } from 'config/chains'
 import dayjs from 'dayjs'
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import useTheme from 'hooks/useTheme'
 import dynamic from 'next/dynamic'
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'

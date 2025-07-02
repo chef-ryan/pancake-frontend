@@ -3,7 +3,7 @@ import { Button, CheckmarkIcon, FlexGap, InfoIcon, SwapLoading, Text, useTooltip
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import ConnectW3WButton from 'components/ConnectW3WButton'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { logGTMIdoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import { useCurrentIDOConfig } from 'views/Idos/hooks/ido/useCurrentIDOConfig'
 import { useIDOClaimCallback } from 'views/Idos/hooks/ido/useIDOClaimCallback'

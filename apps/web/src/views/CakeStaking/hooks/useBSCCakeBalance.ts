@@ -1,6 +1,6 @@
 import { ChainId } from '@pancakeswap/chains'
 import { CAKE, bscTestnetTokens } from '@pancakeswap/tokens'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useTokenBalance from 'hooks/useTokenBalance'
 import { useMemo } from 'react'
 

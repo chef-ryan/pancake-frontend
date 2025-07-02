@@ -1,4 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
+import { useActiveChainId, useTheme } from '@pancakeswap/mfe'
 import { Currency } from '@pancakeswap/sdk'
 import {
   ArrowDownIcon,
@@ -15,8 +16,6 @@ import {
 import { TransactionErrorContent } from '@pancakeswap/widgets-internal'
 import { CurrencyLogo } from 'components/Logo'
 import { TransactionSubmittedContent } from 'components/TransactionConfirmationModal'
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import useTheme from 'hooks/useTheme'
 import { memo } from 'react'
 import { styled } from 'styled-components'
 import { wrappedCurrency } from 'utils/wrappedCurrency'

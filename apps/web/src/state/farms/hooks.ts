@@ -6,7 +6,7 @@ import {
 } from '@pancakeswap/farms'
 import { useQuery } from '@tanstack/react-query'
 import { SLOW_INTERVAL } from 'config/constants'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useBCakeProxyContractAddress } from 'hooks/useBCakeProxyContractAddress'
 import { fetchV3FarmsAvgInfo } from 'queries/farms'
 import { useMemo } from 'react'

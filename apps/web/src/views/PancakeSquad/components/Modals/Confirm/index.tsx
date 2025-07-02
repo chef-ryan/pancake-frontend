@@ -1,4 +1,5 @@
 /* eslint-disable react/no-array-index-key */
+import { useTranslation } from '@pancakeswap/localization'
 import {
   ArrowUpIcon,
   Box,
@@ -8,20 +9,18 @@ import {
   Heading,
   IconButton,
   ModalBody,
-  ModalWrapper,
   ModalHeader,
   ModalProps,
   ModalTitle,
+  ModalWrapper,
+  ScanLink,
   Spinner,
   Text,
-  ScanLink,
 } from '@pancakeswap/uikit'
-import { useTranslation } from '@pancakeswap/localization'
-import useTheme from 'hooks/useTheme'
 
-import { getBlockExploreLink } from 'utils'
+import { useActiveChainId, useTheme } from '@pancakeswap/mfe'
 import truncateHash from '@pancakeswap/utils/truncateHash'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { getBlockExploreLink } from 'utils'
 
 type ConfirmModalProps = {
   isLoading: boolean

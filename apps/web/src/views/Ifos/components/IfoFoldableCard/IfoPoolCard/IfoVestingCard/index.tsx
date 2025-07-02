@@ -9,7 +9,7 @@ import useIfoVesting from 'views/Ifos/hooks/useIfoVesting'
 import { getFullDisplayBalance } from '@pancakeswap/utils/formatBalance'
 import { BIG_ONE, BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 import TotalPurchased from './TotalPurchased'
 import TotalAvailableClaim from './TotalAvailableClaim'

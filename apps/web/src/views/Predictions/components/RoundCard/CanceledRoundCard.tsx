@@ -2,7 +2,7 @@ import { Card, CardBody, Text, Flex, BlockIcon, LinkExternal } from '@pancakeswa
 import { useTranslation } from '@pancakeswap/localization'
 import { NodeRound } from 'state/types'
 import { BetPosition } from '@pancakeswap/prediction'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import ReclaimPositionButton from '../ReclaimPositionButton'
 import useIsRefundable from '../../hooks/useIsRefundable'
 import { RoundResultBox } from '../RoundResult'

@@ -1,7 +1,7 @@
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import BigNumber from 'bignumber.js'
 import { veCakeABI } from 'config/abi/veCake'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { useReadContract } from '@pancakeswap/wagmi'
 import { getVeCakeAddress, getVeCakeAddressNoFallback } from 'utils/addressHelpers'

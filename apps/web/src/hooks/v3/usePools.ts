@@ -3,7 +3,7 @@ import { DEPLOYER_ADDRESSES, FeeAmount, Pool, computePoolAddress } from '@pancak
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { v3PoolStateABI } from 'config/abi/v3PoolState'
 import { QUERY_SETTINGS_IMMUTABLE, QUERY_SETTINGS_WITHOUT_INTERVAL_REFETCH } from 'config/constants'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { useMultipleContractSingleDataWagmi } from 'state/multicall/hooks'
 import { publicClient } from 'utils/viem'

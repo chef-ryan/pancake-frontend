@@ -2,7 +2,7 @@ import { ChainId } from '@pancakeswap/chains'
 import { SUPPORTED_CHAIN_IDS } from '@pancakeswap/prediction'
 import { Flex, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { AIPrediction } from 'components/AdPanel/Ads/AIPredictionStripe'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 

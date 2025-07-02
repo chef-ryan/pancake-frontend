@@ -4,7 +4,7 @@ import { ChainId, CurrencyAmount, Currency } from '@pancakeswap/sdk'
 import { Button, useModalV2, Loading } from '@pancakeswap/uikit'
 import { useCallback, useEffect, useState } from 'react'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 
 // import { useChainNames } from '../../../hooks/useChainNames'

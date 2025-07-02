@@ -1,7 +1,7 @@
 import { RowBetween } from '@pancakeswap/uikit'
 import Card from 'components/Card'
 import dayjs from 'dayjs'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import React, { ComponentProps, Dispatch, ReactNode, SetStateAction } from 'react'
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from 'recharts'
 import { Margin } from 'recharts/types/util/types'

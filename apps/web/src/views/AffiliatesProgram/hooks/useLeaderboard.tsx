@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { MetricDetail } from 'views/AffiliatesProgram/hooks/useAuthAffiliate'
 
 export interface ListType {

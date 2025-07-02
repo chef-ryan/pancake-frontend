@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import dayjs from 'dayjs'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useVeCakeBalance } from 'hooks/useTokenBalance'
 import { useRevenueSharingCakePool, useRevenueSharingVeCake } from './useRevenueSharingProxy'
 import { useCakeLockStatus } from './useVeCakeUserInfo'

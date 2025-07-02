@@ -1,5 +1,5 @@
 import { PageHeader, PageHeaderProps } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 
 const MarketPageHeader: React.FC<React.PropsWithChildren<PageHeaderProps>> = (props) => {
   const { theme } = useTheme()

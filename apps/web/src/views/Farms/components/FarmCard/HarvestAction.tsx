@@ -11,7 +11,7 @@ import { SerializedBCakeUserData } from '@pancakeswap/farms'
 import { Token } from '@pancakeswap/sdk'
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { getBalanceAmount } from '@pancakeswap/utils/formatBalance'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import MultiChainHarvestModal from 'views/Farms/components/MultiChainHarvestModal'
 
 interface FarmCardActionsProps {

@@ -5,7 +5,7 @@ import { ModalV2, RoiCalculatorModal, UseModalV2Props } from '@pancakeswap/uikit
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { displayApr } from '@pancakeswap/utils/displayApr'
 import BigNumber from 'bignumber.js'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { useAccountPositionDetailByPool } from 'state/farmsV4/hooks'
 import { useStableSwapPairsByChainId } from 'state/farmsV4/state/accountPositions/hooks'

@@ -11,9 +11,8 @@ import { SpaceProps } from 'styled-system'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { useActiveChainId, useCakePrice } from '@pancakeswap/mfe'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useCakePrice } from 'hooks/useCakePrice'
 
 // TODO should be common hooks
 import { useIsMigratedToVeCake } from 'views/CakeStaking/hooks/useIsMigratedToVeCake'

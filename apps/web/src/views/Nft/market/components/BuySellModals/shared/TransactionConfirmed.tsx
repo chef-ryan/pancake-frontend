@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { ArrowUpIcon, Button, Flex, ScanLink, Text } from '@pancakeswap/uikit'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { getBlockExploreLink } from 'utils'
 import { Divider } from './styles'
 

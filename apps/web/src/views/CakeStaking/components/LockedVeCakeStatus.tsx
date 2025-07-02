@@ -20,7 +20,7 @@ import {
 import { formatBigInt, formatNumber, getBalanceAmount, getBalanceNumber } from '@pancakeswap/utils/formatBalance'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useVeCakeBalance } from 'hooks/useTokenBalance'
 import { useMemo } from 'react'
 import styled, { css } from 'styled-components'

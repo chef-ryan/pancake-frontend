@@ -1,4 +1,4 @@
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { useStableSwapPairsByChainId } from 'state/farmsV4/state/accountPositions/hooks'
 

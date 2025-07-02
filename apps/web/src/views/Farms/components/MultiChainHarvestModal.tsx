@@ -30,7 +30,7 @@ import { farmFetcher } from 'state/farms'
 import { styled } from 'styled-components'
 import { useFarmCProxyAddress } from 'views/Farms/hooks/useFarmCProxyAddress'
 import useCrossChainHarvestFarm from 'views/Farms/hooks/useCrossChainHarvestFarm'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useAccount } from 'wagmi'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 

@@ -25,7 +25,7 @@ import { StablePair } from 'views/AddLiquidity/AddStableLiquidity/hooks/useStabl
 
 import { RiskInputPanelDisplay } from 'components/AccessRisk/SwapRevampRiskDisplay'
 import { FiatLogo } from 'components/Logo/CurrencyLogo'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'

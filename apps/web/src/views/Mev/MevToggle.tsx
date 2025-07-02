@@ -17,7 +17,7 @@ import {
   useTooltip,
 } from '@pancakeswap/uikit'
 
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { styled } from 'styled-components'
 import { AddMevRpcButton } from './AddMevRpcButton'
 import { useIsMEVEnabled, useShouldShowMEVToggle, useWalletType } from './hooks'

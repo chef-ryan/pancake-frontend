@@ -16,7 +16,7 @@ import { useBCakeBoostLimitAndLockInfo } from 'views/Farms/components/YieldBoost
 import { useBoostStatusPM } from 'views/Farms/components/YieldBooster/hooks/bCakeV3/useBoostStatus'
 import { useAccount } from 'wagmi'
 import { useAtom } from 'jotai'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import {
   AprDataInfo,
   PositionManagerStatus,

@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi'
 import { useSignMessage } from '@pancakeswap/wagmi'
 import { Button } from '@pancakeswap/uikit'
 import { useTranslation } from '@pancakeswap/localization'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useQueryClient } from '@tanstack/react-query'
 
 const LoginButton = () => {

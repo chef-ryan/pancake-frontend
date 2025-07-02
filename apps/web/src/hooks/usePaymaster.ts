@@ -1,5 +1,5 @@
 import isZero from '@pancakeswap/utils/isZero'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { Address, Hex, hexToBigInt, isAddress, stringify } from 'viem'
 

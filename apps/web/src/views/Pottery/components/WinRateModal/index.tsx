@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { BalanceInput, Box, Flex, Modal, Text } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useVaultApy } from 'hooks/useVaultApy'
 import { useEffect, useRef } from 'react'
 import { styled } from 'styled-components'

@@ -1,6 +1,6 @@
 import { Button, ButtonProps, useModal } from '@pancakeswap/uikit'
 import useLocalDispatch from 'contexts/LocalRedux/useLocalDispatch'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { fetchNodeHistory } from 'state/predictions'
 import { useCollectWinningModalProps } from 'state/predictions/hooks'
 import { useAccount } from 'wagmi'

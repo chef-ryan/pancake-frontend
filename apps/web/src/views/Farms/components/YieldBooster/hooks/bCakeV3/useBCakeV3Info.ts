@@ -1,7 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import BN from 'bignumber.js'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMasterchefV3 } from 'hooks/useContract'
 import _toNumber from 'lodash/toNumber'
 import { useMemo } from 'react'

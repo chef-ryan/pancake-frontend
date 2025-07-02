@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, Button, Flex, InjectedModalProps, Modal, Spinner } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { VECAKE_VOTING_POWER_BLOCK } from '../helpers'
 import useGetVotingPower from '../hooks/useGetVotingPower'
 import DetailsView from './CastVoteModal/DetailsView'

@@ -32,7 +32,7 @@ import AddLiquidity from 'views/AddLiquidity'
 import AddStableLiquidity from 'views/AddLiquidity/AddStableLiquidity'
 import useStableConfig, { StableConfigContext } from 'views/Swap/hooks/useStableConfig'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import noop from 'lodash/noop'
 import { usePoolInfo } from 'state/farmsV4/state/extendPools/hooks'
 import { resetMintState } from 'state/mint/actions'

@@ -26,7 +26,7 @@ import { useAccount } from 'wagmi'
 
 import { useTranslation } from '@pancakeswap/localization'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useProfile } from 'state/profile/hooks'
 
 import { Address } from 'viem'

@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { FlexGap, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { styled } from 'styled-components'
 
 import { getImageUrl } from './utils'

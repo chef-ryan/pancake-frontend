@@ -10,7 +10,7 @@ import { VaultPosition, getVaultPosition } from 'utils/cakePool'
 import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useReadContract } from '@pancakeswap/wagmi'
 import { safeGetAddress } from 'utils'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'

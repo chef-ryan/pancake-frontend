@@ -10,7 +10,7 @@ import {
   Text,
   useModal,
 } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { NftToken } from 'state/nftMarket/types'
 import { styled } from 'styled-components'
 import { getBscScanLinkForNft, safeGetAddress } from 'utils'

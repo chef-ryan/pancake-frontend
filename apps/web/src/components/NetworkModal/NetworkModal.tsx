@@ -1,7 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { ModalV2 } from '@pancakeswap/uikit'
 import { SUPPORT_ONLY_BSC } from 'config/constants/supportChains'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { atom, useAtom } from 'jotai'
 import dynamic from 'next/dynamic'
 import { useCallback, useMemo } from 'react'

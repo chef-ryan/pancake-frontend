@@ -1,5 +1,5 @@
 import { Currency, WNATIVE } from '@pancakeswap/sdk'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useCallback, useState } from 'react'
 import BnbWbnbNotice from './BnbWbnbNotice'
 import PriceChart from './PriceChart'

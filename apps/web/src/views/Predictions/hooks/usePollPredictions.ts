@@ -2,7 +2,7 @@ import { useAccount } from 'wagmi'
 import { fetchPredictionData } from 'state/predictions'
 import { useInitialBlock } from 'state/block/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useLocalDispatch from 'contexts/LocalRedux/useLocalDispatch'
 import { useConfig } from '../context/ConfigProvider'
 

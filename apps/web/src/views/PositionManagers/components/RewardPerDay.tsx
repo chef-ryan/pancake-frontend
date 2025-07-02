@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Svg, SvgProps, Tag, TagProps } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { memo, useMemo } from 'react'
 import {} from 'styled-components'
 

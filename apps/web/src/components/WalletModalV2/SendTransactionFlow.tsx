@@ -16,7 +16,7 @@ import {
 import { ConfirmationPendingContent } from '@pancakeswap/widgets-internal'
 import { ChainLogo } from 'components/Logo/ChainLogo'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { BalanceData } from 'hooks/useAddressBalance'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'

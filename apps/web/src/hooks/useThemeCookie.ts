@@ -1,4 +1,4 @@
-import { COOKIE_THEME_KEY, THEME_DOMAIN } from 'hooks/useTheme'
+import { COOKIE_THEME_KEY, THEME_DOMAIN } from '@pancakeswap/mfe'
 import Cookie from 'js-cookie'
 import { useContext, useEffect } from 'react'
 import { ThemeContext as StyledThemeContext } from 'styled-components'

@@ -8,7 +8,7 @@ import { CAKE_PER_BLOCK } from 'config'
 import { masterChefV2ABI } from 'config/abi/masterchefV2'
 import { revenueSharingPoolProxyABI } from 'config/abi/revenueSharingPoolProxy'
 import { WEEK } from 'config/constants/veCake'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useVeCakeBalance } from 'hooks/useTokenBalance'
 import { useMemo } from 'react'
 import {

@@ -6,8 +6,7 @@ import round from 'lodash/round'
 import { useCallback, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useActiveChainId, useCakePrice } from '@pancakeswap/mfe'
 import { useLpTokenPrice } from 'state/farms/hooks'
 import { publicClient } from 'utils/wagmi'
 

@@ -1,7 +1,7 @@
 import { chainNames } from '@pancakeswap/chains'
 import { PredictionStatus } from '@pancakeswap/prediction'
 import { Button, Flex, HelpIcon, PrizeIcon } from '@pancakeswap/uikit'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'

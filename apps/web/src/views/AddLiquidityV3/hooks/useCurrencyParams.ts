@@ -1,7 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { CAKE, STABLE_COIN, USDC, USDT } from '@pancakeswap/tokens'
 import { FeeAmount } from '@pancakeswap/v3-sdk'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useRouter } from 'next/router'
 

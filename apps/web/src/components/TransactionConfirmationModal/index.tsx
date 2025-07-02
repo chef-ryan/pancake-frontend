@@ -15,7 +15,7 @@ import {
   Text,
 } from '@pancakeswap/uikit'
 import { ConfirmationPendingContent, TransactionErrorContent } from '@pancakeswap/widgets-internal'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useCallback, useMemo } from 'react'
 import { styled } from 'styled-components'
 import { getBlockExploreLink, getBlockExploreName } from 'utils'

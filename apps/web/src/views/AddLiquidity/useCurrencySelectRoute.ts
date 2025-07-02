@@ -1,6 +1,6 @@
 import { Currency } from '@pancakeswap/sdk'
 import { CAKE, USDC } from '@pancakeswap/tokens'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'

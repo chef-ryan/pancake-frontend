@@ -14,10 +14,9 @@ import { ConfirmationPendingContent, TransactionErrorContent } from '@pancakeswa
 
 import { Order } from '@gelatonetwork/limit-orders-lib'
 import { useTranslation } from '@pancakeswap/localization'
+import { useActiveChainId, useTheme } from '@pancakeswap/mfe'
 import { TransactionSubmittedContent } from 'components/TransactionConfirmationModal'
 import useGelatoLimitOrdersHandlers from 'hooks/limitOrders/useGelatoLimitOrdersHandlers'
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import useTheme from 'hooks/useTheme'
 import { memo, useCallback, useState } from 'react'
 import { styled } from 'styled-components'
 import { FormattedOrderData } from 'views/LimitOrders/hooks/useFormattedOrderData'

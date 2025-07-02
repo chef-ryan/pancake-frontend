@@ -4,7 +4,7 @@ import { Box, Button, Flex, PaginationButton, Table, Text, Th, useMatchBreakpoin
 import Container from 'components/Layout/Container'
 import TableLoader from 'components/TableLoader'
 import { useBNBPrice } from 'hooks/useBNBPrice'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useEffect, useState } from 'react'
 import { useAppDispatch } from 'state'
 import { getCollectionActivity } from 'state/nftMarket/helpers'

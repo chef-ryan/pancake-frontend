@@ -5,7 +5,7 @@ import { formatBigInt, getBalanceNumber } from '@pancakeswap/utils/formatBalance
 import latinise from '@pancakeswap/utils/latinise'
 import { FarmWidget } from '@pancakeswap/widgets-internal'
 import BigNumber from 'bignumber.js'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useRouter } from 'next/router'
 import { ReactNode, useCallback, useMemo, useRef } from 'react'
 import { styled } from 'styled-components'

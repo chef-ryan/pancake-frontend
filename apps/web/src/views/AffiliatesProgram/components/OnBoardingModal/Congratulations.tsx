@@ -1,8 +1,7 @@
-import { useCallback, useState } from 'react'
-import { Flex, Text, Button, Link, ModalV2 } from '@pancakeswap/uikit'
 import { useTranslation } from '@pancakeswap/localization'
-import USCitizenConfirmModal from 'components/Modal/USCitizenConfirmModal'
-import { useUserNotUsCitizenAcknowledgement, IdType } from 'hooks/useUserIsUsCitizenAcknowledgement'
+import { IdType, USCitizenConfirmModal, useUserNotUsCitizenAcknowledgement } from '@pancakeswap/mfe'
+import { Button, Flex, Link, ModalV2, Text } from '@pancakeswap/uikit'
+import { useCallback, useState } from 'react'
 
 const Congratulations = () => {
   const { t } = useTranslation()

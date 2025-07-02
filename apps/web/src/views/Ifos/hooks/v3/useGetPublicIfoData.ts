@@ -8,7 +8,7 @@ import { bscTokens } from '@pancakeswap/tokens'
 import { Ifo, IfoStatus } from '@pancakeswap/ifos'
 
 import { useLpTokenPrice } from 'state/farms/hooks'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { publicClient } from 'utils/wagmi'
 import { ChainId } from '@pancakeswap/chains'

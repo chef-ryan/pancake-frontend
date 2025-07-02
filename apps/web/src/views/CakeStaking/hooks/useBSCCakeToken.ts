@@ -1,6 +1,6 @@
 import { ChainId, Token } from '@pancakeswap/sdk'
 import { CAKE, bscTestnetTokens } from '@pancakeswap/tokens'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 export const useBSCCakeToken = (): Token | undefined => {
   const { chainId } = useActiveChainId()

@@ -1,7 +1,7 @@
 import { Skeleton } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { BASE_ADD_LIQUIDITY_URL } from 'config'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { styled } from 'styled-components'
 import getLiquidityUrlPathParts from 'utils/getLiquidityUrlPathParts'
 import ApyButton from 'views/Farms/components/FarmCard/ApyButton'

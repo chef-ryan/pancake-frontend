@@ -32,7 +32,7 @@ import keyBy from 'lodash/keyBy'
 import orderBy from 'lodash/orderBy'
 
 import { getPoolsPriceHelperLpFiles } from 'config/constants/priceHelperLps'
-import { getCakePriceFromOracle } from 'hooks/useCakePrice'
+import { getCakePriceFromOracle } from '@pancakeswap/mfe'
 import { farmV3ApiFetch } from 'state/farmsV3/hooks'
 import {
   PoolsState,

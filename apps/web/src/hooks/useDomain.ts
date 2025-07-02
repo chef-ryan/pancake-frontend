@@ -1,5 +1,5 @@
 import { ChainId } from '@pancakeswap/chains'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useSidNameForAddress } from 'hooks/useSid'
 import { useUnsNameForAddress } from 'hooks/useUns'
 import { useMemo } from 'react'

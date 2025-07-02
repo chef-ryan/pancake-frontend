@@ -3,7 +3,7 @@ import { Box, CopyButton, Flex, FlexProps, Image, Text, WalletFilledV2Icon } fro
 import { useQuery } from '@tanstack/react-query'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import { walletsConfig } from 'config/wallet'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useAtom } from 'jotai'
 import { useMemo } from 'react'
 import { styled } from 'styled-components'

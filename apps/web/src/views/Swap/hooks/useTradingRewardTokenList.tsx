@@ -1,4 +1,4 @@
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useV3FarmAPI } from 'hooks/useV3FarmAPI'
 import { useMemo } from 'react'
 import useAllTradingRewardPair, { RewardStatus, RewardType } from 'views/TradingReward/hooks/useAllTradingRewardPair'

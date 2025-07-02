@@ -9,7 +9,7 @@ import { ConfirmModalState, useAsyncConfirmPriceImpactWithoutFee } from '@pancak
 import { ToastDescriptionWithTx } from 'components/Toast'
 import { BLOCK_CONFIRMATION } from 'config/confirmation'
 import { ALLOWED_PRICE_IMPACT_HIGH, PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN } from 'config/constants/exchange'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useEIP5792Status } from 'hooks/useIsEIP5792Supported'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useNativeWrap } from 'hooks/useNativeWrap'

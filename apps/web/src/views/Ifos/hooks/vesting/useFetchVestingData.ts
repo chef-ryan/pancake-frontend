@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import { useAccount } from 'wagmi'
 
 import { FAST_INTERVAL } from 'config/constants'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useIfoConfigsAcrossChains } from 'hooks/useIfoConfig'
 
 import { fetchUserWalletIfoData, VestingData } from './fetchUserWalletIfoData'

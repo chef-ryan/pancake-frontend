@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom'
 import { GRAPH_API_PREDICTION_BNB } from '@pancakeswap/prediction'
 import { getPortalRoot } from '@pancakeswap/uikit'
 import { GRAPH_API_LOTTERY, GRAPH_API_NFTMARKET } from 'config/constants/endpoints'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { SubgraphHealthIndicator, SubgraphHealthIndicatorProps } from './SubgraphHealthIndicator'
 
 interface FactoryParams {

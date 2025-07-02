@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { ArrowBackIcon, ArrowForwardIcon, Box, SortArrowIcon, Text } from '@pancakeswap/uikit'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import NextLink from 'next/link'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { chainIdToExplorerInfoChainName } from 'state/info/api/client'

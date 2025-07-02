@@ -4,7 +4,7 @@ import {
   SUPPORTED_CHAIN_IDS as POSITION_MANAGERS_SUPPORTED_CHAINS,
 } from '@pancakeswap/position-managers'
 import { useQuery } from '@tanstack/react-query'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { Address } from 'viem'
 

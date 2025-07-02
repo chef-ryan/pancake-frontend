@@ -1,5 +1,5 @@
 import { idoABI } from 'config/abi/ido'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { getContract } from 'utils/contractHelpers'

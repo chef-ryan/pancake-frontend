@@ -1,7 +1,7 @@
 import { Ifo, PoolIds } from '@pancakeswap/ifos'
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import BigNumber from 'bignumber.js'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useERC20, useIfoV8Contract } from 'hooks/useContract'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'

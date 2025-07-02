@@ -1,7 +1,7 @@
 import { baseColors, darkColors, lightColors } from '@pancakeswap/uikit'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { ColorType, IChartApi, createChart } from 'lightweight-charts'
 import React, { Dispatch, ReactNode, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 import { styled } from 'styled-components'

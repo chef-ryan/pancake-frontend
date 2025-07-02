@@ -13,7 +13,7 @@ import { publicClient } from 'utils/wagmi'
 import { Address, erc20Abi } from 'viem'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useAccount } from 'wagmi'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 export interface StakeButtonProps {
   wrapperAddress?: Address

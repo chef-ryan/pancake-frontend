@@ -10,7 +10,7 @@ import {
   UNSUPPORTED_LIST_URLS,
   WARNING_LIST_URLS,
 } from 'config/constants/lists'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { atom, useAtomValue } from 'jotai'
 import groupBy from 'lodash/groupBy'
 import keyBy from 'lodash/keyBy'

@@ -5,7 +5,7 @@ import getTimePeriods from '@pancakeswap/utils/getTimePeriods'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 import { getBlockExploreLink } from 'utils'
 import { PublicIfoData } from 'views/Ifos/types'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 interface Props {
   publicIfoData: PublicIfoData

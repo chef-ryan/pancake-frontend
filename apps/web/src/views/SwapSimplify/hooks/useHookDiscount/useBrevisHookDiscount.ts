@@ -1,7 +1,7 @@
 import { InfinityBinPool, InfinityClPool, Route, SmartRouter } from '@pancakeswap/smart-router'
 import { useQueries } from '@tanstack/react-query'
 import { useBrevisHooks } from 'hooks/infinity/useHooksList'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import set from 'lodash/set'
 import { useMemo } from 'react'
 import { isAddressEqual } from 'utils'

@@ -12,7 +12,7 @@ import { queryParametersToSwapState, useSwapState } from 'state/swap/hooks'
 import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
 
 import { SwapUIV2 } from '@pancakeswap/widgets-internal'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { useAtom } from 'jotai'

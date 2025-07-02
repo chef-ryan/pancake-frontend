@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { namehash } from 'viem'
 import { getSidResolverContract } from 'utils/contractHelpers'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useQuery } from '@tanstack/react-query'
 import { useSIDContract } from './useContract'
 

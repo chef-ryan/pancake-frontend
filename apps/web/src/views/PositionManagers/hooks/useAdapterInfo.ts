@@ -6,7 +6,7 @@ import {
 import { Percent } from '@pancakeswap/sdk'
 import { useQuery } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import {
   useContract,
   usePositionManagerBCakeWrapperContract,

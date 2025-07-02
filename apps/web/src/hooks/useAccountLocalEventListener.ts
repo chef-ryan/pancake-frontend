@@ -1,6 +1,6 @@
 import { useAccountEffect } from 'wagmi'
 import { useMemo } from 'react'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useLocalDispatch from '../contexts/LocalRedux/useLocalDispatch'
 import { resetUserState } from '../state/global/actions'
 

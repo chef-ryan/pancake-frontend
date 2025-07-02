@@ -1,6 +1,6 @@
 import { RowBetween } from '@pancakeswap/uikit'
 import dayjs from 'dayjs'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { ColorType, createChart, IChartApi } from 'lightweight-charts'
 import React, { Dispatch, ReactNode, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 import { styled } from 'styled-components'

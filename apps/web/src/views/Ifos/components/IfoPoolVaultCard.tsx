@@ -4,7 +4,7 @@ import { Flex } from '@pancakeswap/uikit'
 import { useMemo } from 'react'
 import { Address } from 'viem'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 import { isCrossChainIfoSupportedOnly } from '@pancakeswap/ifos'
 import { useActiveIfoConfig } from 'hooks/useIfoConfig'

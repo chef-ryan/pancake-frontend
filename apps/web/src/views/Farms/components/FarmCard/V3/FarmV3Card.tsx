@@ -3,7 +3,7 @@ import { Card, ExpandableSectionButton, Flex, Text, TooltipText, useModalV2, use
 import { FarmWidget } from '@pancakeswap/widgets-internal'
 import BigNumber from 'bignumber.js'
 import { CHAIN_QUERY_NAME } from 'config/chains'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMerklInfo } from 'hooks/useMerkl'
 import { useCallback, useMemo, useState } from 'react'
 import { type V3Farm } from 'state/farms/types'

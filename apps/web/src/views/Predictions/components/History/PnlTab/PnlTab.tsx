@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { BetPosition, REWARD_RATE } from '@pancakeswap/prediction'
 import { Box, BscScanIcon, Button, Flex, Heading, Link, Text } from '@pancakeswap/uikit'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { Result, getRoundResult } from 'state/predictions/helpers'
 import { useGetCurrentEpoch } from 'state/predictions/hooks'
 import { Bet } from 'state/types'

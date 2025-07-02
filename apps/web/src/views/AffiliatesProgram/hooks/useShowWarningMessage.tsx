@@ -1,5 +1,5 @@
 import { V3_SUBGRAPH_URLS } from 'config/constants/endpoints'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useSubgraphHealth, { SubgraphStatus } from 'hooks/useSubgraphHealth'
 
 const useShowWarningMessage = () => {

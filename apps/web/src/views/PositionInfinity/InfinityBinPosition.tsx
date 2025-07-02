@@ -3,7 +3,7 @@ import PageLoader from 'components/Loader/PageLoader'
 import { useInfinityBinPositionIdRouteParams } from 'hooks/dynamicRoute/usePositionIdRoute'
 import { useHookByPoolId } from 'hooks/infinity/useHooksList'
 import { usePoolById } from 'hooks/infinity/usePool'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { NextSeo } from 'next-seo'
 
 import { useTranslation } from '@pancakeswap/localization'

@@ -5,7 +5,7 @@ import { ChainId } from '@pancakeswap/sdk'
 import { useCallback, MouseEvent } from 'react'
 import styled from 'styled-components'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 
 import { useChainNames } from '../../../hooks/useChainNames'

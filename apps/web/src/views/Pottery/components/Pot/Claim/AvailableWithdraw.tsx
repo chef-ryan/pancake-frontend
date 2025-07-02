@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useTranslation } from '@pancakeswap/localization'
 import { Flex, Box, Text, Balance } from '@pancakeswap/uikit'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from '@pancakeswap/utils/formatBalance'
 import { PotteryWithdrawAbleData } from 'state/types'

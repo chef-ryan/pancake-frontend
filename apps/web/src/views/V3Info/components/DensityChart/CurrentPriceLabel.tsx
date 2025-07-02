@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AutoColumn, Box, Text } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { DensityChartEntry, PoolDataForView } from 'state/info/types'
 import { styled } from 'styled-components'
 import { RowFixed } from '../Row'

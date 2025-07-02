@@ -1,5 +1,6 @@
 import { ChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
+import useTheme, { useActiveChainId, useWebNotifications } from '@pancakeswap/mfe'
 import {
   AtomBox,
   AutoColumn,
@@ -31,10 +32,8 @@ import {
 import { ExpertModal } from '@pancakeswap/widgets-internal'
 import { TOKEN_RISK } from 'components/AccessRisk'
 import AccessRiskTooltips from 'components/AccessRisk/AccessRiskTooltips'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { usePCSX, usePCSXFeatureEnabled } from 'hooks/usePCSX'
 import { useSpeedQuote } from 'hooks/useSpeedQuote'
-import useTheme from 'hooks/useTheme'
-import { useWebNotifications } from 'hooks/useWebNotifications'
 import { ReactNode, Suspense, lazy, useCallback, useState } from 'react'
 import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
 import { useSubgraphHealthIndicatorManager, useUserUsernameVisibility } from 'state/user/hooks'
@@ -48,7 +47,6 @@ import {
   useUserV2SwapEnable,
   useUserV3SwapEnable,
 } from 'state/user/smartRouter'
-import { usePCSX, usePCSXFeatureEnabled } from 'hooks/usePCSX'
 import { styled } from 'styled-components'
 import GasSettings from './GasSettings'
 import TransactionSettings from './TransactionSettings'

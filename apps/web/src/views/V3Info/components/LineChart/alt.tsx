@@ -1,6 +1,6 @@
 import Card from 'components/Card'
 import dayjs from 'dayjs'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { darken } from 'polished'
 import React, { Dispatch, ReactNode, SetStateAction } from 'react'
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from 'recharts'

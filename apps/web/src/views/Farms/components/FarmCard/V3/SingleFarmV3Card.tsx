@@ -1,5 +1,6 @@
 import { IPendingCakeByTokenId, PositionDetails } from '@pancakeswap/farms'
 import { useTranslation } from '@pancakeswap/localization'
+import { useActiveChainId, useCakePrice } from '@pancakeswap/mfe'
 import { Token } from '@pancakeswap/swap-sdk-core'
 import {
   AtomBox,
@@ -22,8 +23,6 @@ import { BigNumber } from 'bignumber.js'
 import { LightCard } from 'components/Card'
 import { RangeTag } from 'components/RangeTag'
 import { CHAIN_QUERY_NAME } from 'config/chains'
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useCakePrice } from 'hooks/useCakePrice'
 import Image from 'next/image'
 import NextLink from 'next/link'
 import { useCallback, useMemo } from 'react'

@@ -13,7 +13,7 @@ import {
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 
 import BigNumber from 'bignumber.js'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { Activity, NftToken } from 'state/nftMarket/types'
 import { getBlockExploreLink, safeGetAddress } from 'utils'
 import ProfileCell from 'views/Nft/market/components/ProfileCell'

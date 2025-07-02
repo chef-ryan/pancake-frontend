@@ -1,5 +1,5 @@
 import { VaultConfig } from '@pancakeswap/position-managers'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { usePositionManager } from 'views/PositionManagers/hooks/usePositionManager'
 
 export function useVaultConfigs(): VaultConfig[] {

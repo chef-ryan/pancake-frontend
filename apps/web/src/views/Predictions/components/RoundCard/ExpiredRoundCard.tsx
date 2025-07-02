@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { BetPosition } from '@pancakeswap/prediction'
 import { BlockIcon, Box, Card, CardBody } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { getHasRoundFailed } from 'state/predictions/helpers'
 import { useGetBufferSeconds } from 'state/predictions/hooks'
 import { NodeLedger, NodeRound } from 'state/types'

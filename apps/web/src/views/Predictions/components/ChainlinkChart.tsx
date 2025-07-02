@@ -1,4 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
+import { useActiveChainId, useTheme } from '@pancakeswap/mfe'
 import {
   Flex,
   FlexGap,
@@ -10,14 +11,13 @@ import {
   lightColors,
 } from '@pancakeswap/uikit'
 import { formatBigIntToFixed } from '@pancakeswap/utils/formatBalance'
+import { useReadContract, useReadContracts } from '@pancakeswap/wagmi'
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
 import { LineChartLoader } from 'components/ChartLoaders'
 import PairPriceDisplay from 'components/PairPriceDisplay'
 import { chainlinkOracleABI } from 'config/abi/chainlinkOracle'
 import dayjs from 'dayjs'
-import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useChainlinkOracleContract } from 'hooks/useContract'
-import useTheme from 'hooks/useTheme'
 import { IChartApi, SeriesMarkerPosition, SeriesMarkerShape, UTCTimestamp, createChart } from 'lightweight-charts'
 import orderBy from 'lodash/orderBy'
 import { darken } from 'polished'
@@ -25,7 +25,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useGetRoundsByCloseOracleId, useGetSortedRounds } from 'state/predictions/hooks'
 import { NodeRound } from 'state/types'
 import { styled } from 'styled-components'
-import { useReadContract, useReadContracts } from '@pancakeswap/wagmi'
 import { useConfig } from '../context/ConfigProvider'
 import { CHART_DOT_CLICK_EVENT } from '../helpers'
 import usePollOraclePrice from '../hooks/usePollOraclePrice'

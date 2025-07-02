@@ -1,6 +1,6 @@
 import { ChainId } from '@pancakeswap/chains'
 import { useUserSingleHopOnly } from '@pancakeswap/utils/user'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { usePCSX, usePCSXEnabledOnChain } from 'hooks/usePCSX'
 import { useSpeedQuote } from 'hooks/useSpeedQuote'
 import { useAtomValue } from 'jotai'

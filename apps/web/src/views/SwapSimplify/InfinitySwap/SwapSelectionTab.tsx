@@ -10,7 +10,7 @@ import {
   useTooltip,
 } from '@pancakeswap/uikit'
 import GlobalSettings from 'components/Menu/GlobalSettings'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { styled } from 'styled-components'

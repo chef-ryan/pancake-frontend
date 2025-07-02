@@ -2,7 +2,7 @@ import { getPredictionConfig } from '@pancakeswap/prediction'
 import { useQuery } from '@tanstack/react-query'
 
 import { ChainId } from '@pancakeswap/chains'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 export function usePredictionConfigs(pickedChainId?: ChainId) {
   const { chainId } = useActiveChainId()

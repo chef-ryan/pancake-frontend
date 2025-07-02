@@ -1,5 +1,5 @@
 import { useDebounce } from '@pancakeswap/hooks'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useWorker } from 'hooks/useWorker'
 import { useAtom } from 'jotai'
 import { useEffect, useMemo, useRef } from 'react'

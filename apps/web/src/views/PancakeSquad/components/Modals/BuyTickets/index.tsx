@@ -16,7 +16,7 @@ import {
   Text,
 } from '@pancakeswap/uikit'
 import { formatBigInt } from '@pancakeswap/utils/formatBalance'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useState } from 'react'
 import { SaleStatusEnum } from 'views/PancakeSquad/types'
 

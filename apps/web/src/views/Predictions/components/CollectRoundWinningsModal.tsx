@@ -21,7 +21,7 @@ import {
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import { AnyAction, AsyncThunkAction } from '@reduxjs/toolkit'
 import { ToastDescriptionWithTx } from 'components/Toast'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import useCatchTxError from 'hooks/useCatchTxError'
 import { usePredictionsContract } from 'hooks/useContract'

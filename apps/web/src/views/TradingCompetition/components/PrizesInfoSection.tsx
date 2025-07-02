@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { Box, PageSection } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useTranslation } from '@pancakeswap/localization'
 import RibbonWithImage from './RibbonWithImage'
 import { LIGHTBLUEBG_DARK, LIGHTBLUEBG } from '../pageSectionStyles'

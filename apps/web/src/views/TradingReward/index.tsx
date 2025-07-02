@@ -1,6 +1,6 @@
 import { ChainId } from '@pancakeswap/chains'
 import { Box } from '@pancakeswap/uikit'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import Banner from 'views/TradingReward/components/Banner'
 import CurrentRewardPool from 'views/TradingReward/components/CurrentRewardPool'

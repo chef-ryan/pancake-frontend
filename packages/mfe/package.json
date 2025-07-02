@@ -32,8 +32,13 @@
     "@pancakeswap/utils": "workspace:*",
     "@pancakeswap/chains": "workspace:*",
     "@pancakeswap/widgets-internal": "workspace:*",
+    "next": "*",
+    "viem": "*",
+    "wagmi": "*",
     "styled-components": "*",
-    "lodash": "*"
+    "lodash": "*",
+    "bignumber.js": "*",
+    "@tanstack/react-query": "*"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "4.2.1",

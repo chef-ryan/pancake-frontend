@@ -16,7 +16,7 @@ import {
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import truncateHash from '@pancakeswap/utils/truncateHash'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useProfileForAddress } from 'state/profile/hooks'
 import { styled } from 'styled-components'
 import { getBlockExploreLink } from 'utils'

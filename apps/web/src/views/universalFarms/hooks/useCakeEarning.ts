@@ -1,7 +1,7 @@
 import { Protocol } from '@pancakeswap/farms'
 import { formatBigInt } from '@pancakeswap/utils/formatBalance'
 import BigNumber from 'bignumber.js'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { useStakedPositionsByUser } from 'state/farmsV3/hooks'
 import { useAccountPositionDetailByPool } from 'state/farmsV4/hooks'

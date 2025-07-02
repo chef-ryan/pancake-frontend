@@ -4,7 +4,7 @@ import { Button, Flex, Text, useModalV2 } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useConfig } from 'views/Ifos/contexts/IfoContext'
 
 import { isTestnetChainId } from '@pancakeswap/chains'

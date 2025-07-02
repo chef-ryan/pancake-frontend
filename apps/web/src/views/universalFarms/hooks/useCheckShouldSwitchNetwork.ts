@@ -1,4 +1,4 @@
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { useCallback } from 'react'
 

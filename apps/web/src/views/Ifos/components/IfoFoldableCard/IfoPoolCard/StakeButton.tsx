@@ -4,7 +4,7 @@ import { Button, Flex, Text, useModalV2 } from '@pancakeswap/uikit'
 import { useCallback, useMemo } from 'react'
 import { SpaceProps } from 'styled-system'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 import { isTestnetChainId } from '@pancakeswap/chains'
 import { useRouter } from 'next/router'

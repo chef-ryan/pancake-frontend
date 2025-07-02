@@ -1,5 +1,5 @@
 import { Box, PageSection } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useTranslation } from '@pancakeswap/localization'
 import { TeamRanksProps } from '../types'
 import RibbonWithImage from './RibbonWithImage'

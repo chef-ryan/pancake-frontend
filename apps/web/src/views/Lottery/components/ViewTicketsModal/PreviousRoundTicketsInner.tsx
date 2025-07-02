@@ -13,7 +13,7 @@ import {
   useTooltip,
 } from '@pancakeswap/uikit'
 import { LotteryTicket, LotteryTicketClaimData } from 'config/constants/types'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import orderBy from 'lodash/orderBy'
 import { useEffect, useState } from 'react'
 import { getWinningTickets } from 'state/lottery/fetchUnclaimedUserRewards'

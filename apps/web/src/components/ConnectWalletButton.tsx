@@ -3,7 +3,7 @@ import { Button, ButtonProps, FlexGap, WalletFilledV2Icon } from '@pancakeswap/u
 import { useCallback, useState } from 'react'
 import WalletModalManager from 'components/WalletModalManager'
 import { logGTMConnectWalletEvent } from 'utils/customGTMEventTracking'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import Trans from './Trans'
 
 interface ConnectWalletButtonProps extends ButtonProps {

@@ -16,7 +16,7 @@ import {
 } from '@pancakeswap/uikit'
 import { getBalanceNumber } from '@pancakeswap/utils/formatBalance'
 import { LotteryStatus } from 'config/constants/types'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useState } from 'react'
 import { useLottery } from 'state/lottery/hooks'
 import { styled } from 'styled-components'

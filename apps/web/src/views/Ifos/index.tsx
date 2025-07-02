@@ -1,8 +1,7 @@
-import { useEffect } from 'react'
-import { useModal } from '@pancakeswap/uikit'
 import { useTranslation } from '@pancakeswap/localization'
-import { useUserNotUsCitizenAcknowledgement, IdType } from 'hooks/useUserIsUsCitizenAcknowledgement'
-import USCitizenConfirmModal from 'components/Modal/USCitizenConfirmModal'
+import { IdType, USCitizenConfirmModal, useUserNotUsCitizenAcknowledgement } from '@pancakeswap/mfe'
+import { useModal } from '@pancakeswap/uikit'
+import { useEffect } from 'react'
 import Hero from './components/Hero'
 import IfoProvider from './contexts/IfoContext'
 

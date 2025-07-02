@@ -2,7 +2,7 @@ import { IfoSkeletonCardActions } from '@pancakeswap/uikit'
 
 import { Ifo, PoolIds } from '@pancakeswap/ifos'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { isBasicSale } from 'views/Ifos/hooks/v7/helpers'
 import { PublicIfoData, WalletIfoData } from 'views/Ifos/types'
 import { useAccount } from 'wagmi'

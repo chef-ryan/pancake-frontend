@@ -1,5 +1,6 @@
 import { AVERAGE_CHAIN_BLOCK_TIMES } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
+import { useActiveChainId, useTheme } from '@pancakeswap/mfe'
 import { BetPosition, TRANSACTION_BUFFER_BLOCKS } from '@pancakeswap/prediction'
 import {
   ArrowDownIcon,
@@ -13,8 +14,6 @@ import {
 } from '@pancakeswap/uikit'
 import { ToastDescriptionWithTx } from 'components/Toast'
 import useLocalDispatch from 'contexts/LocalRedux/useLocalDispatch'
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import useTheme from 'hooks/useTheme'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { fetchLedgerData } from 'state/predictions'
 import { NodeLedger, NodeRound } from 'state/types'

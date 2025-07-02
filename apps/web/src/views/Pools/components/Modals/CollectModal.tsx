@@ -8,7 +8,7 @@ import { ToastDescriptionWithTx } from 'components/Toast'
 import useCatchTxError from 'hooks/useCatchTxError'
 import { useAppDispatch } from 'state'
 import { updateUserBalance, updateUserPendingReward, updateUserStakedBalance } from 'state/pools'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 import useHarvestPool from '../../hooks/useHarvestPool'
 

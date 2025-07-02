@@ -1,7 +1,7 @@
 import { bCakeFarmWrapperBoosterVeCakeABI } from '@pancakeswap/farms/constants/v3/abi/bCakeFarmWrapperBoosterVeCake'
 import { useQuery } from '@tanstack/react-query'
 import BN from 'bignumber.js'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useBCakeFarmWrapperBoosterVeCakeContract } from 'hooks/useContract'
 import _toNumber from 'lodash/toNumber'
 import { publicClient } from 'utils/wagmi'

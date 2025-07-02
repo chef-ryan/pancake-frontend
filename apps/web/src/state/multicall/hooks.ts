@@ -1,7 +1,7 @@
 import { Token } from '@pancakeswap/sdk'
 import { useReadContracts } from '@pancakeswap/wagmi'
 import { useQueryClient } from '@tanstack/react-query'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useAtom } from 'jotai'
 import { useEffect, useMemo } from 'react'
 import { multicallReducerAtom } from 'state/multicall/reducer'

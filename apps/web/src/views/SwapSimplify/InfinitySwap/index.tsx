@@ -6,7 +6,7 @@ import { RiskDetailsPanel, useShouldRiskPanelDisplay } from 'components/AccessRi
 
 import { GasTokenSelector } from 'components/Paymaster/GasTokenSelector'
 import { useCurrency } from 'hooks/Tokens'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
 import { usePaymaster } from 'hooks/usePaymaster'
 import { useAllTypeBestTrade } from 'quoter/hook/useAllTypeBestTrade'

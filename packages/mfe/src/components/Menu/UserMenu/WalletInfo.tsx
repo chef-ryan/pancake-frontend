@@ -31,7 +31,7 @@ import { isMobile } from 'react-device-detect'
 import { getBlockExploreLink, getBlockExploreName } from 'utils'
 import { Address } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 const COLORS = {
   ETH: '#627EEA',

@@ -2,7 +2,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Balance, Flex, Skeleton, Text } from '@pancakeswap/uikit'
 import { getBalanceNumber, getFullDisplayBalance } from '@pancakeswap/utils/formatBalance'
 import BigNumber from 'bignumber.js'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 
 interface RewardBracketDetailProps {
   cakeAmount: BigNumber

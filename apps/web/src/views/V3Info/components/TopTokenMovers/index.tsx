@@ -2,7 +2,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Box, Card, Flex, Text } from '@pancakeswap/uikit'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useEffect, useMemo, useRef } from 'react'
 import { useChainNameByQuery, useMultiChainPath } from 'state/info/hooks'
 import { TokenDataForView } from 'state/info/types'

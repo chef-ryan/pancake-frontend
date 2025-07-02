@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Button, Link, Modal, OpenNewIcon, Text } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { styled } from 'styled-components'
 
 interface NotEnoughTokensModalProps {

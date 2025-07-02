@@ -2,7 +2,7 @@ import { ChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { Flex, Link, Text } from '@pancakeswap/uikit'
 import { TOKEN_RISK } from 'components/AccessRisk'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 interface AccessRiskTooltipsProps {
   riskLevel?: number

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useMemo } from 'react'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useSubmitPermit2 } from 'hooks/usePermit2'
 import { Address } from 'viem'
 import { InterfaceOrder, isBridgeOrder } from 'views/Swap/utils'

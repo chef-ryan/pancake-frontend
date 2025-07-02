@@ -1,7 +1,7 @@
 import { Currency } from '@pancakeswap/sdk'
 import { RouteType } from '@pancakeswap/smart-router'
 import { ChevronRightIcon, Flex, Text } from '@pancakeswap/uikit'
-import { SHORT_SYMBOL } from 'components/NetworkSwitcher'
+import { SHORT_SYMBOL } from '@pancakeswap/mfe'
 import { Fragment, memo } from 'react'
 import { unwrappedToken } from 'utils/wrappedCurrency'
 

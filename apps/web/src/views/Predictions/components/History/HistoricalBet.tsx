@@ -13,7 +13,7 @@ import {
   useTooltip,
 } from '@pancakeswap/uikit'
 import useLocalDispatch from 'contexts/LocalRedux/useLocalDispatch'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useState } from 'react'
 import { fetchLedgerData, markAsCollected } from 'state/predictions'
 import { Result, getRoundResult } from 'state/predictions/helpers'

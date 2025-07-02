@@ -1,7 +1,7 @@
 import { AppBody } from 'components/App'
 import { SNBNB } from 'config/constants/liquidStaking'
 import { LIQUID_STAKING_SUPPORTED_CHAINS } from 'config/constants/supportChains'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { LiquidStakingPageStake } from 'views/LiquidStaking/Stake'
 import { LiquidStakingFAQs } from 'views/LiquidStaking/components/FAQs'

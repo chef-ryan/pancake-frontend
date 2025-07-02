@@ -3,7 +3,7 @@ import { getPoolContractBySousId } from '@pancakeswap/pools'
 import { Abi, Address, erc20Abi } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 import addresses from 'config/constants/contracts'
 import { useEffect, useMemo, useState } from 'react'

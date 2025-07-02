@@ -5,7 +5,7 @@ import { BIG_INT_TEN, DEFAULT_INPUT_CURRENCY, DEFAULT_OUTPUT_CURRENCY } from 'co
 import { useCurrency } from 'hooks/Tokens'
 import { useTradeExactIn, useTradeExactOut } from 'hooks/Trades'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useAtom, useAtomValue } from 'jotai'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'

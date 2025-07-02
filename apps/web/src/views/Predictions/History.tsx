@@ -6,7 +6,7 @@ import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useTranslation } from '@pancakeswap/localization'
 import { fetchNodeHistory } from 'state/predictions'
 import { getFilteredBets } from 'state/predictions/helpers'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useLocalDispatch from 'contexts/LocalRedux/useLocalDispatch'
 import {
   useGetCurrentEpoch,

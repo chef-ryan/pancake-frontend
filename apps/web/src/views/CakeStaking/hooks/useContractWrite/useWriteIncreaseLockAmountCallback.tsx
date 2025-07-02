@@ -1,6 +1,6 @@
 import { getDecimalAmount } from '@pancakeswap/utils/formatBalance'
 import BN from 'bignumber.js'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useVeCakeContract } from 'hooks/useContract'
 import { usePublicNodeWaitForTransaction } from 'hooks/usePublicNodeWaitForTransaction'
 import { useSetAtom } from 'jotai'

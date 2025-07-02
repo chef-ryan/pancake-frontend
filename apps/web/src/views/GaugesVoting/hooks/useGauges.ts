@@ -1,7 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { Gauge } from '@pancakeswap/gauges'
 import { useQuery } from '@tanstack/react-query'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { stringify } from 'qs'
 
 type Response = {

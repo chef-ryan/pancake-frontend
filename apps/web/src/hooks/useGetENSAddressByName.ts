@@ -1,6 +1,6 @@
 import { ChainId } from '@pancakeswap/chains'
 import { CHAINS } from 'config/chains'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { useEnsAddress } from 'wagmi'
 

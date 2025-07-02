@@ -4,7 +4,7 @@ import { erc20Abi } from 'viem'
 
 import { QueryObserverResult, useQuery } from '@tanstack/react-query'
 import { FAST_INTERVAL } from 'config/constants'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { publicClient } from 'utils/wagmi'
 
 function useTokenAllowance(

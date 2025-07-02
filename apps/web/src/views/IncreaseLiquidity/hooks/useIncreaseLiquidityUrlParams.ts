@@ -1,5 +1,5 @@
 import { ChainId, getChainName } from '@pancakeswap/chains'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useDynamicRouteParam } from 'hooks/useDynamicRouteParam'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useParamChainId } from 'hooks/useParamChainId'

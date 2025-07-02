@@ -4,7 +4,7 @@ import { ArrowForwardIcon, Column, QuestionHelper, Text } from '@pancakeswap/uik
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { LightGreyCard } from 'components/Card'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'

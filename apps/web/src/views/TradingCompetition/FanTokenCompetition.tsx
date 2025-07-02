@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useProfile } from 'state/profile/hooks'
 import { Box, useMatchBreakpoints, PageSection } from '@pancakeswap/uikit'
 import { useTradingCompetitionContractFanToken } from 'hooks/useContract'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { API_PROFILE } from 'config/constants/endpoints'
 import {
   SmartContractPhases,

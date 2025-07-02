@@ -1,6 +1,6 @@
 import { ChainId } from '@pancakeswap/chains'
 import { Box, useMatchBreakpoints } from '@pancakeswap/uikit'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useScrollToHash from 'hooks/useScrollToHash'
 import { useMemo } from 'react'
 import HowToEarn from 'views/TradingReward/components/HowToEarn'

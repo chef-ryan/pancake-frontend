@@ -1,7 +1,7 @@
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { useReadContract } from '@pancakeswap/wagmi'
 import BigNumber from 'bignumber.js'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { getVeCakeAddress } from 'utils/addressHelpers'
 import { isAddressEqual } from 'utils'

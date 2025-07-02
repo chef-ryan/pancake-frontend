@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { SUPPORT_CAKE_STAKING } from 'config/constants/supportChains'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useGaugesVotingContract } from 'hooks/useContract'
 
 /**

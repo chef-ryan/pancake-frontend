@@ -3,7 +3,7 @@ import { acceptListUpdate, updateListVersion, useFetchListCallback } from '@panc
 import { useQuery } from '@tanstack/react-query'
 import { EXCHANGE_PAGE_PATHS, UNIVERSAL_PAGE_PATHS } from 'config/constants/exchange'
 import { UNSUPPORTED_LIST_URLS } from 'config/constants/lists'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo } from 'react'
 import { useActiveListUrlsByChainId, useAllListsByChainId } from 'state/lists/hooks'

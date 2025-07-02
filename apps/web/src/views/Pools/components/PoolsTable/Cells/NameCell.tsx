@@ -6,7 +6,7 @@ import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { FarmWidget, Pool } from '@pancakeswap/widgets-internal'
 import BigNumber from 'bignumber.js'
 import { TokenPairImage } from 'components/TokenImage'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { ReactNode, useMemo } from 'react'
 import { styled } from 'styled-components'
 

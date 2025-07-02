@@ -3,14 +3,14 @@ import { useTranslation } from '@pancakeswap/localization'
 import { NATIVE } from '@pancakeswap/sdk'
 import { Box, UserMenu, useTooltip } from '@pancakeswap/uikit'
 import { ASSET_CDN } from 'config/constants/endpoints'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { useAtom } from 'jotai'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { chainNameConverter } from 'utils/chainNameConverter'
 import { chains as evmChains } from 'utils/wagmi'
-import { NetworkSwitcherModal, networkSwitcherModalAtom } from './NetworkSwitcherModal'
+import { NetworkSwitcherModal, networkSwitcherModalAtom } from 'components/NetworkSwitcherModal'
 
 export const SHORT_SYMBOL = {
   [ChainId.ETHEREUM]: 'ETH',

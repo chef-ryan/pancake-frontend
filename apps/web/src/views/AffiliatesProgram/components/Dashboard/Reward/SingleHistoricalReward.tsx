@@ -14,7 +14,7 @@ import {
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
 import { ClaimDetail, MAX_PER_PAGE, UserClaimListResponse } from 'views/AffiliatesProgram/hooks/useUserClaimList'

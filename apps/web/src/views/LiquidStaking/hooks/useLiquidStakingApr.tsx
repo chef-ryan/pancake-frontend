@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useLiquidStakingList } from 'views/LiquidStaking/hooks/useLiquidStakingList'
 
 interface UseLiquidStakingAprDetail {

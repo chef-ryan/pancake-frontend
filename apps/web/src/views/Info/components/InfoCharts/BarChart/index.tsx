@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import { BarChartLoader } from 'components/ChartLoaders'
 import { createChart, IChartApi } from 'lightweight-charts'

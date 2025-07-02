@@ -4,7 +4,7 @@ import { Button, Loading, useModalV2 } from '@pancakeswap/uikit'
 import { useCallback, useMemo, useState } from 'react'
 import { SpaceProps } from 'styled-system'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 
 // import { useChainNames } from '../../../hooks/useChainNames'

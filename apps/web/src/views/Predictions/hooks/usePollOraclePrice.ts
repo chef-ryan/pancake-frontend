@@ -1,7 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { useReadContract } from '@pancakeswap/wagmi'
 import { chainlinkOracleABI } from 'config/abi/chainlinkOracle'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { Address } from 'viem'
 import { useGaletoOraclePrice } from './useGaletoOraclePrice'

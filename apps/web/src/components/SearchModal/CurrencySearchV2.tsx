@@ -9,7 +9,7 @@ import { KeyboardEvent, RefObject, useCallback, useEffect, useMemo, useRef, useS
 import { FixedSizeList } from 'react-window'
 import { isAddress } from 'viem'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useAllLists, useInactiveListUrls } from 'state/lists/hooks'
 import { safeGetAddress } from 'utils'

@@ -19,11 +19,10 @@ import {
   ToggleView,
 } from '@pancakeswap/uikit'
 
+import { useActiveChainId, useCakePrice } from '@pancakeswap/mfe'
 import { FarmWidget } from '@pancakeswap/widgets-internal'
 import BigNumber from 'bignumber.js'
 import Page from 'components/Layout/Page'
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useCakePrice } from 'hooks/useCakePrice'
 import orderBy from 'lodash/orderBy'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'

@@ -1,5 +1,6 @@
 import { ChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
+import { useActiveChainId, useLocalNetworkChain, useTheme } from '@pancakeswap/mfe'
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -18,10 +19,8 @@ import {
   UserMenuItem,
   useTooltip,
 } from '@pancakeswap/uikit'
-import { useActiveChainId, useLocalNetworkChain } from 'hooks/useActiveChainId'
 import { useHover } from 'hooks/useHover'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
-import useTheme from 'hooks/useTheme'
 import { atom, useAtom } from 'jotai'
 import Image from 'next/image'
 import { useRouter } from 'next/router'

@@ -18,7 +18,7 @@ import { Position, TICK_SPACINGS, TickMath, encodeSqrtRatioX96 } from '@pancakes
 import { FarmWidget } from '@pancakeswap/widgets-internal'
 import { RoiCalculatorModalV2, useRoi } from '@pancakeswap/widgets-internal/roi'
 import BigNumber from 'bignumber.js'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useContext, useMemo, useState } from 'react'
 import { styled } from 'styled-components'
 

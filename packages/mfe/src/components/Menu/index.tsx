@@ -2,17 +2,20 @@ import { languageList, useTranslation } from '@pancakeswap/localization'
 import { Menu as UikitMenu, footerLinks, useModal } from '@pancakeswap/uikit'
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
-import USCitizenConfirmModal from 'components/Modal/USCitizenConfirmModal'
-import { NetworkSwitcher } from 'components/NetworkSwitcher'
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useCakePrice } from 'hooks/useCakePrice'
-import { usePerpUrl } from 'hooks/usePerpUrl'
-import useTheme from 'hooks/useTheme'
-import { IdType, useUserNotUsCitizenAcknowledgement } from 'hooks/useUserIsUsCitizenAcknowledgement'
-import { useWebNotifications } from 'hooks/useWebNotifications'
 import { useRouter } from 'next/router'
 import { Suspense, lazy, useCallback, useMemo } from 'react'
 import { styled } from 'styled-components'
+import {
+  IdType,
+  useActiveChainId,
+  useCakePrice,
+  usePerpUrl,
+  useTheme,
+  useUserNotUsCitizenAcknowledgement,
+  useWebNotifications,
+} from '../../hooks'
+import USCitizenConfirmModal from '../Modal/USCitizenConfirmModal'
+import { NetworkSwitcher } from '../NetworkSwitcher'
 import GlobalSettings from './GlobalSettings'
 import { SettingsMode } from './GlobalSettings/types'
 import UserMenu from './UserMenu'
@@ -21,11 +24,11 @@ import { getActiveMenuItem, getActiveSubMenuChildItem, getActiveSubMenuItem } fr
 
 const Notifications = lazy(() => import('views/Notifications'))
 
-const LinkComponent = (linkProps) => {
+const LinkComponent = (linkProps: any) => {
   return <NextLinkFromReactRouter to={linkProps.href} {...linkProps} prefetch={false} />
 }
 
-const Menu = (props) => {
+const Menu = (props: any) => {
   const { enabled } = useWebNotifications()
   const { chainId } = useActiveChainId()
   const { isDark, setTheme } = useTheme()

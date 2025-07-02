@@ -1,6 +1,6 @@
 import { styled } from 'styled-components'
 import { Flex, PageSection } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useTranslation } from '@pancakeswap/localization'
 import { OutlineText } from 'views/Pottery/components/TextStyle'
 import { FINISHED_ROUNDS_BG, FINISHED_ROUNDS_BG_DARK } from 'views/Lottery/pageSectionStyles'

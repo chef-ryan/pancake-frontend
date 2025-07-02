@@ -3,7 +3,7 @@ import { useDebounce } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { AutoColumn, BscScanIcon, FlexGap, Link, SwapCSS, Text } from '@pancakeswap/uikit'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useGetENSAddressByName } from 'hooks/useGetENSAddressByName'
 import { useCallback } from 'react'
 import { styled } from 'styled-components'

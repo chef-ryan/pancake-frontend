@@ -1,5 +1,5 @@
 import { ButtonMenu, ButtonMenuItem } from '@pancakeswap/uikit'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
 import { SwapType } from '../types'

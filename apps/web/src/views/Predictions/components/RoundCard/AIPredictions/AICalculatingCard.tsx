@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { BetPosition } from '@pancakeswap/prediction'
 import { Card, CardBody, Flex, InfoIcon, Spinner, TooltipText, WaitIcon, useTooltip } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { NodeRound } from 'state/types'
 import { RoundResultBox } from '../../RoundResult'
 import CardHeader, { getBorderBackground } from '../CardHeader'

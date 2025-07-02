@@ -9,7 +9,7 @@ import { usePositionManagerBCakeWrapperContract } from 'hooks/useContract'
 import React, { useMemo } from 'react'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useLpData } from './V2StakedButton'
 
 export interface StakeButtonProps {

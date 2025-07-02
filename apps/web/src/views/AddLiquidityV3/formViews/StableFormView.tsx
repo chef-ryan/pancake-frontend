@@ -25,7 +25,7 @@ import { FormattedSlippage } from 'views/AddLiquidity/AddStableLiquidity/compone
 
 import { RowFixed } from 'components/Layout/Row'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { ReactElement } from 'react'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import { MevProtectToggle } from 'views/Mev/MevProtectToggle'

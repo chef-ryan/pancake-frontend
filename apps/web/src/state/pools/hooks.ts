@@ -12,7 +12,7 @@ import { useAppDispatch } from 'state'
 import { getLegacyFarmConfig } from '@pancakeswap/farms'
 import { useQuery } from '@tanstack/react-query'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import {
   fetchCakeFlexibleSideVaultFees,
   fetchCakePoolPublicDataAsync,

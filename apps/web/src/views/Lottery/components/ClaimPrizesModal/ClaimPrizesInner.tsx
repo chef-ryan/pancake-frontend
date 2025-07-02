@@ -3,7 +3,7 @@ import { AutoRenewIcon, Balance, Button, Flex, PresentWonIcon, Text, useToast } 
 import { getBalanceAmount } from '@pancakeswap/utils/formatBalance'
 import { ToastDescriptionWithTx } from 'components/Toast'
 import { LotteryTicket, LotteryTicketClaimData } from 'config/constants/types'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import useCatchTxError from 'hooks/useCatchTxError'
 import { useLotteryV2Contract } from 'hooks/useContract'
 import { useState } from 'react'

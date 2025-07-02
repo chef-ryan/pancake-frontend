@@ -1,7 +1,7 @@
 import { TFetchStatus } from 'config/constants/types'
 import useLocalDispatch from 'contexts/LocalRedux/useLocalDispatch'
 import useSelector from 'contexts/LocalRedux/useSelector'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useEffect, useMemo } from 'react'
 import { safeGetAddress } from 'utils'
 import { Address } from 'viem'

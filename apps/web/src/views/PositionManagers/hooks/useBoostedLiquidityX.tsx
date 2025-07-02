@@ -1,7 +1,7 @@
 import { positionManagerAdapterABI, positionManagerVeBCakeWrapperABI } from '@pancakeswap/position-managers'
 import { useQuery } from '@tanstack/react-query'
 import BN from 'bignumber.js'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { publicClient } from 'utils/wagmi'
 import { Address } from 'viem'
 

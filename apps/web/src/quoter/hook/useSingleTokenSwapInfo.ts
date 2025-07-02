@@ -1,6 +1,6 @@
 import { Currency, Price, TradeType } from '@pancakeswap/swap-sdk-core'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useAtomValue } from 'jotai'
 import { bestAMMTradeFromQuoterWorkerAtom } from 'quoter/atom/bestAMMTradeFromQuoterWorkerAtom'
 import { useCurrentBlock } from 'state/block/hooks'

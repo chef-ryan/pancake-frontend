@@ -18,14 +18,13 @@ import {
 import { priceHelperTokens } from '@pancakeswap/farms/constants/common'
 import { bCakeFarmBoosterVeCakeABI } from '@pancakeswap/farms/constants/v3/abi/bCakeFarmBoosterVeCake'
 import { TvlMap, fetchCommonTokenUSDValue } from '@pancakeswap/farms/src/fetchFarmsV3'
+import { useActiveChainId, useCakePrice } from '@pancakeswap/mfe'
 import { deserializeToken } from '@pancakeswap/token-lists'
 import { masterChefV3ABI } from '@pancakeswap/v3-sdk'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import BN from 'bignumber.js'
 import { FAST_INTERVAL } from 'config/constants'
 import { FARMS_API_V2 } from 'config/constants/endpoints'
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useCakePrice } from 'hooks/useCakePrice'
 import {
   useBCakeFarmBoosterVeCakeContract,
   useMasterchefV3,

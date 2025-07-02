@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { CardProps, FlexGap, InfoIcon, QuestionHelperV2, Text } from '@pancakeswap/uikit'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import { useBurnStats } from 'views/BurnDashboard/hooks/useBurnStats'

@@ -4,7 +4,7 @@ import { Balance, Box, CardBody, CardRibbon, Flex, ScanLink, Skeleton, Text } fr
 import { getBalanceNumber } from '@pancakeswap/utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import Divider from 'components/Divider'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { PotteryRoundInfo } from 'state/types'
 import { styled } from 'styled-components'

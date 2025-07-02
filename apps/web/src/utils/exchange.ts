@@ -4,7 +4,7 @@ import { BIPS_BASE, V2_ROUTER_ADDRESS } from 'config/constants/exchange'
 import { StableTrade } from 'config/constants/types'
 
 import memoize from '@pancakeswap/utils/memoize'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useContract } from 'hooks/useContract'
 import { Field } from '../state/swap/actions'
 

@@ -1,6 +1,6 @@
 import { Flex, PageSection } from '@pancakeswap/uikit'
 import Image from 'next/image'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { StaticImageData } from 'next/dist/client/legacy/image'
 import { DARKBG } from './pageSectionStyles'
 import BattleCta from './components/BattleCta'

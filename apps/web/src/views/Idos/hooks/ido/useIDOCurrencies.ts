@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
 import { useCurrency } from 'hooks/Tokens'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { getViemClients } from 'utils/viem'
 import { isAddressEqual, zeroAddress } from 'viem'
 import type { Address } from 'viem/accounts'

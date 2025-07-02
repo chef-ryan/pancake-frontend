@@ -1,5 +1,5 @@
 import { PriceOrder } from '@pancakeswap/price-api-sdk'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useCanBuyCrypto } from 'hooks/useCanBuyCrypto'
 import { useMemo } from 'react'
 import { useSwapCurrency } from '../../Swap/V3Swap/hooks/useSwapCurrency'

@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { QuestionHelperV2, ShieldCheckIcon, Text } from '@pancakeswap/uikit'
 import { RowBetween, RowFixed } from 'components/Layout/Row'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { styled } from 'styled-components'
 import { useIsMEVEnabled } from './hooks'
 

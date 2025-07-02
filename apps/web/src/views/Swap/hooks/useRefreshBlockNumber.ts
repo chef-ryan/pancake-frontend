@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 export const useRefreshBlockNumber = () => {
   const [isLoading, setFetch] = useState(false)

@@ -2,7 +2,7 @@ import { bscTokens } from '@pancakeswap/tokens'
 import { getBalanceNumber } from '@pancakeswap/utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import { easterPrizes, PrizesConfig } from 'config/constants/trading-competition/prizes'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useStablecoinPrice } from 'hooks/useStablecoinPrice'
 import { multiplyPriceByAmount } from 'utils/prices'
 

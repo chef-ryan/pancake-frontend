@@ -1,4 +1,4 @@
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { useRouter } from 'next/router'

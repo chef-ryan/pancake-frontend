@@ -6,9 +6,8 @@ import {
   useUserSlippage,
 } from '@pancakeswap/utils/user'
 
+import { useTheme, useWebNotifications } from '@pancakeswap/mfe'
 import { useFeatureFlagEvaluation } from 'hooks/useDataDogRUM'
-import useTheme from 'hooks/useTheme'
-import { useWebNotifications } from 'hooks/useWebNotifications'
 import { useGasPriceManager, useSubgraphHealthIndicatorManager, useUserUsernameVisibility } from 'state/user/hooks'
 import { useUserChart } from 'state/user/hooks/useUserChart'
 import { useUserTokenRisk } from 'state/user/hooks/useUserTokenRisk'

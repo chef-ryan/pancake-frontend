@@ -6,7 +6,7 @@ import useTokenAllowance from 'hooks/useTokenAllowance'
 import { useMemo } from 'react'
 import { getVeCakeContract } from 'utils/contractHelpers'
 import { useAccount, useWalletClient } from 'wagmi'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 
 import { useBSCCakeToken } from './useBSCCakeToken'
 

@@ -11,7 +11,7 @@ import {
   appearAnimation,
 } from '@pancakeswap/uikit'
 import { ChainLogo } from '@pancakeswap/widgets-internal'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import drop from 'lodash/drop'
 import take from 'lodash/take'
 import { CROSSCHAIN_SUPPORTED_CHAINS } from 'quoter/utils/crosschain-utils/config'

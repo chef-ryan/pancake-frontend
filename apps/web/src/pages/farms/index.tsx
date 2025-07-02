@@ -1,5 +1,5 @@
 import { SUPPORT_FARMS } from 'config/constants/supportChains'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useContext } from 'react'
 import { FarmsV3Context, FarmsV3PageLayout } from 'views/Farms'
 import FarmCard from 'views/Farms/components/FarmCard/FarmCard'

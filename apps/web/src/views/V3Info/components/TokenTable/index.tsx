@@ -11,8 +11,7 @@ import {
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 
 import { useTranslation } from '@pancakeswap/localization'
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import useTheme from 'hooks/useTheme'
+import { useActiveChainId, useTheme } from '@pancakeswap/mfe'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { multiChainId } from 'state/info/constant'
 import { useChainNameByQuery, useMultiChainPath } from 'state/info/hooks'

@@ -1,5 +1,5 @@
 import { Colors, Heading, TextProps } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 
 interface HeadingProps extends TextProps {

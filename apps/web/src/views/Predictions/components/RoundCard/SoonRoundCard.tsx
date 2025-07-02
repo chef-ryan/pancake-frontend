@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { BetPosition } from '@pancakeswap/prediction'
 import { Card, CardBody, Text, WaitIcon } from '@pancakeswap/uikit'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { NodeRound } from 'state/types'
 import { formatRoundTime } from '../../helpers'
 import useCountdown from '../../hooks/useCountdown'

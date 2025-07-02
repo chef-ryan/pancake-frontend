@@ -11,7 +11,7 @@ import { useBoostStatusPM } from 'views/Farms/components/YieldBooster/hooks/bCak
 import { useAccount } from 'wagmi'
 import { useAtom } from 'jotai'
 import { disableAddingLiquidityAtom } from 'views/PositionManagers/utils/disableAddingLiquidityAtom'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import {
   PositionManagerStatus,
   usePMV2SSMaxBoostMultiplier,

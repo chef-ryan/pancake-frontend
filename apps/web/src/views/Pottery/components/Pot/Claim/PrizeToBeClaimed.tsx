@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Flex, Box, Text, Balance } from '@pancakeswap/uikit'
 import { DeserializedPotteryUserData } from 'state/types'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { getBalanceNumber } from '@pancakeswap/utils/formatBalance'
 import BigNumber from 'bignumber.js'
 import ClaimButton from './ClaimButton'

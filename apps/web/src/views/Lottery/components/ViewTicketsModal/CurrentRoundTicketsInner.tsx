@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, Flex, Text } from '@pancakeswap/uikit'
 import { LotteryStatus } from 'config/constants/types'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useLottery } from 'state/lottery/hooks'
 import { styled } from 'styled-components'
 import BuyTicketsButton from '../BuyTicketsButton'

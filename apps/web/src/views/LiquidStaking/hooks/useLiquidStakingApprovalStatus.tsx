@@ -1,6 +1,6 @@
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import BigNumber from 'bignumber.js'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { Address, erc20Abi } from 'viem'
 import { useAccount, useReadContract } from 'wagmi'
 

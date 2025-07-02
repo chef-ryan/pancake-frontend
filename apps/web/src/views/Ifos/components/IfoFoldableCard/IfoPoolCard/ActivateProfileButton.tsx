@@ -2,7 +2,7 @@ import { isNativeIfoSupported, PROFILE_SUPPORTED_CHAIN_IDS } from '@pancakeswap/
 import { useTranslation } from '@pancakeswap/localization'
 import { Button, Flex, ProfileAvatar, Text, useModalV2 } from '@pancakeswap/uikit'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 

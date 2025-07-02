@@ -1,4 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
+import { useActiveChainId, useTheme } from '@pancakeswap/mfe'
 import {
   Box,
   Flex,
@@ -15,9 +16,7 @@ import {
 import { FarmWidget } from '@pancakeswap/widgets-internal'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { CHAIN_QUERY_NAME } from 'config/chains'
-import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useMerklInfo } from 'hooks/useMerkl'
-import useTheme from 'hooks/useTheme'
 import { FC, useContext, useMemo } from 'react'
 import { type V3Farm } from 'state/farms/types'
 import { ChainLinkSupportChains, multiChainPaths } from 'state/info/constant'

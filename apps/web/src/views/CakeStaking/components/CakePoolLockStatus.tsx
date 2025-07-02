@@ -18,7 +18,7 @@ import {
 import { formatBigInt } from '@pancakeswap/utils/formatBalance'
 import { WEEK } from 'config/constants/veCake'
 import dayjs from 'dayjs'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 import { useMemo } from 'react'
 import { formatTime } from 'utils/formatTime'
 import relativeTime from 'dayjs/plugin/relativeTime'

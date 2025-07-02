@@ -6,7 +6,7 @@ import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import { useProfileForAddress } from 'state/profile/hooks'
 import { useDomainNameForAddress } from 'hooks/useDomain'
 import truncateHash from '@pancakeswap/utils/truncateHash'
-import { useCakePrice } from 'hooks/useCakePrice'
+import { useCakePrice } from '@pancakeswap/mfe'
 
 interface DesktopResultProps {
   rank: RankListDetail

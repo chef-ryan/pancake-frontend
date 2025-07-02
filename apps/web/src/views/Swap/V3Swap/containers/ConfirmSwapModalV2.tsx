@@ -13,7 +13,7 @@ import {
   SwapTransactionReceiptModalContent,
 } from '@pancakeswap/widgets-internal'
 import AddToWalletButton, { AddToWalletTextOptions } from 'components/AddToWallet/AddToWalletButton'
-import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useActiveChainId } from '@pancakeswap/mfe'
 import { useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'

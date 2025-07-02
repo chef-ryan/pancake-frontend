@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Card, Flex, PaginationButton, Table, Text, Th, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useBNBPrice } from 'hooks/useBNBPrice'
-import useTheme from 'hooks/useTheme'
+import useTheme from '@pancakeswap/mfe'
 import { useEffect, useState } from 'react'
 import { Activity, NftToken } from 'state/nftMarket/types'
 import TableLoader from '../../../../../../components/TableLoader'
