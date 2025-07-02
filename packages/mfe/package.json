@@ -31,6 +31,7 @@
     "@pancakeswap/position-managers": "workspace:*",
     "@pancakeswap/utils": "workspace:*",
     "@pancakeswap/chains": "workspace:*",
+    "@pancakeswap/widgets-internal": "workspace:*",
     "styled-components": "*",
     "lodash": "*"
   },
