@@ -1,0 +1,44 @@
+{
+  "name": "@pancakeswap/mfe",
+  "version": "0.0.1",
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch --mode development"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@pancakeswap/localization": "workspace:*",
+    "@pancakeswap/uikit": "workspace:*",
+    "@pancakeswap/pools": "workspace:*",
+    "@pancakeswap/prediction": "workspace:*",
+    "@pancakeswap/position-managers": "workspace:*",
+    "@pancakeswap/utils": "workspace:*",
+    "@pancakeswap/chains": "workspace:*",
+    "styled-components": "*",
+    "lodash": "*"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "4.2.1",
+    "vite": "5.0.12",
+    "vite-plugin-dts": "^3.5.3",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.0.6"
+  }
+}
