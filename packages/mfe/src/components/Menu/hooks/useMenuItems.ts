@@ -2,11 +2,11 @@ import { ChainId } from '@pancakeswap/chains'
 import { useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { DropdownMenuItems } from '@pancakeswap/uikit'
-import { useActiveChainId } from '@pancakeswap/mfe'
 import React, { useMemo } from 'react'
 import { multiChainPaths } from 'state/info/constant'
 import { logMenuClick } from 'utils/customGTMEventTracking'
 
+import { useActiveChainId } from '../../../hooks'
 import config, { ConfigMenuDropDownItemsType, ConfigMenuItemsType } from '../config/config'
 import { useMenuItemsStatus } from './useMenuItemsStatus'
 

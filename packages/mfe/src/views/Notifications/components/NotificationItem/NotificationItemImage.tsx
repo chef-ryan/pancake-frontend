@@ -1,19 +1,19 @@
 import { ArrowDropDownIcon, ArrowDropUpIcon, Box, FlexGap, Text } from '@pancakeswap/uikit'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import Image from 'next/image'
-import { CHAIN_NAME_TO_CHAIN_ID } from 'views/Notifications/constants'
-import { SubsctiptionType } from 'views/Notifications/types'
+import { CHAIN_NAME_TO_CHAIN_ID } from '../../constants'
+import { SubsctiptionType } from '../../types'
 import {
   extractChainIdFromAPRNotification,
   extractChainIdFromMessage,
   extractPercentageFromString,
   getBadgeString,
-} from 'views/Notifications/utils/textHelpers'
+} from '../../utils/textHelpers'
 
 export const getNotificationPairlogo = (message: string, type: SubsctiptionType) => {
   const isAprNotification = type === SubsctiptionType.Farms
   const chainName = isAprNotification ? extractChainIdFromAPRNotification(message) : extractChainIdFromMessage(message)
-  const chainId = CHAIN_NAME_TO_CHAIN_ID[chainName]
+  const chainId = CHAIN_NAME_TO_CHAIN_ID[chainName as keyof typeof CHAIN_NAME_TO_CHAIN_ID]
 
   const image1 = isAprNotification ? '/images/notifications/farms-scope.svg' : '/logo.png'
   const image2 = `${ASSET_CDN}/web/chains/${chainId}.png`
