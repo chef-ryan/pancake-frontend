@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { Chain, ChainId, Chains, isTestnetChainId, NonEVMChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import {
   ArrowDownIcon,
@@ -23,22 +23,11 @@ import { useHover } from 'hooks/useHover'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import useTheme from 'hooks/useTheme'
 import { atom, useAtom } from 'jotai'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { useUserShowTestnet } from 'state/user/hooks/useUserShowTestnet'
-import { chainNameConverter } from 'utils/chainNameConverter'
-import { chains as evmChains } from 'utils/wagmi'
 import { useAccount } from 'wagmi'
-import { Chain } from 'wagmi/chains'
 import { ChainLogo } from './Logo/ChainLogo'
-
-interface NonEvmChain {
-  id: number
-  name: string
-  link: string
-  image: string
-}
 
 const SOLANA_KEEP_PATHS = ['/bridge']
 
@@ -55,61 +44,21 @@ interface NetworkSelectProps {
   onDismiss: () => void
 }
 
-type Network = (Chain & { isEvm: true }) | (NonEvmChain & { isEvm: false })
-
-function getSortedChains(chainId: ChainId, showTestnet: boolean): Network[] {
-  const chainOrder = [
-    'BNB Smart Chain', // BSC
-    'Ethereum', // ETH
-    'Solana', // SOL
-    'Base', // Base
-    'Arbitrum One', // ARB
-    'ZKsync Era', // ZKsync
-    'Linea Mainnet', // Linea
-    'Aptos', // Aptos
-    'opBNB', // Opbnb
-    'Polygon zkEVM', // ZKevm
-  ] as const
-
-  const chainRnk: Record<string, number> = {}
-  chainOrder.forEach((chain, i) => {
-    chainRnk[chain] = i
-  })
-
-  // 1) filter your EVM list based on the same logic you had...
-  const filteredEvm = evmChains.filter((chain) => {
-    if (chain.id === chainId) return true
-    if ('testnet' in chain && chain.testnet && chain.id !== ChainId.MONAD_TESTNET) {
-      return showTestnet
+function getSortedChains(chainId: ChainId | NonEVMChainId, showTestnet: boolean): Chain[] {
+  return Chains.filter((chain) => {
+    if (chain.isEVM) {
+      if (chain.id === chainId) return true
+      if (isTestnetChainId(chain.id as ChainId) && chain.id !== ChainId.MONAD_TESTNET) {
+        return showTestnet
+      }
+      return true
     }
+    // always include non-EVM chains
     return true
-  })
-
-  const nonEvmChains: NonEvmChain[] = [
-    {
-      id: ChainId.APTOS,
-      name: 'Aptos',
-      link: 'https://aptos.pancakeswap.finance',
-      image: 'https://aptos.pancakeswap.finance/images/apt.png',
-    },
-    {
-      id: ChainId.SOLANA,
-      name: 'Solana',
-      link: process.env.SOLANA_SWAP_PAGE ?? 'https://solana.pancakeswap.finance',
-      image: 'https://tokens.pancakeswap.finance/images/symbol/sol.png',
-    },
-  ]
-
-  // 2) build a single `networks` array
-  const networks: Network[] = [
-    ...filteredEvm.map((chain) => ({ ...chain, isEvm: true } as Network)), // mark as EVM
-    ...nonEvmChains.map((chain) => ({ ...chain, isEvm: false } as Network)), // mark as non-EVM
-  ].sort((a, b) => {
-    const rnkA = chainRnk[a.name] ?? 1000
-    const rnkB = chainRnk[b.name] ?? 1000
-    return rnkA - rnkB
-  })
-  return networks
+  }).map((chain) => ({
+    ...chain,
+    isEvm: chain.isEVM,
+  }))
 }
 
 const NetworkSelect = ({ switchNetwork, chainId, isWrongNetwork, onDismiss }: NetworkSelectProps) => {
@@ -118,9 +67,9 @@ const NetworkSelect = ({ switchNetwork, chainId, isWrongNetwork, onDismiss }: Ne
   const { theme } = useTheme()
   const { isMobile } = useMatchBreakpoints()
   const router = useRouter()
-  const chainSpecificBehavior: Record<ChainId, ChainSpecificBehavior> = useMemo(
+  const chainSpecificBehavior: Record<number, ChainSpecificBehavior> = useMemo(
     () => ({
-      [ChainId.SOLANA]: {
+      [NonEVMChainId.SOLANA]: {
         onClick: () => {
           if (!SOLANA_KEEP_PATHS.includes(router.pathname)) {
             window.open('https://solana.pancakeswap.finance', '_self')
@@ -130,7 +79,7 @@ const NetworkSelect = ({ switchNetwork, chainId, isWrongNetwork, onDismiss }: Ne
           onDismiss()
         },
       },
-      [ChainId.APTOS]: {
+      [NonEVMChainId.APTOS]: {
         onClick: () => {
           window.open('https://aptos.pancakeswap.finance', '_self')
           onDismiss()
@@ -154,7 +103,7 @@ const NetworkSelect = ({ switchNetwork, chainId, isWrongNetwork, onDismiss }: Ne
 
       <Box maxHeight="70vh" overflow="auto" padding="16px 0">
         {networks.map((net) =>
-          net.isEvm ? (
+          net.isEVM ? (
             // EVM item: switch in-wallet
             <UserMenuItem
               key={net.id}
@@ -172,21 +121,19 @@ const NetworkSelect = ({ switchNetwork, chainId, isWrongNetwork, onDismiss }: Ne
                 bold={net.id === chainId && !isWrongNetwork}
                 pl="12px"
               >
-                {chainNameConverter(net.name)}
+                {net.fullName}
               </Text>
             </UserMenuItem>
           ) : (
             // non-EVM item: external link
             <UserMenuItem
               key={`non-evm-${net.id}`}
-              {...(chainSpecificBehavior[net.id as ChainId]
-                ? { onClick: chainSpecificBehavior[net.id as ChainId].onClick }
-                : { as: 'a', href: net.link, target: '_blank' })}
+              onClick={chainSpecificBehavior[net.id as ChainId]?.onClick}
               style={{ justifyContent: 'flex-start', cursor: 'pointer', padding: '0px 24px' }}
             >
-              <Image src={net.image} width={24} height={24} unoptimized alt={net.name} />
+              <ChainLogo chainId={net.id} />
               <Text color="text" pl="12px">
-                {net.name}
+                {net.fullName}
               </Text>
             </UserMenuItem>
           ),
@@ -209,7 +156,7 @@ const WrongNetworkSelect = ({ switchNetwork, chainId, onDismiss }: WrongNetworkS
       'The URL you are accessing (Chain id: %chainId%) belongs to %network%; mismatching your wallet’s network. Please switch the network to continue.',
       {
         chainId,
-        network: evmChains.find((c) => c.id === chainId)?.name ?? 'Unknown network',
+        network: Chains.find((c) => c.id === chainId)?.fullName ?? 'Unknown network',
       },
     ),
     {
@@ -220,7 +167,7 @@ const WrongNetworkSelect = ({ switchNetwork, chainId, onDismiss }: WrongNetworkS
   const { chain } = useAccount()
   const localChainId = useLocalNetworkChain() || ChainId.BSC
 
-  const localChainName = evmChains.find((c) => c.id === localChainId)?.name ?? 'BSC'
+  const localChainName = Chains.find((c) => c.id === localChainId)?.fullName ?? 'BSC'
 
   const [ref1, isHover] = useHover<HTMLButtonElement>()
 
@@ -238,7 +185,7 @@ const WrongNetworkSelect = ({ switchNetwork, chainId, onDismiss }: WrongNetworkS
         <UserMenuItem ref={ref1} style={{ justifyContent: 'flex-start' }}>
           <ChainLogo chainId={chain.id} />
           <Text color="secondary" bold pl="12px">
-            {chainNameConverter(chain.name)}
+            {chain.name}
           </Text>
         </UserMenuItem>
       )}
@@ -253,7 +200,7 @@ const WrongNetworkSelect = ({ switchNetwork, chainId, onDismiss }: WrongNetworkS
         style={{ justifyContent: 'flex-start' }}
       >
         <ChainLogo chainId={localChainId} />
-        <Text pl="12px">{chainNameConverter(localChainName)}</Text>
+        <Text pl="12px">{localChainName}</Text>
       </UserMenuItem>
       <Button
         mx="16px"

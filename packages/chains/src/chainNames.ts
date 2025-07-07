@@ -26,6 +26,32 @@ export const chainNames: Record<ChainId | NonEVMChainId, string> = {
   [NonEVMChainId.APTOS]: 'aptos',
 }
 
+export const chainFullNames: Record<ChainId | NonEVMChainId, string> = {
+  [ChainId.ETHEREUM]: 'Ethereum',
+  [ChainId.GOERLI]: 'Goerli',
+  [ChainId.BSC]: 'BNB Chain',
+  [ChainId.BSC_TESTNET]: 'BNB Chain Testnet',
+  [ChainId.ARBITRUM_ONE]: 'Arbitrum One',
+  [ChainId.ARBITRUM_GOERLI]: 'Arbitrum Goerli',
+  [ChainId.POLYGON_ZKEVM]: 'Polygon zkEVM',
+  [ChainId.POLYGON_ZKEVM_TESTNET]: 'Polygon zkEVM Testnet',
+  [ChainId.ZKSYNC]: 'ZKsync Era',
+  [ChainId.ZKSYNC_TESTNET]: 'ZKsync Era Testnet',
+  [ChainId.LINEA]: 'Linea',
+  [ChainId.LINEA_TESTNET]: 'Linea Testnet',
+  [ChainId.OPBNB]: 'opBNB',
+  [ChainId.OPBNB_TESTNET]: 'opBNB Testnet',
+  [ChainId.BASE]: 'Base',
+  [ChainId.BASE_TESTNET]: 'Base Testnet',
+  [ChainId.SCROLL_SEPOLIA]: 'Scroll Sepolia',
+  [ChainId.SEPOLIA]: 'Sepolia',
+  [ChainId.ARBITRUM_SEPOLIA]: 'Arbitrum Sepolia',
+  [ChainId.BASE_SEPOLIA]: 'Base Sepolia',
+  [ChainId.MONAD_TESTNET]: 'Monad Testnet',
+  [NonEVMChainId.SOLANA]: 'Solana',
+  [NonEVMChainId.APTOS]: 'Aptos',
+}
+
 export const chainNamesInKebabCase = {
   [ChainId.ETHEREUM]: 'ethereum',
   [ChainId.GOERLI]: 'goerli',
