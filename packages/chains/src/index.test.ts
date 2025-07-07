@@ -18,6 +18,7 @@ test('exports', () => {
       "getLlamaChainName",
       "getChainIdByChainName",
       "isTestnetChainId",
+      "isEvm",
       "V3_SUBGRAPHS",
       "V2_SUBGRAPHS",
       "BLOCKS_SUBGRAPHS",

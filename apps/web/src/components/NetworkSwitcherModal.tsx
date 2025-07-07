@@ -40,20 +40,11 @@ interface NonEvmChain {
   image: string
 }
 
-const NON_EVM_CHAINS: NonEvmChain[] = [
-  {
-    id: 1,
-    name: 'Aptos',
-    link: 'https://aptos.pancakeswap.finance/swap',
-    image: 'https://aptos.pancakeswap.finance/images/apt.png',
-  },
-  {
-    id: 2,
-    name: 'Solana',
-    link: process.env.SOLANA_SWAP_PAGE ?? 'https://solana.pancakeswap.finance/swap',
-    image: 'https://tokens.pancakeswap.finance/images/symbol/sol.png',
-  },
-]
+const SOLANA_KEEP_PATHS = ['/bridge']
+
+type ChainSpecificBehavior = {
+  onClick: () => void
+}
 
 export const networkSwitcherModalAtom = atom(false)
 
@@ -94,10 +85,25 @@ function getSortedChains(chainId: ChainId, showTestnet: boolean): Network[] {
     return true
   })
 
+  const nonEvmChains: NonEvmChain[] = [
+    {
+      id: ChainId.APTOS,
+      name: 'Aptos',
+      link: 'https://aptos.pancakeswap.finance',
+      image: 'https://aptos.pancakeswap.finance/images/apt.png',
+    },
+    {
+      id: ChainId.SOLANA,
+      name: 'Solana',
+      link: process.env.SOLANA_SWAP_PAGE ?? 'https://solana.pancakeswap.finance',
+      image: 'https://tokens.pancakeswap.finance/images/symbol/sol.png',
+    },
+  ]
+
   // 2) build a single `networks` array
   const networks: Network[] = [
     ...filteredEvm.map((chain) => ({ ...chain, isEvm: true } as Network)), // mark as EVM
-    ...NON_EVM_CHAINS.map((chain) => ({ ...chain, isEvm: false } as Network)), // mark as non-EVM
+    ...nonEvmChains.map((chain) => ({ ...chain, isEvm: false } as Network)), // mark as non-EVM
   ].sort((a, b) => {
     const rnkA = chainRnk[a.name] ?? 1000
     const rnkB = chainRnk[b.name] ?? 1000
@@ -111,6 +117,28 @@ const NetworkSelect = ({ switchNetwork, chainId, isWrongNetwork, onDismiss }: Ne
   const [showTestnet] = useUserShowTestnet()
   const { theme } = useTheme()
   const { isMobile } = useMatchBreakpoints()
+  const router = useRouter()
+  const chainSpecificBehavior: Record<ChainId, ChainSpecificBehavior> = useMemo(
+    () => ({
+      [ChainId.SOLANA]: {
+        onClick: () => {
+          if (!SOLANA_KEEP_PATHS.includes(router.pathname)) {
+            window.open('https://solana.pancakeswap.finance', '_self')
+          } else {
+            router.replace({ query: { ...router.query, chain: 'solana' } }, undefined, { shallow: true })
+          }
+          onDismiss()
+        },
+      },
+      [ChainId.APTOS]: {
+        onClick: () => {
+          window.open('https://aptos.pancakeswap.finance', '_self')
+          onDismiss()
+        },
+      },
+    }),
+    [router, onDismiss],
+  )
   const networks = useMemo(() => getSortedChains(chainId, showTestnet), [chainId, showTestnet])
 
   return (
@@ -151,9 +179,9 @@ const NetworkSelect = ({ switchNetwork, chainId, isWrongNetwork, onDismiss }: Ne
             // non-EVM item: external link
             <UserMenuItem
               key={`non-evm-${net.id}`}
-              as="a"
-              href={net.link}
-              target="_blank"
+              {...(chainSpecificBehavior[net.id as ChainId]
+                ? { onClick: chainSpecificBehavior[net.id as ChainId].onClick }
+                : { as: 'a', href: net.link, target: '_blank' })}
               style={{ justifyContent: 'flex-start', cursor: 'pointer', padding: '0px 24px' }}
             >
               <Image src={net.image} width={24} height={24} unoptimized alt={net.name} />

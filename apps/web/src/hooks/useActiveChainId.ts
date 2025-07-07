@@ -20,7 +20,7 @@ queryChainIdAtom.onMount = (set) => {
   } else {
     chainId = getChainId(c)
   }
-  if (isChainSupported(+chainId)) {
+  if (isChainSupported(+chainId) || +chainId === ChainId.SOLANA || +chainId === ChainId.APTOS) {
     set(+chainId)
   } else {
     set(0)
@@ -39,7 +39,7 @@ export function useLocalNetworkChain() {
     }
   }, [chainId, setQueryChainId])
 
-  if (isChainSupported(chainId)) {
+  if (isChainSupported(chainId) || chainId === ChainId.SOLANA || chainId === ChainId.APTOS) {
     return chainId
   }
 

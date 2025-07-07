@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Token } from '../src'
+import { Token, SPLToken, isSPL } from '../src'
 
 enum ChainId {
   ETHEREUM = 1,
@@ -47,5 +47,23 @@ describe('Token', () => {
       const tokenB = new Token(ChainId.BSC, ADDRESS_ONE, 18, 'ghi', 'jkl', 'https://coinmarketcap.com/')
       expect(tokenA.equals(tokenB)).toBe(true)
     })
+  })
+})
+
+describe('SPLToken', () => {
+  const PROGRAM_ONE = 'So11111111111111111111111111111111111111112'
+  const PROGRAM_TWO = 'So22222222222222222222222222222222222222222'
+
+  it('equals with same program id', () => {
+    expect(new SPLToken(1, PROGRAM_ONE, 6, 'SPL').equals(new SPLToken(1, PROGRAM_ONE, 6, 'SPL'))).toBe(true)
+  })
+
+  it('fails if program id differs', () => {
+    expect(new SPLToken(1, PROGRAM_ONE, 6, 'SPL').equals(new SPLToken(1, PROGRAM_TWO, 6, 'SPL'))).toBe(false)
+  })
+
+  it('detects SPL with type guard', () => {
+    const token = new SPLToken(1, PROGRAM_ONE, 6, 'SPL')
+    expect(isSPL(token)).toBe(true)
   })
 })
