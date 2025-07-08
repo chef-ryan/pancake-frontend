@@ -1,12 +1,12 @@
-import dynamic from 'next/dynamic'
 import { FlexGap } from '@pancakeswap/uikit'
-import Page from 'components/Layout/Page'
 import ConnectWalletButton from 'components/ConnectWalletButton'
+import Page from 'components/Layout/Page'
+import dynamic from 'next/dynamic'
 
-const SolanaProviders = dynamic(() => import('../../../../solana/src/provider').then((m) => m.Providers), {
+const SolanaProviders = dynamic(() => import('../../sol/provider').then((m) => m.SolProvider), {
   ssr: false,
 })
-const SolWallet = dynamic(() => import('../../../../solana/src/components/SolWallet').then((m) => m.default), {
+const SolWallet = dynamic(() => import('../../sol/SolWallet').then((m) => m.SolWallet), {
   ssr: false,
 })
 
