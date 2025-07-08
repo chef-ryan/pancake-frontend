@@ -21,8 +21,10 @@ import {
 } from '@pancakeswap/uikit'
 import { WalletReadyState } from '@solana/wallet-adapter-base'
 import { useWallet, Wallet } from '@solana/wallet-adapter-react'
+import { useAtom } from 'jotai'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
+import { solanaWalletModalAtom } from './atoms/solanaWalletAtoms'
 import DesktopIcon from './components/DesktopIcon'
 import MobileIcon from './components/MobileIcon'
 import QuestionToolTip from './components/QuestionToolTip'
@@ -82,18 +84,22 @@ const ToggleFooter = styled(Flex)`
   font-size: 14px;
 `
 
-interface Props {
-  isOpen: boolean
-  onSelectWallet: (wallet: Wallet) => void
-  onClose: () => void
-}
-
-export const SolanaWalletModal: React.FC<Props> = ({ isOpen, onSelectWallet, onClose }) => {
-  const { wallets } = useWallet()
+export const SolanaWalletModal: React.FC = () => {
+  const { wallets, select } = useWallet()
   const { isMobile } = useMatchBreakpoints()
   const { t } = useTranslation()
+  const [isOpen, setIsOpen] = useAtom(solanaWalletModalAtom)
   const [canShowUninstalledWallets, setCanShowUninstalledWallets] = useState(false)
   const [isWalletNotInstalled, setIsWalletNotInstalled] = useState(false)
+
+  const onClose = useCallback(() => setIsOpen(false), [setIsOpen])
+  const handleSelectWallet = useCallback(
+    (wallet: Wallet) => {
+      select(wallet.adapter.name)
+      onClose()
+    },
+    [select, onClose],
+  )
 
   const { recommendedWallets, notInstalledWallets } = splitWallets(wallets)
 
@@ -161,8 +167,7 @@ export const SolanaWalletModal: React.FC<Props> = ({ isOpen, onSelectWallet, onC
                     if (!phantomWallet || phantomWallet.readyState === WalletReadyState.NotDetected) {
                       window.location.reload()
                     } else {
-                      onSelectWallet(phantomWallet)
-                      onClose()
+                      handleSelectWallet(phantomWallet)
                     }
                   }}
                   mb="8px"
@@ -221,7 +226,7 @@ export const SolanaWalletModal: React.FC<Props> = ({ isOpen, onSelectWallet, onC
                           setIsWalletNotInstalled(true)
                           return
                         }
-                        onSelectWallet(w)
+                        handleSelectWallet(w)
                       }}
                     />
                   ))}
