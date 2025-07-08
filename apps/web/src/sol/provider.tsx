@@ -25,6 +25,7 @@ import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
 import { BackpackWalletAdapter } from './walletAdapter/BackpackWalletAdapter'
 import { OKXWalletAdapter } from './walletAdapter/OKXWalletAdapter'
 import { defaultEndpoint, defaultNetWork } from './walletAdapter/solWalletConfig'
+import { SolanaWalletModal } from './SolanaWalletModal'
 
 initialize()
 
@@ -84,7 +85,10 @@ export const SolProvider: FC<PropsWithChildren<any>> = ({ children }) => {
   return (
     <ConnectionProvider endpoint={endpoint} config={{ disableRetryOnRateLimit: true }}>
       <WalletProvider wallets={wallets} onError={onWalletError} autoConnect>
-        <WalletModalProvider>{children}</WalletModalProvider>
+        <WalletModalProvider>
+          {children}
+          <SolanaWalletModal />
+        </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   )
