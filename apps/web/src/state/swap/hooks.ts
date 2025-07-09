@@ -1,28 +1,20 @@
-import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Native, Trade, TradeType } from '@pancakeswap/sdk'
+import { Currency, Native, Trade, TradeType } from '@pancakeswap/sdk'
 import { CAKE, STABLE_COIN, USDC, USDT } from '@pancakeswap/tokens'
 import { PairDataTimeWindowEnum } from '@pancakeswap/uikit'
-import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
+import replaceBrowserHistoryMultiple from '@pancakeswap/utils/replaceBrowserHistoryMultiple'
 import { useQuery } from '@tanstack/react-query'
 import { CHAIN_QUERY_NAME, getChainId } from 'config/chains'
+import { DEFAULT_INPUT_CURRENCY } from 'config/constants/exchange'
 import dayjs from 'dayjs'
-import { useTradeExactIn, useTradeExactOut } from 'hooks/Trades'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
-import { useGetENSAddressByName } from 'hooks/useGetENSAddressByName'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useAtom, useAtomValue } from 'jotai'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ChartPeriod, chainIdToExplorerInfoChainName, explorerApiClient } from 'state/info/api/client'
 import { isAddressEqual, safeGetAddress } from 'utils'
-import { computeSlippageAdjustedAmounts } from 'utils/exchange'
 import { useBridgeAvailableRoutes } from 'views/Swap/Bridge/hooks'
-import { useAccount } from 'wagmi'
-import { DEFAULT_INPUT_CURRENCY } from 'config/constants/exchange'
-import replaceBrowserHistoryMultiple from '@pancakeswap/utils/replaceBrowserHistoryMultiple'
-import { useCurrencyBalances } from '../wallet/hooks'
 import { Field, replaceSwapState } from './actions'
 import { SwapState, swapReducerAtom } from './reducer'
 
@@ -47,100 +39,6 @@ function involvesAddress(trade: Trade<Currency, Currency, TradeType>, checksumme
     trade.route.path.some((token) => isAddressEqual(token.address, checksummedAddress)) ||
     trade.route.pairs.some((pair) => isAddressEqual(pair.liquidityToken.address, checksummedAddress))
   )
-}
-
-// Get swap price for single token disregarding slippage and price impact
-
-// from the current swap inputs, compute the best trade and return it.
-export function useDerivedSwapInfo(
-  independentField: Field,
-  typedValue: string,
-  inputCurrency: Currency | undefined,
-  outputCurrency: Currency | undefined,
-  recipient: string,
-): {
-  currencies: { [field in Field]?: Currency }
-  currencyBalances: { [field in Field]?: CurrencyAmount<Currency> }
-  parsedAmount: CurrencyAmount<Currency> | undefined
-  v2Trade: Trade<Currency, Currency, TradeType> | undefined
-  inputError?: string
-} {
-  const { address: account } = useAccount()
-  const { t } = useTranslation()
-  const recipientENSAddress = useGetENSAddressByName(recipient)
-
-  const to: string | null =
-    (recipient === null ? account : safeGetAddress(recipient) || safeGetAddress(recipientENSAddress) || null) ?? null
-
-  const relevantTokenBalances = useCurrencyBalances(
-    account ?? undefined,
-    useMemo(() => [inputCurrency ?? undefined, outputCurrency ?? undefined], [inputCurrency, outputCurrency]),
-  )
-
-  const isExactIn: boolean = independentField === Field.INPUT
-
-  const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
-
-  const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
-
-  const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
-
-  const currencyBalances = {
-    [Field.INPUT]: relevantTokenBalances[0],
-    [Field.OUTPUT]: relevantTokenBalances[1],
-  }
-
-  const currencies: { [field in Field]?: Currency } = {
-    [Field.INPUT]: inputCurrency ?? undefined,
-    [Field.OUTPUT]: outputCurrency ?? undefined,
-  }
-
-  let inputError: string | undefined
-  if (!account) {
-    inputError = t('Connect Wallet')
-  }
-
-  if (!parsedAmount) {
-    inputError = inputError ?? t('Enter an amount')
-  }
-
-  if (!currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {
-    inputError = inputError ?? t('Select a token')
-  }
-
-  const formattedTo = safeGetAddress(to)
-  if (!to || !formattedTo) {
-    inputError = inputError ?? t('Enter a recipient')
-  } else if (
-    BAD_RECIPIENT_ADDRESSES.indexOf(formattedTo) !== -1 ||
-    (bestTradeExactIn && involvesAddress(bestTradeExactIn, formattedTo)) ||
-    (bestTradeExactOut && involvesAddress(bestTradeExactOut, formattedTo))
-  ) {
-    inputError = inputError ?? t('Invalid recipient')
-  }
-  // @ts-ignore
-  const { slippageTolerance: allowedSlippage } = useAutoSlippageWithFallback()
-
-  const slippageAdjustedAmounts = v2Trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade, allowedSlippage)
-
-  // compare input balance to max input based on version
-  const [balanceIn, amountIn] = [
-    currencyBalances[Field.INPUT],
-    slippageAdjustedAmounts ? slippageAdjustedAmounts[Field.INPUT] : null,
-  ]
-
-  if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
-    inputError = t('Insufficient %symbol% balance', { symbol: amountIn.currency.symbol })
-  }
-
-  return {
-    currencies,
-    currencyBalances,
-    parsedAmount,
-    v2Trade: v2Trade ?? undefined,
-    inputError,
-  }
 }
 
 function parseTokenAmountURLParameter(urlParam: any): string {
