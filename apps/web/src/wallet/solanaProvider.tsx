@@ -1,9 +1,9 @@
-import { FC, PropsWithChildren, useMemo } from 'react'
+import { FC, PropsWithChildren, useEffect, useMemo } from 'react'
 
 import { type Adapter, type WalletError } from '@solana/wallet-adapter-base'
 import { ExodusWalletAdapter } from '@solana/wallet-adapter-exodus'
 import { GlowWalletAdapter } from '@solana/wallet-adapter-glow'
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
+import { ConnectionProvider, useWallet, WalletProvider } from '@solana/wallet-adapter-react'
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
 import { SlopeWalletAdapter } from '@solana/wallet-adapter-slope'
 import {
@@ -22,14 +22,31 @@ import {
 import { initialize, SolflareWalletAdapter } from '@solflare-wallet/wallet-adapter'
 import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
 
+import { useSetAtom } from 'jotai'
+import { solanaWalletStateAtom, SolanaWalletStatus } from './atoms/solanaWalletAtoms'
+import { SolanaWalletModal } from './SolanaWalletModal'
 import { BackpackWalletAdapter } from './walletAdapter/BackpackWalletAdapter'
 import { OKXWalletAdapter } from './walletAdapter/OKXWalletAdapter'
 import { defaultEndpoint, defaultNetWork } from './walletAdapter/solWalletConfig'
-import { SolanaWalletModal } from './SolanaWalletModal'
 
 initialize()
 
 const endpoint = defaultEndpoint
+
+const SolanaWalletStateUpdater = () => {
+  const { connected, connecting, publicKey } = useWallet()
+  const setWalletState = useSetAtom(solanaWalletStateAtom)
+
+  useEffect(() => {
+    let status: SolanaWalletStatus = null
+    if (connecting) status = 'connecting'
+    else if (connected) status = 'connected'
+    else status = 'disconnected'
+    setWalletState({ account: publicKey?.toBase58() || null, status })
+  }, [connected, connecting, publicKey, setWalletState])
+
+  return null
+}
 export const SolProvider: FC<PropsWithChildren<any>> = ({ children }) => {
   const _walletConnect = useMemo(() => {
     const connectWallet: WalletConnectWalletAdapter[] = []
@@ -85,6 +102,7 @@ export const SolProvider: FC<PropsWithChildren<any>> = ({ children }) => {
   return (
     <ConnectionProvider endpoint={endpoint} config={{ disableRetryOnRateLimit: true }}>
       <WalletProvider wallets={wallets} onError={onWalletError} autoConnect>
+        <SolanaWalletStateUpdater />
         <WalletModalProvider>
           {children}
           <SolanaWalletModal />

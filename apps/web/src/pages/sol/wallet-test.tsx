@@ -4,6 +4,7 @@ import Page from 'components/Layout/Page'
 import dynamic from 'next/dynamic'
 import { CHAIN_IDS } from 'utils/wagmi'
 import SolanaConnectButton from 'wallet/components/SolanaConnectButton'
+import SolanaDisconnectButton from 'wallet/components/SolanaDisconnectButton'
 
 const SolanaProviders = dynamic(() => import('../../wallet/solanaProvider').then((m) => m.SolProvider), {
   ssr: false,
@@ -15,6 +16,7 @@ export default function WalletTest() {
         <FlexGap gap="16px">
           <ConnectWalletButton>Connect EVM Wallet</ConnectWalletButton>
           <SolanaConnectButton>Connect Solana</SolanaConnectButton>
+          <SolanaDisconnectButton>Disconnect Solana</SolanaDisconnectButton>
         </FlexGap>
       </Page>
     </SolanaProviders>

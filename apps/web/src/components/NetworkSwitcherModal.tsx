@@ -29,7 +29,7 @@ import { useUserShowTestnet } from 'state/user/hooks/useUserShowTestnet'
 import { useAccount } from 'wagmi'
 import { ChainLogo } from './Logo/ChainLogo'
 
-const SOLANA_KEEP_PATHS = ['/bridge']
+const SOLANA_KEEP_PATHS = ['/bridge', '/sol/wallet-test']
 
 type ChainSpecificBehavior = {
   onClick: () => void
