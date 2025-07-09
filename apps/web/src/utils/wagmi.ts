@@ -8,6 +8,7 @@ import { Transport } from 'viem'
 import { createConfig, http } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 import { coinbaseWallet, injected, safe, walletConnect } from 'wagmi/connectors'
+import { customMetaMaskConnector } from 'wallet/metamaskConnector'
 import { fallbackWithRank } from './fallbackWithRank'
 import { CLIENT_CONFIG, publicClient } from './viem'
 
@@ -34,7 +35,6 @@ export const walletConnectNoQrCodeConnector = walletConnect({
   projectId: 'e542ff314e26ff34de2d4fba98db70bb',
 })
 
-export const metaMaskConnector = injected({ target: 'metaMask', shimDisconnect: false })
 export const trustConnector = injected({ target: 'trust', shimDisconnect: false })
 
 const bloctoConnector = blocto({
@@ -85,10 +85,11 @@ export function createWagmiConfig() {
     ssr: true,
     syncConnectedChain: true,
     transports,
+    multiInjectedProviderDiscovery: true,
     ...CLIENT_CONFIG,
 
     connectors: [
-      metaMaskConnector,
+      customMetaMaskConnector,
       injectedConnector,
       safe(),
       coinbaseConnector,

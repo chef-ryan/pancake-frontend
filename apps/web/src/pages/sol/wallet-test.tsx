@@ -2,10 +2,10 @@ import { FlexGap } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import Page from 'components/Layout/Page'
 import dynamic from 'next/dynamic'
-import SolanaConnectButton from 'sol/components/SolanaConnectButton'
 import { CHAIN_IDS } from 'utils/wagmi'
+import SolanaConnectButton from 'wallet/components/SolanaConnectButton'
 
-const SolanaProviders = dynamic(() => import('../../sol/provider').then((m) => m.SolProvider), {
+const SolanaProviders = dynamic(() => import('../../wallet/solanaProvider').then((m) => m.SolProvider), {
   ssr: false,
 })
 export default function WalletTest() {
