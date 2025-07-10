@@ -11,13 +11,14 @@ const SolanaProviders = dynamic(() => import('../../wallet/solanaProvider').then
   ssr: false,
 })
 export default function WalletTest() {
-  const { chainId, account, solanaAccount } = useAccountActiveChain()
+  const { chainId, account, solanaAccount, isWrongNetwork } = useAccountActiveChain()
   return (
     <SolanaProviders>
       <Page>
         <p>activeChainId: {chainId}</p>
         <p>account: {account}</p>
         <p>solanaAccount: {solanaAccount}</p>
+        <p>isWrongNetowork: {Boolean(isWrongNetwork)}</p>
         <FlexGap gap="16px">
           <ConnectWalletButton>Connect EVM Wallet</ConnectWalletButton>
           <SolanaConnectButton>Connect Solana</SolanaConnectButton>

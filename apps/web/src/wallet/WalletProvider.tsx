@@ -36,8 +36,10 @@ export const WalletProvider = (props: WalletProviderProps) => {
 
   return (
     <WagmiProvider reconnectOnMount config={wagmiConfig}>
-      <Sync />
-      <W3WConfigProvider value={isInBinance()}>{children}</W3WConfigProvider>
+      <W3WConfigProvider value={isInBinance()}>
+        <Sync />
+        {children}
+      </W3WConfigProvider>
     </WagmiProvider>
   )
 }

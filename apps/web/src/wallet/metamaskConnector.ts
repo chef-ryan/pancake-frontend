@@ -1,13 +1,27 @@
+import safeGetWindow from '@pancakeswap/utils/safeGetWindow'
+import { chains } from 'utils/wagmi'
 import { createConnector } from 'wagmi'
 import { eip6963Providers } from './WalletProvider'
 
+function getMMProvider() {
+  const window = safeGetWindow()
+  if (window) {
+    if (window.ethereum) {
+      if (window.ethereum.isMetaMask && !window.ethereum.isPhantom) {
+        return window.ethereum
+      }
+    }
+  }
+  const provider = eip6963Providers.find((p) => p.isMetaMask && !p.isPhantom)
+  return provider || null
+}
 export const customMetaMaskConnector = createConnector(() => ({
   id: 'metaMask',
   name: 'metaMask',
   type: 'metaMask',
 
   async connect({ chainId } = {}) {
-    const provider = eip6963Providers.find((p) => p.isMetaMask && !p.isPhantom)
+    const provider = getMMProvider()
     if (!provider) throw new Error('MetaMask not found')
 
     const accounts = await provider.request({ method: 'eth_requestAccounts' })
@@ -24,40 +38,52 @@ export const customMetaMaskConnector = createConnector(() => ({
   },
 
   async getProvider() {
-    const provider = eip6963Providers.find((p) => p.isMetaMask && !p.isPhantom)
-    return provider
+    return getMMProvider()
   },
 
   async isAuthorized() {
-    const provider = eip6963Providers.find((p) => p.isMetaMask && !p.isPhantom)
+    const provider = getMMProvider()
     if (!provider) return false
     const accounts = await provider.request({ method: 'eth_accounts' })
     return accounts.length > 0
   },
 
   async getAccounts() {
-    const provider = eip6963Providers.find((p) => p.isMetaMask && !p.isPhantom)
+    const provider = getMMProvider()
     if (!provider) return []
     const accounts = await provider.request({ method: 'eth_accounts' })
     return accounts as readonly `0x${string}`[]
   },
 
   async getChainId() {
-    const provider = eip6963Providers.find((p) => p.isMetaMask && !p.isPhantom)
+    const provider = getMMProvider()
     if (!provider) throw new Error('MetaMask not found')
     const chainId = await provider.request({ method: 'eth_chainId' })
     return parseInt(chainId, 16)
   },
 
   onAccountsChanged(callback) {
-    const provider = eip6963Providers.find((p) => p.isMetaMask && !p.isPhantom)
+    const provider = getMMProvider()
     provider?.on('accountsChanged', callback)
   },
 
-  onChainChanged(callback) {},
+  onChainChanged(chainId) {},
 
   onDisconnect(callback) {
     const provider = eip6963Providers.find((p) => p.isMetaMask && !p.isPhantom)
     provider?.on('disconnect', callback)
+  },
+
+  async switchChain(parameters) {
+    const provider = getMMProvider()
+    if (!provider) throw new Error('MetaMask not found')
+
+    const { chainId } = parameters
+    await provider.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: `0x${chainId.toString(16)}` }],
+    })
+    const chain = chains.find((x) => x.id === chainId)!
+    return chain
   },
 }))

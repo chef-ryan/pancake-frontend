@@ -126,7 +126,7 @@ export function useSwitchNetwork() {
             }
             return c
           })
-          .catch(() => {
+          .catch((ex) => {
             // TODO: review the error
             toastError(t('Error connecting, please retry and confirm in wallet!'))
             return 'error'
