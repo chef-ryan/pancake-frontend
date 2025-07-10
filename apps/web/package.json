@@ -158,7 +158,21 @@
     "vconsole": "^3.15.1",
     "viem": "catalog:",
     "wagmi": "catalog:",
-    "zod": "^3.22.3"
+    "zod": "^3.22.3",
+    "@solana/buffer-layout": "^4.0.1",
+    "@solana/spl-token": "0.4.8",
+    "@solana/spl-token-0.4": "npm:@solana/spl-token@0.4.0",
+    "@solana/spl-token-registry": "~0.2.4574",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/wallet-adapter-exodus": "^0.1.18",
+    "@solana/wallet-adapter-glow": "^0.1.18",
+    "@solana/wallet-adapter-react": "0.15.36",
+    "@solana/wallet-adapter-react-ui": "0.9.36",
+    "@solana/wallet-adapter-slope": "^0.5.21",
+    "@solana/wallet-adapter-wallets": "^0.19.32",
+    "@solana/web3.js": "~1.95.3",
+    "@solflare-wallet/wallet-adapter": "^1.0.3",
+    "@walletconnect/solana-adapter": "^0.0.5"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "14.2.3",
