@@ -1,15 +1,16 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useBlockNumber as useWagmiBlockNumber, useBlock as useWagmiBlock } from 'wagmi'
 import {
+  getInitialBlockTimestampQueryKey,
   useBlockNumber,
   useBlockTimestamp,
   useInitialBlockTimestamp as useInitBlockTimestamp,
   useInitialBlockNumber,
   useWatchBlock,
-  getInitialBlockTimestampQueryKey,
 } from '@pancakeswap/wagmi'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { FAST_INTERVAL, SLOW_INTERVAL } from 'config/constants'
+import { useBlock as useWagmiBlock, useBlockNumber as useWagmiBlockNumber } from 'wagmi'
 
+import { isEvm } from '@pancakeswap/chains'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useCallback } from 'react'
 
@@ -18,7 +19,7 @@ export const usePollBlockNumber = () => {
 
   useWatchBlock({
     chainId,
-    enabled: true,
+    enabled: isEvm(chainId),
   })
 
   const { data: blockNumber } = useBlockNumber({
@@ -29,14 +30,14 @@ export const usePollBlockNumber = () => {
   useQuery({
     queryKey: [FAST_INTERVAL, 'blockNumber', chainId],
     queryFn: async () => Number(blockNumber),
-    enabled: Boolean(chainId),
+    enabled: Boolean(chainId) && isEvm(chainId),
     refetchInterval: FAST_INTERVAL,
   })
 
   useQuery({
     queryKey: [SLOW_INTERVAL, 'blockNumber', chainId],
     queryFn: async () => Number(blockNumber),
-    enabled: Boolean(chainId),
+    enabled: Boolean(chainId) && isEvm(chainId),
     refetchInterval: SLOW_INTERVAL,
   })
 }
@@ -46,7 +47,7 @@ export const useCurrentBlock = (overrideChainId?: number): number => {
   const chainId = overrideChainId || activeChainId
   const { data: currentBlock = 0 } = useBlockNumber({
     chainId,
-    watch: true,
+    watch: isEvm(chainId),
   })
   return Number(currentBlock)
 }
@@ -69,7 +70,7 @@ export const useChainCurrentBlock = (chainId?: number) => {
     chainId,
     watch: true,
     query: {
-      enabled: isTargetDifferent,
+      enabled: isTargetDifferent && isEvm(chainId),
       select: useCallback((data: bigint) => (data !== undefined ? Number(data) : undefined), []),
     },
   })

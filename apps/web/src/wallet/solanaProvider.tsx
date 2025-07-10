@@ -22,8 +22,8 @@ import {
 import { initialize, SolflareWalletAdapter } from '@solflare-wallet/wallet-adapter'
 import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
 
-import { useSetAtom } from 'jotai'
 import { accountActiveChainAtom } from 'hooks/useAccountActiveChain'
+import { useSetAtom } from 'jotai'
 import { SolanaWalletModal } from './SolanaWalletModal'
 import { BackpackWalletAdapter } from './walletAdapter/BackpackWalletAdapter'
 import { OKXWalletAdapter } from './walletAdapter/OKXWalletAdapter'
@@ -39,7 +39,9 @@ const SolanaWalletStateUpdater = () => {
 
   useEffect(() => {
     const solanaAccount = publicKey?.toBase58() || null
-    setWalletState({ solanaAccount })
+    setWalletState((prev) => {
+      return { ...prev, solanaAccount }
+    })
   }, [connected, connecting, publicKey, setWalletState])
 
   return null
