@@ -23,7 +23,7 @@ import { initialize, SolflareWalletAdapter } from '@solflare-wallet/wallet-adapt
 import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
 
 import { useSetAtom } from 'jotai'
-import { solanaWalletStateAtom, SolanaWalletStatus } from './atoms/solanaWalletAtoms'
+import { accountActiveChainAtom } from 'hooks/useAccountActiveChain'
 import { SolanaWalletModal } from './SolanaWalletModal'
 import { BackpackWalletAdapter } from './walletAdapter/BackpackWalletAdapter'
 import { OKXWalletAdapter } from './walletAdapter/OKXWalletAdapter'
@@ -35,14 +35,11 @@ const endpoint = defaultEndpoint
 
 const SolanaWalletStateUpdater = () => {
   const { connected, connecting, publicKey } = useWallet()
-  const setWalletState = useSetAtom(solanaWalletStateAtom)
+  const setWalletState = useSetAtom(accountActiveChainAtom)
 
   useEffect(() => {
-    let status: SolanaWalletStatus = null
-    if (connecting) status = 'connecting'
-    else if (connected) status = 'connected'
-    else status = 'disconnected'
-    setWalletState({ account: publicKey?.toBase58() || null, status })
+    const solanaAccount = publicKey?.toBase58() || null
+    setWalletState({ solanaAccount })
   }, [connected, connecting, publicKey, setWalletState])
 
   return null

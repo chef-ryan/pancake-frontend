@@ -1,4 +1,5 @@
 import { isInBinance } from '@binance/w3w-utils'
+import { useSyncWalletState } from 'hooks/useAccountActiveChain'
 import { useEffect, useMemo, useState } from 'react'
 import { createW3WWagmiConfig, createWagmiConfig } from 'utils/wagmi'
 import { WagmiProvider } from 'wagmi'
@@ -35,7 +36,13 @@ export const WalletProvider = (props: WalletProviderProps) => {
 
   return (
     <WagmiProvider reconnectOnMount config={wagmiConfig}>
+      <Sync />
       <W3WConfigProvider value={isInBinance()}>{children}</W3WConfigProvider>
     </WagmiProvider>
   )
+}
+
+const Sync = () => {
+  useSyncWalletState()
+  return null
 }

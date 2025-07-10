@@ -1,6 +1,7 @@
 import { FlexGap } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import Page from 'components/Layout/Page'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import dynamic from 'next/dynamic'
 import { CHAIN_IDS } from 'utils/wagmi'
 import SolanaConnectButton from 'wallet/components/SolanaConnectButton'
@@ -10,9 +11,13 @@ const SolanaProviders = dynamic(() => import('../../wallet/solanaProvider').then
   ssr: false,
 })
 export default function WalletTest() {
+  const { chainId, account, solanaAccount } = useAccountActiveChain()
   return (
     <SolanaProviders>
       <Page>
+        <p>activeChainId: {chainId}</p>
+        <p>account: {account}</p>
+        <p>solanaAccount: {solanaAccount}</p>
         <FlexGap gap="16px">
           <ConnectWalletButton>Connect EVM Wallet</ConnectWalletButton>
           <SolanaConnectButton>Connect Solana</SolanaConnectButton>

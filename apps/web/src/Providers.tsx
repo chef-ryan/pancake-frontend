@@ -27,10 +27,10 @@ const Providers: React.FC<
   }>
 > = ({ children, store, dehydratedState }) => {
   return (
-    <WalletProvider>
-      <QueryClientProvider client={queryClient}>
-        <HydrationBoundary state={dehydratedState}>
-          <Provider store={store}>
+    <Provider store={store}>
+      <WalletProvider>
+        <QueryClientProvider client={queryClient}>
+          <HydrationBoundary state={dehydratedState}>
             <NextThemeProvider>
               <LanguageProvider>
                 <StyledUIKitProvider>
@@ -40,10 +40,10 @@ const Providers: React.FC<
                 </StyledUIKitProvider>
               </LanguageProvider>
             </NextThemeProvider>
-          </Provider>
-        </HydrationBoundary>
-      </QueryClientProvider>
-    </WalletProvider>
+          </HydrationBoundary>
+        </QueryClientProvider>
+      </WalletProvider>
+    </Provider>
   )
 }
 

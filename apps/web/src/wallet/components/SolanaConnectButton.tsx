@@ -2,7 +2,9 @@ import { Button, ButtonProps, FlexGap, WalletFilledV2Icon } from '@pancakeswap/u
 import { useSetAtom, useAtomValue } from 'jotai'
 import { useCallback } from 'react'
 import Trans from 'components/Trans'
-import { solanaWalletModalAtom, solanaWalletStateAtom } from '../atoms/solanaWalletAtoms'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { accountActiveChainAtom } from 'hooks/useAccountActiveChain'
+import { solanaWalletModalAtom, SolanaWalletStatus } from '../atoms/solanaWalletAtoms'
 
 interface SolanaConnectButtonProps extends ButtonProps {
   withIcon?: boolean
@@ -12,7 +14,10 @@ const shortenAddress = (address: string, chars = 4) => `${address.slice(0, chars
 
 const SolanaConnectButton = ({ children, withIcon, ...props }: SolanaConnectButtonProps) => {
   const setOpen = useSetAtom(solanaWalletModalAtom)
-  const { account, status } = useAtomValue(solanaWalletStateAtom)
+  const { solanaAccount } = useAtomValue(accountActiveChainAtom)
+  const { connected, connecting, publicKey } = useWallet()
+  const status: SolanaWalletStatus = connecting ? 'connecting' : connected ? 'connected' : 'disconnected'
+  const account = solanaAccount || publicKey?.toBase58() || null
   const handleClick = useCallback(() => setOpen(true), [setOpen])
 
   const content = account ? shortenAddress(account) : children || <Trans>Connect Wallet</Trans>

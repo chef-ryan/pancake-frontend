@@ -97,7 +97,7 @@
     "framer-motion": "^11.2.6",
     "git": "^0.1.5",
     "immer": "^9.0.15",
-    "jotai": "^2.4.3",
+    "jotai": "catalog:",
     "js-cookie": "^3.0.1",
     "lightweight-charts": "^4.0.1",
     "lodash": "^4.17.21",

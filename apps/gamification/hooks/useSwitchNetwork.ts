@@ -14,6 +14,9 @@ export function useSwitchNetworkLocal() {
     (chainId: number) => {
       setSessionChainId(chainId)
       replaceBrowserHistory('chain', chainId === ChainId.BSC ? null : CHAIN_QUERY_NAME[chainId as ChainId])
+      if (window.ethereum?.isTokenPocket === true) {
+        window.location.reload()
+      }
     },
     [setSessionChainId],
   )
@@ -46,11 +49,9 @@ export function useSwitchNetwork() {
         setLoading(true)
         return _switchNetworkAsync({ chainId })
           .then((c) => {
-            switchNetworkLocal(chainId)
+            // switchNetworkLocal(chainId)
             // well token pocket
-            if (window.ethereum?.isTokenPocket === true) {
-              window.location.reload()
-            }
+
             return c
           })
           .catch(() => {
