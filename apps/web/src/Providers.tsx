@@ -4,12 +4,11 @@ import { DialogProvider, ModalProvider, UIKitProvider, dark, light } from '@panc
 import { Store } from '@reduxjs/toolkit'
 import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { HistoryManagerProvider } from 'contexts/HistoryContext'
-import { W3WConfigProvider } from 'contexts/W3WConfigContext'
 import { ThemeProvider as NextThemeProvider, useTheme as useNextTheme } from 'next-themes'
 import { useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { createW3WWagmiConfig, createWagmiConfig } from 'utils/wagmi'
-import { WagmiProvider } from 'wagmi'
+import { WalletProvider } from 'wallet/WalletProvider'
 
 // Create a client
 const queryClient = new QueryClient()
@@ -35,25 +34,23 @@ const Providers: React.FC<
     [],
   )
   return (
-    <WagmiProvider reconnectOnMount config={wagmiConfig}>
-      <W3WConfigProvider value={isInBinance()}>
+    <Provider store={store}>
+      <WalletProvider>
         <QueryClientProvider client={queryClient}>
           <HydrationBoundary state={dehydratedState}>
-            <Provider store={store}>
-              <NextThemeProvider>
-                <LanguageProvider>
-                  <StyledUIKitProvider>
-                    <HistoryManagerProvider>
-                      <ModalProvider portalProvider={DialogProvider}>{children}</ModalProvider>
-                    </HistoryManagerProvider>
-                  </StyledUIKitProvider>
-                </LanguageProvider>
-              </NextThemeProvider>
-            </Provider>
+            <NextThemeProvider>
+              <LanguageProvider>
+                <StyledUIKitProvider>
+                  <HistoryManagerProvider>
+                    <ModalProvider portalProvider={DialogProvider}>{children}</ModalProvider>
+                  </HistoryManagerProvider>
+                </StyledUIKitProvider>
+              </LanguageProvider>
+            </NextThemeProvider>
           </HydrationBoundary>
         </QueryClientProvider>
-      </W3WConfigProvider>
-    </WagmiProvider>
+      </WalletProvider>
+    </Provider>
   )
 }
 
