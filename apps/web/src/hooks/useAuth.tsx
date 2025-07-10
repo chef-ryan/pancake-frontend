@@ -1,6 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { WalletConnectorNotFoundError, WalletSwitchChainError } from '@pancakeswap/ui-wallets'
-import { CHAIN_QUERY_NAME } from 'config/chains'
 import { ConnectorNames } from 'config/wallet'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
@@ -23,24 +22,7 @@ const useAuth = () => {
       const findConnector = connectors.find((c) => c.id === connectorID)
       try {
         if (!findConnector) return undefined
-
-        const connected = await connectAsync({ connector: findConnector, chainId })
-        if (connected.chainId !== chainId) {
-          router.replace(
-            {
-              pathname: router.pathname,
-              query: {
-                ...router.query,
-                chain: CHAIN_QUERY_NAME[connected.chainId],
-              },
-            },
-            undefined,
-            {
-              shallow: true,
-            },
-          )
-        }
-        return connected
+        return await connectAsync({ connector: findConnector, chainId })
       } catch (error) {
         if (error instanceof ConnectorNotFoundError) {
           throw new WalletConnectorNotFoundError()

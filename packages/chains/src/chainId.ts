@@ -23,8 +23,8 @@ export enum ChainId {
 }
 
 export enum NonEVMChainId {
-  SOLANA = 1000001,
-  APTOS = 1000002,
+  SOLANA = 8000001001,
+  APTOS = 8000002000,
 }
 
 export const testnetChainIds = [
