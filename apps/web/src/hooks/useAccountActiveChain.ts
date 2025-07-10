@@ -94,7 +94,10 @@ export function useSyncWalletState() {
     const { chainId: wagmiChainId, address } = wagmiState
     const chainId = queryChainId
 
-    const isNotMatched = isEvm(chainId) ? wagmiChainId !== chainId : chainId !== NonEVMChainId.SOLANA
+    const isNotMatched = isEvm(chainId)
+      ? Boolean(wagmiChainId && wagmiChainId !== chainId)
+      : chainId !== NonEVMChainId.SOLANA
+
     setProxy((prev) => {
       return {
         ...prev,
