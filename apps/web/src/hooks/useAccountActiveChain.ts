@@ -36,7 +36,7 @@ export const useActiveChainId = () => {
   const { isNotMatched, isWrongNetwork, chainId } = useAccountActiveChain()
   return {
     chainId,
-    notMatched: isNotMatched,
+    isNotMatched,
     isWrongNetwork,
   }
 }
