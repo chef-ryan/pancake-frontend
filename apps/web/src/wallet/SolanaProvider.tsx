@@ -24,10 +24,10 @@ import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
 
 import { accountActiveChainAtom } from 'hooks/useAccountActiveChain'
 import { useSetAtom } from 'jotai'
+import { defaultEndpoint, defaultNetWork } from './solana.config'
 import { SolanaWalletModal } from './SolanaWalletModal'
 import { BackpackWalletAdapter } from './walletAdapter/BackpackWalletAdapter'
 import { OKXWalletAdapter } from './walletAdapter/OKXWalletAdapter'
-import { defaultEndpoint, defaultNetWork } from './walletAdapter/solWalletConfig'
 
 initialize()
 
@@ -46,7 +46,7 @@ const SolanaWalletStateUpdater = () => {
 
   return null
 }
-export const SolProvider: FC<PropsWithChildren<any>> = ({ children }) => {
+export const SolanaProvider: FC<PropsWithChildren<any>> = ({ children }) => {
   const _walletConnect = useMemo(() => {
     const connectWallet: WalletConnectWalletAdapter[] = []
     try {

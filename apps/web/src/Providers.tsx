@@ -34,23 +34,23 @@ const Providers: React.FC<
     [],
   )
   return (
-    <Provider store={store}>
-      <WalletProvider>
-        <QueryClientProvider client={queryClient}>
-          <HydrationBoundary state={dehydratedState}>
-            <NextThemeProvider>
-              <LanguageProvider>
+    <LanguageProvider>
+      <Provider store={store}>
+        <WalletProvider>
+          <QueryClientProvider client={queryClient}>
+            <HydrationBoundary state={dehydratedState}>
+              <NextThemeProvider>
                 <StyledUIKitProvider>
                   <HistoryManagerProvider>
                     <ModalProvider portalProvider={DialogProvider}>{children}</ModalProvider>
                   </HistoryManagerProvider>
                 </StyledUIKitProvider>
-              </LanguageProvider>
-            </NextThemeProvider>
-          </HydrationBoundary>
-        </QueryClientProvider>
-      </WalletProvider>
-    </Provider>
+              </NextThemeProvider>
+            </HydrationBoundary>
+          </QueryClientProvider>
+        </WalletProvider>
+      </Provider>
+    </LanguageProvider>
   )
 }
 

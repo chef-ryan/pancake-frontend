@@ -27,9 +27,8 @@ import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { useUserShowTestnet } from 'state/user/hooks/useUserShowTestnet'
 import { useAccount } from 'wagmi'
+import { SOLANA_SUPPORTED_PATH } from 'wallet/solana.config'
 import { ChainLogo } from './Logo/ChainLogo'
-
-const SOLANA_KEEP_PATHS = ['/bridge', '/sol/wallet-test']
 
 type ChainSpecificBehavior = {
   onClick: () => void
@@ -71,7 +70,7 @@ const NetworkSelect = ({ switchNetwork, chainId, isWrongNetwork, onDismiss }: Ne
     () => ({
       [NonEVMChainId.SOLANA]: {
         onClick: () => {
-          if (!SOLANA_KEEP_PATHS.includes(router.pathname)) {
+          if (!SOLANA_SUPPORTED_PATH.includes(router.pathname)) {
             window.open('https://solana.pancakeswap.finance', '_self')
           } else {
             router.replace({ query: { ...router.query, chain: 'solana' } }, undefined, { shallow: true })
