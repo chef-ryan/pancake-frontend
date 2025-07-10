@@ -1,5 +1,6 @@
 import { getWagmiConnectorV2 } from '@binance/w3w-wagmi-connector-v2'
 import { cyberWalletConnector as createCyberWalletConnector, isCyberWallet } from '@cyberlab/cyber-app-sdk'
+import { Chains } from '@pancakeswap/chains'
 import { blocto } from '@pancakeswap/wagmi/connectors/blocto'
 import { CHAINS } from 'config/chains'
 import { PUBLIC_NODES } from 'config/nodes'
@@ -34,7 +35,6 @@ export const walletConnectNoQrCodeConnector = walletConnect({
   projectId: 'e542ff314e26ff34de2d4fba98db70bb',
 })
 
-export const metaMaskConnector = injected({ target: 'metaMask', shimDisconnect: false })
 export const trustConnector = injected({ target: 'trust', shimDisconnect: false })
 
 const bloctoConnector = blocto({
@@ -79,6 +79,7 @@ export const cyberWalletConnector = isCyberWallet()
     })
   : undefined
 
+export const metaMaskConnector = injected({ target: 'metaMask', shimDisconnect: false })
 export function createWagmiConfig() {
   return createConfig({
     chains,
@@ -115,7 +116,7 @@ export const createW3WWagmiConfig = () => {
   })
 }
 
-export const CHAIN_IDS = chains.map((c) => c.id)
+export const CHAIN_IDS = Chains.map((c) => c.id)
 
 export const isChainSupported = memoize((chainId: number) => (CHAIN_IDS as number[]).includes(chainId))
 export const isChainTestnet = memoize((chainId: number) => {
