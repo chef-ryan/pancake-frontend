@@ -12,7 +12,8 @@ const wrongNetworkProps: ButtonProps = {
 }
 
 export const CommitButton = ({ checkChainId, ...props }: ButtonProps & { checkChainId?: number }) => {
-  const { isWrongNetwork } = useActiveChainId(checkChainId)
+  const { isWrongNetwork: _isWrongNetwork, chainId } = useActiveChainId()
+  const isWrongNetwork = _isWrongNetwork ? checkChainId !== chainId : false
   const [switchNetworkLoading] = useSwitchNetworkLoading()
   const setMustSwitchNetworkModal = useSetAtom(mustSwitchNetworkModalAtom)
 
