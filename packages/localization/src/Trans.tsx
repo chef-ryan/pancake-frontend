@@ -1,6 +1,6 @@
 /* eslint-disable no-cond-assign */
 import { Children, createElement, Fragment, isValidElement, ReactNode } from 'react'
-import { TranslationKey } from './types'
+import { ContextData, TranslationKey } from './types'
 import useTranslation from './useTranslation'
 
 const placeholderRegex = /<\/?(\d+)>/g
@@ -76,9 +76,11 @@ export interface TransProps {
   i18nKey?: TranslationKey
   components?: ReactNode[]
   children?: ReactNode
+  values?: ContextData
+  [key: string]: string | number | ReactNode | ContextData | undefined
 }
 
-export const Trans = ({ i18nKey, components, children, ...values }: TransProps) => {
+export const Trans = ({ i18nKey, components, children, values = {}, ...rest }: TransProps) => {
   const { t } = useTranslation()
 
   let key = i18nKey
@@ -96,7 +98,7 @@ export const Trans = ({ i18nKey, components, children, ...values }: TransProps) 
     return null
   }
 
-  const translated = t(key, values)
+  const translated = t(key, { ...rest, ...values })
 
   if (!comp || comp.length === 0) {
     return createElement(Fragment, {}, translated)
