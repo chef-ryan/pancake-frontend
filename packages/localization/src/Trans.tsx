@@ -80,8 +80,7 @@ export interface TransProps {
   [key: string]: string | number | ReactNode | ContextData | undefined
 }
 
-export const Trans = <T extends Record<string, string | number>>(props: TransProps & T) => {
-  const { i18nKey, components, children, values = {}, ...restValues } = props
+export const Trans = ({ i18nKey, components, children, values = {}, ...rest }: TransProps) => {
   const { t } = useTranslation()
 
   let key = i18nKey
@@ -99,7 +98,7 @@ export const Trans = <T extends Record<string, string | number>>(props: TransPro
     return null
   }
 
-  const translated = t(key, { ...values, ...restValues })
+  const translated = t(key, { ...(rest as any), ...values })
 
   if (!comp || comp.length === 0) {
     return createElement(Fragment, {}, translated)
