@@ -2,7 +2,7 @@ import { ChainId } from '@pancakeswap/chains'
 
 import { CHAIN_QUERY_NAME } from 'config/chains'
 
-import { multiChainPaths } from './constant'
+import { multiChainName, multiChainPaths } from './constant'
 import { ApiPoolData, InfoDataSource, PoolDataForView } from './types'
 
 // TODO: refactor
@@ -52,5 +52,5 @@ export function transformPoolData(item: ApiPoolData): PoolDataForView {
 }
 
 export function getMultiChainName(chainId?: ChainId) {
-  return multiChainPaths[chainId || ChainId.BSC]
+  return multiChainName[chainId || ChainId.BSC]
 }
