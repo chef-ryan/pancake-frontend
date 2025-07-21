@@ -50,3 +50,7 @@ export function transformPoolData(item: ApiPoolData): PoolDataForView {
     tvlUSDChange: 0,
   }
 }
+
+export function getMultiChainName(chainId?: ChainId) {
+  return multiChainPaths[chainId || ChainId.BSC]
+}
