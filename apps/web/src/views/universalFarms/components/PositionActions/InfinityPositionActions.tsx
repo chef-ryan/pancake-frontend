@@ -66,7 +66,9 @@ export const InfinityPositionActions = ({
         : (p as InfinityBinPositionDetail).activeId === (pos as InfinityBinPositionDetail).activeId
     }
 
-    const filtered = positionList.filter((p) => p.chainId === chainId).filter((p) => p !== pos && !isSamePosition(p))
+    const filtered = positionList
+      .filter((p) => p.chainId === chainId) // Filter by chainId
+      .filter((p) => p !== pos && !isSamePosition(p)) // Exclude the current position and same position
 
     if (pos) {
       filtered.unshift(pos)
