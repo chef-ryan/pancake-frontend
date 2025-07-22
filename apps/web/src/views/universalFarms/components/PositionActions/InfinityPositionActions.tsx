@@ -36,7 +36,10 @@ export const InfinityPositionActions = ({
   const [, setLatestTxReceipt] = useLatestTxReceipt()
   const modalState = useModalV2()
 
-  const pos = pos_ ?? positionList?.[0] ?? {}
+  const pos =
+    pos_ ??
+    positionList?.find((x) => x.chainId === chainId_) ??
+    ({} as InfinityCLPositionDetail | InfinityBinPositionDetail)
 
   const { chainId: chainIdPos, poolKey } = pos
 
@@ -114,6 +117,7 @@ export const InfinityPositionActions = ({
           positionList={harvestList}
           currency0={currency0}
           currency1={currency1}
+          chainId={chainId}
           onHarvest={onHarvest}
           onCollect={handleCollect}
           pos={pos}
