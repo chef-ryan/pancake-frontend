@@ -1,6 +1,16 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+import AddToWalletButton from 'components/AddToWallet/AddToWalletButton'
+import { ViewOnExplorerButton } from 'components/ViewOnExplorerButton'
+import { useAllLists } from 'state/lists/hooks'
+import { useListState } from 'state/lists/lists'
+import { styled } from 'styled-components'
+import { getTokenSymbolAlias } from 'utils/getTokenAlias'
+
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { usePreviousValue } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { ChainId, Currency, Token } from '@pancakeswap/sdk'
+import { ChainId, Token, UnifiedCurrency } from '@pancakeswap/sdk'
 import { TokenList, WrappedTokenInfo } from '@pancakeswap/token-lists'
 import { enableList, removeList, useFetchListCallback } from '@pancakeswap/token-lists/react'
 import {
@@ -17,17 +27,11 @@ import {
   Text,
 } from '@pancakeswap/uikit'
 import { CurrencyLogo, ImportList } from '@pancakeswap/widgets-internal'
-import AddToWalletButton from 'components/AddToWallet/AddToWalletButton'
-import { ViewOnExplorerButton } from 'components/ViewOnExplorerButton'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useAllLists } from 'state/lists/hooks'
-import { useListState } from 'state/lists/lists'
-import { styled } from 'styled-components'
-import { getTokenSymbolAlias } from 'utils/getTokenAlias'
+
 import CurrencySearch from './CurrencySearch'
 import ImportToken from './ImportToken'
 import Manage from './Manage'
-import { CurrencyModalView } from './types'
+import { CommonBasesType, CurrencyModalView } from './types'
 
 const StyledModalContainer = styled(ModalContainer)`
   width: 100%;
@@ -57,11 +61,11 @@ const StyledModalBody = styled(ModalBody)`
 `
 
 export interface CurrencySearchModalProps extends InjectedModalProps {
-  selectedCurrency?: Currency | null
-  onCurrencySelect?: (currency: Currency) => void
-  otherSelectedCurrency?: Currency | null
+  selectedCurrency?: UnifiedCurrency | null
+  onCurrencySelect?: (currency: UnifiedCurrency) => void
+  otherSelectedCurrency?: UnifiedCurrency | null
   showCommonBases?: boolean
-  commonBasesType?: string
+  commonBasesType?: CommonBasesType
   showSearchInput?: boolean
   tokensToShow?: Token[]
   showCurrencyInHeader?: boolean
@@ -87,10 +91,10 @@ export default function CurrencySearchModal({
   mode,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.search)
-  const [selectedChainId, setSelectedChainId] = useState<ChainId | undefined>(selectedCurrency?.chainId)
+  const [selectedChainId, setSelectedChainId] = useState<ChainId | NonEVMChainId | undefined>(selectedCurrency?.chainId)
 
   const handleCurrencySelect = useCallback(
-    (currency: Currency) => {
+    (currency: UnifiedCurrency) => {
       onDismiss?.()
       onCurrencySelect?.(currency)
     },

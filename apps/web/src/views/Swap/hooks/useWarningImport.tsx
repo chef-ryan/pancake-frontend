@@ -1,4 +1,4 @@
-import { Currency, Token } from '@pancakeswap/sdk'
+import { Currency, Token, UnifiedCurrency } from '@pancakeswap/sdk'
 import { useModal } from '@pancakeswap/uikit'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -63,7 +63,7 @@ export default function useWarningImport() {
   }, [swapWarningCurrency])
 
   const swapWarningHandler = useCallback(
-    (currencyInput?: Currency) => {
+    (currencyInput?: UnifiedCurrency) => {
       const showSwapWarning = shouldShowSwapWarning(chainId, currencyInput)
       if (showSwapWarning) {
         setSwapWarningCurrency(currencyInput)

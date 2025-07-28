@@ -11,7 +11,7 @@ import { TickArray } from "./utils/tick";
 
 import { ClmmPositionLayout, PoolInfoLayout, LockClPositionLayoutV2 } from "./layout";
 
-export { ApiClmmConfigInfo };
+// export { ApiClmmConfigInfo };
 
 export interface ApiClmmPoint {
   price: string;
@@ -591,7 +591,7 @@ export interface CollectRewardParams<T = TxVersion.LEGACY> {
   feePayer?: PublicKey;
 }
 
-export interface CollectRewardsParams<T = TxVersion.LEGACY> extends Omit<CollectRewardParams, "rewardMint"> {
+export interface CollectRewardsParams extends Omit<CollectRewardParams, "rewardMint"> {
   rewardMints: PublicKey[];
 }
 

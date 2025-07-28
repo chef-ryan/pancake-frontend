@@ -6,7 +6,7 @@ import { TOKEN_WSOL } from "../raydium/token/constant";
 /**
  * A token is any fungible financial instrument on Solana, including SOL and all SPL tokens.
  */
-export interface TokenProps {
+interface TokenProps {
   mint: PublicKeyish;
   decimals: number;
   symbol?: string;
@@ -17,11 +17,15 @@ export interface TokenProps {
 
 export class Token {
   public readonly symbol?: string;
+
   public readonly name?: string;
+
   public readonly decimals: number;
+
   public readonly isToken2022: boolean;
 
   public readonly mint: PublicKey;
+
   public static readonly WSOL: Token = new Token({
     ...TOKEN_WSOL,
     mint: TOKEN_WSOL.address,

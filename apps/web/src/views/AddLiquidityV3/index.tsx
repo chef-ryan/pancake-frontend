@@ -1,7 +1,7 @@
 import { CurrencySelect } from 'components/CurrencySelect'
 import { CommonBasesType } from 'components/SearchModal/types'
 
-import { Currency, NATIVE, WNATIVE } from '@pancakeswap/sdk'
+import { NATIVE, UnifiedCurrency, WNATIVE } from '@pancakeswap/sdk'
 import {
   AddIcon,
   AutoColumn,
@@ -124,7 +124,7 @@ export function UniversalAddLiquidity({
   }, [preferredFeeAmount, feeAmountFromUrl])
 
   const handleCurrencySelect = useCallback(
-    (currencyNew: Currency, currencyIdOther?: string): (string | undefined)[] => {
+    (currencyNew: UnifiedCurrency, currencyIdOther?: string): (string | undefined)[] => {
       const currencyIdNew = currencyId(currencyNew)
 
       if (currencyIdNew === currencyIdOther) {
@@ -149,8 +149,7 @@ export function UniversalAddLiquidity({
   )
 
   const handleCurrencyASelect = useCallback(
-    (currencyANew: Currency) => {
-      warningHandler(currencyANew)
+    (currencyANew: UnifiedCurrency) => {
       const [idA, idB] = handleCurrencySelect(currencyANew, currencyIdB)
       const newPathname = router.pathname.replace('/v2', '').replace('/stable', '')
       const { minPrice: _minPrice, maxPrice: _maxPrice, ...rest } = router.query
@@ -184,8 +183,7 @@ export function UniversalAddLiquidity({
   )
 
   const handleCurrencyBSelect = useCallback(
-    (currencyBNew: Currency) => {
-      warningHandler(currencyBNew)
+    (currencyBNew: UnifiedCurrency) => {
       const [idB, idA] = handleCurrencySelect(currencyBNew, currencyIdA)
       const newPathname = router.pathname.replace('/v2', '').replace('/stable', '')
       const { minPrice: _minPrice, maxPrice: _maxPrice, ...rest } = router.query

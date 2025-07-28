@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency } from '@pancakeswap/swap-sdk-core'
+import { UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import {
   AddIcon,
   Button,
@@ -78,14 +78,14 @@ export const AddLiquiditySelector = () => {
 
   // TODO: implement relevant checks for native, token collision, etc. like in AddLiquidityV3
   const handleCurrencyASelect = useCallback(
-    (currency: Currency) => {
+    (currency: UnifiedCurrency) => {
       updateParams({ currencyIdA: currencyId(currency) })
     },
     [updateParams],
   )
 
   const handleCurrencyBSelect = useCallback(
-    (currency: Currency) => {
+    (currency: UnifiedCurrency) => {
       updateParams({ currencyIdB: currencyId(currency) })
     },
     [updateParams],

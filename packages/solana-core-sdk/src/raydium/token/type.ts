@@ -1,5 +1,18 @@
+import { PublicKeyish } from "@/common";
 import { ApiV3Token } from "../../api/type";
-import { Token, TokenProps } from "../../module/token";
+import { type Token } from "../../module/token";
+
+/**
+ * A token is any fungible financial instrument on Solana, including SOL and all SPL tokens.
+ */
+export interface TokenProps {
+  mint: PublicKeyish;
+  decimals: number;
+  symbol?: string;
+  name?: string;
+  skipMint?: boolean;
+  isToken2022?: boolean;
+}
 
 export type TokenInfo = ApiV3Token & {
   priority: number;
@@ -33,7 +46,6 @@ export type LpToken = Token & {
   base: SplToken;
   quote: SplToken;
   icon: string;
-  /** mint. for `<TokenSelector>`*/
   id: string;
   extensions: {
     [key in "coingeckoId" | "website" | "whitepaper"]?: string;

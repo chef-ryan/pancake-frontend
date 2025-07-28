@@ -1,23 +1,28 @@
-import { useTranslation } from '@pancakeswap/localization'
-import { ChainId, Currency, CurrencyAmount, Token } from '@pancakeswap/sdk'
-import { WrappedTokenInfo } from '@pancakeswap/token-lists'
-import { ArrowForwardIcon, AutoColumn, Column, CopyButton, FlexGap, QuestionHelper, Text } from '@pancakeswap/uikit'
-import { formatAmount } from '@pancakeswap/utils/formatFractions'
-import { CurrencyLogo } from '@pancakeswap/widgets-internal'
+import { CSSProperties, MutableRefObject, useCallback, useMemo, useState } from 'react'
+import BN from 'bignumber.js'
+
 import AddToWalletButton from 'components/AddToWallet/AddToWalletButton'
 import { LightGreyCard } from 'components/Card'
 import { ViewOnExplorerButton } from 'components/ViewOnExplorerButton'
-import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
-import useNativeCurrency from 'hooks/useNativeCurrency'
-import { CSSProperties, MutableRefObject, useCallback, useMemo, useState } from 'react'
+import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
+import { useUnifiedCurrencyBalance } from 'hooks/useUnifiedCurrencyBalance'
 import { FixedSizeList } from 'react-window'
 import { styled } from 'styled-components'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
-import { useAccount } from 'wagmi'
+
+import { useTranslation } from '@pancakeswap/localization'
+import { ChainId, Currency, Token, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
+import { WrappedTokenInfo } from '@pancakeswap/token-lists'
+import { ArrowForwardIcon, AutoColumn, Column, CopyButton, FlexGap, QuestionHelper, Text } from '@pancakeswap/uikit'
+import { formatAmount } from '@pancakeswap/utils/formatFractions'
+import { CurrencyLogo } from '@pancakeswap/widgets-internal'
+import { useUnifiedTokenUsdPrice } from 'hooks/useUnifiedTokenUsdPrice'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { NonEVMChainId } from '@pancakeswap/chains'
+
 import { useIsUserAddedToken } from '../../hooks/Tokens'
 import { useCombinedActiveList } from '../../state/lists/hooks'
-import { useCurrencyBalance } from '../../state/wallet/hooks'
 import { isTokenOnList } from '../../utils'
 import { RowBetween, RowFixed } from '../Layout/Row'
 import CircleLoader from '../Loader/CircleLoader'
@@ -42,7 +47,7 @@ const FixedContentRow = styled.div`
   align-items: center;
 `
 
-function Balance({ balance }: { balance: CurrencyAmount<Currency> }) {
+function Balance({ balance }: { balance: UnifiedCurrencyAmount<UnifiedCurrency> }) {
   return (
     <StyledBalanceText title={balance.toExact()} bold>
       {formatAmount(balance, 4)}
@@ -158,7 +163,7 @@ function CurrencyRow({
   style: CSSProperties
   showChainLogo?: boolean
 }) {
-  const { address: account } = useAccount()
+  const { account: evmAccount, solanaAccount } = useAccountActiveChain()
   const { t } = useTranslation()
   const key = currencyKey(currency)
   const selectedTokenList = useCombinedActiveList()
@@ -166,12 +171,18 @@ function CurrencyRow({
   const customAdded = useIsUserAddedToken(currency)
   const [isHovered, setIsHovered] = useState(false)
 
-  const balance = useCurrencyBalance(account ?? undefined, currency)
-  const currencyUsdPrice = useCurrencyUsdPrice(currency, { enabled: Boolean(balance) })
+  const balanceAmount = useUnifiedCurrencyBalance(currency)
+  const currencyUsdPrice = useUnifiedTokenUsdPrice(currency, Boolean(balanceAmount))
   const balanceUSD = useMemo(() => {
-    if (!balance || !currencyUsdPrice.data) return undefined
-    return (Number(balance.toExact()) * currencyUsdPrice.data).toFixed(2)
-  }, [balance, currencyUsdPrice])
+    if (!balanceAmount || !currencyUsdPrice.data) return undefined
+    return new BN(balanceAmount.toExact()).times(currencyUsdPrice.data).toFixed(2)
+  }, [balanceAmount, currencyUsdPrice])
+
+  const isConnected = useMemo(
+    () =>
+      currency.chainId in ChainId ? evmAccount : currency.chainId === NonEVMChainId.SOLANA ? solanaAccount : evmAccount,
+    [evmAccount, solanaAccount, currency.chainId],
+  )
 
   const setIsHoveredCallback = useCallback(() => {
     setIsHovered(true)
@@ -203,9 +214,9 @@ function CurrencyRow({
           </Text>
         </Column>
         <RowFixed style={{ justifySelf: 'flex-end' }}>
-          {balance ? (
+          {balanceAmount ? (
             <AutoColumn justify="flex-end">
-              <Balance balance={balance} />
+              <Balance balance={balanceAmount} />
               <div>
                 {balanceUSD && Number(balanceUSD) > 0 && (
                   <Text color="textSubtle" small ellipsis maxWidth="200px">
@@ -214,7 +225,7 @@ function CurrencyRow({
                 )}
               </div>
             </AutoColumn>
-          ) : account ? (
+          ) : isConnected ? (
             <CircleLoader />
           ) : (
             <ArrowForwardIcon />
@@ -241,11 +252,11 @@ export default function CurrencyList({
   chainId,
 }: {
   height: number | string
-  currencies: Currency[]
-  inactiveCurrencies: Currency[]
-  selectedCurrency?: Currency | null
-  onCurrencySelect: (currency: Currency) => void
-  otherCurrency?: Currency | null
+  currencies: UnifiedCurrency[]
+  inactiveCurrencies: UnifiedCurrency[]
+  selectedCurrency?: UnifiedCurrency | null
+  onCurrencySelect: (currency: UnifiedCurrency) => void
+  otherCurrency?: UnifiedCurrency | null
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
   showNative: boolean
   showImportView: () => void
@@ -254,10 +265,10 @@ export default function CurrencyList({
   showChainLogo?: boolean
   chainId?: ChainId
 }) {
-  const native = useNativeCurrency(chainId)
+  const native = useUnifiedNativeCurrency(chainId)
 
-  const itemData: (Currency | undefined)[] = useMemo(() => {
-    let formatted: (Currency | undefined)[] = showNative
+  const itemData: (UnifiedCurrency | undefined)[] = useMemo(() => {
+    let formatted: (UnifiedCurrency | undefined)[] = showNative
       ? [native, ...currencies, ...inactiveCurrencies]
       : [...currencies, ...inactiveCurrencies]
     if (breakIndex !== undefined) {

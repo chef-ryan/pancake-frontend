@@ -1,4 +1,4 @@
-import { Currency } from '@pancakeswap/sdk'
+import { Currency, SPLToken } from '@pancakeswap/sdk'
 import { RouteType } from '@pancakeswap/smart-router'
 import { ChevronRightIcon, Flex, Text } from '@pancakeswap/uikit'
 import { SHORT_SYMBOL } from 'components/NetworkSwitcher'
@@ -10,7 +10,8 @@ export default memo(function SwapRoute({ path, type }: { path?: Currency[]; type
     <Flex flexWrap="wrap" width="100%" justifyContent="flex-end" alignItems="center">
       {path?.map((token, i) => {
         const isLastItem: boolean = i === path.length - 1
-        const currency = (token.isToken && unwrappedToken(token)) || token
+
+        const currency = SPLToken.isSPLToken(token) ? token : (token.isToken && unwrappedToken(token)) || token
         return (
           // There might be same token appear more than once
           // eslint-disable-next-line react/no-array-index-key

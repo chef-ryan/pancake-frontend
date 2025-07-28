@@ -1,8 +1,6 @@
-import { useTranslation } from '@pancakeswap/localization'
-import { Box, UserMenu as UIKitUserMenu, useMatchBreakpoints, UserMenuVariant } from '@pancakeswap/uikit'
+import { Trans, useTranslation } from '@pancakeswap/localization'
+import { Box, FlexGap, UserMenu as UIKitUserMenu, useMatchBreakpoints, UserMenuVariant } from '@pancakeswap/uikit'
 import { usePrivy } from '@privy-io/react-auth'
-import ConnectWalletButton from 'components/ConnectWalletButton'
-import Trans from 'components/Trans'
 import { WalletContent, WalletModalV2 } from 'components/WalletModalV2'
 import ReceiveModal from 'components/WalletModalV2/ReceiveModal'
 import { ViewState } from 'components/WalletModalV2/type'
@@ -14,7 +12,6 @@ import { usePrivyWalletAddress } from 'contexts/Privy/hooks'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import useAuth from 'hooks/useAuth'
 import { useDomainNameForAddress } from 'hooks/useDomain'
-import { useCallback, useEffect, useRef, useState } from 'react'
 import { useProfile } from 'state/profile/hooks'
 import { usePendingTransactions } from 'state/transactions/hooks'
 import styled from 'styled-components'
@@ -24,6 +21,11 @@ import { ClaimGiftProvider, useClaimGiftContext } from 'views/Gift/providers/Cla
 import { SendGiftProvider, useSendGiftContext } from 'views/Gift/providers/SendGiftProvider'
 import { UnclaimedOnlyProvider } from 'views/Gift/providers/UnclaimedOnlyProvider'
 import { useAccount } from 'wagmi'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { NonEVMChainId } from '@pancakeswap/chains'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import ConnectWalletButton from 'components/ConnectWalletButton'
+import SolanaConnectButton from 'wallet/components/SolanaConnectButton'
 import { MenuTabProvider, useMenuTab, WalletView } from './providers/MenuTabProvider'
 
 const UserMenuItems = ({ onReceiveClick, account }: { onReceiveClick: () => void; account: string | undefined }) => {
@@ -68,17 +70,18 @@ const ClickablePopover = styled.div<{ isOpen: boolean }>`
 
 const UserMenu = () => {
   const { t } = useTranslation()
-  const { address: account, connector } = useAccount()
+  const { chainId, isWrongNetwork, account: evmAccount, solanaAccount } = useAccountActiveChain()
+  const { connector } = useAccount()
   const { ready, authenticated, user } = usePrivy()
 
   // Use new Privy wallet address hook to prevent flickering
   const { address: privyAddress, isLoading: isPrivyAddressLoading, addressType } = usePrivyWalletAddress()
 
   // Determine which address to use: if Privy login use privyAddress, otherwise use account
-  const finalAddress = ready && authenticated && user ? privyAddress : account
+  const finalAddress = ready && authenticated && user ? privyAddress : evmAccount
   const shouldShowLoading = ready && authenticated && user ? isPrivyAddressLoading : false
-  const { chainId, isWrongNetwork } = useActiveChainId()
-  const { domainName, avatar } = useDomainNameForAddress(finalAddress)
+  const currentAccount = chainId === NonEVMChainId.SOLANA ? solanaAccount ?? undefined : evmAccount
+  const { domainName, avatar } = useDomainNameForAddress(chainId === NonEVMChainId.SOLANA ? undefined : currentAccount)
   const { logout } = useAuth()
   const { hasPendingTransactions, pendingNumber } = usePendingTransactions()
   const { profile } = useProfile()
@@ -268,14 +271,24 @@ const UserMenu = () => {
   }
 
   return (
-    <ConnectWalletButton scale="sm">
-      <Box display={['none', null, null, 'block']}>
-        <Trans>Connect Wallet</Trans>
-      </Box>
-      <Box display={['block', null, null, 'none']}>
-        <Trans>Connect</Trans>
-      </Box>
-    </ConnectWalletButton>
+    <FlexGap gap="8px">
+      <ConnectWalletButton scale="sm">
+        <Box display={['none', null, null, 'block']}>
+          <Trans>Connect Wallet</Trans>
+        </Box>
+        <Box display={['block', null, null, 'none']}>
+          <Trans>Connect</Trans>
+        </Box>
+      </ConnectWalletButton>
+      <SolanaConnectButton scale="sm">
+        <Box display={['none', null, null, 'block']}>
+          <Trans>Solana Connect</Trans>
+        </Box>
+        <Box display={['block', null, null, 'none']}>
+          <Trans>SOL</Trans>
+        </Box>
+      </SolanaConnectButton>
+    </FlexGap>
   )
 }
 

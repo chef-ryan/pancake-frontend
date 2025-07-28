@@ -1,7 +1,7 @@
 import { Orders, TWAP as PancakeTWAP, ToastProps } from '@orbs-network/twap-ui-pancake'
 import { useTheme } from '@pancakeswap/hooks'
 import { Percent } from '@pancakeswap/sdk'
-import { Currency, CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
+import { Currency, CurrencyAmount, TradeType, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import {
   AutoColumn,
   Button,
@@ -111,7 +111,7 @@ const useUsd = (address?: string) => {
 }
 
 const useTokenModal = (
-  onCurrencySelect: (value: Currency) => void,
+  onCurrencySelect: (value: UnifiedCurrency) => void,
   selectedCurrency?: Currency,
   otherSelectedCurrency?: Currency,
 ) => {

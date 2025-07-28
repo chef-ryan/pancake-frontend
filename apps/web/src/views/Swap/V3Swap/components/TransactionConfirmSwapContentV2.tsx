@@ -1,13 +1,14 @@
+import { PriceOrder } from '@pancakeswap/price-api-sdk'
 import { Currency, CurrencyAmount, TradeType } from '@pancakeswap/sdk'
 import { ConfirmationModalContent } from '@pancakeswap/widgets-internal'
 import { memo, useCallback, useMemo } from 'react'
 import { Field } from 'state/swap/actions'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import SwapModalHeaderV2 from 'views/Swap/components/SwapModalHeaderV2'
-import { InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
+import { getPriceBreakdown, InterfaceOrder } from 'views/Swap/utils'
 import {
   computeSlippageAdjustedAmounts as computeSlippageAdjustedAmountsWithSmartRouter,
-  computeTradePriceBreakdown as computeTradePriceBreakdownWithSmartRouter,
+  TradePriceBreakdown,
 } from '../utils/exchange'
 import { SwapModalFooterV2 } from './SwapModalFooterV2'
 
@@ -61,8 +62,7 @@ export const TransactionConfirmSwapContentV2 = memo<TransactionConfirmSwapConten
       [order, allowedSlippage],
     )
     const { priceImpactWithoutFee, lpFeeAmount } = useMemo(
-      () =>
-        computeTradePriceBreakdownWithSmartRouter(isBridgeOrder(order) || isXOrder(order) ? undefined : order?.trade),
+      () => getPriceBreakdown(order as PriceOrder) as TradePriceBreakdown,
       [order],
     )
 

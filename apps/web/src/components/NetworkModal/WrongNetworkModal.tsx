@@ -3,10 +3,8 @@ import { useTranslation } from '@pancakeswap/localization'
 import { ArrowForwardIcon, Button, FlexGap, Grid, Message, MessageText, Modal, Text } from '@pancakeswap/uikit'
 import { ChainLogo } from 'components/Logo/ChainLogo'
 import { CHAIN_QUERY_NAME } from 'config/chains'
-import { queryChainIdAtom } from 'hooks/useActiveChainId'
 import useAuth from 'hooks/useAuth'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
-import { useAtom } from 'jotai'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
@@ -26,7 +24,6 @@ export function WrongNetworkModal({ currentChain, onDismiss }: { currentChain: C
   const { switchNetworkAsync, isLoading, canSwitch } = useSwitchNetwork()
   const { logout } = useAuth()
   const { isConnected, chain, chainId: walletChainId } = useAccount()
-  const [, setQueryChainId] = useAtom(queryChainIdAtom)
   const chainId = currentChain.id || ChainId.BSC
   const { t } = useTranslation()
   const router = useRouter()
@@ -54,9 +51,8 @@ export function WrongNetworkModal({ currentChain, onDismiss }: { currentChain: C
           shallow: true,
         },
       )
-      setQueryChainId(chainId)
     })
-  }, [chainId, logout, setQueryChainId, router])
+  }, [chainId, logout, router])
 
   return (
     <Modal

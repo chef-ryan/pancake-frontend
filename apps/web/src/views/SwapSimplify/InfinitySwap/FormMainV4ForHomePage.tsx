@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount } from '@pancakeswap/sdk'
+import { Currency, CurrencyAmount, UnifiedCurrency } from '@pancakeswap/sdk'
 import { Column, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
@@ -57,7 +57,7 @@ export function FormMainForHomePage({ inputAmount, outputAmount, tradeLoading }:
   const { canSwitch, switchNetwork } = useSwitchNetwork()
 
   const handleCurrencySelect = useCallback(
-    (newCurrency: Currency, field: Field) => {
+    (newCurrency: UnifiedCurrency, field: Field) => {
       const isInput = field === Field.INPUT
 
       if (isInput) {
@@ -86,11 +86,11 @@ export function FormMainForHomePage({ inputAmount, outputAmount, tradeLoading }:
     [onCurrencySelection, warningSwapHandler, outputChainId, supportedBridgeChains.data, canSwitch, switchNetwork],
   )
   const handleInputSelect = useCallback(
-    (newCurrency: Currency) => handleCurrencySelect(newCurrency, Field.INPUT),
+    (newCurrency: UnifiedCurrency) => handleCurrencySelect(newCurrency, Field.INPUT),
     [handleCurrencySelect],
   )
   const handleOutputSelect = useCallback(
-    (newCurrency: Currency) => handleCurrencySelect(newCurrency, Field.OUTPUT),
+    (newCurrency: UnifiedCurrency) => handleCurrencySelect(newCurrency, Field.OUTPUT),
     [handleCurrencySelect],
   )
 

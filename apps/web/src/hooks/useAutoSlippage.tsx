@@ -205,6 +205,7 @@ export default function useClassicAutoSlippageTolerance(trade?: SupportedTrade):
         return finalSlippage
       }
 
+      // eslint-disable-next-line no-console
       console.log('Auto Slippage: Using DEFAULT_AUTO_SLIPPAGE because missing outputDollarValue or dollarCostToUse')
       return DEFAULT_AUTO_SLIPPAGE
     },

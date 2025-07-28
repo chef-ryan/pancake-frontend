@@ -1,5 +1,13 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Percent, TradeType } from '@pancakeswap/sdk'
+import {
+  Currency,
+  CurrencyAmount,
+  Percent,
+  SPLToken,
+  TradeType,
+  UnifiedCurrency,
+  UnifiedCurrencyAmount,
+} from '@pancakeswap/sdk'
 import { LegacyPair as Pair } from '@pancakeswap/smart-router/legacy-router'
 import { AutoColumn, Box, Link, QuestionHelperV2, SkeletonV2, Text } from '@pancakeswap/uikit'
 import { formatAmount, formatFraction } from '@pancakeswap/utils/formatFractions'
@@ -156,8 +164,8 @@ export const TradeSummary = memo(function TradeSummary({
   expectedFillTimeSec?: number
   priceBreakdown: BridgeOrderFee[] | TradePriceBreakdown
   hasStablePair?: boolean
-  inputAmount?: CurrencyAmount<Currency>
-  outputAmount?: CurrencyAmount<Currency>
+  inputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
+  outputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
   tradeType?: TradeType
   slippageAdjustedAmounts: SlippageAdjustedAmounts
   isX?: boolean
@@ -166,7 +174,11 @@ export const TradeSummary = memo(function TradeSummary({
 }) {
   const { t } = useTranslation()
   const isExactIn = tradeType === TradeType.EXACT_INPUT
-  const { feeSavedAmount, feeSavedUsdValue } = useFeeSaved(inputAmount, outputAmount)
+
+  const { feeSavedAmount, feeSavedUsdValue } = useFeeSaved(
+    SPLToken.isSPLToken(inputAmount?.currency) ? undefined : (inputAmount as CurrencyAmount<Currency>),
+    SPLToken.isSPLToken(outputAmount?.currency) ? undefined : (outputAmount as CurrencyAmount<Currency>),
+  )
   const { slippageTolerance: allowedSlippage } = useAutoSlippageWithFallback()
 
   // if priceBreakdown is an array and priceBreakdown only has one item, hide the slippage button because it's bridge-only case

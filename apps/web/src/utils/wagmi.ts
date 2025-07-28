@@ -1,5 +1,6 @@
 import { getWagmiConnectorV2 } from '@binance/w3w-wagmi-connector-v2'
 import { cyberWalletConnector as createCyberWalletConnector, isCyberWallet } from '@cyberlab/cyber-app-sdk'
+import { ChainId, Chains } from '@pancakeswap/chains'
 import { blocto } from '@pancakeswap/wagmi/connectors/blocto'
 import { CHAINS } from 'config/chains'
 import { PUBLIC_NODES } from 'config/nodes'
@@ -9,6 +10,7 @@ import { Transport } from 'viem'
 import { createConfig, http } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 import { coinbaseWallet, injected, safe, walletConnect } from 'wagmi/connectors'
+import { customMetaMaskConnector } from 'wallet/metamaskConnector'
 import { fallbackWithRank } from './fallbackWithRank'
 import { CLIENT_CONFIG, publicClient } from './viem'
 
@@ -35,8 +37,7 @@ export const walletConnectNoQrCodeConnector = walletConnect({
   projectId: 'e542ff314e26ff34de2d4fba98db70bb',
 })
 
-export const metaMaskConnector = injected({ target: 'metaMask', shimDisconnect: false })
-export const trustConnector = injected({ target: 'trust', shimDisconnect: true })
+export const trustConnector = injected({ target: 'trust', shimDisconnect: false })
 
 const bloctoConnector = blocto({
   appId: 'e2f2f0cd-3ceb-4dec-b293-bb555f2ed5af',
@@ -81,7 +82,7 @@ export const cyberWalletConnector = isCyberWallet()
   : undefined
 
 export const CONNECTOR_MAP = {
-  [ConnectorNames.MetaMask]: metaMaskConnector,
+  [ConnectorNames.MetaMask]: customMetaMaskConnector,
   [ConnectorNames.Injected]: injectedConnector,
   //  [ConnectorNames.Safe]: safe(),
   [ConnectorNames.WalletLink]: coinbaseConnector,
@@ -93,7 +94,7 @@ export const CONNECTOR_MAP = {
 }
 
 export const CONNECTORS = [
-  metaMaskConnector,
+  customMetaMaskConnector,
   injectedConnector,
   safe(),
   coinbaseConnector,
@@ -128,7 +129,8 @@ export const createW3WWagmiConfig = () => {
   })
 }
 
-export const CHAIN_IDS = chains.map((c) => c.id)
+export const CHAIN_IDS = Chains.map((c) => c.id)
+export const EVM_CHAIN_IDS = Chains.filter((c) => c.isEVM).map((c) => c.id) as ChainId[]
 
 export const isChainSupported = memoize((chainId: number) => (CHAIN_IDS as number[]).includes(chainId))
 export const isChainTestnet = memoize((chainId: number) => {

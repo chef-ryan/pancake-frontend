@@ -9,8 +9,9 @@ export const ChainLogo = memo(
     width = 24,
     height = 24,
     imageStyles,
+    src,
     ...props
-  }: { chainId?: number; width?: number; height?: number; imageStyles?: CSSProperties } & BoxProps) => {
+  }: { chainId?: number; width?: number; height?: number; imageStyles?: CSSProperties; src?: string } & BoxProps) => {
     const [imageLoaded, setImageLoaded] = useState(false);
 
     const icon = chainId ? (
@@ -22,7 +23,7 @@ export const ChainLogo = memo(
           transition: "opacity 0.2s ease",
           ...imageStyles,
         }}
-        src={`${ASSET_CDN}/web/chains/square/${chainId}.svg`}
+        src={src ?? `${ASSET_CDN}/web/chains/square/${chainId}.svg`}
         width={width}
         height={height}
         unoptimized
