@@ -1,4 +1,4 @@
-const VERSION = '0.0.32'
+const VERSION = '0.0.34'
 // https://unpkg.com/@layerzerolabs/x-pancakeswap-widget@0.0.21/element.mjs.sha384
 const SHA384 = 'AGUVeA2krFQS5NHl3wT//Pm0uIoO1uSIf6Za0Dtj1kQQQNC8qrq6TjSt7xrwgH0J'
 
