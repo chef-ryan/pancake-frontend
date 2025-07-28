@@ -21,6 +21,7 @@ import { getBlockExploreLink, getBlockExploreName } from 'utils'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 import ConfirmSwapModalContainer from 'views/Swap/components/ConfirmSwapModalContainer'
 import { SwapTransactionErrorContent } from 'views/Swap/components/SwapTransactionErrorContent'
+import { NonEVMChainId } from '@pancakeswap/chains'
 
 import { Hash } from 'viem'
 import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
@@ -29,6 +30,7 @@ import { useSlippageAdjustedAmounts } from '../hooks'
 import { ConfirmAction } from '../hooks/useConfirmModalState'
 import { AllowedAllowanceState } from '../types'
 import { ApproveStepFlow } from './ApproveStepFlow'
+import { SolanaSwapTxReceiptModalContent } from '../components/SolanaSwapTxReceiptModalContent'
 
 export const useApprovalPhaseStepTitles: ({ trade }: { trade: InterfaceOrder['trade'] | undefined }) => {
   [step in AllowedAllowanceState]: string
@@ -224,6 +226,9 @@ export const ConfirmSwapModalV2: React.FC<ConfirmSwapModalV2Props> = ({
     }
 
     if (confirmModalState === ConfirmModalState.COMPLETED && txHash) {
+      if (chainId === NonEVMChainId.SOLANA) {
+        return <SolanaSwapTxReceiptModalContent txHash={txHash} />
+      }
       return (
         <SwapTransactionReceiptModalContent
           explorerLink={

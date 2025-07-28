@@ -7,7 +7,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useToast } from '@pancakeswap/uikit'
 import { Permit2Signature } from '@pancakeswap/universal-router-sdk'
 import { ConfirmModalState, useAsyncConfirmPriceImpactWithoutFee } from '@pancakeswap/widgets-internal'
-import { ToastDescriptionWithTx } from 'components/Toast'
+import { SolanaDescriptionWithTx, ToastDescriptionWithTx } from 'components/Toast'
 import { BLOCK_CONFIRMATION } from 'config/confirmation'
 import { ALLOWED_PRICE_IMPACT_HIGH, PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN } from 'config/constants/exchange'
 import { useActiveChainId } from 'hooks/useActiveChainId'
@@ -64,6 +64,7 @@ import { useSwapState } from 'state/swap/hooks'
 import { activeBridgeOrderMetadataAtom } from 'views/Swap/Bridge/CrossChainConfirmSwapModal/state/orderDataState'
 import { Permit2Schema } from 'views/Swap/Bridge/types'
 import { getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { BatchCall, getBatchedTransaction as getBatchedTransactionHelper } from './batchHelper'
 import { eip5792UserRejectUpgradeError, userRejectedError } from './useSendSwapTransaction'
 import { useSwapCallback } from './useSwapCallback'
@@ -161,7 +162,7 @@ const useConfirmActions = (
     enablePaymaster: true,
   })
   const nativeWrap = useNativeWrap()
-  const { address: account } = useAccount()
+  const { account, solanaAccount } = useAccountActiveChain()
   const getAllowanceArgs = useMemo(() => {
     if (!chainId) return undefined
     const inputs = [account, getPermit2Address(chainId)] as [`0x${string}`, `0x${string}`]
@@ -793,32 +794,30 @@ const useConfirmActions = (
           const response = await ultraSwapService.submitSwap(serializedTransaction, requestId)
 
           if (response.status === 'Failed') {
-            showError(response.message || response.error || 'Solana swap failed')
+            const error = new UltraSwapError(response.error, UltraSwapErrorType.FAILED, response.signature)
+            showError(error.message || response.error || 'Solana swap failed')
             return
           }
 
           const { signature } = response
-          const txHashHex = `0x${signature}` as Hex
-          setTxHash(txHashHex)
+          setTxHash(signature as any)
 
           // Log swap for analytics
           logSwap({
             tradeType: TradeType.EXACT_INPUT,
-            account: account ?? '0x',
+            account: solanaAccount ?? '0x',
             chainId: order.trade.inputAmount.currency.chainId,
-            hash: signature,
+            hash: signature as any,
             inputAmount: order.trade.inputAmount.toExact(),
             outputAmount: order.trade.outputAmount.toExact(),
             input: order.trade.inputAmount.currency,
             output: order.trade.outputAmount.currency,
-            type: 'SVM',
+            type: 'SolanaSwap',
           })
 
           toastSuccess(
             t('Success!'),
-            <ToastDescriptionWithTx txHash={txHashHex} txChainId={order.trade.inputAmount.currency.chainId}>
-              {t('Solana swap submitted')}
-            </ToastDescriptionWithTx>,
+            <SolanaDescriptionWithTx txHash={signature}>{t('Solana swap submitted')}</SolanaDescriptionWithTx>,
           )
 
           setConfirmState(ConfirmModalState.COMPLETED)
@@ -838,7 +837,7 @@ const useConfirmActions = (
       showIndicator: false,
       getCalldata: () => [],
     }
-  }, [account, order, resetState, showError, toastSuccess, t])
+  }, [account, order, resetState, showError, toastSuccess, t, signTransaction, solanaWallet?.adapter.publicKey])
 
   const actions = useMemo(() => {
     return {
