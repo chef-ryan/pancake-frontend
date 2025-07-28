@@ -12,7 +12,7 @@ import { atomWithLoadable } from './atomWithLoadable'
 export const bestSVMOrderAtom = atomFamily(
   (_option: QuoteQuery) => {
     return atomWithLoadable(async () => {
-      const { baseCurrency, currency, amount, tradeType, slippage } = _option
+      const { baseCurrency, currency, amount, tradeType, slippage, address } = _option
 
       // Early validation
       if (!baseCurrency || !currency || !amount || tradeType === undefined) {
@@ -34,6 +34,7 @@ export const bestSVMOrderAtom = atomFamily(
               amount: amount as UnifiedCurrencyAmount<SPLToken>,
               tradeType: tradeType as TradeType,
               slippageBps: slippage,
+              account: address,
             })
 
             //   perf.tracker.success(svmOrder)

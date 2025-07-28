@@ -39,3 +39,89 @@ export type TradeConfig = BaseTradeConfig & {
 export type RouteConfig = TradeConfig & {
   blockNumber?: number
 }
+
+export const AGGREGATOR_SOURCES = {
+  METIS: 'metis',
+  JUPITERZ: 'jupiterz',
+  HASHFLOW: 'hashflow',
+  DFLOW: 'dflow',
+} as const
+
+export type AggregatorSources = (typeof AGGREGATOR_SOURCES)[keyof typeof AGGREGATOR_SOURCES]
+export interface UltraQuoteResponse {
+  inputMint: string
+  inAmount: string
+  outputMint: string
+  outAmount: string
+  otherAmountThreshold: string
+  priceImpactPct: string
+  routePlan: {
+    swapInfo: {
+      inputMint: string
+      inAmount: string
+      outputMint: string
+      outAmount: string
+      ammKey: string
+      label: string
+      feeAmount: `${number}`
+      feeMint: string
+    }
+    percent: number
+  }[]
+  contextSlot: number
+  transaction: string | null
+  swapType: 'ultra'
+  gasless: boolean
+  requestId: string
+  prioritizationFeeLamports?: number
+  feeBps: number
+  router: AggregatorSources
+}
+
+// Refer docs here https://dev.jup.ag/docs/api/ultra-api/order
+export interface UltraSwapQuoteParams {
+  inputMint: string
+  outputMint: string
+  amount: string
+  taker?: string
+  swapMode?: 'ExactIn' | 'ExactOut'
+  referralAccount?: string
+  referralFee?: number
+}
+interface UltraSwapResponseBase {
+  signature: string
+  code: number
+  status: 'Success' | 'Failed'
+  slot: string
+}
+
+interface UltraSwapResponseSuccess extends UltraSwapResponseBase {
+  status: 'Success'
+  inputAmountResult: string
+  outputAmountResult: string
+}
+
+interface UltraSwapResponseFailed extends UltraSwapResponseBase {
+  status: 'Failed'
+  message: string
+  error: string
+}
+
+export type UltraSwapResponse = UltraSwapResponseSuccess | UltraSwapResponseFailed
+
+interface Router {
+  icon: string
+  id: AggregatorSources
+  name: string
+}
+
+export type RouterResponse = Router[]
+
+interface TokenBalance {
+  amount: string // Raw token amount as string
+  uiAmount: number // Formatted amount with decimals
+  slot: number // Solana slot number
+  isFrozen: boolean // Whether the token account is frozen
+}
+
+export type BalanceResponse = Record<string, TokenBalance>

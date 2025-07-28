@@ -90,6 +90,7 @@ export interface SVMTrade<T extends TradeType = TradeType> {
   outputAmount: UnifiedCurrencyAmount<SPLToken>
   priceImpactPct: Percent
   routes: Route[]
+  requestId: string
   quoteQueryHash?: string
   transaction: string | null
   maximumAmountIn?: UnifiedCurrencyAmount<SPLToken>
