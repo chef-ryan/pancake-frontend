@@ -13,7 +13,8 @@ import { useEffect } from 'react'
 import { useCurrentBlock } from 'state/block/hooks'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
-import { useAccount } from 'wagmi'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { quoteNonceAtom } from '../atom/revalidateAtom'
 import { createQuoteQuery } from '../utils/createQuoteQuery'
 import { useQuoteContext } from './QuoteContext'
@@ -28,7 +29,7 @@ export const useQuoterSync = () => {
     [Field.INPUT]: { currencyId: inputCurrencyId, chainId: inputCurrencyChainId },
     [Field.OUTPUT]: { currencyId: outputCurrencyId, chainId: outputCurrencyChainId },
   } = debouncedSwapState
-  const { address } = useAccount()
+  const { account: address, solanaAccount, chainId: currentChain } = useAccountActiveChain()
   const inputCurrency = useUnifiedCurrency(inputCurrencyId, inputCurrencyChainId)
   const outputCurrency = useUnifiedCurrency(outputCurrencyId, outputCurrencyChainId)
   const isExactIn = independentField === Field.INPUT
@@ -75,7 +76,7 @@ export const useQuoterSync = () => {
     speedQuoteEnabled,
     xEnabled,
     slippage,
-    address,
+    address: currentChain === NonEVMChainId.SOLANA ? solanaAccount : address,
     blockNumber,
     destinationBlockNumber,
     gasLimitDestinationChain,

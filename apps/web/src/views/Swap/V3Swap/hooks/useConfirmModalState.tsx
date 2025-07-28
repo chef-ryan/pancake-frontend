@@ -2,7 +2,8 @@ import { usePreviousValue } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { getPermit2Address } from '@pancakeswap/permit2-sdk'
 import { PriceOrder } from '@pancakeswap/price-api-sdk'
-import { Currency, CurrencyAmount, Percent, Token } from '@pancakeswap/swap-sdk-core'
+import { TradeType, Currency, CurrencyAmount, Percent, Token } from '@pancakeswap/swap-sdk-core'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useToast } from '@pancakeswap/uikit'
 import { Permit2Signature } from '@pancakeswap/universal-router-sdk'
 import { ConfirmModalState, useAsyncConfirmPriceImpactWithoutFee } from '@pancakeswap/widgets-internal'
@@ -37,7 +38,14 @@ import {
 import { eip5792Actions } from 'viem/experimental'
 import { useWalletType } from 'views/Mev/hooks'
 import { WalletType } from 'views/Mev/types'
-import { BridgeOrderWithCommands, getPriceBreakdown, isBridgeOrder, isClassicOrder, isXOrder } from 'views/Swap/utils'
+import {
+  BridgeOrderWithCommands,
+  getPriceBreakdown,
+  isBridgeOrder,
+  isClassicOrder,
+  isSVMOrder,
+  isXOrder,
+} from 'views/Swap/utils'
 import { waitForXOrderReceipt } from 'views/Swap/x/api'
 import { useSendXOrder } from 'views/Swap/x/useSendXOrder'
 import { useAccount, useSendTransaction, useWalletClient } from 'wagmi'
@@ -47,6 +55,8 @@ import { calculateGasMargin } from 'utils'
 import { viemClients } from 'utils/viem'
 import { getBridgeCalldata } from 'views/Swap/Bridge/api'
 import { useBridgeCheckApproval } from 'views/Swap/Bridge/hooks'
+import { VersionedTransaction } from '@solana/web3.js'
+import { UltraSwapError, UltraSwapErrorType, ultraSwapService } from '@pancakeswap/solana-router-sdk'
 
 import { ChainId } from '@pancakeswap/chains'
 import { useUserSlippage } from '@pancakeswap/utils/user'
@@ -143,6 +153,8 @@ const useConfirmActions = (
 ) => {
   const { t } = useTranslation()
   const { chainId } = useActiveChainId()
+  const { signTransaction, wallet: solanaWallet } = useWallet()
+
   const [deadline] = useTransactionDeadline()
   const safeTxHashTransformer = useSafeTxHashTransformer()
   const { revoke, permit, approve, getPermitCalldata, getApproveCalldata } = usePermit2(amountToApprove, spender, {
@@ -749,6 +761,85 @@ const useConfirmActions = (
     }
   }, [t, toastInfo, setConfirmState])
 
+  const solanaSwapStep = useMemo(() => {
+    return {
+      step: ConfirmModalState.PENDING_CONFIRMATION,
+      action: async () => {
+        if (!isSVMOrder(order) || !account || !order.trade) {
+          resetState()
+          return
+        }
+        const publicKey = solanaWallet?.adapter.publicKey
+        if (!signTransaction || !publicKey) {
+          throw new UltraSwapError(
+            'Wallet not connected, or missing wallet functions',
+            UltraSwapErrorType.WALLET_SIGNING_FAILED,
+          )
+        }
+        // Get the transaction from the order data
+        const { transaction, requestId } = order.trade
+        if (!transaction) {
+          showError('No transaction data found for Solana swap')
+          return
+        }
+
+        try {
+          const based64tx = Buffer.from(transaction, 'base64')
+          const versionedTransaction = VersionedTransaction.deserialize(new Uint8Array(based64tx))
+          const signedTransaction = await signTransaction(versionedTransaction)
+          const serializedTransaction = Buffer.from(signedTransaction.serialize()).toString('base64')
+
+          // Submit swap to UltraSwapService
+          const response = await ultraSwapService.submitSwap(serializedTransaction, requestId)
+
+          if (response.status === 'Failed') {
+            showError(response.message || response.error || 'Solana swap failed')
+            return
+          }
+
+          const { signature } = response
+          const txHashHex = `0x${signature}` as Hex
+          setTxHash(txHashHex)
+
+          // Log swap for analytics
+          logSwap({
+            tradeType: TradeType.EXACT_INPUT,
+            account: account ?? '0x',
+            chainId: order.trade.inputAmount.currency.chainId,
+            hash: signature,
+            inputAmount: order.trade.inputAmount.toExact(),
+            outputAmount: order.trade.outputAmount.toExact(),
+            input: order.trade.inputAmount.currency,
+            output: order.trade.outputAmount.currency,
+            type: 'SVM',
+          })
+
+          toastSuccess(
+            t('Success!'),
+            <ToastDescriptionWithTx txHash={txHashHex} txChainId={order.trade.inputAmount.currency.chainId}>
+              {t('Solana swap submitted')}
+            </ToastDescriptionWithTx>,
+          )
+
+          setConfirmState(ConfirmModalState.COMPLETED)
+        } catch (error: any) {
+          console.error('Solana swap error', error)
+          if (error?.message?.includes('rejected')) {
+            showError('Transaction rejected by user')
+          } else if (error?.message?.includes('insufficient')) {
+            showError('Insufficient balance for transaction')
+          } else if (error?.message?.includes('wallet')) {
+            showError('Please connect your Solana wallet first')
+          } else {
+            showError(typeof error === 'string' ? error : error?.message || 'Solana swap failed')
+          }
+        }
+      },
+      showIndicator: false,
+      getCalldata: () => [],
+    }
+  }, [account, order, resetState, showError, toastSuccess, t])
+
   const actions = useMemo(() => {
     return {
       [ConfirmModalState.WRAPPING]: wrapStep,
@@ -757,6 +848,8 @@ const useConfirmActions = (
       [ConfirmModalState.APPROVING_TOKEN]: isBridgeOrder(order) ? approvalBridgeStep : approveStep,
       [ConfirmModalState.PENDING_CONFIRMATION]: isBridgeOrder(order)
         ? swapBridgeStep
+        : isSVMOrder(order)
+        ? solanaSwapStep
         : isClassicOrder(order)
         ? swapStep
         : xSwapStep,
@@ -773,6 +866,7 @@ const useConfirmActions = (
     swapBridgeStep,
     orderSubmittedStep,
     approvalBridgeStep,
+    solanaSwapStep,
   ])
 
   return {

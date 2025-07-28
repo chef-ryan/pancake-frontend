@@ -47,6 +47,7 @@ export interface SolRouterTrade {
   inputAmount: UnifiedCurrencyAmount<SPLToken>
   outputAmount: UnifiedCurrencyAmount<SPLToken>
   routes: RouterPlan[]
+  requestId: string
   otherAmountThreshold: string
   priceImpactPct: string
   slippageBps: number
@@ -60,6 +61,7 @@ export const getBestSolanaTrade = async ({
   outputCurrency,
   tradeType,
   amount,
+  account,
   slippageBps = 50,
 }: BestSolanaTradeParams): Promise<SolRouterTrade> => {
   const inputMint = solToWSol(inputCurrency.address)
@@ -72,6 +74,7 @@ export const getBestSolanaTrade = async ({
     amount: amount.quotient.toString(),
     slippageBps,
     swapType,
+    taker: account,
   }
 
   const response = await ultraSwapService.getQuote(requestBody)
@@ -83,6 +86,7 @@ export const getBestSolanaTrade = async ({
     inputAmount: UnifiedCurrencyAmount.fromRawAmount(inputCurrency, quoteResponse.inAmount),
     outputAmount: UnifiedCurrencyAmount.fromRawAmount(outputCurrency, quoteResponse.outAmount),
     routes: quoteResponse.routePlan,
+    requestId: quoteResponse.requestId,
     otherAmountThreshold: quoteResponse.otherAmountThreshold,
     priceImpactPct: quoteResponse.priceImpactPct,
     slippageBps: quoteResponse.slippageBps,
