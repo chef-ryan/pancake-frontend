@@ -26,16 +26,13 @@ export const explorerAtom = atomWithStorage<{ host: string; name?: string }>(
   supportedExplorers[0],
 )
 
-// Atom to store current explorer info
-export const currentExplorerAtom = atom((get) => {
-  const { host } = get(explorerAtom)
-  const explorer = supportedExplorers.find((e) => e.host === host)
-  return explorer || { host, name: 'Custom', icon: '/images/logo.png' }
-})
-
 // Derived atom to extract just the host
-export const explorerHostAtom = atom(
-  (get) => get(explorerAtom).host,
+export const solanaExplorerAtom = atom(
+  (get) => {
+    const { host } = get(explorerAtom)
+    const explorer = supportedExplorers.find((e) => e.host === host)
+    return explorer || { host, name: 'Custom', icon: '/images/logo.png' }
+  },
   (get, set, newHost: string) => {
     const existingExplorer = supportedExplorers.find((e) => e.host === newHost)
     set(explorerAtom, {

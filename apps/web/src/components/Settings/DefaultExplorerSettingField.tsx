@@ -3,7 +3,7 @@ import { Button, Text, Image, Box, Flex, QuestionHelper } from '@pancakeswap/uik
 import { useTranslation } from '@pancakeswap/localization'
 import styled from 'styled-components'
 import { useAtom } from 'jotai'
-import { explorerHostAtom, supportedExplorers } from '@pancakeswap/utils/user'
+import { solanaExplorerAtom, supportedExplorers } from '@pancakeswap/utils/user'
 
 const ExplorerContainer = styled.div`
   display: flex;
@@ -18,11 +18,7 @@ const FieldContainer = styled.div`
 
 export const DefaultExplorerSettingField: React.FC = () => {
   const { t } = useTranslation()
-  const [currentHost, setCurrentHost] = useAtom(explorerHostAtom)
-
-  const handleSelectExplorer = (host: string) => {
-    setCurrentHost(host)
-  }
+  const [currentExplorer, setCurrentExplorer] = useAtom(solanaExplorerAtom)
 
   return (
     <FieldContainer>
@@ -41,8 +37,8 @@ export const DefaultExplorerSettingField: React.FC = () => {
             }
             key={explorer.name}
             scale="sm"
-            variant={currentHost === explorer.host ? 'primary' : 'tertiary'}
-            onClick={() => handleSelectExplorer(explorer.host)}
+            variant={currentExplorer.host === explorer.host ? 'primary' : 'tertiary'}
+            onClick={() => setCurrentExplorer(explorer.host)}
           >
             {explorer.name}
           </Button>
