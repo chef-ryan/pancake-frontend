@@ -1,7 +1,16 @@
 import { ChainId } from '@pancakeswap/chains'
-import { BridgeOrder, ClassicOrder, OrderType, PriceOrder, XOrder } from '@pancakeswap/price-api-sdk'
-import { Currency, TradeType } from '@pancakeswap/swap-sdk-core'
+import {
+  OrderType,
+  type BridgeOrder,
+  type ClassicOrder,
+  type PriceOrder,
+  type SVMOrder,
+  type XOrder,
+} from '@pancakeswap/price-api-sdk'
+import { UnifiedCurrencyAmount, type Currency, type TradeType } from '@pancakeswap/swap-sdk-core'
 import { CAKE, STABLE_COIN, USDC, USDT } from '@pancakeswap/tokens'
+import { BridgeOrderFee, computeBridgeOrderFee } from './Bridge/utils'
+import { computeTradePriceBreakdown, TradePriceBreakdown } from './V3Swap/utils/exchange'
 
 export const TWAP_SUPPORTED_CHAINS = [ChainId.BSC, ChainId.ARBITRUM_ONE, ChainId.BASE, ChainId.LINEA]
 
@@ -18,6 +27,9 @@ export const isClassicOrder = (order: InterfaceOrder | undefined | null): order 
 export const isBridgeOrder = (order: InterfaceOrder | undefined | null): order is BridgeOrder =>
   order?.type === OrderType.PCS_BRIDGE
 
+export const isSVMOrder = (order: InterfaceOrder | undefined | null): order is SVMOrder =>
+  order?.type === OrderType.PCS_SVM
+
 export type InterfaceOrder<
   input extends Currency = Currency,
   output extends Currency = Currency,
@@ -32,4 +44,24 @@ export type BridgeOrderWithCommands = BridgeOrder & {
 
 export function getDefaultToken(chainId: number): string | undefined {
   return CAKE[chainId]?.address ?? STABLE_COIN[chainId]?.address ?? USDC[chainId]?.address ?? USDT[chainId]?.address
+}
+
+function computeSvmOrderFee(order: SVMOrder): TradePriceBreakdown {
+  return {
+    priceImpactWithoutFee: order.trade.priceImpactPct,
+    // TODO: get lp fee amount
+    lpFeeAmount: UnifiedCurrencyAmount.fromRawAmount(order.trade.inputAmount.currency, 0),
+  }
+}
+
+export function getPriceBreakdown(order?: PriceOrder): TradePriceBreakdown | BridgeOrderFee | BridgeOrderFee[] {
+  if (isSVMOrder(order)) {
+    return computeSvmOrderFee(order)
+  }
+
+  if (isBridgeOrder(order)) {
+    return computeBridgeOrderFee(order)
+  }
+
+  return computeTradePriceBreakdown(isXOrder(order) ? order.ammTrade : order?.trade)
 }

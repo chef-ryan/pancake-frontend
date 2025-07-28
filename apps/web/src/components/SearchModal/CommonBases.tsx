@@ -1,12 +1,13 @@
-import { ChainId } from '@pancakeswap/chains'
-import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Token } from '@pancakeswap/sdk'
-import { AutoColumn, QuestionHelper, Text } from '@pancakeswap/uikit'
-import { CurrencyLogo } from '@pancakeswap/widgets-internal'
-import useNativeCurrency from 'hooks/useNativeCurrency'
+import { SUGGESTED_BASES } from 'config/constants/exchange'
+import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
 import { styled } from 'styled-components'
 
-import { SUGGESTED_BASES } from 'config/constants/exchange'
+import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
+import { useTranslation } from '@pancakeswap/localization'
+import { UnifiedCurrency, UnifiedToken } from '@pancakeswap/sdk'
+import { AutoColumn, QuestionHelper, Text } from '@pancakeswap/uikit'
+import { CurrencyLogo } from '@pancakeswap/widgets-internal'
+
 import { AutoRow } from '../Layout/Row'
 import { CommonBasesType } from './types'
 
@@ -52,13 +53,13 @@ export default function CommonBases({
   commonBasesType,
   supportCrossChain,
 }: {
-  chainId?: ChainId
-  commonBasesType
-  selectedCurrency?: Currency | null
-  onSelect: (currency: Currency) => void
+  chainId?: ChainId | NonEVMChainId
+  commonBasesType?: CommonBasesType
+  selectedCurrency?: UnifiedCurrency | null
+  onSelect: (currency: UnifiedCurrency) => void
   supportCrossChain?: boolean
 }) {
-  const native = useNativeCurrency(chainId)
+  const native = useUnifiedNativeCurrency(chainId)
   const { t } = useTranslation()
   const pinTokenDescText = commonBasesType === CommonBasesType.SWAP_LIMITORDER ? t('Popular tokens') : t('Common bases')
 
@@ -97,8 +98,8 @@ export default function CommonBases({
             </Text>
           </BaseWrapper>
         </ButtonWrapper>
-        {(chainId ? SUGGESTED_BASES[chainId] || [] : []).map((token: Token) => {
-          const selected = selectedCurrency?.equals(token)
+        {(chainId ? SUGGESTED_BASES[chainId] || [] : []).map((token: UnifiedToken) => {
+          const selected = selectedCurrency?.equals?.(token)
           return (
             <ButtonWrapper key={`buttonBase#${token.address}`}>
               <BaseWrapper onClick={() => !selected && onSelect(token)} disable={selected}>

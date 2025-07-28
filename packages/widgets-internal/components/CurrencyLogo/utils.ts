@@ -56,7 +56,7 @@ export const chainName: { [key: number]: string } = {
 export const getTokenListBaseURL = (chainId: number) =>
   `https://tokens.pancakeswap.finance/images/${chainName[chainId]}`;
 
-export const getTokenListTokenUrl = (token: Pick<Token, "chainId" | "address">) =>
+export const getTokenListTokenUrl = (token: Pick<Token, "chainId"> & { address: string }) =>
   Object.keys(chainName).includes(String(token.chainId))
     ? `https://tokens.pancakeswap.finance/images/${
         token.chainId === ChainId.BSC ? "" : `${chainName[token.chainId]}/`
@@ -105,7 +105,10 @@ export const getCurrencyLogoUrls = memoize(
 );
 
 export const getCurrencyLogoUrlsByInfo = memoize(
-  (currency: CurrencyInfo | undefined, { useTrustWallet = true }: GetLogoUrlsOptions = {}): string[] => {
+  (
+    currency: (Omit<CurrencyInfo, "address"> & { address?: string }) | undefined,
+    { useTrustWallet = true }: GetLogoUrlsOptions = {}
+  ): string[] => {
     if (!currency) {
       return [];
     }

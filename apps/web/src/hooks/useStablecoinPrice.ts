@@ -1,5 +1,5 @@
 import { ChainId } from '@pancakeswap/chains'
-import { Currency, ERC20Token, getCurrencyAddress, Price } from '@pancakeswap/sdk'
+import { Currency, ERC20Token, getCurrencyAddress, Native, Price, Token, UnifiedCurrency } from '@pancakeswap/sdk'
 import { STABLE_COIN } from '@pancakeswap/tokens'
 import { getFullDecimalMultiplier } from '@pancakeswap/utils/getFullDecimalMultiplier'
 import isUndefinedOrNull from '@pancakeswap/utils/isUndefinedOrNull'
@@ -97,6 +97,27 @@ export const useStablecoinPriceAmount = (
   config?: UseStablecoinPriceConfig,
 ): number | undefined => {
   const stablePrice = useStablecoinPrice(currency, { enabled: Boolean(currency && amount), ...config })
+
+  return useMemo(() => {
+    if (amount) {
+      if (stablePrice) {
+        return multiplyPriceByAmount(stablePrice, amount)
+      }
+    }
+    return undefined
+  }, [amount, stablePrice])
+}
+
+export const useUnifiedUSDPriceAmount = (
+  currency?: UnifiedCurrency,
+  amount?: number,
+  config?: UseStablecoinPriceConfig,
+): number | undefined => {
+  const stablePrice = useStablecoinPrice(
+    currency instanceof Token || currency instanceof Native ? currency : undefined,
+    { enabled: Boolean(currency && amount), ...config },
+  )
+  // todo:@eric integrate solana usd price
 
   return useMemo(() => {
     if (amount) {

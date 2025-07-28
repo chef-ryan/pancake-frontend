@@ -1,6 +1,5 @@
 import invariant from 'tiny-invariant'
 import { BaseCurrency } from './baseCurrency'
-import { Currency } from './currency'
 
 export interface SerializedToken {
   chainId: number
@@ -14,7 +13,7 @@ export interface SerializedToken {
 /**
  * Represents an ERC20 token with a unique address and some metadata.
  */
-export class Token extends BaseCurrency {
+export class Token extends BaseCurrency<Token> {
   public readonly isNative: false = false as const
 
   public readonly isToken: true = true as const
@@ -43,8 +42,8 @@ export class Token extends BaseCurrency {
    * Returns true if the two tokens are equivalent, i.e. have the same chainId and address.
    * @param other other token to compare
    */
-  public equals(other: Currency): boolean {
-    return other.isToken && this.chainId === other.chainId && this.address === other.address
+  public equals(other: BaseCurrency): boolean {
+    return other.isToken && this.chainId === other.chainId && this.address === (other as Token).address
   }
 
   /**

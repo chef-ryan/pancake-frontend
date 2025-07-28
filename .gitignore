@@ -58,4 +58,6 @@ scripts/dev/**
 
 # typescript
 *.tsbuildinfo
-apps/web/.env
+
+# cursor
+.cursor/rules/**

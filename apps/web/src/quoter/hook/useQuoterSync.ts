@@ -1,7 +1,7 @@
 import { useDebounce } from '@orbs-network/twap-ui/dist/hooks'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
-import { useCurrency } from 'hooks/Tokens'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { useInputBasedAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { activeQuoteHashAtom } from 'quoter/atom/abortControlAtoms'
@@ -29,13 +29,14 @@ export const useQuoterSync = () => {
     [Field.OUTPUT]: { currencyId: outputCurrencyId, chainId: outputCurrencyChainId },
   } = debouncedSwapState
   const { address } = useAccount()
-  const inputCurrency = useCurrency(inputCurrencyId, inputCurrencyChainId)
-  const outputCurrency = useCurrency(outputCurrencyId, outputCurrencyChainId)
+  const inputCurrency = useUnifiedCurrency(inputCurrencyId, inputCurrencyChainId)
+  const outputCurrency = useUnifiedCurrency(outputCurrencyId, outputCurrencyChainId)
   const isExactIn = independentField === Field.INPUT
   const independentCurrency = isExactIn ? inputCurrency : outputCurrency
   const dependentCurrency = isExactIn ? outputCurrency : inputCurrency
   const tradeType = isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT
   const amount = tryParseAmount(typedValue, independentCurrency ?? undefined)
+
   const {
     singleHopOnly,
     split,

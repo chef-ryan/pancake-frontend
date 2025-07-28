@@ -1,5 +1,5 @@
-import { Currency, CurrencyAmount } from '@pancakeswap/sdk'
-import { BIG_INT_ZERO, MIN_BNB } from 'config/constants/exchange'
+import { Currency, CurrencyAmount, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
+import { BIG_INT_ZERO, MIN_BNB, MIN_SOL_RESERVER } from 'config/constants/exchange'
 
 type NullableCurrencyAmount = CurrencyAmount<Currency> | undefined
 
@@ -16,4 +16,20 @@ export function maxAmountSpend<T extends NullableCurrencyAmount>(currencyAmount?
     return CurrencyAmount.fromRawAmount(currencyAmount.currency, BIG_INT_ZERO) as T
   }
   return currencyAmount
+}
+
+export function maxUnifiedAmountSpend<T extends NullableCurrencyAmount | UnifiedCurrencyAmount<UnifiedCurrency>>(
+  currencyAmount?: T,
+): T {
+  if (!currencyAmount) return undefined as T
+  if (!currencyAmount.currency?.isNative) {
+    return currencyAmount
+  }
+  if (currencyAmount.currency.symbol.toLowerCase() === 'sol' && currencyAmount.quotient > MIN_SOL_RESERVER) {
+    return UnifiedCurrencyAmount.fromRawAmount(currencyAmount.currency, currencyAmount.quotient - MIN_SOL_RESERVER) as T
+  }
+  if (currencyAmount.quotient > MIN_BNB) {
+    return UnifiedCurrencyAmount.fromRawAmount(currencyAmount.currency, currencyAmount.quotient - MIN_BNB) as T
+  }
+  return UnifiedCurrencyAmount.fromRawAmount(currencyAmount.currency, BIG_INT_ZERO) as T
 }

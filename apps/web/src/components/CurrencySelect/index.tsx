@@ -15,6 +15,7 @@ import CurrencySearchModal, { CurrencySearchModalProps } from 'components/Search
 import { useStablecoinPrice } from 'hooks/useStablecoinPrice'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useAccount } from 'wagmi'
+import { Currency } from '@pancakeswap/swap-sdk-core'
 import { AutoRow, RowBetween } from '../Layout/Row'
 import { CurrencyLogo } from '../Logo'
 
@@ -51,7 +52,7 @@ export const CurrencySelect = ({
   )
 
   const price = useStablecoinPrice(
-    selectedCurrencyBalance && selectedCurrency ? selectedCurrency : undefined,
+    selectedCurrencyBalance && selectedCurrency ? (selectedCurrency as Currency) : undefined,
     undefined,
   )
   const quoted = selectedCurrencyBalance && price?.quote(selectedCurrencyBalance)

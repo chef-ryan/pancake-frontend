@@ -27,7 +27,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@solana/web3.js": "^1.98.2",
+    "@solana/web3.js": "catalog:",
     "openapi-fetch": "^0.14.0"
   },
   "devDependencies": {

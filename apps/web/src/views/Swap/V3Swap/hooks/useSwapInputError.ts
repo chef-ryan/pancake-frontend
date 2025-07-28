@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount } from '@pancakeswap/sdk'
+import { UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 
 import { Field } from 'state/swap/actions'
@@ -9,11 +9,10 @@ import { isAddressEqual, safeGetAddress } from 'utils'
 import { ClassicOrder, PriceOrder } from '@pancakeswap/price-api-sdk'
 import { isClassicOrder } from 'views/Swap/utils'
 import { useAccount } from 'wagmi'
-import { useSlippageAdjustedAmounts } from './useSlippageAdjustedAmounts'
 
 interface Balances {
-  [Field.INPUT]?: CurrencyAmount<Currency>
-  [Field.OUTPUT]?: CurrencyAmount<Currency>
+  [Field.INPUT]?: UnifiedCurrencyAmount<UnifiedCurrency>
+  [Field.OUTPUT]?: UnifiedCurrencyAmount<UnifiedCurrency>
 }
 
 /**
@@ -41,12 +40,12 @@ export function useSwapInputError(order: PriceOrder | undefined, currencyBalance
   const { independentField, typedValue } = useSwapState()
   const inputCurrency = currencyBalances[Field.INPUT]?.currency
   const outputCurrency = currencyBalances[Field.OUTPUT]?.currency
-  const slippageAdjustedAmounts = useSlippageAdjustedAmounts(order)
 
   const to: string | null = account || null
 
   const isExactIn: boolean = independentField === Field.INPUT
   const independentCurrency = isExactIn ? inputCurrency : outputCurrency
+
   const parsedAmount = tryParseAmount(typedValue, independentCurrency ?? undefined)
 
   let inputError: string | undefined

@@ -59,7 +59,7 @@ export const useAddressBalance = (address?: string, options: UseAddressBalanceOp
   }, [address])
 
   const {
-    data: balances = [],
+    data: balances,
     isLoading,
     error,
     refetch,
@@ -73,34 +73,38 @@ export const useAddressBalance = (address?: string, options: UseAddressBalanceOp
 
   // Filter balances based on options
   const filteredBalances = useMemo(() => {
-    return balances.filter((balance) => {
-      // Filter out spam tokens if includeSpam is false
-      if (!includeSpam && balance.token.isSpam) {
-        return false
-      }
+    return balances
+      ? balances.filter((balance) => {
+          // Filter out spam tokens if includeSpam is false
+          if (!includeSpam && balance.token.isSpam) {
+            return false
+          }
 
-      // Filter by chain ID if specified
-      if (filterByChainId !== undefined && balance.chainId !== filterByChainId) {
-        return false
-      }
+          // Filter by chain ID if specified
+          if (filterByChainId !== undefined && balance.chainId !== filterByChainId) {
+            return false
+          }
 
-      // Filter out tokens without price data if onlyWithPrice is true
-      if (onlyWithPrice && !balance.price?.usd) {
-        return false
-      }
+          // Filter out tokens without price data if onlyWithPrice is true
+          if (onlyWithPrice && !balance.price?.usd) {
+            return false
+          }
 
-      return true
-    })
+          return true
+        })
+      : []
   }, [balances, includeSpam, filterByChainId, onlyWithPrice])
 
   // Calculate total balance in USD for all tokens
   const totalBalanceUsd = useMemo(() => {
-    return balances.reduce((sum, item) => {
-      if (item.price?.totalUsd) {
-        return sum + item.price.totalUsd
-      }
-      return sum
-    }, 0)
+    return balances
+      ? balances.reduce((sum, item) => {
+          if (item.price?.totalUsd) {
+            return sum + item.price.totalUsd
+          }
+          return sum
+        }, 0)
+      : 0
   }, [balances])
 
   // Calculate total balance in USD for filtered tokens

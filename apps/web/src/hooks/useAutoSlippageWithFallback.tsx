@@ -1,4 +1,5 @@
-import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { OrderType } from '@pancakeswap/price-api-sdk'
+import { Currency, CurrencyAmount, SPLToken, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { useUserSlippage } from '@pancakeswap/utils/user'
 import { atom, useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
@@ -50,10 +51,15 @@ export function useAutoSlippageWithFallback(): {
   }, [isAutoSlippageEnabled, autoSlippageTolerance, userSlippageTolerance])
 }
 
-export const useInputBasedAutoSlippageWithFallback = (inputAmount?: CurrencyAmount<Currency>) => {
+export const useInputBasedAutoSlippageWithFallback = (inputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>) => {
   const [isAutoSlippageEnabled] = useAutoSlippageEnabled()
   const [userSlippageTolerance] = useUserSlippage()
-  const { inputBasedSlippage } = useInputBasedAutoSlippage(inputAmount)
+
+  const isSPLToken = inputAmount?.currency && SPLToken.isSPLToken(inputAmount.currency)
+
+  const { inputBasedSlippage } = useInputBasedAutoSlippage(
+    isSPLToken ? undefined : (inputAmount as CurrencyAmount<Currency>),
+  )
 
   return useMemo(() => {
     if (isAutoSlippageEnabled && inputAmount && inputBasedSlippage) {
@@ -99,7 +105,9 @@ export const Sync = () => {
     )
   }, [result?.bestOrder])
 
-  const autoSlippage = useClassicAutoSlippageTolerance(result?.bestOrder?.trade)
+  const autoSlippage = useClassicAutoSlippageTolerance(
+    result?.bestOrder?.type === OrderType.PCS_SVM ? undefined : result?.bestOrder?.trade,
+  )
   const [, setAutoSlippageValue] = useAutoSlippageAtom()
   const updateAutoSlippage = useCallback(() => {
     if (autoSlippage) {

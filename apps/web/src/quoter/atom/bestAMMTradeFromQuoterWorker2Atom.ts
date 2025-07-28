@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 import { OrderType } from '@pancakeswap/price-api-sdk'
 import { BATCH_MULTICALL_CONFIGS, InfinityRouter, SmartRouter } from '@pancakeswap/smart-router'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
@@ -8,7 +8,9 @@ import { globalWorkerAtom } from 'hooks/useWorker'
 import { atomFamily } from 'jotai/utils'
 import { createViemPublicClientGetter } from 'utils/viem'
 
+import { getBestSolanaTrade } from '@pancakeswap/solana-router-sdk'
 import { withTimeout } from '@pancakeswap/utils/withTimeout'
+import { accountActiveChainAtom } from 'hooks/useAccountActiveChain'
 import { QUOTE_TIMEOUT } from 'quoter/consts'
 import { quoteTraceAtom } from 'quoter/perf/quoteTracker'
 import { createPoolQuery } from 'quoter/utils/createQuoteQuery'
@@ -27,6 +29,7 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery)
     if (!amount || !amount.currency || !currency) {
       return undefined
     }
+    const { account } = get(accountActiveChainAtom)
     const perf = get(quoteTraceAtom(option))
     const quoteProvider = createQuoteProvider2({
       gasLimit,
@@ -36,6 +39,38 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery)
       throw new Error('Quote worker not initialized')
     }
     const controller = new AbortController()
+
+    // todo:@Philip here just a mock example
+    const isSolanaChain = currency.chainId === NonEVMChainId.SOLANA
+
+    if (isSolanaChain) {
+      const query = withTimeout(
+        async () => {
+          const result = await getBestSolanaTrade({
+            inputCurrency: amount.currency as any,
+            outputCurrency: currency as any,
+            tradeType: tradeType || TradeType.EXACT_INPUT,
+            amount: amount as any,
+            slippageBps: 50, // Default 0.5% slippage
+            account,
+          })
+
+          return result
+        },
+        {
+          ms: QUOTE_TIMEOUT,
+          abort: () => {
+            controller?.abort()
+          },
+        },
+      )
+
+      try {
+        return await query()
+      } catch (_e) {
+        controller?.abort()
+      }
+    }
 
     const query = withTimeout(
       async () => {

@@ -54,7 +54,8 @@ export function CurrencyLogo({
   ...props
 }: {
   crossOrigin?: "anonymous" | "use-credentials";
-  currency?: CurrencyInfo & {
+  currency?: Omit<CurrencyInfo, "address"> & {
+    address?: string;
     logoURI?: string | undefined;
   };
   size?: string;

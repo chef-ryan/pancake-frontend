@@ -37,7 +37,7 @@ import {
 import { eip5792Actions } from 'viem/experimental'
 import { useWalletType } from 'views/Mev/hooks'
 import { WalletType } from 'views/Mev/types'
-import { BridgeOrderWithCommands, isBridgeOrder, isClassicOrder, isXOrder } from 'views/Swap/utils'
+import { BridgeOrderWithCommands, getPriceBreakdown, isBridgeOrder, isClassicOrder, isXOrder } from 'views/Swap/utils'
 import { waitForXOrderReceipt } from 'views/Swap/x/api'
 import { useSendXOrder } from 'views/Swap/x/useSendXOrder'
 import { useAccount, useSendTransaction, useWalletClient } from 'wagmi'
@@ -53,8 +53,7 @@ import { useUserSlippage } from '@pancakeswap/utils/user'
 import { useSwapState } from 'state/swap/hooks'
 import { activeBridgeOrderMetadataAtom } from 'views/Swap/Bridge/CrossChainConfirmSwapModal/state/orderDataState'
 import { Permit2Schema } from 'views/Swap/Bridge/types'
-import { computeBridgeOrderFee, getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
-import { computeTradePriceBreakdown } from '../utils/exchange'
+import { getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import { BatchCall, getBatchedTransaction as getBatchedTransactionHelper } from './batchHelper'
 import { eip5792UserRejectUpgradeError, userRejectedError } from './useSendSwapTransaction'
 import { useSwapCallback } from './useSwapCallback'
@@ -799,13 +798,7 @@ export const useConfirmModalState = (
     useConfirmActions(order, amountToApprove, spender)
   const preConfirmState = usePreviousValue(confirmState)
   const [confirmSteps, setConfirmSteps] = useState<ConfirmModalState[]>()
-  const tradePriceBreakdown = useMemo(
-    () =>
-      isBridgeOrder(order)
-        ? computeBridgeOrderFee(order)
-        : computeTradePriceBreakdown(isXOrder(order) ? undefined : order?.trade),
-    [order],
-  )
+  const tradePriceBreakdown = useMemo(() => getPriceBreakdown(order), [order])
   const { walletType } = useWalletType()
   const { chainId } = useActiveChainId()
   const { data: walletClient } = useWalletClient({ chainId })

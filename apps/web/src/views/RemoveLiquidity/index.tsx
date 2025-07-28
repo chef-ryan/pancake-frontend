@@ -1,6 +1,6 @@
 import { useDebouncedChangeHandler } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Percent, WNATIVE } from '@pancakeswap/sdk'
+import { Percent, UnifiedCurrency, WNATIVE } from '@pancakeswap/sdk'
 import {
   AddIcon,
   ArrowDownIcon,
@@ -414,7 +414,7 @@ export default function RemoveLiquidity({ currencyA, currencyB, currencyIdA, cur
   )
 
   const handleSelectCurrencyA = useCallback(
-    (currency: Currency) => {
+    (currency: UnifiedCurrency) => {
       if (currencyIdB && currencyId(currency) === currencyIdB) {
         router.replace(`/v2/remove/${currencyId(currency)}/${currencyIdA}`, undefined, { shallow: true })
       } else {
@@ -424,7 +424,7 @@ export default function RemoveLiquidity({ currencyA, currencyB, currencyIdA, cur
     [currencyIdA, currencyIdB, router],
   )
   const handleSelectCurrencyB = useCallback(
-    (currency: Currency) => {
+    (currency: UnifiedCurrency) => {
       if (currencyIdA && currencyId(currency) === currencyIdA) {
         router.replace(`/v2/remove/${currencyIdB}/${currencyId(currency)}`, undefined, { shallow: true })
       } else {

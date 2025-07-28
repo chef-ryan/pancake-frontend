@@ -1,4 +1,4 @@
-import { Currency } from '@pancakeswap/sdk'
+import { UnifiedCurrency } from '@pancakeswap/sdk'
 import { CAKE, USDC } from '@pancakeswap/tokens'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import useNativeCurrency from 'hooks/useNativeCurrency'
@@ -14,7 +14,7 @@ export const useCurrencySelectRoute = () => {
     router.query.currency || (chainId ? [native.symbol, CAKE[chainId]?.address ?? USDC[chainId]?.address] : [])
 
   const handleCurrencyASelect = useCallback(
-    (currencyA_: Currency) => {
+    (currencyA_: UnifiedCurrency) => {
       const newCurrencyIdA = currencyId(currencyA_)
       if (newCurrencyIdA === currencyIdB) {
         router.replace(`/add/${currencyIdB}/${currencyIdA}`, undefined, { shallow: true })
@@ -27,7 +27,7 @@ export const useCurrencySelectRoute = () => {
     [currencyIdB, router, currencyIdA],
   )
   const handleCurrencyBSelect = useCallback(
-    (currencyB_: Currency) => {
+    (currencyB_: UnifiedCurrency) => {
       const newCurrencyIdB = currencyId(currencyB_)
       if (currencyIdA === newCurrencyIdB) {
         if (currencyIdB) {

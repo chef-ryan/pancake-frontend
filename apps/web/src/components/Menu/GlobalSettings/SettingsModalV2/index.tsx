@@ -15,9 +15,12 @@ import {
   useModalV2,
 } from '@pancakeswap/uikit'
 import { useExpertMode, useUserExpertModeAcknowledgement } from '@pancakeswap/utils/user'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 
 import { ReactNode, useCallback, useId, useState } from 'react'
 import { useRoutingSettingChanged } from 'state/user/smartRouter'
+import { NonEVMChainId } from '@pancakeswap/chains'
+import { SettingsMenu } from 'components/Settings/SettingsMenu'
 import SettingsModal from '../SettingsModal'
 import { SettingsMode } from '../types'
 import { CustomizeRoutingTab } from './CustomizeRoutingTab'
@@ -54,6 +57,7 @@ export const SettingsModalV2 = ({
 }: SettingsModalV2Props) => {
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
+  const { chainId } = useAccountActiveChain()
 
   const [showExpertModeAcknowledgement, setShowExpertModeAcknowledgement] = useUserExpertModeAcknowledgement()
   const [expertMode, setExpertMode] = useExpertMode()
@@ -110,7 +114,9 @@ export const SettingsModalV2 = ({
   const renderTab = useCallback(() => {
     switch (activeTabIndex) {
       case SettingsTabIndex.SETTINGS: {
-        return (
+        return chainId === NonEVMChainId.SOLANA ? (
+          <SettingsMenu />
+        ) : (
           <SettingsTab
             key="settings_tab"
             onCustomizeRoutingClick={() => setActiveTabIndex(SettingsTabIndex.CUSTOMIZE_ROUTING)}
@@ -143,6 +149,7 @@ export const SettingsModalV2 = ({
         return null
     }
   }, [
+    chainId,
     ariaId,
     expertMode,
     activeTabIndex,

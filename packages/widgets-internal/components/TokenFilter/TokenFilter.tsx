@@ -1,6 +1,6 @@
 import { ChainId, getChainName as defaultGetChainName } from "@pancakeswap/chains";
 import { useTheme } from "@pancakeswap/hooks";
-import { Currency, ERC20Token } from "@pancakeswap/sdk";
+import { Currency, ERC20Token, UnifiedCurrency } from "@pancakeswap/sdk";
 import { getTokenByAddress } from "@pancakeswap/tokens";
 import { Column, IMultiSelectChangeEvent, IMultiSelectProps, ISelectItem, MultiSelect } from "@pancakeswap/uikit";
 import { useCallback, useMemo } from "react";
@@ -71,7 +71,7 @@ const ItemName = styled.span`
   font-weight: 400;
 `;
 
-export const getCurrencyAddress = <T extends Currency | undefined>(
+export const getCurrencyAddress = <T extends UnifiedCurrency | undefined>(
   currency?: T
 ): T extends Currency ? Address : undefined => {
   return currency
