@@ -78,7 +78,8 @@ const UserMenu = () => {
   const { address: privyAddress, isLoading: isPrivyAddressLoading, addressType } = usePrivyWalletAddress()
 
   // Determine which address to use: if Privy login use privyAddress, otherwise use account
-  const finalAddress = ready && authenticated && user ? privyAddress : evmAccount
+  const finalAddress =
+    ready && authenticated && user ? privyAddress : chainId === NonEVMChainId.SOLANA ? solanaAccount : evmAccount
   const shouldShowLoading = ready && authenticated && user ? isPrivyAddressLoading : false
   const currentAccount = chainId === NonEVMChainId.SOLANA ? solanaAccount ?? undefined : evmAccount
   const { domainName, avatar } = useDomainNameForAddress(chainId === NonEVMChainId.SOLANA ? undefined : currentAccount)
