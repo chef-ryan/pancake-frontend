@@ -1,4 +1,4 @@
-import { Chain, ChainId, Chains, isTestnetChainId, NonEVMChainId } from '@pancakeswap/chains'
+import { Chain, ChainId, Chains, isTestnetChainId, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import {
   ArrowDownIcon,
@@ -43,7 +43,7 @@ interface NetworkSelectProps {
   onDismiss: () => void
 }
 
-function getSortedChains(chainId: ChainId | NonEVMChainId, showTestnet: boolean): Chain[] {
+function getSortedChains(chainId: UnifiedChainId, showTestnet: boolean): Chain[] {
   return Chains.filter((chain) => {
     if (chain.isEVM) {
       if (chain.id === chainId) return true

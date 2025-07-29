@@ -1,11 +1,12 @@
-import { ChainId, NonEVMChainId } from './chainId'
+import { ChainId, NonEVMChainId, UnifiedChainId } from './chainId'
 import { chainNames, chainFullNames } from './chainNames'
 
 export interface Chain {
-  id: ChainId | NonEVMChainId
+  id: UnifiedChainId
   name: string
   fullName: string
   isEVM: boolean
+  testnet?: boolean
 }
 
 export const Chains: Chain[] = [
@@ -26,12 +27,6 @@ export const Chains: Chain[] = [
   },
   { id: ChainId.ZKSYNC, name: chainNames[ChainId.ZKSYNC], fullName: chainFullNames[ChainId.ZKSYNC], isEVM: true },
   { id: ChainId.LINEA, name: chainNames[ChainId.LINEA], fullName: chainFullNames[ChainId.LINEA], isEVM: true },
-  {
-    id: NonEVMChainId.APTOS,
-    name: chainNames[NonEVMChainId.APTOS],
-    fullName: chainFullNames[NonEVMChainId.APTOS],
-    isEVM: false,
-  },
   { id: ChainId.OPBNB, name: chainNames[ChainId.OPBNB], fullName: chainFullNames[ChainId.OPBNB], isEVM: true },
   {
     id: ChainId.POLYGON_ZKEVM,
@@ -44,6 +39,7 @@ export const Chains: Chain[] = [
     name: chainNames[ChainId.BSC_TESTNET],
     fullName: chainFullNames[ChainId.BSC_TESTNET],
     isEVM: true,
+    testnet: true,
   },
   { id: ChainId.GOERLI, name: chainNames[ChainId.GOERLI], fullName: chainFullNames[ChainId.GOERLI], isEVM: true },
   { id: ChainId.SEPOLIA, name: chainNames[ChainId.SEPOLIA], fullName: chainFullNames[ChainId.SEPOLIA], isEVM: true },
@@ -52,6 +48,7 @@ export const Chains: Chain[] = [
     name: chainNames[ChainId.POLYGON_ZKEVM_TESTNET],
     fullName: chainFullNames[ChainId.POLYGON_ZKEVM_TESTNET],
     isEVM: true,
+    testnet: true,
   },
   {
     id: ChainId.ARBITRUM_GOERLI,
@@ -70,12 +67,14 @@ export const Chains: Chain[] = [
     name: chainNames[ChainId.LINEA_TESTNET],
     fullName: chainFullNames[ChainId.LINEA_TESTNET],
     isEVM: true,
+    testnet: true,
   },
   {
     id: ChainId.BASE_TESTNET,
     name: chainNames[ChainId.BASE_TESTNET],
     fullName: chainFullNames[ChainId.BASE_TESTNET],
     isEVM: true,
+    testnet: true,
   },
   {
     id: ChainId.BASE_SEPOLIA,
@@ -88,6 +87,7 @@ export const Chains: Chain[] = [
     name: chainNames[ChainId.OPBNB_TESTNET],
     fullName: chainFullNames[ChainId.OPBNB_TESTNET],
     isEVM: true,
+    testnet: true,
   },
   {
     id: ChainId.SCROLL_SEPOLIA,
@@ -100,5 +100,6 @@ export const Chains: Chain[] = [
     name: chainNames[ChainId.MONAD_TESTNET],
     fullName: chainFullNames[ChainId.MONAD_TESTNET],
     isEVM: true,
+    testnet: true,
   },
 ]

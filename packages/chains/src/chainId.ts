@@ -23,11 +23,11 @@ export enum ChainId {
 }
 
 export enum NonEVMChainId {
-  // SOLANA = 8000001001,
-  // todo:@eric
-  SOLANA = 1000001,
+  SOLANA = 8000001001,
   APTOS = 8000002000,
 }
+
+export type UnifiedChainId = ChainId | NonEVMChainId
 
 export const testnetChainIds = [
   ChainId.GOERLI,

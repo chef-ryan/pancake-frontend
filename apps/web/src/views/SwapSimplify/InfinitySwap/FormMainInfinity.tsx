@@ -1,6 +1,6 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId as EvmChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Percent, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
+import { Currency, Percent, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { Skeleton, Text } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import replaceBrowserHistoryMultiple from '@pancakeswap/utils/replaceBrowserHistoryMultiple'
@@ -72,7 +72,7 @@ export const handleCurrencySelectFn = async ({
   const isInput = field === Field.INPUT
 
   if (isInput && canSwitch && newCurrency.chainId !== inputChainId) {
-    if (newCurrency.chainId in ChainId) {
+    if (newCurrency.chainId in EvmChainId) {
       const result = await switchNetworkAsync(newCurrency.chainId, true)
       if (result === 'error') return
     }

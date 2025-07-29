@@ -13,7 +13,7 @@ import { getTokenAddressFromSymbolAlias } from 'utils/getTokenAlias'
 import { isAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { NonEVMChainId } from '@pancakeswap/chains'
+import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useDebounce, useSortedTokensByQuery } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 /* eslint-disable no-restricted-syntax */
@@ -60,8 +60,8 @@ interface CurrencySearchProps {
   showSearchHeader?: boolean
   headerTitle?: React.ReactNode
   onDismiss?: () => void
-  setSelectedChainId: (chainId: ChainId | NonEVMChainId) => void
-  selectedChainId?: ChainId | NonEVMChainId
+  setSelectedChainId: (chainId: UnifiedChainId) => void
+  selectedChainId?: UnifiedChainId
   mode?: string
   supportCrossChain?: boolean
   onSettingsClick?: () => void
@@ -289,8 +289,7 @@ function CurrencySearch({
           showImportView={showImportView}
           setImportToken={setImportToken}
           showChainLogo={showChainLogo}
-          // todo:@eric
-          chainId={selectedChainId as ChainId}
+          chainId={selectedChainId}
         />
       </Box>
     ) : (
@@ -362,8 +361,7 @@ function CurrencySearch({
         )}
         {supportCrossChain ? (
           <SwapNetworkSelection
-            // todo:@eric
-            chainId={selectedChainId as ChainId}
+            chainId={selectedChainId}
             onSelect={(currentChainId) => setSelectedChainId(currentChainId)}
             isDependent={mode === 'swap-currency-output'}
           />

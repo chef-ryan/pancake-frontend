@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import { Address } from 'viem'
 
 import { Campaign, CampaignType, TranslatableText } from '@pancakeswap/achievements'
-import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
+import { UnifiedChainId } from '@pancakeswap/chains'
 import type { FarmConfigBaseProps, SerializedFarmConfig, SerializedFarmPublicData } from '@pancakeswap/farms'
 import { LegacyTradeWithStableSwap as TradeWithStableSwap } from '@pancakeswap/smart-router/legacy-router'
 import type { Currency, CurrencyAmount, Percent, Price, Token, UnifiedToken } from '@pancakeswap/swap-sdk-core'
@@ -11,7 +11,7 @@ import type { Trade } from '@pancakeswap/v2-sdk'
 
 // a list of tokens by chain
 export type ChainMap<T> = {
-  readonly [chainId in ChainId | NonEVMChainId]: T
+  readonly [chainId in UnifiedChainId]: T
 }
 
 export type ChainTokenList = ChainMap<UnifiedToken[]>

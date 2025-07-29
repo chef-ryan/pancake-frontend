@@ -13,8 +13,8 @@ import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 import { useCallback, useEffect, useState } from 'react'
 import { ChartPeriod, chainIdToExplorerInfoChainName, explorerApiClient } from 'state/info/api/client'
-import { isAddressEqual, safeGetAddress } from 'utils'
-import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
+import { isAddressEqual, safeGetAddress, safeGetSolanaAddress, safeGetUnifiedAddress } from 'utils'
+import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useBridgeAvailableRoutes } from 'views/Swap/Bridge/hooks'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { Field, replaceSwapState } from './actions'
@@ -63,7 +63,7 @@ function validatedRecipient(recipient: any): string | null {
   return null
 }
 
-function getNativeCurrency(chainId?: ChainId | NonEVMChainId) {
+function getNativeCurrency(chainId?: UnifiedChainId) {
   if (!chainId) {
     return undefined
   }
@@ -89,13 +89,15 @@ export function queryParametersToSwapState(
 
   // Parse currencies
   let inputCurrency =
-    safeGetAddress(parsedQs.inputCurrency) ||
+    safeGetUnifiedAddress(inputChainId, parsedQs.inputCurrency) ||
     getNativeCurrency(inputChainId)?.symbol ||
     nativeSymbol ||
     DEFAULT_INPUT_CURRENCY
   let outputCurrency =
     typeof parsedQs.outputCurrency === 'string'
-      ? safeGetAddress(parsedQs.outputCurrency) || getNativeCurrency(outputChainId)?.symbol || nativeSymbol
+      ? safeGetUnifiedAddress(outputChainId, parsedQs.outputCurrency) ||
+        getNativeCurrency(outputChainId)?.symbol ||
+        nativeSymbol
       : defaultOutputCurrency
   if (inputCurrency === outputCurrency && inputChainId === outputChainId) {
     if (typeof parsedQs.outputCurrency === 'string') {

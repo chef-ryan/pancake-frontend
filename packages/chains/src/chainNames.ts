@@ -1,6 +1,6 @@
-import { ChainId, NonEVMChainId } from './chainId'
+import { ChainId, NonEVMChainId, UnifiedChainId } from './chainId'
 
-export const chainNames: Record<ChainId | NonEVMChainId, string> = {
+export const chainNames: Record<UnifiedChainId, string> = {
   [ChainId.ETHEREUM]: 'eth',
   [ChainId.GOERLI]: 'goerli',
   [ChainId.BSC]: 'bsc',
@@ -26,7 +26,7 @@ export const chainNames: Record<ChainId | NonEVMChainId, string> = {
   [NonEVMChainId.APTOS]: 'aptos',
 }
 
-export const chainFullNames: Record<ChainId | NonEVMChainId, string> = {
+export const chainFullNames: Record<UnifiedChainId, string> = {
   [ChainId.ETHEREUM]: 'Ethereum',
   [ChainId.GOERLI]: 'Goerli',
   [ChainId.BSC]: 'BNB Chain',
@@ -107,11 +107,11 @@ export const chainNameToChainId = Object.entries(chainNames).reduce((acc, [chain
     [chainName]: chainId as unknown as ChainId,
     ...acc,
   }
-}, {} as Record<string, ChainId | NonEVMChainId>)
+}, {} as Record<string, UnifiedChainId>)
 
 // @see https://github.com/DefiLlama/defillama-server/blob/master/common/chainToCoingeckoId.ts
 // @see https://github.com/DefiLlama/chainlist/blob/main/constants/chainIds.json
-export const defiLlamaChainNames: Record<ChainId | NonEVMChainId, string> = {
+export const defiLlamaChainNames: Record<UnifiedChainId, string> = {
   [ChainId.BSC]: 'bsc',
   [ChainId.ETHEREUM]: 'ethereum',
   [ChainId.GOERLI]: '',

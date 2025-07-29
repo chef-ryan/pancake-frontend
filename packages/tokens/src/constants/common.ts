@@ -1,5 +1,6 @@
 import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 import { ERC20Token } from '@pancakeswap/sdk'
+import { solanaTokens } from './solana'
 
 export const CAKE_MAINNET = new ERC20Token(
   ChainId.BSC,
@@ -255,6 +256,7 @@ export const CAKE = {
     'PancakeSwap Token',
     'https://pancakeswap.finance/',
   ),
+  [NonEVMChainId.SOLANA]: solanaTokens.cake,
 }
 
 export const USDC = {
@@ -382,14 +384,7 @@ export const USDC = {
     'USD Coin',
     'https://www.centre.io/usdc',
   ),
-  [NonEVMChainId.SOLANA]: {
-    id: NonEVMChainId.SOLANA,
-    address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    decimal: 6,
-    name: 'USD Coin',
-    symbol: 'USDC',
-    link: 'https://www.centre.io/usdc',
-  },
+  [NonEVMChainId.SOLANA]: solanaTokens.usdc,
 }
 
 export const USDT = {
@@ -467,14 +462,7 @@ export const USDT = {
     'Tether USD',
     'https://tether.to/',
   ),
-  [NonEVMChainId.SOLANA]: {
-    id: NonEVMChainId.SOLANA,
-    address: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
-    decimal: 6,
-    name: 'Tether USD',
-    symbol: 'USDT',
-    link: 'https://tether.to/',
-  },
+  [NonEVMChainId.SOLANA]: solanaTokens.usdt,
 }
 
 export const WSOL = {

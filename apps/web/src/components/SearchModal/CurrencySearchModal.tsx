@@ -7,10 +7,10 @@ import { useListState } from 'state/lists/lists'
 import { styled } from 'styled-components'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
 
-import { NonEVMChainId } from '@pancakeswap/chains'
+import { UnifiedChainId } from '@pancakeswap/chains'
 import { usePreviousValue } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { ChainId, Token, UnifiedCurrency } from '@pancakeswap/sdk'
+import { Token, UnifiedCurrency } from '@pancakeswap/sdk'
 import { TokenList, WrappedTokenInfo } from '@pancakeswap/token-lists'
 import { enableList, removeList, useFetchListCallback } from '@pancakeswap/token-lists/react'
 import {
@@ -91,7 +91,7 @@ export default function CurrencySearchModal({
   mode,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.search)
-  const [selectedChainId, setSelectedChainId] = useState<ChainId | NonEVMChainId | undefined>(selectedCurrency?.chainId)
+  const [selectedChainId, setSelectedChainId] = useState<UnifiedChainId | undefined>(selectedCurrency?.chainId)
 
   const handleCurrencySelect = useCallback(
     (currency: UnifiedCurrency) => {

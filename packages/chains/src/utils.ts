@@ -1,4 +1,4 @@
-import { ChainId, NonEVMChainId, testnetChainIds } from './chainId'
+import { ChainId, testnetChainIds, UnifiedChainId } from './chainId'
 import {
   chainNameToChainId,
   chainNames,
@@ -23,7 +23,7 @@ export function getLlamaChainName(chainId: ChainId) {
   return defiLlamaChainNames[chainId]
 }
 
-export function getChainIdByChainName(chainName?: string): ChainId | NonEVMChainId | undefined {
+export function getChainIdByChainName(chainName?: string): UnifiedChainId | undefined {
   if (!chainName) return undefined
   return chainNameToChainId[chainName] ?? undefined
 }

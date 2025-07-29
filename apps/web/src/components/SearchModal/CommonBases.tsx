@@ -2,7 +2,7 @@ import { SUGGESTED_BASES } from 'config/constants/exchange'
 import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
 import { styled } from 'styled-components'
 
-import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
+import { UnifiedChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { UnifiedCurrency, UnifiedToken } from '@pancakeswap/sdk'
 import { AutoColumn, QuestionHelper, Text } from '@pancakeswap/uikit'
@@ -53,7 +53,7 @@ export default function CommonBases({
   commonBasesType,
   supportCrossChain,
 }: {
-  chainId?: ChainId | NonEVMChainId
+  chainId?: UnifiedChainId
   commonBasesType?: CommonBasesType
   selectedCurrency?: UnifiedCurrency | null
   onSelect: (currency: UnifiedCurrency) => void

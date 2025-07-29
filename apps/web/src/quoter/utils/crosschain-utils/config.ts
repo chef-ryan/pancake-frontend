@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, UnifiedChainId } from '@pancakeswap/chains'
 
 /**
  * This config is used to manage the supported chains for crosschain swap:
@@ -8,7 +8,7 @@ import { ChainId } from '@pancakeswap/chains'
  */
 
 // Order will be decided for the Token Selection Modal
-export const CROSSCHAIN_SUPPORTED_CHAINS = [
+export const CROSSCHAIN_SUPPORTED_CHAINS: UnifiedChainId[] = [
   ChainId.BSC,
   ChainId.BASE,
   ChainId.ARBITRUM_ONE,

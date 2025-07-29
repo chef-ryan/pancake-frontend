@@ -1,4 +1,4 @@
-import { ChainId, Chains, NonEVMChainId } from '@pancakeswap/chains'
+import { ChainId, Chains, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { NATIVE } from '@pancakeswap/sdk'
 import { Box, UserMenu, useTooltip } from '@pancakeswap/uikit'
@@ -35,7 +35,7 @@ export const SHORT_SYMBOL = {
   [ChainId.MONAD_TESTNET]: 'tMonad',
   [NonEVMChainId.SOLANA]: 'Solana',
   [NonEVMChainId.APTOS]: 'Aptos',
-} as const satisfies Record<ChainId | NonEVMChainId, string>
+} as const satisfies Record<UnifiedChainId, string>
 
 export const NetworkSwitcher = () => {
   const { t } = useTranslation()

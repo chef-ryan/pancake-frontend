@@ -19,7 +19,7 @@ import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useUnifiedTokenUsdPrice } from 'hooks/useUnifiedTokenUsdPrice'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { NonEVMChainId } from '@pancakeswap/chains'
+import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 
 import { useIsUserAddedToken } from '../../hooks/Tokens'
 import { useCombinedActiveList } from '../../state/lists/hooks'
@@ -263,7 +263,7 @@ export default function CurrencyList({
   setImportToken: (token: Token) => void
   breakIndex: number | undefined
   showChainLogo?: boolean
-  chainId?: ChainId
+  chainId?: UnifiedChainId
 }) {
   const native = useUnifiedNativeCurrency(chainId)
 

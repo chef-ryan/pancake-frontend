@@ -1,11 +1,11 @@
-import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { Native, NativeCurrency, SOL, UnifiedNativeCurrency } from '@pancakeswap/sdk'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { useMemo } from 'react'
 import { useActiveChainId } from './useActiveChainId'
 
-export function useUnifiedNativeCurrency(overrideChainId?: ChainId | NonEVMChainId): UnifiedNativeCurrency {
+export function useUnifiedNativeCurrency(overrideChainId?: UnifiedChainId): UnifiedNativeCurrency {
   const { chainId: chainId_ } = useActiveChainId()
   const chainId = overrideChainId ?? chainId_
   return useMemo(() => {
