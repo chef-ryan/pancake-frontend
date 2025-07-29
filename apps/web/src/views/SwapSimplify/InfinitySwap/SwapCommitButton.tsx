@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Token } from '@pancakeswap/swap-sdk-core'
+import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { AutoColumn, Box, Button, Dots, Message, MessageText, Text, useModal } from '@pancakeswap/uikit'
 import { useAddressBalance } from 'hooks/useAddressBalance'
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -48,6 +48,10 @@ import {
   isXOrder,
 } from 'views/Swap/utils'
 import { useAccount, useChainId } from 'wagmi'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { ChainId as EvmChainId, NonEVMChainId } from '@pancakeswap/chains'
+import SolanaConnectButton from 'wallet/components/SolanaConnectButton'
+
 import { ConfirmSwapModalV3 } from '../../Swap/Bridge/CrossChainConfirmSwapModal/ConfirmSwapModalV3'
 import { useParsedAmounts, useSlippageAdjustedAmounts, useSwapInputError } from '../../Swap/V3Swap/hooks'
 import { useConfirmModalState } from '../../Swap/V3Swap/hooks/useConfirmModalState'
@@ -108,9 +112,12 @@ const WrapCommitButtonReplace: React.FC<React.PropsWithChildren> = ({ children }
 }
 
 const ConnectButtonReplace = ({ children }) => {
-  const { address: account } = useAccount()
+  const { chainId, account, solanaAccount } = useAccountActiveChain()
 
-  if (!account) {
+  if (chainId === NonEVMChainId.SOLANA && !solanaAccount) {
+    return <SolanaConnectButton width="100%" withIcon />
+  }
+  if (chainId in EvmChainId && !account) {
     return <ConnectWalletButton width="100%" withIcon />
   }
   return children
