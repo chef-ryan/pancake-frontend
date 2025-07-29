@@ -41,8 +41,7 @@ export const InfinitySwapForm = memo(() => {
   const { shouldShowBuyCrypto, buyCryptoLink } = useBuyCryptoInfo(bestOrder)
 
   const executionPrice = useMemo(
-    () =>
-      isSVMOrder(bestOrder) ? undefined : bestOrder?.trade ? SmartRouter.getExecutionPrice(bestOrder.trade) : undefined,
+    () => (bestOrder?.trade ? SmartRouter.getExecutionPrice(bestOrder.trade as any) : undefined),
     [bestOrder?.trade],
   )
   const isPriceImpactTooHigh = useIsPriceImpactTooHigh(!tradeError ? bestOrder : undefined, !tradeLoaded)
