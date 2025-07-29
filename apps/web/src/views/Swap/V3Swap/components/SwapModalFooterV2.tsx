@@ -29,7 +29,7 @@ import { paymasterInfo } from 'config/paymaster'
 import { usePaymaster } from 'hooks/usePaymaster'
 import { isAddressEqual } from 'utils'
 import { SlippageButton } from 'views/Swap/components/SlippageButton'
-import { InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
+import { InterfaceOrder, isBridgeOrder, isSVMOrder, isXOrder } from 'views/Swap/utils'
 import { useHasDynamicHook } from 'views/SwapSimplify/hooks/useHasDynamicHook'
 import FormattedPriceImpact from '../../components/FormattedPriceImpact'
 import { StyledBalanceMaxMini, SwapCallbackError } from '../../components/styleds'
@@ -126,7 +126,7 @@ export const SwapModalFooterV2 = memo(function SwapModalFooterV2({
   const severity = warningSeverity(priceImpactWithoutFee)
 
   const executionPriceDisplay = useMemo(() => {
-    const price = SmartRouter.getExecutionPrice(order?.trade) ?? undefined
+    const price = isSVMOrder(order) ? undefined : SmartRouter.getExecutionPrice(order?.trade) ?? undefined
     return formatExecutionPrice(price, inputAmount, outputAmount, showInverted)
   }, [order, inputAmount, outputAmount, showInverted])
 

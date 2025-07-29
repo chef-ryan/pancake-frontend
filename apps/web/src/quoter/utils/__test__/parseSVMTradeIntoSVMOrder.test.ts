@@ -3,7 +3,7 @@ import { PoolType, SVMPool } from '@pancakeswap/smart-router'
 import type { SolRouterTrade } from '@pancakeswap/solana-router-sdk'
 import { SPLToken, TradeType, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { PublicKey } from '@solana/web3.js'
-import type { QuoteQuery } from '../../quoter.types'
+import type { SVMQuoteQuery } from '../../quoter.types'
 import { parseSVMTradeIntoSVMOrder } from '../svm-utils/parseSVMTradeIntoSVMOrder'
 
 // Mock tokens
@@ -31,6 +31,7 @@ describe('parseSVMTradeIntoSVMOrder', () => {
   it('should convert SolRouterTrade to SVMOrder correctly', () => {
     // Mock SolRouterTrade
     const mockSolRouterTrade: SolRouterTrade = {
+      requestId: 'mock_request_id',
       tradeType: TradeType.EXACT_INPUT,
       inputAmount: UnifiedCurrencyAmount.fromRawAmount(MOCK_SOL, '1000000000'), // 1 SOL
       outputAmount: UnifiedCurrencyAmount.fromRawAmount(MOCK_USDC, '100000000'), // 100 USDC
@@ -57,7 +58,10 @@ describe('parseSVMTradeIntoSVMOrder', () => {
     }
 
     // Mock QuoteQuery
-    const mockQuoteQuery: QuoteQuery = {
+    const mockQuoteQuery: SVMQuoteQuery = {
+      baseCurrency: MOCK_SOL,
+      currency: MOCK_USDC,
+      amount: UnifiedCurrencyAmount.fromRawAmount(MOCK_SOL, '1000000000'),
       tradeType: TradeType.EXACT_INPUT,
       speedQuoteEnabled: false,
       xEnabled: false,

@@ -27,7 +27,7 @@ import { BridgeFeeToolTip, TotalFeeToolTip, TradingFeeToolTip } from 'views/Swap
 import { BridgeOrderFee, getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import { EstimatedTime } from '../../Swap/Bridge/CrossChainConfirmSwapModal/components/EstimatedTime'
-import { SlippageAdjustedAmounts, TradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
+import { SlippageAdjustedAmounts, SVMTradePriceBreakdown, TradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
 import FormattedPriceImpact from '../../Swap/components/FormattedPriceImpact'
 import { SlippageButton } from '../../Swap/components/SlippageButton'
 import { useFeeSaved } from '../../Swap/hooks/useFeeSaved'
@@ -162,7 +162,7 @@ export const TradeSummary = memo(function TradeSummary({
   expectedFillTimeSec,
 }: {
   expectedFillTimeSec?: number
-  priceBreakdown: BridgeOrderFee[] | TradePriceBreakdown
+  priceBreakdown: BridgeOrderFee[] | TradePriceBreakdown | SVMTradePriceBreakdown
   hasStablePair?: boolean
   inputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
   outputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>

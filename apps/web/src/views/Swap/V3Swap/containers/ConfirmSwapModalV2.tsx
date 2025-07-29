@@ -24,7 +24,7 @@ import { SwapTransactionErrorContent } from 'views/Swap/components/SwapTransacti
 import { NonEVMChainId } from '@pancakeswap/chains'
 
 import { Hash } from 'viem'
-import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
+import { EVMInterfaceOrder, InterfaceOrder, isXOrder } from 'views/Swap/utils'
 import { TransactionConfirmSwapContentV2 } from '../components/TransactionConfirmSwapContentV2'
 import { useSlippageAdjustedAmounts } from '../hooks'
 import { ConfirmAction } from '../hooks/useConfirmModalState'
@@ -52,8 +52,8 @@ type ConfirmSwapModalV2Props = InjectedModalProps & {
   onDismiss?: () => void
   confirmModalState: ConfirmModalState
   pendingModalSteps: ConfirmAction[]
-  order?: InterfaceOrder | null
-  originalOrder?: InterfaceOrder | null
+  order?: EVMInterfaceOrder | null
+  originalOrder?: EVMInterfaceOrder | null
   currencyBalances?: { [field in Field]?: CurrencyAmount<Currency> }
   txHash?: string
   orderHash?: Hash

@@ -42,9 +42,9 @@ export type UseBetterQuoteOptions = {
 }
 
 export interface Options {
-  amount?: CurrencyAmount<Currency> | UnifiedCurrencyAmount<UnifiedCurrency>
-  baseCurrency?: Currency | UnifiedCurrency | null
-  currency?: Currency | UnifiedCurrency | null
+  amount?: CurrencyAmount<Currency>
+  baseCurrency?: Currency | null
+  currency?: Currency | null
   tradeType?: TradeType
   maxHops?: number
   maxSplits?: number
@@ -99,6 +99,12 @@ export type QuoteQuery = Options & {
   createTime: number
   routeKey?: string
   gasLimit?: bigint
+}
+
+export interface SVMQuoteQuery extends Omit<QuoteQuery, 'amount' | 'baseCurrency' | 'currency'> {
+  amount: UnifiedCurrencyAmount<UnifiedCurrency> | undefined
+  baseCurrency: UnifiedCurrency | null
+  currency: UnifiedCurrency | null
 }
 
 export interface StrategyQuery {

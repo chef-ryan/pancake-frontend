@@ -89,6 +89,11 @@ export type TradeEssentialForPriceBreakdown = Pick<SmartRouterTrade<TradeType>, 
 
 export interface TradePriceBreakdown {
   priceImpactWithoutFee?: Percent | null
+  lpFeeAmount?: CurrencyAmount<Currency> | null
+}
+
+export interface SVMTradePriceBreakdown {
+  priceImpactWithoutFee?: Percent | null
   lpFeeAmount?: UnifiedCurrencyAmount<UnifiedCurrency> | null
 }
 

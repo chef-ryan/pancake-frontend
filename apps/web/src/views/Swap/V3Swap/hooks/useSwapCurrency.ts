@@ -14,7 +14,7 @@ export const useSwapCurrencyIds = (): [SwapStateCurrency | undefined, SwapStateC
   return [inputCurrency, outputCurrency]
 }
 
-export const useSwapCurrency = (): [UnifiedCurrency | undefined, UnifiedCurrency | undefined] => {
+export const useSwapCurrency = (): [UnifiedCurrency | undefined | null, UnifiedCurrency | undefined | null] => {
   const [stateInputCurrency, stateOutputCurrency] = useSwapCurrencyIds()
 
   const inputCurrency = useUnifiedCurrency(stateInputCurrency?.currencyId, stateInputCurrency?.chainId)

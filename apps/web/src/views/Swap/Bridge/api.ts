@@ -5,7 +5,7 @@ import { InfinityTradeWithoutGraph } from '@pancakeswap/smart-router/dist/evm/in
 import { BRIDGE_API_ENDPOINT } from 'config/constants/endpoints'
 import { chainIdToExplorerInfoChainName } from 'state/info/api/client'
 import { Address } from 'viem/accounts'
-import { BridgeOrderWithCommands } from '../utils'
+import { BridgeOrderWithCommands, isSVMOrder } from '../utils'
 import {
   BridgeDataSchema,
   BridgeStatusResponse,
@@ -93,6 +93,10 @@ export const getBridgeCalldata = async ({
     }
 
     const commands: (BridgeDataSchema | SwapDataSchema)[] = order.commands.map((command) => {
+      if (isSVMOrder(command)) {
+        throw new Error('SVM order not supported for bridge')
+      }
+
       if (command.type === OrderType.PCS_BRIDGE) {
         return generateBridgeCommands({
           trade: command.trade,

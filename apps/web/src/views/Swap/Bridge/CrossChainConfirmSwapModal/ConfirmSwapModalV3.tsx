@@ -27,7 +27,7 @@ import { DISPLAY_PRECISION } from 'config/constants/formatting'
 import { useAtom } from 'jotai'
 import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { Hash } from 'viem'
-import { InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
+import { EVMInterfaceOrder, InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
 
 import { useSlippageAdjustedAmounts } from 'views/Swap/V3Swap/hooks'
 import { ConfirmAction } from 'views/Swap/V3Swap/hooks/useConfirmModalState'
@@ -61,8 +61,8 @@ type ConfirmSwapModalV3Props = InjectedModalProps & {
   onDismiss?: () => void
   confirmModalState: ConfirmModalState
   pendingModalSteps: ConfirmAction[]
-  order?: InterfaceOrder | null
-  originalOrder?: InterfaceOrder | null
+  order?: EVMInterfaceOrder | null
+  originalOrder?: EVMInterfaceOrder | null
   currencyBalances?: { [field in Field]?: CurrencyAmount<Currency> }
   txHash?: string
   orderHash?: Hash

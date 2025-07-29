@@ -1,10 +1,13 @@
-import { Currency, Price, TradeType } from '@pancakeswap/swap-sdk-core'
+import { Currency, CurrencyAmount, Price, TradeType } from '@pancakeswap/swap-sdk-core'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useAtomValue } from 'jotai'
 import { bestAMMTradeFromQuoterWorkerAtom } from 'quoter/atom/bestAMMTradeFromQuoterWorkerAtom'
 import { useCurrentBlock } from 'state/block/hooks'
 import { getTokenAddress } from 'views/Swap/components/Chart/utils'
+import { InterfaceOrder } from 'views/Swap/utils'
+import { OrderType } from '@pancakeswap/price-api-sdk'
+
 import { createQuoteQuery } from '../utils/createQuoteQuery'
 import { multicallGasLimitAtom } from './useMulticallGasLimit'
 
@@ -42,8 +45,12 @@ export function useSingleTokenSwapInfo(query: Query): { [key: string]: number } 
   })
 
   const quoteResult = useAtomValue(bestAMMTradeFromQuoterWorkerAtom(quoteOption))
+
   const bestTradeExactIn = quoteResult.map((x) => x.trade).unwrapOr(undefined)
-  if (!inputCurrency || !outputCurrency || !bestTradeExactIn) {
+
+  const isSVMOrder = (bestTradeExactIn as InterfaceOrder | undefined)?.type === OrderType.PCS_SVM
+
+  if (!inputCurrency || !outputCurrency || !bestTradeExactIn || !isSVMOrder) {
     return {}
   }
 
@@ -51,8 +58,9 @@ export function useSingleTokenSwapInfo(query: Query): { [key: string]: number } 
   try {
     inputTokenPrice = parseFloat(
       new Price({
-        baseAmount: bestTradeExactIn.inputAmount,
-        quoteAmount: bestTradeExactIn.outputAmount,
+        // NOTE: safe to cast to CurrencyAmount<Currency> since we already check isSVMOrder above
+        baseAmount: bestTradeExactIn.inputAmount as CurrencyAmount<Currency>,
+        quoteAmount: bestTradeExactIn.outputAmount as CurrencyAmount<Currency>,
       }).toSignificant(6),
     )
   } catch (error) {

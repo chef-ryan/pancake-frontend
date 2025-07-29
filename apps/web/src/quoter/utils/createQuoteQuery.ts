@@ -1,12 +1,12 @@
 import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
-import { PoolQuery, PoolQueryOptions, QuoteQuery } from 'quoter/quoter.types'
+import { PoolQuery, PoolQueryOptions, QuoteQuery, SVMQuoteQuery } from 'quoter/quoter.types'
 import { getViemClients } from 'utils/viem'
 import { PoolHashHelper } from './PoolHashHelper'
 
 const PLACE_HOLDER_TIME = 1000 * 120 // 2 minutes
 
 const cache = new Map<string, QuoteQuery>()
-export function createQuoteQuery(query: Omit<QuoteQuery, 'hash' | 'createTime'>): QuoteQuery {
+export function createQuoteQuery(query: Omit<QuoteQuery | SVMQuoteQuery, 'hash' | 'createTime'>): QuoteQuery {
   const hash = PoolHashHelper.hashQuoteQuery(query as QuoteQuery)
 
   if (cache.has(hash)) {

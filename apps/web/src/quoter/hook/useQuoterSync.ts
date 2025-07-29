@@ -15,6 +15,8 @@ import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { NonEVMChainId } from '@pancakeswap/chains'
+import { QuoteQuery, SVMQuoteQuery } from 'quoter/quoter.types'
+
 import { quoteNonceAtom } from '../atom/revalidateAtom'
 import { createQuoteQuery } from '../utils/createQuoteQuery'
 import { useQuoteContext } from './QuoteContext'
@@ -83,7 +85,8 @@ export const useQuoterSync = () => {
     nonce,
     for: 'main',
     gasLimit,
-  }
+  } as QuoteQuery | SVMQuoteQuery
+
   const isCrossChain = inputCurrencyChainId !== outputCurrencyChainId
 
   const quoteQuery = createQuoteQuery(quoteQueryInit)
@@ -91,7 +94,7 @@ export const useQuoterSync = () => {
 
   useEffect(() => {
     setActiveQuoteHash(quoteQuery.hash)
-  }, [quoteQuery.hash])
+  }, [quoteQuery.hash, setActiveQuoteHash])
 
   useEffect(() => {
     setTyping(true)
@@ -152,5 +155,16 @@ export const useQuoterSync = () => {
       },
     })
     setTyping(false)
-  }, [quoteResult.value, quoteResult.loading, quoteResult.error, pauseQuote, setTrade, setTyping, setNonce, paused])
+  }, [
+    quoteResult.value,
+    quoteResult.loading,
+    quoteResult.error,
+    pauseQuote,
+    setTrade,
+    setTyping,
+    setNonce,
+    paused,
+    setPlaceholder,
+    quoteResult,
+  ])
 }

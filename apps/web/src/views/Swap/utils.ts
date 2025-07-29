@@ -10,7 +10,7 @@ import {
 import { UnifiedCurrencyAmount, type Currency, type TradeType } from '@pancakeswap/swap-sdk-core'
 import { CAKE, STABLE_COIN, USDC, USDT } from '@pancakeswap/tokens'
 import { BridgeOrderFee, computeBridgeOrderFee } from './Bridge/utils'
-import { computeTradePriceBreakdown, TradePriceBreakdown } from './V3Swap/utils/exchange'
+import { computeTradePriceBreakdown, SVMTradePriceBreakdown, TradePriceBreakdown } from './V3Swap/utils/exchange'
 
 export const TWAP_SUPPORTED_CHAINS = [ChainId.BSC, ChainId.ARBITRUM_ONE, ChainId.BASE, ChainId.LINEA]
 
@@ -30,6 +30,13 @@ export const isBridgeOrder = (order: InterfaceOrder | undefined | null): order i
 export const isSVMOrder = (order: InterfaceOrder | undefined | null): order is SVMOrder =>
   order?.type === OrderType.PCS_SVM
 
+// create EVMInterfaceOrder which omit SVMOrder
+export type EVMInterfaceOrder<
+  input extends Currency = Currency,
+  output extends Currency = Currency,
+  tradeType extends TradeType = TradeType,
+> = Exclude<PriceOrder<input, output, tradeType>, SVMOrder>
+
 export type InterfaceOrder<
   input extends Currency = Currency,
   output extends Currency = Currency,
@@ -38,15 +45,15 @@ export type InterfaceOrder<
 
 // Type to support commands property
 export type BridgeOrderWithCommands = BridgeOrder & {
-  commands?: InterfaceOrder[]
-  noSlippageCommands?: InterfaceOrder[]
+  commands?: EVMInterfaceOrder[]
+  noSlippageCommands?: EVMInterfaceOrder[]
 }
 
 export function getDefaultToken(chainId: number): string | undefined {
   return CAKE[chainId]?.address ?? STABLE_COIN[chainId]?.address ?? USDC[chainId]?.address ?? USDT[chainId]?.address
 }
 
-function computeSvmOrderFee(order: SVMOrder): TradePriceBreakdown {
+function computeSvmOrderFee(order: SVMOrder): SVMTradePriceBreakdown {
   return {
     priceImpactWithoutFee: order.trade.priceImpactPct,
     // TODO: get lp fee amount
@@ -54,7 +61,9 @@ function computeSvmOrderFee(order: SVMOrder): TradePriceBreakdown {
   }
 }
 
-export function getPriceBreakdown(order?: PriceOrder): TradePriceBreakdown | BridgeOrderFee | BridgeOrderFee[] {
+export function getPriceBreakdown(
+  order?: PriceOrder,
+): TradePriceBreakdown | SVMTradePriceBreakdown | BridgeOrderFee | BridgeOrderFee[] {
   if (isSVMOrder(order)) {
     return computeSvmOrderFee(order)
   }

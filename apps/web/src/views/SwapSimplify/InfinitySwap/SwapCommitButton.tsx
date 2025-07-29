@@ -1,4 +1,4 @@
-import { Currency } from '@pancakeswap/swap-sdk-core'
+import { Currency, CurrencyAmount, Token } from '@pancakeswap/swap-sdk-core'
 import { AutoColumn, Box, Button, Dots, Message, MessageText, Text, useModal } from '@pancakeswap/uikit'
 import { useAddressBalance } from 'hooks/useAddressBalance'
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -39,7 +39,14 @@ import { warningSeverity } from 'utils/exchange'
 import { useBridgeCheckApproval } from 'views/Swap/Bridge/hooks/useBridgeCheckApproval'
 import { getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import { ConfirmSwapModalV2 } from 'views/Swap/V3Swap/containers/ConfirmSwapModalV2'
-import { getPriceBreakdown, isBridgeOrder, isClassicOrder, isXOrder } from 'views/Swap/utils'
+import {
+  EVMInterfaceOrder,
+  getPriceBreakdown,
+  isBridgeOrder,
+  isClassicOrder,
+  isSVMOrder,
+  isXOrder,
+} from 'views/Swap/utils'
 import { useAccount, useChainId } from 'wagmi'
 import { ConfirmSwapModalV3 } from '../../Swap/Bridge/CrossChainConfirmSwapModal/ConfirmSwapModalV3'
 import { useParsedAmounts, useSlippageAdjustedAmounts, useSwapInputError } from '../../Swap/V3Swap/hooks'
@@ -193,13 +200,15 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   const slippageAdjustedAmounts = useSlippageAdjustedAmounts(orderToExecute)
   const amountToApprove = useMemo(
     () =>
-      inputCurrency?.isNative
+      isSVMOrder(orderToExecute)
+        ? undefined
+        : inputCurrency?.isNative
         ? isXOrder(orderToExecute)
           ? slippageAdjustedAmounts[Field.INPUT]
           : undefined
         : slippageAdjustedAmounts[Field.INPUT],
     [inputCurrency?.isNative, orderToExecute, slippageAdjustedAmounts],
-  )
+  ) as CurrencyAmount<Currency> | undefined
 
   const { callToAction, confirmState, txHash, orderHash, confirmActions, errorMessage, resetState } =
     useConfirmModalState(orderToExecute, amountToApprove?.wrapped, getUniversalRouterAddress(chainId))
@@ -279,12 +288,15 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
       <ConfirmSwapModalV3
         order={order}
         orderHash={orderHash}
-        originalOrder={tradeToConfirm}
+        originalOrder={tradeToConfirm as EVMInterfaceOrder}
         txHash={txHash}
         confirmModalState={confirmState}
         pendingModalSteps={confirmActions ?? []}
         swapErrorMessage={errorMessage}
-        currencyBalances={currencyBalances}
+        currencyBalances={
+          // NOTE: since Bridge not support Solana yet, can safely cast to CurrencyAmount<Currency>
+          currencyBalances as { [field in Field]?: CurrencyAmount<Currency> | undefined }
+        }
         onAcceptChanges={handleAcceptChanges}
         onConfirm={onConfirm}
         openSettingModal={openSettingModal}
@@ -292,14 +304,14 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
       />
     ) : (
       <ConfirmSwapModalV2
-        order={order}
+        order={order as EVMInterfaceOrder}
         orderHash={orderHash}
-        originalOrder={tradeToConfirm}
+        originalOrder={tradeToConfirm as EVMInterfaceOrder}
         txHash={txHash}
         confirmModalState={confirmState}
         pendingModalSteps={confirmActions ?? []}
         swapErrorMessage={errorMessage}
-        currencyBalances={currencyBalances}
+        currencyBalances={currencyBalances as { [field in Field]?: CurrencyAmount<Currency> | undefined }}
         onAcceptChanges={handleAcceptChanges}
         onConfirm={onConfirm}
         openSettingModal={openSettingModal}

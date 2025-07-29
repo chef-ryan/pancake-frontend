@@ -6,7 +6,7 @@ import { BridgeTradeError, NoValidRouteError } from 'quoter/quoter.types'
 import { basisPointsToPercent } from 'utils/exchange'
 import tryParseCurrencyAmount from 'utils/tryParseCurrencyAmount'
 import { generateSwapCommands } from 'views/Swap/Bridge/api'
-import { type InterfaceOrder } from 'views/Swap/utils'
+import { isSVMOrder, type InterfaceOrder } from 'views/Swap/utils'
 import { CrossChainQuoteStrategy } from '../base/CrossChainQuoteStrategy'
 import { type DestinationSwapQuoteSchema } from '../types'
 
@@ -57,6 +57,10 @@ export class SwapToBridgeToSwapStrategy extends CrossChainQuoteStrategy {
       trade: destinationSwapOrderWithSlippage.trade as InfinityTradeWithoutGraph<TradeType>,
       allowedSlippage: this.context.userSlippage,
     })
+
+    if (isSVMOrder(originSwapOrder) || isSVMOrder(destinationSwapOrder)) {
+      throw new Error('SVM order not supported for cross chain')
+    }
 
     const slippagedOriginSwapOrderOutputAmount = SmartRouter.minimumAmountOut(
       originSwapOrder.trade,

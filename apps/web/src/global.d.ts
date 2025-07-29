@@ -17,6 +17,7 @@ export interface ExtendEthereum extends WindowProvider {
   isOpera?: true
   isBraveWallet?: true
   isRabby?: true
+  isPhantom?: true
 }
 
 declare global {

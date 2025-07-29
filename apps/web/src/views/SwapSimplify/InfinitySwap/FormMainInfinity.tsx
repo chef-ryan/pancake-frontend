@@ -1,6 +1,6 @@
 import { ChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Percent, UnifiedCurrency } from '@pancakeswap/sdk'
+import { Currency, CurrencyAmount, Percent, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { Skeleton, Text } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import replaceBrowserHistoryMultiple from '@pancakeswap/utils/replaceBrowserHistoryMultiple'
@@ -27,8 +27,8 @@ import { FormContainer } from './FormContainer'
 import { Recipient } from './Recipient'
 
 interface Props {
-  inputAmount?: CurrencyAmount<Currency>
-  outputAmount?: CurrencyAmount<Currency>
+  inputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
+  outputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
   tradeLoading?: boolean
   pricingAndSlippage?: ReactNode
   swapCommitButton?: ReactNode

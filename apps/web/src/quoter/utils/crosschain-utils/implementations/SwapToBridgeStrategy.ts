@@ -2,6 +2,7 @@ import { Loadable } from '@pancakeswap/utils/Loadable'
 import { Field } from 'state/swap/actions'
 import { computeSlippageAdjustedAmounts } from 'views/Swap/V3Swap/utils/exchange'
 import { type InterfaceOrder } from 'views/Swap/utils'
+import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { CrossChainQuoteStrategy } from '../base/CrossChainQuoteStrategy'
 
 export class SwapToBridgeStrategy extends CrossChainQuoteStrategy {
@@ -47,7 +48,7 @@ export class SwapToBridgeStrategy extends CrossChainQuoteStrategy {
 
     // Use the swap output amount as the bridge input amount
     const bridgeQuoteLoadable = this.context.atomGetters.getBridgeQuote({
-      inputAmount: slippagedOutputAmount,
+      inputAmount: slippagedOutputAmount as CurrencyAmount<Currency>,
       outputCurrency: this.context.quoteCurrency,
     })
 

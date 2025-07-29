@@ -9,7 +9,7 @@ import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { warningSeverity } from 'utils/exchange'
 import { getPriceBreakdown, InterfaceOrder, isBridgeOrder } from 'views/Swap/utils'
 import { TradePriceBreakdown } from 'views/Swap/V3Swap/utils/exchange'
-import { NoValidRouteError, QuoteQuery } from '../quoter.types'
+import { NoValidRouteError, QuoteQuery, SVMQuoteQuery } from '../quoter.types'
 import { activeQuoteHashAtom } from './abortControlAtoms'
 import { bestSVMOrderAtom } from './bestSVMOrderAtom'
 import { placeholderAtom } from './placeholderAtom'
@@ -111,7 +111,8 @@ export const bestSameChainWithoutPlaceHolderAtom = atomFamily((_option: QuoteQue
         amountCurrency &&
         SPLToken.isSPLToken(amountCurrency)
       ) {
-        return get(bestSVMOrderAtom(option))
+        // NOTE: safe to cast to SVMQuoteQuery since we already check the condition above
+        return get(bestSVMOrderAtom(option as unknown as SVMQuoteQuery))
       }
 
       if (

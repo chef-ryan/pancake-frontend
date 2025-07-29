@@ -2,7 +2,7 @@ import { type SVMOrder, OrderType, SVMTrade } from '@pancakeswap/price-api-sdk'
 import { PoolType, Route, RouteType, SVMPool } from '@pancakeswap/smart-router'
 import { SolRouterTrade } from '@pancakeswap/solana-router-sdk'
 import { Currency, CurrencyAmount, Percent, TradeType, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
-import { QuoteQuery } from 'quoter/quoter.types'
+import { QuoteQuery, SVMQuoteQuery } from 'quoter/quoter.types'
 
 /**
  * SVM Trade to SVM Order mapping
@@ -23,9 +23,7 @@ import { QuoteQuery } from 'quoter/quoter.types'
  * ├── minimumAmountOut → minimumAmountOut ✓ (direct copy)
  * └── + quoteQueryHash (from query.hash)
  */
-export function parseSVMTradeIntoSVMOrder(svmTrade: SolRouterTrade, query: QuoteQuery): SVMOrder<TradeType> {
-  console.log('svmTrade', svmTrade)
-
+export function parseSVMTradeIntoSVMOrder(svmTrade: SolRouterTrade, query: SVMQuoteQuery): SVMOrder<TradeType> {
   // Convert RouterPlan[] to Route[] with grouping logic
   const routes: Route[] = []
   let currentGroup: typeof svmTrade.routes = []

@@ -1,4 +1,4 @@
-import { BridgeTransactionData, PriceOrder } from '@pancakeswap/price-api-sdk'
+import { BridgeTransactionData, PriceOrder, SVMOrder } from '@pancakeswap/price-api-sdk'
 import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { Address } from 'viem/accounts'
 import { CrossChainAPIErrorCode } from '../CrossChainConfirmSwapModal/hooks/useBridgeErrorMessages'
@@ -145,7 +145,7 @@ export interface ActiveBridgeOrderMetadata {
   originChainId: number
   txHash: string
 
-  order: PriceOrder | null | undefined
+  order: Exclude<PriceOrder, SVMOrder> | null | undefined
 
   // Optional metadata to show in modals quickly
   metadata?: {

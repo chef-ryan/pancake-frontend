@@ -30,7 +30,7 @@ import { SlippageAdjustedAmounts, TradePriceBreakdown, formatExecutionPrice } fr
 import FormattedPriceImpact from 'views/Swap/components/FormattedPriceImpact'
 import { SlippageButton } from 'views/Swap/components/SlippageButton'
 import { StyledBalanceMaxMini, SwapCallbackError } from 'views/Swap/components/styleds'
-import { InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
+import { EVMInterfaceOrder, InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
 
 import { OrderType } from '@pancakeswap/price-api-sdk'
 import BigNumber from 'bignumber.js'
@@ -126,7 +126,7 @@ export const SwapModalFooterV3 = memo(function SwapModalFooterV3({
   swapErrorMessage,
   disabledConfirm,
 }: {
-  order?: InterfaceOrder
+  order?: EVMInterfaceOrder
   tradeType: TradeType
   inputAmount: CurrencyAmount<Currency>
   outputAmount: CurrencyAmount<Currency>

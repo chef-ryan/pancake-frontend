@@ -521,7 +521,7 @@ const useConfirmActions = (
       step: ConfirmModalState.PENDING_CONFIRMATION,
       action: async () => {
         // TODO: show error message???
-        if (!order || !recipient) {
+        if (!order || !recipient || isSVMOrder(order)) {
           return
         }
 

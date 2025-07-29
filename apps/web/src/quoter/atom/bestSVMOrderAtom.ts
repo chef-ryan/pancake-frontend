@@ -7,12 +7,12 @@ import { solanaUserSlippageAtomWithLocalStorage } from '@pancakeswap/utils/user'
 import { QUOTE_TIMEOUT } from 'quoter/consts'
 import { parseSVMTradeIntoSVMOrder } from 'quoter/utils/svm-utils/parseSVMTradeIntoSVMOrder'
 import { type InterfaceOrder } from 'views/Swap/utils'
-import type { QuoteQuery } from '../quoter.types'
+import type { SVMQuoteQuery } from '../quoter.types'
 import { atomWithLoadable } from './atomWithLoadable'
 
 export const bestSVMOrderAtom = atomFamily(
-  (_option: QuoteQuery) => {
-    return atomWithLoadable(async (get) => {
+  (_option: SVMQuoteQuery) => {
+    return atomWithLoadable<InterfaceOrder>(async (get) => {
       const { baseCurrency, currency, amount, tradeType, address } = _option
       const userSlippageTolerance = get(solanaUserSlippageAtomWithLocalStorage)
 
@@ -63,12 +63,8 @@ export const bestSVMOrderAtom = atomFamily(
           return Loadable.Nothing<InterfaceOrder>()
         }
 
-        console.log('bestOrder', bestOrder)
-
         return Loadable.Just<InterfaceOrder>(bestOrder)
       } catch (error) {
-        console.log('error', error)
-
         return Loadable.Fail<InterfaceOrder>(error)
         //   perf.tracker.fail(error)
       } finally {

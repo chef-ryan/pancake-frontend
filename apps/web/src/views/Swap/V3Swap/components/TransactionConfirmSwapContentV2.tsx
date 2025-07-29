@@ -5,7 +5,7 @@ import { memo, useCallback, useMemo } from 'react'
 import { Field } from 'state/swap/actions'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import SwapModalHeaderV2 from 'views/Swap/components/SwapModalHeaderV2'
-import { getPriceBreakdown, InterfaceOrder } from 'views/Swap/utils'
+import { EVMInterfaceOrder, getPriceBreakdown, InterfaceOrder } from 'views/Swap/utils'
 import {
   computeSlippageAdjustedAmounts as computeSlippageAdjustedAmountsWithSmartRouter,
   TradePriceBreakdown,
@@ -28,8 +28,8 @@ function tradeMeaningfullyDiffers(tradeA: InterfaceOrder['trade'], tradeB: Inter
 }
 
 interface TransactionConfirmSwapContentV2Props {
-  order: InterfaceOrder | undefined | null
-  originalOrder: InterfaceOrder | undefined | null
+  order: EVMInterfaceOrder | undefined | null
+  originalOrder: EVMInterfaceOrder | undefined | null
   // trade: Trade | undefined | null
   // originalTrade: Trade | undefined | null
   onAcceptChanges: () => void

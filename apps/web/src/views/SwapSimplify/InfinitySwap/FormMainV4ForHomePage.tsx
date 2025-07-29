@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, UnifiedCurrency } from '@pancakeswap/sdk'
+import { Currency, CurrencyAmount, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { Column, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
@@ -25,8 +25,8 @@ import useWarningImport from '../../Swap/hooks/useWarningImport'
 import { FlipButton } from './FlipButton'
 
 interface Props {
-  inputAmount?: CurrencyAmount<Currency>
-  outputAmount?: CurrencyAmount<Currency>
+  inputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
+  outputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
   tradeLoading?: boolean
   pricingAndSlippage?: ReactNode
   swapCommitButton?: ReactNode
