@@ -1,6 +1,6 @@
 import { useTranslation } from "@pancakeswap/localization";
 import { useCallback, useEffect, useState, useMemo, memo } from "react";
-import { Currency, CurrencyAmount, ONE_HUNDRED_PERCENT, ZERO_PERCENT } from "@pancakeswap/sdk";
+import { Currency, CurrencyAmount, ERC20Token, ONE_HUNDRED_PERCENT, ZERO_PERCENT } from "@pancakeswap/sdk";
 import { FeeCalculator, encodeSqrtRatioX96 } from "@pancakeswap/v3-sdk";
 import { styled } from "styled-components";
 import { CAKE } from "@pancakeswap/tokens";
@@ -45,7 +45,7 @@ interface Props {
 
 const getCakeAssetsByReward = (chainId: number, cakeRewardAmount = 0, cakePrice: string) => {
   return {
-    currency: CAKE[chainId as keyof typeof CAKE],
+    currency: CAKE[chainId as keyof typeof CAKE] as ERC20Token,
     amount: cakeRewardAmount,
     price: cakePrice,
     value: Number.isFinite(cakeRewardAmount) ? +cakeRewardAmount * +cakePrice : Infinity,
