@@ -4,7 +4,7 @@ import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
-import { isAddressEqual, safeGetAddress } from 'utils'
+import { isAddressEqual, safeGetAddress, safeGetUnifiedAddress } from 'utils'
 
 import { ClassicOrder, PriceOrder } from '@pancakeswap/price-api-sdk'
 import { isClassicOrder } from 'views/Swap/utils'
@@ -36,7 +36,7 @@ const BAD_RECIPIENT_ADDRESSES: string[] = [
 
 export function useSwapInputError(order: PriceOrder | undefined, currencyBalances: Balances): string | undefined {
   const { t } = useTranslation()
-  const { unifiedAccount } = useAccountActiveChain()
+  const { unifiedAccount, chainId } = useAccountActiveChain()
   const { independentField, typedValue } = useSwapState()
   const inputCurrency = currencyBalances[Field.INPUT]?.currency
   const outputCurrency = currencyBalances[Field.OUTPUT]?.currency
@@ -61,7 +61,7 @@ export function useSwapInputError(order: PriceOrder | undefined, currencyBalance
     inputError = inputError ?? t('Select a token')
   }
 
-  const formattedTo = safeGetAddress(to)
+  const formattedTo = safeGetUnifiedAddress(chainId, to)
   if (!to || !formattedTo) {
     inputError = inputError ?? t('Enter a recipient')
   } else if (
