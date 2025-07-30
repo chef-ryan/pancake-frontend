@@ -2,6 +2,8 @@ import { useTranslation } from '@pancakeswap/localization'
 import { useToast } from '@pancakeswap/uikit'
 import { CHAIN_QUERY_NAME } from 'config/chains'
 import { EXCHANGE_PAGE_PATHS } from 'config/constants/exchange'
+import { NonEVMChainId } from '@pancakeswap/chains'
+import { SOLANA_SUPPORTED_PATH } from 'wallet/solana.config'
 import { ExtendEthereum } from 'global'
 import useAuth from 'hooks/useAuth'
 import { useRouter } from 'next/router'
@@ -48,6 +50,18 @@ export function useSwitchNetworkLocal() {
     (newChainId: number, skipReplace = false) => {
       const { chain: queryChainName, chainId: queryChainId, persistChain } = router.query
       if (persistChain || skipReplace) return
+
+      if (newChainId === NonEVMChainId.SOLANA) {
+        if (!SOLANA_SUPPORTED_PATH.includes(router.pathname)) {
+          window.open('https://solana.pancakeswap.finance', '_self')
+        } else {
+          router.replace({ query: { ...router.query, chain: 'solana' } }, undefined, { shallow: true })
+        }
+        if (!isBloctoMobileApp) {
+          clearUserStates(dispatch, { chainId: newChainId, newChainId })
+        }
+        return
+      }
       const newChainQueryName = CHAIN_QUERY_NAME[newChainId]
       const chainQueryName = queryChainName || CHAIN_QUERY_NAME[queryChainId as string]
       const removeQueriesFromPath =
@@ -99,7 +113,6 @@ export function useSwitchNetwork() {
 
   const { toastError } = useToast()
   const { isConnected, connector, address } = useAccount()
-  console.log(`[wallet]`, isConnected)
 
   const { logout } = useAuth()
 
@@ -109,6 +122,9 @@ export function useSwitchNetwork() {
 
   const switchNetworkAsync = useCallback(
     async (chainId: number, skipReplace = false) => {
+      if (chainId === NonEVMChainId.SOLANA) {
+        return switchNetworkLocal(chainId, skipReplace)
+      }
       if (isConnected && connector && typeof _switchNetworkAsync === 'function') {
         if (isLoading) return undefined
         setLoading(true)
@@ -154,6 +170,9 @@ export function useSwitchNetwork() {
 
   const switchNetwork = useCallback(
     (chainId: number) => {
+      if (chainId === NonEVMChainId.SOLANA) {
+        return switchNetworkLocal(chainId)
+      }
       if (isConnected && typeof _switchNetwork === 'function') {
         return _switchNetwork({ chainId })
       }
