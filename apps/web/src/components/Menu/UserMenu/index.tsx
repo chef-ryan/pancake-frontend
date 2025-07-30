@@ -180,6 +180,7 @@ const UserMenu = () => {
     logGTMDisconnectWalletEvent(chainId, connector?.name, finalAddress)
     logout()
   }, [logout, connector?.name, finalAddress, chainId])
+  const isSolanaChain = chainId === NonEVMChainId.SOLANA
 
   if (shouldShowLoading) {
     return (
@@ -203,7 +204,7 @@ const UserMenu = () => {
     )
   }
 
-  if (finalAddress || giftCode) {
+  if (!isSolanaChain && (finalAddress || giftCode)) {
     return (
       <>
         <ClickableUserMenu ref={menuRef}>
