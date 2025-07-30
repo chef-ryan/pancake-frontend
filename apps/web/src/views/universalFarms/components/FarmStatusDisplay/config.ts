@@ -1,7 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { RewardProvider, RewardConfig } from './types'
 
-export const rewardConfig: Record<ChainId, RewardConfig[]> = {
+export const rewardConfig: Partial<Record<ChainId, RewardConfig[]>> = {
   [ChainId.BSC]: [
     {
       poolAddress: '0xdc35157217A3AeFF3dcaF2e86327254FBF9f4601',
@@ -14,7 +14,7 @@ export const rewardConfig: Record<ChainId, RewardConfig[]> = {
       multiplier: 30,
     },
     {
-      poolAddress: '0xe38b4d4dc90e6a0859bee047689d97db7fd94621',
+      poolAddress: '0xE38B4d4Dc90E6a0859bEE047689d97db7fD94621',
       rewardProvider: RewardProvider.Falcon,
       multiplier: 60,
     },
