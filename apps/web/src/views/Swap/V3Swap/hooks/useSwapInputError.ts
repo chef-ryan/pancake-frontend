@@ -8,7 +8,7 @@ import { isAddressEqual, safeGetAddress } from 'utils'
 
 import { ClassicOrder, PriceOrder } from '@pancakeswap/price-api-sdk'
 import { isClassicOrder } from 'views/Swap/utils'
-import { useAccount } from 'wagmi'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 
 interface Balances {
   [Field.INPUT]?: UnifiedCurrencyAmount<UnifiedCurrency>
@@ -36,12 +36,12 @@ const BAD_RECIPIENT_ADDRESSES: string[] = [
 
 export function useSwapInputError(order: PriceOrder | undefined, currencyBalances: Balances): string | undefined {
   const { t } = useTranslation()
-  const { address: account } = useAccount()
+  const { unifiedAccount } = useAccountActiveChain()
   const { independentField, typedValue } = useSwapState()
   const inputCurrency = currencyBalances[Field.INPUT]?.currency
   const outputCurrency = currencyBalances[Field.OUTPUT]?.currency
 
-  const to: string | null = account || null
+  const to: string | null = unifiedAccount || null
 
   const isExactIn: boolean = independentField === Field.INPUT
   const independentCurrency = isExactIn ? inputCurrency : outputCurrency
@@ -49,7 +49,7 @@ export function useSwapInputError(order: PriceOrder | undefined, currencyBalance
   const parsedAmount = tryParseAmount(typedValue, independentCurrency ?? undefined)
 
   let inputError: string | undefined
-  if (!account) {
+  if (!unifiedAccount) {
     inputError = t('Connect Wallet')
   }
 

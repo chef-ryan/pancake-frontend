@@ -44,6 +44,7 @@ export const useActiveChainId = (checkChainId?: number) => {
 interface AccountChainState {
   account?: `0x${string}`
   solanaAccount?: string | null
+  unifiedAccount?: string | null
   chainId: number
   isWrongNetwork: boolean
   isNotMatched: boolean
@@ -55,6 +56,7 @@ const accountChainProxy = proxy<AccountChainState>({
   isWrongNetwork: false,
   status: null,
   solanaAccount: null,
+  unifiedAccount: null,
   isNotMatched: false,
 })
 export const accountActiveChainAtom = atomWithProxy(accountChainProxy)
@@ -103,6 +105,7 @@ export function useSyncWalletState() {
         ...prev,
         chainId, // Using this as single source of truth
         account: address,
+        unifiedAccount: chainId === NonEVMChainId.SOLANA ? prev.solanaAccount : address,
         isWrongNetwork: isNotMatched,
         isNotMatched,
       }

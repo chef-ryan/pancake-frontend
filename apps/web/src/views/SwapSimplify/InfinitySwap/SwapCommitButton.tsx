@@ -114,10 +114,10 @@ const WrapCommitButtonReplace: React.FC<React.PropsWithChildren> = ({ children }
 const ConnectButtonReplace = ({ children }) => {
   const { chainId, account, solanaAccount } = useAccountActiveChain()
 
-  if (chainId === NonEVMChainId.SOLANA && !solanaAccount) {
-    return <SolanaConnectButton width="100%" withIcon />
+  if (chainId === NonEVMChainId.SOLANA) {
+    return !solanaAccount ? <SolanaConnectButton width="100%" withIcon /> : children
   }
-  if (chainId in EvmChainId && !account) {
+  if (!account) {
     return <ConnectWalletButton width="100%" withIcon />
   }
   return children
