@@ -58,7 +58,7 @@ import { useBridgeCheckApproval } from 'views/Swap/Bridge/hooks'
 import { VersionedTransaction } from '@solana/web3.js'
 import { UltraSwapError, UltraSwapErrorType, ultraSwapService } from '@pancakeswap/solana-router-sdk'
 
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId as EvmChainId } from '@pancakeswap/chains'
 import { useUserSlippage } from '@pancakeswap/utils/user'
 import { useSwapState } from 'state/swap/hooks'
 import { activeBridgeOrderMetadataAtom } from 'views/Swap/Bridge/CrossChainConfirmSwapModal/state/orderDataState'
@@ -153,7 +153,7 @@ const useConfirmActions = (
   spender: Address | undefined,
 ) => {
   const { t } = useTranslation()
-  const { chainId } = useActiveChainId()
+  const { chainId, account, solanaAccount } = useAccountActiveChain()
   const { signTransaction, wallet: solanaWallet } = useWallet()
 
   const [deadline] = useTransactionDeadline()
@@ -162,9 +162,8 @@ const useConfirmActions = (
     enablePaymaster: true,
   })
   const nativeWrap = useNativeWrap()
-  const { account, solanaAccount } = useAccountActiveChain()
   const getAllowanceArgs = useMemo(() => {
-    if (!chainId) return undefined
+    if (!chainId || !(chainId in EvmChainId)) return undefined
     const inputs = [account, getPermit2Address(chainId)] as [`0x${string}`, `0x${string}`]
     return {
       chainId,
@@ -537,7 +536,7 @@ const useConfirmActions = (
           })
 
           if (bridgeCalldataResponse?.transactionData?.calldata) {
-            const publicClient = viemClients[chainId as ChainId]
+            const publicClient = viemClients[chainId as EvmChainId]
 
             const result = await publicClient
               ?.estimateGas({
@@ -1007,7 +1006,7 @@ export const useConfirmModalState = (
         return false
       }
       // Disable batching for Base chain
-      if (chainId === ChainId.BASE) {
+      if (chainId === EvmChainId.BASE) {
         return false
       }
       if (eip5792Status === 'unsupported' || steps.length <= 1) {

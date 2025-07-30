@@ -10,6 +10,7 @@ import { Permit2Signature } from '@pancakeswap/universal-router-sdk'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
 import { Address } from 'viem'
+import { ChainId as EvmChainId } from '@pancakeswap/chains'
 import useSendSwapTransaction from './useSendSwapTransaction'
 import { useSwapCallArguments, SwapCall } from './useSwapCallArguments'
 import type { TWallchainMasterInput, WallchainStatus } from './useWallchain'
@@ -65,7 +66,7 @@ export function useSwapCallback({
   const { callback } = useSendSwapTransaction(account, chainId, trade ?? undefined, swapCalls, 'UniversalRouter')
 
   return useMemo(() => {
-    if (!trade || !account || !chainId || !callback) {
+    if (!trade || !account || !chainId || !callback || !(chainId in EvmChainId)) {
       return { state: SwapCallbackState.INVALID, error: t('Missing dependencies') }
     }
     if (!recipient) {
