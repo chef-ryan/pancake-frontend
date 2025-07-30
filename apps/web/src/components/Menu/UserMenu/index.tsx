@@ -36,11 +36,10 @@ const UserMenuItems = ({ onReceiveClick }: { onReceiveClick: () => void; account
 
   const handleClickDisconnect = useCallback(() => {
     logGTMDisconnectWalletEvent(chainId, connector?.name, account)
-    if (chainId in ChainId) {
-      logout()
-    }
     if (chainId === NonEVMChainId.SOLANA) {
       disconnect()
+    } else {
+      logout()
     }
   }, [disconnect, logout, connector?.name, account, chainId])
 
@@ -94,6 +93,7 @@ const UserMenu = () => {
   const currentAccount = chainId === NonEVMChainId.SOLANA ? solanaAccount ?? undefined : evmAccount
   const { domainName, avatar } = useDomainNameForAddress(chainId === NonEVMChainId.SOLANA ? undefined : currentAccount)
   const { logout } = useAuth()
+  const { disconnect } = useWallet()
   const { hasPendingTransactions, pendingNumber } = usePendingTransactions()
   const { profile } = useProfile()
   const avatarSrc = profile?.nft?.image?.thumbnail ?? avatar
@@ -178,7 +178,11 @@ const UserMenu = () => {
 
   const handleClickDisconnect = useCallback(() => {
     logGTMDisconnectWalletEvent(chainId, connector?.name, finalAddress)
-    logout()
+    if (chainId === NonEVMChainId.SOLANA) {
+      disconnect()
+    } else {
+      logout()
+    }
   }, [logout, connector?.name, finalAddress, chainId])
 
   if (shouldShowLoading) {

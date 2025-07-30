@@ -39,7 +39,7 @@ const SolanaWalletStateUpdater = () => {
   useEffect(() => {
     const solanaAccount = publicKey?.toBase58() || null
     setWalletState((prev) => {
-      return { ...prev, solanaAccount }
+      return { ...prev, solanaAccount, unifiedAccount: solanaAccount }
     })
   }, [connected, connecting, publicKey, setWalletState])
 
