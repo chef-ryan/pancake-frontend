@@ -7,13 +7,13 @@ import { CHAIN_QUERY_NAME, getChainId } from 'config/chains'
 import { DEFAULT_INPUT_CURRENCY } from 'config/constants/exchange'
 import dayjs from 'dayjs'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import useNativeCurrency from 'hooks/useNativeCurrency'
+import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
 import { useAtom, useAtomValue } from 'jotai'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 import { useCallback, useEffect, useState } from 'react'
 import { ChartPeriod, chainIdToExplorerInfoChainName, explorerApiClient } from 'state/info/api/client'
-import { isAddressEqual, safeGetAddress, safeGetSolanaAddress, safeGetUnifiedAddress } from 'utils'
+import { isAddressEqual, safeGetAddress, safeGetUnifiedAddress } from 'utils'
 import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useBridgeAvailableRoutes } from 'views/Swap/Bridge/hooks'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
@@ -130,7 +130,7 @@ export function useDefaultsFromURLSearch():
   | undefined {
   const { chainId } = useAccountActiveChain()
   const [, dispatch] = useAtom(swapReducerAtom)
-  const native = useNativeCurrency()
+  const native = useUnifiedNativeCurrency()
   const { query, pathname, isReady } = useRouter()
   const [result, setResult] = useState<
     | {
