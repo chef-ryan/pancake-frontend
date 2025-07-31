@@ -3,7 +3,6 @@ import { useTranslation } from '@pancakeswap/localization'
 import {
   Box,
   Button,
-  Collapse,
   Flex,
   FlexGap,
   Grid,
@@ -12,7 +11,6 @@ import {
   LinkExternal,
   Modal,
   ModalBody,
-  ModalCloseButton,
   ModalV2,
   Text,
   Toggle,
@@ -22,6 +20,7 @@ import {
 import { WalletReadyState } from '@solana/wallet-adapter-base'
 import { useWallet, Wallet } from '@solana/wallet-adapter-react'
 import { useAtom } from 'jotai'
+import { SwapUIV2 } from '@pancakeswap/widgets-internal'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { solanaWalletModalAtom } from './atoms/solanaWalletAtoms'
@@ -47,12 +46,6 @@ const WalletListBox = styled(Box)`
   flex: 1;
 `
 
-const DividerBox = styled(Box)`
-  flex: 1;
-  height: 1px;
-  background: repeating-linear-gradient(to right, currentColor 0 5px, transparent 5px 10px);
-`
-
 const InstructionFlex = styled(Flex)`
   font-size: 14px;
   text-align: start;
@@ -71,10 +64,6 @@ const NotInstalledGrid = styled(Grid)`
   row-gap: 12px;
 `
 
-const DividerHeader = styled(Flex)`
-  font-size: 14px;
-`
-
 const WalletItemContainer = styled(FlexGap)<{ selectable: boolean }>`
   cursor: ${({ selectable }) => (selectable ? 'pointer' : 'not-allowed')};
 `
@@ -85,6 +74,7 @@ const ToggleFooter = styled(Flex)`
 
 export const SolanaWalletModal: React.FC = () => {
   const { wallets, select } = useWallet()
+
   const { isMobile } = useMatchBreakpoints()
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useAtom(solanaWalletModalAtom)
@@ -181,7 +171,7 @@ export const SolanaWalletModal: React.FC = () => {
                 {t(
                   'By connecting your wallet, you acknowledge that you have read, understand and accept the terms in the',
                 )}{' '}
-                <Link external href="https://pancakeswap.finance/terms-of-service">
+                <Link external display="inline" fontSize="14px" href="https://pancakeswap.finance/terms-of-service">
                   {t('disclaimer')}
                 </Link>
               </DisclaimerBox>
@@ -226,18 +216,18 @@ export const SolanaWalletModal: React.FC = () => {
                     />
                   ))}
                 </WalletGrid>
-                <Collapse isOpen={canShowUninstalledWallets} mt="16px">
-                  <DividerHeader color="textSubtle" my="12px" alignItems="center">
-                    <DividerBox />
-                    <Text mx="8px">Uninstalled wallets</Text>
-                    <DividerBox />
-                  </DividerHeader>
-                  <NotInstalledGrid opacity={0.5} gridTemplateColumns="1fr 1fr">
-                    {notInstalledWallets.map((wallet) => (
-                      <WalletItem selectable={false} key={wallet.adapter.name} wallet={wallet} />
-                    ))}
-                  </NotInstalledGrid>
-                </Collapse>
+                <SwapUIV2.Collapse
+                  hideToggleIcon
+                  isOpen={canShowUninstalledWallets}
+                  title={null}
+                  content={
+                    <NotInstalledGrid opacity={0.5} gridTemplateColumns="1fr 1fr">
+                      {notInstalledWallets.map((wallet) => (
+                        <WalletItem selectable={false} key={wallet.adapter.name} wallet={wallet} />
+                      ))}
+                    </NotInstalledGrid>
+                  }
+                />
               </WalletListBox>
               {!isMobile && (
                 <ToggleFooter
