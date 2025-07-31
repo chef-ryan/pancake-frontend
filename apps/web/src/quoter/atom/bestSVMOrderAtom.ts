@@ -28,11 +28,13 @@ export const bestSVMOrderAtom = atomFamily(
       try {
         const query = withTimeout(
           async () => {
+            const [inputCurrency, outputCurrency] =
+              tradeType === TradeType.EXACT_INPUT ? [baseCurrency, currency] : [currency, baseCurrency]
             // Parse response to SVM order format
             const solTradeRoute = await getBestSolanaTrade({
               // TODO: need to remove as SPLToken
-              inputCurrency: baseCurrency as SPLToken,
-              outputCurrency: currency as SPLToken,
+              inputCurrency: inputCurrency as SPLToken,
+              outputCurrency: outputCurrency as SPLToken,
               amount: amount as UnifiedCurrencyAmount<SPLToken>,
               tradeType: tradeType as TradeType,
               slippageBps: userSlippageTolerance,

@@ -9,7 +9,7 @@ interface SolanaQuoteRequest {
   outputMint: string
   amount: string
   slippageBps: number
-  swapType: 'exactIn' | 'exactOut'
+  swapMode: 'ExactIn' | 'ExactOut'
   taker?: string
   excludeRouters?: string
   excludeDexes?: string
@@ -66,14 +66,14 @@ export const getBestSolanaTrade = async ({
 }: BestSolanaTradeParams): Promise<SolRouterTrade> => {
   const inputMint = solToWSol(inputCurrency.address)
   const outputMint = solToWSol(outputCurrency.address)
-  const swapType = tradeType === TradeType.EXACT_INPUT ? 'exactIn' : 'exactOut'
+  const swapMode = tradeType === TradeType.EXACT_INPUT ? 'ExactIn' : 'ExactOut'
 
   const requestBody: SolanaQuoteRequest = {
     inputMint,
     outputMint,
     amount: amount.quotient.toString(),
     slippageBps,
-    swapType,
+    swapMode,
     taker: account,
   }
 

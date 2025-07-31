@@ -24,7 +24,7 @@ interface IUltraSwapService {
 }
 
 class UltraSwapService implements IUltraSwapService {
-  private BASE_URL = 'https://ultra-api.jup.ag'
+  private BASE_URL = 'https://lite-api.jup.ag/ultra/v1'
 
   private ROUTE = {
     SWAP: `${this.BASE_URL}/execute`,
