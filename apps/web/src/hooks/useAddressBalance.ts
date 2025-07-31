@@ -1,7 +1,8 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 import { useQuery } from '@tanstack/react-query'
 import BigNumber from 'bignumber.js'
 import { useCallback, useMemo } from 'react'
+import { useActiveChainId } from './useActiveChainId'
 
 export interface TokenData {
   address: string
@@ -35,19 +36,20 @@ interface UseAddressBalanceOptions {
   enabled?: boolean
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_WALLET_API_BASE_URL || 'https://wallet-api.pancakeswap.com/v1/balances'
+const API_BASE_URL = process.env.NEXT_PUBLIC_WALLET_API_BASE_URL || 'https://wallet-api.pancakeswap.com/v1'
 
 /**
  * Hook to fetch and manage token balances for a specific address using React Query
  */
 export const useAddressBalance = (address?: string, options: UseAddressBalanceOptions = {}) => {
+  const { chainId } = useActiveChainId()
   const { includeSpam = false, onlyWithPrice = false, filterByChainId, enabled = true } = options
 
   // Fetch balances from the API
   const fetchBalances = useCallback(async (): Promise<BalanceData[]> => {
     if (!address) return []
 
-    const response = await fetch(`${API_BASE_URL}/${address}`)
+    const response = await fetch(`${API_BASE_URL}${chainId === NonEVMChainId.SOLANA ? '/sol' : ''}/balances/${address}`)
 
     if (!response.ok) {
       throw new Error(`Error fetching balances: ${response.statusText}`)
