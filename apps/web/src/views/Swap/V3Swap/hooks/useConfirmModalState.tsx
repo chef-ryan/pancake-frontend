@@ -765,7 +765,7 @@ const useConfirmActions = (
     return {
       step: ConfirmModalState.PENDING_CONFIRMATION,
       action: async () => {
-        if (!isSVMOrder(order) || !account || !order.trade) {
+        if (!isSVMOrder(order) || !solanaAccount || !order.trade) {
           resetState()
           return
         }
@@ -836,7 +836,7 @@ const useConfirmActions = (
       showIndicator: false,
       getCalldata: () => [],
     }
-  }, [account, order, resetState, showError, toastSuccess, t, signTransaction, solanaWallet?.adapter.publicKey])
+  }, [solanaAccount, order, resetState, showError, toastSuccess, t, signTransaction, solanaWallet?.adapter.publicKey])
 
   const actions = useMemo(() => {
     return {

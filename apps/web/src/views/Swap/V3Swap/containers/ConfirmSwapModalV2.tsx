@@ -132,10 +132,15 @@ export const ConfirmSwapModalV2: React.FC<ConfirmSwapModalV2Props> = ({
     const amountB = isExactIn ? `Min ${amountBWithSlippage}` : amountBWithSlippage
 
     if (swapErrorMessage) {
+      const message = swapErrorMessage.includes('Could not find an Account to execute with this Action')
+        ? t(
+            'TransactionExecutionError: The requested account and / or method has not been authorised by the user. Please make sure your wallet is updated to the latest version.',
+          )
+        : swapErrorMessage
       return (
         <Flex width="100%" alignItems="center" height="calc(430px - 73px - 120px)">
           <SwapTransactionErrorContent
-            message={swapErrorMessage}
+            message={message}
             onDismiss={handleDismiss}
             openSettingModal={openSettingModal}
           />

@@ -4373,5 +4373,6 @@
   "TWAP and Limit orders are currently not supported for Smart Account wallets.": "TWAP and Limit orders are currently not supported for Smart Account wallets.",
   "Create your Wallet with Social Login": "Create your Wallet with Social Login",
   "Important Notice: %chain% Sunset": "Important Notice: %chain% Sunset",
-  "%chain% will be sunset on %date%. Please make sure to remove your liquidity from all pools before deadline.": "%chain% will be sunset on %date%. Please make sure to remove your liquidity from all pools before deadline."
+  "%chain% will be sunset on %date%. Please make sure to remove your liquidity from all pools before deadline.": "%chain% will be sunset on %date%. Please make sure to remove your liquidity from all pools before deadline.",
+  "TransactionExecutionError: The requested account and / or method has not been authorised by the user. Please make sure your wallet is updated to the latest version.": "TransactionExecutionError: The requested account and / or method has not been authorised by the user. Please make sure your wallet is updated to the latest version."
 }
