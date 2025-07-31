@@ -10,14 +10,14 @@ import { useQuery } from '@tanstack/react-query'
 import { SOLANA_LISTS_CONFIG, TokenListKey, USER_ADDED_KEY, convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
 
 // Custom hook for individual token list queries
-function useTokenListQuery(listKey: TokenListKey) {
+function useTokenListQuery(listKey: TokenListKey, enabled: boolean) {
   const listSettings = useAtomValue(solanaListSettingsAtom)
   // PancakeSwap list is always enabled
   const isEnabled = listKey === TokenListKey.PANCAKESWAP ? true : listSettings[listKey]
   const listConfig = SOLANA_LISTS_CONFIG[listKey]
 
   return useQuery({
-    queryKey: ['solana-token-list', listConfig.key, isEnabled],
+    queryKey: ['solana-token-list', listConfig.key, isEnabled && enabled],
     queryFn: async () => {
       const res = await fetch(listConfig.apiUrl)
       if (!res.ok) {
@@ -29,7 +29,7 @@ function useTokenListQuery(listKey: TokenListKey) {
     retry: 3,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    enabled: isEnabled,
+    enabled: isEnabled && enabled,
     select: (data) => {
       return listConfig.parser(data)
     },
@@ -48,14 +48,14 @@ function saveUserAddedTokens(tokens: TokenInfo[]) {
   localStorage.setItem(USER_ADDED_KEY, JSON.stringify(tokens))
 }
 
-export function useSolanaTokenList() {
+export function useSolanaTokenList(enabled = true) {
   const [userTokens, setUserTokens] = useState<TokenInfo[]>(getUserAddedTokens())
   const setTokenList = useSetAtom(solanaTokenListAtom)
 
   // Create individual queries for each token list using the custom hook
-  const { data: pcsTokens, isLoading: pcsLoading } = useTokenListQuery(TokenListKey.PANCAKESWAP)
-  const { data: raydiumTokens, isLoading: raydiumLoading } = useTokenListQuery(TokenListKey.RAYDIUM)
-  const { data: jupiterTokens, isLoading: jupiterLoading } = useTokenListQuery(TokenListKey.JUPITER)
+  const { data: pcsTokens, isLoading: pcsLoading } = useTokenListQuery(TokenListKey.PANCAKESWAP, enabled)
+  const { data: raydiumTokens, isLoading: raydiumLoading } = useTokenListQuery(TokenListKey.RAYDIUM, enabled)
+  const { data: jupiterTokens, isLoading: jupiterLoading } = useTokenListQuery(TokenListKey.JUPITER, enabled)
 
   const mergedTokens = useMemo(() => {
     const seen = new Set<string>()
