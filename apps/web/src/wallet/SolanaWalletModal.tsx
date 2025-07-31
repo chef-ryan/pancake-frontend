@@ -45,8 +45,6 @@ const DisclaimerBox = styled(Box)`
 
 const WalletListBox = styled(Box)`
   flex: 1;
-  overflow-y: auto;
-  padding-right: 10px;
 `
 
 const DividerBox = styled(Box)`
@@ -66,6 +64,7 @@ const ToggleRow = styled(FlexGap)`
 
 const WalletGrid = styled(Grid)`
   row-gap: 10px;
+  column-gap: 10px;
 `
 
 const NotInstalledGrid = styled(Grid)`
@@ -109,12 +108,7 @@ export const SolanaWalletModal: React.FC = () => {
 
   return (
     <ModalV2 isOpen={isOpen} onDismiss={onClose}>
-      <Modal
-        title={t('Connect your wallet to PancakeSwap')}
-        onDismiss={onClose}
-        minWidth="36em"
-        onAnimationEnd={handleCloseComplete}
-      >
+      <Modal title={t('Connect your wallet to PancakeSwap')} onDismiss={onClose} onAnimationEnd={handleCloseComplete}>
         {isWalletNotInstalled ? (
           <ModalBody>
             <ColumnBox>
@@ -203,8 +197,9 @@ export const SolanaWalletModal: React.FC = () => {
                         fontWeight: 500,
                       }}
                       justifyContent="space-between"
+                      alignItems="center"
                       gap="4px"
-                      mb="16px"
+                      mb="8px"
                     >
                       <Text>{t('Show uninstalled')}</Text>
                       <Toggle
@@ -271,7 +266,6 @@ export const SolanaWalletModal: React.FC = () => {
             </ColumnBox>
           </ModalBody>
         )}
-        <ModalCloseButton onDismiss={onClose} />
       </Modal>
     </ModalV2>
   )
