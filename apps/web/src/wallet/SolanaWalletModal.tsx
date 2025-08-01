@@ -42,7 +42,8 @@ const DisclaimerBox = styled(Box)`
   font-size: 14px;
 `
 
-const WalletListBox = styled(Box)`
+const WalletListBox = styled(FlexGap)`
+  flex-direction: column;
   flex: 1;
 `
 
@@ -175,8 +176,8 @@ export const SolanaWalletModal: React.FC = () => {
                   {t('disclaimer')}
                 </Link>
               </DisclaimerBox>
-              <WalletListBox mb="24px">
-                <Flex justifyContent="space-between" mb="8px" alignItems="center">
+              <WalletListBox mb="24px" gap="10px">
+                <Flex justifyContent="space-between" alignItems="center">
                   <Text fontSize="16px" color="text" bold mb="8px">
                     {t('Choose wallet')}
                   </Text>

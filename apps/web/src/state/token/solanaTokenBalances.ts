@@ -1,28 +1,28 @@
 import { useMemo } from 'react'
 
 import BN from 'bignumber.js'
-import { atom, useAtomValue } from 'jotai'
+import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { atomFamily, loadable } from 'jotai/utils'
 import { TokenAccount } from '@pancakeswap/solana-core-sdk'
 import { rpcUrlAtom } from '@pancakeswap/utils/user'
-import { useQuery } from '@tanstack/react-query'
-import { FAST_INTERVAL } from 'config/constants'
-import { PublicKey } from '@solana/web3.js'
-import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
-import { getAssociatedTokenAddress } from '@solana/spl-token-0.4'
 
 import { fetchSolanaTokenBalances } from './solanaBalanceFetcher'
 
-const NATIVE_SOLANA_MINT_ADDRESS = '11111111111111111111111111111111'
+// Global refresh counter for triggering balance updates
+export const solanaTokenBalanceRefreshCounterAtom = atom(0)
 
 /**
- * AtomFamily: caches all token balances for a wallet.
- * The value is a Map<string, BN> where key is mint address.
+ * AtomFamily that uses Jotai's dependency tracking with refresh capability.
+ * This atom family will re-fetch when refresh counter or RPC URL changes.
  */
 const walletBalancesAtomFamily = atomFamily((walletAddress: string | null | undefined) =>
   loadable(
     atom(async (get) => {
       if (!walletAddress) return new Map<string, TokenAccount[]>()
+
+      // Add dependency on refresh counter to trigger updates
+      get(solanaTokenBalanceRefreshCounterAtom)
+
       const rpc = get(rpcUrlAtom)
       return fetchSolanaTokenBalances(walletAddress, rpc)
     }),
@@ -42,50 +42,13 @@ export function useSolanaTokenBalance(
   walletAddress?: string | null,
   mintAddress?: string,
 ): { balance: BN; loading: boolean; error?: Error } {
-  const connection = useSolanaConnectionWithRpcAtom()
-
-  const {
-    data: balance,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['useSolanaTokenBalance', walletAddress, mintAddress],
-    queryFn: async () => {
-      if (!walletAddress || !mintAddress) return new BN(0)
-      try {
-        // handle native case
-        if (mintAddress === NATIVE_SOLANA_MINT_ADDRESS) {
-          const balance = await connection.getBalance(new PublicKey(walletAddress))
-          return new BN(balance.toString())
-        }
-
-        const mintPub = new PublicKey(mintAddress)
-        const owner = new PublicKey(walletAddress)
-
-        // TODO: can cache this ATA address
-        const ata = await getAssociatedTokenAddress(mintPub, owner)
-
-        const balance = await connection.getTokenAccountBalance(ata)
-
-        return new BN(balance.value.amount.toString())
-      } catch (error) {
-        console.error(error)
-        return new BN(0)
-      }
-    },
-    enabled: Boolean(walletAddress && mintAddress),
-    staleTime: FAST_INTERVAL,
-    refetchOnWindowFocus: false,
-    refetchInterval: FAST_INTERVAL,
-  })
-
+  const state = useAtomValue(walletBalancesAtomFamily(walletAddress))
   return useMemo(() => {
-    return {
-      balance: balance ?? new BN(0),
-      loading: isLoading,
-      error: error as Error,
-    }
-  }, [balance, isLoading, error])
+    if (!mintAddress) return { balance: new BN(0), loading: false }
+    if (state.state === 'hasError') return { balance: new BN(0), loading: false, error: state.error as Error }
+    if (state.state === 'loading') return { balance: new BN(0), loading: true }
+    return { balance: new BN(state.data.get(mintAddress)?.[0].amount.toNumber() ?? 0), loading: false }
+  }, [mintAddress, state])
 }
 
 /**

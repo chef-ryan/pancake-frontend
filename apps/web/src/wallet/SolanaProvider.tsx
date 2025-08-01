@@ -23,14 +23,13 @@ import { initialize, SolflareWalletAdapter } from '@solflare-wallet/wallet-adapt
 import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
 
 import { accountActiveChainAtom } from 'hooks/useAccountActiveChain'
-import { useSetAtom } from 'jotai'
-import { defaultEndpoint, defaultNetWork } from './solana.config'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { rpcUrlAtom } from '@pancakeswap/utils/user'
+import { defaultNetWork } from './solana.config'
 import { BackpackWalletAdapter } from './walletAdapter/BackpackWalletAdapter'
 import { OKXWalletAdapter } from './walletAdapter/OKXWalletAdapter'
 
 initialize()
-
-const endpoint = defaultEndpoint
 
 const SolanaWalletStateUpdater = () => {
   const { connected, connecting, publicKey } = useWallet()
@@ -46,6 +45,7 @@ const SolanaWalletStateUpdater = () => {
   return null
 }
 export const SolanaProvider: FC<PropsWithChildren<any>> = ({ children }) => {
+  const endpoint = useAtomValue(rpcUrlAtom)
   const _walletConnect = useMemo(() => {
     const connectWallet: WalletConnectWalletAdapter[] = []
     try {
