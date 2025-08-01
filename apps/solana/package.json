@@ -60,7 +60,7 @@
     "@project-serum/serum": "^0.13.65",
     "@sentry/nextjs": "^8.26.0",
     "@solana/buffer-layout": "^4.0.1",
-    "@solana/spl-token": "0.4.8",
+    "@solana/spl-token": "~0.4.9",
     "@solana/spl-token-0.4": "npm:@solana/spl-token@0.4.0",
     "@solana/spl-token-registry": "~0.2.4574",
     "@solana/wallet-adapter-base": "^0.9.23",

@@ -97,6 +97,7 @@ const whitelist = [
   "Your browser doesn't support iframe",
   'Try it now',
   'This Product is in beta.',
+  'Smart contract wallets are currently not supported on Bridge. To continue, please switch back to an EOA (Externally Owned Account) wallet before interacting with the product.',
 ]
 
 describe.concurrent('Check translations integrity', () => {
