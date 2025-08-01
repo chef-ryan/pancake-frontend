@@ -32,7 +32,6 @@ export function parseTokenAccountResp({ owner, solAccountResp, tokenAccountResp 
       isNative: false,
       programId: account.owner,
     });
-    // todo programId should get from api
     tokenAccountRawInfos.push({ pubkey, accountInfo, programId: account.owner });
   }
 

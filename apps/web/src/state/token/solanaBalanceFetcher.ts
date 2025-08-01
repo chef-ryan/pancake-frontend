@@ -8,7 +8,7 @@ export async function fetchSolanaTokenBalances(
 ): Promise<Map<string, TokenAccount[]>> {
   const connection = new Connection(rpc)
   const owner = new PublicKey(walletAddress)
-  const [solAccountResp, tokenAccountResp, token2022Req] = await Promise.all([
+  const [solAccountResp, tokenAccountResp, token2022Resp] = await Promise.all([
     connection.getAccountInfo(owner),
     connection.getTokenAccountsByOwner(owner, { programId: TOKEN_PROGRAM_ID }),
     connection.getTokenAccountsByOwner(owner, { programId: TOKEN_2022_PROGRAM_ID }),
@@ -19,7 +19,7 @@ export async function fetchSolanaTokenBalances(
     solAccountResp,
     tokenAccountResp: {
       context: tokenAccountResp.context,
-      value: [...tokenAccountResp.value, ...token2022Req.value],
+      value: [...tokenAccountResp.value, ...token2022Resp.value],
     },
   })
 
