@@ -173,7 +173,7 @@ export function useTransferConfig(supportedChains: IChainConfig[]) {
     }
 
     initConfig()
-  }, [])
+  }, [supportedChains])
 
   return transferConfig
 }

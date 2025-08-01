@@ -51,7 +51,6 @@ const InfinitySwapInner = () => {
   // Prefetch Solana tokens when user switches to Solana
   useSolanaTokenList(chainId === NonEVMChainId.SOLANA)
 
-
   useEffect(() => {
     if (firstTime && query.showTradingReward) {
       setFirstTime(false)
