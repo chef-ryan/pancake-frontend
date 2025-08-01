@@ -57,6 +57,7 @@ import { getBridgeCalldata } from 'views/Swap/Bridge/api'
 import { useBridgeCheckApproval } from 'views/Swap/Bridge/hooks'
 import { VersionedTransaction } from '@solana/web3.js'
 import { UltraSwapError, UltraSwapErrorType, ultraSwapService } from '@pancakeswap/solana-router-sdk'
+import { confirmTransaction } from '@pancakeswap/solana-core-sdk'
 
 import { ChainId as EvmChainId } from '@pancakeswap/chains'
 import { useUserSlippage } from '@pancakeswap/utils/user'
@@ -65,6 +66,8 @@ import { activeBridgeOrderMetadataAtom } from 'views/Swap/Bridge/CrossChainConfi
 import { Permit2Schema } from 'views/Swap/Bridge/types'
 import { getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { useRefreshSolanaTokenBalances } from 'state/token/solanaTokenBalances'
+import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
 import { BatchCall, getBatchedTransaction as getBatchedTransactionHelper } from './batchHelper'
 import { eip5792UserRejectUpgradeError, userRejectedError } from './useSendSwapTransaction'
 import { useSwapCallback } from './useSwapCallback'
@@ -197,6 +200,9 @@ const useConfirmActions = (
 
   const { toastSuccess, toastError, toastInfo } = useToast()
 
+  // Refresh function to update cached Solana balances after swap
+  const refreshSolanaBalances = useRefreshSolanaTokenBalances(solanaWallet?.adapter.publicKey?.toBase58())
+
   const resetState = useCallback(() => {
     setConfirmState(ConfirmModalState.REVIEWING)
     setTxHash(undefined)
@@ -236,6 +242,24 @@ const useConfirmActions = (
       return undefined
     },
     [chainId],
+  )
+
+  const connection = useSolanaConnectionWithRpcAtom()
+
+  const retryWaitForSolanaTransaction = useCallback(
+    async (signature?: string) => {
+      if (!signature) return undefined
+      const waitTx = async () => {
+        try {
+          await confirmTransaction(connection, signature)
+        } catch (error) {
+          throw new RetryableError()
+        }
+      }
+      const { promise } = retry(waitTx, { n: 5, minWait: 3000, maxWait: 5000 })
+      return promise
+    },
+    [connection],
   )
 
   // define the action of each step
@@ -820,6 +844,10 @@ const useConfirmActions = (
           )
 
           setConfirmState(ConfirmModalState.COMPLETED)
+
+          // Wait for transaction confirmation then refresh balances
+          await retryWaitForSolanaTransaction(signature)
+          refreshSolanaBalances()
         } catch (error: any) {
           console.error('Solana swap error', error)
           if (error?.message?.includes('rejected')) {
@@ -836,7 +864,18 @@ const useConfirmActions = (
       showIndicator: false,
       getCalldata: () => [],
     }
-  }, [solanaAccount, order, resetState, showError, toastSuccess, t, signTransaction, solanaWallet?.adapter.publicKey])
+  }, [
+    solanaAccount,
+    order,
+    resetState,
+    showError,
+    toastSuccess,
+    t,
+    signTransaction,
+    retryWaitForSolanaTransaction,
+    refreshSolanaBalances,
+    solanaWallet?.adapter.publicKey,
+  ])
 
   const actions = useMemo(() => {
     return {
