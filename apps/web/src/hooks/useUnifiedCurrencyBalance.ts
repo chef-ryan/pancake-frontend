@@ -34,11 +34,20 @@ export function useUnifiedCurrencyBalances(
   currencies?: (UnifiedCurrency | undefined)[],
 ): (UnifiedBalance | undefined)[] {
   const { account: evmAccount, solanaAccount } = useAccountActiveChain()
-  const isSolana = currencies?.some((currency) => currency && SPLToken.isSPLToken(currency))
-  const solanaBalances = useSolanaTokenBalances(
-    solanaAccount,
-    isSolana ? currencies?.map((currency) => (currency as SPLToken | SPLNativeCurrency)?.address) : undefined,
-  )
+
+  const solanaCurrencies: SPLToken[] = useMemo(() => {
+    if (!currencies) return []
+
+    return currencies.filter((currency) => currency && SPLToken.isSPLToken(currency)) as SPLToken[]
+  }, [currencies])
+
+  const isSolana = solanaCurrencies?.length > 0
+
+  const solanaCurrenciesAddresses = useMemo(() => {
+    return solanaCurrencies.map((currency) => currency.address)
+  }, [solanaCurrencies])
+
+  const solanaBalances = useSolanaTokenBalances(solanaAccount, isSolana ? solanaCurrenciesAddresses : undefined)
   const evmBalances = useCurrencyBalances(evmAccount, currencies as Currency[])
 
   return useMemo(() => {

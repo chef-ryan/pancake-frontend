@@ -13,6 +13,7 @@ import { getMulticallAddress } from 'utils/addressHelpers'
 import { publicClient } from 'utils/viem'
 import { Address, erc20Abi, getAddress, isAddress } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { useMultipleContractSingleDataWagmi } from '../multicall/hooks'
 
 /**
@@ -145,13 +146,17 @@ export function useAllTokenBalances(selectedChainId?: number): {
   isLoading: boolean
 } {
   const { address: account } = useAccount()
+  const { chainId } = useActiveChainId()
 
   // Fetch balances using the hook we created
-  const { balances: apiBalances, isLoading: isLoadingBalance } = useAddressBalance(account, {
-    includeSpam: false,
-    onlyWithPrice: false,
-    filterByChainId: selectedChainId,
-  })
+  const { balances: apiBalances, isLoading: isLoadingBalance } = useAddressBalance(
+    chainId === NonEVMChainId.SOLANA ? undefined : account,
+    {
+      includeSpam: false,
+      onlyWithPrice: false,
+      filterByChainId: selectedChainId,
+    },
+  )
 
   return useMemo(() => {
     /// [tokenAddress: string]: CurrencyAmount<Token> | undefined
@@ -186,7 +191,7 @@ export function useAllTokenBalances(selectedChainId?: number): {
       balances,
       isLoading: isLoadingBalance,
     }
-  }, [apiBalances, isLoadingBalance, selectedChainId])
+  }, [apiBalances, isLoadingBalance])
 }
 
 /**

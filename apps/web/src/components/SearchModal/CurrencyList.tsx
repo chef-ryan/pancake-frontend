@@ -171,6 +171,9 @@ function CurrencyRow({
   const customAdded = useIsUserAddedToken(currency)
   const [isHovered, setIsHovered] = useState(false)
 
+  // Must do: for solana case, this causes expensive call due to getting token balance by each call
+  // useUnifiedCurrencyBalance is only good for getting balance of a single token
+  // useUnifiedCurrencyBalances is good for getting balance of multiple tokens but not have the refresh mechanism
   const balanceAmount = useUnifiedCurrencyBalance(currency)
   const currencyUsdPrice = useUnifiedTokenUsdPrice(currency, Boolean(balanceAmount))
   const balanceUSD = useMemo(() => {
