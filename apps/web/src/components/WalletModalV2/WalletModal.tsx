@@ -17,7 +17,6 @@ import { RecentTransactions } from 'components/App/Transactions/TransactionsModa
 import { useTheme } from '@pancakeswap/hooks'
 import { useMenuTab, WalletView } from 'components/Menu/UserMenu/providers/MenuTabProvider'
 import { TabsComponent } from 'components/Menu/UserMenu/WalletModal'
-import { usePrivy } from '@privy-io/react-auth'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import { useAddressBalance } from 'hooks/useAddressBalance'
 import { useRouter } from 'next/router'
@@ -28,6 +27,8 @@ import { ClaimGiftConfirmView } from 'views/Gift/components/ClaimGiftConfirmView
 import { ClaimGiftView } from 'views/Gift/components/ClaimGiftView'
 import { GiftInfoDetailView } from 'views/Gift/components/GiftInfoDetailView'
 import { GiftsDashboard } from 'views/Gift/components/GiftsDashboard'
+import { NonEVMChainId } from '@pancakeswap/chains'
+import { useActiveChainId } from 'hooks/useActiveChainId'
 import { CancelGiftProvider } from 'views/Gift/providers/CancelGiftProvider'
 import { ActionButton } from './ActionButton'
 import { AssetsList } from './AssetsList'
@@ -135,7 +136,8 @@ export const WalletContent = ({
   const { isMobile } = useMatchBreakpoints()
   const { viewState, setViewState, goBack, setSendEntry } = useWalletModalV2ViewState()
   const { theme } = useTheme()
-  const { authenticated, ready, user, createWallet, setWalletRecovery, enrollInMfa } = usePrivy()
+
+  const { chainId } = useActiveChainId()
 
   // Fetch balances using the hook we created
   const { balances, isLoading, totalBalanceUsd } = useAddressBalance(account, {
@@ -229,7 +231,7 @@ export const WalletContent = ({
               <Text fontSize="20px" fontWeight="bold" mb="8px">
                 {t('My Wallet')}
               </Text>
-              {!noAssets && (
+              {chainId !== NonEVMChainId.SOLANA && !noAssets && (
                 <Box mb="16px" onClick={(e) => e.stopPropagation()}>
                   <TabsComponent
                     view={view}
@@ -259,7 +261,7 @@ export const WalletContent = ({
           )}
         </Box>
       </CancelGiftProvider>
-      {viewState === ViewState.WALLET_INFO && (
+      {viewState === ViewState.WALLET_INFO && chainId !== NonEVMChainId.SOLANA && (
         <>
           {noAssets ? (
             <Box padding="8px 16px">
