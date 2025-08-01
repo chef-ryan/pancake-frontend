@@ -26,7 +26,6 @@ import styled from 'styled-components'
 import { solanaWalletModalAtom } from './atoms/solanaWalletAtoms'
 import DesktopIcon from './components/DesktopIcon'
 import MobileIcon from './components/MobileIcon'
-import QuestionToolTip from './components/QuestionToolTip'
 
 const ColumnBox = styled(Box)`
   display: flex;
@@ -271,7 +270,6 @@ function WalletItem({
   wallet: Wallet
   onClick?: (wallet: Wallet) => void
 }) {
-  const { t } = useTranslation()
   return (
     <WalletItemContainer
       selectable={selectable}
@@ -285,35 +283,6 @@ function WalletItem({
     >
       <Image src={wallet.adapter.icon} width={24} height={24} ml="4px" />
       <Text bold>{wallet.adapter.name}</Text>
-      {wallet.adapter.name === 'Phantom' && (
-        <FlexGap gap="4px" backgroundColor="backgroundAlt" px="8px" py="4px" borderRadius="8px" alignItems="center">
-          <Text fontSize="12px" color="secondary">
-            {t('Auto Confirm')}
-          </Text>
-          <QuestionToolTip
-            label={
-              <>
-                {t('Auto-confirm is now available for all transactions on PancakeSwap.')}
-                <LinkExternal href="https://phantom.com/learn/blog/auto-confirm" color="secondary" fontWeight="bold">
-                  {t('Learn more')}
-                </LinkExternal>
-              </>
-            }
-            placement="top"
-          />
-        </FlexGap>
-      )}
-      {wallet.adapter.name === 'Solflare' && (
-        <FlexGap gap="4px" backgroundColor="backgroundAlt" px="8px" py="4px" borderRadius="8px" alignItems="center">
-          <Text fontSize="12px" color="secondary">
-            {t('Auto Approve')}
-          </Text>
-          <QuestionToolTip
-            label={t('Auto-approve is now available for all transactions on PancakeSwap.')}
-            placement="top"
-          />
-        </FlexGap>
-      )}
     </WalletItemContainer>
   )
 }
