@@ -193,7 +193,7 @@ export default function CurrencySearchModalV2({
         ) : modalView === CurrencyModalView.manage ? (
           <Manage
             setModalView={setModalView}
-            setImportToken={setImportToken}
+            setImportToken={(token) => setImportToken(token as Token)}
             setImportList={setImportList}
             setListUrl={setListUrl}
             chainId={chainId}

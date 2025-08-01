@@ -23,14 +23,14 @@ import { getBlockExploreLink, safeGetAddress } from 'utils'
 import ImportRow from './ImportRow'
 import { CurrencyModalView } from './types'
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   width: 100%;
   height: calc(100% - 60px);
   position: relative;
   padding-bottom: 60px;
 `
 
-const Footer = styled.div`
+export const Footer = styled.div`
   position: absolute;
   bottom: 0;
   width: 100%;

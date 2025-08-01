@@ -38,6 +38,21 @@ export const convertRawTokenInfoIntoSPLToken = (token: TokenInfo) => {
   })
 }
 
+export const convertSPLTokenIntoRawTokenInfoUserAdded = (token: SPLToken): TokenInfo => {
+  return {
+    priority: 5,
+    userAdded: true,
+    type: 'imported',
+    address: token.address,
+    decimals: token.decimals,
+    symbol: token.symbol,
+    chainId: token.chainId,
+    programId: token.programId,
+    logoURI: token.logoURI,
+    name: token.name ?? '',
+  }
+}
+
 // Enhanced token list configuration with all necessary metadata
 export const SOLANA_LISTS_CONFIG: Record<TokenListKey, SolanaTokenListConfig> = {
   [TokenListKey.PANCAKESWAP]: {
