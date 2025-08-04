@@ -18,7 +18,7 @@ import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useDebounce, useSortedTokensByQuery } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 /* eslint-disable no-restricted-syntax */
-import { ChainId, getTokenComparator, Token, UnifiedCurrency } from '@pancakeswap/sdk'
+import { ChainId, ERC20Token, getTokenComparator, Token, UnifiedCurrency } from '@pancakeswap/sdk'
 import { createFilterToken, WrappedTokenInfo } from '@pancakeswap/token-lists'
 import {
   AutoColumn,
@@ -274,7 +274,7 @@ function CurrencySearch({
             <ImportRow
               chainId={selectedChainId}
               onCurrencySelect={handleCurrencySelect}
-              token={searchToken}
+              token={searchToken as ERC20Token}
               showImportView={showImportView}
               setImportToken={setImportToken}
             />
