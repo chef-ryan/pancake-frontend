@@ -4365,5 +4365,7 @@
   "Liquidity Slippage": "Liquidity Slippage",
   "Loading more pools...": "Loading more pools...",
   "Try Zap": "Try Zap",
-  "to automatically balance and provide V3 liquidity in one click.": "to automatically balance and provide V3 liquidity in one click."
+  "to automatically balance and provide V3 liquidity in one click.": "to automatically balance and provide V3 liquidity in one click.",
+  "Set position range": "Set position range",
+  "Position Range": "Position Range"
 }
