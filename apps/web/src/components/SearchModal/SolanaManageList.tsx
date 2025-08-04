@@ -10,7 +10,6 @@ import { solanaListSettingsAtom } from '../../state/token/solanaTokenAtoms'
 import { useSolanaTokenList } from '../../hooks/useSolanaTokenList'
 
 import Row, { RowFixed } from '../Layout/Row'
-import { CurrencyModalView } from './types'
 import { ListContainer, RowWrapper, Wrapper } from './ManageLists'
 
 const SolanaListRow = memo(function SolanaListRow({

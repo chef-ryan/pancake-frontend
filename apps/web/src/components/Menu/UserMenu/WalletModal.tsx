@@ -14,6 +14,8 @@ import { useCallback } from 'react'
 import { styled } from 'styled-components'
 import { parseEther } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
+import { useActiveChainId } from 'hooks/useActiveChainId'
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { useMenuTab, WalletView } from './providers/MenuTabProvider'
 import WalletInfo from './WalletInfo'
 import WalletTransactions from './WalletTransactions'
@@ -56,13 +58,17 @@ const WalletModal: React.FC<React.PropsWithChildren<{ onDismiss?: () => void; in
 }) => {
   const { view, setView } = useMenuTab()
   const { t } = useTranslation()
+  const { chainId } = useActiveChainId()
   const { address: account } = useAccount()
   const { data, isFetched } = useBalance({ address: account })
   const hasLowNativeBalance = Boolean(isFetched && data && data.value <= LOW_NATIVE_BALANCE)
 
-  const handleClick = useCallback((newIndex: number) => {
-    setView(newIndex)
-  }, [])
+  const handleClick = useCallback(
+    (newIndex: number) => {
+      setView(newIndex)
+    },
+    [setView],
+  )
 
   return (
     <ModalWrapper minWidth="360px">
@@ -74,7 +80,9 @@ const WalletModal: React.FC<React.PropsWithChildren<{ onDismiss?: () => void; in
           <CloseIcon width="24px" color="text" />
         </IconButton>
       </ModalHeader>
-      {view !== WalletView.WRONG_NETWORK && <TabsComponent view={view} handleClick={handleClick} />}
+      {view !== WalletView.WRONG_NETWORK && chainId !== NonEVMChainId.SOLANA && (
+        <TabsComponent view={view} handleClick={handleClick} />
+      )}
       <ModalBody p="24px" width="100%">
         {view === WalletView.WALLET_INFO && (
           <WalletInfo hasLowNativeBalance={hasLowNativeBalance} switchView={handleClick} onDismiss={onDismiss} />

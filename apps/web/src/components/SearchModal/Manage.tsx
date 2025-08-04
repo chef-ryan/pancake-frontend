@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Token } from '@pancakeswap/sdk'
+import { SPLToken, Token } from '@pancakeswap/sdk'
 import { TokenList } from '@pancakeswap/token-lists'
 import { ButtonMenu, ButtonMenuItem, ModalBody } from '@pancakeswap/uikit'
 import { useState } from 'react'
@@ -9,6 +9,7 @@ import ManageLists from './ManageLists'
 import ManageTokens from './ManageTokens'
 import { CurrencyModalView } from './types'
 import SolanaManageList from './SolanaManageList'
+import SolanaManageTokens from './SolanaManageTokens'
 
 const StyledButtonMenu = styled(ButtonMenu)`
   width: 100%;
@@ -22,7 +23,7 @@ export default function Manage({
   chainId,
 }: {
   setModalView: (view: CurrencyModalView) => void
-  setImportToken: (token: Token) => void
+  setImportToken: (token: Token | SPLToken) => void
   setImportList: (list: TokenList) => void
   setListUrl: (url: string) => void
   chainId?: number
@@ -33,18 +34,17 @@ export default function Manage({
 
   return (
     <ModalBody style={{ overflow: 'visible' }}>
-      {chainId === NonEVMChainId.SOLANA ? null : (
-        <StyledButtonMenu
-          activeIndex={showLists ? 0 : 1}
-          onItemClick={() => setShowLists((prev) => !prev)}
-          scale="sm"
-          variant="subtle"
-          mb="32px"
-        >
-          <ButtonMenuItem width="50%">{t('Lists')}</ButtonMenuItem>
-          <ButtonMenuItem width="50%">{t('Tokens')}</ButtonMenuItem>
-        </StyledButtonMenu>
-      )}
+      <StyledButtonMenu
+        activeIndex={showLists ? 0 : 1}
+        onItemClick={() => setShowLists((prev) => !prev)}
+        scale="sm"
+        variant="subtle"
+        mb="32px"
+      >
+        <ButtonMenuItem width="50%">{t('Lists')}</ButtonMenuItem>
+        <ButtonMenuItem width="50%">{t('Tokens')}</ButtonMenuItem>
+      </StyledButtonMenu>
+
       {showLists ? (
         chainId === NonEVMChainId.SOLANA ? (
           <SolanaManageList />
@@ -56,6 +56,8 @@ export default function Manage({
             chainId={chainId}
           />
         )
+      ) : chainId === NonEVMChainId.SOLANA ? (
+        <SolanaManageTokens setModalView={setModalView} setImportToken={setImportToken} />
       ) : (
         <ManageTokens setModalView={setModalView} setImportToken={setImportToken} chainId={chainId} />
       )}
