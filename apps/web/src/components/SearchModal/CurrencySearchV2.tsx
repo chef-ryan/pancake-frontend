@@ -1,7 +1,7 @@
 import { useDebounce, useSortedTokensByQuery } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 /* eslint-disable no-restricted-syntax */
-import { Currency, Token, UnifiedCurrency } from '@pancakeswap/sdk'
+import { Currency, Token, UnifiedCurrency, UnifiedToken } from '@pancakeswap/sdk'
 import { WrappedTokenInfo, createFilterToken } from '@pancakeswap/token-lists'
 import { AutoColumn, Box, Column, Input, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useAudioPlay } from '@pancakeswap/utils/user'
@@ -31,7 +31,7 @@ interface CurrencySearchV2Props {
   showCommonBases?: boolean
   commonBasesType?: CommonBasesType
   showImportView: () => void
-  setImportToken: (token: Token) => void
+  setImportToken: (token: UnifiedToken) => void
   height?: number
   tokensToShow?: Token[]
   chainId?: number

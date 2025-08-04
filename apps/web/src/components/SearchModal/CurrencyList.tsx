@@ -12,7 +12,7 @@ import { getTokenSymbolAlias } from 'utils/getTokenAlias'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 
 import { useTranslation } from '@pancakeswap/localization'
-import { ChainId, Currency, Token, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
+import { ChainId, Currency, UnifiedCurrency, UnifiedCurrencyAmount, UnifiedToken } from '@pancakeswap/sdk'
 import { WrappedTokenInfo } from '@pancakeswap/token-lists'
 import { ArrowForwardIcon, AutoColumn, Column, CopyButton, FlexGap, QuestionHelper, Text } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
@@ -263,7 +263,7 @@ export default function CurrencyList({
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
   showNative: boolean
   showImportView: () => void
-  setImportToken: (token: Token) => void
+  setImportToken: (token: UnifiedToken) => void
   breakIndex: number | undefined
   showChainLogo?: boolean
   chainId?: UnifiedChainId

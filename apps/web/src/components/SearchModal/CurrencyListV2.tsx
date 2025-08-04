@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Token } from '@pancakeswap/sdk'
+import { Currency, CurrencyAmount, UnifiedToken } from '@pancakeswap/sdk'
 import { ArrowForwardIcon, Column, QuestionHelper, Text } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
@@ -127,7 +127,7 @@ export default function CurrencyListV2({
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
   showNative: boolean
   showImportView: () => void
-  setImportToken: (token: Token) => void
+  setImportToken: (token: UnifiedToken) => void
   breakIndex: number | undefined
   chainId?: number
 }) {

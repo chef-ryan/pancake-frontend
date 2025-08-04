@@ -1,6 +1,6 @@
 import { usePreviousValue } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Token, UnifiedCurrency } from '@pancakeswap/sdk'
+import { Currency, Token, UnifiedCurrency, UnifiedToken } from '@pancakeswap/sdk'
 import { TokenList } from '@pancakeswap/token-lists'
 import { enableList, removeList, useFetchListCallback } from '@pancakeswap/token-lists/react'
 import {
@@ -93,7 +93,7 @@ export default function CurrencySearchModalV2({
   const prevView = usePreviousValue(modalView)
 
   // used for import token flow
-  const [importToken, setImportToken] = useState<Token | undefined>()
+  const [importToken, setImportToken] = useState<UnifiedToken | undefined>()
 
   // used for import list
   const [importList, setImportList] = useState<TokenList | undefined>()
@@ -180,7 +180,7 @@ export default function CurrencySearchModalV2({
             chainId={chainId}
           />
         ) : modalView === CurrencyModalView.importToken && importToken ? (
-          <ImportToken tokens={[importToken]} handleCurrencySelect={handleCurrencySelect} chainId={chainId} />
+          <ImportToken tokens={[importToken as Token]} handleCurrencySelect={handleCurrencySelect} chainId={chainId} />
         ) : modalView === CurrencyModalView.importList && importList && listURL ? (
           <ImportList
             onAddList={handleAddList}

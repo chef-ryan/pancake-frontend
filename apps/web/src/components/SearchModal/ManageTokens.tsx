@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Token } from '@pancakeswap/sdk'
+import { Token, UnifiedToken } from '@pancakeswap/sdk'
 import {
   AutoColumn,
   BscScanIcon,
@@ -45,7 +45,7 @@ export default function ManageTokens({
   chainId: chainIdProp,
 }: {
   setModalView: (view: CurrencyModalView) => void
-  setImportToken: (token: Token) => void
+  setImportToken: (token: UnifiedToken) => void
   chainId?: number
 }) {
   const { chainId: activeChainId } = useActiveChainId()
