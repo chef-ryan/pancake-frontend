@@ -147,7 +147,7 @@ export function PricePeriodRangeChart({
             key={baseCurrency.wrapped.address}
             data={{ liquiditySeries: formattedData, current: price, priceHistory: priceHistoryData }}
             dimensions={{ width: 400, height: 200 }}
-            margins={{ top: 10, right: 2, bottom: 20, left: 0 }}
+            margins={{ top: 10, right: 18, bottom: 20, left: 0 }}
             styles={{
               area: {
                 selection: theme.colors.text,

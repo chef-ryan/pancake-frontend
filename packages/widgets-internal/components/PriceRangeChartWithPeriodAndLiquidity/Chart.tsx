@@ -214,7 +214,16 @@ export function Chart({
             color={theme.colors.primary}
             strokeWidth={0.5}
           />
-          <AxisRight yScale={priceScale} innerWidth={width} highlightValue={current} ticks={isMobile ? 4 : 6} />
+          <AxisRight
+            yScale={priceScale}
+            innerWidth={width}
+            highlightValue={current}
+            highlightSecondaryValues={
+              brushDomain ? [Number(brushDomain.min.toPrecision(6)), Number(brushDomain.max.toPrecision(6))] : undefined
+            }
+            ticks={isMobile ? 4 : 6}
+            offset={1}
+          />
           <ZoomOverlay width={innerWidth} height={height} ref={zoomRef} />
           <Brush
             id={id}

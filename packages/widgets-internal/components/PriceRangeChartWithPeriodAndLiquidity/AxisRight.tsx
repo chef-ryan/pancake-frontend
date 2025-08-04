@@ -14,7 +14,15 @@ const StyledGroup = styled.g<{ $isMobile: boolean }>`
   }
 `;
 
-const Axis = ({ axisGenerator, highlightValue }: { axisGenerator: d3Axis<NumberValue>; highlightValue?: number }) => {
+const Axis = ({
+  axisGenerator,
+  highlightValue,
+  highlightSecondaryValues,
+}: {
+  axisGenerator: d3Axis<NumberValue>;
+  highlightValue?: number;
+  highlightSecondaryValues?: number[];
+}) => {
   const { theme } = useTheme();
   const axisRef = (axis: SVGGElement) => {
     if (!axis) return;
@@ -42,6 +50,26 @@ const Axis = ({ axisGenerator, highlightValue }: { axisGenerator: d3Axis<NumberV
             .attr("rx", 4)
             .attr("fill", theme.colors.primary);
         });
+
+      if (highlightSecondaryValues) {
+        axisGroup
+          .selectAll(".tick")
+          .filter((d) => highlightSecondaryValues.includes(d as number))
+          .select("text")
+          .style("fill", theme.colors.v2Default)
+          .attr("transform", "translate(-2, 0)")
+          .each(function iter() {
+            const bbox = (this as SVGTextElement).getBBox();
+            select((this as SVGTextElement).parentElement)
+              .insert("rect", "text")
+              .attr("x", bbox.x - 4)
+              .attr("y", bbox.y)
+              .attr("width", bbox.width + 4)
+              .attr("height", bbox.height)
+              .attr("rx", 4)
+              .attr("fill", theme.colors.secondary);
+          });
+      }
     }
   };
 
@@ -54,8 +82,10 @@ export const AxisRight = ({
   offset = 0,
   ticks = 6,
   highlightValue,
+  highlightSecondaryValues,
 }: {
   highlightValue?: number;
+  highlightSecondaryValues?: number[];
   yScale: ScaleLinear<number, number>;
   innerWidth: number;
   offset?: number;
@@ -72,9 +102,31 @@ export const AxisRight = ({
     );
     finalTicks = defaultTicks.map((tick) => (tick === closestTick ? highlightValue : tick));
   }
+
+  // If highlightSecondaryValues array is defined, replace the closest ticks with highlightSecondaryValues
+  if (highlightSecondaryValues) {
+    const closestTicks = highlightSecondaryValues.map((value) => {
+      const closestTick = finalTicks.reduce((prev, curr) =>
+        Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev
+      );
+      return closestTick;
+    });
+    finalTicks = finalTicks.map((tick) => {
+      const closestTickIndex = closestTicks.indexOf(tick);
+      if (closestTickIndex !== -1) {
+        return highlightSecondaryValues[closestTickIndex];
+      }
+      return tick;
+    });
+  }
+
   return (
     <StyledGroup $isMobile={isMobile} transform={`translate(${innerWidth + offset})`}>
-      <Axis axisGenerator={axisLeft(yScale).tickValues(finalTicks).tickSize(0)} highlightValue={highlightValue} />
+      <Axis
+        axisGenerator={axisLeft(yScale).tickValues(finalTicks).tickSize(0)}
+        highlightValue={highlightValue}
+        highlightSecondaryValues={highlightSecondaryValues}
+      />
     </StyledGroup>
   );
 };

@@ -14,16 +14,16 @@ const StyledButton = styled(Button)<{ $isActive: boolean }>`
 
 export const PRESET_RANGE_ITEMS = [
   {
-    label: "1D",
-    value: "1D",
+    label: "1M",
+    value: "1M",
   },
   {
     label: "7D",
     value: "1W",
   },
   {
-    label: "1M",
-    value: "1M",
+    label: "1D",
+    value: "1D",
   },
 ] as const;
 

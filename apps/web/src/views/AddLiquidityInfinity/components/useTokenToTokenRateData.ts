@@ -1,3 +1,4 @@
+import { Protocol } from '@pancakeswap/farms'
 import { Currency, isCurrencySorted } from '@pancakeswap/swap-sdk-core'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_SETTINGS_IMMUTABLE, QUERY_SETTINGS_WITHOUT_INTERVAL_REFETCH } from 'config/constants'
@@ -13,7 +14,7 @@ import type { Address } from 'viem/accounts'
 interface IRateDataProps {
   period: APISchema['schemas']['ChartPeriod']
   poolId?: Address
-  protocol: InfinityProtocol
+  protocol: InfinityProtocol | Protocol.V3
   chainId?: number
 }
 
@@ -80,6 +81,7 @@ const generateDateSequence = (period: APISchema['schemas']['ChartPeriod']) => {
   }))
 }
 
+// Token Rate Data for Infinity and V3
 export const useTokenRateData = ({
   chainId,
   poolId,
