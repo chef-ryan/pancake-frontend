@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { styled } from "styled-components";
 
 import { brushHandleAccentPath, brushHandlePath, OffScreenHandle } from "./svg";
-import { BrushDomainType } from "./types";
 import { ToolTip } from "./ToolTip";
+import { BrushDomainType } from "./types";
 
 const Handle = styled.path<{ color: string; id: string }>`
   cursor: ew-resize;
@@ -14,6 +14,8 @@ const Handle = styled.path<{ color: string; id: string }>`
   stroke-width: 1;
   stroke: url(#${({ id }) => id});
   fill: ${({ color }) => color};
+
+  z-index: 1;
 `;
 
 const HandleAccent = styled.path`
@@ -23,6 +25,8 @@ const HandleAccent = styled.path`
   stroke-width: 1.5;
   stroke: ${({ theme }) => theme.colors.background};
   opacity: ${({ theme }) => theme.colors.background};
+
+  z-index: 1;
 `;
 
 // flips the handles draggers when close to the container edges

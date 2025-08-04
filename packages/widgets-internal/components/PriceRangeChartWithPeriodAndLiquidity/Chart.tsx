@@ -1,17 +1,17 @@
 import { useTheme } from "@pancakeswap/hooks";
-import { max, extent, scaleLinear, ZoomTransform, scaleTime } from "d3";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import partition from "lodash/partition";
 import { useMatchBreakpoints } from "@pancakeswap/uikit";
+import { extent, max, scaleLinear, scaleTime, ZoomTransform } from "d3";
+import partition from "lodash/partition";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { Area } from "./VerticalArea";
+import { AxisBottom } from "./AxisBottom";
 import { AxisRight } from "./AxisRight";
 import { Brush } from "./Brush";
-import { HorizontalLine } from "./Line";
-import { LiquidityChartEntry, PriceChartEntry, ChartProps } from "./types";
-import Zoom, { ZoomOverlay } from "./Zoom";
-import { AxisBottom } from "./AxisBottom";
 import { CandleChart } from "./CandleChart";
+import { HorizontalLine } from "./Line";
+import { ChartProps, LiquidityChartEntry, PriceChartEntry } from "./types";
+import { Area } from "./VerticalArea";
+import Zoom, { ZoomOverlay } from "./Zoom";
 
 const priceAccessor = (d: LiquidityChartEntry) => d.price0;
 const liquidityAccessor = (d: LiquidityChartEntry) => d.activeLiquidity;
@@ -214,16 +214,7 @@ export function Chart({
             color={theme.colors.primary}
             strokeWidth={0.5}
           />
-          <AxisRight
-            yScale={priceScale}
-            innerWidth={width}
-            highlightValue={current}
-            highlightSecondaryValues={
-              brushDomain ? [Number(brushDomain.min.toPrecision(6)), Number(brushDomain.max.toPrecision(6))] : undefined
-            }
-            ticks={isMobile ? 4 : 6}
-            offset={1}
-          />
+
           <ZoomOverlay width={innerWidth} height={height} ref={zoomRef} />
           <Brush
             id={id}
@@ -238,6 +229,16 @@ export function Chart({
             minHandleColor={minHandleColor}
             maxHandleColor={maxHandleColor}
             current={current}
+          />
+          <AxisRight
+            yScale={priceScale}
+            innerWidth={width}
+            highlightValue={current}
+            highlightSecondaryValues={
+              brushDomain ? [Number(brushDomain.min.toPrecision(6)), Number(brushDomain.max.toPrecision(6))] : undefined
+            }
+            ticks={isMobile ? 4 : 6}
+            offset={1}
           />
         </g>
         <AxisBottom

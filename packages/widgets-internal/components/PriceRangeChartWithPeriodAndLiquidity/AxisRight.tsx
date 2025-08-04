@@ -1,9 +1,11 @@
 import { useTheme } from "@pancakeswap/hooks";
 import { useMatchBreakpoints } from "@pancakeswap/uikit";
-import { Axis as d3Axis, NumberValue, ScaleLinear, select, axisLeft } from "d3";
+import { axisLeft, Axis as d3Axis, NumberValue, ScaleLinear, select } from "d3";
 import { styled } from "styled-components";
 
 const StyledGroup = styled.g<{ $isMobile: boolean }>`
+  z-index: 10;
+
   line {
     display: none;
   }
@@ -57,6 +59,7 @@ const Axis = ({
           .filter((d) => highlightSecondaryValues.includes(d as number))
           .select("text")
           .style("fill", theme.colors.v2Default)
+          .style("z-index", 10)
           .attr("transform", "translate(-2, 0)")
           .each(function iter() {
             const bbox = (this as SVGTextElement).getBBox();
