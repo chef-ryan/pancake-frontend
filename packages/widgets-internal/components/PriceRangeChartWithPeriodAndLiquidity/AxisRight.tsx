@@ -40,7 +40,7 @@ const Axis = ({ axisGenerator, highlightValue }: { axisGenerator: d3Axis<NumberV
             .attr("width", bbox.width + 4)
             .attr("height", bbox.height)
             .attr("rx", 4)
-            .attr("fill", theme.colors.secondary);
+            .attr("fill", theme.colors.primary);
         });
     }
   };

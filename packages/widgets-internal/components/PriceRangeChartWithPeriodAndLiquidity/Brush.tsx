@@ -201,8 +201,8 @@ export const Brush = ({
           <linearGradient id={`${id}-gradient-handle`} x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" style={{ stopColor: theme.colors.secondary, stopOpacity: 1 }} />
             <stop offset="68%" style={{ stopColor: theme.colors.secondary, stopOpacity: 1 }} />
-            <stop offset="71.8%" style={{ stopColor: theme.colors.secondary, stopOpacity: 0.4 }} />
-            <stop offset="81.7%" style={{ stopColor: theme.colors.secondary, stopOpacity: 0 }} />
+            <stop offset="71.8%" style={{ stopColor: theme.colors.secondary, stopOpacity: 1 }} />
+            <stop offset="81.7%" style={{ stopColor: theme.colors.secondary, stopOpacity: 1 }} />
           </linearGradient>
         </defs>
 
@@ -214,25 +214,9 @@ export const Brush = ({
           onMouseLeave={() => setHovering(false)}
         />
         {/* Top dashed line */}
-        <line
-          x1="0"
-          y1={scale(max)}
-          x2={innerWidth}
-          y2={scale(max)}
-          stroke={maxHandleColor}
-          strokeWidth="1"
-          strokeDasharray="1,3"
-        />
+        <line x1="0" y1={scale(max)} x2={innerWidth} y2={scale(max)} stroke={maxHandleColor} strokeWidth="1" />
         {/* bottom dashed line */}
-        <line
-          x1="0"
-          y1={scale(min)}
-          x2={innerWidth}
-          y2={scale(min)}
-          stroke={minHandleColor}
-          strokeWidth="1"
-          strokeDasharray="1,3"
-        />
+        <line x1="0" y1={scale(min)} x2={innerWidth} y2={scale(min)} stroke={minHandleColor} strokeWidth="1" />
 
         {localBrushExtent && (
           <>

@@ -11,7 +11,7 @@ import { HorizontalLine } from "./Line";
 import { LiquidityChartEntry, PriceChartEntry, ChartProps } from "./types";
 import Zoom, { ZoomOverlay } from "./Zoom";
 import { AxisBottom } from "./AxisBottom";
-import { LineChart } from "./LineChart";
+import { CandleChart } from "./CandleChart";
 
 const priceAccessor = (d: LiquidityChartEntry) => d.price0;
 const liquidityAccessor = (d: LiquidityChartEntry) => d.activeLiquidity;
@@ -104,8 +104,9 @@ export function Chart({
   }, [current, liquiditySeries]);
 
   const [minHandleColor, maxHandleColor] = useMemo(() => {
-    const isHighToLow = liquiditySeries[0]?.price0 > liquiditySeries[liquiditySeries.length - 1]?.price0;
-    return isHighToLow ? [theme.colors.success, theme.colors.failure] : [theme.colors.failure, theme.colors.success];
+    // const isHighToLow = liquiditySeries[0]?.price0 > liquiditySeries[liquiditySeries.length - 1]?.price0;
+    // return isHighToLow ? [theme.colors.success, theme.colors.failure] : [theme.colors.failure, theme.colors.success];
+    return [theme.colors.secondary, theme.colors.secondary];
   }, [liquiditySeries, theme.colors.failure, theme.colors.success]);
 
   const defaultBrushExtent = useMemo(
@@ -134,12 +135,10 @@ export function Chart({
       <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: "hidden" }}>
         <defs>
           <linearGradient id="green-gradient" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="5%" stopColor={theme.colors.success} stopOpacity={1} />
-            <stop offset="100%" stopColor={theme.colors.success} stopOpacity={0.05} />
+            <stop offset="5%" stopColor={theme.colors.input} stopOpacity={1} />
           </linearGradient>
           <linearGradient id="red-gradient" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="5%" stopColor={theme.colors.failure} stopOpacity={1} />
-            <stop offset="100%" stopColor={theme.colors.failure} stopOpacity={0.05} />
+            <stop offset="5%" stopColor={theme.colors.input} stopOpacity={1} />
           </linearGradient>
         </defs>
         <defs>
@@ -151,7 +150,7 @@ export function Chart({
             // mask to highlight selected area
             <mask id={`${id}-chart-area-mask`}>
               <rect
-                fill="white"
+                fill={theme.colors.secondary}
                 y={liquidityScale(brushDomain.min)}
                 x="0"
                 width={innerWidth}
@@ -195,7 +194,7 @@ export function Chart({
         </g>
         <g>
           <g clipPath={`url(#${id}-line-chart-clip)`}>
-            <LineChart
+            <CandleChart
               series={priceHistory}
               xScale={periodScale}
               yScale={priceScale}
@@ -212,7 +211,7 @@ export function Chart({
             yScale={priceScale}
             x1={innerWidth * 0.6}
             x2={innerWidth}
-            color={theme.colors.secondary}
+            color={theme.colors.primary}
             strokeWidth={0.5}
           />
           <AxisRight yScale={priceScale} innerWidth={width} highlightValue={current} ticks={isMobile ? 4 : 6} />

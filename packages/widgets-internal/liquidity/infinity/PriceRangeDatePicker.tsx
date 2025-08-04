@@ -3,10 +3,10 @@ import { ButtonMenu, ButtonMenuItem, FlexGap, Text } from "@pancakeswap/uikit";
 import { useCallback, useMemo } from "react";
 
 export const PRESET_RANGE_ITEMS = [
-  {
-    label: "1H",
-    value: "1H",
-  },
+  // {
+  //   label: "1H",
+  //   value: "1H",
+  // },
   {
     label: "1D",
     value: "1D",

@@ -35,7 +35,7 @@ export const ToolTip = ({ visible = false, flip = false, text = "", textRef, wid
       })`}
       visible={visible}
     >
-      <TooltipBackground y="0" x="0" height={LABEL_HEIGHT} width={boxWidth} rx="8" />
+      <TooltipBackground y="0" x="0" height={LABEL_HEIGHT} width={boxWidth} rx="4" />
       <TooltipText y={LABEL_HEIGHT / 2 + 1} x={boxWidth / 2} dominantBaseline="middle" ref={textRef}>
         {text}
       </TooltipText>
