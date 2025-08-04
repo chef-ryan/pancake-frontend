@@ -38,6 +38,7 @@ export interface PricePeriodRangeChartProps {
   formattedData: LiquidityChartEntry[] | undefined;
   priceHistoryData?: PriceChartEntry[];
   axisTicks?: ChartProps["axisTicks"];
+  showGridLines?: boolean;
 }
 
 export function PricePeriodRangeChart({
@@ -57,6 +58,7 @@ export function PricePeriodRangeChart({
   formattedData,
   priceHistoryData,
   axisTicks,
+  showGridLines = true,
 }: PricePeriodRangeChartProps) {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -165,6 +167,7 @@ export function PricePeriodRangeChart({
             zoomLevels={zoomLevel ?? ZOOM_LEVELS[TICK_SPACING_LEVEL.MEDIUM]}
             ticksAtLimit={ticksAtLimit}
             axisTicks={axisTicks}
+            showGridLines={showGridLines}
           />
         </ChartWrapper>
       )}

@@ -8,6 +8,7 @@ import { AxisBottom } from "./AxisBottom";
 import { AxisRight } from "./AxisRight";
 import { Brush } from "./Brush";
 import { CandleChart } from "./CandleChart";
+import { GridLines } from "./GridLines";
 import { HorizontalLine } from "./Line";
 import { BrushDomainType, ChartProps, LiquidityChartEntry, PriceChartEntry } from "./types";
 import { Area } from "./VerticalArea";
@@ -32,6 +33,7 @@ export function Chart({
   zoomLevels,
   showZoomButtons = true,
   axisTicks,
+  showGridLines = true,
 }: ChartProps) {
   const zoomRef = useRef<SVGRectElement | null>(null);
   const { theme } = useTheme();
@@ -107,7 +109,7 @@ export function Chart({
     // const isHighToLow = liquiditySeries[0]?.price0 > liquiditySeries[liquiditySeries.length - 1]?.price0;
     // return isHighToLow ? [theme.colors.success, theme.colors.failure] : [theme.colors.failure, theme.colors.success];
     return [theme.colors.secondary, theme.colors.secondary];
-  }, [liquiditySeries, theme.colors.failure, theme.colors.success]);
+  }, [liquiditySeries, theme.colors.secondary]);
 
   const defaultBrushExtent = useMemo(
     () => ({ min: priceScale.domain()[1], max: priceScale.domain()[0] }),
@@ -173,6 +175,20 @@ export function Chart({
           </clipPath>
         </defs>
 
+        {/* Grid lines rendered first so they appear behind chart data */}
+        {showGridLines && (
+          <g clipPath={`url(#${id}-chart-clip)`}>
+            <GridLines
+              priceScale={priceScale}
+              periodScale={periodScale}
+              innerWidth={innerWidth}
+              innerHeight={innerHeight}
+              horizontalTicks={6}
+              verticalTicks={4}
+            />
+          </g>
+        )}
+
         <g>
           <g clipPath={`url(#${id}-chart-clip)`}>
             <Area
@@ -212,7 +228,7 @@ export function Chart({
           <HorizontalLine
             value={current}
             yScale={priceScale}
-            x1={innerWidth * 0.6}
+            x1={0}
             x2={innerWidth}
             color={theme.colors.primary}
             strokeWidth={0.5}
