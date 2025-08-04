@@ -84,7 +84,7 @@ export function useSyncWalletState() {
   // wagmi change
   useValueChanged(() => {
     const { chainId: wagmiChainId } = wagmiAccountState
-    if (wagmiChainId) {
+    if (wagmiChainId && isEvm(queryChainId)) {
       switchNetwork(wagmiChainId)
     }
   }, [wagmiAccountState])
