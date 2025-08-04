@@ -20,7 +20,6 @@ import { CurrencyLogo, DoubleCurrencyLogo, SwapUIV2 } from '@pancakeswap/widgets
 import { RiskInputPanelDisplay } from 'components/AccessRisk/SwapRevampRiskDisplay'
 import { FiatLogo } from 'components/Logo/CurrencyLogo'
 import { CommonBasesType } from 'components/SearchModal/types'
-import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useUnifiedUSDPriceAmount } from 'hooks/useStablecoinPrice'
 import { useUnifiedCurrencyBalance } from 'hooks/useUnifiedCurrencyBalance'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -28,7 +27,7 @@ import { styled } from 'styled-components'
 import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
 import { StablePair } from 'views/AddLiquidity/AddStableLiquidity/hooks/useStableLPDerivedMintInfo'
-import { useAccount } from 'wagmi'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { FONT_SIZE, LOGO_SIZE, useFontSize } from './state'
 
@@ -221,10 +220,8 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   modalTitle,
   showSearchHeader,
 }: CurrencyInputPanelProps) {
-  const { address: account } = useAccount()
-  // const value = useRef<string | undefined>(defaultValue)
+  const { unifiedAccount: account, chainId } = useAccountActiveChain()
   const [value, setValue] = useState<string | undefined>(defaultValue)
-  const { chainId } = useActiveChainId()
 
   const selectedCurrencyBalance = useUnifiedCurrencyBalance(currency ?? undefined)
 
