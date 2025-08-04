@@ -25,6 +25,7 @@ import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
 import { accountActiveChainAtom } from 'hooks/useAccountActiveChain'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { rpcUrlAtom } from '@pancakeswap/utils/user'
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { defaultNetWork } from './solana.config'
 import { BackpackWalletAdapter } from './walletAdapter/BackpackWalletAdapter'
 import { OKXWalletAdapter } from './walletAdapter/OKXWalletAdapter'
@@ -38,7 +39,7 @@ const SolanaWalletStateUpdater = () => {
   useEffect(() => {
     const solanaAccount = publicKey?.toBase58() || null
     setWalletState((prev) => {
-      return { ...prev, solanaAccount, unifiedAccount: solanaAccount }
+      return { ...prev, solanaAccount, unifiedAccount: solanaAccount, chainId: NonEVMChainId.SOLANA }
     })
   }, [connected, connecting, publicKey, setWalletState])
 
