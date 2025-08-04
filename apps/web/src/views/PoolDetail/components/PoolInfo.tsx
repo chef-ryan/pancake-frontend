@@ -32,6 +32,7 @@ import {
   Liquidity,
 } from '@pancakeswap/widgets-internal'
 import { InfinityFeeTierBreakdown } from 'components/FeeTierBreakdown'
+import { MiniUniversalFarmsOverlay } from 'components/MiniUniversalFarms/MiniUniversalFarmsOverlay'
 import { useHookByPoolId } from 'hooks/infinity/useHooksList'
 import { useCurrencyByChainId } from 'hooks/Tokens'
 import { NextSeo } from 'next-seo'
@@ -41,9 +42,8 @@ import { useChainIdByQuery } from 'state/info/hooks'
 import { getBlockExploreLink } from 'utils'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
 import { isInfinityProtocol } from 'utils/protocols'
-import { zeroAddress } from 'viem'
 import { Tooltips } from 'views/CakeStaking/components/Tooltips'
-import { getRewardProvider } from 'views/universalFarms/components/FarmStatusDisplay/hooks'
+import { getRewardProvider, getRewardMultiplier } from 'views/universalFarms/components/FarmStatusDisplay/hooks'
 import { PoolGlobalAprButtonV3 } from 'views/universalFarms/components/PoolAprButtonV3'
 import { RewardInfoCard } from 'views/universalFarms/components/RewardInfoCard'
 import LiquiditySunsetWarning from 'components/Liquidity/LiquiditySunsetWarning'
@@ -62,17 +62,14 @@ enum PoolDetailTab {
   Transactions = 1,
 }
 
-// const SearchButton = styled(IconButton).attrs({ variant: 'primary60' })`
-//   background-color: ${({ theme }) => theme.colors.input};
-// `
-
 const RewardInfoCardContainer = ({ poolInfo }: { poolInfo: PoolInfoType }) => {
   const provider = getRewardProvider(poolInfo.chainId, poolInfo.lpAddress)
+  const multiplier = getRewardMultiplier(poolInfo.chainId, poolInfo.lpAddress)
   const hasPoolReward = !!provider
 
   if (!hasPoolReward) return null
 
-  return <RewardInfoCard provider={provider} />
+  return <RewardInfoCard provider={provider} multiplier={multiplier} />
 }
 
 export const PoolInfo = () => {
@@ -130,9 +127,7 @@ export const PoolInfo = () => {
               width="100%"
             >
               <Box>
-                {/* <SearchButton>
-                  <SearchIcon color="textSubtle" width={24} />
-                </SearchButton> */}
+                <MiniUniversalFarmsOverlay linkType="poolDetail" />
               </Box>
               <FlexGap flexDirection="column" gap="16px">
                 <FlexGap
@@ -342,7 +337,7 @@ export const PoolInfo = () => {
               <LightGreyCard padding="8px 16px">
                 <AutoColumn rowGap="2px">
                   <FlexGap>
-                    <Text fontSize={12} bold color="textSubtle" textTransform="uppercase">
+                    <Text fontSize={12} bold color="textSubtle" textTransform="uppercase" minWidth="max-content">
                       {t('Est. APR')}
                     </Text>
                     <PoolGlobalAprButtonV3 pool={poolInfo} showApyText={false} />
