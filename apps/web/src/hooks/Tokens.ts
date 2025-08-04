@@ -27,12 +27,13 @@ import {
   useUnsupportedTokenList,
   useWarningTokenList,
 } from 'state/lists/hooks'
-import { safeGetAddress } from 'utils'
+import { safeGetAddress, safeGetUnifiedAddress } from 'utils'
 import useUserAddedTokens, { useUserAddedTokensByChainIds } from '../state/user/hooks/useUserAddedTokens'
 import { useActiveChainId } from './useActiveChainId'
 import useNativeCurrency, { useUnifiedNativeCurrency } from './useNativeCurrency'
 import useAccountActiveChain from './useAccountActiveChain'
 import { useSolanaToken } from './useSolanaToken'
+import { useSolanaTokenList } from './useSolanaTokenList'
 
 export const mapWithoutUrls = (tokenMap?: TokenAddressMap<ChainId>, chainId?: number) => {
   if (!tokenMap || !chainId) return {}
@@ -209,20 +210,27 @@ export function useWarningTokens(chainId?: ChainId): { [address: string]: ERC20T
   return useMemo(() => mapWithoutUrls(warningTokensMap, selectedChainId), [warningTokensMap, selectedChainId])
 }
 
-export function useIsTokenActive(token: ERC20Token | undefined | null, chainId?: number): boolean {
-  const activeTokens = useAllTokens(chainId)
+export function useIsTokenActive(token: UnifiedToken | undefined | null, chainId?: number): boolean {
+  const activeEvmTokens = useAllTokens(chainId)
+  const { tokenList: solanaTokens } = useSolanaTokenList()
 
-  if (!activeTokens || !token) {
-    return false
-  }
+  return useMemo(() => {
+    if (
+      (chainId && chainId in ChainId && !activeEvmTokens) ||
+      (chainId === NonEVMChainId.SOLANA && !solanaTokens.length) ||
+      !token
+    ) {
+      return false
+    }
 
-  const tokenAddress = safeGetAddress(token.address)
+    const tokenAddress = safeGetUnifiedAddress(chainId, token.address)
 
-  return Boolean(tokenAddress && !!activeTokens[tokenAddress])
+    return Boolean((tokenAddress && !!activeEvmTokens[tokenAddress]) || solanaTokens.find((t) => t.equals(token)))
+  }, [activeEvmTokens, chainId, solanaTokens, token])
 }
 
 // Check if currency is included in custom list from user storage
-export function useIsUserAddedToken(currency: Currency | undefined | null, chainId?: number): boolean {
+export function useIsUserAddedToken(currency: UnifiedCurrency | undefined | null, chainId?: number): boolean {
   const userAddedTokens = useUserAddedTokens(chainId)
 
   if (!currency?.equals) {

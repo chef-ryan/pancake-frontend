@@ -35,7 +35,7 @@ import {
 } from '@pancakeswap/uikit'
 import { useAudioPlay } from '@pancakeswap/utils/user'
 import { useSolanaTokenBalances } from 'state/token/solanaTokenBalances'
-import { SPLToken } from '@pancakeswap/swap-sdk-core'
+import { SPLToken, UnifiedToken } from '@pancakeswap/swap-sdk-core'
 
 import { useAllTokens, useIsUserAddedToken, useToken } from '../../hooks/Tokens'
 import Row from '../Layout/Row'
@@ -43,7 +43,6 @@ import CommonBases, { BaseWrapper } from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { CurrencySearchInput } from './CurrencySearchInput'
 import ImportRow from './ImportRow'
-import SolanaImportRow from './SolanaImportRow'
 import SwapNetworkSelection from './SwapNetworkSelection'
 import { getSwapSound } from './swapSound'
 import { CommonBasesType } from './types'
@@ -56,7 +55,7 @@ interface CurrencySearchProps {
   showCommonBases?: boolean
   commonBasesType?: CommonBasesType
   showImportView: () => void
-  setImportToken: (token: Token) => void
+  setImportToken: (token: UnifiedToken) => void
   height?: number
   tokensToShow?: Token[]
   showChainLogo?: boolean
@@ -263,22 +262,13 @@ function CurrencySearch({
     if (searchToken && !searchTokenIsAdded && !hasFilteredInactiveTokens) {
       return (
         <Column style={{ padding: '20px 0', height: '100%' }}>
-          {isSolana ? (
-            <SolanaImportRow
-              token={searchToken as SPLToken}
-              onCurrencySelect={handleCurrencySelect as (c: SPLToken) => void}
-              showImportView={showImportView}
-              setImportToken={setImportToken as unknown as (t: SPLToken) => void}
-            />
-          ) : (
-            <ImportRow
-              chainId={selectedChainId}
-              onCurrencySelect={handleCurrencySelect}
-              token={searchToken as ERC20Token}
-              showImportView={showImportView}
-              setImportToken={setImportToken}
-            />
-          )}
+          <ImportRow
+            chainId={selectedChainId}
+            onCurrencySelect={handleCurrencySelect}
+            token={searchToken}
+            showImportView={showImportView}
+            setImportToken={setImportToken}
+          />
         </Column>
       )
     }
