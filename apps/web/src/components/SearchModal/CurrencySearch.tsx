@@ -4,6 +4,7 @@ import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
 import { useSolanaTokenList } from 'hooks/useSolanaTokenList'
+import { useSolanaTokenInfo } from 'hooks/solana/useSolanaTokenInfo'
 import { FixedSizeList } from 'react-window'
 import { useAllLists, useInactiveListUrls } from 'state/lists/hooks'
 import { UpdaterByChainId } from 'state/lists/updater'
@@ -34,6 +35,7 @@ import {
 } from '@pancakeswap/uikit'
 import { useAudioPlay } from '@pancakeswap/utils/user'
 import { useSolanaTokenBalances } from 'state/token/solanaTokenBalances'
+import { SPLToken } from '@pancakeswap/swap-sdk-core'
 
 import { useAllTokens, useIsUserAddedToken, useToken } from '../../hooks/Tokens'
 import Row from '../Layout/Row'
@@ -41,6 +43,7 @@ import CommonBases, { BaseWrapper } from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { CurrencySearchInput } from './CurrencySearchInput'
 import ImportRow from './ImportRow'
+import SolanaImportRow from './SolanaImportRow'
 import SwapNetworkSelection from './SwapNetworkSelection'
 import { getSwapSound } from './swapSound'
 import { CommonBasesType } from './types'
@@ -157,10 +160,15 @@ function CurrencySearch({
   // Solana balances integration
   const solanaBalances = useSolanaTokenBalances(solanaAccount, tokenAddresses)
 
-  const searchToken = useToken(debouncedQuery, selectedChainId)
+  const solanaSearchToken = useSolanaTokenInfo(isSolana ? debouncedQuery : undefined)
+  const evmSearchToken = useToken(debouncedQuery, selectedChainId)
+  const searchToken = isSolana ? solanaSearchToken : evmSearchToken
 
   // if they input an address, use it
-  const searchTokenIsAdded = useIsUserAddedToken(searchToken, selectedChainId)
+  const evmSearchTokenIsAdded = useIsUserAddedToken(evmSearchToken, selectedChainId)
+  const searchTokenIsAdded = isSolana
+    ? !!solanaTokens.find((t) => t.address === (searchToken as SPLToken | undefined)?.address)
+    : evmSearchTokenIsAdded
 
   // if no results on main list, show option to expand into inactive
   const filteredInactiveTokens = useSearchInactiveTokenLists(debouncedQuery)
@@ -255,13 +263,22 @@ function CurrencySearch({
     if (searchToken && !searchTokenIsAdded && !hasFilteredInactiveTokens) {
       return (
         <Column style={{ padding: '20px 0', height: '100%' }}>
-          <ImportRow
-            chainId={selectedChainId}
-            onCurrencySelect={handleCurrencySelect}
-            token={searchToken}
-            showImportView={showImportView}
-            setImportToken={setImportToken}
-          />
+          {isSolana ? (
+            <SolanaImportRow
+              token={searchToken as SPLToken}
+              onCurrencySelect={handleCurrencySelect as (c: SPLToken) => void}
+              showImportView={showImportView}
+              setImportToken={setImportToken as unknown as (t: SPLToken) => void}
+            />
+          ) : (
+            <ImportRow
+              chainId={selectedChainId}
+              onCurrencySelect={handleCurrencySelect}
+              token={searchToken}
+              showImportView={showImportView}
+              setImportToken={setImportToken}
+            />
+          )}
         </Column>
       )
     }
