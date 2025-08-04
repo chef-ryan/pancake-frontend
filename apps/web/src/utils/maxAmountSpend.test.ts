@@ -1,4 +1,4 @@
-import { CurrencyAmount, Native, SOL } from '@pancakeswap/sdk'
+import { CurrencyAmount, Native, SOL, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { maxAmountSpend, maxUnifiedAmountSpend } from './maxAmountSpend'
 
 describe('maxAmountSpend', () => {
@@ -19,12 +19,12 @@ describe('maxAmountSpend', () => {
 
 describe('maxUnifiedAmountSpend', () => {
   it('should has value when CurrencyAmount is SOL and CurrencyAmount is higher than min reserve', () => {
-    const maxAmount = maxUnifiedAmountSpend(CurrencyAmount.fromRawAmount(SOL, 10n ** 8n))
+    const maxAmount = maxUnifiedAmountSpend(UnifiedCurrencyAmount.fromRawAmount(SOL, 10n ** 8n))
 
     expect(maxAmount.quotient > 0n).toBeTruthy()
   })
 
   it('should be 0 when CurrencyAmount is SOL and CurrencyAmount is low', () => {
-    expect(maxUnifiedAmountSpend(CurrencyAmount.fromRawAmount(SOL, 0n)).quotient === 0n).toBeTruthy()
+    expect(maxUnifiedAmountSpend(UnifiedCurrencyAmount.fromRawAmount(SOL, 0n)).quotient === 0n).toBeTruthy()
   })
 })
