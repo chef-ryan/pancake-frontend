@@ -9,7 +9,7 @@ import { AxisRight } from "./AxisRight";
 import { Brush } from "./Brush";
 import { CandleChart } from "./CandleChart";
 import { HorizontalLine } from "./Line";
-import { ChartProps, LiquidityChartEntry, PriceChartEntry } from "./types";
+import { BrushDomainType, ChartProps, LiquidityChartEntry, PriceChartEntry } from "./types";
 import { Area } from "./VerticalArea";
 import Zoom, { ZoomOverlay } from "./Zoom";
 
@@ -114,6 +114,9 @@ export function Chart({
     [priceScale]
   );
 
+  // Only used for tracking the brush extent when dragging the handles
+  const [localBrushExtent, setLocalBrushExtent] = useState<BrushDomainType | null>(brushDomain ?? defaultBrushExtent);
+
   const handleResetBrush = useCallback(() => {
     onBrushDomainChange({ min: current * zoomLevels.initialMin, max: current * zoomLevels.initialMax }, "reset");
   }, [current, onBrushDomainChange, zoomLevels.initialMax, zoomLevels.initialMin]);
@@ -216,16 +219,18 @@ export function Chart({
           />
 
           <ZoomOverlay width={innerWidth} height={height} ref={zoomRef} />
+
           <Brush
             id={id}
             scale={priceScale}
             interactive={interactive}
             brushLabelValue={brushLabels}
             brushExtent={brushDomain ?? defaultBrushExtent}
-            width={innerWidth / 2 - margins.right - paddingRight}
+            width={innerWidth / 2 - margins.right - paddingRight * 2}
             innerWidth={innerWidth}
             innerHeight={innerHeight}
             setBrushExtent={onBrushDomainChange}
+            setLocalBrushExtent={setLocalBrushExtent}
             minHandleColor={minHandleColor}
             maxHandleColor={maxHandleColor}
             current={current}
@@ -235,7 +240,9 @@ export function Chart({
             innerWidth={width}
             highlightValue={current}
             highlightSecondaryValues={
-              brushDomain ? [Number(brushDomain.min.toPrecision(6)), Number(brushDomain.max.toPrecision(6))] : undefined
+              localBrushExtent
+                ? [Number(localBrushExtent.min.toFixed(12)), Number(localBrushExtent.max.toFixed(12))]
+                : undefined
             }
             ticks={isMobile ? 4 : 6}
             offset={1}

@@ -12,7 +12,7 @@ const Handle = styled.path<{ color: string; id: string }>`
   pointer-events: none;
 
   stroke-width: 1;
-  stroke: url(#${({ id }) => id});
+  stroke: transparent;
   fill: ${({ color }) => color};
 
   z-index: 1;
@@ -22,7 +22,7 @@ const HandleAccent = styled.path`
   cursor: ew-resize;
   pointer-events: none;
 
-  stroke-width: 1.5;
+  stroke-width: 0.5;
   stroke: ${({ theme }) => theme.colors.background};
   opacity: ${({ theme }) => theme.colors.background};
 
@@ -53,6 +53,7 @@ export const Brush = ({
   brushLabelValue,
   brushExtent,
   setBrushExtent,
+  setLocalBrushExtent: setLocalBrushExtentPropCallback,
   innerWidth,
   innerHeight,
   minHandleColor,
@@ -66,6 +67,7 @@ export const Brush = ({
   brushLabelValue: (d: "n" | "s", x: number) => string;
   brushExtent: BrushDomainType;
   setBrushExtent: (extent: BrushDomainType, mode: string | undefined) => void;
+  setLocalBrushExtent: (extent: BrushDomainType | null) => void;
   innerWidth: number;
   width: number;
   innerHeight: number;
@@ -83,6 +85,10 @@ export const Brush = ({
   const [hovering, setHovering] = useState(false);
 
   const previousBrushExtent = usePreviousValue(brushExtent);
+
+  useEffect(() => {
+    setLocalBrushExtentPropCallback?.(localBrushExtent);
+  }, [localBrushExtent, setLocalBrushExtentPropCallback]);
 
   const brushed = useCallback(
     (event: D3BrushEvent<unknown>) => {

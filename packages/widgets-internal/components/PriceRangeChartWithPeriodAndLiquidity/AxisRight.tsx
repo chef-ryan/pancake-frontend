@@ -4,7 +4,7 @@ import { axisLeft, Axis as d3Axis, NumberValue, ScaleLinear, select } from "d3";
 import { styled } from "styled-components";
 
 const StyledGroup = styled.g<{ $isMobile: boolean }>`
-  z-index: 10;
+  z-index: 2;
 
   line {
     display: none;
@@ -99,11 +99,12 @@ export const AxisRight = ({
 
   // If current is defined, replace the closest tick with current
   let finalTicks = defaultTicks;
+
   if (highlightValue !== undefined) {
-    const closestTick = defaultTicks.reduce((prev, curr) =>
+    const closestTick = finalTicks.reduce((prev, curr) =>
       Math.abs(curr - highlightValue) < Math.abs(prev - highlightValue) ? curr : prev
     );
-    finalTicks = defaultTicks.map((tick) => (tick === closestTick ? highlightValue : tick));
+    finalTicks = finalTicks.map((tick) => (tick === closestTick ? highlightValue : tick));
   }
 
   // If highlightSecondaryValues array is defined, replace the closest ticks with highlightSecondaryValues

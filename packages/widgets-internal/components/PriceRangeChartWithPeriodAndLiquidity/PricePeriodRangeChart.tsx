@@ -149,7 +149,7 @@ export function PricePeriodRangeChart({
             dimensions={{ width: 400, height: 200 }}
             margins={{
               top: 10,
-              right: 2,
+              right: 4,
               bottom: 20,
               left: 0,
             }}
