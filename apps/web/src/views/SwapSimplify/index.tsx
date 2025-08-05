@@ -7,7 +7,7 @@ import { MobileCard } from 'components/AdPanel/MobileCard'
 import { useCurrency } from 'hooks/Tokens'
 import { useSolanaTokenList } from 'hooks/useSolanaTokenList'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import { NonEVMChainId } from '@pancakeswap/chains'
+import { isEvm, NonEVMChainId } from '@pancakeswap/chains'
 import { AutoSlippageProvider } from 'hooks/useAutoSlippageWithFallback'
 import { useSwapHotTokenDisplay } from 'hooks/useSwapHotTokenDisplay'
 import dynamic from 'next/dynamic'
@@ -72,7 +72,7 @@ const InfinitySwapInner = () => {
         mt={isChartExpanded ? undefined : isMobile ? '18px' : '42px'}
         p={isChartExpanded ? undefined : isMobile ? '16px' : '24px'}
       >
-        {isDesktop && isChartDisplayed && (
+        {isDesktop && isChartDisplayed && isEvm(chainId) && (
           <Flex width={isChartExpanded ? '100%' : '50%'} maxWidth="928px" flexDirection="column" style={{ gap: 20 }}>
             <ChartWithPriceHeader
               currency0={inputCurrency || undefined}
@@ -83,7 +83,7 @@ const InfinitySwapInner = () => {
           </Flex>
         )}
 
-        {!isDesktop && (
+        {!isDesktop && isEvm(chainId) && (
           <BottomDrawer
             content={
               <ChartWithPriceHeader
