@@ -1,6 +1,8 @@
 import { PublicKey } from '@solana/web3.js'
+import { UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { PublicKeyish } from './types'
-import { SOLMint, WSOLMint } from './constants'
+import { SOL_INFO, SOLMint, TOKEN_WSOL, WSOLMint } from './constants'
 
 export function tryParsePublicKey(v: string): PublicKey | string {
   try {
@@ -36,4 +38,11 @@ export function validateAndParsePublicKey({
   }
 
   throw new Error('invalid public key')
+}
+
+export const isSolWSol = (token?: UnifiedCurrency | null) => {
+  if (!token) return false
+  if (token.chainId !== NonEVMChainId.SOLANA) return false
+  if (token.isNative) return true
+  return token.address.toString() === TOKEN_WSOL.address || token.address.toString() === SOL_INFO.address
 }

@@ -18,7 +18,7 @@ import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useDebounce, useSortedTokensByQuery } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 /* eslint-disable no-restricted-syntax */
-import { ChainId, ERC20Token, getTokenComparator, Token, UnifiedCurrency } from '@pancakeswap/sdk'
+import { ChainId, ERC20Token, getTokenComparator, isSolWSol, Token, UnifiedCurrency } from '@pancakeswap/sdk'
 import { createFilterToken, WrappedTokenInfo } from '@pancakeswap/token-lists'
 import {
   AutoColumn,
@@ -184,17 +184,19 @@ function CurrencySearch({
     if (isSolana) {
       // Simple search for Solana tokens
       const s = debouncedQuery.toLowerCase().trim()
+      const otherIsSol = isSolWSol(otherSelectedCurrency)
       return solanaTokens.filter(
         (token) =>
-          token.symbol.toLowerCase().includes(s) ||
-          token.name?.toLowerCase().includes(s) ||
-          token.address.toLowerCase() === s,
+          (token.symbol.toLowerCase().includes(s) ||
+            token.name?.toLowerCase().includes(s) ||
+            token.address.toLowerCase() === s) &&
+          !(otherIsSol && isSolWSol(token)),
       )
     }
     const filterToken = createFilterToken(debouncedQuery, (address) => isAddress(address))
     // Only EVM tokens here
     return Object.values(tokensToShow || allTokens).filter(filterToken) as Token[]
-  }, [tokensToShow, allTokens, debouncedQuery, isSolana, solanaTokens])
+  }, [tokensToShow, allTokens, debouncedQuery, isSolana, solanaTokens, otherSelectedCurrency])
 
   const queryTokens = useSortedTokensByQuery(filteredTokens as Token[], debouncedQuery)
 
@@ -279,13 +281,7 @@ function CurrencySearch({
           height={isMobile ? (showCommonBases ? height || 250 : height ? height + 80 : 350) : 340}
           showNative={showNative}
           currencies={filteredSortedTokens}
-          inactiveCurrencies={
-            isSolana
-              ? filteredInactiveTokens
-              : filteredInactiveTokens.filter(
-                  (t) => t && typeof t === 'object' && 'equals' in t && typeof t.equals === 'function',
-                )
-          }
+          inactiveCurrencies={filteredInactiveTokens}
           breakIndex={
             Boolean(filteredInactiveTokens?.length) && filteredSortedTokens ? filteredSortedTokens.length : undefined
           }
@@ -324,7 +320,6 @@ function CurrencySearch({
     height,
     showChainLogo,
     selectedChainId,
-    isSolana,
   ])
 
   return (
