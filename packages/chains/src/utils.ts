@@ -1,4 +1,4 @@
-import { ChainId, testnetChainIds, UnifiedChainId } from './chainId'
+import { ChainId, NonEVMChainId, testnetChainIds, UnifiedChainId } from './chainId'
 import {
   chainNameToChainId,
   chainNames,
@@ -35,4 +35,9 @@ export function isTestnetChainId(chainId: ChainId) {
 export function isEvm(chainId?: ChainId) {
   if (!chainId) return false
   return chainId < 1_000_000
+}
+
+export function isSolana(chainId?: UnifiedChainId) {
+  if (!chainId) return false
+  return chainId === NonEVMChainId.SOLANA
 }
