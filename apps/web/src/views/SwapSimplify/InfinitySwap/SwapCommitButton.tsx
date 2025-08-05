@@ -219,7 +219,11 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   ) as CurrencyAmount<Currency> | undefined
 
   const { callToAction, confirmState, txHash, orderHash, confirmActions, errorMessage, resetState } =
-    useConfirmModalState(orderToExecute, amountToApprove?.wrapped, getUniversalRouterAddress(chainId))
+    useConfirmModalState(
+      orderToExecute,
+      amountToApprove?.wrapped,
+      isEvm(chainId) ? getUniversalRouterAddress(chainId) : undefined,
+    )
 
   const { onUserInput } = useSwapActionHandlers()
   const reset = useCallback(() => {
