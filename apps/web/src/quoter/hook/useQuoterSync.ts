@@ -126,6 +126,7 @@ export const useQuoterSync = () => {
 
   useEffect(() => {
     if (quoteResult.isJust() && !quoteResult.hasFlag('placeholder')) {
+      // NOTE: placeholderHash is used to show previous quote when new quote is pending
       const placeholderHash = quoteResult.getExtra('placeholderHash') as string
       setPlaceholder(placeholderHash, quoteResult.unwrap())
     }

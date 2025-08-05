@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Currency, getCurrencyAddress, sortCurrencies } from '@pancakeswap/swap-sdk-core'
 import { keccak256, stringify } from 'viem/utils'
-import { PoolQuery, QuoteQuery, StrategyQuery } from '../quoter.types'
+import { PoolQuery, QuoteQuery, StrategyQuery, SVMQuoteQuery } from '../quoter.types'
 
 export class PoolHashHelper {
   static hashCurrenciesWithSort(a?: Currency, b?: Currency) {
@@ -119,7 +119,7 @@ export const isEqualCurrency = (a: Currency | undefined, b: Currency | undefined
   return getCurrencyAddress(a) === getCurrencyAddress(b) && a.chainId === b.chainId
 }
 
-export const isEqualQuoteQuery = (a: QuoteQuery, b: QuoteQuery) => {
+export const isEqualQuoteQuery = (a: { hash: string }, b: { hash: string }) => {
   return a.hash === b.hash
 }
 
