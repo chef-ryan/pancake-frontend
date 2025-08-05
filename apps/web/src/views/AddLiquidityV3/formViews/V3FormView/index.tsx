@@ -721,7 +721,7 @@ export default function V3FormView({
                 </Box>
               )}
               <DynamicSection disabled={!feeAmount || invalidPool}>
-                <FlexGap gap="8px" justifyContent="space-between" alignItems="center">
+                <FlexGap gap="8px" justifyContent="space-between" alignItems="center" flexWrap="wrap">
                   <PreTitle>{t('Set position range')}</PreTitle>
                   <FlexGap gap="8px" alignItems="center">
                     <FlexGap gap="8px" alignItems="center">

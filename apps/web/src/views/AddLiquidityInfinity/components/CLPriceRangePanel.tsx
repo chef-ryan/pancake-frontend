@@ -12,8 +12,6 @@ import { useCLPriceRangeCallback } from 'hooks/infinity/useCLPriceRangeCallback'
 import { useCurrencyByPoolId } from 'hooks/infinity/useCurrencyByPoolId'
 import { useCallback, useMemo, useState } from 'react'
 import { useInverted } from 'state/infinity/shared'
-
-import { getTokenSymbolAlias } from 'utils/getTokenAlias'
 import { useCLDensityChartData } from '../hooks/useDensityChartData'
 import { usePool } from '../hooks/usePool'
 import { useTicksAtLimit } from '../hooks/useTicksAtLimit'
@@ -117,8 +115,10 @@ export const CLPriceRangePanel = () => {
     if (ticksAtLimit[Bound.UPPER]) {
       return defaultZoom
     }
+
     const min = Number(lowerPrice?.divide(rawPrice ?? 1).toSignificant(6) ?? 1)
     const max = Number(upperPrice?.divide(rawPrice ?? 1).toSignificant(6) ?? 1)
+
     return {
       ...defaultZoom,
       initialMin: min * defaultZoom.initialMin,
@@ -127,18 +127,10 @@ export const CLPriceRangePanel = () => {
   }, [ticksAtLimit, quickAction, pool?.tickSpacing, lowerPrice, rawPrice, upperPrice])
 
   const axisTicks = useMemo(() => getAxisTicks(pricePeriod.value, isMobile), [pricePeriod.value, isMobile])
-  const symbol0 = useMemo(
-    () => getTokenSymbolAlias(currency0?.wrapped?.address, currency0?.chainId, currency0?.symbol),
-    [currency0],
-  )
-  const symbol1 = useMemo(
-    () => getTokenSymbolAlias(currency1?.wrapped?.address, currency1?.chainId, currency1?.symbol),
-    [currency1],
-  )
 
   return (
     <>
-      <FlexGap gap="8px" justifyContent="space-between" alignItems="center">
+      <FlexGap gap="8px" justifyContent="space-between" alignItems="center" flexWrap="wrap">
         <PreTitle>{t('Set position range')}</PreTitle>
         <FlexGap gap="8px" alignItems="center">
           <FlexGap gap="8px" alignItems="center">

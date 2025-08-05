@@ -9,8 +9,6 @@ const Wrapper = styled.div<{ $count: number; $isMobile?: boolean }>`
   grid-template-columns: repeat(${({ $count }) => $count.toString()}, 1fr);
   grid-gap: 6px;
 
-  margin-left: auto;
-
   position: absolute;
   top: ${({ $isMobile }) => ($isMobile ? `-5px` : `-26px`)};
   right: ${({ $isMobile }) => ($isMobile ? `auto` : `0`)};
@@ -22,8 +20,6 @@ export const ZoomOverlay = styled.rect`
   cursor: grab;
 
   z-index: 3;
-
-  border: 1px solid red;
 
   &:active {
     cursor: grabbing;

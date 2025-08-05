@@ -56,7 +56,7 @@ export function Chart({
         .range([innerHeight, 0]),
       periodScale: scaleTime()
         .domain(extent(priceHistory, periodAccessor) as [Date, Date])
-        .range([0, innerWidth * 0.75]),
+        .range([0, innerWidth * 0.95]),
     };
 
     if (zoom) {
