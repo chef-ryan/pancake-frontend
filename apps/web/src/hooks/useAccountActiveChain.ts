@@ -37,7 +37,7 @@ export const useActiveChainId = (checkChainId?: number) => {
   return {
     chainId,
     isNotMatched,
-    isWrongNetwork: isWrongNetwork ? Boolean(checkChainId && checkChainId !== chainId) : false,
+    isWrongNetwork: checkChainId ? isWrongNetwork && checkChainId !== chainId : isWrongNetwork,
   }
 }
 
