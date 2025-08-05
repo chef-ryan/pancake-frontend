@@ -47,9 +47,9 @@ import {
   isSVMOrder,
   isXOrder,
 } from 'views/Swap/utils'
-import { useAccount, useChainId } from 'wagmi'
+import { useAccount } from 'wagmi'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { ChainId as EvmChainId, NonEVMChainId } from '@pancakeswap/chains'
+import { isEvm, NonEVMChainId } from '@pancakeswap/chains'
 import SolanaConnectButton from 'wallet/components/SolanaConnectButton'
 
 import { ConfirmSwapModalV3 } from '../../Swap/Bridge/CrossChainConfirmSwapModal/ConfirmSwapModalV3'
@@ -165,11 +165,12 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
 }: SwapCommitButtonPropsType & CommitButtonProps) {
   const { address: account } = useAccount()
   const { t } = useTranslation()
-  const chainId = useChainId()
+  const { chainId } = useAccountActiveChain()
   // form data
   const { independentField, typedValue } = useSwapState()
   const [inputCurrency, outputCurrency] = useSwapCurrency()
-  const { isExpertMode } = useSwapConfig()
+  const { isExpertMode: isExpertMode_ } = useSwapConfig()
+  const isExpertMode = useMemo(() => isExpertMode_ && isEvm(chainId), [chainId, isExpertMode_])
   const { isRecipientEmpty, isRecipientError } = useIsRecipientError()
 
   const tradePriceBreakdown = useMemo(() => getPriceBreakdown(order), [order])
