@@ -736,6 +736,12 @@ export default function V3FormView({
                         {t('Position Range')}
                       </Text>
                     </FlexGap>
+                    <FlexGap gap="8px" alignItems="center">
+                      <Dot color="input" show />
+                      <Text color="textSubtle" small>
+                        {t('Liquidity Depth')}
+                      </Text>
+                    </FlexGap>
                   </FlexGap>
                 </FlexGap>
 
