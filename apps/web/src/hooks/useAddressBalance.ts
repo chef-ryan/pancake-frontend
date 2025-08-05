@@ -56,8 +56,12 @@ export const useAddressBalance = (address?: string, options: UseAddressBalanceOp
   const list = useCombinedActiveList()
 
   const isListedToken = useCallback(
-    (chainId: ChainId, tokenAddress: string): boolean => {
-      return isNative(tokenAddress) || Boolean(list[chainId]?.[safeGetAddress(tokenAddress) ?? ''])
+    (chainId: ChainId | NonEVMChainId, tokenAddress: string): boolean => {
+      return (
+        chainId === NonEVMChainId.SOLANA ||
+        isNative(tokenAddress) ||
+        Boolean(list[chainId]?.[safeGetAddress(tokenAddress) ?? ''])
+      )
     },
     [list],
   )
