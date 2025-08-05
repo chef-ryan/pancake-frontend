@@ -147,7 +147,7 @@ export const CLPriceRangePanel = () => {
           </FlexGap>
         </FlexGap>
       </FlexGap>
-      <Box mt="22px" border="1px solid" borderColor="cardBorder" borderRadius="24px" p="8px">
+      <Box mt="22px" border="1px solid" borderColor="cardBorder" borderRadius="24px" p="8px 8px 2px">
         <FlexGap
           flexDirection={isMobile ? 'column' : 'row'}
           justifyContent={isMobile ? 'flex-start' : 'space-between'}

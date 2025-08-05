@@ -41,22 +41,57 @@ export function Chart({
 
   const [zoom, setZoom] = useState<ZoomTransform | null>(null);
 
+  // Calculate domain from the price history candlestick chart
+  const calculatePriceHistoryDomain = useCallback(() => {
+    const priceValues: number[] = [];
+    priceHistory.forEach((entry) => {
+      if (entry.open > 0) priceValues.push(entry.open);
+      if (entry.close > 0) priceValues.push(entry.close);
+      if (entry.high > 0) priceValues.push(entry.high);
+      if (entry.low > 0) priceValues.push(entry.low);
+    });
+
+    // Fallback to current-price based domain if no valid price data
+    if (priceValues.length === 0) {
+      return {
+        min: current * zoomLevels.initialMin,
+        max: current * zoomLevels.initialMax,
+      };
+    }
+
+    const minPrice = Math.min(...priceValues);
+    const maxPrice = Math.max(...priceValues);
+
+    // Apply +/-10% padding to keep the price chart always in view
+    const priceRange = maxPrice - minPrice;
+
+    // If all prices are the same, use a percentage of the price as padding
+    const padding = priceRange > 0 ? priceRange * 0.1 : maxPrice * 0.1;
+    const domainMin = minPrice - padding;
+    const domainMax = maxPrice + padding;
+
+    return { min: domainMin, max: domainMax };
+  }, [priceHistory, current, zoomLevels.initialMin, zoomLevels.initialMax]);
+
   const [innerHeight, innerWidth] = useMemo(
     () => [height - margins.top - margins.bottom, width - margins.left - margins.right],
     [width, height, margins]
   );
 
   const { liquidityScale, priceScale, periodScale } = useMemo(() => {
+    const priceDomain = calculatePriceHistoryDomain();
+
     const scales = {
       liquidityScale: scaleLinear()
         .domain([0, max(liquiditySeries, liquidityAccessor)] as number[])
         .range([innerWidth, innerWidth * 0.5]),
       priceScale: scaleLinear()
-        .domain([current * zoomLevels.initialMin, current * zoomLevels.initialMax] as number[])
+        // Keep the candlestick chart in view by default instead of user's selected range
+        .domain([priceDomain.min, priceDomain.max] as number[])
         .range([innerHeight, 0]),
       periodScale: scaleTime()
         .domain(extent(priceHistory, periodAccessor) as [Date, Date])
-        .range([0, innerWidth * 0.95]),
+        .range([0, innerWidth * 0.93]),
     };
 
     if (zoom) {
@@ -65,16 +100,7 @@ export function Chart({
     }
 
     return scales;
-  }, [
-    priceHistory,
-    current,
-    zoomLevels.initialMin,
-    zoomLevels.initialMax,
-    innerWidth,
-    liquiditySeries,
-    innerHeight,
-    zoom,
-  ]);
+  }, [calculatePriceHistoryDomain, innerWidth, liquiditySeries, innerHeight, zoom, priceHistory]);
 
   useEffect(() => {
     if (!brushDomain) {
@@ -133,8 +159,8 @@ export function Chart({
           width={innerWidth}
           height={height}
           resetBrush={handleResetBrush}
-          showResetButton={false}
           zoomLevels={zoomLevels}
+          showResetButton={false}
         />
       )}
       <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} style={{ overflow: "hidden" }}>
