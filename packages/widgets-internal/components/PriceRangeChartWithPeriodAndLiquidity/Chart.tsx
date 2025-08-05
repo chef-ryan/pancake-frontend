@@ -36,10 +36,23 @@ export function Chart({
   showGridLines = true,
 }: ChartProps) {
   const zoomRef = useRef<SVGRectElement | null>(null);
+
   const { theme } = useTheme();
   const { isMobile } = useMatchBreakpoints();
 
   const [zoom, setZoom] = useState<ZoomTransform | null>(null);
+  const [axisRightWidth, setAxisRightWidth] = useState<number>(0);
+
+  // Handle axis mount and measure its width
+  const handleAxisMount = useCallback((element: SVGGElement | null) => {
+    if (element) {
+      // Use a small delay to ensure the axis is fully rendered
+      setTimeout(() => {
+        const width = element.getBoundingClientRect().width;
+        setAxisRightWidth(width);
+      }, 0);
+    }
+  }, []);
 
   // Calculate domain from the price history candlestick chart
   const calculatePriceHistoryDomain = useCallback(() => {
@@ -81,6 +94,9 @@ export function Chart({
   const { liquidityScale, priceScale, periodScale } = useMemo(() => {
     const priceDomain = calculatePriceHistoryDomain();
 
+    // Subtract right axis width using state
+    const priceScaleRange = axisRightWidth > 0 ? innerWidth - axisRightWidth : innerWidth * 0.93;
+
     const scales = {
       liquidityScale: scaleLinear()
         .domain([0, max(liquiditySeries, liquidityAccessor)] as number[])
@@ -91,7 +107,7 @@ export function Chart({
         .range([innerHeight, 0]),
       periodScale: scaleTime()
         .domain(extent(priceHistory, periodAccessor) as [Date, Date])
-        .range([0, innerWidth * 0.93]),
+        .range([0, priceScaleRange]),
     };
 
     if (zoom) {
@@ -100,7 +116,7 @@ export function Chart({
     }
 
     return scales;
-  }, [calculatePriceHistoryDomain, innerWidth, liquiditySeries, innerHeight, zoom, priceHistory]);
+  }, [calculatePriceHistoryDomain, innerWidth, liquiditySeries, innerHeight, zoom, priceHistory, axisRightWidth]);
 
   useEffect(() => {
     if (!brushDomain) {
@@ -288,6 +304,7 @@ export function Chart({
             }
             ticks={isMobile ? 4 : 6}
             offset={1}
+            onAxisMount={handleAxisMount}
           />
         </g>
         <AxisBottom

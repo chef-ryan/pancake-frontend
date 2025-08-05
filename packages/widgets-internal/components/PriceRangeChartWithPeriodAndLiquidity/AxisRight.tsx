@@ -86,6 +86,7 @@ export const AxisRight = ({
   ticks = 6,
   highlightValue,
   highlightSecondaryValues,
+  onAxisMount,
 }: {
   highlightValue?: number;
   highlightSecondaryValues?: number[];
@@ -93,6 +94,7 @@ export const AxisRight = ({
   innerWidth: number;
   offset?: number;
   ticks?: number;
+  onAxisMount?: (element: SVGGElement | null) => void;
 }) => {
   const defaultTicks = yScale.ticks(ticks);
   const { isMobile } = useMatchBreakpoints();
@@ -125,7 +127,12 @@ export const AxisRight = ({
   }
 
   return (
-    <StyledGroup $isMobile={isMobile} transform={`translate(${innerWidth + offset})`}>
+    <StyledGroup
+      id="price-range-chart-axis-right"
+      $isMobile={isMobile}
+      transform={`translate(${innerWidth + offset})`}
+      ref={onAxisMount}
+    >
       <Axis
         axisGenerator={axisLeft(yScale).tickValues(finalTicks).tickSize(0)}
         highlightValue={highlightValue}
