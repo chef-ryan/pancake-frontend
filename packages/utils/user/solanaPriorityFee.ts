@@ -1,10 +1,7 @@
 import { atom, useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 
-// default priority fee lamports
-const DEFAULT_PRIORITY_FEE = 0
-
-const solanaPriorityFeeAtom = atomWithStorage('solanaPriorityFee', DEFAULT_PRIORITY_FEE)
+const solanaPriorityFeeAtom = atomWithStorage<number | undefined>('solanaPriorityFee', undefined)
 
 export const solanaPriorityFeeAtomWithLocalStorage = atom(
   (get) => get(solanaPriorityFeeAtom),
