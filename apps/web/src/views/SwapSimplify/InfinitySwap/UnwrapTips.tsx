@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { Button, Flex, InfoIcon, Text, useToast } from '@pancakeswap/uikit'
+import { Button, Flex, FlexGap, InfoIcon, Text, useToast } from '@pancakeswap/uikit'
 import { useTranslation } from '@pancakeswap/localization'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { createCloseAccountInstruction } from '@solana/spl-token-0.4'
@@ -7,23 +7,19 @@ import { Transaction } from '@solana/web3.js'
 import { useSolanaTokenBalance, useRefreshSolanaTokenBalances } from 'state/token/solanaTokenBalances'
 import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { NonEVMChainId } from '@pancakeswap/chains'
+import { isSolana } from '@pancakeswap/chains'
 import { WSOLMint } from '@pancakeswap/sdk'
-import { useSwapCurrency } from 'views/Swap/V3Swap/hooks/useSwapCurrency'
 
 export const UnwrapTips: React.FC = () => {
   const { t } = useTranslation()
   const { publicKey, signTransaction } = useWallet()
   const connection = useSolanaConnectionWithRpcAtom()
-  const { solanaAccount } = useAccountActiveChain()
+  const { solanaAccount, chainId } = useAccountActiveChain()
   const { balance: wsolBalance } = useSolanaTokenBalance(solanaAccount, WSOLMint.toBase58())
   const refreshSolanaBalances = useRefreshSolanaTokenBalances(solanaAccount)
   const { toastSuccess, toastError } = useToast()
-  const [inputCurrency, outputCurrency] = useSwapCurrency()
 
-  const isSolanaSwap =
-    inputCurrency?.chainId === NonEVMChainId.SOLANA || outputCurrency?.chainId === NonEVMChainId.SOLANA
-  const showUnwrapTip = isSolanaSwap && wsolBalance.gt(0)
+  const showUnwrapTip = isSolana(chainId) && wsolBalance.gt(0)
 
   const handleUnwrap = useCallback(async () => {
     try {
@@ -41,7 +37,7 @@ export const UnwrapTips: React.FC = () => {
       const sig = await connection.sendRawTransaction(signed.serialize())
       await connection.confirmTransaction(sig)
       toastSuccess(t('Success!'), t('Unwrapped WSOL to SOL'))
-      refreshSolanaBalances()
+      setTimeout(refreshSolanaBalances, 3000)
     } catch (e: any) {
       toastError(t('Failed'), e?.message ?? 'Unwrap failed')
     }
@@ -50,15 +46,15 @@ export const UnwrapTips: React.FC = () => {
   if (!showUnwrapTip) return null
 
   return (
-    <Flex mb="12px" alignItems="center" px="8px" py="8px" backgroundColor="rgba(0,0,0,0.05)" borderRadius="8px">
-      <InfoIcon mr="4px" />
-      <Text>
+    <FlexGap alignItems="center" gap="4px">
+      <InfoIcon width="16px" height="16px" />
+      <Text fontSize="12px">
         {t('You have %amount% WSOL that you can ', { amount: wsolBalance.dividedBy(1e9).toFixed(6) })}
-        <Button variant="textPrimary60" onClick={handleUnwrap}>
-          {t('unwrap')}
-        </Button>
       </Text>
-    </Flex>
+      <Button scale="xs" variant="textPrimary60" pl="0px" onClick={handleUnwrap}>
+        {t('unwrap')}
+      </Button>
+    </FlexGap>
   )
 }
 
