@@ -1,5 +1,5 @@
 import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
-import { AutoColumn, Box, Button, Dots, Message, MessageText, Text, useModal } from '@pancakeswap/uikit'
+import { AutoColumn, Button, Dots, Message, MessageText, Text, useModal } from '@pancakeswap/uikit'
 import { useAddressBalance } from 'hooks/useAddressBalance'
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -457,19 +457,17 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   }
 
   return (
-    <Box mt="0.25rem">
-      <CommitButton
-        id="swap-button"
-        width="100%"
-        data-dd-action-name="Swap commit button"
-        variant={isValid && priceImpactSeverity > 2 && !errorMessage ? 'danger' : 'primary'}
-        disabled={disabled}
-        onClick={handleSwap}
-        checkChainId={isValid ? inputCurrency?.chainId : undefined}
-      >
-        {buttonText}
-      </CommitButton>
-    </Box>
+    <CommitButton
+      id="swap-button"
+      width="100%"
+      data-dd-action-name="Swap commit button"
+      variant={isValid && priceImpactSeverity > 2 && !errorMessage ? 'danger' : 'primary'}
+      disabled={disabled}
+      onClick={handleSwap}
+      checkChainId={isValid ? inputCurrency?.chainId : undefined}
+    >
+      {buttonText}
+    </CommitButton>
   )
 })
 

@@ -15,6 +15,7 @@ export const PanelWrapper = styled.div`
 `
 interface ButtonAndDetailsPanelProps {
   shouldRenderDetails?: boolean
+  tips?: React.ReactNode
 
   swapCommitButton: React.ReactNode
   pricingAndSlippage: React.ReactNode
@@ -26,6 +27,7 @@ interface ButtonAndDetailsPanelProps {
 
 export const ButtonAndDetailsPanel: React.FC<ButtonAndDetailsPanelProps> = ({
   shouldRenderDetails,
+  tips,
   swapCommitButton,
   pricingAndSlippage,
   tradeDetails,
@@ -36,6 +38,7 @@ export const ButtonAndDetailsPanel: React.FC<ButtonAndDetailsPanelProps> = ({
   const [isOpen, setIsOpen] = useAtom(swapDetailsCollapseAtom)
   return (
     <PanelWrapper>
+      {tips}
       {swapCommitButton}
       {mevSlot}
       {gasTokenSelector}

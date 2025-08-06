@@ -13,7 +13,6 @@ import { useAllTypeBestTrade } from 'quoter/hook/useAllTypeBestTrade'
 import { memo, Suspense, useMemo } from 'react'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
-import { isSVMOrder } from 'views/Swap/utils'
 import { MevSwapDetail } from 'views/Mev/MevSwapDetail'
 import { MevToggle } from 'views/Mev/MevToggle'
 import { SwapType } from '../../Swap/types'
@@ -30,6 +29,7 @@ import { RefreshButton } from './RefreshButton'
 import { SwapSelection } from './SwapSelectionTab'
 import { TradeDetails } from './TradeDetails'
 import { TradingFee } from './TradingFee'
+import { UnwrapTips } from './UnwrapTips'
 
 export const InfinitySwapForm = memo(() => {
   const { bestOrder, refreshOrder, tradeError, tradeLoaded, refreshDisabled, pauseQuoting, resumeQuoting } =
@@ -96,6 +96,7 @@ export const InfinitySwapForm = memo(() => {
         />
       )}
       <ButtonAndDetailsPanel
+        tips={<UnwrapTips />}
         swapCommitButton={
           <CommitButton order={bestOrder} tradeLoaded={tradeLoaded} tradeError={tradeError} {...commitHooks} />
         }
