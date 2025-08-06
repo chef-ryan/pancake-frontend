@@ -14,15 +14,22 @@ import {
   WarningIcon,
   useMatchBreakpoints,
   useTooltip,
+  CircleInfo,
+  useToast,
 } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { CurrencyLogo as CurrencyLogoWidget } from '@pancakeswap/widgets-internal'
 import { AutoRow, RowBetween, RowFixed } from 'components/Layout/Row'
 import { useGasToken } from 'hooks/useGasToken'
-import { ReactElement, memo, useMemo, useState } from 'react'
+import { ReactElement, memo, useMemo, useState, useCallback } from 'react'
 import { Field } from 'state/swap/actions'
 import { styled } from 'styled-components'
 import { warningSeverity } from 'utils/exchange'
+
+import { WSOLMint } from '@pancakeswap/solana-core-sdk'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { createCloseAccountInstruction } from '@solana/spl-token-0.4'
+import { Transaction } from '@solana/web3.js'
 
 import { PancakeSwapXTag } from 'components/PancakeSwapXTag'
 import { paymasterInfo } from 'config/paymaster'
@@ -31,6 +38,9 @@ import { isAddressEqual } from 'utils'
 import { SlippageButton } from 'views/Swap/components/SlippageButton'
 import { InterfaceOrder, isBridgeOrder, isSVMOrder, isXOrder } from 'views/Swap/utils'
 import { useHasDynamicHook } from 'views/SwapSimplify/hooks/useHasDynamicHook'
+import { useAccountActiveChain } from 'hooks/useAccountActiveChain'
+import { useSolanaTokenBalance, useRefreshSolanaTokenBalances } from 'state/token/solanaTokenBalances'
+import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
 import FormattedPriceImpact from '../../components/FormattedPriceImpact'
 import { StyledBalanceMaxMini, SwapCallbackError } from '../../components/styleds'
 import { SlippageAdjustedAmounts, formatExecutionPrice } from '../utils/exchange'
@@ -120,6 +130,35 @@ export const SwapModalFooterV2 = memo(function SwapModalFooterV2({
         ? t('Gas fees is fully sponsored')
         : t('%discount% discount on this gas fee token', { discount: gasTokenInfo.discount })),
   )
+
+  const { solanaAccount } = useAccountActiveChain()
+  const { publicKey, signTransaction } = useWallet()
+  const connection = useSolanaConnectionWithRpcAtom()
+  const { balance: wsolBalance } = useSolanaTokenBalance(solanaAccount, WSOLMint.toBase58())
+  const refreshSolanaBalances = useRefreshSolanaTokenBalances(solanaAccount)
+  const { toastSuccess, toastError } = useToast()
+
+  const handleUnwrap = useCallback(async () => {
+    try {
+      if (!publicKey || !signTransaction) throw new Error('Wallet not connected')
+      const accounts = await connection.getTokenAccountsByOwner(publicKey, { mint: WSOLMint })
+      if (accounts.value.length === 0) return
+      const tx = new Transaction()
+      accounts.value.forEach(({ pubkey }) => {
+        tx.add(createCloseAccountInstruction(pubkey, publicKey, publicKey))
+      })
+      tx.feePayer = publicKey
+      const { blockhash } = await connection.getLatestBlockhash()
+      tx.recentBlockhash = blockhash
+      const signed = await signTransaction(tx)
+      const sig = await connection.sendRawTransaction(signed.serialize())
+      await connection.confirmTransaction(sig)
+      toastSuccess(t('Success!'), t('Unwrapped WSOL to SOL'))
+      refreshSolanaBalances()
+    } catch (e: any) {
+      toastError(t('Failed'), e?.message ?? 'Unwrap failed')
+    }
+  }, [publicKey, signTransaction, connection, toastSuccess, toastError, t, refreshSolanaBalances])
 
   const severity = warningSeverity(priceImpactWithoutFee)
 
@@ -327,6 +366,29 @@ export const SwapModalFooterV2 = memo(function SwapModalFooterV2({
             </span>
           </Flex>
         </SameTokenWarningBox>
+      )}
+
+      {isSVMOrder(order) && wsolBalance.gt(0) && (
+        <Flex
+          mt="-2"
+          mb="12px"
+          fontSize="14px"
+          alignItems="center"
+          px="8px"
+          py="8px"
+          backgroundColor="rgba(0,0,0,0.05)"
+          borderRadius="8px"
+        >
+          <CircleInfo mr="4px" />
+          <Text>
+            {t('You have %amount% WSOL that you can ', {
+              amount: wsolBalance.dividedBy(1e9).toFixed(6),
+            })}
+            <Text as="span" color="primary" cursor="pointer" onClick={handleUnwrap}>
+              {t('unwrap')}
+            </Text>
+          </Text>
+        </Flex>
       )}
 
       <AutoRow>

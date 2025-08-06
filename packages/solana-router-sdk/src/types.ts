@@ -85,6 +85,7 @@ export interface UltraSwapQuoteParams {
   amount: string
   taker?: string
   swapMode?: 'ExactIn' | 'ExactOut'
+  priorityFeeLamports?: number
   referralAccount?: string
   referralFee?: number
 }

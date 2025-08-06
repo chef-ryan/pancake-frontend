@@ -13,6 +13,7 @@ interface SolanaQuoteRequest {
   taker?: string
   excludeRouters?: string
   excludeDexes?: string
+  priorityFeeLamports?: number
 }
 
 interface BestSolanaTradeParams {
@@ -24,6 +25,7 @@ interface BestSolanaTradeParams {
   tradeType: TradeType
   excludeRouters?: string
   excludeDexes?: string
+  priorityFeeLamports?: number
 }
 
 interface RouterPlan {
@@ -63,6 +65,7 @@ export const getBestSolanaTrade = async ({
   amount,
   account,
   slippageBps = 50,
+  priorityFeeLamports,
 }: BestSolanaTradeParams): Promise<SolRouterTrade> => {
   const inputMint = solToWSol(inputCurrency.address)
   const outputMint = solToWSol(outputCurrency.address)
@@ -75,6 +78,7 @@ export const getBestSolanaTrade = async ({
     slippageBps,
     swapMode,
     taker: account,
+    priorityFeeLamports,
   }
 
   const response = await ultraSwapService.getQuote(requestBody)

@@ -3,7 +3,7 @@ import { SPLToken, TradeType, UnifiedCurrencyAmount } from '@pancakeswap/swap-sd
 import { Loadable } from '@pancakeswap/utils/Loadable'
 import { withTimeout } from '@pancakeswap/utils/withTimeout'
 import { atomFamily } from 'jotai/utils'
-import { solanaUserSlippageAtomWithLocalStorage } from '@pancakeswap/utils/user'
+import { solanaUserSlippageAtomWithLocalStorage, solanaPriorityFeeAtomWithLocalStorage } from '@pancakeswap/utils/user'
 import { QUOTE_TIMEOUT } from 'quoter/consts'
 import { parseSVMTradeIntoSVMOrder } from 'quoter/utils/svm-utils/parseSVMTradeIntoSVMOrder'
 import { type InterfaceOrder } from 'views/Swap/utils'
@@ -15,6 +15,7 @@ export const bestSVMOrderAtom = atomFamily((_option: SVMQuoteQuery) => {
   return atomWithLoadable<InterfaceOrder>(async (get) => {
     const { baseCurrency, currency, amount, tradeType, address } = _option
     const userSlippageTolerance = get(solanaUserSlippageAtomWithLocalStorage)
+      const priorityFeeLamports = get(solanaPriorityFeeAtomWithLocalStorage)
 
     // Early validation
     if (!baseCurrency || !currency || !amount || tradeType === undefined) {
@@ -39,6 +40,7 @@ export const bestSVMOrderAtom = atomFamily((_option: SVMQuoteQuery) => {
             tradeType: tradeType as TradeType,
             slippageBps: userSlippageTolerance,
             account: address,
+            priorityFeeLamports
           })
 
           //   perf.tracker.success(svmOrder)
