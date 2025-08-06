@@ -6,12 +6,12 @@ import {
   BridgeRoutes,
   BridgeTransfer,
   CanonicalBridgeProvider,
-  CanonicalBridgeProviderProps,
   EventData,
   EventName,
   IChainConfig,
   ICustomizedBridgeConfig,
   createGTMEventListener,
+  IBridgeConfig,
 } from '@bnb-chain/canonical-bridge-widget'
 import { useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -30,22 +30,22 @@ import { SmartWalletWarning } from '../components/SmartWalletWarning'
 
 export interface CanonicalBridgeProps {
   connectWalletButtons: {
-    default: CanonicalBridgeProviderProps['config']['connectWalletButton']
+    default: IBridgeConfig['components']['connectWalletButton']
   } & {
-    [key: string]: CanonicalBridgeProviderProps['config']['connectWalletButton']
+    [key: string]: IBridgeConfig['components']['connectWalletButton']
   }
   supportedChainIds: number[]
-  rpcConfig: Record<number, string[]>
+  rpcConfig: Record<number, readonly string[]>
   disabledToChains?: number[]
 }
 
 const gtmListener = createGTMEventListener()
 
 export const CanonicalBridge = (props: CanonicalBridgeProps) => {
-  const { connectWalletButtons, supportedChainIds, disabledToChains } = props
+  const { connectWalletButtons, supportedChainIds, disabledToChains, rpcConfig } = props
   useDisableToChains(disabledToChains)
 
-  const { currentLanguage } = useTranslation()
+  const { currentLanguage, t } = useTranslation()
   const fromChain = useChainFromWidget('from')
   const theme = useTheme()
   const toast = useToast()
@@ -58,10 +58,10 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
         .filter((e) => !(connector?.id === 'BinanceW3WSDK' && e.id === 1101))
         .map((chain) => ({
           ...chain,
-          rpcUrls: { default: { http: props.rpcConfig?.[chain.id] ?? chain.rpcUrls.default.http } },
+          rpcUrls: { default: { http: rpcConfig?.[chain.id] ?? chain.rpcUrls.default.http } },
         }))
     )
-  }, [supportedChainIds, connector?.id, props.rpcConfig])
+  }, [supportedChainIds, connector?.id, rpcConfig])
   const transferConfig = useTransferConfig(supportedChains)
   const handleError = useCallback(
     (params: { type: string; message?: string | undefined; error?: Error | undefined }) => {
@@ -76,7 +76,7 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
     () => ({
       appName: 'canonical-bridge',
       assetPrefix: env.ASSET_PREFIX,
-      bridgeTitle: 'Bridge',
+      bridgeTitle: t('Bridge'),
       theme: {
         colorMode: theme.isDark ? 'dark' : 'light',
         breakpoints,
@@ -102,7 +102,7 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
 
       analytics: {
         enabled: true,
-        onEvent: (eventName: EventName, eventData: EventData<EventName>) => {
+        onEvent: (eventName: EventName, eventData: EventData<any>) => {
           gtmListener(eventName, eventData)
         },
       },
@@ -110,7 +110,16 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
       chains: supportedChains,
       onError: handleError,
     }),
-    [currentLanguage.code, theme.isDark, transferConfig, supportedChains, handleError, fromChain, connectWalletButtons],
+    [
+      currentLanguage.code,
+      t,
+      theme.isDark,
+      transferConfig,
+      supportedChains,
+      handleError,
+      fromChain,
+      connectWalletButtons,
+    ],
   )
 
   return (
