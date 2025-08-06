@@ -1,4 +1,4 @@
-import { isEvm, isSolana } from '@pancakeswap/chains'
+import { isSolana } from '@pancakeswap/chains'
 import { useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import {
@@ -65,7 +65,7 @@ interface SlippageButtonProps {
   enableAutoSlippage?: boolean
 }
 
-export const SlippageButton = ({ enableAutoSlippage = false }: SlippageButtonProps) => {
+export const SlippageButton = ({ enableAutoSlippage: enableAutoSlippage_ = false }: SlippageButtonProps) => {
   const { t } = useTranslation()
   const { theme } = useTheme()
   const { isMobile } = useMatchBreakpoints()
@@ -78,10 +78,16 @@ export const SlippageButton = ({ enableAutoSlippage = false }: SlippageButtonPro
   const [userSlippageTolerance] = useUserSlippage()
   const [solanaSlippageTolerance] = useSolanaUserSlippage()
 
-  const tolerance = useMemo(
-    () =>
-      isSolana(chainId) ? solanaSlippageTolerance : enableAutoSlippage ? slippageTolerance : userSlippageTolerance,
-    [chainId, enableAutoSlippage, slippageTolerance, solanaSlippageTolerance, userSlippageTolerance],
+  const { tolerance, enableAutoSlippage } = useMemo(
+    () => ({
+      enableAutoSlippage: isSolana(chainId) ? false : enableAutoSlippage_,
+      tolerance: isSolana(chainId)
+        ? solanaSlippageTolerance
+        : enableAutoSlippage_
+        ? slippageTolerance
+        : userSlippageTolerance,
+    }),
+    [chainId, enableAutoSlippage_, slippageTolerance, solanaSlippageTolerance, userSlippageTolerance],
   )
 
   const isRiskyLow = tolerance < 50
