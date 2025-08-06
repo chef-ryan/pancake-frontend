@@ -3,8 +3,9 @@ import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useMemo, useRef, us
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
-import { useSolanaTokenList } from 'hooks/useSolanaTokenList'
+import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
 import { useSolanaTokenInfo } from 'hooks/solana/useSolanaTokenInfo'
+import { useSolanaTokenBalances } from 'state/token/solanaTokenBalances'
 import { FixedSizeList } from 'react-window'
 import { useAllLists, useInactiveListUrls } from 'state/lists/hooks'
 import { UpdaterByChainId } from 'state/lists/updater'
@@ -18,7 +19,7 @@ import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useDebounce, useSortedTokensByQuery } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 /* eslint-disable no-restricted-syntax */
-import { ChainId, ERC20Token, getTokenComparator, isSolWSol, Token, UnifiedCurrency } from '@pancakeswap/sdk'
+import { getTokenComparator, isSolWSol, Token, UnifiedCurrency } from '@pancakeswap/sdk'
 import { createFilterToken, WrappedTokenInfo } from '@pancakeswap/token-lists'
 import {
   AutoColumn,
@@ -34,7 +35,6 @@ import {
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import { useAudioPlay } from '@pancakeswap/utils/user'
-import { useSolanaTokenBalances } from 'state/token/solanaTokenBalances'
 import { SPLToken, UnifiedToken } from '@pancakeswap/swap-sdk-core'
 
 import { useAllTokens, useIsUserAddedToken, useToken } from '../../hooks/Tokens'

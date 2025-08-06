@@ -3,7 +3,7 @@ import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 import { Currency } from '@pancakeswap/sdk'
 
 import { useCurrencyUsdPrice } from './useCurrencyUsdPrice'
-import { useBirdeyeTokenPrice } from './solana/useBirdeyeTokenPrice'
+import { useSolanaTokenPrice } from './solana/useSolanaTokenPrice'
 
 export function useUnifiedTokenUsdPrice(
   currency: Currency | { address: string; chainId: number },
@@ -13,7 +13,7 @@ export function useUnifiedTokenUsdPrice(
   const isEvm = currency.chainId in ChainId
 
   const evmPrice = useCurrencyUsdPrice(isEvm ? (currency as Currency) : undefined, { enabled })
-  const solanaPriceResult = useBirdeyeTokenPrice({
+  const solanaPriceResult = useSolanaTokenPrice({
     mintList: isSolana && 'address' in currency ? [currency.address] : [],
     enabled,
   })
@@ -24,7 +24,7 @@ export function useUnifiedTokenUsdPrice(
     }
     if (isSolana && 'address' in currency) {
       return {
-        data: solanaPriceResult.data?.[currency.address]?.value ?? 0,
+        data: solanaPriceResult.data?.[`${NonEVMChainId.SOLANA}-${currency.address}`] ?? 0,
         isLoading: solanaPriceResult.isLoading,
         error: solanaPriceResult.error,
       }

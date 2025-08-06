@@ -5,9 +5,8 @@ import { ListLogo } from '@pancakeswap/widgets-internal'
 import { useAtom } from 'jotai'
 import { memo, useCallback } from 'react'
 import { SOLANA_LISTS, TokenListKey } from 'config/solana-list'
-
-import { solanaListSettingsAtom } from '../../state/token/solanaTokenAtoms'
-import { useSolanaTokenList } from '../../hooks/useSolanaTokenList'
+import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
+import { solanaListSettingsAtom } from 'state/token/solanaTokenAtoms'
 
 import Row, { RowFixed } from '../Layout/Row'
 import { ListContainer, RowWrapper, Wrapper } from './ManageLists'

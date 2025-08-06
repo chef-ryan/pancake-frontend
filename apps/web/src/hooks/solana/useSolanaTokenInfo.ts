@@ -4,7 +4,7 @@ import { PublicKey } from '@solana/web3.js'
 import type { TokenInfo } from '@pancakeswap/solana-core-sdk'
 import { SPLToken } from '@pancakeswap/swap-sdk-core'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
-import { useSolanaTokenList } from 'hooks/useSolanaTokenList'
+import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
 
 const API_ENDPOINT = process.env.NEXT_PUBLIC_SOLANA_EXPLORE_API_ENDPOINT
 

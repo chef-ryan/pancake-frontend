@@ -13,7 +13,7 @@ import {
   Text,
 } from '@pancakeswap/uikit'
 import Row, { RowBetween, RowFixed } from 'components/Layout/Row'
-import { useSolanaTokenList } from 'hooks/useSolanaTokenList'
+import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
 import { RefObject, useCallback, useMemo, useRef, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'

@@ -1,26 +1,21 @@
 import { useMemo } from 'react'
 
-import useSWR from 'swr'
+import useSWR, { Fetcher } from 'swr'
 
 import { WSOLMint } from '@pancakeswap/solana-core-sdk'
 import { PublicKey } from '@solana/web3.js'
 
-export interface BirdEyeTokenPrice {
-  value: number
-  updateUnixTime: number
-  updateHumanTime: string
-  priceChange24h: number
-}
+const WALLET_PRICE_URL = 'https://wallet-api.pancakeswap.com/sol/v1/prices/list'
 
-const BIRDEYE_PRICE_URL = `${process.env.NEXT_PUBLIC_SOLANA_EXPLORE_API_ENDPOINT}/cached/v1/tokens/birdeye/defi/multi_price`
+type PriceReturnType = { [key: string]: number }
 
-const fetcher = async ([url, mintList]: [string, string]) => {
-  const response = await fetch(`${url}?list_address=${mintList}`)
-  if (!response.ok) throw new Error('Failed to fetch Birdeye price')
+const fetcher: Fetcher<PriceReturnType, [string, string]> = async ([url, mintList]: [string, string]) => {
+  const response = await fetch(`${url}/${mintList}`)
+  if (!response.ok) throw new Error('Failed to fetch price')
   return response.json()
 }
 
-export const useBirdeyeTokenPrice = (props: {
+export const useSolanaTokenPrice = (props: {
   mintList: (string | PublicKey | undefined)[]
   refreshInterval?: number
   timeout?: number
@@ -30,13 +25,13 @@ export const useBirdeyeTokenPrice = (props: {
 
   const readyList = useMemo(
     () => Array.from(new Set(mintList.filter((m) => !!m && typeof m === 'string' && m.length === 44))),
-    [JSON.stringify(mintList)],
+    [mintList],
   )
 
   const shouldFetch = readyList.length > 0 && enabled
 
   const { data, isLoading, error, ...rest } = useSWR(
-    shouldFetch ? [BIRDEYE_PRICE_URL, readyList.join(',')] : null,
+    shouldFetch ? [WALLET_PRICE_URL, readyList.join(',')] : null,
     fetcher,
     {
       refreshInterval,
@@ -46,12 +41,12 @@ export const useBirdeyeTokenPrice = (props: {
   )
   const isEmptyResult = !isLoading && !(data && !error)
 
-  if (data?.data && data?.success) {
-    data.data[PublicKey.default.toBase58()] = data.data[WSOLMint.toBase58()]
+  if (data) {
+    data[PublicKey.default.toBase58()] = data[WSOLMint.toBase58()]
   }
 
   return {
-    data: data?.success ? data?.data : {},
+    data: data ?? {},
     isLoading,
     error,
     isEmptyResult,

@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, isSolana } from '@pancakeswap/chains'
 import { Currency, ERC20Token, getCurrencyAddress, Native, Price, Token, UnifiedCurrency } from '@pancakeswap/sdk'
 import { STABLE_COIN } from '@pancakeswap/tokens'
 import { getFullDecimalMultiplier } from '@pancakeswap/utils/getFullDecimalMultiplier'
@@ -12,6 +12,7 @@ import { useMemo } from 'react'
 import { DeepKeyMap, isEqual } from 'utils/hash'
 import { multiplyPriceByAmount } from 'utils/prices'
 import { getViemClients } from 'utils/viem'
+import { useSolanaTokenPrice } from './solana/useSolanaTokenPrice'
 
 type UseStablecoinPriceConfig = {
   enabled?: boolean
@@ -117,10 +118,16 @@ export const useUnifiedUSDPriceAmount = (
     currency instanceof Token || currency instanceof Native ? currency : undefined,
     { enabled: Boolean(currency && amount), ...config },
   )
-  // todo:@eric integrate solana usd price
+  const { data: solanaPrice } = useSolanaTokenPrice({
+    mintList: [currency?.wrapped.address],
+    enabled: Boolean(currency && amount && isSolana(currency.chainId)),
+  })
 
   return useMemo(() => {
     if (amount) {
+      if (isSolana(currency?.chainId)) {
+        return solanaPrice
+      }
       if (stablePrice) {
         return multiplyPriceByAmount(stablePrice, amount)
       }

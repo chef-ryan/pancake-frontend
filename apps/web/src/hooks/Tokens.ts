@@ -32,8 +32,8 @@ import useUserAddedTokens, { useUserAddedTokensByChainIds } from '../state/user/
 import { useActiveChainId } from './useActiveChainId'
 import useNativeCurrency, { useUnifiedNativeCurrency } from './useNativeCurrency'
 import useAccountActiveChain from './useAccountActiveChain'
-import { useSolanaToken } from './useSolanaToken'
-import { useSolanaTokenList } from './useSolanaTokenList'
+import { useSolanaTokenList } from './solana/useSolanaTokenList'
+import { useSolanaToken } from './solana/useSolanaToken'
 
 export const mapWithoutUrls = (tokenMap?: TokenAddressMap<ChainId>, chainId?: number) => {
   if (!tokenMap || !chainId) return {}

@@ -5,7 +5,7 @@ import { useAtom } from 'jotai'
 
 import { MobileCard } from 'components/AdPanel/MobileCard'
 import { useCurrency } from 'hooks/Tokens'
-import { useSolanaTokenList } from 'hooks/useSolanaTokenList'
+import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { isEvm, NonEVMChainId } from '@pancakeswap/chains'
 import { AutoSlippageProvider } from 'hooks/useAutoSlippageWithFallback'

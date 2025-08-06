@@ -7,7 +7,7 @@ import truncateHash from '@pancakeswap/utils/truncateHash'
 import { solanaExplorerAtom } from '@pancakeswap/utils/user'
 import { useAtom } from 'jotai'
 import { NonEVMChainId } from '@pancakeswap/chains'
-import { useSolanaTokenList } from 'hooks/useSolanaTokenList'
+import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
 import { convertSPLTokenIntoRawTokenInfoUserAdded } from 'config/solana-list'
 
 import { WarningMessage } from './ImportToken'
