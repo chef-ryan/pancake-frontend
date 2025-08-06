@@ -116,7 +116,7 @@ export const useUnifiedUSDPriceAmount = (
 ): number | undefined => {
   const stablePrice = useStablecoinPrice(
     currency instanceof Token || currency instanceof Native ? currency : undefined,
-    { enabled: Boolean(currency && amount), ...config },
+    { enabled: Boolean(currency && amount && !isSolana(currency.chainId)), ...config },
   )
   const { data: solanaPrice } = useSolanaTokenPrice({
     mintList: [currency?.wrapped.address],
@@ -125,8 +125,14 @@ export const useUnifiedUSDPriceAmount = (
 
   return useMemo(() => {
     if (amount) {
-      if (isSolana(currency?.chainId)) {
-        return solanaPrice
+      if (
+        isSolana(currency?.chainId) &&
+        currency?.wrapped.address &&
+        typeof solanaPrice === 'object' &&
+        solanaPrice !== null &&
+        Object.keys(solanaPrice).length > 0
+      ) {
+        return solanaPrice[currency?.wrapped.address]
       }
       if (stablePrice) {
         return multiplyPriceByAmount(stablePrice, amount)
