@@ -12,7 +12,7 @@ const WALLET_PRICE_URL = 'https://wallet-api.pancakeswap.com/sol/v1/prices/list'
 type PriceReturnType = { [key: string]: number }
 
 interface SolanaTokenPriceParams {
-  mintList: string[]
+  mint?: string
   enabled: boolean
   version: number
 }
@@ -22,16 +22,20 @@ const placeHolderMap = new DeepKeyMap<SolanaTokenPriceParams, PriceReturnType>()
 const solanaTokenPriceAtom = atomFamily((params: SolanaTokenPriceParams) => {
   return atomWithLoadable(
     async () => {
-      const { mintList, enabled } = params
-      if (!enabled || mintList.length === 0) {
+      const { mint, enabled } = params
+      if (!enabled || !mint) {
         return undefined
       }
-      const response = await fetch(`${WALLET_PRICE_URL}/${mintList.join(',')}`)
+      const response = await fetch(`${WALLET_PRICE_URL}/${mint}`)
       if (!response.ok) {
         throw new Error('Failed to fetch price')
       }
-      const result: PriceReturnType = await response.json()
-      result[PublicKey.default.toBase58()] = result[WSOLMint.toBase58()]
+      const resp: PriceReturnType = await response.json()
+      const result = Object.entries(resp).reduce((acc, [key, val]) => {
+        // eslint-disable-next-line no-param-reassign
+        acc[key.split('-')[1] ?? key] = val
+        return acc
+      }, {})
       placeHolderMap.set({ ...params, version: 0 }, result)
       return result
     },
@@ -43,21 +47,15 @@ const solanaTokenPriceAtom = atomFamily((params: SolanaTokenPriceParams) => {
 }, isEqual)
 
 export const useSolanaTokenPrice = (props: {
-  mintList: (string | PublicKey | undefined)[]
+  mint: string | undefined
   refreshInterval?: number
   timeout?: number
   enabled?: boolean
 }) => {
-  const { mintList, refreshInterval = 2 * 60 * 1000, enabled = true } = props || {}
-
-  const readyList = useMemo(
-    () => Array.from(new Set(mintList.filter((m): m is string => !!m && typeof m === 'string' && m.length === 44))),
-    [mintList],
-  )
-
+  const { mint, refreshInterval = 2 * 60 * 1000, enabled = true } = props || {}
   const version = Math.floor(Date.now() / refreshInterval)
 
-  const loadable = useAtomValue(solanaTokenPriceAtom({ mintList: readyList, enabled, version }))
+  const loadable = useAtomValue(solanaTokenPriceAtom({ mint, enabled, version }))
 
   const data = loadable.unwrapOr({})
   const error = loadable.isFail() ? loadable.error : undefined
@@ -65,7 +63,7 @@ export const useSolanaTokenPrice = (props: {
   const isEmptyResult = loadable.isNothing()
 
   return {
-    data,
+    data: mint ? data[mint?.toLowerCase()] : undefined,
     isLoading,
     error,
     isEmptyResult,

@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import { ChainId, isSolana } from '@pancakeswap/chains'
 import { Currency, ERC20Token, getCurrencyAddress, Native, Price, Token, UnifiedCurrency } from '@pancakeswap/sdk'
 import { STABLE_COIN } from '@pancakeswap/tokens'
@@ -119,19 +120,22 @@ export const useUnifiedUSDPriceAmount = (
     { enabled: Boolean(currency && amount), ...config },
   )
   const { data: solanaPrice } = useSolanaTokenPrice({
-    mintList: [currency?.wrapped.address],
+    mint: currency?.wrapped.address,
     enabled: Boolean(currency && amount && isSolana(currency.chainId)),
   })
 
   return useMemo(() => {
+    if (!currency) {
+      return undefined
+    }
     if (amount) {
-      if (isSolana(currency?.chainId)) {
-        return solanaPrice
+      if (isSolana(currency.chainId)) {
+        return new BigNumber(solanaPrice ?? 0).times(amount).toNumber()
       }
       if (stablePrice) {
         return multiplyPriceByAmount(stablePrice, amount)
       }
     }
     return undefined
-  }, [amount, stablePrice])
+  }, [amount, stablePrice, currency, solanaPrice])
 }
