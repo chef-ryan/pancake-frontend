@@ -86,7 +86,6 @@ export const BridgeView = () => {
               [],
             )}
             supportedChainIds={CHAIN_IDS}
-            // @ts-ignore
             rpcConfig={PUBLIC_NODES}
             disabledToChains={DISABLED_TO_CHAINS}
           />
