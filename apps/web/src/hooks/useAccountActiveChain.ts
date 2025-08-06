@@ -110,7 +110,7 @@ export function useSyncWalletState() {
         isNotMatched,
       }
     })
-  }, [queryChainId])
+  }, [queryChainId, wagmiAccountState])
 }
 
 export default useAccountActiveChain
