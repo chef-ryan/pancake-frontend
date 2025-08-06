@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { SUGGESTED_BASES } from 'config/constants/exchange'
 import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
 import { styled } from 'styled-components'
@@ -52,16 +53,25 @@ export default function CommonBases({
   selectedCurrency,
   commonBasesType,
   supportCrossChain,
+  disabledCurrencies,
 }: {
   chainId?: UnifiedChainId
   commonBasesType?: CommonBasesType
   selectedCurrency?: UnifiedCurrency | null
   onSelect: (currency: UnifiedCurrency) => void
   supportCrossChain?: boolean
+  disabledCurrencies?: UnifiedCurrency[]
 }) {
   const native = useUnifiedNativeCurrency(chainId)
   const { t } = useTranslation()
   const pinTokenDescText = commonBasesType === CommonBasesType.SWAP_LIMITORDER ? t('Popular tokens') : t('Common bases')
+
+  const isNativeDisabled = useMemo(
+    () =>
+      (selectedCurrency?.isNative && selectedCurrency?.chainId === chainId) ||
+      Boolean(disabledCurrencies?.find((c) => c.equals(native))),
+    [chainId, disabledCurrencies, native, selectedCurrency?.chainId, selectedCurrency?.isNative],
+  )
 
   return (
     <AutoColumn gap="sm">
@@ -77,13 +87,13 @@ export default function CommonBases({
         <ButtonWrapper>
           <BaseWrapper
             onClick={() => {
-              if (selectedCurrency && selectedCurrency.isNative && selectedCurrency.chainId === chainId) {
+              if (isNativeDisabled) {
                 return
               }
 
               onSelect(native)
             }}
-            disable={selectedCurrency?.isNative && selectedCurrency?.chainId === chainId}
+            disable={isNativeDisabled}
           >
             <CurrencyLogo
               showChainLogo={supportCrossChain}
@@ -100,9 +110,10 @@ export default function CommonBases({
         </ButtonWrapper>
         {(chainId ? SUGGESTED_BASES[chainId] || [] : []).map((token: UnifiedToken) => {
           const selected = selectedCurrency?.equals?.(token)
+          const disabled = selected || Boolean(disabledCurrencies?.find((c) => c.equals(token)))
           return (
             <ButtonWrapper key={`buttonBase#${token.address}`}>
-              <BaseWrapper onClick={() => !selected && onSelect(token)} disable={selected}>
+              <BaseWrapper onClick={() => !disabled && onSelect(token)} disable={disabled}>
                 <CurrencyLogo
                   showChainLogo={supportCrossChain}
                   currency={token}

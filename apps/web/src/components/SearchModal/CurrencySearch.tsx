@@ -172,8 +172,6 @@ function CurrencySearch({
   // if no results on main list, show option to expand into inactive
   const filteredInactiveTokens = useSearchInactiveTokenLists(debouncedQuery)
 
-  // ====
-
   const showNative: boolean = useMemo(() => {
     if (tokensToShow) return false
     const s = debouncedQuery.toLowerCase().trim()
@@ -242,20 +240,19 @@ function CurrencySearch({
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         const s = debouncedQuery.toLowerCase().trim()
-        if (!isSolana && s === native.symbol.toLowerCase().trim()) {
+        if (s === native.symbol.toLowerCase().trim()) {
           handleCurrencySelect(native)
         } else if (filteredSortedTokens.length > 0) {
           if (
-            isSolana ||
             filteredSortedTokens[0].symbol?.toLowerCase() === debouncedQuery.trim().toLowerCase() ||
             filteredSortedTokens.length === 1
           ) {
-            handleCurrencySelect(isSolana ? (filteredSortedTokens[0] as any) : filteredSortedTokens[0])
+            handleCurrencySelect(filteredSortedTokens[0])
           }
         }
       }
     },
-    [debouncedQuery, filteredSortedTokens, handleCurrencySelect, native, isSolana],
+    [debouncedQuery, filteredSortedTokens, handleCurrencySelect, native],
   )
 
   const hasFilteredInactiveTokens = Boolean(filteredInactiveTokens?.length)
@@ -376,6 +373,7 @@ function CurrencySearch({
             onSelect={handleCurrencySelect}
             selectedCurrency={selectedCurrency}
             commonBasesType={commonBasesType}
+            disabledCurrencies={isSolWSol(otherSelectedCurrency?.wrapped) ? [native] : undefined}
           />
         )}
       </AutoColumn>

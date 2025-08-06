@@ -19,7 +19,7 @@ import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useUnifiedTokenUsdPrice } from 'hooks/useUnifiedTokenUsdPrice'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
+import { isSolana, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 
 import { useIsUserAddedToken } from '../../hooks/Tokens'
 import { useCombinedActiveList } from '../../state/lists/hooks'
@@ -288,6 +288,13 @@ export default function CurrencyList({
 
       const isSelected = Boolean(selectedCurrency && currency && selectedCurrency.equals(currency))
       const otherSelected = Boolean(otherCurrency && currency && otherCurrency.equals(currency))
+      const isNativeWrap = Boolean(
+        isSolana(chainId) &&
+          currency?.wrapped &&
+          otherCurrency?.wrapped &&
+          otherCurrency.wrapped.equals(currency.wrapped) &&
+          !otherSelected,
+      )
 
       const handleSelect = () => onCurrencySelect(currency)
       const token = wrappedCurrency(currency, currency?.chainId)
@@ -327,7 +334,7 @@ export default function CurrencyList({
         <CurrencyRow
           style={style}
           currency={currency}
-          isSelected={isSelected}
+          isSelected={isSelected || isNativeWrap}
           onSelect={handleSelect}
           otherSelected={otherSelected}
           showChainLogo={showChainLogo}
@@ -335,6 +342,7 @@ export default function CurrencyList({
       )
     },
     [
+      chainId,
       selectedCurrency,
       otherCurrency,
       currencies.length,
