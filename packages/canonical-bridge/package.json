@@ -30,7 +30,6 @@
     "@tronweb3/tronwallet-adapter-react-hooks": "^1",
     "@pancakeswap/uikit": "workspace:*",
     "@pancakeswap/localization": "workspace:*",
-    "@pancakeswap/hooks": "workspace:*",
     "@bnb-chain/canonical-bridge-widget": "0.10.1",
     "@bnb-chain/canonical-bridge-sdk": "0.7.0"
   },
@@ -52,8 +51,7 @@
     "viem": "catalog:",
     "wagmi": "catalog:",
     "@pancakeswap/uikit": "workspace:*",
-    "@pancakeswap/localization": "workspace:*",
-    "@pancakeswap/hooks": "workspace:*"
+    "@pancakeswap/localization": "workspace:*"
   },
   "exports": {
     "./package.json": "./package.json",

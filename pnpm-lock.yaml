@@ -2226,9 +2226,6 @@ importers:
         specifier: ^6
         version: 6.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     devDependencies:
-      '@pancakeswap/hooks':
-        specifier: workspace:*
-        version: link:../hooks
       '@pancakeswap/localization':
         specifier: workspace:*
         version: link:../localization
