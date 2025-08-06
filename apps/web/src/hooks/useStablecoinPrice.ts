@@ -117,7 +117,7 @@ export const useUnifiedUSDPriceAmount = (
 ): number | undefined => {
   const stablePrice = useStablecoinPrice(
     currency instanceof Token || currency instanceof Native ? currency : undefined,
-    { enabled: Boolean(currency && amount), ...config },
+    { enabled: Boolean(currency && amount && !isSolana(currency.chainId)), ...config },
   )
   const { data: solanaPrice } = useSolanaTokenPrice({
     mint: currency?.wrapped.address,
