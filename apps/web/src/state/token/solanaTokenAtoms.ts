@@ -4,9 +4,10 @@ import { atomFamily } from 'jotai/utils'
 import { SPLToken } from '@pancakeswap/swap-sdk-core'
 import { TokenListKey } from 'config/solana-list'
 import { atomWithStorageSync } from 'utils/atomWithStorageSync'
+import { solanaTokens } from '@pancakeswap/tokens'
 
 // Atom to store the list of SPLToken
-export const solanaTokenListAtom = atom<SPLToken[]>([])
+export const solanaTokenListAtom = atom<SPLToken[]>([solanaTokens.cake, solanaTokens.usdc, solanaTokens.usdt])
 
 // AtomFamily to get a token by address from the list
 export const solanaTokenAtomFamily = atomFamily((address?: string) =>

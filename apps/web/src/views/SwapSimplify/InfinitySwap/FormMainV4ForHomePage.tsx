@@ -54,7 +54,7 @@ export function FormMainForHomePage({ inputAmount, outputAmount, tradeLoading }:
   const inputCurrency = useUnifiedCurrency(inputCurrencyId, inputChainId)
   const outputCurrency = useUnifiedCurrency(outputCurrencyId, outputChainId)
 
-  useSolanaTokenList(chainId === NonEVMChainId.SOLANA)
+  // useSolanaTokenList(chainId === NonEVMChainId.SOLANA)
   useDefaults()
   const handleTypeInput = useCallback((value: string) => onUserInput(Field.INPUT, value), [onUserInput])
   const handleTypeOutput = useCallback((value: string) => onUserInput(Field.OUTPUT, value), [onUserInput])
