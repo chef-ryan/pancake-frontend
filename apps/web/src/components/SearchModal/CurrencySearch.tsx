@@ -212,12 +212,11 @@ function CurrencySearch({
 
   const filteredSortedTokens: UnifiedCurrency[] = useMemo(() => {
     if (isSolana) {
-      const defaultOrder = new Map(filteredTokens.map((t, idx) => [t.address, idx]))
       return [...filteredTokens].sort((a, b) => {
-        const balA = solanaBalances.balances.get(a.address) ?? new BN(0)
-        const balB = solanaBalances.balances.get(b.address) ?? new BN(0)
-        const priceA = solanaPrices?.[a.address] ?? 0
-        const priceB = solanaPrices?.[b.address] ?? 0
+        const balA = solanaBalances.balances.get(a.address)?.dividedBy(10 ** (a.decimals || 1)) ?? new BN(0)
+        const balB = solanaBalances.balances.get(b.address)?.dividedBy(10 ** (b.decimals || 1)) ?? new BN(0)
+        const priceA = solanaPrices?.[a.address.toLowerCase()] ?? 0
+        const priceB = solanaPrices?.[b.address.toLowerCase()] ?? 0
         const usdA = balA.multipliedBy(priceA)
         const usdB = balB.multipliedBy(priceB)
         if (!usdA.eq(usdB)) {
@@ -233,7 +232,7 @@ function CurrencySearch({
         if (hasBalA !== hasBalB) {
           return hasBalB ? 1 : -1
         }
-        return (defaultOrder.get(a.address) ?? 0) - (defaultOrder.get(b.address) ?? 0)
+        return 0
       })
     }
     const tokenComparator = getTokenComparator(balances ?? {})
