@@ -7,6 +7,8 @@ import { memo, useMemo } from 'react'
 import { RoutingSettingsButton } from 'components/Menu/GlobalSettings/SettingsModalV2'
 import { CurrencyLogoWrapper, RouterBox, RouterTypeText } from 'views/Swap/components/RouterViewer'
 import { useHookDiscount } from 'views/SwapSimplify/hooks/useHookDiscount'
+import { Currency } from '@pancakeswap/sdk'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { BridgeRoutesDisplay } from './RouteDisplay/BridgeRoutesDisplay'
 import { EVMPairNodes } from './RouteDisplay/pairNode'
 import { JupPairNodes } from './RouteDisplay/JupPairNodes'
@@ -110,7 +112,11 @@ export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayPr
           }}
           ref={targetRef}
         >
-          <CurrencyLogo size="100%" currency={inputCurrency} />
+          {route.type === RouteType.SVM ? (
+            <SolanaCurrencyLogo currencyId={inputCurrency.wrapped.address} chainId={inputCurrency.chainId} />
+          ) : (
+            <CurrencyLogo size="100%" currency={inputCurrency} />
+          )}
           <RouterTypeText fontWeight="bold">{Math.round(route.percent)}%</RouterTypeText>
         </CurrencyLogoWrapper>
         {tooltipVisible && tooltip}
@@ -122,10 +128,20 @@ export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayPr
           }}
           ref={outputTargetRef}
         >
-          <CurrencyLogo size="100%" currency={outputCurrency} />
+          {route.type === RouteType.SVM ? (
+            <SolanaCurrencyLogo currencyId={outputCurrency.wrapped.address} chainId={outputCurrency.chainId} />
+          ) : (
+            <CurrencyLogo size="100%" currency={outputCurrency} />
+          )}
         </CurrencyLogoWrapper>
         {outputTooltipVisible && outputTooltip}
       </RouterBox>
     </AutoColumn>
   )
 })
+
+function SolanaCurrencyLogo({ currencyId, chainId }: { currencyId: string; chainId: number }) {
+  // NOTE: wonder why? check parseSVMTradeIntoSVMOrder.ts
+  const unifiedCurrency = useUnifiedCurrency(currencyId, chainId)
+  return <CurrencyLogo size="100%" currency={unifiedCurrency as Currency} />
+}

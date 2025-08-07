@@ -29,7 +29,7 @@ interface BestSolanaTradeParams {
   priorityFeeLamports?: number
 }
 
-interface RouterPlan {
+export interface RouterPlan {
   swapInfo: {
     inputMint: string
     inAmount: string

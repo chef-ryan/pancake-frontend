@@ -1,6 +1,6 @@
 import { type SVMOrder, OrderType, SVMTrade } from '@pancakeswap/price-api-sdk'
 import { PoolType, Route, RouteType, SVMPool } from '@pancakeswap/smart-router'
-import type { SolRouterTrade } from '@pancakeswap/solana-router-sdk'
+import type { SolRouterTrade, RouterPlan } from '@pancakeswap/solana-router-sdk'
 import {
   Currency,
   CurrencyAmount,
@@ -18,114 +18,171 @@ type ExtendedSolRouterTrade = Omit<SolRouterTrade, 'inputAmount' | 'outputAmount
   outputAmount: UnifiedCurrencyAmount<SPLToken>
 }
 
+function createMockCurrency(address: string, chainId: number, programId: string) {
+  return new SPLToken({
+    address,
+    chainId,
+    programId,
+    decimals: 0,
+    symbol: 'MOCK_INFO',
+    name: 'MOCK_INFO',
+    logoURI: '',
+  })
+}
+
 export function parseRoutePlansToRoutes(svmTrade: ExtendedSolRouterTrade): Route[] {
   const routes: Route[] = []
   let currentGroup: typeof svmTrade.routes = []
+
+  // Identify convergence points: plans where multiple prior plans output to its input
+  const convergenceIndices = new Set<number>()
+  for (let i = 0; i < svmTrade.routes.length; i++) {
+    const plan = svmTrade.routes[i]
+    if (plan.percent === 100) {
+      // Count how many previous plans output to this plan's input
+      let contributingPlans = 0
+      for (let j = 0; j < i; j++) {
+        if (svmTrade.routes[j].swapInfo.outputMint === plan.swapInfo.inputMint) {
+          contributingPlans++
+        }
+      }
+      // If multiple plans contribute to this plan's input, it's a convergence point
+      if (contributingPlans >= 2) {
+        convergenceIndices.add(i)
+      }
+    }
+  }
 
   for (let i = 0; i < svmTrade.routes.length; i++) {
     const routerPlan = svmTrade.routes[i]
     currentGroup.push(routerPlan)
 
-    // Group based on percentage inheritance:
-    // - percent < 100: Start of new route (new split)
-    // - percent = 100: Continue current route (next hop)
-    // - Last plan always ends a route
     const isLastPlan = i === svmTrade.routes.length - 1
     const nextPlan = isLastPlan ? null : svmTrade.routes[i + 1]
+    const nextIsConvergence = nextPlan && convergenceIndices.has(i + 1)
 
-    // End route if:
-    // 1. This is the last plan, OR
-    // 2. Next plan has percent < 100 (starts new split)
-    const isEndOfRoute = isLastPlan || (nextPlan && nextPlan.percent < 100)
+    // Check if current plan connects to next plan (output of current = input of next)
+    const currentConnectsToNext =
+      nextPlan && !isLastPlan && routerPlan.swapInfo.outputMint === nextPlan.swapInfo.inputMint
+
+    const isEndOfRoute =
+      isLastPlan ||
+      (nextPlan && nextPlan.percent < 100) ||
+      nextIsConvergence ||
+      (!currentConnectsToNext && nextPlan && nextPlan.percent === 100)
 
     if (isEndOfRoute) {
-      // Process the current group into a single Route
-      // TODO: need to update feeAmount. It's not correct.
-      const pools = currentGroup.map((plan) => {
-        const feeAmount = UnifiedCurrencyAmount.fromRawAmount(svmTrade.inputAmount.currency, plan.swapInfo.feeAmount)
-
-        const pool: SVMPool = {
-          type: PoolType.SVM,
-          id: plan.swapInfo.ammKey.toString(),
-          fee: plan.bps,
-          feeAmount: feeAmount as UnifiedCurrencyAmount<SPLToken>,
-        }
-
-        return pool
-      })
-
-      // Build path: start with input currency, include all intermediate currencies, end with output currency
-      // For multi-hop routes, path will be [inputCurrency, intermediate1, intermediate2, ..., outputCurrency]
-      const path: Currency[] = []
-
-      // Add the input currency (from the first plan)
-      const firstPlan = currentGroup[0]
-      path.push(svmTrade.inputAmount.currency as Currency)
-
-      // Add intermediate currencies (outputMint of each plan except the last one becomes an intermediate currency)
-      for (let j = 0; j < currentGroup.length - 1; j++) {
-        const plan = currentGroup[j]
-        const outputMintAddress = plan.swapInfo.outputMint
-
-        // Find the currency for this outputMint
-        let intermediateCurrency: SPLToken | SPLNativeCurrency
-        if (outputMintAddress === svmTrade.inputAmount.currency.wrapped.address) {
-          intermediateCurrency = svmTrade.inputAmount.currency
-        } else if (outputMintAddress === svmTrade.outputAmount.currency.wrapped.address) {
-          intermediateCurrency = svmTrade.outputAmount.currency
-        } else {
-          // For intermediate tokens that don't match input/output currencies,
-          // create a proper SPLToken instance
-          intermediateCurrency = new SPLToken({
-            address: outputMintAddress,
-            // NOTE: this is only for mock data so intermediateCurrency can be passed around without any problem
-            // before using path, we need to use useUnifiedCurrency to get actual token info.
-            chainId: svmTrade.inputAmount.currency.chainId,
-            programId: svmTrade.inputAmount.currency.programId,
-            decimals: svmTrade.inputAmount.currency.decimals,
-            symbol: svmTrade.inputAmount.currency.symbol,
-            name: svmTrade.inputAmount.currency.name,
-            logoURI: '',
-          })
-        }
-
-        // NOTE: cast to Currency to avoid type error
-        // Fix it later
-        path.push(intermediateCurrency as Currency)
-      }
-
-      // Determine final output currency based on last plan in group
-      const lastPlan = currentGroup[currentGroup.length - 1]
-
-      const finalOutputCurrency = svmTrade.outputAmount.currency as Currency
-
-      // Add the final output currency
-      path.push(finalOutputCurrency)
-
-      const inputAmount = UnifiedCurrencyAmount.fromRawAmount(
-        svmTrade.inputAmount.currency as Currency,
-        firstPlan.swapInfo.inAmount,
-      )
-      const outputAmount = UnifiedCurrencyAmount.fromRawAmount(finalOutputCurrency, lastPlan.swapInfo.outAmount)
-
-      routes.push({
-        type: RouteType.SVM,
-        pools,
-        path,
-        // NOTE: it's dangerous to cast UnifiedCurrencyAmount to CurrencyAmount
-        // but can't add UnifiedCurrencyAmount to Route[] becuase it's only for EVM
-        // Need to find a better way to handle this
-        inputAmount: inputAmount as CurrencyAmount<Currency>,
-        outputAmount: outputAmount as CurrencyAmount<Currency>,
-        percent: firstPlan.percent, // Use percent from first plan in group
-      })
-
-      // Reset for next group
+      const route = createRoute(currentGroup, svmTrade)
+      routes.push(route)
       currentGroup = []
     }
   }
 
   return routes
+}
+
+function createRoute(currentGroup: RouterPlan[], svmTrade: ExtendedSolRouterTrade): Route {
+  // Process the current group into a single Route
+  // TODO: need to update feeAmount. It's not correct.
+  const pools = currentGroup.map((plan) => {
+    const feeAmount = UnifiedCurrencyAmount.fromRawAmount(svmTrade.inputAmount.currency, plan.swapInfo.feeAmount)
+
+    const pool: SVMPool = {
+      type: PoolType.SVM,
+      id: plan.swapInfo.ammKey.toString(),
+      fee: plan.bps,
+      feeAmount: feeAmount as UnifiedCurrencyAmount<SPLToken>,
+    }
+
+    return pool
+  })
+
+  // Build path: start with input currency, include all intermediate currencies, end with output currency
+  // For multi-hop routes, path will be [inputCurrency, intermediate1, intermediate2, ..., outputCurrency]
+  const path: Currency[] = []
+
+  // Add the input currency (from the first plan)
+  const firstPlan = currentGroup[0]
+  const firstPlanInputMint = firstPlan.swapInfo.inputMint
+
+  // Determine the actual input currency for this route group
+  let routeInputCurrency: SPLToken
+  if (firstPlanInputMint === svmTrade.inputAmount.currency.wrapped.address) {
+    routeInputCurrency = svmTrade.inputAmount.currency
+  } else if (firstPlanInputMint === svmTrade.outputAmount.currency.wrapped.address) {
+    routeInputCurrency = svmTrade.outputAmount.currency
+  } else {
+    // Create currency for route input token
+    routeInputCurrency = createMockCurrency(
+      firstPlanInputMint,
+      svmTrade.inputAmount.currency.chainId,
+      svmTrade.inputAmount.currency.programId,
+    )
+  }
+
+  path.push(routeInputCurrency as Currency)
+
+  // Add intermediate currencies (outputMint of each plan except the last one becomes an intermediate currency)
+  for (let j = 0; j < currentGroup.length - 1; j++) {
+    const plan = currentGroup[j]
+    const outputMintAddress = plan.swapInfo.outputMint
+
+    // Find the currency for this outputMint
+    let intermediateCurrency: SPLToken | SPLNativeCurrency
+    if (outputMintAddress === svmTrade.inputAmount.currency.wrapped.address) {
+      intermediateCurrency = svmTrade.inputAmount.currency
+    } else if (outputMintAddress === svmTrade.outputAmount.currency.wrapped.address) {
+      intermediateCurrency = svmTrade.outputAmount.currency
+    } else {
+      // For intermediate tokens that don't match input/output currencies,
+      // create a proper SPLToken instance
+      intermediateCurrency = createMockCurrency(
+        outputMintAddress,
+        svmTrade.inputAmount.currency.chainId,
+        svmTrade.inputAmount.currency.programId,
+      )
+    }
+
+    // NOTE: cast to Currency to avoid type error
+    // Fix it later
+    path.push(intermediateCurrency as Currency)
+  }
+
+  // Determine final output currency based on last plan in group
+  const lastPlan = currentGroup[currentGroup.length - 1]
+  const finalOutputMintAddress = lastPlan.swapInfo.outputMint
+
+  let finalOutputCurrency: SPLToken
+  if (finalOutputMintAddress === svmTrade.inputAmount.currency.wrapped.address) {
+    finalOutputCurrency = svmTrade.inputAmount.currency
+  } else if (finalOutputMintAddress === svmTrade.outputAmount.currency.wrapped.address) {
+    finalOutputCurrency = svmTrade.outputAmount.currency
+  } else {
+    // Create currency for final output token
+    finalOutputCurrency = createMockCurrency(
+      finalOutputMintAddress,
+      svmTrade.inputAmount.currency.chainId,
+      svmTrade.inputAmount.currency.programId,
+    )
+  }
+
+  // Add the final output currency
+  path.push(finalOutputCurrency as Currency)
+
+  const inputAmount = UnifiedCurrencyAmount.fromRawAmount(routeInputCurrency, firstPlan.swapInfo.inAmount)
+  const outputAmount = UnifiedCurrencyAmount.fromRawAmount(finalOutputCurrency, lastPlan.swapInfo.outAmount)
+
+  return {
+    type: RouteType.SVM,
+    pools,
+    path,
+    // NOTE: it's dangerous to cast UnifiedCurrencyAmount to CurrencyAmount
+    // but can't add UnifiedCurrencyAmount to Route[] becuase it's only for EVM
+    // Need to find a better way to handle this
+    inputAmount: inputAmount as CurrencyAmount<Currency>,
+    outputAmount: outputAmount as CurrencyAmount<Currency>,
+    percent: firstPlan.percent, // Use percent from first plan in group
+  }
 }
 
 /**
