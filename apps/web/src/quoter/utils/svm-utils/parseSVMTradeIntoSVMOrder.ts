@@ -85,13 +85,12 @@ function createRoute(currentGroup: RouterPlan[], svmTrade: ExtendedSolRouterTrad
   // Process the current group into a single Route
   // TODO: need to update feeAmount. It's not correct.
   const pools = currentGroup.map((plan) => {
-    const feeAmount = UnifiedCurrencyAmount.fromRawAmount(svmTrade.inputAmount.currency, plan.swapInfo.feeAmount)
-
     const pool: SVMPool = {
       type: PoolType.SVM,
       id: plan.swapInfo.ammKey.toString(),
       fee: plan.bps,
-      feeAmount: feeAmount as UnifiedCurrencyAmount<SPLToken>,
+      feeAmount: plan.swapInfo.feeAmount,
+      feeMintAddress: plan.swapInfo.feeMint.toString(),
     }
 
     return pool
