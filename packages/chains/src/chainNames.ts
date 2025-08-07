@@ -109,6 +109,14 @@ export const chainNameToChainId = Object.entries(chainNames).reduce((acc, [chain
   }
 }, {} as Record<string, UnifiedChainId>)
 
+export const chainFullNamesToChainId = Object.entries(chainFullNames).reduce((acc, [chainId, chainName]) => {
+  return {
+    [chainName.toLowerCase()]: chainId as unknown as UnifiedChainId,
+    [chainName]: chainId as unknown as UnifiedChainId,
+    ...acc,
+  }
+}, {})
+
 // @see https://github.com/DefiLlama/defillama-server/blob/master/common/chainToCoingeckoId.ts
 // @see https://github.com/DefiLlama/chainlist/blob/main/constants/chainIds.json
 export const defiLlamaChainNames: Record<UnifiedChainId, string> = {
