@@ -1,24 +1,16 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Route, RouteType } from '@pancakeswap/smart-router'
-import {
-  AtomBox,
-  AutoColumn,
-  Flex,
-  Modal,
-  ModalV2,
-  QuestionHelper,
-  Text,
-  UseModalV2Props,
-  useTooltip,
-} from '@pancakeswap/uikit'
+import { AutoColumn, Flex, Modal, ModalV2, QuestionHelper, Text, UseModalV2Props, useTooltip } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { memo, useMemo } from 'react'
 
 import { RoutingSettingsButton } from 'components/Menu/GlobalSettings/SettingsModalV2'
-import { CurrencyLogoWrapper, RouterBox, RouterPoolBox, RouterTypeText } from 'views/Swap/components/RouterViewer'
+import { CurrencyLogoWrapper, RouterBox, RouterTypeText } from 'views/Swap/components/RouterViewer'
 import { useHookDiscount } from 'views/SwapSimplify/hooks/useHookDiscount'
 import { BridgeRoutesDisplay } from './RouteDisplay/BridgeRoutesDisplay'
-import { getPairNodes, Pair } from './RouteDisplay/pairNode'
+import { EVMPairNodes } from './RouteDisplay/pairNode'
+import { JupPairNodes } from './RouteDisplay/JupPairNodes'
+import { Pair } from './RouteDisplay/types'
 
 export type RouteDisplayEssentials = Pick<Route, 'path' | 'pools' | 'inputAmount' | 'outputAmount' | 'percent' | 'type'>
 
@@ -68,7 +60,6 @@ interface RouteDisplayProps {
 
 export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayProps) {
   const { hookDiscount, category } = useHookDiscount(route.pools)
-  const { t } = useTranslation()
   const { path, pools, inputAmount, outputAmount } = route
   const { currency: inputCurrency } = inputAmount
   const { currency: outputCurrency } = outputAmount
@@ -96,15 +87,18 @@ export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayPr
     return currencyPairs
   }, [path])
 
-  const pairNodes = getPairNodes({
-    pairs,
-    pools,
-    routePoolsLength: route.pools.length,
-    hookDiscount,
-    category,
-    t,
-    PairNode,
-  })
+  const pairNodes =
+    route.type === RouteType.SVM ? (
+      <JupPairNodes pairs={pairs} pools={pools} />
+    ) : (
+      <EVMPairNodes
+        pairs={pairs}
+        pools={pools}
+        routePoolsLength={route.pools.length}
+        hookDiscount={hookDiscount}
+        category={category}
+      />
+    )
 
   return (
     <AutoColumn gap="24px">
@@ -135,44 +129,3 @@ export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayPr
     </AutoColumn>
   )
 })
-
-function PairNode({
-  pair,
-  text,
-  className,
-  tooltipText,
-}: {
-  pair: Pair
-  text: string | React.ReactNode
-  className: string
-  tooltipText: string
-}) {
-  const [input, output] = pair
-
-  const tooltip = useTooltip(tooltipText)
-
-  return (
-    <RouterPoolBox className={className}>
-      {tooltip.tooltipVisible && tooltip.tooltip}
-      <Flex ref={tooltip.targetRef}>
-        <AtomBox
-          size={{
-            xs: '24px',
-            md: '32px',
-          }}
-        >
-          <CurrencyLogo size="100%" currency={input} />
-        </AtomBox>
-        <AtomBox
-          size={{
-            xs: '24px',
-            md: '32px',
-          }}
-        >
-          <CurrencyLogo size="100%" currency={output} />
-        </AtomBox>
-      </Flex>
-      <RouterTypeText>{text}</RouterTypeText>
-    </RouterPoolBox>
-  )
-}
