@@ -1,5 +1,4 @@
 import {
-  cBridge,
   deBridge,
   ICBridgeTransferConfig,
   IChainConfig,
@@ -17,7 +16,7 @@ import axios from 'axios'
 import { env } from '../configs/env'
 import layerZeroConfig from '../token-config/mainnet/layerZero/config.json'
 
-export function useTransferConfig(supportedChains: IChainConfig[]) {
+export function useTransferConfig(supportedChains: IChainConfig[]): ICustomizedBridgeConfig['transfer'] | undefined {
   const [transferConfig, setTransferConfig] = useState<ICustomizedBridgeConfig['transfer']>()
 
   useEffect(() => {
