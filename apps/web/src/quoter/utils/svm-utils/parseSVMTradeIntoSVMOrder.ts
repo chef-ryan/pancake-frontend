@@ -96,25 +96,8 @@ export function parseRoutePlansToRoutes(svmTrade: ExtendedSolRouterTrade): Route
 
       // Determine final output currency based on last plan in group
       const lastPlan = currentGroup[currentGroup.length - 1]
-      const finalOutputMintAddress = lastPlan.swapInfo.outputMint
 
-      let finalOutputCurrency: Currency
-      if (finalOutputMintAddress === svmTrade.inputAmount.currency.wrapped.address) {
-        finalOutputCurrency = svmTrade.inputAmount.currency as Currency
-      } else if (finalOutputMintAddress === svmTrade.outputAmount.currency.wrapped.address) {
-        finalOutputCurrency = svmTrade.outputAmount.currency as Currency
-      } else {
-        // Create currency for final output token
-        finalOutputCurrency = new SPLToken({
-          address: finalOutputMintAddress,
-          chainId: svmTrade.inputAmount.currency.chainId,
-          programId: svmTrade.inputAmount.currency.programId,
-          decimals: svmTrade.inputAmount.currency.decimals,
-          symbol: svmTrade.inputAmount.currency.symbol,
-          name: svmTrade.inputAmount.currency.name,
-          logoURI: '',
-        }) as Currency
-      }
+      const finalOutputCurrency = svmTrade.outputAmount.currency as Currency
 
       // Add the final output currency
       path.push(finalOutputCurrency)
