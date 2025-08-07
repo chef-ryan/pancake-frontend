@@ -133,6 +133,10 @@
     {
       "chainId": 59144,
       "chainName": "Linea"
+    },
+    {
+      "chainId": 7565164,
+      "chainName": "Solana"
     }
   ]
 }
