@@ -1,4 +1,4 @@
-import { SOLMint, SPLToken, TradeType, UnifiedCurrencyAmount, WSOLMint } from '@pancakeswap/sdk'
+import { isWSol, solToWSol, SPLToken, TradeType, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { PublicKey } from '@solana/web3.js'
 import { create } from 'superstruct'
 import { FormattedUltraQuoteResponse } from './FormattedUltraQuoteResponse'
@@ -14,6 +14,7 @@ interface SolanaQuoteRequest {
   excludeRouters?: string
   excludeDexes?: string
   priorityFeeLamports?: number
+  useWsol?: boolean
 }
 
 interface BestSolanaTradeParams {
@@ -56,8 +57,6 @@ export interface SolRouterTrade {
   transaction: string | null
 }
 
-export const solToWSol = (key: string): string => (key === SOLMint.toBase58() ? WSOLMint.toBase58() : key)
-
 export const getBestSolanaTrade = async ({
   inputCurrency,
   outputCurrency,
@@ -79,6 +78,7 @@ export const getBestSolanaTrade = async ({
     swapMode,
     taker: account,
     priorityFeeLamports,
+    useWsol: isWSol(inputCurrency.address) || isWSol(outputCurrency.address),
   }
 
   const response = await ultraSwapService.getQuote(requestBody)

@@ -46,3 +46,6 @@ export const isSolWSol = (token?: UnifiedCurrency | null) => {
   if (token.isNative) return true
   return token.address.toString() === TOKEN_WSOL.address || token.address.toString() === SOL_INFO.address
 }
+export const isSol = (mint: string) => mint === SOLMint.toBase58()
+export const isWSol = (mint: string) => mint === WSOLMint.toBase58()
+export const solToWSol = (key: string): string => (key === SOLMint.toBase58() ? WSOLMint.toBase58() : key)
