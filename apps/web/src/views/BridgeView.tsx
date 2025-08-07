@@ -1,14 +1,15 @@
 import { CanonicalBridge, useChainFromWidget } from '@pancakeswap/canonical-bridge'
-import { ChainId, chainNameToChainId, chainNames, NonEVMChainId } from '@pancakeswap/chains'
+import { ChainId, chainNames, NonEVMChainId, chainFullNamesToChainId } from '@pancakeswap/chains'
 import { Flex, useMatchBreakpoints } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { PUBLIC_NODES } from 'config/nodes'
-import { Suspense, useEffect, useMemo } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
 import { CHAIN_IDS } from 'utils/wagmi'
 import Page from 'views/Page'
 import SolanaConnectButton from 'wallet/components/SolanaConnectButton'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useSwitchNetworkLocal } from 'hooks/useSwitchNetwork'
+import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
+import { useRouter } from 'next/router'
 
 const DISABLED_TO_CHAINS = [ChainId.POLYGON_ZKEVM]
 
@@ -61,15 +62,26 @@ function usePortalConflictFix() {
 
 const BridgeChainSync = () => {
   const fromChain = useChainFromWidget('from')
-  const switchNetworkLocal = useSwitchNetworkLocal()
+  const { switchNetworkAsync: switchNetwork } = useSwitchNetwork()
   const { chainId: activeChainId } = useActiveChainId()
+  const switchingRef = useRef(false)
 
-  useEffect(() => {
-    const chainId = fromChain ? chainNameToChainId[fromChain] : undefined
-    if (chainId && chainId !== activeChainId) {
-      switchNetworkLocal(chainId)
+  const checkAndSwitchChain = useCallback(async (activeChainId: number, fromChain?: string) => {
+    if (switchingRef.current) return
+    switchingRef.current = true
+    try {
+      const chainId = fromChain ? chainFullNamesToChainId[fromChain] : undefined
+
+      if (chainId && chainId !== activeChainId) {
+        const result = await switchNetwork(chainId)
+      }
+    } finally {
+      switchingRef.current = false
     }
-  }, [fromChain, switchNetworkLocal, activeChainId])
+  }, [])
+  useEffect(() => {
+    checkAndSwitchChain(activeChainId, fromChain)
+  }, [activeChainId, fromChain])
 
   return null
 }
