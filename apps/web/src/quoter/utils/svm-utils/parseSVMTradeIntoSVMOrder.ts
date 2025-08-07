@@ -1,6 +1,6 @@
 import { type SVMOrder, OrderType, SVMTrade } from '@pancakeswap/price-api-sdk'
 import { PoolType, Route, RouteType, SVMPool } from '@pancakeswap/smart-router'
-import { SolRouterTrade } from '@pancakeswap/solana-router-sdk'
+import type { SolRouterTrade } from '@pancakeswap/solana-router-sdk'
 import {
   Currency,
   CurrencyAmount,
@@ -8,11 +8,17 @@ import {
   TradeType,
   UnifiedCurrencyAmount,
   SPLToken,
+  SPLNativeCurrency,
 } from '@pancakeswap/swap-sdk-core'
-import { SOLANA_NATIVE_TOKEN_ADDRESS } from 'quoter/consts'
 import { SVMQuoteQuery } from 'quoter/quoter.types'
 
-export function parseRoutePlansToRoutes(svmTrade: SolRouterTrade): Route[] {
+// Extended type to support both SPLToken and SPLNative currencies
+type ExtendedSolRouterTrade = Omit<SolRouterTrade, 'inputAmount' | 'outputAmount'> & {
+  inputAmount: UnifiedCurrencyAmount<SPLToken>
+  outputAmount: UnifiedCurrencyAmount<SPLToken>
+}
+
+export function parseRoutePlansToRoutes(svmTrade: ExtendedSolRouterTrade): Route[] {
   const routes: Route[] = []
   let currentGroup: typeof svmTrade.routes = []
 
@@ -20,14 +26,21 @@ export function parseRoutePlansToRoutes(svmTrade: SolRouterTrade): Route[] {
     const routerPlan = svmTrade.routes[i]
     currentGroup.push(routerPlan)
 
-    // Check if this RouterPlan's outputMint matches the final outputAmount address
-    // or if this is the last plan in the array
-    const isEndOfRoute =
-      routerPlan.swapInfo.outputMint === svmTrade.outputAmount.currency.wrapped.address ||
-      i === svmTrade.routes.length - 1
+    // Group based on percentage inheritance:
+    // - percent < 100: Start of new route (new split)
+    // - percent = 100: Continue current route (next hop)
+    // - Last plan always ends a route
+    const isLastPlan = i === svmTrade.routes.length - 1
+    const nextPlan = isLastPlan ? null : svmTrade.routes[i + 1]
+
+    // End route if:
+    // 1. This is the last plan, OR
+    // 2. Next plan has percent < 100 (starts new split)
+    const isEndOfRoute = isLastPlan || (nextPlan && nextPlan.percent < 100)
 
     if (isEndOfRoute) {
       // Process the current group into a single Route
+      // TODO: need to update feeAmount. It's not correct.
       const pools = currentGroup.map((plan) => {
         const feeAmount = UnifiedCurrencyAmount.fromRawAmount(svmTrade.inputAmount.currency, plan.swapInfo.feeAmount)
 
@@ -35,7 +48,7 @@ export function parseRoutePlansToRoutes(svmTrade: SolRouterTrade): Route[] {
           type: PoolType.SVM,
           id: plan.swapInfo.ammKey.toString(),
           fee: plan.bps,
-          feeAmount,
+          feeAmount: feeAmount as UnifiedCurrencyAmount<SPLToken>,
         }
 
         return pool
@@ -55,7 +68,7 @@ export function parseRoutePlansToRoutes(svmTrade: SolRouterTrade): Route[] {
         const outputMintAddress = plan.swapInfo.outputMint
 
         // Find the currency for this outputMint
-        let intermediateCurrency: SPLToken
+        let intermediateCurrency: SPLToken | SPLNativeCurrency
         if (outputMintAddress === svmTrade.inputAmount.currency.wrapped.address) {
           intermediateCurrency = svmTrade.inputAmount.currency
         } else if (outputMintAddress === svmTrade.outputAmount.currency.wrapped.address) {
@@ -81,20 +94,19 @@ export function parseRoutePlansToRoutes(svmTrade: SolRouterTrade): Route[] {
         path.push(intermediateCurrency as Currency)
       }
 
-      // Add the final output currency
-      path.push(svmTrade.outputAmount.currency as Currency)
-
-      // Use amounts from first and last plans in the group
+      // Determine final output currency based on last plan in group
       const lastPlan = currentGroup[currentGroup.length - 1]
+
+      const finalOutputCurrency = svmTrade.outputAmount.currency as Currency
+
+      // Add the final output currency
+      path.push(finalOutputCurrency)
 
       const inputAmount = UnifiedCurrencyAmount.fromRawAmount(
         svmTrade.inputAmount.currency as Currency,
         firstPlan.swapInfo.inAmount,
       )
-      const outputAmount = UnifiedCurrencyAmount.fromRawAmount(
-        svmTrade.outputAmount.currency as Currency,
-        lastPlan.swapInfo.outAmount,
-      )
+      const outputAmount = UnifiedCurrencyAmount.fromRawAmount(finalOutputCurrency, lastPlan.swapInfo.outAmount)
 
       routes.push({
         type: RouteType.SVM,
@@ -135,7 +147,7 @@ export function parseRoutePlansToRoutes(svmTrade: SolRouterTrade): Route[] {
  * ├── minimumAmountOut → minimumAmountOut ✓ (direct copy)
  * └── + quoteQueryHash (from query.hash)
  */
-export function parseSVMTradeIntoSVMOrder(svmTrade: SolRouterTrade, query: SVMQuoteQuery): SVMOrder<TradeType> {
+export function parseSVMTradeIntoSVMOrder(svmTrade: ExtendedSolRouterTrade, query: SVMQuoteQuery): SVMOrder<TradeType> {
   // Convert RouterPlan[] to Route[] with grouping logic
   const routes: Route[] = parseRoutePlansToRoutes(svmTrade)
 
