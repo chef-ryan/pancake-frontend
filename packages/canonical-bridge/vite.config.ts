@@ -11,7 +11,7 @@ export default defineConfig({
       formats: ['cjs', 'es'],
     },
     rollupOptions: {
-      external: ['@bnb-chain/canonical-bridge-sdk', ...Object.keys(pkg.peerDependencies)],
+      external: [...Object.keys(pkg.peerDependencies)],
     },
   },
   plugins: [dts()],
