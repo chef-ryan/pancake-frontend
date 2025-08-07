@@ -83,14 +83,18 @@ export function useSyncWalletState() {
 
   // wagmi change
   useValueChanged(() => {
-    const { chainId: wagmiChainId } = wagmiAccountState
+    const { chainId: wagmiChainId, address } = wagmiAccountState
     if (wagmiChainId && isEvm(queryChainId)) {
       switchNetwork(wagmiChainId)
     }
+    setProxy((prev) => ({
+      ...prev,
+      chainId: wagmiChainId ?? queryChainId,
+      account: address,
+      unifiedAccount: address,
+    }))
   }, [wagmiAccountState])
 
-  // query chainId Changes
-  // sync chainId
   useEffect(() => {
     const wagmiState = wagmiAccountState
     const { chainId: wagmiChainId, address } = wagmiState
@@ -110,7 +114,8 @@ export function useSyncWalletState() {
         isNotMatched,
       }
     })
-  }, [queryChainId, wagmiAccountState])
+    // only update when query chain id updated
+  }, [queryChainId])
 }
 
 export default useAccountActiveChain
