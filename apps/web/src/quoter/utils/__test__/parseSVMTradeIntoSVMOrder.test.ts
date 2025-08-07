@@ -1,10 +1,12 @@
 import { OrderType } from '@pancakeswap/price-api-sdk'
 import { PoolType, SVMPool } from '@pancakeswap/smart-router'
-import type { SolRouterTrade } from '@pancakeswap/solana-router-sdk'
+import { SOL } from '@pancakeswap/sdk'
 import { SPLToken, TradeType, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { PublicKey } from '@solana/web3.js'
 import type { SVMQuoteQuery } from '../../quoter.types'
 import { parseRoutePlansToRoutes, parseSVMTradeIntoSVMOrder } from '../svm-utils/parseSVMTradeIntoSVMOrder'
+
+const NATIVE_SOL = SOL
 
 // Mock tokens
 const MOCK_SOL = new SPLToken({
@@ -50,7 +52,7 @@ const MOCK_TOKEN_2 = new SPLToken({
 describe('parseSVMTradeIntoSVMOrder', () => {
   it('should convert SolRouterTrade to SVMOrder correctly with single-route and single-hop', () => {
     // Mock SolRouterTrade
-    const mockSolRouterTrade: SolRouterTrade = {
+    const mockSolRouterTrade = {
       requestId: 'mock_request_id',
       tradeType: TradeType.EXACT_INPUT,
       inputAmount: UnifiedCurrencyAmount.fromRawAmount(MOCK_SOL, '1000000000'), // 1 SOL
@@ -139,7 +141,7 @@ describe('single-route', () => {
   // NOTE: no need to test single-hop only because it's already tested in the main test
 
   it('should work with multi-hop', () => {
-    const mockSolRouterTrade: SolRouterTrade = {
+    const mockSolRouterTrade = {
       requestId: 'mock_request_id',
       tradeType: TradeType.EXACT_INPUT,
       otherAmountThreshold: '99000000', // 99 USDC minimum out
@@ -210,7 +212,7 @@ describe('single-route', () => {
 
 describe('split-routes', () => {
   it('should work with single-hop only', () => {
-    const mockSolRouterTrade: SolRouterTrade = {
+    const mockSolRouterTrade = {
       requestId: 'mock_request_id',
       tradeType: TradeType.EXACT_INPUT,
       inputAmount: UnifiedCurrencyAmount.fromRawAmount(MOCK_SOL, '1000000000'), // 1 SOL
@@ -269,7 +271,7 @@ describe('split-routes', () => {
   })
 
   it('should work with multi-hop in first', () => {
-    const mockSolRouterTrade: SolRouterTrade = {
+    const mockSolRouterTrade = {
       requestId: 'mock_request_id',
       tradeType: TradeType.EXACT_INPUT,
       otherAmountThreshold: '16780', // 99 USDC minimum out
@@ -363,7 +365,7 @@ describe('split-routes', () => {
   })
 
   it('should work with multi-hop in middle', () => {
-    const mockSolRouterTrade: SolRouterTrade = {
+    const mockSolRouterTrade = {
       requestId: 'mock_request_id',
       tradeType: TradeType.EXACT_INPUT,
       otherAmountThreshold: '16780', // 99 USDC minimum out
@@ -481,7 +483,7 @@ describe('split-routes', () => {
   })
 
   it('should work with multi-hop in last', () => {
-    const mockSolRouterTrade: SolRouterTrade = {
+    const mockSolRouterTrade = {
       requestId: 'mock_request_id',
       tradeType: TradeType.EXACT_INPUT,
       otherAmountThreshold: '99000000', // 99 USDC minimum out
@@ -559,7 +561,7 @@ describe('split-routes', () => {
   })
 
   it('should work with all multi-hop', () => {
-    const mockSolRouterTrade: SolRouterTrade = {
+    const mockSolRouterTrade = {
       requestId: 'mock_request_id',
       tradeType: TradeType.EXACT_INPUT,
       otherAmountThreshold: '99000000', // 99 USDC minimum out
@@ -648,6 +650,101 @@ describe('split-routes', () => {
     expect(route2.path.length).toBe(3)
     expect(route2.path[0]).toBe(MOCK_SOL)
     expect(route2.path[1].wrapped.address).toBe(MOCK_TOKEN_2.address)
+    expect(route2.path[2]).toBe(MOCK_USDC)
+  })
+
+  it('should work with native solana', () => {
+    const mockSolRouterTrade = {
+      requestId: 'mock_request_id',
+      tradeType: TradeType.EXACT_INPUT,
+      otherAmountThreshold: '99000000', // 99 USDC minimum out
+      priceImpactPct: '0.0002', // 0.15%
+      slippageBps: 50,
+      transaction: 'mock_transaction_string',
+      inputAmount: UnifiedCurrencyAmount.fromRawAmount(NATIVE_SOL as unknown as SPLToken, '1000000'),
+      outputAmount: UnifiedCurrencyAmount.fromRawAmount(MOCK_USDC, '289245979504'),
+      routes: [
+        {
+          swapInfo: {
+            ammKey: new PublicKey('GtpsrTHYnfFVm3qkPJtyKVwQLpXT7p2MRy9bp5hYeJnQ'),
+            label: 'PancakeSwap',
+            inputMint: 'So11111111111111111111111111111111111111112',
+            outputMint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+            inAmount: '53000000',
+            outAmount: '36501273675',
+            feeAmount: '9576',
+            feeMint: new PublicKey('So11111111111111111111111111111111111111112'),
+          },
+          percent: 53,
+          bps: 5300,
+        },
+        {
+          swapInfo: {
+            ammKey: new PublicKey('8B8KYcFPMjZyDtJ1BENsqhW3fEmMrB4ekoEQJiM6z3SC'),
+            label: 'TesseraV',
+            inputMint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+            outputMint: MOCK_USDC.address,
+            inAmount: '36501273675',
+            outAmount: '8864881',
+            feeAmount: '0',
+            feeMint: new PublicKey('11111111111111111111111111111111'),
+          },
+          percent: 100,
+          bps: 10000,
+        },
+        {
+          swapInfo: {
+            ammKey: new PublicKey('FLckHLGMJy5gEoXWwcE68Nprde1D4araK4TGLw4pQq2n'),
+            label: 'TesseraV',
+            inputMint: 'So11111111111111111111111111111111111111112',
+            outputMint: '674PmuiDtgKx3uKuJ1B16f9m5L84eFvNwj3xDMvHcbo7',
+            inAmount: '47000000',
+            outAmount: '7861054',
+            feeAmount: '0',
+            feeMint: new PublicKey('11111111111111111111111111111111'),
+          },
+          percent: 47,
+          bps: 4700,
+        },
+        {
+          swapInfo: {
+            ammKey: new PublicKey('F4i12x6vu71dhHpWBrpRjPYGnNFqH4emVPrsPZydB5c9'),
+            label: 'Raydium',
+            inputMint: '674PmuiDtgKx3uKuJ1B16f9m5L84eFvNwj3xDMvHcbo7',
+            outputMint: MOCK_USDC.address,
+            inAmount: '16725935',
+            outAmount: '28213897225637',
+            feeAmount: '15890',
+            feeMint: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+          },
+          percent: 100,
+          bps: 10000,
+        },
+      ],
+    }
+
+    expect(mockSolRouterTrade.inputAmount.currency.isNative).toBe(true)
+
+    const routes = parseRoutePlansToRoutes(mockSolRouterTrade)
+
+    expect(routes).toHaveLength(2)
+
+    const [route1, route2] = routes
+
+    expect(route1.pools).toHaveLength(2)
+    expect(route1.percent).toBe(53)
+
+    expect(route1.path.length).toBe(3)
+    expect(route1.path[0]).toBe(NATIVE_SOL)
+    expect(route1.path[1].wrapped.address).toBe('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263')
+    expect(route1.path[2]).toBe(MOCK_USDC)
+
+    expect(route2.pools).toHaveLength(2)
+    expect(route2.percent).toBe(47)
+
+    expect(route2.path.length).toBe(3)
+    expect(route2.path[0]).toBe(NATIVE_SOL)
+    expect(route2.path[1].wrapped.address).toBe('674PmuiDtgKx3uKuJ1B16f9m5L84eFvNwj3xDMvHcbo7')
     expect(route2.path[2]).toBe(MOCK_USDC)
   })
 })
