@@ -1,5 +1,5 @@
-import { CanonicalBridge } from '@pancakeswap/canonical-bridge'
-import { ChainId, chainNames, NonEVMChainId } from '@pancakeswap/chains'
+import { CanonicalBridge, useChainFromWidget } from '@pancakeswap/canonical-bridge'
+import { ChainId, chainNameToChainId, chainNames, NonEVMChainId } from '@pancakeswap/chains'
 import { Flex, useMatchBreakpoints } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { PUBLIC_NODES } from 'config/nodes'
@@ -7,6 +7,8 @@ import { Suspense, useEffect, useMemo } from 'react'
 import { CHAIN_IDS } from 'utils/wagmi'
 import Page from 'views/Page'
 import SolanaConnectButton from 'wallet/components/SolanaConnectButton'
+import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useSwitchNetworkLocal } from 'hooks/useSwitchNetwork'
 
 const DISABLED_TO_CHAINS = [ChainId.POLYGON_ZKEVM]
 
@@ -57,6 +59,21 @@ function usePortalConflictFix() {
   }, [])
 }
 
+const BridgeChainSync = () => {
+  const fromChain = useChainFromWidget('from')
+  const switchNetworkLocal = useSwitchNetworkLocal()
+  const { chainId: activeChainId } = useActiveChainId()
+
+  useEffect(() => {
+    const chainId = fromChain ? chainNameToChainId[fromChain] : undefined
+    if (chainId && chainId !== activeChainId) {
+      switchNetworkLocal(chainId)
+    }
+  }, [fromChain, switchNetworkLocal, activeChainId])
+
+  return null
+}
+
 export const BridgeView = () => {
   const { isMobile } = useMatchBreakpoints()
 
@@ -91,6 +108,7 @@ export const BridgeView = () => {
           />
         </Suspense>
       </Flex>
+      <BridgeChainSync />
     </Page>
   )
 }
