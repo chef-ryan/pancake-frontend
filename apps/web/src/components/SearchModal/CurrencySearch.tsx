@@ -6,6 +6,8 @@ import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
 import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
 import { useSolanaTokenInfo } from 'hooks/solana/useSolanaTokenInfo'
 import { useSolanaTokenBalances } from 'state/token/solanaTokenBalances'
+import { useSolanaTokenPrices } from 'hooks/solana/useSolanaTokenPrice'
+import BN from 'bignumber.js'
 import { FixedSizeList } from 'react-window'
 import { useAllLists, useInactiveListUrls } from 'state/lists/hooks'
 import { UpdaterByChainId } from 'state/lists/updater'
@@ -158,6 +160,14 @@ function CurrencySearch({
   const tokenAddresses = useMemo(() => solanaTokens.map((t) => t.address), [solanaTokens])
   // Solana balances integration
   const solanaBalances = useSolanaTokenBalances(solanaAccount, tokenAddresses)
+  const tokenAddressesWithBalance = useMemo(
+    () => tokenAddresses.filter((addr) => solanaBalances.balances.get(addr)?.gt(0)),
+    [tokenAddresses, solanaBalances.balances],
+  )
+  const { data: solanaPrices } = useSolanaTokenPrices({
+    mints: tokenAddressesWithBalance,
+    enabled: isSolana && tokenAddressesWithBalance.length > 0,
+  })
 
   const solanaSearchToken = useSolanaTokenInfo(isSolana ? debouncedQuery : undefined)
   const evmSearchToken = useToken(debouncedQuery, selectedChainId)
@@ -202,15 +212,33 @@ function CurrencySearch({
 
   const filteredSortedTokens: UnifiedCurrency[] = useMemo(() => {
     if (isSolana) {
+      const defaultOrder = new Map(filteredTokens.map((t, idx) => [t.address, idx]))
       return [...filteredTokens].sort((a, b) => {
-        const balA = solanaBalances.balances.get(a.address) ?? 0
-        const balB = solanaBalances.balances.get(b.address) ?? 0
-        return Number(balB) - Number(balA)
+        const balA = solanaBalances.balances.get(a.address) ?? new BN(0)
+        const balB = solanaBalances.balances.get(b.address) ?? new BN(0)
+        const priceA = solanaPrices?.[a.address] ?? 0
+        const priceB = solanaPrices?.[b.address] ?? 0
+        const usdA = balA.multipliedBy(priceA)
+        const usdB = balB.multipliedBy(priceB)
+        if (!usdA.eq(usdB)) {
+          return usdB.comparedTo(usdA)
+        }
+        const hasBalA = balA.gt(0)
+        const hasBalB = balB.gt(0)
+        if (hasBalA && hasBalB) {
+          if (!balA.eq(balB)) {
+            return balB.comparedTo(balA)
+          }
+        }
+        if (hasBalA !== hasBalB) {
+          return hasBalB ? 1 : -1
+        }
+        return (defaultOrder.get(a.address) ?? 0) - (defaultOrder.get(b.address) ?? 0)
       })
     }
     const tokenComparator = getTokenComparator(balances ?? {})
     return [...(queryTokens as Token[])].sort(tokenComparator)
-  }, [filteredTokens, queryTokens, balances, isSolana, solanaBalances.balances])
+  }, [filteredTokens, queryTokens, balances, isSolana, solanaBalances.balances, solanaPrices])
 
   const handleCurrencySelect = useCallback(
     (currency: UnifiedCurrency) => {
