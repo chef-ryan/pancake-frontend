@@ -21,9 +21,11 @@ import {
 } from '@pancakeswap/uikit'
 import { useSolanaUserSlippage, useUserSlippage } from '@pancakeswap/utils/user'
 import { VerticalDivider } from '@pancakeswap/widgets-internal'
+import GlobalSettings from 'components/Menu/GlobalSettings'
 import { DEFAULT_SLIPPAGE_TOLERANCE, SlippageError } from 'components/Menu/GlobalSettings/TransactionSettings'
 import { SlippageTabs } from 'components/Settings/SlippageTabs'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { SettingsMode } from 'components/Menu/GlobalSettings/types'
 
 import { useAutoSlippageEnabled, useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
 import { useCallback, useMemo, useState } from 'react'
@@ -109,32 +111,49 @@ export const SlippageButton = ({ enableAutoSlippage: enableAutoSlippage_ = false
     ? theme.colors.yellow
     : theme.colors.primary60
 
+  const button = (onClick) => (
+    <div style={{ textAlign: 'center' }}>
+      <div ref={!isMobile ? targetRef : undefined}>
+        <TertiaryButton
+          $color={color}
+          startIcon={
+            isRiskyVeryHigh ? (
+              <RiskAlertIcon color={color} width={16} />
+            ) : isRiskyLow || isRiskyHigh ? (
+              <WarningIcon color={color} width={16} />
+            ) : undefined
+          }
+          endIcon={<PencilIcon color={color} width={12} />}
+          onClick={onClick}
+        >
+          {enableAutoSlippage && isAuto && tolerance
+            ? `${t('Auto')}: ${basisPointsToPercent(tolerance).toFixed(2)}%`
+            : typeof tolerance === 'number'
+            ? `${basisPointsToPercent(tolerance).toFixed(2)}%`
+            : tolerance}
+        </TertiaryButton>
+      </div>
+
+      {(isRiskyLow || isRiskyHigh) && tooltipVisible && tooltip}
+    </div>
+  )
+
+  if (enableAutoSlippage) {
+    return (
+      <>
+        <GlobalSettings
+          id="slippage_btn_global_settings"
+          key="slippage_btn_global_settings"
+          mode={SettingsMode.SWAP_LIQUIDITY}
+          overrideButton={button}
+        />
+      </>
+    )
+  }
+
   return (
     <>
-      <div style={{ textAlign: 'center' }}>
-        <div ref={!isMobile ? targetRef : undefined}>
-          <TertiaryButton
-            $color={color}
-            startIcon={
-              isRiskyVeryHigh ? (
-                <RiskAlertIcon color={color} width={16} />
-              ) : isRiskyLow || isRiskyHigh ? (
-                <WarningIcon color={color} width={16} />
-              ) : undefined
-            }
-            endIcon={<PencilIcon color={color} width={12} />}
-            onClick={onOpen}
-          >
-            {enableAutoSlippage && isAuto && tolerance
-              ? `${t('Auto')}: ${basisPointsToPercent(tolerance).toFixed(2)}%`
-              : typeof tolerance === 'number'
-              ? `${basisPointsToPercent(tolerance).toFixed(2)}%`
-              : tolerance}
-          </TertiaryButton>
-        </div>
-
-        {(isRiskyLow || isRiskyHigh) && tooltipVisible && tooltip}
-      </div>
+      {button(onOpen)}
       <SlippageSettingsModal isOpen={isOpen} onDismiss={onDismiss} enableAutoSlippage={enableAutoSlippage} />
     </>
   )
