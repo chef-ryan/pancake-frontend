@@ -1,25 +1,29 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
+import { Currency, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { Column, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 
 import CurrencyInputPanelSimplify from 'components/CurrencyInputPanelSimplify'
 import { CommonBasesType } from 'components/SearchModal/types'
-import { useCurrency } from 'hooks/Tokens'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { Field, replaceSwapState } from 'state/swap/actions'
 import { queryParametersToSwapState, useSwapState } from 'state/swap/hooks'
 import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
 
 import { SwapUIV2 } from '@pancakeswap/widgets-internal'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import useNativeCurrency from 'hooks/useNativeCurrency'
+import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { useAtom } from 'jotai'
 import { useRouter } from 'next/router'
 import { swapReducerAtom } from 'state/swap/reducer'
 import { useBridgeAvailableRoutes } from 'views/Swap/Bridge/hooks/useBridgeAvailableRoutes'
 import { getDefaultToken } from 'views/Swap/utils'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
+import { NonEVMChainId } from '@pancakeswap/chains'
+
 import { useIsWrapping } from '../../Swap/V3Swap/hooks'
 import useWarningImport from '../../Swap/hooks/useWarningImport'
 import { FlipButton } from './FlipButton'
@@ -37,6 +41,8 @@ export function FormMainForHomePage({ inputAmount, outputAmount, tradeLoading }:
   const { t } = useTranslation()
   const warningSwapHandler = useWarningImport()
   const { isMobile } = useMatchBreakpoints()
+  const { chainId } = useAccountActiveChain()
+
   const {
     independentField,
     typedValue,
@@ -44,10 +50,11 @@ export function FormMainForHomePage({ inputAmount, outputAmount, tradeLoading }:
     [Field.OUTPUT]: { currencyId: outputCurrencyId, chainId: outputChainId },
   } = useSwapState()
   const isWrapping = useIsWrapping()
-  const inputCurrency = useCurrency(inputCurrencyId, inputChainId)
-  const outputCurrency = useCurrency(outputCurrencyId, outputChainId)
   const { onCurrencySelection, onUserInput } = useSwapActionHandlers()
+  const inputCurrency = useUnifiedCurrency(inputCurrencyId, inputChainId)
+  const outputCurrency = useUnifiedCurrency(outputCurrencyId, outputChainId)
 
+  useSolanaTokenList(chainId === NonEVMChainId.SOLANA)
   useDefaults()
   const handleTypeInput = useCallback((value: string) => onUserInput(Field.INPUT, value), [onUserInput])
   const handleTypeOutput = useCallback((value: string) => onUserInput(Field.OUTPUT, value), [onUserInput])
@@ -166,7 +173,7 @@ export function FormMainForHomePage({ inputAmount, outputAmount, tradeLoading }:
 function useDefaults(): { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined } | undefined {
   const { chainId } = useActiveChainId()
   const [, dispatch] = useAtom(swapReducerAtom)
-  const native = useNativeCurrency()
+  const native = useUnifiedNativeCurrency()
   const { isReady } = useRouter()
   const [result, setResult] = useState<
     { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined } | undefined
