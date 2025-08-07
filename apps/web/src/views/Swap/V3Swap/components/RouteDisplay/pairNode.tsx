@@ -1,12 +1,13 @@
 import { findHook, HOOK_CATEGORY, parseProtocolFeesToNumbers } from '@pancakeswap/infinity-sdk'
-import { Currency, Rounding } from '@pancakeswap/sdk'
+import { Rounding } from '@pancakeswap/sdk'
 import { InfinityBinPool, InfinityClPool, SmartRouter } from '@pancakeswap/smart-router'
 import { Column } from '@pancakeswap/uikit'
-import React from 'react'
+import { useTranslation } from '@pancakeswap/localization'
+import React, { Fragment } from 'react'
 import { v3FeeToPercent } from '../../utils/exchange'
 import { HookDiscountFeeDisplay } from './HookDiscountFeeDisplay'
-
-export type Pair = [Currency, Currency]
+import { PairNode } from '../PairNode'
+import { Pair } from './types'
 
 export interface PairNodeProps {
   pair: Pair
@@ -15,27 +16,25 @@ export interface PairNodeProps {
   tooltipText: string
 }
 
-export type PairNodeComponent = React.ComponentType<PairNodeProps>
-
 interface Params {
   pairs: Pair[]
   pools: any[]
   routePoolsLength: number
   hookDiscount: Record<string, { discountFee: number; originalFee: number }>
   category?: HOOK_CATEGORY.BrevisDiscount | HOOK_CATEGORY.PrimusDiscount
-  t: (key: string) => string
-  PairNode: PairNodeComponent
+  pairNode?: (props: PairNodeProps) => React.ReactNode
 }
 
-export function getPairNodes({
+export function EVMPairNodes({
   pairs,
   pools,
   routePoolsLength,
   hookDiscount,
   category,
-  t,
-  PairNode,
+  pairNode,
 }: Params): React.ReactNode[] | null {
+  const { t } = useTranslation()
+
   return pairs.length > 0
     ? pairs.map((p, index) => {
         const [input, output] = p
@@ -65,6 +64,7 @@ export function getPairNodes({
                 infinityDiscountFee = infinityFee
               }
             }
+            // eslint-disable-next-line no-console
             console.log('[infi]', pool.hooks, hookData, input.chainId)
           }
           // infinityFee = hookData?.defaultFee || 0
@@ -116,6 +116,20 @@ export function getPairNodes({
           t('StableSwap')
         )
         const tooltipText = `${input.symbol}/${output.symbol}${isV3Pool || isInfinityPool ? ` (${feeDisplay}%)` : ''}`
+
+        if (pairNode) {
+          return (
+            <Fragment key={key}>
+              {pairNode({
+                pair: p,
+                text,
+                className: isInfinityPool || isV3Pool ? 'highlight' : '',
+                tooltipText,
+              })}
+            </Fragment>
+          )
+        }
+
         return (
           <PairNode
             pair={p}

@@ -27,6 +27,7 @@ import {
   useUnsupportedTokenList,
   useWarningTokenList,
 } from 'state/lists/hooks'
+import { SOLANA_NATIVE_TOKEN_ADDRESS } from 'quoter/consts'
 import { safeGetAddress, safeGetUnifiedAddress } from 'utils'
 import useUserAddedTokens, { useUserAddedTokensByChainIds } from '../state/user/hooks/useUserAddedTokens'
 import { useActiveChainId } from './useActiveChainId'
@@ -448,7 +449,8 @@ export function useUnifiedCurrency(
   const isNative =
     currencyId?.toUpperCase() === native.symbol?.toUpperCase() ||
     currencyId?.toLowerCase() === GELATO_NATIVE ||
-    currencyId?.toLowerCase() === zeroAddress
+    currencyId?.toLowerCase() === zeroAddress ||
+    currencyId?.toLowerCase() === SOLANA_NATIVE_TOKEN_ADDRESS
 
   const token = useUnifiedToken(isNative ? undefined : currencyId, chainId)
   return isNative ? native : token

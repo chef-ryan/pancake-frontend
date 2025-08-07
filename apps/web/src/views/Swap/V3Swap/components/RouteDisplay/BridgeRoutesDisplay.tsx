@@ -22,8 +22,8 @@ import styled from 'styled-components'
 import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { RouterPoolBox, RouterTypeText } from 'views/Swap/components/RouterViewer'
 import { useHookDiscount } from 'views/SwapSimplify/hooks/useHookDiscount'
-import { getPairNodes, Pair } from './pairNode'
-import { RouteDisplayEssentials } from './types'
+import { Pair, RouteDisplayEssentials } from './types'
+import { EVMPairNodes } from './pairNode'
 
 interface BridgeRoutesDisplayProps {
   routes: RouteDisplayEssentials[]
@@ -338,16 +338,6 @@ export const BridgeRouteDisplay = memo(function BridgeRouteDisplay({ route }: Br
     return currencyPairs
   }, [path])
 
-  const pairNodes = getPairNodes({
-    pairs,
-    pools,
-    routePoolsLength: route.pools.length,
-    hookDiscount,
-    category,
-    t,
-    PairNode,
-  })
-
   return (
     <LightCard borderRadius="24px" padding="0">
       <RouteBoxHeader borderRadius="24px 24px 0 0" p="5px 6px">
@@ -357,11 +347,18 @@ export const BridgeRouteDisplay = memo(function BridgeRouteDisplay({ route }: Br
       </RouteBoxHeader>
       <Box p="12px 18px 64px">
         <RouterBox
-          justifyContent={pairNodes && pairNodes.length > 1 ? 'space-between' : 'center'}
+          justifyContent={pairs && pairs.length > 1 ? 'space-between' : 'center'}
           alignItems="center"
-          $showDottedBackground={Boolean(pairNodes && pairNodes.length > 1)}
+          $showDottedBackground={Boolean(pairs && pairs.length > 1)}
         >
-          {pairNodes}
+          <EVMPairNodes
+            pairs={pairs}
+            pools={pools}
+            routePoolsLength={route.pools.length}
+            hookDiscount={hookDiscount}
+            category={category}
+            pairNode={PairNode}
+          />
         </RouterBox>
       </Box>
     </LightCard>

@@ -1,30 +1,18 @@
 import { type SVMOrder, OrderType, SVMTrade } from '@pancakeswap/price-api-sdk'
 import { PoolType, Route, RouteType, SVMPool } from '@pancakeswap/smart-router'
 import { SolRouterTrade } from '@pancakeswap/solana-router-sdk'
-import { Currency, CurrencyAmount, Percent, TradeType, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
-import { QuoteQuery, SVMQuoteQuery } from 'quoter/quoter.types'
+import {
+  Currency,
+  CurrencyAmount,
+  Percent,
+  TradeType,
+  UnifiedCurrencyAmount,
+  SPLToken,
+} from '@pancakeswap/swap-sdk-core'
+import { SOLANA_NATIVE_TOKEN_ADDRESS } from 'quoter/consts'
+import { SVMQuoteQuery } from 'quoter/quoter.types'
 
-/**
- * SVM Trade to SVM Order mapping
- * SolRouterTrade → SVMOrder
- * ├── tradeType (from query.tradeType)
- * ├── inputAmount ✓ (direct copy)
- * ├── outputAmount ✓ (direct copy)
- * ├── routes: RouterPlan[] → Route[] (convert each RouterPlan with grouping)
- * |───────|Group RouterPlans until outputMint matches final outputAmount address
- * |───────|RouterPlan.swapInfo.ammKey → SVMPool.id
- * |───────|RouterPlan.swapInfo.feeAmount → SVMPool.feeAmount
- * |───────|RouterPlan.percent → Route.percent (from first plan in group)
- * |───────|RouterPlan.swapInfo.inAmount → Route.inputAmount (from first plan)
- * |───────|RouterPlan.swapInfo.outAmount → Route.outputAmount (from last plan)
- * ├── priceImpactPct → priceImpactPct ✓ (direct copy)
- * ├── transaction ✓ (direct copy)
- * ├── maximumAmountIn → maximumAmountIn ✓ (direct copy)
- * ├── minimumAmountOut → minimumAmountOut ✓ (direct copy)
- * └── + quoteQueryHash (from query.hash)
- */
-export function parseSVMTradeIntoSVMOrder(svmTrade: SolRouterTrade, query: SVMQuoteQuery): SVMOrder<TradeType> {
-  // Convert RouterPlan[] to Route[] with grouping logic
+export function parseRoutePlansToRoutes(svmTrade: SolRouterTrade): Route[] {
   const routes: Route[] = []
   let currentGroup: typeof svmTrade.routes = []
 
@@ -35,7 +23,8 @@ export function parseSVMTradeIntoSVMOrder(svmTrade: SolRouterTrade, query: SVMQu
     // Check if this RouterPlan's outputMint matches the final outputAmount address
     // or if this is the last plan in the array
     const isEndOfRoute =
-      routerPlan.swapInfo.outputMint === svmTrade.outputAmount.currency.address || i === svmTrade.routes.length - 1
+      routerPlan.swapInfo.outputMint === svmTrade.outputAmount.currency.wrapped.address ||
+      i === svmTrade.routes.length - 1
 
     if (isEndOfRoute) {
       // Process the current group into a single Route
@@ -52,13 +41,50 @@ export function parseSVMTradeIntoSVMOrder(svmTrade: SolRouterTrade, query: SVMQu
         return pool
       })
 
-      // Build path: start with input currency, end with output currency
-      // For multi-hop routes, we use the start and end currencies
-      // (intermediate tokens would require additional token resolution)
-      const path = [svmTrade.inputAmount.currency as Currency, svmTrade.outputAmount.currency as Currency]
+      // Build path: start with input currency, include all intermediate currencies, end with output currency
+      // For multi-hop routes, path will be [inputCurrency, intermediate1, intermediate2, ..., outputCurrency]
+      const path: Currency[] = []
+
+      // Add the input currency (from the first plan)
+      const firstPlan = currentGroup[0]
+      path.push(svmTrade.inputAmount.currency as Currency)
+
+      // Add intermediate currencies (outputMint of each plan except the last one becomes an intermediate currency)
+      for (let j = 0; j < currentGroup.length - 1; j++) {
+        const plan = currentGroup[j]
+        const outputMintAddress = plan.swapInfo.outputMint
+
+        // Find the currency for this outputMint
+        let intermediateCurrency: SPLToken
+        if (outputMintAddress === svmTrade.inputAmount.currency.wrapped.address) {
+          intermediateCurrency = svmTrade.inputAmount.currency
+        } else if (outputMintAddress === svmTrade.outputAmount.currency.wrapped.address) {
+          intermediateCurrency = svmTrade.outputAmount.currency
+        } else {
+          // For intermediate tokens that don't match input/output currencies,
+          // create a proper SPLToken instance
+          intermediateCurrency = new SPLToken({
+            address: outputMintAddress,
+            // NOTE: this is only for mock data so intermediateCurrency can be passed around without any problem
+            // before using path, we need to use useUnifiedCurrency to get actual token info.
+            chainId: svmTrade.inputAmount.currency.chainId,
+            programId: svmTrade.inputAmount.currency.programId,
+            decimals: svmTrade.inputAmount.currency.decimals,
+            symbol: svmTrade.inputAmount.currency.symbol,
+            name: svmTrade.inputAmount.currency.name,
+            logoURI: '',
+          })
+        }
+
+        // NOTE: cast to Currency to avoid type error
+        // Fix it later
+        path.push(intermediateCurrency as Currency)
+      }
+
+      // Add the final output currency
+      path.push(svmTrade.outputAmount.currency as Currency)
 
       // Use amounts from first and last plans in the group
-      const firstPlan = currentGroup[0]
       const lastPlan = currentGroup[currentGroup.length - 1]
 
       const inputAmount = UnifiedCurrencyAmount.fromRawAmount(
@@ -86,6 +112,32 @@ export function parseSVMTradeIntoSVMOrder(svmTrade: SolRouterTrade, query: SVMQu
       currentGroup = []
     }
   }
+
+  return routes
+}
+
+/**
+ * SVM Trade to SVM Order mapping
+ * SolRouterTrade → SVMOrder
+ * ├── tradeType (from query.tradeType)
+ * ├── inputAmount ✓ (direct copy)
+ * ├── outputAmount ✓ (direct copy)
+ * ├── routes: RouterPlan[] → Route[] (convert each RouterPlan with grouping)
+ * |───────|Group RouterPlans until outputMint matches final outputAmount address
+ * |───────|RouterPlan.swapInfo.ammKey → SVMPool.id
+ * |───────|RouterPlan.swapInfo.feeAmount → SVMPool.feeAmount
+ * |───────|RouterPlan.percent → Route.percent (from first plan in group)
+ * |───────|RouterPlan.swapInfo.inAmount → Route.inputAmount (from first plan)
+ * |───────|RouterPlan.swapInfo.outAmount → Route.outputAmount (from last plan)
+ * ├── priceImpactPct → priceImpactPct ✓ (direct copy)
+ * ├── transaction ✓ (direct copy)
+ * ├── maximumAmountIn → maximumAmountIn ✓ (direct copy)
+ * ├── minimumAmountOut → minimumAmountOut ✓ (direct copy)
+ * └── + quoteQueryHash (from query.hash)
+ */
+export function parseSVMTradeIntoSVMOrder(svmTrade: SolRouterTrade, query: SVMQuoteQuery): SVMOrder<TradeType> {
+  // Convert RouterPlan[] to Route[] with grouping logic
+  const routes: Route[] = parseRoutePlansToRoutes(svmTrade)
 
   const PCT_MULTIPLIER = 1_000_000
 
