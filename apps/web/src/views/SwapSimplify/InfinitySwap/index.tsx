@@ -4,6 +4,9 @@ import { SwapUIV2 } from '@pancakeswap/widgets-internal'
 import { useTokenRisk } from 'components/AccessRisk'
 import { RiskDetailsPanel, useShouldRiskPanelDisplay } from 'components/AccessRisk/SwapRevampRiskDisplay'
 
+import { OrderType } from '@pancakeswap/price-api-sdk'
+import { TradeType } from '@pancakeswap/swap-sdk-core'
+import { isSolana } from '@pancakeswap/chains'
 import { GasTokenSelector } from 'components/Paymaster/GasTokenSelector'
 import { useCurrency } from 'hooks/Tokens'
 import { useActiveChainId } from 'hooks/useActiveChainId'
@@ -57,6 +60,8 @@ export const InfinitySwapForm = memo(() => {
   const {
     [Field.INPUT]: { currencyId: inputCurrencyId },
     [Field.OUTPUT]: { currencyId: outputCurrencyId },
+    independentField,
+    typedValue,
   } = useSwapState()
 
   const inputCurrency = useCurrency(inputCurrencyId)
@@ -65,6 +70,12 @@ export const InfinitySwapForm = memo(() => {
   const { slippageTolerance: userSlippageTolerance } = useAutoSlippageWithFallback()
   const isSlippageTooHigh = useMemo(() => userSlippageTolerance > 500, [userSlippageTolerance])
   const shouldRiskPanelDisplay = useShouldRiskPanelDisplay(inputCurrency?.wrapped, outputCurrency?.wrapped)
+  const isExactOutWarning = useMemo(
+    () =>
+      (independentField === Field.OUTPUT && isSolana(activeChianId) && typedValue) ||
+      (bestOrder?.type === OrderType.PCS_SVM && bestOrder.trade.tradeType === TradeType.EXACT_OUTPUT),
+    [bestOrder?.trade.tradeType, bestOrder?.type, independentField, activeChianId, typedValue],
+  )
   const token0Risk = useTokenRisk(inputCurrency?.wrapped)
   const token1Risk = useTokenRisk(outputCurrency?.wrapped)
 
@@ -85,10 +96,11 @@ export const InfinitySwapForm = memo(() => {
         />
       </SwapUIV2.SwapTabAndInputPanelWrapper>
       {shouldShowBuyCrypto && <BuyCryptoPanel link={buyCryptoLink} />}
-      {(shouldRiskPanelDisplay || isPriceImpactTooHigh || isSlippageTooHigh) && (
+      {(shouldRiskPanelDisplay || isPriceImpactTooHigh || isSlippageTooHigh || isExactOutWarning) && (
         <RiskDetailsPanel
           isPriceImpactTooHigh={isPriceImpactTooHigh}
           isSlippageTooHigh={isSlippageTooHigh}
+          isExactOutWarning={isExactOutWarning}
           token0={inputCurrency?.wrapped}
           token1={outputCurrency?.wrapped}
           token0RiskLevelDescription={token0Risk.data?.riskLevelDescription}

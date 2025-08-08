@@ -4065,5 +4065,7 @@
   "Price Range": "Price Range",
   "price range": "price range",
   "Price range": "Price range",
-  "Liquidity Depth": "Liquidity Depth"
+  "Liquidity Depth": "Liquidity Depth",
+  "ExactOut swap supports less liquidity venues and less routes.": "ExactOut swap supports less liquidity venues and less routes.",
+  "It might also offer a worse price. Slippage is only applied on input amount, not output amount.": "It might also offer a worse price. Slippage is only applied on input amount, not output amount."
 }
