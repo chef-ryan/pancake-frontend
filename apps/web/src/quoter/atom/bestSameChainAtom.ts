@@ -7,8 +7,9 @@ import { atomFamily } from 'jotai/utils'
 import { isBetterQuoteTrade } from 'quoter/utils/getBetterQuote'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { warningSeverity } from 'utils/exchange'
-import { getPriceBreakdown, InterfaceOrder, isBridgeOrder } from 'views/Swap/utils'
-import { TradePriceBreakdown } from 'views/Swap/V3Swap/utils/exchange'
+import { InterfaceOrder, isBridgeOrder, isSVMOrder } from 'views/Swap/utils'
+import { OrderType } from '@pancakeswap/price-api-sdk'
+import { computeTradePriceBreakdown } from 'views/Swap/V3Swap/utils/exchange'
 import { NoValidRouteError, QuoteQuery, SVMQuoteQuery } from '../quoter.types'
 import { activeQuoteHashAtom } from './abortControlAtoms'
 import { bestSVMOrderAtom } from './bestSVMOrderAtom'
@@ -157,14 +158,16 @@ export const bestSameChainWithoutPlaceHolderAtom = atomFamily((_option: QuoteQue
           const order = quote.unwrap()
 
           // NOTE: refactor so it doesn't need to check for bridge order
-          if (isBridgeOrder(order)) {
+          if (isBridgeOrder(order) || isSVMOrder(order)) {
             continue
           }
 
           if (i !== tests.length - 1) {
-            // NOTE: has isBridgeOrder check to avoid type error, safe to cast as TradePriceBreakdown
-            const priceImpactWithoutFee = (getPriceBreakdown(order) as TradePriceBreakdown)
-              .priceImpactWithoutFee as Percent
+            const trade = order?.type === OrderType.DUTCH_LIMIT ? order.ammTrade : order?.trade
+
+            // eslint-disable-next-line
+            const priceImpactWithoutFee = computeTradePriceBreakdown(trade).priceImpactWithoutFee
+
             const isHighImpact = warningSeverity(priceImpactWithoutFee) >= 3
             if (isHighImpact) {
               continue

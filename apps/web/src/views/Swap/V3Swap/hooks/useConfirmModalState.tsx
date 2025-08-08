@@ -38,14 +38,7 @@ import {
 import { eip5792Actions } from 'viem/experimental'
 import { useWalletType } from 'views/Mev/hooks'
 import { WalletType } from 'views/Mev/types'
-import {
-  BridgeOrderWithCommands,
-  getPriceBreakdown,
-  isBridgeOrder,
-  isClassicOrder,
-  isSVMOrder,
-  isXOrder,
-} from 'views/Swap/utils'
+import { BridgeOrderWithCommands, isBridgeOrder, isClassicOrder, isSVMOrder, isXOrder } from 'views/Swap/utils'
 import { waitForXOrderReceipt } from 'views/Swap/x/api'
 import { useSendXOrder } from 'views/Swap/x/useSendXOrder'
 import { useAccount, useSendTransaction, useWalletClient } from 'wagmi'
@@ -68,6 +61,8 @@ import { getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useRefreshSolanaTokenBalances } from 'state/token/solanaTokenBalances'
 import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
+import { usePriceBreakdown } from 'views/SwapSimplify/hooks/usePriceBreakdown'
+
 import { BatchCall, getBatchedTransaction as getBatchedTransactionHelper } from './batchHelper'
 import { eip5792UserRejectUpgradeError, userRejectedError } from './useSendSwapTransaction'
 import { useSwapCallback } from './useSwapCallback'
@@ -929,7 +924,7 @@ export const useConfirmModalState = (
     useConfirmActions(order, amountToApprove, spender)
   const preConfirmState = usePreviousValue(confirmState)
   const [confirmSteps, setConfirmSteps] = useState<ConfirmModalState[]>()
-  const tradePriceBreakdown = useMemo(() => getPriceBreakdown(order), [order])
+  const tradePriceBreakdown = usePriceBreakdown(order)
   const { walletType } = useWalletType()
   const { chainId } = useActiveChainId()
   const { data: walletClient } = useWalletClient({ chainId })
