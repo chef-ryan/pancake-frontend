@@ -20,6 +20,7 @@ import {
 import { CHAIN_QUERY_NAME } from 'config/chains'
 import { SUPPORT_FARMS, SUPPORT_ONLY_BSC } from 'config/constants/supportChains'
 import { getPerpetualUrl } from 'utils/getPerpetualUrl'
+import { EVM_CHAIN_IDS } from 'utils/wagmi'
 
 export type ConfigMenuDropDownItemsType = DropdownMenuItems & {
   hideSubNav?: boolean
@@ -71,6 +72,7 @@ const config: (
         {
           label: t('Buy Crypto'),
           href: '/buy-crypto',
+          supportChainIds: EVM_CHAIN_IDS,
         },
       ].map((item) => addMenuItemSupported(item, chainId)),
     },
