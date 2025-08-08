@@ -42,6 +42,7 @@
     "@pancakeswap/sdk": "workspace:*",
     "@pancakeswap/utils": "workspace:*",
     "@solana/web3.js": "catalog:",
+    "decimal.js": "^10.4.2",
     "superstruct": "^2.0.2"
   },
   "devDependencies": {

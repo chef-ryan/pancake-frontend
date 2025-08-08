@@ -17,7 +17,7 @@ const PublicKeyFromString = coerce(instance(PublicKey), string(), (value) => new
 
 const AmountFromString = string()
 
-const NumberFromString = coerce<string, null, number>(string(), number(), (value) => Number(value))
+// const NumberFromString = coerce<string, null, number>(string(), number(), (value) => Number(value))
 
 const SwapInfo = type({
   ammKey: PublicKeyFromString,
@@ -43,7 +43,7 @@ export const FormattedUltraQuoteResponse = type({
   outputMint: PublicKeyFromString,
   outAmount: AmountFromString,
   otherAmountThreshold: AmountFromString,
-  priceImpactPct: NumberFromString,
+  priceImpact: number(),
   routePlan: RoutePlanWithMetadata,
   slippageBps: number(),
   contextSlot: defaulted(number(), 0),

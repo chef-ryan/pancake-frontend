@@ -3338,6 +3338,9 @@ importers:
       abitype:
         specifier: '*'
         version: 1.0.8(typescript@5.7.3)(zod@3.25.67)
+      decimal.js:
+        specifier: ^10.4.2
+        version: 10.4.3
       lodash:
         specifier: '*'
         version: 4.17.21

@@ -1,6 +1,7 @@
 import { isWSol, solToWSol, SPLToken, TradeType, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { PublicKey } from '@solana/web3.js'
 import { create } from 'superstruct'
+import Decimal from 'decimal.js'
 import { FormattedUltraQuoteResponse } from './FormattedUltraQuoteResponse'
 import { ultraSwapService } from './UltraSwapService'
 
@@ -92,7 +93,7 @@ export const getBestSolanaTrade = async ({
     routes: quoteResponse.routePlan,
     requestId: quoteResponse.requestId,
     otherAmountThreshold: quoteResponse.otherAmountThreshold,
-    priceImpactPct: quoteResponse.priceImpactPct,
+    priceImpactPct: new Decimal(quoteResponse.priceImpact).dividedBy(100).toString(),
     slippageBps: quoteResponse.slippageBps,
     transaction: quoteResponse.transaction,
   }
