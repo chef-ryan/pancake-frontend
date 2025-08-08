@@ -103,6 +103,24 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
       analytics: {
         enabled: true,
         onEvent: (eventName: EventName, eventData: EventData<any>) => {
+          if (eventName === 'select_bridge_fromDropdown') {
+            const fromNetworkName = eventData?.fromNetwork
+
+            if (fromNetworkName) {
+              const matchedChain = chains.find((chain) => chain.name.toLowerCase() === fromNetworkName.toLowerCase())
+
+              if (matchedChain) {
+                const customPayload = {
+                  network: matchedChain.name,
+                  chainId: matchedChain.id,
+                }
+
+                window.dispatchEvent(new CustomEvent('pcs_bridge_select_from_network', { detail: customPayload }))
+              } else {
+                console.warn(`No matching chain found for network name: ${fromNetworkName}`)
+              }
+            }
+          }
           gtmListener(eventName, eventData)
         },
       },

@@ -1,15 +1,13 @@
-import { CanonicalBridge, useChainFromWidget } from '@pancakeswap/canonical-bridge'
-import { ChainId, chainNames, NonEVMChainId, chainFullNamesToChainId } from '@pancakeswap/chains'
+import { CanonicalBridge } from '@pancakeswap/canonical-bridge'
+import { ChainId, chainNames, NonEVMChainId } from '@pancakeswap/chains'
 import { Flex, useMatchBreakpoints } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { PUBLIC_NODES } from 'config/nodes'
-import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
+import { Suspense, useEffect, useMemo } from 'react'
 import { CHAIN_IDS } from 'utils/wagmi'
 import Page from 'views/Page'
 import SolanaConnectButton from 'wallet/components/SolanaConnectButton'
-import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
-import { useRouter } from 'next/router'
 
 const DISABLED_TO_CHAINS = [ChainId.POLYGON_ZKEVM]
 
@@ -61,27 +59,21 @@ function usePortalConflictFix() {
 }
 
 const BridgeChainSync = () => {
-  const fromChain = useChainFromWidget('from')
   const { switchNetworkAsync: switchNetwork } = useSwitchNetwork()
-  const { chainId: activeChainId } = useActiveChainId()
-  const switchingRef = useRef(false)
 
-  const checkAndSwitchChain = useCallback(async (activeChainId: number, fromChain?: string) => {
-    if (switchingRef.current) return
-    switchingRef.current = true
-    try {
-      const chainId = fromChain ? chainFullNamesToChainId[fromChain] : undefined
+  useEffect(() => {
+    const handleNetworkSelect = async (event: Event) => {
+      const customEvent = event as CustomEvent<{ network: string; chainId: number }>
+      const { chainId } = customEvent.detail
+      const result = await switchNetwork(chainId)
+    }
 
-      if (chainId && chainId !== activeChainId) {
-        const result = await switchNetwork(chainId)
-      }
-    } finally {
-      switchingRef.current = false
+    window.addEventListener('pcs_bridge_select_from_network', handleNetworkSelect)
+
+    return () => {
+      window.removeEventListener('pcs_bridge_select_from_network', handleNetworkSelect)
     }
   }, [])
-  useEffect(() => {
-    checkAndSwitchChain(activeChainId, fromChain)
-  }, [activeChainId, fromChain])
 
   return null
 }
