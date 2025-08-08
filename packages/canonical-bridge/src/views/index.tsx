@@ -13,6 +13,7 @@ import {
   createGTMEventListener,
   IBridgeConfig,
 } from '@bnb-chain/canonical-bridge-widget'
+import { allCasesNameToChainId } from '@pancakeswap/chains'
 import { useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
 import { RefreshingIcon } from '../components/RefreshingIcon'
@@ -107,12 +108,12 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
             const fromNetworkName = eventData?.fromNetwork
 
             if (fromNetworkName) {
-              const matchedChain = chains.find((chain) => chain.name.toLowerCase() === fromNetworkName.toLowerCase())
+              const matchedChainId = allCasesNameToChainId[fromNetworkName]
 
-              if (matchedChain) {
+              if (matchedChainId) {
                 const customPayload = {
-                  network: matchedChain.name,
-                  chainId: matchedChain.id,
+                  network: fromNetworkName,
+                  chainId: matchedChainId,
                 }
 
                 window.dispatchEvent(new CustomEvent('pcs_bridge_select_from_network', { detail: customPayload }))
