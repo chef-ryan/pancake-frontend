@@ -8,14 +8,14 @@ import { QUOTE_TIMEOUT } from 'quoter/consts'
 import { parseSVMTradeIntoSVMOrder } from 'quoter/utils/svm-utils/parseSVMTradeIntoSVMOrder'
 import { type InterfaceOrder } from 'views/Swap/utils'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
-import type { SVMQuoteQuery } from '../quoter.types'
+import { NoValidRouteError, type SVMQuoteQuery } from '../quoter.types'
 import { atomWithLoadable } from './atomWithLoadable'
 
 export const bestSVMOrderAtom = atomFamily((_option: SVMQuoteQuery) => {
   return atomWithLoadable<InterfaceOrder>(async (get) => {
     const { baseCurrency, currency, amount, tradeType, address } = _option
     const userSlippageTolerance = get(solanaUserSlippageAtomWithLocalStorage)
-      const priorityFeeLamports = get(solanaPriorityFeeAtomWithLocalStorage)
+    const priorityFeeLamports = get(solanaPriorityFeeAtomWithLocalStorage)
 
     // Early validation
     if (!baseCurrency || !currency || !amount || tradeType === undefined) {
@@ -40,7 +40,7 @@ export const bestSVMOrderAtom = atomFamily((_option: SVMQuoteQuery) => {
             tradeType: tradeType as TradeType,
             slippageBps: userSlippageTolerance,
             account: address,
-            priorityFeeLamports
+            priorityFeeLamports,
           })
 
           //   perf.tracker.success(svmOrder)
@@ -69,8 +69,7 @@ export const bestSVMOrderAtom = atomFamily((_option: SVMQuoteQuery) => {
 
       return Loadable.Just<InterfaceOrder>(bestOrder)
     } catch (error) {
-      return Loadable.Fail<InterfaceOrder>(error)
-      //   perf.tracker.fail(error)
+      return Loadable.Fail<InterfaceOrder>(new NoValidRouteError('No valid swap quotes'))
     } finally {
       //   perf.tracker.report()
     }

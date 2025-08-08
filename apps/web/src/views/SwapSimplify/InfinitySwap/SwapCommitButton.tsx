@@ -247,6 +247,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
       !swapInputError &&
       !tradeLoading &&
       !hasBridgeTradeError &&
+      parsedAmounts[Field.INPUT]?.greaterThan(BIG_INT_ZERO) &&
       parsedAmounts[Field.OUTPUT]?.greaterThan(BIG_INT_ZERO),
     [swapInputError, tradeLoading, hasBridgeTradeError, parsedAmounts],
   )
