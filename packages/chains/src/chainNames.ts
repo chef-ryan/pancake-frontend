@@ -102,6 +102,11 @@ export const mainnetChainNamesInKebabCase = {
   [NonEVMChainId.APTOS]: 'aptos',
 } as const
 
+const legacyChainNames: [string, UnifiedChainId][] = [
+  ['Binance Smart Chain', ChainId.BSC],
+  ['BNB Smart Chain', ChainId.BSC],
+]
+
 export const chainNameToChainId = Object.entries(chainNames).reduce((acc, [chainId, chainName]) => {
   return {
     [chainName]: chainId as unknown as ChainId,
@@ -111,11 +116,31 @@ export const chainNameToChainId = Object.entries(chainNames).reduce((acc, [chain
 
 export const chainFullNamesToChainId = Object.entries(chainFullNames).reduce((acc, [chainId, chainName]) => {
   return {
-    [chainName.toLowerCase()]: chainId as unknown as UnifiedChainId,
     [chainName]: chainId as unknown as UnifiedChainId,
     ...acc,
   }
-}, {})
+}, {} as Record<string, UnifiedChainId>)
+
+export const kebabCaseNamesToChainId = Object.entries(chainNamesInKebabCase).reduce((acc, [chainId, chainName]) => {
+  return {
+    [chainName]: chainId as unknown as UnifiedChainId,
+    ...acc,
+  }
+}, {} as Record<string, UnifiedChainId>)
+
+export const allCasesNameToChainId = Object.entries({
+  ...chainFullNamesToChainId,
+  ...kebabCaseNamesToChainId,
+  ...chainNameToChainId,
+})
+  .concat(legacyChainNames)
+  .reduce((acc, [chainName, chainId]) => {
+    return {
+      [chainName]: chainId as UnifiedChainId,
+      [chainName.toLowerCase()]: chainId as UnifiedChainId,
+      ...acc,
+    }
+  }, {} as Record<string, UnifiedChainId>)
 
 // @see https://github.com/DefiLlama/defillama-server/blob/master/common/chainToCoingeckoId.ts
 // @see https://github.com/DefiLlama/chainlist/blob/main/constants/chainIds.json
