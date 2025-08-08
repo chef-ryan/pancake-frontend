@@ -210,7 +210,7 @@ export function parseSVMTradeIntoSVMOrder(svmTrade: ExtendedSolRouterTrade, quer
   const PCT_MULTIPLIER = 1_000_000
 
   // Truncate decimal part (e.g. 123.232 -> 123)
-  const priceNumber = Math.trunc(Number(svmTrade.priceImpactPct) * PCT_MULTIPLIER)
+  const priceNumber = Math.trunc(Math.abs(Number(svmTrade.priceImpactPct)) * PCT_MULTIPLIER)
 
   // Create SVMTrade
   const svmTradeData: SVMTrade<TradeType> = {
