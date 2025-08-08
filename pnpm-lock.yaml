@@ -2198,6 +2198,9 @@ importers:
       '@emotion/styled':
         specifier: ^11
         version: 11.11.5(@emotion/react@11.11.4(@types/react@18.2.37)(react@18.2.0))(@types/react@18.2.37)(react@18.2.0)
+      '@pancakeswap/chains':
+        specifier: workspace:*
+        version: link:../chains
       '@solana/spl-token':
         specifier: ^0
         version: 0.4.9(@solana/web3.js@1.98.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.7.3)(utf-8-validate@5.0.10)

@@ -13,7 +13,7 @@ import { AutoColumn, Box, Link, QuestionHelperV2, SkeletonV2, Text } from '@panc
 import { formatAmount, formatFraction } from '@pancakeswap/utils/formatFractions'
 import { memo, useMemo, useState } from 'react'
 
-import { OrderType } from '@pancakeswap/price-api-sdk'
+import { OrderType, PriceOrder } from '@pancakeswap/price-api-sdk'
 import { NumberDisplay, SwapUIV2 } from '@pancakeswap/widgets-internal'
 import BigNumber from 'bignumber.js'
 import { LightGreyCard } from 'components/Card'
@@ -25,11 +25,13 @@ import { styled } from 'styled-components'
 import { BridgeFeeToolTip, TotalFeeToolTip, TradingFeeToolTip } from 'views/Swap/Bridge/components/FeeToolTip'
 import { BridgeOrderFee, getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
+import { isSVMOrder } from 'views/Swap/utils'
 import { EstimatedTime } from '../../Swap/Bridge/CrossChainConfirmSwapModal/components/EstimatedTime'
 import { SlippageAdjustedAmounts, SVMTradePriceBreakdown, TradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
 import FormattedPriceImpact from '../../Swap/components/FormattedPriceImpact'
 import { SlippageButton } from '../../Swap/components/SlippageButton'
 import { useFeeSaved } from '../../Swap/hooks/useFeeSaved'
+import { SVMTradingFee } from './TradingFee'
 
 const DetailsTitle = styled(Text)`
   text-decoration: underline dotted;
@@ -159,6 +161,7 @@ export const TradeSummary = memo(function TradeSummary({
   hasDynamicHook,
   priceBreakdown,
   expectedFillTimeSec,
+  order,
 }: {
   expectedFillTimeSec?: number
   priceBreakdown: BridgeOrderFee[] | TradePriceBreakdown | SVMTradePriceBreakdown
@@ -170,6 +173,7 @@ export const TradeSummary = memo(function TradeSummary({
   isX?: boolean
   loading?: boolean
   hasDynamicHook?: boolean
+  order?: PriceOrder
 }) {
   const { t } = useTranslation()
   const isExactIn = tradeType === TradeType.EXACT_INPUT
@@ -333,24 +337,28 @@ export const TradeSummary = memo(function TradeSummary({
               </DetailsTitle>
             </QuestionHelperV2>
           </RowFixed>
-          <SkeletonV2 width="70px" height="16px" borderRadius="8px" minHeight="auto" isDataReady={!loading}>
-            {isX ? (
-              <Text color="primary" fontSize="14px">
-                0 {inputAmount?.currency?.symbol}
-              </Text>
-            ) : hasDynamicHook ? (
-              <QuestionHelperV2 text={t('This route uses a dynamic fee pool; actual fees may vary.')}>
-                <Text fontSize="14px" style={{ textDecoration: 'underline dotted', cursor: 'help' }}>{`~${formatAmount(
-                  priceBreakdown.lpFeeAmount,
-                  4,
-                )} ${inputAmount?.currency?.symbol}`}</Text>
-              </QuestionHelperV2>
-            ) : (
-              <Text fontSize="14px">{`${formatAmount(priceBreakdown.lpFeeAmount, 4)} ${
-                inputAmount?.currency?.symbol
-              }`}</Text>
-            )}
-          </SkeletonV2>
+          {isSVMOrder(order) ? (
+            <SVMTradingFee routes={order.trade.routes} />
+          ) : (
+            <SkeletonV2 width="70px" height="16px" borderRadius="8px" minHeight="auto" isDataReady={!loading}>
+              {isX ? (
+                <Text color="primary" fontSize="14px">
+                  0 {inputAmount?.currency?.symbol}
+                </Text>
+              ) : hasDynamicHook ? (
+                <QuestionHelperV2 text={t('This route uses a dynamic fee pool; actual fees may vary.')}>
+                  <Text
+                    fontSize="14px"
+                    style={{ textDecoration: 'underline dotted', cursor: 'help' }}
+                  >{`~${formatAmount(priceBreakdown.lpFeeAmount, 4)} ${inputAmount?.currency?.symbol}`}</Text>
+                </QuestionHelperV2>
+              ) : (
+                <Text fontSize="14px">{`${formatAmount(priceBreakdown.lpFeeAmount, 4)} ${
+                  inputAmount?.currency?.symbol
+                }`}</Text>
+              )}
+            </SkeletonV2>
+          )}
         </RowBetween>
       ) : null}
 

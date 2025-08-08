@@ -56,7 +56,7 @@ export function getDefaultToken(chainId: number): string | undefined {
 function computeSvmOrderFee(order: SVMOrder): SVMTradePriceBreakdown {
   return {
     priceImpactWithoutFee: order.trade.priceImpactPct,
-    // TODO: get lp fee amount
+    // NOTE: lpFeeAmount will be computed in different place
     lpFeeAmount: UnifiedCurrencyAmount.fromRawAmount(order.trade.inputAmount.currency, 0),
   }
 }

@@ -39,14 +39,7 @@ import { warningSeverity } from 'utils/exchange'
 import { useBridgeCheckApproval } from 'views/Swap/Bridge/hooks/useBridgeCheckApproval'
 import { getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import { ConfirmSwapModalV2 } from 'views/Swap/V3Swap/containers/ConfirmSwapModalV2'
-import {
-  EVMInterfaceOrder,
-  getPriceBreakdown,
-  isBridgeOrder,
-  isClassicOrder,
-  isSVMOrder,
-  isXOrder,
-} from 'views/Swap/utils'
+import { EVMInterfaceOrder, isBridgeOrder, isClassicOrder, isSVMOrder, isXOrder } from 'views/Swap/utils'
 import { useAccount } from 'wagmi'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { isEvm, NonEVMChainId } from '@pancakeswap/chains'
@@ -60,6 +53,7 @@ import { useSwapCurrency } from '../../Swap/V3Swap/hooks/useSwapCurrency'
 import { CommitButtonProps } from '../../Swap/V3Swap/types'
 import { useIsRecipientError } from '../hooks/useIsRecipientError'
 import { useQuoteTrackingStateMachine } from '../hooks/useQuoteTrackingStateMachine'
+import { usePriceBreakdown } from '../hooks/usePriceBreakdown'
 
 const SettingsModalWithCustomDismiss = withCustomOnDismiss(SettingsModalV2)
 
@@ -173,7 +167,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   const isExpertMode = useMemo(() => isExpertMode_ && isEvm(chainId), [chainId, isExpertMode_])
   const { isRecipientEmpty, isRecipientError } = useIsRecipientError()
 
-  const tradePriceBreakdown = useMemo(() => getPriceBreakdown(order), [order])
+  const tradePriceBreakdown = usePriceBreakdown(order)
 
   // warnings on slippage
   const priceImpactSeverity = warningSeverity(

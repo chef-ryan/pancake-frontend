@@ -109,21 +109,21 @@ const legacyChainNames: [string, UnifiedChainId][] = [
 
 export const chainNameToChainId = Object.entries(chainNames).reduce((acc, [chainId, chainName]) => {
   return {
-    [chainName]: chainId as unknown as ChainId,
+    [chainName]: +chainId as unknown as ChainId,
     ...acc,
   }
 }, {} as Record<string, UnifiedChainId>)
 
 export const chainFullNamesToChainId = Object.entries(chainFullNames).reduce((acc, [chainId, chainName]) => {
   return {
-    [chainName]: chainId as unknown as UnifiedChainId,
+    [chainName]: +chainId as unknown as UnifiedChainId,
     ...acc,
   }
 }, {} as Record<string, UnifiedChainId>)
 
 export const kebabCaseNamesToChainId = Object.entries(chainNamesInKebabCase).reduce((acc, [chainId, chainName]) => {
   return {
-    [chainName]: chainId as unknown as UnifiedChainId,
+    [chainName]: +chainId as unknown as UnifiedChainId,
     ...acc,
   }
 }, {} as Record<string, UnifiedChainId>)
@@ -136,8 +136,8 @@ export const allCasesNameToChainId = Object.entries({
   .concat(legacyChainNames)
   .reduce((acc, [chainName, chainId]) => {
     return {
-      [chainName]: chainId as UnifiedChainId,
-      [chainName.toLowerCase()]: chainId as UnifiedChainId,
+      [chainName]: +chainId as UnifiedChainId,
+      [chainName.toLowerCase()]: +chainId as UnifiedChainId,
       ...acc,
     }
   }, {} as Record<string, UnifiedChainId>)

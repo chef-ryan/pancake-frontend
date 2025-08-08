@@ -5,7 +5,8 @@ import { memo, useCallback, useMemo } from 'react'
 import { Field } from 'state/swap/actions'
 import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
 import SwapModalHeaderV2 from 'views/Swap/components/SwapModalHeaderV2'
-import { EVMInterfaceOrder, getPriceBreakdown, InterfaceOrder } from 'views/Swap/utils'
+import { EVMInterfaceOrder, InterfaceOrder } from 'views/Swap/utils'
+import { usePriceBreakdown } from 'views/SwapSimplify/hooks/usePriceBreakdown'
 import {
   computeSlippageAdjustedAmounts as computeSlippageAdjustedAmountsWithSmartRouter,
   TradePriceBreakdown,
@@ -61,10 +62,7 @@ export const TransactionConfirmSwapContentV2 = memo<TransactionConfirmSwapConten
       () => computeSlippageAdjustedAmountsWithSmartRouter(order, allowedSlippage),
       [order, allowedSlippage],
     )
-    const { priceImpactWithoutFee, lpFeeAmount } = useMemo(
-      () => getPriceBreakdown(order as PriceOrder) as TradePriceBreakdown,
-      [order],
-    )
+    const { priceImpactWithoutFee, lpFeeAmount } = usePriceBreakdown(order as PriceOrder) as TradePriceBreakdown
 
     const isEnoughInputBalance = useMemo(() => {
       if (order?.trade?.tradeType !== TradeType.EXACT_OUTPUT) return null

@@ -31,7 +31,8 @@
     "@pancakeswap/uikit": "workspace:*",
     "@pancakeswap/localization": "workspace:*",
     "@bnb-chain/canonical-bridge-widget": "0.10.3",
-    "@bnb-chain/canonical-bridge-sdk": "0.7.2"
+    "@bnb-chain/canonical-bridge-sdk": "0.7.2",
+    "@pancakeswap/chains": "workspace:*"
   },
   "dependencies": {
     "polished": "^4.2.2"
