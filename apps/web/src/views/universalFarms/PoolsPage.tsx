@@ -47,7 +47,7 @@ export const PoolsPage = () => {
       pathname: nextRouter.pathname,
       query: params,
     })
-  }, [query, nextRouter])
+  }, [query])
 
   const handleFilterChange: IPoolsFilterPanelProps['onChange'] = useCallback(
     (newFilters) => {
@@ -102,7 +102,7 @@ const List = () => {
       pathname: nextRouter.pathname,
       query: params,
     })
-  }, [query, nextRouter])
+  }, [query])
 
   const handleRowClick = useCallback(
     async (pool: PoolInfo) => {
