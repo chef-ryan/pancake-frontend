@@ -96,7 +96,8 @@
     },
     "overrides": {
       "supports-color": "^8.1.1",
-      "stylus": "0.0.1-security"
+      "stylus": "0.0.1-security",
+      "@solana/web3.js": "1.95.8"
     }
   }
 }
