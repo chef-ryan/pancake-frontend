@@ -6,7 +6,7 @@ import { getActiveMenuItem, getActiveSubMenuItem } from 'components/Menu/utils'
 import { useHistory } from 'contexts/HistoryContext'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import useAuth from 'hooks/useAuth'
-import { useSwitchNetwork, useSwitchNetworkLocal } from 'hooks/useSwitchNetwork'
+import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import Image from 'next/image'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -15,8 +15,7 @@ import { chains } from 'utils/wagmi'
 
 export function PageNetworkSupportModal() {
   const { t } = useTranslation()
-  const { switchNetworkAsync, isLoading, canSwitch } = useSwitchNetwork()
-  const switchNetworkLocal = useSwitchNetworkLocal()
+  const { switchNetwork, isLoading, canSwitch } = useSwitchNetwork()
   const { chainId, isConnected, isWrongNetwork } = useActiveWeb3React()
   const { logout } = useAuth()
 
@@ -59,7 +58,7 @@ export function PageNetworkSupportModal() {
           <Button
             variant={foundChain && lastValidPath ? 'secondary' : 'primary'}
             isLoading={isLoading}
-            onClick={() => (isWrongNetwork ? switchNetworkLocal(ChainId.BSC) : switchNetworkAsync(ChainId.BSC))}
+            onClick={() => switchNetwork(ChainId.BSC)}
           >
             {t('Switch to %chain%', { chain: 'BNB Chain' })}
           </Button>

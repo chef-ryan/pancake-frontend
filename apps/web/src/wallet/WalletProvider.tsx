@@ -1,15 +1,18 @@
 import { isInBinance } from '@binance/w3w-utils'
-import { useSyncWalletState } from 'hooks/useAccountActiveChain'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { createW3WWagmiConfig, createWagmiConfig } from 'utils/wagmi'
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { usePrivy } from '@privy-io/react-auth'
 import { atomWithStorage } from 'jotai/utils'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { WagmiProvider as PrivyWagmiProvider } from '@privy-io/wagmi'
+import { useAccountEffect } from 'wagmi'
 import { SOLANA_SUPPORTED_PATH } from './solana.config'
 import { W3WConfigProvider } from './W3WConfigContext'
+import { useRequestChainUpdate } from './hook/useRequestChainUpdate'
+import { useSyncWagmiState } from './hook/useSyncWagmiState'
+import { switchChainRequestAtom } from './atoms/switchChainRequestAtom'
 
 interface WalletProviderProps {
   reconnectOnMount?: boolean
@@ -93,6 +96,7 @@ export const WalletProvider = (props: WalletProviderProps) => {
   const { children } = props
   const [ready, setReady] = useState(false)
   const router = useRouter()
+  const updateRequestChain = useSetAtom(switchChainRequestAtom)
   usePrivyProvider()
   const wagmiConfig = useMemo(
     () => (typeof window !== 'undefined' && isInBinance() ? createW3WWagmiConfig() : createWagmiConfig()),
@@ -109,6 +113,20 @@ export const WalletProvider = (props: WalletProviderProps) => {
       setReady(true)
     })
   }, [])
+
+  useAccountEffect({
+    config: wagmiConfig,
+    onConnect: (data) => {
+      const { chainId, isReconnected } = data
+      if (!isReconnected) {
+        updateRequestChain((prev) => ({
+          ...prev,
+          chainId,
+          from: 'wagmi',
+        }))
+      }
+    },
+  })
   if (!ready) {
     return null // or a loading spinner
   }
@@ -126,6 +144,7 @@ export const WalletProvider = (props: WalletProviderProps) => {
 }
 
 const Sync = () => {
-  useSyncWalletState()
+  useRequestChainUpdate()
+  useSyncWagmiState()
   return null
 }

@@ -15,6 +15,7 @@ import { ParsedUrlQuery } from 'querystring'
 import { ReactNode, Suspense, useCallback, useMemo } from 'react'
 import { Field } from 'state/swap/actions'
 import { useDefaultsFromURLSearch, useSwapState } from 'state/swap/hooks'
+import { SwitchChainOption } from 'wallet/hook/useSwitchNetworkV2'
 import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
 import currencyId from 'utils/currencyId'
 import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
@@ -39,7 +40,7 @@ interface HandleCurrencySelectDeps {
   onCurrencySelection: (field: Field, currency: any) => void
   warningSwapHandler: (currency: any) => void
   canSwitch: boolean
-  switchNetworkAsync: (chainId: number, skipReplace?: boolean) => Promise<unknown>
+  switchNetwork: (chainId: number, options?: SwitchChainOption) => void
   outputChainId: number | undefined
   supportedBridgeChains: { data?: { originChainId: number; destinationChainId: number }[] }
   inputChainId: number | undefined
@@ -58,7 +59,7 @@ export const handleCurrencySelectFn = async ({
   onCurrencySelection,
   warningSwapHandler,
   canSwitch,
-  switchNetworkAsync,
+  switchNetwork,
   outputChainId,
   supportedBridgeChains,
   inputChainId,
@@ -73,8 +74,10 @@ export const handleCurrencySelectFn = async ({
 
   if (isInput && canSwitch && newCurrency.chainId !== inputChainId) {
     if (newCurrency.chainId in EvmChainId) {
-      const result = await switchNetworkAsync(newCurrency.chainId, true)
-      if (result === 'error') return
+      switchNetwork(newCurrency.chainId, {
+        replaceUrl: false,
+        from: 'switch',
+      })
     }
 
     const isSameAsOutput = currencyId(newCurrency) === outputCurrencyId && newCurrency.chainId === outputChainId
@@ -177,7 +180,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
     }
   }, [maxAmountInput, onUserInput])
 
-  const { canSwitch, switchNetworkAsync } = useSwitchNetwork()
+  const { canSwitch, switchNetwork } = useSwitchNetwork()
 
   const supportedBridgeChains = useBridgeAvailableRoutes()
 
@@ -189,7 +192,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
         onCurrencySelection,
         warningSwapHandler,
         canSwitch,
-        switchNetworkAsync,
+        switchNetwork,
         outputChainId,
         supportedBridgeChains,
         inputChainId,
@@ -205,7 +208,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
       onCurrencySelection,
       warningSwapHandler,
       canSwitch,
-      switchNetworkAsync,
+      switchNetwork,
       outputChainId,
       supportedBridgeChains,
       inputChainId,

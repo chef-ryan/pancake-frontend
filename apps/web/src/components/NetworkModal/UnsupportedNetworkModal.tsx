@@ -1,7 +1,6 @@
 import { Button, Grid, Message, MessageText, Modal, Text } from '@pancakeswap/uikit'
-import { useLocalNetworkChain } from 'hooks/useActiveChainId'
 import { useTranslation } from '@pancakeswap/localization'
-import { useSwitchNetwork, useSwitchNetworkLocal } from 'hooks/useSwitchNetwork'
+import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import Image from 'next/image'
 import useAuth from 'hooks/useAuth'
 import { useMenuItems } from 'components/Menu/hooks/useMenuItems'
@@ -11,13 +10,13 @@ import { useAccount } from 'wagmi'
 import { useMemo } from 'react'
 import { ChainId } from '@pancakeswap/chains'
 import { viemClients } from 'utils/viem'
+import { getQueryChainId } from 'wallet/util/getQueryChainId'
 import Dots from '../Loader/Dots'
 
 // Where chain is not supported or page not supported
 export function UnsupportedNetworkModal({ pageSupportedChains }: { pageSupportedChains: number[] }) {
-  const { switchNetworkAsync, isLoading, canSwitch } = useSwitchNetwork()
-  const switchNetworkLocal = useSwitchNetworkLocal()
-  const chainId = useLocalNetworkChain() || ChainId.BSC
+  const { switchNetwork, isLoading, canSwitch } = useSwitchNetwork()
+  const chainId = getQueryChainId()
   const { isConnected } = useAccount()
   const { logout } = useAuth()
   const { t } = useTranslation()
@@ -62,11 +61,9 @@ export function UnsupportedNetworkModal({ pageSupportedChains }: { pageSupported
           <Button
             isLoading={isLoading}
             onClick={() => {
-              if (supportedMainnetChains.map((c) => c?.id).includes(chainId)) {
-                switchNetworkAsync(chainId)
-              } else {
-                switchNetworkAsync(ChainId.BSC)
-              }
+              switchNetwork(chainId, {
+                from: 'switch',
+              })
             }}
           >
             {isLoading ? (
@@ -87,7 +84,9 @@ export function UnsupportedNetworkModal({ pageSupportedChains }: { pageSupported
             variant="secondary"
             onClick={() =>
               logout().then(() => {
-                switchNetworkLocal(ChainId.BSC)
+                switchNetwork(ChainId.BSC, {
+                  from: 'switch',
+                })
               })
             }
           >

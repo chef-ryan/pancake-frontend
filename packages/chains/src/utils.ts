@@ -41,3 +41,11 @@ export function isSolana(chainId?: UnifiedChainId) {
   if (!chainId) return false
   return chainId === NonEVMChainId.SOLANA
 }
+
+export function isChainSupported(chainId?: UnifiedChainId) {
+  if (!chainId) return false
+  return (
+    Object.values(ChainId).includes(chainId as ChainId) ||
+    Object.values(NonEVMChainId).includes(chainId as NonEVMChainId)
+  )
+}

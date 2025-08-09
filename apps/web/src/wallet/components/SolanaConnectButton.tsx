@@ -2,8 +2,8 @@ import { Button, ButtonProps, FlexGap, WalletFilledV2Icon } from '@pancakeswap/u
 import { useSetAtom, useAtomValue } from 'jotai'
 import { useCallback } from 'react'
 import Trans from 'components/Trans'
+import { accountActiveChainAtom } from 'wallet/atoms/accountStateAtoms'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { accountActiveChainAtom } from 'hooks/useAccountActiveChain'
 import { solanaWalletModalAtom, SolanaWalletStatus } from '../atoms/solanaWalletAtoms'
 
 interface SolanaConnectButtonProps extends ButtonProps {

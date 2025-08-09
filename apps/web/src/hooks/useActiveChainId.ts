@@ -1,1 +1,1 @@
-export { useActiveChainId, useLocalNetworkChain } from './useAccountActiveChain'
+export { useActiveChainId } from './useAccountActiveChain'

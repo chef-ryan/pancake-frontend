@@ -34,23 +34,23 @@ const Providers: React.FC<
   return (
     <FirebaseAuthProvider>
       <Provider store={store}>
-        <PrivyProvider>
-          <QueryClientProvider client={queryClient}>
-            <WalletProvider>
-              <HydrationBoundary state={dehydratedState}>
-                <NextThemeProvider>
-                  <LanguageProvider>
+        <LanguageProvider>
+          <PrivyProvider>
+            <QueryClientProvider client={queryClient}>
+              <WalletProvider>
+                <HydrationBoundary state={dehydratedState}>
+                  <NextThemeProvider>
                     <StyledUIKitProvider>
                       <HistoryManagerProvider>
                         <ModalProvider portalProvider={DialogProvider}>{children}</ModalProvider>
                       </HistoryManagerProvider>
                     </StyledUIKitProvider>
-                  </LanguageProvider>
-                </NextThemeProvider>
-              </HydrationBoundary>
-            </WalletProvider>
-          </QueryClientProvider>
-        </PrivyProvider>
+                  </NextThemeProvider>
+                </HydrationBoundary>
+              </WalletProvider>
+            </QueryClientProvider>
+          </PrivyProvider>
+        </LanguageProvider>
       </Provider>
     </FirebaseAuthProvider>
   )

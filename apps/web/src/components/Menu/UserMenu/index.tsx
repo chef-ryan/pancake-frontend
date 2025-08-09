@@ -21,7 +21,7 @@ import { ClaimGiftProvider, useClaimGiftContext } from 'views/Gift/providers/Cla
 import { SendGiftProvider, useSendGiftContext } from 'views/Gift/providers/SendGiftProvider'
 import { UnclaimedOnlyProvider } from 'views/Gift/providers/UnclaimedOnlyProvider'
 import { useAccount } from 'wagmi'
-import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { useAccountActiveChain } from 'hooks/useAccountActiveChain'
 import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ConnectWalletButton from 'components/ConnectWalletButton'

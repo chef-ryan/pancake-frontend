@@ -1,5 +1,5 @@
 import { ChainId } from '@pancakeswap/chains'
-import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { useAccountActiveChain } from 'hooks/useAccountActiveChain'
 import AnniversaryAchievementModal from './AnniversaryAchievementModal'
 import V3AirdropModal from './V3AirdropModal'
 
