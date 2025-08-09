@@ -32,7 +32,7 @@ import { safeGetAddress, safeGetUnifiedAddress } from 'utils'
 import useUserAddedTokens, { useUserAddedTokensByChainIds } from '../state/user/hooks/useUserAddedTokens'
 import { useActiveChainId } from './useActiveChainId'
 import useNativeCurrency, { useUnifiedNativeCurrency } from './useNativeCurrency'
-import useAccountActiveChain from './useAccountActiveChain'
+import { useAccountActiveChain } from './useAccountActiveChain'
 import { useSolanaTokenList } from './solana/useSolanaTokenList'
 import { useSolanaToken } from './solana/useSolanaToken'
 

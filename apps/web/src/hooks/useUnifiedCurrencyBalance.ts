@@ -10,7 +10,7 @@ import {
 import { useMemo } from 'react'
 import { useSolanaTokenBalance, useSolanaTokenBalances } from 'state/token/solanaTokenBalances'
 import { useCurrencyBalance, useCurrencyBalances } from '../state/wallet/hooks'
-import useAccountActiveChain from './useAccountActiveChain'
+import { useAccountActiveChain } from './useAccountActiveChain'
 
 export type UnifiedBalance = CurrencyAmount<Currency> | UnifiedCurrencyAmount<UnifiedCurrency>
 

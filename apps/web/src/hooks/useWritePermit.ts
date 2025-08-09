@@ -11,7 +11,7 @@ import { useCallback } from 'react'
 import { publicClient } from 'utils/viem'
 import { Address, isHex } from 'viem'
 import { useSignTypedData, useWalletClient } from 'wagmi'
-import useAccountActiveChain from './useAccountActiveChain'
+import { useAccountActiveChain } from './useAccountActiveChain'
 import { useIsSmartContract } from './useIsSmartContract'
 
 const useAllowanceTransferPermit = (overrideChainId?: number) => {
