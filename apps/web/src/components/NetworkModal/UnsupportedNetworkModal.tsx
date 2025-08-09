@@ -16,7 +16,7 @@ import Dots from '../Loader/Dots'
 // Where chain is not supported or page not supported
 export function UnsupportedNetworkModal({ pageSupportedChains }: { pageSupportedChains: number[] }) {
   const { switchNetwork, isLoading, canSwitch } = useSwitchNetwork()
-  const chainId = getQueryChainId()
+  const chainId = pageSupportedChains[0]
   const { isConnected } = useAccount()
   const { logout } = useAuth()
   const { t } = useTranslation()
@@ -63,6 +63,7 @@ export function UnsupportedNetworkModal({ pageSupportedChains }: { pageSupported
             onClick={() => {
               switchNetwork(chainId, {
                 from: 'switch',
+                replaceUrl: true,
               })
             }}
           >
