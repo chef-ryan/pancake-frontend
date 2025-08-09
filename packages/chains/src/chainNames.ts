@@ -114,14 +114,14 @@ export const chainNameToChainId = Object.entries(chainNames).reduce((acc, [chain
   }
 }, {} as Record<string, UnifiedChainId>)
 
-export const chainFullNamesToChainId = Object.entries(chainFullNames).reduce((acc, [chainId, chainName]) => {
+const chainFullNamesToChainId = Object.entries(chainFullNames).reduce((acc, [chainId, chainName]) => {
   return {
     [chainName]: +chainId as unknown as UnifiedChainId,
     ...acc,
   }
 }, {} as Record<string, UnifiedChainId>)
 
-export const kebabCaseNamesToChainId = Object.entries(chainNamesInKebabCase).reduce((acc, [chainId, chainName]) => {
+const kebabCaseNamesToChainId = Object.entries(chainNamesInKebabCase).reduce((acc, [chainId, chainName]) => {
   return {
     [chainName]: +chainId as unknown as UnifiedChainId,
     ...acc,

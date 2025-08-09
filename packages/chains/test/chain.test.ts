@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ChainId, isTestnetChainId, isEvm } from '../src'
+import { ChainId, isTestnetChainId, isEvm, NonEVMChainId } from '../src'
 
 describe('chains', () => {
   it('should be defined', () => {
@@ -13,7 +13,7 @@ describe('chains', () => {
 
   it('should check if chain is evm', () => {
     expect(isEvm(ChainId.BSC)).toBeTruthy()
-    expect(isEvm(ChainId.SOLANA)).toBeFalsy()
-    expect(isEvm(ChainId.APTOS)).toBeFalsy()
+    expect(isEvm(NonEVMChainId.SOLANA)).toBeFalsy()
+    expect(isEvm(NonEVMChainId.APTOS)).toBeFalsy()
   })
 })

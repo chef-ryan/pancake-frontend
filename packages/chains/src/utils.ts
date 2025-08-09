@@ -32,7 +32,7 @@ export function isTestnetChainId(chainId: ChainId) {
   return testnetChainIds.includes(chainId)
 }
 
-export function isEvm(chainId?: ChainId) {
+export function isEvm(chainId?: number) {
   if (!chainId) return false
   return chainId < 1_000_000
 }
