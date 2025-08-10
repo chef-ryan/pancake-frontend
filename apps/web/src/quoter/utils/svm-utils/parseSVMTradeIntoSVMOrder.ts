@@ -81,14 +81,29 @@ export function parseRoutePlansToRoutes(svmTrade: ExtendedSolRouterTrade): Route
   return routes
 }
 
+const FEE_PRECISION = 1_000_000n
+
+function trimPercentage(fee: number) {
+  // Round to 5 decimal places to remove floating point precision errors
+  // This handles cases like 0.00120000000002 becoming 0.0012
+  return Math.round(fee * 100000) / 100000
+}
+
 function createRoute(currentGroup: RouterPlan[], svmTrade: ExtendedSolRouterTrade): Route {
   // Process the current group into a single Route
-  // TODO: need to update feeAmount. It's not correct.
   const pools = currentGroup.map((plan) => {
+    const inAmountNumber = BigInt(plan.swapInfo.inAmount)
+    const feeAmountNumber = BigInt(plan.swapInfo.feeAmount)
+
+    // In case inAmountNumber is 0 or NaN
+    const feeAmount = inAmountNumber > 0 ? (feeAmountNumber * FEE_PRECISION) / inAmountNumber : 0n
+
+    const fee = (Number(feeAmount) / Number(FEE_PRECISION)) * 100
+
     const pool: SVMPool = {
       type: PoolType.SVM,
       id: plan.swapInfo.ammKey.toString(),
-      fee: plan.bps,
+      fee: trimPercentage(fee),
       feeAmount: plan.swapInfo.feeAmount,
       feeMintAddress: plan.swapInfo.feeMint.toString(),
     }

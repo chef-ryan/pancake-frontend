@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Route, RouteType } from '@pancakeswap/smart-router'
+import { Route, RouteType, SVMPool } from '@pancakeswap/smart-router'
 import { AutoColumn, Flex, Modal, ModalV2, QuestionHelper, Text, UseModalV2Props, useTooltip } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { memo, useMemo } from 'react'
@@ -164,7 +164,7 @@ function SolanaRouteDisplayContainer({ route }: RouteDisplayProps) {
       percent={route.percent}
       inputCurrency={inputCurrency}
       outputCurrency={outputCurrency}
-      pairNodes={<JupPairNodes pairs={pairs} pools={pools} />}
+      pairNodes={<JupPairNodes pairs={pairs} pools={pools as SVMPool[]} />}
     />
   )
 }

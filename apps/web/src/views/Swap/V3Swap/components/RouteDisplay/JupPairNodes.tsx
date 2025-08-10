@@ -1,25 +1,23 @@
 import { Currency, SPLToken } from '@pancakeswap/sdk'
 import React, { useMemo } from 'react'
 import { useUnifiedCurrency } from 'hooks/Tokens'
+import { SVMPool } from '@pancakeswap/smart-router'
 import { PairNode } from '../PairNode'
 
 export type Pair = [Currency, Currency]
 
 export interface PairNodeProps {
   pair: Pair
-  text: string | React.ReactNode
   className: string
-  tooltipText: string
+  poolFee?: number
 }
-
-export type PairNodeComponent = React.ComponentType<PairNodeProps>
 
 interface Params {
   pairs: Pair[]
-  pools: any[]
+  pools: SVMPool[]
 }
 
-function SolanaPairNode({ pair, className }: Omit<PairNodeProps, 'text' | 'tooltipText'>) {
+function SolanaPairNode({ pair, className, poolFee }: PairNodeProps) {
   const [input, output] = pair as [SPLToken, SPLToken]
 
   // why need to use useUnifiedCurrency here?
@@ -30,7 +28,7 @@ function SolanaPairNode({ pair, className }: Omit<PairNodeProps, 'text' | 'toolt
   const inputCurrency = useUnifiedCurrency(input.address, input.chainId)
   const outputCurrency = useUnifiedCurrency(output.address, output.chainId)
 
-  const tooltipText = `${inputCurrency?.symbol}/${outputCurrency?.symbol}`
+  const tooltipText = `${inputCurrency?.symbol}/${outputCurrency?.symbol} ${poolFee ? `(${poolFee}%)` : ''}`
 
   const slpTokenPair: Pair | undefined = useMemo(() => {
     if (!inputCurrency || !outputCurrency) {
@@ -46,10 +44,19 @@ function SolanaPairNode({ pair, className }: Omit<PairNodeProps, 'text' | 'toolt
   return <PairNode pair={slpTokenPair} text={tooltipText} className={className} tooltipText={tooltipText} />
 }
 
-export function JupPairNodes({ pairs }: Params): React.ReactNode[] | null {
+export function JupPairNodes({ pairs, pools }: Params): React.ReactNode[] | null {
+  const isMatchLength = pairs?.length === pools?.length
+
   return pairs.length > 0
     ? pairs.map((p, index) => {
-        return <SolanaPairNode pair={p} className="highlight" key={index} />
+        return (
+          <SolanaPairNode
+            pair={p}
+            poolFee={isMatchLength ? pools[0].fee : undefined}
+            className="highlight"
+            key={index}
+          />
+        )
       })
     : null
 }
