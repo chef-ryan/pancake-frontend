@@ -1,3 +1,4 @@
+import { isSolana } from '@pancakeswap/chains'
 import { useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import {
@@ -18,14 +19,16 @@ import {
   useTooltip,
   WarningIcon,
 } from '@pancakeswap/uikit'
-import { useUserSlippage } from '@pancakeswap/utils/user'
+import { useSolanaUserSlippage, useUserSlippage } from '@pancakeswap/utils/user'
 import { VerticalDivider } from '@pancakeswap/widgets-internal'
 import GlobalSettings from 'components/Menu/GlobalSettings'
 import { DEFAULT_SLIPPAGE_TOLERANCE, SlippageError } from 'components/Menu/GlobalSettings/TransactionSettings'
+import { SlippageTabs } from 'components/Settings/SlippageTabs'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { SettingsMode } from 'components/Menu/GlobalSettings/types'
 
 import { useAutoSlippageEnabled, useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { escapeRegExp } from 'utils'
 import { basisPointsToPercent } from 'utils/exchange'
@@ -64,18 +67,30 @@ interface SlippageButtonProps {
   enableAutoSlippage?: boolean
 }
 
-export const SlippageButton = ({ enableAutoSlippage = false }: SlippageButtonProps) => {
+export const SlippageButton = ({ enableAutoSlippage: enableAutoSlippage_ = false }: SlippageButtonProps) => {
   const { t } = useTranslation()
   const { theme } = useTheme()
   const { isMobile } = useMatchBreakpoints()
+  const { chainId } = useAccountActiveChain()
 
   const { isOpen, onOpen, onDismiss } = useModalV2()
 
   // Calculate auto slippage
   const { slippageTolerance, isAuto } = useAutoSlippageWithFallback()
   const [userSlippageTolerance] = useUserSlippage()
+  const [solanaSlippageTolerance] = useSolanaUserSlippage()
 
-  const tolerance = enableAutoSlippage ? slippageTolerance : userSlippageTolerance
+  const { tolerance, enableAutoSlippage } = useMemo(
+    () => ({
+      enableAutoSlippage: isSolana(chainId) ? false : enableAutoSlippage_,
+      tolerance: isSolana(chainId)
+        ? solanaSlippageTolerance
+        : enableAutoSlippage_
+        ? slippageTolerance
+        : userSlippageTolerance,
+    }),
+    [chainId, enableAutoSlippage_, slippageTolerance, solanaSlippageTolerance, userSlippageTolerance],
+  )
 
   const isRiskyLow = tolerance < 50
   const isRiskyHigh = tolerance > 100
@@ -157,6 +172,8 @@ const SlippageSettingsModal = ({
 }) => {
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
+  const { chainId } = useAccountActiveChain()
+
   const [isAutoSlippageEnabled, setIsAutoSlippageEnabled] = useAutoSlippageEnabled()
   const [userSlippageTolerance, setUserSlippageTolerance] = useUserSlippage()
 
@@ -183,24 +200,27 @@ const SlippageSettingsModal = ({
     slippageError = undefined
   }
 
-  const parseCustomSlippage = useCallback((value: string) => {
-    if (value === '' || inputRegex.test(escapeRegExp(value))) {
-      setSlippageInput(value)
+  const parseCustomSlippage = useCallback(
+    (value: string) => {
+      if (value === '' || inputRegex.test(escapeRegExp(value))) {
+        setSlippageInput(value)
 
-      try {
-        const valueAsIntFromRoundedFloat = Number.parseInt((Number.parseFloat(value) * 100).toString())
-        if (!Number.isNaN(valueAsIntFromRoundedFloat) && valueAsIntFromRoundedFloat < 5000) {
-          setUserSlippageTolerance(valueAsIntFromRoundedFloat)
+        try {
+          const valueAsIntFromRoundedFloat = Number.parseInt((Number.parseFloat(value) * 100).toString())
+          if (!Number.isNaN(valueAsIntFromRoundedFloat) && valueAsIntFromRoundedFloat < 5000) {
+            setUserSlippageTolerance(valueAsIntFromRoundedFloat)
+          }
+        } catch (error) {
+          console.error(error)
         }
-      } catch (error) {
-        console.error(error)
       }
-    }
-  }, [])
+    },
+    [setUserSlippageTolerance],
+  )
 
-  return (
-    <ModalV2 isOpen={isOpen} onDismiss={onDismiss} closeOnOverlayClick>
-      <MotionModal title={t('Slippage setting')} onDismiss={onDismiss} minHeight="100px">
+  const evmSlippageSetting = useMemo(
+    () => (
+      <>
         <PreTitle mb="8px">{t('Liquidity Slippage')}</PreTitle>
         <FlexGap gap="16px" justifyContent="space-between" alignItems="center" flexWrap="wrap">
           <Box>
@@ -329,6 +349,27 @@ const SlippageSettingsModal = ({
             </Text>
           </Message>
         )}
+      </>
+    ),
+    [
+      autoSlippageActive,
+      enableAutoSlippage,
+      isMobile,
+      parseCustomSlippage,
+      setIsAutoSlippageEnabled,
+      setUserSlippageTolerance,
+      slippageError,
+      slippageInput,
+      slippageInputIsValid,
+      t,
+      userSlippageTolerance,
+    ],
+  )
+
+  return (
+    <ModalV2 isOpen={isOpen} onDismiss={onDismiss} closeOnOverlayClick>
+      <MotionModal title={t('Slippage setting')} onDismiss={onDismiss} minHeight="100px">
+        {isSolana(chainId) ? <SlippageTabs /> : evmSlippageSetting}
       </MotionModal>
     </ModalV2>
   )

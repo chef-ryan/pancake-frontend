@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Pair, Token } from '@pancakeswap/sdk'
+import { Pair, Token, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import {
   Box,
   Button,
@@ -13,23 +13,21 @@ import {
   useMatchBreakpoints,
   useModal,
 } from '@pancakeswap/uikit'
-import { formatAmount } from '@pancakeswap/utils/formatFractions'
-import { CurrencyLogo, DoubleCurrencyLogo, SwapUIV2 } from '@pancakeswap/widgets-internal'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { styled } from 'styled-components'
-
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
+import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import isUndefinedOrNull from '@pancakeswap/utils/isUndefinedOrNull'
-import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
-import { StablePair } from 'views/AddLiquidity/AddStableLiquidity/hooks/useStableLPDerivedMintInfo'
-
+import { CurrencyLogo, DoubleCurrencyLogo, SwapUIV2 } from '@pancakeswap/widgets-internal'
 import { RiskInputPanelDisplay } from 'components/AccessRisk/SwapRevampRiskDisplay'
 import { FiatLogo } from 'components/Logo/CurrencyLogo'
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useCurrencyBalance } from 'state/wallet/hooks'
+import { CommonBasesType } from 'components/SearchModal/types'
+import { useUnifiedUSDPriceAmount } from 'hooks/useStablecoinPrice'
+import { useUnifiedCurrencyBalance } from 'hooks/useUnifiedCurrencyBalance'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { styled } from 'styled-components'
 import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
-import { useAccount } from 'wagmi'
+import { StablePair } from 'views/AddLiquidity/AddStableLiquidity/hooks/useStableLPDerivedMintInfo'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { FONT_SIZE, LOGO_SIZE, useFontSize } from './state'
 
@@ -159,18 +157,18 @@ interface CurrencyInputPanelProps {
   onMax?: () => void
   showQuickInputButton?: boolean
   showMaxButton: boolean
-  maxAmount?: CurrencyAmount<Currency>
+  maxAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
   lpPercent?: string
   label?: string
-  onCurrencySelect?: (currency: Currency) => void
-  currency?: Currency | null
+  onCurrencySelect?: (currency: UnifiedCurrency) => void
+  currency?: UnifiedCurrency | null
   disableCurrencySelect?: boolean
   hideBalance?: boolean
   pair?: Pair | StablePair | null
-  otherCurrency?: Currency | null
+  otherCurrency?: UnifiedCurrency | null
   id: string
   showCommonBases?: boolean
-  commonBasesType?: string
+  commonBasesType?: CommonBasesType
   showSearchInput?: boolean
   beforeButton?: React.ReactNode
   isDependent?: boolean
@@ -222,20 +220,18 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   modalTitle,
   showSearchHeader,
 }: CurrencyInputPanelProps) {
-  const { address: account } = useAccount()
-  // const value = useRef<string | undefined>(defaultValue)
+  const { unifiedAccount: account, chainId } = useAccountActiveChain()
   const [value, setValue] = useState<string | undefined>(defaultValue)
-  const { chainId } = useActiveChainId()
 
-  const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
+  const selectedCurrencyBalance = useUnifiedCurrencyBalance(currency ?? undefined)
 
   const { t } = useTranslation()
 
   const mode = id
-  const token = pair ? pair.liquidityToken : currency?.isToken ? currency : null
+  const token = pair ? pair.liquidityToken : currency?.isToken && currency instanceof Token ? currency : null
   const [isInputFocus, setIsInputFocus] = useState(false)
 
-  const amountInDollar = useStablecoinPriceAmount(
+  const amountInDollar = useUnifiedUSDPriceAmount(
     showUSDPrice ? currency ?? undefined : undefined,
     value !== undefined && Number.isFinite(+value) ? +value : undefined,
   )

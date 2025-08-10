@@ -11,7 +11,7 @@ import {
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import { useUserSlippage } from '@pancakeswap/utils/user'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { escapeRegExp } from 'utils'
 
 import { VerticalDivider } from '@pancakeswap/widgets-internal'
@@ -60,30 +60,49 @@ const DEFAULT_TXN_DEADLINE = 20 // In Minutes
 
 export const DEFAULT_SLIPPAGE_TOLERANCE = 50
 
-const SlippageTabs = () => {
-  const [userSlippageTolerance, setUserSlippageTolerance] = useUserSlippage()
-  const [ttl, setTTL] = useUserTransactionTTL()
+export const SlippageTabsComponent = ({
+  slippageTolerance,
+  ttl,
+  setSlippageTolerance,
+  setTTL,
+  isAutoSlippageEnabled,
+  setIsAutoSlippageEnabled,
+}: {
+  slippageTolerance: number
+  setSlippageTolerance: (val: number) => void
+  ttl?: number
+  setTTL?: (val: number) => void
+  isAutoSlippageEnabled?: boolean
+  setIsAutoSlippageEnabled?: (val: boolean) => void
+}) => {
   const [slippageInput, setSlippageInput] = useState('')
   const [deadlineInput, setDeadlineInput] = useState('')
-  const [isAutoSlippageEnabled, setIsAutoSlippageEnabled] = useAutoSlippageEnabled()
   const { isMobile } = useMatchBreakpoints()
   const { t } = useTranslation()
 
+  const { isShowAutoSlippage, isShowTTL } = useMemo(
+    () => ({
+      isShowAutoSlippage:
+        typeof setIsAutoSlippageEnabled !== 'undefined' && typeof isAutoSlippageEnabled !== 'undefined',
+      isShowTTL: typeof setTTL !== 'undefined' && typeof ttl !== 'undefined',
+    }),
+    [isAutoSlippageEnabled, setIsAutoSlippageEnabled, setTTL, ttl],
+  )
   const slippageInputIsValid =
-    slippageInput === '' || (userSlippageTolerance / 100).toFixed(2) === Number.parseFloat(slippageInput).toFixed(2)
+    slippageInput === '' || (slippageTolerance / 100).toFixed(2) === Number.parseFloat(slippageInput).toFixed(2)
   const deadlineInputIsValid =
     deadlineInput === '' || (ttl !== undefined && (Number(ttl) / 60).toString() === deadlineInput)
 
   let slippageError: SlippageError | undefined
   if (slippageInput !== '' && !slippageInputIsValid) {
     slippageError = SlippageError.InvalidInput
-  } else if (slippageInputIsValid && userSlippageTolerance < 50) {
+  } else if (slippageInputIsValid && slippageTolerance < 50) {
     // Slippage < 0.5%
     slippageError = SlippageError.RiskyLow
-  } else if (slippageInputIsValid && userSlippageTolerance > 2000) {
+  } else if (slippageInputIsValid && slippageTolerance > 2000) {
     // Slippage > 20%
     slippageError = SlippageError.RiskyVeryHigh
-  } else if (slippageInputIsValid && userSlippageTolerance > 100) {
+  } else if (slippageInputIsValid && slippageTolerance > 100) {
     // Slippage > 1%
     slippageError = SlippageError.RiskyHigh
   } else {
@@ -107,7 +126,7 @@ const SlippageTabs = () => {
       try {
         const valueAsIntFromRoundedFloat = Number.parseInt((Number.parseFloat(value) * 100).toString())
         if (!Number.isNaN(valueAsIntFromRoundedFloat) && valueAsIntFromRoundedFloat < 5000) {
-          setUserSlippageTolerance(valueAsIntFromRoundedFloat)
+          setSlippageTolerance(valueAsIntFromRoundedFloat)
         }
       } catch (error) {
         console.error(error)
@@ -119,7 +138,7 @@ const SlippageTabs = () => {
     try {
       const valueAsInt: number = Number.parseInt(value) * 60
       if (!Number.isNaN(valueAsInt) && valueAsInt > 60 && valueAsInt < THREE_DAYS_IN_SECONDS) {
-        setTTL(valueAsInt)
+        setTTL?.(valueAsInt)
       } else {
         setDeadlineError(DeadlineError.InvalidInput)
       }
@@ -129,8 +148,8 @@ const SlippageTabs = () => {
   }
 
   return (
-    <Flex flexDirection="column">
-      <Flex flexDirection="column" mb="24px">
+    <FlexGap flexDirection="column" gap="24px">
+      <Flex flexDirection="column">
         <Flex mb="12px">
           <Text>{t('Slippage Tolerance')}</Text>
           <QuestionHelper
@@ -143,24 +162,26 @@ const SlippageTabs = () => {
         </Flex>
 
         <ButtonsContainer style={{ flexWrap: isMobile ? 'nowrap' : 'wrap' }}>
+          {isShowAutoSlippage && (
+            <StyledButton
+              scale="sm"
+              onClick={() => {
+                setSlippageInput('')
+                setIsAutoSlippageEnabled?.(true)
+              }}
+              variant={isAutoSlippageEnabled ? 'subtle' : 'light'}
+            >
+              {t('Auto')}
+            </StyledButton>
+          )}
           <StyledButton
             scale="sm"
             onClick={() => {
               setSlippageInput('')
-              setIsAutoSlippageEnabled(true)
+              setSlippageTolerance(10)
+              setIsAutoSlippageEnabled?.(false)
             }}
-            variant={isAutoSlippageEnabled ? 'subtle' : 'light'}
-          >
-            {t('Auto')}
-          </StyledButton>
-          <StyledButton
-            scale="sm"
-            onClick={() => {
-              setSlippageInput('')
-              setUserSlippageTolerance(10)
-              setIsAutoSlippageEnabled(false)
-            }}
-            variant={userSlippageTolerance === 10 && !isAutoSlippageEnabled ? 'subtle' : 'light'}
+            variant={slippageTolerance === 10 && !isAutoSlippageEnabled ? 'subtle' : 'light'}
           >
             0.1%
           </StyledButton>
@@ -168,10 +189,10 @@ const SlippageTabs = () => {
             scale="sm"
             onClick={() => {
               setSlippageInput('')
-              setUserSlippageTolerance(50)
-              setIsAutoSlippageEnabled(false)
+              setSlippageTolerance(50)
+              setIsAutoSlippageEnabled?.(false)
             }}
-            variant={userSlippageTolerance === 50 && !isAutoSlippageEnabled ? 'subtle' : 'light'}
+            variant={slippageTolerance === 50 && !isAutoSlippageEnabled ? 'subtle' : 'light'}
           >
             0.5%
           </StyledButton>
@@ -179,10 +200,10 @@ const SlippageTabs = () => {
             scale="sm"
             onClick={() => {
               setSlippageInput('')
-              setUserSlippageTolerance(100)
-              setIsAutoSlippageEnabled(false)
+              setSlippageTolerance(100)
+              setIsAutoSlippageEnabled?.(false)
             }}
-            variant={userSlippageTolerance === 100 && !isAutoSlippageEnabled ? 'subtle' : 'light'}
+            variant={slippageTolerance === 100 && !isAutoSlippageEnabled ? 'subtle' : 'light'}
           >
             1.0%
           </StyledButton>
@@ -192,21 +213,21 @@ const SlippageTabs = () => {
                 scale="md"
                 inputMode="decimal"
                 pattern="^[0-9]*[.,]?[0-9]{0,2}$"
-                placeholder={isAutoSlippageEnabled ? 'Auto' : (userSlippageTolerance / 100).toFixed(2)}
+                placeholder={isAutoSlippageEnabled ? 'Auto' : (slippageTolerance / 100).toFixed(2)}
                 value={slippageInput}
                 onBlur={() => {
-                  parseCustomSlippage((userSlippageTolerance / 100).toFixed(2))
+                  parseCustomSlippage((slippageTolerance / 100).toFixed(2))
                 }}
                 onChange={(event) => {
                   if (isAutoSlippageEnabled) {
-                    setIsAutoSlippageEnabled(false)
+                    setIsAutoSlippageEnabled?.(false)
                   }
                   if (event.currentTarget.validity.valid) {
                     parseCustomSlippage(event.target.value.replace(/,/g, '.'))
                   }
                 }}
                 isWarning={!slippageInputIsValid}
-                isSuccess={![10, 50, 100].includes(userSlippageTolerance)}
+                isSuccess={![10, 50, 100].includes(slippageTolerance)}
                 style={{
                   paddingRight: '28px',
                 }}
@@ -242,7 +263,7 @@ const SlippageTabs = () => {
                 role="button"
                 onClick={() => {
                   setSlippageInput('')
-                  setUserSlippageTolerance(DEFAULT_SLIPPAGE_TOLERANCE)
+                  setSlippageTolerance(DEFAULT_SLIPPAGE_TOLERANCE)
                 }}
                 style={{
                   textDecoration: 'underline',
@@ -261,59 +282,77 @@ const SlippageTabs = () => {
           </Message>
         )}
       </Flex>
-      <Box mb="24px">
-        <Flex alignItems="center">
-          <Text>{t('Tx deadline')}</Text>
-          <QuestionHelper
-            text={t('Your transaction will revert if it is left confirming for longer than this time.')}
-            placement="top"
-            ml="4px"
-          />
-        </Flex>
-        <Flex alignItems="center">
-          <Box position="relative" width="128px" mt="4px">
-            <Input
-              scale="md"
-              inputMode="numeric"
-              pattern="^[0-9]+$"
-              isWarning={!!deadlineError}
-              placeholder={(Number(ttl) / 60).toString()}
-              value={deadlineInput}
-              onChange={(event) => {
-                if (event.currentTarget.validity.valid) {
-                  setDeadlineInput(event.target.value)
-                }
-              }}
-              onBlur={(event) => {
-                if (event.currentTarget.validity.valid) {
-                  parseCustomDeadline(event.target.value)
-                }
-              }}
-              style={{
-                paddingRight: '48px',
-              }}
+      {isShowTTL && (
+        <Box>
+          <Flex alignItems="center">
+            <Text>{t('Tx deadline')}</Text>
+            <QuestionHelper
+              text={t('Your transaction will revert if it is left confirming for longer than this time.')}
+              placement="top"
+              ml="4px"
             />
-            <Flex position="absolute" right="8px" top="8px" alignItems="center">
-              <StyledVerticalDivider />
-              <Text color="textSubtle">{t('Mins')}</Text>
-            </Flex>
-          </Box>
-          <PrimaryOutlineButton
-            ml="8px"
-            mt="3px"
-            variant="text"
-            scale="sm"
-            onClick={() => {
-              setDeadlineInput('')
-              parseCustomDeadline(DEFAULT_TXN_DEADLINE.toString())
-            }}
-          >
-            {t('Reset')}
-          </PrimaryOutlineButton>
-        </Flex>
-      </Box>
-    </Flex>
+          </Flex>
+          <Flex alignItems="center">
+            <Box position="relative" width="128px" mt="4px">
+              <Input
+                scale="md"
+                inputMode="numeric"
+                pattern="^[0-9]+$"
+                isWarning={!!deadlineError}
+                placeholder={(Number(ttl) / 60).toString()}
+                value={deadlineInput}
+                onChange={(event) => {
+                  if (event.currentTarget.validity.valid) {
+                    setDeadlineInput(event.target.value)
+                  }
+                }}
+                onBlur={(event) => {
+                  if (event.currentTarget.validity.valid) {
+                    parseCustomDeadline(event.target.value)
+                  }
+                }}
+                style={{
+                  paddingRight: '48px',
+                }}
+              />
+              <Flex position="absolute" right="8px" top="8px" alignItems="center">
+                <StyledVerticalDivider />
+                <Text color="textSubtle">{t('Mins')}</Text>
+              </Flex>
+            </Box>
+            <PrimaryOutlineButton
+              ml="8px"
+              mt="3px"
+              variant="text"
+              scale="sm"
+              onClick={() => {
+                setDeadlineInput('')
+                parseCustomDeadline(DEFAULT_TXN_DEADLINE.toString())
+              }}
+            >
+              {t('Reset')}
+            </PrimaryOutlineButton>
+          </Flex>
+        </Box>
+      )}
+    </FlexGap>
   )
 }
 
+const SlippageTabs = () => {
+  const [userSlippageTolerance, setUserSlippageTolerance] = useUserSlippage()
+  const [isAutoSlippageEnabled, setIsAutoSlippageEnabled] = useAutoSlippageEnabled()
+  const [ttl, setTTL] = useUserTransactionTTL()
+
+  return (
+    <SlippageTabsComponent
+      slippageTolerance={userSlippageTolerance}
+      setSlippageTolerance={setUserSlippageTolerance}
+      ttl={ttl}
+      setTTL={setTTL}
+      isAutoSlippageEnabled={isAutoSlippageEnabled}
+      setIsAutoSlippageEnabled={setIsAutoSlippageEnabled}
+    />
+  )
+}
 export default SlippageTabs

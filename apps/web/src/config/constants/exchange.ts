@@ -1,18 +1,15 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 import { Percent, Token, WNATIVE } from '@pancakeswap/sdk'
 import {
-  BUSD,
-  USDC,
-  USDT,
-  WBTC_ETH,
-  arbSepoliaTokens,
   arbitrumGoerliTokens,
   arbitrumTokens,
+  arbSepoliaTokens,
   baseSepoliaTokens,
   baseTestnetTokens,
   baseTokens,
   bscTestnetTokens,
   bscTokens,
+  BUSD,
   lineaTestnetTokens,
   lineaTokens,
   monadTestnetTokens,
@@ -22,10 +19,17 @@ import {
   polygonZkEvmTokens,
   scrollSepoliaTokens,
   sepoliaTokens,
+  solanaTokens,
+  USDC,
+  USDT,
+  WBTC_ETH,
   zkSyncTestnetTokens,
   zksyncTokens,
 } from '@pancakeswap/tokens'
+
 import { ChainTokenList } from './types'
+
+// Remove toSolanaTokenInfo function
 
 export {
   ADDITIONAL_BASES,
@@ -86,6 +90,8 @@ export const SUGGESTED_BASES: ChainTokenList = {
   [ChainId.ARBITRUM_SEPOLIA]: [arbSepoliaTokens.usdc, arbSepoliaTokens.weth],
   [ChainId.BASE_SEPOLIA]: [baseSepoliaTokens.usdc, baseSepoliaTokens.weth],
   [ChainId.MONAD_TESTNET]: [monadTestnetTokens.wmon, monadTestnetTokens.usdc, monadTestnetTokens.usdt],
+  [NonEVMChainId.SOLANA]: [solanaTokens.usdc, solanaTokens.usdt],
+  [NonEVMChainId.APTOS]: [],
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
@@ -111,6 +117,8 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   [ChainId.ARBITRUM_SEPOLIA]: [arbSepoliaTokens.usdc, arbSepoliaTokens.weth],
   [ChainId.BASE_SEPOLIA]: [baseSepoliaTokens.usdc, baseSepoliaTokens.weth],
   [ChainId.MONAD_TESTNET]: [monadTestnetTokens.usdc, monadTestnetTokens.busd],
+  [NonEVMChainId.SOLANA]: [solanaTokens.usdc, solanaTokens.usdt],
+  [NonEVMChainId.APTOS]: [],
 }
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
@@ -158,6 +166,7 @@ export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(1500n, BIPS_
 
 // used to ensure the user doesn't send so much BNB so they end up with <.01
 export const MIN_BNB: bigint = BIG_INT_TEN ** 15n // .001 BNB
+export const MIN_SOL_RESERVER: bigint = BIG_INT_TEN ** 7n // 0.01 SOL
 export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(50n, BIPS_BASE)
 
 export const ZERO_PERCENT = new Percent('0')

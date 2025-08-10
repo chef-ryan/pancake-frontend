@@ -1,5 +1,5 @@
 import { PriceOrder } from '@pancakeswap/price-api-sdk'
-import { Currency } from '@pancakeswap/swap-sdk-core'
+import { UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { BIG_INT_ZERO } from 'config/constants/exchange'
 import { useEffect, useMemo } from 'react'
 import { Field } from 'state/swap/actions'
@@ -13,8 +13,8 @@ interface UseQuoteTrackingParams {
   typedValue: string
   tradeLoading?: boolean
   tradeError?: Error | null
-  inputCurrency?: Currency
-  outputCurrency?: Currency
+  inputCurrency?: UnifiedCurrency | null
+  outputCurrency?: UnifiedCurrency | null
   swapInputError?: string
   parsedAmounts: { [field in Field]?: any }
   disabled?: boolean

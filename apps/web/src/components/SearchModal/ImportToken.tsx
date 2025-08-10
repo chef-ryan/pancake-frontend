@@ -36,6 +36,25 @@ interface ImportProps {
   chainId?: number
 }
 
+export function WarningMessage({ chainName }: { chainName: string }) {
+  const { t } = useTranslation()
+  return (
+    <Message variant="warning">
+      <Text>
+        {t(
+          'Anyone can create tokens on %network% with any name, including creating fake versions of existing tokens and tokens that claim to represent projects that do not have a token.',
+          {
+            network: chainName,
+          },
+        )}
+        <br />
+        <br />
+        <b>{t('If you purchase a fraudulent token, you may be exposed to permanent loss of funds.')}</b>
+      </Text>
+    </Message>
+  )
+}
+
 function ImportToken({ tokens, handleCurrencySelect, chainId: chainIdProp }: ImportProps) {
   const { chainId: activeChainId } = useActiveChainId()
   const chainId = chainIdProp || activeChainId
@@ -69,19 +88,7 @@ function ImportToken({ tokens, handleCurrencySelect, chainId: chainIdProp }: Imp
 
   return (
     <AutoColumn gap="lg">
-      <Message variant="warning">
-        <Text>
-          {t(
-            'Anyone can create tokens on %network% with any name, including creating fake versions of existing tokens and tokens that claim to represent projects that do not have a token.',
-            {
-              network: chains.find((c) => c.id === tokens?.[0]?.chainId || chainId)?.name,
-            },
-          )}
-          <br />
-          <br />
-          <b>{t('If you purchase a fraudulent token, you may be exposed to permanent loss of funds.')}</b>
-        </Text>
-      </Message>
+      <WarningMessage chainName={chains.find((c) => c.id === tokens?.[0]?.chainId || chainId)?.name || ''} />
 
       {tokens.map((token) => {
         const list = token.chainId && inactiveTokenList?.[token.chainId]?.[token.address]?.list

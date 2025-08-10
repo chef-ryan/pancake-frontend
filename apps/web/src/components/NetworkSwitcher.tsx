@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, Chains, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { NATIVE } from '@pancakeswap/sdk'
 import { Box, UserMenu, useTooltip } from '@pancakeswap/uikit'
@@ -9,7 +9,6 @@ import { useAtom } from 'jotai'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { chainNameConverter } from 'utils/chainNameConverter'
-import { chains as evmChains } from 'utils/wagmi'
 import { NetworkSwitcherModal, networkSwitcherModalAtom } from './NetworkSwitcherModal'
 
 export const SHORT_SYMBOL = {
@@ -34,7 +33,9 @@ export const SHORT_SYMBOL = {
   [ChainId.BASE_SEPOLIA]: 'Base Sepolia',
   [ChainId.ARBITRUM_SEPOLIA]: 'Arb Sepolia',
   [ChainId.MONAD_TESTNET]: 'tMonad',
-} as const satisfies Record<ChainId, string>
+  [NonEVMChainId.SOLANA]: 'Solana',
+  [NonEVMChainId.APTOS]: 'Aptos',
+} as const satisfies Record<UnifiedChainId, string>
 
 export const NetworkSwitcher = () => {
   const { t } = useTranslation()
@@ -43,10 +44,8 @@ export const NetworkSwitcher = () => {
   const router = useRouter()
   const [, setIsNetworkSwitcherOpen] = useAtom(networkSwitcherModalAtom)
 
-  const foundChain = useMemo(() => evmChains.find((c) => c.id === chainId), [chainId])
-  const symbol =
-    (foundChain?.id ? SHORT_SYMBOL[foundChain.id] ?? NATIVE[foundChain.id]?.symbol : undefined) ??
-    foundChain?.nativeCurrency?.symbol
+  const foundChain = useMemo(() => Chains.find((c) => c.id === chainId), [chainId])
+  const symbol = foundChain?.id ? SHORT_SYMBOL[foundChain.id] ?? NATIVE[foundChain.id]?.symbol : undefined
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     t('Unable to switch network. Please try it on your wallet'),
     { placement: 'bottom' },
@@ -80,7 +79,7 @@ export const NetworkSwitcher = () => {
             t('Network')
           ) : foundChain ? (
             <>
-              <Box display={['none', null, null, null, null, null, 'block']}>{chainNameConverter(foundChain.name)}</Box>
+              <Box display={['none', null, null, null, null, null, 'block']}>{foundChain.fullName}</Box>
               <Box display={['block', null, null, null, null, null, 'none']}>{symbol}</Box>
             </>
           ) : (

@@ -2,6 +2,7 @@ import { expect, test } from 'vitest'
 import * as exports from './index'
 
 test('exports', () => {
+  console.log(Object.keys(exports))
   expect(Object.keys(exports)).toMatchInlineSnapshot(`
     [
       "BaseCurrency",

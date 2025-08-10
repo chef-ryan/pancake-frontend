@@ -1,14 +1,14 @@
 import { SORT_ORDER } from '@pancakeswap/uikit'
 import { INetworkProps, IProtocolMenuProps } from '@pancakeswap/widgets-internal'
-import { accountActiveChainAtom } from 'hooks/useAccountActiveChain'
 import { atom } from 'jotai'
+import { getQueryChainId } from 'wallet/util/getQueryChainId'
 import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
 import { DEFAULT_CHAINS } from 'state/farmsV4/state/farmPools/fetcher'
 import { getProtocolsByIndex, parseUrlToSearchQuery } from '../utils/queryParser'
 
 const _searchQueryAtom = atom<FarmQuery>(parseUrlToSearchQuery())
 export const searchQueryAtom = atom((get) => {
-  const { chainId } = get(accountActiveChainAtom)
+  const chainId = getQueryChainId()
   const query = get(_searchQueryAtom)
   return {
     ...query,

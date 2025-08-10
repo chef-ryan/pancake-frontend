@@ -1,6 +1,13 @@
 import type { ExclusiveDutchOrderInfoJSON, ExclusiveDutchOrderTrade } from '@pancakeswap/pcsx-sdk'
 import type { InfinityRouter, Route, RouteType } from '@pancakeswap/smart-router'
-import type { Currency, CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
+import type {
+  Currency,
+  CurrencyAmount,
+  Percent,
+  SPLToken,
+  TradeType,
+  UnifiedCurrencyAmount,
+} from '@pancakeswap/swap-sdk-core'
 import type { AMMOrder } from './amm'
 import { Hex } from './common'
 import { OrderType } from './orderType'
@@ -77,8 +84,26 @@ export type BridgeOrder<tradeType extends TradeType = TradeType> = {
   bridgeTransactionData: BridgeTransactionData
 }
 
+export interface SVMTrade<T extends TradeType = TradeType> {
+  tradeType: T
+  inputAmount: UnifiedCurrencyAmount<SPLToken>
+  outputAmount: UnifiedCurrencyAmount<SPLToken>
+  priceImpactPct: Percent
+  routes: Route[]
+  requestId: string
+  quoteQueryHash?: string
+  transaction: string | null
+  maximumAmountIn?: UnifiedCurrencyAmount<SPLToken>
+  minimumAmountOut?: UnifiedCurrencyAmount<SPLToken>
+}
+
+export type SVMOrder<T extends TradeType = TradeType> = {
+  type: OrderType.PCS_SVM
+  trade: SVMTrade<T>
+}
+
 export type PriceOrder<
   input extends Currency = Currency,
   output extends Currency = Currency,
   tradeType extends TradeType = TradeType,
-> = ClassicOrder<tradeType> | XOrder<input, output, tradeType> | BridgeOrder<tradeType>
+> = ClassicOrder<tradeType> | XOrder<input, output, tradeType> | BridgeOrder<tradeType> | SVMOrder<tradeType>

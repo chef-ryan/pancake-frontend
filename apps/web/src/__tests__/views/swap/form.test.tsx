@@ -7,7 +7,7 @@ import { CHAIN_QUERY_NAME } from 'config/chains'
 
 describe('handleCurrencySelect', () => {
   it('switches network and updates router when isInput && canSwitch', async () => {
-    const switchNetworkAsync = vi.fn().mockResolvedValue(undefined)
+    const switchNetwork = vi.fn().mockResolvedValue(undefined)
     const replace = vi.fn()
     const replaceBrowserHistoryMultiple = vi.fn()
 
@@ -17,7 +17,7 @@ describe('handleCurrencySelect', () => {
       onCurrencySelection: vi.fn(),
       warningSwapHandler: vi.fn(),
       canSwitch: true,
-      switchNetworkAsync,
+      switchNetwork,
       outputChainId: ChainId.BSC,
       supportedBridgeChains: { data: [] },
       inputChainId: ChainId.BSC,
@@ -34,7 +34,10 @@ describe('handleCurrencySelect', () => {
 
     await handleCurrencySelectFn(mockContext)
 
-    expect(switchNetworkAsync).toHaveBeenCalledWith(ChainId.BASE, true)
+    expect(switchNetwork).toHaveBeenCalledWith(ChainId.BASE, {
+      from: 'switch',
+      replaceUrl: false,
+    })
     expect(replace).toHaveBeenCalledWith(
       {
         query: expect.objectContaining({

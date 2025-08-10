@@ -11,6 +11,8 @@ import { useRouter } from 'next/router'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import currencyId from 'utils/currencyId'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { CHAIN_QUERY_NAME } from 'config/chains'
 import { useSwapCurrency } from '../../Swap/V3Swap/hooks/useSwapCurrency'
 import { CommitButtonProps } from '../../Swap/V3Swap/types'
 
@@ -60,15 +62,21 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner() {
   // form data
   const { independentField, typedValue } = useSwapState()
   const [inputCurrency, outputCurrency] = useSwapCurrency()
+  const { chainId } = useAccountActiveChain()
   const router = useRouter()
 
   const handleSwap = useCallback(() => {
     const [input, output] = [inputCurrency, outputCurrency].map((currency) => currencyId(currency))
+    const searchParams = new URLSearchParams()
+    searchParams.append('chain', CHAIN_QUERY_NAME[inputCurrency?.chainId ?? chainId])
+    searchParams.append('chainOut', CHAIN_QUERY_NAME[outputCurrency?.chainId ?? chainId])
+    searchParams.append('inputCurrency', input)
+    searchParams.append('outputCurrency', output)
+    searchParams.append('exactAmount', typedValue)
+    searchParams.append('exactField', independentField)
 
-    router.push(
-      `/swap?inputCurrency=${input}&outputCurrency=${output}&exactAmount=${typedValue}&exactField=${independentField}`,
-    )
-  }, [inputCurrency, outputCurrency, typedValue, independentField, router])
+    router.push(`/swap?${searchParams.toString()}`)
+  }, [chainId, inputCurrency, outputCurrency, typedValue, independentField, router])
 
   const buttonText = useMemo(() => {
     return t('Get Started')

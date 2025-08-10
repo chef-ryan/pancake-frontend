@@ -33,7 +33,7 @@ import { useStartPriceAsFraction } from './useStartPriceAsFraction'
 export const useFormSubmitCallback = () => {
   const { t } = useTranslation()
   const { address: account, chainId: activeChainId } = useAccount()
-  const { switchNetworkAsync } = useSwitchNetwork()
+  const { switchNetwork } = useSwitchNetwork()
   const { toastError } = useToast()
   const { chainId } = useSelectIdRouteParams()
   const { currency0, currency1 } = useCurrencies()
@@ -100,7 +100,7 @@ export const useFormSubmitCallback = () => {
     }
 
     if (activeChainId !== chainId) {
-      const result = await switchNetworkAsync(chainId)
+      const result = await switchNetwork(chainId)
       if (!result) return // User denied switching the network
     }
 
@@ -217,7 +217,7 @@ export const useFormSubmitCallback = () => {
     requirePermit0,
     requirePermit1,
     startPriceAsFraction,
-    switchNetworkAsync,
+    switchNetwork,
     t,
     toastError,
     upperBinId,

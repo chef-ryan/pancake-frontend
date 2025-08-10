@@ -23,14 +23,14 @@ export function SyncVeCakeButton({ ifoChainId, buttonVisible = true, ...props }:
   const { chainId } = useActiveChainId()
   const sourceChain = useIfoSourceChain(ifoChainId)
   const { onDismiss, isOpen, setIsOpen } = useModalV2()
-  const { switchNetworkAsync } = useSwitchNetwork()
+  const { switchNetwork } = useSwitchNetwork()
 
   const [isSwitching, setIsSwitching] = useState(false)
 
   const isCurrentChainSourceChain = useMemo(() => chainId === sourceChain, [chainId, sourceChain])
   const switchToSourceChain = useCallback(
-    () => sourceChain && !isCurrentChainSourceChain && switchNetworkAsync(sourceChain),
-    [sourceChain, switchNetworkAsync, isCurrentChainSourceChain],
+    () => sourceChain && !isCurrentChainSourceChain && switchNetwork(sourceChain),
+    [sourceChain, switchNetwork, isCurrentChainSourceChain],
   )
 
   const onSyncClick = useCallback(async () => {

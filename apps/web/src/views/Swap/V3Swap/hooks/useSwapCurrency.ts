@@ -1,5 +1,5 @@
-import { Currency } from '@pancakeswap/swap-sdk-core'
-import { useCurrency } from 'hooks/Tokens'
+import { UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 
@@ -14,11 +14,11 @@ export const useSwapCurrencyIds = (): [SwapStateCurrency | undefined, SwapStateC
   return [inputCurrency, outputCurrency]
 }
 
-export const useSwapCurrency = (): [Currency | undefined, Currency | undefined] => {
+export const useSwapCurrency = (): [UnifiedCurrency | undefined | null, UnifiedCurrency | undefined | null] => {
   const [stateInputCurrency, stateOutputCurrency] = useSwapCurrencyIds()
 
-  const inputCurrency = useCurrency(stateInputCurrency?.currencyId, stateInputCurrency?.chainId) as Currency
-  const outputCurrency = useCurrency(stateOutputCurrency?.currencyId, stateOutputCurrency?.chainId) as Currency
+  const inputCurrency = useUnifiedCurrency(stateInputCurrency?.currencyId, stateInputCurrency?.chainId)
+  const outputCurrency = useUnifiedCurrency(stateOutputCurrency?.currencyId, stateOutputCurrency?.chainId)
 
   return [inputCurrency, outputCurrency]
 }

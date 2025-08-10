@@ -3,11 +3,9 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useAppDispatch } from 'state'
 import { clearUserStates } from 'utils/clearUserStates'
 import { useAccount, useAccountEffect, useConfig } from 'wagmi'
-import { useSwitchNetworkLocal } from './useSwitchNetwork'
 
 export const useChainIdListener = () => {
   const switchedNetworkRef = useRef<number>()
-  const switchNetworkCallback = useSwitchNetworkLocal()
   const { chainId: oldChainId } = useAccount()
   const onChainChanged = useCallback(
     ({ chainId }: { chainId?: number }) => {
@@ -15,9 +13,8 @@ export const useChainIdListener = () => {
       if (oldChainId === chainId) return
       if (chainId === switchedNetworkRef.current) return
       switchedNetworkRef.current = undefined
-      switchNetworkCallback(chainId)
     },
-    [switchNetworkCallback, oldChainId],
+    [oldChainId],
   )
 
   const handleSwitchNetwork = useCallback((e: Event) => {

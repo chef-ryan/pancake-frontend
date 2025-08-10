@@ -1,7 +1,7 @@
 import { useDebounce } from '@orbs-network/twap-ui/dist/hooks'
 import { TradeType } from '@pancakeswap/swap-sdk-core'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
-import { useCurrency } from 'hooks/Tokens'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { useInputBasedAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { activeQuoteHashAtom } from 'quoter/atom/abortControlAtoms'
@@ -13,7 +13,10 @@ import { useEffect } from 'react'
 import { useCurrentBlock } from 'state/block/hooks'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
-import { useAccount } from 'wagmi'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { NonEVMChainId } from '@pancakeswap/chains'
+import { QuoteQuery, SVMQuoteQuery } from 'quoter/quoter.types'
+
 import { quoteNonceAtom } from '../atom/revalidateAtom'
 import { createQuoteQuery } from '../utils/createQuoteQuery'
 import { useQuoteContext } from './QuoteContext'
@@ -28,14 +31,15 @@ export const useQuoterSync = () => {
     [Field.INPUT]: { currencyId: inputCurrencyId, chainId: inputCurrencyChainId },
     [Field.OUTPUT]: { currencyId: outputCurrencyId, chainId: outputCurrencyChainId },
   } = debouncedSwapState
-  const { address } = useAccount()
-  const inputCurrency = useCurrency(inputCurrencyId, inputCurrencyChainId)
-  const outputCurrency = useCurrency(outputCurrencyId, outputCurrencyChainId)
+  const { account: address, solanaAccount, chainId: currentChain } = useAccountActiveChain()
+  const inputCurrency = useUnifiedCurrency(inputCurrencyId, inputCurrencyChainId)
+  const outputCurrency = useUnifiedCurrency(outputCurrencyId, outputCurrencyChainId)
   const isExactIn = independentField === Field.INPUT
   const independentCurrency = isExactIn ? inputCurrency : outputCurrency
   const dependentCurrency = isExactIn ? outputCurrency : inputCurrency
   const tradeType = isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT
   const amount = tryParseAmount(typedValue, independentCurrency ?? undefined)
+
   const {
     singleHopOnly,
     split,
@@ -74,14 +78,15 @@ export const useQuoterSync = () => {
     speedQuoteEnabled,
     xEnabled,
     slippage,
-    address,
+    address: currentChain === NonEVMChainId.SOLANA ? solanaAccount : address,
     blockNumber,
     destinationBlockNumber,
     gasLimitDestinationChain,
     nonce,
     for: 'main',
     gasLimit,
-  }
+  } as QuoteQuery | SVMQuoteQuery
+
   const isCrossChain = inputCurrencyChainId !== outputCurrencyChainId
 
   const quoteQuery = createQuoteQuery(quoteQueryInit)
@@ -89,7 +94,7 @@ export const useQuoterSync = () => {
 
   useEffect(() => {
     setActiveQuoteHash(quoteQuery.hash)
-  }, [quoteQuery.hash])
+  }, [quoteQuery.hash, setActiveQuoteHash])
 
   useEffect(() => {
     setTyping(true)
@@ -121,6 +126,7 @@ export const useQuoterSync = () => {
 
   useEffect(() => {
     if (quoteResult.isJust() && !quoteResult.hasFlag('placeholder')) {
+      // NOTE: placeholderHash is used to show previous quote when new quote is pending
       const placeholderHash = quoteResult.getExtra('placeholderHash') as string
       setPlaceholder(placeholderHash, quoteResult.unwrap())
     }
@@ -150,5 +156,16 @@ export const useQuoterSync = () => {
       },
     })
     setTyping(false)
-  }, [quoteResult.value, quoteResult.loading, quoteResult.error, pauseQuote, setTrade, setTyping, setNonce, paused])
+  }, [
+    quoteResult.value,
+    quoteResult.loading,
+    quoteResult.error,
+    pauseQuote,
+    setTrade,
+    setTyping,
+    setNonce,
+    paused,
+    setPlaceholder,
+    quoteResult,
+  ])
 }

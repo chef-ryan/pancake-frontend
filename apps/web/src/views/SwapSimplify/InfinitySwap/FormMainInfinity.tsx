@@ -1,27 +1,26 @@
+import { ChainId as EvmChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Percent } from '@pancakeswap/sdk'
+import { Currency, Percent, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { Skeleton, Text } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
-import { ReactNode, Suspense, useCallback, useMemo } from 'react'
-
+import replaceBrowserHistoryMultiple from '@pancakeswap/utils/replaceBrowserHistoryMultiple'
 import CurrencyInputPanelSimplify from 'components/CurrencyInputPanelSimplify'
 import { CommonBasesType } from 'components/SearchModal/types'
-import { useCurrency } from 'hooks/Tokens'
-import { Field } from 'state/swap/actions'
-import { useDefaultsFromURLSearch, useSwapState } from 'state/swap/hooks'
-import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
-import { useCurrencyBalances } from 'state/wallet/hooks'
-import { maxAmountSpend } from 'utils/maxAmountSpend'
-
-import replaceBrowserHistoryMultiple from '@pancakeswap/utils/replaceBrowserHistoryMultiple'
 import { CHAIN_QUERY_NAME } from 'config/chains'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
-import currencyId from 'utils/currencyId'
-import { useBridgeAvailableRoutes } from 'views/Swap/Bridge/hooks/useBridgeAvailableRoutes'
-import { getDefaultToken } from 'views/Swap/utils'
-import { useAccount } from 'wagmi'
+import { useUnifiedCurrencyBalance } from 'hooks/useUnifiedCurrencyBalance'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
+import { ReactNode, Suspense, useCallback, useMemo } from 'react'
+import { Field } from 'state/swap/actions'
+import { useDefaultsFromURLSearch, useSwapState } from 'state/swap/hooks'
+import { SwitchChainOption } from 'wallet/hook/useSwitchNetworkV2'
+import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
+import currencyId from 'utils/currencyId'
+import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
+import { useBridgeAvailableRoutes } from 'views/Swap/Bridge/hooks/useBridgeAvailableRoutes'
+import { getDefaultToken } from 'views/Swap/utils'
 import useWarningImport from '../../Swap/hooks/useWarningImport'
 import { useIsWrapping } from '../../Swap/V3Swap/hooks'
 import { AssignRecipientButton, FlipButton } from './FlipButton'
@@ -29,8 +28,8 @@ import { FormContainer } from './FormContainer'
 import { Recipient } from './Recipient'
 
 interface Props {
-  inputAmount?: CurrencyAmount<Currency>
-  outputAmount?: CurrencyAmount<Currency>
+  inputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
+  outputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
   tradeLoading?: boolean
   pricingAndSlippage?: ReactNode
   swapCommitButton?: ReactNode
@@ -41,7 +40,7 @@ interface HandleCurrencySelectDeps {
   onCurrencySelection: (field: Field, currency: any) => void
   warningSwapHandler: (currency: any) => void
   canSwitch: boolean
-  switchNetworkAsync: (chainId: number, skipReplace?: boolean) => Promise<unknown>
+  switchNetwork: (chainId: number, options?: SwitchChainOption) => void
   outputChainId: number | undefined
   supportedBridgeChains: { data?: { originChainId: number; destinationChainId: number }[] }
   inputChainId: number | undefined
@@ -60,7 +59,7 @@ export const handleCurrencySelectFn = async ({
   onCurrencySelection,
   warningSwapHandler,
   canSwitch,
-  switchNetworkAsync,
+  switchNetwork,
   outputChainId,
   supportedBridgeChains,
   inputChainId,
@@ -74,8 +73,12 @@ export const handleCurrencySelectFn = async ({
   const isInput = field === Field.INPUT
 
   if (isInput && canSwitch && newCurrency.chainId !== inputChainId) {
-    const result = await switchNetworkAsync(newCurrency.chainId, true)
-    if (result === 'error') return
+    if (newCurrency.chainId in EvmChainId) {
+      switchNetwork(newCurrency.chainId, {
+        replaceUrl: false,
+        from: 'switch',
+      })
+    }
 
     const isSameAsOutput = currencyId(newCurrency) === outputCurrencyId && newCurrency.chainId === outputChainId
 
@@ -139,7 +142,6 @@ export const handleCurrencySelectFn = async ({
 
 export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsufficientBalance }: Props) {
   const { t } = useTranslation()
-  const { address: account } = useAccount()
   const warningSwapHandler = useWarningImport()
 
   const {
@@ -153,12 +155,12 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
   const isWrapping = useIsWrapping()
   const loadedUrlParams = useDefaultsFromURLSearch()
 
-  const inputCurrency = useCurrency(inputCurrencyId, inputChainId)
-  const outputCurrency = useCurrency(outputCurrencyId, outputChainId)
+  const inputCurrency = useUnifiedCurrency(inputCurrencyId, inputChainId)
+  const outputCurrency = useUnifiedCurrency(outputCurrencyId, outputChainId)
 
-  const [inputBalance] = useCurrencyBalances(account, [inputCurrency, outputCurrency])
+  const inputBalance = useUnifiedCurrencyBalance(inputCurrency)
 
-  const maxAmountInput = useMemo(() => maxAmountSpend(inputBalance), [inputBalance])
+  const maxAmountInput = useMemo(() => maxUnifiedAmountSpend(inputBalance), [inputBalance])
 
   const handleTypeInput = useCallback((value: string) => onUserInput(Field.INPUT, value), [onUserInput])
   const handleTypeOutput = useCallback((value: string) => onUserInput(Field.OUTPUT, value), [onUserInput])
@@ -178,19 +180,19 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
     }
   }, [maxAmountInput, onUserInput])
 
-  const { canSwitch, switchNetworkAsync } = useSwitchNetwork()
+  const { canSwitch, switchNetwork } = useSwitchNetwork()
 
   const supportedBridgeChains = useBridgeAvailableRoutes()
 
   const router = useRouter()
 
   const handleCurrencySelect = useCallback(
-    async (newCurrency: Currency, field: Field) => {
+    async (newCurrency: UnifiedCurrency, field: Field) => {
       return handleCurrencySelectFn({
         onCurrencySelection,
         warningSwapHandler,
         canSwitch,
-        switchNetworkAsync,
+        switchNetwork,
         outputChainId,
         supportedBridgeChains,
         inputChainId,
@@ -206,7 +208,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
       onCurrencySelection,
       warningSwapHandler,
       canSwitch,
-      switchNetworkAsync,
+      switchNetwork,
       outputChainId,
       supportedBridgeChains,
       inputChainId,
@@ -216,11 +218,11 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
     ],
   )
   const handleInputSelect = useCallback(
-    (newCurrency: Currency) => handleCurrencySelect(newCurrency, Field.INPUT),
+    (newCurrency: UnifiedCurrency) => handleCurrencySelect(newCurrency, Field.INPUT),
     [handleCurrencySelect],
   )
   const handleOutputSelect = useCallback(
-    (newCurrency: Currency) => handleCurrencySelect(newCurrency, Field.OUTPUT),
+    (newCurrency: UnifiedCurrency) => handleCurrencySelect(newCurrency, Field.OUTPUT),
     [handleCurrencySelect],
   )
 

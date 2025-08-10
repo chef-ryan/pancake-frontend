@@ -1,4 +1,3 @@
-import { isInBinance } from '@binance/w3w-utils'
 import { LanguageProvider } from '@pancakeswap/localization'
 import { DialogProvider, ModalProvider, UIKitProvider, dark, light } from '@pancakeswap/uikit'
 import { Store } from '@reduxjs/toolkit'
@@ -6,13 +5,13 @@ import { HydrationBoundary, QueryClient, QueryClientProvider } from '@tanstack/r
 import { HistoryManagerProvider } from 'contexts/HistoryContext'
 import { FirebaseAuthProvider } from 'contexts/Privy/firebase'
 import { PrivyProvider } from 'contexts/Privy/privy'
-import { WagmiWithPrivyProvider } from 'contexts/Privy/provider'
 import { W3WConfigProvider } from 'contexts/W3WConfigContext'
 import { ThemeProvider as NextThemeProvider, useTheme as useNextTheme } from 'next-themes'
 import { useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { WagmiProvider } from 'wagmi'
-import { createWagmiConfig, createW3WWagmiConfig } from 'utils/wagmi'
+import { createWagmiConfig } from 'utils/wagmi'
+import { WalletProvider } from 'wallet/WalletProvider'
 // Create a client
 const queryClient = new QueryClient()
 
@@ -32,31 +31,27 @@ const Providers: React.FC<
     dehydratedState: any
   }>
 > = ({ children, store, dehydratedState }) => {
-  const wagmiConfig = useMemo(() => createWagmiConfig(), [])
-
   return (
     <FirebaseAuthProvider>
-      <PrivyProvider>
-        <QueryClientProvider client={queryClient}>
-          <WagmiWithPrivyProvider reconnectOnMount={false} config={wagmiConfig}>
-            <W3WConfigProvider value={isInBinance()}>
-              <HydrationBoundary state={dehydratedState}>
-                <Provider store={store}>
+      <Provider store={store}>
+        <LanguageProvider>
+          <PrivyProvider>
+            <QueryClientProvider client={queryClient}>
+              <WalletProvider>
+                <HydrationBoundary state={dehydratedState}>
                   <NextThemeProvider>
-                    <LanguageProvider>
-                      <StyledUIKitProvider>
-                        <HistoryManagerProvider>
-                          <ModalProvider portalProvider={DialogProvider}>{children}</ModalProvider>
-                        </HistoryManagerProvider>
-                      </StyledUIKitProvider>
-                    </LanguageProvider>
+                    <StyledUIKitProvider>
+                      <HistoryManagerProvider>
+                        <ModalProvider portalProvider={DialogProvider}>{children}</ModalProvider>
+                      </HistoryManagerProvider>
+                    </StyledUIKitProvider>
                   </NextThemeProvider>
-                </Provider>
-              </HydrationBoundary>
-            </W3WConfigProvider>
-          </WagmiWithPrivyProvider>
-        </QueryClientProvider>
-      </PrivyProvider>
+                </HydrationBoundary>
+              </WalletProvider>
+            </QueryClientProvider>
+          </PrivyProvider>
+        </LanguageProvider>
+      </Provider>
     </FirebaseAuthProvider>
   )
 }
@@ -78,13 +73,11 @@ export const TestProviders: React.FC<
           <HydrationBoundary state={dehydratedState}>
             <Provider store={store}>
               <NextThemeProvider>
-                <LanguageProvider>
-                  <StyledUIKitProvider>
-                    <HistoryManagerProvider>
-                      <ModalProvider portalProvider={DialogProvider}>{children}</ModalProvider>
-                    </HistoryManagerProvider>
-                  </StyledUIKitProvider>
-                </LanguageProvider>
+                <StyledUIKitProvider>
+                  <HistoryManagerProvider>
+                    <ModalProvider portalProvider={DialogProvider}>{children}</ModalProvider>
+                  </HistoryManagerProvider>
+                </StyledUIKitProvider>
               </NextThemeProvider>
             </Provider>
           </HydrationBoundary>

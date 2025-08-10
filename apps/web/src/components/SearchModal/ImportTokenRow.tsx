@@ -1,18 +1,18 @@
-import { Currency, Token } from '@pancakeswap/swap-sdk-core'
+import { UnifiedCurrency, UnifiedToken } from '@pancakeswap/swap-sdk-core'
 import { TokenRowButton } from '@pancakeswap/widgets-internal'
 import { CSSProperties } from 'react'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
 import TokenRowWithCurrencyLogo from './TokenRowWithCurrencyLogo'
 
 interface ImportTokenRowProps {
-  token: Token
+  token: UnifiedToken
   style?: CSSProperties
   dim?: boolean
-  onCurrencySelect?: (currency: Currency) => void
+  onCurrencySelect?: (currency: UnifiedCurrency) => void
   list: any
   isActive: boolean
   isAdded: boolean
-  setImportToken: (token: Token) => void
+  setImportToken: (token: UnifiedToken) => void
   showImportView: () => void
 }
 
@@ -37,7 +37,7 @@ const ImportTokenRow: React.FC<React.PropsWithChildren<ImportTokenRowProps>> = (
       onCurrencySelect={onCurrencySelect}
       isActive={isActive}
     >
-      <TokenRowButton<Token>
+      <TokenRowButton<UnifiedToken>
         token={token}
         isActive={isActive}
         isAdded={isAdded}

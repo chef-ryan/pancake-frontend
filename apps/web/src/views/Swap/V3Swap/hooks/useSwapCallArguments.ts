@@ -7,6 +7,7 @@ import {
 } from '@pancakeswap/universal-router-sdk'
 import { FeeOptions } from '@pancakeswap/v3-sdk'
 import { useMemo } from 'react'
+import { ChainId as EvmChainId } from '@pancakeswap/chains'
 
 import { useGetENSAddressByName } from 'hooks/useGetENSAddressByName'
 
@@ -50,7 +51,7 @@ export function useSwapCallArguments(
   ) as Address | null
 
   return useMemo(() => {
-    if (!trade || !recipient || !account || !chainId) return []
+    if (!trade || !recipient || !account || !chainId || !(chainId in EvmChainId)) return []
 
     const options = {
       fee: feeOptions,

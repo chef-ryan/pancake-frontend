@@ -239,6 +239,13 @@ const config = {
     ]
   },
   webpack: (webpackConfig, { webpack, isServer }) => {
+    webpackConfig.resolve = webpackConfig.resolve || {}
+    webpackConfig.resolve.alias = webpackConfig.resolve.alias || {}
+    webpackConfig.resolve.alias['@solana/wallet-adapter-react'] = path.resolve(
+      __dirname,
+      'node_modules',
+      '@solana/wallet-adapter-react'
+    )
     webpackConfig.infrastructureLogging = {
       level: 'info', // or 'verbose' for more detail
     };

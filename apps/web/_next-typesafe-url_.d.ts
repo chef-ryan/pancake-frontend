@@ -101,6 +101,7 @@ declare module "@@@next-typesafe-url" {
     "/profile/pancake-collectibles": StaticRoute;
     "/remove/[tokenId]": StaticRoute;
     "/simple-staking": StaticRoute;
+    "/sol/wallet-test": StaticRoute;
     "/stable/[address]": StaticRoute;
     "/stable/add/[[...currency]]": StaticRoute;
     "/stable/remove/[[...currency]]": StaticRoute;

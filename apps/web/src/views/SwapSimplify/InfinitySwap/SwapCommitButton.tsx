@@ -1,5 +1,5 @@
-import { Currency } from '@pancakeswap/swap-sdk-core'
-import { AutoColumn, Box, Button, Dots, Message, MessageText, Text, useModal } from '@pancakeswap/uikit'
+import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { AutoColumn, Button, Dots, Message, MessageText, Text, useModal } from '@pancakeswap/uikit'
 import { useAddressBalance } from 'hooks/useAddressBalance'
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -21,6 +21,7 @@ import { SettingsMode } from 'components/Menu/GlobalSettings/types'
 import { BIG_INT_ZERO } from 'config/constants/exchange'
 import { useCurrency } from 'hooks/Tokens'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
+import { useUnifiedCurrencyBalances } from 'hooks/useUnifiedCurrencyBalance'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
 import { useAtomValue } from 'jotai'
 import { baseAllTypeBestTradeAtom } from 'quoter/atom/bestTradeUISyncAtom'
@@ -29,7 +30,6 @@ import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
 import { useRoutingSettingChanged } from 'state/user/smartRouter'
-import { useCurrencyBalances } from 'state/wallet/hooks'
 import {
   logGTMClickSwapConfirmEvent,
   logGTMClickSwapEvent,
@@ -37,19 +37,23 @@ import {
 } from 'utils/customGTMEventTracking'
 import { warningSeverity } from 'utils/exchange'
 import { useBridgeCheckApproval } from 'views/Swap/Bridge/hooks/useBridgeCheckApproval'
-import { computeBridgeOrderFee, getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
+import { getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import { ConfirmSwapModalV2 } from 'views/Swap/V3Swap/containers/ConfirmSwapModalV2'
-import { isBridgeOrder, isClassicOrder, isXOrder } from 'views/Swap/utils'
-import { useAccount, useChainId } from 'wagmi'
+import { EVMInterfaceOrder, isBridgeOrder, isClassicOrder, isSVMOrder, isXOrder } from 'views/Swap/utils'
+import { useAccount } from 'wagmi'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { isEvm, NonEVMChainId } from '@pancakeswap/chains'
+import SolanaConnectButton from 'wallet/components/SolanaConnectButton'
+
 import { ConfirmSwapModalV3 } from '../../Swap/Bridge/CrossChainConfirmSwapModal/ConfirmSwapModalV3'
 import { useParsedAmounts, useSlippageAdjustedAmounts, useSwapInputError } from '../../Swap/V3Swap/hooks'
 import { useConfirmModalState } from '../../Swap/V3Swap/hooks/useConfirmModalState'
 import { useSwapConfig } from '../../Swap/V3Swap/hooks/useSwapConfig'
 import { useSwapCurrency } from '../../Swap/V3Swap/hooks/useSwapCurrency'
 import { CommitButtonProps } from '../../Swap/V3Swap/types'
-import { computeTradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
 import { useIsRecipientError } from '../hooks/useIsRecipientError'
 import { useQuoteTrackingStateMachine } from '../hooks/useQuoteTrackingStateMachine'
+import { usePriceBreakdown } from '../hooks/usePriceBreakdown'
 
 const SettingsModalWithCustomDismiss = withCustomOnDismiss(SettingsModalV2)
 
@@ -102,8 +106,11 @@ const WrapCommitButtonReplace: React.FC<React.PropsWithChildren> = ({ children }
 }
 
 const ConnectButtonReplace = ({ children }) => {
-  const { address: account } = useAccount()
+  const { chainId, account, solanaAccount } = useAccountActiveChain()
 
+  if (chainId === NonEVMChainId.SOLANA) {
+    return !solanaAccount ? <SolanaConnectButton width="100%" withIcon /> : children
+  }
   if (!account) {
     return <ConnectWalletButton width="100%" withIcon />
   }
@@ -152,20 +159,15 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
 }: SwapCommitButtonPropsType & CommitButtonProps) {
   const { address: account } = useAccount()
   const { t } = useTranslation()
-  const chainId = useChainId()
+  const { chainId } = useAccountActiveChain()
   // form data
   const { independentField, typedValue } = useSwapState()
   const [inputCurrency, outputCurrency] = useSwapCurrency()
-  const { isExpertMode } = useSwapConfig()
+  const { isExpertMode: isExpertMode_ } = useSwapConfig()
+  const isExpertMode = useMemo(() => isExpertMode_ && isEvm(chainId), [chainId, isExpertMode_])
   const { isRecipientEmpty, isRecipientError } = useIsRecipientError()
 
-  const tradePriceBreakdown = useMemo(
-    () =>
-      isBridgeOrder(order)
-        ? computeBridgeOrderFee(order)
-        : computeTradePriceBreakdown(isXOrder(order) ? undefined : order?.trade),
-    [order],
-  )
+  const tradePriceBreakdown = usePriceBreakdown(order)
 
   // warnings on slippage
   const priceImpactSeverity = warningSeverity(
@@ -177,10 +179,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
       : undefined,
   )
 
-  const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [
-    inputCurrency ?? undefined,
-    outputCurrency ?? undefined,
-  ])
+  const relevantTokenBalances = useUnifiedCurrencyBalances([inputCurrency ?? undefined, outputCurrency ?? undefined])
   const currencyBalances = useMemo(
     () => ({
       [Field.INPUT]: relevantTokenBalances[0],
@@ -203,16 +202,22 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   const slippageAdjustedAmounts = useSlippageAdjustedAmounts(orderToExecute)
   const amountToApprove = useMemo(
     () =>
-      inputCurrency?.isNative
+      isSVMOrder(orderToExecute)
+        ? undefined
+        : inputCurrency?.isNative
         ? isXOrder(orderToExecute)
           ? slippageAdjustedAmounts[Field.INPUT]
           : undefined
         : slippageAdjustedAmounts[Field.INPUT],
     [inputCurrency?.isNative, orderToExecute, slippageAdjustedAmounts],
-  )
+  ) as CurrencyAmount<Currency> | undefined
 
   const { callToAction, confirmState, txHash, orderHash, confirmActions, errorMessage, resetState } =
-    useConfirmModalState(orderToExecute, amountToApprove?.wrapped, getUniversalRouterAddress(chainId))
+    useConfirmModalState(
+      orderToExecute,
+      amountToApprove?.wrapped,
+      isEvm(chainId) ? getUniversalRouterAddress(chainId) : undefined,
+    )
 
   const { onUserInput } = useSwapActionHandlers()
   const reset = useCallback(() => {
@@ -242,6 +247,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
       !swapInputError &&
       !tradeLoading &&
       !hasBridgeTradeError &&
+      parsedAmounts[Field.INPUT]?.greaterThan(BIG_INT_ZERO) &&
       parsedAmounts[Field.OUTPUT]?.greaterThan(BIG_INT_ZERO),
     [swapInputError, tradeLoading, hasBridgeTradeError, parsedAmounts],
   )
@@ -289,12 +295,15 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
       <ConfirmSwapModalV3
         order={order}
         orderHash={orderHash}
-        originalOrder={tradeToConfirm}
+        originalOrder={tradeToConfirm as EVMInterfaceOrder}
         txHash={txHash}
         confirmModalState={confirmState}
         pendingModalSteps={confirmActions ?? []}
         swapErrorMessage={errorMessage}
-        currencyBalances={currencyBalances}
+        currencyBalances={
+          // NOTE: since Bridge not support Solana yet, can safely cast to CurrencyAmount<Currency>
+          currencyBalances as { [field in Field]?: CurrencyAmount<Currency> | undefined }
+        }
         onAcceptChanges={handleAcceptChanges}
         onConfirm={onConfirm}
         openSettingModal={openSettingModal}
@@ -302,14 +311,14 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
       />
     ) : (
       <ConfirmSwapModalV2
-        order={order}
+        order={order as EVMInterfaceOrder}
         orderHash={orderHash}
-        originalOrder={tradeToConfirm}
+        originalOrder={tradeToConfirm as EVMInterfaceOrder}
         txHash={txHash}
         confirmModalState={confirmState}
         pendingModalSteps={confirmActions ?? []}
         swapErrorMessage={errorMessage}
-        currencyBalances={currencyBalances}
+        currencyBalances={currencyBalances as { [field in Field]?: CurrencyAmount<Currency> | undefined }}
         onAcceptChanges={handleAcceptChanges}
         onConfirm={onConfirm}
         openSettingModal={openSettingModal}
@@ -443,19 +452,17 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   }
 
   return (
-    <Box mt="0.25rem">
-      <CommitButton
-        id="swap-button"
-        width="100%"
-        data-dd-action-name="Swap commit button"
-        variant={isValid && priceImpactSeverity > 2 && !errorMessage ? 'danger' : 'primary'}
-        disabled={disabled}
-        onClick={handleSwap}
-        checkChainId={isValid ? inputCurrency?.chainId : undefined}
-      >
-        {buttonText}
-      </CommitButton>
-    </Box>
+    <CommitButton
+      id="swap-button"
+      width="100%"
+      data-dd-action-name="Swap commit button"
+      variant={isValid && priceImpactSeverity > 2 && !errorMessage ? 'danger' : 'primary'}
+      disabled={disabled}
+      onClick={handleSwap}
+      checkChainId={isValid ? inputCurrency?.chainId : undefined}
+    >
+      {buttonText}
+    </CommitButton>
   )
 })
 

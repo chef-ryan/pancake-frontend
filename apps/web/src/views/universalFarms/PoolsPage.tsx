@@ -3,6 +3,7 @@ import { Flex, Loading, Spinner, TableView, useMatchBreakpoints } from '@pancake
 import { useRouter } from 'next/router'
 import { Suspense, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
+import isEqual from 'lodash/isEqual'
 
 import { useTranslation } from '@pancakeswap/localization'
 import { DEFAULT_ACTIVE_LIST_URLS } from 'config/constants/lists'
@@ -39,6 +40,9 @@ export const PoolsPage = () => {
 
   useEffect(() => {
     const params = farmQueryToUrlParams(query)
+    if (isEqual(params, nextRouter.query)) {
+      return
+    }
     nextRouter.replace({
       pathname: nextRouter.pathname,
       query: params,
@@ -91,6 +95,9 @@ const List = () => {
 
   useEffect(() => {
     const params = farmQueryToUrlParams(query)
+    if (isEqual(params, nextRouter.query)) {
+      return
+    }
     nextRouter.replace({
       pathname: nextRouter.pathname,
       query: params,

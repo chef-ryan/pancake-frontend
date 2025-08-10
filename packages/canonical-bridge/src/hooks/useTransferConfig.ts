@@ -13,7 +13,6 @@ import {
 } from '@bnb-chain/canonical-bridge-widget'
 import { useEffect, useState } from 'react'
 
-import axios from 'axios'
 import { env } from '../configs/env'
 import layerZeroConfig from '../token-config/mainnet/layerZero/config.json'
 
@@ -23,16 +22,24 @@ export function useTransferConfig(supportedChains: IChainConfig[]) {
   useEffect(() => {
     const initConfig = async () => {
       const [cBridgeRes, deBridgeRes, stargateRes, mesonRes] = await Promise.all([
-        axios.get<{ data: ICBridgeTransferConfig }>(`${env.SERVER_ENDPOINT}/api/bridge/v2/cbridge`),
-        axios.get<{ data: IDeBridgeTransferConfig }>(`${env.SERVER_ENDPOINT}/api/bridge/v2/debridge`),
-        axios.get<{ data: IStargateTransferConfig }>(`${env.SERVER_ENDPOINT}/api/bridge/v2/stargate`),
-        axios.get<{ data: IMesonTransferConfig }>(`${env.SERVER_ENDPOINT}/api/bridge/v2/meson`),
+        fetch(`${env.SERVER_ENDPOINT}/api/bridge/v2/cbridge`).then(async (res) => {
+          return (await res.json()) as { data: ICBridgeTransferConfig }
+        }),
+        fetch(`${env.SERVER_ENDPOINT}/api/bridge/v2/debridge`).then(async (res) => {
+          return (await res.json()) as { data: ICBridgeTransferConfig }
+        }),
+        fetch(`${env.SERVER_ENDPOINT}/api/bridge/v2/stargate`).then(async (res) => {
+          return (await res.json()) as { data: IStargateTransferConfig }
+        }),
+        fetch(`${env.SERVER_ENDPOINT}/api/bridge/v2/meson`).then(async (res) => {
+          return (await res.json()) as { data: IMesonTransferConfig }
+        }),
       ])
 
-      const cBridgeConfig = cBridgeRes.data.data
-      const deBridgeConfig = deBridgeRes.data.data
-      const mesonConfig = mesonRes.data.data
-      const stargateConfig = stargateRes.data.data
+      const cBridgeConfig = cBridgeRes.data
+      const deBridgeConfig = deBridgeRes.data
+      const mesonConfig = mesonRes.data
+      const stargateConfig = stargateRes.data
 
       const tokenConfig: ICustomizedBridgeConfig['transfer'] = {
         defaultFromChainId: 1,
@@ -173,7 +180,7 @@ export function useTransferConfig(supportedChains: IChainConfig[]) {
     }
 
     initConfig()
-  }, [])
+  }, [supportedChains])
 
   return transferConfig
 }

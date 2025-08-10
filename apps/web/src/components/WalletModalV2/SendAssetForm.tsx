@@ -396,7 +396,7 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewState
                     <Text fontWeight="bold" fontSize="20px">
                       {asset.token.symbol}
                     </Text>
-                    <Text color="textSubtle" fontSize="12px" mt="-4px">{`${chainName.toUpperCase()} ${t(
+                    <Text color="textSubtle" fontSize="12px" mt="-4px">{`${chainName?.toUpperCase() ?? '-'} ${t(
                       'Chain',
                     )}`}</Text>
                   </FlexGap>

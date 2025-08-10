@@ -4,11 +4,11 @@ import { atomWithStorage } from 'jotai/utils'
 type SocialProvider = 'google' | 'x' | 'telegram' | 'discord' | null
 
 const privySocialLoginAtom = atomWithStorage<boolean>('pcs:privySocialLogin', false, undefined, {
-  unstable_getOnInit: true,
+  getOnInit: true,
 })
 
 const socialLoginProviderAtom = atomWithStorage<SocialProvider>('pcs:socialLoginProvider', null, undefined, {
-  unstable_getOnInit: true,
+  getOnInit: true,
 })
 
 export function usePrivySocialLoginAtom() {

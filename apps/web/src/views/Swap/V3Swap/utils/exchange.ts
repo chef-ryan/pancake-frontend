@@ -8,6 +8,8 @@ import {
   Percent,
   Price,
   TradeType,
+  UnifiedCurrency,
+  UnifiedCurrencyAmount,
   ZERO,
 } from '@pancakeswap/sdk'
 import { Route, SmartRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
@@ -25,7 +27,7 @@ import { BridgeOrderFee } from 'views/Swap/Bridge/utils'
 import { BridgeOrderWithCommands, InterfaceOrder, isBridgeOrder } from 'views/Swap/utils'
 
 export type SlippageAdjustedAmounts = {
-  [field in Field]?: CurrencyAmount<Currency> | null
+  [field in Field]?: UnifiedCurrencyAmount<UnifiedCurrency> | null
 }
 
 // computes the minimum amount out and maximum amount in for a trade given a user specified allowed slippage in bips
@@ -33,7 +35,7 @@ export function computeSlippageAdjustedAmounts(
   order: InterfaceOrder | undefined | null,
   allowedSlippage: number,
 ): SlippageAdjustedAmounts {
-  if (order?.type === OrderType.DUTCH_LIMIT) {
+  if (order?.type === OrderType.DUTCH_LIMIT || order?.type === OrderType.PCS_SVM) {
     return {
       [Field.INPUT]: order.trade.maximumAmountIn,
       [Field.OUTPUT]: order.trade.minimumAmountOut,
@@ -88,6 +90,11 @@ export type TradeEssentialForPriceBreakdown = Pick<SmartRouterTrade<TradeType>, 
 export interface TradePriceBreakdown {
   priceImpactWithoutFee?: Percent | null
   lpFeeAmount?: CurrencyAmount<Currency> | null
+}
+
+export interface SVMTradePriceBreakdown {
+  priceImpactWithoutFee?: Percent | null
+  lpFeeAmount?: UnifiedCurrencyAmount<UnifiedCurrency> | null
 }
 
 // computes price breakdown for the trade

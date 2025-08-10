@@ -1,6 +1,6 @@
 import { ChainId } from '@pancakeswap/chains'
 import { useHttpLocations } from '@pancakeswap/hooks'
-import { Currency } from '@pancakeswap/sdk'
+import { Token, UnifiedCurrency } from '@pancakeswap/sdk'
 import { WrappedTokenInfo } from '@pancakeswap/token-lists'
 import { BinanceIcon, TokenLogo } from '@pancakeswap/uikit'
 import { getImageUrlsFromToken } from 'components/TokenImage'
@@ -16,7 +16,7 @@ const StyledLogo = styled(TokenLogo)<{ size: string }>`
 `
 
 interface LogoProps {
-  currency?: Currency
+  currency?: UnifiedCurrency
   size?: string
   style?: React.CSSProperties
   src?: string
@@ -43,7 +43,7 @@ export default function CurrencyLogo({ currency, size = '24px', style, src }: Lo
     if (currency?.isNative) return []
 
     if (currency?.isToken) {
-      const tokenLogoURL = getTokenLogoURL(currency)
+      const tokenLogoURL = getTokenLogoURL(currency as Token)
 
       if (currency instanceof WrappedTokenInfo) {
         if (!tokenLogoURL) return [...imageUrls, ...uriLocations, basicTokenImage]
@@ -76,7 +76,7 @@ export default function CurrencyLogo({ currency, size = '24px', style, src }: Lo
 
 const basicTokensList = ['USDT', 'USDC', 'DAI', 'WBNB', 'WETH', 'WBTC', 'BNB', 'BUSD']
 
-export const getBasicTokensImage = (token: Currency | undefined) => {
+export const getBasicTokensImage = (token: UnifiedCurrency | undefined) => {
   if (!token) return ''
   return basicTokensList.includes(token?.symbol)
     ? `https://tokens.pancakeswap.finance/images/symbol/${token?.symbol?.toLowerCase() ?? ''}.png`

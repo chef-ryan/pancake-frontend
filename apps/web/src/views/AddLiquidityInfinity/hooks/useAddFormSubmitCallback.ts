@@ -31,7 +31,7 @@ export const useAddFormSubmitCallback = () => {
   const { address: account, chainId: activeChainId } = useAccount()
   const { chainId, poolId } = useInfinityPoolIdRouteParams()
   const pool = usePool()
-  const { switchNetworkAsync } = useSwitchNetwork()
+  const { switchNetwork } = useSwitchNetwork()
   const { toastError } = useToast()
   const { t } = useTranslation()
   const { lastEditCurrency } = useAtomValue(lastEditAtom)
@@ -103,8 +103,8 @@ export const useAddFormSubmitCallback = () => {
     }
 
     if (activeChainId !== chainId) {
-      const result = await switchNetworkAsync(chainId)
-      if (!result) return // User denied switching the network
+      const result = await switchNetwork(chainId)
+      if (!result) return // Switch network fail
     }
 
     try {
@@ -214,7 +214,7 @@ export const useAddFormSubmitCallback = () => {
     poolKey,
     requirePermit0,
     requirePermit1,
-    switchNetworkAsync,
+    switchNetwork,
     t,
     toastError,
     upperBinId,

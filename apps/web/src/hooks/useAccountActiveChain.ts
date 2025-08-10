@@ -1,31 +1,33 @@
-import { useAtom, useAtomValue } from 'jotai'
-import { atomWithProxy } from 'jotai-valtio'
-import { useEffect } from 'react'
-import { proxy } from 'valtio'
-import { useAccount } from 'wagmi'
-import { useActiveChainId } from './useActiveChainId'
+import { isEvm } from '@pancakeswap/chains'
+import { useAtomValue } from 'jotai'
+import { useEffect, useRef } from 'react'
 
-interface AccountChainState {
-  account?: `0x${string}`
-  chainId: number | undefined
-  isWrongNetwork: boolean
-  status: 'connected' | 'disconnected' | 'connecting' | 'reconnecting' | null
+import { accountActiveChainAtom } from 'wallet/atoms/accountStateAtoms'
+
+export const useActiveChainId = (checkChainId?: number) => {
+  const { isNotMatched, isWrongNetwork, chainId } = useAccountActiveChain()
+  return {
+    chainId,
+    isNotMatched,
+    isWrongNetwork: checkChainId ? isWrongNetwork && checkChainId !== chainId : isWrongNetwork,
+  }
 }
 
-const accountChainProxy = proxy<AccountChainState>({ chainId: undefined, isWrongNetwork: false, status: null })
-export const accountActiveChainAtom = atomWithProxy(accountChainProxy)
+export const useActiveChainIdRef = () => {
+  const { chainId } = useAccountActiveChain()
 
-const useAccountActiveChain = () => {
-  const { address: account, status } = useAccount()
-  const { chainId, isWrongNetwork } = useActiveChainId()
-
-  const [, setProxy] = useAtom(accountActiveChainAtom)
-
+  const ref = useRef(chainId)
   useEffect(() => {
-    setProxy({ account, chainId, isWrongNetwork, status })
-  }, [account, chainId, status, isWrongNetwork, setProxy])
+    ref.current = chainId
+  }, [chainId])
+  return ref
+}
 
-  return useAtomValue(accountActiveChainAtom)
+export const useAccountActiveChain = () => {
+  const result = useAtomValue(accountActiveChainAtom)
+  const { chainId, account, solanaAccount } = result
+  const unifiedAccount = isEvm(chainId) ? account : solanaAccount
+  return { ...result, unifiedAccount }
 }
 
 export default useAccountActiveChain

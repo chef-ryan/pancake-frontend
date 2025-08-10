@@ -17,7 +17,7 @@ export const CreateGiftButton = ({
   handleCreateGift: () => void
   tokenAmount: CurrencyAmount<Token | NativeCurrency>
 }) => {
-  const { switchNetworkAsync } = useSwitchNetwork()
+  const { switchNetwork } = useSwitchNetwork()
   const { chainId } = useActiveChainId()
 
   const isChainMatched = chainId === tokenAmount?.currency.chainId
@@ -79,7 +79,7 @@ export const CreateGiftButton = ({
       disabled={isLoading || isApproving}
       onClick={() => {
         if (!isChainMatched) {
-          switchNetworkAsync(tokenAmount.currency.chainId)
+          switchNetwork(tokenAmount.currency.chainId)
         } else {
           onCreateGiftClick()
         }

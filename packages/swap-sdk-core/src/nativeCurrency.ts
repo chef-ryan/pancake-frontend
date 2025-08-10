@@ -5,7 +5,7 @@ import { Token } from './token'
 /**
  * Represents the native currency of the chain on which it resides, e.g.
  */
-export abstract class NativeCurrency extends BaseCurrency {
+export abstract class NativeCurrency extends BaseCurrency<Token> {
   public readonly isNative = true as const
 
   public readonly isToken = false as const

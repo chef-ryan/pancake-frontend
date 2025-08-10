@@ -1,12 +1,12 @@
 import { getIsMobile, isInBinance } from '@binance/w3w-utils'
 import { getCurrencyAddress, TradeType } from '@pancakeswap/swap-sdk-core'
-import { accountActiveChainAtom } from 'hooks/useAccountActiveChain'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { QuoteQuery } from 'quoter/quoter.types'
 
 import { BasePerf, PerfTracker } from 'utils/PerfTracker'
 import { InterfaceOrder } from 'views/Swap/utils'
+import { accountActiveChainAtom } from 'wallet/atoms/accountStateAtoms'
 
 type QuoteTrace = BasePerf & {
   quoteHash: string

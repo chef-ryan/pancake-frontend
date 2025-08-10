@@ -19,6 +19,7 @@ import { useAtom } from 'jotai'
 import { useRouter } from 'next/router'
 import { useCallback, useContext, useMemo } from 'react'
 import { styled } from 'styled-components'
+import { isEvm } from '@pancakeswap/chains'
 import { SettingsMode } from '../../../components/Menu/GlobalSettings/types'
 import { SwapFeaturesContext } from '../../Swap/SwapFeaturesContext'
 import { chartDisplayAtom } from './atoms'
@@ -141,7 +142,7 @@ export const SwapSelection = ({
   }, [chainId, theme.colors.textDisabled, isSmartAccount])
 
   const limitProps = useMemo(() => {
-    const isLimitSupported = !isSmartAccount
+    const isLimitSupported = !isSmartAccount && isEvm(chainId)
     return {
       disabled: !isLimitSupported,
       style: {
@@ -151,7 +152,7 @@ export const SwapSelection = ({
         userSelect: 'none',
       } as React.CSSProperties,
     }
-  }, [theme.colors.textDisabled, isSmartAccount])
+  }, [theme.colors.textDisabled, isSmartAccount, chainId])
 
   return (
     <SwapSelectionWrapper style={style}>
@@ -176,7 +177,7 @@ export const SwapSelection = ({
         <StyledButtonMenuItem {...limitProps}>{t('Limit')}</StyledButtonMenuItem>
       </ButtonMenu>
       {/* NOTE: Commented out until charts are supported again */}
-      {withToolkit && (
+      {withToolkit && isEvm(chainId) && (
         <ColoredIconButton
           onClick={() => {
             toggleChartDisplayed()

@@ -21,14 +21,16 @@ import { getBlockExploreLink, getBlockExploreName } from 'utils'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 import ConfirmSwapModalContainer from 'views/Swap/components/ConfirmSwapModalContainer'
 import { SwapTransactionErrorContent } from 'views/Swap/components/SwapTransactionErrorContent'
+import { NonEVMChainId } from '@pancakeswap/chains'
 
 import { Hash } from 'viem'
-import { InterfaceOrder, isXOrder } from 'views/Swap/utils'
+import { EVMInterfaceOrder, InterfaceOrder, isXOrder } from 'views/Swap/utils'
 import { TransactionConfirmSwapContentV2 } from '../components/TransactionConfirmSwapContentV2'
 import { useSlippageAdjustedAmounts } from '../hooks'
 import { ConfirmAction } from '../hooks/useConfirmModalState'
 import { AllowedAllowanceState } from '../types'
 import { ApproveStepFlow } from './ApproveStepFlow'
+import { SolanaSwapTxReceiptModalContent } from '../components/SolanaSwapTxReceiptModalContent'
 
 export const useApprovalPhaseStepTitles: ({ trade }: { trade: InterfaceOrder['trade'] | undefined }) => {
   [step in AllowedAllowanceState]: string
@@ -50,8 +52,8 @@ type ConfirmSwapModalV2Props = InjectedModalProps & {
   onDismiss?: () => void
   confirmModalState: ConfirmModalState
   pendingModalSteps: ConfirmAction[]
-  order?: InterfaceOrder | null
-  originalOrder?: InterfaceOrder | null
+  order?: EVMInterfaceOrder | null
+  originalOrder?: EVMInterfaceOrder | null
   currencyBalances?: { [field in Field]?: CurrencyAmount<Currency> }
   txHash?: string
   orderHash?: Hash
@@ -130,10 +132,15 @@ export const ConfirmSwapModalV2: React.FC<ConfirmSwapModalV2Props> = ({
     const amountB = isExactIn ? `Min ${amountBWithSlippage}` : amountBWithSlippage
 
     if (swapErrorMessage) {
+      const message = swapErrorMessage.includes('Could not find an Account to execute with this Action')
+        ? t(
+            'TransactionExecutionError: The requested account and / or method has not been authorised by the user. Please make sure your wallet is updated to the latest version.',
+          )
+        : swapErrorMessage
       return (
         <Flex width="100%" alignItems="center" height="calc(430px - 73px - 120px)">
           <SwapTransactionErrorContent
-            message={swapErrorMessage}
+            message={message}
             onDismiss={handleDismiss}
             openSettingModal={openSettingModal}
           />
@@ -224,6 +231,9 @@ export const ConfirmSwapModalV2: React.FC<ConfirmSwapModalV2Props> = ({
     }
 
     if (confirmModalState === ConfirmModalState.COMPLETED && txHash) {
+      if (chainId === NonEVMChainId.SOLANA) {
+        return <SolanaSwapTxReceiptModalContent txHash={txHash} />
+      }
       return (
         <SwapTransactionReceiptModalContent
           explorerLink={

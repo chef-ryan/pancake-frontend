@@ -29,10 +29,10 @@ export function BridgeButton({ ifoChainId, icake, dstIcake, buttonVisible = true
   const sourceChain = useIfoSourceChain(ifoChainId)
   const isCurrentChainSourceChain = chainId === sourceChain
   const [isSwitching, setIsSwitching] = useState(false)
-  const { switchNetworkAsync } = useSwitchNetwork()
+  const { switchNetwork } = useSwitchNetwork()
   const switchToSourceChain = useCallback(
-    () => sourceChain && !isCurrentChainSourceChain && switchNetworkAsync(sourceChain),
-    [sourceChain, switchNetworkAsync, isCurrentChainSourceChain],
+    () => sourceChain && !isCurrentChainSourceChain && switchNetwork(sourceChain),
+    [sourceChain, switchNetwork, isCurrentChainSourceChain],
   )
   // const nativeIfoSupported = useMemo(() => isNativeIfoSupported(chainId), [chainId])
   const { t } = useTranslation()

@@ -1,6 +1,6 @@
 import { useIntersectionObserver } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency } from '@pancakeswap/swap-sdk-core'
+import { UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { AddIcon, Button, Grid, Heading, IColumnsType, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { getCurrencyAddress, PoolTypeFilter, toTokenValue } from '@pancakeswap/widgets-internal'
 import { CurrencySelectV2 } from 'components/CurrencySelectV2'
@@ -179,7 +179,7 @@ export const PoolList = () => {
   )
 
   const handleToken0Change = useCallback(
-    (currency: Currency) => {
+    (currency: UnifiedCurrency) => {
       const newCurrencyIdA = getCurrencyAddress(currency)
       if (newCurrencyIdA === currencyIdB) {
         updateParams({ currencyIdA: currencyIdB, currencyIdB: currencyIdA })
@@ -191,7 +191,7 @@ export const PoolList = () => {
   )
 
   const handleToken1Change = useCallback(
-    (currency: Currency) => {
+    (currency: UnifiedCurrency) => {
       const newCurrencyIdB = getCurrencyAddress(currency)
       if (newCurrencyIdB === currencyIdA) {
         updateParams({ currencyIdA: currencyIdB, currencyIdB: currencyIdA })

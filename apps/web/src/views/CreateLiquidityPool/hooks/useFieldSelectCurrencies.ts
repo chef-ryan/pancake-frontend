@@ -1,4 +1,4 @@
-import { Currency } from '@pancakeswap/swap-sdk-core'
+import { UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { useCallback } from 'react'
 import currencyId from 'utils/currencyId'
@@ -11,7 +11,7 @@ export const useFieldSelectCurrencies = () => {
   const { resetAmounts, switchDepositAmounts } = useCreateDepositAmounts()
 
   const handleBaseCurrencySelect = useCallback(
-    (currency: Currency) => {
+    (currency: UnifiedCurrency) => {
       if (
         (quoteCurrency?.isNative && currency.isNative) ||
         (quoteCurrency?.isToken &&
@@ -32,7 +32,7 @@ export const useFieldSelectCurrencies = () => {
   )
 
   const handleQuoteCurrencySelect = useCallback(
-    (currency: Currency) => {
+    (currency: UnifiedCurrency) => {
       if (
         (baseCurrency?.isNative && currency.isNative) ||
         (baseCurrency?.isToken &&

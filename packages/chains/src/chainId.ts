@@ -22,6 +22,13 @@ export enum ChainId {
   MONAD_TESTNET = 10143,
 }
 
+export enum NonEVMChainId {
+  SOLANA = 8000001001,
+  APTOS = 8000002000,
+}
+
+export type UnifiedChainId = ChainId | NonEVMChainId
+
 export const testnetChainIds = [
   ChainId.GOERLI,
   ChainId.BSC_TESTNET,

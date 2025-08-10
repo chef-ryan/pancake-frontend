@@ -1,13 +1,13 @@
 import { PriceOrder } from '@pancakeswap/price-api-sdk'
-import { Currency, CurrencyAmount } from '@pancakeswap/sdk'
+import { UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 
 interface Balances {
-  [Field.INPUT]?: CurrencyAmount<Currency>
-  [Field.OUTPUT]?: CurrencyAmount<Currency>
+  [Field.INPUT]?: UnifiedCurrencyAmount<UnifiedCurrency>
+  [Field.OUTPUT]?: UnifiedCurrencyAmount<UnifiedCurrency>
 }
 
 export function useParsedAmounts(trade: PriceOrder['trade'] | undefined, balances: Balances, isWrapping: boolean) {

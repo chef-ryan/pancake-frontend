@@ -17,7 +17,6 @@ import { RecentTransactions } from 'components/App/Transactions/TransactionsModa
 import { useTheme } from '@pancakeswap/hooks'
 import { useMenuTab, WalletView } from 'components/Menu/UserMenu/providers/MenuTabProvider'
 import { TabsComponent } from 'components/Menu/UserMenu/WalletModal'
-import { usePrivy } from '@privy-io/react-auth'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import { useAddressBalance } from 'hooks/useAddressBalance'
 import { useRouter } from 'next/router'
@@ -28,6 +27,8 @@ import { ClaimGiftConfirmView } from 'views/Gift/components/ClaimGiftConfirmView
 import { ClaimGiftView } from 'views/Gift/components/ClaimGiftView'
 import { GiftInfoDetailView } from 'views/Gift/components/GiftInfoDetailView'
 import { GiftsDashboard } from 'views/Gift/components/GiftsDashboard'
+import { NonEVMChainId } from '@pancakeswap/chains'
+import { useActiveChainId } from 'hooks/useActiveChainId'
 import { CancelGiftProvider } from 'views/Gift/providers/CancelGiftProvider'
 import { ActionButton } from './ActionButton'
 import { AssetsList } from './AssetsList'
@@ -135,7 +136,8 @@ export const WalletContent = ({
   const { isMobile } = useMatchBreakpoints()
   const { viewState, setViewState, goBack, setSendEntry } = useWalletModalV2ViewState()
   const { theme } = useTheme()
-  const { authenticated, ready, user, createWallet, setWalletRecovery, enrollInMfa } = usePrivy()
+
+  const { chainId } = useActiveChainId()
 
   // Fetch balances using the hook we created
   const { balances, isLoading, totalBalanceUsd } = useAddressBalance(account, {
@@ -229,7 +231,7 @@ export const WalletContent = ({
               <Text fontSize="20px" fontWeight="bold" mb="8px">
                 {t('My Wallet')}
               </Text>
-              {!noAssets && (
+              {chainId !== NonEVMChainId.SOLANA && !noAssets && (
                 <Box mb="16px" onClick={(e) => e.stopPropagation()}>
                   <TabsComponent
                     view={view}
@@ -262,60 +264,66 @@ export const WalletContent = ({
       {viewState === ViewState.WALLET_INFO && (
         <>
           {noAssets ? (
-            <Box padding="8px 16px">
+            chainId === NonEVMChainId.SOLANA ? (
               <Text color="textSubtle" textAlign="center" mb="16px">
-                {t('This wallet looks new — choose an option below to add crypto and start trading')}
+                {t('This wallet looks new. Does not have any assets.')}
               </Text>
-              <FlexGap gap="16px" justifyContent="center" flexWrap="wrap">
-                <OptionBox
-                  onClick={() => {
-                    router.push('/buy-crypto')
-                    onDismiss()
-                  }}
-                >
-                  <Box mb="16px" mx="auto" width="60px" height="60px">
-                    <img src={`${ASSET_CDN}/web/landing/trade-buy-crypto.png`} width="60px" alt="Buy Crypto" />
-                  </Box>
-                  <Text bold color="secondary" fontSize="16px" mb="8px">
-                    {t('Buy')}
-                  </Text>
-                  <Text fontSize="14px" color="textSubtle">
-                    {t('Purchase with credit card, Apple Pay, or Google Pay.')}
-                  </Text>
-                </OptionBox>
-                <OptionBox
-                  onClick={() => {
-                    onReceiveClick()
-                    onDismiss()
-                  }}
-                >
-                  <Box mb="16px" mx="auto" width="60px" height="60px">
-                    <img src={`${ASSET_CDN}/web/landing/earn-fixed-staking.png`} width="60px" alt="Receive Crypto" />
-                  </Box>
-                  <Text bold color="secondary" fontSize="16px" mb="8px">
-                    {t('Receive')}
-                  </Text>
-                  <Text fontSize="14px" color="textSubtle">
-                    {t('Receive crypto from another wallet.')}
-                  </Text>
-                </OptionBox>
-              </FlexGap>
-              <FlexGap
-                justifyContent="center"
-                alignItems="center"
-                mt="24px"
-                onClick={() => {
-                  router.push('/bridge')
-                }}
-                style={{ cursor: 'pointer' }}
-              >
-                <Text bold color="primary" fontSize="16px">
-                  {t('Bridge Crypto')}
+            ) : (
+              <Box padding="8px 16px">
+                <Text color="textSubtle" textAlign="center" mb="16px">
+                  {t('This wallet looks new — choose an option below to add crypto and start trading')}
                 </Text>
-                <ArrowForwardIcon color="primary" />
-              </FlexGap>
-            </Box>
-          ) : view === WalletView.GIFTS ? null : (
+                <FlexGap gap="16px" justifyContent="center" flexWrap="wrap">
+                  <OptionBox
+                    onClick={() => {
+                      router.push('/buy-crypto')
+                      onDismiss()
+                    }}
+                  >
+                    <Box mb="16px" mx="auto" width="60px" height="60px">
+                      <img src={`${ASSET_CDN}/web/landing/trade-buy-crypto.png`} width="60px" alt="Buy Crypto" />
+                    </Box>
+                    <Text bold color="secondary" fontSize="16px" mb="8px">
+                      {t('Buy')}
+                    </Text>
+                    <Text fontSize="14px" color="textSubtle">
+                      {t('Purchase with credit card, Apple Pay, or Google Pay.')}
+                    </Text>
+                  </OptionBox>
+                  <OptionBox
+                    onClick={() => {
+                      onReceiveClick()
+                      onDismiss()
+                    }}
+                  >
+                    <Box mb="16px" mx="auto" width="60px" height="60px">
+                      <img src={`${ASSET_CDN}/web/landing/earn-fixed-staking.png`} width="60px" alt="Receive Crypto" />
+                    </Box>
+                    <Text bold color="secondary" fontSize="16px" mb="8px">
+                      {t('Receive')}
+                    </Text>
+                    <Text fontSize="14px" color="textSubtle">
+                      {t('Receive crypto from another wallet.')}
+                    </Text>
+                  </OptionBox>
+                </FlexGap>
+                <FlexGap
+                  justifyContent="center"
+                  alignItems="center"
+                  mt="24px"
+                  onClick={() => {
+                    router.push('/bridge')
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <Text bold color="primary" fontSize="16px">
+                    {t('Bridge Crypto')}
+                  </Text>
+                  <ArrowForwardIcon color="primary" />
+                </FlexGap>
+              </Box>
+            )
+          ) : view === WalletView.GIFTS || chainId === NonEVMChainId.SOLANA ? null : (
             <ActionButtonsContainer>
               <FlexGap gap="8px" width="100%">
                 <ActionButton

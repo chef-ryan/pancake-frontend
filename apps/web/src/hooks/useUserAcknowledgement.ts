@@ -1,14 +1,11 @@
 import { useAtom } from 'jotai'
-import { atomWithStorage } from 'jotai/utils'
 import { useCallback, useMemo } from 'react'
+import { atomWithStorageSync } from 'utils/atomWithStorageSync'
 import { useAccount } from 'wagmi'
 
 export function useUserAcknowledgement(id: string) {
   const { address } = useAccount()
-  const atom = useMemo(
-    () => atomWithStorage(`pcs_user_ack_${id}_${address}`, false, undefined, { unstable_getOnInit: true }),
-    [id, address],
-  )
+  const atom = useMemo(() => atomWithStorageSync(`pcs_user_ack_${id}_${address}`, false), [id, address])
   const [userACK, setUserACK] = useAtom(atom)
 
   const ack = useMemo(() => address && userACK, [address, userACK])

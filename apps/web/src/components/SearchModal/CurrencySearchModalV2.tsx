@@ -1,6 +1,6 @@
 import { usePreviousValue } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Token } from '@pancakeswap/sdk'
+import { Currency, Token, UnifiedCurrency, UnifiedToken } from '@pancakeswap/sdk'
 import { TokenList } from '@pancakeswap/token-lists'
 import { enableList, removeList, useFetchListCallback } from '@pancakeswap/token-lists/react'
 import {
@@ -25,7 +25,7 @@ import { styled } from 'styled-components'
 import CurrencySearchV2 from './CurrencySearchV2'
 import ImportToken from './ImportToken'
 import Manage from './Manage'
-import { CurrencyModalView } from './types'
+import { CommonBasesType, CurrencyModalView } from './types'
 
 const Footer = styled.div`
   width: 100%;
@@ -54,10 +54,10 @@ const StyledModalBody = styled(ModalBody)`
 
 export interface CurrencySearchModalV2Props extends InjectedModalProps {
   selectedCurrency?: Currency | null
-  onCurrencySelect?: (currency: Currency) => void
+  onCurrencySelect?: (currency: UnifiedCurrency) => void
   otherSelectedCurrency?: Currency | null
   showCommonBases?: boolean
-  commonBasesType?: string
+  commonBasesType?: CommonBasesType
   showSearchInput?: boolean
   tokensToShow?: Token[]
   chainId?: number
@@ -80,7 +80,7 @@ export default function CurrencySearchModalV2({
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.search)
 
   const handleCurrencySelect = useCallback(
-    (currency: Currency) => {
+    (currency: UnifiedCurrency) => {
       onDismiss?.()
       onCurrencySelect?.(currency)
     },
@@ -93,7 +93,7 @@ export default function CurrencySearchModalV2({
   const prevView = usePreviousValue(modalView)
 
   // used for import token flow
-  const [importToken, setImportToken] = useState<Token | undefined>()
+  const [importToken, setImportToken] = useState<UnifiedToken | undefined>()
 
   // used for import list
   const [importList, setImportList] = useState<TokenList | undefined>()
@@ -180,7 +180,7 @@ export default function CurrencySearchModalV2({
             chainId={chainId}
           />
         ) : modalView === CurrencyModalView.importToken && importToken ? (
-          <ImportToken tokens={[importToken]} handleCurrencySelect={handleCurrencySelect} chainId={chainId} />
+          <ImportToken tokens={[importToken as Token]} handleCurrencySelect={handleCurrencySelect} chainId={chainId} />
         ) : modalView === CurrencyModalView.importList && importList && listURL ? (
           <ImportList
             onAddList={handleAddList}
@@ -193,7 +193,7 @@ export default function CurrencySearchModalV2({
         ) : modalView === CurrencyModalView.manage ? (
           <Manage
             setModalView={setModalView}
-            setImportToken={setImportToken}
+            setImportToken={(token) => setImportToken(token as Token)}
             setImportList={setImportList}
             setListUrl={setListUrl}
             chainId={chainId}

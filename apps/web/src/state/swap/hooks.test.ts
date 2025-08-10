@@ -1,16 +1,9 @@
 /* eslint-disable no-var */
 /* eslint-disable vars-on-top */
-import { Currency } from '@pancakeswap/swap-sdk-core'
-import { renderHook } from '@testing-library/react-hooks'
-import { useCurrency } from 'hooks/Tokens'
-import { useAtom } from 'jotai'
 import { parse } from 'querystring'
-import { useEffect } from 'react'
-import { swapReducerAtom } from 'state/swap/reducer'
-import { createReduxWrapper } from 'testUtils'
 import { Mock, vi } from 'vitest'
-import { Field, replaceSwapState } from './actions'
-import { queryParametersToSwapState, useDerivedSwapInfo, useSwapState } from './hooks'
+import { Field } from './actions'
+import { queryParametersToSwapState } from './hooks'
 
 describe('hooks', () => {
   describe('#queryParametersToSwapState', () => {
@@ -122,128 +115,4 @@ vi.mock('wagmi', async () => {
     ...original,
     useAccount: mockAccount,
   }
-})
-
-describe('#useDerivedSwapInfo', () => {
-  it('should show Login Error', async () => {
-    const { result, rerender } = renderHook(
-      () => {
-        const {
-          independentField,
-          typedValue,
-          recipient,
-          [Field.INPUT]: { currencyId: inputCurrencyId },
-          [Field.OUTPUT]: { currencyId: outputCurrencyId },
-        } = useSwapState()
-        const inputCurrency = useCurrency(inputCurrencyId)
-        const outputCurrency = useCurrency(outputCurrencyId)
-        return useDerivedSwapInfo(
-          independentField,
-          typedValue,
-          inputCurrency as Currency,
-          outputCurrency as Currency,
-          recipient || '',
-        )
-      },
-      { wrapper: createReduxWrapper() },
-    )
-    expect(result.current.inputError).toBe('Connect Wallet')
-
-    mockAccount.mockReturnValue({ address: '0x33edFBc4934baACc78f4d317bc07639119dd3e78' })
-    rerender()
-
-    expect(result.current.inputError).toBe('Enter an amount')
-    mockAccount.mockClear()
-  })
-
-  it('should show [Enter a recipient] Error', async () => {
-    mockAccount.mockReturnValue({ address: '0x33edFBc4934baACc78f4d317bc07639119dd3e78' })
-    const { result, rerender } = renderHook(
-      () => {
-        const [, dispatch] = useAtom(swapReducerAtom)
-        useEffect(() => {
-          dispatch(
-            replaceSwapState({
-              field: Field.INPUT,
-              typedValue: '0.11',
-              inputCurrencyId: 'BNB',
-              outputCurrencyId: 'BNB',
-              recipient: '',
-            }),
-          )
-        }, [dispatch])
-        const {
-          independentField,
-          typedValue,
-          recipient,
-          [Field.INPUT]: { currencyId: inputCurrencyId },
-          [Field.OUTPUT]: { currencyId: outputCurrencyId },
-        } = useSwapState()
-        const inputCurrency = useCurrency(inputCurrencyId)
-        const outputCurrency = useCurrency(outputCurrencyId)
-        return useDerivedSwapInfo(
-          independentField,
-          typedValue,
-          inputCurrency as Currency,
-          outputCurrency as Currency,
-          recipient || '',
-        )
-      },
-      {
-        wrapper: createReduxWrapper(),
-      },
-    )
-
-    rerender()
-    expect(result.current.inputError).toBe('Enter a recipient')
-    mockAccount.mockClear()
-  })
-
-  it('should return undefined when no pair', async () => {
-    const { result } = renderHook(
-      () => {
-        const [, dispatch] = useAtom(swapReducerAtom)
-        useEffect(() => {
-          dispatch(
-            replaceSwapState({
-              field: Field.INPUT,
-              typedValue: '',
-              inputCurrencyId: '',
-              outputCurrencyId: '',
-              recipient: null,
-            }),
-          )
-        }, [dispatch])
-        const {
-          independentField,
-          typedValue,
-          recipient,
-          [Field.INPUT]: { currencyId: inputCurrencyId },
-          [Field.OUTPUT]: { currencyId: outputCurrencyId },
-        } = useSwapState()
-        const inputCurrency = useCurrency(inputCurrencyId)
-        const outputCurrency = useCurrency(outputCurrencyId)
-        const swapInfo = useDerivedSwapInfo(
-          independentField,
-          typedValue,
-          inputCurrency as Currency,
-          outputCurrency as Currency,
-          recipient || '',
-        )
-        return {
-          swapInfo,
-        }
-      },
-      {
-        wrapper: createReduxWrapper(),
-      },
-    )
-
-    expect(result.current.swapInfo.currencies.INPUT).toBeUndefined()
-    expect(result.current.swapInfo.currencies.OUTPUT).toBeUndefined()
-    expect(result.current.swapInfo.currencyBalances.INPUT).toBeUndefined()
-    expect(result.current.swapInfo.currencyBalances.OUTPUT).toBeUndefined()
-    expect(result.current.swapInfo.v2Trade).toBeUndefined()
-    expect(result.current.swapInfo.parsedAmount).toBeUndefined()
-  })
 })

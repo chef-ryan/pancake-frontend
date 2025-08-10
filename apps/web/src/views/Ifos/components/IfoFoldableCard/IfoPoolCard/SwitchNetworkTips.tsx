@@ -25,7 +25,7 @@ export function SwitchNetworkTips({ ifoChainId }: Props) {
   const { t } = useTranslation()
   const { chainId } = useActiveChainId()
   const chainName = useChainNames([ifoChainId])
-  const { switchNetworkAsync } = useSwitchNetwork()
+  const { switchNetwork } = useSwitchNetwork()
 
   const onSwitchNetwork = useCallback(
     (e: MouseEvent) => {
@@ -33,9 +33,9 @@ export function SwitchNetworkTips({ ifoChainId }: Props) {
       if (chainId === ifoChainId) {
         return
       }
-      switchNetworkAsync(ifoChainId)
+      switchNetwork(ifoChainId)
     },
-    [chainId, ifoChainId, switchNetworkAsync],
+    [chainId, ifoChainId, switchNetwork],
   )
 
   if (chainId === ifoChainId) {

@@ -1,7 +1,7 @@
 import { useDebounce, useSortedTokensByQuery } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 /* eslint-disable no-restricted-syntax */
-import { Currency, Token } from '@pancakeswap/sdk'
+import { Currency, Token, UnifiedCurrency, UnifiedToken } from '@pancakeswap/sdk'
 import { WrappedTokenInfo, createFilterToken } from '@pancakeswap/token-lists'
 import { AutoColumn, Box, Column, Input, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useAudioPlay } from '@pancakeswap/utils/user'
@@ -21,16 +21,17 @@ import CommonBases from './CommonBases'
 import CurrencyListV2 from './CurrencyListV2'
 import ImportRow from './ImportRow'
 import { getSwapSound } from './swapSound'
+import { CommonBasesType } from './types'
 
 interface CurrencySearchV2Props {
   selectedCurrency?: Currency | null
-  onCurrencySelect: (currency: Currency) => void
+  onCurrencySelect: (currency: UnifiedCurrency) => void
   otherSelectedCurrency?: Currency | null
   showSearchInput?: boolean
   showCommonBases?: boolean
-  commonBasesType?: string
+  commonBasesType?: CommonBasesType
   showImportView: () => void
-  setImportToken: (token: Token) => void
+  setImportToken: (token: UnifiedToken) => void
   height?: number
   tokensToShow?: Token[]
   chainId?: number
@@ -143,7 +144,7 @@ function CurrencySearchV2({
   )
 
   const handleCurrencySelect = useCallback(
-    (currency: Currency) => {
+    (currency: UnifiedCurrency) => {
       onCurrencySelect(currency)
       if (audioPlay) {
         getSwapSound().play()

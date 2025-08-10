@@ -5,10 +5,10 @@ import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 
 const WrongNetworkWarning = () => {
   const { t } = useTranslation()
-  const { switchNetworkAsync, canSwitch } = useSwitchNetwork()
+  const { switchNetwork, canSwitch } = useSwitchNetwork()
 
   const handleSwitchNetwork = async (): Promise<void> => {
-    await switchNetworkAsync(ChainId.BSC)
+    await switchNetwork(ChainId.BSC)
   }
 
   return (

@@ -4,7 +4,7 @@ import invariant from 'tiny-invariant'
 /**
  * Represents an ERC20 token with a unique address and some metadata.
  */
-export class OnRampCurrency extends BaseCurrency {
+export class OnRampCurrency extends BaseCurrency<Currency> {
   public readonly isNative: boolean
 
   public readonly isToken: boolean

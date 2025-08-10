@@ -42,20 +42,20 @@ export function NetworkSwitcherModal({
 }: Props) {
   const { t } = useTranslation()
   const chainNames = useChainNames(supportedChains)
-  const { switchNetworkAsync } = useSwitchNetwork()
+  const { switchNetwork } = useSwitchNetwork()
   const onSwitch = useCallback(async () => {
     if (!supportedChains?.length) {
       return
     }
+    const succ = await switchNetwork(supportedChains[0])
     try {
-      const result = await switchNetworkAsync(supportedChains[0])
-      if (result) {
+      if (succ) {
         onSwitchNetworkSuccess?.()
       }
     } catch (e) {
       console.error(e)
     }
-  }, [switchNetworkAsync, supportedChains, onSwitchNetworkSuccess])
+  }, [switchNetwork, supportedChains, onSwitchNetworkSuccess])
   const { targetRef, tooltip } = useTooltip(<Box style={{ maxWidth: '160px' }}>{tips}</Box>, {
     placement: 'left',
     manualVisible: true,

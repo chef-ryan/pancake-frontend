@@ -1,6 +1,6 @@
 import '@kyberswap/pancake-liquidity-widgets/dist/style.css'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency } from '@pancakeswap/sdk'
+import { Currency, UnifiedCurrency } from '@pancakeswap/sdk'
 import {
   Flex,
   InfoFilledIcon,
@@ -54,7 +54,7 @@ const LiquidityWidget = dynamic(
 
 const NATIVE_CURRENCY_ADDRESS = getAddress('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
 
-const getCurrencyAddress = (currency: Currency | undefined | null): string =>
+const getCurrencyAddress = (currency: UnifiedCurrency | undefined | null): string =>
   currency?.isNative ? NATIVE_CURRENCY_ADDRESS : currency?.wrapped?.address || ''
 
 export const ZapLiquidityWidget: React.FC<ZapLiquidityProps> = ({
@@ -143,7 +143,7 @@ export const ZapLiquidityWidget: React.FC<ZapLiquidityProps> = ({
   )
 
   const handleSelectToken = useCallback(
-    (token: Currency) => {
+    (token: UnifiedCurrency) => {
       const selectedTokenAddress = getCurrencyAddress(token)
       const indexOfToken = depositTokens
         .split(',')

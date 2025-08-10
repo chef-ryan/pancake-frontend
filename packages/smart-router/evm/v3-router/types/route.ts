@@ -12,6 +12,8 @@ export enum RouteType {
   InfinityCL,
   InfinityBIN,
   BRIDGE,
+  // TODO: SVM should not be in evm v3-router. Need to find a better place for it.
+  SVM,
 }
 
 export interface BaseRoute {

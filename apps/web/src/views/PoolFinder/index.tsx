@@ -1,4 +1,4 @@
-import { Currency } from '@pancakeswap/sdk'
+import { Currency, UnifiedCurrency } from '@pancakeswap/sdk'
 import { AddIcon, AutoColumn, Button, ChevronDownIcon, ColumnCenter, Text, useModal } from '@pancakeswap/uikit'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 
@@ -64,11 +64,11 @@ export default function PoolFinder() {
   const hasPosition = Boolean(position && position.quotient > BIG_INT_ZERO)
 
   const handleCurrencySelect = useCallback(
-    (currency: Currency) => {
+    (currency: UnifiedCurrency) => {
       if (activeField === Fields.TOKEN0) {
-        setCurrency0(currency)
+        setCurrency0(currency as Currency)
       } else {
-        setCurrency1(currency)
+        setCurrency1(currency as Currency)
       }
     },
     [activeField],

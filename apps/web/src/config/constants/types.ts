@@ -1,17 +1,20 @@
-import { Campaign, CampaignType, TranslatableText } from '@pancakeswap/achievements'
-import { ChainId } from '@pancakeswap/chains'
-import type { FarmConfigBaseProps, SerializedFarmConfig, SerializedFarmPublicData } from '@pancakeswap/farms'
-import { Currency, CurrencyAmount, ERC20Token, Percent, Price, Token, Trade, TradeType } from '@pancakeswap/sdk'
-import { LegacyTradeWithStableSwap as TradeWithStableSwap } from '@pancakeswap/smart-router/legacy-router'
 import BigNumber from 'bignumber.js'
 import { Address } from 'viem'
 
+import { Campaign, CampaignType, TranslatableText } from '@pancakeswap/achievements'
+import { UnifiedChainId } from '@pancakeswap/chains'
+import type { FarmConfigBaseProps, SerializedFarmConfig, SerializedFarmPublicData } from '@pancakeswap/farms'
+import { LegacyTradeWithStableSwap as TradeWithStableSwap } from '@pancakeswap/smart-router/legacy-router'
+import type { Currency, CurrencyAmount, Percent, Price, Token, UnifiedToken } from '@pancakeswap/swap-sdk-core'
+import { TradeType } from '@pancakeswap/swap-sdk-core'
+import type { Trade } from '@pancakeswap/v2-sdk'
+
 // a list of tokens by chain
 export type ChainMap<T> = {
-  readonly [chainId in ChainId]: T
+  readonly [chainId in UnifiedChainId]: T
 }
 
-export type ChainTokenList = ChainMap<Token[]>
+export type ChainTokenList = ChainMap<UnifiedToken[]>
 
 export interface Addresses {
   56: Address
@@ -99,46 +102,6 @@ export interface FarmAuctionBidderConfig {
 
 // Note: this status is slightly different compared to 'status' config
 // from Farm Auction smart contract
-export enum AuctionStatus {
-  ToBeAnnounced, // No specific dates/blocks to display
-  Pending, // Auction is scheduled but not live yet (i.e. waiting for startBlock)
-  Open, // Auction is open for bids
-  Finished, // Auction end block is reached, bidding is not possible
-  Closed, // Auction was closed in smart contract
-}
-
-export interface Auction {
-  id: number
-  status: AuctionStatus
-  startBlock: number
-  startDate: Date
-  endBlock: number
-  endDate: Date
-  auctionDuration: number
-  initialBidAmount: number
-  topLeaderboard: number
-  leaderboardThreshold: BigNumber
-}
-
-export interface BidderAuction {
-  id: number
-  amount: BigNumber
-  claimed: boolean
-}
-
-export interface Bidder extends FarmAuctionBidderConfig {
-  position?: number
-  isTopPosition: boolean
-  samePositionAsAbove: boolean
-  amount: BigNumber
-}
-
-export interface ConnectedBidder {
-  account: string
-  isWhitelisted: boolean
-  bidderData?: Bidder
-}
-
 export const FetchStatus = {
   Idle: 'idle',
   Fetching: 'pending',
@@ -147,6 +110,16 @@ export const FetchStatus = {
 } as const
 
 export type TFetchStatus = (typeof FetchStatus)[keyof typeof FetchStatus]
+
+export interface StableTrade {
+  tradeType: TradeType
+  inputAmount: CurrencyAmount<Currency>
+  outputAmount: CurrencyAmount<Currency>
+  executionPrice: Price<Currency, Currency>
+  priceImpact: null
+  maximumAmountIn: (slippaged: Percent) => CurrencyAmount<Currency>
+  minimumAmountOut: (slippaged: Percent) => CurrencyAmount<Currency>
+}
 
 export const isStableSwap = (trade: ITrade): trade is StableTrade => {
   return (
@@ -163,19 +136,9 @@ export type ITrade =
 
 export type V2TradeAndStableSwap = Trade<Currency, Currency, TradeType> | StableTrade | undefined
 
-export interface StableTrade {
-  tradeType: TradeType
-  inputAmount: CurrencyAmount<Currency>
-  outputAmount: CurrencyAmount<Currency>
-  executionPrice: Price<Currency, Currency>
-  priceImpact: null
-  maximumAmountIn: (slippaged: Percent) => CurrencyAmount<Currency>
-  minimumAmountOut: (slippaged: Percent) => CurrencyAmount<Currency>
-}
-
 export enum Bound {
   LOWER = 'LOWER',
   UPPER = 'UPPER',
 }
 
-export type UnsafeCurrency = Currency | ERC20Token | null | undefined
+export type UnsafeCurrency = Currency | null | undefined

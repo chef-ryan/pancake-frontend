@@ -9,6 +9,8 @@ import { useAtom } from 'jotai'
 import { useMemo } from 'react'
 import { styled } from 'styled-components'
 import { Connector, useAccount, useConnect } from 'wagmi'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { useSocialLoginProviderAtom } from '../../contexts/Privy/atom'
 
 interface CopyAddressProps extends FlexProps {
@@ -118,6 +120,11 @@ const useDappIcon = () => {
   return { dappIcon }
 }
 
+const useSolanaWalletIcon = () => {
+  const { wallet } = useWallet()
+  return wallet?.adapter.icon
+}
+
 const SOCIAL_LOGIN_ICONS = {
   google: `${ASSET_CDN}/web/wallets/social-login/google.jpg`,
   x: `${ASSET_CDN}/web/wallets/social-login/x.svg`,
@@ -139,8 +146,15 @@ export const CopyAddress: React.FC<React.PropsWithChildren<CopyAddressProps>> = 
 
   const walletConfig = walletsConfig({ chainId, connect: connectAsync })
 
-  const wallet = useMemo(() => walletConfig.find((w) => w.id === previouslyUsedWalletsId[0]), [walletConfig])
   const { dappIcon } = useDappIcon()
+  const solanaWalletIcon = useSolanaWalletIcon()
+  const walletIcon = useMemo(() => {
+    if (chainId === NonEVMChainId.SOLANA) {
+      return solanaWalletIcon
+    }
+    const evmWallet = walletConfig.find((w) => w.id === previouslyUsedWalletsId[0])
+    return evmWallet?.icon
+  }, [walletConfig, chainId, solanaWalletIcon, previouslyUsedWalletsId])
 
   const socialIcon = useMemo(() => {
     return socialProvider && isSmartAccount ? SOCIAL_LOGIN_ICONS[socialProvider] : null
@@ -164,8 +178,8 @@ export const CopyAddress: React.FC<React.PropsWithChildren<CopyAddressProps>> = 
             <SocialIconWrapper $needsWhiteBg={needsWhiteBackground}>
               <Image src={socialIcon} width={32} height={32} alt="Social Login" />
             </SocialIconWrapper>
-          ) : wallet?.icon ? (
-            <Image src={wallet?.icon as string} width={40} height={40} alt="Wallet" />
+          ) : walletIcon ? (
+            <Image src={walletIcon as string} width={40} height={40} alt="Wallet" />
           ) : dappIcon ? (
             <Image src={dappIcon} width={40} height={40} alt="Wallet" />
           ) : (

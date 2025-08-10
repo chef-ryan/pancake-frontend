@@ -1,5 +1,8 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, BoxProps, BscScanIcon, LinkExternal, TooltipOptions, useTooltip } from '@pancakeswap/uikit'
+import { useAtom } from 'jotai'
+import { solanaExplorerAtom } from '@pancakeswap/utils/user'
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { getBlockExploreLink } from '../../utils'
 
 interface ViewOnExplorerButtonProps extends BoxProps {
@@ -20,6 +23,7 @@ export const ViewOnExplorerButton = ({
   ...props
 }: ViewOnExplorerButtonProps) => {
   const { t } = useTranslation()
+  const [currentExplorer] = useAtom(solanaExplorerAtom)
 
   const { targetRef, tooltipVisible, tooltip } = useTooltip(t('Open on Explorer'), {
     placement: tooltipPlacement,
@@ -29,7 +33,11 @@ export const ViewOnExplorerButton = ({
     <>
       <Box ref={targetRef} {...props}>
         <LinkExternal
-          href={getBlockExploreLink(address, type, chainId)}
+          href={
+            chainId === NonEVMChainId.SOLANA
+              ? `${currentExplorer.host}/token/${address}`
+              : getBlockExploreLink(address, type, chainId)
+          }
           target="_blank"
           rel="noopener noreferrer"
           title={t('Open on Explorer')}

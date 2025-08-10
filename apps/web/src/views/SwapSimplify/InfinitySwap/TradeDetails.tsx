@@ -5,14 +5,13 @@ import { memo, useMemo } from 'react'
 import { styled } from 'styled-components'
 
 import { PriceOrder } from '@pancakeswap/price-api-sdk'
-import { computeBridgeOrderFee } from 'views/Swap/Bridge/utils'
 import { isBridgeOrder, isClassicOrder, isXOrder } from 'views/Swap/utils'
 import { RouteDisplayEssentials } from 'views/Swap/V3Swap/components/RouteDisplayModal'
 import { useIsWrapping, useSlippageAdjustedAmounts } from '../../Swap/V3Swap/hooks'
-import { computeTradePriceBreakdown } from '../../Swap/V3Swap/utils/exchange'
 import { useHasDynamicHook } from '../hooks/useHasDynamicHook'
 import { TradeSummary } from './AdvancedSwapDetails'
 import { RoutesBreakdown, XRoutesBreakdown } from './RoutesBreakdown'
+import { usePriceBreakdown } from '../hooks/usePriceBreakdown'
 
 export const AdvancedDetailsFooter = styled.div.withConfig({
   shouldForwardProp: (prop) => !['show'].includes(prop),
@@ -35,13 +34,7 @@ interface Props {
 export const TradeDetails = memo(function TradeDetails({ loaded, order }: Props) {
   const slippageAdjustedAmounts = useSlippageAdjustedAmounts(order)
   const isWrapping = useIsWrapping()
-  const priceBreakdown = useMemo(
-    () =>
-      isBridgeOrder(order)
-        ? computeBridgeOrderFee(order)
-        : computeTradePriceBreakdown(isXOrder(order) ? order.ammTrade : order?.trade),
-    [order],
-  )
+  const priceBreakdown = usePriceBreakdown(order)
   const hasStablePool = useMemo(
     () =>
       isClassicOrder(order)
@@ -61,6 +54,7 @@ export const TradeDetails = memo(function TradeDetails({ loaded, order }: Props)
     <AdvancedDetailsFooter show>
       <AutoColumn gap="0px">
         <TradeSummary
+          order={order}
           expectedFillTimeSec={isBridgeOrder(order) ? order.expectedFillTimeSec : undefined}
           isX={isXOrder(order)}
           slippageAdjustedAmounts={slippageAdjustedAmounts}

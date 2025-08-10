@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Percent } from '@pancakeswap/sdk'
+import { Currency, CurrencyAmount, Percent, SPLToken, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { FeeAmount, Tick } from '@pancakeswap/v3-sdk'
 import { Address, Hex } from 'viem'
 
@@ -8,10 +8,21 @@ export enum PoolType {
   STABLE,
   InfinityCL,
   InfinityBIN,
+  SVM,
 }
 
 export interface BasePool {
   type: PoolType
+}
+
+// NOTE: Should not put SVM pool in Smart Router evm
+// but don't know how to put it so leave it here for now
+export interface SVMPool extends BasePool {
+  type: PoolType.SVM
+  id: string
+  fee?: number
+  feeAmount?: string
+  feeMintAddress?: string
 }
 
 export interface V2Pool extends BasePool {
@@ -88,7 +99,7 @@ export type InfinityBinPool = BaseInfinityPool & {
   reserveOfBin?: Record<ActiveId, Reserve>
 }
 
-export type Pool = V2Pool | V3Pool | StablePool | InfinityBinPool | InfinityClPool
+export type Pool = V2Pool | V3Pool | StablePool | InfinityBinPool | InfinityClPool | SVMPool
 
 export interface WithTvl {
   tvlUSD: bigint

@@ -1,4 +1,4 @@
-import { Currency, Token } from '@pancakeswap/sdk'
+import { UnifiedCurrency, UnifiedToken } from '@pancakeswap/sdk'
 import { useIsTokenActive, useIsUserAddedToken } from 'hooks/Tokens'
 import { CSSProperties } from 'react'
 import { useCombinedInactiveList } from 'state/lists/hooks'
@@ -13,12 +13,12 @@ export default function ImportRow({
   setImportToken,
   chainId,
 }: {
-  token: Token
+  token: UnifiedToken
   style?: CSSProperties
   dim?: boolean
-  onCurrencySelect?: (currency: Currency) => void
+  onCurrencySelect?: (currency: UnifiedCurrency) => void
   showImportView: () => void
-  setImportToken: (token: Token) => void
+  setImportToken: (token: UnifiedToken) => void
   chainId?: number
 }) {
   // check if token comes from list

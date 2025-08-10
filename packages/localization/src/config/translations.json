@@ -21,6 +21,7 @@
   "StableSwap": "StableSwap",
   "Stake as": "Stake as",
   "Close": "Close",
+  "Token address not found": "Token address not found",
   "Merkl Rewards": "Merkl Rewards",
   "Your withdrawal request might take 7 days.": "Your withdrawal request might take 7 days.",
   "Withdrawal Request Submitted!": "Withdrawal Request Submitted!",
@@ -116,6 +117,7 @@
   "Stake & Earn": "Stake & Earn",
   "Stake Periods": "Stake Periods",
   "Staked Amount": "Staked Amount",
+  "This wallet looks new. Does not have any assets.": "This wallet looks new. Does not have any assets.",
   "Click here for more information": "Click here for more information",
   "Funds will not be available for withdrawal for the first %days% days, and subsequently an early withdrawal fee will be applied if amount is unstaked before locked period is up. ": "Funds will not be available for withdrawal for the first %days% days, and subsequently an early withdrawal fee will be applied if amount is unstaked before locked period is up. ",
   "Your funds have been restaked in the pool": "Your funds have been restaked in the pool",
@@ -4049,6 +4051,9 @@
   "Create your Wallet with Social Login": "Create your Wallet with Social Login",
   "Important Notice: %chain% Sunset": "Important Notice: %chain% Sunset",
   "%chain% will be sunset on %date%. Please make sure to remove your liquidity from all pools before deadline.": "%chain% will be sunset on %date%. Please make sure to remove your liquidity from all pools before deadline.",
+  "TransactionExecutionError: The requested account and / or method has not been authorised by the user. Please make sure your wallet is updated to the latest version.": "TransactionExecutionError: The requested account and / or method has not been authorised by the user. Please make sure your wallet is updated to the latest version.",
+  "Solana swap submitted": "Solana swap submitted",
+  "Smart contract wallets are currently not supported on Bridge. To continue, please switch back to an EOA (Externally Owned Account) wallet before interacting with the product.": "Smart contract wallets are currently not supported on Bridge. To continue, please switch back to an EOA (Externally Owned Account) wallet before interacting with the product.",
   "Slippage setting": "Slippage setting",
   "Liquidity Slippage": "Liquidity Slippage",
   "Loading more pools...": "Loading more pools...",
@@ -4059,5 +4064,7 @@
   "Price Range": "Price Range",
   "price range": "price range",
   "Price range": "Price range",
-  "Liquidity Depth": "Liquidity Depth"
+  "Liquidity Depth": "Liquidity Depth",
+  "ExactOut swap supports less liquidity venues and less routes.": "ExactOut swap supports less liquidity venues and less routes.",
+  "It might also offer a worse price. Slippage is only applied on input amount, not output amount.": "It might also offer a worse price. Slippage is only applied on input amount, not output amount."
 }

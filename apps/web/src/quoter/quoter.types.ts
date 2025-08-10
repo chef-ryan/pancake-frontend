@@ -1,6 +1,12 @@
 import { ChainId } from '@pancakeswap/chains'
 import type { InfinityRouter, SmartRouter, SmartRouterTrade } from '@pancakeswap/smart-router'
-import type { Currency, CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
+import type {
+  Currency,
+  CurrencyAmount,
+  TradeType,
+  UnifiedCurrency,
+  UnifiedCurrencyAmount,
+} from '@pancakeswap/swap-sdk-core'
 import type { AbortControl } from '@pancakeswap/utils/abortControl'
 import type { getViemClients } from 'utils/viem'
 import { Address } from 'viem/accounts'
@@ -93,6 +99,12 @@ export type QuoteQuery = Options & {
   createTime: number
   routeKey?: string
   gasLimit?: bigint
+}
+
+export interface SVMQuoteQuery extends Omit<QuoteQuery, 'amount' | 'baseCurrency' | 'currency'> {
+  amount: UnifiedCurrencyAmount<UnifiedCurrency> | undefined
+  baseCurrency: UnifiedCurrency | null
+  currency: UnifiedCurrency | null
 }
 
 export interface StrategyQuery {

@@ -5,6 +5,9 @@ import { useAtom } from 'jotai'
 
 import { MobileCard } from 'components/AdPanel/MobileCard'
 import { useCurrency } from 'hooks/Tokens'
+import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
+import { useActiveChainId } from 'hooks/useActiveChainId'
+import { isEvm, NonEVMChainId } from '@pancakeswap/chains'
 import { AutoSlippageProvider } from 'hooks/useAutoSlippageWithFallback'
 import { useSwapHotTokenDisplay } from 'hooks/useSwapHotTokenDisplay'
 import dynamic from 'next/dynamic'
@@ -29,6 +32,7 @@ const Wrapper = styled(Box)`
 
 const InfinitySwapInner = () => {
   const { query } = useRouter()
+  const { chainId } = useActiveChainId()
   const { isMobile, isDesktop } = useMatchBreakpoints()
   const { isChartExpanded } = useContext(SwapFeaturesContext)
   const [isChartDisplayed, setIsChartDisplayed] = useAtom(chartDisplayAtom)
@@ -43,6 +47,9 @@ const InfinitySwapInner = () => {
 
   const inputCurrency = useCurrency(inputCurrencyId, inputChainId)
   const outputCurrency = useCurrency(outputCurrencyId, outputChainId)
+
+  // Prefetch Solana tokens when user switches to Solana
+  useSolanaTokenList(chainId === NonEVMChainId.SOLANA)
 
   useEffect(() => {
     if (firstTime && query.showTradingReward) {
@@ -65,7 +72,7 @@ const InfinitySwapInner = () => {
         mt={isChartExpanded ? undefined : isMobile ? '18px' : '42px'}
         p={isChartExpanded ? undefined : isMobile ? '16px' : '24px'}
       >
-        {isDesktop && isChartDisplayed && (
+        {isDesktop && isChartDisplayed && isEvm(chainId) && (
           <Flex width={isChartExpanded ? '100%' : '50%'} maxWidth="928px" flexDirection="column" style={{ gap: 20 }}>
             <ChartWithPriceHeader
               currency0={inputCurrency || undefined}
@@ -76,7 +83,7 @@ const InfinitySwapInner = () => {
           </Flex>
         )}
 
-        {!isDesktop && (
+        {!isDesktop && isEvm(chainId) && (
           <BottomDrawer
             content={
               <ChartWithPriceHeader

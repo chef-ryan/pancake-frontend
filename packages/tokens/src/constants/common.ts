@@ -1,5 +1,6 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 import { ERC20Token } from '@pancakeswap/sdk'
+import { solanaTokens } from './solana'
 
 export const CAKE_MAINNET = new ERC20Token(
   ChainId.BSC,
@@ -255,6 +256,7 @@ export const CAKE = {
     'PancakeSwap Token',
     'https://pancakeswap.finance/',
   ),
+  [NonEVMChainId.SOLANA]: solanaTokens.cake,
 }
 
 export const USDC = {
@@ -382,6 +384,7 @@ export const USDC = {
     'USD Coin',
     'https://www.centre.io/usdc',
   ),
+  [NonEVMChainId.SOLANA]: solanaTokens.usdc,
 }
 
 export const USDT = {
@@ -459,6 +462,40 @@ export const USDT = {
     'Tether USD',
     'https://tether.to/',
   ),
+  [NonEVMChainId.SOLANA]: solanaTokens.usdt,
+}
+
+export const WSOL = {
+  [NonEVMChainId.SOLANA]: {
+    id: NonEVMChainId.SOLANA,
+    address: 'So11111111111111111111111111111111111111112',
+    decimal: 9,
+    name: 'Wrapped SOL',
+    symbol: 'WSOL',
+    link: 'https://solana.com/',
+  },
+}
+
+export const RAY = {
+  [NonEVMChainId.SOLANA]: {
+    id: NonEVMChainId.SOLANA,
+    address: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R',
+    decimal: 6,
+    name: 'Raydium',
+    symbol: 'RAY',
+    link: 'https://raydium.io/',
+  },
+}
+
+export const mSOL = {
+  [NonEVMChainId.SOLANA]: {
+    id: NonEVMChainId.SOLANA,
+    address: 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
+    decimal: 9,
+    name: 'Marinade Staked SOL',
+    symbol: 'mSOL',
+    link: 'https://marinade.finance/',
+  },
 }
 
 export const DAI = {

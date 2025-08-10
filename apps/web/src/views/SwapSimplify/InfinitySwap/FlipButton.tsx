@@ -85,7 +85,7 @@ export const FlipButton = memo(function FlipButton({
   const lottieRef = useRef<LottieRefCurrentProps | null>(null)
   const { isDark } = useTheme()
   const { isDesktop } = useMatchBreakpoints()
-  const { switchNetworkAsync, isLoading } = useSwitchNetwork()
+  const { switchNetwork, isLoading } = useSwitchNetwork()
   const { chainId: activeChainId } = useActiveChainId()
 
   const [isSwitching, setIsSwitching] = useState(false)
@@ -107,8 +107,11 @@ export const FlipButton = memo(function FlipButton({
       // If cross-chain swap, switch network to new Input Currency's chain
 
       if (outputChainId && activeChainId !== outputChainId && !isLoading) {
-        const result = await switchNetworkAsync(outputChainId, true)
-        if (result !== 'error') {
+        const result = await switchNetwork(outputChainId, {
+          replaceUrl: false,
+          from: 'switch',
+        })
+        if (result) {
           router.replace(
             {
               query: {
@@ -150,7 +153,7 @@ export const FlipButton = memo(function FlipButton({
     inputChainId,
     outputChainId,
     replaceBrowser,
-    switchNetworkAsync,
+    switchNetwork,
     router,
   ])
 

@@ -3,6 +3,7 @@ import { SOL_INFO } from "../raydium/token/constant";
 import { Token } from "./token";
 
 interface CurrencyProps {
+  isNative?: boolean;
   decimals: number;
   symbol?: string;
   name?: string;
@@ -13,13 +14,17 @@ interface CurrencyProps {
  */
 export class Currency {
   public readonly symbol?: string;
+
   public readonly name?: string;
+
   public readonly decimals: number;
+
+  public readonly isNative: boolean = false;
 
   /**
    * The only instance of the base class `Currency`.
    */
-  public static readonly SOL: Currency = new Currency(SOL_INFO);
+  public static readonly SOL: Currency = new Currency({ ...SOL_INFO, isNative: true });
 
   /**
    * Constructs an instance of the base class `Currency`. The only instance of the base class `Currency` is `Currency.SOL`.
@@ -27,10 +32,11 @@ export class Currency {
    * @param symbol - symbol of the currency
    * @param name - name of the currency
    */
-  public constructor({ decimals, symbol = "UNKNOWN", name = "UNKNOWN" }: CurrencyProps) {
+  public constructor({ decimals, symbol = "UNKNOWN", name = "UNKNOWN", isNative = false }: CurrencyProps) {
     this.decimals = decimals;
     this.symbol = symbol;
     this.name = name;
+    this.isNative = isNative;
   }
 
   public equals(other: Currency): boolean {
@@ -44,9 +50,9 @@ export class Currency {
 export function currencyEquals(currencyA: Currency, currencyB: Currency): boolean {
   if (currencyA instanceof Token && currencyB instanceof Token) {
     return currencyA.equals(currencyB);
-  } else if (currencyA instanceof Token || currencyB instanceof Token) {
-    return false;
-  } else {
-    return currencyA === currencyB;
   }
+  if (currencyA instanceof Token || currencyB instanceof Token) {
+    return false;
+  }
+  return currencyA === currencyB;
 }

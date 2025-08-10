@@ -44,9 +44,17 @@ interface CollapseProps {
   isOpen?: boolean;
   onToggle?: () => void;
   recalculateDep?: boolean;
+  hideToggleIcon?: boolean;
 }
 
-export const Collapse: React.FC<CollapseProps> = ({ title, content, isOpen, onToggle, recalculateDep = false }) => {
+export const Collapse: React.FC<CollapseProps> = ({
+  hideToggleIcon,
+  title,
+  content,
+  isOpen,
+  onToggle,
+  recalculateDep = false,
+}) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -83,9 +91,11 @@ export const Collapse: React.FC<CollapseProps> = ({ title, content, isOpen, onTo
         }}
       >
         {title}
-        <IconWrapper className={isOpen ? "open" : undefined}>
-          <ChevronDownIcon color="textSubtle" width="24px" />
-        </IconWrapper>
+        {hideToggleIcon ? null : (
+          <IconWrapper className={isOpen ? "open" : undefined}>
+            <ChevronDownIcon color="textSubtle" width="24px" />
+          </IconWrapper>
+        )}
       </TitleWrapper>
       <ContentWrapper ref={contentRef}>{content}</ContentWrapper>
     </Container>

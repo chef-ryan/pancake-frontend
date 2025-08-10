@@ -77,6 +77,10 @@ export function transactionErrorToUserReadableMessage(error: any, t: TranslateFu
       return t(
         'The output token cannot be transferred. There may be an issue with the output token. Note: fee on transfer and rebase tokens are incompatible with Pancakeswap V3.',
       )
+    case 'The requested account and/or method has not been authorized by the user.':
+      return t(
+        'TransactionExecutionError: The requested account and / or method has not been authorised by the user. Please make sure your wallet is updated to the latest version.',
+      )
     default:
       if (reason?.indexOf('undefined is not an object') !== -1) {
         console.error(error, reason)

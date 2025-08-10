@@ -152,7 +152,7 @@ export const CrossChainVeCakeModal: React.FC<{
   const { toastSuccess } = useToast()
   const { isDesktop } = useMatchBreakpoints()
   const { address: account, chain } = useAccount()
-  const { switchNetworkAsync } = useSwitchNetwork()
+  const { switchNetwork } = useSwitchNetwork()
   const veCakeSenderV2Contract = usePancakeVeSenderV2Contract(ChainId.BSC)
   const { fetchWithCatchTxError, loading: pendingTx } = useCatchTxError()
   const { balance: veCakeOnBsc } = useVeCakeBalance(ChainId.BSC)
@@ -187,13 +187,13 @@ export const CrossChainVeCakeModal: React.FC<{
   const handleSwitchNetwork = useCallback(async () => {
     try {
       setIsSwitching(true)
-      await switchNetworkAsync(ChainId.BSC)
+      switchNetwork(ChainId.BSC)
     } catch (e) {
       console.error(e)
     } finally {
       setIsSwitching(false)
     }
-  }, [switchNetworkAsync, setIsSwitching])
+  }, [switchNetwork, setIsSwitching])
 
   const syncVeCake = useCallback(
     async (chainId: ChainId) => {

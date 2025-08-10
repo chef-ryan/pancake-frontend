@@ -2,9 +2,9 @@ import { Currency, CurrencyAmount, TradeType } from '@pancakeswap/sdk'
 import { ConfirmationModalContent } from '@pancakeswap/widgets-internal'
 import { memo, useCallback, useMemo } from 'react'
 import { Field } from 'state/swap/actions'
-import { maxAmountSpend } from 'utils/maxAmountSpend'
+import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
 import { computeBridgeOrderFee } from 'views/Swap/Bridge/utils'
-import { InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
+import { EVMInterfaceOrder, InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
 import {
   computeSlippageAdjustedAmounts as computeSlippageAdjustedAmountsWithSmartRouter,
   computeTradePriceBreakdown as computeTradePriceBreakdownWithSmartRouter,
@@ -28,8 +28,8 @@ function tradeMeaningfullyDiffers(tradeA: InterfaceOrder['trade'], tradeB: Inter
 }
 
 interface TransactionConfirmSwapContentV3Props {
-  order: InterfaceOrder | undefined | null
-  originalOrder: InterfaceOrder | undefined | null
+  order: EVMInterfaceOrder | undefined | null
+  originalOrder: EVMInterfaceOrder | undefined | null
   // trade: Trade | undefined | null
   // originalTrade: Trade | undefined | null
   onAcceptChanges: () => void
@@ -73,12 +73,7 @@ export const TransactionConfirmSwapContentV3 = memo<TransactionConfirmSwapConten
       if (order?.trade?.tradeType !== TradeType.EXACT_OUTPUT) return null
 
       const isInputBalanceExist = !!(currencyBalances && currencyBalances[Field.INPUT])
-      const isInputBalanceBNB = isInputBalanceExist && currencyBalances[Field.INPUT]?.currency.isNative
-      const inputCurrencyAmount = isInputBalanceExist
-        ? isInputBalanceBNB
-          ? maxAmountSpend(currencyBalances[Field.INPUT])
-          : currencyBalances[Field.INPUT]
-        : null
+      const inputCurrencyAmount = isInputBalanceExist ? maxUnifiedAmountSpend(currencyBalances[Field.INPUT]) : null
       return inputCurrencyAmount && slippageAdjustedAmounts && slippageAdjustedAmounts[Field.INPUT]
         ? inputCurrencyAmount.greaterThan(slippageAdjustedAmounts[Field.INPUT]) ||
             inputCurrencyAmount.equalTo(slippageAdjustedAmounts[Field.INPUT])

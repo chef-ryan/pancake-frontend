@@ -76,7 +76,7 @@ export function ConfirmTransactionContent({
   const { chainId } = useActiveChainId()
   const isChainMatched = chainId === asset.chainId
   const nativeCurrency = useNativeCurrency(asset.chainId)
-  const { switchNetworkAsync } = useSwitchNetwork()
+  const { switchNetwork } = useSwitchNetwork()
 
   const price = asset.price?.usd ?? 0
 
@@ -135,7 +135,7 @@ export function ConfirmTransactionContent({
             </Box>
           </Flex>
 
-          <Button onClick={isChainMatched ? onConfirm : () => switchNetworkAsync(asset.chainId)} width="100%">
+          <Button onClick={isChainMatched ? onConfirm : () => switchNetwork(asset.chainId)} width="100%">
             {isChainMatched ? t('Send') : t('Switch Network')}
           </Button>
         </ColumnCenter>

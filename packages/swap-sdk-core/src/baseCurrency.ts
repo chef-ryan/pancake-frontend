@@ -1,11 +1,11 @@
 import invariant from 'tiny-invariant'
-import { Currency } from './currency'
-import type { Token } from './token'
+// import { Currency } from './currency'
+// import type { Token } from './token'
 
 /**
  * A currency is any fungible financial instrument, including Ether, all ERC20 tokens, and other chain-native currencies
  */
-export abstract class BaseCurrency {
+export abstract class BaseCurrency<T extends BaseCurrency<any> = BaseCurrency<any>> {
   /**
    * Returns whether the currency is native to the chain and must be wrapped (e.g. Ether)
    */
@@ -44,7 +44,8 @@ export abstract class BaseCurrency {
    * @param name of the currency
    */
   protected constructor(chainId: number, decimals: number, symbol: string, name?: string) {
-    invariant(Number.isSafeInteger(chainId), 'CHAIN_ID')
+    // todo:@eric adapter solana chain Id
+    // invariant(Number.isSafeInteger(chainId), 'CHAIN_ID')
     invariant(decimals >= 0 && decimals < 255 && Number.isInteger(decimals), 'DECIMALS')
 
     this.chainId = chainId
@@ -57,15 +58,15 @@ export abstract class BaseCurrency {
    * Returns whether this currency is functionally equivalent to the other currency
    * @param other the other currency
    */
-  public abstract equals(other: Currency): boolean
+  public abstract equals(other: BaseCurrency<any>): boolean
 
   /**
    * Return the wrapped version of this currency that can be used with the PancakeSwap contracts. Currencies must
    * implement this to be used in PancakeSwap
    */
-  public abstract get wrapped(): Token
+  public abstract get wrapped(): T
 
-  public get asToken(): Token {
+  public get asToken(): T {
     return this.wrapped
   }
 }

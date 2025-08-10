@@ -1,6 +1,6 @@
-import { ChainId } from './chainId'
+import { ChainId, NonEVMChainId, UnifiedChainId } from './chainId'
 
-export const chainNames: Record<ChainId, string> = {
+export const chainNames: Record<UnifiedChainId, string> = {
   [ChainId.ETHEREUM]: 'eth',
   [ChainId.GOERLI]: 'goerli',
   [ChainId.BSC]: 'bsc',
@@ -22,6 +22,34 @@ export const chainNames: Record<ChainId, string> = {
   [ChainId.ARBITRUM_SEPOLIA]: 'arbSepolia',
   [ChainId.BASE_SEPOLIA]: 'baseSepolia',
   [ChainId.MONAD_TESTNET]: 'monadTestnet',
+  [NonEVMChainId.SOLANA]: 'solana',
+  [NonEVMChainId.APTOS]: 'aptos',
+}
+
+export const chainFullNames: Record<UnifiedChainId, string> = {
+  [ChainId.ETHEREUM]: 'Ethereum',
+  [ChainId.GOERLI]: 'Goerli',
+  [ChainId.BSC]: 'BNB Chain',
+  [ChainId.BSC_TESTNET]: 'BNB Chain Testnet',
+  [ChainId.ARBITRUM_ONE]: 'Arbitrum One',
+  [ChainId.ARBITRUM_GOERLI]: 'Arbitrum Goerli',
+  [ChainId.POLYGON_ZKEVM]: 'Polygon zkEVM',
+  [ChainId.POLYGON_ZKEVM_TESTNET]: 'Polygon zkEVM Testnet',
+  [ChainId.ZKSYNC]: 'ZKsync Era',
+  [ChainId.ZKSYNC_TESTNET]: 'ZKsync Era Testnet',
+  [ChainId.LINEA]: 'Linea',
+  [ChainId.LINEA_TESTNET]: 'Linea Testnet',
+  [ChainId.OPBNB]: 'opBNB',
+  [ChainId.OPBNB_TESTNET]: 'opBNB Testnet',
+  [ChainId.BASE]: 'Base',
+  [ChainId.BASE_TESTNET]: 'Base Testnet',
+  [ChainId.SCROLL_SEPOLIA]: 'Scroll Sepolia',
+  [ChainId.SEPOLIA]: 'Sepolia',
+  [ChainId.ARBITRUM_SEPOLIA]: 'Arbitrum Sepolia',
+  [ChainId.BASE_SEPOLIA]: 'Base Sepolia',
+  [ChainId.MONAD_TESTNET]: 'Monad Testnet',
+  [NonEVMChainId.SOLANA]: 'Solana',
+  [NonEVMChainId.APTOS]: 'Aptos',
 }
 
 export const chainNamesInKebabCase = {
@@ -46,6 +74,8 @@ export const chainNamesInKebabCase = {
   [ChainId.ARBITRUM_SEPOLIA]: 'arbitrum-sepolia',
   [ChainId.BASE_SEPOLIA]: 'base-sepolia',
   [ChainId.MONAD_TESTNET]: 'monad-testnet',
+  [NonEVMChainId.SOLANA]: 'solana',
+  [NonEVMChainId.APTOS]: 'aptos',
 } as const
 
 export const mainnetChainNamesInKebabCase = {
@@ -68,18 +98,53 @@ export const mainnetChainNamesInKebabCase = {
   [ChainId.SEPOLIA]: 'ethereum',
   [ChainId.ARBITRUM_SEPOLIA]: 'arbitrum',
   [ChainId.BASE_SEPOLIA]: 'base',
+  [NonEVMChainId.SOLANA]: 'solana',
+  [NonEVMChainId.APTOS]: 'aptos',
 } as const
+
+const legacyChainNames: [string, UnifiedChainId][] = [
+  ['Binance Smart Chain', ChainId.BSC],
+  ['BNB Smart Chain', ChainId.BSC],
+]
 
 export const chainNameToChainId = Object.entries(chainNames).reduce((acc, [chainId, chainName]) => {
   return {
-    [chainName]: chainId as unknown as ChainId,
+    [chainName]: +chainId as unknown as ChainId,
     ...acc,
   }
-}, {} as Record<string, ChainId>)
+}, {} as Record<string, UnifiedChainId>)
+
+const chainFullNamesToChainId = Object.entries(chainFullNames).reduce((acc, [chainId, chainName]) => {
+  return {
+    [chainName]: +chainId as unknown as UnifiedChainId,
+    ...acc,
+  }
+}, {} as Record<string, UnifiedChainId>)
+
+const kebabCaseNamesToChainId = Object.entries(chainNamesInKebabCase).reduce((acc, [chainId, chainName]) => {
+  return {
+    [chainName]: +chainId as unknown as UnifiedChainId,
+    ...acc,
+  }
+}, {} as Record<string, UnifiedChainId>)
+
+export const allCasesNameToChainId = Object.entries({
+  ...chainFullNamesToChainId,
+  ...kebabCaseNamesToChainId,
+  ...chainNameToChainId,
+})
+  .concat(legacyChainNames)
+  .reduce((acc, [chainName, chainId]) => {
+    return {
+      [chainName]: +chainId as UnifiedChainId,
+      [chainName.toLowerCase()]: +chainId as UnifiedChainId,
+      ...acc,
+    }
+  }, {} as Record<string, UnifiedChainId>)
 
 // @see https://github.com/DefiLlama/defillama-server/blob/master/common/chainToCoingeckoId.ts
 // @see https://github.com/DefiLlama/chainlist/blob/main/constants/chainIds.json
-export const defiLlamaChainNames: Record<ChainId, string> = {
+export const defiLlamaChainNames: Record<UnifiedChainId, string> = {
   [ChainId.BSC]: 'bsc',
   [ChainId.ETHEREUM]: 'ethereum',
   [ChainId.GOERLI]: '',
@@ -101,4 +166,6 @@ export const defiLlamaChainNames: Record<ChainId, string> = {
   [ChainId.ARBITRUM_SEPOLIA]: '',
   [ChainId.BASE_SEPOLIA]: '',
   [ChainId.MONAD_TESTNET]: '',
+  [NonEVMChainId.SOLANA]: '',
+  [NonEVMChainId.APTOS]: '',
 }

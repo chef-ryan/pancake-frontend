@@ -1,19 +1,18 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount } from '@pancakeswap/sdk'
+import { UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
-import { isAddressEqual, safeGetAddress } from 'utils'
+import { isAddressEqual, safeGetAddress, safeGetUnifiedAddress } from 'utils'
 
 import { ClassicOrder, PriceOrder } from '@pancakeswap/price-api-sdk'
 import { isClassicOrder } from 'views/Swap/utils'
-import { useAccount } from 'wagmi'
-import { useSlippageAdjustedAmounts } from './useSlippageAdjustedAmounts'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 
 interface Balances {
-  [Field.INPUT]?: CurrencyAmount<Currency>
-  [Field.OUTPUT]?: CurrencyAmount<Currency>
+  [Field.INPUT]?: UnifiedCurrencyAmount<UnifiedCurrency>
+  [Field.OUTPUT]?: UnifiedCurrencyAmount<UnifiedCurrency>
 }
 
 /**
@@ -37,20 +36,20 @@ const BAD_RECIPIENT_ADDRESSES: string[] = [
 
 export function useSwapInputError(order: PriceOrder | undefined, currencyBalances: Balances): string | undefined {
   const { t } = useTranslation()
-  const { address: account } = useAccount()
+  const { unifiedAccount, chainId } = useAccountActiveChain()
   const { independentField, typedValue } = useSwapState()
   const inputCurrency = currencyBalances[Field.INPUT]?.currency
   const outputCurrency = currencyBalances[Field.OUTPUT]?.currency
-  const slippageAdjustedAmounts = useSlippageAdjustedAmounts(order)
 
-  const to: string | null = account || null
+  const to: string | null = unifiedAccount || null
 
   const isExactIn: boolean = independentField === Field.INPUT
   const independentCurrency = isExactIn ? inputCurrency : outputCurrency
+
   const parsedAmount = tryParseAmount(typedValue, independentCurrency ?? undefined)
 
   let inputError: string | undefined
-  if (!account) {
+  if (!unifiedAccount) {
     inputError = t('Connect Wallet')
   }
 
@@ -62,7 +61,7 @@ export function useSwapInputError(order: PriceOrder | undefined, currencyBalance
     inputError = inputError ?? t('Select a token')
   }
 
-  const formattedTo = safeGetAddress(to)
+  const formattedTo = safeGetUnifiedAddress(chainId, to)
   if (!to || !formattedTo) {
     inputError = inputError ?? t('Enter a recipient')
   } else if (

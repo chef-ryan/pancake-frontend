@@ -1,13 +1,19 @@
 import { BridgeOrder, OrderType } from '@pancakeswap/price-api-sdk'
 import { Route, SmartRouter } from '@pancakeswap/smart-router'
-import { Currency, TradeType } from '@pancakeswap/swap-sdk-core'
+import { Currency, CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
 import { Loadable } from '@pancakeswap/utils/Loadable'
 import { convertTokenToCurrency, mapWithoutUrls } from 'hooks/Tokens'
 import first from 'lodash/first'
 import last from 'lodash/last'
 import { BridgeTradeError } from 'quoter/quoter.types'
 import { basisPointsToPercent } from 'utils/exchange'
-import { isXOrder, type BridgeOrderWithCommands, type InterfaceOrder } from 'views/Swap/utils'
+import {
+  EVMInterfaceOrder,
+  isSVMOrder,
+  isXOrder,
+  type BridgeOrderWithCommands,
+  type InterfaceOrder,
+} from 'views/Swap/utils'
 import { WHITELIST_TOKEN_MAP } from '../config'
 import { type QuoteContext } from '../types'
 
@@ -52,22 +58,23 @@ export abstract class CrossChainQuoteStrategy {
       bridgeFee: bridgeQuote.bridgeFee,
       expectedFillTimeSec: 'expectedFillTimeSec' in bridgeQuote ? bridgeQuote.expectedFillTimeSec : 0,
       trade: {
-        inputAmount: first(commands)!.trade.inputAmount,
+        // NOTE: safe cast to CurrencyAmount<Currency> since CrossChain won't support SVM yet
+        inputAmount: first(commands)!.trade.inputAmount as CurrencyAmount<Currency>,
         // NOTE: Show output amount without slippage.
         // Minimum output received (with slippage) is different from ouputAmount
-        outputAmount: last(noSlippageCommands)!.trade.outputAmount,
+        outputAmount: last(noSlippageCommands)!.trade.outputAmount as CurrencyAmount<Currency>,
         tradeType: TradeType.EXACT_INPUT,
         routes: noSlippageRoutes,
       },
-      noSlippageCommands,
-      commands: commandsWithSlippage,
+      noSlippageCommands: noSlippageCommands as EVMInterfaceOrder[],
+      commands: commandsWithSlippage as EVMInterfaceOrder[],
     }
   }
 
   static validateQuoteResult(loadable: Loadable<BridgeOrder | InterfaceOrder>, errorMessage: string) {
     const result = loadable.unwrapOr(undefined)
 
-    if (!result || !result.trade.outputAmount.greaterThan(0)) {
+    if (!result || isSVMOrder(result) || !result.trade.outputAmount.greaterThan(0)) {
       throw new BridgeTradeError(errorMessage)
     }
 
@@ -75,6 +82,10 @@ export abstract class CrossChainQuoteStrategy {
   }
 
   protected constructSwapOrderRoutes(swapOrder: InterfaceOrder): InterfaceOrder {
+    if (isSVMOrder(swapOrder)) {
+      throw new Error('SVM order not supported for cross chain')
+    }
+
     if (!('routes' in swapOrder.trade)) {
       return swapOrder as SwapOrderWithSlippage
     }

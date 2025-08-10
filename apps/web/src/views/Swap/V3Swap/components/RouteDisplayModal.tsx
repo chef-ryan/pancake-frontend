@@ -1,24 +1,18 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Route, RouteType } from '@pancakeswap/smart-router'
-import {
-  AtomBox,
-  AutoColumn,
-  Flex,
-  Modal,
-  ModalV2,
-  QuestionHelper,
-  Text,
-  UseModalV2Props,
-  useTooltip,
-} from '@pancakeswap/uikit'
+import { AutoColumn, Flex, Modal, ModalV2, QuestionHelper, Text, UseModalV2Props, useTooltip } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { memo, useMemo } from 'react'
 
 import { RoutingSettingsButton } from 'components/Menu/GlobalSettings/SettingsModalV2'
-import { CurrencyLogoWrapper, RouterBox, RouterPoolBox, RouterTypeText } from 'views/Swap/components/RouterViewer'
+import { CurrencyLogoWrapper, RouterBox, RouterTypeText } from 'views/Swap/components/RouterViewer'
 import { useHookDiscount } from 'views/SwapSimplify/hooks/useHookDiscount'
+import { Currency, SPLToken, UnifiedCurrency } from '@pancakeswap/sdk'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { BridgeRoutesDisplay } from './RouteDisplay/BridgeRoutesDisplay'
-import { getPairNodes, Pair } from './RouteDisplay/pairNode'
+import { EVMPairNodes } from './RouteDisplay/pairNode'
+import { JupPairNodes } from './RouteDisplay/JupPairNodes'
+import { Pair } from './RouteDisplay/types'
 
 export type RouteDisplayEssentials = Pick<Route, 'path' | 'pools' | 'inputAmount' | 'outputAmount' | 'percent' | 'type'>
 
@@ -66,12 +60,7 @@ interface RouteDisplayProps {
   route: RouteDisplayEssentials
 }
 
-export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayProps) {
-  const { hookDiscount, category } = useHookDiscount(route.pools)
-  const { t } = useTranslation()
-  const { path, pools, inputAmount, outputAmount } = route
-  const { currency: inputCurrency } = inputAmount
-  const { currency: outputCurrency } = outputAmount
+function RouteDisplayView({ inputCurrency, outputCurrency, pairNodes, percent }) {
   const { targetRef, tooltip, tooltipVisible } = useTooltip(<Text>{inputCurrency.symbol}</Text>, {
     placement: 'right',
   })
@@ -84,28 +73,6 @@ export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayPr
     placement: 'right',
   })
 
-  const pairs = useMemo<Pair[]>(() => {
-    if (path.length <= 1) {
-      return []
-    }
-
-    const currencyPairs: Pair[] = []
-    for (let i = 0; i < path.length - 1; i += 1) {
-      currencyPairs.push([path[i], path[i + 1]])
-    }
-    return currencyPairs
-  }, [path])
-
-  const pairNodes = getPairNodes({
-    pairs,
-    pools,
-    routePoolsLength: route.pools.length,
-    hookDiscount,
-    category,
-    t,
-    PairNode,
-  })
-
   return (
     <AutoColumn gap="24px">
       <RouterBox justifyContent="space-between" alignItems="center">
@@ -116,8 +83,9 @@ export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayPr
           }}
           ref={targetRef}
         >
-          <CurrencyLogo size="100%" currency={inputCurrency} />
-          <RouterTypeText fontWeight="bold">{Math.round(route.percent)}%</RouterTypeText>
+          <CurrencyLogo size="100%" currency={inputCurrency as Currency} />
+
+          <RouterTypeText fontWeight="bold">{Math.round(percent)}%</RouterTypeText>
         </CurrencyLogoWrapper>
         {tooltipVisible && tooltip}
         {pairNodes}
@@ -128,51 +96,83 @@ export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayPr
           }}
           ref={outputTargetRef}
         >
-          <CurrencyLogo size="100%" currency={outputCurrency} />
+          <CurrencyLogo size="100%" currency={outputCurrency as Currency} />
         </CurrencyLogoWrapper>
         {outputTooltipVisible && outputTooltip}
       </RouterBox>
     </AutoColumn>
   )
-})
+}
 
-function PairNode({
-  pair,
-  text,
-  className,
-  tooltipText,
-}: {
-  pair: Pair
-  text: string | React.ReactNode
-  className: string
-  tooltipText: string
-}) {
-  const [input, output] = pair
+function getPairs(path: UnifiedCurrency[]) {
+  if (path.length <= 1) {
+    return []
+  }
 
-  const tooltip = useTooltip(tooltipText)
+  const currencyPairs: Pair[] = []
+  for (let i = 0; i < path.length - 1; i += 1) {
+    currencyPairs.push([path[i] as Currency, path[i + 1] as Currency])
+  }
+  return currencyPairs
+}
+
+export function EVMRouteDisplayContainer({ route }: RouteDisplayProps) {
+  const { hookDiscount, category } = useHookDiscount(route.pools)
+  const { path, pools, inputAmount, outputAmount } = route
+  const { currency: inputCurrency } = inputAmount
+  const { currency: outputCurrency } = outputAmount
+
+  const pairs = useMemo(() => getPairs(path), [path])
 
   return (
-    <RouterPoolBox className={className}>
-      {tooltip.tooltipVisible && tooltip.tooltip}
-      <Flex ref={tooltip.targetRef}>
-        <AtomBox
-          size={{
-            xs: '24px',
-            md: '32px',
-          }}
-        >
-          <CurrencyLogo size="100%" currency={input} />
-        </AtomBox>
-        <AtomBox
-          size={{
-            xs: '24px',
-            md: '32px',
-          }}
-        >
-          <CurrencyLogo size="100%" currency={output} />
-        </AtomBox>
-      </Flex>
-      <RouterTypeText>{text}</RouterTypeText>
-    </RouterPoolBox>
+    <RouteDisplayView
+      percent={route.percent}
+      inputCurrency={inputCurrency}
+      outputCurrency={outputCurrency}
+      pairNodes={
+        <EVMPairNodes
+          pairs={pairs}
+          pools={pools}
+          routePoolsLength={route.pools.length}
+          hookDiscount={hookDiscount}
+          category={category}
+        />
+      }
+    />
   )
 }
+
+function SolanaRouteDisplayContainer({ route }: RouteDisplayProps) {
+  const { path, pools, inputAmount, outputAmount } = route
+  const { currency: inputCurrencyMaybeMock } = inputAmount
+  const { currency: outputCurrencyMaybeMock } = outputAmount
+
+  const pairs = useMemo(() => getPairs(path), [path])
+
+  const inputCurrency = useUnifiedCurrency(
+    (inputCurrencyMaybeMock as SPLToken).address,
+    (inputCurrencyMaybeMock as SPLToken).chainId,
+  )
+
+  const outputCurrency = useUnifiedCurrency(
+    (outputCurrencyMaybeMock as SPLToken).address,
+    (outputCurrencyMaybeMock as SPLToken).chainId,
+  )
+
+  return (
+    <RouteDisplayView
+      percent={route.percent}
+      inputCurrency={inputCurrency}
+      outputCurrency={outputCurrency}
+      pairNodes={<JupPairNodes pairs={pairs} pools={pools} />}
+    />
+  )
+}
+
+export const RouteDisplay = memo(function RouteDisplay({ route }: RouteDisplayProps) {
+  if (route.type === RouteType.SVM) {
+    return <SolanaRouteDisplayContainer route={route} />
+  }
+
+  return <EVMRouteDisplayContainer route={route} />
+})

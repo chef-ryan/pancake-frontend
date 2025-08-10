@@ -17,10 +17,10 @@ interface WalletWrongNetworkProps {
 
 const WalletWrongNetwork: React.FC<React.PropsWithChildren<WalletWrongNetworkProps>> = ({ onDismiss }) => {
   const { t } = useTranslation()
-  const { switchNetworkAsync, canSwitch } = useSwitchNetwork()
+  const { switchNetwork, canSwitch } = useSwitchNetwork()
 
   const handleSwitchNetwork = async (): Promise<void> => {
-    await switchNetworkAsync(ChainId.BSC)
+    await switchNetwork(ChainId.BSC)
     onDismiss?.()
   }
 

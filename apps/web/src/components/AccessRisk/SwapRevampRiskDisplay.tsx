@@ -70,6 +70,7 @@ interface RiskDetailsPanelProps {
   token1RiskLevelDescription?: string
   isPriceImpactTooHigh?: boolean
   isSlippageTooHigh?: boolean
+  isExactOutWarning?: boolean
 }
 
 interface RiskDetailsModalProps {
@@ -188,6 +189,22 @@ export const SlippageTitle: React.FC = () => {
   )
 }
 
+const ExactOutWarningTitle: React.FC = () => {
+  const { t } = useTranslation()
+  return (
+    <FlexGap alignItems="flex-start" gap="8px">
+      <Box>
+        <WarningIcon width={24} color="destructive60" />
+      </Box>
+      <FlexGap justifyContent="center" alignItems="flex-start" flexDirection="column" gap="8px">
+        <Text fontSize="16px" bold>
+          {t('ExactOut swap supports less liquidity venues and less routes.')}
+        </Text>
+      </FlexGap>
+    </FlexGap>
+  )
+}
+
 const PriceImpactDetails: React.FC = () => {
   const { t } = useTranslation()
   return (
@@ -197,6 +214,19 @@ const PriceImpactDetails: React.FC = () => {
           {t(
             'Final execution price may be differ from the market price due to trader size, available liquidity, and trading route. Please proceed with caution.',
           )}
+        </Text>
+      </FlexGap>
+    </FlexGap>
+  )
+}
+
+const ExactOutWarningDetails: React.FC = () => {
+  const { t } = useTranslation()
+  return (
+    <FlexGap alignItems="flex-start">
+      <FlexGap justifyContent="center" alignItems="flex-start" flexDirection="column" gap="8px">
+        <Text>
+          {t('It might also offer a worse price. Slippage is only applied on input amount, not output amount.')}
         </Text>
       </FlexGap>
     </FlexGap>
@@ -281,6 +311,7 @@ export const RiskDetailsPanel: React.FC<RiskDetailsPanelProps> = ({
   token1RiskLevelDescription,
   isPriceImpactTooHigh,
   isSlippageTooHigh,
+  isExactOutWarning,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
@@ -300,8 +331,11 @@ export const RiskDetailsPanel: React.FC<RiskDetailsPanelProps> = ({
     if (isSlippageTooHigh) {
       count++
     }
+    if (isExactOutWarning) {
+      count++
+    }
     return count > 1
-  }, [isRiskToken0, isRiskToken1, isPriceImpactTooHigh, isSlippageTooHigh])
+  }, [isRiskToken0, isRiskToken1, isPriceImpactTooHigh, isSlippageTooHigh, isExactOutWarning])
   useEffect(() => {
     if (isRiskMoreThanOne) {
       setIsOpen(false)
@@ -320,6 +354,7 @@ export const RiskDetailsPanel: React.FC<RiskDetailsPanelProps> = ({
               <RiskTitle token={token1} isInputToken={false} />
               {isPriceImpactTooHigh && <PriceImpactTitle />}
               {isSlippageTooHigh && <SlippageTitle />}
+              {isExactOutWarning && <ExactOutWarningTitle />}
             </FlexGap>
           }
           content={
@@ -328,6 +363,7 @@ export const RiskDetailsPanel: React.FC<RiskDetailsPanelProps> = ({
               <RiskDetails token={token1} riskLevelDescription={token1RiskLevelDescription} />
               {isPriceImpactTooHigh && <PriceImpactDetails />}
               {isSlippageTooHigh && <SlippageDetails />}
+              {isExactOutWarning && <ExactOutWarningDetails />}
             </FlexGap>
           }
         />
@@ -356,6 +392,12 @@ export const RiskDetailsPanel: React.FC<RiskDetailsPanelProps> = ({
             <RiskModalDetailCardWrapper>
               <SlippageTitle />
               <SlippageDetails />
+            </RiskModalDetailCardWrapper>
+          )}
+          {isExactOutWarning && (
+            <RiskModalDetailCardWrapper>
+              <ExactOutWarningTitle />
+              <ExactOutWarningDetails />
             </RiskModalDetailCardWrapper>
           )}
         </FlexGap>

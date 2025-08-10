@@ -64,7 +64,7 @@ const MultiChainHarvestModal: React.FC<MultiChainHarvestModalProp> = ({
   const { t } = useTranslation()
   const { toastSuccess } = useToast()
   const { account, chainId, isWrongNetwork } = useAccountActiveChain()
-  const { switchNetworkAsync } = useSwitchNetwork()
+  const { switchNetwork } = useSwitchNetwork()
   const { cProxyAddress } = useFarmCProxyAddress(account, chainId)
   const { onReward } = useCrossChainHarvestFarm(pid, cProxyAddress)
   const { fetchWithCatchTxError, loading: isPending } = useCatchTxError()
@@ -87,7 +87,7 @@ const MultiChainHarvestModal: React.FC<MultiChainHarvestModalProp> = ({
         JSON.stringify({ pid, token, lpSymbol, quoteToken, earningsBigNumber, earningsBusd }),
       )
     }
-    switchNetworkAsync(network)
+    switchNetwork(network)
   }
 
   const handleHarvest = useCallback(async () => {

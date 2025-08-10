@@ -1,4 +1,4 @@
-import { TradeType } from '@pancakeswap/swap-sdk-core'
+import { Currency, Percent, SPLToken, TradeType } from '@pancakeswap/swap-sdk-core'
 import { Loadable } from '@pancakeswap/utils/Loadable'
 import { TimeoutError } from '@pancakeswap/utils/withTimeout'
 import { getIsWrapping } from 'hooks/useWrapCallback'
@@ -7,12 +7,14 @@ import { atomFamily } from 'jotai/utils'
 import { isBetterQuoteTrade } from 'quoter/utils/getBetterQuote'
 import { isEqualQuoteQuery } from 'quoter/utils/PoolHashHelper'
 import { warningSeverity } from 'utils/exchange'
-import { InterfaceOrder, isBridgeOrder, isXOrder } from 'views/Swap/utils'
+import { InterfaceOrder, isBridgeOrder, isSVMOrder } from 'views/Swap/utils'
+import { OrderType } from '@pancakeswap/price-api-sdk'
 import { computeTradePriceBreakdown } from 'views/Swap/V3Swap/utils/exchange'
-import { NoValidRouteError, QuoteQuery } from '../quoter.types'
+import { NoValidRouteError, QuoteQuery, SVMQuoteQuery } from '../quoter.types'
 import { activeQuoteHashAtom } from './abortControlAtoms'
+import { bestSVMOrderAtom } from './bestSVMOrderAtom'
 import { placeholderAtom } from './placeholderAtom'
-import { StrategyRoute, routingStrategyAtom } from './routingStrategy'
+import { routingStrategyAtom, StrategyRoute } from './routingStrategy'
 
 function getFailReason(errors: any[]) {
   const someTimeout = errors.find((x) => x instanceof TimeoutError)
@@ -27,7 +29,6 @@ export const bestSameChainWithoutPlaceHolderAtom = atomFamily((_option: QuoteQue
     function executeRoutes(
       strategies: StrategyRoute[],
       option: QuoteQuery,
-      level: number,
     ): {
       quote: Loadable<InterfaceOrder>
       anyShadowFail?: boolean
@@ -99,8 +100,36 @@ export const bestSameChainWithoutPlaceHolderAtom = atomFamily((_option: QuoteQue
     }
 
     const option: QuoteQuery = { enabled: true, type: 'quoter', tradeType: TradeType.EXACT_INPUT, ..._option }
+
     try {
-      const isWrapping = getIsWrapping(option.amount?.currency, option.currency || undefined, option.currency?.chainId)
+      const amountCurrency = option.amount?.currency
+
+      if (
+        option.baseCurrency &&
+        option.currency &&
+        SPLToken.isSPLToken(option.baseCurrency) &&
+        SPLToken.isSPLToken(option.currency) &&
+        amountCurrency &&
+        SPLToken.isSPLToken(amountCurrency)
+      ) {
+        // NOTE: safe to cast to SVMQuoteQuery since we already check the condition above
+        return get(bestSVMOrderAtom(option as unknown as SVMQuoteQuery))
+      }
+
+      if (
+        !option.currency ||
+        !amountCurrency ||
+        SPLToken.isSPLToken(amountCurrency) ||
+        SPLToken.isSPLToken(option.currency)
+      ) {
+        return Loadable.Nothing<InterfaceOrder>()
+      }
+
+      const isWrapping = getIsWrapping(
+        amountCurrency as Currency,
+        option.currency as Currency | undefined,
+        option.currency?.chainId,
+      )
       if (isWrapping || !option.enabled) {
         return Loadable.Nothing<InterfaceOrder>()
       }
@@ -123,18 +152,22 @@ export const bestSameChainWithoutPlaceHolderAtom = atomFamily((_option: QuoteQue
         if (strategy.length === 0) {
           return Loadable.Fail<InterfaceOrder>(new NoValidRouteError())
         }
-        const { quote, anyShadowFail, anyTimeout, key } = executeRoutes(strategy, option, i)
+        const { quote, anyShadowFail, anyTimeout, key } = executeRoutes(strategy, option)
 
         if (quote.isJust()) {
           const order = quote.unwrap()
 
           // NOTE: refactor so it doesn't need to check for bridge order
-          if (isBridgeOrder(order)) {
+          if (isBridgeOrder(order) || isSVMOrder(order)) {
             continue
           }
 
           if (i !== tests.length - 1) {
-            const { priceImpactWithoutFee } = computeTradePriceBreakdown(isXOrder(order) ? order.ammTrade : order.trade)
+            const trade = order?.type === OrderType.DUTCH_LIMIT ? order.ammTrade : order?.trade
+
+            // eslint-disable-next-line
+            const priceImpactWithoutFee = computeTradePriceBreakdown(trade).priceImpactWithoutFee
+
             const isHighImpact = warningSeverity(priceImpactWithoutFee) >= 3
             if (isHighImpact) {
               continue
