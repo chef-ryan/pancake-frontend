@@ -106,7 +106,7 @@ export const BridgeView = () => {
               }),
               [],
             )}
-            supportedChainIds={CHAIN_IDS}
+            supportedChainIds={[...CHAIN_IDS, 7565164]}
             rpcConfig={PUBLIC_NODES}
             disabledToChains={DISABLED_TO_CHAINS}
           />

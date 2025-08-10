@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 import pkg from './package.json'
 
@@ -14,5 +15,5 @@ export default defineConfig({
       external: [...Object.keys(pkg.peerDependencies)],
     },
   },
-  plugins: [dts()],
+  plugins: [dts(), nodePolyfills()],
 })
