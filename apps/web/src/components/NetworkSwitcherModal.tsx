@@ -28,6 +28,7 @@ import { useCallback, useMemo } from 'react'
 import { useUserShowTestnet } from 'state/user/hooks/useUserShowTestnet'
 import { useAccount } from 'wagmi'
 import { SOLANA_SUPPORTED_PATH } from 'wallet/solana.config'
+import { useIsSocialLogin } from 'wallet/Privy/hooks/useIsSocialLogin'
 import { getQueryChainId } from 'wallet/util/getQueryChainId'
 import { ChainLogo } from './Logo/ChainLogo'
 
@@ -44,7 +45,7 @@ interface NetworkSelectProps {
   onDismiss: () => void
 }
 
-function getSortedChains(chainId: UnifiedChainId, showTestnet: boolean): Chain[] {
+function getSortedChains(chainId: UnifiedChainId, showTestnet: boolean, isSocialLogin: boolean): Chain[] {
   return Chains.filter((chain) => {
     if (chain.isEVM) {
       if (chain.id === chainId) return true
@@ -53,8 +54,7 @@ function getSortedChains(chainId: UnifiedChainId, showTestnet: boolean): Chain[]
       }
       return true
     }
-    // always include non-EVM chains
-    return true
+    return !isSocialLogin
   }).map((chain) => ({
     ...chain,
     isEvm: chain.isEVM,
@@ -88,7 +88,8 @@ const NetworkSelect = ({ switchNetwork, chainId, isWrongNetwork, onDismiss }: Ne
     }),
     [router, onDismiss, switchNetwork],
   )
-  const networks = useMemo(() => getSortedChains(chainId, showTestnet), [chainId, showTestnet])
+  const isSocialLogin = useIsSocialLogin()
+  const networks = useMemo(() => getSortedChains(chainId, showTestnet, isSocialLogin), [chainId, showTestnet])
 
   return (
     <Box borderRadius={isMobile ? '32px' : '32px 32px 0 0'} overflow="hidden">

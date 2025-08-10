@@ -11,7 +11,7 @@ import { styled } from 'styled-components'
 import { Connector, useAccount, useConnect } from 'wagmi'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { NonEVMChainId } from '@pancakeswap/chains'
-import { useSocialLoginProviderAtom } from '../../contexts/Privy/atom'
+import { useSocialLoginProviderAtom } from '../../wallet/Privy/atom'
 
 interface CopyAddressProps extends FlexProps {
   account: string | undefined

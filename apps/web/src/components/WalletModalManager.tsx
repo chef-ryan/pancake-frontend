@@ -6,7 +6,7 @@ import useAuth from 'hooks/useAuth'
 
 import { ChainId } from '@pancakeswap/chains'
 import { WalletConfigV2 } from '@pancakeswap/ui-wallets/src/types'
-import { useFirebaseAuth } from 'contexts/Privy/firebase'
+import { useFirebaseAuth } from 'wallet/Privy/firebase'
 import { useCallback, useMemo } from 'react'
 import { logGTMWalletConnectedEvent } from 'utils/customGTMEventTracking'
 import { useConnect } from 'wagmi'

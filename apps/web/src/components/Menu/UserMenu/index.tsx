@@ -9,7 +9,7 @@ import {
   useWalletModalV2ViewState,
   WalletModalV2ViewStateProvider,
 } from 'components/WalletModalV2/WalletModalV2ViewStateProvider'
-import { usePrivyWalletAddress } from 'contexts/Privy/hooks'
+import { usePrivyWalletAddress } from 'wallet/Privy/hooks'
 import useAuth from 'hooks/useAuth'
 import { useDomainNameForAddress } from 'hooks/useDomain'
 import { useProfile } from 'state/profile/hooks'

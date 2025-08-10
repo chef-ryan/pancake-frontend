@@ -76,7 +76,7 @@ const usePrivyProvider = () => {
               localStorage.removeItem(key)
             })
 
-            const { retriggerFirebaseAuth } = await import('contexts/Privy/firebase')
+            const { retriggerFirebaseAuth } = await import('wallet/Privy/firebase')
             await retriggerFirebaseAuth()
           } catch (logoutError) {
             console.error('Failed to retrigger auth:', logoutError)

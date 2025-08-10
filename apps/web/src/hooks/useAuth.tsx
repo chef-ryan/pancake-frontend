@@ -7,7 +7,7 @@ import { useCallback } from 'react'
 import { useAppDispatch } from 'state'
 import { CONNECTOR_MAP } from 'utils/wagmi'
 import { ConnectorNotFoundError, SwitchChainNotSupportedError, useAccount, useConnect, useDisconnect } from 'wagmi'
-import { useFirebaseAuth } from '../contexts/Privy/firebase'
+import { useFirebaseAuth } from '../wallet/Privy/firebase'
 import { clearUserStates } from '../utils/clearUserStates'
 import { useActiveChainId } from './useActiveChainId'
 
