@@ -337,8 +337,8 @@ export const TradeSummary = memo(function TradeSummary({
               </DetailsTitle>
             </QuestionHelperV2>
           </RowFixed>
-          {isSVMOrder(order) ? (
-            <SVMTradingFee routes={order.trade.routes} />
+          {isSVMOrder(order) && inputAmount?.currency?.symbol ? (
+            <SVMTradingFee routes={order.trade.routes} inputCurrencySymbol={inputAmount?.currency?.symbol} />
           ) : (
             <SkeletonV2 width="70px" height="16px" borderRadius="8px" minHeight="auto" isDataReady={!loading}>
               {isX ? (

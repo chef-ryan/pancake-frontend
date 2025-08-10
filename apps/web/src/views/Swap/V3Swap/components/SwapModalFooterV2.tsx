@@ -238,8 +238,8 @@ export const SwapModalFooterV2 = memo(function SwapModalFooterV2({
               <DottedHelpText fontSize="14px">{t('Trading Fee')}</DottedHelpText>
             </QuestionHelperV2>
           </RowFixed>
-          {isSVMOrder(order) ? (
-            <SVMTradingFee routes={order.trade.routes} />
+          {isSVMOrder(order) && inputAmount?.currency?.symbol ? (
+            <SVMTradingFee routes={order.trade.routes} inputCurrencySymbol={inputAmount.currency.symbol} />
           ) : realizedLPFee || isXOrder(order) ? (
             <Flex alignItems="center">
               {isXOrder(order) ? (

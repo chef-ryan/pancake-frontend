@@ -4,7 +4,7 @@ import { FlexGap, SkeletonV2, Text } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { memo, useMemo } from 'react'
 import { isSVMOrder, isXOrder } from 'views/Swap/utils'
-import { TradeType } from '@pancakeswap/sdk'
+import { TradeType, UnifiedCurrencyAmount, SPLToken } from '@pancakeswap/sdk'
 import BigNumber from 'bignumber.js'
 import { useSolanaTokenPrices } from 'hooks/solana/useSolanaTokenPrice'
 import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
@@ -20,89 +20,95 @@ interface TradingFeeProps {
   order?: PriceOrder
 }
 
-export const SVMTradingFee = memo(({ routes }: { routes: SVMTrade<TradeType>['routes'] }) => {
-  // Collect unique fee mints from all pools
-  const uniqueMints = useMemo(() => {
-    const mintSet = new Set<string>()
-    for (const route of routes ?? []) {
-      for (const pool of (route as any)?.pools ?? []) {
-        const mint: string | undefined = pool?.feeMintAddress
-        if (mint) mintSet.add(String(mint).toLowerCase())
+export const SVMTradingFee = memo(
+  ({ routes, inputCurrencySymbol }: { routes: SVMTrade<TradeType>['routes']; inputCurrencySymbol: string }) => {
+    // Collect unique fee mints from all pools
+    const uniqueMints = useMemo(() => {
+      const mintSet = new Set<string>()
+      for (const route of routes ?? []) {
+        for (const pool of (route as any)?.pools ?? []) {
+          const mint: string | undefined = pool?.feeMintAddress
+          if (mint) mintSet.add(String(mint).toLowerCase())
+        }
       }
-    }
-    // Always include wSOL for conversion
-    mintSet.add(TOKEN_WSOL.address.toLowerCase())
-    return Array.from(mintSet)
-  }, [routes])
 
-  const { tokenList } = useSolanaTokenList()
-  const tokenMap = useMemo(() => {
-    const map = new Map<string, { decimals: number }>()
-    for (const t of tokenList) {
-      map.set(t.address.toLowerCase(), { decimals: t.decimals })
-    }
-    return map
-  }, [tokenList])
+      return Array.from(mintSet)
+    }, [routes])
 
-  const { data: priceMap, isLoading } = useSolanaTokenPrices({
-    mints: uniqueMints,
-    enabled: uniqueMints.length > 0,
-  })
+    // Input currency Address is the first token in the first pool in the first route
+    const inputCurrencyAddress = uniqueMints?.length ? uniqueMints[0] : ''
 
-  const totalFeeInSol = useMemo(() => {
-    if (!routes || !priceMap) return undefined
-    const wsolMintLower = TOKEN_WSOL.address.toLowerCase()
-    const solUsd = priceMap[wsolMintLower]
-    let sum = new BigNumber(0)
-    let hadMissing = false
-
-    for (const route of routes) {
-      const pools: any[] = (route as any)?.pools ?? []
-      for (const pool of pools) {
-        const feeAmountRaw: string | undefined = pool?.feeAmount
-        const feeMint: string | undefined = pool?.feeMintAddress
-        if (!feeAmountRaw || !feeMint) continue
-        const mintLower = String(feeMint).toLowerCase()
-        const meta = tokenMap.get(mintLower)
-        const decimals = meta?.decimals
-        if (decimals === undefined) {
-          hadMissing = true
-          continue
-        }
-        const humanAmount = new BigNumber(feeAmountRaw).div(new BigNumber(10).pow(decimals))
-
-        if (mintLower === wsolMintLower) {
-          sum = sum.plus(humanAmount)
-          continue
-        }
-
-        const tokenUsd = priceMap[mintLower]
-        if (tokenUsd === undefined || solUsd === undefined || solUsd === 0) {
-          hadMissing = true
-          continue
-        }
-        const feeInSol = humanAmount.multipliedBy(tokenUsd).dividedBy(solUsd)
-        sum = sum.plus(feeInSol)
+    const { tokenList } = useSolanaTokenList()
+    const tokenMap = useMemo(() => {
+      const map = new Map<string, { decimals: number }>()
+      for (const t of tokenList) {
+        map.set(t.address.toLowerCase(), { decimals: t.decimals })
       }
-    }
+      return map
+    }, [tokenList])
 
-    return { value: sum.toNumber(), approximate: hadMissing }
-  }, [priceMap, routes, tokenMap])
+    const { data: priceMap, isLoading } = useSolanaTokenPrices({
+      mints: uniqueMints,
+      enabled: uniqueMints.length > 0,
+    })
 
-  const display = useMemo(() => {
-    if (!totalFeeInSol) return null
-    const prefix = totalFeeInSol.approximate ? '~' : ''
-    return `${prefix}${formatNumber(totalFeeInSol.value, { maxDecimalDisplayDigits: 6 })} SOL`
-  }, [totalFeeInSol])
+    const totalFeeInInputCurrency = useMemo(() => {
+      if (!routes || !priceMap) return undefined
+      const inputMintLower = inputCurrencyAddress.toLowerCase()
+      const inputUsd = priceMap[inputMintLower]
+      let sum = new BigNumber(0)
+      let hadMissing = false
 
-  return (
-    <SkeletonV2 width="100px" height="16px" borderRadius="8px" minHeight="auto" isDataReady={!isLoading}>
-      <Text color="textSubtle" fontSize="14px">
-        {display ?? '-'}
-      </Text>
-    </SkeletonV2>
-  )
-})
+      for (const route of routes) {
+        const pools: any[] = (route as any)?.pools ?? []
+        for (const pool of pools) {
+          const feeAmountRaw: string | undefined = pool?.feeAmount
+          const feeMint: string | undefined = pool?.feeMintAddress
+          if (!feeAmountRaw || !feeMint) continue
+          const mintLower = String(feeMint).toLowerCase()
+          const meta = tokenMap.get(mintLower)
+          const decimals = meta?.decimals
+          if (decimals === undefined) {
+            hadMissing = true
+            continue
+          }
+          const humanAmount = new BigNumber(feeAmountRaw).div(new BigNumber(10).pow(decimals))
+
+          if (mintLower === inputMintLower) {
+            sum = sum.plus(humanAmount)
+            continue
+          }
+
+          const tokenUsd = priceMap[mintLower]
+          if (tokenUsd === undefined || inputUsd === undefined || inputUsd === 0) {
+            hadMissing = true
+            continue
+          }
+          const feeInInputCurrency = humanAmount.multipliedBy(tokenUsd).dividedBy(inputUsd)
+          sum = sum.plus(feeInInputCurrency)
+        }
+      }
+
+      return { value: sum.toNumber(), approximate: hadMissing }
+    }, [priceMap, routes, tokenMap])
+
+    const display = useMemo(() => {
+      if (!totalFeeInInputCurrency) return null
+      const prefix = totalFeeInInputCurrency.approximate ? '~' : ''
+      return `${prefix}${formatNumber(totalFeeInInputCurrency.value, {
+        maxDecimalDisplayDigits: 6,
+      })} ${inputCurrencySymbol}`
+    }, [totalFeeInInputCurrency, inputCurrencySymbol])
+
+    return (
+      <SkeletonV2 width="100px" height="16px" borderRadius="8px" minHeight="auto" isDataReady={!isLoading}>
+        <Text color="textSubtle" fontSize="14px">
+          {display ?? '-'}
+        </Text>
+      </SkeletonV2>
+    )
+  },
+)
 
 export const TradingFee: React.FC<TradingFeeProps> = memo(({ order, loaded }) => {
   const { t } = useTranslation()
@@ -131,8 +137,8 @@ export const TradingFee: React.FC<TradingFeeProps> = memo(({ order, loaded }) =>
         {t('Fee')}
       </Text>
       <SkeletonV2 width="108px" height="16px" borderRadius="8px" minHeight="auto" isDataReady={loaded}>
-        {isSVMOrder(order) ? (
-          <SVMTradingFee routes={order.trade.routes} />
+        {isSVMOrder(order) && inputAmount?.currency?.symbol ? (
+          <SVMTradingFee routes={order.trade.routes} inputCurrencySymbol={inputAmount.currency.symbol} />
         ) : isXOrder(order) ? (
           <Text color="primary" fontSize="14px">
             0 {inputAmount?.currency?.symbol}
