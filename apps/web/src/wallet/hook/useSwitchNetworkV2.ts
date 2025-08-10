@@ -7,7 +7,7 @@ import { useCallback, useMemo, useRef } from 'react'
 import { Connector, useAccount, useSwitchChain } from 'wagmi'
 import { accountActiveChainAtom } from 'wallet/atoms/accountStateAtoms'
 import { SwitchChainRequest, switchChainUpdatingAtom } from 'wallet/atoms/switchChainRequestAtom'
-import { SOLANA_SUPPORTED_PATH } from 'wallet/solana.config'
+import { SOLANA_SUPPORTED_PATH } from 'wallet/network.switch.config'
 
 export interface SwitchChainOption {
   replaceUrl?: boolean

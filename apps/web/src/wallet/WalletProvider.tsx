@@ -6,10 +6,10 @@ import { usePrivy } from '@privy-io/react-auth'
 import { atomWithStorage } from 'jotai/utils'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { WagmiProvider as PrivyWagmiProvider } from '@privy-io/wagmi'
-import { SOLANA_SUPPORTED_PATH } from './solana.config'
 import { W3WConfigProvider } from './W3WConfigContext'
 import { useSyncWagmiState } from './hook/useSyncWagmiState'
 import { useWagmiConfig } from './hook/useWagmiConfig'
+import { SOLANA_SUPPORTED_PATH } from './network.switch.config'
 
 interface WalletProviderProps {
   reconnectOnMount?: boolean
