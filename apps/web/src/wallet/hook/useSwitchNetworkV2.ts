@@ -56,7 +56,24 @@ export const useSwitchNetworkV2 = () => {
     [switchChainAsync, isConnected],
   )
 
-  return { switchNetwork: switchChain, canSwitch, isLoading: switching }
+  const canSwitchToChain = useCallback(
+    (chainId: number) => {
+      if (!isEvm(chainId)) {
+        return true
+      }
+      return isConnected
+        ? !!switchChainAsync &&
+            !(
+              typeof window !== 'undefined' &&
+              // @ts-ignore // TODO: add type later
+              window.ethereum?.isMathWallet
+            )
+        : true
+    },
+    [switchChainAsync, isConnected],
+  )
+
+  return { switchNetwork: switchChain, canSwitch, isLoading: switching, canSwitchToChain }
 }
 
 const requireLogout = async (connector: Connector, chainId: number, address: `0x${string}` | undefined) => {

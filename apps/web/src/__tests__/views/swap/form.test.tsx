@@ -16,7 +16,7 @@ describe('handleCurrencySelect', () => {
     const mockContext = {
       onCurrencySelection: vi.fn(),
       warningSwapHandler: vi.fn(),
-      canSwitch: true,
+      canSwitchToChain: (chainId: number) => true,
       switchNetwork,
       outputChainId: ChainId.BSC,
       supportedBridgeChains: { data: [] },

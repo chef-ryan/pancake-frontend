@@ -39,7 +39,7 @@ interface Props {
 interface HandleCurrencySelectDeps {
   onCurrencySelection: (field: Field, currency: any) => void
   warningSwapHandler: (currency: any) => void
-  canSwitch: boolean
+  canSwitchToChain: (chainId: number) => boolean
   switchNetwork: (chainId: number, options?: SwitchChainOption) => void
   outputChainId: number | undefined
   supportedBridgeChains: { data?: { originChainId: number; destinationChainId: number }[] }
@@ -58,7 +58,7 @@ interface HandleCurrencySelectDeps {
 export const handleCurrencySelectFn = async ({
   onCurrencySelection,
   warningSwapHandler,
-  canSwitch,
+  canSwitchToChain,
   switchNetwork,
   outputChainId,
   supportedBridgeChains,
@@ -72,13 +72,11 @@ export const handleCurrencySelectFn = async ({
 }: HandleCurrencySelectDeps): Promise<void> => {
   const isInput = field === Field.INPUT
 
-  if (isInput && canSwitch && newCurrency.chainId !== inputChainId) {
-    if (newCurrency.chainId in EvmChainId) {
-      switchNetwork(newCurrency.chainId, {
-        replaceUrl: false,
-        from: 'switch',
-      })
-    }
+  if (isInput && canSwitchToChain(newCurrency.chainId) && newCurrency.chainId !== inputChainId) {
+    switchNetwork(newCurrency.chainId, {
+      replaceUrl: false,
+      from: 'switch',
+    })
 
     const isSameAsOutput = currencyId(newCurrency) === outputCurrencyId && newCurrency.chainId === outputChainId
 
@@ -180,7 +178,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
     }
   }, [maxAmountInput, onUserInput])
 
-  const { canSwitch, switchNetwork } = useSwitchNetwork()
+  const { canSwitchToChain, switchNetwork } = useSwitchNetwork()
 
   const supportedBridgeChains = useBridgeAvailableRoutes()
 
@@ -191,7 +189,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
       return handleCurrencySelectFn({
         onCurrencySelection,
         warningSwapHandler,
-        canSwitch,
+        canSwitchToChain,
         switchNetwork,
         outputChainId,
         supportedBridgeChains,
@@ -207,7 +205,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
     [
       onCurrencySelection,
       warningSwapHandler,
-      canSwitch,
+      canSwitchToChain,
       switchNetwork,
       outputChainId,
       supportedBridgeChains,
