@@ -1,3 +1,4 @@
+import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { initializeApp } from 'firebase/app'
 
 const firebaseConfig = {
@@ -11,3 +12,5 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig)
+
+export const UNSUPPORTED_SOCIAL_LOGIC_CHAINS: UnifiedChainId[] = [NonEVMChainId.SOLANA, NonEVMChainId.APTOS]
