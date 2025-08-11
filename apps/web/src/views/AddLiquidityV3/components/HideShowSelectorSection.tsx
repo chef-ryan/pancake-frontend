@@ -51,7 +51,7 @@ export default function HideShowSelectorSection({
     if (parent && content && showOptions) {
       const headerHeight = header?.scrollHeight ?? 0
       const contentHeight = content.scrollHeight
-      parent.style.height = `${contentHeight + headerHeight + PADDING * 2 + 8}px`
+      parent.style.height = `${contentHeight + headerHeight + PADDING * 2 + 16}px`
     } else if (parent && !showOptions) {
       parent.style.height = `${header?.scrollHeight ?? 0 + PADDING * 2}px`
     }
