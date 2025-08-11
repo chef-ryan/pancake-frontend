@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import { getActiveMenuItem, getActiveSubMenuItem } from 'components/Menu/utils'
 import { useAccount } from 'wagmi'
 import { useMemo } from 'react'
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, isTestnetChainId } from '@pancakeswap/chains'
 import { viemClients } from 'utils/viem'
 import { getQueryChainId } from 'wallet/util/getQueryChainId'
 import Dots from '../Loader/Dots'
@@ -16,7 +16,8 @@ import Dots from '../Loader/Dots'
 // Where chain is not supported or page not supported
 export function UnsupportedNetworkModal({ pageSupportedChains }: { pageSupportedChains: number[] }) {
   const { switchNetwork, isLoading, canSwitch } = useSwitchNetwork()
-  const chainId = pageSupportedChains[0]
+  const chainId =
+    pageSupportedChains.find((x) => x === ChainId.BSC) || pageSupportedChains.find((x) => !isTestnetChainId(x))
   const { isConnected } = useAccount()
   const { logout } = useAuth()
   const { t } = useTranslation()
