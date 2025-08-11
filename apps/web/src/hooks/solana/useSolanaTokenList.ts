@@ -32,7 +32,7 @@ function useTokenListQuery(listKey: TokenListKey, enabled: boolean) {
     refetchOnReconnect: false,
     enabled: isEnabled && enabled,
     select: (data) => {
-      return listConfig.parser(data)
+      return listConfig.parser(data).filter((token) => token.name && token.symbol)
     },
   })
 }
@@ -69,7 +69,7 @@ export function useSolanaTokenList(enabled = true) {
     addTokens(jupiterTokens)
 
     return result
-  }, [pcsTokens, raydiumTokens, jupiterTokens, userTokens])
+  }, [pcsTokens?.length, raydiumTokens?.length, jupiterTokens?.length, userTokens])
 
   useEffect(() => {
     setTokenList(mergedTokens)
