@@ -82,7 +82,6 @@ const requireLogout = async (connector: Connector, chainId: number, address: `0x
 
     const provider = (await connector.getProvider()) as any
 
-    console.log(`[chain] sessions`, provider.session?.namespaces?.eip155?.accounts)
     return Boolean(
       provider &&
         Array.isArray(provider.session?.namespaces?.eip155?.accounts) &&
@@ -117,18 +116,7 @@ const useProcessSwitchChainRequest = () => {
       if (isEvm(requestChainId)) {
         if (from !== 'wagmi') {
           // from = wagmi -> no need call switch again
-          console.log(`[chain]`, 'switch wagmi', requestChainId)
-          await switchNetworkWagmiAsync(
-            { chainId: requestChainId },
-            {
-              onSuccess: () => {
-                console.log(`[chain]`, 'switch wagmi success', requestChainId)
-              },
-              onError: (error) => {
-                console.error(`[chain]`, 'switch wagmi error', error)
-              },
-            },
-          )
+          await switchNetworkWagmiAsync({ chainId: requestChainId })
         }
         updateAccountState((prev) => ({
           ...prev,
@@ -139,17 +127,16 @@ const useProcessSwitchChainRequest = () => {
           router.replace({ query: { ...router.query, chain } }, undefined, { shallow: true })
         }
 
-        console.log(`[chain] connector`, wagmiConnector)
         if (wagmiConnector && (await requireLogout(wagmiConnector, requestChainId, evmAddress))) {
           await logout()
         }
-        console.log(`[chain]`, 'switch done', requestChainId)
         return true
       }
 
       // Solana
       if (!SOLANA_SUPPORTED_PATH.includes(path)) {
         window.open('https://solana.pancakeswap.finance', '_self')
+        return true
       }
       updateAccountState((prev) => ({
         ...prev,
@@ -170,7 +157,6 @@ const useProcessSwitchChainRequest = () => {
 
   const handleRequestChainIdChange = useCallback(async (request: SwitchChainRequest) => {
     const { from, chainId: requestChainId } = request
-    console.log(`[chain]`, 'processSwitching', request)
     const activeChainId = activeChainIdRef.current
 
     // Check request chain ID && active Chain ID
