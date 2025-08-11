@@ -32,7 +32,8 @@ import MobileIcon from './components/MobileIcon'
 const ColumnBox = styled(Box)`
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 `
 
 const WarningBox = styled(Box)`
