@@ -1,4 +1,5 @@
 import { Box, Breadcrumbs, Container, FlexGap, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { getChainId } from 'config/chains'
 
 import { Pair } from '@pancakeswap/sdk'
 import { FeeAmount, Pool } from '@pancakeswap/v3-sdk'
@@ -25,6 +26,7 @@ import useStableConfig, { StableConfigContext } from 'views/Swap/hooks/useStable
 
 import { PoolInfoHeader } from 'components/PoolInfoHeader'
 import { useActiveChainId } from 'hooks/useActiveChainId'
+import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { usePoolInfo } from 'state/farmsV4/state/extendPools/hooks'
 import { resetMintState } from 'state/mint/actions'
 import { useAddLiquidityV2FormDispatch } from 'state/mint/reducer'
@@ -136,6 +138,15 @@ export function UniversalAddLiquidity({
     setSelectorType,
     stableConfig.stableSwapConfig,
   ])
+
+  const { switchNetwork } = useSwitchNetwork()
+  const { chainId } = useActiveChainId()
+  useEffect(() => {
+    const queryChainId = router.query.chain && getChainId(router.query.chain as string)
+    if (queryChainId && queryChainId !== chainId) {
+      switchNetwork(queryChainId)
+    }
+  }, [])
 
   return (
     <>
