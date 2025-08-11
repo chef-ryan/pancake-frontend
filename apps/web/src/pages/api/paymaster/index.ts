@@ -6,8 +6,11 @@ import {
 } from 'config/paymaster'
 import stringify from 'fast-json-stable-stringify'
 import { NextApiHandler } from 'next'
-import { calculateGasMargin } from 'utils'
 import { decodeFunctionData, erc20Abi } from 'viem'
+
+export function calculateGasMargin(value: bigint, margin = 1000n): bigint {
+  return (value * (10000n + margin)) / 10000n
+}
 
 const handler: NextApiHandler = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
