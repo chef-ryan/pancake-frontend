@@ -29,6 +29,8 @@ function SolanaPairNode({ pair, className, poolFee }: PairNodeProps) {
   const outputCurrency = useUnifiedCurrency(output.address, output.chainId)
 
   const tooltipText = `${inputCurrency?.symbol}/${outputCurrency?.symbol} ${poolFee ? `(${poolFee}%)` : ''}`
+  // show fee only
+  const text = poolFee ? `${poolFee}%` : ''
 
   const slpTokenPair: Pair | undefined = useMemo(() => {
     if (!inputCurrency || !outputCurrency) {
@@ -41,7 +43,7 @@ function SolanaPairNode({ pair, className, poolFee }: PairNodeProps) {
     return null
   }
 
-  return <PairNode pair={slpTokenPair} text={tooltipText} className={className} tooltipText={tooltipText} />
+  return <PairNode pair={slpTokenPair} text={text} className={className} tooltipText={tooltipText} />
 }
 
 export function JupPairNodes({ pairs, pools }: Params): React.ReactNode[] | null {

@@ -60,8 +60,18 @@ interface RouteDisplayProps {
   route: RouteDisplayEssentials
 }
 
-function RouteDisplayView({ inputCurrency, outputCurrency, pairNodes, percent }) {
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(<Text>{inputCurrency.symbol}</Text>, {
+function RouteDisplayView({
+  inputCurrency,
+  outputCurrency,
+  pairNodes,
+  percent,
+}: {
+  inputCurrency: UnifiedCurrency | null | undefined
+  outputCurrency: UnifiedCurrency | null | undefined
+  pairNodes: React.ReactNode
+  percent: number
+}) {
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(<Text>{inputCurrency?.symbol ?? ''}</Text>, {
     placement: 'right',
   })
 
@@ -69,9 +79,13 @@ function RouteDisplayView({ inputCurrency, outputCurrency, pairNodes, percent })
     targetRef: outputTargetRef,
     tooltip: outputTooltip,
     tooltipVisible: outputTooltipVisible,
-  } = useTooltip(<Text>{outputCurrency.symbol}</Text>, {
+  } = useTooltip(<Text>{outputCurrency?.symbol ?? ''}</Text>, {
     placement: 'right',
   })
+
+  if (!inputCurrency || !outputCurrency) {
+    return null
+  }
 
   return (
     <AutoColumn gap="24px">
