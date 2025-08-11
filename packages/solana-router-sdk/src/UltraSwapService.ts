@@ -37,7 +37,7 @@ class UltraSwapService implements IUltraSwapService {
   async getQuote(params: UltraSwapQuoteParams, signal?: AbortSignal): Promise<UltraQuoteResponse> {
     const queryParams = new URLSearchParams(
       Object.entries(params)
-        .filter(([_, value]) => value !== undefined)
+        .filter(([_, value]) => value !== undefined && value !== null)
         .reduce(
           (acc, [key, value]) => ({
             ...acc,
