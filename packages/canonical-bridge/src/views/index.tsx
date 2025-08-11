@@ -48,6 +48,7 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
 
   const { currentLanguage, t } = useTranslation()
   const fromChain = useChainFromWidget('from')
+  const toChain = useChainFromWidget('to')
   const theme = useTheme()
   const toast = useToast()
   const { connector } = useAccount()
@@ -104,21 +105,21 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
       analytics: {
         enabled: true,
         onEvent: (eventName: EventName, eventData: EventData<any>) => {
-          if (eventName === 'select_bridge_fromDropdown') {
-            const fromNetworkName = eventData?.fromNetwork
+          if (eventName === 'select_bridge_fromDropdown' || eventName === 'click_bridge_switchNetwork') {
+            const networkName = eventName === 'select_bridge_fromDropdown' ? eventData?.fromNetwork : toChain
 
-            if (fromNetworkName) {
-              const matchedChainId = allCasesNameToChainId[fromNetworkName]
+            if (networkName) {
+              const matchedChainId = allCasesNameToChainId[networkName]
 
               if (matchedChainId) {
                 const customPayload = {
-                  network: fromNetworkName,
+                  network: networkName,
                   chainId: matchedChainId,
                 }
 
                 window.dispatchEvent(new CustomEvent('pcs_bridge_select_from_network', { detail: customPayload }))
               } else {
-                console.warn(`No matching chain found for network name: ${fromNetworkName}`)
+                console.warn(`No matching chain found for network name: ${networkName}`)
               }
             }
           }
@@ -137,6 +138,7 @@ export const CanonicalBridge = (props: CanonicalBridgeProps) => {
       supportedChains,
       handleError,
       fromChain,
+      toChain,
       connectWalletButtons,
     ],
   )
