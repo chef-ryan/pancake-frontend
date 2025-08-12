@@ -79,10 +79,13 @@ export const useSolanaTokenPrices = (props: {
   const isLoading = loadable.isPending()
   const isEmptyResult = loadable.isNothing()
 
-  return {
-    data,
-    isLoading,
-    error,
-    isEmptyResult,
-  }
+  return useMemo(
+    () => ({
+      data,
+      isLoading,
+      error,
+      isEmptyResult,
+    }),
+    [data, isLoading, error, isEmptyResult],
+  )
 }

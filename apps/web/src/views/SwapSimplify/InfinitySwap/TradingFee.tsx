@@ -4,7 +4,8 @@ import { FlexGap, SkeletonV2, Text } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { memo, useMemo } from 'react'
 import { isSVMOrder, isXOrder } from 'views/Swap/utils'
-import { TradeType } from '@pancakeswap/sdk'
+import { SPLToken, TradeType } from '@pancakeswap/sdk'
+
 import BigNumber from 'bignumber.js'
 import { useSolanaTokenPrices } from 'hooks/solana/useSolanaTokenPrice'
 import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
@@ -15,6 +16,7 @@ import { SOLANA_NATIVE_TOKEN_ADDRESS } from 'quoter/consts'
 import { useIsWrapping, useSlippageAdjustedAmounts } from '../../Swap/V3Swap/hooks'
 import { useHasDynamicHook } from '../hooks/useHasDynamicHook'
 import { usePriceBreakdown } from '../hooks/usePriceBreakdown'
+import { useDirectBestSolanaTrade } from '../hooks/useDirectBestSolanaTrade'
 
 interface TradingFeeProps {
   loaded: boolean
@@ -55,10 +57,11 @@ export const SVMTradingFee = memo(
 
     const { tokenList } = useSolanaTokenList()
 
-    // Only map tokens that we actually need (those in uniqueMints)
-    const tokenMap = useMemo(() => {
-      const map = new Map<string, { decimals: number }>()
+    // Only map tokens that we actually need (those in uniqueMints) and construct missingMints
+    const { tokenMap, missingMints } = useMemo(() => {
+      const map = new Map<string, SPLToken>()
       const uniqueMintsSet = new Set(uniqueMints.map((mint) => mint.toLowerCase()))
+      const missing: SPLToken[] = []
 
       for (const token of tokenList) {
         // Early exit if we've found all tokens we need
@@ -66,17 +69,30 @@ export const SVMTradingFee = memo(
 
         const tokenAddressLower = token.address.toLowerCase()
         if (uniqueMintsSet.has(tokenAddressLower)) {
-          map.set(tokenAddressLower, { decimals: token.decimals })
+          map.set(tokenAddressLower, token)
+
+          if (priceMap[tokenAddressLower] === undefined) {
+            missing.push(token)
+          }
+
           uniqueMintsSet.delete(tokenAddressLower) // Remove from set once found
         }
       }
-      return map
-    }, [tokenList, uniqueMints])
+
+      return { tokenMap: map, missingMints: missing }
+    }, [tokenList, uniqueMints, priceMap])
+
+    const { fallbackPriceMap, isFallbackLoading } = useDirectBestSolanaTrade(missingMints)
+
+    const combinedPriceMap = useMemo(
+      () => ({ ...(priceMap || {}), ...(fallbackPriceMap || {}) }),
+      [priceMap, fallbackPriceMap],
+    )
 
     const totalFeeInInputCurrency = useMemo(() => {
-      if (!allPools?.length || !priceMap) return undefined
+      if (!allPools?.length || !combinedPriceMap) return undefined
       const inputMintLower = inputCurrencyAddress.toLowerCase()
-      const inputUsd = priceMap[inputMintLower]
+      const inputUsd = combinedPriceMap[inputMintLower]
 
       if (inputUsd === undefined || inputUsd === 0) return undefined
 
@@ -97,7 +113,7 @@ export const SVMTradingFee = memo(
         }
 
         const humanAmount = new BigNumber(feeAmountRaw).div(new BigNumber(10).pow(decimals))
-        const tokenUsd = priceMap[mintLower]
+        const tokenUsd = combinedPriceMap[mintLower]
         if (tokenUsd === undefined) {
           continue
         }
@@ -109,7 +125,7 @@ export const SVMTradingFee = memo(
       const totalFeeInInputCurrency = totalUsdValue.dividedBy(inputUsd)
 
       return { value: totalFeeInInputCurrency.toNumber() }
-    }, [priceMap, allPools, inputCurrencyAddress, tokenMap])
+    }, [combinedPriceMap, allPools, inputCurrencyAddress, tokenMap])
 
     const display = useMemo(() => {
       if (!totalFeeInInputCurrency) return null
@@ -119,8 +135,10 @@ export const SVMTradingFee = memo(
       })} ${inputCurrencySymbol}`
     }, [totalFeeInInputCurrency, inputCurrencySymbol])
 
+    const isDataReady = !isLoading && !isFallbackLoading
+
     return (
-      <SkeletonV2 width="100px" height="16px" borderRadius="8px" minHeight="auto" isDataReady={!isLoading}>
+      <SkeletonV2 width="100px" height="16px" borderRadius="8px" minHeight="auto" isDataReady={isDataReady}>
         <Text color="textSubtle" fontSize="14px">
           {display ?? '-'}
         </Text>
