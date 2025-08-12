@@ -4,15 +4,16 @@ import { atom } from 'jotai'
 import { getQueryChainId } from 'wallet/util/getQueryChainId'
 import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
 import { DEFAULT_CHAINS } from 'state/farmsV4/state/farmPools/fetcher'
+import { ChainId, isEvm } from '@pancakeswap/chains'
 import { getProtocolsByIndex, parseUrlToSearchQuery } from '../utils/queryParser'
 
 const _searchQueryAtom = atom<FarmQuery>(parseUrlToSearchQuery())
 export const searchQueryAtom = atom((get) => {
-  const chainId = getQueryChainId()
+  const chainId = getQueryChainId() || ChainId.BSC
   const query = get(_searchQueryAtom)
   return {
     ...query,
-    activeChainId: chainId,
+    activeChainId: isEvm(chainId as number) ? (chainId as ChainId) : ChainId.BSC,
   }
 })
 
