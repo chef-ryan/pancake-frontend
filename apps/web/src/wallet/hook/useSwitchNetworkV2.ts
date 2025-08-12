@@ -126,7 +126,10 @@ const useProcessSwitchChainRequest = () => {
           }))
           if (replaceUrl) {
             const chain = getChainName(requestChainId)
-            router.replace({ query: { ...router.query, chain } }, undefined, { shallow: true })
+            console.log(`[route]`, router.pathname)
+            router.replace({ pathname: router.pathname, query: { ...router.query, chain } }, undefined, {
+              shallow: true,
+            })
           }
 
           if (wagmiConnector && (await requireLogout(wagmiConnector, requestChainId, evmAddress))) {
@@ -159,19 +162,22 @@ const useProcessSwitchChainRequest = () => {
     [router, switchNetworkWagmiAsync, setSwitching, updateAccountState, logout],
   )
 
-  const handleRequestChainIdChange = useCallback(async (request: SwitchChainRequest) => {
-    const { from, chainId: requestChainId } = request
-    const activeChainId = activeChainIdRef.current
+  const handleRequestChainIdChange = useCallback(
+    async (request: SwitchChainRequest) => {
+      const { from, chainId: requestChainId } = request
+      const activeChainId = activeChainIdRef.current
 
-    // Check request chain ID && active Chain ID
-    // For url type, wagmi state may not sync with the active chain ID
-    if (requestChainId === activeChainId && from !== 'url') {
-      // No need to switch
-      return false
-    }
+      // Check request chain ID && active Chain ID
+      // For url type, wagmi state may not sync with the active chain ID
+      if (requestChainId === activeChainId && from !== 'url') {
+        // No need to switch
+        return false
+      }
 
-    return processSwitching(request)
-  }, [])
+      return processSwitching(request)
+    },
+    [router],
+  )
 
   return handleRequestChainIdChange
 }
