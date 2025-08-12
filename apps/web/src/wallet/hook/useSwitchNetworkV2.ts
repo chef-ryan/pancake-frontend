@@ -40,7 +40,7 @@ export const useSwitchNetworkV2 = () => {
 
       return processSwitching(request)
     },
-    [],
+    [evmAddress, wagmiConnector, processSwitching, isConnected],
   )
 
   const canSwitch = useMemo(
@@ -104,70 +104,80 @@ const useProcessSwitchChainRequest = () => {
   const router = useRouter()
 
   const activeChainIdRef = useActiveChainIdRef()
-  const processSwitching = useCallback(async (request: SwitchChainRequest) => {
-    const { from, wagmiConnector, evmAddress, replaceUrl, chainId: requestChainId, path } = request
-    if (lock.current) {
-      return false
-    }
-    // Need to switch
-    lock.current = true
-    try {
-      setSwitching(true)
-      if (isEvm(requestChainId)) {
-        if (from !== 'wagmi') {
-          // from = wagmi -> no need call switch again
-          await switchNetworkWagmiAsync({ chainId: requestChainId })
+  const processSwitching = useCallback(
+    async (request: SwitchChainRequest) => {
+      const { from, wagmiConnector, evmAddress, replaceUrl, chainId: requestChainId, path } = request
+      if (lock.current) {
+        return false
+      }
+      console.log(`[wallet] process switch`, request)
+      // Need to switch
+      lock.current = true
+      try {
+        setSwitching(true)
+        if (isEvm(requestChainId)) {
+          if (from !== 'wagmi') {
+            // from = wagmi -> no need call switch again
+            await switchNetworkWagmiAsync({ chainId: requestChainId })
+          }
+          updateAccountState((prev) => ({
+            ...prev,
+            chainId: requestChainId,
+          }))
+          if (replaceUrl) {
+            const chain = getChainName(requestChainId)
+            console.log(`[route]`, router.pathname)
+            router.replace({ pathname: router.pathname, query: { ...router.query, chain } }, undefined, {
+              shallow: true,
+            })
+          }
+
+          if (wagmiConnector && (await requireLogout(wagmiConnector, requestChainId, evmAddress))) {
+            await logout()
+          }
+          return true
+        }
+
+        // Solana
+        if (!SOLANA_SUPPORTED_PATH.includes(path)) {
+          window.open('https://solana.pancakeswap.finance', '_self')
+          return true
         }
         updateAccountState((prev) => ({
           ...prev,
           chainId: requestChainId,
         }))
-        if (replaceUrl) {
-          const chain = getChainName(requestChainId)
-          router.replace({ query: { ...router.query, chain } }, undefined, { shallow: true })
-        }
-
-        if (wagmiConnector && (await requireLogout(wagmiConnector, requestChainId, evmAddress))) {
-          await logout()
-        }
+        router.replace({ query: { ...router.query, chain: 'solana' } }, undefined, { shallow: true })
         return true
+      } catch (error) {
+        console.log(`[chain]`, 'switch error', error)
+        return false
+      } finally {
+        setSwitching(false)
+        setTimeout(() => {
+          lock.current = false
+        }, 60)
+      }
+    },
+    [router, switchNetworkWagmiAsync, setSwitching, updateAccountState, logout],
+  )
+
+  const handleRequestChainIdChange = useCallback(
+    async (request: SwitchChainRequest) => {
+      const { from, chainId: requestChainId } = request
+      const activeChainId = activeChainIdRef.current
+
+      // Check request chain ID && active Chain ID
+      // For url type, wagmi state may not sync with the active chain ID
+      if (requestChainId === activeChainId && from !== 'url') {
+        // No need to switch
+        return false
       }
 
-      // Solana
-      if (!SOLANA_SUPPORTED_PATH.includes(path)) {
-        window.open('https://solana.pancakeswap.finance', '_self')
-        return true
-      }
-      updateAccountState((prev) => ({
-        ...prev,
-        chainId: requestChainId,
-      }))
-      router.replace({ query: { ...router.query, chain: 'solana' } }, undefined, { shallow: true })
-      return true
-    } catch (error) {
-      console.log(`[chain]`, 'switch error', error)
-      return false
-    } finally {
-      setSwitching(false)
-      setTimeout(() => {
-        lock.current = false
-      }, 60)
-    }
-  }, [])
-
-  const handleRequestChainIdChange = useCallback(async (request: SwitchChainRequest) => {
-    const { from, chainId: requestChainId } = request
-    const activeChainId = activeChainIdRef.current
-
-    // Check request chain ID && active Chain ID
-    // For url type, wagmi state may not sync with the active chain ID
-    if (requestChainId === activeChainId && from !== 'url') {
-      // No need to switch
-      return false
-    }
-
-    return processSwitching(request)
-  }, [])
+      return processSwitching(request)
+    },
+    [router],
+  )
 
   return handleRequestChainIdChange
 }

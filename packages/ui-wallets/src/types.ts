@@ -59,7 +59,7 @@ export type ConnectData = {
 export interface WalletModalV2Props<T = unknown> extends ModalV2Props {
   wallets: WalletConfigV2<T>[]
   topWallets: WalletConfigV2<T>[]
-  login: (connectorID: T) => Promise<ConnectData | undefined>
+  login: (wallet: WalletConfigV2<T>) => Promise<ConnectData | undefined>
   docLink: string
   docText: string
   mevDocLink: string | null

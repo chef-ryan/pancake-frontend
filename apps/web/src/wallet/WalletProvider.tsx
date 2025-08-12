@@ -17,7 +17,16 @@ interface WalletProviderProps {
   children?: React.ReactNode
 }
 
-export const eip6963Providers: any[] = []
+export interface EIP6963Detail {
+  provider: any
+  info: {
+    name: string
+    rdns: string
+    uuid: string
+    icon: string
+  }
+}
+export const eip6963Providers: EIP6963Detail[] = []
 
 const walletRecoveryRecordsAtom = atomWithStorage<Record<string, number>>('pcs:socialLogin:walletRecoveryRecords', {})
 
