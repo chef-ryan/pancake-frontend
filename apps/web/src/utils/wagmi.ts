@@ -82,7 +82,6 @@ export const cyberWalletConnector = isCyberWallet()
   : undefined
 
 export const CONNECTOR_MAP = {
-  [ConnectorNames.MetaMask]: customMetaMaskConnector,
   [ConnectorNames.Injected]: injectedConnector,
   //  [ConnectorNames.Safe]: safe(),
   [ConnectorNames.WalletLink]: coinbaseConnector,

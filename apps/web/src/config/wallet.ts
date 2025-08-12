@@ -113,7 +113,7 @@ export const walletsConfig = <config extends Config = Config, context = unknown>
         return isMetamaskInstalled()
         // && metaMaskConnector.ready
       },
-      connectorId: ConnectorNames.MetaMask,
+      connectorId: ConnectorNames.Injected,
       deepLink: 'https://metamask.app.link/dapp/pancakeswap.finance/',
       qrCode,
       downloadLink: 'https://metamask.app.link/dapp/pancakeswap.finance/',
