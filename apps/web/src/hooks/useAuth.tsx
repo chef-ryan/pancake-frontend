@@ -35,6 +35,7 @@ const useAuth = () => {
         const eip6963detail = eip6963Providers.find((p) => p.info.name.toLowerCase() === title.toLowerCase())
         if (eip6963detail) {
           eipConnector = createEip6963Connector(eip6963detail)
+          console.log(`[wallet]`, 'createEip6963Connector', eip6963detail, eipConnector)
         }
       }
       const connector = eipConnector || findConnector
@@ -60,6 +61,7 @@ const useAuth = () => {
   )
 
   const logout = useCallback(async () => {
+    console.log(`[wallet]`, 'logout', { chainId, authenticated, ready })
     try {
       if (authenticated && ready) {
         await signOutAndClearUserStates()

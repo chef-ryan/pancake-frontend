@@ -3,6 +3,8 @@ import { createConnector } from 'wagmi'
 import { EIP6963Detail } from './WalletProvider'
 
 const cache = new Map<string, any>()
+let isSwitching = false
+const listeners: Array<() => void> = []
 export const createEip6963Connector = (detail: EIP6963Detail) => {
   if (cache.has(detail.info.uuid)) {
     return cache.get(detail.info.uuid)
@@ -13,7 +15,7 @@ export const createEip6963Connector = (detail: EIP6963Detail) => {
   const connector = createConnector(() => ({
     id: info.uuid,
     name: info.name,
-    type: info.name,
+    type: 'injected',
 
     async connect({ chainId } = {}) {
       const accounts = await provider.request({ method: 'eth_requestAccounts' })
@@ -24,7 +26,10 @@ export const createEip6963Connector = (detail: EIP6963Detail) => {
       }
     },
 
-    async disconnect() {},
+    async disconnect() {
+      listeners.forEach((off) => off())
+      listeners.length = 0
+    },
 
     async getProvider() {
       return provider
@@ -49,21 +54,49 @@ export const createEip6963Connector = (detail: EIP6963Detail) => {
     },
 
     onAccountsChanged(callback) {
-      provider?.on('accountsChanged', callback)
+      const handler = (accounts?: string[]) => {
+        if (Array.isArray(accounts)) {
+          if (accounts.length === 0 && isSwitching) {
+            return
+          }
+          // @ts-ignore
+          callback(accounts as readonly `0x${string}`[])
+        }
+      }
+      provider?.on?.('accountsChanged', handler)
+      listeners.push(() => provider?.removeListener?.('accountsChanged', handler))
     },
 
-    onChainChanged(chainId) {},
+    onChainChanged(callback) {
+      const handler = (next: string | number) => {
+        const id = typeof next === 'string' ? parseInt(next, 16) : Number(next)
+        // @ts-ignore
+        callback(id)
+      }
+      provider?.on?.('chainChanged', handler)
+      listeners.push(() => provider?.removeListener?.('chainChanged', handler))
+    },
 
     onDisconnect(callback) {
-      provider?.on('disconnect', callback)
+      // @ts-ignore
+      const handler = (err?: unknown) => callback(err)
+      provider?.on?.('disconnect', handler)
+      listeners.push(() => provider?.removeListener?.('disconnect', handler))
     },
 
-    async switchChain(parameters) {
-      const { chainId } = parameters
-      await provider.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: `0x${chainId.toString(16)}` }],
-      })
+    async switchChain({ chainId }) {
+      isSwitching = true
+      try {
+        await provider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: `0x${chainId.toString(16)}` }],
+        })
+      } finally {
+        // allow wallet time to re-emit correct accounts after switch
+        setTimeout(() => {
+          isSwitching = false
+        }, 300)
+      }
       const chain = chains.find((x) => x.id === chainId)!
       return chain
     },
