@@ -60,8 +60,10 @@ const config = {
     // Allow Next.js to handle CJS packages that depend on ESM modules
     // without throwing `import-esm-externals` errors
     esmExternals: 'loose',
-    webpackBuildWorker: true
+    webpackBuildWorker: true,
+    bundlePagesExternals: true
   },
+  bundlePagesRouterDependencies: true,
   outputFileTracingRoot: path.join(__dirname, '../../'),
   outputFileTracingExcludes: {
     '*': [],
