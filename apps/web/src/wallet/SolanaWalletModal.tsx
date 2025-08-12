@@ -105,6 +105,9 @@ export const SolanaWalletModal: React.FC = () => {
   const phantomWallet = recommendedWallets.find((w) => w.adapter.name === 'Phantom')
 
   const handleCloseComplete = useCallback(() => setIsWalletNotInstalled(false), [])
+  if (!isOpen) {
+    return null
+  }
 
   return (
     <ModalV2 isOpen={isOpen} onDismiss={onClose}>
