@@ -11,6 +11,12 @@ test('exports', () => {
       "WSOL",
       "SPLNative",
       "SOL",
+     "tryParsePublicKey",
+     "validateAndParsePublicKey",
+     "isSolWSol",
+     "isSol",
+     "isWSol",
+     "solToWSol",
     ]
   `)
 })
