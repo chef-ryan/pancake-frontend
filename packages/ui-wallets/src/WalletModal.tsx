@@ -567,7 +567,7 @@ export function WalletModalV2<T = unknown>(props: WalletModalV2Props<T>) {
       setSelected(wallet)
       setError('')
       if (wallet.installed !== false) {
-        login(wallet.connectorId)
+        login(wallet)
           .then((v) => {
             if (v) {
               handleWalletConnected(wallet, v)

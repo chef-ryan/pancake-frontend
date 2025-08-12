@@ -1,12 +1,14 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { WalletConnectorNotFoundError, WalletSwitchChainError } from '@pancakeswap/ui-wallets'
+import { WalletConfigV2, WalletConnectorNotFoundError, WalletSwitchChainError } from '@pancakeswap/ui-wallets'
 import { usePrivy } from '@privy-io/react-auth'
-import { ConnectorNames } from 'config/wallet'
+import { ConnectorNames, walletsConfig } from 'config/wallet'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
 import { useAppDispatch } from 'state'
 import { CONNECTOR_MAP } from 'utils/wagmi'
 import { ConnectorNotFoundError, SwitchChainNotSupportedError, useAccount, useConnect, useDisconnect } from 'wagmi'
+import { eip6963Providers } from 'wallet/WalletProvider'
+import { createEip6963Connector } from 'wallet/eip5953Connector'
 import { useFirebaseAuth } from '../wallet/Privy/firebase'
 import { clearUserStates } from '../utils/clearUserStates'
 import { useActiveChainId } from './useActiveChainId'
@@ -23,11 +25,23 @@ const useAuth = () => {
   const { signOutAndClearUserStates } = useFirebaseAuth()
 
   const login = useCallback(
-    async (connectorID: ConnectorNames) => {
-      const findConnector = CONNECTOR_MAP[connectorID] || undefined
+    async (wallet: WalletConfigV2) => {
+      const { connectorId, title } = wallet
+
+      const findConnector = CONNECTOR_MAP[connectorId as ConnectorNames] || undefined
+      let eipConnector: any
+
+      if (connectorId === ConnectorNames.Injected) {
+        const eip6963detail = eip6963Providers.find((p) => p.info.name.toLowerCase() === title.toLowerCase())
+        if (eip6963detail) {
+          eipConnector = createEip6963Connector(eip6963detail)
+        }
+      }
+      const connector = eipConnector || findConnector
+
       try {
-        if (!findConnector) return undefined
-        return await connectAsync({ connector: findConnector, chainId })
+        if (!connector) return undefined
+        return await connectAsync({ connector, chainId })
       } catch (error) {
         if (error instanceof ConnectorNotFoundError) {
           throw new WalletConnectorNotFoundError()

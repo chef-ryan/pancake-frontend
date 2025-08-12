@@ -12,7 +12,7 @@ function getMMProvider() {
       }
     }
   }
-  const provider = eip6963Providers.find((p) => p.isMetaMask && !p.isPhantom)
+  const provider = eip6963Providers.find((p) => p.info.name === 'MetaMask')?.provider
   return provider || null
 }
 export const customMetaMaskConnector = createConnector(() => ({
@@ -70,7 +70,7 @@ export const customMetaMaskConnector = createConnector(() => ({
   onChainChanged(chainId) {},
 
   onDisconnect(callback) {
-    const provider = eip6963Providers.find((p) => p.isMetaMask && !p.isPhantom)
+    const provider = getMMProvider()
     provider?.on('disconnect', callback)
   },
 
