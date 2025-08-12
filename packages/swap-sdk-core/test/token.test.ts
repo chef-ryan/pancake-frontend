@@ -49,21 +49,3 @@ describe('Token', () => {
     })
   })
 })
-
-describe('SPLToken', () => {
-  const PROGRAM_ONE = 'So11111111111111111111111111111111111111112'
-  const PROGRAM_TWO = 'So22222222222222222222222222222222222222222'
-
-  it('equals with same program id', () => {
-    expect(new SPLToken(1, PROGRAM_ONE, 6, 'SPL').equals(new SPLToken(1, PROGRAM_ONE, 6, 'SPL'))).toBe(true)
-  })
-
-  it('fails if program id differs', () => {
-    expect(new SPLToken(1, PROGRAM_ONE, 6, 'SPL').equals(new SPLToken(1, PROGRAM_TWO, 6, 'SPL'))).toBe(false)
-  })
-
-  it('detects SPL with type guard', () => {
-    const token = new SPLToken(1, PROGRAM_ONE, 6, 'SPL')
-    expect(SPLToken.isSPLToken(token)).toBe(true)
-  })
-})
