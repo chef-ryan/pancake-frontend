@@ -41,7 +41,7 @@ export const SVMTradingFee = memo(
           mint = TOKEN_WSOL.address
         }
 
-        if (mint) mintSet.add(String(mint).toLowerCase())
+        if (mint) mintSet.add(mint)
       }
 
       return Array.from(mintSet)
@@ -60,22 +60,21 @@ export const SVMTradingFee = memo(
     // Only map tokens that we actually need (those in uniqueMints) and construct missingMints
     const { tokenMap, missingMints } = useMemo(() => {
       const map = new Map<string, SPLToken>()
-      const uniqueMintsSet = new Set(uniqueMints.map((mint) => mint.toLowerCase()))
+      const uniqueMintsSet = new Set(uniqueMints.map((mint) => mint))
       const missing: SPLToken[] = []
 
       for (const token of tokenList) {
         // Early exit if we've found all tokens we need
         if (uniqueMintsSet.size === 0) break
 
-        const tokenAddressLower = token.address.toLowerCase()
-        if (uniqueMintsSet.has(tokenAddressLower)) {
-          map.set(tokenAddressLower, token)
+        if (uniqueMintsSet.has(token.address)) {
+          map.set(token.address, token)
 
-          if (priceMap[tokenAddressLower] === undefined) {
+          if (priceMap[token.address] === undefined) {
             missing.push(token)
           }
 
-          uniqueMintsSet.delete(tokenAddressLower) // Remove from set once found
+          uniqueMintsSet.delete(token.address) // Remove from set once found
         }
       }
 
@@ -91,8 +90,7 @@ export const SVMTradingFee = memo(
 
     const totalFeeInInputCurrency = useMemo(() => {
       if (!allPools?.length || !combinedPriceMap) return undefined
-      const inputMintLower = inputCurrencyAddress.toLowerCase()
-      const inputUsd = combinedPriceMap[inputMintLower]
+      const inputUsd = combinedPriceMap[inputCurrencyAddress]
 
       if (inputUsd === undefined || inputUsd === 0) return undefined
 
@@ -104,16 +102,14 @@ export const SVMTradingFee = memo(
         const feeMint: string | undefined = pool?.feeMintAddress
         if (!feeAmountRaw || !feeMint) continue
 
-        const mintLower = String(feeMint).toLowerCase()
-
-        const meta = tokenMap.get(mintLower)
+        const meta = tokenMap.get(feeMint)
         const decimals = meta?.decimals
         if (decimals === undefined) {
           continue
         }
 
         const humanAmount = new BigNumber(feeAmountRaw).div(new BigNumber(10).pow(decimals))
-        const tokenUsd = combinedPriceMap[mintLower]
+        const tokenUsd = combinedPriceMap[feeMint]
         if (tokenUsd === undefined) {
           continue
         }

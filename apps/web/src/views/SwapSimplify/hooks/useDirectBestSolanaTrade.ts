@@ -12,7 +12,7 @@ export function useDirectBestSolanaTrade(missingMints: SPLToken[]) {
     enabled: missingMints.length > 0,
     queryFn: async () => {
       const { usdc } = solanaTokens
-      const usdcDecimals = usdc.decimals
+
       const tasks = missingMints
         .map(async (inputCurrency) => {
           if (!inputCurrency) return undefined
@@ -30,7 +30,7 @@ export function useDirectBestSolanaTrade(missingMints: SPLToken[]) {
             })
 
             return {
-              mint: inputCurrency.address.toLowerCase(),
+              mint: inputCurrency.address,
               price: toNumber(trade?.outputAmount.toSignificant(6)) ?? 0,
             }
           } catch (error) {
