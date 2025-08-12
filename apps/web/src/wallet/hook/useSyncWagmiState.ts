@@ -40,7 +40,7 @@ export function useSyncWagmiState() {
         })
       } else {
         const urlChain = getQueryChainId()
-        if (urlChain !== chainId) {
+        if (urlChain && urlChain !== chainId) {
           switchNetwork(urlChain, {
             from: 'url',
             replaceUrl: true,

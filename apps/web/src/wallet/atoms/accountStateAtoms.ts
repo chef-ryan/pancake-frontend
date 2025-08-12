@@ -1,3 +1,4 @@
+import { ChainId } from '@pancakeswap/chains'
 import { atom } from 'jotai'
 import { atomWithProxy } from 'jotai-valtio'
 import { proxy } from 'valtio/vanilla'
@@ -14,7 +15,7 @@ interface AccountChainState {
 }
 
 export const accountChainProxy = proxy<AccountChainState>({
-  chainId: getQueryChainId(), // Mount with initial chain ID
+  chainId: getQueryChainId() || ChainId.BSC, // Mount with initial chain ID
   isWrongNetwork: false,
   status: null,
   solanaAccount: null,

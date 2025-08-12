@@ -1,7 +1,5 @@
 import { atom } from 'jotai'
-import { proxy } from 'valtio/vanilla'
 import { Connector } from 'wagmi'
-import { getQueryChainId } from 'wallet/util/getQueryChainId'
 
 export interface SwitchChainRequest {
   chainId: number

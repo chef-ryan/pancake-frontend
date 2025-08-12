@@ -7,15 +7,9 @@ export function getQueryChainId() {
     return ChainId.BSC
   }
   const params = new URL(window.location.href).searchParams
-  let chainId: number
-  const c = params.get('chain')
-  if (!c) {
-    chainId = Number(params.get('chainId'))
-  } else {
-    chainId = getChainIdByChainName(c) || ChainId.BSC
-  }
-  if (!isChainSupported(chainId)) {
-    return ChainId.BSC
+  const chainId = getChainIdByChainName(params.get('chain') || '')
+  if (!chainId) {
+    return undefined
   }
   return chainId
 }

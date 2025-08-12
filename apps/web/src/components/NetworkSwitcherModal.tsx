@@ -27,8 +27,6 @@ import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { useUserShowTestnet } from 'state/user/hooks/useUserShowTestnet'
 import { useAccount } from 'wagmi'
-import { SOLANA_SUPPORTED_PATH } from 'wallet/network.switch.config'
-import { useIsSocialLogin } from 'wallet/Privy/hooks/useIsSocialLogin'
 import { getQueryChainId } from 'wallet/util/getQueryChainId'
 import { ChainLogo } from './Logo/ChainLogo'
 
@@ -161,7 +159,7 @@ const WrongNetworkSelect = ({ switchNetwork, chainId, onDismiss }: WrongNetworkS
     },
   )
   const { chain } = useAccount()
-  const localChainId = getQueryChainId()
+  const localChainId = getQueryChainId() || ChainId.BSC
 
   const localChainName = Chains.find((c) => c.id === localChainId)?.fullName ?? 'BSC'
 
