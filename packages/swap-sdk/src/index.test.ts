@@ -2,7 +2,6 @@ import { expect, test } from 'vitest'
 import * as exports from './index'
 
 test('exports', () => {
-  console.log(Object.keys(exports))
   expect(Object.keys(exports)).toMatchInlineSnapshot(`
     [
       "BaseCurrency",
@@ -18,11 +17,14 @@ test('exports', () => {
       "Percent",
       "Price",
       "Rounding",
+      "SPLNativeCurrency",
+      "SPLToken",
       "TEN",
       "THREE",
       "TWO",
       "Token",
       "TradeType",
+      "UnifiedCurrencyAmount",
       "VMType",
       "VM_TYPE_MAXIMA",
       "ZERO",
@@ -64,6 +66,19 @@ test('exports', () => {
       "ZERO_PERCENT",
       "erc20Abi",
       "validateAndParseAddress",
+      "SOL",
+      "SOLMint",
+      "SOL_INFO",
+      "SPLNative",
+      "TOKEN_WSOL",
+      "WSOL",
+      "WSOLMint",
+      "isSol",
+      "isSolWSol",
+      "isWSol",
+      "solToWSol",
+      "tryParsePublicKey",
+      "validateAndParsePublicKey",
       "ChainId",
       "OnRampCurrency",
     ]
