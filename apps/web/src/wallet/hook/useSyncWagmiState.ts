@@ -34,13 +34,11 @@ export function useSyncWagmiState() {
       const { chainId, isReconnected } = data
 
       if (!isReconnected) {
-        console.log(`[chain]`, 'connect-0', chainId)
         switchNetwork(chainId, {
           from: 'wagmi',
           replaceUrl: true,
         })
       } else {
-        console.log(`[chain]`, 'connect-1', chainId)
         const urlChain = getQueryChainId()
         if (urlChain !== chainId) {
           switchNetwork(urlChain, {
