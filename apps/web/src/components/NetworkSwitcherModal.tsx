@@ -45,7 +45,7 @@ interface NetworkSelectProps {
   onDismiss: () => void
 }
 
-function getSortedChains(chainId: UnifiedChainId, showTestnet: boolean, isSocialLogin: boolean): Chain[] {
+function getSortedChains(chainId: UnifiedChainId, showTestnet: boolean): Chain[] {
   return Chains.filter((chain) => {
     if (chain.isEVM) {
       if (chain.id === chainId) return true
@@ -54,7 +54,7 @@ function getSortedChains(chainId: UnifiedChainId, showTestnet: boolean, isSocial
       }
       return true
     }
-    return !isSocialLogin
+    return true
   }).map((chain) => ({
     ...chain,
     isEvm: chain.isEVM,
@@ -84,8 +84,7 @@ const NetworkSelect = ({ switchNetwork, chainId, isWrongNetwork, onDismiss }: Ne
     }),
     [router, onDismiss, switchNetwork],
   )
-  const isSocialLogin = useIsSocialLogin()
-  const networks = useMemo(() => getSortedChains(chainId, showTestnet, isSocialLogin), [chainId, showTestnet])
+  const networks = useMemo(() => getSortedChains(chainId, showTestnet), [chainId, showTestnet])
 
   return (
     <Box borderRadius={isMobile ? '32px' : '32px 32px 0 0'} overflow="hidden">

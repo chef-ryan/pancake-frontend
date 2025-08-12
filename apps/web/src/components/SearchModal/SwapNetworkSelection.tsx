@@ -20,7 +20,6 @@ import { css, styled } from 'styled-components'
 import { chainNameConverter } from 'utils/chainNameConverter'
 import { useBridgeAvailableChains } from 'views/Swap/Bridge/hooks'
 import { chains as evmChains } from 'utils/wagmi'
-import { useIsSocialLogin } from 'wallet/Privy/hooks/useIsSocialLogin'
 import { UNSUPPORTED_SOCIAL_LOGIC_CHAINS } from 'wallet/Privy/constants'
 
 import { BaseWrapper, ButtonWrapper, RowWrapper } from './CommonBases'
@@ -67,7 +66,6 @@ export default function SwapNetworkSelection({
   const { chainId: activeChainId } = useActiveChainId()
 
   const usedChainId = chainId ?? activeChainId
-  const isSocialLogin = useIsSocialLogin()
 
   const { chains: supportedBridgeChains, loading: supportedBridgeChainsLoading } = useBridgeAvailableChains({
     originChainId: isDependent ? activeChainId : usedChainId,
@@ -77,11 +75,7 @@ export default function SwapNetworkSelection({
 
   const supportedChains = useMemo(() => {
     if (isDependent) {
-      return Chains.filter(
-        (chain) =>
-          (chain.id === usedChainId || supportedBridgeChains.includes(chain.id)) &&
-          !(UNSUPPORTED_SOCIAL_LOGIC_CHAINS.includes(chain.id) && isSocialLogin),
-      )
+      return Chains.filter((chain) => chain.id === usedChainId || supportedBridgeChains.includes(chain.id))
     }
 
     return Chains.filter((chain) => {
@@ -91,13 +85,10 @@ export default function SwapNetworkSelection({
       ) {
         return false
       }
-      if (UNSUPPORTED_SOCIAL_LOGIC_CHAINS.includes(chain.id) && isSocialLogin) {
-        return false
-      }
 
       return true
     })
-  }, [supportedBridgeChains, usedChainId, isDependent, isSocialLogin])
+  }, [supportedBridgeChains, usedChainId, isDependent])
 
   const selectedChain = useMemo(
     () => supportedChains.find((chain) => chain.id === usedChainId),
