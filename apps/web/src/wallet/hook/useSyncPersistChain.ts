@@ -1,4 +1,3 @@
-import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { allCasesNameToChainId } from '@pancakeswap/chains'
