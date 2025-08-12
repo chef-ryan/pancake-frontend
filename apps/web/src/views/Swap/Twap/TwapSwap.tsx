@@ -56,17 +56,6 @@ const TwapAndLimitSwapInner = ({ limit }: { limit?: boolean }) => {
   const inputCurrency = useCurrency(inputCurrencyId, inputChainId)
   const outputCurrency = useCurrency(outputCurrencyId, outputChainId)
 
-  const currencies: { [field in Field]?: Currency } = {
-    [Field.INPUT]: inputCurrency ?? undefined,
-    [Field.OUTPUT]: outputCurrency ?? undefined,
-  }
-
-  const singleTokenPrice = useSingleTokenSwapInfo({
-    inputCurrencyId,
-    inputCurrency: inputCurrency || undefined,
-    outputCurrencyId,
-    outputCurrency: outputCurrency || undefined,
-  })
   useDefaultsFromURLSearch()
 
   return (
