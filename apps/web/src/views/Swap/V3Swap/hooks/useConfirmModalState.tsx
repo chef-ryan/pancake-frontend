@@ -66,6 +66,8 @@ import { usePriceBreakdown } from 'views/SwapSimplify/hooks/usePriceBreakdown'
 import { BatchCall, getBatchedTransaction as getBatchedTransactionHelper } from './batchHelper'
 import { eip5792UserRejectUpgradeError, userRejectedError } from './useSendSwapTransaction'
 import { useSwapCallback } from './useSwapCallback'
+import { useSolSwapStep } from './steps/useSolSwapStep'
+import { ConfirmStepContext } from './steps/step.type'
 
 export interface ConfirmAction {
   step: ConfirmModalState
@@ -236,24 +238,6 @@ const useConfirmActions = (
     [chainId],
   )
 
-  const connection = useSolanaConnectionWithRpcAtom()
-
-  const retryWaitForSolanaTransaction = useCallback(
-    async (signature?: string) => {
-      if (!signature) return undefined
-      const waitTx = async () => {
-        try {
-          await confirmTransaction(connection, signature)
-        } catch (error) {
-          throw new RetryableError()
-        }
-      }
-      const { promise } = retry(waitTx, { n: 5, minWait: 3000, maxWait: 5000 })
-      return promise
-    },
-    [connection],
-  )
-
   // define the action of each step
   const revokeStep = useMemo(() => {
     const action = async (nextState?: ConfirmModalState) => {
@@ -316,6 +300,15 @@ const useConfirmActions = (
   ])
 
   const { approvalData, error, refetch, signPermit2 } = useBridgeCheckApproval(order)
+
+  const confirmStepContext: ConfirmStepContext = {
+    order,
+    amountToApprove,
+    spender,
+    resetState,
+    showError,
+    setConfirmState,
+  }
 
   const permitStep = useMemo(() => {
     return {
@@ -569,7 +562,6 @@ const useConfirmActions = (
 
             if (result) {
               const hash = await safeTxHashTransformer(result)
-              setTxHash(hash)
 
               setConfirmState(ConfirmModalState.ORDER_SUBMITTED)
 
@@ -764,96 +756,7 @@ const useConfirmActions = (
     }
   }, [t, toastInfo, setConfirmState])
 
-  const solanaSwapStep = useMemo(() => {
-    return {
-      step: ConfirmModalState.PENDING_CONFIRMATION,
-      action: async () => {
-        if (!isSVMOrder(order) || !solanaAccount || !order.trade) {
-          resetState()
-          return
-        }
-        const publicKey = solanaWallet?.adapter.publicKey
-        if (!signTransaction || !publicKey) {
-          throw new UltraSwapError(
-            'Wallet not connected, or missing wallet functions',
-            UltraSwapErrorType.WALLET_SIGNING_FAILED,
-          )
-        }
-        // Get the transaction from the order data
-        const { transaction, requestId } = order.trade
-        if (!transaction) {
-          showError('No transaction data found for Solana swap')
-          return
-        }
-
-        try {
-          const based64tx = Buffer.from(transaction, 'base64')
-          const versionedTransaction = VersionedTransaction.deserialize(new Uint8Array(based64tx))
-          const signedTransaction = await signTransaction(versionedTransaction)
-          const serializedTransaction = Buffer.from(signedTransaction.serialize()).toString('base64')
-
-          // Submit swap to UltraSwapService
-          const response = await ultraSwapService.submitSwap(serializedTransaction, requestId)
-
-          if (response.status === 'Failed') {
-            const error = new UltraSwapError(response.error, UltraSwapErrorType.FAILED, response.signature)
-            showError(error.message || response.error || 'Solana swap failed')
-            return
-          }
-
-          const { signature } = response
-
-          // Log swap for analytics
-          logSwap({
-            tradeType: TradeType.EXACT_INPUT,
-            account: solanaAccount ?? '0x',
-            chainId: order.trade.inputAmount.currency.chainId,
-            hash: signature as any,
-            inputAmount: order.trade.inputAmount.toExact(),
-            outputAmount: order.trade.outputAmount.toExact(),
-            input: order.trade.inputAmount.currency,
-            output: order.trade.outputAmount.currency,
-            type: 'SolanaSwap',
-          })
-
-          toastSuccess(
-            t('Success!'),
-            <SolanaDescriptionWithTx txHash={signature}>{t('Solana swap submitted')}</SolanaDescriptionWithTx>,
-          )
-
-          setConfirmState(ConfirmModalState.COMPLETED)
-
-          // Wait for transaction confirmation then refresh balances
-          await retryWaitForSolanaTransaction(signature)
-          refreshSolanaBalances()
-        } catch (error: any) {
-          console.error('Solana swap error', error)
-          if (error?.message?.includes('rejected')) {
-            showError('Transaction rejected by user')
-          } else if (error?.message?.includes('insufficient')) {
-            showError('Insufficient balance for transaction')
-          } else if (error?.message?.includes('wallet')) {
-            showError('Please connect your Solana wallet first')
-          } else {
-            showError(typeof error === 'string' ? error : error?.message || 'Solana swap failed')
-          }
-        }
-      },
-      showIndicator: false,
-      getCalldata: () => [],
-    }
-  }, [
-    solanaAccount,
-    order,
-    resetState,
-    showError,
-    toastSuccess,
-    t,
-    signTransaction,
-    retryWaitForSolanaTransaction,
-    refreshSolanaBalances,
-    solanaWallet?.adapter.publicKey,
-  ])
+  const solanaSwapStep = useSolSwapStep(confirmStepContext)
 
   const actions = useMemo(() => {
     return {
