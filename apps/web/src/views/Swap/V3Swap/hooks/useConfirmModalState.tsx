@@ -187,7 +187,6 @@ const useConfirmActions = (
   const { sendTransactionAsync } = useSendTransaction()
 
   const [confirmState, setConfirmState] = useState<ConfirmModalState>(ConfirmModalState.REVIEWING)
-  const [txHash, setTxHash] = useState<Hex | undefined>(undefined)
   const [orderHash, setOrderHash] = useState<Hex | undefined>(undefined)
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
 
@@ -200,14 +199,12 @@ const useConfirmActions = (
 
   const resetState = useCallback(() => {
     setConfirmState(ConfirmModalState.REVIEWING)
-    setTxHash(undefined)
     setErrorMessage(undefined)
     setPermit2Signature(undefined)
   }, [])
 
   const showError = useCallback((error: string) => {
     setErrorMessage(error)
-    setTxHash(undefined)
     setPermit2Signature(undefined)
   }, [])
 
@@ -260,13 +257,11 @@ const useConfirmActions = (
   // define the action of each step
   const revokeStep = useMemo(() => {
     const action = async (nextState?: ConfirmModalState) => {
-      setTxHash(undefined)
       setConfirmState(ConfirmModalState.RESETTING_APPROVAL)
       try {
         const result = await revoke()
         if (result?.hash) {
           const hash = await safeTxHashTransformer(result.hash)
-          setTxHash(hash)
 
           await retryWaitForTransaction({ hash })
         }
@@ -378,7 +373,7 @@ const useConfirmActions = (
           if (result && result.hash) {
             const chain = amountToApprove?.currency.chainId
             await retryWaitForTransaction({
-              hash: txHash,
+              hash: result.hash,
               confirmations: chain ? BLOCK_CONFIRMATION[chain] : undefined,
             })
           }
@@ -396,19 +391,17 @@ const useConfirmActions = (
       },
       showIndicator: true,
     }
-  }, [amountToApprove, nativeWrap, retryWaitForTransaction, showError, txHash, wrappedBalance?.quotient])
+  }, [amountToApprove, nativeWrap, retryWaitForTransaction, showError, wrappedBalance?.quotient])
 
   const approveStep = useMemo(() => {
     return {
       step: ConfirmModalState.APPROVING_TOKEN,
       action: async (nextState?: ConfirmModalState) => {
-        setTxHash(undefined)
         setConfirmState(ConfirmModalState.APPROVING_TOKEN)
         try {
           const result = await approve()
           if (result?.hash && chainId) {
             const hash = await safeTxHashTransformer(result.hash)
-            setTxHash(hash)
             await retryWaitForTransaction({ hash })
           }
           let newAllowanceRaw: bigint = amountToApprove?.quotient ?? 0n
@@ -470,7 +463,6 @@ const useConfirmActions = (
           return
         }
 
-        setTxHash(undefined)
         setConfirmState(ConfirmModalState.APPROVING_TOKEN)
 
         try {
@@ -495,7 +487,6 @@ const useConfirmActions = (
 
             if (result) {
               const hash = await safeTxHashTransformer(result)
-              setTxHash(hash)
               await retryWaitForTransaction({ hash })
             }
 
@@ -543,7 +534,6 @@ const useConfirmActions = (
           return
         }
 
-        setTxHash(undefined)
         setConfirmState(ConfirmModalState.PENDING_CONFIRMATION)
 
         try {
@@ -639,7 +629,6 @@ const useConfirmActions = (
     return {
       step: ConfirmModalState.PENDING_CONFIRMATION,
       action: async () => {
-        setTxHash(undefined)
         setConfirmState(ConfirmModalState.PENDING_CONFIRMATION)
 
         if (!swap) {
@@ -656,9 +645,6 @@ const useConfirmActions = (
           const result = await swap()
           if (result?.hash) {
             const hash = await safeTxHashTransformer(result.hash)
-
-            setTxHash(hash)
-
             await retryWaitForTransaction({ hash })
           }
           setConfirmState(ConfirmModalState.COMPLETED)
@@ -680,7 +666,6 @@ const useConfirmActions = (
     return {
       step: ConfirmModalState.PENDING_CONFIRMATION,
       action: async () => {
-        setTxHash(undefined)
         setConfirmState(ConfirmModalState.PENDING_CONFIRMATION)
 
         if (!isXOrder(order)) {
@@ -739,7 +724,6 @@ const useConfirmActions = (
                 output,
                 type: 'X-Filled',
               })
-              setTxHash(receipt.transactionHash)
               setConfirmState(ConfirmModalState.COMPLETED)
               toastSuccess(
                 t('Success!'),
@@ -818,7 +802,6 @@ const useConfirmActions = (
           }
 
           const { signature } = response
-          setTxHash(signature as any)
 
           // Log swap for analytics
           logSwap({
@@ -902,13 +885,11 @@ const useConfirmActions = (
   ])
 
   return {
-    txHash,
     orderHash,
     actions,
 
     confirmState,
     setConfirmState,
-    setTxHash,
     resetState,
     errorMessage,
     showError,
@@ -920,8 +901,11 @@ export const useConfirmModalState = (
   amountToApprove: CurrencyAmount<Token> | undefined,
   spender: Address | undefined,
 ) => {
-  const { actions, confirmState, txHash, orderHash, errorMessage, resetState, setConfirmState, setTxHash, showError } =
-    useConfirmActions(order, amountToApprove, spender)
+  const { actions, confirmState, orderHash, errorMessage, resetState, setConfirmState, showError } = useConfirmActions(
+    order,
+    amountToApprove,
+    spender,
+  )
   const preConfirmState = usePreviousValue(confirmState)
   const [confirmSteps, setConfirmSteps] = useState<ConfirmModalState[]>()
   const tradePriceBreakdown = usePriceBreakdown(order)
@@ -1057,7 +1041,6 @@ export const useConfirmModalState = (
 
   const callActionBatched = useCallback(
     async (steps: ConfirmModalState[]) => {
-      setTxHash(undefined)
       setConfirmState(ConfirmModalState.PENDING_CONFIRMATION)
       const calls = getBatchedTransaction(steps)
       if (!calls) {
@@ -1090,7 +1073,6 @@ export const useConfirmModalState = (
 
         const status = await statusPromise
         if (status.status === 'success') {
-          setTxHash(status.receipts?.[0]?.transactionHash)
           setConfirmState(ConfirmModalState.COMPLETED)
         }
       } catch (error) {
@@ -1100,7 +1082,7 @@ export const useConfirmModalState = (
         }
       }
     },
-    [setConfirmState, resetState, setTxHash, getBatchedTransaction, sendBatchedTransaction, walletType],
+    [setConfirmState, resetState, getBatchedTransaction, sendBatchedTransaction, walletType],
   )
 
   const callToAction = useCallback(
@@ -1175,7 +1157,6 @@ export const useConfirmModalState = (
     errorMessage,
     confirmState,
     resetState,
-    txHash,
     orderHash,
     confirmActions,
   }
