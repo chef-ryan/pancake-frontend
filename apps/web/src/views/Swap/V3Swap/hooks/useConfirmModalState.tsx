@@ -189,7 +189,7 @@ const useConfirmActions = (
   const { sendTransactionAsync } = useSendTransaction()
 
   const [confirmState, setConfirmState] = useState<ConfirmModalState>(ConfirmModalState.REVIEWING)
-  const [txHash, setTxHash] = useState<Hex | undefined>(undefined)
+  const [txHash, setTxHash] = useState<string | undefined>(undefined)
   const [orderHash, setOrderHash] = useState<Hex | undefined>(undefined)
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
 
@@ -312,6 +312,7 @@ const useConfirmActions = (
     resetState,
     showError,
     setConfirmState,
+    setTxHash,
   }
 
   const permitStep = useMemo(() => {
@@ -370,7 +371,7 @@ const useConfirmActions = (
           if (result && result.hash) {
             const chain = amountToApprove?.currency.chainId
             await retryWaitForTransaction({
-              hash: txHash,
+              hash: txHash as Hex | undefined,
               confirmations: chain ? BLOCK_CONFIRMATION[chain] : undefined,
             })
           }

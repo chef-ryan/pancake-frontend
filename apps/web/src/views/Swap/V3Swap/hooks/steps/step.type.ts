@@ -11,4 +11,5 @@ export interface ConfirmStepContext {
   resetState: () => void
   showError: (message: string) => void
   setConfirmState: Dispatch<SetStateAction<ConfirmModalState>>
+  setTxHash: Dispatch<SetStateAction<string | undefined>>
 }

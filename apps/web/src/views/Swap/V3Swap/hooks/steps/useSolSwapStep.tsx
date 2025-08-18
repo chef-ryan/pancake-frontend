@@ -17,7 +17,7 @@ import useSwapRecordTransaction from '../useSwapRecordTransaction'
 import { ConfirmStepContext } from './step.type'
 
 export const useSolSwapStep = (context: ConfirmStepContext) => {
-  const { order, resetState, showError, setConfirmState } = context
+  const { order, resetState, showError, setConfirmState, setTxHash } = context
   const connection = useSolanaConnectionWithRpcAtom()
   const { solanaAccount } = useAccountActiveChain()
   const { signTransaction, wallet: solanaWallet } = useWallet()
@@ -78,6 +78,7 @@ export const useSolSwapStep = (context: ConfirmStepContext) => {
           }
 
           const { signature } = response
+          setTxHash(signature)
 
           try {
             addSwapTransaction({ order, hash: signature as any, type: 'SolanaSwap' })
