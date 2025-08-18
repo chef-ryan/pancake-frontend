@@ -1,12 +1,10 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { TradeType } from '@pancakeswap/swap-sdk-core'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useToast } from '@pancakeswap/uikit'
 import { ConfirmModalState } from '@pancakeswap/widgets-internal'
 import { SolanaDescriptionWithTx } from 'components/Toast'
 import { useCallback, useMemo } from 'react'
 import { RetryableError, retry } from 'state/multicall/retry'
-import { logSwap } from 'utils/log'
 import { isSVMOrder } from 'views/Swap/utils'
 import { VersionedTransaction } from '@solana/web3.js'
 import { UltraSwapError, UltraSwapErrorType, ultraSwapService } from '@pancakeswap/solana-router-sdk'
@@ -14,9 +12,8 @@ import { confirmTransaction } from '@pancakeswap/solana-core-sdk'
 
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useRefreshSolanaTokenBalances } from 'state/token/solanaTokenBalances'
-import { useTransactionAdder } from 'state/transactions/hooks'
 import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
-import { formatAmount } from '@pancakeswap/utils/formatFractions'
+import useSwapRecordTransaction from '../useSwapRecordTransaction'
 import { ConfirmStepContext } from './step.type'
 
 export const useSolSwapStep = (context: ConfirmStepContext) => {
@@ -24,9 +21,9 @@ export const useSolSwapStep = (context: ConfirmStepContext) => {
   const connection = useSolanaConnectionWithRpcAtom()
   const { solanaAccount } = useAccountActiveChain()
   const { signTransaction, wallet: solanaWallet } = useWallet()
-  const addTransaction = useTransactionAdder()
   const { toastSuccess } = useToast()
   const { t } = useTranslation()
+  const addSwapTransaction = useSwapRecordTransaction(order?.trade?.inputAmount.currency.chainId, solanaAccount)
   const refreshSolanaBalances = useRefreshSolanaTokenBalances(solanaWallet?.adapter.publicKey?.toBase58())
   const retryWaitForSolanaTransaction = useCallback(
     async (signature?: string) => {
@@ -83,37 +80,10 @@ export const useSolSwapStep = (context: ConfirmStepContext) => {
           const { signature } = response
 
           try {
-            const inputSymbol = order.trade.inputAmount.currency.symbol
-            const outputSymbol = order.trade.outputAmount.currency.symbol
-            const inputAmount = formatAmount(order.trade.inputAmount, 3)
-            const outputAmount = formatAmount(order.trade.outputAmount, 3)
-            addTransaction(
-              { hash: signature as any },
-              {
-                summary: `Swap ${inputAmount} ${inputSymbol} for ${outputAmount} ${outputSymbol}`,
-                translatableSummary: {
-                  text: 'Swap %inputAmount% %inputSymbol% for %outputAmount% %outputSymbol%',
-                  data: { inputAmount, inputSymbol, outputAmount, outputSymbol },
-                },
-                type: 'swap',
-              },
-            )
+            addSwapTransaction({ order, hash: signature as any, type: 'SolanaSwap' })
           } catch (error) {
             console.error('Failed to add transaction', error)
           }
-
-          // Log swap for analytics
-          logSwap({
-            tradeType: TradeType.EXACT_INPUT,
-            account: solanaAccount ?? '0x',
-            chainId: order.trade.inputAmount.currency.chainId,
-            hash: signature as any,
-            inputAmount: order.trade.inputAmount.toExact(),
-            outputAmount: order.trade.outputAmount.toExact(),
-            input: order.trade.inputAmount.currency,
-            output: order.trade.outputAmount.currency,
-            type: 'SolanaSwap',
-          })
 
           toastSuccess(
             t('Success!'),

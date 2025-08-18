@@ -1,15 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
-import { TradeType } from '@pancakeswap/sdk'
-import { SmartRouter } from '@pancakeswap/smart-router'
-import { formatAmount } from '@pancakeswap/utils/formatFractions'
-import truncateHash from '@pancakeswap/utils/truncateHash'
 import { useMemo } from 'react'
-import { useSwapState } from 'state/swap/hooks'
-import { useTransactionAdder } from 'state/transactions/hooks'
-import { calculateGasMargin, safeGetAddress } from 'utils'
-import { basisPointsToPercent } from 'utils/exchange'
-import { logSwap, logTx } from 'utils/log'
+import { calculateGasMargin } from 'utils'
 import { isUserRejected } from 'utils/sentry'
 import { transactionErrorToUserReadableMessage } from 'utils/transactionErrorToUserReadableMessage'
 import {
@@ -22,11 +14,12 @@ import {
 } from 'viem'
 import { useSendTransaction } from 'wagmi'
 
-import { ClassicOrder } from '@pancakeswap/price-api-sdk'
-import { useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
+import { ClassicOrder, OrderType } from '@pancakeswap/price-api-sdk'
 import { usePaymaster } from 'hooks/usePaymaster'
 import { logger } from 'utils/datadog'
+import { InterfaceOrder } from 'views/Swap/utils'
 import { viemClients } from 'utils/viem'
+import useSwapRecordTransaction from './useSwapRecordTransaction'
 import { isZero } from '../utils/isZero'
 
 interface SwapCall {
@@ -64,13 +57,9 @@ export default function useSendSwapTransaction(
   type: 'V3SmartSwap' | 'UniversalRouter' = 'V3SmartSwap',
 ) {
   const { t } = useTranslation()
-  const addTransaction = useTransactionAdder()
   const { sendTransactionAsync } = useSendTransaction()
   const publicClient = viemClients[chainId as ChainId]
-  // @ts-ignore
-  const { slippageTolerance: allowedSlippage } = useAutoSlippageWithFallback()
-  const { recipient } = useSwapState()
-  const recipientAddress = recipient === null ? account : recipient
+  const addSwapTransaction = useSwapRecordTransaction(chainId, account)
 
   // Paymaster for zkSync
   const { isPaymasterAvailable, isPaymasterTokenActive, sendPaymasterTransaction } = usePaymaster()
@@ -168,66 +157,11 @@ export default function useSendSwapTransaction(
 
         return sendTxResult
           .then((response) => {
-            const inputSymbol = trade.inputAmount.currency.symbol
-            const outputSymbol = trade.outputAmount.currency.symbol
-            const pct = basisPointsToPercent(allowedSlippage)
-            const inputAmount =
-              trade.tradeType === TradeType.EXACT_INPUT
-                ? formatAmount(trade.inputAmount, 3)
-                : formatAmount(SmartRouter.maximumAmountIn(trade, pct), 3)
-            const outputAmount =
-              trade.tradeType === TradeType.EXACT_OUTPUT
-                ? formatAmount(trade.outputAmount, 3)
-                : formatAmount(SmartRouter.minimumAmountOut(trade, pct), 3)
-
-            const base = `Swap ${
-              trade.tradeType === TradeType.EXACT_OUTPUT ? 'max.' : ''
-            } ${inputAmount} ${inputSymbol} for ${
-              trade.tradeType === TradeType.EXACT_INPUT ? 'min.' : ''
-            } ${outputAmount} ${outputSymbol}`
-
-            const recipientAddressText =
-              recipientAddress && safeGetAddress(recipientAddress) ? truncateHash(recipientAddress) : recipientAddress
-
-            const withRecipient = recipient === account ? base : `${base} to ${recipientAddressText}`
-
-            const translatableWithRecipient =
-              trade.tradeType === TradeType.EXACT_OUTPUT
-                ? recipient === account
-                  ? 'Swap max. %inputAmount% %inputSymbol% for %outputAmount% %outputSymbol%'
-                  : 'Swap max. %inputAmount% %inputSymbol% for %outputAmount% %outputSymbol% to %recipientAddress%'
-                : recipient === account
-                ? 'Swap %inputAmount% %inputSymbol% for min. %outputAmount% %outputSymbol%'
-                : 'Swap %inputAmount% %inputSymbol% for min. %outputAmount% %outputSymbol% to %recipientAddress%'
-            addTransaction(
-              { hash: response },
-              {
-                summary: withRecipient,
-                translatableSummary: {
-                  text: translatableWithRecipient,
-                  data: {
-                    inputAmount,
-                    inputSymbol,
-                    outputAmount,
-                    outputSymbol,
-                    ...(recipient !== account && { recipientAddress: recipientAddressText }),
-                  },
-                },
-                type: 'swap',
-              },
-            )
-            logSwap({
-              tradeType: trade.tradeType,
-              account,
-              chainId,
+            addSwapTransaction({
+              order: { type: OrderType.PCS_CLASSIC, trade } as InterfaceOrder,
               hash: response,
-              inputAmount,
-              outputAmount,
-              input: trade.inputAmount.currency,
-              output: trade.outputAmount.currency,
               type,
             })
-            logTx({ account, chainId, hash: response })
             return { hash: response }
           })
           .catch((error) => {
@@ -274,10 +208,7 @@ export default function useSendSwapTransaction(
     publicClient,
     swapCalls,
     t,
-    allowedSlippage,
-    recipientAddress,
-    recipient,
-    addTransaction,
+    addSwapTransaction,
     type,
     sendPaymasterTransaction,
     isPaymasterAvailable,

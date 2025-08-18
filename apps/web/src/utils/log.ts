@@ -6,6 +6,17 @@ export const logTx = ({ account, hash, chainId }: { account: string; hash: strin
   fetch(`/api/_log/${account}/${chainId}/${hash}`)
 }
 
+export type LogTradeType =
+  | 'V2Swap'
+  | 'SmartSwap'
+  | 'StableSwap'
+  | 'MarketMakerSwap'
+  | 'V3SmartSwap'
+  | 'UniversalRouter'
+  | 'X'
+  | 'X-Filled'
+  | 'SolanaSwap'
+
 export const logSwap = ({
   input,
   output,
@@ -25,16 +36,7 @@ export const logSwap = ({
   chainId: number
   account: string
   hash: `0x${string}`
-  type:
-    | 'V2Swap'
-    | 'SmartSwap'
-    | 'StableSwap'
-    | 'MarketMakerSwap'
-    | 'V3SmartSwap'
-    | 'UniversalRouter'
-    | 'X'
-    | 'X-Filled'
-    | 'SolanaSwap'
+  type: LogTradeType
 }) => {
   try {
     logger.info(type, {
