@@ -11,14 +11,13 @@ import { SolanaDescriptionWithTx, ToastDescriptionWithTx } from 'components/Toas
 import { BLOCK_CONFIRMATION } from 'config/confirmation'
 import { ALLOWED_PRICE_IMPACT_HIGH, PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN } from 'config/constants/exchange'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useEIP5792Status } from 'hooks/useIsEIP5792Supported'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useNativeWrap } from 'hooks/useNativeWrap'
 import { Calldata, usePermit2 } from 'hooks/usePermit2'
 import { usePermit2Requires } from 'hooks/usePermit2Requires'
 import { useSafeTxHashTransformer } from 'hooks/useSafeTxHashTransformer'
 import { useTransactionDeadline } from 'hooks/useTransactionDeadline'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RetryableError, retry } from 'state/multicall/retry'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { logGTMSwapTxSentEvent } from 'utils/customGTMEventTracking'
@@ -31,17 +30,14 @@ import {
   TransactionNotFoundError,
   TransactionReceipt,
   TransactionReceiptNotFoundError,
-  createWalletClient,
-  custom,
   erc20Abi,
 } from 'viem'
-import { eip5792Actions } from 'viem/experimental'
 import { useWalletType } from 'views/Mev/hooks'
 import { WalletType } from 'views/Mev/types'
 import { BridgeOrderWithCommands, isBridgeOrder, isClassicOrder, isSVMOrder, isXOrder } from 'views/Swap/utils'
 import { waitForXOrderReceipt } from 'views/Swap/x/api'
 import { useSendXOrder } from 'views/Swap/x/useSendXOrder'
-import { useAccount, useSendTransaction, useWalletClient } from 'wagmi'
+import { useAccount, useSendTransaction } from 'wagmi'
 
 import { useSetAtom } from 'jotai'
 import { calculateGasMargin } from 'utils'
@@ -63,18 +59,11 @@ import { useRefreshSolanaTokenBalances } from 'state/token/solanaTokenBalances'
 import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
 import { usePriceBreakdown } from 'views/SwapSimplify/hooks/usePriceBreakdown'
 
-import { BatchCall, getBatchedTransaction as getBatchedTransactionHelper } from './batchHelper'
 import { eip5792UserRejectUpgradeError, userRejectedError } from './useSendSwapTransaction'
 import { useSwapCallback } from './useSwapCallback'
 import { useSolSwapStep } from './steps/useSolSwapStep'
-import { ConfirmStepContext } from './steps/step.type'
-
-export interface ConfirmAction {
-  step: ConfirmModalState
-  action: (nextStep?: ConfirmModalState) => Promise<void>
-  showIndicator: boolean
-  getCalldata?: <T = Calldata>() => T
-}
+import { useBatchTransaction } from './steps/useBatchTransaction'
+import { ConfirmStepContext, ConfirmAction } from './steps/step.type'
 
 const getTokenAllowance = ({
   chainId,
@@ -829,69 +818,6 @@ export const useConfirmModalState = (
   const tradePriceBreakdown = usePriceBreakdown(order)
   const { walletType } = useWalletType()
   const { chainId } = useActiveChainId()
-  const { data: walletClient } = useWalletClient({ chainId })
-  const { connector } = useAccount()
-  const eip5792Status = useEIP5792Status()
-  const { toastError } = useToast()
-  const { t } = useTranslation()
-  const performEip5792Lock = useRef(false)
-
-  const getBatchedTransaction = useCallback(
-    (steps: ConfirmModalState[]) =>
-      getBatchedTransactionHelper(steps, actions, chainId, amountToApprove, spender, order),
-    [
-      actions,
-      amountToApprove?.currency.address,
-      amountToApprove?.currency.isToken,
-      amountToApprove?.quotient,
-      chainId,
-      order,
-      spender,
-    ],
-  )
-
-  const sendBatchedTransaction = useCallback(
-    async (calls: BatchCall[]) => {
-      if (!walletClient?.transport || !spender) {
-        console.error('Missing required parameters')
-        return null
-      }
-
-      const provider = await connector?.getProvider()
-      if (!provider) return null
-
-      const client = createWalletClient({
-        transport: custom(provider as any),
-        account: walletClient.account,
-        chain: walletClient.chain,
-      }).extend(eip5792Actions())
-
-      try {
-        const result = await client.sendCalls({
-          calls,
-          forceAtomic: true,
-        })
-
-        if (!result.id) {
-          console.error('No transaction ID returned')
-          return null
-        }
-
-        return { id: result.id, client } as const
-      } catch (error) {
-        console.warn('Error sending batched transaction:', error)
-        if (userRejectedError(error)) {
-          showError('Transaction rejected')
-        } else if (!eip5792UserRejectUpgradeError(error)) {
-          const errorMsg = typeof error === 'string' ? error : (error as any)?.message
-          showError(errorMsg)
-          toastError(t('Failed'), errorMsg)
-        }
-        throw error
-      }
-    },
-    [connector, walletClient, spender, t, toastError, showError],
-  )
 
   const confirmPriceImpactWithoutFee = useAsyncConfirmPriceImpactWithoutFee(
     (Array.isArray(tradePriceBreakdown)
@@ -936,74 +862,17 @@ export const useConfirmModalState = (
     [],
   )
 
-  const canCallActionBatched = useCallback(
-    (steps: ConfirmModalState[]) => {
-      if (!walletClient?.transport || !spender) {
-        return false
-      }
-      // Disable batching for Base chain
-      if (chainId === EvmChainId.BASE) {
-        return false
-      }
-      if (eip5792Status === 'unsupported' || steps.length <= 1) {
-        return false
-      }
-      const calls = getBatchedTransaction(steps)
-      if (!calls || calls.length < steps.length) {
-        return false
-      }
-      return true
-    },
-    [eip5792Status, getBatchedTransaction, walletClient?.transport, spender, chainId],
-  )
-
-  const callActionBatched = useCallback(
-    async (steps: ConfirmModalState[]) => {
-      setTxHash(undefined)
-      setConfirmState(ConfirmModalState.PENDING_CONFIRMATION)
-      const calls = getBatchedTransaction(steps)
-      if (!calls) {
-        resetState()
-        return
-      }
-      try {
-        const result = await sendBatchedTransaction(calls)
-        if (!result?.id || !result.client) {
-          return
-        }
-        // Monitor transaction status using viem's EIP-5792 implementation
-        const { promise: statusPromise } = retry(
-          async () => {
-            const status = await result.client.getCallsStatus({ id: result.id })
-            if (status.status === 'failure') {
-              throw new Error('Transaction failed')
-            }
-            if (status.status !== 'success') {
-              throw new RetryableError()
-            }
-            return status
-          },
-          {
-            n: 3,
-            minWait: 2000,
-            maxWait: 3500,
-          },
-        )
-
-        const status = await statusPromise
-        if (status.status === 'success') {
-          setTxHash(status.receipts?.[0]?.transactionHash)
-          setConfirmState(ConfirmModalState.COMPLETED)
-        }
-      } catch (error) {
-        console.warn('[5792] Failed to call batched action:', error)
-        if (userRejectedError(error) || eip5792UserRejectUpgradeError(error)) {
-          throw error
-        }
-      }
-    },
-    [setConfirmState, resetState, setTxHash, getBatchedTransaction, sendBatchedTransaction, walletType],
-  )
+  const { canCallActionBatched, callActionBatched, performEip5792Lock } = useBatchTransaction({
+    actions,
+    chainId,
+    amountToApprove,
+    spender,
+    order,
+    showError,
+    setConfirmState,
+    setTxHash,
+    resetState,
+  })
 
   const callToAction = useCallback(
     async (skipBatch: boolean = false) => {
