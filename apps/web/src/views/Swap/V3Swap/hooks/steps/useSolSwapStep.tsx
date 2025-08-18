@@ -23,7 +23,7 @@ export const useSolSwapStep = (context: ConfirmStepContext) => {
   const { signTransaction, wallet: solanaWallet } = useWallet()
   const { toastSuccess } = useToast()
   const { t } = useTranslation()
-  const addSwapTransaction = useSwapRecordTransaction(order?.trade?.inputAmount.currency.chainId, solanaAccount)
+  const addSwapTransaction = useSwapRecordTransaction(order?.trade?.inputAmount.currency.chainId, solanaAccount || '')
   const refreshSolanaBalances = useRefreshSolanaTokenBalances(solanaWallet?.adapter.publicKey?.toBase58())
   const retryWaitForSolanaTransaction = useCallback(
     async (signature?: string) => {

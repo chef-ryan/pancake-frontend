@@ -15,7 +15,7 @@ import { useAtomValue } from 'jotai'
 import { isSolana } from '@pancakeswap/chains'
 import { InterfaceOrder } from 'views/Swap/utils'
 
-export default function useSwapRecordTransaction(chainId?: number, account?: Address) {
+export default function useSwapRecordTransaction(chainId?: number, account?: string) {
   const addTransaction = useTransactionAdder()
   const { recipient } = useSwapState()
   const recipientAddress = recipient === null ? account : recipient
