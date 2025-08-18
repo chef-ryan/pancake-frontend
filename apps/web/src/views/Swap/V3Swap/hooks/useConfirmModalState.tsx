@@ -2,18 +2,17 @@ import { usePreviousValue } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { getPermit2Address } from '@pancakeswap/permit2-sdk'
 import { PriceOrder } from '@pancakeswap/price-api-sdk'
-import { TradeType, Currency, CurrencyAmount, Percent, Token } from '@pancakeswap/swap-sdk-core'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { Currency, CurrencyAmount, Percent, Token } from '@pancakeswap/swap-sdk-core'
 import { useToast } from '@pancakeswap/uikit'
 import { Permit2Signature } from '@pancakeswap/universal-router-sdk'
 import { ConfirmModalState, useAsyncConfirmPriceImpactWithoutFee } from '@pancakeswap/widgets-internal'
-import { SolanaDescriptionWithTx, ToastDescriptionWithTx } from 'components/Toast'
+import { ToastDescriptionWithTx } from 'components/Toast'
 import { BLOCK_CONFIRMATION } from 'config/confirmation'
 import { ALLOWED_PRICE_IMPACT_HIGH, PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN } from 'config/constants/exchange'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useNativeWrap } from 'hooks/useNativeWrap'
-import { Calldata, usePermit2 } from 'hooks/usePermit2'
+import { usePermit2 } from 'hooks/usePermit2'
 import { usePermit2Requires } from 'hooks/usePermit2Requires'
 import { useSafeTxHashTransformer } from 'hooks/useSafeTxHashTransformer'
 import { useTransactionDeadline } from 'hooks/useTransactionDeadline'
@@ -44,9 +43,6 @@ import { calculateGasMargin } from 'utils'
 import { viemClients } from 'utils/viem'
 import { getBridgeCalldata } from 'views/Swap/Bridge/api'
 import { useBridgeCheckApproval } from 'views/Swap/Bridge/hooks'
-import { VersionedTransaction } from '@solana/web3.js'
-import { UltraSwapError, UltraSwapErrorType, ultraSwapService } from '@pancakeswap/solana-router-sdk'
-import { confirmTransaction } from '@pancakeswap/solana-core-sdk'
 
 import { ChainId as EvmChainId } from '@pancakeswap/chains'
 import { useUserSlippage } from '@pancakeswap/utils/user'
@@ -55,8 +51,6 @@ import { activeBridgeOrderMetadataAtom } from 'views/Swap/Bridge/CrossChainConfi
 import { Permit2Schema } from 'views/Swap/Bridge/types'
 import { getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { useRefreshSolanaTokenBalances } from 'state/token/solanaTokenBalances'
-import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
 import { usePriceBreakdown } from 'views/SwapSimplify/hooks/usePriceBreakdown'
 
 import { eip5792UserRejectUpgradeError, userRejectedError } from './useSendSwapTransaction'
@@ -142,8 +136,7 @@ const useConfirmActions = (
   spender: Address | undefined,
 ) => {
   const { t } = useTranslation()
-  const { chainId, account, solanaAccount } = useAccountActiveChain()
-  const { signTransaction, wallet: solanaWallet } = useWallet()
+  const { chainId, account } = useAccountActiveChain()
 
   const [deadline] = useTransactionDeadline()
   const safeTxHashTransformer = useSafeTxHashTransformer()
@@ -185,9 +178,6 @@ const useConfirmActions = (
   const setActiveBridgeOrderMetadata = useSetAtom(activeBridgeOrderMetadataAtom)
 
   const { toastSuccess, toastError, toastInfo } = useToast()
-
-  // Refresh function to update cached Solana balances after swap
-  const refreshSolanaBalances = useRefreshSolanaTokenBalances(solanaWallet?.adapter.publicKey?.toBase58())
 
   const resetState = useCallback(() => {
     setConfirmState(ConfirmModalState.REVIEWING)
@@ -500,7 +490,6 @@ const useConfirmActions = (
     }
   }, [
     approvalData,
-    account,
     order,
     retryWaitForTransaction,
     safeTxHashTransformer,
@@ -509,6 +498,7 @@ const useConfirmActions = (
     t,
     error?.code,
     error?.message,
+    refetch,
   ])
 
   const { recipient: recipientAddress } = useSwapState()
@@ -924,7 +914,18 @@ export const useConfirmModalState = (
         state: steps[0],
       })
     },
-    [canCallActionBatched, callActionBatched, actions, createSteps, performStep, swapPreflightCheck],
+    [
+      canCallActionBatched,
+      callActionBatched,
+      actions,
+      createSteps,
+      performStep,
+      swapPreflightCheck,
+      amountToApprove?.currency.symbol,
+      chainId,
+      performEip5792Lock,
+      walletType,
+    ],
   )
 
   // auto perform the next step
