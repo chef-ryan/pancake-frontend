@@ -854,7 +854,6 @@ export const useConfirmModalState = (
 
   const { canCallActionBatched, callActionBatched, performEip5792Lock } = useBatchTransaction({
     actions,
-    chainId,
     amountToApprove,
     spender,
     order,

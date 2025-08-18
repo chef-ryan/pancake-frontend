@@ -1,34 +1,24 @@
-import { useCallback, useRef, Dispatch, SetStateAction } from 'react'
+import { useCallback, useRef } from 'react'
 import { useAccount, useWalletClient } from 'wagmi'
-import { createWalletClient, custom, Address } from 'viem'
+import { createWalletClient, custom } from 'viem'
 import { eip5792Actions } from 'viem/experimental'
 import { useTranslation } from '@pancakeswap/localization'
 import { useToast } from '@pancakeswap/uikit'
 import { useEIP5792Status } from 'hooks/useIsEIP5792Supported'
-import { PriceOrder } from '@pancakeswap/price-api-sdk'
-import { CurrencyAmount, Token } from '@pancakeswap/swap-sdk-core'
 import { ConfirmModalState } from '@pancakeswap/widgets-internal'
 import { RetryableError, retry } from 'state/multicall/retry'
+import { useActiveChainId } from 'hooks/useAccountActiveChain'
 import { ChainId as EvmChainId } from '@pancakeswap/chains'
 import { BatchCall, getBatchedTransaction as getBatchedTransactionHelper } from '../batchHelper'
 import { eip5792UserRejectUpgradeError, userRejectedError } from '../useSendSwapTransaction'
-import { ConfirmAction } from './step.type'
+import { ConfirmAction, ConfirmStepContext } from './step.type'
 
-interface UseBatchTransactionArgs {
+interface UseBatchTransactionArgs extends ConfirmStepContext {
   actions: { [k in ConfirmModalState]: ConfirmAction }
-  chainId?: number
-  amountToApprove?: CurrencyAmount<Token>
-  spender?: Address
-  order?: PriceOrder
-  showError: (message: string) => void
-  setConfirmState: Dispatch<SetStateAction<ConfirmModalState>>
-  setTxHash: Dispatch<SetStateAction<string | undefined>>
-  resetState: () => void
 }
 
 export const useBatchTransaction = ({
   actions,
-  chainId,
   amountToApprove,
   spender,
   order,
@@ -37,6 +27,7 @@ export const useBatchTransaction = ({
   setTxHash,
   resetState,
 }: UseBatchTransactionArgs) => {
+  const { chainId } = useActiveChainId()
   const { connector } = useAccount()
   const { data: walletClient } = useWalletClient({ chainId })
   const eip5792Status = useEIP5792Status()
@@ -50,6 +41,7 @@ export const useBatchTransaction = ({
       getBatchedTransactionHelper(steps, actions, chainId as number, amountToApprove, spender, order),
     [
       actions,
+      amountToApprove,
       amountToApprove?.currency.address,
       amountToApprove?.currency.isToken,
       amountToApprove?.quotient,
