@@ -3,7 +3,7 @@ import { getLiquidityDetailURL } from 'config/constants/liquidity'
 import { useTotalPriceUSD } from 'hooks/useTotalPriceUSD'
 import { memo, useMemo } from 'react'
 import { useExtraInfinityPositionInfo, usePoolInfo } from 'state/farmsV4/hooks'
-import { InfinityCLPositionDetail } from 'state/farmsV4/state/accountPositions/type'
+import { InfinityCLPositionDetail, PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 
 import { PositionItem } from './PositionItem'
 import { PriceRange } from './PriceRange'
@@ -89,7 +89,7 @@ export const InfinityCLPositionItem = memo(
         isStaked={data.isStaked && !outOfRange}
         tokenId={data.tokenId}
         detailMode={detailMode}
-        userPosition={data}
+        userPosition={data as unknown as PositionDetail}
         showAPR={showAPR}
         miniMode={miniMode}
       >
