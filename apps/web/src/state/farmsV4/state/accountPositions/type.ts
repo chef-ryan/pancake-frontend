@@ -19,12 +19,13 @@ export type LiquidityOfCLPosition = {
   upperTick: number
 }
 
-export type InfinityCLPositionDetail = PositionDetail & {
+export type InfinityCLPositionDetail = Omit<PositionDetail, 'protocol'> & {
   status: POSITION_STATUS
   poolKey: PoolKey
   poolId: Hex
   tickSpacing: number
   dynamic: boolean
+  protocol: Protocol.InfinityCLAMM
 }
 
 export type ReserveOfBin = {
@@ -76,11 +77,18 @@ export type PositionDetail = {
   // additional detail
   isStaked?: boolean
   chainId: number
-  protocol: Protocol
+  protocol: Protocol.V3
 
   farmingMultiplier: number
   farmingLiquidity: bigint
 }
+
+export type UnifiedPositionDetail =
+  | PositionDetail
+  | InfinityBinPositionDetail
+  | InfinityCLPositionDetail
+  | V2LPDetail
+  | StableLPDetail
 
 export type V2LPDetail = {
   nativeBalance: CurrencyAmount<ERC20Token>
@@ -94,7 +102,7 @@ export type V2LPDetail = {
   farmingBoosterMultiplier: number
   farmingBoostedAmount: CurrencyAmount<ERC20Token>
   isStaked?: boolean
-  protocol: Protocol
+  protocol: Protocol.V2
 }
 
 export type StableLPDetail = {
@@ -111,7 +119,7 @@ export type StableLPDetail = {
   farmingBoosterMultiplier: number
   farmingBoostedAmount: CurrencyAmount<ERC20Token>
   isStaked?: boolean
-  protocol: Protocol
+  protocol: Protocol.STABLE
 }
 
 export type PairListType = PositionDetail | V2LPDetail | StableLPDetail

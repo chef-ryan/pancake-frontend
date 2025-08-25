@@ -37,7 +37,7 @@ import {
 } from 'views/PoolDetail/utils'
 import { AprTooltipContent } from 'views/universalFarms/components/PoolAprButtonV3/AprTooltipContent'
 import { InfinityPositionActions } from 'views/universalFarms/components/PositionActions/InfinityPositionActions'
-import { useInfinityPositions } from 'views/universalFarms/hooks/useInfinityPositions'
+import { useInfinityPositionsData } from 'views/universalFarms/hooks/useInfinityPositions'
 import { useInfinityCLPositionApr } from 'views/universalFarms/hooks/usePositionAPR'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import { ActionButton } from '../styles'
@@ -374,7 +374,7 @@ export const InfinityCLPositionsTable: React.FC<InfinityCLPositionsTableProps> =
   )
 
   // Get all infinity positions for the harvest modal
-  const { data: allInfinityPositions } = useInfinityPositions()
+  const { data: allInfinityPositions } = useInfinityPositionsData()
 
   // Handle data from individual position rows
   const handleRowDataReady = useCallback((data: TransformedPosition) => {

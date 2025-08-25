@@ -7,7 +7,6 @@ import { useMemo } from 'react'
 import { getKeyForPools, useAccountV3Positions, useV3PoolsLength } from 'state/farmsV4/hooks'
 import { POSITION_STATUS, PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { useAccount } from 'wagmi'
-import { V3PositionItem } from '../components'
 import { useAllChainIds } from './useMultiChains'
 
 const getPoolStatus = (pos: PositionDetail, pool: Pool | null) => {
@@ -20,7 +19,7 @@ const getPoolStatus = (pos: PositionDetail, pool: Pool | null) => {
   return POSITION_STATUS.ACTIVE
 }
 
-export const useV3PositionItems = ({
+export const useV3Positions = ({
   selectedNetwork,
   selectedTokens,
   positionStatus,
@@ -81,21 +80,16 @@ export const useV3PositionItems = ({
 
   const { data: poolsLength } = useV3PoolsLength(allChainIds)
 
-  const v3PositionList = useMemo(
-    () =>
-      sortedV3Positions.map((pos) => {
-        const key = getKeyForPools({
-          chainId: pos.chainId,
-          protocol: pos.protocol,
-          tokenId: pos.tokenId.toString(),
-        })
-        return <V3PositionItem key={key} data={pos} poolLength={poolsLength[pos.chainId]} />
-      }),
-    [sortedV3Positions, poolsLength],
-  )
-
   return {
     v3Loading,
-    v3PositionList,
+    v3Positions: sortedV3Positions,
+    v3PoolsLength: poolsLength as Record<number, number>,
   }
 }
+
+export const getV3PositionKey = (pos: PositionDetail) =>
+  getKeyForPools({
+    chainId: pos.chainId,
+    protocol: pos.protocol,
+    tokenId: pos.tokenId.toString(),
+  })

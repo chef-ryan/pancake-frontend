@@ -33,7 +33,7 @@ import {
 } from 'views/PoolDetail/utils'
 import { AprTooltipContent } from 'views/universalFarms/components/PoolAprButtonV3/AprTooltipContent'
 import { InfinityPositionActions } from 'views/universalFarms/components/PositionActions/InfinityPositionActions'
-import { useInfinityPositions } from 'views/universalFarms/hooks/useInfinityPositions'
+import { useInfinityPositionsData } from 'views/universalFarms/hooks/useInfinityPositions'
 import { useInfinityBinPositionApr } from 'views/universalFarms/hooks/usePositionAPR'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import { useAccount } from 'wagmi'
@@ -346,7 +346,7 @@ export const InfinityBinPositionsTable: React.FC<InfinityBinPositionsTableProps>
     poolInfo,
   )
 
-  const { data: allInfinityPositions } = useInfinityPositions()
+  const { data: allInfinityPositions } = useInfinityPositionsData()
 
   const {
     data: { rewardsAmount, rewardsUSD },

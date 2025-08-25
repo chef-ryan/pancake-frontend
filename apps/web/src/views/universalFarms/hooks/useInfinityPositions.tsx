@@ -12,26 +12,23 @@ import { getHookByAddress } from 'utils/getHookByAddress'
 import { isInfinityProtocol } from 'utils/protocols'
 import { usePoolFeatureAndType } from 'views/AddLiquiditySelector/hooks/usePoolTypeQuery'
 import { useAccount } from 'wagmi'
-import { InfinityPositionActions } from '../components/PositionActions/InfinityPositionActions'
-import { InfinityBinPositionItem } from '../components/PositionItem/InfinityBinPositionItem'
-import { InfinityCLPositionItem } from '../components/PositionItem/InfinityCLPositionItem'
 import { useAllChainIds } from './useMultiChains'
 import { usePositionEarningAmount } from './usePositionEarningAmount'
 
-type InfinityPositionItemsParams = {
+type InfinityPositionsParams = {
   selectedNetwork: INetworkProps['value']
   selectedTokens: ITokenProps['value']
   positionStatus: POSITION_STATUS
   farmsOnly: boolean
 }
 
-export const useInfinityPositionItems = ({
+export const useInfinityPositions = ({
   selectedNetwork,
   selectedTokens,
   positionStatus,
   farmsOnly,
-}: InfinityPositionItemsParams) => {
-  const { data: positions, isLoading } = useInfinityPositions()
+}: InfinityPositionsParams) => {
+  const { data: allPositions, isLoading } = useInfinityPositionsData()
   const { protocols, isSelectAllProtocols, isSelectAllFeatures, features } = usePoolFeatureAndType()
   const infinityTypes = useMemo(
     () => (isSelectAllProtocols || !protocols.length ? ALL_PROTOCOLS : protocols),
@@ -58,7 +55,7 @@ export const useInfinityPositionItems = ({
 
   const filteredPositions = useMemo(
     () =>
-      positions.filter(
+      allPositions.filter(
         (pos) =>
           infinityTypes.includes(pos.protocol) &&
           selectedNetwork.includes(pos.chainId) &&
@@ -80,7 +77,7 @@ export const useInfinityPositionItems = ({
           !isExhausted(pos),
       ),
     [
-      positions,
+      allPositions,
       infinityTypes,
       selectedNetwork,
       selectedTokens,
@@ -94,50 +91,14 @@ export const useInfinityPositionItems = ({
 
   const sortedPositions = useMemo(() => filteredPositions.sort((a, b) => a.status - b.status), [filteredPositions])
 
-  const infinityPositionList = useMemo(
-    () =>
-      sortedPositions.map((pos) => {
-        const { poolId, chainId } = pos
-        const key = getKeyForPools({
-          chainId,
-          poolAddress: poolId,
-          protocol: pos.protocol,
-          tokenId:
-            pos.protocol === Protocol.InfinityCLAMM
-              ? (pos as InfinityCLPositionDetail).tokenId
-              : (pos as InfinityBinPositionDetail).activeId.toString(),
-        })
-        if (pos.protocol === Protocol.InfinityCLAMM) {
-          return (
-            <InfinityCLPositionItem
-              key={key}
-              data={pos}
-              action={<InfinityPositionActions pos={pos} positionList={positions} />}
-            />
-          )
-        }
-        if (pos.protocol === Protocol.InfinityBIN) {
-          const p = pos as InfinityBinPositionDetail
-          return (
-            <InfinityBinPositionItem
-              key={key}
-              data={p}
-              action={<InfinityPositionActions pos={p} positionList={positions} />}
-            />
-          )
-        }
-        return null
-      }),
-    [sortedPositions, positions],
-  )
-
   return {
     infinityLoading: isLoading,
-    infinityPositionList,
+    infinityPositions: sortedPositions,
+    allInfinityPositions: allPositions,
   }
 }
 
-export const useInfinityPositions = () => {
+export const useInfinityPositionsData = () => {
   const { address: account } = useAccount()
   const allChainIds = useAllChainIds()
   const { data: infinityCLPositions, pending: infinityCLLoading } = useAccountInfinityCLPositions(allChainIds, account)
@@ -159,4 +120,17 @@ export const useInfinityPositions = () => {
     isLoading: infinityCLLoading || infinityBinLoading,
     data: positions,
   }
+}
+
+export const getInfinityPositionKey = (pos: InfinityCLPositionDetail | InfinityBinPositionDetail) => {
+  const { poolId, chainId } = pos
+  return getKeyForPools({
+    chainId,
+    poolAddress: poolId,
+    protocol: pos.protocol,
+    tokenId:
+      pos.protocol === Protocol.InfinityCLAMM
+        ? (pos as InfinityCLPositionDetail).tokenId
+        : (pos as InfinityBinPositionDetail).activeId.toString(),
+  })
 }
