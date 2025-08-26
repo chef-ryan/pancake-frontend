@@ -429,7 +429,7 @@ export const getStablePairDetails = async (
       farmingBoostedAmount,
       farmingBoosterMultiplier,
       isStaked,
-      protocol: Protocol.STABLE,
+      protocol: Protocol.STABLE as Protocol.STABLE,
     }
   })
   return result
