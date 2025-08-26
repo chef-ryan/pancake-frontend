@@ -18,6 +18,7 @@ import {
   InfinityCLPositionDetail,
   PositionDetail,
   StableLPDetail,
+  UnifiedPositionDetail,
   V2LPDetail,
 } from 'state/farmsV4/state/accountPositions/type'
 import { InfinityPoolInfo, PoolInfo } from 'state/farmsV4/state/type'
@@ -65,7 +66,7 @@ export type PositionInfoProps = {
   pool?: PoolInfo | null
   poolId?: `0x${string}`
   detailMode?: boolean
-  userPosition?: PositionDetail | V2LPDetail | StableLPDetail | InfinityBinPositionDetail
+  userPosition?: UnifiedPositionDetail
   showAPR?: boolean
   miniMode?: boolean
   disableFixedTags?: boolean
