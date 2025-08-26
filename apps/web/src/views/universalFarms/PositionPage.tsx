@@ -48,6 +48,7 @@ import { useV2Positions } from './hooks/useV2Positions'
 import { useStablePositions } from './hooks/useStablePositions'
 import { positionEarningAmountAtom } from './hooks/usePositionEarningAmount'
 import { getPositionKey } from './components/PositionItem/PositionCard'
+import { matchPositionSearch } from './utils/matchPositionSearch'
 
 const ToggleWrapper = styled.div`
   display: inline-flex;
@@ -157,15 +158,16 @@ export const PositionPage = () => {
   const { features, isSelectAllFeatures, isSelectAllProtocols, protocols } = usePoolFeatureAndType()
   const { isMobile, isMd } = useMatchBreakpoints()
 
-  const { selectedProtocolIndex, selectedNetwork, selectedTokens, positionStatus, farmsOnly } = filters
+  const { selectedProtocolIndex, selectedNetwork, selectedTokens, positionStatus, farmsOnly, search } = filters
 
   const poolsFilter = useMemo(
     () => ({
       selectedProtocolIndex,
       selectedNetwork,
       selectedTokens,
+      search,
     }),
-    [selectedProtocolIndex, selectedNetwork, selectedTokens],
+    [selectedProtocolIndex, selectedNetwork, selectedTokens, search],
   )
   const selectedPoolTypes = useSelectedProtocols(selectedProtocolIndex)
   const [onPresentTransactionsModal] = useModal(<TransactionsModal />)
@@ -223,13 +225,22 @@ export const PositionPage = () => {
   })
 
   const allPositionList = useMemo(() => {
-    return (
-      [...infinityPositions, ...v3Positions, ...v2Positions, ...stablePositions] as UnifiedPositionDetail[]
-    ).filter((item) => {
-      if (isSelectAllFeatures || !features.length || isInfinityProtocol(item.protocol)) return true
-      return selectedPoolTypes.includes(item.protocol)
-    })
-  }, [infinityPositions, v3Positions, v2Positions, stablePositions])
+    return ([...infinityPositions, ...v3Positions, ...v2Positions, ...stablePositions] as UnifiedPositionDetail[])
+      .filter((item) => {
+        if (isSelectAllFeatures || !features.length || isInfinityProtocol(item.protocol)) return true
+        return selectedPoolTypes.includes(item.protocol)
+      })
+      .filter((item) => matchPositionSearch(item, search))
+  }, [
+    infinityPositions,
+    v3Positions,
+    v2Positions,
+    stablePositions,
+    isSelectAllFeatures,
+    features,
+    selectedPoolTypes,
+    search,
+  ])
 
   const visibleList = useMemo(() => {
     return allPositionList.slice(0, cursorVisible)
