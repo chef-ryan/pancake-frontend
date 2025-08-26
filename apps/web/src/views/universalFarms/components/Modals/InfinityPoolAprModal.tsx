@@ -1,7 +1,7 @@
 import type { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import React, { useMemo } from 'react'
 import { useExtraInfinityPositionInfo } from 'state/farmsV4/hooks'
-import type { InfinityCLPositionDetail } from 'state/farmsV4/state/accountPositions/type'
+import type { InfinityCLPositionDetail, PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { useCurrencyBalances } from 'state/wallet/hooks'
 import { CurrencyField } from 'utils/types'
 import { useAccount } from 'wagmi'
@@ -13,7 +13,7 @@ export const InfinityPoolAprModal: React.FC<BasicPoolAprModalProps<InfinityCLPos
   ...props
 }) => {
   const { address } = useAccount()
-  const { positionDetail, poolInfo } = props
+  const { positionDetail, poolInfo, ...rest } = props
   const posInfo = useExtraInfinityPositionInfo(positionDetail)
   const { pool } = posInfo
 
@@ -36,7 +36,9 @@ export const InfinityPoolAprModal: React.FC<BasicPoolAprModalProps<InfinityCLPos
       feeProtocol={pool?.feeProtocol}
       price={posInfo.price}
       currencyBalances={currencyBalances}
-      {...props}
+      positionDetail={positionDetail as unknown as PositionDetail}
+      poolInfo={poolInfo}
+      {...rest}
     />
   ) : null
 }
