@@ -30,7 +30,7 @@ export const idoConfigDict: Record<string, IDOConfig> = {
     projectUrl: 'https://pancakeswap.finance/',
     chainId: ChainId.BSC,
     bannerUrl: `${ASSET_CDN}/web/ido/test-banner.png`, // TODO: Replace with actual banner
-    contractAddress: '0xf0325De2A32A0629510e17Fb80A5a659a6cf9C25', // IFO v10 contract address
+    contractAddress: '0xFE8100024131400608e00A6B1E6dc92b6567097A', // IFO v10 contract address
     tgeTitle: <Trans>IFO v10 Test - USDT Offering</Trans>,
     tgeSubtitle: <Trans>Testing on Tenderly Virtual Network</Trans>,
     description: (
