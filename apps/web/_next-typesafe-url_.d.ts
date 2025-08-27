@@ -38,6 +38,7 @@ declare module "@@@next-typesafe-url" {
     "/ido/w3w": StaticRoute;
     "/ifo/history": StaticRoute;
     "/ifo": StaticRoute;
+    "/ifov1": StaticRoute;
     "/increase/[[...currency]]": StaticRoute;
     "/": StaticRoute;
     "/info/[chainName]": StaticRoute;
