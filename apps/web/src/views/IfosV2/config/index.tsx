@@ -23,6 +23,68 @@ export type IDOConfig = {
 }
 
 export const idoConfigDict: Record<string, IDOConfig> = {
+  // TODO: IFO v10 testing configuration on Tenderly Virtual Network
+  ifov10test: {
+    id: 'ifov10test',
+    icon: '/images/ido/test.png', // 你可以之後替換成實際的圖標
+    projectUrl: 'https://pancakeswap.finance/',
+    chainId: ChainId.BSC,
+    bannerUrl: `${ASSET_CDN}/web/ido/test-banner.png`, // 你可以之後替換成實際的橫幅
+    contractAddress: '0xf0325De2A32A0629510e17Fb80A5a659a6cf9C25', // IFO v10 合約地址
+    tgeTitle: <Trans>IFO v10 Test - USDT Offering</Trans>,
+    tgeSubtitle: <Trans>Testing on Tenderly Virtual Network</Trans>,
+    description: (
+      <>
+        <Trans>This is a test IFO v10 configuration for development and testing purposes.</Trans>
+        <br />
+        <br />
+        <b>Virtual Network Details:</b>
+        <br />
+        - LP Token 0: Native Token (BNB)
+        <br />
+        - Offering Token: USDT (0x55d398326f99059fF775485246999027B3197955)
+        <br />
+        - Admin: 0xbe9c4b9bbf22a2ef48d2ba0ee177168db6d46363
+        <br />- Start Time: {new Date(1756266834 * 1000).toLocaleString()}
+        <br />- End Time: {new Date(1756349634 * 1000).toLocaleString()}
+        <br />
+        - Pool Mode: Single Pool (maxPoolId = 0)
+        <br />- Vesting: Disabled
+      </>
+    ),
+    faqs: [
+      {
+        title: <Trans>1. Test Environment Notice</Trans>,
+        description: (
+          <Trans>
+            This is a test IFO running on Tenderly Virtual Network. All transactions are simulated and not on mainnet.
+          </Trans>
+        ),
+      },
+      {
+        title: <Trans>2. How to participate?</Trans>,
+        description: (
+          <>
+            <Trans>
+              You can participate using BNB (Native Token) to purchase USDT tokens during the offering period.
+            </Trans>
+            <br />
+            <Trans>Start: {new Date(1756266834 * 1000).toLocaleString()}</Trans>
+            <br />
+            <Trans>End: {new Date(1756349634 * 1000).toLocaleString()}</Trans>
+          </>
+        ),
+      },
+      {
+        title: <Trans>3. Token Distribution</Trans>,
+        description: (
+          <Trans>
+            Tokens will be distributed immediately after the IFO ends. No vesting period is enabled for this test.
+          </Trans>
+        ),
+      },
+    ],
+  },
   myshell: {
     id: 'myshell',
     icon: '/images/ido/myshell.png',

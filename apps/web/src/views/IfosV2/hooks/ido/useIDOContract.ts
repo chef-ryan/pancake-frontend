@@ -1,4 +1,5 @@
-import { idoABI } from 'config/abi/ido'
+// TODO: Using IFO v10 ABI for testing
+// import { idoABI } from 'config/abi/ido'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
@@ -7,6 +8,7 @@ import { createPublicClient, custom, http, isAddress, type WalletClient } from '
 import { bsc } from 'viem/chains'
 import { idoConfigDict } from 'views/Idos/config'
 import { useWalletClient } from 'wagmi'
+import { ifoV10Abi as idoABI } from '../../abi/ifoV10Abi'
 
 export const useIDOContract = () => {
   const { chainId } = useActiveChainId()
