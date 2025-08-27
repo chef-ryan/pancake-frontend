@@ -73,7 +73,8 @@ export const useIDODepositCallback = () => {
             throw new W3WSignError('Invalid signature or expiredAt')
           }
 
-          return idoContract.write.depositPool([amountPool, pid, BigInt(expireAt), `0x${signature}`], {
+          // TODO: IFO v10 depositPool only takes amount and pid
+          return idoContract.write.depositPool([amountPool, pid], {
             account,
             chain: idoContract.chain,
             value,

@@ -73,13 +73,13 @@ export const useIDOPoolInfo = () => {
             {
               address: idoContract.address,
               abi: idoContract.abi,
-              functionName: '_poolInformation',
+              functionName: 'viewPoolInformation',
               args: [0n],
             },
             {
               address: idoContract.address,
               abi: idoContract.abi,
-              functionName: '_poolInformation',
+              functionName: 'viewPoolInformation',
               args: [1n],
             },
             {
@@ -96,22 +96,27 @@ export const useIDOPoolInfo = () => {
           allowFailure: false,
         })
 
+      // TODO: IFO v10 viewPoolInformation returns: [offeringAmountPool, raisingAmountPool, limitPerUserInLP, hasTax, flatTaxRate, totalAmountPool]
       const pool0Info = {
         pid: 0,
         poolToken: pool0Token,
-        raisingAmountPool: _pool0Info[0],
-        offeringAmountPool: _pool0Info[1],
-        capPerUserInLP: _pool0Info[2],
-        totalAmountPool: _pool0Info[3],
+        offeringAmountPool: _pool0Info[0], // offeringAmountPool
+        raisingAmountPool: _pool0Info[1], // raisingAmountPool
+        capPerUserInLP: _pool0Info[2], // limitPerUserInLP
+        hasTax: _pool0Info[3], // hasTax
+        flatTaxRate: _pool0Info[4], // flatTaxRate
+        totalAmountPool: _pool0Info[5], // totalAmountPool
       }
 
       const pool1Info = {
         pid: 1,
         poolToken: pool1Token,
-        raisingAmountPool: _pool1Info[0],
-        offeringAmountPool: _pool1Info[1],
-        capPerUserInLP: _pool1Info[2],
-        totalAmountPool: _pool1Info[3],
+        offeringAmountPool: _pool1Info[0], // offeringAmountPool
+        raisingAmountPool: _pool1Info[1], // raisingAmountPool
+        capPerUserInLP: _pool1Info[2], // limitPerUserInLP
+        hasTax: _pool1Info[3], // hasTax
+        flatTaxRate: _pool1Info[4], // flatTaxRate
+        totalAmountPool: _pool1Info[5], // totalAmountPool
       }
 
       return {
