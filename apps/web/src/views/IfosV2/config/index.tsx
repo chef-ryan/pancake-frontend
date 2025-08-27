@@ -26,11 +26,11 @@ export const idoConfigDict: Record<string, IDOConfig> = {
   // TODO: IFO v10 testing configuration on Tenderly Virtual Network
   ifov10test: {
     id: 'ifov10test',
-    icon: '/images/ido/test.png', // 你可以之後替換成實際的圖標
+    icon: '/images/ido/test.png', // TODO: Replace with actual icon
     projectUrl: 'https://pancakeswap.finance/',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/test-banner.png`, // 你可以之後替換成實際的橫幅
-    contractAddress: '0xf0325De2A32A0629510e17Fb80A5a659a6cf9C25', // IFO v10 合約地址
+    bannerUrl: `${ASSET_CDN}/web/ido/test-banner.png`, // TODO: Replace with actual banner
+    contractAddress: '0xf0325De2A32A0629510e17Fb80A5a659a6cf9C25', // IFO v10 contract address
     tgeTitle: <Trans>IFO v10 Test - USDT Offering</Trans>,
     tgeSubtitle: <Trans>Testing on Tenderly Virtual Network</Trans>,
     description: (
