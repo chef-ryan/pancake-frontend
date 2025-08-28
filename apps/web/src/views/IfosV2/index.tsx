@@ -16,7 +16,7 @@ const WidthWrapper = styled.div`
   margin: 0 auto;
 `
 
-export const IdoPageLayout = ({ children }) => {
+export const IfoPageLayout = ({ children }) => {
   const { address } = useAccount()
   const { t } = useTranslation()
 

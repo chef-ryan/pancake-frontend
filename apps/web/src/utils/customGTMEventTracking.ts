@@ -31,6 +31,11 @@ export enum GTMEvent {
   IFOCommit = 'ifoCommit',
   IFOCommitTxnSent = 'ifoCommitTxnSent',
 
+  // IFO v2
+  IfoDeposit = 'ifoDeposit',
+  IfoClaim = 'ifoClaim',
+  IfoConnectWallet = 'ifoConnectWallet',
+
   // IDO
   IdoDeposit = 'idoDeposit',
   IdoClaim = 'idoClaim',
@@ -106,6 +111,12 @@ export enum GTMAction {
   ClickCommitBasicSale = 'Click Commit Button for Basic Sale',
   CommitTxnSentPublicSale = 'Commit Transaction Sent for Public Sale',
   CommitTxnSentBasicSale = 'Commit Transaction Sent for Basic Sale',
+
+  // IFOV2
+  ConfirmIFODeposit = 'Confirm IFO Deposit',
+  ConfirmIFOClaim = 'Confirm IFO Claim After TGE',
+  IFOConnectWalletPreTGE = 'IFO Connect Wallet Pre TGE',
+  IFOConnectWalletDuringTGE = 'IFO Connect Wallet During TGE',
 
   // IDO
   ConfirmIDODeposit = 'Confirm IDO Deposit',
@@ -496,12 +507,30 @@ export const logGTMIdoDepositEvent = () => {
   })
 }
 
+export const logGTMIfoDepositEvent = () => {
+  console.info('---IfoDeposit---')
+  window?.dataLayer?.push({
+    event: GTMEvent.IfoDeposit,
+    action: GTMAction.ConfirmIDODeposit,
+    category: GTMCategory.IDO,
+  })
+}
+
 export const logGTMIdoClaimEvent = () => {
   console.info('---IdoClaim---')
   window?.dataLayer?.push({
-    event: GTMEvent.IdoClaim,
+    event: GTMEvent.IfoClaim,
     action: GTMAction.ConfirmIDOClaim,
     category: GTMCategory.IDO,
+  })
+}
+
+export const logGTMIfoClaimEvent = () => {
+  console.info('---IfoClaim---')
+  window?.dataLayer?.push({
+    event: GTMEvent.IfoClaim,
+    action: GTMAction.ConfirmIFOClaim,
+    category: GTMCategory.IFO,
   })
 }
 
@@ -509,6 +538,15 @@ export const logGTMIdoConnectWalletEvent = (preTGE: boolean) => {
   console.info('---IdoConnectWallet---')
   window?.dataLayer?.push({
     event: GTMEvent.IdoConnectWallet,
+    action: preTGE ? GTMAction.IDOConnectWalletPreTGE : GTMAction.IDOConnectWalletDuringTGE,
+    category: GTMCategory.IDO,
+  })
+}
+
+export const logGTMIfoConnectWalletEvent = (preTGE: boolean) => {
+  console.info('---IfoConnectWallet---')
+  window?.dataLayer?.push({
+    event: GTMEvent.IfoConnectWallet,
     action: preTGE ? GTMAction.IDOConnectWalletPreTGE : GTMAction.IDOConnectWalletDuringTGE,
     category: GTMCategory.IDO,
   })

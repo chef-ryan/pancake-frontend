@@ -2,13 +2,13 @@ import { IfoStatus } from '@pancakeswap/ifos'
 import { type Currency, CurrencyAmount, Percent, Price } from '@pancakeswap/swap-sdk-core'
 import { UnsafeCurrency } from 'config/constants/types'
 import { getStatusByTimestamp } from '../helpers'
-import { useIDOStatus } from './usdIDOStatus'
-import { useIDOConfig } from './useIDOConfig'
-import { useIDOCurrencies } from './useIDOCurrencies'
-import { PoolInfo, useIDOPoolInfo } from './useIDOPoolInfo'
-import { useIDOUserStatus } from './useIDOUserStatus'
+import { useIFOStatus } from './useIFOStatus'
+import { useIFOConfig } from './useIFOConfig'
+import { useIFOCurrencies } from './useIFOCurrencies'
+import { PoolInfo, useIFOPoolInfo } from './useIFOPoolInfo'
+import { useIFOUserStatus } from './useIFOUserStatus'
 
-export type IDOPublicData = {
+export type IFOPublicData = {
   startTime: number
   endTime: number
   status: IfoStatus
@@ -31,13 +31,13 @@ export type IDOPublicData = {
   userClaimed?: boolean
 }
 
-export const useIdoPublicData = (): [IDOPublicData, IDOPublicData] | [IDOPublicData] => {
-  const { data: info } = useIDOPoolInfo()
+export const useIfoPublicData = (): [IFOPublicData, IFOPublicData] | [IFOPublicData] => {
+  const { data: info } = useIFOPoolInfo()
   const { pool0Info, pool1Info, startTimestamp, endTimestamp } = info ?? {}
-  const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIDOCurrencies()
-  const [status0, status1] = useIDOStatus()
-  const { pricePerTokens, raiseAmounts, saleAmounts, maxStakePerUsers } = useIDOConfig()
-  const [userStatus0, userStatus1] = useIDOUserStatus()
+  const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIFOCurrencies()
+  const [status0, status1] = useIFOStatus()
+  const { pricePerTokens, raiseAmounts, saleAmounts, maxStakePerUsers } = useIFOConfig()
+  const [userStatus0, userStatus1] = useIFOUserStatus()
 
   const {
     stakedAmount: userStakedAmount,

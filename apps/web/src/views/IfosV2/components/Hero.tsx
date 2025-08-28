@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, Container, Flex, FlexGap, Heading, Text } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
-import { useCurrentIDOConfig } from '../hooks/ido/useCurrentIDOConfig'
+import { useCurrentIfoConfig } from '../hooks/useCurrentIfoConfig'
 
 const StyledHero = styled(Box)`
   position: relative;
@@ -20,7 +20,7 @@ const StyledSubTitle = styled(Text)`
 
 const Hero = () => {
   const { t } = useTranslation()
-  const currentIdoConfig = useCurrentIDOConfig()
+  const currentIfoConfig = useCurrentIfoConfig()
 
   // const router = useRouter()
   // const handleClick = () => {
@@ -28,11 +28,11 @@ const Hero = () => {
   //   if (howToElem != null) {
   //     howToElem.scrollIntoView()
   //   } else {
-  //     router.push('/ido#ifo-how-to')
+  //     router.push('/ifo#ifo-how-to')
   //   }
   // }
 
-  if (!currentIdoConfig) {
+  if (!currentIfoConfig) {
     return null
   }
 
@@ -52,8 +52,8 @@ const Hero = () => {
                 </FlexGap>
               </StyledHeading>
               <p>
-                <StyledSubTitle bold>{currentIdoConfig.tgeTitle}</StyledSubTitle>
-                <StyledSubTitle>: {currentIdoConfig.tgeSubtitle}</StyledSubTitle>
+                <StyledSubTitle bold>{currentIfoConfig.tgeTitle}</StyledSubTitle>
+                <StyledSubTitle>: {currentIfoConfig.tgeSubtitle}</StyledSubTitle>
               </p>
             </Box>
 

@@ -3,24 +3,24 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { useAccount } from 'wagmi'
-import { useIDOContract } from './useIDOContract'
-import { useIDOCurrencies } from './useIDOCurrencies'
-import { useIDOPoolInfo } from './useIDOPoolInfo'
-import { useIDOUserInfo } from './useIDOUserInfo'
+import { useIFOContract } from './useIFOContract'
+import { useIFOCurrencies } from './useIFOCurrencies'
+import { useIFOPoolInfo } from './useIFOPoolInfo'
+import { useIFOUserInfo } from './useIFOUserInfo'
 
-export type IDOUserStatus = {
+export type IFOUserStatus = {
   stakedAmount: CurrencyAmount<Currency> | undefined
   stakeRefund: CurrencyAmount<Currency> | undefined
   claimableAmount: CurrencyAmount<Currency> | undefined
   claimed: boolean | undefined
 }
 
-export const useIDOUserStatus = (): [IDOUserStatus | undefined, IDOUserStatus | undefined] => {
-  const { data: userInfo } = useIDOUserInfo()
-  const { data: poolInfo } = useIDOPoolInfo()
+export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | undefined] => {
+  const { data: userInfo } = useIFOUserInfo()
+  const { data: poolInfo } = useIFOPoolInfo()
   const { pool0Info, pool1Info } = poolInfo ?? {}
   const { data: offeringAndRefundingAmounts } = useViewUserOfferingAndRefundingAmounts()
-  const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIDOCurrencies()
+  const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIFOCurrencies()
 
   const stakedAmounts = useMemo(() => {
     if (!stakeCurrency0 || !userInfo) return [undefined, undefined]
@@ -79,16 +79,16 @@ export type UserOfferingAndRefundingAmounts = {
 }
 
 const useViewUserOfferingAndRefundingAmounts = () => {
-  const idoContract = useIDOContract()
+  const ifoContract = useIFOContract()
   const { address: account } = useAccount()
   const latestTxReceipt = useLatestTxReceipt()
 
   return useQuery({
-    queryKey: ['idoUserOfferingAndRefundingAmounts', idoContract?.address, account, latestTxReceipt],
+    queryKey: ['ifoUserOfferingAndRefundingAmounts', ifoContract?.address, account, latestTxReceipt],
     queryFn: async (): Promise<[UserOfferingAndRefundingAmounts, UserOfferingAndRefundingAmounts]> => {
-      if (!idoContract || !account) throw new Error('IDO contract not found')
+      if (!ifoContract || !account) throw new Error('IFO contract not found')
       const [[userOfferingAmount0, userRefundingAmount0], [userOfferingAmount1, userRefundingAmount1]] =
-        await idoContract.read.viewUserOfferingAndRefundingAmountsForPools([account, [0, 1]])
+        await ifoContract.read.viewUserOfferingAndRefundingAmountsForPools([account, [0, 1]])
 
       return [
         {
@@ -101,7 +101,7 @@ const useViewUserOfferingAndRefundingAmounts = () => {
         },
       ]
     },
-    enabled: !!account && !!idoContract,
+    enabled: !!account && !!ifoContract,
     placeholderData: (prev) => prev,
   })
 }

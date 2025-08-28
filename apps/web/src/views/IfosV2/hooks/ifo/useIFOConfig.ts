@@ -3,10 +3,10 @@ import { type Currency, CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
 import { getStatusByTimestamp } from '../helpers'
-import { useIDOCurrencies } from './useIDOCurrencies'
-import { useIDOPoolInfo } from './useIDOPoolInfo'
+import { useIFOCurrencies } from './useIFOCurrencies'
+import { useIFOPoolInfo } from './useIFOPoolInfo'
 
-export type IDOConfig = {
+export type IFOConfig = {
   totalSales: [bigint, bigint]
   startTimestamp: number
   endTimestamp: number
@@ -19,10 +19,10 @@ export type IDOConfig = {
   status: IfoStatus
 }
 
-export const useIDOConfig = () => {
-  const { data: poolInfo } = useIDOPoolInfo()
+export const useIFOConfig = () => {
+  const { data: poolInfo } = useIFOPoolInfo()
   const { pool0Info, pool1Info } = poolInfo ?? {}
-  const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIDOCurrencies()
+  const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIFOCurrencies()
   const now = dayjs().unix()
 
   return useMemo(() => {
@@ -70,7 +70,7 @@ export const useIDOConfig = () => {
           )
         : undefined,
       status: getStatusByTimestamp(now, poolInfo?.startTimestamp, poolInfo?.endTimestamp),
-    } satisfies IDOConfig
+    } satisfies IFOConfig
   }, [
     pool0Info?.offeringAmountPool,
     pool0Info?.raisingAmountPool,

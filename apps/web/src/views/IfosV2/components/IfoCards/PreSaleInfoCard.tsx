@@ -3,7 +3,7 @@ import { CheckmarkCircleIcon, ChevronRightIcon, CloseCircleIcon, Flex, FlexGap, 
 import { ReactNode, useMemo } from 'react'
 import semver from 'semver'
 import { styled } from 'styled-components'
-import { getSnapshotDeepLink } from 'views/Idos/helpers/getSnapshotLink'
+import { getSnapshotDeepLink } from '../../helpers/getSnapshotLink'
 
 export const CardWrapper = styled.div`
   background: ${({ theme }) => (theme.isDark ? '#13393C' : '#EEFBFC')};

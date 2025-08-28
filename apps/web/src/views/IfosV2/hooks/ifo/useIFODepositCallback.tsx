@@ -10,33 +10,19 @@ import { logger } from 'utils/datadog'
 import { erc20Abi, WriteContractReturnType, zeroAddress } from 'viem'
 import { userRejectedError } from 'views/Swap/V3Swap/hooks/useSendSwapTransaction'
 import { useAccount, useWriteContract } from 'wagmi'
-import {
-  useW3WAccountSign,
-  W3WSignAlreadyParticipatedError,
-  W3WSignNotSupportedError,
-  W3WSignRestrictedError,
-} from '../w3w/useW3WAccountSign'
-import { useIDOContract } from './useIDOContract'
-import { useIDOPoolInfo } from './useIDOPoolInfo'
-import { useIDOUserInfo } from './useIDOUserInfo'
+import { useIFOContract } from './useIFOContract'
+import { useIFOPoolInfo } from './useIFOPoolInfo'
+import { useIFOUserInfo } from './useIFOUserInfo'
 
-class W3WSignError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'W3WSignError'
-  }
-}
-
-export const useIDODepositCallback = () => {
-  const idoContract = useIDOContract()
+export const useIFODepositCallback = () => {
+  const ifoContract = useIFOContract()
   const { t } = useTranslation()
   const { address: account } = useAccount()
   const { toastSuccess, toastWarning } = useToast()
   const [, setLatestTxReceipt] = useLatestTxReceipt()
-  const { data: poolInfo } = useIDOPoolInfo()
+  const { data: poolInfo } = useIFOPoolInfo()
   const { fetchWithCatchTxError, loading: isPending } = useCatchTxError({ throwUserRejectError: true })
-  const { refetch } = useIDOUserInfo()
-  const sign = useW3WAccountSign()
+  const { refetch } = useIFOUserInfo()
   const { writeContractAsync } = useWriteContract()
 
   const deposit = useCallback(
@@ -45,7 +31,7 @@ export const useIDODepositCallback = () => {
       amount: CurrencyAmount<Currency>,
       onFinish?: () => void,
     ): Promise<WriteContractReturnType | undefined> => {
-      if (!account || !idoContract?.write || (!pid && pid !== 0)) return
+      if (!account || !ifoContract?.write || (!pid && pid !== 0)) return
 
       const depositAddress = amount.currency.isNative ? zeroAddress : amount.currency.address
       const poolToken = pid === 0 ? poolInfo?.pool0Info?.poolToken : poolInfo?.pool1Info?.poolToken
@@ -58,25 +44,18 @@ export const useIDODepositCallback = () => {
       const amountPool = amount.currency.isNative ? 0n : amount.quotient
       try {
         const receipt = await fetchWithCatchTxError(async () => {
-          const { signature, expireAt } = await sign()
-
           if (amount.currency.isToken) {
             await writeContractAsync({
               address: amount.currency.address,
               abi: erc20Abi,
               functionName: 'approve',
-              args: [idoContract.address, amount.quotient],
+              args: [ifoContract.address, amount.quotient],
             })
           }
-
-          if (!signature || !expireAt) {
-            throw new W3WSignError('Invalid signature or expiredAt')
-          }
-
           // TODO: IFO v10 depositPool only takes amount and pid
-          return idoContract.write.depositPool([amountPool, pid], {
+          return ifoContract.write.depositPool([amountPool, pid], {
             account,
-            chain: idoContract.chain,
+            chain: ifoContract.chain,
             value,
           })
         })
@@ -85,13 +64,7 @@ export const useIDODepositCallback = () => {
           toastSuccess(t('Deposit successful'), <ToastDescriptionWithTx bscTrace txHash={receipt.transactionHash} />)
         }
       } catch (error) {
-        if (error instanceof W3WSignRestrictedError) {
-          toastWarning(t('Restricted address detected'), t('You cannot participate in this TGE'))
-        } else if (error instanceof W3WSignNotSupportedError) {
-          toastWarning(t('Method not support '), t('Please upgrade your wallet app'))
-        } else if (error instanceof W3WSignAlreadyParticipatedError) {
-          toastWarning(t('Account Already Participated'), t('You have already participated in this TGE'))
-        } else if (userRejectedError(error)) {
+        if (userRejectedError(error)) {
           toastWarning(
             t('You canceled deposit'),
             t(`You didn't confirm %symbol% deposit in your wallet`, {
@@ -101,13 +74,13 @@ export const useIDODepositCallback = () => {
         }
         console.error(error)
         logger.error(
-          '[ido]: Error deposit ',
+          '[ifo]: Error deposit ',
           {
             error,
             account,
-            chainId: idoContract?.chain?.id,
+            chainId: ifoContract?.chain?.id,
             amount: amount?.quotient,
-            address: idoContract?.address,
+            address: ifoContract?.address,
           },
           error instanceof Error ? error : new Error('unknown error'),
         )
@@ -118,11 +91,10 @@ export const useIDODepositCallback = () => {
     },
     [
       account,
-      idoContract,
+      ifoContract,
       poolInfo?.pool0Info?.poolToken,
       poolInfo?.pool1Info?.poolToken,
       fetchWithCatchTxError,
-      sign,
       writeContractAsync,
       setLatestTxReceipt,
       toastSuccess,

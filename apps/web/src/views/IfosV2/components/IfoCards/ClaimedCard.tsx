@@ -2,10 +2,10 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Button, Card, CardBody, FlexGap, Text } from '@pancakeswap/uikit'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import useTheme from 'hooks/useTheme'
-import { useIDOCurrencies } from 'views/Idos/hooks/ido/useIDOCurrencies'
-import { IDOUserStatus } from 'views/Idos/hooks/ido/useIDOUserStatus'
 import { useChainId } from 'wagmi'
-import { formatDollarAmount } from './IdoDepositButton'
+import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
+import { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import { formatDollarAmount } from './IfoDepositButton'
 
 declare global {
   interface Window {
@@ -21,7 +21,7 @@ declare global {
 }
 
 export const ClaimedCard: React.FC<{
-  userStatus: IDOUserStatus | undefined
+  userStatus: IFOUserStatus | undefined
   pid: number
 }> = ({ userStatus, pid }) => {
   const { t } = useTranslation()
@@ -30,7 +30,7 @@ export const ClaimedCard: React.FC<{
   const chainId = useChainId()
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
   const claimableAmount = userStatus?.claimableAmount?.toSignificant(6)
-  const { offeringCurrency } = useIDOCurrencies()
+  const { offeringCurrency } = useIFOCurrencies()
   const amountInDollar = useStablecoinPriceAmount(
     offeringCurrency ?? undefined,
     claimableAmount !== undefined && Number.isFinite(+claimableAmount) ? +claimableAmount : undefined,

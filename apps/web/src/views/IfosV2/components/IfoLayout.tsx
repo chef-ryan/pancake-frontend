@@ -1,10 +1,10 @@
 import { Box } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
 
-const IdoLayout = styled(Box)`
+const IfoLayout = styled(Box)`
   background-color: ${({ theme }) => theme.colors.gradientBubblegum};
 `
-export const IdoLayoutWrapper = styled(IdoLayout)`
+export const IfoLayoutWrapper = styled(IfoLayout)`
   column-gap: 32px;
   display: grid;
   grid-template-columns: 1fr;
@@ -14,4 +14,4 @@ export const IdoLayoutWrapper = styled(IdoLayout)`
   }
 `
 
-export default IdoLayout
+export default IfoLayout

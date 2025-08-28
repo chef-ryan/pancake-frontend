@@ -7,8 +7,6 @@ import {
   Button,
   Flex,
   FlexGap,
-  Heading,
-  Image,
   LazyAnimatePresence,
   Loading,
   ModalBody,
@@ -18,7 +16,6 @@ import {
   Text,
   domAnimation,
   useModalV2,
-  useTooltip,
 } from '@pancakeswap/uikit'
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
@@ -31,13 +28,11 @@ import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { useAccount } from 'wagmi'
 
 import { getIsAndroid, isInBinance } from '@binance/w3w-utils'
-import { ASSET_CDN } from 'config/constants/endpoints'
-import { logGTMIdoDepositEvent } from 'utils/customGTMEventTracking'
-import { useIDOConfig } from 'views/Idos/hooks/ido/useIDOConfig'
-import { useIDODuration } from 'views/Idos/hooks/ido/useIDODuration'
-import type { IDOUserStatus } from 'views/Idos/hooks/ido/useIDOUserStatus'
-import { VerifyStatus, useW3WAccountVerify } from 'views/Idos/hooks/w3w/useW3WAccountVerify'
-import { useIDODepositCallback } from '../../hooks/ido/useIDODepositCallback'
+import { logGTMIfoDepositEvent } from 'utils/customGTMEventTracking'
+import { useIFOConfig } from '../../hooks/ifo/useIFOConfig'
+import { useIFODuration } from '../../hooks/ifo/useIFODuration'
+import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import { useIFODepositCallback } from '../../hooks/ifo/useIFODepositCallback'
 
 export const formatDollarAmount = (amount: number) => {
   if (amount > 0 && amount < 0.01) {
@@ -46,20 +41,19 @@ export const formatDollarAmount = (amount: number) => {
   return formatNumber(amount)
 }
 
-export const IdoDepositButton: React.FC<{
-  userStatus: IDOUserStatus | undefined
+export const IfoDepositButton: React.FC<{
+  userStatus: IFOUserStatus | undefined
   pid: number
   type: 'add' | 'deposit'
 }> = ({ userStatus, type, pid }) => {
   const { t } = useTranslation()
   const { onDismiss, onOpen, isOpen } = useModalV2()
-  const { isOpen: isUnverifiedOpen, onOpen: onUnverifiedOpen, onDismiss: onUnverifiedDismiss } = useModalV2()
   const [value, setValue] = useState('')
   const isAndroid = getIsAndroid()
   const isBinance = isInBinance()
 
   const stakeCurrency = userStatus?.stakedAmount?.currency
-  const { maxStakePerUsers, duration } = useIDOConfig()
+  const { maxStakePerUsers, duration } = useIFOConfig()
   const maxStakePerUser = useMemo(() => {
     if (!stakeCurrency) return undefined
     if (maxStakePerUsers[0]?.currency.equals(stakeCurrency)) {
@@ -71,7 +65,7 @@ export const IdoDepositButton: React.FC<{
   const { address: account } = useAccount()
   const inputBalance = useCurrencyBalance(account ?? undefined, stakeCurrency ?? undefined)
   const balance = stakeCurrency ? formatAmount(inputBalance, 6) : undefined
-  const { deposit, isPending: isLoading } = useIDODepositCallback()
+  const { deposit, isPending: isLoading } = useIFODepositCallback()
 
   const maxAmountInput = useMemo(() => maxAmountSpend(inputBalance), [inputBalance])
 
@@ -143,37 +137,13 @@ export const IdoDepositButton: React.FC<{
   )
   const isInputloading = inputBalance === undefined
 
-  const { verifyStatus } = useW3WAccountVerify()
-
   const disabled = useMemo(() => {
     return maxDepositExceeded || isUserInsufficientBalance
   }, [maxDepositExceeded, isUserInsufficientBalance])
 
   const handleDeposit = useCallback(() => {
-    if (verifyStatus === VerifyStatus.eligible) {
-      onOpen()
-    } else {
-      onUnverifiedOpen()
-    }
-  }, [verifyStatus, onOpen, onUnverifiedOpen])
-
-  useEffect(() => {
-    if (verifyStatus === VerifyStatus.eligible && isUnverifiedOpen) {
-      onUnverifiedDismiss()
-    }
-  }, [isUnverifiedOpen, onUnverifiedDismiss, verifyStatus])
-
-  const { targetRef, tooltip } = useTooltip(
-    <Text>
-      {t(
-        'Please choose a Binance keyless wallet. If you do not have one, go to Binance wallet management page to create one. ',
-      )}
-    </Text>,
-    {
-      placement: 'top-end',
-      manualVisible: isUnverifiedOpen && verifyStatus !== VerifyStatus.restricted,
-    },
-  )
+    onOpen()
+  }, [onOpen])
 
   const inputRef = useRef<HTMLDivElement>(null)
 
@@ -198,16 +168,12 @@ export const IdoDepositButton: React.FC<{
   const [depositing, setDepositing] = useState(false)
   const handleConfirmDeposit = async () => {
     if (depositing) return
-    if (verifyStatus !== VerifyStatus.eligible || !isBinance) {
-      onUnverifiedOpen()
-      return
-    }
     if (depositAmount) {
       setDepositing(true)
       try {
         const hash = await deposit(pid, depositAmount, handleCloseModal)
         if (hash) {
-          logGTMIdoDepositEvent()
+          logGTMIfoDepositEvent()
         }
       } finally {
         setDepositing(false)
@@ -215,21 +181,7 @@ export const IdoDepositButton: React.FC<{
     }
   }
 
-  const durationText = useIDODuration(duration)
-
-  useEffect(() => {
-    if (account && isBinance && verifyStatus === VerifyStatus.ineligible) {
-      onUnverifiedOpen()
-    }
-  }, [account, isBinance, verifyStatus, onUnverifiedOpen])
-
-  // const { disconnectAsync } = useDisconnect()
-  const handleUnverifiedDismiss = () => {
-    onUnverifiedDismiss()
-    // if (account && isBinance && verifyStatus === VerifyStatus.ineligible) {
-    //   disconnectAsync()
-    // }
-  }
+  const durationText = useIFODuration(duration)
 
   // issue: https://issues.chromium.org/issues/41177736
   // android may not trigger blur event when keyboard hide
@@ -239,7 +191,7 @@ export const IdoDepositButton: React.FC<{
       Math.min(window.innerWidth / window.screen.width, window.innerHeight / window.screen.height) < 0.7
     if (
       document.activeElement?.tagName === 'INPUT' &&
-      document.activeElement?.id === `idoStakeCurrency${stakeCurrency?.symbol}` &&
+      document.activeElement?.id === `ifoStakeCurrency${stakeCurrency?.symbol}` &&
       !isSoftKeyboardOpen
     ) {
       ;(document.activeElement as HTMLInputElement).blur()
@@ -267,7 +219,7 @@ export const IdoDepositButton: React.FC<{
           <ModalBody p="16px" pt="28px">
             <FlexGap flexDirection="column" gap="8px" ref={inputRef}>
               <SwapUIV2.CurrencyInputPanelSimplify
-                id={`idoStakeCurrency${stakeCurrency?.symbol ?? ''}`}
+                id={`ifoStakeCurrency${stakeCurrency?.symbol ?? ''}`}
                 disabled={false}
                 error={maxStakePerUser && depositAmount?.greaterThan(maxStakePerUser) && !maxStakePerUser.equalTo(0)}
                 value={value}
@@ -399,42 +351,6 @@ export const IdoDepositButton: React.FC<{
             </FlexGap>
             {isAndroid && isBinance ? <Box height="60px" width="100%" /> : null}
           </ModalBody>
-        </ModalContainer>
-      </ModalV2>
-      <ModalV2 isOpen={isUnverifiedOpen} title="" onDismiss={handleUnverifiedDismiss} closeOnOverlayClick>
-        <>
-          <Box style={{ position: 'fixed', right: '10px', top: '0' }} width="5px" height="5px" ref={targetRef} />
-          {tooltip}
-        </>
-        <ModalContainer>
-          {verifyStatus === VerifyStatus.restricted ? (
-            <ModalBody p="16px" pt="30px">
-              <FlexGap flexDirection="column" gap="16px">
-                <Flex justifyContent="center">
-                  <Image src={`${ASSET_CDN}/web/wallets/binance-w3w.png`} width={40} height={40} />
-                </Flex>
-                <Text>{account}</Text>
-                <Text>{t('Due to regulatory requirements, you are not eligible to participate in.')}</Text>
-              </FlexGap>
-              {isAndroid && isBinance ? <Box height="60px" width="100%" /> : null}
-            </ModalBody>
-          ) : (
-            <ModalBody p="16px" pt="30px">
-              <Heading textAlign="center" fontSize="20px" bold mb="16px">
-                {t('Binance Keyless Wallet')}
-              </Heading>
-              <FlexGap flexDirection="column" gap="16px">
-                <Flex justifyContent="center">
-                  <Image src={`${ASSET_CDN}/web/wallets/binance-w3w.png`} width={40} height={40} />
-                </Flex>
-                <Text width="100%" style={{ lineBreak: 'anywhere' }}>
-                  {account}
-                </Text>
-                <Text>{t('This IDO subscription is exclusively available using the Binance Keyless Wallet.')}</Text>
-              </FlexGap>
-              {isAndroid && isBinance ? <Box height="60px" width="100%" /> : null}
-            </ModalBody>
-          )}
         </ModalContainer>
       </ModalV2>
     </>

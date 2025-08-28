@@ -2,10 +2,10 @@ import { useTranslation } from '@pancakeswap/localization'
 import { FlexGap, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
-import type { IDOUserStatus } from 'views/Idos/hooks/ido/useIDOUserStatus'
-import { IdoDepositButton, formatDollarAmount } from './IdoDepositButton'
+import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import { IfoDepositButton, formatDollarAmount } from './IfoDepositButton'
 
-export const StakedDisplay: React.FC<{ userStatus: IDOUserStatus; pid: number }> = ({ userStatus, pid }) => {
+export const StakedDisplay: React.FC<{ userStatus: IFOUserStatus; pid: number }> = ({ userStatus, pid }) => {
   const { t } = useTranslation()
   const stakedAmount = userStatus?.stakedAmount
   const stakeCurrency = userStatus?.stakedAmount?.currency
@@ -46,7 +46,7 @@ export const StakedDisplay: React.FC<{ userStatus: IDOUserStatus; pid: number }>
           </FlexGap>
         </FlexGap>
       </FlexGap>
-      <IdoDepositButton userStatus={userStatus} type="add" pid={pid} />
+      <IfoDepositButton userStatus={userStatus} type="add" pid={pid} />
     </FlexGap>
   )
 }

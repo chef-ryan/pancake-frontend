@@ -2,9 +2,9 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, CardHeader, Heading, Text } from '@pancakeswap/uikit'
 import FoldableText from 'components/FoldableSection/FoldableText'
-import { IDOFAQs } from 'views/Idos/config'
+import { IFOFAQs } from '../../config'
 
-const IdoQuestions: React.FC<{ faqs: IDOFAQs }> = ({ faqs }) => {
+const IfoQuestions: React.FC<{ faqs: IFOFAQs }> = ({ faqs }) => {
   const { t } = useTranslation()
 
   return (
@@ -27,4 +27,4 @@ const IdoQuestions: React.FC<{ faqs: IDOFAQs }> = ({ faqs }) => {
   )
 }
 
-export default IdoQuestions
+export default IfoQuestions
