@@ -1,8 +1,8 @@
 import { ASSET_CDN } from 'config/constants/endpoints'
-import bgImage from '../images/ido-banner.png'
+import bgImage from '../images/ifo-banner.png'
 
-export function getBannerUrl(idoId: string) {
-  return `${ASSET_CDN}/web/ido/${idoId}-banner.png`
+export function getBannerUrl(ifoId: string) {
+  return `${ASSET_CDN}/web/ifo/${ifoId}-banner.png`
 }
 
 export function getTempBannerUrl() {

@@ -6,9 +6,9 @@ import { ASSET_CDN } from 'config/constants/endpoints'
 import { ReactNode } from 'react'
 import type { Address } from 'viem'
 
-export type IDOFAQs = Array<{ title: ReactNode; description: ReactNode }>
+export type IFOFAQs = Array<{ title: ReactNode; description: ReactNode }>
 
-export type IDOConfig = {
+export type IFOConfig = {
   id: string
   icon: string
   projectUrl: string
@@ -19,17 +19,17 @@ export type IDOConfig = {
   description: ReactNode
   ineligibleContent?: ReactNode
   contractAddress: Address
-  faqs?: IDOFAQs
+  faqs?: IFOFAQs
 }
 
-export const idoConfigDict: Record<string, IDOConfig> = {
+export const ifoConfigDict: Record<string, IFOConfig> = {
   // TODO: IFO v10 testing configuration on Tenderly Virtual Network
   ifov10test: {
     id: 'ifov10test',
-    icon: '/images/ido/test.png', // TODO: Replace with actual icon
+    icon: '/images/ifo/test.png', // TODO: Replace with actual icon
     projectUrl: 'https://pancakeswap.finance/',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/test-banner.png`, // TODO: Replace with actual banner
+    bannerUrl: `${ASSET_CDN}/web/ifo/test-banner.png`, // TODO: Replace with actual banner
     contractAddress: '0xFE8100024131400608e00A6B1E6dc92b6567097A', // IFO v10 contract address
     tgeTitle: <Trans>IFO v10 Test - USDT Offering</Trans>,
     tgeSubtitle: <Trans>Testing on Tenderly Virtual Network</Trans>,
@@ -87,10 +87,10 @@ export const idoConfigDict: Record<string, IDOConfig> = {
   },
   myshell: {
     id: 'myshell',
-    icon: '/images/ido/myshell.png',
+    icon: '/images/ifo/myshell.png',
     projectUrl: 'https://myshell.ai/',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/myshell-banner.png`,
+    bannerUrl: `${ASSET_CDN}/web/ifo/myshell-banner.png`,
     contractAddress: '0x0D54115eF8474C48103A1e3b41464BF3dB00E4B2',
     tgeTitle: <Trans>MyShell's Token Generation Event</Trans>,
     tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
@@ -106,9 +106,9 @@ export const idoConfigDict: Record<string, IDOConfig> = {
   bubblemaps: {
     id: 'bubblemaps',
     projectUrl: 'https://bubblemaps.io/',
-    icon: '/images/ido/bubblemaps.png',
+    icon: '/images/ifo/bubblemaps.png',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/bubblemaps-banner.png`,
+    bannerUrl: `${ASSET_CDN}/web/ifo/bubblemaps-banner.png`,
     contractAddress: '0xb330A50d27341730b7B3fD285B150e5742C3b090',
     tgeTitle: <Trans>Bubblemaps's Token Generation Event</Trans>,
     tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
@@ -233,9 +233,9 @@ export const idoConfigDict: Record<string, IDOConfig> = {
   bedrock: {
     id: 'bedrock',
     projectUrl: 'https://www.bedrock.technology/',
-    icon: '/images/ido/bedrock.png',
+    icon: '/images/ifo/bedrock.png',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/bedrock-banner.png`,
+    bannerUrl: `${ASSET_CDN}/web/ifo/bedrock-banner.png`,
     contractAddress: '0xA7082d7935830e476932196D241D5Db60529B4Af',
     tgeTitle: <Trans>Bedrock's Token Generation Event</Trans>,
     tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
@@ -316,9 +316,9 @@ export const idoConfigDict: Record<string, IDOConfig> = {
   particle: {
     id: 'particle',
     projectUrl: 'https://particle.network/',
-    icon: '/images/ido/particle.png',
+    icon: '/images/ifo/particle.png',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/particle-banner.png`,
+    bannerUrl: `${ASSET_CDN}/web/ifo/particle-banner.png`,
     contractAddress: '0x935de2dBc611F4b01b2D8b14AE5c58d940d2f719',
     tgeTitle: <Trans>Particle Network's Token Generation Event</Trans>,
     tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
@@ -404,9 +404,9 @@ export const idoConfigDict: Record<string, IDOConfig> = {
   kiloex: {
     id: 'kiloex',
     projectUrl: 'https://www.kiloex.io/',
-    icon: '/images/ido/kiloex.png',
+    icon: '/images/ifo/kiloex.png',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/kiloex-banner.png`,
+    bannerUrl: `${ASSET_CDN}/web/ifo/kiloex-banner.png`,
     contractAddress: '0x61222059aAC449252949B3911AC1e325966F31eC',
     tgeTitle: <Trans>KiloEx's Token Generation Event</Trans>,
     tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
@@ -490,9 +490,9 @@ export const idoConfigDict: Record<string, IDOConfig> = {
   pump: {
     id: 'pump',
     projectUrl: 'https://pumpbtc.xyz/',
-    icon: '/images/ido/pump.svg',
+    icon: '/images/ifo/pump.svg',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/purgent-banner.png`,
+    bannerUrl: `${ASSET_CDN}/web/ifo/purgent-banner.png`,
     contractAddress: '0x2b1CaFd7aD06A548B13E2CfCaC4775FC4c3891AC',
     tgeTitle: <Trans>Purgent's Token Generation Event</Trans>,
     tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
@@ -570,10 +570,10 @@ export const idoConfigDict: Record<string, IDOConfig> = {
   stakestone: {
     id: 'stakestone',
     projectUrl: 'https://stakestone.io/',
-    icon: '/images/ido/stakestone.svg', // Token Icon updated from provided assets
+    icon: '/images/ifo/stakestone.svg', // Token Icon updated from provided assets
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/stakestone-banner.png`, // Updated Banner URL
-    contractAddress: '0xf87c2D0869e4864788e3EfF1f0354d9d3B19907b', // Updated IDO Contract Address
+    bannerUrl: `${ASSET_CDN}/web/ifo/stakestone-banner.png`, // Updated Banner URL
+    contractAddress: '0xf87c2D0869e4864788e3EfF1f0354d9d3B19907b', // Updated IFO Contract Address
     tgeTitle: <Trans>StakeStone Token Generation Event</Trans>,
     tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
     description: (
@@ -660,9 +660,9 @@ export const idoConfigDict: Record<string, IDOConfig> = {
   mindnetwork: {
     id: 'mindnetwork',
     projectUrl: 'https://www.mindnetwork.xyz/',
-    icon: '/images/ido/mindnetwork.svg',
+    icon: '/images/ifo/mindnetwork.svg',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/mindnetwork-banner.png`,
+    bannerUrl: `${ASSET_CDN}/web/ifo/mindnetwork-banner.png`,
     contractAddress: '0x000D84716E4ffeFFa96Bb70F9a1a2C233586e0F3',
     tgeTitle: <Trans>Mind Network's Token Generation Event</Trans>,
     tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
@@ -799,9 +799,9 @@ export const idoConfigDict: Record<string, IDOConfig> = {
   lorenzoprotocol: {
     id: 'lorenzoprotocol',
     projectUrl: 'https://lorenzo-protocol.xyz/',
-    icon: '/images/ido/lorenzo.svg',
+    icon: '/images/ifo/lorenzo.svg',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/lorenzo-banner.svg`,
+    bannerUrl: `${ASSET_CDN}/web/ifo/lorenzo-banner.svg`,
     contractAddress: '0x8f62d34113A1dE746eAac3b1F2D4CEeC9d393027',
     tgeTitle: `Lorenzo's Token Generation Event`,
     tgeSubtitle: 'Exclusively via Binance Keyless Wallet',
@@ -934,9 +934,9 @@ export const idoConfigDict: Record<string, IDOConfig> = {
   hyperlane_0421: {
     id: 'hyperlane_0421',
     projectUrl: 'https://hyperlane.xyz/',
-    icon: '/images/ido/hyper.svg',
+    icon: '/images/ifo/hyper.svg',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/hyperlane-banner.svg`,
+    bannerUrl: `${ASSET_CDN}/web/ifo/hyperlane-banner.svg`,
     contractAddress: '0x445162BC2B73EC0631486F70A4a716e7ea2d9A4e',
     tgeTitle: `Hyperlane's Token Generation Event`,
     tgeSubtitle: 'Exclusively via Binance Keyless Wallet',

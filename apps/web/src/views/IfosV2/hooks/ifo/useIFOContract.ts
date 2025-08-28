@@ -1,48 +1,48 @@
 // TODO: Using IFO v10 ABI for testing
-// import { idoABI } from 'config/abi/ido'
+// import { ifoABI } from 'config/abi/ifo'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { getContract } from 'utils/contractHelpers'
 import { createPublicClient, custom, http, isAddress, type WalletClient } from 'viem'
 import { bsc } from 'viem/chains'
-import { idoConfigDict } from 'views/Idos/config'
 import { useWalletClient } from 'wagmi'
-import { ifoV10Abi as idoABI } from '../../abi/ifoV10Abi'
+import { ifoConfigDict } from '../../config'
+import { ifoV10Abi as ifoABI } from '../../abi/ifoV10Abi'
 
-export const useIDOContract = () => {
+export const useIFOContract = () => {
   const { chainId } = useActiveChainId()
   const { data: signer } = useWalletClient()
   const { query } = useRouter()
   const ifoId = query.ifo as string
 
-  return useMemo(() => getIDOContract(ifoId, signer ?? undefined, chainId), [chainId, signer, ifoId])
+  return useMemo(() => getIFOContract(ifoId, signer ?? undefined, chainId), [chainId, signer, ifoId])
 }
 
-function getIdoAddressFromUrl(): `0x${string}` | null {
+function getIfoAddressFromUrl(): `0x${string}` | null {
   if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') return null
 
   if (typeof window !== 'undefined') {
     const urlParams = new URLSearchParams(window.location.search)
-    return urlParams.get('testIdoAddress') as `0x${string}` | null
+    return urlParams.get('testIfoAddress') as `0x${string}` | null
   }
 
-  return process.env.NEXT_PUBLIC_BSC_TESTNET_IDO_ADDRESS as `0x${string}` | null
+  return process.env.NEXT_PUBLIC_BSC_TESTNET_IFO_ADDRESS as `0x${string}` | null
 }
 
-function getIDOAddress(ifoId: string): `0x${string}` {
-  const contractAddressFromQuery = getIdoAddressFromUrl()
+function getIFOAddress(ifoId: string): `0x${string}` {
+  const contractAddressFromQuery = getIfoAddressFromUrl()
   if (contractAddressFromQuery && isAddress(contractAddressFromQuery)) {
     return contractAddressFromQuery
   }
-  return idoConfigDict[ifoId]?.contractAddress
+  return ifoConfigDict[ifoId]?.contractAddress
 }
 
-function getIDOContract(ifoId: string, signer?: WalletClient, chainId?: number) {
-  const idoAddress = getIDOAddress(ifoId)
+function getIFOContract(ifoId: string, signer?: WalletClient, chainId?: number) {
+  const ifoAddress = getIFOAddress(ifoId)
   return getContract({
-    address: idoAddress,
-    abi: idoABI,
+    address: ifoAddress,
+    abi: ifoABI,
     signer,
     chainId,
     publicClient: createPublicClient({

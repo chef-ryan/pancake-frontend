@@ -4,35 +4,35 @@ import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import ConnectW3WButton from 'components/ConnectW3WButton'
 import useTheme from 'hooks/useTheme'
 import { useMemo } from 'react'
-import { logGTMIdoConnectWalletEvent } from 'utils/customGTMEventTracking'
-import type { IDOStatus } from 'views/Idos/hooks/ido/usdIDOStatus'
-import { useIDOConfig } from 'views/Idos/hooks/ido/useIDOConfig'
-import { useIDOCurrencies } from 'views/Idos/hooks/ido/useIDOCurrencies'
-import type { IDOUserStatus } from 'views/Idos/hooks/ido/useIDOUserStatus'
-import { VerifyStatus, useW3WAccountVerify } from 'views/Idos/hooks/w3w/useW3WAccountVerify'
+import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import { useAccount } from 'wagmi'
+import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
+import { useIFOConfig } from '../../hooks/ifo/useIFOConfig'
+import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
+import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import { VerifyStatus, useW3WAccountVerify } from '../../hooks/w3w/useW3WAccountVerify'
 import { useCurrentIfoConfig } from '../../hooks/useCurrentIfoConfig'
 import { ClaimDisplay } from './ClaimDisplay'
 import { Divider } from './Divider'
-import { IdoDepositButton } from './IdoDepositButton'
+import { IfoDepositButton } from './IfoDepositButton'
 import { ComplianceCard, PreSaleEligibleCard, PreSaleInfoCard, SnapshotNotPassCard } from './PreSaleInfoCard'
 import { StakedDisplay } from './StakedDisplay'
 
-export const IdoStakeActionCard: React.FC<{
+export const IfoStakeActionCard: React.FC<{
   pid: number
-  userStatus: IDOUserStatus | undefined
-  idoStatus: IDOStatus
-}> = ({ userStatus, idoStatus, pid }) => {
+  userStatus: IFOUserStatus | undefined
+  ifoStatus: IFOStatus
+}> = ({ userStatus, ifoStatus, pid }) => {
   const { t } = useTranslation()
   const { address: account } = useAccount()
   const { theme, isDark } = useTheme()
   const { verifyStatus, isLoading: isPendingVerify } = useW3WAccountVerify()
-  const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIDOCurrencies()
+  const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
 
   const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
-  const { status, raiseAmounts, pricePerTokens, saleAmounts } = useIDOConfig()
+  const { status, raiseAmounts, pricePerTokens, saleAmounts } = useIFOConfig()
   const { id, ineligibleContent } = useCurrentIfoConfig() ?? {}
 
   const [raiseAmount, pricePerToken, saleAmount] = useMemo(() => {
@@ -51,7 +51,7 @@ export const IdoStakeActionCard: React.FC<{
   )
 
   const handleConnectWallet = (e) => {
-    logGTMIdoConnectWalletEvent(status === 'coming_soon')
+    logGTMIfoConnectWalletEvent(status === 'coming_soon')
   }
 
   return (
@@ -84,7 +84,7 @@ export const IdoStakeActionCard: React.FC<{
                   ) : ['idle', 'live'].includes(status) && verifyStatus === VerifyStatus.snapshotNotPass ? (
                     <SnapshotNotPassCard projectId={id} />
                   ) : (
-                    <IdoDepositButton userStatus={userStatus} type="deposit" pid={pid} />
+                    <IfoDepositButton userStatus={userStatus} type="deposit" pid={pid} />
                   )
                 ) : (
                   <ConnectW3WButton width="100%" onClick={handleConnectWallet} />
@@ -113,7 +113,7 @@ export const IdoStakeActionCard: React.FC<{
               <FlexGap justifyContent="space-between">
                 <Text color="textSubtle">{t('Total committed')}</Text>
                 <Text>
-                  {idoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
+                  {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
                 </Text>
               </FlexGap>
               <FlexGap justifyContent="space-between">
@@ -121,10 +121,10 @@ export const IdoStakeActionCard: React.FC<{
                 <FlexGap flexDirection="column" alignItems="flex-end">
                   <FlexGap gap="3px">
                     <Text>
-                      {idoStatus.progress.toFixed(2)} % {idoStatus.progress.greaterThan(1) && '🎉'}
+                      {ifoStatus.progress.toFixed(2)} % {ifoStatus.progress.greaterThan(1) && '🎉'}
                     </Text>
                   </FlexGap>
-                  {idoStatus.progress.greaterThan(1) && (
+                  {ifoStatus.progress.greaterThan(1) && (
                     <FlexGap gap="3px">
                       <Text>{t('Oversubscribed')}</Text>
                       <FlexGap ref={targetRef}>

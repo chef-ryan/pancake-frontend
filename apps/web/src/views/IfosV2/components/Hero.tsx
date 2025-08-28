@@ -28,7 +28,7 @@ const Hero = () => {
   //   if (howToElem != null) {
   //     howToElem.scrollIntoView()
   //   } else {
-  //     router.push('/ido#ifo-how-to')
+  //     router.push('/ifo#ifo-how-to')
   //   }
   // }
 

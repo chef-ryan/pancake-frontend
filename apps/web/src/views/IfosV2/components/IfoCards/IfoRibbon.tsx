@@ -63,7 +63,7 @@ const ChainBoardContainer = styled(Box)`
   }
 `
 
-export const IdoRibbon = ({
+export const IfoRibbon = ({
   ifoStatus,
   plannedStartTime,
   startTime,

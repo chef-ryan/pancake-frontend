@@ -1,25 +1,25 @@
-import { IDoCurrentCard } from './components/IdoCards/IdoCards'
-import IdoContainer from './components/IdoContainer'
-import type { IDOConfig } from './config'
+import { IfoCurrentCard } from './components/IfoCards/IfoCards'
+import IfoContainer from './components/IfoContainer'
+import type { IFOConfig } from './config'
 
 interface TypeProps {
-  idoConfig: IDOConfig | undefined
+  ifoConfig: IFOConfig | undefined
 }
 
-const CurrentIdo: React.FC<React.PropsWithChildren<TypeProps>> = ({ idoConfig }) => {
+const CurrentIfo: React.FC<React.PropsWithChildren<TypeProps>> = ({ ifoConfig }) => {
   const steps = <></>
 
-  if (!idoConfig) {
+  if (!ifoConfig) {
     return null
   }
 
   return (
-    <IdoContainer
-      idoSection={<IDoCurrentCard idoId={idoConfig.id} bannerUrl={idoConfig.bannerUrl} />}
-      idoSteps={steps}
-      idoFaqs={idoConfig.faqs}
+    <IfoContainer
+      ifoSection={<IfoCurrentCard ifoId={ifoConfig.id} bannerUrl={ifoConfig.bannerUrl} />}
+      ifoSteps={steps}
+      ifoFaqs={ifoConfig.faqs}
     />
   )
 }
 
-export default CurrentIdo
+export default CurrentIfo

@@ -16,9 +16,9 @@ import {
   W3WSignNotSupportedError,
   W3WSignRestrictedError,
 } from '../w3w/useW3WAccountSign'
-import { useIDOContract } from './useIDOContract'
-import { useIDOPoolInfo } from './useIDOPoolInfo'
-import { useIDOUserInfo } from './useIDOUserInfo'
+import { useIFOContract } from './useIFOContract'
+import { useIFOPoolInfo } from './useIFOPoolInfo'
+import { useIFOUserInfo } from './useIFOUserInfo'
 
 class W3WSignError extends Error {
   constructor(message: string) {
@@ -27,15 +27,15 @@ class W3WSignError extends Error {
   }
 }
 
-export const useIDODepositCallback = () => {
-  const idoContract = useIDOContract()
+export const useIFODepositCallback = () => {
+  const ifoContract = useIFOContract()
   const { t } = useTranslation()
   const { address: account } = useAccount()
   const { toastSuccess, toastWarning } = useToast()
   const [, setLatestTxReceipt] = useLatestTxReceipt()
-  const { data: poolInfo } = useIDOPoolInfo()
+  const { data: poolInfo } = useIFOPoolInfo()
   const { fetchWithCatchTxError, loading: isPending } = useCatchTxError({ throwUserRejectError: true })
-  const { refetch } = useIDOUserInfo()
+  const { refetch } = useIFOUserInfo()
   const sign = useW3WAccountSign()
   const { writeContractAsync } = useWriteContract()
 
@@ -45,7 +45,7 @@ export const useIDODepositCallback = () => {
       amount: CurrencyAmount<Currency>,
       onFinish?: () => void,
     ): Promise<WriteContractReturnType | undefined> => {
-      if (!account || !idoContract?.write || (!pid && pid !== 0)) return
+      if (!account || !ifoContract?.write || (!pid && pid !== 0)) return
 
       const depositAddress = amount.currency.isNative ? zeroAddress : amount.currency.address
       const poolToken = pid === 0 ? poolInfo?.pool0Info?.poolToken : poolInfo?.pool1Info?.poolToken
@@ -65,7 +65,7 @@ export const useIDODepositCallback = () => {
               address: amount.currency.address,
               abi: erc20Abi,
               functionName: 'approve',
-              args: [idoContract.address, amount.quotient],
+              args: [ifoContract.address, amount.quotient],
             })
           }
 
@@ -74,9 +74,9 @@ export const useIDODepositCallback = () => {
           }
 
           // TODO: IFO v10 depositPool only takes amount and pid
-          return idoContract.write.depositPool([amountPool, pid], {
+          return ifoContract.write.depositPool([amountPool, pid], {
             account,
-            chain: idoContract.chain,
+            chain: ifoContract.chain,
             value,
           })
         })
@@ -101,13 +101,13 @@ export const useIDODepositCallback = () => {
         }
         console.error(error)
         logger.error(
-          '[ido]: Error deposit ',
+          '[ifo]: Error deposit ',
           {
             error,
             account,
-            chainId: idoContract?.chain?.id,
+            chainId: ifoContract?.chain?.id,
             amount: amount?.quotient,
-            address: idoContract?.address,
+            address: ifoContract?.address,
           },
           error instanceof Error ? error : new Error('unknown error'),
         )
@@ -118,7 +118,7 @@ export const useIDODepositCallback = () => {
     },
     [
       account,
-      idoContract,
+      ifoContract,
       poolInfo?.pool0Info?.poolToken,
       poolInfo?.pool1Info?.poolToken,
       fetchWithCatchTxError,

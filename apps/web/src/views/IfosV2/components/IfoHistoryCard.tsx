@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, Card, CardBody, CardHeader, ExpandableButton, FlexGap, Text } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
-import { IfoRibbon } from 'views/Ifos/components/IfoFoldableCard/IfoRibbon'
+import { IfoRibbon } from './IfoCards/IfoRibbon'
 import { StyledLogo } from './Icons'
-import type { IDOConfig } from '../config'
+import type { IFOConfig } from '../config'
 
 const Header = styled(CardHeader)<{ $bannerUrl: string }>`
   width: 100%;
@@ -26,14 +26,14 @@ const DetailRow: React.FC<{ label: string; value: string }> = ({ label, value })
   </FlexGap>
 )
 
-const IfoHistoryCard: React.FC<{ ido: IDOConfig }> = ({ ido }) => {
+const IfoHistoryCard: React.FC<{ ifo: IFOConfig }> = ({ ifo }) => {
   const { t } = useTranslation()
   const [expanded, setExpanded] = useState(false)
 
   return (
     <Card mb="24px">
       <Box position="relative">
-        <Header $bannerUrl={ido.bannerUrl}>
+        <Header $bannerUrl={ifo.bannerUrl}>
           <ExpandableButton expanded={expanded} onClick={() => setExpanded((prev) => !prev)} />
         </Header>
         {expanded && <IfoRibbon ifoStatus="finished" plannedStartTime={0} startTime={0} endTime={0} />}
@@ -41,7 +41,7 @@ const IfoHistoryCard: React.FC<{ ido: IDOConfig }> = ({ ido }) => {
       {expanded && (
         <CardBody>
           <FlexGap gap="8px" mb="16px" alignItems="center">
-            {ido.icon && <StyledLogo size="40px" srcs={[ido.icon]} />}
+            {ifo.icon && <StyledLogo size="40px" srcs={[ifo.icon]} />}
             <FlexGap flexDirection="column">
               <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
                 {t('Total Sale')}

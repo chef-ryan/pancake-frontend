@@ -1,13 +1,13 @@
 import { Container } from '@pancakeswap/uikit'
 import IfoHistoryCard from './components/IfoHistoryCard'
-import { idoConfigDict } from './config'
+import { ifoConfigDict } from './config'
 
 const HistoryIfos: React.FC = () => {
-  const historyIfos = Object.values(idoConfigDict).slice(1)
+  const historyIfos = Object.values(ifoConfigDict).slice(1)
   return (
     <Container px="0">
-      {historyIfos.map((ido) => (
-        <IfoHistoryCard key={ido.id} ido={ido} />
+      {historyIfos.map((ifo) => (
+        <IfoHistoryCard key={ifo.id} ifo={ifo} />
       ))}
     </Container>
   )

@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
-import { IDOConfig, idoConfigDict } from '../../config'
+import { IFOConfig, ifoConfigDict } from '../config'
 
-export const useCurrentIfoConfig = (): IDOConfig | undefined => {
+export const useCurrentIfoConfig = (): IFOConfig | undefined => {
   const { query } = useRouter()
   const currentIfo = query.ifo as string | undefined
-  return idoConfigDict[currentIfo] || Object.values(idoConfigDict)[0]
+  return ifoConfigDict[currentIfo || ''] || Object.values(ifoConfigDict)[0]
 }

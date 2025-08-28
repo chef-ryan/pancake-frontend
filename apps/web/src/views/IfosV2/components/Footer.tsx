@@ -1,11 +1,11 @@
 import { BscScanIcon, CardBody, FlexGap, LanguageIcon, Link, Text } from '@pancakeswap/uikit'
 import useTheme from 'hooks/useTheme'
 import { useCurrentIfoConfig } from '../hooks/useCurrentIfoConfig'
-import { useIDOContract } from '../hooks/ido/useIDOContract'
+import { useIFOContract } from '../hooks/ifo/useIFOContract'
 
 export const Footer: React.FC = () => {
   const { theme } = useTheme()
-  const idoContract = useIDOContract()
+  const ifoContract = useIFOContract()
   const currentIfoConfig = useCurrentIfoConfig()
   return (
     <CardBody>
@@ -14,7 +14,7 @@ export const Footer: React.FC = () => {
           <Link href={currentIfoConfig?.projectUrl} target="_blank" rel="noopener noreferrer">
             <LanguageIcon width="24px" color={theme.colors.textSubtle} />
           </Link>
-          <Link href={`https://bscscan.com/address/${idoContract?.address}`} target="_blank" rel="noopener noreferrer">
+          <Link href={`https://bscscan.com/address/${ifoContract?.address}`} target="_blank" rel="noopener noreferrer">
             <BscScanIcon width="24px" color={theme.colors.textSubtle} />
           </Link>
         </FlexGap>

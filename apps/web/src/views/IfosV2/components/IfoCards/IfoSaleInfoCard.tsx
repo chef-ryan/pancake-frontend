@@ -6,21 +6,21 @@ import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import useTheme from 'hooks/useTheme'
 import { useMemo } from 'react'
-import { StyledLogo } from 'views/Idos/components/Icons'
-import { useIDOConfig } from 'views/Idos/hooks/ido/useIDOConfig'
-import { useIDOCurrencies } from 'views/Idos/hooks/ido/useIDOCurrencies'
-import { useIDODuration } from 'views/Idos/hooks/ido/useIDODuration'
+import { StyledLogo } from '../Icons'
+import { useIFOConfig } from '../../hooks/ifo/useIFOConfig'
+import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
+import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import { useCurrentIfoConfig } from '../../hooks/useCurrentIfoConfig'
 
 dayjs.extend(timezone)
 
-export const IdoSaleInfoCard: React.FC = () => {
+export const IfoSaleInfoCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
-  const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIDOCurrencies()
-  const { totalSalesAmount, status, duration, startTimestamp, endTimestamp } = useIDOConfig()
+  const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
+  const { totalSalesAmount, status, duration, startTimestamp, endTimestamp } = useIFOConfig()
   const { icon } = useCurrentIfoConfig() ?? {}
-  const preSaleDurationText = useIDODuration(duration)
+  const preSaleDurationText = useIFODuration(duration)
 
   const durationText = useMemo(() => {
     if (status !== 'finished') {

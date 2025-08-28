@@ -1,24 +1,24 @@
 import { useQuery } from '@tanstack/react-query'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
-import { useIDOContract } from './useIDOContract'
+import { useIFOContract } from './useIFOContract'
 
-export type IDOUserInfo = {
+export type IFOUserInfo = {
   amountPool: bigint
   claimedPool: boolean
 }
 
-export const useIDOUserInfo = () => {
+export const useIFOUserInfo = () => {
   const { chainId, account } = useAccountActiveChain()
-  const idoContract = useIDOContract()
+  const ifoContract = useIFOContract()
   const latestTxReceipt = useLatestTxReceipt()
 
   return useQuery({
-    queryKey: ['idoUserInfo', account, chainId, latestTxReceipt],
-    queryFn: async (): Promise<[IDOUserInfo, IDOUserInfo]> => {
-      if (!account || !idoContract) throw new Error('IDO contract not found')
+    queryKey: ['ifoUserInfo', account, chainId, latestTxReceipt],
+    queryFn: async (): Promise<[IFOUserInfo, IFOUserInfo]> => {
+      if (!account || !ifoContract) throw new Error('IFO contract not found')
 
-      const [amountPools, claimedPools] = await idoContract.read.viewUserInfo([
+      const [amountPools, claimedPools] = await ifoContract.read.viewUserInfo([
         account,
         [0, 1], // @note: hardcode for now, as we currently only support max 2 pool
       ])
@@ -34,6 +34,6 @@ export const useIDOUserInfo = () => {
         },
       ]
     },
-    enabled: !!account && !!idoContract,
+    enabled: !!account && !!ifoContract,
   })
 }

@@ -3,7 +3,7 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { getViemClients } from 'utils/viem'
 import type { Address } from 'viem'
-import { useIDOContract } from './useIDOContract'
+import { useIFOContract } from './useIFOContract'
 
 export type PoolInfo = {
   pid: number
@@ -31,7 +31,7 @@ export type PoolInfo = {
   totalAmountPool: bigint
 }
 
-export type IDOPoolInfo = {
+export type IFOPoolInfo = {
   pool0Info: PoolInfo | undefined
   pool1Info: PoolInfo | undefined
   /**
@@ -44,52 +44,52 @@ export type IDOPoolInfo = {
   endTimestamp: number
 }
 
-export const useIDOPoolInfo = () => {
+export const useIFOPoolInfo = () => {
   const { chainId } = useActiveChainId()
-  const idoContract = useIDOContract()
+  const ifoContract = useIFOContract()
   const latestTxReceipt = useLatestTxReceipt()
 
   return useQuery({
-    queryKey: ['idoPoolInfo', chainId, latestTxReceipt],
-    queryFn: async (): Promise<IDOPoolInfo> => {
+    queryKey: ['ifoPoolInfo', chainId, latestTxReceipt],
+    queryFn: async (): Promise<IFOPoolInfo> => {
       const publicClient = getViemClients({ chainId })
-      if (!idoContract || !publicClient) throw new Error('IDO contract not found')
+      if (!ifoContract || !publicClient) throw new Error('IFO contract not found')
 
       const [pool0Token, pool1Token, _pool0Info, _pool1Info, startTimestamp, endTimestamp] =
         await publicClient.multicall({
           contracts: [
             {
-              address: idoContract.address,
-              abi: idoContract.abi,
+              address: ifoContract.address,
+              abi: ifoContract.abi,
               functionName: 'addresses',
               args: [0n],
             },
             {
-              address: idoContract.address,
-              abi: idoContract.abi,
+              address: ifoContract.address,
+              abi: ifoContract.abi,
               functionName: 'addresses',
               args: [1n],
             },
             {
-              address: idoContract.address,
-              abi: idoContract.abi,
+              address: ifoContract.address,
+              abi: ifoContract.abi,
               functionName: 'viewPoolInformation',
               args: [0n],
             },
             {
-              address: idoContract.address,
-              abi: idoContract.abi,
+              address: ifoContract.address,
+              abi: ifoContract.abi,
               functionName: 'viewPoolInformation',
               args: [1n],
             },
             {
-              address: idoContract.address,
-              abi: idoContract.abi,
+              address: ifoContract.address,
+              abi: ifoContract.abi,
               functionName: 'startTimestamp',
             },
             {
-              address: idoContract.address,
-              abi: idoContract.abi,
+              address: ifoContract.address,
+              abi: ifoContract.abi,
               functionName: 'endTimestamp',
             },
           ],
@@ -126,6 +126,6 @@ export const useIDOPoolInfo = () => {
         endTimestamp: Number(endTimestamp),
       }
     },
-    enabled: !!idoContract,
+    enabled: !!ifoContract,
   })
 }

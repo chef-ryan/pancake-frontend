@@ -4,25 +4,25 @@ import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import ConnectW3WButton from 'components/ConnectW3WButton'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import useTheme from 'hooks/useTheme'
-import { logGTMIdoConnectWalletEvent } from 'utils/customGTMEventTracking'
-import { useIDOClaimCallback } from 'views/Idos/hooks/ido/useIDOClaimCallback'
-import { useIDOConfig } from 'views/Idos/hooks/ido/useIDOConfig'
-import { useIDOCurrencies } from 'views/Idos/hooks/ido/useIDOCurrencies'
-import type { IDOUserStatus } from 'views/Idos/hooks/ido/useIDOUserStatus'
 import { useAccount } from 'wagmi'
+import { logGTMIdoConnectWalletEvent, logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
+import { useIFOClaimCallback } from '../../hooks/ifo/useIFOClaimCallback'
+import { useIFOConfig } from '../../hooks/ifo/useIFOConfig'
+import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
+import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import { useCurrentIfoConfig } from '../../hooks/useCurrentIfoConfig'
-import { formatDollarAmount } from './IdoDepositButton'
+import { formatDollarAmount } from './IfoDepositButton'
 
 export const ClaimDisplay: React.FC<{
-  userStatus: IDOUserStatus | undefined
+  userStatus: IFOUserStatus | undefined
   pid: number
 }> = ({ userStatus, pid }) => {
   const { t } = useTranslation()
-  const { claim, isPending: isLoading } = useIDOClaimCallback()
+  const { claim, isPending: isLoading } = useIFOClaimCallback()
   const claimableAmount = userStatus?.claimableAmount?.toSignificant(6)
-  const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIDOCurrencies()
+  const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
   const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
-  const { status } = useIDOConfig()
+  const { status } = useIFOConfig()
   const { icon } = useCurrentIfoConfig() ?? {}
   const amountInDollar = useStablecoinPriceAmount(
     offeringCurrency ?? undefined,
@@ -51,7 +51,7 @@ export const ClaimDisplay: React.FC<{
   const { isDark } = useTheme()
   const { address: account } = useAccount()
   const handleConnectWallet = (e) => {
-    logGTMIdoConnectWalletEvent(status === 'coming_soon')
+    logGTMIfoConnectWalletEvent(status === 'coming_soon')
   }
   return (
     <>

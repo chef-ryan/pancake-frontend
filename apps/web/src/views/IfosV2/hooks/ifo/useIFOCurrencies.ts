@@ -5,49 +5,49 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import { getViemClients } from 'utils/viem'
 import { isAddressEqual, zeroAddress } from 'viem'
 import type { Address } from 'viem/accounts'
-import { useIDOContract } from './useIDOContract'
+import { useIFOContract } from './useIFOContract'
 
-type IDOAddresses = {
+type IFOAddresses = {
   lpToken0: Address
   lpToken1: Address | undefined
   offeringToken: Address
   adminAddress: Address
 }
 
-export const useIDOAddresses = () => {
+export const useIFOAddresses = () => {
   const { chainId } = useActiveChainId()
-  const idoContract = useIDOContract()
+  const ifoContract = useIFOContract()
 
   return useQuery({
-    queryKey: ['idoAddresses', chainId],
-    queryFn: async (): Promise<IDOAddresses> => {
+    queryKey: ['ifoAddresses', chainId],
+    queryFn: async (): Promise<IFOAddresses> => {
       const publicClient = getViemClients({ chainId })
-      if (!idoContract || !publicClient) throw new Error('IDO contract not found')
+      if (!ifoContract || !publicClient) throw new Error('IFO contract not found')
 
       const [lpToken0, lpToken1, offeringToken, adminAddress] = await publicClient.multicall({
         allowFailure: false,
         contracts: [
           {
-            address: idoContract.address,
-            abi: idoContract.abi,
+            address: ifoContract.address,
+            abi: ifoContract.abi,
             functionName: 'addresses',
             args: [0n],
           },
           {
-            address: idoContract.address,
-            abi: idoContract.abi,
+            address: ifoContract.address,
+            abi: ifoContract.abi,
             functionName: 'addresses',
             args: [1n],
           },
           {
-            address: idoContract.address,
-            abi: idoContract.abi,
+            address: ifoContract.address,
+            abi: ifoContract.abi,
             functionName: 'addresses',
             args: [2n],
           },
           {
-            address: idoContract.address,
-            abi: idoContract.abi,
+            address: ifoContract.address,
+            abi: ifoContract.abi,
             functionName: 'addresses',
             args: [3n],
           },
@@ -61,13 +61,13 @@ export const useIDOAddresses = () => {
         adminAddress,
       }
     },
-    enabled: !!idoContract,
+    enabled: !!ifoContract,
     ...QUERY_SETTINGS_IMMUTABLE,
   })
 }
 
-export const useIDOCurrencies = () => {
-  const { data: addresses } = useIDOAddresses()
+export const useIFOCurrencies = () => {
+  const { data: addresses } = useIFOAddresses()
   const stakeCurrency0 = useCurrency(addresses?.lpToken0)
   const stakeCurrency1 = useCurrency(addresses?.lpToken1)
   const offeringCurrency = useCurrency(addresses?.offeringToken)
