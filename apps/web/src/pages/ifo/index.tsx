@@ -17,6 +17,4 @@ CurrentIfoPage.Layout = IdoPageLayout
 
 CurrentIfoPage.chains = IFO_SUPPORT_CHAINS
 
-CurrentIfoPage.mp = true
-
 export default CurrentIfoPage
