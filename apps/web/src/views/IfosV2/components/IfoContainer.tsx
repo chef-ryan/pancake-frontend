@@ -4,7 +4,6 @@ import { Address } from 'viem'
 
 import { IFOFAQs } from '../config'
 import IfoQuestions from './IfoQuestions'
-import IfoLayout, { IfoLayoutWrapper } from './IfoLayout'
 import { SectionBackground } from './SectionBackground'
 
 interface TypeProps {
@@ -17,14 +16,10 @@ interface TypeProps {
 const IfoContainer: React.FC<React.PropsWithChildren<TypeProps>> = ({ ifoSection, ifoFaqs }) => {
   return (
     <>
-      <IfoLayout id="current-ifo">
-        <SectionBackground>
-          <Container px="0">
-            <IfoLayoutWrapper>{ifoSection}</IfoLayoutWrapper>
-          </Container>
-        </SectionBackground>
-        {ifoFaqs ? <IfoQuestions faqs={ifoFaqs} /> : null}
-      </IfoLayout>
+      <SectionBackground>
+        <Container px="0">{ifoSection}</Container>
+      </SectionBackground>
+      {ifoFaqs ? <IfoQuestions faqs={ifoFaqs} /> : null}
     </>
   )
 }

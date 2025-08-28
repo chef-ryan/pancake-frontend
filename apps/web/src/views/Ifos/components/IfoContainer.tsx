@@ -1,9 +1,8 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Container, LinkExternal } from '@pancakeswap/uikit'
+import { Container, LinkExternal, Flex, Box } from '@pancakeswap/uikit'
 import { ReactNode } from 'react'
 import { Address } from 'viem'
 
-import IfoLayout, { IfoLayoutWrapper } from './IfoLayout'
 import IfoPoolVaultCard from './IfoPoolVaultCard'
 import { SectionBackground } from './SectionBackground'
 
@@ -25,12 +24,12 @@ const IfoContainer: React.FC<React.PropsWithChildren<TypeProps>> = ({
   const { t } = useTranslation()
 
   return (
-    <IfoLayout id="current-ifo" py={['24px', '24px', '40px']}>
+    <Box id="current-ifo" py={['24px', '24px', '40px']}>
       <Container>
-        <IfoLayoutWrapper>
+        <Flex flexDirection={['column', null, 'row']} columnGap="32px" alignItems="flex-start">
           <IfoPoolVaultCard ifoBasicSaleType={ifoBasicSaleType} ifoAddress={ifoAddress} />
           {ifoSection}
-        </IfoLayoutWrapper>
+        </Flex>
       </Container>
       <SectionBackground>
         <Container>{ifoSteps}</Container>
@@ -43,7 +42,7 @@ const IfoContainer: React.FC<React.PropsWithChildren<TypeProps>> = ({
       >
         {t('Apply to run an IFO!')}
       </LinkExternal>
-    </IfoLayout>
+    </Box>
   )
 }
 
