@@ -4,12 +4,17 @@ import { ChainId } from '@pancakeswap/chains'
 
 // import { IfoPageLayout } from '../../views/Ifos'
 // import Ifo from '../../views/Ifos/Ifo'
+import IfoProvider from 'views/Ifos/contexts/IfoContext'
 import IFO from '../../views/IfosV2/ifo'
 
 const IFO_SUPPORT_CHAINS = [ChainId.BSC, ChainId.BSC_TESTNET]
 
 const CurrentIfoPage = () => {
-  return <IFO />
+  return (
+    <IfoProvider>
+      <IFO />
+    </IfoProvider>
+  )
 }
 
 CurrentIfoPage.chains = IFO_SUPPORT_CHAINS
