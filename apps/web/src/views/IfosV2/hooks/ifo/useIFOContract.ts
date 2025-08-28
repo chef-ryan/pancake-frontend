@@ -23,7 +23,7 @@ function getIFOAddress(ifoId: string): `0x${string}` {
     return contractAddressFromQuery
   }
   const ifoConfig = ifoConfigs.find((x) => x.id === ifoId)
-  return ifoConfig.contractAddress
+  return ifoConfig!.contractAddress
 }
 
 export function getIFOContract(ifoId: string, signer?: WalletClient, chainId?: number) {

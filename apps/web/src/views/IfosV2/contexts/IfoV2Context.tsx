@@ -39,7 +39,6 @@ export const IfoV2Provider: React.FC<ProviderProps> = ({ id, children }) => {
   }
   const ifoContract = getIFOContract(config?.id, signer ?? undefined, chainId)
   const value = { chainId, ifoContract, config }
-  console.log(`[ifo]`, 'context', value)
 
   return <IfoV2Context.Provider value={value}>{children}</IfoV2Context.Provider>
 }

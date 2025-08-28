@@ -25,12 +25,12 @@ export type IFOConfig = {
 export const ifoConfigs: IFOConfig[] = [
   // TODO: IFO v10 testing configuration on Tenderly Virtual Network
   {
-    id: 'ifov10test',
+    id: 'ifo-test01',
     icon: '/images/ifo/test.png', // TODO: Replace with actual icon
     projectUrl: 'https://pancakeswap.finance/',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ifo/test-banner.png`, // TODO: Replace with actual banner
-    contractAddress: '0xFE8100024131400608e00A6B1E6dc92b6567097A', // IFO v10 contract address
+    bannerUrl: `${ASSET_CDN}/web/ido/myshell-banner.png`, // TODO: Replace with actual banner
+    contractAddress: '0xd00528C3a3AEB599c9dB517787BF024aBD4fE65c', // IFO v10 contract address
     tgeTitle: <Trans>IFO v10 Test - USDT Offering</Trans>,
     tgeSubtitle: <Trans>Testing on Tenderly Virtual Network</Trans>,
     description: (
@@ -86,12 +86,12 @@ export const ifoConfigs: IFOConfig[] = [
     ],
   },
   {
-    id: 'myshell',
+    id: 'ifo test-02',
     icon: '/images/ifo/myshell.png',
     projectUrl: 'https://myshell.ai/',
     chainId: ChainId.BSC,
     bannerUrl: `${ASSET_CDN}/web/ifo/myshell-banner.png`,
-    contractAddress: '0x0D54115eF8474C48103A1e3b41464BF3dB00E4B2',
+    contractAddress: '0xcE6B19a9d0f83F5a4F098B99870f513FCA6133Df',
     tgeTitle: <Trans>MyShell's Token Generation Event</Trans>,
     tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
     description: (

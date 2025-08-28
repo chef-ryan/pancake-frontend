@@ -1,22 +1,23 @@
-// TODO: Using IfosV2 components for IFO v10 testing
 import { ChainId } from '@pancakeswap/chains'
-// import { SUPPORTED_CHAIN_IDS } from '@pancakeswap/ifos'
 
-// import { IfoPageLayout } from '../../views/Ifos'
-// import Ifo from '../../views/Ifos/Ifo'
 import IfoProvider from 'views/Ifos/contexts/IfoContext'
+import { NextPageWithLayout } from 'utils/page.types'
+import IfoLayout from 'views/IfosV2/components/IfoLayout'
+import Hero from 'views/Ifos/components/Hero'
 import IFO from '../../views/IfosV2/ifo'
 
 const IFO_SUPPORT_CHAINS = [ChainId.BSC, ChainId.BSC_TESTNET]
 
-const CurrentIfoPage = () => {
+const CurrentIfoPage: NextPageWithLayout = () => {
   return (
     <IfoProvider>
+      <Hero />
       <IFO />
     </IfoProvider>
   )
 }
 
 CurrentIfoPage.chains = IFO_SUPPORT_CHAINS
+CurrentIfoPage.Layout = IfoLayout
 
 export default CurrentIfoPage
