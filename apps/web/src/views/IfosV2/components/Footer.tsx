@@ -1,12 +1,10 @@
 import { BscScanIcon, CardBody, FlexGap, LanguageIcon, Link, Text } from '@pancakeswap/uikit'
 import useTheme from 'hooks/useTheme'
-import { useCurrentIfoConfig } from '../hooks/useCurrentIfoConfig'
-import { useIFOContract } from '../hooks/ifo/useIFOContract'
+import useIfo from '../hooks/useIfo'
 
 export const Footer: React.FC = () => {
   const { theme } = useTheme()
-  const ifoContract = useIFOContract()
-  const currentIfoConfig = useCurrentIfoConfig()
+  const { ifoContract, config: currentIfoConfig } = useIfo()
   return (
     <CardBody>
       <FlexGap gap="12px" flexDirection="column">

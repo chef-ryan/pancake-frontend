@@ -5,7 +5,7 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import { getViemClients } from 'utils/viem'
 import { isAddressEqual, zeroAddress } from 'viem'
 import type { Address } from 'viem/accounts'
-import { useIFOContract } from './useIFOContract'
+import useIfo from '../useIfo'
 
 type IFOAddresses = {
   lpToken0: Address
@@ -16,7 +16,7 @@ type IFOAddresses = {
 
 export const useIFOAddresses = () => {
   const { chainId } = useActiveChainId()
-  const ifoContract = useIFOContract()
+  const { ifoContract } = useIfo()
 
   return useQuery({
     queryKey: ['ifoAddresses', chainId],

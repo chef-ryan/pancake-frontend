@@ -3,7 +3,7 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { getViemClients } from 'utils/viem'
 import type { Address } from 'viem'
-import { useIFOContract } from './useIFOContract'
+import useIfo from '../useIfo'
 
 export type PoolInfo = {
   pid: number
@@ -46,7 +46,7 @@ export type IFOPoolInfo = {
 
 export const useIFOPoolInfo = () => {
   const { chainId } = useActiveChainId()
-  const ifoContract = useIFOContract()
+  const { ifoContract } = useIfo()
   const latestTxReceipt = useLatestTxReceipt()
 
   return useQuery({

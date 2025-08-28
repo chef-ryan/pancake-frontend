@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
-import { useIFOContract } from './useIFOContract'
+import useIfo from '../useIfo'
 
 export type IFOUserInfo = {
   amountPool: bigint
@@ -10,7 +10,7 @@ export type IFOUserInfo = {
 
 export const useIFOUserInfo = () => {
   const { chainId, account } = useAccountActiveChain()
-  const ifoContract = useIFOContract()
+  const { ifoContract } = useIfo()
   const latestTxReceipt = useLatestTxReceipt()
 
   return useQuery({

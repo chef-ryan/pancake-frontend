@@ -1,10 +1,12 @@
 import CurrentIfo from './CurrentIfo'
-import { useCurrentIfoConfig } from './hooks/useCurrentIfoConfig'
+import { IfoV2Provider } from './contexts/IfoV2Context'
 
 const Ifo = () => {
-  const currentIfoConfig = useCurrentIfoConfig()
-
-  return <CurrentIfo ifoConfig={currentIfoConfig} />
+  return (
+    <IfoV2Provider>
+      <CurrentIfo />
+    </IfoV2Provider>
+  )
 }
 
 export default Ifo

@@ -10,7 +10,7 @@ import { useIFOClaimCallback } from '../../hooks/ifo/useIFOClaimCallback'
 import { useIFOConfig } from '../../hooks/ifo/useIFOConfig'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
-import { useCurrentIfoConfig } from '../../hooks/useCurrentIfoConfig'
+import useIfo from '../../hooks/useIfo'
 import { formatDollarAmount } from './IfoDepositButton'
 
 export const ClaimDisplay: React.FC<{
@@ -23,7 +23,8 @@ export const ClaimDisplay: React.FC<{
   const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
   const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
   const { status } = useIFOConfig()
-  const { icon } = useCurrentIfoConfig() ?? {}
+  const { config } = useIfo()
+  const { icon } = config ?? {}
   const amountInDollar = useStablecoinPriceAmount(
     offeringCurrency ?? undefined,
     claimableAmount !== undefined && Number.isFinite(+claimableAmount) ? +claimableAmount : undefined,

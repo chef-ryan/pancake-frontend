@@ -10,12 +10,12 @@ import { logger } from 'utils/datadog'
 import { erc20Abi, WriteContractReturnType, zeroAddress } from 'viem'
 import { userRejectedError } from 'views/Swap/V3Swap/hooks/useSendSwapTransaction'
 import { useAccount, useWriteContract } from 'wagmi'
-import { useIFOContract } from './useIFOContract'
+import useIfo from '../useIfo'
 import { useIFOPoolInfo } from './useIFOPoolInfo'
 import { useIFOUserInfo } from './useIFOUserInfo'
 
 export const useIFODepositCallback = () => {
-  const ifoContract = useIFOContract()
+  const { ifoContract } = useIfo()
   const { t } = useTranslation()
   const { address: account } = useAccount()
   const { toastSuccess, toastWarning } = useToast()

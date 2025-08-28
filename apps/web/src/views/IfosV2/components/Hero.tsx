@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, Container, Flex, FlexGap, Heading, Text } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
-import { useCurrentIfoConfig } from '../hooks/useCurrentIfoConfig'
+import useIfo from '../hooks/useIfo'
 
 const StyledHero = styled(Box)`
   position: relative;
@@ -20,7 +20,7 @@ const StyledSubTitle = styled(Text)`
 
 const Hero = () => {
   const { t } = useTranslation()
-  const currentIfoConfig = useCurrentIfoConfig()
+  const { config: currentIfoConfig } = useIfo()
 
   // const router = useRouter()
   // const handleClick = () => {

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { useAccount } from 'wagmi'
-import { useIFOContract } from './useIFOContract'
+import useIfo from '../useIfo'
 import { useIFOCurrencies } from './useIFOCurrencies'
 import { useIFOPoolInfo } from './useIFOPoolInfo'
 import { useIFOUserInfo } from './useIFOUserInfo'
@@ -79,7 +79,7 @@ export type UserOfferingAndRefundingAmounts = {
 }
 
 const useViewUserOfferingAndRefundingAmounts = () => {
-  const ifoContract = useIFOContract()
+  const { ifoContract } = useIfo()
   const { address: account } = useAccount()
   const latestTxReceipt = useLatestTxReceipt()
 

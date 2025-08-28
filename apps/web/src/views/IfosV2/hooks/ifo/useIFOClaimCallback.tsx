@@ -7,11 +7,11 @@ import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/u
 import { logGTMIfoClaimEvent } from 'utils/customGTMEventTracking'
 import { isUserRejected } from 'utils/sentry'
 import { useAccount } from 'wagmi'
-import { useIFOContract } from './useIFOContract'
+import useIfo from '../useIfo'
 import { useIFOUserInfo } from './useIFOUserInfo'
 
 export const useIFOClaimCallback = () => {
-  const ifoContract = useIFOContract()
+  const { ifoContract } = useIfo()
   const { t } = useTranslation()
   const { address: account } = useAccount()
   const { toastSuccess, toastWarning } = useToast()

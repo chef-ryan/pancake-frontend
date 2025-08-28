@@ -1,23 +1,20 @@
 import { IfoCurrentCard } from './components/IfoCards/IfoCards'
 import IfoContainer from './components/IfoContainer'
-import type { IFOConfig } from './config'
+import useIfo from './hooks/useIfo'
 
-interface TypeProps {
-  ifoConfig: IFOConfig | undefined
-}
-
-const CurrentIfo: React.FC<React.PropsWithChildren<TypeProps>> = ({ ifoConfig }) => {
+const CurrentIfo: React.FC = () => {
+  const { config } = useIfo()
   const steps = <></>
 
-  if (!ifoConfig) {
+  if (!config) {
     return null
   }
 
   return (
     <IfoContainer
-      ifoSection={<IfoCurrentCard ifoId={ifoConfig.id} bannerUrl={ifoConfig.bannerUrl} />}
+      ifoSection={<IfoCurrentCard ifoId={config.id} bannerUrl={config.bannerUrl} />}
       ifoSteps={steps}
-      ifoFaqs={ifoConfig.faqs}
+      ifoFaqs={config.faqs}
     />
   )
 }

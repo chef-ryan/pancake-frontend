@@ -10,7 +10,7 @@ import { StyledLogo } from '../Icons'
 import { useIFOConfig } from '../../hooks/ifo/useIFOConfig'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import { useIFODuration } from '../../hooks/ifo/useIFODuration'
-import { useCurrentIfoConfig } from '../../hooks/useCurrentIfoConfig'
+import useIfo from '../../hooks/useIfo'
 
 dayjs.extend(timezone)
 
@@ -19,7 +19,8 @@ export const IfoSaleInfoCard: React.FC = () => {
   const { theme, isDark } = useTheme()
   const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
   const { totalSalesAmount, status, duration, startTimestamp, endTimestamp } = useIFOConfig()
-  const { icon } = useCurrentIfoConfig() ?? {}
+  const { config } = useIfo()
+  const { icon } = config ?? {}
   const preSaleDurationText = useIFODuration(duration)
 
   const durationText = useMemo(() => {

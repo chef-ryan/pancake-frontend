@@ -1,23 +1,10 @@
 // TODO: Using IFO v10 ABI for testing
 // import { ifoABI } from 'config/abi/ifo'
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useRouter } from 'next/router'
-import { useMemo } from 'react'
 import { getContract } from 'utils/contractHelpers'
 import { createPublicClient, custom, http, isAddress, type WalletClient } from 'viem'
 import { bsc } from 'viem/chains'
-import { useWalletClient } from 'wagmi'
-import { ifoConfigDict } from '../../config'
+import { ifoConfigs } from 'views/IfosV2/config'
 import { ifoV10Abi as ifoABI } from '../../abi/ifoV10Abi'
-
-export const useIFOContract = () => {
-  const { chainId } = useActiveChainId()
-  const { data: signer } = useWalletClient()
-  const { query } = useRouter()
-  const ifoId = query.ifo as string
-
-  return useMemo(() => getIFOContract(ifoId, signer ?? undefined, chainId), [chainId, signer, ifoId])
-}
 
 function getIfoAddressFromUrl(): `0x${string}` | null {
   if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') return null
@@ -35,10 +22,11 @@ function getIFOAddress(ifoId: string): `0x${string}` {
   if (contractAddressFromQuery && isAddress(contractAddressFromQuery)) {
     return contractAddressFromQuery
   }
-  return ifoConfigDict[ifoId]?.contractAddress
+  const ifoConfig = ifoConfigs.find((x) => x.id === ifoId)
+  return ifoConfig.contractAddress
 }
 
-function getIFOContract(ifoId: string, signer?: WalletClient, chainId?: number) {
+export function getIFOContract(ifoId: string, signer?: WalletClient, chainId?: number) {
   const ifoAddress = getIFOAddress(ifoId)
   return getContract({
     address: ifoAddress,
