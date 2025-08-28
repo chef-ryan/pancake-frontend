@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, FlexGap, Text } from '@pancakeswap/uikit'
 import getTimePeriods from '@pancakeswap/utils/getTimePeriods'
-import { NumberDisplay } from '@pancakeswap/widgets-internal'
+import { CurrencyLogo, DoubleCurrencyLogo, NumberDisplay } from '@pancakeswap/widgets-internal'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import useTheme from 'hooks/useTheme'
@@ -74,18 +74,25 @@ export const IfoSaleInfoCard: React.FC = () => {
           </FlexGap>
         </FlexGap>
         {status !== 'finished' && (
-          <Text color="textSubtle" mt="16px">
-            {stakeCurrency0 && stakeCurrency1
-              ? t('You can subscribe to the sale by depositing %stakeCurrency0% and %stakeCurrency1% half in ratio.', {
-                  stakeCurrency0: stakeCurrency0.symbol,
-                  stakeCurrency1: stakeCurrency1.symbol,
-                })
-              : stakeCurrency0 || stakeCurrency1
-              ? t('You can subscribe to the sale by depositing %stakeCurrency%.', {
-                  stakeCurrency: stakeCurrency0?.symbol ?? stakeCurrency1?.symbol,
-                })
-              : null}
-          </Text>
+          <FlexGap alignItems="center" gap="8px" mt="16px">
+            {stakeCurrency0 && stakeCurrency1 ? (
+              <DoubleCurrencyLogo size={20} currency0={stakeCurrency0} currency1={stakeCurrency1} />
+            ) : stakeCurrency0 || stakeCurrency1 ? (
+              <CurrencyLogo size="20px" currency={stakeCurrency0 ?? stakeCurrency1} />
+            ) : null}
+            <Text color="textSubtle">
+              {stakeCurrency0 && stakeCurrency1
+                ? t('Subscribe to the sale by depositing %stakeCurrency0% & %stakeCurrency1% in a 1:1 ratio.', {
+                    stakeCurrency0: stakeCurrency0.symbol,
+                    stakeCurrency1: stakeCurrency1.symbol,
+                  })
+                : stakeCurrency0 || stakeCurrency1
+                ? t('Subscribe to the sale by depositing %stakeCurrency%.', {
+                    stakeCurrency: stakeCurrency0?.symbol ?? stakeCurrency1?.symbol,
+                  })
+                : null}
+            </Text>
+          </FlexGap>
         )}
       </CardBody>
     </Card>
