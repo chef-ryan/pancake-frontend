@@ -5,12 +5,12 @@ import ConnectW3WButton from 'components/ConnectW3WButton'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import useTheme from 'hooks/useTheme'
 import { logGTMIdoConnectWalletEvent } from 'utils/customGTMEventTracking'
-import { useCurrentIDOConfig } from 'views/Idos/hooks/ido/useCurrentIDOConfig'
 import { useIDOClaimCallback } from 'views/Idos/hooks/ido/useIDOClaimCallback'
 import { useIDOConfig } from 'views/Idos/hooks/ido/useIDOConfig'
 import { useIDOCurrencies } from 'views/Idos/hooks/ido/useIDOCurrencies'
 import type { IDOUserStatus } from 'views/Idos/hooks/ido/useIDOUserStatus'
 import { useAccount } from 'wagmi'
+import { useCurrentIfoConfig } from '../../hooks/useCurrentIfoConfig'
 import { formatDollarAmount } from './IdoDepositButton'
 
 export const ClaimDisplay: React.FC<{
@@ -23,7 +23,7 @@ export const ClaimDisplay: React.FC<{
   const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIDOCurrencies()
   const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
   const { status } = useIDOConfig()
-  const { icon } = useCurrentIDOConfig() ?? {}
+  const { icon } = useCurrentIfoConfig() ?? {}
   const amountInDollar = useStablecoinPriceAmount(
     offeringCurrency ?? undefined,
     claimableAmount !== undefined && Number.isFinite(+claimableAmount) ? +claimableAmount : undefined,

@@ -6,12 +6,12 @@ import useTheme from 'hooks/useTheme'
 import { useMemo } from 'react'
 import { logGTMIdoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import type { IDOStatus } from 'views/Idos/hooks/ido/usdIDOStatus'
-import { useCurrentIDOConfig } from 'views/Idos/hooks/ido/useCurrentIDOConfig'
 import { useIDOConfig } from 'views/Idos/hooks/ido/useIDOConfig'
 import { useIDOCurrencies } from 'views/Idos/hooks/ido/useIDOCurrencies'
 import type { IDOUserStatus } from 'views/Idos/hooks/ido/useIDOUserStatus'
 import { VerifyStatus, useW3WAccountVerify } from 'views/Idos/hooks/w3w/useW3WAccountVerify'
 import { useAccount } from 'wagmi'
+import { useCurrentIfoConfig } from '../../hooks/useCurrentIfoConfig'
 import { ClaimDisplay } from './ClaimDisplay'
 import { Divider } from './Divider'
 import { IdoDepositButton } from './IdoDepositButton'
@@ -33,7 +33,7 @@ export const IdoStakeActionCard: React.FC<{
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
   const { status, raiseAmounts, pricePerTokens, saleAmounts } = useIDOConfig()
-  const { id, ineligibleContent } = useCurrentIDOConfig() ?? {}
+  const { id, ineligibleContent } = useCurrentIfoConfig() ?? {}
 
   const [raiseAmount, pricePerToken, saleAmount] = useMemo(() => {
     if (pid === 0) {

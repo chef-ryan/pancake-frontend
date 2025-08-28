@@ -14,9 +14,9 @@ export const useIDOContract = () => {
   const { chainId } = useActiveChainId()
   const { data: signer } = useWalletClient()
   const { query } = useRouter()
-  const idoId = query.ido as string
+  const ifoId = query.ifo as string
 
-  return useMemo(() => getIDOContract(idoId, signer ?? undefined, chainId), [chainId, signer, idoId])
+  return useMemo(() => getIDOContract(ifoId, signer ?? undefined, chainId), [chainId, signer, ifoId])
 }
 
 function getIdoAddressFromUrl(): `0x${string}` | null {
@@ -30,16 +30,16 @@ function getIdoAddressFromUrl(): `0x${string}` | null {
   return process.env.NEXT_PUBLIC_BSC_TESTNET_IDO_ADDRESS as `0x${string}` | null
 }
 
-function getIDOAddress(idoId: string): `0x${string}` {
+function getIDOAddress(ifoId: string): `0x${string}` {
   const contractAddressFromQuery = getIdoAddressFromUrl()
   if (contractAddressFromQuery && isAddress(contractAddressFromQuery)) {
     return contractAddressFromQuery
   }
-  return idoConfigDict[idoId]?.contractAddress
+  return idoConfigDict[ifoId]?.contractAddress
 }
 
-function getIDOContract(idoId: string, signer?: WalletClient, chainId?: number) {
-  const idoAddress = getIDOAddress(idoId)
+function getIDOContract(ifoId: string, signer?: WalletClient, chainId?: number) {
+  const idoAddress = getIDOAddress(ifoId)
   return getContract({
     address: idoAddress,
     abi: idoABI,

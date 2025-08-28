@@ -7,10 +7,10 @@ import timezone from 'dayjs/plugin/timezone'
 import useTheme from 'hooks/useTheme'
 import { useMemo } from 'react'
 import { StyledLogo } from 'views/Idos/components/Icons'
-import { useCurrentIDOConfig } from 'views/Idos/hooks/ido/useCurrentIDOConfig'
 import { useIDOConfig } from 'views/Idos/hooks/ido/useIDOConfig'
 import { useIDOCurrencies } from 'views/Idos/hooks/ido/useIDOCurrencies'
 import { useIDODuration } from 'views/Idos/hooks/ido/useIDODuration'
+import { useCurrentIfoConfig } from '../../hooks/useCurrentIfoConfig'
 
 dayjs.extend(timezone)
 
@@ -19,7 +19,7 @@ export const IdoSaleInfoCard: React.FC = () => {
   const { theme, isDark } = useTheme()
   const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIDOCurrencies()
   const { totalSalesAmount, status, duration, startTimestamp, endTimestamp } = useIDOConfig()
-  const { icon } = useCurrentIDOConfig() ?? {}
+  const { icon } = useCurrentIfoConfig() ?? {}
   const preSaleDurationText = useIDODuration(duration)
 
   const durationText = useMemo(() => {
