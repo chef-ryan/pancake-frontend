@@ -12,6 +12,7 @@ import { ClaimedCard } from './ClaimedCard'
 import { IfoRibbon } from './IfoRibbon'
 import { IfoSaleInfoCard } from './IfoSaleInfoCard'
 import { IfoStakeActionCard } from './IfoStakeActionCard'
+import { IfoVestingCard } from './IfoVestingCard'
 
 export const StyledCardBody = styled(CardBody)`
   padding: 24px 16px;
@@ -93,6 +94,7 @@ export const IfoCard: React.FC = () => {
         {pool0Info && <IfoStakeActionCard pid={pool0Info.pid} userStatus={userStatus0} ifoStatus={ifoStatus0} />}
         {pool1Info && <IfoStakeActionCard pid={pool1Info.pid} userStatus={userStatus1} ifoStatus={ifoStatus1} />}
       </FlexGap>
+      <IfoVestingCard />
     </CardBody>
   )
 }
