@@ -1,12 +1,14 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Box, Flex, Heading, Progress, Text } from '@pancakeswap/uikit'
-import { ReactNode } from 'react'
+import { Box, Flex, Heading, Progress, ProgressBar, Text } from '@pancakeswap/uikit'
+import { ReactNode, useMemo } from 'react'
 import { styled } from 'styled-components'
 
 import { IfoStatus } from '@pancakeswap/ifos'
+import { Percent } from '@pancakeswap/swap-sdk-core'
 import useTheme from 'hooks/useTheme'
 import { PublicIfoData } from '../../types'
 import LiveTimer, { SoonTimer } from './Timer'
+import { useIFOPoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
 
 const StyledProgress = styled(Progress)`
   background-color: #281a5b;
@@ -79,6 +81,13 @@ export const IfoRibbon = ({
   hasUserStaked?: boolean
 }) => {
   const { isDark } = useTheme()
+  const { data: poolInfo } = useIFOPoolInfo()
+  const totalRaiseProgress = useMemo(() => {
+    const totalRaise = (poolInfo?.pool0Info?.raisingAmountPool ?? 0n) + (poolInfo?.pool1Info?.raisingAmountPool ?? 0n)
+    if (totalRaise === 0n) return 0
+    const totalAmount = (poolInfo?.pool0Info?.totalAmountPool ?? 0n) + (poolInfo?.pool1Info?.totalAmountPool ?? 0n)
+    return Number(new Percent(totalAmount, totalRaise).toFixed(2))
+  }, [poolInfo])
 
   let ribbon: ReactNode = null
   switch (ifoStatus) {
@@ -109,15 +118,15 @@ export const IfoRibbon = ({
 
   return (
     <Container>
-      {/* {ifoStatus === 'live' && (
+      {poolInfo && (
         <StyledProgress variant="flat">
           <ProgressBar
-            $useDark
+            $useDark={isDark}
             $background="linear-gradient(273deg, #ffd800 -2.87%, #eb8c00 113.73%)"
-            style={{ width: `${Math.min(Math.max(timeProgress, 0), 100)}%` }}
+            style={{ width: `${Math.min(totalRaiseProgress, 100)}%` }}
           />
         </StyledProgress>
-      )} */}
+      )}
       <Flex
         justifyContent="center"
         alignItems="center"
