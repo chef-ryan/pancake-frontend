@@ -11,6 +11,7 @@ import { Footer } from '../Footer'
 import { ClaimedCard } from './ClaimedCard'
 import { IfoRibbon } from './IfoRibbon'
 import { IfoSaleInfoCard } from './IfoSaleInfoCard'
+import { IfoSaleDetailCard } from './IfoSaleDetailCard'
 import { IfoStakeActionCard } from './IfoStakeActionCard'
 import { IfoVestingCard } from './IfoVestingCard'
 
@@ -42,6 +43,13 @@ export const Divider = styled.div`
   height: 1px;
   background-color: ${({ theme }) => theme.colors.cardBorder};
   margin: 8px 0 0 0;
+`
+
+const SaleInfoWrapper = styled(FlexGap)`
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: row;
+  }
 `
 
 export const IfoCurrentCard = ({ ifoId, bannerUrl }: { ifoId: string; bannerUrl: string }) => {
@@ -85,12 +93,25 @@ export const IfoCard: React.FC = () => {
   const { pool0Info, pool1Info } = poolInfo ?? {}
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const [ifoStatus0, ifoStatus1] = useIFOStatus()
+  const { info } = useIfo()
+  const { status } = info
 
   return (
     <CardBody>
       {pool0Info && <ClaimedCard userStatus={userStatus0} pid={pool0Info.pid} />}
       {pool1Info && <ClaimedCard userStatus={userStatus1} pid={pool1Info.pid} />}
-      <IfoSaleInfoCard />
+      {status === 'coming_soon' ? (
+        <SaleInfoWrapper gap="16px">
+          <Box flex="1">
+            <IfoSaleInfoCard />
+          </Box>
+          <Box flex="1">
+            <IfoSaleDetailCard />
+          </Box>
+        </SaleInfoWrapper>
+      ) : (
+        <IfoSaleInfoCard />
+      )}
       <FlexGap flexDirection="column" gap="16px">
         {pool0Info && <IfoStakeActionCard pid={pool0Info.pid} userStatus={userStatus0} ifoStatus={ifoStatus0} />}
         {pool1Info && <IfoStakeActionCard pid={pool1Info.pid} userStatus={userStatus1} ifoStatus={ifoStatus1} />}

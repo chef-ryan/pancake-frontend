@@ -19,14 +19,15 @@ export type IfoInfo = {
   status: IfoStatus
 }
 
-export const useIFOInfo = () => {
+type InfoFN = () => IfoInfo
+export const useIFOInfo: InfoFN = () => {
   const { data: poolInfo } = useIFOPoolInfo()
   const { pool0Info, pool1Info } = poolInfo ?? {}
   const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIFOCurrencies()
   const now = dayjs().unix()
 
-  return useMemo(() => {
-    return {
+  return useMemo<IfoInfo>(() => {
+    const info = {
       totalSales: [pool0Info?.offeringAmountPool ?? 0n, pool1Info?.offeringAmountPool ?? 0n],
       startTimestamp: poolInfo?.startTimestamp ?? 0,
       endTimestamp: poolInfo?.endTimestamp ?? 0,
@@ -70,7 +71,8 @@ export const useIFOInfo = () => {
           )
         : undefined,
       status: getStatusByTimestamp(now, poolInfo?.startTimestamp, poolInfo?.endTimestamp),
-    } satisfies IfoInfo
+    } as IfoInfo
+    return info
   }, [
     pool0Info?.offeringAmountPool,
     pool0Info?.raisingAmountPool,
