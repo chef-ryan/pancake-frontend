@@ -1,6 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
-import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import ConnectW3WButton from 'components/ConnectW3WButton'
 import useTheme from 'hooks/useTheme'
 import { useMemo } from 'react'
@@ -12,7 +11,7 @@ import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import { ClaimDisplay } from './ClaimDisplay'
 import { Divider } from './Divider'
-import { IfoDepositButton } from './IfoDepositButton'
+import { IfoDepositForm } from './IfoDepositForm'
 import { PreSaleInfoCard } from './PreSaleInfoCard'
 import { StakedDisplay } from './StakedDisplay'
 
@@ -63,19 +62,15 @@ export const IfoStakeActionCard: React.FC<{
               <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
                 {stakeCurrency?.symbol} {t('Pool')}
               </Text>
-              <FlexGap gap="8px" alignItems="center">
-                {stakeCurrency && <CurrencyLogo size="40px" currency={stakeCurrency} />}
-
-                {account ? (
-                  status === 'coming_soon' ? (
-                    <PreSaleInfoCard />
-                  ) : (
-                    <IfoDepositButton userStatus={userStatus} type="deposit" pid={pid} />
-                  )
+              {account ? (
+                status === 'coming_soon' ? (
+                  <PreSaleInfoCard />
                 ) : (
-                  <ConnectW3WButton width="100%" onClick={handleConnectWallet} />
-                )}
-              </FlexGap>
+                  <IfoDepositForm userStatus={userStatus} pid={pid} />
+                )
+              ) : (
+                <ConnectW3WButton width="100%" onClick={handleConnectWallet} />
+              )}
             </FlexGap>
           )}
 

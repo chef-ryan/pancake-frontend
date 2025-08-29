@@ -5,13 +5,13 @@ import ConnectW3WButton from 'components/ConnectW3WButton'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import useTheme from 'hooks/useTheme'
 import { useAccount } from 'wagmi'
-import { logGTMIdoConnectWalletEvent, logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
+import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import { useIFOClaimCallback } from '../../hooks/ifo/useIFOClaimCallback'
 import { useIFOConfig } from '../../hooks/ifo/useIFOConfig'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
-import { formatDollarAmount } from './IfoDepositButton'
+import { formatDollarAmount } from './IfoDepositForm'
 
 export const ClaimDisplay: React.FC<{
   userStatus: IFOUserStatus | undefined

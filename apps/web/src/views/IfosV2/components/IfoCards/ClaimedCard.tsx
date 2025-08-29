@@ -5,7 +5,7 @@ import useTheme from 'hooks/useTheme'
 import { useChainId } from 'wagmi'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
-import { formatDollarAmount } from './IfoDepositButton'
+import { formatDollarAmount } from './IfoDepositForm'
 
 declare global {
   interface Window {
