@@ -25,6 +25,67 @@ export type IFOConfig = {
 export const ifoConfigs: IFOConfig[] = [
   // TODO: IFO v10 testing configuration on Tenderly Virtual Network
   {
+    id: 'ifo-presale',
+    icon: '/images/ifo/test.png', // TODO: Replace with actual icon
+    projectUrl: 'https://pancakeswap.finance/',
+    chainId: ChainId.BSC,
+    bannerUrl: `${ASSET_CDN}/web/ido/myshell-banner.png`, // TODO: Replace with actual banner
+    contractAddress: '0xd7c2b747995Ab27537829f0e1BB2326432F833B4', // IFO v10 contract address
+    tgeTitle: <Trans>IFO v10 Test - USDT Offering</Trans>,
+    tgeSubtitle: <Trans>Testing on Tenderly Virtual Network</Trans>,
+    description: (
+      <>
+        <Trans>This is a test IFO v10 configuration for development and testing purposes.</Trans>
+        <br />
+        <br />
+        <b>Virtual Network Details:</b>
+        <br />
+        - LP Token 0: Native Token (BNB)
+        <br />
+        - Offering Token: USDT (0x55d398326f99059fF775485246999027B3197955)
+        <br />
+        - Admin: 0xbe9c4b9bbf22a2ef48d2ba0ee177168db6d46363
+        <br />- Start Time: {new Date(1756266834 * 1000).toLocaleString()}
+        <br />- End Time: {new Date(1756349634 * 1000).toLocaleString()}
+        <br />
+        - Pool Mode: Single Pool (maxPoolId = 0)
+        <br />- Vesting: Disabled
+      </>
+    ),
+    faqs: [
+      {
+        title: <Trans>1. Test Environment Notice</Trans>,
+        description: (
+          <Trans>
+            This is a test IFO running on Tenderly Virtual Network. All transactions are simulated and not on mainnet.
+          </Trans>
+        ),
+      },
+      {
+        title: <Trans>2. How to participate?</Trans>,
+        description: (
+          <>
+            <Trans>
+              You can participate using BNB (Native Token) to purchase USDT tokens during the offering period.
+            </Trans>
+            <br />
+            <Trans>Start: {new Date(1756266834 * 1000).toLocaleString()}</Trans>
+            <br />
+            <Trans>End: {new Date(1756349634 * 1000).toLocaleString()}</Trans>
+          </>
+        ),
+      },
+      {
+        title: <Trans>3. Token Distribution</Trans>,
+        description: (
+          <Trans>
+            Tokens will be distributed immediately after the IFO ends. No vesting period is enabled for this test.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
     id: 'ifo-test01',
     icon: '/images/ifo/test.png', // TODO: Replace with actual icon
     projectUrl: 'https://pancakeswap.finance/',
