@@ -7,7 +7,6 @@ import timezone from 'dayjs/plugin/timezone'
 import useTheme from 'hooks/useTheme'
 import { useMemo } from 'react'
 import { StyledLogo } from '../Icons'
-import { useIFOConfig } from '../../hooks/ifo/useIFOConfig'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import useIfo from '../../hooks/useIfo'
@@ -18,8 +17,8 @@ export const IfoSaleInfoCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
-  const { totalSalesAmount, status, duration, startTimestamp, endTimestamp } = useIFOConfig()
-  const { config } = useIfo()
+  const { config, info } = useIfo()
+  const { totalSalesAmount, status, duration, startTimestamp, endTimestamp } = info
   const { icon } = config ?? {}
   const preSaleDurationText = useIFODuration(duration)
 

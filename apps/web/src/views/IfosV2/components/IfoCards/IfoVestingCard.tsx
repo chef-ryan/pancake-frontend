@@ -6,7 +6,7 @@ import NextLink from 'next/link'
 import { styled } from 'styled-components'
 import { useIFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
-import { useIFOConfig } from '../../hooks/ifo/useIFOConfig'
+import useIfo from '../../hooks/useIfo'
 import { useIFOClaimCallback } from '../../hooks/ifo/useIFOClaimCallback'
 import { useIFOPoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
 
@@ -32,7 +32,9 @@ export const IfoVestingCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const { offeringCurrency } = useIFOCurrencies()
-  const { name, id } = useIFOConfig()
+  const { config } = useIfo()
+  const name = config?.tgeTitle
+  const id = config?.id
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const { claim, isPending } = useIFOClaimCallback()
   const { data: poolInfo } = useIFOPoolInfo()

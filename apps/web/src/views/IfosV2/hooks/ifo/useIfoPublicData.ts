@@ -3,9 +3,9 @@ import { type Currency, CurrencyAmount, Percent, Price } from '@pancakeswap/swap
 import { UnsafeCurrency } from 'config/constants/types'
 import { getStatusByTimestamp } from '../helpers'
 import { useIFOStatus } from './useIFOStatus'
-import { useIFOConfig } from './useIFOConfig'
 import { useIFOCurrencies } from './useIFOCurrencies'
 import { PoolInfo, useIFOPoolInfo } from './useIFOPoolInfo'
+import useIfo from '../useIfo'
 import { useIFOUserStatus } from './useIFOUserStatus'
 
 export type IFOPublicData = {
@@ -36,7 +36,8 @@ export const useIfoPublicData = (): [IFOPublicData, IFOPublicData] | [IFOPublicD
   const { pool0Info, pool1Info, startTimestamp, endTimestamp } = info ?? {}
   const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIFOCurrencies()
   const [status0, status1] = useIFOStatus()
-  const { pricePerTokens, raiseAmounts, saleAmounts, maxStakePerUsers } = useIFOConfig()
+  const { info } = useIfo()
+  const { pricePerTokens, raiseAmounts, saleAmounts, maxStakePerUsers } = info
   const [userStatus0, userStatus1] = useIFOUserStatus()
 
   const {

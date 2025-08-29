@@ -6,7 +6,7 @@ import { getStatusByTimestamp } from '../helpers'
 import { useIFOCurrencies } from './useIFOCurrencies'
 import { useIFOPoolInfo } from './useIFOPoolInfo'
 
-export type IFOConfig = {
+export type IfoInfo = {
   totalSales: [bigint, bigint]
   startTimestamp: number
   endTimestamp: number
@@ -19,7 +19,7 @@ export type IFOConfig = {
   status: IfoStatus
 }
 
-export const useIFOConfig = () => {
+export const useIFOInfo = () => {
   const { data: poolInfo } = useIFOPoolInfo()
   const { pool0Info, pool1Info } = poolInfo ?? {}
   const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIFOCurrencies()
@@ -70,7 +70,7 @@ export const useIFOConfig = () => {
           )
         : undefined,
       status: getStatusByTimestamp(now, poolInfo?.startTimestamp, poolInfo?.endTimestamp),
-    } satisfies IFOConfig
+    } satisfies IfoInfo
   }, [
     pool0Info?.offeringAmountPool,
     pool0Info?.raisingAmountPool,

@@ -14,10 +14,10 @@ import { useAccount } from 'wagmi'
 
 import { getIsAndroid, isInBinance } from '@binance/w3w-utils'
 import { logGTMIfoDepositEvent } from 'utils/customGTMEventTracking'
-import { useIFOConfig } from '../../hooks/ifo/useIFOConfig'
 import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import { useIFODepositCallback } from '../../hooks/ifo/useIFODepositCallback'
+import useIfo from '../../hooks/useIfo'
 
 export const formatDollarAmount = (amount: number) => {
   if (amount > 0 && amount < 0.01) {
@@ -39,7 +39,8 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
   const isBinance = isInBinance()
 
   const stakeCurrency = userStatus?.stakedAmount?.currency
-  const { maxStakePerUsers, duration } = useIFOConfig()
+  const { info } = useIfo()
+  const { maxStakePerUsers, duration } = info
   const maxStakePerUser = useMemo(() => {
     if (!stakeCurrency) return undefined
     if (maxStakePerUsers[0]?.currency.equals(stakeCurrency)) {

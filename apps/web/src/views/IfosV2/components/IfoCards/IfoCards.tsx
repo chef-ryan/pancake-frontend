@@ -3,10 +3,10 @@ import { styled } from 'styled-components'
 
 import { useMemo } from 'react'
 import { useIFOStatus } from '../../hooks/ifo/useIFOStatus'
-import { useIFOConfig } from '../../hooks/ifo/useIFOConfig'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import { useIFOPoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
 import { useIFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import useIfo from '../../hooks/useIfo'
 import { Footer } from '../Footer'
 import { ClaimedCard } from './ClaimedCard'
 import { IfoRibbon } from './IfoRibbon'
@@ -45,7 +45,8 @@ export const Divider = styled.div`
 `
 
 export const IfoCurrentCard = ({ ifoId, bannerUrl }: { ifoId: string; bannerUrl: string }) => {
-  const { status, duration, startTimestamp, endTimestamp } = useIFOConfig()
+  const { info } = useIfo()
+  const { status, duration, startTimestamp, endTimestamp } = info
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const { offeringCurrency } = useIFOCurrencies()
   const hasUserStaked = userStatus0?.stakedAmount?.greaterThan(0) || userStatus1?.stakedAmount?.greaterThan(0)

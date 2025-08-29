@@ -6,9 +6,9 @@ import { useMemo } from 'react'
 import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import { useAccount } from 'wagmi'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
-import { useIFOConfig } from '../../hooks/ifo/useIFOConfig'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import useIfo from '../../hooks/useIfo'
 import { ClaimDisplay } from './ClaimDisplay'
 import { Divider } from './Divider'
 import { IfoDepositForm } from './IfoDepositForm'
@@ -28,7 +28,8 @@ export const IfoStakeActionCard: React.FC<{
   const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
-  const { status, raiseAmounts, pricePerTokens } = useIFOConfig()
+  const { info } = useIfo()
+  const { status, raiseAmounts, pricePerTokens } = info
 
   const [raiseAmount, pricePerToken] = useMemo(() => {
     if (pid === 0) {
