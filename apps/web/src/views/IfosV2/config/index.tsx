@@ -154,7 +154,7 @@ export const ifoConfigs: IFOConfig[] = [
     bannerUrl: `${ASSET_CDN}/web/ifo/myshell-banner.png`,
     contractAddress: '0xcE6B19a9d0f83F5a4F098B99870f513FCA6133Df',
     tgeTitle: <Trans>MyShell's Token Generation Event</Trans>,
-    tgeSubtitle: <Trans>Exclusively via Binance Keyless Wallet</Trans>,
+    tgeSubtitle: undefined,
     description: (
       <Trans>
         MyShell is an AI creator platform for everyone to build, share, and own AI agents. Our vision is to create a

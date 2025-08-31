@@ -12,7 +12,6 @@ import { useCurrencyBalance } from 'state/wallet/hooks'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { useAccount } from 'wagmi'
 
-import { getIsAndroid, isInBinance } from '@binance/w3w-utils'
 import { logGTMIfoDepositEvent } from 'utils/customGTMEventTracking'
 import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
@@ -35,8 +34,6 @@ interface IfoDepositFormProps {
 export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid, onDismiss }) => {
   const { t } = useTranslation()
   const [value, setValue] = useState('')
-  const isAndroid = getIsAndroid()
-  const isBinance = isInBinance()
 
   const stakeCurrency = userStatus?.stakedAmount?.currency
   const { info } = useIfo()
@@ -302,7 +299,6 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
           </Button>
         )}
       </FlexGap>
-      {isAndroid && isBinance ? <Box height="60px" width="100%" /> : null}
     </FlexGap>
   )
 }

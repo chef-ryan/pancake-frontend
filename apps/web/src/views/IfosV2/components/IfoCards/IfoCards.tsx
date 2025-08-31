@@ -14,6 +14,7 @@ import { IfoSaleInfoCard } from './IfoSaleInfoCard'
 import { IfoSaleDetailCard } from './IfoSaleDetailCard'
 import { IfoStakeActionCard } from './IfoStakeActionCard'
 import { IfoVestingCard } from './IfoVestingCard'
+import { VestingScheduleCard } from './VestingScheduleCard'
 
 export const StyledCardBody = styled(CardBody)`
   padding: 24px 16px;
@@ -102,10 +103,10 @@ export const IfoCard: React.FC = () => {
       {pool1Info && <ClaimedCard userStatus={userStatus1} pid={pool1Info.pid} />}
       {status === 'coming_soon' ? (
         <SaleInfoWrapper gap="16px">
-          <Box flex="1">
+          <Box>
             <IfoSaleInfoCard />
           </Box>
-          <Box flex="1">
+          <Box>
             <IfoSaleDetailCard />
           </Box>
         </SaleInfoWrapper>
@@ -117,6 +118,7 @@ export const IfoCard: React.FC = () => {
         {pool1Info && <IfoStakeActionCard pid={pool1Info.pid} userStatus={userStatus1} ifoStatus={ifoStatus1} />}
       </FlexGap>
       <IfoVestingCard />
+      {status === 'coming_soon' && <VestingScheduleCard />}
     </CardBody>
   )
 }

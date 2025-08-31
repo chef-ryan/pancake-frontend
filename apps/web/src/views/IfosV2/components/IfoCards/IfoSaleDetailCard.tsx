@@ -7,14 +7,8 @@ import useIfo from '../../hooks/useIfo'
 export const IfoSaleDetailCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
-  const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
-  const { info } = useIfo()
-  const { pricePerTokens, raiseAmounts } = info
-
-  const pools = [
-    { currency: stakeCurrency0, price: pricePerTokens[0], raise: raiseAmounts[0] },
-    { currency: stakeCurrency1, price: pricePerTokens[1], raise: raiseAmounts[1] },
-  ].filter((p) => p.currency)
+  const { offeringCurrency } = useIFOCurrencies()
+  const { pools } = useIfo()
 
   return (
     <Card background={isDark ? '#18171A' : theme.colors.background} mb="16px">

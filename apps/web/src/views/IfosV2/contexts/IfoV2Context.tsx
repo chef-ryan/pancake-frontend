@@ -2,15 +2,23 @@ import { createContext, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useWalletClient } from 'wagmi'
+import type { Currency, CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
 import { getIFOContract } from '../hooks/ifo/useIFOContract'
 import type { IfoInfo } from '../hooks/ifo/useIFOInfo'
 import { IFOConfig, ifoConfigs } from '../config'
+
+export interface IfoPool {
+  currency: Currency
+  price?: Price<Currency, Currency>
+  raise?: CurrencyAmount<Currency>
+}
 
 export interface IfoV2ContextType {
   chainId: number
   ifoContract: ReturnType<typeof getIFOContract>
   config?: IFOConfig
   info?: IfoInfo
+  pools?: IfoPool[]
 }
 
 const IfoV2Context = createContext<IfoV2ContextType | null>(null)
@@ -40,8 +48,8 @@ export const IfoV2Provider: React.FC<ProviderProps> = ({ id, children }) => {
     return null
   }
   const ifoContract = getIFOContract(config?.id, signer ?? undefined, chainId)
-  // info will be attached in useIfo hook
-  const value = { chainId, ifoContract, config, info: undefined }
+  // info and pools will be attached in useIfo hook
+  const value = { chainId, ifoContract, config, info: undefined, pools: undefined }
 
   return <IfoV2Context.Provider value={value}>{children}</IfoV2Context.Provider>
 }

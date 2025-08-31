@@ -1,10 +1,23 @@
-import { useIfoV2Context } from '../contexts/IfoV2Context'
+import { useMemo } from 'react'
+import { useIfoV2Context, type IfoPool } from '../contexts/IfoV2Context'
+import { useIFOCurrencies } from './ifo/useIFOCurrencies'
 import { useIFOInfo } from './ifo/useIFOInfo'
 
 const useIfo = () => {
   const ctx = useIfoV2Context()
   const info = useIFOInfo()
-  return { ...ctx, info }
+  const { stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
+
+  const pools = useMemo<IfoPool[]>(
+    () =>
+      [
+        { currency: stakeCurrency0, price: info.pricePerTokens[0], raise: info.raiseAmounts[0] },
+        { currency: stakeCurrency1, price: info.pricePerTokens[1], raise: info.raiseAmounts[1] },
+      ].filter((p): p is IfoPool => Boolean(p.currency)),
+    [stakeCurrency0, stakeCurrency1, info.pricePerTokens, info.raiseAmounts],
+  )
+
+  return { ...ctx, info, pools }
 }
 
 export default useIfo
