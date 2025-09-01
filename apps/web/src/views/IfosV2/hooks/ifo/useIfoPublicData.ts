@@ -5,7 +5,7 @@ import { getStatusByTimestamp } from '../helpers'
 import { useIFOStatus } from './useIFOStatus'
 import { useIFOCurrencies } from './useIFOCurrencies'
 import { useIFOPoolInfo } from './useIFOPoolInfo'
-import type { PoolInfo } from '../../ifo.types'
+import type { PoolInfo } from '../../ifov2.types'
 import useIfo from '../useIfo'
 import { useIFOUserStatus } from './useIFOUserStatus'
 

@@ -6,7 +6,6 @@ import { styled } from 'styled-components'
 import { IfoStatus } from '@pancakeswap/ifos'
 import { Percent } from '@pancakeswap/swap-sdk-core'
 import useTheme from 'hooks/useTheme'
-import { PublicIfoData } from '../../types'
 import LiveTimer, { SoonTimer } from './Timer'
 import { useIFOPoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
 
@@ -18,7 +17,7 @@ const Container = styled(Box)`
   position: relative;
 `
 
-const BigCurve = styled(Box)<{ $status?: PublicIfoData['status']; $dark?: boolean }>`
+const BigCurve = styled(Box)<{ $status?: IfoStatus; $dark?: boolean }>`
   width: 150%;
   position: absolute;
   top: -150%;

@@ -7,7 +7,7 @@ import type { Address } from 'viem'
 import { CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
 import { useIfoV2Context } from '../../contexts/IfoV2Context'
 import { useIFOCurrencies } from './useIFOCurrencies'
-import type { PoolInfo } from '../../ifo.types'
+import type { PoolInfo } from '../../ifov2.types'
 
 interface RawPoolInfo {
   pid: number
