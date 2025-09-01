@@ -4,7 +4,6 @@ import { Box, Card, CardBody, CardHeader, ExpandableButton, FlexGap, Text } from
 import { styled } from 'styled-components'
 import { IfoRibbon } from './IfoCards/IfoRibbon'
 import { StyledLogo } from './Icons'
-import type { IFOConfig } from '../config'
 
 const Header = styled(CardHeader)<{ $bannerUrl: string }>`
   width: 100%;
