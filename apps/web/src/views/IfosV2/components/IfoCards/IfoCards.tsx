@@ -86,7 +86,7 @@ const IfoCard: React.FC = () => {
 
   switch (ifoStatus) {
     case 'coming_soon':
-      return <IfoCardComing {...cardProps} />
+      return <IfoCardComing />
     case 'live':
       return <IfoCardLive {...cardProps} />
     case 'finished':
