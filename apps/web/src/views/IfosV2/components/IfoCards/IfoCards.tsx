@@ -90,8 +90,9 @@ export const IfoCurrentCard = ({ ifoId, bannerUrl }: { ifoId: string; bannerUrl:
 }
 
 export const IfoCard: React.FC = () => {
-  const { data: poolInfo } = useIFOPoolInfo()
-  const { pool0Info, pool1Info } = poolInfo ?? {}
+  const pools = useIFOPoolInfo()
+  const pool0Info = pools[0]
+  const pool1Info = pools[1]
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const [ifoStatus0, ifoStatus1] = useIFOStatus()
   const { info } = useIfo()

@@ -2,9 +2,13 @@ import type { IfoStatus } from '@pancakeswap/ifos'
 import { type Currency, CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useActiveChainId } from 'hooks/useActiveChainId'
+import { getViemClients } from 'utils/viem'
 import { getStatusByTimestamp } from '../helpers'
 import { useIFOCurrencies } from './useIFOCurrencies'
 import { useIFOPoolInfo } from './useIFOPoolInfo'
+import { useIfoV2Context } from '../../contexts/IfoV2Context'
 
 export type IfoInfo = {
   totalSales: [bigint, bigint]
@@ -21,44 +25,45 @@ export type IfoInfo = {
 
 type InfoFN = () => IfoInfo
 export const useIFOInfo: InfoFN = () => {
-  const { data: poolInfo } = useIFOPoolInfo()
-  const { pool0Info, pool1Info } = poolInfo ?? {}
-  const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIFOCurrencies()
+  const pools = useIFOPoolInfo()
+  const pool0Info = pools[0]
+  const pool1Info = pools[1]
+  const { offeringCurrency } = useIFOCurrencies()
+  const { chainId } = useActiveChainId()
+  const { ifoContract } = useIfoV2Context()
+  const { data: timestamps } = useQuery({
+    queryKey: ['ifoTimestamps', chainId],
+    queryFn: async (): Promise<{ startTimestamp: number; endTimestamp: number }> => {
+      const publicClient = getViemClients({ chainId })
+      if (!ifoContract || !publicClient) throw new Error('IFO contract not found')
+      const [startTimestamp, endTimestamp] = await publicClient.multicall({
+        contracts: [
+          { address: ifoContract.address, abi: ifoContract.abi, functionName: 'startTimestamp' },
+          { address: ifoContract.address, abi: ifoContract.abi, functionName: 'endTimestamp' },
+        ],
+        allowFailure: false,
+      })
+      return { startTimestamp: Number(startTimestamp), endTimestamp: Number(endTimestamp) }
+    },
+    enabled: !!ifoContract,
+  })
   const now = dayjs().unix()
 
   return useMemo<IfoInfo>(() => {
     const info = {
       totalSales: [pool0Info?.offeringAmountPool ?? 0n, pool1Info?.offeringAmountPool ?? 0n],
-      startTimestamp: poolInfo?.startTimestamp ?? 0,
-      endTimestamp: poolInfo?.endTimestamp ?? 0,
+      startTimestamp: timestamps?.startTimestamp ?? 0,
+      endTimestamp: timestamps?.endTimestamp ?? 0,
       duration:
-        poolInfo?.endTimestamp && poolInfo?.startTimestamp ? poolInfo?.endTimestamp - poolInfo?.startTimestamp : 0,
-      pricePerTokens: [
-        stakeCurrency0 && offeringCurrency
-          ? new Price(
-              offeringCurrency,
-              stakeCurrency0,
-              pool0Info?.offeringAmountPool ?? 0n,
-              pool0Info?.raisingAmountPool ?? 0n,
-            )
-          : undefined,
-        stakeCurrency1 && offeringCurrency
-          ? new Price(
-              offeringCurrency,
-              stakeCurrency1,
-              pool1Info?.offeringAmountPool ?? 0n,
-              pool1Info?.raisingAmountPool ?? 0n,
-            )
-          : undefined,
-      ],
+        timestamps?.endTimestamp && timestamps?.startTimestamp
+          ? timestamps.endTimestamp - timestamps.startTimestamp
+          : 0,
+      pricePerTokens: [pool0Info?.price, pool1Info?.price],
       maxStakePerUsers: [
-        stakeCurrency0 ? CurrencyAmount.fromRawAmount(stakeCurrency0, pool0Info?.capPerUserInLP ?? 0n) : undefined,
-        stakeCurrency1 ? CurrencyAmount.fromRawAmount(stakeCurrency1, pool1Info?.capPerUserInLP ?? 0n) : undefined,
+        pool0Info?.currency ? CurrencyAmount.fromRawAmount(pool0Info.currency, pool0Info.capPerUserInLP) : undefined,
+        pool1Info?.currency ? CurrencyAmount.fromRawAmount(pool1Info.currency, pool1Info.capPerUserInLP) : undefined,
       ],
-      raiseAmounts: [
-        stakeCurrency0 ? CurrencyAmount.fromRawAmount(stakeCurrency0, pool0Info?.raisingAmountPool ?? 0n) : undefined,
-        stakeCurrency1 ? CurrencyAmount.fromRawAmount(stakeCurrency1, pool1Info?.raisingAmountPool ?? 0n) : undefined,
-      ],
+      raiseAmounts: [pool0Info?.raise, pool1Info?.raise],
       saleAmounts: offeringCurrency
         ? [
             CurrencyAmount.fromRawAmount(offeringCurrency, pool0Info?.offeringAmountPool ?? 0n),
@@ -70,7 +75,7 @@ export const useIFOInfo: InfoFN = () => {
             CurrencyAmount.fromRawAmount(offeringCurrency, pool1Info?.offeringAmountPool ?? 0n),
           )
         : undefined,
-      status: getStatusByTimestamp(now, poolInfo?.startTimestamp, poolInfo?.endTimestamp),
+      status: getStatusByTimestamp(now, timestamps?.startTimestamp, timestamps?.endTimestamp),
     } as IfoInfo
     return info
   }, [
@@ -80,11 +85,15 @@ export const useIFOInfo: InfoFN = () => {
     pool1Info?.offeringAmountPool,
     pool1Info?.raisingAmountPool,
     pool1Info?.capPerUserInLP,
-    poolInfo?.startTimestamp,
-    poolInfo?.endTimestamp,
-    stakeCurrency0,
+    timestamps?.startTimestamp,
+    timestamps?.endTimestamp,
     offeringCurrency,
-    stakeCurrency1,
+    pool0Info?.currency,
+    pool1Info?.currency,
+    pool0Info?.price,
+    pool1Info?.price,
+    pool0Info?.raise,
+    pool1Info?.raise,
     now,
   ])
 }

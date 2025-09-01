@@ -20,7 +20,7 @@ export const useIFODepositCallback = () => {
   const { address: account } = useAccount()
   const { toastSuccess, toastWarning } = useToast()
   const [, setLatestTxReceipt] = useLatestTxReceipt()
-  const { data: poolInfo } = useIFOPoolInfo()
+  const pools = useIFOPoolInfo()
   const { fetchWithCatchTxError, loading: isPending } = useCatchTxError({ throwUserRejectError: true })
   const { refetch } = useIFOUserInfo()
   const { writeContractAsync } = useWriteContract()
@@ -34,7 +34,7 @@ export const useIFODepositCallback = () => {
       if (!account || !ifoContract?.write || (!pid && pid !== 0)) return
 
       const depositAddress = amount.currency.isNative ? zeroAddress : amount.currency.address
-      const poolToken = pid === 0 ? poolInfo?.pool0Info?.poolToken : poolInfo?.pool1Info?.poolToken
+      const poolToken = pools[pid]?.poolToken
 
       if (!poolToken || !isAddressEqual(poolToken, depositAddress)) {
         console.error('Invalid pool token')
@@ -92,8 +92,7 @@ export const useIFODepositCallback = () => {
     [
       account,
       ifoContract,
-      poolInfo?.pool0Info?.poolToken,
-      poolInfo?.pool1Info?.poolToken,
+      pools,
       fetchWithCatchTxError,
       writeContractAsync,
       setLatestTxReceipt,

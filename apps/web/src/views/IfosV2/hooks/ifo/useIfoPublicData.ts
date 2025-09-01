@@ -4,7 +4,8 @@ import { UnsafeCurrency } from 'config/constants/types'
 import { getStatusByTimestamp } from '../helpers'
 import { useIFOStatus } from './useIFOStatus'
 import { useIFOCurrencies } from './useIFOCurrencies'
-import { PoolInfo, useIFOPoolInfo } from './useIFOPoolInfo'
+import { useIFOPoolInfo } from './useIFOPoolInfo'
+import type { PoolInfo } from '../../ifo.types'
 import useIfo from '../useIfo'
 import { useIFOUserStatus } from './useIFOUserStatus'
 
@@ -32,12 +33,13 @@ export type IFOPublicData = {
 }
 
 export const useIfoPublicData = (): [IFOPublicData, IFOPublicData] | [IFOPublicData] => {
-  const { data: info } = useIFOPoolInfo()
-  const { pool0Info, pool1Info, startTimestamp, endTimestamp } = info ?? {}
+  const pools = useIFOPoolInfo()
+  const pool0Info = pools[0]
+  const pool1Info = pools[1]
   const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIFOCurrencies()
   const [status0, status1] = useIFOStatus()
   const { info } = useIfo()
-  const { pricePerTokens, raiseAmounts, saleAmounts, maxStakePerUsers } = info
+  const { pricePerTokens, raiseAmounts, saleAmounts, maxStakePerUsers, startTimestamp, endTimestamp } = info
   const [userStatus0, userStatus1] = useIFOUserStatus()
 
   const {

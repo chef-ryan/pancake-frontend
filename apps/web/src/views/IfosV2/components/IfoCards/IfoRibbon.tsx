@@ -81,13 +81,13 @@ export const IfoRibbon = ({
   hasUserStaked?: boolean
 }) => {
   const { isDark } = useTheme()
-  const { data: poolInfo } = useIFOPoolInfo()
+  const pools = useIFOPoolInfo()
   const totalRaiseProgress = useMemo(() => {
-    const totalRaise = (poolInfo?.pool0Info?.raisingAmountPool ?? 0n) + (poolInfo?.pool1Info?.raisingAmountPool ?? 0n)
+    const totalRaise = (pools[0]?.raisingAmountPool ?? 0n) + (pools[1]?.raisingAmountPool ?? 0n)
     if (totalRaise === 0n) return 0
-    const totalAmount = (poolInfo?.pool0Info?.totalAmountPool ?? 0n) + (poolInfo?.pool1Info?.totalAmountPool ?? 0n)
+    const totalAmount = (pools[0]?.totalAmountPool ?? 0n) + (pools[1]?.totalAmountPool ?? 0n)
     return Number(new Percent(totalAmount, totalRaise).toFixed(2))
-  }, [poolInfo])
+  }, [pools])
 
   let ribbon: ReactNode = null
   switch (ifoStatus) {
@@ -118,7 +118,7 @@ export const IfoRibbon = ({
 
   return (
     <Container>
-      {poolInfo && (
+      {pools.length > 0 && (
         <StyledProgress variant="flat">
           <ProgressBar
             $useDark={isDark}

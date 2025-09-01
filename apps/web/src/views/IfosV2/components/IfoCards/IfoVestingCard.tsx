@@ -37,7 +37,7 @@ export const IfoVestingCard: React.FC = () => {
   const id = config?.id
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const { claim, isPending } = useIFOClaimCallback()
-  const { data: poolInfo } = useIFOPoolInfo()
+  const pools = useIFOPoolInfo()
 
   const totalClaimable = useMemo(() => {
     const amount0 = userStatus0?.claimableAmount
@@ -60,11 +60,11 @@ export const IfoVestingCard: React.FC = () => {
   const availablePercent = claimedAll ? 0 : totalClaimable && totalClaimable.greaterThan(0) ? 100 : 0
 
   const handleClaim = async () => {
-    if (userStatus0?.claimableAmount?.greaterThan(0) && poolInfo?.pool0Info) {
-      await claim(poolInfo.pool0Info.pid)
+    if (userStatus0?.claimableAmount?.greaterThan(0) && pools[0]) {
+      await claim(pools[0].pid)
     }
-    if (userStatus1?.claimableAmount?.greaterThan(0) && poolInfo?.pool1Info) {
-      await claim(poolInfo.pool1Info.pid)
+    if (userStatus1?.claimableAmount?.greaterThan(0) && pools[1]) {
+      await claim(pools[1].pid)
     }
   }
 

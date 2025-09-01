@@ -1,6 +1,5 @@
 import { type Currency, CurrencyAmount, Percent } from '@pancakeswap/swap-sdk-core'
 import { useMemo } from 'react'
-import { useIFOCurrencies } from './useIFOCurrencies'
 import { useIFOPoolInfo } from './useIFOPoolInfo'
 
 export type IFOStatus = {
@@ -9,29 +8,22 @@ export type IFOStatus = {
 }
 
 export const useIFOStatus = (): [IFOStatus, IFOStatus] => {
-  const { stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
-  const { data: poolInfo } = useIFOPoolInfo()
+  const pools = useIFOPoolInfo()
+  const pool0Info = pools[0]
+  const pool1Info = pools[1]
   const progresses = useMemo(() => {
     return [
-      poolInfo?.pool0Info
-        ? new Percent(poolInfo.pool0Info.totalAmountPool, poolInfo.pool0Info.raisingAmountPool)
-        : new Percent(0, 100),
-      poolInfo?.pool1Info
-        ? new Percent(poolInfo.pool1Info.totalAmountPool, poolInfo.pool1Info.raisingAmountPool)
-        : new Percent(0, 100),
+      pool0Info ? new Percent(pool0Info.totalAmountPool, pool0Info.raisingAmountPool) : new Percent(0, 100),
+      pool1Info ? new Percent(pool1Info.totalAmountPool, pool1Info.raisingAmountPool) : new Percent(0, 100),
     ]
-  }, [poolInfo])
+  }, [pool0Info, pool1Info])
 
   const currentStakedAmounts = useMemo(() => {
     return [
-      stakeCurrency0 && poolInfo?.pool0Info
-        ? CurrencyAmount.fromRawAmount(stakeCurrency0, poolInfo.pool0Info.totalAmountPool)
-        : undefined,
-      stakeCurrency1 && poolInfo?.pool1Info
-        ? CurrencyAmount.fromRawAmount(stakeCurrency1, poolInfo.pool1Info.totalAmountPool)
-        : undefined,
+      pool0Info?.currency ? CurrencyAmount.fromRawAmount(pool0Info.currency, pool0Info.totalAmountPool) : undefined,
+      pool1Info?.currency ? CurrencyAmount.fromRawAmount(pool1Info.currency, pool1Info.totalAmountPool) : undefined,
     ]
-  }, [poolInfo, stakeCurrency0, stakeCurrency1])
+  }, [pool0Info, pool1Info])
 
   return [
     {
