@@ -1,8 +1,13 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Card, CardBody, CardHeader, FlexGap, Text } from '@pancakeswap/uikit'
+import { Card, CardBody, CardHeader, Flex, FlexGap, Text } from '@pancakeswap/uikit'
+import dayjs from 'dayjs'
+import { useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import useTheme from 'hooks/useTheme'
 import { styled } from 'styled-components'
+import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
+import useIfo from '../../hooks/useIfo'
 
 const Timeline = styled.div`
   position: relative;
@@ -32,19 +37,51 @@ const Dot = styled.div`
   height: 8px;
   border-radius: 50%;
   background-color: ${({ theme }) => theme.colors.primary};
-  margin-bottom: 8px;
 `
 
 export const VestingScheduleCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const { offeringCurrency } = useIFOCurrencies()
+  const { ifoContract, info } = useIfo()
+
+  const { data: vesting } = useQuery({
+    queryKey: ['ifoVestingInfo', ifoContract?.address],
+    queryFn: async () => {
+      if (!ifoContract) throw new Error('IFO contract not found')
+      const [startTime, [percentage, cliff, duration]] = await Promise.all([
+        ifoContract.read.vestingStartTime(),
+        ifoContract.read.viewPoolVestingInformation([0n]),
+      ])
+      return {
+        startTime: Number(startTime),
+        percentage: Number(percentage),
+        cliff: Number(cliff),
+        duration: Number(duration),
+      }
+    },
+    enabled: !!ifoContract,
+  })
+
+  const vestingDuration = useIFODuration(vesting?.duration ?? 0)
+
+  const releaseRate = useMemo(() => {
+    if (!vesting) return undefined
+    const rate = vesting.percentage / vesting.duration
+    const rounded = rate >= 0.00001 ? rate.toFixed(5) : '< 0.00001'
+    return `${rounded}%`
+  }, [vesting])
+
+  const format = (timestamp: number) => dayjs(timestamp).format('DD-MM-YY HH:mm')
+  const ifoEnded = info.endTimestamp ? format(info.endTimestamp * 1000) : '--'
+  const cliff = vesting ? format((vesting.startTime + vesting.cliff) * 1000) : '--'
+  const vestingEnd = vesting ? format((vesting.startTime + vesting.duration) * 1000) : '--'
 
   return (
     <Card background={isDark ? '#18171A' : theme.colors.background} mb="16px">
       <CardHeader>
         <Text fontSize="20px" bold>
-          {`${offeringCurrency?.symbol ?? ''} ${t('VESTING SCHEDULE')}`}
+          {`${offeringCurrency?.symbol ?? ''} ${t('Vesting schedule')}`}
         </Text>
       </CardHeader>
       <CardBody>
@@ -52,44 +89,31 @@ export const VestingScheduleCard: React.FC = () => {
           <Timeline>
             <Milestone>
               <Dot />
-              <Text fontSize="12px" bold>
-                {t('IFO ENDED')}
-              </Text>
-              <Text fontSize="12px" color="textSubtle">
-                --
-              </Text>
             </Milestone>
             <Milestone>
               <Dot />
-              <Text fontSize="12px" bold>
-                {t('CLIFF')}
-              </Text>
-              <Text fontSize="12px" color="textSubtle">
-                --
-              </Text>
             </Milestone>
             <Milestone>
               <Dot />
-              <Text fontSize="12px" bold>
-                {t('VESTING END')}
-              </Text>
-              <Text fontSize="12px" color="textSubtle">
-                --
-              </Text>
             </Milestone>
           </Timeline>
+          <Flex justifyContent="space-between">
+            <Text fontSize="12px" bold>{`${t('IFO ended')} (${ifoEnded})`}</Text>
+            <Text fontSize="12px" bold>{`${t('Cliff')} (${cliff})`}</Text>
+            <Text fontSize="12px" bold>{`${t('Vesting end')} (${vestingEnd})`}</Text>
+          </Flex>
           <FlexGap flexDirection="column" gap="8px">
             <FlexGap justifyContent="space-between">
               <Text color="textSubtle">{t('Release rate')}</Text>
-              <Text>{t('1% per second')}</Text>
+              <Text>{releaseRate ? t('%releaseRate% per second', { releaseRate }) : '--'}</Text>
             </FlexGap>
             <FlexGap justifyContent="space-between">
               <Text color="textSubtle">{t('Vesting duration')}</Text>
-              <Text>{t('30 days')}</Text>
+              <Text>{vestingDuration || '--'}</Text>
             </FlexGap>
             <FlexGap justifyContent="space-between">
               <Text color="textSubtle">{t('Fully released date')}</Text>
-              <Text>{t('Oct 29 2026 13:54:12')}</Text>
+              <Text>{vestingEnd}</Text>
             </FlexGap>
           </FlexGap>
         </FlexGap>
