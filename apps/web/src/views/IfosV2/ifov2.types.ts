@@ -1,4 +1,6 @@
+import type { ChainId } from '@pancakeswap/chains'
 import type { Currency, CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
+import type { ReactNode } from 'react'
 import type { Address } from 'viem'
 
 export interface PoolInfo {
@@ -48,3 +50,19 @@ export interface PoolInfo {
 }
 
 export default PoolInfo
+
+export type IFOConfig = {
+  id: string
+  icon: string
+  projectUrl: string
+  chainId: ChainId
+  bannerUrl: string
+  tgeTitle: ReactNode
+  tgeSubtitle: ReactNode
+  description: ReactNode
+  ineligibleContent?: ReactNode
+  contractAddress: Address
+  faqs?: IFOFAQs
+}
+
+export type IFOFAQs = Array<{ title: ReactNode; description: ReactNode }>

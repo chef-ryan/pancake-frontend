@@ -1,26 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
 import { ChainId } from '@pancakeswap/chains'
 import { Trans } from '@pancakeswap/localization'
-import { Box } from '@pancakeswap/uikit'
 import { ASSET_CDN } from 'config/constants/endpoints'
-import { ReactNode } from 'react'
-import type { Address } from 'viem'
-
-export type IFOFAQs = Array<{ title: ReactNode; description: ReactNode }>
-
-export type IFOConfig = {
-  id: string
-  icon: string
-  projectUrl: string
-  chainId: ChainId
-  bannerUrl: string
-  tgeTitle: ReactNode
-  tgeSubtitle: ReactNode
-  description: ReactNode
-  ineligibleContent?: ReactNode
-  contractAddress: Address
-  faqs?: IFOFAQs
-}
+import { IFOConfig } from '../ifov2.types'
 
 export const ifoConfigs: IFOConfig[] = [
   // TODO: IFO v10 testing configuration on Tenderly Virtual Network
