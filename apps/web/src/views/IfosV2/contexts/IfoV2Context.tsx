@@ -4,8 +4,8 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useWalletClient } from 'wagmi'
 import { getIFOContract } from '../hooks/ifo/useIFOContract'
 import type { IfoInfo } from '../hooks/ifo/useIFOInfo'
-import { IFOConfig, ifoConfigs } from '../config'
-import type { PoolInfo } from '../ifov2.types'
+import { ifoConfigs } from '../config'
+import type { IFOConfig, PoolInfo } from '../ifov2.types'
 
 export interface IfoV2ContextType {
   chainId: number

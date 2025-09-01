@@ -26,7 +26,7 @@ const SaleInfoWrapper = styled(FlexGap)`
   }
 `
 
-export const IfoCardComming: React.FC<IfoCardProps> = ({
+export const IfoCardComing: React.FC<IfoCardProps> = ({
   pool0Info,
   pool1Info,
   userStatus0,

@@ -9,7 +9,7 @@ import { useIFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
 import { Footer } from '../Footer'
 import { IfoRibbon } from './IfoRibbon'
-import { IfoCardComming } from './IfoCardComming'
+import { IfoCardComing } from './IfoCardComing'
 import { IfoCardLive } from './IfoCardLive'
 import { IfoCardFinished } from './IfoCardFinished'
 import { IfoCardIdle } from './IfoCardIdle'
@@ -86,7 +86,7 @@ const IfoCard: React.FC = () => {
 
   switch (ifoStatus) {
     case 'coming_soon':
-      return <IfoCardComming {...cardProps} />
+      return <IfoCardComing {...cardProps} />
     case 'live':
       return <IfoCardLive {...cardProps} />
     case 'finished':
