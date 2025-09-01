@@ -30,6 +30,15 @@ const Header = styled(CardHeader)<{
   background-image: ${({ $bannerUrl }) => `url('${$bannerUrl}')`};
 `
 
+const StyledCard = styled(Card)`
+  width: 100%;
+  margin: 0 auto;
+
+  ${({ theme }) => theme.mediaQueries.lg} {
+    width: 737px;
+  }
+`
+
 export const IfoCurrentCard = ({ ifoId, bannerUrl }: { ifoId: string; bannerUrl: string }) => {
   const { info } = useIfo()
   const { status, duration, startTimestamp, endTimestamp } = info
@@ -48,7 +57,7 @@ export const IfoCurrentCard = ({ ifoId, bannerUrl }: { ifoId: string; bannerUrl:
   }
 
   return (
-    <Card style={{ width: '100%' }}>
+    <StyledCard>
       <Box className="sticky-header" position="sticky" bottom="48px" width="100%" zIndex={6}>
         <Header $isCurrent $bannerUrl={bannerUrl} />
         <IfoRibbon
@@ -62,7 +71,7 @@ export const IfoCurrentCard = ({ ifoId, bannerUrl }: { ifoId: string; bannerUrl:
         <IfoCard />
       </Box>
       <Footer />
-    </Card>
+    </StyledCard>
   )
 }
 

@@ -16,23 +16,9 @@ export const ifoConfigs: IFOConfig[] = [
     tgeTitle: <Trans>IFO v10 Test - USDT Offering</Trans>,
     tgeSubtitle: <Trans>Testing on Tenderly Virtual Network</Trans>,
     description: (
-      <>
+      <div>
         <Trans>This is a test IFO v10 configuration for development and testing purposes.</Trans>
-        <br />
-        <br />
-        <b>Virtual Network Details:</b>
-        <br />
-        - LP Token 0: Native Token (BNB)
-        <br />
-        - Offering Token: USDT (0x55d398326f99059fF775485246999027B3197955)
-        <br />
-        - Admin: 0xbe9c4b9bbf22a2ef48d2ba0ee177168db6d46363
-        <br />- Start Time: {new Date(1756266834 * 1000).toLocaleString()}
-        <br />- End Time: {new Date(1756349634 * 1000).toLocaleString()}
-        <br />
-        - Pool Mode: Single Pool (maxPoolId = 0)
-        <br />- Vesting: Disabled
-      </>
+      </div>
     ),
     faqs: [
       {
