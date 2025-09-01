@@ -7,8 +7,11 @@ export const Footer: React.FC = () => {
   const { ifoContract, config: currentIfoConfig } = useIfo()
   return (
     <CardBody>
-      <FlexGap gap="12px" flexDirection="column">
-        <FlexGap gap="12px">
+      <FlexGap gap="12px" width="100%" flexDirection={['column', 'row']} alignItems="center">
+        <Text flex="1" color="textSubtle" fontSize="14px" lineHeight="16.8px" textAlign={['center', 'left']}>
+          {currentIfoConfig?.description}
+        </Text>
+        <FlexGap gap="12px" justifyContent={['center', 'flex-end']}>
           <Link href={currentIfoConfig?.projectUrl} target="_blank" rel="noopener noreferrer">
             <LanguageIcon width="24px" color={theme.colors.textSubtle} />
           </Link>
@@ -16,9 +19,6 @@ export const Footer: React.FC = () => {
             <BscScanIcon width="24px" color={theme.colors.textSubtle} />
           </Link>
         </FlexGap>
-        <Text color="textSubtle" fontSize="14px" lineHeight="16.8px">
-          {currentIfoConfig?.description}
-        </Text>
       </FlexGap>
     </CardBody>
   )
