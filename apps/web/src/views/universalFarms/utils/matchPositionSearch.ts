@@ -16,7 +16,6 @@ const getSymbolTags = (chainId: number, address: string) => {
   const relatedToken = tokensMap[key]
   const tags = new Set<string>()
   if (relatedToken) {
-    console.log(`[search]`, relatedToken)
     if (Native.onChain(chainId).wrapped.address.toLowerCase() === relatedToken.address.toLowerCase()) {
       tags.add(Native.onChain(chainId).symbol.toLowerCase())
     }
@@ -40,7 +39,7 @@ export function matchPositionSearch(pos: UnifiedPositionDetail, search: string) 
   switch (pos.protocol) {
     case Protocol.InfinityCLAMM: {
       const symbolTags0 = getSymbolTags(pos.chainId, (pos as InfinityCLPositionDetail).token0)
-      const symbolTags1 = getSymbolTags(pos.chainId, (pos as InfinityCLPositionDetail).token0)
+      const symbolTags1 = getSymbolTags(pos.chainId, (pos as InfinityCLPositionDetail).token1)
       tags.push(...symbolTags0, ...symbolTags1)
       tags.push('infinity', 'clamm')
       break
