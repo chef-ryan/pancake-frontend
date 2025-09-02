@@ -36,6 +36,7 @@ declare module "@@@next-typesafe-url" {
     "/ido/[ido]": StaticRoute;
     "/ido": StaticRoute;
     "/ido/w3w": StaticRoute;
+    "/ifo/deposit/[ifoId]/[poolIndex]": StaticRoute;
     "/ifo/history": StaticRoute;
     "/ifo": StaticRoute;
     "/ifov1": StaticRoute;
