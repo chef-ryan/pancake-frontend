@@ -1,12 +1,13 @@
-import { useMemo, useState } from 'react'
+import { ReactNode, useMemo, useState } from 'react'
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, Card, CardBody, CardHeader, ExpandableButton, FlexGap, Text } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
 import { CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
+import getTimePeriods from '@pancakeswap/utils/getTimePeriods'
 import { IfoRibbon } from './IfoCards/IfoRibbon'
 import { StyledLogo } from './Icons'
-import { useIFODuration } from '../hooks/ifo/useIFODuration'
 import useIfo from '../hooks/useIfo'
+import { useIfoDisplay } from '../hooks/useIfoDisplay'
 
 const Header = styled(CardHeader)<{ $bannerUrl: string }>`
   width: 100%;
@@ -21,7 +22,7 @@ const Header = styled(CardHeader)<{ $bannerUrl: string }>`
   background-image: ${({ $bannerUrl }) => `url('${$bannerUrl}')`};
 `
 
-const DetailRow: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+const DetailRow: React.FC<{ label: string; value: ReactNode }> = ({ label, value }) => (
   <FlexGap justifyContent="space-between" mt="8px">
     <Text color="textSubtle">{label}</Text>
     <Text textAlign="right">{value}</Text>
@@ -34,34 +35,31 @@ const IfoHistoryCard: React.FC = () => {
   const { t } = useTranslation()
   const [expanded, setExpanded] = useState(false)
   const { config, info, pools } = useIfo()
+  const { pools: displayPools, startDisplay, endDisplay, preSaleDurationText } = useIfoDisplay()
 
   const pool0 = pools?.[0]
+  const poolDisplay0 = displayPools?.[0]
   const saleAmount = pool0?.saleAmount
   const raiseAmount = pool0?.raise
   const pricePerToken = pool0?.price
 
   const totalSale = saleAmount ? `${saleAmount.toSignificant(6)} ${saleAmount.currency.symbol}` : '-'
 
-  const durationText = useIFODuration(info?.duration ?? 0)
-
   const additionalFee = useMemo(() => {
     if (pool0?.hasTax) {
-      return `${Number(pool0.flatTaxRate) / 1e8}%`
+      return `${poolDisplay0?.flatTaxRate ?? 0}%`
     }
     return '0%'
-  }, [pool0])
+  }, [pool0, poolDisplay0])
 
   const totalCommitted = useMemo(() => {
     if (!pool0 || !pool0.currency) return ''
     const amount = CurrencyAmount.fromRawAmount(pool0.currency, pool0.totalAmountPool)
-    const percent =
-      pool0.raisingAmountPool > 0n
-        ? ((Number(pool0.totalAmountPool) / Number(pool0.raisingAmountPool)) * 100).toFixed(2)
-        : '0'
+    const percent = poolDisplay0?.totalCommittedPercent ?? '0'
     return `${amount.toSignificant(6)} ${amount.currency.symbol} (${percent}%)`
-  }, [pool0])
+  }, [pool0, poolDisplay0])
 
-  const fundsToRaise = raiseAmount ? `${raiseAmount.toSignificant(6)} ${raiseAmount.currency.symbol}` : ''
+  const fundsToRaise = poolDisplay0?.raiseAmountText ?? ''
 
   const { cakeToBurn, taxAmount } = useMemo(() => {
     if (!pool0 || !pool0.currency || !pool0.hasTax) {
@@ -97,6 +95,39 @@ const IfoHistoryCard: React.FC = () => {
     )
     return `${price.toSignificant(6)} ${price.quoteCurrency.symbol}`
   }, [raiseAmount, saleAmount, taxAmount])
+
+  const durationText = useMemo(() => {
+    if (info.status !== 'finished') {
+      return preSaleDurationText
+    }
+
+    const { days } = getTimePeriods(info.duration)
+    if (days < 1) {
+      return (
+        <>
+          {startDisplay.date}
+          <br />
+          {startDisplay.time} - {endDisplay.time} (UTC+8)
+        </>
+      )
+    }
+
+    return (
+      <>
+        {startDisplay.date} {t('to')} <br />
+        {endDisplay.date}
+      </>
+    )
+  }, [
+    endDisplay.date,
+    endDisplay.time,
+    info.duration,
+    info.status,
+    preSaleDurationText,
+    startDisplay.date,
+    startDisplay.time,
+    t,
+  ])
 
   return (
     <Card mb="24px">

@@ -70,3 +70,16 @@ export type IFOConfig = {
 }
 
 export type IFOFAQs = Array<{ title: ReactNode; description: ReactNode }>
+
+export interface IfoPoolDisplay {
+  flatTaxRate: number
+  totalCommittedPercent: string
+  raiseAmountText: string
+}
+
+export interface IfoDisplay {
+  startDisplay: { date: string; time: string }
+  endDisplay: { date: string; time: string }
+  preSaleDurationText: string
+  pools: IfoPoolDisplay[]
+}

@@ -1,25 +1,22 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, FlexGap, Text } from '@pancakeswap/uikit'
-import getTimePeriods from '@pancakeswap/utils/getTimePeriods'
 import { CurrencyLogo, DoubleCurrencyLogo, NumberDisplay } from '@pancakeswap/widgets-internal'
 import useTheme from 'hooks/useTheme'
+import getTimePeriods from '@pancakeswap/utils/getTimePeriods'
 import { useMemo } from 'react'
 import { StyledLogo } from '../Icons'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
-import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import useIfo from '../../hooks/useIfo'
-import { useIfoTimeDisplay } from '../../hooks/ifo/useIfoTimeDisplay'
+import { useIfoDisplay } from '../../hooks/useIfoDisplay'
 
 export const IfoSaleInfoCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
   const { config, info } = useIfo()
-  const { totalSalesAmount, status, duration, startTimestamp, endTimestamp } = info
+  const { totalSalesAmount, status, duration } = info
   const { icon } = config ?? {}
-  const preSaleDurationText = useIFODuration(duration)
-  const startDisplay = useIfoTimeDisplay(startTimestamp)
-  const endDisplay = useIfoTimeDisplay(endTimestamp)
+  const { startDisplay, endDisplay, preSaleDurationText } = useIfoDisplay()
 
   const durationText = useMemo(() => {
     if (status !== 'finished') {
@@ -43,7 +40,7 @@ export const IfoSaleInfoCard: React.FC = () => {
         {endDisplay.date}
       </>
     )
-  }, [duration, endDisplay.date, endDisplay.time, preSaleDurationText, startDisplay.date, startDisplay.time, status, t])
+  }, [endDisplay.date, endDisplay.time, duration, preSaleDurationText, startDisplay.date, startDisplay.time, status, t])
 
   return (
     <Card background={isDark ? '#18171A' : theme.colors.background} mb="16px">

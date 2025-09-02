@@ -7,6 +7,7 @@ import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
+import { useIfoDisplay } from '../../hooks/useIfoDisplay'
 import { Divider } from './Divider'
 import { IfoDepositForm } from './IfoDepositForm'
 import { StakedDisplay } from './StakedDisplay'
@@ -24,9 +25,10 @@ export const IfoPoolLive: React.FC<{
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
   const { info, pools } = useIfo()
+  const { pools: displayPools } = useIfoDisplay()
   const { status } = info
   const poolInfo = pools?.[pid]
-  const raiseAmount = poolInfo?.raise
+  const raiseAmountText = displayPools?.[pid]?.raiseAmountText
   const pricePerToken = poolInfo?.price
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
@@ -72,9 +74,7 @@ export const IfoPoolLive: React.FC<{
       </FlexGap>
       <FlexGap justifyContent="space-between">
         <Text color="textSubtle">{t('Target Raise')}</Text>
-        <Text>
-          {raiseAmount?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
-        </Text>
+        <Text>{raiseAmountText}</Text>
       </FlexGap>
       {status === 'live' && (
         <>
