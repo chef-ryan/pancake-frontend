@@ -29,13 +29,17 @@ export interface PoolInfo {
    */
   hasTax: boolean
   /**
-   * Flat tax rate for overflow
-   */
-  flatTaxRate: bigint
-  /**
    * Total amount of tokens staked in the pool
    */
   totalAmountPool: bigint
+  /**
+   * Sum of taxes collected from overflow
+   */
+  sumTaxesOverflow: bigint
+  /**
+   * Flat tax rate for overflow
+   */
+  flatTaxRate: bigint
   /**
    * Currency used to stake in the pool
    */
