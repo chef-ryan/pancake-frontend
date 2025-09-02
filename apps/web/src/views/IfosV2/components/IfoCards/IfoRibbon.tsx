@@ -8,6 +8,8 @@ import { Percent } from '@pancakeswap/swap-sdk-core'
 import useTheme from 'hooks/useTheme'
 import LiveTimer, { SoonTimer } from './Timer'
 import { useIFOPoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
+import { useIFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import useIfo from '../../hooks/useIfo'
 
 const StyledProgress = styled(Progress)`
   background-color: #281a5b;
@@ -64,23 +66,22 @@ const ChainBoardContainer = styled(Box)`
   }
 `
 
-export const IfoRibbon = ({
-  ifoStatus,
-  plannedStartTime,
-  startTime,
-  endTime,
-  isClaimed,
-  hasUserStaked,
-}: {
-  ifoStatus: IfoStatus
-  plannedStartTime: number
-  startTime: number
-  endTime: number
-  isClaimed?: boolean
-  hasUserStaked?: boolean
-}) => {
+export const IfoRibbon: React.FC = () => {
   const { isDark } = useTheme()
+  const { info } = useIfo()
+  const { status: ifoStatus, startTimestamp, endTimestamp } = info
   const pools = useIFOPoolInfo()
+  const [userStatus0, userStatus1] = useIFOUserStatus()
+
+  const hasUserStaked = userStatus0?.stakedAmount?.greaterThan(0) || userStatus1?.stakedAmount?.greaterThan(0)
+
+  const isClaimed = useMemo(() => {
+    if (!userStatus0 && !userStatus1) return false
+    if (userStatus0?.claimableAmount?.greaterThan(0) && userStatus1?.claimableAmount?.greaterThan(0))
+      return userStatus0.claimed && userStatus1.claimed
+    return userStatus0?.claimed || userStatus1?.claimed
+  }, [userStatus0, userStatus1])
+
   const totalRaiseProgress = useMemo(() => {
     const totalRaise = (pools[0]?.raisingAmountPool ?? 0n) + (pools[1]?.raisingAmountPool ?? 0n)
     if (totalRaise === 0n) return 0
@@ -94,15 +95,15 @@ export const IfoRibbon = ({
       ribbon = <IfoRibbonEnd isClaimed={isClaimed} hasUserStaked={hasUserStaked} />
       break
     case 'live':
-      ribbon = <IfoRibbonLive endTime={endTime} ifoStatus={ifoStatus} dark={isDark} />
+      ribbon = <IfoRibbonLive endTime={endTimestamp} ifoStatus={ifoStatus} dark={isDark} />
       break
     case 'coming_soon':
       ribbon = (
         <IfoRibbonSoon
-          endTime={endTime}
-          startTime={startTime}
+          endTime={endTimestamp}
+          startTime={startTimestamp}
           ifoStatus={ifoStatus}
-          plannedStartTime={plannedStartTime}
+          plannedStartTime={startTimestamp}
           dark={isDark}
         />
       )

@@ -135,14 +135,7 @@ const IfoHistoryCard: React.FC = () => {
         <Header $bannerUrl={config?.bannerUrl || ''}>
           <ExpandableButton expanded={expanded} onClick={() => setExpanded((prev) => !prev)} />
         </Header>
-        {expanded && (
-          <IfoRibbon
-            ifoStatus={info.status}
-            plannedStartTime={info.startTimestamp ? info.startTimestamp - 432000 : 0}
-            startTime={info.startTimestamp}
-            endTime={info.endTimestamp}
-          />
-        )}
+        {expanded && <IfoRibbon />}
       </Box>
       {expanded && (
         <CardBody>

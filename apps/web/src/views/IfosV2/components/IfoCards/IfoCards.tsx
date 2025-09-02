@@ -1,7 +1,6 @@
 import { Box, Card, CardHeader, Spinner } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
 
-import { useMemo } from 'react'
 import { useIFOStatus } from '../../hooks/ifo/useIFOStatus'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import { useIFOPoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
@@ -41,16 +40,8 @@ const StyledCard = styled(Card)`
 
 export const IfoCurrentCard = ({ ifoId, bannerUrl }: { ifoId: string; bannerUrl: string }) => {
   const { info } = useIfo()
-  const { status, duration, startTimestamp, endTimestamp } = info
-  const [userStatus0, userStatus1] = useIFOUserStatus()
+  const { status } = info
   const { offeringCurrency } = useIFOCurrencies()
-  const hasUserStaked = userStatus0?.stakedAmount?.greaterThan(0) || userStatus1?.stakedAmount?.greaterThan(0)
-  const isClaimed = useMemo(() => {
-    if (!userStatus0 && !userStatus1) return false
-    if (userStatus0?.claimableAmount?.greaterThan(0) && userStatus1?.claimableAmount?.greaterThan(0))
-      return userStatus0.claimed && userStatus1.claimed
-    return userStatus0?.claimed || userStatus1?.claimed
-  }, [userStatus0, userStatus1])
 
   if (!status || !offeringCurrency) {
     return <Spinner />
@@ -60,14 +51,7 @@ export const IfoCurrentCard = ({ ifoId, bannerUrl }: { ifoId: string; bannerUrl:
     <StyledCard>
       <Box className="sticky-header" position="sticky" bottom="48px" width="100%" zIndex={6}>
         <Header $isCurrent $bannerUrl={bannerUrl} />
-        <IfoRibbon
-          startTime={startTimestamp}
-          plannedStartTime={startTimestamp}
-          ifoStatus={status}
-          endTime={endTimestamp}
-          hasUserStaked={hasUserStaked}
-          isClaimed={isClaimed}
-        />
+        <IfoRibbon />
         <IfoCard />
       </Box>
       <Footer />
