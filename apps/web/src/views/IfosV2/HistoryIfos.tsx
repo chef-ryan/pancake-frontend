@@ -8,7 +8,7 @@ const HistoryIfos: React.FC = () => {
     <Container p="0">
       {ifoConfigs.map((ifo) => (
         <IfoV2Provider id={ifo.id} key={ifo.id}>
-          <IfoHistoryCard ifo={ifo} />
+          <IfoHistoryCard />
         </IfoV2Provider>
       ))}
     </Container>

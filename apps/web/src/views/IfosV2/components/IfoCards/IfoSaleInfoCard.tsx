@@ -2,16 +2,13 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, FlexGap, Text } from '@pancakeswap/uikit'
 import getTimePeriods from '@pancakeswap/utils/getTimePeriods'
 import { CurrencyLogo, DoubleCurrencyLogo, NumberDisplay } from '@pancakeswap/widgets-internal'
-import dayjs from 'dayjs'
-import timezone from 'dayjs/plugin/timezone'
 import useTheme from 'hooks/useTheme'
 import { useMemo } from 'react'
 import { StyledLogo } from '../Icons'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import useIfo from '../../hooks/useIfo'
-
-dayjs.extend(timezone)
+import { useIfoTimeDisplay } from '../../hooks/ifo/useIfoTimeDisplay'
 
 export const IfoSaleInfoCard: React.FC = () => {
   const { t } = useTranslation()
@@ -21,6 +18,8 @@ export const IfoSaleInfoCard: React.FC = () => {
   const { totalSalesAmount, status, duration, startTimestamp, endTimestamp } = info
   const { icon } = config ?? {}
   const preSaleDurationText = useIFODuration(duration)
+  const startDisplay = useIfoTimeDisplay(startTimestamp)
+  const endDisplay = useIfoTimeDisplay(endTimestamp)
 
   const durationText = useMemo(() => {
     if (status !== 'finished') {
@@ -31,21 +30,20 @@ export const IfoSaleInfoCard: React.FC = () => {
     if (days < 1) {
       return (
         <>
-          {dayjs.unix(startTimestamp).format('DD-MM-YYYY')}
+          {startDisplay.date}
           <br />
-          {dayjs.unix(startTimestamp).tz('Asia/Singapore').format('HH:mm')} -{' '}
-          {dayjs.unix(endTimestamp).tz('Asia/Singapore').format('HH:mm')} (UTC+8)
+          {startDisplay.time} - {endDisplay.time} (UTC+8)
         </>
       )
     }
 
     return (
       <>
-        {dayjs.unix(startTimestamp).format('DD-MM-YYYY')} {t('to')} <br />
-        {dayjs.unix(endTimestamp).format('DD-MM-YYYY')}
+        {startDisplay.date} {t('to')} <br />
+        {endDisplay.date}
       </>
     )
-  }, [duration, endTimestamp, preSaleDurationText, startTimestamp, status, t])
+  }, [duration, endDisplay.date, endDisplay.time, preSaleDurationText, startDisplay.date, startDisplay.time, status, t])
 
   return (
     <Card background={isDark ? '#18171A' : theme.colors.background} mb="16px">
