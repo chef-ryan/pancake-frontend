@@ -1,15 +1,19 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Button, FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
+import { Button, FlexGap, InfoIcon, Text, useTooltip, AddIcon } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useRouter } from 'next/router'
+import { useMemo } from 'react'
+import { CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
+import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
 import { useIfoDisplay } from '../../hooks/useIfoDisplay'
 
 export const IfoPoolLive: React.FC<{
   pid: number
   ifoStatus: IFOStatus
-}> = ({ ifoStatus, pid }) => {
+  userStatus?: IFOUserStatus
+}> = ({ ifoStatus, pid, userStatus }) => {
   const { t } = useTranslation()
   const router = useRouter()
   const { config, info, pools } = useIfo()
@@ -20,6 +24,21 @@ export const IfoPoolLive: React.FC<{
   const raiseAmountText = displayPools?.[pid]?.raiseAmountText
   const pricePerToken = poolInfo?.price
   const ifoId = config?.id
+  const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
+
+  const feeTier = displayPools?.[pid]?.flatTaxRate ?? 0
+
+  const TAX_PRECISION = 10000000000n
+  const cakeToBurn = useMemo(() => {
+    if (!poolInfo || !poolInfo.stakeCurrency || !poolInfo.hasTax) return ''
+    const overflow =
+      poolInfo.totalAmountPool > poolInfo.raisingAmountPool ? poolInfo.totalAmountPool - poolInfo.raisingAmountPool : 0n
+    if (overflow <= 0n) return ''
+    const taxRaw = (overflow * poolInfo.flatTaxRate) / TAX_PRECISION
+    if (taxRaw <= 0n) return ''
+    const amount = CurrencyAmount.fromRawAmount(poolInfo.stakeCurrency, taxRaw)
+    return `${amount.toSignificant(6)} ${amount.currency.symbol}`
+  }, [poolInfo])
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     t('This sale has been oversubscribed. You will get partial refund of the deposit.'),
@@ -47,9 +66,15 @@ export const IfoPoolLive: React.FC<{
             {stakeCurrency?.symbol} {t('Pool')}
           </Text>
         </FlexGap>
-        <Button scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
-          {t('Deposit')}
-        </Button>
+        {userHasStaked ? (
+          <Button variant="secondary" scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
+            <AddIcon color="primary" width="14px" />
+          </Button>
+        ) : (
+          <Button scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
+            {t('Deposit')}
+          </Button>
+        )}
       </FlexGap>
 
       <FlexGap justifyContent="space-between" mt="8px">
@@ -64,7 +89,7 @@ export const IfoPoolLive: React.FC<{
         <Text color="textSubtle">{t('Target Raise')}</Text>
         <Text>{raiseAmountText}</Text>
       </FlexGap>
-      {status === 'live' && (
+      {userHasStaked && (
         <>
           <FlexGap justifyContent="space-between">
             <Text color="textSubtle">{t('Total committed')}</Text>
@@ -90,6 +115,14 @@ export const IfoPoolLive: React.FC<{
                 </FlexGap>
               )}
             </FlexGap>
+          </FlexGap>
+          <FlexGap justifyContent="space-between">
+            <Text color="textSubtle">{t('Fee Tier')}</Text>
+            <Text>{feeTier}%</Text>
+          </FlexGap>
+          <FlexGap justifyContent="space-between">
+            <Text color="textSubtle">{t('CAKE to burn:')}</Text>
+            <Text>{cakeToBurn || '-'}</Text>
           </FlexGap>
         </>
       )}
