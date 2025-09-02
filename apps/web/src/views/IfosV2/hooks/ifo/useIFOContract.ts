@@ -35,12 +35,7 @@ export function getIFOContract(ifoId: string, signer?: WalletClient, chainId?: n
     chainId,
     publicClient: createPublicClient({
       chain: bsc,
-      // TODO: Using Tenderly Virtual Network for IFO v10 testing
-      transport:
-        typeof window !== 'undefined' && window.ethereum
-          ? custom(window.ethereum as any)
-          : http('https://virtual.binance.eu.rpc.tenderly.co/08d597ab-f1d8-43bf-9fbf-6ba2fb94f081'),
-      // transport: typeof window !== 'undefined' && window.ethereum ? custom(window.ethereum as any) : http(),
+      transport: http('https://virtual.binance.eu.rpc.tenderly.co/08d597ab-f1d8-43bf-9fbf-6ba2fb94f081'),
     }),
   })
 }
