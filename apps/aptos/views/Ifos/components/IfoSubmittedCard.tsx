@@ -12,7 +12,7 @@ interface IfoSummitedCardProps {
   txHash: string
 }
 
-const IfoSummitedCard: React.FC<React.PropsWithChildren<IfoSummitedCardProps>> = ({ txHash }) => {
+const IfoSubmittedCard: React.FC<React.PropsWithChildren<IfoSummitedCardProps>> = ({ txHash }) => {
   const { t } = useTranslation()
   const chainId = useActiveChainId()
   const [animationData, setAnimationData] = useState<any>()
