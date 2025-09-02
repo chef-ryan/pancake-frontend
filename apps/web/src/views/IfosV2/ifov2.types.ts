@@ -53,8 +53,6 @@ export interface PoolInfo {
   saleAmount?: CurrencyAmount<Currency>
 }
 
-export default PoolInfo
-
 export type IFOConfig = {
   id: string
   icon: string
