@@ -1,4 +1,5 @@
 import type { ChainId } from '@pancakeswap/chains'
+import type { IfoStatus } from '@pancakeswap/ifos'
 import type { Currency, CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
 import type { ReactNode } from 'react'
 import type { Address } from 'viem'
@@ -68,6 +69,24 @@ export type IFOConfig = {
 }
 
 export type IFOFAQs = Array<{ title: ReactNode; description: ReactNode }>
+
+export interface VestingInfo {
+  startTime: number
+  percentage: number
+  cliff: number
+  duration: number
+  rate: number
+}
+
+export interface IfoInfo {
+  startTimestamp: number
+  endTimestamp: number
+  duration: number
+  totalSalesAmount: CurrencyAmount<Currency> | undefined
+  status: IfoStatus
+  ready: boolean
+  vestingInfo?: VestingInfo
+}
 
 export interface IfoPoolDisplay {
   flatTaxRate: number

@@ -1,4 +1,3 @@
-import type { IfoStatus } from '@pancakeswap/ifos'
 import { type Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
@@ -8,16 +7,9 @@ import { getViemClients } from 'utils/viem'
 import { getStatusByTimestamp } from '../helpers'
 import { useIFOCurrencies } from './useIFOCurrencies'
 import { useIFOPoolInfo } from './useIFOPoolInfo'
+import { useVestingInfo } from './useVestingInfo'
 import { useIfoV2Context } from '../../contexts/IfoV2Context'
-
-export type IfoInfo = {
-  startTimestamp: number
-  endTimestamp: number
-  duration: number
-  totalSalesAmount: CurrencyAmount<Currency> | undefined
-  status: IfoStatus
-  ready: boolean
-}
+import type { IfoInfo } from '../../ifov2.types'
 
 type InfoFN = () => IfoInfo
 export const useIFOInfo: InfoFN = () => {
@@ -26,6 +18,7 @@ export const useIFOInfo: InfoFN = () => {
   const pool1Info = pools[1]
   const { offeringCurrency } = useIFOCurrencies()
   const { chainId } = useActiveChainId()
+  const vestingInfo = useVestingInfo()
   const { ifoContract } = useIfoV2Context()
   const { data: timestamps } = useQuery({
     queryKey: ['ifoTimestamps', chainId],
@@ -60,6 +53,7 @@ export const useIFOInfo: InfoFN = () => {
         : undefined,
       status: getStatusByTimestamp(now, timestamps?.startTimestamp, timestamps?.endTimestamp),
       ready: Boolean(timestamps && offeringCurrency),
+      vestingInfo,
     } as IfoInfo
     return info
   }, [
@@ -67,6 +61,7 @@ export const useIFOInfo: InfoFN = () => {
     pool1Info?.offeringAmountPool,
     timestamps?.startTimestamp,
     timestamps?.endTimestamp,
+    vestingInfo,
     offeringCurrency,
     now,
   ])

@@ -2,11 +2,11 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, CardHeader, Flex, FlexGap, Text } from '@pancakeswap/uikit'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import useTheme from 'hooks/useTheme'
 import { styled } from 'styled-components'
 import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
+import { useVestingInfo } from '../../hooks/ifo/useVestingInfo'
 import useIfo from '../../hooks/useIfo'
 
 const Timeline = styled.div`
@@ -43,25 +43,8 @@ export const VestingScheduleCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const { offeringCurrency } = useIFOCurrencies()
-  const { ifoContract, info } = useIfo()
-
-  const { data: vesting } = useQuery({
-    queryKey: ['ifoVestingInfo', ifoContract?.address],
-    queryFn: async () => {
-      if (!ifoContract) throw new Error('IFO contract not found')
-      const [startTime, [percentage, cliff, duration]] = await Promise.all([
-        ifoContract.read.vestingStartTime(),
-        ifoContract.read.viewPoolVestingInformation([0n]),
-      ])
-      return {
-        startTime: Number(startTime),
-        percentage: Number(percentage),
-        cliff: Number(cliff),
-        duration: Number(duration),
-      }
-    },
-    enabled: !!ifoContract,
-  })
+  const { info } = useIfo()
+  const vesting = useVestingInfo()
 
   const vestingDuration = useIFODuration(vesting?.duration ?? 0)
 
