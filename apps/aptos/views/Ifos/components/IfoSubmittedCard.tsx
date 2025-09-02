@@ -38,5 +38,3 @@ const IfoSubmittedCard: React.FC<React.PropsWithChildren<IfoSummitedCardProps>> 
     </Card>
   )
 }
-
-export default IfoSummitedCard
