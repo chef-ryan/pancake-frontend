@@ -1,9 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Button, FlexGap, InfoIcon, Text, useTooltip, AddIcon } from '@pancakeswap/uikit'
+import { Button, FlexGap, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useRouter } from 'next/router'
-import { useMemo } from 'react'
-import { CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
@@ -26,27 +24,6 @@ export const IfoPoolLive: React.FC<{
   const ifoId = config?.id
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
-  const feeTier = displayPools?.[pid]?.flatTaxRate ?? 0
-
-  const TAX_PRECISION = 10000000000n
-  const cakeToBurn = useMemo(() => {
-    if (!poolInfo || !poolInfo.stakeCurrency || !poolInfo.hasTax) return ''
-    const overflow =
-      poolInfo.totalAmountPool > poolInfo.raisingAmountPool ? poolInfo.totalAmountPool - poolInfo.raisingAmountPool : 0n
-    if (overflow <= 0n) return ''
-    const taxRaw = (overflow * poolInfo.flatTaxRate) / TAX_PRECISION
-    if (taxRaw <= 0n) return ''
-    const amount = CurrencyAmount.fromRawAmount(poolInfo.stakeCurrency, taxRaw)
-    return `${amount.toSignificant(6)} ${amount.currency.symbol}`
-  }, [poolInfo])
-
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(
-    t('This sale has been oversubscribed. You will get partial refund of the deposit.'),
-    {
-      placement: 'top',
-    },
-  )
-
   if (status === 'coming_soon') {
     return null
   }
@@ -66,15 +43,9 @@ export const IfoPoolLive: React.FC<{
             {stakeCurrency?.symbol} {t('Pool')}
           </Text>
         </FlexGap>
-        {userHasStaked ? (
-          <Button variant="secondary" scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
-            <AddIcon color="primary" width="14px" />
-          </Button>
-        ) : (
-          <Button scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
-            {t('Deposit')}
-          </Button>
-        )}
+        <Button scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
+          {t('Deposit')}
+        </Button>
       </FlexGap>
 
       <FlexGap justifyContent="space-between" mt="8px">
@@ -90,41 +61,12 @@ export const IfoPoolLive: React.FC<{
         <Text>{raiseAmountText}</Text>
       </FlexGap>
       {userHasStaked && (
-        <>
-          <FlexGap justifyContent="space-between">
-            <Text color="textSubtle">{t('Total committed')}</Text>
-            <Text>
-              {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
-            </Text>
-          </FlexGap>
-          <FlexGap justifyContent="space-between">
-            <Text color="textSubtle">{t('Status')}</Text>
-            <FlexGap flexDirection="column" alignItems="flex-end">
-              <FlexGap gap="3px">
-                <Text>
-                  {ifoStatus.progress.toFixed(2)} % {ifoStatus.progress.greaterThan(1) && '🎉'}
-                </Text>
-              </FlexGap>
-              {ifoStatus.progress.greaterThan(1) && (
-                <FlexGap gap="3px">
-                  <Text>{t('Oversubscribed')}</Text>
-                  <FlexGap ref={targetRef}>
-                    <InfoIcon width="14px" color="textSubtle" />
-                    {tooltipVisible && tooltip}
-                  </FlexGap>
-                </FlexGap>
-              )}
-            </FlexGap>
-          </FlexGap>
-          <FlexGap justifyContent="space-between">
-            <Text color="textSubtle">{t('Fee Tier')}</Text>
-            <Text>{feeTier}%</Text>
-          </FlexGap>
-          <FlexGap justifyContent="space-between">
-            <Text color="textSubtle">{t('CAKE to burn:')}</Text>
-            <Text>{cakeToBurn || '-'}</Text>
-          </FlexGap>
-        </>
+        <FlexGap justifyContent="space-between">
+          <Text color="textSubtle">{t('Deposit Amount')}</Text>
+          <Text>
+            {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
+          </Text>
+        </FlexGap>
       )}
     </FlexGap>
   )

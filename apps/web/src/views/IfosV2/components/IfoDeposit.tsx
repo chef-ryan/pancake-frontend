@@ -76,66 +76,19 @@ export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
         <IfoRibbon />
         <CardBody>
           <FlexGap flexDirection="column" gap="8px">
-            {userHasStaked ? (
-              <StakedDisplay userStatus={userStatus} pid={pid} />
-            ) : (
-              <FlexGap flexDirection="column" gap="8px">
-                <FlexGap alignItems="center" gap="4px">
-                  <CurrencyLogo currency={stakeCurrency} size="24px" />
-                  <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
-                    {stakeCurrency?.symbol} {t('Pool')}
-                  </Text>
-                </FlexGap>
-                {account ? (
-                  <IfoDepositForm userStatus={userStatus} pid={pid} />
-                ) : (
-                  <ConnectW3WButton width="100%" onClick={handleConnectWallet} />
-                )}
+            <FlexGap flexDirection="column" gap="8px">
+              <FlexGap alignItems="center" gap="4px">
+                <CurrencyLogo currency={stakeCurrency} size="24px" />
+                <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
+                  {stakeCurrency?.symbol} {t('Pool')}
+                </Text>
               </FlexGap>
-            )}
-
-            {userHasStaked && <Divider />}
-            <FlexGap justifyContent="space-between" mt="8px">
-              <Text color="textSubtle">
-                {t('Sale Price per')} {offeringCurrency?.symbol ?? ''}
-              </Text>
-              <Text>
-                {pricePerToken?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
-              </Text>
+              {account ? (
+                <IfoDepositForm userStatus={userStatus} pid={pid} />
+              ) : (
+                <ConnectW3WButton width="100%" onClick={handleConnectWallet} />
+              )}
             </FlexGap>
-            <FlexGap justifyContent="space-between">
-              <Text color="textSubtle">{t('Target Raise')}</Text>
-              <Text>{raiseAmountText}</Text>
-            </FlexGap>
-            {status === 'live' && (
-              <>
-                <FlexGap justifyContent="space-between">
-                  <Text color="textSubtle">{t('Total committed')}</Text>
-                  <Text>
-                    {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
-                  </Text>
-                </FlexGap>
-                <FlexGap justifyContent="space-between">
-                  <Text color="textSubtle">{t('Status')}</Text>
-                  <FlexGap flexDirection="column" alignItems="flex-end">
-                    <FlexGap gap="3px">
-                      <Text>
-                        {ifoStatus.progress.toFixed(2)} % {ifoStatus.progress.greaterThan(1) && '🎉'}
-                      </Text>
-                    </FlexGap>
-                    {ifoStatus.progress.greaterThan(1) && (
-                      <FlexGap gap="3px">
-                        <Text>{t('Oversubscribed')}</Text>
-                        <FlexGap ref={targetRef}>
-                          <InfoIcon width="14px" color="textSubtle" />
-                          {tooltipVisible && tooltip}
-                        </FlexGap>
-                      </FlexGap>
-                    )}
-                  </FlexGap>
-                </FlexGap>
-              </>
-            )}
           </FlexGap>
         </CardBody>
       </Box>
