@@ -16,6 +16,7 @@ export type IfoInfo = {
   duration: number
   totalSalesAmount: CurrencyAmount<Currency> | undefined
   status: IfoStatus
+  ready: boolean
 }
 
 type InfoFN = () => IfoInfo
@@ -58,6 +59,7 @@ export const useIFOInfo: InfoFN = () => {
           )
         : undefined,
       status: getStatusByTimestamp(now, timestamps?.startTimestamp, timestamps?.endTimestamp),
+      ready: Boolean(timestamps && offeringCurrency),
     } as IfoInfo
     return info
   }, [

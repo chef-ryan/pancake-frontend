@@ -32,7 +32,8 @@ export const IfoVestingCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const { offeringCurrency } = useIFOCurrencies()
-  const { config } = useIfo()
+  const { config, info } = useIfo()
+  const { ready } = info
   const name = config?.tgeTitle
   const id = config?.id
   const [userStatus0, userStatus1] = useIFOUserStatus()
@@ -49,7 +50,7 @@ export const IfoVestingCard: React.FC = () => {
   const userParticipated =
     (userStatus0?.stakedAmount?.greaterThan(0) ?? false) || (userStatus1?.stakedAmount?.greaterThan(0) ?? false)
 
-  if (!userParticipated || !offeringCurrency) {
+  if (!ready || !userParticipated) {
     return null
   }
 

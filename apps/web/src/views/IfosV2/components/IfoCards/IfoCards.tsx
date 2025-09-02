@@ -2,7 +2,6 @@ import { Box, Card, CardHeader, Spinner } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
 
 import { useIFOStatus } from '../../hooks/ifo/useIFOStatus'
-import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import { useIFOPoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
 import { useIFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
@@ -40,10 +39,9 @@ const StyledCard = styled(Card)`
 
 export const IfoCurrentCard = ({ ifoId, bannerUrl }: { ifoId: string; bannerUrl: string }) => {
   const { info } = useIfo()
-  const { status } = info
-  const { offeringCurrency } = useIFOCurrencies()
+  const { ready } = info
 
-  if (!status || !offeringCurrency) {
+  if (!ready) {
     return <Spinner />
   }
 
