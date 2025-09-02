@@ -104,6 +104,9 @@ export const useIFOPoolInfo = (): PoolInfo[] => {
             ? new Price(offeringCurrency, currency, pool0Info.offeringAmountPool, pool0Info.raisingAmountPool)
             : undefined,
         raise: currency ? CurrencyAmount.fromRawAmount(currency, pool0Info.raisingAmountPool) : undefined,
+        saleAmount: offeringCurrency
+          ? CurrencyAmount.fromRawAmount(offeringCurrency, pool0Info.offeringAmountPool)
+          : undefined,
       })
     }
 
@@ -117,6 +120,9 @@ export const useIFOPoolInfo = (): PoolInfo[] => {
             ? new Price(offeringCurrency, currency, pool1Info.offeringAmountPool, pool1Info.raisingAmountPool)
             : undefined,
         raise: currency ? CurrencyAmount.fromRawAmount(currency, pool1Info.raisingAmountPool) : undefined,
+        saleAmount: offeringCurrency
+          ? CurrencyAmount.fromRawAmount(offeringCurrency, pool1Info.offeringAmountPool)
+          : undefined,
       })
     }
 

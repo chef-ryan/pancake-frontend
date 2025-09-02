@@ -39,7 +39,7 @@ export const useIfoPublicData = (): [IFOPublicData, IFOPublicData] | [IFOPublicD
   const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIFOCurrencies()
   const [status0, status1] = useIFOStatus()
   const { info } = useIfo()
-  const { pricePerTokens, raiseAmounts, saleAmounts, maxStakePerUsers, startTimestamp, endTimestamp } = info
+  const { startTimestamp, endTimestamp } = info
   const [userStatus0, userStatus1] = useIFOUserStatus()
 
   const {
@@ -67,14 +67,16 @@ export const useIfoPublicData = (): [IFOPublicData, IFOPublicData] | [IFOPublicD
       plannedStartTime: startTimestamp ? startTimestamp - 432000 : 0, // five days before
       progress: status0.progress,
       currentStakedAmount: status0.currentStakedAmount,
-      maxStakePerUser: maxStakePerUsers[0],
+      maxStakePerUser: pool0Info?.currency
+        ? CurrencyAmount.fromRawAmount(pool0Info.currency, pool0Info.capPerUserInLP)
+        : undefined,
       timeProgress,
       duration,
-      pricePerToken: pricePerTokens[0],
+      pricePerToken: pool0Info?.price,
       stakeCurrency: stakeCurrency0,
       offeringCurrency,
-      raiseAmount: raiseAmounts[0],
-      saleAmount: saleAmounts[0],
+      raiseAmount: pool0Info?.raise,
+      saleAmount: pool0Info?.saleAmount,
       userStakedAmount,
       userStakedRefund,
       userClaimableAmount,
@@ -88,14 +90,16 @@ export const useIfoPublicData = (): [IFOPublicData, IFOPublicData] | [IFOPublicD
       plannedStartTime: startTimestamp ? startTimestamp - 432000 : 0, // five days before
       progress: status1.progress,
       currentStakedAmount: status1.currentStakedAmount,
-      maxStakePerUser: maxStakePerUsers[1],
+      maxStakePerUser: pool1Info?.currency
+        ? CurrencyAmount.fromRawAmount(pool1Info.currency, pool1Info.capPerUserInLP)
+        : undefined,
       timeProgress,
       duration,
-      pricePerToken: pricePerTokens[1],
+      pricePerToken: pool1Info?.price,
       stakeCurrency: stakeCurrency1,
       offeringCurrency,
-      raiseAmount: raiseAmounts[1],
-      saleAmount: saleAmounts[1],
+      raiseAmount: pool1Info?.raise,
+      saleAmount: pool1Info?.saleAmount,
       userStakedAmount: userStatus1?.stakedAmount,
       userStakedRefund: userStatus1?.stakeRefund,
       userClaimableAmount: userStatus1?.claimableAmount,

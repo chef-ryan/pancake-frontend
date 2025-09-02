@@ -47,6 +47,10 @@ export interface PoolInfo {
    * Total raising amount in the staking currency
    */
   raise?: CurrencyAmount<Currency>
+  /**
+   * Total offering amount in the offering currency
+   */
+  saleAmount?: CurrencyAmount<Currency>
 }
 
 export default PoolInfo

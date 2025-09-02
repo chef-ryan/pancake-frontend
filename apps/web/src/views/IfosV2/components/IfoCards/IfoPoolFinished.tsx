@@ -1,6 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
-import { useMemo } from 'react'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
@@ -19,16 +18,11 @@ export const IfoPoolFinished: React.FC<{
   const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
-  const { info } = useIfo()
-  const { status, raiseAmounts, pricePerTokens } = info
-
-  const [raiseAmount, pricePerToken] = useMemo(() => {
-    if (pid === 0) {
-      return [raiseAmounts[0], pricePerTokens[0]]
-    }
-
-    return [raiseAmounts[1], pricePerTokens[1]]
-  }, [pid, raiseAmounts, pricePerTokens])
+  const { info, pools } = useIfo()
+  const { status } = info
+  const poolInfo = pools?.[pid]
+  const raiseAmount = poolInfo?.raise
+  const pricePerToken = poolInfo?.price
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     t('This sale has been oversubscribed. You will get partial refund of the deposit.'),

@@ -36,9 +36,9 @@ const IfoHistoryCard: React.FC = () => {
   const { config, info, pools } = useIfo()
 
   const pool0 = pools?.[0]
-  const saleAmount = info?.saleAmounts?.[0]
-  const raiseAmount = info?.raiseAmounts?.[0]
-  const pricePerToken = info?.pricePerTokens?.[0]
+  const saleAmount = pool0?.saleAmount
+  const raiseAmount = pool0?.raise
+  const pricePerToken = pool0?.price
 
   const totalSale = saleAmount ? `${saleAmount.toSignificant(6)} ${saleAmount.currency.symbol}` : '-'
 
