@@ -19,9 +19,8 @@ export const IfoPoolFinished: React.FC<{
   const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
-  const { info, pools } = useIfo()
+  const { pools } = useIfo()
   const { pools: displayPools } = useIfoDisplay()
-  const { status } = info
   const poolInfo = pools?.[pid]
   const raiseAmountText = displayPools?.[pid]?.raiseAmountText
   const pricePerToken = poolInfo?.price
@@ -32,10 +31,6 @@ export const IfoPoolFinished: React.FC<{
       placement: 'top',
     },
   )
-
-  if (status === 'coming_soon') {
-    return null
-  }
 
   return (
     <FlexGap flexDirection="column" gap="8px">
@@ -54,35 +49,31 @@ export const IfoPoolFinished: React.FC<{
         <Text color="textSubtle">{t('Target Raise')}</Text>
         <Text>{raiseAmountText}</Text>
       </FlexGap>
-      {(status === 'live' || status === 'finished') && (
-        <>
-          <FlexGap justifyContent="space-between">
-            <Text color="textSubtle">{t('Total committed')}</Text>
+      <FlexGap justifyContent="space-between">
+        <Text color="textSubtle">{t('Total committed')}</Text>
+        <Text>
+          {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
+        </Text>
+      </FlexGap>
+      <FlexGap justifyContent="space-between">
+        <Text color="textSubtle">{t('Status')}</Text>
+        <FlexGap flexDirection="column" alignItems="flex-end">
+          <FlexGap gap="3px">
             <Text>
-              {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
+              {ifoStatus.progress.toFixed(2)} % {ifoStatus.progress.greaterThan(1) && '🎉'}
             </Text>
           </FlexGap>
-          <FlexGap justifyContent="space-between">
-            <Text color="textSubtle">{t('Status')}</Text>
-            <FlexGap flexDirection="column" alignItems="flex-end">
-              <FlexGap gap="3px">
-                <Text>
-                  {ifoStatus.progress.toFixed(2)} % {ifoStatus.progress.greaterThan(1) && '🎉'}
-                </Text>
+          {ifoStatus.progress.greaterThan(1) && (
+            <FlexGap gap="3px">
+              <Text>{t('Oversubscribed')}</Text>
+              <FlexGap ref={targetRef}>
+                <InfoIcon width="14px" color="textSubtle" />
+                {tooltipVisible && tooltip}
               </FlexGap>
-              {ifoStatus.progress.greaterThan(1) && (
-                <FlexGap gap="3px">
-                  <Text>{t('Oversubscribed')}</Text>
-                  <FlexGap ref={targetRef}>
-                    <InfoIcon width="14px" color="textSubtle" />
-                    {tooltipVisible && tooltip}
-                  </FlexGap>
-                </FlexGap>
-              )}
             </FlexGap>
-          </FlexGap>
-        </>
-      )}
+          )}
+        </FlexGap>
+      </FlexGap>
     </FlexGap>
   )
 }
