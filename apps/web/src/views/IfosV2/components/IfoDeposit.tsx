@@ -1,29 +1,35 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Button, FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
+import { FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
+import ConnectW3WButton from 'components/ConnectW3WButton'
+import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
+import { useAccount } from 'wagmi'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
-import { useRouter } from 'next/router'
-import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
-import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
-import useIfo from '../../hooks/useIfo'
-import { useIfoDisplay } from '../../hooks/useIfoDisplay'
+import { Divider } from './IfoCards/Divider'
+import { IfoDepositForm } from './IfoCards/IfoDepositForm'
+import { StakedDisplay } from './IfoCards/StakedDisplay'
+import { useIFOCurrencies } from '../hooks/ifo/useIFOCurrencies'
+import { useIFOStatus } from '../hooks/ifo/useIFOStatus'
+import { useIFOUserStatus } from '../hooks/ifo/useIFOUserStatus'
+import useIfo from '../hooks/useIfo'
+import { useIfoDisplay } from '../hooks/useIfoDisplay'
 
-export const IfoPoolLive: React.FC<{
-  pid: number
-  ifoStatus: IFOStatus
-}> = ({ ifoStatus, pid }) => {
+export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
   const { t } = useTranslation()
-  const router = useRouter()
+  const { address: account } = useAccount()
   const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
-
   const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
+  const [userStatus0, userStatus1] = useIFOUserStatus()
+  const userStatus = pid === 0 ? userStatus0 : userStatus1
+  const [ifoStatus0, ifoStatus1] = useIFOStatus()
+  const ifoStatus = pid === 0 ? ifoStatus0 : ifoStatus1
+  const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
-  const { config, info, pools } = useIfo()
+  const { info, pools } = useIfo()
   const { pools: displayPools } = useIfoDisplay()
   const { status } = info
   const poolInfo = pools?.[pid]
   const raiseAmountText = displayPools?.[pid]?.raiseAmountText
   const pricePerToken = poolInfo?.price
-  const ifoId = config?.id
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     t('This sale has been oversubscribed. You will get partial refund of the deposit.'),
@@ -32,30 +38,35 @@ export const IfoPoolLive: React.FC<{
     },
   )
 
+  const handleConnectWallet = () => {
+    logGTMIfoConnectWalletEvent(status === 'coming_soon')
+  }
+
   if (status === 'coming_soon') {
     return null
   }
 
-  const handleDepositClick = () => {
-    if (ifoId) {
-      router.push(`/ifo/deposit/${ifoId}/${pid}`)
-    }
-  }
-
   return (
     <FlexGap flexDirection="column" gap="8px">
-      <FlexGap justifyContent="space-between" alignItems="center">
-        <FlexGap alignItems="center" gap="4px">
-          <CurrencyLogo currency={stakeCurrency} size="24px" />
-          <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
-            {stakeCurrency?.symbol} {t('Pool')}
-          </Text>
+      {userHasStaked ? (
+        <StakedDisplay userStatus={userStatus} pid={pid} />
+      ) : (
+        <FlexGap flexDirection="column" gap="8px">
+          <FlexGap alignItems="center" gap="4px">
+            <CurrencyLogo currency={stakeCurrency} size="24px" />
+            <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
+              {stakeCurrency?.symbol} {t('Pool')}
+            </Text>
+          </FlexGap>
+          {account ? (
+            <IfoDepositForm userStatus={userStatus} pid={pid} />
+          ) : (
+            <ConnectW3WButton width="100%" onClick={handleConnectWallet} />
+          )}
         </FlexGap>
-        <Button scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
-          {t('Deposit')}
-        </Button>
-      </FlexGap>
+      )}
 
+      {userHasStaked && <Divider />}
       <FlexGap justifyContent="space-between" mt="8px">
         <Text color="textSubtle">
           {t('Sale Price per')} {offeringCurrency?.symbol ?? ''}
@@ -101,4 +112,4 @@ export const IfoPoolLive: React.FC<{
   )
 }
 
-export default IfoPoolLive
+export default IfoDeposit

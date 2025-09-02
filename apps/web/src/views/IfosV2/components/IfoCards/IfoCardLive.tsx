@@ -4,35 +4,25 @@ import { PoolInfo } from 'views/IfosV2/ifov2.types'
 import { IfoSaleInfoCard } from './IfoSaleInfoCard'
 import { IfoPoolLive } from './IfoPoolLive'
 import { VestingScheduleCard } from './VestingScheduleCard'
-import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 
 interface IfoCardProps {
   pool0Info?: PoolInfo
   pool1Info?: PoolInfo
-  userStatus0?: IFOUserStatus
-  userStatus1?: IFOUserStatus
   ifoStatus0: IFOStatus
   ifoStatus1: IFOStatus
 }
 
-export const IfoCardLive: React.FC<IfoCardProps> = ({
-  pool0Info,
-  pool1Info,
-  userStatus0,
-  userStatus1,
-  ifoStatus0,
-  ifoStatus1,
-}) => {
+export const IfoCardLive: React.FC<IfoCardProps> = ({ pool0Info, pool1Info, ifoStatus0, ifoStatus1 }) => {
   const { isDark, theme } = useTheme()
   const { isDesktop } = useMatchBreakpoints()
 
   const stakeActionCards = (
-    <Card background={isDark ? '#18171A' : theme.colors.background} mb="16px">
+    <Card flex="1" background={isDark ? '#18171A' : theme.colors.background} mb="16px">
       <CardBody>
         <FlexGap flexDirection="column" gap="16px">
-          {pool0Info && <IfoPoolLive pid={pool0Info.pid} userStatus={userStatus0} ifoStatus={ifoStatus0} />}
-          {pool1Info && <IfoPoolLive pid={pool1Info.pid} userStatus={userStatus1} ifoStatus={ifoStatus1} />}
+          {pool0Info && <IfoPoolLive pid={pool0Info.pid} ifoStatus={ifoStatus0} />}
+          {pool1Info && <IfoPoolLive pid={pool1Info.pid} ifoStatus={ifoStatus1} />}
         </FlexGap>
       </CardBody>
     </Card>

@@ -29,8 +29,8 @@ export const IfoCardIdle: React.FC<IfoCardProps> = ({
     {pool1Info && <ClaimedCard userStatus={userStatus1} pid={pool1Info.pid} />}
     <IfoSaleInfoCard />
     <FlexGap flexDirection="column" gap="16px">
-      {pool0Info && <IfoPoolLive pid={pool0Info.pid} userStatus={userStatus0} ifoStatus={ifoStatus0} />}
-      {pool1Info && <IfoPoolLive pid={pool1Info.pid} userStatus={userStatus1} ifoStatus={ifoStatus1} />}
+      {pool0Info && <IfoPoolLive pid={pool0Info.pid} ifoStatus={ifoStatus0} />}
+      {pool1Info && <IfoPoolLive pid={pool1Info.pid} ifoStatus={ifoStatus1} />}
     </FlexGap>
     <IfoVestingCard />
   </CardBody>
