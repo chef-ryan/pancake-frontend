@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, Flex, Heading, Progress, ProgressBar, Text } from '@pancakeswap/uikit'
-import { ReactNode, useMemo } from 'react'
+import { ReactNode, useMemo, useState, useEffect } from 'react'
 import { styled } from 'styled-components'
 
 import { IfoStatus } from '@pancakeswap/ifos'
@@ -28,7 +28,7 @@ const BigCurve = styled(Box)<{ $status?: IfoStatus; $dark?: boolean }>`
   transform: translateX(-50%);
   z-index: 1;
 
-  ${({ $status, $dark, theme }) => {
+  ${({ $status, $dark }) => {
     switch ($status) {
       case 'coming_soon':
         return `
@@ -53,7 +53,7 @@ const RibbonContainer = styled(Box)`
   position: relative;
 `
 
-const ChainBoardContainer = styled(Box)`
+const _ChainBoardContainer = styled(Box)`
   position: absolute;
   top: -4rem;
   left: 50%;
@@ -72,6 +72,16 @@ export const IfoRibbon: React.FC = () => {
   const { status: ifoStatus, startTimestamp, endTimestamp } = info
   const pools = useIFOPoolInfo()
   const [userStatus0, userStatus1] = useIFOUserStatus()
+  const [currentTime, setCurrentTime] = useState(() => Math.floor(Date.now() / 1000))
+
+  // Update current time every second for live progress
+  useEffect(() => {
+    if (ifoStatus !== 'live') return undefined
+    const timer = setInterval(() => {
+      setCurrentTime(Math.floor(Date.now() / 1000))
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [ifoStatus])
 
   const hasUserStaked = userStatus0?.stakedAmount?.greaterThan(0) || userStatus1?.stakedAmount?.greaterThan(0)
 
@@ -88,6 +98,15 @@ export const IfoRibbon: React.FC = () => {
     const totalAmount = (pools[0]?.totalAmountPool ?? 0n) + (pools[1]?.totalAmountPool ?? 0n)
     return Number(new Percent(totalAmount, totalRaise).toFixed(2))
   }, [pools])
+
+  const timeProgress = useMemo(() => {
+    if (ifoStatus !== 'live' || !startTimestamp || !endTimestamp) return 0
+    const totalDuration = endTimestamp - startTimestamp
+    const elapsed = currentTime - startTimestamp
+    if (elapsed <= 0) return 0
+    if (elapsed >= totalDuration) return 100
+    return Math.min((elapsed / totalDuration) * 100, 100)
+  }, [ifoStatus, startTimestamp, endTimestamp, currentTime])
 
   let ribbon: ReactNode = null
   switch (ifoStatus) {
@@ -123,7 +142,7 @@ export const IfoRibbon: React.FC = () => {
           <ProgressBar
             $useDark={isDark}
             $background="linear-gradient(273deg, #ffd800 -2.87%, #eb8c00 113.73%)"
-            style={{ width: `${Math.min(totalRaiseProgress, 100)}%` }}
+            style={{ width: `${Math.min(ifoStatus === 'live' ? timeProgress : totalRaiseProgress, 100)}%` }}
           />
         </StyledProgress>
       )}
