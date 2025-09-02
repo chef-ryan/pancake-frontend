@@ -98,11 +98,7 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
     : undefined
 
   const maxDepositExceeded = useMemo(() => {
-    return (
-      maxStakePerUser &&
-      !maxStakePerUser.equalTo(0) &&
-      (totalDepositedAmount?.greaterThan(maxStakePerUser) || totalDepositedAmount?.equalTo(maxStakePerUser))
-    )
+    return maxStakePerUser && !maxStakePerUser.equalTo(0) && totalDepositedAmount?.greaterThan(maxStakePerUser)
   }, [maxStakePerUser, totalDepositedAmount])
 
   const isUserInsufficientBalance = useMemo(() => {
@@ -171,7 +167,7 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
       <SwapUIV2.CurrencyInputPanelSimplify
         id={`ifoStakeCurrency${stakeCurrency?.symbol ?? ''}`}
         disabled={false}
-        error={maxStakePerUser && depositAmount?.greaterThan(maxStakePerUser) && !maxStakePerUser.equalTo(0)}
+        error={maxDepositExceeded}
         value={value}
         placeholder="0.00"
         onInputFocus={handleInputFocus}

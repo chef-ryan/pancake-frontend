@@ -41,7 +41,7 @@ export const useIFODepositCallback = () => {
         return
       }
       const value = amount.currency.isNative ? amount.quotient : 0n
-      const amountPool = amount.currency.isNative ? 0n : amount.quotient
+      const amountPool = amount.quotient
       try {
         const receipt = await fetchWithCatchTxError(async () => {
           if (amount.currency.isToken) {
