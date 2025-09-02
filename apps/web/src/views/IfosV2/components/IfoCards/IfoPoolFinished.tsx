@@ -1,26 +1,19 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
-import ConnectW3WButton from 'components/ConnectW3WButton'
 import { useMemo } from 'react'
-import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
-import { useAccount } from 'wagmi'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
 import { ClaimDisplay } from './ClaimDisplay'
 import { Divider } from './Divider'
-import { IfoDepositForm } from './IfoDepositForm'
-import { PreSaleInfoCard } from './PreSaleInfoCard'
-import { StakedDisplay } from './StakedDisplay'
 
-export const IfoStakeActionCard: React.FC<{
+export const IfoPoolFinished: React.FC<{
   pid: number
   userStatus: IFOUserStatus | undefined
   ifoStatus: IFOStatus
 }> = ({ userStatus, ifoStatus, pid }) => {
   const { t } = useTranslation()
-  const { address: account } = useAccount()
   const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
 
   const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
@@ -44,32 +37,13 @@ export const IfoStakeActionCard: React.FC<{
     },
   )
 
-  const handleConnectWallet = (e) => {
-    logGTMIfoConnectWalletEvent(status === 'coming_soon')
+  if (status === 'coming_soon') {
+    return null
   }
 
   return (
     <FlexGap flexDirection="column" gap="8px">
-      {status === 'finished' ? (
-        <ClaimDisplay userStatus={userStatus} pid={pid} />
-      ) : userStatus?.stakedAmount?.greaterThan(0) ? (
-        <StakedDisplay userStatus={userStatus} pid={pid} />
-      ) : (
-        <FlexGap flexDirection="column" gap="8px">
-          <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
-            {stakeCurrency?.symbol} {t('Pool')}
-          </Text>
-          {account ? (
-            status === 'coming_soon' ? (
-              <PreSaleInfoCard />
-            ) : (
-              <IfoDepositForm userStatus={userStatus} pid={pid} />
-            )
-          ) : (
-            <ConnectW3WButton width="100%" onClick={handleConnectWallet} />
-          )}
-        </FlexGap>
-      )}
+      <ClaimDisplay userStatus={userStatus} pid={pid} />
 
       {userHasStaked && <Divider />}
       <FlexGap justifyContent="space-between" mt="8px">
@@ -118,3 +92,5 @@ export const IfoStakeActionCard: React.FC<{
     </FlexGap>
   )
 }
+
+export default IfoPoolFinished
