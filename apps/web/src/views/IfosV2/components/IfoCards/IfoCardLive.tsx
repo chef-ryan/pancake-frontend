@@ -18,7 +18,13 @@ export const IfoCardLive: React.FC<IfoCardProps> = ({ pool0Info, pool1Info, ifoS
   const { isDesktop } = useMatchBreakpoints()
 
   const stakeActionCards = (
-    <Card flex="1" background={isDark ? '#18171A' : theme.colors.background} mb="16px">
+    <Card
+      style={{
+        flex: '1',
+      }}
+      background={isDark ? '#18171A' : theme.colors.background}
+      mb="16px"
+    >
       <CardBody>
         <FlexGap flexDirection="column" gap="16px">
           {pool0Info && <IfoPoolLive pid={pool0Info.pid} ifoStatus={ifoStatus0} />}
