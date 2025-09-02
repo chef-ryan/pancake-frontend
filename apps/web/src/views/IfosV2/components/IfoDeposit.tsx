@@ -37,33 +37,12 @@ const StyledCard = styled(Card)`
 `
 
 export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
-  const { t } = useTranslation()
-  const { address: account } = useAccount()
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const userStatus = pid === 0 ? userStatus0 : userStatus1
-  const [ifoStatus0, ifoStatus1] = useIFOStatus()
-  const ifoStatus = pid === 0 ? ifoStatus0 : ifoStatus1
-  const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
-  const { info, pools, config } = useIfo()
-  const { pools: displayPools } = useIfoDisplay()
-  const { status, offeringCurrency } = info
-  const poolInfo = pools?.[pid]
-  const stakeCurrency = poolInfo?.stakeCurrency
-  const raiseAmountText = displayPools?.[pid]?.raiseAmountText
-  const pricePerToken = poolInfo?.price
+  const { info, config } = useIfo()
+  const { status } = info
   const bannerUrl = config?.bannerUrl ?? ''
-
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(
-    t('This sale has been oversubscribed. You will get partial refund of the deposit.'),
-    {
-      placement: 'top',
-    },
-  )
-
-  const handleConnectWallet = () => {
-    logGTMIfoConnectWalletEvent(status === 'coming_soon')
-  }
 
   if (status === 'coming_soon' || !userStatus) {
     return null
@@ -75,24 +54,44 @@ export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
         <Header $bannerUrl={bannerUrl} />
         <IfoRibbon />
         <CardBody>
-          <FlexGap flexDirection="column" gap="8px">
-            <FlexGap flexDirection="column" gap="8px">
-              <FlexGap alignItems="center" gap="4px">
-                <CurrencyLogo currency={stakeCurrency} size="24px" />
-                <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
-                  {stakeCurrency?.symbol} {t('Pool')}
-                </Text>
-              </FlexGap>
-              {account ? (
-                <IfoDepositForm userStatus={userStatus} pid={pid} />
-              ) : (
-                <ConnectW3WButton width="100%" onClick={handleConnectWallet} />
-              )}
-            </FlexGap>
-          </FlexGap>
+          <IfoDepositCard pid={pid} />
         </CardBody>
       </Box>
     </StyledCard>
+  )
+}
+
+const IfoDepositCard = ({ pid }: { pid: number }) => {
+  const { t } = useTranslation()
+  const { address: account } = useAccount()
+  const [userStatus0, userStatus1] = useIFOUserStatus()
+  const userStatus = pid === 0 ? userStatus0 : userStatus1
+
+  const { pools, info } = useIfo()
+  const poolInfo = pools?.[pid]
+  const stakeCurrency = poolInfo?.stakeCurrency
+  const { status } = info
+
+  const handleConnectWallet = () => {
+    logGTMIfoConnectWalletEvent(status === 'coming_soon')
+  }
+
+  return (
+    <FlexGap flexDirection="column" gap="8px">
+      <FlexGap flexDirection="column" gap="8px">
+        <FlexGap alignItems="center" gap="4px">
+          <CurrencyLogo currency={stakeCurrency} size="24px" />
+          <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
+            {stakeCurrency?.symbol} {t('Pool')}
+          </Text>
+        </FlexGap>
+        {account ? (
+          <IfoDepositForm userStatus={userStatus} pid={pid} />
+        ) : (
+          <ConnectW3WButton width="100%" onClick={handleConnectWallet} />
+        )}
+      </FlexGap>
+    </FlexGap>
   )
 }
 
