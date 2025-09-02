@@ -1,9 +1,9 @@
 import { CardBody, FlexGap } from '@pancakeswap/uikit'
+import { PoolInfo } from 'views/IfosV2/ifov2.types'
 import { ClaimedCard } from './ClaimedCard'
 import { IfoSaleInfoCard } from './IfoSaleInfoCard'
 import { IfoStakeActionCard } from './IfoStakeActionCard'
 import { IfoVestingCard } from './IfoVestingCard'
-import type { PoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 
