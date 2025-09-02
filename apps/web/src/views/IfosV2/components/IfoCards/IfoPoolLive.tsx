@@ -3,7 +3,6 @@ import { Button, FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useRouter } from 'next/router'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
-import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import useIfo from '../../hooks/useIfo'
 import { useIfoDisplay } from '../../hooks/useIfoDisplay'
 
@@ -13,14 +12,11 @@ export const IfoPoolLive: React.FC<{
 }> = ({ ifoStatus, pid }) => {
   const { t } = useTranslation()
   const router = useRouter()
-  const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
-
-  const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
-
   const { config, info, pools } = useIfo()
   const { pools: displayPools } = useIfoDisplay()
-  const { status } = info
+  const { status, offeringCurrency } = info
   const poolInfo = pools?.[pid]
+  const stakeCurrency = poolInfo?.stakeCurrency
   const raiseAmountText = displayPools?.[pid]?.raiseAmountText
   const pricePerToken = poolInfo?.price
   const ifoId = config?.id

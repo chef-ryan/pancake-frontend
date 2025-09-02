@@ -53,8 +53,8 @@ const IfoHistoryCard: React.FC = () => {
   }, [pool0, poolDisplay0])
 
   const totalCommitted = useMemo(() => {
-    if (!pool0 || !pool0.currency) return ''
-    const amount = CurrencyAmount.fromRawAmount(pool0.currency, pool0.totalAmountPool)
+    if (!pool0 || !pool0.stakeCurrency) return ''
+    const amount = CurrencyAmount.fromRawAmount(pool0.stakeCurrency, pool0.totalAmountPool)
     const percent = poolDisplay0?.totalCommittedPercent ?? '0'
     return `${amount.toSignificant(6)} ${amount.currency.symbol} (${percent}%)`
   }, [pool0, poolDisplay0])
@@ -62,7 +62,7 @@ const IfoHistoryCard: React.FC = () => {
   const fundsToRaise = poolDisplay0?.raiseAmountText ?? ''
 
   const { cakeToBurn, taxAmount } = useMemo(() => {
-    if (!pool0 || !pool0.currency || !pool0.hasTax) {
+    if (!pool0 || !pool0.stakeCurrency || !pool0.hasTax) {
       return { cakeToBurn: undefined, taxAmount: undefined }
     }
     const overflow =
@@ -74,7 +74,7 @@ const IfoHistoryCard: React.FC = () => {
     if (taxRaw <= 0n) {
       return { cakeToBurn: undefined, taxAmount: undefined }
     }
-    const amount = CurrencyAmount.fromRawAmount(pool0.currency, taxRaw)
+    const amount = CurrencyAmount.fromRawAmount(pool0.stakeCurrency, taxRaw)
     return {
       cakeToBurn: `${amount.toSignificant(6)} ${amount.currency.symbol}`,
       taxAmount: amount,

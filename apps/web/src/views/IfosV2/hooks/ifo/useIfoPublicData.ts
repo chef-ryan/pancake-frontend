@@ -3,8 +3,6 @@ import { type Currency, CurrencyAmount, Percent, Price } from '@pancakeswap/swap
 import { UnsafeCurrency } from 'config/constants/types'
 import { getStatusByTimestamp } from '../helpers'
 import { useIFOStatus } from './useIFOStatus'
-import { useIFOCurrencies } from './useIFOCurrencies'
-import { useIFOPoolInfo } from './useIFOPoolInfo'
 import type { PoolInfo } from '../../ifov2.types'
 import useIfo from '../useIfo'
 import { useIFOUserStatus } from './useIFOUserStatus'
@@ -33,13 +31,13 @@ export type IFOPublicData = {
 }
 
 export const useIfoPublicData = (): [IFOPublicData, IFOPublicData] | [IFOPublicData] => {
-  const pools = useIFOPoolInfo()
+  const { pools, info } = useIfo()
   const pool0Info = pools[0]
   const pool1Info = pools[1]
-  const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIFOCurrencies()
+  const stakeCurrency0 = pool0Info?.stakeCurrency as UnsafeCurrency
+  const stakeCurrency1 = pool1Info?.stakeCurrency as UnsafeCurrency
+  const { offeringCurrency, startTimestamp, endTimestamp } = info
   const [status0, status1] = useIFOStatus()
-  const { info } = useIfo()
-  const { startTimestamp, endTimestamp } = info
   const [userStatus0, userStatus1] = useIFOUserStatus()
 
   const {
@@ -67,14 +65,14 @@ export const useIfoPublicData = (): [IFOPublicData, IFOPublicData] | [IFOPublicD
       plannedStartTime: startTimestamp ? startTimestamp - 432000 : 0, // five days before
       progress: status0.progress,
       currentStakedAmount: status0.currentStakedAmount,
-      maxStakePerUser: pool0Info?.currency
-        ? CurrencyAmount.fromRawAmount(pool0Info.currency, pool0Info.capPerUserInLP)
+      maxStakePerUser: pool0Info?.stakeCurrency
+        ? CurrencyAmount.fromRawAmount(pool0Info.stakeCurrency, pool0Info.capPerUserInLP)
         : undefined,
       timeProgress,
       duration,
       pricePerToken: pool0Info?.price,
       stakeCurrency: stakeCurrency0,
-      offeringCurrency,
+      offeringCurrency: offeringCurrency as UnsafeCurrency,
       raiseAmount: pool0Info?.raise,
       saleAmount: pool0Info?.saleAmount,
       userStakedAmount,
@@ -90,14 +88,14 @@ export const useIfoPublicData = (): [IFOPublicData, IFOPublicData] | [IFOPublicD
       plannedStartTime: startTimestamp ? startTimestamp - 432000 : 0, // five days before
       progress: status1.progress,
       currentStakedAmount: status1.currentStakedAmount,
-      maxStakePerUser: pool1Info?.currency
-        ? CurrencyAmount.fromRawAmount(pool1Info.currency, pool1Info.capPerUserInLP)
+      maxStakePerUser: pool1Info?.stakeCurrency
+        ? CurrencyAmount.fromRawAmount(pool1Info.stakeCurrency, pool1Info.capPerUserInLP)
         : undefined,
       timeProgress,
       duration,
       pricePerToken: pool1Info?.price,
       stakeCurrency: stakeCurrency1,
-      offeringCurrency,
+      offeringCurrency: offeringCurrency as UnsafeCurrency,
       raiseAmount: pool1Info?.raise,
       saleAmount: pool1Info?.saleAmount,
       userStakedAmount: userStatus1?.stakedAmount,

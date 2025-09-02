@@ -38,10 +38,10 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
   const { info, pools } = useIfo()
   const { duration } = info
   const poolInfo = pools?.[pid]
-  const stakeCurrency = userStatus?.stakedAmount?.currency ?? poolInfo?.currency
+  const stakeCurrency = userStatus?.stakedAmount?.currency ?? poolInfo?.stakeCurrency
   const maxStakePerUser = useMemo(() => {
-    if (!poolInfo?.currency) return undefined
-    return CurrencyAmount.fromRawAmount(poolInfo.currency, poolInfo.capPerUserInLP)
+    if (!poolInfo?.stakeCurrency) return undefined
+    return CurrencyAmount.fromRawAmount(poolInfo.stakeCurrency, poolInfo.capPerUserInLP)
   }, [poolInfo])
 
   const { address: account } = useAccount()

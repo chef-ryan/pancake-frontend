@@ -7,7 +7,6 @@ import useTheme from 'hooks/useTheme'
 import { useAccount } from 'wagmi'
 import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import { useIFOClaimCallback } from '../../hooks/ifo/useIFOClaimCallback'
-import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
 import { formatDollarAmount } from './IfoDepositForm'
@@ -19,10 +18,9 @@ export const ClaimDisplay: React.FC<{
   const { t } = useTranslation()
   const { claim, isPending: isLoading } = useIFOClaimCallback()
   const claimableAmount = userStatus?.claimableAmount?.toSignificant(6)
-  const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
-  const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
-  const { config, info } = useIfo()
-  const { status } = info
+  const { config, info, pools } = useIfo()
+  const { offeringCurrency, status } = info
+  const stakeCurrency = pools?.[pid]?.stakeCurrency
   const { icon } = config ?? {}
   const amountInDollar = useStablecoinPriceAmount(
     offeringCurrency ?? undefined,

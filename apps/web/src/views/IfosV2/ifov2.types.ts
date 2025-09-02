@@ -39,7 +39,7 @@ export interface PoolInfo {
   /**
    * Currency used to stake in the pool
    */
-  currency?: Currency
+  stakeCurrency?: Currency
   /**
    * Price of the offering token denominated in the staking currency
    */
@@ -86,6 +86,7 @@ export interface IfoInfo {
   status: IfoStatus
   ready: boolean
   vestingInfo?: VestingInfo
+  offeringCurrency?: Currency
 }
 
 export interface IfoPoolDisplay {

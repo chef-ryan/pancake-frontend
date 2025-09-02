@@ -4,9 +4,11 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { getViemClients } from 'utils/viem'
 import type { Address } from 'viem'
+import { zeroAddress } from 'viem'
 import { CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
+import { useCurrency } from 'hooks/Tokens'
 import { useIfoV2Context } from '../../contexts/IfoV2Context'
-import { useIFOCurrencies } from './useIFOCurrencies'
+import { useIFOAddresses } from './useIFOAddresses'
 import type { PoolInfo } from '../../ifov2.types'
 
 interface RawPoolInfo {
@@ -24,28 +26,19 @@ export const useIFOPoolInfo = (): PoolInfo[] => {
   const { chainId } = useActiveChainId()
   const { ifoContract } = useIfoV2Context()
   const latestTxReceipt = useLatestTxReceipt()
-  const { stakeCurrency0, stakeCurrency1, offeringCurrency } = useIFOCurrencies()
+  const { data: addresses } = useIFOAddresses()
+  const stakeCurrency0 = useCurrency(addresses?.lpToken0)
+  const stakeCurrency1 = useCurrency(addresses?.lpToken1)
+  const offeringCurrency = useCurrency(addresses?.offeringToken)
 
   const { data } = useQuery({
-    queryKey: ['ifoPoolInfo', chainId, latestTxReceipt],
+    queryKey: ['ifoPoolInfo', chainId, addresses, latestTxReceipt],
     queryFn: async (): Promise<[RawPoolInfo, RawPoolInfo]> => {
       const publicClient = getViemClients({ chainId })
-      if (!ifoContract || !publicClient) throw new Error('IFO contract not found')
+      if (!ifoContract || !publicClient || !addresses) throw new Error('IFO contract not found')
 
-      const [pool0Token, pool1Token, _pool0Info, _pool1Info] = await publicClient.multicall({
+      const [_pool0Info, _pool1Info] = await publicClient.multicall({
         contracts: [
-          {
-            address: ifoContract.address,
-            abi: ifoContract.abi,
-            functionName: 'addresses',
-            args: [0n],
-          },
-          {
-            address: ifoContract.address,
-            abi: ifoContract.abi,
-            functionName: 'addresses',
-            args: [1n],
-          },
           {
             address: ifoContract.address,
             abi: ifoContract.abi,
@@ -64,7 +57,7 @@ export const useIFOPoolInfo = (): PoolInfo[] => {
 
       const pool0Info: RawPoolInfo = {
         pid: 0,
-        poolToken: pool0Token,
+        poolToken: addresses.lpToken0,
         offeringAmountPool: _pool0Info[0],
         raisingAmountPool: _pool0Info[1],
         capPerUserInLP: _pool0Info[2],
@@ -75,7 +68,7 @@ export const useIFOPoolInfo = (): PoolInfo[] => {
 
       const pool1Info: RawPoolInfo = {
         pid: 1,
-        poolToken: pool1Token,
+        poolToken: (addresses.lpToken1 ?? zeroAddress) as Address,
         offeringAmountPool: _pool1Info[0],
         raisingAmountPool: _pool1Info[1],
         capPerUserInLP: _pool1Info[2],
@@ -86,7 +79,7 @@ export const useIFOPoolInfo = (): PoolInfo[] => {
 
       return [pool0Info, pool1Info]
     },
-    enabled: !!ifoContract,
+    enabled: !!ifoContract && !!addresses,
   })
 
   return useMemo(() => {
@@ -95,15 +88,15 @@ export const useIFOPoolInfo = (): PoolInfo[] => {
     const pools: PoolInfo[] = []
 
     if (pool0Info.offeringAmountPool > 0n) {
-      const currency = stakeCurrency0
+      const stakeCurrency = stakeCurrency0
       pools.push({
         ...pool0Info,
-        currency,
+        stakeCurrency,
         price:
-          currency && offeringCurrency
-            ? new Price(offeringCurrency, currency, pool0Info.offeringAmountPool, pool0Info.raisingAmountPool)
+          stakeCurrency && offeringCurrency
+            ? new Price(offeringCurrency, stakeCurrency, pool0Info.offeringAmountPool, pool0Info.raisingAmountPool)
             : undefined,
-        raise: currency ? CurrencyAmount.fromRawAmount(currency, pool0Info.raisingAmountPool) : undefined,
+        raise: stakeCurrency ? CurrencyAmount.fromRawAmount(stakeCurrency, pool0Info.raisingAmountPool) : undefined,
         saleAmount: offeringCurrency
           ? CurrencyAmount.fromRawAmount(offeringCurrency, pool0Info.offeringAmountPool)
           : undefined,
@@ -111,15 +104,15 @@ export const useIFOPoolInfo = (): PoolInfo[] => {
     }
 
     if (pool1Info.offeringAmountPool > 0n) {
-      const currency = stakeCurrency1
+      const stakeCurrency = stakeCurrency1
       pools.push({
         ...pool1Info,
-        currency,
+        stakeCurrency,
         price:
-          currency && offeringCurrency
-            ? new Price(offeringCurrency, currency, pool1Info.offeringAmountPool, pool1Info.raisingAmountPool)
+          stakeCurrency && offeringCurrency
+            ? new Price(offeringCurrency, stakeCurrency, pool1Info.offeringAmountPool, pool1Info.raisingAmountPool)
             : undefined,
-        raise: currency ? CurrencyAmount.fromRawAmount(currency, pool1Info.raisingAmountPool) : undefined,
+        raise: stakeCurrency ? CurrencyAmount.fromRawAmount(stakeCurrency, pool1Info.raisingAmountPool) : undefined,
         saleAmount: offeringCurrency
           ? CurrencyAmount.fromRawAmount(offeringCurrency, pool1Info.offeringAmountPool)
           : undefined,

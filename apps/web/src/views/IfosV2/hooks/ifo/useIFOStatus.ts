@@ -20,8 +20,12 @@ export const useIFOStatus = (): [IFOStatus, IFOStatus] => {
 
   const currentStakedAmounts = useMemo(() => {
     return [
-      pool0Info?.currency ? CurrencyAmount.fromRawAmount(pool0Info.currency, pool0Info.totalAmountPool) : undefined,
-      pool1Info?.currency ? CurrencyAmount.fromRawAmount(pool1Info.currency, pool1Info.totalAmountPool) : undefined,
+      pool0Info?.stakeCurrency
+        ? CurrencyAmount.fromRawAmount(pool0Info.stakeCurrency, pool0Info.totalAmountPool)
+        : undefined,
+      pool1Info?.stakeCurrency
+        ? CurrencyAmount.fromRawAmount(pool1Info.stakeCurrency, pool1Info.totalAmountPool)
+        : undefined,
     ]
   }, [pool0Info, pool1Info])
 

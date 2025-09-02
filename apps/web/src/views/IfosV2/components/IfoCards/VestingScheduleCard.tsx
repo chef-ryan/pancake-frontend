@@ -5,7 +5,6 @@ import { useMemo } from 'react'
 import useTheme from 'hooks/useTheme'
 import { styled } from 'styled-components'
 import { useIFODuration } from '../../hooks/ifo/useIFODuration'
-import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import { useVestingInfo } from '../../hooks/ifo/useVestingInfo'
 import useIfo from '../../hooks/useIfo'
 
@@ -42,8 +41,8 @@ const Dot = styled.div`
 export const VestingScheduleCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
-  const { offeringCurrency } = useIFOCurrencies()
   const { info } = useIfo()
+  const { offeringCurrency } = info
   const vesting = useVestingInfo()
 
   const vestingDuration = useIFODuration(vesting?.duration ?? 0)

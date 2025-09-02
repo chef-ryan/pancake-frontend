@@ -5,10 +5,8 @@ import useTheme from 'hooks/useTheme'
 import NextLink from 'next/link'
 import { styled } from 'styled-components'
 import { useIFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
-import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import useIfo from '../../hooks/useIfo'
 import { useIFOClaimCallback } from '../../hooks/ifo/useIFOClaimCallback'
-import { useIFOPoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
 
 const ProgressContainer = styled.div`
   width: 100%;
@@ -31,14 +29,12 @@ const ProgressBar = styled.div<{ width: number; color: string; left?: number }>`
 export const IfoVestingCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
-  const { offeringCurrency } = useIFOCurrencies()
-  const { config, info } = useIfo()
-  const { ready } = info
+  const { config, info, pools } = useIfo()
+  const { offeringCurrency, ready } = info
   const name = config?.tgeTitle
   const id = config?.id
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const { claim, isPending } = useIFOClaimCallback()
-  const pools = useIFOPoolInfo()
 
   const totalClaimable = useMemo(() => {
     const amount0 = userStatus0?.claimableAmount

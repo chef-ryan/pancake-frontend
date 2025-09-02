@@ -4,8 +4,6 @@ import { useMemo } from 'react'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { useAccount } from 'wagmi'
 import useIfo from '../useIfo'
-import { useIFOCurrencies } from './useIFOCurrencies'
-import { useIFOPoolInfo } from './useIFOPoolInfo'
 import { useIFOUserInfo } from './useIFOUserInfo'
 
 export type IFOUserStatus = {
@@ -17,21 +15,23 @@ export type IFOUserStatus = {
 
 export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | undefined] => {
   const { data: userInfo } = useIFOUserInfo()
-  const pools = useIFOPoolInfo()
+  const { pools, info } = useIfo()
   const pool0Info = pools[0]
   const pool1Info = pools[1]
   const { data: offeringAndRefundingAmounts } = useViewUserOfferingAndRefundingAmounts()
-  const { offeringCurrency } = useIFOCurrencies()
-  const { info } = useIfo()
-  const { ready } = info
+  const { offeringCurrency, ready } = info
 
   const stakedAmounts = useMemo(() => {
     if (!userInfo) return [undefined, undefined]
     return [
-      pool0Info?.currency ? CurrencyAmount.fromRawAmount(pool0Info.currency, userInfo[0].amountPool) : undefined,
-      pool1Info?.currency ? CurrencyAmount.fromRawAmount(pool1Info.currency, userInfo[1].amountPool) : undefined,
+      pool0Info?.stakeCurrency
+        ? CurrencyAmount.fromRawAmount(pool0Info.stakeCurrency, userInfo[0].amountPool)
+        : undefined,
+      pool1Info?.stakeCurrency
+        ? CurrencyAmount.fromRawAmount(pool1Info.stakeCurrency, userInfo[1].amountPool)
+        : undefined,
     ]
-  }, [userInfo, pool0Info?.currency, pool1Info?.currency])
+  }, [userInfo, pool0Info?.stakeCurrency, pool1Info?.stakeCurrency])
 
   const claimed = useMemo(() => {
     if (!userInfo) return [undefined, undefined]
@@ -40,14 +40,20 @@ export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | 
 
   const stakeRefund = useMemo(() => {
     return [
-      pool0Info?.currency
-        ? CurrencyAmount.fromRawAmount(pool0Info.currency, offeringAndRefundingAmounts?.[0].userRefundingAmount ?? 0n)
+      pool0Info?.stakeCurrency
+        ? CurrencyAmount.fromRawAmount(
+            pool0Info.stakeCurrency,
+            offeringAndRefundingAmounts?.[0].userRefundingAmount ?? 0n,
+          )
         : undefined,
-      pool1Info?.currency
-        ? CurrencyAmount.fromRawAmount(pool1Info.currency, offeringAndRefundingAmounts?.[1].userRefundingAmount ?? 0n)
+      pool1Info?.stakeCurrency
+        ? CurrencyAmount.fromRawAmount(
+            pool1Info.stakeCurrency,
+            offeringAndRefundingAmounts?.[1].userRefundingAmount ?? 0n,
+          )
         : undefined,
     ]
-  }, [pool0Info?.currency, pool1Info?.currency, offeringAndRefundingAmounts])
+  }, [pool0Info?.stakeCurrency, pool1Info?.stakeCurrency, offeringAndRefundingAmounts])
 
   const claimableAmount = useMemo(() => {
     if (!ready) return [undefined, undefined]

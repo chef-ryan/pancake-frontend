@@ -5,16 +5,16 @@ import useTheme from 'hooks/useTheme'
 import getTimePeriods from '@pancakeswap/utils/getTimePeriods'
 import { useMemo } from 'react'
 import { StyledLogo } from '../Icons'
-import { useIFOCurrencies } from '../../hooks/ifo/useIFOCurrencies'
 import useIfo from '../../hooks/useIfo'
 import { useIfoDisplay } from '../../hooks/useIfoDisplay'
 
 export const IfoSaleInfoCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
-  const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
-  const { config, info } = useIfo()
-  const { totalSalesAmount, status, duration } = info
+  const { config, info, pools } = useIfo()
+  const { offeringCurrency, totalSalesAmount, status, duration } = info
+  const stakeCurrency0 = pools?.[0]?.stakeCurrency
+  const stakeCurrency1 = pools?.[1]?.stakeCurrency
   const { icon } = config ?? {}
   const { startDisplay, endDisplay, preSaleDurationText } = useIfoDisplay()
 

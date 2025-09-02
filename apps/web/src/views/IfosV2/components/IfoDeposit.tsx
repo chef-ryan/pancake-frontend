@@ -9,7 +9,6 @@ import { Divider } from './IfoCards/Divider'
 import { IfoDepositForm } from './IfoCards/IfoDepositForm'
 import { StakedDisplay } from './IfoCards/StakedDisplay'
 import { IfoRibbon } from './IfoCards/IfoRibbon'
-import { useIFOCurrencies } from '../hooks/ifo/useIFOCurrencies'
 import { useIFOStatus } from '../hooks/ifo/useIFOStatus'
 import { useIFOUserStatus } from '../hooks/ifo/useIFOUserStatus'
 import useIfo from '../hooks/useIfo'
@@ -40,8 +39,6 @@ const StyledCard = styled(Card)`
 export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
   const { t } = useTranslation()
   const { address: account } = useAccount()
-  const { offeringCurrency, stakeCurrency0, stakeCurrency1 } = useIFOCurrencies()
-  const stakeCurrency = pid === 0 ? stakeCurrency0 : stakeCurrency1
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const userStatus = pid === 0 ? userStatus0 : userStatus1
   const [ifoStatus0, ifoStatus1] = useIFOStatus()
@@ -50,8 +47,9 @@ export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
 
   const { info, pools, config } = useIfo()
   const { pools: displayPools } = useIfoDisplay()
-  const { status } = info
+  const { status, offeringCurrency } = info
   const poolInfo = pools?.[pid]
+  const stakeCurrency = poolInfo?.stakeCurrency
   const raiseAmountText = displayPools?.[pid]?.raiseAmountText
   const pricePerToken = poolInfo?.price
   const bannerUrl = config?.bannerUrl ?? ''
@@ -67,7 +65,7 @@ export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
     logGTMIfoConnectWalletEvent(status === 'coming_soon')
   }
 
-  if (status === 'coming_soon') {
+  if (status === 'coming_soon' || !userStatus) {
     return null
   }
 
