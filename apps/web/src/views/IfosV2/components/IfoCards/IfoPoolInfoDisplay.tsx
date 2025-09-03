@@ -42,9 +42,7 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
   return (
     <>
       <FlexGap justifyContent="space-between" mt="8px">
-        <Text color="textSubtle">
-          {t('Sale Price per')} {offeringCurrency?.symbol ?? ''}
-        </Text>
+        <Text color="textSubtle">{t('Sale Price per token')}</Text>
         <Text>
           {pricePerToken?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
         </Text>
