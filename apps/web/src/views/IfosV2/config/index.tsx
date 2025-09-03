@@ -12,7 +12,7 @@ export const ifoConfigs: IFOConfig[] = [
     projectUrl: 'https://pancakeswap.finance/',
     chainId: ChainId.BSC,
     bannerUrl: `${ASSET_CDN}/web/ido/myshell-banner.png`, // TODO: Replace with actual banner
-    contractAddress: '0x2AD8B47403993D3FeB9D4e9E162FEE063CB3E113', // IFO v10 contract address
+    contractAddress: '0x8947176dF22fAecDC247A27E6c5a1b35243F78EE', // IFO v10 contract address
     tgeTitle: <Trans>IFO v10 Test - USDT Offering</Trans>,
     tgeSubtitle: <Trans>Testing on Tenderly Virtual Network</Trans>,
     description: (
