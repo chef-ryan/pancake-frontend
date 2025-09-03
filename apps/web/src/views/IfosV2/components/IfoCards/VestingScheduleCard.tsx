@@ -58,6 +58,9 @@ export const VestingScheduleCard: React.FC = () => {
   const ifoEnded = info.endTimestamp ? format(info.endTimestamp * 1000) : '--'
   const cliff = vesting ? format((vesting.startTime + vesting.cliff) * 1000) : '--'
   const vestingEnd = vesting ? format((vesting.startTime + vesting.duration) * 1000) : '--'
+  if (!vesting?.duration) {
+    return null
+  }
 
   return (
     <Card background={isDark ? '#18171A' : theme.colors.background} mb="16px">
