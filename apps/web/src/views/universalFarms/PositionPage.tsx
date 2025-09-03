@@ -155,7 +155,6 @@ export const PositionPage = () => {
   const { observerRef, isIntersecting } = useIntersectionObserver()
   const [cursorVisible, setCursorVisible] = useState(NUMBER_OF_FARMS_VISIBLE)
   const { replaceURLQueriesByFilter, ...filters } = useFilterToQueries()
-  const { features, isSelectAllFeatures, isSelectAllProtocols, protocols } = usePoolFeatureAndType()
   const { isMobile, isMd } = useMatchBreakpoints()
 
   const { selectedProtocolIndex, selectedNetwork, selectedTokens, positionStatus, farmsOnly, search } = filters
@@ -227,20 +226,11 @@ export const PositionPage = () => {
   const allPositionList = useMemo(() => {
     return ([...infinityPositions, ...v3Positions, ...v2Positions, ...stablePositions] as UnifiedPositionDetail[])
       .filter((item) => {
-        if (isSelectAllFeatures || !features.length || isInfinityProtocol(item.protocol)) return true
-        return selectedPoolTypes.includes(item.protocol)
+        const { protocol } = item
+        return selectedPoolTypes.includes(protocol)
       })
       .filter((item) => matchPositionSearch(item, search))
-  }, [
-    infinityPositions,
-    v3Positions,
-    v2Positions,
-    stablePositions,
-    isSelectAllFeatures,
-    features,
-    selectedPoolTypes,
-    search,
-  ])
+  }, [infinityPositions, v3Positions, v2Positions, stablePositions, selectedPoolTypes, search])
 
   const visibleList = useMemo(() => {
     return allPositionList.slice(0, cursorVisible)
