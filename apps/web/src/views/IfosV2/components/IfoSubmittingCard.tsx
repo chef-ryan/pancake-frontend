@@ -2,9 +2,11 @@ import { useTranslation } from '@pancakeswap/localization'
 import type { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { Card, CardBody, CardFooter, Flex, Text } from '@pancakeswap/uikit'
 import dynamic from 'next/dynamic'
-import { useEffect, useState, useMemo } from 'react'
+import { useMemo } from 'react'
+import { useAtomValue } from 'jotai'
 import { LottieComponentProps } from 'lottie-react'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
+import { ifoLoadingAnimationAtom } from '../atoms'
 
 const Lottie = dynamic<LottieComponentProps>(() => import('lottie-react'), { ssr: false })
 
@@ -14,13 +16,7 @@ interface IfoSubmittingCardProps {
 
 const IfoSubmittingCard: React.FC<IfoSubmittingCardProps> = ({ deposit }) => {
   const { t } = useTranslation()
-  const [animationData, setAnimationData] = useState<any>()
-
-  useEffect(() => {
-    fetch('https://assets.pancakeswap.finance/web/ifos/loading.json')
-      .then((res) => res.json())
-      .then(setAnimationData)
-  }, [])
+  const animationData = useAtomValue(ifoLoadingAnimationAtom)
 
   const usdValue = useStablecoinPriceAmount(deposit.currency, Number(deposit.toExact()), {
     enabled: true,

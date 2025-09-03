@@ -7,6 +7,7 @@ import { styled } from 'styled-components'
 import { useIFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
 import { useIFOClaimCallback } from '../../hooks/ifo/useIFOClaimCallback'
+import { useVestingInfo } from '../../hooks/ifo/useVestingInfo'
 
 const ProgressContainer = styled.div`
   width: 100%;
@@ -35,6 +36,7 @@ export const IfoVestingCard: React.FC = () => {
   const id = config?.id
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const { claim, isPending } = useIFOClaimCallback()
+  const vesting = useVestingInfo()
 
   const totalClaimable = useMemo(() => {
     const amount0 = userStatus0?.claimableAmount
@@ -46,15 +48,22 @@ export const IfoVestingCard: React.FC = () => {
   const userParticipated =
     (userStatus0?.stakedAmount?.greaterThan(0) ?? false) || (userStatus1?.stakedAmount?.greaterThan(0) ?? false)
 
-  if (!ready || !userParticipated) {
-    return null
-  }
-
   const claimedAll = (userStatus0?.claimed ?? false) && (userStatus1?.claimed ?? false)
   const amountString = totalClaimable?.toSignificant(6) ?? '0'
 
-  const claimedPercent = claimedAll ? 100 : 0
-  const availablePercent = claimedAll ? 0 : totalClaimable && totalClaimable.greaterThan(0) ? 100 : 0
+  const progress = useMemo(() => {
+    if (!vesting || !vesting.duration) return 0
+    const now = Math.floor(Date.now() / 1000)
+    const elapsed = now - vesting.startTime
+    if (elapsed <= vesting.cliff) return 0
+    const vestingPeriod = vesting.duration - vesting.cliff
+    if (vestingPeriod <= 0) return 100
+    const percent = Math.min(100, ((elapsed - vesting.cliff) / vestingPeriod) * 100)
+    return percent
+  }, [vesting])
+
+  const claimedPercent = claimedAll ? progress : 0
+  const availablePercent = claimedAll ? 0 : progress
 
   const handleClaim = async () => {
     if (userStatus0?.claimableAmount?.greaterThan(0) && pools[0]) {
@@ -63,6 +72,9 @@ export const IfoVestingCard: React.FC = () => {
     if (userStatus1?.claimableAmount?.greaterThan(0) && pools[1]) {
       await claim(pools[1].pid)
     }
+  }
+  if (!ready || !userParticipated || !vesting || vesting.duration === 0) {
+    return null
   }
 
   return (

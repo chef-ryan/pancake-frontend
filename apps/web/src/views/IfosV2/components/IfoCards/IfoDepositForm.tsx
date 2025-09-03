@@ -18,7 +18,6 @@ import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import { useIFODepositCallback } from '../../hooks/ifo/useIFODepositCallback'
 import IfoSubmittingCard from '../IfoSubmittingCard'
-import IfoSubmittedCard from '../IfoSubmittedCard'
 import useIfo from '../../hooks/useIfo'
 
 export const formatDollarAmount = (amount: number) => {
@@ -50,7 +49,7 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
   const { address: account } = useAccount()
   const inputBalance = useCurrencyBalance(account ?? undefined, stakeCurrency ?? undefined)
   const balance = stakeCurrency ? formatAmount(inputBalance, 6) : undefined
-  const { deposit, status, txHash } = useIFODepositCallback()
+  const { deposit, status } = useIFODepositCallback()
   const router = useRouter()
   const [submittedDeposit, setSubmittedDeposit] = useState<CurrencyAmount<Currency> | undefined>()
 
@@ -167,18 +166,14 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
     if (status === 'CONFIRMED') {
       const timer = setTimeout(() => {
         router.back()
-      }, 5000)
+      }, 3000)
       return () => clearTimeout(timer)
     }
     return undefined
   }, [status, router])
 
-  if (status === 'PENDING' || status === 'CONFIRMING') {
+  if (status === 'PENDING' || status === 'CONFIRMING' || status === 'CONFIRMED') {
     return submittedDeposit ? <IfoSubmittingCard deposit={submittedDeposit} /> : null
-  }
-
-  if (status === 'CONFIRMED') {
-    return <IfoSubmittedCard txHash={txHash} />
   }
 
   return (

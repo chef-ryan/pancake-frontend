@@ -1,9 +1,11 @@
 import { createContext, useContext } from 'react'
+import { useAtomValue } from 'jotai'
 import { useRouter } from 'next/router'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useWalletClient } from 'wagmi'
 import { getIFOContract } from '../hooks/ifo/useIFOContract'
 import { ifoConfigs } from '../config'
+import { ifoLoadingAnimationAtom } from '../atoms'
 import type { IFOConfig, IfoInfo, PoolInfo } from '../ifov2.types'
 
 export interface IfoV2ContextType {
@@ -33,6 +35,9 @@ export const IfoV2Provider: React.FC<ProviderProps> = ({ id, children }) => {
   const { chainId } = useActiveChainId()
   const { query } = useRouter()
   const { data: signer } = useWalletClient()
+
+  // Preload submitting animation
+  useAtomValue(ifoLoadingAnimationAtom)
 
   const ifoId = (id ?? (query.ifo as string)) || ''
 
