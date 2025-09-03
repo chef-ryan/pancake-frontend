@@ -30,19 +30,23 @@ const BigCurve = styled(Box)<{ $status?: IfoStatus; $dark?: boolean }>`
   transform: translateX(-50%);
   z-index: 1;
 
-  ${({ $status, $dark }) => {
+  ${({ theme }) => theme.mediaQueries.md} {
+    border-radius: 50%;
+  }
+
+  ${({ $status, $dark, theme }) => {
     switch ($status) {
       case 'coming_soon':
         return `
-          background: ${$dark ? '#322B48' : '#F6F4FB'};
+          background: ${$dark ? '#353547' : '#EFF3F4'};
         `
       case 'live':
         return `
-          background: linear-gradient(269.16deg, #8051D6 14.87%, #492286 103.19%);
+          background: linear-gradient(180deg, #8051D6 0%, #492286 100%);
         `
       case 'finished':
         return `
-          background: ${$dark ? '#9373E' : '#E0E0E0'};
+          background: ${theme.colors.input};
         `
       default:
         return ''
@@ -141,16 +145,13 @@ export const IfoRibbon: React.FC = () => {
 
   return (
     <Container>
-      {(pools.length > 0 || ifoStatus === 'finished') && (
+      {ifoStatus === 'live' && (
         <StyledProgress variant="flat">
           <ProgressBar
             $useDark={isDark}
             $background="linear-gradient(273deg, #ffd800 -2.87%, #eb8c00 113.73%)"
             style={{
-              width: `${Math.min(
-                ifoStatus === 'finished' ? 100 : ifoStatus === 'live' ? timeProgress : totalRaiseProgress,
-                100,
-              )}%`,
+              width: `${Math.min(timeProgress, 100)}%`,
             }}
           />
         </StyledProgress>
@@ -187,6 +188,7 @@ const IfoRibbonEnd: React.FC<{
     <>
       <BigCurve
         $status="finished"
+        $dark={isDark}
         style={{ background: isClaimed ? theme.colors.success : hasUserStaked ? theme.colors.textSubtle : undefined }}
       />
       <RibbonContainer>
