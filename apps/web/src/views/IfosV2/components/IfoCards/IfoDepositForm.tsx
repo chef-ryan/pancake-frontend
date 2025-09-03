@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Percent } from '@pancakeswap/sdk'
-import { CurrencyAmount } from '@pancakeswap/swap-sdk-core'
-import { Box, Button, FlexGap, LazyAnimatePresence, Loading, SwapLoading, Text, domAnimation } from '@pancakeswap/uikit'
+import type { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { Box, Button, FlexGap, LazyAnimatePresence, Loading, Text, domAnimation } from '@pancakeswap/uikit'
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { CurrencyLogo, SwapUIV2 } from '@pancakeswap/widgets-internal'
@@ -11,11 +11,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { useAccount } from 'wagmi'
+import { useRouter } from 'next/router'
 
 import { logGTMIfoDepositEvent } from 'utils/customGTMEventTracking'
 import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import { useIFODepositCallback } from '../../hooks/ifo/useIFODepositCallback'
+import IfoSubmittingCard from '../IfoSubmittingCard'
+import IfoSubmittedCard from '../IfoSubmittedCard'
 import useIfo from '../../hooks/useIfo'
 
 export const formatDollarAmount = (amount: number) => {
@@ -47,7 +50,9 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
   const { address: account } = useAccount()
   const inputBalance = useCurrencyBalance(account ?? undefined, stakeCurrency ?? undefined)
   const balance = stakeCurrency ? formatAmount(inputBalance, 6) : undefined
-  const { deposit, isPending: isLoading } = useIFODepositCallback()
+  const { deposit, status, txHash } = useIFODepositCallback()
+  const router = useRouter()
+  const [submittedDeposit, setSubmittedDeposit] = useState<CurrencyAmount<Currency> | undefined>()
 
   const maxAmountInput = useMemo(() => maxAmountSpend(inputBalance), [inputBalance])
 
@@ -119,21 +124,14 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
 
   const accountEllipsis = account ? `${account.substring(0, 2)}...${account.substring(account.length - 4)}` : null
 
-  const [depositing, setDepositing] = useState(false)
   const handleConfirmDeposit = async () => {
-    if (depositing) return
     if (depositAmount) {
-      setDepositing(true)
-      try {
-        const hash = await deposit(pid, depositAmount, () => {})
-        if (hash) {
-          logGTMIfoDepositEvent()
-        }
-        setValue('')
-        onDismiss?.()
-      } finally {
-        setDepositing(false)
+      setSubmittedDeposit(depositAmount)
+      const hash = await deposit(pid, depositAmount, () => {})
+      if (hash) {
+        logGTMIfoDepositEvent()
       }
+      setValue('')
     }
   }
 
@@ -161,6 +159,27 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
       ;(document.activeElement as HTMLInputElement).blur()
     }
   }, [stakeCurrency?.symbol])
+
+  useEffect(() => {
+    if (status === 'IDLE') {
+      setSubmittedDeposit(undefined)
+    }
+    if (status === 'CONFIRMED') {
+      const timer = setTimeout(() => {
+        router.back()
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+    return undefined
+  }, [status, router])
+
+  if (status === 'PENDING' || status === 'CONFIRMING') {
+    return submittedDeposit ? <IfoSubmittingCard deposit={submittedDeposit} /> : null
+  }
+
+  if (status === 'CONFIRMED') {
+    return <IfoSubmittedCard txHash={txHash} />
+  }
 
   return (
     <FlexGap flexDirection="column" gap="8px" ref={inputRef} width="100%">
@@ -282,10 +301,9 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
             maxDepositExceeded
           }
           width="100%"
-          isLoading={isLoading}
           onClick={handleConfirmDeposit}
         >
-          {t('Confirm Deposit')} {isLoading ? <SwapLoading ml="3px" /> : null}
+          {t('Confirm Deposit')}
         </Button>
         {onDismiss && (
           <Button mt="4px" width="100%" variant="secondary" onClick={onDismiss}>

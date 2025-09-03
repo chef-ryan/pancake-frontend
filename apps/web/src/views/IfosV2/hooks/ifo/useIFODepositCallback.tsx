@@ -3,7 +3,7 @@ import type { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { useToast } from '@pancakeswap/uikit'
 import { ToastDescriptionWithTx } from 'components/Toast'
 import useCatchTxError from 'hooks/useCatchTxError'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { isAddressEqual } from 'utils'
 import { logger } from 'utils/datadog'
@@ -24,6 +24,8 @@ export const useIFODepositCallback = () => {
   const { fetchWithCatchTxError, loading: isPending } = useCatchTxError({ throwUserRejectError: true })
   const { refetch } = useIFOUserInfo()
   const { writeContractAsync } = useWriteContract()
+  const [status, setStatus] = useState<'IDLE' | 'PENDING' | 'CONFIRMING' | 'CONFIRMED'>('IDLE')
+  const [txHash, setTxHash] = useState<string>('')
 
   const deposit = useCallback(
     async (
@@ -42,6 +44,7 @@ export const useIFODepositCallback = () => {
       }
       const value = amount.currency.isNative ? amount.quotient : 0n
       const amountPool = amount.quotient
+      setStatus('PENDING')
       try {
         const receipt = await fetchWithCatchTxError(async () => {
           if (amount.currency.isToken) {
@@ -53,15 +56,21 @@ export const useIFODepositCallback = () => {
             })
           }
           // TODO: IFO v10 depositPool only takes amount and pid
-          return ifoContract.write.depositPool([amountPool, pid], {
+          const tx = await ifoContract.write.depositPool([amountPool, pid], {
             account,
             chain: ifoContract.chain,
             value,
           })
+          setTxHash(tx as string)
+          setStatus('CONFIRMING')
+          return tx
         })
         if (receipt?.status) {
           setLatestTxReceipt(receipt)
           toastSuccess(t('Deposit successful'), <ToastDescriptionWithTx bscTrace txHash={receipt.transactionHash} />)
+          setStatus('CONFIRMED')
+        } else {
+          setStatus('IDLE')
         }
       } catch (error) {
         if (userRejectedError(error)) {
@@ -84,6 +93,7 @@ export const useIFODepositCallback = () => {
           },
           error instanceof Error ? error : new Error('unknown error'),
         )
+        setStatus('IDLE')
       } finally {
         onFinish?.()
         refetch()
@@ -106,5 +116,7 @@ export const useIFODepositCallback = () => {
   return {
     deposit,
     isPending,
+    status,
+    txHash,
   }
 }
