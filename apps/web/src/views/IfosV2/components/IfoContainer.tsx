@@ -2,7 +2,7 @@ import { Container } from '@pancakeswap/uikit'
 import { ReactNode } from 'react'
 import { Address } from 'viem'
 
-import { IFOFAQs } from '../config'
+import { IFOFAQs } from '../ifov2.types'
 import IfoQuestions from './IfoQuestions'
 import { SectionBackground } from './SectionBackground'
 

@@ -2,7 +2,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, CardHeader, Heading, Text } from '@pancakeswap/uikit'
 import FoldableText from 'components/FoldableSection/FoldableText'
-import { IFOFAQs } from '../../config'
+import { IFOFAQs } from '../../ifov2.types'
 
 const IfoQuestions: React.FC<{ faqs: IFOFAQs }> = ({ faqs }) => {
   const { t } = useTranslation()

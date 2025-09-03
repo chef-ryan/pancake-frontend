@@ -36,11 +36,11 @@ const IfoSubmittingCard: React.FC<IfoSubmittingCardProps> = ({ deposit }) => {
 
   return (
     <Card>
-      <CardBody p="24px" display="flex" alignItems="center" justifyContent="center">
+      <CardBody p="24px" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {animationData && <Lottie animationData={animationData} loop style={{ width: 200 }} />}
       </CardBody>
       <CardFooter p="24px">
-        <Card p="16px" borderRadius="16px" width="100%">
+        <Card p="16px" style={{ borderRadius: '16px', width: '100%' }}>
           <Text fontSize="14px" color="textSubtle">
             {t('Deposit Amount')}: {deposit.toSignificant(6)} {deposit.currency.symbol}
           </Text>

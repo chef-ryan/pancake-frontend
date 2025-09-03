@@ -27,7 +27,7 @@ const IfoSubmittedCard: React.FC<IfoSubmittedCardProps> = ({ txHash }) => {
 
   return (
     <Card>
-      <CardBody p="24px" display="flex" alignItems="center" justifyContent="center">
+      <CardBody p="24px" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {animationData && <Lottie animationData={animationData} loop={false} style={{ width: 200 }} />}
       </CardBody>
       <CardBody p="0 24px 24px 24px">

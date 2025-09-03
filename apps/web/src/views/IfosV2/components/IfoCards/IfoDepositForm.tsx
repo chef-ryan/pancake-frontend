@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Percent } from '@pancakeswap/sdk'
-import type { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { CurrencyAmount, type Currency } from '@pancakeswap/swap-sdk-core'
 import { Box, Button, FlexGap, LazyAnimatePresence, Loading, Text, domAnimation } from '@pancakeswap/uikit'
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'

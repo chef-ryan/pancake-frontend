@@ -90,7 +90,7 @@ export const IfoVestingCard: React.FC = () => {
           <FlexGap flexDirection="column" gap="4px">
             <FlexGap gap="4px" alignItems="center">
               <Text fontSize="20px" bold>
-                {offeringCurrency.symbol}
+                {offeringCurrency?.symbol}
               </Text>
               <Text color="textSubtle">{name}</Text>
             </FlexGap>
