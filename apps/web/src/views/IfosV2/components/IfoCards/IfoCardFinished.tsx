@@ -68,28 +68,38 @@ export const IfoCardFinished: React.FC<IfoCardProps> = ({
     </PoolCardWrapper>
   ) : null
 
+  const isSinglePool = Boolean((pool0Card && !pool1Card) || (pool1Card && !pool0Card))
+
   return (
     <CardBody>
       {isDesktop ? (
-        <>
-          <FlexGap gap="16px" mb="16px" alignItems="flex-start">
-            <FlexGap flex="1" flexDirection="column" gap="16px">
-              {saleInfo}
-            </FlexGap>
-            <FlexGap flex="1" flexDirection="column" gap="16px">
-              {allocationCard}
-            </FlexGap>
+        isSinglePool ? (
+          <FlexGap flexDirection="column" gap="16px" maxWidth="420px" width="100%" mx="auto">
+            {saleInfo}
+            {allocationCard}
+            {pool0Card || pool1Card}
           </FlexGap>
+        ) : (
+          <>
+            <FlexGap gap="16px" mb="16px" alignItems="flex-start">
+              <FlexGap flex="1" flexDirection="column" gap="16px">
+                {saleInfo}
+              </FlexGap>
+              <FlexGap flex="1" flexDirection="column" gap="16px">
+                {allocationCard}
+              </FlexGap>
+            </FlexGap>
 
-          <FlexGap gap="16px" alignItems="flex-start">
-            <FlexGap flex="1" flexDirection="column" gap="16px">
-              {pool0Card}
+            <FlexGap gap="16px" alignItems="flex-start">
+              <FlexGap flex="1" flexDirection="column" gap="16px">
+                {pool0Card}
+              </FlexGap>
+              <FlexGap flex="1" flexDirection="column" gap="16px">
+                {pool1Card}
+              </FlexGap>
             </FlexGap>
-            <FlexGap flex="1" flexDirection="column" gap="16px">
-              {pool1Card}
-            </FlexGap>
-          </FlexGap>
-        </>
+          </>
+        )
       ) : (
         <>
           {saleInfo}
