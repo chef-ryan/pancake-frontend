@@ -75,7 +75,7 @@ export function matchPositionSearch(pos: UnifiedPositionDetail, search: string) 
       const { pair } = pos as any
       const s0 = pair.token0.symbol.toLowerCase()
       const s1 = pair.token1.symbol.toLowerCase()
-      tags.push(s0, s1, 'stable')
+      tags.push(s0, s1, 'stable', 'ss')
       break
     }
     default:
