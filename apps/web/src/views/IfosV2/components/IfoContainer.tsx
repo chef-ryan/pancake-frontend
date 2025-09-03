@@ -4,6 +4,7 @@ import { Address } from 'viem'
 
 import { IFOFAQs } from '../ifov2.types'
 import IfoQuestions from './IfoQuestions'
+import HowToTakePart from './HowToTakePart'
 import { SectionBackground } from './SectionBackground'
 
 interface TypeProps {
@@ -19,6 +20,7 @@ const IfoContainer: React.FC<React.PropsWithChildren<TypeProps>> = ({ ifoSection
       <SectionBackground>
         <Container px="0">{ifoSection}</Container>
       </SectionBackground>
+      <HowToTakePart />
       {ifoFaqs ? <IfoQuestions faqs={ifoFaqs} /> : null}
     </>
   )
