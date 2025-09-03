@@ -26,7 +26,7 @@ const IfoContainer: React.FC<React.PropsWithChildren<TypeProps>> = ({
   return (
     <Box id="current-ifo" py={['24px', '24px', '40px']}>
       <Container>
-        <Flex flexDirection={['column', null, 'row']} columnGap="32px" alignItems="flex-start">
+        <Flex flexDirection={['column', null, 'row']} style={{ columnGap: '32px' }} alignItems="flex-start">
           <IfoPoolVaultCard ifoBasicSaleType={ifoBasicSaleType} ifoAddress={ifoAddress} />
           {ifoSection}
         </Flex>

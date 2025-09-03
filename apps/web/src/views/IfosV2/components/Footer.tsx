@@ -8,7 +8,7 @@ export const Footer: React.FC = () => {
   return (
     <CardBody>
       <FlexGap gap="12px" width="100%" flexDirection={['column', 'row']} alignItems="center">
-        <Text flex="1" color="textSubtle" fontSize="14px" lineHeight="16.8px" textAlign={['center', 'left']}>
+        <Text style={{ flex: 1 }} color="textSubtle" fontSize="14px" lineHeight="16.8px" textAlign={['center', 'left']}>
           {currentIfoConfig?.description}
         </Text>
         <FlexGap gap="12px" justifyContent={['center', 'flex-end']}>
