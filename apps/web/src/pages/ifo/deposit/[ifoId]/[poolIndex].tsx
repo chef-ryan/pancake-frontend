@@ -3,7 +3,21 @@ import { useRouter } from 'next/router'
 import { NextPageWithLayout } from 'utils/page.types'
 import IfoLayout from 'views/IfosV2/components/IfoLayout'
 import { IfoV2Provider } from 'views/IfosV2/contexts/IfoV2Context'
+import Hero from 'views/IfosV2/components/Hero'
+import IfoContainer from 'views/IfosV2/components/IfoContainer'
+import useIfo from 'views/IfosV2/hooks/useIfo'
 import { IfoDeposit } from 'views/IfosV2/components/IfoDeposit'
+
+const IfoDepositPageContent: React.FC<{ pid: number }> = ({ pid }) => {
+  const { config } = useIfo()
+
+  return (
+    <>
+      <Hero />
+      <IfoContainer ifoSection={<IfoDeposit pid={pid} />} ifoFaqs={config?.faqs} />
+    </>
+  )
+}
 
 const IfoDepositPage: NextPageWithLayout = () => {
   const { query } = useRouter()
@@ -15,7 +29,7 @@ const IfoDepositPage: NextPageWithLayout = () => {
 
   return (
     <IfoV2Provider id={ifoId}>
-      <IfoDeposit pid={Number(poolIndex)} />
+      <IfoDepositPageContent pid={Number(poolIndex)} />
     </IfoV2Provider>
   )
 }

@@ -55,10 +55,11 @@ export const useIFODepositCallback = () => {
               args: [ifoContract.address, amount.quotient],
             })
           }
-          // TODO: IFO v10 depositPool only takes amount and pid
-          const tx = await ifoContract.write.depositPool([amountPool, pid], {
-            account,
-            chain: ifoContract.chain,
+          const tx = await writeContractAsync({
+            address: ifoContract.address,
+            abi: ifoContract.abi as any,
+            functionName: 'depositPool',
+            args: [amountPool, pid],
             value,
           })
           setTxHash(tx as string)
