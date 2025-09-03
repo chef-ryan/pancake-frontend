@@ -5,7 +5,9 @@ import { styled } from 'styled-components'
 
 import { IfoStatus } from '@pancakeswap/ifos'
 import { Percent } from '@pancakeswap/swap-sdk-core'
+import { ChainId } from '@pancakeswap/chains'
 import useTheme from 'hooks/useTheme'
+import { IfoChainBoard } from 'views/Ifos/components/IfoChainBoard'
 import LiveTimer, { SoonTimer } from './Timer'
 import { useIFOPoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
 import { useIFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
@@ -53,16 +55,18 @@ const RibbonContainer = styled(Box)`
   position: relative;
 `
 
-const _ChainBoardContainer = styled(Box)`
+const ChainBoardContainer = styled(Box)`
   position: absolute;
   top: -4rem;
   left: 50%;
+  transform: translateX(-50%);
 
   ${({ theme }) => theme.mediaQueries.sm} {
     left: unset;
     top: unset;
     right: 90px;
     bottom: 3px;
+    transform: none;
   }
 `
 
@@ -137,12 +141,17 @@ export const IfoRibbon: React.FC = () => {
 
   return (
     <Container>
-      {pools.length > 0 && (
+      {(pools.length > 0 || ifoStatus === 'finished') && (
         <StyledProgress variant="flat">
           <ProgressBar
             $useDark={isDark}
             $background="linear-gradient(273deg, #ffd800 -2.87%, #eb8c00 113.73%)"
-            style={{ width: `${Math.min(ifoStatus === 'live' ? timeProgress : totalRaiseProgress, 100)}%` }}
+            style={{
+              width: `${Math.min(
+                ifoStatus === 'finished' ? 100 : ifoStatus === 'live' ? timeProgress : totalRaiseProgress,
+                100,
+              )}%`,
+            }}
           />
         </StyledProgress>
       )}
@@ -157,9 +166,9 @@ export const IfoRibbon: React.FC = () => {
       >
         {ribbon}
       </Flex>
-      {/* <ChainBoardContainer zIndex={2}>
-        <IfoChainBoard chainId={ifoChainId} />
-      </ChainBoardContainer> */}
+      <ChainBoardContainer zIndex={2}>
+        <IfoChainBoard chainId={ChainId.BSC} />
+      </ChainBoardContainer>
     </Container>
   )
 }

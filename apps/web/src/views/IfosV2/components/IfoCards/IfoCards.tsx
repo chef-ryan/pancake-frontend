@@ -12,11 +12,8 @@ import { IfoCardLive } from './IfoCardLive'
 import { IfoCardFinished } from './IfoCardFinished'
 import { IfoCardIdle } from './IfoCardIdle'
 
-const Header = styled(CardHeader)<{
-  $isCurrent?: boolean
-  $bannerUrl: string
-}>`
-  width: 100%;
+// V2 Header component with IFO v1 style - uses bannerUrl directly
+const Header = styled(CardHeader)<{ $bannerUrl: string; $isCurrent?: boolean }>`
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -24,20 +21,30 @@ const Header = styled(CardHeader)<{
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  background-color: ${({ theme }) => theme.colors.dropdown};
-  background-image: ${({ $bannerUrl }) => `url('${$bannerUrl}')`};
+  border-top-left-radius: 32px;
+  border-top-right-radius: 32px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%),
+    ${({ $bannerUrl }) => `url('${$bannerUrl}')`};
+  background-size: cover;
+  background-position: center;
+  ${({ theme }) => theme.mediaQueries.md} {
+    height: 112px;
+  }
 `
 
 const StyledCard = styled(Card)`
   width: 100%;
   margin: 0 auto;
+  border-top-left-radius: 32px;
+  border-top-right-radius: 32px;
+  overflow: hidden;
 
   ${({ theme }) => theme.mediaQueries.lg} {
     width: 737px;
   }
 `
 
-export const IfoCurrentCard = ({ ifoId, bannerUrl }: { ifoId: string; bannerUrl: string }) => {
+export const IfoCurrentCard = ({ bannerUrl }: { ifoId: string; bannerUrl: string }) => {
   const { info } = useIfo()
   const { ready } = info
 
