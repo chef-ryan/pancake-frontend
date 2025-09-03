@@ -9,12 +9,8 @@ export const useIFODuration = (duration: number) => {
     return `${days} ${t('days')}`
   }
 
-  if (hours >= 2) {
-    return `${hours} ${t('hours')}`
-  }
-
-  if (hours === 1) {
-    return `${t('1 hour')} ${minutes} ${t('mins')}`
+  if (hours >= 1) {
+    return `${hours} ${t(hours > 1 ? 'hours' : 'hour')}`
   }
 
   if (minutes > 1) {
