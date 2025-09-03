@@ -4,6 +4,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Flex, Skeleton, Text } from '@pancakeswap/uikit'
 import useTheme from 'hooks/useTheme'
 import { styled } from 'styled-components'
+import { useEffect } from 'react'
 
 interface Props {
   plannedStartTime: number
@@ -56,6 +57,13 @@ export const SoonTimer: React.FC<React.PropsWithChildren<Props>> = ({ startTime,
   const { theme } = useTheme()
   const textColor = theme.colors.secondary
   const { t } = useTranslation()
+
+  const countdownState = useCountdown(startTime)
+  useEffect(() => {
+    if (ifoStatus !== 'idle' && !countdownState) {
+      window.location.reload()
+    }
+  }, [countdownState, ifoStatus])
 
   const countdownDisplay =
     ifoStatus !== 'idle' ? (
