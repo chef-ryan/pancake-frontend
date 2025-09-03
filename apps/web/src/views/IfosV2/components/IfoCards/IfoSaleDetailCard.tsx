@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Card, CardBody, FlexGap, Text } from '@pancakeswap/uikit'
+import { Card, CardBody, FlexGap, Text, CheckmarkCircleFillIcon } from '@pancakeswap/uikit'
 import useTheme from 'hooks/useTheme'
 import useIfo from '../../hooks/useIfo'
 
@@ -12,10 +12,10 @@ export const IfoSaleDetailCard: React.FC = () => {
   return (
     <Card background={isDark ? '#18171A' : theme.colors.background} mb="16px">
       <CardBody>
-        <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
-          {t('Eligibility')}
-        </Text>
-        <Text mt="4px">{t('Anyone with $CAKE can join — our IFOs are open to all.')}</Text>
+        <FlexGap alignItems="center" gap="8px">
+          <CheckmarkCircleFillIcon color={theme.colors.success} width="20px" />
+          <Text color="success">{t('Anyone with $CAKE can join — our IFOs are open to all.')}</Text>
+        </FlexGap>
         <FlexGap flexDirection="column" gap="16px" mt="16px">
           {pools.map((pool) => (
             <FlexGap key={pool.pid} flexDirection="column" gap="8px">
@@ -31,7 +31,7 @@ export const IfoSaleDetailCard: React.FC = () => {
                 </Text>
               </FlexGap>
               <FlexGap justifyContent="space-between">
-                <Text color="textSubtle">{t('Target Raise')}</Text>
+                <Text color="textSubtle">{t('Target Fund Raise')}</Text>
                 <Text>
                   {pool.raise?.toSignificant(6)} {pool.stakeCurrency?.symbol ?? ''}
                 </Text>
