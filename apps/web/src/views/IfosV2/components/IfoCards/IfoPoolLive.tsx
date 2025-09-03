@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Button, FlexGap, Text } from '@pancakeswap/uikit'
+import { AddIcon, Button, FlexGap, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useRouter } from 'next/router'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
@@ -19,6 +19,7 @@ export const IfoPoolLive: React.FC<{
   const poolInfo = pools?.[pid]
   const stakeCurrency = poolInfo?.stakeCurrency
   const ifoId = config?.id
+  const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
   if (status === 'coming_soon') {
     return null
   }
@@ -38,9 +39,15 @@ export const IfoPoolLive: React.FC<{
             {stakeCurrency?.symbol} {t('Pool')}
           </Text>
         </FlexGap>
-        <Button scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
-          {t('Deposit')}
-        </Button>
+        {userHasStaked ? (
+          <Button variant="secondary" scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
+            <AddIcon color="primary" />
+          </Button>
+        ) : (
+          <Button scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
+            {t('Deposit')}
+          </Button>
+        )}
       </FlexGap>
 
       <IfoPoolInfoDisplay pid={pid} ifoStatus={ifoStatus} userStatus={userStatus} variant="live" />

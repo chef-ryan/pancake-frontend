@@ -31,6 +31,7 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
   const raiseAmountText = displayPools?.[pid]?.raiseAmountText
   const pricePerToken = poolInfo?.price
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
+  const showExtraInfo = variant === 'live' && userHasStaked
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     t('This sale has been oversubscribed. You will get partial refund of the deposit.'),
@@ -51,13 +52,21 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
         <Text color="textSubtle">{t('Target Raise')}</Text>
         <Text>{raiseAmountText}</Text>
       </FlexGap>
-      {variant === 'live' && userHasStaked && (
-        <FlexGap justifyContent="space-between">
-          <Text color="textSubtle">{t('Deposit Amount')}</Text>
-          <Text>
-            {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
-          </Text>
-        </FlexGap>
+      {showExtraInfo && (
+        <>
+          <FlexGap justifyContent="space-between">
+            <Text color="textSubtle">{t('Total committed')}</Text>
+            <Text>
+              {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
+            </Text>
+          </FlexGap>
+          <FlexGap justifyContent="space-between">
+            <Text color="textSubtle">{t('Deposit Amount')}</Text>
+            <Text>
+              {userStatus?.stakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
+            </Text>
+          </FlexGap>
+        </>
       )}
       {variant === 'finished' && (
         <FlexGap justifyContent="space-between">
@@ -67,13 +76,13 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
           </Text>
         </FlexGap>
       )}
-      {feeTier && (
+      {!showExtraInfo && feeTier && (
         <FlexGap justifyContent="space-between">
           <Text color="textSubtle">{t('Fee Tier')}</Text>
           <Text>{feeTier}</Text>
         </FlexGap>
       )}
-      {cakeToBurn && (
+      {!showExtraInfo && cakeToBurn && (
         <FlexGap justifyContent="space-between">
           <Text color="textSubtle">{t('CAKE to burn:')}</Text>
           <Text>{cakeToBurn}</Text>
@@ -98,6 +107,18 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
           )}
         </FlexGap>
       </FlexGap>
+      {showExtraInfo && feeTier && (
+        <FlexGap justifyContent="space-between">
+          <Text color="textSubtle">{t('Fee Tier')}</Text>
+          <Text>{feeTier}</Text>
+        </FlexGap>
+      )}
+      {showExtraInfo && cakeToBurn && (
+        <FlexGap justifyContent="space-between">
+          <Text color="textSubtle">{t('CAKE to burn:')}</Text>
+          <Text>{cakeToBurn}</Text>
+        </FlexGap>
+      )}
     </>
   )
 }
