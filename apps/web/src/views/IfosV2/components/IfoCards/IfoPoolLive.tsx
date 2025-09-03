@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Button, FlexGap, Text } from '@pancakeswap/uikit'
+import { Button, FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useRouter } from 'next/router'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
@@ -24,6 +24,12 @@ export const IfoPoolLive: React.FC<{
   const ifoId = config?.id
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    t('This sale has been oversubscribed. You will get partial refund of the deposit.'),
+    {
+      placement: 'top',
+    },
+  )
   if (status === 'coming_soon') {
     return null
   }
@@ -68,6 +74,25 @@ export const IfoPoolLive: React.FC<{
           </Text>
         </FlexGap>
       )}
+      <FlexGap justifyContent="space-between">
+        <Text color="textSubtle">{t('Status')}</Text>
+        <FlexGap flexDirection="column" alignItems="flex-end">
+          <FlexGap gap="3px">
+            <Text>
+              {ifoStatus.progress.toFixed(2)} % {ifoStatus.progress.greaterThan(1) && '🎉'}
+            </Text>
+          </FlexGap>
+          {ifoStatus.progress.greaterThan(1) && (
+            <FlexGap gap="3px">
+              <Text>{t('Oversubscribed')}</Text>
+              <FlexGap ref={targetRef}>
+                <InfoIcon width="14px" color="textSubtle" />
+                {tooltipVisible && tooltip}
+              </FlexGap>
+            </FlexGap>
+          )}
+        </FlexGap>
+      </FlexGap>
     </FlexGap>
   )
 }
