@@ -1,6 +1,8 @@
-import { CardBody, FlexGap } from '@pancakeswap/uikit'
+import { Card, CardBody, FlexGap, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { PoolInfo } from 'views/IfosV2/ifov2.types'
-import { ClaimedCard } from './ClaimedCard'
+import useTheme from 'hooks/useTheme'
+import IfoAllocationCard from '../IfoAllocationCard'
+import useIfo from '../../hooks/useIfo'
 import { IfoSaleInfoCard } from './IfoSaleInfoCard'
 import { IfoPoolFinished } from './IfoPoolFinished'
 import { IfoVestingCard } from './IfoVestingCard'
@@ -23,15 +25,97 @@ export const IfoCardFinished: React.FC<IfoCardProps> = ({
   userStatus1,
   ifoStatus0,
   ifoStatus1,
-}) => (
-  <CardBody>
-    {pool0Info && <ClaimedCard userStatus={userStatus0} pid={pool0Info.pid} />}
-    {pool1Info && <ClaimedCard userStatus={userStatus1} pid={pool1Info.pid} />}
-    <IfoSaleInfoCard />
-    <FlexGap flexDirection="column" gap="16px">
-      {pool0Info && <IfoPoolFinished pid={pool0Info.pid} userStatus={userStatus0} ifoStatus={ifoStatus0} />}
-      {pool1Info && <IfoPoolFinished pid={pool1Info.pid} userStatus={userStatus1} ifoStatus={ifoStatus1} />}
+}) => {
+  const { isDesktop } = useMatchBreakpoints()
+  const { info } = useIfo()
+
+  const { offeringCurrency } = info
+  const symbol = offeringCurrency?.symbol ?? ''
+  const tokenAddress = offeringCurrency?.wrapped.address ?? ''
+  const { isDark, theme } = useTheme()
+
+  const allocationCurrencyAmount = (() => {
+    if (userStatus0?.claimableAmount && userStatus1?.claimableAmount) {
+      return userStatus0.claimableAmount.add(userStatus1.claimableAmount)
+    }
+    return userStatus0?.claimableAmount ?? userStatus1?.claimableAmount
+  })()
+
+  const allocatedAmount = allocationCurrencyAmount?.toSignificant(6)
+
+  const userHasStaked0 = userStatus0?.stakedAmount?.greaterThan(0)
+  const userHasStaked1 = userStatus1?.stakedAmount?.greaterThan(0)
+  const userClaimed0 = userStatus0?.claimed
+  const userClaimed1 = userStatus1?.claimed
+
+  const showAllocationCard = !!(userClaimed0 || userClaimed1 || (!userHasStaked0 && !userHasStaked1))
+
+  const saleInfo = <IfoSaleInfoCard />
+
+  const allocationCard = showAllocationCard ? (
+    <IfoAllocationCard symbol={symbol} tokenAddress={tokenAddress} allocatedAmount={allocatedAmount} />
+  ) : null
+
+  const pool0Card = pool0Info ? (
+    <PoolCardWrapper>
+      <IfoPoolFinished pid={pool0Info.pid} userStatus={userStatus0} ifoStatus={ifoStatus0} />
+    </PoolCardWrapper>
+  ) : null
+
+  const pool1Card = pool1Info ? (
+    <PoolCardWrapper>
+      <IfoPoolFinished pid={pool1Info.pid} userStatus={userStatus1} ifoStatus={ifoStatus1} />
+    </PoolCardWrapper>
+  ) : null
+
+  return (
+    <CardBody>
+      {isDesktop ? (
+        <>
+          <FlexGap gap="16px" mb="16px" alignItems="flex-start">
+            <FlexGap flex="1" flexDirection="column" gap="16px">
+              {saleInfo}
+            </FlexGap>
+            <FlexGap flex="1" flexDirection="column" gap="16px">
+              {allocationCard}
+            </FlexGap>
+          </FlexGap>
+
+          <FlexGap gap="16px" alignItems="flex-start">
+            <FlexGap flex="1" flexDirection="column" gap="16px">
+              {pool0Card}
+            </FlexGap>
+            <FlexGap flex="1" flexDirection="column" gap="16px">
+              {pool1Card}
+            </FlexGap>
+          </FlexGap>
+        </>
+      ) : (
+        <>
+          {saleInfo}
+          {allocationCard}
+          {pool0Card}
+          {pool1Card}
+        </>
+      )}
+      <IfoVestingCard />
+    </CardBody>
+  )
+}
+
+const PoolCardWrapper = ({ children }: { children: React.ReactNode }) => {
+  const { isDark, theme } = useTheme()
+  return (
+    <FlexGap flex="1" flexDirection="column" gap="16px">
+      <Card
+        style={{
+          flex: '1',
+        }}
+        background={isDark ? '#18171A' : theme.colors.background}
+        mb="16px"
+      >
+        <CardBody>{children}</CardBody>
+      </Card>
     </FlexGap>
-    <IfoVestingCard />
-  </CardBody>
-)
+  )
+}

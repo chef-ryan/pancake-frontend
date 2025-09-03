@@ -2,8 +2,6 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, FlexGap, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo, DoubleCurrencyLogo, NumberDisplay } from '@pancakeswap/widgets-internal'
 import useTheme from 'hooks/useTheme'
-import getTimePeriods from '@pancakeswap/utils/getTimePeriods'
-import { useMemo } from 'react'
 import { StyledLogo } from '../Icons'
 import useIfo from '../../hooks/useIfo'
 import { useIfoDisplay } from '../../hooks/useIfoDisplay'
@@ -12,45 +10,21 @@ export const IfoSaleInfoCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const { config, info, pools } = useIfo()
-  const { offeringCurrency, totalSalesAmount, status, duration } = info
+  const { offeringCurrency, totalSalesAmount, status } = info
   const stakeCurrency0 = pools?.[0]?.stakeCurrency
   const stakeCurrency1 = pools?.[1]?.stakeCurrency
   const { icon } = config ?? {}
-  const { startDisplay, endDisplay, preSaleDurationText } = useIfoDisplay()
-
-  const durationText = useMemo(() => {
-    if (status !== 'finished') {
-      return preSaleDurationText
-    }
-
-    const { days } = getTimePeriods(duration)
-    if (days < 1) {
-      return (
-        <>
-          {startDisplay.date}
-          <br />
-          {startDisplay.time} - {endDisplay.time} (UTC+8)
-        </>
-      )
-    }
-
-    return (
-      <>
-        {startDisplay.date} {t('to')} <br />
-        {endDisplay.date}
-      </>
-    )
-  }, [endDisplay.date, endDisplay.time, duration, preSaleDurationText, startDisplay.date, startDisplay.time, status, t])
+  const { preSaleDurationText } = useIfoDisplay()
 
   return (
     <Card background={isDark ? '#18171A' : theme.colors.background} mb="16px">
       <CardBody>
-        <FlexGap gap="8px">
+        <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
+          {t('Total Sale')}
+        </Text>
+        <FlexGap mt="8px" gap="8px" alignItems="center" background={theme.colors.cardSecondary}>
           {icon && <StyledLogo size="40px" srcs={[icon]} />}
           <FlexGap flexDirection="column">
-            <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
-              {t('Total Sale')}
-            </Text>
             <NumberDisplay
               bold
               fontSize="20px"
@@ -58,18 +32,18 @@ export const IfoSaleInfoCard: React.FC = () => {
               value={totalSalesAmount?.toSignificant(6)}
               suffix={` ${offeringCurrency?.symbol}`}
             />
-          </FlexGap>
-        </FlexGap>
-        <FlexGap flexDirection="column" gap="8px" mt="16px">
-          <FlexGap justifyContent="space-between">
-            <Text color="textSubtle" style={{ whiteSpace: 'nowrap' }}>
-              {t('Project Duration')}
-            </Text>
-            <Text textAlign="right">{durationText}</Text>
+            <Text color="textSubtle">{`${preSaleDurationText} ${t('Project Duration')}`}</Text>
           </FlexGap>
         </FlexGap>
         {status !== 'finished' && (
-          <FlexGap alignItems="center" gap="8px" mt="16px">
+          <FlexGap
+            alignItems="center"
+            gap="8px"
+            mt="16px"
+            p="8px"
+            borderRadius="16px"
+            border={`1px solid ${theme.colors.cardBorder}`}
+          >
             {stakeCurrency0 && stakeCurrency1 ? (
               <DoubleCurrencyLogo size={20} currency0={stakeCurrency0} currency1={stakeCurrency1} />
             ) : stakeCurrency0 || stakeCurrency1 ? (

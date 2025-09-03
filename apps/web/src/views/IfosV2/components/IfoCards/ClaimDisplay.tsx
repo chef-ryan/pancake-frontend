@@ -1,11 +1,11 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Button, CheckmarkIcon, FlexGap, InfoIcon, SwapLoading, Text, useTooltip } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
-import ConnectW3WButton from 'components/ConnectW3WButton'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import useTheme from 'hooks/useTheme'
 import { useAccount } from 'wagmi'
 import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
+import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useIFOClaimCallback } from '../../hooks/ifo/useIFOClaimCallback'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
@@ -146,7 +146,7 @@ export const ClaimDisplay: React.FC<{
           <FlexGap gap="8px" alignItems="center">
             {stakeCurrency && <CurrencyLogo size="40px" currency={stakeCurrency} />}
             {!account ? (
-              <ConnectW3WButton width="100%" onClick={handleConnectWallet} />
+              <ConnectWalletButton width="100%" onClickCapture={handleConnectWallet} />
             ) : (
               <Text fontSize="16px" color="textDisabled" bold>
                 {t('You didn’t deposit')} {stakeCurrency?.symbol}
