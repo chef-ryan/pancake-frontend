@@ -5,15 +5,21 @@ import { useQuery } from '@tanstack/react-query'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { getViemClients } from 'utils/viem'
 import { useCurrency } from 'hooks/Tokens'
+import { useAtomValue } from 'jotai'
+import { ifoInfoAtom, ifoPoolsAtom } from 'views/IfosV2/atom/ifo.atoms'
+import { useIfoV2Context } from 'views/IfosV2/contexts/useIfoV2Context'
 import { getStatusByTimestamp } from '../helpers'
-import { useIFOPoolInfo } from './useIFOPoolInfo'
 import { useVestingInfo } from './useVestingInfo'
-import { useIfoV2Context } from '../../contexts/IfoV2Context'
 import type { IfoInfo } from '../../ifov2.types'
 import { useIFOAddresses } from './useIFOAddresses'
+import { useIFOPoolInfo } from './useIFOPoolInfo'
 
-type InfoFN = () => IfoInfo
-export const useIFOInfo: InfoFN = () => {
+export const useIFOInfo = () => {
+  const { config } = useIfoV2Context()
+  return useAtomValue(ifoInfoAtom(config.id))
+}
+
+export const useIFOInfoCtx = () => {
   const pools = useIFOPoolInfo()
   const pool0Info = pools[0]
   const pool1Info = pools[1]
@@ -54,7 +60,6 @@ export const useIFOInfo: InfoFN = () => {
           )
         : undefined,
       status: getStatusByTimestamp(now, timestamps?.startTimestamp, timestamps?.endTimestamp),
-      ready: Boolean(timestamps && offeringCurrency),
       vestingInfo,
       offeringCurrency,
     } as IfoInfo

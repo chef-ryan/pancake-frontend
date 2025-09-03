@@ -8,13 +8,16 @@ import { useIfoDisplay } from '../../hooks/useIfoDisplay'
 
 export const IfoSaleInfoCard: React.FC = () => {
   const { t } = useTranslation()
-  const { theme, isDark } = useTheme()
+  const { theme } = useTheme()
   const { config, info, pools } = useIfo()
-  const { offeringCurrency, totalSalesAmount, status } = info
   const stakeCurrency0 = pools?.[0]?.stakeCurrency
   const stakeCurrency1 = pools?.[1]?.stakeCurrency
   const { icon } = config ?? {}
   const { preSaleDurationText } = useIfoDisplay()
+  if (!info) {
+    return null
+  }
+  const { offeringCurrency, totalSalesAmount, status } = info
 
   const SubscribeInfo = () => (
     <FlexGap
@@ -24,6 +27,7 @@ export const IfoSaleInfoCard: React.FC = () => {
       p="8px"
       borderRadius="16px"
       border={`1px solid ${theme.colors.cardBorder}`}
+      background={theme.colors.cardSecondary}
     >
       {stakeCurrency0 && stakeCurrency1 ? (
         <DoubleCurrencyLogo size={40} currency0={stakeCurrency0} currency1={stakeCurrency1} />
@@ -64,7 +68,7 @@ export const IfoSaleInfoCard: React.FC = () => {
   )
 
   return (
-    <Card background={isDark ? '#18171A' : theme.colors.background} mb="16px">
+    <Card background={theme.colors.card} mb="16px">
       <CardBody>
         <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
           {t('Total Sale')}

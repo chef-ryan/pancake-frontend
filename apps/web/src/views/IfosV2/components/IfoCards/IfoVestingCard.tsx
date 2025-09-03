@@ -31,8 +31,7 @@ export const IfoVestingCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const { config, info, pools } = useIfo()
-  const { offeringCurrency, ready } = info
-  const name = config?.tgeTitle
+  const name = config.tgeTitle
   const id = config?.id
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const { claim, isPending } = useIFOClaimCallback()
@@ -73,9 +72,10 @@ export const IfoVestingCard: React.FC = () => {
       await claim(pools[1].pid)
     }
   }
-  if (!ready || !userParticipated || !vesting || vesting.duration === 0) {
+  if (!info || !userParticipated || !vesting || vesting.duration === 0) {
     return null
   }
+  const { offeringCurrency } = info
 
   return (
     <Card background={isDark ? '#18171A' : theme.colors.background} mb="16px">

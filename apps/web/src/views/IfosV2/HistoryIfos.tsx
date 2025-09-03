@@ -1,7 +1,7 @@
 import { Container } from '@pancakeswap/uikit'
 import IfoHistoryCard from './components/IfoHistoryCard'
 import { ifoConfigs } from './config'
-import { IfoV2Provider } from './contexts/IfoV2Context'
+import { IfoV2Provider } from './contexts/IfoV2Provider'
 
 const HistoryIfos: React.FC = () => {
   return (

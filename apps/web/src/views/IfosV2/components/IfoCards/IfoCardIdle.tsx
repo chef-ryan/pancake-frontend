@@ -1,4 +1,4 @@
-import { CardBody, FlexGap } from '@pancakeswap/uikit'
+import { FlexGap } from '@pancakeswap/uikit'
 import { ClaimedCard } from './ClaimedCard'
 import { IfoSaleInfoCard } from './IfoSaleInfoCard'
 import { IfoPoolLive } from './IfoPoolLive'
@@ -24,7 +24,7 @@ const IfoCardIdle: React.FC<IfoCardProps> = ({
   ifoStatus0,
   ifoStatus1,
 }) => (
-  <CardBody>
+  <>
     {pool0Info && <ClaimedCard userStatus={userStatus0} pid={pool0Info.pid} />}
     {pool1Info && <ClaimedCard userStatus={userStatus1} pid={pool1Info.pid} />}
     <IfoSaleInfoCard />
@@ -33,7 +33,7 @@ const IfoCardIdle: React.FC<IfoCardProps> = ({
       {pool1Info && <IfoPoolLive pid={pool1Info.pid} ifoStatus={ifoStatus1} userStatus={userStatus1} />}
     </FlexGap>
     <IfoVestingCard />
-  </CardBody>
+  </>
 )
 
 export { IfoCardIdle }

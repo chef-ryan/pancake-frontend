@@ -1,9 +1,16 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
+import { styled } from 'styled-components'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
 import { useIfoDisplay } from '../../hooks/useIfoDisplay'
+
+const StyledText = styled(Text)`
+  font-size: 14px;
+  font-family: Kanit;
+  line-height: 150%;
+`
 
 interface IfoPoolInfoDisplayProps {
   pid: number
@@ -23,8 +30,7 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
   cakeToBurn,
 }) => {
   const { t } = useTranslation()
-  const { info, pools } = useIfo()
-  const { offeringCurrency } = info
+  const { pools } = useIfo()
   const poolInfo = pools?.[pid]
   const stakeCurrency = poolInfo?.stakeCurrency
   const { pools: displayPools } = useIfoDisplay()
@@ -43,62 +49,62 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
   return (
     <>
       <FlexGap justifyContent="space-between" mt="8px">
-        <Text color="textSubtle">{t('Sale Price per token')}</Text>
-        <Text>
+        <StyledText color="textSubtle">{t('Sale Price per token')}</StyledText>
+        <StyledText color="text">
           {pricePerToken?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
-        </Text>
+        </StyledText>
       </FlexGap>
       <FlexGap justifyContent="space-between">
-        <Text color="textSubtle">{t('Target Raise')}</Text>
-        <Text>{raiseAmountText}</Text>
+        <StyledText color="textSubtle">{t('Target Raise')}</StyledText>
+        <StyledText color="text">{raiseAmountText}</StyledText>
       </FlexGap>
       {showExtraInfo && (
         <>
           <FlexGap justifyContent="space-between">
-            <Text color="textSubtle">{t('Total committed')}</Text>
-            <Text>
+            <StyledText color="textSubtle">{t('Total committed')}</StyledText>
+            <StyledText color="text">
               {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
-            </Text>
+            </StyledText>
           </FlexGap>
           <FlexGap justifyContent="space-between">
-            <Text color="textSubtle">{t('Deposit Amount')}</Text>
-            <Text>
+            <StyledText color="textSubtle">{t('Deposit Amount')}</StyledText>
+            <StyledText color="text">
               {userStatus?.stakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
-            </Text>
+            </StyledText>
           </FlexGap>
         </>
       )}
       {variant === 'finished' && (
         <FlexGap justifyContent="space-between">
-          <Text color="textSubtle">{t('Total committed')}</Text>
-          <Text>
+          <StyledText color="textSubtle">{t('Total committed')}</StyledText>
+          <StyledText color="text">
             {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
-          </Text>
+          </StyledText>
         </FlexGap>
       )}
       {!showExtraInfo && feeTier && (
         <FlexGap justifyContent="space-between">
-          <Text color="textSubtle">{t('Fee Tier')}</Text>
-          <Text>{feeTier}</Text>
+          <StyledText color="textSubtle">{t('Fee Tier')}</StyledText>
+          <StyledText color="text">{feeTier}</StyledText>
         </FlexGap>
       )}
       {!showExtraInfo && cakeToBurn && (
         <FlexGap justifyContent="space-between">
-          <Text color="textSubtle">{t('CAKE to burn:')}</Text>
-          <Text>{cakeToBurn}</Text>
+          <StyledText color="textSubtle">{t('CAKE to burn:')}</StyledText>
+          <StyledText color="text">{cakeToBurn}</StyledText>
         </FlexGap>
       )}
       <FlexGap justifyContent="space-between">
-        <Text color="textSubtle">{t('Status')}</Text>
+        <StyledText color="textSubtle">{t('Status')}</StyledText>
         <FlexGap flexDirection="column" alignItems="flex-end">
           <FlexGap gap="3px">
-            <Text>
+            <StyledText color="text">
               {ifoStatus.progress.toFixed(2)} % {ifoStatus.progress.greaterThan(1) && '🎉'}
-            </Text>
+            </StyledText>
           </FlexGap>
           {ifoStatus.progress.greaterThan(1) && (
             <FlexGap gap="3px">
-              <Text>{t('Oversubscribed')}</Text>
+              <StyledText color="text">{t('Oversubscribed')}</StyledText>
               <FlexGap ref={targetRef}>
                 <InfoIcon width="14px" color="textSubtle" />
                 {tooltipVisible && tooltip}
@@ -109,14 +115,14 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
       </FlexGap>
       {showExtraInfo && feeTier && (
         <FlexGap justifyContent="space-between">
-          <Text color="textSubtle">{t('Fee Tier')}</Text>
-          <Text>{feeTier}</Text>
+          <StyledText color="textSubtle">{t('Fee Tier')}</StyledText>
+          <StyledText color="text">{feeTier}</StyledText>
         </FlexGap>
       )}
       {showExtraInfo && cakeToBurn && (
         <FlexGap justifyContent="space-between">
-          <Text color="textSubtle">{t('CAKE to burn:')}</Text>
-          <Text>{cakeToBurn}</Text>
+          <StyledText color="textSubtle">{t('CAKE to burn:')}</StyledText>
+          <StyledText color="text">{cakeToBurn}</StyledText>
         </FlexGap>
       )}
     </>

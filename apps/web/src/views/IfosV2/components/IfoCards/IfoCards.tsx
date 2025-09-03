@@ -1,5 +1,6 @@
-import { Box, Card, CardHeader, Spinner } from '@pancakeswap/uikit'
+import { Box, Card, CardBody, CardHeader, Spinner } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
+import useTheme from 'hooks/useTheme'
 
 import { useIFOStatus } from '../../hooks/ifo/useIFOStatus'
 import { useIFOPoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
@@ -46,15 +47,23 @@ const StyledCard = styled(Card)`
 
 export const IfoCurrentCard = ({ bannerUrl }: { ifoId: string; bannerUrl: string }) => {
   const { info } = useIfo()
-  const { ready } = info
+  const { theme } = useTheme()
 
-  if (!ready) {
+  if (!info) {
     return <Spinner />
   }
+  const { status } = info
 
   return (
     <StyledCard>
-      <Box className="sticky-header" position="sticky" bottom="48px" width="100%" zIndex={6}>
+      <Box
+        background={theme.colors.gradientBubblegum}
+        className="sticky-header"
+        position="sticky"
+        bottom="48px"
+        width="100%"
+        zIndex={6}
+      >
         <Header $isCurrent $bannerUrl={bannerUrl} />
         <IfoRibbon />
         <IfoCard />
@@ -82,15 +91,22 @@ const IfoCard: React.FC = () => {
     ifoStatus1,
   }
 
+  let content: JSX.Element
   switch (ifoStatus) {
     case 'coming_soon':
-      return <IfoCardComing />
+      content = <IfoCardComing />
+      break
     case 'live':
-      return <IfoCardLive {...cardProps} />
+      content = <IfoCardLive {...cardProps} />
+      break
     case 'finished':
-      return <IfoCardFinished {...cardProps} />
+      content = <IfoCardFinished {...cardProps} />
+      break
     case 'idle':
     default:
-      return <IfoCardIdle {...cardProps} />
+      content = <IfoCardIdle {...cardProps} />
+      break
   }
+
+  return <CardBody>{content}</CardBody>
 }

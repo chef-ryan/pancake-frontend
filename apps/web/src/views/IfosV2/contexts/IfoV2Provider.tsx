@@ -1,4 +1,3 @@
-import { createContext, useContext } from 'react'
 import { useAtomValue } from 'jotai'
 import { useRouter } from 'next/router'
 import { useActiveChainId } from 'hooks/useActiveChainId'
@@ -6,25 +5,9 @@ import { useWalletClient } from 'wagmi'
 import { getIFOContract } from '../hooks/ifo/useIFOContract'
 import { ifoConfigs } from '../config'
 import { ifoLoadingAnimationAtom } from '../atoms'
-import type { IFOConfig, IfoInfo, PoolInfo } from '../ifov2.types'
 
-export interface IfoV2ContextType {
-  chainId: number
-  ifoContract: ReturnType<typeof getIFOContract>
-  config?: IFOConfig
-  info?: IfoInfo
-  pools?: PoolInfo[]
-}
-
-const IfoV2Context = createContext<IfoV2ContextType | null>(null)
-
-export const useIfoV2Context = () => {
-  const ctx = useContext(IfoV2Context)
-  if (!ctx) {
-    throw new Error('useIfoV2Context must be used within an IfoV2Provider')
-  }
-  return ctx
-}
+import { SyncIfoContext } from './SyncIfoContext'
+import { IfoV2Context } from './IfoV2Context'
 
 interface ProviderProps {
   id?: string
@@ -49,7 +32,10 @@ export const IfoV2Provider: React.FC<ProviderProps> = ({ id, children }) => {
   // info and pools will be attached in useIfo hook
   const value = { chainId, ifoContract, config, info: undefined, pools: undefined }
 
-  return <IfoV2Context.Provider value={value}>{children}</IfoV2Context.Provider>
+  return (
+    <IfoV2Context.Provider value={value}>
+      {children}
+      <SyncIfoContext id={config.id} />
+    </IfoV2Context.Provider>
+  )
 }
-
-export default IfoV2Context

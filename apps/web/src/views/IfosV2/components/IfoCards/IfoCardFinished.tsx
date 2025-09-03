@@ -32,7 +32,6 @@ export const IfoCardFinished: React.FC<IfoCardProps> = ({
   const { offeringCurrency } = info
   const symbol = offeringCurrency?.symbol ?? ''
   const tokenAddress = offeringCurrency?.wrapped.address ?? ''
-  const { isDark, theme } = useTheme()
 
   const allocationCurrencyAmount = (() => {
     if (userStatus0?.claimableAmount && userStatus1?.claimableAmount) {
@@ -71,7 +70,7 @@ export const IfoCardFinished: React.FC<IfoCardProps> = ({
   const isSinglePool = Boolean((pool0Card && !pool1Card) || (pool1Card && !pool0Card))
 
   return (
-    <CardBody>
+    <>
       {isDesktop ? (
         isSinglePool ? (
           <FlexGap flexDirection="column" gap="16px" maxWidth="420px" width="100%" mx="auto">
@@ -109,19 +108,19 @@ export const IfoCardFinished: React.FC<IfoCardProps> = ({
         </>
       )}
       <IfoVestingCard />
-    </CardBody>
+    </>
   )
 }
 
 const PoolCardWrapper = ({ children }: { children: React.ReactNode }) => {
-  const { isDark, theme } = useTheme()
+  const { theme } = useTheme()
   return (
     <FlexGap flex="1" flexDirection="column" gap="16px">
       <Card
         style={{
           flex: '1',
         }}
-        background={isDark ? '#18171A' : theme.colors.background}
+        background={theme.colors.card}
         mb="16px"
       >
         <CardBody>{children}</CardBody>

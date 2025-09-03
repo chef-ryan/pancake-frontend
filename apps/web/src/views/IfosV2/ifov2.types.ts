@@ -3,6 +3,7 @@ import type { IfoStatus } from '@pancakeswap/ifos'
 import type { Currency, CurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
 import type { ReactNode } from 'react'
 import type { Address } from 'viem'
+import type { getIFOContract } from './hooks/ifo/useIFOContract'
 
 export interface PoolInfo {
   pid: number
@@ -88,7 +89,6 @@ export interface IfoInfo {
   duration: number
   totalSalesAmount: CurrencyAmount<Currency> | undefined
   status: IfoStatus
-  ready: boolean
   vestingInfo?: VestingInfo
   offeringCurrency?: Currency
 }
@@ -104,4 +104,12 @@ export interface IfoDisplay {
   endDisplay: { date: string; time: string }
   preSaleDurationText: string
   pools: IfoPoolDisplay[]
+}
+
+export interface IfoV2ContextType {
+  chainId: number
+  ifoContract: ReturnType<typeof getIFOContract>
+  config: IFOConfig
+  info?: IfoInfo
+  pools?: PoolInfo[]
 }

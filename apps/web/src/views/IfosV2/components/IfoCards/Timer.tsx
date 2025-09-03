@@ -4,7 +4,8 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Flex, Skeleton, Text } from '@pancakeswap/uikit'
 import useTheme from 'hooks/useTheme'
 import { styled } from 'styled-components'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import useIfo from 'views/IfosV2/hooks/useIfo'
 
 interface Props {
   plannedStartTime: number
@@ -26,6 +27,23 @@ const CountDown: React.FC<{
   const { theme } = useTheme()
   const color = textColor ?? theme.colors.secondary
   const { days, hours, minutes, seconds } = useCountdown(time) ?? { days: 0, hours: 0, minutes: 0, seconds: 0 }
+  const start = useRef(false)
+  const { info } = useIfo()
+
+  useEffect(() => {
+    if (!info || info.status !== 'idle') {
+      return
+    }
+    if (seconds > 0) {
+      start.current = true
+      return
+    }
+    if (start.current) {
+      if (seconds === 0) {
+        window.location.reload()
+      }
+    }
+  }, [seconds, info])
 
   return (
     <FlexGap gap="4px" alignItems="baseline">

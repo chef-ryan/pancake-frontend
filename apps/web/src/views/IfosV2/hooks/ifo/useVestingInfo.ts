@@ -1,7 +1,7 @@
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useQuery } from '@tanstack/react-query'
 import { getViemClients } from 'utils/viem'
-import { useIfoV2Context } from '../../contexts/IfoV2Context'
+import { useIfoV2Context } from 'views/IfosV2/contexts/useIfoV2Context'
 import type { VestingInfo } from '../../ifov2.types'
 
 export const useVestingInfo = (): VestingInfo | undefined => {

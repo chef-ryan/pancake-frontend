@@ -45,7 +45,7 @@ export const IfoCardLive: React.FC<IfoCardProps> = ({
   )
 
   return (
-    <CardBody>
+    <>
       {isDesktop ? (
         <FlexGap gap="16px" alignItems="flex-start">
           <FlexGap flexDirection="column" flex="1" gap="16px">
@@ -60,6 +60,6 @@ export const IfoCardLive: React.FC<IfoCardProps> = ({
           {stakeActionCards}
         </>
       )}
-    </CardBody>
+    </>
   )
 }

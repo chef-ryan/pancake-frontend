@@ -1,5 +1,5 @@
+import { IfoV2Provider } from './contexts/IfoV2Provider'
 import CurrentIfo from './CurrentIfo'
-import { IfoV2Provider } from './contexts/IfoV2Context'
 
 const Ifo = () => {
   return (

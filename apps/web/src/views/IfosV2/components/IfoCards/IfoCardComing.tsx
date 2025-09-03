@@ -1,4 +1,4 @@
-import { CardBody, FlexGap } from '@pancakeswap/uikit'
+import { FlexGap } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
 import { IfoSaleInfoCard } from './IfoSaleInfoCard'
 import { IfoSaleDetailCard } from './IfoSaleDetailCard'
@@ -11,10 +11,8 @@ const SaleInfoWrapper = styled(FlexGap)`
 `
 
 export const IfoCardComing: React.FC = () => (
-  <CardBody>
-    <SaleInfoWrapper gap="16px">
-      <IfoSaleInfoCard />
-      <IfoSaleDetailCard />
-    </SaleInfoWrapper>
-  </CardBody>
+  <SaleInfoWrapper gap="16px">
+    <IfoSaleInfoCard />
+    <IfoSaleDetailCard />
+  </SaleInfoWrapper>
 )

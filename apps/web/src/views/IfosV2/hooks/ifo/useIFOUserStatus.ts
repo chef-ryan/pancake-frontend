@@ -19,7 +19,6 @@ export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | 
   const pool0Info = pools[0]
   const pool1Info = pools[1]
   const { data: offeringAndRefundingAmounts } = useViewUserOfferingAndRefundingAmounts()
-  const { offeringCurrency, ready } = info
 
   const stakedAmounts = useMemo(() => {
     if (!userInfo) return [undefined, undefined]
@@ -56,12 +55,13 @@ export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | 
   }, [pool0Info?.stakeCurrency, pool1Info?.stakeCurrency, offeringAndRefundingAmounts])
 
   const claimableAmount = useMemo(() => {
-    if (!ready) return [undefined, undefined]
+    if (!info) return [undefined, undefined]
+    const { offeringCurrency } = info
     return [
       CurrencyAmount.fromRawAmount(offeringCurrency!, offeringAndRefundingAmounts?.[0].userOfferingAmount ?? 0n),
       CurrencyAmount.fromRawAmount(offeringCurrency!, offeringAndRefundingAmounts?.[1].userOfferingAmount ?? 0n),
     ]
-  }, [ready, offeringCurrency, offeringAndRefundingAmounts])
+  }, [info, offeringAndRefundingAmounts])
 
   return [
     pool0Info

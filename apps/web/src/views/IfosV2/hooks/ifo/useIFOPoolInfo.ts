@@ -6,12 +6,20 @@ import { getViemClients } from 'utils/viem'
 import { zeroAddress } from 'viem'
 import { useCurrency } from 'hooks/Tokens'
 import { Currency } from '@pancakeswap/swap-sdk-core'
-import { useIfoV2Context } from '../../contexts/IfoV2Context'
+import { useAtomValue } from 'jotai'
+import { ifoPoolsAtom } from 'views/IfosV2/atom/ifo.atoms'
+import { useIfoV2Context } from 'views/IfosV2/contexts/useIfoV2Context'
 import { useIFOAddresses } from './useIFOAddresses'
 import type { PoolInfo } from '../../ifov2.types'
 import { mapToPoolInfo, type RawPoolInfo } from './mapToPoolInfo'
 
-export const useIFOPoolInfo = (): PoolInfo[] => {
+export const useIFOPoolInfo = () => {
+  const { config } = useIfoV2Context()
+  const pools = useAtomValue(ifoPoolsAtom(config.id))
+  return pools ?? []
+}
+
+export const useIFOPoolInfoCtx = (): PoolInfo[] => {
   const { chainId } = useActiveChainId()
   const { ifoContract } = useIfoV2Context()
   const latestTxReceipt = useLatestTxReceipt()
@@ -66,5 +74,3 @@ export const useIFOPoolInfo = (): PoolInfo[] => {
       .filter((pool): pool is PoolInfo => Boolean(pool))
   }, [data, addresses, stakeCurrency0, stakeCurrency1, offeringCurrency])
 }
-
-export default useIFOPoolInfo

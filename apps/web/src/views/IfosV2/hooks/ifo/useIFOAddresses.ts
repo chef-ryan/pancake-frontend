@@ -4,7 +4,7 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import { getViemClients } from 'utils/viem'
 import { isAddressEqual, zeroAddress } from 'viem'
 import type { Address } from 'viem/accounts'
-import { useIfoV2Context } from '../../contexts/IfoV2Context'
+import { useIfoV2Context } from 'views/IfosV2/contexts/useIfoV2Context'
 
 export type IFOAddresses = {
   lpToken0: Address
@@ -54,7 +54,7 @@ export const useIFOAddresses = () => {
       })
 
       return {
-        lpToken0,
+        lpToken0: lpToken0 as Address,
         lpToken1: isAddressEqual(lpToken1, zeroAddress) ? undefined : lpToken1,
         offeringToken,
         adminAddress,
