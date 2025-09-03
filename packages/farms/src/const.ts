@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 
 // @todo remove all other v2/v3 and type definitions
 export const supportedChainIdV4 = [
@@ -11,6 +11,7 @@ export const supportedChainIdV4 = [
   ChainId.POLYGON_ZKEVM,
   ChainId.LINEA,
   ChainId.ARBITRUM_ONE,
+  NonEVMChainId.SOLANA,
 ] as const
 
 export const supportedChainIdV2 = [
