@@ -1,6 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, Card, CardBody, Flex, Heading, Text } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
+import useIfo from '../hooks/useIfo'
 
 const SectionWrapper = styled(Box)`
   background: ${({ theme }) =>
@@ -71,9 +72,18 @@ const StepCard = ({ stepNumber, title, description }: { stepNumber: number; titl
 
 const HowToTakePart: React.FC = () => {
   const { t } = useTranslation()
+  const { pools } = useIfo()
+
+  const stakeSymbols = pools?.map((pool) => pool.stakeCurrency?.symbol).filter(Boolean) as string[]
+  const commitTokensText =
+    stakeSymbols.length === 1
+      ? stakeSymbols[0]
+      : stakeSymbols.length >= 2
+      ? `${stakeSymbols[0]} or ${stakeSymbols[1]}`
+      : 'CAKE'
 
   return (
-    <SectionWrapper>
+    <SectionWrapper id="ifo-how-to">
       <Flex flexDirection="column" alignItems="center" mb="40px">
         <StyledHeading as="h2" textAlign="center">
           {t('How to Take Part')}
@@ -89,9 +99,10 @@ const HowToTakePart: React.FC = () => {
       >
         <StepCard
           stepNumber={1}
-          title={t('Commit CAKE')}
+          title={t('Commit %symbol%', { symbol: commitTokensText })}
           description={t(
-            'When the IFO sales are live, you can "commit" your CAKE to buy the tokens being sold.\n\nWe recommend committing to the Basic Sale first, but you can do both if you like.',
+            'When the IFO sales are live, you can "commit" your %symbol% to buy the tokens being sold.\n\nWe recommend committing to the Basic Sale first, but you can do both if you like.',
+            { symbol: commitTokensText },
           )}
         />
 
@@ -99,7 +110,8 @@ const HowToTakePart: React.FC = () => {
           stepNumber={2}
           title={t('Claim your tokens and achievement')}
           description={t(
-            'After the IFO sales finish, you can claim any IFO tokens that you bought, and any unspent CAKE-BNB LP tokens will be returned to your wallet.',
+            'After the IFO sales finish, you can claim any IFO tokens that you bought, and any unspent %symbol%-BNB LP tokens will be returned to your wallet.',
+            { symbol: commitTokensText },
           )}
         />
       </Flex>
