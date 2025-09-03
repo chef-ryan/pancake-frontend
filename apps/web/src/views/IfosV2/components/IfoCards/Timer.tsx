@@ -58,13 +58,6 @@ export const SoonTimer: React.FC<React.PropsWithChildren<Props>> = ({ startTime,
   const textColor = theme.colors.secondary
   const { t } = useTranslation()
 
-  const countdownState = useCountdown(startTime)
-  useEffect(() => {
-    if (ifoStatus !== 'idle' && !countdownState) {
-      window.location.reload()
-    }
-  }, [countdownState, ifoStatus])
-
   const countdownDisplay =
     ifoStatus !== 'idle' ? (
       <>
