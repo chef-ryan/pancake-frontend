@@ -3,7 +3,7 @@ import { ClaimedCard } from './ClaimedCard'
 import { IfoSaleInfoCard } from './IfoSaleInfoCard'
 import { IfoPoolLive } from './IfoPoolLive'
 import { IfoVestingCard } from './IfoVestingCard'
-import type { PoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
+import type { PoolInfo } from '../../ifov2.types'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 
@@ -16,7 +16,7 @@ interface IfoCardProps {
   ifoStatus1: IFOStatus
 }
 
-export const IfoCardIdle: React.FC<IfoCardProps> = ({
+const IfoCardIdle: React.FC<IfoCardProps> = ({
   pool0Info,
   pool1Info,
   userStatus0,
@@ -35,3 +35,5 @@ export const IfoCardIdle: React.FC<IfoCardProps> = ({
     <IfoVestingCard />
   </CardBody>
 )
+
+export { IfoCardIdle }

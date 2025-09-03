@@ -21,7 +21,7 @@ const Container = styled(Box)`
   position: relative;
 `
 
-const BigCurve = styled(Box)<{ $status?: IfoStatus; $dark?: boolean }>`
+const BigCurve = styled.div<{ $status?: IfoStatus; $dark?: boolean }>`
   width: 150%;
   position: absolute;
   top: -150%;
