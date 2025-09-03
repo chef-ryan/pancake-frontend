@@ -1,11 +1,11 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Button, FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
+import { Button, FlexGap, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useRouter } from 'next/router'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
-import { useIfoDisplay } from '../../hooks/useIfoDisplay'
+import IfoPoolInfoDisplay from './IfoPoolInfoDisplay'
 
 export const IfoPoolLive: React.FC<{
   pid: number
@@ -15,21 +15,10 @@ export const IfoPoolLive: React.FC<{
   const { t } = useTranslation()
   const router = useRouter()
   const { config, info, pools } = useIfo()
-  const { pools: displayPools } = useIfoDisplay()
-  const { status, offeringCurrency } = info
+  const { status } = info
   const poolInfo = pools?.[pid]
   const stakeCurrency = poolInfo?.stakeCurrency
-  const raiseAmountText = displayPools?.[pid]?.raiseAmountText
-  const pricePerToken = poolInfo?.price
   const ifoId = config?.id
-  const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
-
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(
-    t('This sale has been oversubscribed. You will get partial refund of the deposit.'),
-    {
-      placement: 'top',
-    },
-  )
   if (status === 'coming_soon') {
     return null
   }
@@ -54,45 +43,7 @@ export const IfoPoolLive: React.FC<{
         </Button>
       </FlexGap>
 
-      <FlexGap justifyContent="space-between" mt="8px">
-        <Text color="textSubtle">
-          {t('Sale Price per')} {offeringCurrency?.symbol ?? ''}
-        </Text>
-        <Text>
-          {pricePerToken?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
-        </Text>
-      </FlexGap>
-      <FlexGap justifyContent="space-between">
-        <Text color="textSubtle">{t('Target Raise')}</Text>
-        <Text>{raiseAmountText}</Text>
-      </FlexGap>
-      {userHasStaked && (
-        <FlexGap justifyContent="space-between">
-          <Text color="textSubtle">{t('Deposit Amount')}</Text>
-          <Text>
-            {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
-          </Text>
-        </FlexGap>
-      )}
-      <FlexGap justifyContent="space-between">
-        <Text color="textSubtle">{t('Status')}</Text>
-        <FlexGap flexDirection="column" alignItems="flex-end">
-          <FlexGap gap="3px">
-            <Text>
-              {ifoStatus.progress.toFixed(2)} % {ifoStatus.progress.greaterThan(1) && '🎉'}
-            </Text>
-          </FlexGap>
-          {ifoStatus.progress.greaterThan(1) && (
-            <FlexGap gap="3px">
-              <Text>{t('Oversubscribed')}</Text>
-              <FlexGap ref={targetRef}>
-                <InfoIcon width="14px" color="textSubtle" />
-                {tooltipVisible && tooltip}
-              </FlexGap>
-            </FlexGap>
-          )}
-        </FlexGap>
-      </FlexGap>
+      <IfoPoolInfoDisplay pid={pid} ifoStatus={ifoStatus} userStatus={userStatus} variant="live" />
     </FlexGap>
   )
 }
