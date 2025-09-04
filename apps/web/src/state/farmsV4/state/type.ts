@@ -1,7 +1,8 @@
 import { Protocol } from '@pancakeswap/farms'
 import { HookData } from '@pancakeswap/infinity-sdk'
-import { Currency } from '@pancakeswap/swap-sdk-core'
+import { Currency, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { Address } from 'viem'
+import { paths } from 'state/info/api/solSchema'
 import { FarmInfo } from '../search/farm.util'
 
 type Prettify<T> = {
@@ -9,6 +10,8 @@ type Prettify<T> = {
 } & object
 
 export type PoolInfo = Prettify<V2PoolInfo | StablePoolInfo | V3PoolInfo | InfinityPoolInfo>
+
+export type UnifedPoolInfo = Prettify<V2PoolInfo | StablePoolInfo | V3PoolInfo | InfinityPoolInfo | SolV3PoolInfo>
 
 export type BasePoolInfo = {
   pid?: number
@@ -38,6 +41,15 @@ export type BasePoolInfo = {
   isActiveFarm?: boolean
   isDynamicFee?: boolean
   farm?: FarmInfo
+}
+
+type SolanaPoolResp =
+  paths['/cached/v1/pools/info/ids']['get']['responses']['200']['content']['application/json']['data'][0]
+export type SolV3PoolInfo = Omit<BasePoolInfo, 'token0' | 'token1'> & {
+  protocol: Protocol.V3
+  solanaData: SolanaPoolResp
+  token0: UnifiedCurrency
+  token1: UnifiedCurrency
 }
 
 export type V3PoolInfo = BasePoolInfo & {

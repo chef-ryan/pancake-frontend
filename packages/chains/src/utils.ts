@@ -7,7 +7,7 @@ import {
   mainnetChainNamesInKebabCase,
 } from './chainNames'
 
-export function getChainName(chainId: ChainId) {
+export function getChainName(chainId: UnifiedChainId) {
   return chainNames[chainId]
 }
 

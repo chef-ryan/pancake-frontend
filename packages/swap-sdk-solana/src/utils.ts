@@ -42,7 +42,7 @@ export function validateAndParsePublicKey({
 
 export const isSolWSol = (token?: UnifiedCurrency | null) => {
   if (!token) return false
-  if (token.chainId !== NonEVMChainId.SOLANA) return false
+  if (token.chainId !== NonEVMChainId.SOLANA && token.chainId !== 101) return false
   if (token.isNative) return true
   return token.address.toString() === TOKEN_WSOL.address || token.address.toString() === SOL_INFO.address
 }

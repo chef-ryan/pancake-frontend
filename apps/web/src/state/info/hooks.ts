@@ -1135,6 +1135,8 @@ export const useChainNameByQuery = (): MultiChainNameExtend => {
       case 'bsc-testnet':
       case 'bscTestnet':
         return 'BSC_TESTNET'
+      case 'solana':
+        return 'SOLANA'
       default:
         return 'BSC'
     }

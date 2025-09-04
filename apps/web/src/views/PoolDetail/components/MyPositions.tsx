@@ -10,8 +10,10 @@ import { useCheckShouldSwitchNetwork } from 'views/universalFarms/hooks'
 
 import { useAtom } from 'jotai'
 import { positionEarningAmountAtom } from 'views/universalFarms/hooks/usePositionEarningAmount'
+import { NonEVMChainId } from '@pancakeswap/chains'
 
 import { useAccount } from 'wagmi'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { MyPositionsProvider } from './MyPositionsContext'
 import {
   InfinityBinPositionsTable,
@@ -19,6 +21,7 @@ import {
   V2OrSSPositionsTable,
   V3PositionsTable,
 } from './ProtocolPositionsTables'
+import { SolanaV3PositionsTable } from './ProtocolPositionsTables/SolanaV3PositionsTable'
 
 export const MyPositions: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
   return (
@@ -30,7 +33,8 @@ export const MyPositions: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
 
 const MyPositionsInner: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
   const { t } = useTranslation()
-  const { address: account } = useAccount()
+  const { address: evmAccount } = useAccount()
+  const { unifiedAccount } = useAccountActiveChain()
   const chainId = useChainIdByQuery()
   const provider = getRewardProvider(poolInfo.chainId, poolInfo.lpAddress)
   const hasPoolReward = !!provider
@@ -60,9 +64,9 @@ const MyPositionsInner: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
     // clear position earning data when account update
     setPositionEarningAmount({})
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+  }, [unifiedAccount])
 
-  if (!account) {
+  if (!unifiedAccount) {
     return (
       <Grid gridGap="24px" gridTemplateColumns={['1fr', '1fr', '1fr', '1fr']}>
         <Box>
@@ -81,6 +85,10 @@ const MyPositionsInner: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
   return (
     <AutoColumn gap="lg">
       {(() => {
+        if (poolInfo.chainId === NonEVMChainId.SOLANA) {
+          // For Solana pools, render Solana-specific positions table (currently supports V3/CLMM)
+          return <SolanaV3PositionsTable poolInfo={poolInfo} />
+        }
         switch (poolInfo.protocol) {
           case 'v3':
             return <V3PositionsTable poolInfo={poolInfo} />

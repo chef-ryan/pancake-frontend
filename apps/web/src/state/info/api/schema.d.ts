@@ -3151,6 +3151,7 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
         /** @description Pool ID */
@@ -3192,6 +3193,7 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
         /** @description Pool ID */
@@ -4808,6 +4810,7 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
         /** @description Ethereum address */
         address: string
       }

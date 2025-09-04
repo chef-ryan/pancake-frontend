@@ -2,7 +2,7 @@ import { useTheme } from '@pancakeswap/hooks'
 import { CurrencyAmount, Token } from '@pancakeswap/swap-sdk-core'
 import { Box, Flex, Spinner } from '@pancakeswap/uikit'
 import { formatFiatNumber } from '@pancakeswap/utils/formatFiatNumber'
-import { FeeAmount, Pool, TICK_SPACINGS, TickMath } from '@pancakeswap/v3-sdk'
+import { Pool, TickMath } from '@pancakeswap/v3-sdk'
 import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
@@ -11,6 +11,7 @@ import { formatAmount } from 'utils/formatInfoNumbers'
 import { maxUint128 } from 'viem'
 import { TickProcessed } from 'views/V3Info/data/pool/tickData'
 import { usePoolTickData } from 'views/V3Info/hooks'
+import { getTickSpacing } from 'views/PoolDetail/utils/tickSpacing'
 import { ChartToolTip } from './ChartToolTip'
 import { CurrentPriceLabel } from './CurrentPriceLabel'
 import { ActionButton, ControlsWrapper } from './styled'
@@ -104,12 +105,11 @@ export const ChartV3Liquidity: React.FC<ChartLiquidityProps> = ({ address, poolI
           poolTickData.ticksProcessed.map(async (t: TickProcessed, i) => {
             const active = t.tickIdx === poolTickData.activeTickIdx
             const sqrtPriceX96 = TickMath.getSqrtRatioAtTick(t.tickIdx)
-            const feeAmount: FeeAmount = feeTier
             const token0 = poolInfo.token0?.wrapped
             const token1 = poolInfo.token1?.wrapped
             const mockTicks = [
               {
-                index: t.tickIdx - TICK_SPACINGS[feeAmount],
+                index: t.tickIdx - getTickSpacing(poolInfo),
                 liquidityGross: t.liquidityGross,
                 liquidityNet: t.liquidityNet * BigInt('-1'),
               },

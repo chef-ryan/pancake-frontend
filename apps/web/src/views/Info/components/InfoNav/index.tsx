@@ -12,7 +12,7 @@ import {
 } from '@pancakeswap/uikit'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { STABLE_SUPPORTED_CHAIN_IDS } from '@pancakeswap/stable-swap-sdk'
 import { ChainLogo } from 'components/Logo/ChainLogo'
@@ -140,7 +140,7 @@ export const NetworkSwitcher: React.FC<{ activeIndex: number }> = ({ activeIndex
   )
 }
 
-const NetworkSelect: React.FC<{ chainId: ChainId; switchNetwork: (chainId: number) => void }> = ({
+const NetworkSelect: React.FC<{ chainId: UnifiedChainId; switchNetwork: (chainId: number) => void }> = ({
   switchNetwork,
   chainId,
 }) => {

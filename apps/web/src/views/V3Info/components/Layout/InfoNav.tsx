@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { ChainId } from '@pancakeswap/chains'
+import { UnifiedChainId } from '@pancakeswap/chains'
 import {
   Box,
   ButtonMenu,
@@ -115,7 +115,7 @@ export const NetworkSwitcher: React.FC<{ activeIndex: number }> = ({ activeIndex
   )
 }
 
-const NetworkSelect: React.FC<{ chainId: ChainId; switchNetwork: (chainId: number) => void }> = ({
+const NetworkSelect: React.FC<{ chainId: UnifiedChainId; switchNetwork: (chainId: number) => void }> = ({
   switchNetwork,
   chainId,
 }) => {

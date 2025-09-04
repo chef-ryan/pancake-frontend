@@ -21,7 +21,7 @@ import truncateHash from '@pancakeswap/utils/truncateHash'
 import { Liquidity } from '@pancakeswap/widgets-internal'
 import { PropsWithChildren, useMemo } from 'react'
 import { getBlockExploreLink } from 'utils'
-import { ChainId } from '@pancakeswap/chains'
+import { UnifiedChainId } from '@pancakeswap/chains'
 
 const HookInfoItem = ({
   label,
@@ -53,7 +53,7 @@ const HookInfoItem = ({
 
 interface PoolFeaturesModalProps {
   hookData?: HookData
-  chainId?: ChainId
+  chainId?: UnifiedChainId
 }
 
 export const PoolFeaturesModal = ({ hookData, chainId, children }: PropsWithChildren<PoolFeaturesModalProps>) => {

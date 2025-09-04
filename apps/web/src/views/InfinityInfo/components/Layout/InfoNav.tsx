@@ -1,5 +1,5 @@
 import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
-import type { ChainId } from '@pancakeswap/chains'
+import type { UnifiedChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import {
   Box,
@@ -125,7 +125,7 @@ export const NetworkSwitcher: React.FC<{ activeIndex: number }> = ({ activeIndex
   )
 }
 
-const NetworkSelect: React.FC<{ chainId: ChainId; switchNetwork: (chainId: number) => void }> = ({
+const NetworkSelect: React.FC<{ chainId: UnifiedChainId; switchNetwork: (chainId: number) => void }> = ({
   switchNetwork,
   chainId,
 }) => {

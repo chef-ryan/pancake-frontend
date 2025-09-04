@@ -16,6 +16,10 @@ function getSolExplorerLink(
   switch (type) {
     case 'transaction':
       return `https://solscan.io/tx/${data}`
+    case 'address':
+      return `https://solscan.io/account/${data}`
+    case 'token':
+      return `https://solscan.io/token/${data}`
     default:
       throw new Error(`Unsupported Solana explorer type: ${type}`)
   }

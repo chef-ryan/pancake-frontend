@@ -1,11 +1,9 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, isSolana } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
-import { GraphQLClient } from 'graphql-request'
 import { useMemo } from 'react'
 import { usePoolInfo } from 'state/farmsV4/hooks'
 import { multiChainId } from 'state/info/constant'
 import { useChainNameByQuery } from 'state/info/hooks'
-import { isAddress } from 'viem'
 
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { chainIdToExplorerInfoChainName, explorerApiClient } from 'state/info/api/client'
@@ -14,9 +12,7 @@ import { components } from 'state/info/api/schema'
 import { fetchPoolsForToken } from 'state/info/queries/tokens/fetchPoolsForToken'
 import { fetchTokenChartData } from 'state/info/queries/tokens/fetchTokenChartData'
 import { fetchedTokenData } from 'state/info/queries/tokens/fetchTokenData'
-import { fetchedTokenDatas } from 'state/info/queries/tokens/fetchTokenDatas'
 import {
-  Block,
   ChartDayData,
   PoolChartEntry,
   PoolDataForView,
@@ -28,6 +24,7 @@ import {
 } from 'state/info/types'
 import { transformPoolData } from 'state/info/utils'
 import { getPercentChange } from 'views/V3Info/utils/data'
+import { type SolV3PoolInfo } from 'state/farmsV4/state/type'
 import { fetchPoolChartData } from '../data/pool/chartData'
 import { fetchedPoolData } from '../data/pool/poolData'
 import { PoolTickData, fetchTicksSurroundingPrice } from '../data/pool/tickData'
@@ -201,8 +198,6 @@ export const useTopTokensData = ():
   })
   return data?.data
 }
-
-const graphPerPage = 50
 
 export const useTokenData = (address: string): TokenDataForView | undefined => {
   const chainName = useChainNameByQuery()
@@ -409,7 +404,7 @@ export const usePoolTickData = (address?: string): PoolTickData | undefined => {
   const chainName = useChainNameByQuery()
   const chainId = multiChainId[chainName]
   const explorerChainName = useExplorerChainNameByQuery()
-  const poolInfo = usePoolInfo({ poolAddress: address && isAddress(address) ? address : undefined, chainId })
+  const poolInfo = usePoolInfo({ poolAddress: address, chainId })
 
   const { data } = useQuery({
     queryKey: [`v3/info/pool/poolTickData/${chainId}/${address}`, chainId, poolInfo?.feeTier],
@@ -423,7 +418,9 @@ export const usePoolTickData = (address?: string): PoolTickData | undefined => {
         chainId,
         signal,
         protocol: Protocol.V3,
-        tickSpacing: FEE_TIER_TO_TICK_SPACING(poolInfo.feeTier),
+        tickSpacing: isSolana(chainId)
+          ? (poolInfo as SolV3PoolInfo).solanaData.config.tickSpacing
+          : FEE_TIER_TO_TICK_SPACING(poolInfo.feeTier),
       })
     },
     enabled: Boolean(explorerChainName && address && poolInfo?.feeTier),

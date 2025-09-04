@@ -1,9 +1,8 @@
-import { Token, getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
-import { useCurrencyByChainId } from 'hooks/Tokens'
+import { getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { useMemo } from 'react'
 import { useChainIdByQuery } from 'state/info/hooks'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
-import { zeroAddress } from 'viem'
 import { usePoolInfoByQuery } from './usePoolInfo'
 
 export const usePoolSymbol = () => {
@@ -11,9 +10,13 @@ export const usePoolSymbol = () => {
   const chainId = useChainIdByQuery()
 
   const currency0 =
-    useCurrencyByChainId(poolInfo?.token0 ? getCurrencyAddress(poolInfo.token0) : undefined, chainId) ?? undefined
+    useUnifiedCurrency(poolInfo?.token0 ? getCurrencyAddress(poolInfo.token0) : undefined, chainId) ??
+    poolInfo?.token0 ??
+    undefined
   const currency1 =
-    useCurrencyByChainId(poolInfo?.token1 ? getCurrencyAddress(poolInfo.token1) : undefined, chainId) ?? undefined
+    useUnifiedCurrency(poolInfo?.token1 ? getCurrencyAddress(poolInfo.token1) : undefined, chainId) ??
+    poolInfo?.token1 ??
+    undefined
 
   const [poolSymbol, symbol0, symbol1] = useMemo(() => {
     const s0 = currency0?.isNative

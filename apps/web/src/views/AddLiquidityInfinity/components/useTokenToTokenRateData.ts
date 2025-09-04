@@ -123,9 +123,11 @@ export const useTokenRateData = ({
 }
 
 const usePoolRateData = ({ chainId, poolId, protocol, period }: IRateDataProps) => {
-  const chainName = chainId
+  const rawChainName = chainId
     ? chainIdToExplorerInfoChainName[chainId as keyof typeof chainIdToExplorerInfoChainName]
     : undefined
+  // Explorer API schema excludes Solana ('sol'); guard it out
+  const chainName = rawChainName === 'sol' ? undefined : rawChainName
   const { isLoading, data: rateDataFromAPI } = useQuery({
     queryKey: ['usePoolRateData', chainName, protocol, poolId, period],
     queryFn: ({ signal }) => {

@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { UnifiedChainId } from '@pancakeswap/chains'
 import { BinPool, Pool as CLPool, findHook, PoolType } from '@pancakeswap/infinity-sdk'
 import { Token } from '@pancakeswap/swap-sdk-core'
 import { useQuery } from '@tanstack/react-query'
@@ -17,7 +17,7 @@ export const usePoolById = <
   TPool = TPoolType extends 'CL' ? CLPool : TPoolType extends 'Bin' ? BinPool : CLPool | BinPool,
 >(
   poolId?: Address,
-  overrideChainId?: ChainId,
+  overrideChainId?: UnifiedChainId,
   enabled: boolean = true,
 ): [PoolState, TPool | null] => {
   const { chainId: activeChainId } = useActiveChainId()

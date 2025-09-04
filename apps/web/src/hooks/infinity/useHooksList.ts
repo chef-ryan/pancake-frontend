@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, UnifiedChainId } from '@pancakeswap/chains'
 import {
   HOOK_CATEGORY,
   type HookData,
@@ -13,7 +13,7 @@ import { safeGetAddress } from 'utils'
 import { Address } from 'viem'
 import { usePoolKeyByPoolId } from './usePoolKeyByPoolId'
 
-export const useHooksList = (chainId?: ChainId, poolType?: PoolType): HookData[] => {
+export const useHooksList = (chainId?: UnifiedChainId, poolType?: PoolType): HookData[] => {
   return useMemo(() => {
     if (!chainId) {
       return []
@@ -29,7 +29,7 @@ export const useHooksList = (chainId?: ChainId, poolType?: PoolType): HookData[]
   }, [chainId, poolType])
 }
 
-export const useHooksMap = (chainId?: ChainId): Record<string, HookData> => {
+export const useHooksMap = (chainId?: UnifiedChainId): Record<string, HookData> => {
   const list = useHooksList(chainId)
   return useMemo(() => keyBy(list, (l) => safeGetAddress(l.address) ?? ''), [list])
 }
@@ -65,7 +65,7 @@ export const useHookByAddress = (chainId?: ChainId, address?: HookData['address'
   return useMemo(() => (safeGetAddress(address) ? hooksMap[safeGetAddress(address)!] : undefined), [hooksMap, address])
 }
 
-export const useHookByPoolId = (chainId?: ChainId, poolId?: Address): HookData | undefined => {
+export const useHookByPoolId = (chainId?: UnifiedChainId, poolId?: Address): HookData | undefined => {
   const { data: poolKey } = usePoolKeyByPoolId(poolId, chainId)
   const hooksMap = useHooksMap(chainId)
 

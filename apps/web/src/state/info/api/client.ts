@@ -1,11 +1,13 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 import { queryOptions, type QueryFunction } from '@tanstack/react-query'
 import createClient, { type MaybeOptionalInit, type Middleware } from 'openapi-fetch'
 import type { HasRequiredKeys, PathsWithMethod } from 'openapi-typescript-helpers'
 import { createQueryKey } from 'utils/reactQuery'
 import type { paths } from './schema.d'
+import type { paths as solPaths } from './solSchema.d'
 
 const endpoints = process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT || 'http://localhost:4123'
+const solEndpoints = process.env.NEXT_PUBLIC_SOLANA_EXPLORE_API_ENDPOINT || 'http://localhost:4123'
 
 export const throwOnError: Middleware = {
   async onResponse({ response: res }) {
@@ -23,6 +25,11 @@ export const explorerApiClient = createClient<paths>({
   baseUrl: endpoints,
 })
 explorerApiClient.use(throwOnError)
+
+export const solExplorerApiClient = createClient<solPaths>({
+  baseUrl: solEndpoints,
+})
+solExplorerApiClient.use(throwOnError)
 
 export function createExplorerQuery<
   P extends PathsWithMethod<paths, 'get'>,
@@ -97,4 +104,5 @@ export const chainIdToExplorerInfoChainName = {
   [ChainId.LINEA]: 'linea',
   [ChainId.BASE]: 'base',
   [ChainId.OPBNB]: 'opbnb',
+  [NonEVMChainId.SOLANA]: 'sol',
 } as const

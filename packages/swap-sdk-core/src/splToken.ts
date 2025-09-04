@@ -71,7 +71,6 @@ export class SPLToken extends BaseCurrency<SPLToken> {
 
   public sortsBefore(other: SPLToken): boolean {
     invariant(this.chainId === other.chainId, 'CHAIN_IDS')
-    invariant(this.programId !== other.programId, 'ADDRESSES')
     return this.programId.toLowerCase() < other.programId.toLowerCase()
   }
 

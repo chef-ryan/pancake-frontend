@@ -1,7 +1,7 @@
 import { GraphQLClient } from 'graphql-request'
 import { infoStableSwapClients, v2Clients } from 'utils/graphql'
 
-import { ChainId, isTestnetChainId } from '@pancakeswap/chains'
+import { ChainId, isTestnetChainId, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { STABLE_SUPPORTED_CHAIN_IDS } from '@pancakeswap/stable-swap-sdk'
 import { mapValues } from '@pancakeswap/utils/fns'
 import { BSC_TOKEN_WHITELIST, ETH_TOKEN_BLACKLIST, ETH_TOKEN_WHITELIST, TOKEN_BLACKLIST } from 'config/constants/info'
@@ -17,7 +17,7 @@ export type MultiChainName =
   | 'LINEA'
   | 'BASE'
   | 'OPBNB'
-
+  | 'SOLANA'
 export type MultiChainNameExtend = MultiChainName | 'BSC_TESTNET' | 'ZKSYNC_TESTNET'
 
 export const multiChainName: Record<number | string, MultiChainNameExtend> = {
@@ -46,9 +46,10 @@ export const multiChainQueryMainToken: Record<MultiChainName, string> = {
   LINEA: 'ETH',
   BASE: 'ETH',
   OPBNB: 'ETH',
+  SOLANA: 'SOL',
 }
 
-export const multiChainId: Record<MultiChainNameExtend, ChainId> = {
+export const multiChainId: Record<MultiChainNameExtend, UnifiedChainId> = {
   BSC: ChainId.BSC,
   ETH: ChainId.ETHEREUM,
   POLYGON_ZKEVM: ChainId.POLYGON_ZKEVM,
@@ -57,6 +58,7 @@ export const multiChainId: Record<MultiChainNameExtend, ChainId> = {
   LINEA: ChainId.LINEA,
   BASE: ChainId.BASE,
   OPBNB: ChainId.OPBNB,
+  SOLANA: NonEVMChainId.SOLANA,
   BSC_TESTNET: ChainId.BSC_TESTNET,
   ZKSYNC_TESTNET: ChainId.ZKSYNC_TESTNET,
 }
@@ -106,6 +108,7 @@ export const multiChainScan: Record<MultiChainName, string> = {
   LINEA: linea.blockExplorers.default.name,
   BASE: base.blockExplorers.default.name,
   OPBNB: opBNB.blockExplorers.default.name,
+  SOLANA: 'Solscan',
 }
 
 /** Override Explorer Names if default for chain is "Etherscan" */
@@ -127,6 +130,7 @@ export const multiChainTokenBlackList: Record<MultiChainName, string[]> = mapVal
     BASE: ['0x'],
     OPBNB: ['0x'],
     BSC_TESTNET: ['0x'],
+    SOLANA: [],
   },
   (val) => val.map((address) => address.toLowerCase()),
 )
@@ -142,6 +146,7 @@ export const multiChainTokenWhiteList: Record<MultiChainName, string[]> = mapVal
     BASE: [],
     OPBNB: [],
     BSC_TESTNET: [],
+    SOLANA: [],
   },
   (val) => val.map((address) => address.toLowerCase()),
 )
@@ -176,4 +181,4 @@ export const subgraphTokenSymbol = {
 export const checkIsStableSwap = () => window.location.href.includes('stableSwap')
 export const checkIsInfinity = () => window.location.pathname.includes('infinity')
 
-export const ChainLinkSupportChains = [ChainId.BSC, ChainId.BSC_TESTNET]
+export const ChainLinkSupportChains: UnifiedChainId[] = [ChainId.BSC, ChainId.BSC_TESTNET]

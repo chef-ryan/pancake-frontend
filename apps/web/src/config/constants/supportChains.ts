@@ -1,8 +1,8 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 import { supportedChainId } from '@pancakeswap/farms'
 
 export const SUPPORT_ONLY_BSC = [ChainId.BSC]
-export const SUPPORT_FARMS = supportedChainId
+export const SUPPORT_FARMS = [...supportedChainId, NonEVMChainId.SOLANA]
 export const LIQUID_STAKING_SUPPORTED_CHAINS = [
   ChainId.BSC,
   ChainId.ETHEREUM,

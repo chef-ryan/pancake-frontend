@@ -40,6 +40,7 @@ test('exports', () => {
       "sortCurrencies",
       "isCurrencySorted",
       "getCurrencyAddress",
+      "getUnifedCurrencyAddress"
       "getMatchedCurrency",
     ]
   `)

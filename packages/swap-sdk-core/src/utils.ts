@@ -1,8 +1,9 @@
 import invariant from 'tiny-invariant'
 import { ONE, THREE, TWO, VMType, VM_TYPE_MAXIMA, ZERO, ZERO_ADDRESS } from './constants'
-import { Currency } from './currency'
+import { Currency, UnifiedCurrency } from './currency'
 import { CurrencyAmount, Percent, Price } from './fractions'
 import { Token } from './token'
+import { SPLNativeCurrency } from './splNativeCurrency'
 
 export function validateVMTypeInstance(value: bigint, vmType: VMType): void {
   invariant(value >= ZERO, `${value} is not a ${vmType}.`)
@@ -137,6 +138,13 @@ export const isCurrencySorted = (currencyA: Currency, currencyB: Currency): bool
 export function getCurrencyAddress(currency: Currency) {
   if (currency.isNative) {
     return ZERO_ADDRESS
+  }
+  return currency.address
+}
+
+export function getUnifedCurrencyAddress(currency: UnifiedCurrency) {
+  if (currency.isNative) {
+    return currency instanceof SPLNativeCurrency ? currency.address : ZERO_ADDRESS
   }
   return currency.address
 }

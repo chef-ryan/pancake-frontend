@@ -48,6 +48,7 @@ import TransactionTable from 'views/Info/components/InfoTables/TransactionsTable
 import Percent from 'views/Info/components/Percent'
 import { DISABLED_ADD_LIQUIDITY_CHAINS } from 'config/constants/liquidity'
 import { logGTMClickAddLiquidityEvent } from 'utils/customGTMEventTracking'
+import { ChainId } from '@pancakeswap/chains'
 
 const ContentLayout = styled.div`
   display: grid;
@@ -108,7 +109,7 @@ const PoolPage: React.FC<React.PropsWithChildren<{ address: string }>> = ({ addr
   const stableAPR = useStableSwapAPR(isStableSwap ? poolData?.lpAddress : undefined)
   const { data: farmConfig } = useQuery({
     queryKey: [`info/getFarmConfig/${chainId}`],
-    queryFn: () => getLegacyFarmConfig(chainId),
+    queryFn: () => getLegacyFarmConfig(chainId as ChainId),
     enabled: Boolean(isStableSwap && chainId),
     refetchOnReconnect: false,
     refetchOnMount: false,

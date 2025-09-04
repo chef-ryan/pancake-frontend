@@ -1,6 +1,6 @@
 import { Protocol } from '@pancakeswap/farms'
 import { useTranslation } from '@pancakeswap/localization'
-import { Percent, Token, getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
+import { Percent, getUnifedCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import {
   AutoColumn,
   Box,
@@ -34,7 +34,7 @@ import {
 import { InfinityFeeTierBreakdown } from 'components/FeeTierBreakdown'
 import { MiniUniversalFarmsOverlay } from 'components/MiniUniversalFarms/MiniUniversalFarmsOverlay'
 import { useHookByPoolId } from 'hooks/infinity/useHooksList'
-import { useCurrencyByChainId } from 'hooks/Tokens'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { NextSeo } from 'next-seo'
 import { useMemo, useState } from 'react'
 import { InfinityPoolInfo, PoolInfo as PoolInfoType } from 'state/farmsV4/state/type'
@@ -47,6 +47,7 @@ import { getRewardProvider, getRewardMultiplier } from 'views/universalFarms/com
 import { PoolGlobalAprButtonV3 } from 'views/universalFarms/components/PoolAprButtonV3'
 import { RewardInfoCard } from 'views/universalFarms/components/RewardInfoCard'
 import LiquiditySunsetWarning from 'components/Liquidity/LiquiditySunsetWarning'
+import { isSolana } from '@pancakeswap/chains'
 import { usePoolInfoByQuery } from '../hooks/usePoolInfo'
 import { usePoolSymbol } from '../hooks/usePoolSymbol'
 import { useFlipCurrentPrice } from '../state/flipCurrentPrice'
@@ -89,9 +90,13 @@ export const PoolInfo = () => {
   const [tab, setTab] = useState(PoolDetailTab.MyPositions)
 
   const currency0 =
-    useCurrencyByChainId(poolInfo?.token0 ? getCurrencyAddress(poolInfo.token0) : undefined, chainId) ?? undefined
+    useUnifiedCurrency(poolInfo?.token0 ? getUnifedCurrencyAddress(poolInfo.token0) : undefined, chainId) ??
+    poolInfo?.token0 ??
+    undefined
   const currency1 =
-    useCurrencyByChainId(poolInfo?.token1 ? getCurrencyAddress(poolInfo.token1) : undefined, chainId) ?? undefined
+    useUnifiedCurrency(poolInfo?.token1 ? getUnifedCurrencyAddress(poolInfo.token1) : undefined, chainId) ??
+    poolInfo?.token1 ??
+    undefined
 
   const fee = useMemo(() => {
     return new Percent(poolInfo?.feeTier ?? 0n, poolInfo?.feeTierBase)
@@ -368,13 +373,17 @@ export const PoolInfo = () => {
             >
               <span style={{ fontSize: isSmallScreen ? '12px' : '16px' }}>{t('My Positions')}</span>
             </Tab>
-            <Tab
-              isActive={tab === PoolDetailTab.Transactions}
-              onClick={() => setTab(PoolDetailTab.Transactions)}
-              key="transactions"
-            >
-              <span style={{ fontSize: isSmallScreen ? '12px' : '16px' }}>{t('Transactions')}</span>
-            </Tab>
+            {isSolana(chainId) ? (
+              <></>
+            ) : (
+              <Tab
+                isActive={tab === PoolDetailTab.Transactions}
+                onClick={() => setTab(PoolDetailTab.Transactions)}
+                key="transactions"
+              >
+                <span style={{ fontSize: isSmallScreen ? '12px' : '16px' }}>{t('Transactions')}</span>
+              </Tab>
+            )}
           </TabMenu>
         </Box>
 

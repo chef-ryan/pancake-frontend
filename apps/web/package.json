@@ -72,6 +72,7 @@
     "@pancakeswap/sdk": "workspace:*",
     "@pancakeswap/smart-router": "workspace:*",
     "@pancakeswap/solana-core-sdk": "workspace:*",
+    "@pancakeswap/solana-clmm-sdk": "workspace:*",
     "@pancakeswap/solana-router-sdk": "workspace:*",
     "@pancakeswap/stable-swap-sdk": "workspace:*",
     "@pancakeswap/swap-sdk-core": "workspace:*",

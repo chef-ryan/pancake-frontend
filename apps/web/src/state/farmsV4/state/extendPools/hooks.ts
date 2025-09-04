@@ -2,12 +2,14 @@ import { Protocol } from '@pancakeswap/farms'
 import { Token } from '@pancakeswap/swap-sdk-core'
 import { computePoolAddress, DEPLOYER_ADDRESSES, FeeAmount } from '@pancakeswap/v3-sdk'
 import { useQuery } from '@tanstack/react-query'
+import { isEvm, isSolana } from '@pancakeswap/chains'
 import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
 import { useCurrencyByChainId } from 'hooks/Tokens'
 import isEqual from 'lodash/isEqual'
 import memoize from 'lodash/memoize'
 import { useCallback, useMemo, useState } from 'react'
 import { Address } from 'viem/accounts'
+import { useSolanaPoolInfo } from 'views/PoolDetail/hooks/useSolanaPoolInfo'
 
 import { useLatestTxReceipt } from '../accountPositions/hooks/useLatestTxReceipt'
 import type { PoolInfo } from '../type'
@@ -144,11 +146,14 @@ export const usePoolInfo = <TPoolType extends PoolInfo>({
   poolAddress,
   chainId,
 }: {
-  poolAddress: `0x${string}` | undefined
+  poolAddress: string | undefined
   chainId: number | undefined
 }): TPoolType | undefined | null => {
   const [latestTxReceipt] = useLatestTxReceipt()
-  const { data: poolInfo } = useQuery({
+  const isEvmChain = isEvm(chainId)
+  const { data: solanaPoolInfo } = useSolanaPoolInfo(poolAddress, chainId)
+
+  const { data: evmPoolInfo } = useQuery({
     queryKey: ['poolInfo', chainId, poolAddress, latestTxReceipt?.blockHash],
     queryFn: async () => {
       let result
@@ -166,21 +171,22 @@ export const usePoolInfo = <TPoolType extends PoolInfo>({
       }
       return result
     },
-    enabled: !!poolAddress && !!chainId,
+    enabled: !!poolAddress && !!chainId && isEvmChain,
     retryDelay: 1000,
     retry: 10,
     ...QUERY_SETTINGS_IMMUTABLE,
   })
+  const token0 = useCurrencyByChainId(evmPoolInfo?.token0?.address, chainId) ?? undefined
+  const token1 = useCurrencyByChainId(evmPoolInfo?.token1?.address, chainId) ?? undefined
 
-  const token0 = useCurrencyByChainId(poolInfo?.token0?.address, chainId) ?? undefined
-  const token1 = useCurrencyByChainId(poolInfo?.token1?.address, chainId) ?? undefined
+  return useMemo(() => {
+    if (evmPoolInfo && !evmPoolInfo.token0?.symbol && token0) {
+      evmPoolInfo.token0 = token0
+    }
+    if (evmPoolInfo && !evmPoolInfo.token1?.symbol && token1) {
+      evmPoolInfo.token1 = token1
+    }
 
-  if (poolInfo && !poolInfo.token0?.symbol && token0) {
-    poolInfo.token0 = token0
-  }
-  if (poolInfo && !poolInfo.token1?.symbol && token1) {
-    poolInfo.token1 = token1
-  }
-
-  return poolInfo as TPoolType | undefined | null
+    return (isSolana(chainId) ? solanaPoolInfo : evmPoolInfo) as TPoolType | undefined | null
+  }, [chainId, evmPoolInfo, solanaPoolInfo, token0, token1])
 }
