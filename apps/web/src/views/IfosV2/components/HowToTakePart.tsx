@@ -12,7 +12,7 @@ const SectionWrapper = styled(Box)`
 `
 
 const StyledHeading = styled(Heading)`
-  color: #7645d9;
+  color: ${({ theme }) => theme.colors.secondary};
   font-feature-settings: 'liga' off;
   font-family: Kanit;
   font-size: 40px;

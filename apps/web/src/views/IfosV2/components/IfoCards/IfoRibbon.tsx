@@ -4,12 +4,10 @@ import { ReactNode, useMemo, useState, useEffect } from 'react'
 import { styled } from 'styled-components'
 
 import { IfoStatus } from '@pancakeswap/ifos'
-import { Percent } from '@pancakeswap/swap-sdk-core'
 import { ChainId } from '@pancakeswap/chains'
 import useTheme from 'hooks/useTheme'
 import { IfoChainBoard } from 'views/Ifos/components/IfoChainBoard'
 import LiveTimer, { SoonTimer } from './Timer'
-import { useIFOPoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
 import { useIFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
 
@@ -80,7 +78,6 @@ export const IfoRibbon: React.FC = () => {
   const ifoStatus = info?.status
   const startTimestamp = info?.startTimestamp
   const endTimestamp = info?.endTimestamp
-  const pools = useIFOPoolInfo()
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const [currentTime, setCurrentTime] = useState(() => Math.floor(Date.now() / 1000))
 
@@ -101,13 +98,6 @@ export const IfoRibbon: React.FC = () => {
       return userStatus0.claimed && userStatus1.claimed
     return userStatus0?.claimed || userStatus1?.claimed
   }, [userStatus0, userStatus1])
-
-  const totalRaiseProgress = useMemo(() => {
-    const totalRaise = (pools[0]?.raisingAmountPool ?? 0n) + (pools[1]?.raisingAmountPool ?? 0n)
-    if (totalRaise === 0n) return 0
-    const totalAmount = (pools[0]?.totalAmountPool ?? 0n) + (pools[1]?.totalAmountPool ?? 0n)
-    return Number(new Percent(totalAmount, totalRaise).toFixed(2))
-  }, [pools])
 
   const timeProgress = useMemo(() => {
     if (ifoStatus !== 'live' || !startTimestamp || !endTimestamp) return 0
