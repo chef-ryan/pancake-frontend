@@ -67,7 +67,7 @@ const ChainBoardContainer = styled(Box)`
 
   ${({ theme }) => theme.mediaQueries.sm} {
     left: unset;
-    top: unset;
+    top: 6px;
     right: 90px;
     bottom: 3px;
     transform: none;
