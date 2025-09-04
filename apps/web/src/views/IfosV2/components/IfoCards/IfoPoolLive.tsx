@@ -26,7 +26,11 @@ export const IfoPoolLive: React.FC<{
 
   const handleDepositClick = () => {
     if (ifoId) {
-      router.push(`/ifo/deposit/${ifoId}/${pid}`)
+      const { ifo, ...restQuery } = router.query
+      router.push({
+        pathname: '/ifo/deposit/[ifoId]/[poolIndex]',
+        query: { ifoId, poolIndex: pid, ...restQuery },
+      })
     }
   }
 
