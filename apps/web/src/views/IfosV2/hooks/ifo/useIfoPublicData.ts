@@ -36,7 +36,9 @@ export const useIfoPublicData = (): [IFOPublicData, IFOPublicData] | [IFOPublicD
   const pool1Info = pools[1]
   const stakeCurrency0 = pool0Info?.stakeCurrency as UnsafeCurrency
   const stakeCurrency1 = pool1Info?.stakeCurrency as UnsafeCurrency
-  const { offeringCurrency, startTimestamp, endTimestamp } = info
+  const offeringCurrency = info?.offeringCurrency
+  const startTimestamp = info?.startTimestamp
+  const endTimestamp = info?.endTimestamp
   const [status0, status1] = useIFOStatus()
   const [userStatus0, userStatus1] = useIFOUserStatus()
 

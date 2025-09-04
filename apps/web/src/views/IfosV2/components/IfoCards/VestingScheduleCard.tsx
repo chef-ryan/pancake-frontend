@@ -42,7 +42,7 @@ export const VestingScheduleCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const { info } = useIfo()
-  const { offeringCurrency } = info
+  const offeringCurrency = info?.offeringCurrency
   const vesting = useVestingInfo()
 
   const vestingDuration = useIFODuration(vesting?.duration ?? 0)
@@ -55,7 +55,7 @@ export const VestingScheduleCard: React.FC = () => {
   }, [vesting])
 
   const format = (timestamp: number) => dayjs(timestamp).format('DD-MM-YY HH:mm')
-  const ifoEnded = info.endTimestamp ? format(info.endTimestamp * 1000) : '--'
+  const ifoEnded = info?.endTimestamp ? format(info.endTimestamp * 1000) : '--'
   const cliff = vesting ? format((vesting.startTime + vesting.cliff) * 1000) : '--'
   const vestingEnd = vesting ? format((vesting.startTime + vesting.duration) * 1000) : '--'
   if (!vesting?.duration) {

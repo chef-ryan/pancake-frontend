@@ -1,6 +1,6 @@
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import { IfoInfo } from '../ifov2.types'
+import { IfoInfo, PoolInfo } from '../ifov2.types'
 
 export const ifoInfoAtom = atomFamily((id: string) => {
   return atom<IfoInfo | undefined>(undefined)

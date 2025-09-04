@@ -97,11 +97,11 @@ const IfoHistoryCard: React.FC = () => {
   }, [raiseAmount, saleAmount, taxAmount])
 
   const durationText = useMemo(() => {
-    if (info.status !== 'finished') {
+    if (info?.status !== 'finished') {
       return preSaleDurationText
     }
 
-    const { days } = getTimePeriods(info.duration)
+    const { days } = getTimePeriods(info?.duration ?? 0)
     if (days < 1) {
       return (
         <>
@@ -121,8 +121,8 @@ const IfoHistoryCard: React.FC = () => {
   }, [
     endDisplay.date,
     endDisplay.time,
-    info.duration,
-    info.status,
+    info?.duration,
+    info?.status,
     preSaleDurationText,
     startDisplay.date,
     startDisplay.time,

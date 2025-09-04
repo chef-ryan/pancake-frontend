@@ -52,7 +52,6 @@ export const IfoCurrentCard = ({ bannerUrl }: { ifoId: string; bannerUrl: string
   if (!info) {
     return <Spinner />
   }
-  const { status } = info
 
   return (
     <StyledCard>
@@ -80,7 +79,7 @@ const IfoCard: React.FC = () => {
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const [ifoStatus0, ifoStatus1] = useIFOStatus()
   const { info } = useIfo()
-  const { status: ifoStatus } = info
+  const ifoStatus = info?.status
 
   const cardProps = {
     pool0Info,

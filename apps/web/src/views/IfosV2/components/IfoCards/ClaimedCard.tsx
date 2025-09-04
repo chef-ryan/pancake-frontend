@@ -30,9 +30,8 @@ export const ClaimedCard: React.FC<{
   const chainId = useChainId()
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
   const claimableAmount = userStatus?.claimableAmount?.toSignificant(6)
-  const {
-    info: { offeringCurrency },
-  } = useIfo()
+  const { info } = useIfo()
+  const offeringCurrency = info?.offeringCurrency
   const amountInDollar = useStablecoinPriceAmount(
     offeringCurrency ?? undefined,
     claimableAmount !== undefined && Number.isFinite(+claimableAmount) ? +claimableAmount : undefined,

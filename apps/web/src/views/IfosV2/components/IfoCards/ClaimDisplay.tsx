@@ -19,7 +19,8 @@ export const ClaimDisplay: React.FC<{
   const { claim, isPending: isLoading } = useIFOClaimCallback()
   const claimableAmount = userStatus?.claimableAmount?.toSignificant(6)
   const { config, info, pools } = useIfo()
-  const { offeringCurrency, status } = info
+  const offeringCurrency = info?.offeringCurrency
+  const status = info?.status
   const stakeCurrency = pools?.[pid]?.stakeCurrency
   const { icon } = config ?? {}
   const amountInDollar = useStablecoinPriceAmount(

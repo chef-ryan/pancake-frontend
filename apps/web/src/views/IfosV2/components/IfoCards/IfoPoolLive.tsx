@@ -15,7 +15,7 @@ export const IfoPoolLive: React.FC<{
   const { t } = useTranslation()
   const router = useRouter()
   const { config, info, pools } = useIfo()
-  const { status } = info
+  const status = info?.status
   const poolInfo = pools?.[pid]
   const stakeCurrency = poolInfo?.stakeCurrency
   const ifoId = config?.id

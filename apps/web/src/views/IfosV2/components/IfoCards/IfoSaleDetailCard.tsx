@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Card, CardBody, FlexGap, Text, CheckmarkCircleFillIcon } from '@pancakeswap/uikit'
+import { Card, CardBody, FlexGap, Text, CheckmarkCircleIcon } from '@pancakeswap/uikit'
 import useTheme from 'hooks/useTheme'
 import useIfo from '../../hooks/useIfo'
 
@@ -14,7 +14,7 @@ export const IfoSaleDetailCard: React.FC = () => {
     <Card background={isDark ? '#18171A' : theme.colors.background} mb="16px">
       <CardBody>
         <FlexGap alignItems="center" gap="8px">
-          <CheckmarkCircleFillIcon color={theme.colors.success} width="20px" />
+          <CheckmarkCircleIcon color={theme.colors.success} width="20px" />
           <Text color="success">
             {t('Anyone with %symbol% can join — our IFOs are open to all.', { symbol: joinSymbols })}
           </Text>

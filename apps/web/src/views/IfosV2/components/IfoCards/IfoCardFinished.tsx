@@ -29,7 +29,7 @@ export const IfoCardFinished: React.FC<IfoCardProps> = ({
   const { isDesktop } = useMatchBreakpoints()
   const { info } = useIfo()
 
-  const { offeringCurrency } = info
+  const offeringCurrency = info?.offeringCurrency
   const symbol = offeringCurrency?.symbol ?? ''
   const tokenAddress = offeringCurrency?.wrapped.address ?? ''
 

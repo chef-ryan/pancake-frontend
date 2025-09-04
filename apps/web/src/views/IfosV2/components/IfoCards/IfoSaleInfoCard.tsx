@@ -1,25 +1,21 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, FlexGap, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo, DoubleCurrencyLogo, NumberDisplay } from '@pancakeswap/widgets-internal'
+import type { Currency } from '@pancakeswap/swap-sdk-core'
 import useTheme from 'hooks/useTheme'
 import { StyledLogo } from '../Icons'
 import useIfo from '../../hooks/useIfo'
 import { useIfoDisplay } from '../../hooks/useIfoDisplay'
 
-export const IfoSaleInfoCard: React.FC = () => {
+interface SubscribeInfoProps {
+  stakeCurrency0?: Currency
+  stakeCurrency1?: Currency
+}
+
+export const SubscribeInfo: React.FC<SubscribeInfoProps> = ({ stakeCurrency0, stakeCurrency1 }) => {
   const { t } = useTranslation()
   const { theme } = useTheme()
-  const { config, info, pools } = useIfo()
-  const stakeCurrency0 = pools?.[0]?.stakeCurrency
-  const stakeCurrency1 = pools?.[1]?.stakeCurrency
-  const { icon } = config ?? {}
-  const { preSaleDurationText } = useIfoDisplay()
-  if (!info) {
-    return null
-  }
-  const { offeringCurrency, totalSalesAmount, status } = info
-
-  const SubscribeInfo = () => (
+  return (
     <FlexGap
       alignItems="center"
       gap="8px"
@@ -48,8 +44,17 @@ export const IfoSaleInfoCard: React.FC = () => {
       </Text>
     </FlexGap>
   )
+}
 
-  const FinishedInfo = () => (
+interface FinishedInfoProps {
+  stakeCurrency0?: Currency
+  stakeCurrency1?: Currency
+}
+
+export const FinishedInfo: React.FC<FinishedInfoProps> = ({ stakeCurrency0, stakeCurrency1 }) => {
+  const { t } = useTranslation()
+  const { theme } = useTheme()
+  return (
     <FlexGap
       alignItems="center"
       gap="8px"
@@ -66,7 +71,21 @@ export const IfoSaleInfoCard: React.FC = () => {
       <Text color="textSubtle">{t('Sale finished')}</Text>
     </FlexGap>
   )
+}
 
+export const IfoSaleInfoCard: React.FC = () => {
+  const { t } = useTranslation()
+  const { theme, isDark } = useTheme()
+  const { config, info, pools } = useIfo()
+
+  const stakeCurrency0 = pools?.[0]?.stakeCurrency
+  const stakeCurrency1 = pools?.[1]?.stakeCurrency
+  const { icon } = config ?? {}
+  const { preSaleDurationText } = useIfoDisplay()
+  if (!info) {
+    return null
+  }
+  const { offeringCurrency, totalSalesAmount, status } = info
   return (
     <Card background={theme.colors.card} mb="16px">
       <CardBody>
@@ -86,7 +105,11 @@ export const IfoSaleInfoCard: React.FC = () => {
             <Text color="textSubtle">{`${preSaleDurationText} ${t('Project Duration')}`}</Text>
           </FlexGap>
         </FlexGap>
-        {status !== 'finished' ? <SubscribeInfo /> : <FinishedInfo />}
+        {status !== 'finished' ? (
+          <SubscribeInfo stakeCurrency0={stakeCurrency0} stakeCurrency1={stakeCurrency1} />
+        ) : (
+          <FinishedInfo stakeCurrency0={stakeCurrency0} stakeCurrency1={stakeCurrency1} />
+        )}
       </CardBody>
     </Card>
   )

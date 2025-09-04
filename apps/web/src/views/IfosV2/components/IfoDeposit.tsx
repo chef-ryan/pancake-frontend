@@ -47,7 +47,7 @@ export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
   const userStatus = pid === 0 ? userStatus0 : userStatus1
 
   const { info, config } = useIfo()
-  const { status } = info
+  const status = info?.status
   const bannerUrl = config?.bannerUrl ?? ''
 
   if (status === 'coming_soon' || !userStatus) {
@@ -76,7 +76,7 @@ const IfoDepositCard = ({ pid }: { pid: number }) => {
   const { pools, info } = useIfo()
   const poolInfo = pools?.[pid]
   const stakeCurrency = poolInfo?.stakeCurrency
-  const { status } = info
+  const status = info?.status
 
   const handleConnectWallet = () => {
     logGTMIfoConnectWalletEvent(status === 'coming_soon')

@@ -77,7 +77,9 @@ const ChainBoardContainer = styled(Box)`
 export const IfoRibbon: React.FC = () => {
   const { isDark } = useTheme()
   const { info } = useIfo()
-  const { status: ifoStatus, startTimestamp, endTimestamp } = info
+  const ifoStatus = info?.status
+  const startTimestamp = info?.startTimestamp
+  const endTimestamp = info?.endTimestamp
   const pools = useIFOPoolInfo()
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const [currentTime, setCurrentTime] = useState(() => Math.floor(Date.now() / 1000))
@@ -122,15 +124,15 @@ export const IfoRibbon: React.FC = () => {
       ribbon = <IfoRibbonEnd isClaimed={isClaimed} hasUserStaked={hasUserStaked} />
       break
     case 'live':
-      ribbon = <IfoRibbonLive endTime={endTimestamp} ifoStatus={ifoStatus} dark={isDark} />
+      ribbon = <IfoRibbonLive endTime={endTimestamp ?? 0} ifoStatus={ifoStatus} dark={isDark} />
       break
     case 'coming_soon':
       ribbon = (
         <IfoRibbonSoon
-          endTime={endTimestamp}
-          startTime={startTimestamp}
+          endTime={endTimestamp ?? 0}
+          startTime={startTimestamp ?? 0}
           ifoStatus={ifoStatus}
-          plannedStartTime={startTimestamp}
+          plannedStartTime={startTimestamp ?? 0}
           dark={isDark}
         />
       )

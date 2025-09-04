@@ -38,7 +38,7 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
   const [value, setValue] = useState('')
 
   const { info, pools } = useIfo()
-  const { duration } = info
+  const duration = info?.duration ?? 0
   const poolInfo = pools?.[pid]
   const stakeCurrency = userStatus?.stakedAmount?.currency ?? poolInfo?.stakeCurrency
   const maxStakePerUser = useMemo(() => {
