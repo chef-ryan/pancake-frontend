@@ -38,7 +38,7 @@ export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | 
     return [userInfo[0].claimedPool, userInfo[1].claimedPool]
   }, [userInfo])
 
-  const stakeRefundRaw = useMemo(() => {
+  const stakeRefund = useMemo(() => {
     return [
       pool0Info?.stakeCurrency
         ? CurrencyAmount.fromRawAmount(
@@ -65,13 +65,6 @@ export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | 
         : undefined,
     ]
   }, [pool0Info?.stakeCurrency, pool1Info?.stakeCurrency, offeringAndRefundingAmounts])
-
-  const stakeRefund = useMemo(() => {
-    return [
-      stakeRefundRaw[0] && tax[0] ? stakeRefundRaw[0].subtract(tax[0]) : stakeRefundRaw[0],
-      stakeRefundRaw[1] && tax[1] ? stakeRefundRaw[1].subtract(tax[1]) : stakeRefundRaw[1],
-    ]
-  }, [stakeRefundRaw, tax])
 
   const claimableAmount = useMemo(() => {
     if (!info) return [undefined, undefined]
