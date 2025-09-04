@@ -16,7 +16,7 @@ import { useIFOPoolInfo } from './useIFOPoolInfo'
 
 export const useIFOInfo = () => {
   const { config } = useIfoV2Context()
-  return useAtomValue(ifoInfoAtom(config.id))
+  return useAtomValue(ifoInfoAtom(config.id))!
 }
 
 export const useIFOInfoCtx = () => {

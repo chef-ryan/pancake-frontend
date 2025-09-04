@@ -8,6 +8,7 @@ import { ifoLoadingAnimationAtom } from '../atoms'
 
 import { SyncIfoContext } from './SyncIfoContext'
 import { IfoV2Context } from './IfoV2Context'
+import useIfo from '../hooks/useIfo'
 
 interface ProviderProps {
   id?: string
@@ -34,8 +35,7 @@ export const IfoV2Provider: React.FC<ProviderProps> = ({ id, children }) => {
 
   return (
     <IfoV2Context.Provider value={value}>
-      {children}
-      <SyncIfoContext id={config.id} />
+      <SyncIfoContext id={config.id}>{children}</SyncIfoContext>
     </IfoV2Context.Provider>
   )
 }

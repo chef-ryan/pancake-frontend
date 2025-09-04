@@ -6,6 +6,7 @@ import type { IfoDisplay, IfoPoolDisplay } from '../ifov2.types'
 
 export const useIfoDisplay = (): IfoDisplay => {
   const { info, pools } = useIfo()
+
   const { duration, startTimestamp, endTimestamp } = info
 
   const startDisplay = useIfoTimeDisplay(startTimestamp)
