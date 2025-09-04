@@ -1,4 +1,4 @@
-import { useTranslation } from '@pancakeswap/localization'
+import { Trans, useTranslation } from '@pancakeswap/localization'
 import { FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
 import { ReactNode } from 'react'
 import { styled } from 'styled-components'
@@ -45,11 +45,59 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus,
     ? `${userStatus.tax.toSignificant(6)} ${userStatus.tax.currency.symbol}`
     : undefined
 
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(
-    t('This sale has been oversubscribed. You will get partial refund of the deposit.'),
-    {
-      placement: 'top',
-    },
+  const {
+    targetRef: statusTargetRef,
+    tooltip: statusTooltip,
+    tooltipVisible: statusTooltipVisible,
+  } = useTooltip(t('This sale has been oversubscribed. You will get partial refund of the deposit.'), {
+    placement: 'top',
+  })
+
+  const feeTierTooltipContent = (
+    <Text as="div" fontSize="12px">
+      <Trans>
+        Tiered Tax for Oversubscription
+        <br />
+        Fees decrease as oversubscription grows:
+        <br />
+        • ≥20x → 1% fee
+        <br />
+        • ≥50x → 0.8% fee
+        <br />
+        • ≥100x → 0.6% fee
+        <br />
+        • ≥200x → 0.4% fee
+        <br />
+        • ≥300x → 0.3% fee
+        <br />
+        • ≥400x → 0.25% fee
+        <br />
+        • ≥500x → 0.2% fee
+        <br />
+        • ≥650x → 0.15% fee
+        <br />
+        • ≥850x → 0.1% fee
+        <br />
+        <br />
+        💡 All IFO fees collected will be used for CAKE burn.
+      </Trans>
+    </Text>
+  )
+
+  const {
+    targetRef: feeTierTargetRef,
+    tooltip: feeTierTooltip,
+    tooltipVisible: feeTierTooltipVisible,
+  } = useTooltip(feeTierTooltipContent, {
+    placement: 'top-start',
+  })
+
+  const feeTierRight = (
+    <FlexGap ref={feeTierTargetRef} alignItems="center">
+      <StyledText color="text">{feeTier}</StyledText>
+      <InfoIcon width="14px" color="textSubtle" />
+      {feeTierTooltipVisible && feeTierTooltip}
+    </FlexGap>
   )
 
   const list: InfoRowData[] = [
@@ -89,7 +137,7 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus,
     },
     {
       left: <StyledText color="textSubtle">{t('Fee Tier')}</StyledText>,
-      right: <StyledText color="text">{feeTier}</StyledText>,
+      right: feeTierRight,
       display: variant !== 'presale' && !showExtraInfo && !!feeTier,
     },
     {
@@ -109,9 +157,9 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus,
           {ifoStatus?.progress?.greaterThan(1) && (
             <FlexGap gap="3px">
               <StyledText color="text">{t('Oversubscribed')}</StyledText>
-              <FlexGap ref={targetRef}>
+              <FlexGap ref={statusTargetRef}>
                 <InfoIcon width="14px" color="textSubtle" />
-                {tooltipVisible && tooltip}
+                {statusTooltipVisible && statusTooltip}
               </FlexGap>
             </FlexGap>
           )}
@@ -121,7 +169,7 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus,
     },
     {
       left: <StyledText color="textSubtle">{t('Fee Tier')}</StyledText>,
-      right: <StyledText color="text">{feeTier}</StyledText>,
+      right: feeTierRight,
       display: Boolean(variant !== 'presale' && showExtraInfo && !!feeTier),
     },
     {
