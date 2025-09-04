@@ -1,12 +1,11 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Box, Card, CardBody, CardHeader, FlexGap, Text } from '@pancakeswap/uikit'
+import { Box, Card, CardBody, CardHeader, FlexGap, Text, IconButton, ArrowBackIcon } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
-import ConnectW3WButton from 'components/ConnectW3WButton'
 import useTheme from 'hooks/useTheme'
 import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import { useAccount } from 'wagmi'
-import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import ConnectWalletButton from 'components/ConnectWalletButton'
+import { useRouter } from 'next/router'
 import { IfoDepositForm } from './IfoCards/IfoDepositForm'
 import { IfoRibbon } from './IfoCards/IfoRibbon'
 import { useIFOUserStatus } from '../hooks/ifo/useIFOUserStatus'
@@ -80,6 +79,7 @@ export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
 const IfoDepositCard = ({ pid }: { pid: number }) => {
   const { t } = useTranslation()
   const { address: account } = useAccount()
+  const router = useRouter()
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const userStatus = pid === 0 ? userStatus0 : userStatus1
 
@@ -96,12 +96,14 @@ const IfoDepositCard = ({ pid }: { pid: number }) => {
     <StyledDepositCard>
       <CardBody>
         <FlexGap flexDirection="column" gap="8px">
-          <FlexGap alignItems="center" gap="4px">
-            <CurrencyLogo currency={stakeCurrency} size="24px" />
-            <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
-              {stakeCurrency?.symbol} {t('Pool')}
-            </Text>
+          <FlexGap>
+            <IconButton scale="sm" variant="text" onClick={() => router.back()}>
+              <ArrowBackIcon width="24px" />
+            </IconButton>
           </FlexGap>
+          <Text fontSize="16px" bold textTransform="uppercase">
+            {t('Deposit to %symbol% Pool', { symbol: stakeCurrency?.symbol })}
+          </Text>
           {account ? (
             <IfoDepositForm userStatus={userStatus} pid={pid} />
           ) : (

@@ -1,4 +1,4 @@
-import { MotionBox, TooltipText, useTooltip, WalletFilledV2Icon } from "@pancakeswap/uikit";
+import { MotionBox, Text, TooltipText, useTooltip, WalletFilledV2Icon } from "@pancakeswap/uikit";
 import { memo } from "react";
 import { styled } from "styled-components";
 import { truncateDecimals } from "../utils/numbers";
@@ -31,7 +31,9 @@ export const WalletAssetDisplay: React.FC<{
   onMax?: () => void;
   balance?: string;
   isUserInsufficientBalance?: boolean;
-}> = memo(({ balance, onMax, isUserInsufficientBalance }) => {
+  label?: string;
+  style?: React.CSSProperties;
+}> = memo(({ label, style, balance, onMax, isUserInsufficientBalance }) => {
   const { targetRef, tooltip, tooltipVisible } = useTooltip(balance || "", {
     placement: "right",
     avoidToStopPropagation: true,
@@ -45,7 +47,20 @@ export const WalletAssetDisplay: React.FC<{
       exit={{ x: 2, opacity: 0 }}
       className={onMax ? "clickable" : undefined}
       onClick={onMax}
+      style={style}
     >
+      {label && (
+        <StyledText
+          style={{
+            textDecoration: "none",
+          }}
+          fontSize="12px"
+          marginRight="8px"
+          color={isUserInsufficientBalance ? "#D14293" : "textSubtle"}
+        >
+          {label}
+        </StyledText>
+      )}
       <WalletFilledV2Icon color={isUserInsufficientBalance ? "#D14293" : "textSubtle"} width="16px" />
       <StyledText ref={targetRef} color={isUserInsufficientBalance ? "#D14293" : "textSubtle"}>
         {truncateDecimals(balance)}

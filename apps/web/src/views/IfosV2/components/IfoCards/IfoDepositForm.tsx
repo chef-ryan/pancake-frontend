@@ -1,25 +1,27 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Percent } from '@pancakeswap/sdk'
 import { CurrencyAmount, type Currency } from '@pancakeswap/swap-sdk-core'
-import { Box, Button, FlexGap, LazyAnimatePresence, Loading, Text, domAnimation } from '@pancakeswap/uikit'
+import { Box, Button, FlexGap, Loading, Text } from '@pancakeswap/uikit'
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
-import { CurrencyLogo, SwapUIV2 } from '@pancakeswap/widgets-internal'
+import { SwapUIV2 } from '@pancakeswap/widgets-internal'
 import BigNumber from 'bignumber.js'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
-import { useAccount } from 'wagmi'
 import { useRouter } from 'next/router'
 
 import { logGTMIfoDepositEvent } from 'utils/customGTMEventTracking'
-import { CAKE } from '@pancakeswap/tokens'
+import { useAccount } from 'wagmi'
 import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import { useIFODepositCallback } from '../../hooks/ifo/useIFODepositCallback'
 import IfoSubmittingCard from '../IfoSubmittingCard'
 import useIfo from '../../hooks/useIfo'
+import BalanceRow from './BalanceRow'
+import PercentageSelector from './PercentageSelector'
+import MaxDepositExceed from './MaxDepositExceed'
 
 export const formatDollarAmount = (amount: number) => {
   if (amount > 0 && amount < 0.01) {
@@ -122,8 +124,6 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
   )
   const isInputloading = inputBalance === undefined
 
-  const accountEllipsis = account ? `${account.substring(0, 2)}...${account.substring(account.length - 4)}` : null
-
   const handleConfirmDeposit = async () => {
     if (depositAmount) {
       setSubmittedDeposit(depositAmount)
@@ -184,33 +184,12 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
         onInputFocus={handleInputFocus}
         onUserInput={setValue}
         top={
-          <FlexGap flexDirection="column" gap="8px" width="100%">
-            <FlexGap justifyContent="space-between" alignItems="center">
-              <Text fontSize="12px" bold>
-                {t('Address')}
-              </Text>
-              <Text>{accountEllipsis}</Text>
-            </FlexGap>
-            <FlexGap justifyContent="space-between" alignItems="center" position="relative">
-              <Text fontSize="12px" bold>
-                {t('Deposit')}
-              </Text>
-              <LazyAnimatePresence mode="wait" features={domAnimation}>
-                {account ? (
-                  <SwapUIV2.WalletAssetDisplay
-                    isUserInsufficientBalance={isUserInsufficientBalance}
-                    balance={balance}
-                    onMax={handleMaxInput}
-                  />
-                ) : null}
-              </LazyAnimatePresence>
-            </FlexGap>
-          </FlexGap>
-        }
-        inputLeft={
-          <FlexGap alignItems="center">
-            {stakeCurrency && <CurrencyLogo size="40px" currency={stakeCurrency} />}
-          </FlexGap>
+          <BalanceRow
+            currency={stakeCurrency}
+            balance={balance}
+            isUserInsufficientBalance={isUserInsufficientBalance}
+            onMax={handleMaxInput}
+          />
         }
         bottom={
           isInputloading || Number.isFinite(amountInDollar) ? (
@@ -235,37 +214,21 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
           ) : null
         }
       />
-      {maxDepositExceeded && <Text color="failure">{t('Max stake per user exceeded')}</Text>}
-      <FlexGap>
-        {maxAmountInput?.greaterThan(0) &&
-          [25, 50, 75, 100].map((percent) => {
-            const isAtCurrentPercent = maxAmountInput && value !== '0' && value === getPercentAmount(percent).toExact()
-            return (
-              <Button
-                key={`btn_quickCurrency${percent}`}
-                data-dd-action-name={`Balance percent ${percent}`}
-                onClick={() => {
-                  handlePercentInput(percent)
-                }}
-                scale="sm"
-                mr="5px"
-                width="100%"
-                variant={isAtCurrentPercent ? 'primary' : 'secondary'}
-                style={{ textTransform: 'uppercase' }}
-              >
-                {percent === 100 ? t('Max') : `${percent}%`}
-              </Button>
-            )
-          })}
-      </FlexGap>
+      <PercentageSelector
+        maxAmountInput={maxAmountInput}
+        value={value}
+        onPercent={handlePercentInput}
+        getPercentAmount={getPercentAmount}
+      />
+      <MaxDepositExceed show={Boolean(maxDepositExceeded)} />
       <FlexGap flexDirection="column" gap="8px">
         <FlexGap justifyContent="space-between">
-          <Text color="textSubtle">{t('Project Duration')}</Text>
+          <Text color="textSubtle">{t('Duration')}</Text>
           <Text>{durationText}</Text>
         </FlexGap>
         {maxStakePerUser && !maxStakePerUser.equalTo(0) && (
           <FlexGap justifyContent="space-between">
-            <Text color="textSubtle">{t('Max. stake per user')}</Text>
+            <Text color="textSubtle">{t('Max Deposit')}</Text>
             <Text>
               {maxStakePerUser?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
             </Text>
@@ -279,11 +242,6 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
             </Text>
           </FlexGap>
         ) : null}
-        <Text color="textSubtle" fontSize="12px">
-          {t(
-            'Some Rules/ T&C context or information that user need to know before locking BNB/ participating in TGE, show here.',
-          )}
-        </Text>
         <Button
           disabled={
             value === '' ||
