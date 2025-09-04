@@ -95,13 +95,11 @@ const IfoDepositCard = ({ pid }: { pid: number }) => {
   return (
     <StyledDepositCard>
       <CardBody>
-        <FlexGap flexDirection="column" gap="8px">
-          <FlexGap>
-            <IconButton scale="sm" variant="text" onClick={() => router.back()}>
-              <ArrowBackIcon width="24px" />
-            </IconButton>
-          </FlexGap>
-          <Text fontSize="16px" bold textTransform="uppercase">
+        <FlexGap flexDirection="column">
+          <IconButton scale="sm" variant="text" onClick={() => router.back()} my="24px" alignSelf="flex-start">
+            <ArrowBackIcon width="24px" color="textSubtle" />
+          </IconButton>
+          <Text fontSize="16px" bold textTransform="uppercase" color="secondary" mb="8px">
             {t('Deposit to %symbol% Pool', { symbol: stakeCurrency?.symbol })}
           </Text>
           {account ? (

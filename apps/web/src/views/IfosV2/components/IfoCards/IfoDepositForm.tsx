@@ -2,6 +2,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Percent } from '@pancakeswap/sdk'
 import { CurrencyAmount, type Currency } from '@pancakeswap/swap-sdk-core'
 import { Box, Button, FlexGap, Loading, Text } from '@pancakeswap/uikit'
+import { styled } from 'styled-components'
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { SwapUIV2 } from '@pancakeswap/widgets-internal'
@@ -29,6 +30,12 @@ export const formatDollarAmount = (amount: number) => {
   }
   return formatNumber(amount)
 }
+
+const StyledText = styled(Text)`
+  font-size: 14px;
+  font-family: Kanit;
+  line-height: 150%;
+`
 
 interface IfoDepositFormProps {
   userStatus: IFOUserStatus | undefined
@@ -223,23 +230,23 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
       <MaxDepositExceed show={Boolean(maxDepositExceeded)} />
       <FlexGap flexDirection="column" gap="8px">
         <FlexGap justifyContent="space-between">
-          <Text color="textSubtle">{t('Duration')}</Text>
-          <Text>{durationText}</Text>
+          <StyledText color="textSubtle">{t('Duration')}</StyledText>
+          <StyledText color="text">{durationText}</StyledText>
         </FlexGap>
         {maxStakePerUser && !maxStakePerUser.equalTo(0) && (
           <FlexGap justifyContent="space-between">
-            <Text color="textSubtle">{t('Max Deposit')}</Text>
-            <Text>
+            <StyledText color="textSubtle">{t('Max Deposit')}</StyledText>
+            <StyledText color="text">
               {maxStakePerUser?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
-            </Text>
+            </StyledText>
           </FlexGap>
         )}
         {userStatus?.stakedAmount?.greaterThan(0) ? (
           <FlexGap justifyContent="space-between">
-            <Text color="textSubtle">{t('Subscribed')}</Text>
-            <Text>
+            <StyledText color="textSubtle">{t('Subscribed')}</StyledText>
+            <StyledText color="text">
               {userStatus?.stakedAmount?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
-            </Text>
+            </StyledText>
           </FlexGap>
         ) : null}
         <Button

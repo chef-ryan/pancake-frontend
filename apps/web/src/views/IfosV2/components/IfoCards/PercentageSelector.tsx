@@ -20,7 +20,7 @@ const PercentageSelector: React.FC<PercentageSelectorProps> = ({
   if (!maxAmountInput?.greaterThan(0)) return null
 
   return (
-    <FlexGap>
+    <FlexGap gap="8px" borderColor="primary" borderRadius="8px" width="100%" p="4px">
       {[25, 50, 75, 100].map((percent) => {
         const isAtCurrentPercent = maxAmountInput && value !== '0' && value === getPercentAmount(percent).toExact()
         return (
@@ -29,10 +29,11 @@ const PercentageSelector: React.FC<PercentageSelectorProps> = ({
             data-dd-action-name={`Balance percent ${percent}`}
             onClick={() => onPercent(percent)}
             scale="sm"
-            mr="5px"
-            width="100%"
             variant={isAtCurrentPercent ? 'primary' : 'secondary'}
-            style={{ textTransform: 'uppercase' }}
+            display="flex"
+            p="4px"
+            border="2px solid"
+            style={{ textTransform: 'uppercase', fontSize: '14px', fontWeight: 600, flex: 1 }}
           >
             {percent === 100 ? t('Max') : `${percent}%`}
           </Button>
