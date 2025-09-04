@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai'
 import { useRouter } from 'next/router'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useWalletClient } from 'wagmi'
+import { isAddress } from 'viem'
 import { getIFOContract } from '../hooks/ifo/useIFOContract'
 import { ifoConfigs } from '../config'
 import { ifoLoadingAnimationAtom } from '../atoms'
@@ -30,6 +31,10 @@ export const IfoV2Provider: React.FC<ProviderProps> = ({ id, children }) => {
     return null
   }
   const ifoContract = getIFOContract(config?.id, signer ?? undefined, chainId)
+  const customAddress = query.ca as string | undefined
+  if (customAddress && isAddress(customAddress)) {
+    ifoContract.address = customAddress as `0x${string}`
+  }
   // info and pools will be attached in useIfo hook
   const value = { chainId, ifoContract, config, info: undefined, pools: undefined }
 
