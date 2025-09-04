@@ -59,14 +59,7 @@ export const IdoDepositButton: React.FC<{
   const isBinance = isInBinance()
 
   const stakeCurrency = userStatus?.stakedAmount?.currency
-  const { maxStakePerUsers, duration } = useIDOConfig()
-  const maxStakePerUser = useMemo(() => {
-    if (!stakeCurrency) return undefined
-    if (maxStakePerUsers[0]?.currency.equals(stakeCurrency)) {
-      return maxStakePerUsers[0]
-    }
-    return maxStakePerUsers[1]
-  }, [maxStakePerUsers, stakeCurrency])
+  const { duration } = useIDOConfig()
 
   const { address: account } = useAccount()
   const inputBalance = useCurrencyBalance(account ?? undefined, stakeCurrency ?? undefined)
@@ -86,17 +79,10 @@ export const IdoDepositButton: React.FC<{
     (percent: number) => {
       if (maxAmountInput) {
         const percentAmount = getPercentAmount(percent)
-        if (
-          userStatus?.stakedAmount &&
-          maxStakePerUser &&
-          !maxStakePerUser.equalTo(0) &&
-          percentAmount.greaterThan(maxStakePerUser.subtract(userStatus?.stakedAmount))
-        ) {
-          setValue(maxStakePerUser.subtract(userStatus?.stakedAmount).toExact())
-        } else setValue(percentAmount.toExact())
+        setValue(percentAmount.toExact())
       }
     },
-    [maxAmountInput, getPercentAmount, userStatus?.stakedAmount, maxStakePerUser],
+    [maxAmountInput, getPercentAmount],
   )
 
   const handleMaxInput = useCallback(() => {
@@ -112,20 +98,6 @@ export const IdoDepositButton: React.FC<{
     stakeCurrency && value !== ''
       ? CurrencyAmount.fromRawAmount(stakeCurrency, new BigNumber(value ?? 0).times(tokenBalanceMultiplier).toFixed(0))
       : undefined
-
-  const totalDepositedAmount = stakeCurrency
-    ? CurrencyAmount.fromRawAmount(stakeCurrency, userStatus?.stakedAmount?.quotient ?? 0).add(
-        CurrencyAmount.fromRawAmount(stakeCurrency, depositAmount?.quotient ?? 0),
-      )
-    : undefined
-
-  const maxDepositExceeded = useMemo(() => {
-    return (
-      maxStakePerUser &&
-      !maxStakePerUser.equalTo(0) &&
-      (totalDepositedAmount?.greaterThan(maxStakePerUser) || totalDepositedAmount?.equalTo(maxStakePerUser))
-    )
-  }, [maxStakePerUser, totalDepositedAmount])
 
   const isUserInsufficientBalance = useMemo(() => {
     if (depositAmount && inputBalance) {
@@ -146,8 +118,8 @@ export const IdoDepositButton: React.FC<{
   const { verifyStatus } = useW3WAccountVerify()
 
   const disabled = useMemo(() => {
-    return maxDepositExceeded || isUserInsufficientBalance
-  }, [maxDepositExceeded, isUserInsufficientBalance])
+    return isUserInsufficientBalance
+  }, [isUserInsufficientBalance])
 
   const handleDeposit = useCallback(() => {
     if (verifyStatus === VerifyStatus.eligible) {
@@ -259,7 +231,7 @@ export const IdoDepositButton: React.FC<{
             {t('Deposit')} {stakeCurrency?.symbol ?? ''}
           </>
         ) : (
-          <AddIcon color={maxDepositExceeded ? 'textDisabled' : 'primary'} />
+          <AddIcon color="primary" />
         )}
       </Button>
       <ModalV2 isOpen={isOpen} title="Deposit" onDismiss={handleCloseModal} closeOnOverlayClick>
@@ -269,7 +241,6 @@ export const IdoDepositButton: React.FC<{
               <SwapUIV2.CurrencyInputPanelSimplify
                 id={`idoStakeCurrency${stakeCurrency?.symbol ?? ''}`}
                 disabled={false}
-                error={maxStakePerUser && depositAmount?.greaterThan(maxStakePerUser) && !maxStakePerUser.equalTo(0)}
                 value={value}
                 placeholder="0.00"
                 onInputFocus={handleInputFocus}
@@ -327,9 +298,6 @@ export const IdoDepositButton: React.FC<{
                   ) : null
                 }
               />
-              {maxStakePerUser && !maxStakePerUser.equalTo(0) && totalDepositedAmount?.greaterThan(maxStakePerUser) && (
-                <Text color="failure">{t('Max stake per user exceeded')}</Text>
-              )}
               <FlexGap>
                 {maxAmountInput?.greaterThan(0) &&
                   [25, 50, 75, 100].map((percent) => {
@@ -358,14 +326,6 @@ export const IdoDepositButton: React.FC<{
                   <Text color="textSubtle">{t('Project Duration')}</Text>
                   <Text>{durationText}</Text>
                 </FlexGap>
-                {maxStakePerUser && !maxStakePerUser.equalTo(0) && (
-                  <FlexGap justifyContent="space-between">
-                    <Text color="textSubtle">{t('Max. stake per user')}</Text>
-                    <Text>
-                      {maxStakePerUser?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
-                    </Text>
-                  </FlexGap>
-                )}
                 {userStatus?.stakedAmount?.greaterThan(0) ? (
                   <FlexGap justifyContent="space-between">
                     <Text color="textSubtle">{t('Subscribed')}</Text>
@@ -380,15 +340,7 @@ export const IdoDepositButton: React.FC<{
                   )}
                 </Text>
                 <Button
-                  disabled={
-                    value === '' ||
-                    !depositAmount ||
-                    depositAmount.equalTo(0) ||
-                    isUserInsufficientBalance ||
-                    (maxStakePerUser &&
-                      !maxStakePerUser.equalTo(0) &&
-                      totalDepositedAmount?.greaterThan(maxStakePerUser))
-                  }
+                  disabled={value === '' || !depositAmount || depositAmount.equalTo(0) || isUserInsufficientBalance}
                   width="100%"
                   isLoading={isLoading}
                   onClick={handleConfirmDeposit}
