@@ -88,7 +88,7 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
           {userStatus?.stakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
         </StyledText>
       ),
-      display: variant !== 'presale' && showExtraInfo,
+      display: Boolean(variant !== 'presale' && showExtraInfo),
     },
     {
       left: <StyledText color="textSubtle">{t('Fee Tier')}</StyledText>,
@@ -125,12 +125,12 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
     {
       left: <StyledText color="textSubtle">{t('Fee Tier')}</StyledText>,
       right: <StyledText color="text">{feeTier}</StyledText>,
-      display: variant !== 'presale' && showExtraInfo && !!feeTier,
+      display: Boolean(variant !== 'presale' && showExtraInfo && !!feeTier),
     },
     {
       left: <StyledText color="textSubtle">{t('CAKE to burn:')}</StyledText>,
       right: <StyledText color="text">{cakeToBurn}</StyledText>,
-      display: variant !== 'presale' && showExtraInfo && !!cakeToBurn,
+      display: Boolean(variant !== 'presale' && showExtraInfo && !!cakeToBurn),
     },
   ]
 
