@@ -1,4 +1,4 @@
-import { type Currency, CurrencyAmount, Fraction } from '@pancakeswap/swap-sdk-core'
+import { type Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
@@ -56,16 +56,15 @@ export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | 
   }, [pool0Info?.stakeCurrency, pool1Info?.stakeCurrency, offeringAndRefundingAmounts])
 
   const tax = useMemo(() => {
-    const denom = 1_000_000_000_000n
     return [
-      pool0Info?.feeTier !== undefined && stakeRefundRaw[0]
-        ? stakeRefundRaw[0].multiply(new Fraction(BigInt(Math.round(pool0Info.feeTier * Number(denom))), denom))
+      pool0Info?.stakeCurrency
+        ? CurrencyAmount.fromRawAmount(pool0Info.stakeCurrency, offeringAndRefundingAmounts?.[0].userTaxAmount ?? 0n)
         : undefined,
-      pool1Info?.feeTier !== undefined && stakeRefundRaw[1]
-        ? stakeRefundRaw[1].multiply(new Fraction(BigInt(Math.round(pool1Info.feeTier * Number(denom))), denom))
+      pool1Info?.stakeCurrency
+        ? CurrencyAmount.fromRawAmount(pool1Info.stakeCurrency, offeringAndRefundingAmounts?.[1].userTaxAmount ?? 0n)
         : undefined,
     ]
-  }, [pool0Info?.feeTier, pool1Info?.feeTier, stakeRefundRaw])
+  }, [pool0Info?.stakeCurrency, pool1Info?.stakeCurrency, offeringAndRefundingAmounts])
 
   const stakeRefund = useMemo(() => {
     return [
@@ -108,6 +107,7 @@ export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | 
 export type UserOfferingAndRefundingAmounts = {
   userOfferingAmount: bigint
   userRefundingAmount: bigint
+  userTaxAmount: bigint
 }
 
 const useViewUserOfferingAndRefundingAmounts = () => {
@@ -119,17 +119,21 @@ const useViewUserOfferingAndRefundingAmounts = () => {
     queryKey: ['ifoUserOfferingAndRefundingAmounts', ifoContract?.address, account, latestTxReceipt],
     queryFn: async (): Promise<[UserOfferingAndRefundingAmounts, UserOfferingAndRefundingAmounts]> => {
       if (!ifoContract || !account) throw new Error('IFO contract not found')
-      const [[userOfferingAmount0, userRefundingAmount0], [userOfferingAmount1, userRefundingAmount1]] =
-        await ifoContract.read.viewUserOfferingAndRefundingAmountsForPools([account, [0, 1]])
+      const [
+        [userOfferingAmount0, userRefundingAmount0, userTaxAmount0],
+        [userOfferingAmount1, userRefundingAmount1, userTaxAmount1],
+      ] = await ifoContract.read.viewUserOfferingAndRefundingAmountsForPools([account, [0, 1]])
 
       return [
         {
           userOfferingAmount: userOfferingAmount0,
           userRefundingAmount: userRefundingAmount0,
+          userTaxAmount: userTaxAmount0,
         },
         {
           userOfferingAmount: userOfferingAmount1,
           userRefundingAmount: userRefundingAmount1,
+          userTaxAmount: userTaxAmount1,
         },
       ]
     },
