@@ -34,6 +34,7 @@ export const useIFODepositCallback = () => {
     async (
       pid: number,
       amount: CurrencyAmount<Currency>,
+      onSucc?: () => void,
       onFinish?: () => void,
     ): Promise<WriteContractReturnType | undefined> => {
       if (!account || !ifoContract?.write || (!pid && pid !== 0)) return
@@ -74,6 +75,7 @@ export const useIFODepositCallback = () => {
           toastSuccess(t('Deposit successful'), <ToastDescriptionWithTx bscTrace txHash={receipt.transactionHash} />)
           updateVersion()
           setStatus('CONFIRMED')
+          onSucc?.()
         } else {
           setStatus('IDLE')
         }
@@ -86,18 +88,7 @@ export const useIFODepositCallback = () => {
             }),
           )
         }
-        console.error(error)
-        logger.error(
-          '[ifo]: Error deposit ',
-          {
-            error,
-            account,
-            chainId: ifoContract?.chain?.id,
-            amount: amount?.quotient,
-            address: ifoContract?.address,
-          },
-          error instanceof Error ? error : new Error('unknown error'),
-        )
+
         setStatus('IDLE')
       } finally {
         onFinish?.()

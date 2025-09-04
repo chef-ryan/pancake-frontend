@@ -33,16 +33,18 @@ export const IfoV2Provider: React.FC<ProviderProps> = ({ id, children }) => {
   if (!config) {
     return null
   }
-  const ifoContract = getIFOContract(config?.id, signer ?? undefined, chainId)
   const customAddress = query.ca as string | undefined
-  if (customAddress && isAddress(customAddress)) {
-    ifoContract.address = customAddress as `0x${string}`
-  }
+  const ifoContract = getIFOContract(
+    config?.id,
+    signer ?? undefined,
+    chainId,
+    customAddress as `0x${string}` | undefined,
+  )
   // info and pools will be attached in useIfo hook
   const value = { chainId, ifoContract, config, info: undefined, pools: undefined }
 
   return (
-    <IfoV2Context.Provider value={value}>
+    <IfoV2Context.Provider value={value} key={ifoContract.address}>
       <SyncIfoContext id={config.id} key={version}>
         {children}
       </SyncIfoContext>

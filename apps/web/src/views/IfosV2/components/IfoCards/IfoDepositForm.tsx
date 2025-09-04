@@ -127,7 +127,9 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
   const handleConfirmDeposit = async () => {
     if (depositAmount) {
       setSubmittedDeposit(depositAmount)
-      const hash = await deposit(pid, depositAmount, () => {})
+      const hash = await deposit(pid, depositAmount, () => {
+        router.back()
+      })
       if (hash) {
         logGTMIfoDepositEvent()
       }
@@ -163,12 +165,6 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
   useEffect(() => {
     if (status === 'IDLE') {
       setSubmittedDeposit(undefined)
-    }
-    if (status === 'CONFIRMED' || status === 'CONFIRMING') {
-      const timer = setTimeout(() => {
-        window.history.go(-1)
-      }, 3000)
-      return () => clearTimeout(timer)
     }
     return undefined
   }, [status, router])

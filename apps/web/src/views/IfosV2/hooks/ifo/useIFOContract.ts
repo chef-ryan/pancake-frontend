@@ -1,7 +1,7 @@
 // TODO: Using IFO v10 ABI for testing
 // import { ifoABI } from 'config/abi/ifo'
 import { getContract } from 'utils/contractHelpers'
-import { createPublicClient, custom, http, isAddress, type WalletClient } from 'viem'
+import { Address, createPublicClient, custom, http, isAddress, type WalletClient } from 'viem'
 import { bsc } from 'viem/chains'
 import { ifoConfigs } from 'views/IfosV2/config'
 import { ifoV10Abi as ifoABI } from '../../abi/ifoV10Abi'
@@ -26,10 +26,10 @@ function getIFOAddress(ifoId: string): `0x${string}` {
   return ifoConfig!.contractAddress
 }
 
-export function getIFOContract(ifoId: string, signer?: WalletClient, chainId?: number) {
+export function getIFOContract(ifoId: string, signer?: WalletClient, chainId?: number, ca?: Address) {
   const ifoAddress = getIFOAddress(ifoId)
   return getContract({
-    address: ifoAddress,
+    address: ca || ifoAddress,
     abi: ifoABI,
     signer,
     chainId,
