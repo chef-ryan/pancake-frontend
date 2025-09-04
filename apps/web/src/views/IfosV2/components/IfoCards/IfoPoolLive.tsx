@@ -32,13 +32,11 @@ export const IfoPoolLive: React.FC<{
 
   return (
     <FlexGap flexDirection="column" gap="8px">
+      <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
+        {stakeCurrency?.symbol} {t('Pool')}
+      </Text>
       <FlexGap justifyContent="space-between" alignItems="center">
-        <FlexGap alignItems="center" gap="4px">
-          <CurrencyLogo currency={stakeCurrency} size="24px" />
-          <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
-            {stakeCurrency?.symbol} {t('Pool')}
-          </Text>
-        </FlexGap>
+        <CurrencyLogo currency={stakeCurrency} size="40px" />
         {userHasStaked ? (
           <Button variant="secondary" scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
             <AddIcon color="primary" />

@@ -7,28 +7,32 @@ interface IfoAllocationCardProps {
   allocatedAmount?: string
 }
 
-const IfoAllocationCard: React.FC<IfoAllocationCardProps> = ({ symbol, tokenAddress, allocatedAmount }) => {
+export const IfoAllocationDisplay: React.FC<IfoAllocationCardProps> = ({ symbol, tokenAddress, allocatedAmount }) => {
   const { t } = useTranslation()
   const amount = allocatedAmount ?? '0'
   const swapUrl = `https://pancakeswap.finance/swap?chain=bsc&inputCurrency=${tokenAddress}&outputCurrency=BNB`
 
   return (
-    <Card>
-      <CardBody p="24px">
-        <FlexGap flexDirection="column" alignItems="center" gap="16px">
-          <Text textTransform="uppercase" color="secondary" bold fontSize="12px">
-            {symbol} {t('allocated')}
-          </Text>
-          <Text fontSize="20px" bold>
-            {amount}
-          </Text>
-          <Button as="a" href={swapUrl} target="_blank" rel="noopener noreferrer" width="100%">
-            {t('Swap')} {symbol}
-          </Button>
-        </FlexGap>
-      </CardBody>
-    </Card>
+    <FlexGap flexDirection="column" alignItems="center" gap="16px">
+      <Text textTransform="uppercase" color="secondary" bold fontSize="12px">
+        {symbol} {t('allocated')}
+      </Text>
+      <Text fontSize="20px" bold>
+        {amount}
+      </Text>
+      <Button as="a" href={swapUrl} target="_blank" rel="noopener noreferrer" width="100%">
+        {t('Swap')} {symbol}
+      </Button>
+    </FlexGap>
   )
 }
+
+const IfoAllocationCard: React.FC<IfoAllocationCardProps> = (props) => (
+  <Card>
+    <CardBody p="24px">
+      <IfoAllocationDisplay {...props} />
+    </CardBody>
+  </Card>
+)
 
 export default IfoAllocationCard

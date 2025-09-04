@@ -27,7 +27,7 @@ interface IfoPoolInfoDisplayProps {
   pid: number
   ifoStatus?: IFOStatus
   userStatus?: IFOUserStatus
-  variant: 'live' | 'finished' | 'presale'
+  variant: 'live' | 'finished' | 'presale' | 'history'
   feeTier?: string
   cakeToBurn?: string
 }
@@ -79,7 +79,9 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
           {ifoStatus?.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
         </StyledText>
       ),
-      display: variant !== 'presale' && ((variant === 'live' && userHasStaked) || variant === 'finished'),
+      display:
+        variant !== 'presale' &&
+        ((variant === 'live' && userHasStaked) || variant === 'finished' || variant === 'history'),
     },
     {
       left: <StyledText color="textSubtle">{t('Deposit Amount')}</StyledText>,
@@ -120,7 +122,7 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
           )}
         </FlexGap>
       ),
-      display: variant !== 'presale',
+      display: variant !== 'presale' && variant !== 'history',
     },
     {
       left: <StyledText color="textSubtle">{t('Fee Tier')}</StyledText>,
