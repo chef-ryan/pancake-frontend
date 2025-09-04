@@ -10,9 +10,11 @@ import { logger } from 'utils/datadog'
 import { erc20Abi, WriteContractReturnType, zeroAddress } from 'viem'
 import { userRejectedError } from 'views/Swap/V3Swap/hooks/useSendSwapTransaction'
 import { useAccount, useWriteContract } from 'wagmi'
+import { useSetAtom } from 'jotai'
 import useIfo from '../useIfo'
 import { useIFOPoolInfo } from './useIFOPoolInfo'
 import { useIFOUserInfo } from './useIFOUserInfo'
+import { updateIfoVer } from '../../atom/ifoVersionAtom'
 
 export const useIFODepositCallback = () => {
   const { ifoContract } = useIfo()
@@ -26,6 +28,7 @@ export const useIFODepositCallback = () => {
   const { writeContractAsync } = useWriteContract()
   const [status, setStatus] = useState<'IDLE' | 'PENDING' | 'CONFIRMING' | 'CONFIRMED'>('IDLE')
   const [txHash, setTxHash] = useState<string>('')
+  const updateVersion = useSetAtom(updateIfoVer)
 
   const deposit = useCallback(
     async (
@@ -69,6 +72,7 @@ export const useIFODepositCallback = () => {
         if (receipt?.status) {
           setLatestTxReceipt(receipt)
           toastSuccess(t('Deposit successful'), <ToastDescriptionWithTx bscTrace txHash={receipt.transactionHash} />)
+          updateVersion()
           setStatus('CONFIRMED')
         } else {
           setStatus('IDLE')
@@ -111,6 +115,7 @@ export const useIFODepositCallback = () => {
       t,
       toastWarning,
       refetch,
+      updateVersion,
     ],
   )
 

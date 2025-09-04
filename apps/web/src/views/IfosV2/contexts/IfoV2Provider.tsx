@@ -6,6 +6,7 @@ import { isAddress } from 'viem'
 import { getIFOContract } from '../hooks/ifo/useIFOContract'
 import { ifoConfigs } from '../config'
 import { ifoLoadingAnimationAtom } from '../atoms'
+import { ifoVersionAtom } from '../atom/ifoVersionAtom'
 
 import { SyncIfoContext } from './SyncIfoContext'
 import { IfoV2Context } from './IfoV2Context'
@@ -24,6 +25,8 @@ export const IfoV2Provider: React.FC<ProviderProps> = ({ id, children }) => {
   // Preload submitting animation
   useAtomValue(ifoLoadingAnimationAtom)
 
+  const version = useAtomValue(ifoVersionAtom)
+
   const ifoId = (id ?? (query.ifo as string)) || ''
 
   const config = ifoId ? ifoConfigs.find((x) => x.id === ifoId) : ifoConfigs[0]
@@ -40,7 +43,9 @@ export const IfoV2Provider: React.FC<ProviderProps> = ({ id, children }) => {
 
   return (
     <IfoV2Context.Provider value={value}>
-      <SyncIfoContext id={config.id}>{children}</SyncIfoContext>
+      <SyncIfoContext id={config.id} key={version}>
+        {children}
+      </SyncIfoContext>
     </IfoV2Context.Provider>
   )
 }

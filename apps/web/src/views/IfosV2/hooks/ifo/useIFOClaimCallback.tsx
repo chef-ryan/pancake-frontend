@@ -7,8 +7,10 @@ import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/u
 import { logGTMIfoClaimEvent } from 'utils/customGTMEventTracking'
 import { isUserRejected } from 'utils/sentry'
 import { useAccount } from 'wagmi'
+import { useSetAtom } from 'jotai'
 import useIfo from '../useIfo'
 import { useIFOUserInfo } from './useIFOUserInfo'
+import { updateIfoVer } from '../../atom/ifoVersionAtom'
 
 export const useIFOClaimCallback = () => {
   const { ifoContract } = useIfo()
@@ -18,6 +20,7 @@ export const useIFOClaimCallback = () => {
   const { fetchWithCatchTxError, loading: isPending } = useCatchTxError({ throwUserRejectError: true })
   const { refetch } = useIFOUserInfo()
   const [, setLatestTxReceipt] = useLatestTxReceipt()
+  const updateVersion = useSetAtom(updateIfoVer)
 
   const claim = useCallback(
     async (pid: number, onFinish?: () => void) => {
@@ -33,6 +36,7 @@ export const useIFOClaimCallback = () => {
           setLatestTxReceipt(receipt)
           toastSuccess(t('Claim successful'), <ToastDescriptionWithTx bscTrace txHash={receipt.transactionHash} />)
           logGTMIfoClaimEvent()
+          updateVersion()
         }
       } catch (error) {
         if (isUserRejected(error)) {
@@ -43,7 +47,17 @@ export const useIFOClaimCallback = () => {
         onFinish?.()
       }
     },
-    [account, ifoContract, fetchWithCatchTxError, setLatestTxReceipt, toastSuccess, t, toastWarning, refetch],
+    [
+      account,
+      ifoContract,
+      fetchWithCatchTxError,
+      setLatestTxReceipt,
+      toastSuccess,
+      t,
+      toastWarning,
+      refetch,
+      updateVersion,
+    ],
   )
 
   return { claim, isPending }

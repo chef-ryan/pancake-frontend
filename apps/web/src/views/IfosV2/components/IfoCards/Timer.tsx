@@ -6,6 +6,8 @@ import useTheme from 'hooks/useTheme'
 import { styled } from 'styled-components'
 import { useEffect, useRef } from 'react'
 import useIfo from 'views/IfosV2/hooks/useIfo'
+import { useSetAtom } from 'jotai'
+import { updateIfoVer } from 'views/IfosV2/atom/ifoVersionAtom'
 
 interface Props {
   plannedStartTime: number
@@ -42,6 +44,7 @@ const CountDown: React.FC<{
   const { days, hours, minutes, seconds } = useCountdown(time) ?? { days: 0, hours: 0, minutes: 0, seconds: 0 }
   const start = useRef(false)
   const { info } = useIfo()
+  const updateVersion = useSetAtom(updateIfoVer)
 
   useEffect(() => {
     if (!info || info.status !== 'idle') {
@@ -53,10 +56,10 @@ const CountDown: React.FC<{
     }
     if (start.current) {
       if (seconds === 0) {
-        window.location.reload()
+        updateVersion()
       }
     }
-  }, [seconds, info])
+  }, [seconds, info, updateVersion])
 
   return (
     <FlexGap gap="4px" alignItems="baseline">
