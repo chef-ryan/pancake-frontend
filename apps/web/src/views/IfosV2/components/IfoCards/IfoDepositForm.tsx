@@ -14,6 +14,7 @@ import { useAccount } from 'wagmi'
 import { useRouter } from 'next/router'
 
 import { logGTMIfoDepositEvent } from 'utils/customGTMEventTracking'
+import { CAKE } from '@pancakeswap/tokens'
 import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import { useIFODepositCallback } from '../../hooks/ifo/useIFODepositCallback'
@@ -163,9 +164,9 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
     if (status === 'IDLE') {
       setSubmittedDeposit(undefined)
     }
-    if (status === 'CONFIRMED') {
+    if (status === 'CONFIRMED' || status === 'CONFIRMING') {
       const timer = setTimeout(() => {
-        router.back()
+        window.history.go(-1)
       }, 3000)
       return () => clearTimeout(timer)
     }

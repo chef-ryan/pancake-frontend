@@ -2,9 +2,11 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Box, Card, CardBody, CardHeader, FlexGap, Text } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
 import ConnectW3WButton from 'components/ConnectW3WButton'
+import useTheme from 'hooks/useTheme'
 import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import { useAccount } from 'wagmi'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
+import ConnectWalletButton from 'components/ConnectWalletButton'
 import { IfoDepositForm } from './IfoCards/IfoDepositForm'
 import { IfoRibbon } from './IfoCards/IfoRibbon'
 import { useIFOUserStatus } from '../hooks/ifo/useIFOUserStatus'
@@ -49,6 +51,7 @@ export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
   const { info, config } = useIfo()
   const status = info?.status
   const bannerUrl = config?.bannerUrl ?? ''
+  const { theme } = useTheme()
 
   if (status === 'coming_soon' || !userStatus) {
     return null
@@ -56,7 +59,14 @@ export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
 
   return (
     <StyledCard>
-      <Box className="sticky-header" position="sticky" bottom="48px" width="100%" zIndex={6}>
+      <Box
+        background={theme.colors.gradientBubblegum}
+        className="sticky-header"
+        position="sticky"
+        bottom="48px"
+        width="100%"
+        zIndex={6}
+      >
         <Header $bannerUrl={bannerUrl} />
         <IfoRibbon />
         <CardBody>
@@ -95,7 +105,7 @@ const IfoDepositCard = ({ pid }: { pid: number }) => {
           {account ? (
             <IfoDepositForm userStatus={userStatus} pid={pid} />
           ) : (
-            <ConnectW3WButton width="100%" onClick={handleConnectWallet} />
+            <ConnectWalletButton width="100%" onClickCapture={handleConnectWallet} />
           )}
         </FlexGap>
       </CardBody>

@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import type { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
-import { Card, CardBody, CardFooter, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Card, CardBody, CardFooter, Flex, Text } from '@pancakeswap/uikit'
 import dynamic from 'next/dynamic'
 import { useMemo } from 'react'
 import { useAtomValue } from 'jotai'
@@ -31,12 +31,12 @@ const IfoSubmittingCard: React.FC<IfoSubmittingCardProps> = ({ deposit }) => {
   }, [usdValue])
 
   return (
-    <Card>
-      <CardBody p="24px" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Box>
+      <Box p="24px" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {animationData && <Lottie animationData={animationData} loop style={{ width: 200 }} />}
-      </CardBody>
-      <CardFooter p="24px">
-        <Card p="16px" style={{ borderRadius: '16px', width: '100%' }}>
+      </Box>
+      <Box p="24px">
+        <Box p="16px" style={{ borderRadius: '16px', width: '100%' }}>
           <Text fontSize="14px" color="textSubtle">
             {t('Deposit Amount')}: {deposit.toSignificant(6)} {deposit.currency.symbol}
           </Text>
@@ -45,9 +45,9 @@ const IfoSubmittingCard: React.FC<IfoSubmittingCardProps> = ({ deposit }) => {
               ~{formattedUsd} USD
             </Text>
           </Flex>
-        </Card>
-      </CardFooter>
-    </Card>
+        </Box>
+      </Box>
+    </Box>
   )
 }
 
