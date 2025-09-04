@@ -16,6 +16,7 @@ import {
   LiquidityMath,
   SqrtPriceMath,
   TickUtils,
+  PoolUtils,
 } from '@pancakeswap/solana-core-sdk'
 import { PancakeClmmProgramId } from '@pancakeswap/solana-clmm-sdk'
 import { PoolInfo, SolV3PoolInfo } from 'state/farmsV4/state/type'
@@ -24,7 +25,10 @@ import { formatAmount } from '@pancakeswap/utils/formatInfoNumbers'
 import { formatPercentage, formatPoolDetailFiatNumber } from 'views/PoolDetail/utils'
 import truncateHash from '@pancakeswap/utils/truncateHash'
 import { useQuery } from '@tanstack/react-query'
+import { displayApr } from '@pancakeswap/utils/displayApr'
 import { useChainIdByQuery } from 'state/info/hooks'
+import { Tooltips } from 'components/Tooltips'
+import { AprTooltipContent } from 'views/universalFarms/components/PoolAprButtonV3/AprTooltipContent'
 
 import { PrimaryOutlineButton } from '../styles'
 import { PositionsTable } from './PositionsTable'
@@ -67,7 +71,7 @@ const fetchSolanaPositions = async ({
   const positions = await raydium.clmm.getOwnerPositionInfo({ programId })
   const filtered = positions.filter((p) => p.poolId.toBase58() === poolId)
 
-  const { computePoolInfo, tickData } = await raydium.clmm.getPoolInfoFromRpc(poolId!)
+  const { computePoolInfo, tickData, poolInfo: apiPoolInfo } = await raydium.clmm.getPoolInfoFromRpc(poolId!)
 
   const tableBase = filtered.map((p) => {
     const nft = p.nftMint.toBase58()
@@ -137,7 +141,7 @@ const fetchSolanaPositions = async ({
     )
 
     return {
-      raw: { amountA, amountB, feeA, feeB, rewards },
+      raw: { amountA, amountB, feeA, feeB, rewards, liquidity: p.liquidity as BN },
       tokenId: nft,
       data: p,
       tokenInfo,
@@ -157,7 +161,7 @@ const fetchSolanaPositions = async ({
     return { tokenId: b.tokenId, amountADec, amountBDec, feeADec, feeBDec, rewardAmountsDec }
   })
 
-  return { baseRows, tableBase, computePoolInfo }
+  return { baseRows, tableBase, computePoolInfo, apiPoolInfo }
 }
 
 export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) => {
@@ -282,14 +286,17 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
     const solData = (poolInfo as SolV3PoolInfo | any)?.solanaData
     const mintA = solData?.mintA?.address
     const mintB = solData?.mintB?.address
-    return [mintA, mintB]
-  }, [poolInfo])
+    const rewardMints = (data?.computePoolInfo?.rewardInfos || [])
+      .map((ri: any) => ri?.tokenMint?.toBase58?.())
+      .filter(Boolean)
+    return [mintA, mintB, ...(rewardMints as string[])]
+  }, [poolInfo, data?.computePoolInfo])
 
   const { data: priceMap } = useBirdeyeTokenPrice({ mintList: tokenMints, enabled: chainId === NonEVMChainId.SOLANA })
 
   const computed = useMemo(() => {
     const base = data?.baseRows ?? []
-    if (!rowsDisplay.length) return { rows: [], totalLiq: 0, totalEarn: 0 }
+    if (!rowsDisplay.length) return { rows: [], totalLiq: 0, totalEarn: 0, totalApr: 0 }
     const solData = (poolInfo as SolV3PoolInfo | any)?.solanaData
     const mintA = solData?.mintA?.address
     const mintB = solData?.mintB?.address
@@ -297,6 +304,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
     const priceB = mintB ? priceMap?.[mintB]?.value ?? 0 : 0
     let totalLiq = 0
     let totalEarn = 0
+    let aprWeightedSum = 0
     const rows = rowsDisplay.map((row) => {
       const b = base.find((x) => x.tokenId === row.tokenId)
       if (!b) return row
@@ -304,16 +312,52 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
       totalLiq += liqUSD
       const earnUSD = b.feeADec * priceA + b.feeBDec * priceB
       totalEarn += earnUSD
+
+      let aprValue = 0
+      let feeAprValue = 0
+      try {
+        const mintPrice: Record<string, { value: number }> = {}
+        if (mintA) mintPrice[mintA] = { value: priceA }
+        if (mintB) mintPrice[mintB] = { value: priceB }
+        ;(data?.computePoolInfo?.rewardInfos || []).forEach((ri: any) => {
+          const m = ri?.tokenMint?.toBase58?.()
+          if (m) mintPrice[m] = { value: priceMap?.[m]?.value ?? 0 }
+        })
+        const tb = data?.tableBase?.find((tb) => tb.tokenId === row.tokenId)
+        const aprRes = tb
+          ? PoolUtils.estimateAprsForPriceRangeDelta({
+              poolInfo: data!.apiPoolInfo,
+              poolLiquidity: data!.computePoolInfo.liquidity,
+              aprType: 'day',
+              mintPrice,
+              liquidity: tb.raw.liquidity,
+              positionTickLowerIndex: tb.data.tickLower,
+              positionTickUpperIndex: tb.data.tickUpper,
+              chainTime: Math.floor(Date.now() / 1000),
+            })
+          : { apr: 0, feeApr: 0, rewardsApr: [] as number[] }
+        aprValue = aprRes?.apr || 0
+        feeAprValue = aprRes?.feeApr || 0
+      } catch (e) {
+        console.error(e)
+      }
+      aprWeightedSum += aprValue * liqUSD
       return {
         ...row,
         tableRow: {
           ...row.tableRow,
           earnings: <Text>{formatPoolDetailFiatNumber(earnUSD)}</Text>,
           liquidity: <Text>{formatPoolDetailFiatNumber(liqUSD)}</Text>,
+          apr: (
+            <Tooltips content={<AprTooltipContent combinedApr={aprValue} lpFeeApr={feeAprValue} showDesc />}>
+              <Text>{displayApr(aprValue)}</Text>
+            </Tooltips>
+          ),
         },
       }
     })
-    return { rows, totalLiq, totalEarn }
+    const totalApr = totalLiq > 0 ? aprWeightedSum / totalLiq : 0
+    return { rows, totalLiq, totalEarn, totalApr }
   }, [data, priceMap, poolInfo, rowsDisplay])
 
   if (isLoading) return <LoadingCard />
@@ -323,7 +367,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
     <PositionsTable
       poolInfo={poolInfo}
       totalLiquidityUSD={computed.totalLiq}
-      totalApr={0}
+      totalApr={computed.totalApr}
       totalEarnings={formatPoolDetailFiatNumber(computed.totalEarn)}
       data={computed.rows.map((r) => r.tableRow)}
       harvestAllButton={

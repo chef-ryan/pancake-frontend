@@ -10,7 +10,7 @@ import { useCheckShouldSwitchNetwork } from 'views/universalFarms/hooks'
 
 import { useAtom } from 'jotai'
 import { positionEarningAmountAtom } from 'views/universalFarms/hooks/usePositionEarningAmount'
-import { NonEVMChainId } from '@pancakeswap/chains'
+import { isSolana, NonEVMChainId } from '@pancakeswap/chains'
 
 import { useAccount } from 'wagmi'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
@@ -33,8 +33,7 @@ export const MyPositions: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
 
 const MyPositionsInner: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
   const { t } = useTranslation()
-  const { address: evmAccount } = useAccount()
-  const { unifiedAccount } = useAccountActiveChain()
+  const { solanaAccount, account } = useAccountActiveChain()
   const chainId = useChainIdByQuery()
   const provider = getRewardProvider(poolInfo.chainId, poolInfo.lpAddress)
   const hasPoolReward = !!provider
@@ -64,9 +63,12 @@ const MyPositionsInner: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
     // clear position earning data when account update
     setPositionEarningAmount({})
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unifiedAccount])
+  }, [account])
 
-  if (!unifiedAccount) {
+  const isSolanaChain = isSolana(chainId)
+  const isUnconnected = isSolanaChain ? !solanaAccount : !account
+
+  if (isUnconnected) {
     return (
       <Grid gridGap="24px" gridTemplateColumns={['1fr', '1fr', '1fr', '1fr']}>
         <Box>
@@ -84,25 +86,25 @@ const MyPositionsInner: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
   }
   return (
     <AutoColumn gap="lg">
-      {(() => {
-        if (poolInfo.chainId === NonEVMChainId.SOLANA) {
-          // For Solana pools, render Solana-specific positions table (currently supports V3/CLMM)
-          return <SolanaV3PositionsTable poolInfo={poolInfo} />
-        }
-        switch (poolInfo.protocol) {
-          case 'v3':
-            return <V3PositionsTable poolInfo={poolInfo} />
-          case Protocol.InfinityCLAMM:
-            return <InfinityCLPositionsTable poolInfo={poolInfo as InfinityCLPoolInfo} />
-          case Protocol.InfinityBIN:
-            return <InfinityBinPositionsTable poolInfo={poolInfo as InfinityBinPoolInfo} />
-          case 'v2':
-          case 'stable':
-            return <V2OrSSPositionsTable poolInfo={poolInfo as V2PoolInfo | StablePoolInfo} />
-          default:
-            return <div>{t('Unsupported protocol: %protocol%', { protocol: poolInfo.protocol })}</div>
-        }
-      })()}
+      {isSolanaChain ? (
+        <SolanaV3PositionsTable poolInfo={poolInfo} />
+      ) : (
+        (() => {
+          switch (poolInfo.protocol) {
+            case 'v3':
+              return <V3PositionsTable poolInfo={poolInfo} />
+            case Protocol.InfinityCLAMM:
+              return <InfinityCLPositionsTable poolInfo={poolInfo as InfinityCLPoolInfo} />
+            case Protocol.InfinityBIN:
+              return <InfinityBinPositionsTable poolInfo={poolInfo as InfinityBinPoolInfo} />
+            case 'v2':
+            case 'stable':
+              return <V2OrSSPositionsTable poolInfo={poolInfo as V2PoolInfo | StablePoolInfo} />
+            default:
+              return <div>{t('Unsupported protocol: %protocol%', { protocol: poolInfo.protocol })}</div>
+          }
+        })()
+      )}
     </AutoColumn>
   )
 }
