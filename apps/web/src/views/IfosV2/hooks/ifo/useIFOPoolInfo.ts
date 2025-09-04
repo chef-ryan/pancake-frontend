@@ -30,29 +30,51 @@ export const useIFOPoolInfoCtx = (): PoolInfo[] => {
 
   const { data } = useQuery({
     queryKey: ['ifoPoolInfo', chainId, addresses, latestTxReceipt],
-    queryFn: async (): Promise<RawPoolInfo[]> => {
+    queryFn: async (): Promise<{ raw: RawPoolInfo; taxRateRaw: bigint }[]> => {
       const publicClient = getViemClients({ chainId })
       if (!ifoContract || !publicClient || !addresses) throw new Error('IFO contract not found')
 
-      const infos = await publicClient.multicall({
-        contracts: [
-          {
-            address: ifoContract.address,
-            abi: ifoContract.abi,
-            functionName: 'viewPoolInformation',
-            args: [0n],
-          },
-          {
-            address: ifoContract.address,
-            abi: ifoContract.abi,
-            functionName: 'viewPoolInformation',
-            args: [1n],
-          },
-        ],
-        allowFailure: false,
-      })
+      const [infos, taxRates] = await Promise.all([
+        publicClient.multicall({
+          contracts: [
+            {
+              address: ifoContract.address,
+              abi: ifoContract.abi,
+              functionName: 'viewPoolInformation',
+              args: [0n],
+            },
+            {
+              address: ifoContract.address,
+              abi: ifoContract.abi,
+              functionName: 'viewPoolInformation',
+              args: [1n],
+            },
+          ],
+          allowFailure: false,
+        }),
+        publicClient.multicall({
+          contracts: [
+            {
+              address: ifoContract.address,
+              abi: ifoContract.abi,
+              functionName: 'viewPoolTaxRateOverflow',
+              args: [0n],
+            },
+            {
+              address: ifoContract.address,
+              abi: ifoContract.abi,
+              functionName: 'viewPoolTaxRateOverflow',
+              args: [1n],
+            },
+          ],
+          allowFailure: false,
+        }),
+      ])
 
-      return infos as RawPoolInfo[]
+      return (infos as RawPoolInfo[]).map((info, idx) => ({
+        raw: info,
+        taxRateRaw: taxRates[idx] as bigint,
+      }))
     },
     enabled: !!ifoContract && !!addresses,
   })
@@ -62,13 +84,14 @@ export const useIFOPoolInfoCtx = (): PoolInfo[] => {
 
     return data
       .filter((x) => x)
-      .map((raw, idx) =>
+      .map(({ raw, taxRateRaw }, idx) =>
         mapToPoolInfo({
           raw,
           pid: idx,
           poolToken: idx === 0 ? addresses.lpToken0 : addresses.lpToken1 ?? zeroAddress,
           stakeCurrency: (idx === 0 ? stakeCurrency0 : stakeCurrency1) as Currency,
           offeringCurrency: offeringCurrency as Currency,
+          feeTier: Number(taxRateRaw) / 1e12,
         }),
       )
       .filter((pool): pool is PoolInfo => Boolean(pool))

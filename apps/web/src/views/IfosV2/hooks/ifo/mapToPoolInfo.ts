@@ -12,6 +12,7 @@ interface MapToPoolInfoArgs {
   poolToken: Address
   stakeCurrency?: Currency
   offeringCurrency?: Currency
+  feeTier?: number
 }
 
 export const mapToPoolInfo = ({
@@ -20,6 +21,7 @@ export const mapToPoolInfo = ({
   poolToken,
   stakeCurrency,
   offeringCurrency,
+  feeTier,
 }: MapToPoolInfoArgs): PoolInfo | undefined => {
   const [raisingAmountPool, offeringAmountPool, capPerUserInLP, hasTax, totalAmountPool, sumTaxesOverflow] = raw
 
@@ -38,6 +40,7 @@ export const mapToPoolInfo = ({
     totalAmountPool,
     sumTaxesOverflow,
     flatTaxRate,
+    feeTier: feeTier ?? 0,
     stakeCurrency,
     price:
       stakeCurrency && offeringCurrency

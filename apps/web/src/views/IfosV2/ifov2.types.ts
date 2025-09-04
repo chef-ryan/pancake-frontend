@@ -42,6 +42,10 @@ export interface PoolInfo {
    */
   flatTaxRate: bigint
   /**
+   * Current deposit tax rate expressed as a percentage (0-1)
+   */
+  feeTier: number
+  /**
    * Currency used to stake in the pool
    */
   stakeCurrency?: Currency
