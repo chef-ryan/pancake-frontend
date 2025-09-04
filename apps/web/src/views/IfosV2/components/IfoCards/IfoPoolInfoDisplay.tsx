@@ -60,24 +60,29 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus,
         <br />
         Fees decrease as oversubscription grows:
         <br />
-        • ≥20x → 1% fee
+        • ≥0x → 1% fee
         <br />
         • ≥50x → 0.8% fee
         <br />
         • ≥100x → 0.6% fee
         <br />
+        • ≥150x → 0.5% fee
+        <br />
         • ≥200x → 0.4% fee
         <br />
-        • ≥300x → 0.3% fee
+        • ≥250x → 0.3% fee
         <br />
-        • ≥400x → 0.25% fee
+        • ≥300x → 0.25% fee
         <br />
-        • ≥500x → 0.2% fee
+        • ≥400x → 0.2% fee
         <br />
-        • ≥650x → 0.15% fee
+        • ≥500x → 0.15% fee
         <br />
-        • ≥850x → 0.1% fee
+        • ≥650x → 0.12% fee
         <br />
+        • ≥800x → 0.1% fee
+        <br />
+        • ≥1500x → 0.05% fee
         <br />
         💡 All IFO fees collected will be used for CAKE burn.
       </Trans>
