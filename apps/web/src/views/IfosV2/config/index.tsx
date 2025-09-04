@@ -8,10 +8,10 @@ export const ifoConfigs: IFOConfig[] = [
   // TODO: IFO v10 testing configuration on Tenderly Virtual Network
   {
     id: 'ifo-presale',
-    icon: '/images/ifo/test.png', // TODO: Replace with actual icon
+    icon: 'https://proofs.pancakeswap.com/cms/uploads/27729a23a3b3e0e5ab75da585f04217c4b036b0f92b54bf6a7393afe1f157be6.png', // TODO: Replace with actual icon
     projectUrl: 'https://pancakeswap.finance/',
     chainId: ChainId.BSC,
-    bannerUrl: `${ASSET_CDN}/web/ido/myshell-banner.png`, // TODO: Replace with actual banner
+    bannerUrl: `https://proofs.pancakeswap.com/cms/uploads/495262706d9d431db12f564544d807e4b8d1e7f39e8b26b170d16f6a26212987.png`, // TODO: Replace with actual banner
     contractAddress: '0x2555B0a2f388cbb4aD07F60Ec3E363217A762f20', // IFO v10 contract address
     tgeTitle: <Trans>IFO v10 Test - USDT Offering</Trans>,
     tgeSubtitle: <Trans>Testing on Tenderly Virtual Network</Trans>,
