@@ -67,10 +67,10 @@ const ChainBoardContainer = styled(Box)`
 
   ${({ theme }) => theme.mediaQueries.sm} {
     left: unset;
-    top: 6px;
+    top: unset;
     right: 90px;
-    bottom: 3px;
-    transform: none;
+    bottom: -3px;
+    transform: rotate(1.5deg);
   }
 `
 
