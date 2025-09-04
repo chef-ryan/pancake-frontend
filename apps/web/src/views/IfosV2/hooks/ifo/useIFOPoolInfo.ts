@@ -3,12 +3,13 @@ import { useQuery } from '@tanstack/react-query'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { getViemClients } from 'utils/viem'
-import { zeroAddress } from 'viem'
+import { zeroAddress, isAddressEqual } from 'viem'
 import { useCurrency } from 'hooks/Tokens'
 import { Currency } from '@pancakeswap/swap-sdk-core'
 import { useAtomValue } from 'jotai'
 import { ifoPoolsAtom } from 'views/IfosV2/atom/ifo.atoms'
 import { useIfoV2Context } from 'views/IfosV2/contexts/useIfoV2Context'
+import { CAKE } from '@pancakeswap/tokens'
 import { useIFOAddresses } from './useIFOAddresses'
 import type { PoolInfo } from '../../ifov2.types'
 import { mapToPoolInfo, type RawPoolInfo } from './mapToPoolInfo'
@@ -27,6 +28,7 @@ export const useIFOPoolInfoCtx = (): PoolInfo[] => {
   const stakeCurrency0 = useCurrency(addresses?.lpToken0)
   const stakeCurrency1 = useCurrency(addresses?.lpToken1)
   const offeringCurrency = useCurrency(addresses?.offeringToken)
+  const cakeAddress = CAKE[chainId as keyof typeof CAKE]?.address ?? zeroAddress
 
   const { data } = useQuery({
     queryKey: ['ifoPoolInfo', chainId, addresses, latestTxReceipt],
@@ -84,16 +86,25 @@ export const useIFOPoolInfoCtx = (): PoolInfo[] => {
 
     return data
       .filter((x) => x)
-      .map(({ raw, taxRateRaw }, idx) =>
-        mapToPoolInfo({
+      .map(({ raw, taxRateRaw }, idx) => {
+        const poolToken = idx === 0 ? addresses.lpToken0 : addresses.lpToken1 ?? zeroAddress
+        const stakeCurrency = (idx === 0 ? stakeCurrency0 : stakeCurrency1) as Currency
+        const mapped = mapToPoolInfo({
           raw,
           pid: idx,
-          poolToken: idx === 0 ? addresses.lpToken0 : addresses.lpToken1 ?? zeroAddress,
-          stakeCurrency: (idx === 0 ? stakeCurrency0 : stakeCurrency1) as Currency,
+          poolToken,
+          stakeCurrency,
           offeringCurrency: offeringCurrency as Currency,
           feeTier: Number(taxRateRaw) / 1e12,
-        }),
-      )
+        })
+
+        if (!mapped) return undefined
+
+        return {
+          ...mapped,
+          isCakePool: isAddressEqual(poolToken, cakeAddress),
+        }
+      })
       .filter((pool): pool is PoolInfo => Boolean(pool))
-  }, [data, addresses, stakeCurrency0, stakeCurrency1, offeringCurrency])
+  }, [data, addresses, stakeCurrency0, stakeCurrency1, offeringCurrency, cakeAddress])
 }

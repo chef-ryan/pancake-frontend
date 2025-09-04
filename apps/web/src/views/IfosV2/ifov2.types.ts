@@ -61,6 +61,10 @@ export interface PoolInfo {
    * Total offering amount in the offering currency
    */
   saleAmount?: CurrencyAmount<Currency>
+  /**
+   * Whether the staking token for this pool is CAKE
+   */
+  isCakePool?: boolean
 }
 
 export type IFOConfig = {
