@@ -31,7 +31,7 @@ export const useAllChainIds = () => {
   return useMemo(() => allChains.map((chain) => chain.id), [allChains])
 }
 
-export const useAllChainsOpts = (opts?: { includeSolana?: boolean }) => {
+export const useAllChainsOpts = () => {
   const chains = useAllChain()
   const evmChains = chains.map((chain) => ({
     icon: `${ASSET_CDN}/web/chains/${chain.id}.png`,
@@ -39,13 +39,12 @@ export const useAllChainsOpts = (opts?: { includeSolana?: boolean }) => {
     label: chain.name,
   }))
 
-  if (opts?.includeSolana) {
-    evmChains.unshift({
-      icon: `${ASSET_CDN}/web/chains/${NonEVMChainId.SOLANA}.png`,
-      value: NonEVMChainId.SOLANA,
-      label: 'Solana',
-    })
-  }
+  // non-evm chains
+  evmChains.unshift({
+    icon: `${ASSET_CDN}/web/chains/${NonEVMChainId.SOLANA}.png`,
+    value: NonEVMChainId.SOLANA,
+    label: 'Solana',
+  })
 
   return evmChains
 }
