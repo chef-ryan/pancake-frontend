@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Box, Flex, Heading, Progress, ProgressBar, Text } from '@pancakeswap/uikit'
+import { Box, Flex, Progress, ProgressBar, Text } from '@pancakeswap/uikit'
 import { ReactNode, useMemo, useState, useEffect } from 'react'
 import { styled } from 'styled-components'
 
@@ -214,15 +214,13 @@ const IfoRibbonSoon = ({
     <>
       <BigCurve $status="coming_soon" $dark={dark} />
       <RibbonContainer>
-        <Heading as="h3" scale="lg" color="secondary">
-          <SoonTimer
-            startTime={startTime}
-            endTime={endTime}
-            ifoStatus={ifoStatus}
-            plannedStartTime={plannedStartTime}
-            dark={dark}
-          />
-        </Heading>
+        <SoonTimer
+          startTime={startTime}
+          endTime={endTime}
+          ifoStatus={ifoStatus}
+          plannedStartTime={plannedStartTime}
+          dark={dark}
+        />
       </RibbonContainer>
     </>
   )

@@ -1,5 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
+import { ReactNode } from 'react'
 import { styled } from 'styled-components'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
@@ -12,11 +13,21 @@ const StyledText = styled(Text)`
   line-height: 150%;
 `
 
+type InfoRowData = { left: ReactNode; right: ReactNode; display: boolean }
+
+const InfoRow: React.FC<InfoRowData & { mt?: string }> = ({ left, right, display, mt }) =>
+  display ? (
+    <FlexGap justifyContent="space-between" mt={mt}>
+      {left}
+      {right}
+    </FlexGap>
+  ) : null
+
 interface IfoPoolInfoDisplayProps {
   pid: number
-  ifoStatus: IFOStatus
+  ifoStatus?: IFOStatus
   userStatus?: IFOUserStatus
-  variant: 'live' | 'finished'
+  variant: 'live' | 'finished' | 'presale'
   feeTier?: string
   cakeToBurn?: string
 }
@@ -46,63 +57,59 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
     },
   )
 
-  return (
-    <>
-      <FlexGap justifyContent="space-between" mt="8px">
-        <StyledText color="textSubtle">{t('Sale Price per token')}</StyledText>
+  const list: InfoRowData[] = [
+    {
+      left: <StyledText color="textSubtle">{t('Sale Price per token')}</StyledText>,
+      right: (
         <StyledText color="text">
           {pricePerToken?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
         </StyledText>
-      </FlexGap>
-      <FlexGap justifyContent="space-between">
-        <StyledText color="textSubtle">{t('Target Raise')}</StyledText>
-        <StyledText color="text">{raiseAmountText}</StyledText>
-      </FlexGap>
-      {showExtraInfo && (
-        <>
-          <FlexGap justifyContent="space-between">
-            <StyledText color="textSubtle">{t('Total committed')}</StyledText>
-            <StyledText color="text">
-              {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
-            </StyledText>
-          </FlexGap>
-          <FlexGap justifyContent="space-between">
-            <StyledText color="textSubtle">{t('Deposit Amount')}</StyledText>
-            <StyledText color="text">
-              {userStatus?.stakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
-            </StyledText>
-          </FlexGap>
-        </>
-      )}
-      {variant === 'finished' && (
-        <FlexGap justifyContent="space-between">
-          <StyledText color="textSubtle">{t('Total committed')}</StyledText>
-          <StyledText color="text">
-            {ifoStatus.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
-          </StyledText>
-        </FlexGap>
-      )}
-      {!showExtraInfo && feeTier && (
-        <FlexGap justifyContent="space-between">
-          <StyledText color="textSubtle">{t('Fee Tier')}</StyledText>
-          <StyledText color="text">{feeTier}</StyledText>
-        </FlexGap>
-      )}
-      {!showExtraInfo && cakeToBurn && (
-        <FlexGap justifyContent="space-between">
-          <StyledText color="textSubtle">{t('CAKE to burn:')}</StyledText>
-          <StyledText color="text">{cakeToBurn}</StyledText>
-        </FlexGap>
-      )}
-      <FlexGap justifyContent="space-between">
-        <StyledText color="textSubtle">{t('Status')}</StyledText>
+      ),
+      display: true,
+    },
+    {
+      left: <StyledText color="textSubtle">{t('Target Raise')}</StyledText>,
+      right: <StyledText color="text">{raiseAmountText}</StyledText>,
+      display: true,
+    },
+    {
+      left: <StyledText color="textSubtle">{t('Total committed')}</StyledText>,
+      right: (
+        <StyledText color="text">
+          {ifoStatus?.currentStakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
+        </StyledText>
+      ),
+      display: variant !== 'presale' && ((variant === 'live' && userHasStaked) || variant === 'finished'),
+    },
+    {
+      left: <StyledText color="textSubtle">{t('Deposit Amount')}</StyledText>,
+      right: (
+        <StyledText color="text">
+          {userStatus?.stakedAmount?.toSignificant(6) ?? 0} {stakeCurrency?.symbol ?? ''}
+        </StyledText>
+      ),
+      display: variant !== 'presale' && showExtraInfo,
+    },
+    {
+      left: <StyledText color="textSubtle">{t('Fee Tier')}</StyledText>,
+      right: <StyledText color="text">{feeTier}</StyledText>,
+      display: variant !== 'presale' && !showExtraInfo && !!feeTier,
+    },
+    {
+      left: <StyledText color="textSubtle">{t('CAKE to burn:')}</StyledText>,
+      right: <StyledText color="text">{cakeToBurn}</StyledText>,
+      display: variant !== 'presale' && !showExtraInfo && !!cakeToBurn,
+    },
+    {
+      left: <StyledText color="textSubtle">{t('Status')}</StyledText>,
+      right: (
         <FlexGap flexDirection="column" alignItems="flex-end">
           <FlexGap gap="3px">
             <StyledText color="text">
-              {ifoStatus.progress.toFixed(2)} % {ifoStatus.progress.greaterThan(1) && '🎉'}
+              {ifoStatus?.progress.toFixed(2)} % {ifoStatus?.progress?.greaterThan(1) && '🎉'}
             </StyledText>
           </FlexGap>
-          {ifoStatus.progress.greaterThan(1) && (
+          {ifoStatus?.progress?.greaterThan(1) && (
             <FlexGap gap="3px">
               <StyledText color="text">{t('Oversubscribed')}</StyledText>
               <FlexGap ref={targetRef}>
@@ -112,19 +119,26 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({
             </FlexGap>
           )}
         </FlexGap>
-      </FlexGap>
-      {showExtraInfo && feeTier && (
-        <FlexGap justifyContent="space-between">
-          <StyledText color="textSubtle">{t('Fee Tier')}</StyledText>
-          <StyledText color="text">{feeTier}</StyledText>
-        </FlexGap>
-      )}
-      {showExtraInfo && cakeToBurn && (
-        <FlexGap justifyContent="space-between">
-          <StyledText color="textSubtle">{t('CAKE to burn:')}</StyledText>
-          <StyledText color="text">{cakeToBurn}</StyledText>
-        </FlexGap>
-      )}
+      ),
+      display: variant !== 'presale',
+    },
+    {
+      left: <StyledText color="textSubtle">{t('Fee Tier')}</StyledText>,
+      right: <StyledText color="text">{feeTier}</StyledText>,
+      display: variant !== 'presale' && showExtraInfo && !!feeTier,
+    },
+    {
+      left: <StyledText color="textSubtle">{t('CAKE to burn:')}</StyledText>,
+      right: <StyledText color="text">{cakeToBurn}</StyledText>,
+      display: variant !== 'presale' && showExtraInfo && !!cakeToBurn,
+    },
+  ]
+
+  return (
+    <>
+      {list.map((row, idx) => (
+        <InfoRow key={idx} {...row} mt={idx === 0 ? '8px' : undefined} />
+      ))}
     </>
   )
 }

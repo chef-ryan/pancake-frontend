@@ -19,6 +19,19 @@ const FlexGap = styled(Flex)<{ gap: string }>`
   gap: ${({ gap }) => gap};
 `
 
+const CountdownText = styled(Text)`
+  font-family: Kanit;
+  font-size: 16px;
+  font-weight: 400;
+
+  ${({ theme }) => theme.mediaQueries.md} {
+    font-size: 24px;
+    font-weight: 600;
+    text-decoration-line: underline;
+    text-decoration-style: dashed;
+  }
+`
+
 const CountDown: React.FC<{
   time: number
   textColor?: string
@@ -48,25 +61,25 @@ const CountDown: React.FC<{
   return (
     <FlexGap gap="4px" alignItems="baseline">
       {days ? (
-        <Text fontSize="20px" bold color={color}>
+        <CountdownText color={color}>
           {days}
           {t('d')} :
-        </Text>
+        </CountdownText>
       ) : null}
       {hours ? (
-        <Text fontSize="20px" bold color={color}>
+        <CountdownText color={color}>
           {hours}
           {t('h')} :
-        </Text>
+        </CountdownText>
       ) : null}
-      <Text fontSize="20px" bold color={color}>
+      <CountdownText color={color}>
         {minutes ?? '0'}
         {t('m')} :
-      </Text>
-      <Text fontSize="20px" bold color={color}>
+      </CountdownText>
+      <CountdownText color={color}>
         {seconds}
         {t('s')}
-      </Text>
+      </CountdownText>
     </FlexGap>
   )
 }
@@ -80,7 +93,12 @@ export const SoonTimer: React.FC<React.PropsWithChildren<Props>> = ({ startTime,
     ifoStatus !== 'idle' ? (
       <>
         <FlexGap gap="8px" alignItems="center">
-          <Text fontSize="16px" color={textColor}>
+          <Text
+            fontSize={['16px', '16px', '24px']}
+            fontFamily="Kanit"
+            fontWeight={['600', '600', '400']}
+            color={textColor}
+          >
             {t('Starts in')}:
           </Text>
           <CountDown time={startTime} />
@@ -104,8 +122,12 @@ const LiveTimer: React.FC<React.PropsWithChildren<Pick<Props, 'endTime' | 'ifoSt
     ifoStatus !== 'idle' ? (
       <>
         <FlexGap gap="8px" alignItems="center">
-          <Text textTransform="uppercase" fontSize="16px" bold color="#FBCB01">{`${t('Live Now')}!`}</Text>
-          <Text color="white">{t('Ends in')}:</Text>
+          <Text textTransform="uppercase" fontSize={['16px', '16px', '24px']} bold color="#FBCB01">
+            {`${t('Live Now')}!`}
+          </Text>
+          <Text fontSize={['16px', '16px', '24px']} color="white" fontFamily="Kanit" fontWeight={['600', '600', '400']}>
+            {t('Ends in')}:
+          </Text>
           <CountDown time={endTime} textColor="white" />
         </FlexGap>
       </>
