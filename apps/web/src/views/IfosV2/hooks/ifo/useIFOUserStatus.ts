@@ -1,4 +1,4 @@
-import { type Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { type Currency, CurrencyAmount, Fraction } from '@pancakeswap/swap-sdk-core'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
@@ -11,6 +11,7 @@ export type IFOUserStatus = {
   stakeRefund: CurrencyAmount<Currency> | undefined
   claimableAmount: CurrencyAmount<Currency> | undefined
   claimed: boolean | undefined
+  tax: CurrencyAmount<Currency> | undefined
 }
 
 export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | undefined] => {
@@ -37,7 +38,7 @@ export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | 
     return [userInfo[0].claimedPool, userInfo[1].claimedPool]
   }, [userInfo])
 
-  const stakeRefund = useMemo(() => {
+  const stakeRefundRaw = useMemo(() => {
     return [
       pool0Info?.stakeCurrency
         ? CurrencyAmount.fromRawAmount(
@@ -53,6 +54,25 @@ export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | 
         : undefined,
     ]
   }, [pool0Info?.stakeCurrency, pool1Info?.stakeCurrency, offeringAndRefundingAmounts])
+
+  const tax = useMemo(() => {
+    const denom = 1_000_000_000_000n
+    return [
+      pool0Info?.feeTier !== undefined && stakeRefundRaw[0]
+        ? stakeRefundRaw[0].multiply(new Fraction(BigInt(Math.round(pool0Info.feeTier * Number(denom))), denom))
+        : undefined,
+      pool1Info?.feeTier !== undefined && stakeRefundRaw[1]
+        ? stakeRefundRaw[1].multiply(new Fraction(BigInt(Math.round(pool1Info.feeTier * Number(denom))), denom))
+        : undefined,
+    ]
+  }, [pool0Info?.feeTier, pool1Info?.feeTier, stakeRefundRaw])
+
+  const stakeRefund = useMemo(() => {
+    return [
+      stakeRefundRaw[0] && tax[0] ? stakeRefundRaw[0].subtract(tax[0]) : stakeRefundRaw[0],
+      stakeRefundRaw[1] && tax[1] ? stakeRefundRaw[1].subtract(tax[1]) : stakeRefundRaw[1],
+    ]
+  }, [stakeRefundRaw, tax])
 
   const claimableAmount = useMemo(() => {
     if (!info) return [undefined, undefined]
@@ -70,6 +90,7 @@ export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | 
           stakeRefund: stakeRefund[0],
           claimableAmount: claimableAmount[0],
           claimed: claimed[0],
+          tax: tax[0],
         }
       : undefined,
     pool1Info
@@ -78,6 +99,7 @@ export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | 
           stakeRefund: stakeRefund[1],
           claimableAmount: claimableAmount[1],
           claimed: claimed[1],
+          tax: tax[1],
         }
       : undefined,
   ]

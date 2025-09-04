@@ -1,7 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Box, Card, CardBody, CardHeader, ExpandableButton, FlexGap } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
-import { CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { IfoRibbon } from './IfoCards/IfoRibbon'
 import { IfoSaleInfoDisplay } from './IfoCards/IfoSaleInfoCard'
 import IfoPoolInfoDisplay from './IfoCards/IfoPoolInfoDisplay'
@@ -30,31 +29,12 @@ const Header = styled(CardHeader)<{ $bannerUrl: string }>`
   border-top-right-radius: 32px;
 `
 
-const TAX_PRECISION = 10000000000n
-
 const IfoHistoryCard: React.FC = () => {
   const [expanded, setExpanded] = useState(false)
   const { config, info, pools } = useIfo()
   const [ifoStatus0] = useIFOStatus()
 
   const pool0 = pools?.[0]
-
-  const { cakeToBurn } = useMemo(() => {
-    if (!pool0 || !pool0.stakeCurrency || !pool0.hasTax) {
-      return { cakeToBurn: undefined }
-    }
-    const overflow =
-      pool0.totalAmountPool > pool0.raisingAmountPool ? pool0.totalAmountPool - pool0.raisingAmountPool : 0n
-    if (overflow <= 0n) {
-      return { cakeToBurn: undefined }
-    }
-    const taxRaw = (overflow * pool0.flatTaxRate) / TAX_PRECISION
-    if (taxRaw <= 0n) {
-      return { cakeToBurn: undefined }
-    }
-    const amount = CurrencyAmount.fromRawAmount(pool0.stakeCurrency, taxRaw)
-    return { cakeToBurn: `${amount.toSignificant(6)} ${amount.currency.symbol}` }
-  }, [pool0])
 
   const symbol = info?.offeringCurrency?.symbol ?? ''
   const tokenAddress = info?.offeringCurrency?.wrapped.address ?? ''
@@ -76,7 +56,7 @@ const IfoHistoryCard: React.FC = () => {
           <FlexGap flexDirection="column" gap="16px">
             <IfoSaleInfoDisplay />
             <IfoAllocationDisplay symbol={symbol} tokenAddress={tokenAddress} allocatedAmount={saleAmount} />
-            <IfoPoolInfoDisplay pid={0} ifoStatus={ifoStatus0} variant="history" cakeToBurn={cakeToBurn} />
+            <IfoPoolInfoDisplay pid={0} ifoStatus={ifoStatus0} variant="history" />
           </FlexGap>
         </CardBody>
       )}

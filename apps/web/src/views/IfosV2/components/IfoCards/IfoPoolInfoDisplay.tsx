@@ -28,10 +28,9 @@ interface IfoPoolInfoDisplayProps {
   ifoStatus?: IFOStatus
   userStatus?: IFOUserStatus
   variant: 'live' | 'finished' | 'presale' | 'history'
-  cakeToBurn?: string
 }
 
-const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus, userStatus, variant, cakeToBurn }) => {
+const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus, userStatus, variant }) => {
   const { t } = useTranslation()
   const { pools } = useIfo()
   const poolInfo = pools?.[pid]
@@ -42,6 +41,9 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus,
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
   const showExtraInfo = variant === 'live' && userHasStaked
   const feeTier = poolInfo?.feeTier !== undefined ? `${(poolInfo.feeTier * 100).toFixed(2)}%` : undefined
+  const cakeToBurn = userStatus?.tax
+    ? `${userStatus.tax.toSignificant(6)} ${userStatus.tax.currency.symbol}`
+    : undefined
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     t('This sale has been oversubscribed. You will get partial refund of the deposit.'),

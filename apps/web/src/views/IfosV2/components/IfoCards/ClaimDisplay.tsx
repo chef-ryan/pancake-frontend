@@ -18,22 +18,28 @@ export const ClaimDisplay: React.FC<{
   const { t } = useTranslation()
   const { claim, isPending: isLoading } = useIFOClaimCallback()
   const claimableAmount = userStatus?.claimableAmount?.toSignificant(6)
-  const { config, info, pools } = useIfo()
+  const { info, pools } = useIfo()
   const offeringCurrency = info?.offeringCurrency
   const status = info?.status
   const stakeCurrency = pools?.[pid]?.stakeCurrency
-  const { icon } = config ?? {}
   const amountInDollar = useStablecoinPriceAmount(
     offeringCurrency ?? undefined,
     claimableAmount !== undefined && Number.isFinite(+claimableAmount) ? +claimableAmount : undefined,
   )
   const refundAmount = userStatus?.stakeRefund?.toSignificant(6)
+  const taxAmount = userStatus?.tax?.toSignificant(6)
   const hasRefund = userStatus?.stakeRefund?.greaterThan(0)
 
   const refundInDollar = useStablecoinPriceAmount(
     stakeCurrency ?? undefined,
     refundAmount !== undefined && Number.isFinite(+refundAmount) ? +refundAmount : undefined,
   )
+  const taxInDollar = useStablecoinPriceAmount(
+    stakeCurrency ?? undefined,
+    taxAmount !== undefined && Number.isFinite(+taxAmount) ? +taxAmount : undefined,
+  )
+
+  const feeTier = pools?.[pid]?.feeTier !== undefined ? `${(pools[pid].feeTier * 100).toFixed(2)}%` : undefined
 
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
@@ -109,34 +115,64 @@ export const ClaimDisplay: React.FC<{
             </Text>
           </FlexGap>
           {hasRefund && (
-            <FlexGap justifyContent="space-between" alignItems="flex-start">
-              <FlexGap gap="3px" alignItems="center">
-                <Text color="textSubtle">{userStatus?.claimed ? t('Refunded') : t('Refund')}</Text>
-                {userStatus?.claimed ? null : (
-                  <FlexGap ref={targetRef}>
-                    <InfoIcon width="14px" color="textSubtle" />
-                    {tooltipVisible && tooltip}
+            <>
+              <FlexGap justifyContent="space-between" alignItems="flex-start">
+                <FlexGap gap="3px" alignItems="center">
+                  <Text color="textSubtle">{userStatus?.claimed ? t('Refunded') : t('Refund')}</Text>
+                  {userStatus?.claimed ? null : (
+                    <FlexGap ref={targetRef}>
+                      <InfoIcon width="14px" color="textSubtle" />
+                      {tooltipVisible && tooltip}
+                    </FlexGap>
+                  )}
+                </FlexGap>
+                <FlexGap flexDirection="column" alignItems="flex-end">
+                  <Text>
+                    {refundAmount} {stakeCurrency?.symbol ?? ''}
+                  </Text>
+                  <FlexGap>
+                    {Number.isFinite(refundInDollar) ? (
+                      <>
+                        <Text fontSize="14px" color="textSubtle" ellipsis>
+                          {`~${refundInDollar && formatDollarAmount(refundInDollar)}`}
+                        </Text>
+                        <Text ml="4px" fontSize="14px" color="textSubtle">
+                          USD
+                        </Text>
+                      </>
+                    ) : null}
                   </FlexGap>
-                )}
-              </FlexGap>
-              <FlexGap flexDirection="column" alignItems="flex-end">
-                <Text>
-                  {userStatus?.stakeRefund?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
-                </Text>
-                <FlexGap>
-                  {Number.isFinite(refundInDollar) ? (
-                    <>
-                      <Text fontSize="14px" color="textSubtle" ellipsis>
-                        {`~${refundInDollar && formatDollarAmount(refundInDollar)}`}
-                      </Text>
-                      <Text ml="4px" fontSize="14px" color="textSubtle">
-                        USD
-                      </Text>
-                    </>
-                  ) : null}
                 </FlexGap>
               </FlexGap>
-            </FlexGap>
+              {userStatus?.tax?.greaterThan(0) && (
+                <FlexGap justifyContent="space-between" alignItems="flex-start" mt="8px">
+                  <Text color="textSubtle">{t('Tax')}</Text>
+                  <FlexGap flexDirection="column" alignItems="flex-end">
+                    <Text>
+                      {taxAmount} {stakeCurrency?.symbol ?? ''}
+                    </Text>
+                    <FlexGap>
+                      {Number.isFinite(taxInDollar) ? (
+                        <>
+                          <Text fontSize="14px" color="textSubtle" ellipsis>
+                            {`~${taxInDollar && formatDollarAmount(taxInDollar)}`}
+                          </Text>
+                          <Text ml="4px" fontSize="14px" color="textSubtle">
+                            USD
+                          </Text>
+                        </>
+                      ) : null}
+                    </FlexGap>
+                  </FlexGap>
+                </FlexGap>
+              )}
+              {feeTier && (
+                <FlexGap justifyContent="space-between" mt="8px">
+                  <Text color="textSubtle">{t('Fee Tier')}</Text>
+                  <Text>{feeTier}</Text>
+                </FlexGap>
+              )}
+            </>
           )}
         </FlexGap>
       ) : (
