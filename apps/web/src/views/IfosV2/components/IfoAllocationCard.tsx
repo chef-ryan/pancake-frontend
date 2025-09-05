@@ -30,14 +30,24 @@ export const IfoAllocationDisplay: React.FC<IfoAllocationCardProps> = ({
       <FlexGap width="100%" gap="8px">
         <AddToWalletButton
           variant="subtle"
-          width="100%"
           wrapperProps={{ flex: 1 }}
           tokenAddress={tokenAddress}
           tokenSymbol={symbol}
           tokenDecimals={tokenDecimals}
+          endIcon={null}
           buttonText={t('View in Wallet')}
         />
-        <Button as="a" href={swapUrl} target="_blank" rel="noopener noreferrer" flex="1" width="100%">
+        <Button
+          rel="noopener noreferrer"
+          width="100%"
+          onClick={() => {
+            window.open(swapUrl, '_blank', 'noopener,noreferrer')
+          }}
+          style={{
+            flex: 1,
+            padding: 0,
+          }}
+        >
           {t('Swap')} {symbol}
         </Button>
       </FlexGap>
