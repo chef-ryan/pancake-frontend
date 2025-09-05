@@ -57,11 +57,13 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus,
   const feeTierTooltipContent = (
     <Text as="div" fontSize="12px">
       <Trans>
-        Tiered Tax for Oversubscription
+        Tiered Tax by Subscription Multiple
         <br />
-        Fees decrease as oversubscription grows:
+        Fees decrease as subscription multiple (x) grows:
         <br />
-        • ≥0x → 1% fee
+        • ≤ 1x : 0%
+        <br />
+        • &gt;1x → 1% fee
         <br />
         • ≥50x → 0.8% fee
         <br />

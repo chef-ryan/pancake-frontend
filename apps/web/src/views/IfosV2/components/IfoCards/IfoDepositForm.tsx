@@ -251,6 +251,7 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
         ) : null}
         <Button
           disabled={
+            info?.status !== 'live' ||
             value === '' ||
             !depositAmount ||
             depositAmount.equalTo(0) ||
