@@ -1627,6 +1627,7 @@
   "Scanning Risk": "Scanning Risk",
   "Add to Wallet": "Add to Wallet",
   "Add %asset% to Wallet": "Add %asset% to Wallet",
+  "View in Wallet": "View in Wallet",
   "Common tokens": "Common tokens",
   "Swap max. %inputAmount% %inputSymbol% for %outputAmount% %outputSymbol%": "Swap max. %inputAmount% %inputSymbol% for %outputAmount% %outputSymbol%",
   "Swap max. %inputAmount% %inputSymbol% for %outputAmount% %outputSymbol% to %recipientAddress%": "Swap max. %inputAmount% %inputSymbol% for %outputAmount% %outputSymbol% to %recipientAddress%",

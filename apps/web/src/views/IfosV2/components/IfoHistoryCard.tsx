@@ -38,6 +38,7 @@ const IfoHistoryCard: React.FC = () => {
 
   const symbol = info?.offeringCurrency?.symbol ?? ''
   const tokenAddress = info?.offeringCurrency?.wrapped.address ?? ''
+  const tokenDecimals = info?.offeringCurrency?.decimals ?? 18
   const saleAmount = pool0?.saleAmount?.toSignificant(6)
   if (info?.status !== 'finished') {
     return null
@@ -55,7 +56,12 @@ const IfoHistoryCard: React.FC = () => {
         <CardBody p="24px">
           <FlexGap flexDirection="column" gap="16px">
             <IfoSaleInfoDisplay />
-            <IfoAllocationDisplay symbol={symbol} tokenAddress={tokenAddress} allocatedAmount={saleAmount} />
+            <IfoAllocationDisplay
+              symbol={symbol}
+              tokenAddress={tokenAddress}
+              tokenDecimals={tokenDecimals}
+              allocatedAmount={saleAmount}
+            />
             <IfoPoolInfoDisplay pid={0} ifoStatus={ifoStatus0} variant="history" />
           </FlexGap>
         </CardBody>

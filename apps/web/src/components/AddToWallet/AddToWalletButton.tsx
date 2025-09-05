@@ -5,6 +5,7 @@ import {
   ButtonProps,
   CoinbaseWalletIcon,
   Flex,
+  FlexProps,
   MetamaskIcon,
   OkxWallet,
   OperaIcon,
@@ -36,6 +37,8 @@ export interface AddToWalletButtonProps {
   textOptions?: AddToWalletTextOptions
   marginTextBetweenLogo?: string
   tooltipPlacement?: TooltipOptions['placement']
+  wrapperProps?: FlexProps
+  buttonText?: string
 }
 
 const Icons = {
@@ -134,6 +137,8 @@ const AddToWalletButton: React.FC<AddToWalletButtonProps & ButtonProps> = ({
   tooltipPlacement = 'auto',
   ml,
   mr,
+  wrapperProps,
+  buttonText,
   ...props
 }) => {
   const { t } = useTranslation()
@@ -173,9 +178,9 @@ const AddToWalletButton: React.FC<AddToWalletButtonProps & ButtonProps> = ({
 
   return (
     <>
-      <Flex alignItems="center" justifyContent="center" ref={targetRef} ml={ml} mr={mr}>
+      <Flex alignItems="center" justifyContent="center" ref={targetRef} ml={ml} mr={mr} {...wrapperProps}>
         <Button {...props} title={t('Add to your wallet')} onClick={handleOnClick}>
-          {getWalletText(textOptions, tokenSymbol, t)}
+          {buttonText ?? getWalletText(textOptions, tokenSymbol, t)}
           {walletIcon}
         </Button>
       </Flex>

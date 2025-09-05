@@ -1,13 +1,20 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, Button, Text, FlexGap } from '@pancakeswap/uikit'
+import AddToWalletButton from 'components/AddToWallet/AddToWalletButton'
 
 interface IfoAllocationCardProps {
   symbol: string
   tokenAddress: string
+  tokenDecimals: number
   allocatedAmount?: string
 }
 
-export const IfoAllocationDisplay: React.FC<IfoAllocationCardProps> = ({ symbol, tokenAddress, allocatedAmount }) => {
+export const IfoAllocationDisplay: React.FC<IfoAllocationCardProps> = ({
+  symbol,
+  tokenAddress,
+  tokenDecimals,
+  allocatedAmount,
+}) => {
   const { t } = useTranslation()
   const amount = allocatedAmount ?? '0'
   const swapUrl = `https://pancakeswap.finance/swap?chain=bsc&inputCurrency=${tokenAddress}&outputCurrency=BNB`
@@ -20,9 +27,20 @@ export const IfoAllocationDisplay: React.FC<IfoAllocationCardProps> = ({ symbol,
       <Text fontSize="20px" bold>
         {amount}
       </Text>
-      <Button as="a" href={swapUrl} target="_blank" rel="noopener noreferrer" width="100%">
-        {t('Swap')} {symbol}
-      </Button>
+      <FlexGap width="100%" gap="8px">
+        <AddToWalletButton
+          variant="subtle"
+          width="100%"
+          wrapperProps={{ flex: 1 }}
+          tokenAddress={tokenAddress}
+          tokenSymbol={symbol}
+          tokenDecimals={tokenDecimals}
+          buttonText={t('View in Wallet')}
+        />
+        <Button as="a" href={swapUrl} target="_blank" rel="noopener noreferrer" flex="1" width="100%">
+          {t('Swap')} {symbol}
+        </Button>
+      </FlexGap>
     </FlexGap>
   )
 }

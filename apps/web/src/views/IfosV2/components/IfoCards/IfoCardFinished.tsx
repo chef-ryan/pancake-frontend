@@ -32,6 +32,7 @@ export const IfoCardFinished: React.FC<IfoCardProps> = ({
   const offeringCurrency = info?.offeringCurrency
   const symbol = offeringCurrency?.symbol ?? ''
   const tokenAddress = offeringCurrency?.wrapped.address ?? ''
+  const tokenDecimals = offeringCurrency?.decimals ?? 18
 
   const allocationCurrencyAmount = (() => {
     if (userStatus0?.claimableAmount && userStatus1?.claimableAmount) {
@@ -52,7 +53,12 @@ export const IfoCardFinished: React.FC<IfoCardProps> = ({
   const saleInfo = <IfoSaleInfoCard />
 
   const allocationCard = showAllocationCard ? (
-    <IfoAllocationCard symbol={symbol} tokenAddress={tokenAddress} allocatedAmount={allocatedAmount} />
+    <IfoAllocationCard
+      symbol={symbol}
+      tokenAddress={tokenAddress}
+      tokenDecimals={tokenDecimals}
+      allocatedAmount={allocatedAmount}
+    />
   ) : null
 
   const pool0Card = pool0Info ? (
