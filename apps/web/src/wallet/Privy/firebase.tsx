@@ -11,6 +11,7 @@ import {
 } from 'firebase/auth'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { nanoid } from 'nanoid'
+import Cookie from 'js-cookie'
 import { usePrivySocialLoginAtom, useSocialLoginProviderAtom } from './atom'
 import { loginWithTelegramViaScript } from './telegramLogin'
 
@@ -149,9 +150,10 @@ export function FirebaseAuthProvider({ children }: AuthProviderProps) {
       setSocialProvider('discord')
 
       const state = nanoid(21)
-      localStorage.setItem('discordAuthState', state)
-      const from = encodeURIComponent(btoa(window.location.href))
-      const redirectUri = `${window.location.origin}/auth/discord?from=${from}`
+      Cookie.set('discordAuthState', state, { sameSite: 'Lax', path: '/' })
+      const from = window.location.pathname + window.location.search + window.location.hash
+      localStorage.setItem('discordAuthFrom', from)
+      const redirectUri = `${window.location.origin}/auth/discord`
       const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID
       window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
         redirectUri,

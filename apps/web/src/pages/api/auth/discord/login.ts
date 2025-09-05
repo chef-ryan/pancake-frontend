@@ -12,8 +12,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const { code, state } = req.body ?? {}
+  const cookieState = req.cookies?.discordAuthState
 
-  if (!code || typeof code !== 'string' || !state || typeof state !== 'string') {
+  if (
+    !code ||
+    typeof code !== 'string' ||
+    !state ||
+    typeof state !== 'string' ||
+    !cookieState ||
+    typeof cookieState !== 'string'
+  ) {
     res.status(400).json({ error: 'Invalid code or state' })
     return
   }
@@ -21,6 +29,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!stateRegex.test(state)) {
     // ensure state matches nanoid(21) format
     res.status(400).json({ error: 'Invalid state format' })
+    return
+  }
+
+  if (state !== cookieState) {
+    res.status(400).json({ error: 'State mismatch' })
     return
   }
 
@@ -63,7 +76,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await firebaseAdmin() // Ensure Admin SDK is initialized
     const customToken = await getAuth().createCustomToken(`discord:${discordId}`)
 
-    // 4. Return token to frontend
+    // 4. Return token to frontend and clear state cookie
+    res.setHeader('Set-Cookie', 'discordAuthState=; Path=/; Max-Age=0; SameSite=Lax')
     res.status(200).json({ customToken })
   } catch (err) {
     console.error('[Discord login error]:', err)

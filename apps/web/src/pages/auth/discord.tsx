@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
+import Cookie from 'js-cookie'
 import { useFirebaseAuth } from '../../wallet/Privy/firebase'
 import { useSocialLoginProviderAtom } from '../../wallet/Privy/atom'
 
@@ -13,7 +14,7 @@ export default function DiscordAuthPage() {
   useEffect(() => {
     const authenticate = async () => {
       if (!router.isReady) return
-      const { code, state, from } = router.query
+      const { code, state } = router.query
       if (typeof code !== 'string' || typeof state !== 'string') {
         console.error('Invalid Discord auth callback parameters')
         return
@@ -22,12 +23,14 @@ export default function DiscordAuthPage() {
         console.error('Invalid Discord OAuth state format')
         return
       }
-      const expectedState = localStorage.getItem('discordAuthState')
+      const expectedState = Cookie.get('discordAuthState')
       if (state !== expectedState) {
         console.error('Discord OAuth state mismatch')
         return
       }
-      localStorage.removeItem('discordAuthState')
+      Cookie.remove('discordAuthState', { path: '/' })
+      const from = localStorage.getItem('discordAuthFrom') || undefined
+      localStorage.removeItem('discordAuthFrom')
       try {
         const res = await fetch('/api/auth/discord/login', {
           method: 'POST',
@@ -39,17 +42,9 @@ export default function DiscordAuthPage() {
           setSocialProvider('discord')
           const loggedIn = await loginWithCustomToken(data.customToken)
           if (loggedIn) {
-            let redirectTo = '/'
-            if (typeof from === 'string') {
-              try {
-                const decoded = atob(decodeURIComponent(from))
-                const url = new URL(decoded)
-                if (url.origin === window.location.origin) {
-                  redirectTo = url.toString()
-                }
-              } catch (error) {
-                console.error('Invalid from parameter:', error)
-              }
+            let redirectTo = `${window.location.origin}/`
+            if (from) {
+              redirectTo += from.replace(/^\/+/, '')
             }
             window.location.replace(redirectTo)
           }
