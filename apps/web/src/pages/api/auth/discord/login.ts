@@ -6,7 +6,13 @@ const MAX_STATE_LENGTH = 21
 const stateRegex = /^[a-zA-Z0-9_-]+$/
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
-  const { code, state } = req.query
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST')
+    res.status(405).json({ error: 'Method not allowed' })
+    return
+  }
+
+  const { code, state } = req.body ?? {}
 
   if (!code || typeof code !== 'string' || !state || typeof state !== 'string') {
     res.status(400).json({ error: 'Invalid code or state' })
@@ -59,43 +65,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await firebaseAdmin() // Ensure Admin SDK is initialized
     const customToken = await getAuth().createCustomToken(`discord:${discordId}`)
 
-    // 4. Return token to frontend via postMessage
-    res.setHeader('Content-Type', 'text/html')
-    res.end(`
-      <!DOCTYPE html>
-  <html lang="zh-TW">
-    <head>
-      <meta charset="UTF-8" />
-      <title>Login success</title>
-    </head>
-    <body>
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          const token = "${customToken}";
-          const state = "${state}";
-          const origin = "${process.env.NEXT_PUBLIC_FRONTEND_ORIGIN || '*'}";
-
-          if (window.opener) {
-            window.opener.postMessage({ customToken: token, state: state }, origin);
-            window.close();
-          } else {
-            // fallback
-            localStorage.setItem('discordAuthToken', token);
-            localStorage.setItem('discordAuthCallbackState', state);
-            document.body.innerHTML =
-              '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; flex-direction: column;">' +
-              '<h2>login success</h2>' +
-              '<p>close window and return to PancakeSwap.</p>' +
-              '<button onclick="window.close()" style="padding: 10px 20px; background: #1FC7D4; color: white; border: none; border-radius: 16px; cursor: pointer; margin-top: 20px;">close window</button>' +
-              '</div>';
-          }
-        });
-      </script>
-    </body>
-  </html>
-    `)
+    // 4. Return token to frontend
+    res.status(200).json({ customToken })
   } catch (err) {
-    console.error('[Discord callback error]:', err)
+    console.error('[Discord login error]:', err)
     res.status(500).json({ error: 'Discord authentication failed' })
   }
 }
