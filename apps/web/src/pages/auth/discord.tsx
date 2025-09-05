@@ -33,7 +33,18 @@ export default function DiscordAuthPage() {
           setSocialProvider('discord')
           const loggedIn = await loginWithCustomToken(data.customToken)
           if (loggedIn) {
-            const redirectTo = typeof from === 'string' ? atob(decodeURIComponent(from)) : '/'
+            let redirectTo = '/'
+            if (typeof from === 'string') {
+              try {
+                const decoded = atob(decodeURIComponent(from))
+                const url = new URL(decoded)
+                if (url.origin === window.location.origin) {
+                  redirectTo = url.toString()
+                }
+              } catch (error) {
+                console.error('Invalid from parameter:', error)
+              }
+            }
             window.location.replace(redirectTo)
           }
         } else {

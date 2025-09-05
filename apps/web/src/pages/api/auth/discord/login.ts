@@ -47,6 +47,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
       body: params,
     })
+    if (!tokenRes.ok) {
+      const errData = await tokenRes.json()
+      throw new Error(`Token exchange failed: ${errData.error || tokenRes.status}`)
+    }
 
     const tokenData = await tokenRes.json()
     const { access_token: accessToken } = tokenData
