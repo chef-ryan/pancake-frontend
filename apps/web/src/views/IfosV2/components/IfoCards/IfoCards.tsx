@@ -38,7 +38,7 @@ const StyledCard = styled(Card)`
   margin: 0 auto;
   border-top-left-radius: 32px;
   border-top-right-radius: 32px;
-  overflow: hidden;
+  overflow: visible;
 
   ${({ theme }) => theme.mediaQueries.lg} {
     width: 737px;

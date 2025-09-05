@@ -136,7 +136,11 @@ export const IfoRibbon: React.FC = () => {
   }
 
   return (
-    <Container>
+    <Container
+      style={{
+        overflow: 'visible',
+      }}
+    >
       {ifoStatus === 'live' && (
         <StyledProgress variant="flat">
           <ProgressBar
