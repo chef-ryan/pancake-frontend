@@ -3,6 +3,8 @@ import { useEffect } from 'react'
 import { useFirebaseAuth } from '../../wallet/Privy/firebase'
 import { useSocialLoginProviderAtom } from '../../wallet/Privy/atom'
 
+const stateRegex = /^[a-zA-Z0-9_-]{21}$/
+
 export default function DiscordAuthPage() {
   const router = useRouter()
   const { loginWithCustomToken } = useFirebaseAuth()
@@ -14,6 +16,10 @@ export default function DiscordAuthPage() {
       const { code, state, from } = router.query
       if (typeof code !== 'string' || typeof state !== 'string') {
         console.error('Invalid Discord auth callback parameters')
+        return
+      }
+      if (!stateRegex.test(state)) {
+        console.error('Invalid Discord OAuth state format')
         return
       }
       const expectedState = localStorage.getItem('discordAuthState')

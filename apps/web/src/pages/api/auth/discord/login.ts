@@ -2,8 +2,7 @@ import { getAuth } from 'firebase-admin/auth'
 import { firebaseAdmin } from 'lib/firebase-admin'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-const MAX_STATE_LENGTH = 21
-const stateRegex = /^[a-zA-Z0-9_-]+$/
+const stateRegex = /^[a-zA-Z0-9_-]{21}$/
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   if (req.method !== 'POST') {
@@ -19,13 +18,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return
   }
 
-  if (state.length > MAX_STATE_LENGTH) {
-    res.status(400).json({ error: 'State parameter too long' })
-    return
-  }
-
   if (!stateRegex.test(state)) {
-    // only allow alphanumeric + underscore
+    // ensure state matches nanoid(21) format
     res.status(400).json({ error: 'Invalid state format' })
     return
   }
