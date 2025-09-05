@@ -28,7 +28,6 @@ export default function DiscordAuthPage() {
         console.error('Discord OAuth state mismatch')
         return
       }
-      Cookie.remove('discordAuthState', { path: '/' })
       const from = localStorage.getItem('discordAuthFrom') || undefined
       localStorage.removeItem('discordAuthFrom')
       try {
@@ -53,6 +52,8 @@ export default function DiscordAuthPage() {
         }
       } catch (err) {
         console.error('Discord login failed:', err)
+      } finally {
+        Cookie.remove('discordAuthState', { path: '/' })
       }
     }
     authenticate()
