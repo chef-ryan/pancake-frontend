@@ -63,5 +63,5 @@ export default function DiscordAuthPage() {
     authenticate()
   }, [router, loginWithCustomToken, setSocialProvider])
 
-  return <div>Signing in with Discord...</div>
+  return null
 }
