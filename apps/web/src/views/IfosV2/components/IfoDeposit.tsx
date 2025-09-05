@@ -1,15 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import {
-  Box,
-  Card,
-  CardBody,
-  CardHeader,
-  FlexGap,
-  Text,
-  IconButton,
-  ArrowBackIcon,
-  useMatchBreakpoints,
-} from '@pancakeswap/uikit'
+import { Box, Card, CardBody, CardHeader, FlexGap, Text, IconButton, ArrowBackIcon } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
 import useTheme from 'hooks/useTheme'
 import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
@@ -44,9 +34,9 @@ const StyledCard = styled(Card)`
   }
 `
 
-const StyledDepositCard = styled(Card)<{ isMobile: boolean }>`
+const StyledDepositCard = styled(Card)`
   width: 100%;
-  margin: ${({ isMobile }) => (isMobile ? '16px' : '24px')} auto 0;
+  margin: 16px;
 
   ${({ theme }) => theme.mediaQueries.lg} {
     width: 320px;
@@ -68,7 +58,7 @@ export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
   }
 
   return (
-    <StyledCard className="ifo-card">
+    <StyledCard>
       <Box
         background={theme.colors.gradientBubblegum}
         className="sticky-header"
@@ -93,7 +83,6 @@ const IfoDepositCard = ({ pid }: { pid: number }) => {
   const router = useRouter()
   const [userStatus0, userStatus1] = useIFOUserStatus()
   const userStatus = pid === 0 ? userStatus0 : userStatus1
-  const { isMobile } = useMatchBreakpoints()
 
   const { pools, info } = useIfo()
   const poolInfo = pools?.[pid]
@@ -105,7 +94,7 @@ const IfoDepositCard = ({ pid }: { pid: number }) => {
   }
 
   return (
-    <StyledDepositCard isMobile={isMobile}>
+    <StyledDepositCard>
       <CardBody>
         <FlexGap flexDirection="column">
           <IconButton scale="sm" variant="text" onClick={() => router.back()} my="24px" alignSelf="flex-start">
