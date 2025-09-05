@@ -1,10 +1,11 @@
 import { useTranslation } from '@pancakeswap/localization'
 import type { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
-import { Box, Card, CardBody, CardFooter, Flex, Text } from '@pancakeswap/uikit'
+import { Box, Text } from '@pancakeswap/uikit'
 import dynamic from 'next/dynamic'
 import { useMemo } from 'react'
 import { useAtomValue } from 'jotai'
 import { LottieComponentProps } from 'lottie-react'
+import { useTheme } from 'styled-components'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import { ifoLoadingAnimationAtom } from '../atoms'
 
@@ -14,8 +15,44 @@ interface IfoSubmittingCardProps {
   deposit: CurrencyAmount<Currency>
 }
 
-const IfoSubmittingCard: React.FC<IfoSubmittingCardProps> = ({ deposit }) => {
+interface DepositDisplayProps {
+  deposit: CurrencyAmount<Currency>
+  usdValue: string
+}
+
+const DepositDisplay: React.FC<DepositDisplayProps> = ({ deposit, usdValue }) => {
   const { t } = useTranslation()
+  const theme = useTheme()
+
+  return (
+    <Box p="24px">
+      <Box
+        p="24px"
+        style={{
+          borderRadius: '24px',
+          border: `1px solid ${theme.colors.cardBorder}`,
+          background: theme.colors.background,
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Text fontSize="14px" color="textSubtle">
+          {t('Deposit Amount')}
+        </Text>
+        <Text>
+          {deposit.toSignificant(6)} {deposit.currency.symbol}
+        </Text>
+        <Text fontSize="14px" color="textSubtle">
+          ~{usdValue} USD
+        </Text>
+      </Box>
+    </Box>
+  )
+}
+
+const IfoSubmittingCard: React.FC<IfoSubmittingCardProps> = ({ deposit }) => {
   const animationData = useAtomValue(ifoLoadingAnimationAtom)
 
   const usdValue = useStablecoinPriceAmount(deposit.currency, Number(deposit.toExact()), {
@@ -35,18 +72,7 @@ const IfoSubmittingCard: React.FC<IfoSubmittingCardProps> = ({ deposit }) => {
       <Box p="24px" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {animationData && <Lottie animationData={animationData} loop style={{ width: 200 }} />}
       </Box>
-      <Box p="24px">
-        <Box p="16px" style={{ borderRadius: '16px', width: '100%' }}>
-          <Text fontSize="14px" color="textSubtle">
-            {t('Deposit Amount')}: {deposit.toSignificant(6)} {deposit.currency.symbol}
-          </Text>
-          <Flex justifyContent="flex-end">
-            <Text fontSize="14px" color="textSubtle">
-              ~{formattedUsd} USD
-            </Text>
-          </Flex>
-        </Box>
-      </Box>
+      <DepositDisplay deposit={deposit} usdValue={formattedUsd} />
     </Box>
   )
 }
