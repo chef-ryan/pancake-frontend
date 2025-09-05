@@ -61,28 +61,26 @@ const CountDown: React.FC<{
     }
   }, [seconds, info, updateVersion])
 
+  const segments = [
+    { value: days, suffix: t('d') },
+    { value: hours, suffix: t('h') },
+    { value: minutes, suffix: t('m') },
+    { value: seconds, suffix: t('s') },
+  ].filter((segment) => segment.value > 0) as { value: number; suffix: string }[]
+
+  if (segments.length === 0) {
+    segments.push({ value: 0, suffix: t('s') })
+  }
+
   return (
     <FlexGap gap="4px" alignItems="baseline">
-      {days ? (
-        <CountdownText color={color}>
-          {days}
-          {t('d')} :
+      {segments.map((segment, index) => (
+        <CountdownText key={`${segment.suffix}-${index}`} color={color}>
+          {segment.value}
+          {segment.suffix}
+          {index < segments.length - 1 ? ' :' : ''}
         </CountdownText>
-      ) : null}
-      {hours ? (
-        <CountdownText color={color}>
-          {hours}
-          {t('h')} :
-        </CountdownText>
-      ) : null}
-      <CountdownText color={color}>
-        {minutes ?? '0'}
-        {t('m')} :
-      </CountdownText>
-      <CountdownText color={color}>
-        {seconds}
-        {t('s')}
-      </CountdownText>
+      ))}
     </FlexGap>
   )
 }
