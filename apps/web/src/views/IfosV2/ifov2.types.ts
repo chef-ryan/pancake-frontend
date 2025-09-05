@@ -79,9 +79,12 @@ export type IFOConfig = {
   ineligibleContent?: ReactNode
   contractAddress: Address
   faqs?: IFOFAQs
+  howTo?: HowTo[]
 }
 
 export type IFOFAQs = Array<{ title: ReactNode; description: ReactNode }>
+
+export type HowTo = { title: string; content: ReactNode }
 
 export interface VestingInfo {
   startTime: number

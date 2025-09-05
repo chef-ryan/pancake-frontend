@@ -20,6 +20,20 @@ export const ifoConfigs: IFOConfig[] = [
         <Trans>This is a test IFO v10 configuration for development and testing purposes.</Trans>
       </div>
     ),
+    howTo: [
+      {
+        title: 'Connect Wallet',
+        content: <Trans>Link your wallet on BNB Chain to get started.</Trans>,
+      },
+      {
+        title: 'Commit Funds',
+        content: <Trans>During the sale period, commit BNB to buy the offering tokens.</Trans>,
+      },
+      {
+        title: 'Claim Tokens',
+        content: <Trans>After the IFO ends, return to claim your purchased USDT.</Trans>,
+      },
+    ],
     faqs: [
       {
         title: <Trans>1. Test Environment Notice</Trans>,

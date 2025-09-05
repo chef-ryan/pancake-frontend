@@ -100,7 +100,7 @@ export const IfoSaleInfoDisplay: React.FC = () => {
       <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
         {t('Total Sale')}
       </Text>
-      <FlexGap mt="8px" gap="8px" alignItems="center" background={theme.colors.white}>
+      <FlexGap mt="8px" gap="8px" alignItems="center" background={theme.colors.backgroundAlt}>
         {icon && <StyledLogo size="40px" srcs={[icon]} />}
         <FlexGap flexDirection="column">
           <NumberDisplay

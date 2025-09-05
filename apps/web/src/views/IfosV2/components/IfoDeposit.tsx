@@ -59,17 +59,14 @@ export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
 
   return (
     <StyledCard>
-      <Box
-        background={theme.colors.gradientBubblegum}
-        className="sticky-header"
-        position="sticky"
-        bottom="48px"
-        width="100%"
-        zIndex={6}
-      >
+      <Box className="sticky-header" position="sticky" bottom="48px" width="100%" zIndex={6}>
         <Header $bannerUrl={bannerUrl} />
         <IfoRibbon />
-        <CardBody>
+        <CardBody
+          style={{
+            background: theme.colors.gradientBubblegum,
+          }}
+        >
           <IfoDepositCard pid={pid} />
         </CardBody>
       </Box>
@@ -97,7 +94,7 @@ const IfoDepositCard = ({ pid }: { pid: number }) => {
     <StyledDepositCard>
       <CardBody>
         <FlexGap flexDirection="column">
-          <IconButton scale="sm" variant="text" onClick={() => router.back()} my="24px" alignSelf="flex-start">
+          <IconButton scale="sm" variant="text" onClick={() => router.back()} my="24px">
             <ArrowBackIcon width="24px" color="textSubtle" />
           </IconButton>
           <Text fontSize="16px" bold textTransform="uppercase" color="secondary" mb="8px">

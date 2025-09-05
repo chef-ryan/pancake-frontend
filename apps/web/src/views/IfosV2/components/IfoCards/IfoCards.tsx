@@ -55,14 +55,7 @@ export const IfoCurrentCard = ({ bannerUrl }: { ifoId: string; bannerUrl: string
 
   return (
     <StyledCard>
-      <Box
-        background={theme.colors.gradientBubblegum}
-        className="sticky-header"
-        position="sticky"
-        bottom="48px"
-        width="100%"
-        zIndex={6}
-      >
+      <Box className="sticky-header" position="sticky" bottom="48px" width="100%" zIndex={6}>
         <Header $isCurrent $bannerUrl={bannerUrl} />
         <IfoRibbon />
         <IfoCard />
@@ -80,6 +73,7 @@ const IfoCard: React.FC = () => {
   const [ifoStatus0, ifoStatus1] = useIFOStatus()
   const { info } = useIfo()
   const ifoStatus = info?.status
+  const { theme } = useTheme()
 
   const cardProps = {
     pool0Info,
@@ -107,5 +101,13 @@ const IfoCard: React.FC = () => {
       break
   }
 
-  return <CardBody>{content}</CardBody>
+  return (
+    <CardBody
+      style={{
+        background: theme.colors.gradientBubblegum,
+      }}
+    >
+      {content}
+    </CardBody>
+  )
 }
