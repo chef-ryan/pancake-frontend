@@ -19,12 +19,13 @@ export const IfoPoolLive: React.FC<{
   const router = useRouter()
   const { config, info, pools } = useIfo()
   const status = info?.status
+  const isComingSoon = status === 'coming_soon'
   const poolInfo = pools?.[pid]
   const stakeCurrency = poolInfo?.stakeCurrency
   const ifoId = config?.id
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
   const { address: account } = useAccount()
-  if (status === 'coming_soon') {
+  if (isComingSoon) {
     return null
   }
 
@@ -39,7 +40,7 @@ export const IfoPoolLive: React.FC<{
   }
 
   const handleConnectWallet = () => {
-    logGTMIfoConnectWalletEvent(status === 'coming_soon')
+    logGTMIfoConnectWalletEvent(isComingSoon)
   }
 
   return (

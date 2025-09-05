@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { getViemClients } from 'utils/viem'
-import { zeroAddress, isAddressEqual } from 'viem'
+import { zeroAddress, isAddressEqual, type Address } from 'viem'
 import { useCurrency } from 'hooks/Tokens'
 import { Currency } from '@pancakeswap/swap-sdk-core'
 import { useAtomValue } from 'jotai'
@@ -85,9 +85,8 @@ export const useIFOPoolInfoCtx = (): PoolInfo[] => {
     if (!data || !addresses) return []
 
     return data
-      .filter((x) => x)
       .map(({ raw, taxRateRaw }, idx) => {
-        const poolToken = idx === 0 ? addresses.lpToken0 : addresses.lpToken1 ?? zeroAddress
+        const poolToken = ((idx === 0 ? addresses.lpToken0 : addresses.lpToken1) ?? zeroAddress) as Address
         const stakeCurrency = (idx === 0 ? stakeCurrency0 : stakeCurrency1) as Currency
         const mapped = mapToPoolInfo({
           raw,
@@ -102,8 +101,8 @@ export const useIFOPoolInfoCtx = (): PoolInfo[] => {
 
         return {
           ...mapped,
-          isCakePool: isAddressEqual(poolToken, cakeAddress),
-        }
+          isCakePool: isAddressEqual(poolToken, cakeAddress as `0x${string}`),
+        } as PoolInfo
       })
       .filter((pool): pool is PoolInfo => Boolean(pool))
   }, [data, addresses, stakeCurrency0, stakeCurrency1, offeringCurrency, cakeAddress])
