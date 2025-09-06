@@ -27,19 +27,13 @@ export const ClaimDisplay: React.FC<{
     claimableAmount !== undefined && Number.isFinite(+claimableAmount) ? +claimableAmount : undefined,
   )
   const refundAmount = userStatus?.stakeRefund?.toSignificant(6)
-  const taxAmount = userStatus?.tax?.toSignificant(6)
   const hasRefund = userStatus?.stakeRefund?.greaterThan(0)
 
   const refundInDollar = useStablecoinPriceAmount(
     stakeCurrency ?? undefined,
     refundAmount !== undefined && Number.isFinite(+refundAmount) ? +refundAmount : undefined,
   )
-  const taxInDollar = useStablecoinPriceAmount(
-    stakeCurrency ?? undefined,
-    taxAmount !== undefined && Number.isFinite(+taxAmount) ? +taxAmount : undefined,
-  )
-
-  const feeTier = pools?.[pid]?.feeTier !== undefined ? `${(pools[pid].feeTier * 100).toFixed(2)}%` : undefined
+  // fee tier information is no longer displayed
 
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
@@ -144,34 +138,7 @@ export const ClaimDisplay: React.FC<{
                   </FlexGap>
                 </FlexGap>
               </FlexGap>
-              {userStatus?.tax?.greaterThan(0) && (
-                <FlexGap justifyContent="space-between" alignItems="flex-start" mt="8px">
-                  <Text color="textSubtle">{t('Tax')}</Text>
-                  <FlexGap flexDirection="column" alignItems="flex-end">
-                    <Text>
-                      {taxAmount} {stakeCurrency?.symbol ?? ''}
-                    </Text>
-                    <FlexGap>
-                      {Number.isFinite(taxInDollar) ? (
-                        <>
-                          <Text fontSize="14px" color="textSubtle" ellipsis>
-                            {`~${taxInDollar && formatDollarAmount(taxInDollar)}`}
-                          </Text>
-                          <Text ml="4px" fontSize="14px" color="textSubtle">
-                            USD
-                          </Text>
-                        </>
-                      ) : null}
-                    </FlexGap>
-                  </FlexGap>
-                </FlexGap>
-              )}
-              {feeTier && (
-                <FlexGap justifyContent="space-between" mt="8px">
-                  <Text color="textSubtle">{t('Fee Tier')}</Text>
-                  <Text>{feeTier}</Text>
-                </FlexGap>
-              )}
+              {/* Tax and fee tier display removed */}
             </>
           )}
         </FlexGap>

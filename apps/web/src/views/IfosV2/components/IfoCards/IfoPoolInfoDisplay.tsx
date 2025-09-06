@@ -108,6 +108,31 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus,
     </FlexGap>
   )
 
+  const statusRight = (
+    <FlexGap flexDirection="column" alignItems="flex-end">
+      <FlexGap gap="3px" alignItems="center">
+        <StyledText color="text">
+          {ifoStatus?.progress.toFixed(2)} % {ifoStatus?.progress?.greaterThan(1) && '🎉'}
+        </StyledText>
+        {ifoStatus?.progress?.greaterThan(1) && variant === 'finished' && (
+          <FlexGap ref={statusTargetRef}>
+            <InfoIcon width="14px" color="textSubtle" />
+            {statusTooltipVisible && statusTooltip}
+          </FlexGap>
+        )}
+      </FlexGap>
+      {ifoStatus?.progress?.greaterThan(1) && variant !== 'finished' && (
+        <FlexGap gap="3px">
+          <StyledText color="text">{t('Oversubscribed')}</StyledText>
+          <FlexGap ref={statusTargetRef}>
+            <InfoIcon width="14px" color="textSubtle" />
+            {statusTooltipVisible && statusTooltip}
+          </FlexGap>
+        </FlexGap>
+      )}
+    </FlexGap>
+  )
+
   const list: InfoRowData[] = [
     {
       left: <StyledText color="textSubtle">{t('Sale Price per token')}</StyledText>,
@@ -146,33 +171,16 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus,
     {
       left: <StyledText color="textSubtle">{t('Fee Tier')}</StyledText>,
       right: feeTierRight,
-      display: variant !== 'presale' && !showExtraInfo && !!feeTier,
+      display: variant !== 'presale' && variant !== 'finished' && !showExtraInfo && !!feeTier,
     },
     {
       left: <StyledText color="textSubtle">{t('CAKE to burn:')}</StyledText>,
       right: <StyledText color="text">{cakeToBurn}</StyledText>,
-      display: variant !== 'presale' && !showExtraInfo && !!cakeToBurn,
+      display: variant !== 'presale' && variant !== 'finished' && !showExtraInfo && !!cakeToBurn,
     },
     {
       left: <StyledText color="textSubtle">{t('Status')}</StyledText>,
-      right: (
-        <FlexGap flexDirection="column" alignItems="flex-end">
-          <FlexGap gap="3px">
-            <StyledText color="text">
-              {ifoStatus?.progress.toFixed(2)} % {ifoStatus?.progress?.greaterThan(1) && '🎉'}
-            </StyledText>
-          </FlexGap>
-          {ifoStatus?.progress?.greaterThan(1) && (
-            <FlexGap gap="3px">
-              <StyledText color="text">{t('Oversubscribed')}</StyledText>
-              <FlexGap ref={statusTargetRef}>
-                <InfoIcon width="14px" color="textSubtle" />
-                {statusTooltipVisible && statusTooltip}
-              </FlexGap>
-            </FlexGap>
-          )}
-        </FlexGap>
-      ),
+      right: statusRight,
       display: variant !== 'presale' && variant !== 'history',
     },
     {

@@ -53,33 +53,6 @@ export const SubscribeInfo: React.FC<SubscribeInfoProps> = ({ stakeCurrency0, st
   )
 }
 
-interface FinishedInfoProps {
-  stakeCurrency0?: Currency
-  stakeCurrency1?: Currency
-}
-
-export const FinishedInfo: React.FC<FinishedInfoProps> = ({ stakeCurrency0, stakeCurrency1 }) => {
-  const { t } = useTranslation()
-  const { theme } = useTheme()
-  return (
-    <FlexGap
-      alignItems="center"
-      gap="8px"
-      mt="16px"
-      p="8px"
-      borderRadius="16px"
-      border={`1px solid ${theme.colors.cardBorder}`}
-    >
-      {stakeCurrency0 && stakeCurrency1 ? (
-        <DoubleCurrencyLogo size={40} currency0={stakeCurrency0} currency1={stakeCurrency1} />
-      ) : stakeCurrency0 || stakeCurrency1 ? (
-        <CurrencyLogo size="40px" currency={stakeCurrency0 ?? stakeCurrency1} />
-      ) : null}
-      <Text color="textSubtle">{t('Sale finished')}</Text>
-    </FlexGap>
-  )
-}
-
 export const IfoSaleInfoDisplay: React.FC = () => {
   const { t } = useTranslation()
   const { theme } = useTheme()
@@ -94,6 +67,26 @@ export const IfoSaleInfoDisplay: React.FC = () => {
     return null
   }
   const { offeringCurrency, totalSalesAmount, status } = info
+
+  if (status === 'finished') {
+    return (
+      <FlexGap mt="8px" gap="8px" alignItems="center" background={theme.colors.backgroundAlt}>
+        {icon && <StyledLogo size="40px" srcs={[icon]} />}
+        <FlexGap flexDirection="column">
+          <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
+            {t('Total Sale')}
+          </Text>
+          <NumberDisplay
+            bold
+            fontSize="20px"
+            lineHeight="30px"
+            value={totalSalesAmount?.toSignificant(6)}
+            suffix={` ${offeringCurrency?.symbol}`}
+          />
+        </FlexGap>
+      </FlexGap>
+    )
+  }
 
   return (
     <>
@@ -113,11 +106,7 @@ export const IfoSaleInfoDisplay: React.FC = () => {
           <Text color="textSubtle">{`${preSaleDurationText} ${t('Project Duration')}`}</Text>
         </FlexGap>
       </FlexGap>
-      {status !== 'finished' ? (
-        <SubscribeInfo stakeCurrency0={stakeCurrency0} stakeCurrency1={stakeCurrency1} />
-      ) : (
-        <FinishedInfo stakeCurrency0={stakeCurrency0} stakeCurrency1={stakeCurrency1} />
-      )}
+      <SubscribeInfo stakeCurrency0={stakeCurrency0} stakeCurrency1={stakeCurrency1} />
     </>
   )
 }

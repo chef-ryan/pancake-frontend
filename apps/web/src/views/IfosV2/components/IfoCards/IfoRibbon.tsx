@@ -188,9 +188,13 @@ const IfoRibbonEnd: React.FC<{
         style={{ background: isClaimed ? theme.colors.success : hasUserStaked ? theme.colors.textSubtle : undefined }}
       />
       <RibbonContainer>
-        <Text color={isClaimed || hasUserStaked ? 'white' : isDark ? '#39373E' : '#8D8D8D'}>
-          {t('Sale Finished')}{' '}
-          {isClaimed ? <> & {t('Claimed')}</> : hasUserStaked ? <> - {t('Claim available!')}</> : ''}
+        <Text
+          fontSize={['16px', '16px', '24px']}
+          fontFamily="Kanit"
+          fontWeight={['600', '600', '400']}
+          color={isClaimed || hasUserStaked ? 'white' : isDark ? '#39373E' : '#8D8D8D'}
+        >
+          {t('IFO Ended')} {isClaimed ? <> & {t('Claimed')}</> : hasUserStaked ? <> - {t('Claim available!')}</> : ''}
         </Text>
       </RibbonContainer>
     </>
