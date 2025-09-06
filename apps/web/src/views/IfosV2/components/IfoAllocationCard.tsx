@@ -55,12 +55,18 @@ export const IfoAllocationDisplay: React.FC<IfoAllocationCardProps> = ({
   )
 }
 
-const IfoAllocationCard: React.FC<IfoAllocationCardProps> = (props) => (
-  <Card>
-    <CardBody p="24px">
-      <IfoAllocationDisplay {...props} />
-    </CardBody>
-  </Card>
-)
+const IfoAllocationCard: React.FC<IfoAllocationCardProps> = (props) => {
+  if (!Number(props.allocatedAmount)) {
+    return null
+  }
+
+  return (
+    <Card>
+      <CardBody p="24px">
+        <IfoAllocationDisplay {...props} />
+      </CardBody>
+    </Card>
+  )
+}
 
 export default IfoAllocationCard
