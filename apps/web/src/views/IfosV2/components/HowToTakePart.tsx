@@ -28,8 +28,6 @@ const StyledHeading = styled(Heading)`
 
 const StyledCard = styled(Card)`
   background: ${({ theme }) => theme.colors.backgroundAlt};
-  border-radius: 24px;
-  padding: 24px;
   width: 100%;
   max-width: 400px;
 `
@@ -53,7 +51,7 @@ const StepNumber = styled(Box)`
 const StepCard = ({ stepNumber, title, description }: { stepNumber: number; title: string; description: string }) => {
   return (
     <StyledCard>
-      <CardBody p="0">
+      <CardBody p="24px">
         <StepNumber>
           <Text fontSize="24px" fontWeight="bold" color="white">
             {stepNumber}
