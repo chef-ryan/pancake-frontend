@@ -48,17 +48,30 @@ export const IfoPoolLive: React.FC<{
       <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
         {stakeCurrency?.symbol} {t('Pool')}
       </Text>
-      <FlexGap justifyContent="space-between" alignItems="center">
+      <FlexGap alignItems="center" width="100%" gap="8px">
         <CurrencyLogo currency={stakeCurrency} size="40px" />
         {!account ? (
-          <ConnectWalletButton scale="sm" onClickCapture={handleConnectWallet} />
+          <ConnectWalletButton scale="sm" onClickCapture={handleConnectWallet} style={{ marginLeft: 'auto' }} />
         ) : userHasStaked ? (
-          <Button variant="secondary" scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
+          <Button
+            variant="secondary"
+            scale="sm"
+            onClick={handleDepositClick}
+            disabled={status !== 'live'}
+            padding="11px 12px 13px 12px"
+            style={{ marginLeft: 'auto' }}
+          >
             <AddIcon color="primary" />
           </Button>
         ) : (
-          <Button scale="sm" onClick={handleDepositClick} disabled={status !== 'live'}>
-            {t('Deposit')}
+          <Button
+            scale="sm"
+            onClick={handleDepositClick}
+            disabled={status !== 'live'}
+            padding="11px 12px 13px 12px"
+            style={{ flex: 1 }}
+          >
+            {t('Deposit %symbol%', { symbol: stakeCurrency?.symbol })}
           </Button>
         )}
       </FlexGap>

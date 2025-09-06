@@ -8,8 +8,6 @@ export const IfoSaleDetailCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const { pools } = useIfo()
-  const stakeSymbols = pools.map((pool) => pool.stakeCurrency?.symbol).filter(Boolean) as string[]
-  const joinSymbols = stakeSymbols.length === 2 ? `${stakeSymbols[0]} & ${stakeSymbols[1]}` : stakeSymbols[0]
 
   return (
     <Card background={isDark ? '#18171A' : theme.colors.background} mb="16px">
@@ -18,9 +16,7 @@ export const IfoSaleDetailCard: React.FC = () => {
           <Box mt="2px">
             <CheckmarkCircleIcon color={theme.colors.success} width="20px" />
           </Box>
-          <Text color="success">
-            {t('Anyone with %symbol% can join — our IFOs are open to all.', { symbol: joinSymbols })}
-          </Text>
+          <Text color="success">{t('Eligible to join when this IFO goes live!')}</Text>
         </FlexGap>
         <FlexGap flexDirection="column" gap="16px" mt="16px">
           {pools.map((pool) => (

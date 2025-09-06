@@ -61,14 +61,16 @@ export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
     <StyledCard>
       <Box className="sticky-header" position="sticky" bottom="48px" width="100%" zIndex={6}>
         <Header $bannerUrl={bannerUrl} />
-        <IfoRibbon />
-        <CardBody
+        <Box
           style={{
             background: theme.colors.gradientBubblegum,
           }}
         >
-          <IfoDepositCard pid={pid} />
-        </CardBody>
+          <IfoRibbon />
+          <CardBody>
+            <IfoDepositCard pid={pid} />
+          </CardBody>
+        </Box>
       </Box>
     </StyledCard>
   )
