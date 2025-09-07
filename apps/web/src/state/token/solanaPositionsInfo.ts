@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { rpcUrlAtom } from '@pancakeswap/utils/user'
 import memoize from '@pancakeswap/utils/memoize'
+import { PANCAKE_CLMM_PROGRAM_ID, SLOW_INTERVAL } from 'config/constants'
 import { walletBalancesAtomFamily } from './atomFamily'
 
 export const useSolanaPositionNFTsByAccount = (walletAddress?: string | null) => {
@@ -31,33 +32,34 @@ export const useSolanaPositionNFTsByAccount = (walletAddress?: string | null) =>
   }, [data, isLoading, tokenList])
 }
 
-const solanaPositionInfoFetcher = async (rpc: string, addresses: string[]) => {
+const solanaPositionInfoFetcher = async (rpc: string, addresses: PublicKey[]) => {
   const connection = new Connection(rpc)
 
-  const res = await getMultipleAccountsInfo(
-    connection,
-    addresses.map((mint) => new PublicKey(mint)),
-    { batchRequest: true },
-  )
+  try {
+    const res = await getMultipleAccountsInfo(connection, addresses)
 
-  return res
-    .flat()
-    .map((info) => {
-      if (!info) return null
-      return PositionInfoLayout.decode(info.data)
-    })
-    .filter((info) => !!info)
+    return res
+      .flat()
+      .map((info) => {
+        if (!info) return null
+        return PositionInfoLayout.decode(info.data)
+      })
+      .filter((info) => !!info)
+  } catch (error) {
+    console.error('error fetching solana position info', error)
+    return []
+  }
 }
 
-const pdaCacheMap = new Map<string, string>()
+const pdaCacheMap = new Map<string, PublicKey>()
 
 const getSolanaPositionMints = memoize((nfts: TokenAccount[]) => {
   return nfts.map((nft) => {
     const key = `${nft.mint.toBase58()}-${nft.programId.toBase58()}`
     if (pdaCacheMap.get(key)) return pdaCacheMap.get(key)!
-    const pda = getPdaPersonalPositionAddress(new PublicKey(nft.programId), new PublicKey(nft.mint.toBase58()))
-    pdaCacheMap.set(key, pda.publicKey.toBase58())
-    return pda.publicKey.toBase58()
+    const pda = getPdaPersonalPositionAddress(PANCAKE_CLMM_PROGRAM_ID, nft.mint)
+    pdaCacheMap.set(key, pda.publicKey)
+    return pda.publicKey
   })
 })
 
@@ -68,5 +70,9 @@ export const useSolanaPositionsInfoByAccount = (walletAddress?: string | null) =
   return useQuery({
     queryKey: ['solana-position-info', walletAddress],
     queryFn: () => solanaPositionInfoFetcher(rpc, getSolanaPositionMints(nfts)),
+    enabled: Boolean(walletAddress) && nfts.length > 0,
+    staleTime: SLOW_INTERVAL,
+    refetchInterval: SLOW_INTERVAL,
+    refetchOnWindowFocus: true,
   })
 }
