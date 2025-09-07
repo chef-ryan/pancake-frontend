@@ -1,5 +1,7 @@
 // used to construct the list of all pairs we consider by default in the frontend
 
+import { PublicKey } from '@solana/web3.js'
+
 // default allowed slippage, in bips
 export const INITIAL_ALLOWED_SLIPPAGE = 50
 // 20 minutes, denominated in seconds
@@ -33,3 +35,5 @@ export const QUERY_SETTINGS_WITHOUT_INTERVAL_REFETCH = {
 export const PERSIST_CHAIN_KEY = 'persistChain'
 
 export const LS_CB1 = 'cb1-state'
+
+export const PANCAKE_CLMM_PROGRAM_ID = new PublicKey('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq')
