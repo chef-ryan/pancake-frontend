@@ -58,8 +58,11 @@ export const IfoPoolLive: React.FC<{
             scale="sm"
             onClick={handleDepositClick}
             disabled={status !== 'live'}
+            style={{
+              height: '40px',
+              marginLeft: 'auto',
+            }}
             padding="11px 12px 13px 12px"
-            style={{ marginLeft: 'auto' }}
           >
             <AddIcon color="primary" />
           </Button>
@@ -67,9 +70,11 @@ export const IfoPoolLive: React.FC<{
           <Button
             scale="sm"
             onClick={handleDepositClick}
+            style={{
+              height: '40px',
+              flex: 1,
+            }}
             disabled={status !== 'live'}
-            padding="11px 12px 13px 12px"
-            style={{ flex: 1 }}
           >
             {t('Deposit %symbol%', { symbol: stakeCurrency?.symbol })}
           </Button>
