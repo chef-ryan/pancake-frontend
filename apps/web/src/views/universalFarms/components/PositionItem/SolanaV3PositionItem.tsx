@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { PositionInfoLayout, PositionUtils, TickUtils, TokenInfo } from '@pancakeswap/solana-core-sdk'
 import { NonEVMChainId } from '@pancakeswap/chains'
 import { Price, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
@@ -38,11 +38,10 @@ export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: So
         baseIn: true,
       }),
     ]
-    const [upperNum, upperDen] = upper.price.toFraction()
-    const [lowerNum, lowerDen] = lower.price.toFraction()
+
     return [
-      new Price(currency0, currency1, upperNum.toFixed(0), upperDen.toFixed(0)),
-      new Price(currency0, currency1, lowerNum.toFixed(0), lowerDen.toFixed(0)),
+      Price.fromDecimal(currency0, currency1, upper.price.toString()),
+      Price.fromDecimal(currency0, currency1, lower.price.toString()),
     ]
   }, [poolInfo, position.tickUpper, position.tickLower])
 
