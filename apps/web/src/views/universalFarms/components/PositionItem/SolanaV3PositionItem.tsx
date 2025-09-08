@@ -9,6 +9,7 @@ import { POSITION_STATUS } from 'state/farmsV4/state/accountPositions/type'
 import { SolanaV3Pool } from 'state/pools/solana'
 import { useSolanaTokenPrice } from 'hooks/solana/useSolanaTokenPrice'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
+import { calculateSolanaTickLimits, calculateTickLimits, getTickAtLimitStatus } from 'views/PoolDetail/utils'
 import { PriceRange } from './PriceRange'
 import { PositionItem } from './PositionItem'
 
@@ -68,9 +69,11 @@ export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: So
     ]
   }, [poolInfo, position.liquidity])
 
-  const tickAtLimit = useMemo(() => ({ LOWER: false, UPPER: false }), [])
+  const tickAtLimit = useMemo(() => {
+    const tickLimits = calculateSolanaTickLimits(poolInfo?.config.tickSpacing)
+    return getTickAtLimitStatus(position.tickLower, position.tickUpper, tickLimits)
+  }, [poolInfo?.config.tickSpacing, position.tickLower, position.tickUpper])
 
-  // Mock pool data
   const pool = useMemo(() => {
     if (!currency0 || !currency1 || !poolInfo) {
       return undefined
