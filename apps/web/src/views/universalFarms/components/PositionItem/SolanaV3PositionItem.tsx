@@ -1,10 +1,10 @@
 import { memo, useMemo, useState } from 'react'
 import { PositionInfoLayout, PositionUtils, TickUtils, TokenInfo } from '@pancakeswap/solana-core-sdk'
 import { NonEVMChainId } from '@pancakeswap/chains'
+import BigNumber from 'bignumber.js'
 import { Price, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { Protocol } from '@pancakeswap/farms'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
-import { useSolanaTokenInfo } from 'hooks/solana/useSolanaTokenInfo'
 import { POSITION_STATUS } from 'state/farmsV4/state/accountPositions/type'
 import { SolanaV3Pool } from 'state/pools/solana'
 import { useSolanaTokenPrice } from 'hooks/solana/useSolanaTokenPrice'
@@ -40,10 +40,10 @@ export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: So
     ]
 
     return [
-      Price.fromDecimal(currency0, currency1, upper.price.toString()),
-      Price.fromDecimal(currency0, currency1, lower.price.toString()),
+      Price.fromDecimal(currency0, currency1, new BigNumber(upper.price.toString()).toFixed()),
+      Price.fromDecimal(currency0, currency1, new BigNumber(lower.price.toString()).toFixed()),
     ]
-  }, [poolInfo, position.tickUpper, position.tickLower])
+  }, [poolInfo, position.tickUpper, position.tickLower, currency0, currency1])
 
   const [amount0, amount1] = useMemo(() => {
     if (!currency0 || !currency1 || !poolInfo) {
@@ -107,11 +107,7 @@ export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: So
     )
   }, [currency0Price, currency1Price, amount0, amount1])
 
-  console.log('debug totalPriceUSD', totalPriceUSD)
-
   const desc = useMemo(() => {
-    // For now, return a simple description
-    // In real implementation, this should show proper price range
     return (
       <PriceRange
         base={currency0 ?? undefined}
