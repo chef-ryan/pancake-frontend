@@ -182,17 +182,13 @@ const IfoRibbonEnd: React.FC<{
   const { isDark, theme } = useTheme()
   return (
     <>
-      <BigCurve
-        $status="finished"
-        $dark={isDark}
-        style={{ background: isClaimed ? theme.colors.success : hasUserStaked ? theme.colors.textSubtle : undefined }}
-      />
+      <BigCurve $status="finished" $dark={isDark} style={{ background: theme.colors.input }} />
       <RibbonContainer>
         <Text
           fontSize={['16px', '16px', '24px']}
           fontFamily="Kanit"
           fontWeight={['600', '600', '400']}
-          color={isClaimed || hasUserStaked ? 'white' : isDark ? '#39373E' : '#8D8D8D'}
+          color="textSubtle"
         >
           {t('IFO Ended')} {isClaimed ? <> & {t('Claimed')}</> : hasUserStaked ? <> - {t('Claim available!')}</> : ''}
         </Text>
