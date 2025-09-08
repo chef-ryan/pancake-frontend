@@ -1,5 +1,5 @@
 import { memo, useMemo } from 'react'
-import { PositionInfoLayout, PositionUtils, TickUtils } from '@pancakeswap/solana-core-sdk'
+import { PositionInfoLayout, PositionUtils, TickUtils, TokenInfo } from '@pancakeswap/solana-core-sdk'
 import { NonEVMChainId } from '@pancakeswap/chains'
 import { Price, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { Protocol } from '@pancakeswap/farms'
@@ -8,6 +8,7 @@ import { useSolanaTokenInfo } from 'hooks/solana/useSolanaTokenInfo'
 import { POSITION_STATUS } from 'state/farmsV4/state/accountPositions/type'
 import { SolanaV3Pool } from 'state/pools/solana'
 import { useSolanaTokenPrice } from 'hooks/solana/useSolanaTokenPrice'
+import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
 import { PriceRange } from './PriceRange'
 import { PositionItem } from './PositionItem'
 
@@ -18,8 +19,8 @@ type SolanaV3PositionItemProps = {
 }
 
 export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: SolanaV3PositionItemProps) => {
-  const currency0 = useSolanaTokenInfo(poolInfo?.mintA.address)
-  const currency1 = useSolanaTokenInfo(poolInfo?.mintB.address)
+  const currency0 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo?.mintA as TokenInfo), [poolInfo?.mintA])
+  const currency1 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo?.mintB as TokenInfo), [poolInfo?.mintB])
 
   const [priceUpper, priceLower] = useMemo(() => {
     if (!currency0 || !currency1 || !poolInfo) {
@@ -102,10 +103,12 @@ export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: So
 
   const totalPriceUSD = useMemo(() => {
     return (
-      Number(currency0Price ?? 0) * Number(amount0?.toExact()) +
-      Number(currency1Price ?? 0) * Number(amount1?.toExact())
+      Number(currency0Price ?? 0) * Number(amount0?.toExact() ?? 0) +
+      Number(currency1Price ?? 0) * Number(amount1?.toExact() ?? 0)
     )
   }, [currency0Price, currency1Price, amount0, amount1])
+
+  console.log('debug totalPriceUSD', totalPriceUSD)
 
   const desc = useMemo(() => {
     // For now, return a simple description
