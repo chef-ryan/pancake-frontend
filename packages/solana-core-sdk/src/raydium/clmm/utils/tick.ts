@@ -277,6 +277,14 @@ export class TickUtils {
     return tick < MIN_TICK || tick > MAX_TICK;
   }
 
+  public static nearestUsableTick(tick: number, tickSpacing: number): number {
+    if (tickSpacing === 1) return tick;
+    const rounded = Math.round(tick / tickSpacing) * tickSpacing;
+    if (rounded < MIN_TICK) return rounded + tickSpacing;
+    if (rounded > MAX_TICK) return rounded - tickSpacing;
+    return rounded;
+  }
+
   public static nextInitTick(
     tickArrayCurrent: TickArray,
     currentTickIndex: number,
