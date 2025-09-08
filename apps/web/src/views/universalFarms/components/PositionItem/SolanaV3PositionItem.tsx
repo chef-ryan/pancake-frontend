@@ -7,6 +7,7 @@ import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { useSolanaTokenInfo } from 'hooks/solana/useSolanaTokenInfo'
 import { POSITION_STATUS } from 'state/farmsV4/state/accountPositions/type'
 import { SolanaV3Pool } from 'state/pools/solana'
+import { useSolanaTokenPrice } from 'hooks/solana/useSolanaTokenPrice'
 import { PriceRange } from './PriceRange'
 import { PositionItem } from './PositionItem'
 
@@ -90,7 +91,21 @@ export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: So
     } satisfies SolanaV3PoolInfo
   }, [currency0, currency1, poolInfo?.feeRate, position.liquidity, position.poolId])
 
-  const totalPriceUSD = useMemo(() => 0, []) // Should be calculated from position amounts and token prices
+  const { data: currency0Price } = useSolanaTokenPrice({
+    mint: currency0?.wrapped.address,
+    enabled: Boolean(currency0),
+  })
+  const { data: currency1Price } = useSolanaTokenPrice({
+    mint: currency1?.wrapped.address,
+    enabled: Boolean(currency1),
+  })
+
+  const totalPriceUSD = useMemo(() => {
+    return (
+      Number(currency0Price ?? 0) * Number(amount0?.toExact()) +
+      Number(currency1Price ?? 0) * Number(amount1?.toExact())
+    )
+  }, [currency0Price, currency1Price, amount0, amount1])
 
   const desc = useMemo(() => {
     // For now, return a simple description
