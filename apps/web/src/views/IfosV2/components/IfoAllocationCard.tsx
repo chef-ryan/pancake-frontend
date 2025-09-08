@@ -29,7 +29,7 @@ export const IfoAllocationDisplay: React.FC<IfoAllocationCardProps> = ({
       </Text>
       <FlexGap width="100%" gap="8px">
         <AddToWalletButton
-          variant="subtle"
+          variant="secondary"
           wrapperProps={{ flex: 1 }}
           tokenAddress={tokenAddress}
           tokenSymbol={symbol}
