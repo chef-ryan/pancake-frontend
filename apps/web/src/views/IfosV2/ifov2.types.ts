@@ -71,6 +71,8 @@ export type IFOConfig = {
   id: string
   icon: string
   projectUrl: string
+  twitterLink?: string
+  tgLink?: string
   chainId: ChainId
   bannerUrl: string
   tgeTitle: ReactNode

@@ -5,7 +5,7 @@ import { NextPageWithLayout } from 'utils/page.types'
 import IfoLayout from 'views/IfosV2/components/IfoLayout'
 import Hero from 'views/Ifos/components/Hero'
 import dynamic from 'next/dynamic'
-import IFO from '../../views/IfosV2/ifo'
+import IFO from 'views/IfosV2/ifo'
 
 const IFO_SUPPORT_CHAINS = [ChainId.BSC, ChainId.BSC_TESTNET]
 

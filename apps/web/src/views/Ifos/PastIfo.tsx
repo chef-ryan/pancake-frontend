@@ -9,12 +9,12 @@ import IfoCardV3Data from './components/IfoCardV3Data'
 import { IfoCardV7Data } from './components/IfoCardV7Data'
 import { IfoCardV8Data } from './components/IfoCardV8Data'
 
-const PastIfo = () => {
+const PastIfo = ({ isV2 }: { isV2?: boolean }) => {
   const inactiveIfo = useInActiveIfoConfigs()
 
   return (
     <Container id="past-ifos" py={['24px', '24px', '40px']} maxWidth="736px" m="auto" width="100%">
-      <HistoryIfos />
+      {isV2 && <HistoryIfos />}
       {inactiveIfo?.map((ifo) => {
         switch (ifo.version) {
           case 1:

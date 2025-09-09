@@ -1,7 +1,7 @@
 import { useCountdown } from '@pancakeswap/hooks'
 import { IfoStatus } from '@pancakeswap/ifos'
 import { useTranslation } from '@pancakeswap/localization'
-import { Flex, Skeleton, Text } from '@pancakeswap/uikit'
+import { Flex, Skeleton, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import useTheme from 'hooks/useTheme'
 import { styled } from 'styled-components'
 
@@ -23,28 +23,30 @@ const CountDown: React.FC<{
 }> = ({ time, textColor }) => {
   const { t } = useTranslation()
   const { theme } = useTheme()
+  const { isMobile } = useMatchBreakpoints()
   const color = textColor ?? theme.colors.secondary
   const { days, hours, minutes, seconds } = useCountdown(time) ?? { days: 0, hours: 0, minutes: 0, seconds: 0 }
+  const fontSize = isMobile ? '16px' : '20px'
 
   return (
     <FlexGap gap="4px" alignItems="baseline">
       {days ? (
-        <Text fontSize="20px" bold color={color}>
+        <Text fontSize={fontSize} fontWeight={600} color={color}>
           {days}
           {t('d')} :
         </Text>
       ) : null}
       {hours ? (
-        <Text fontSize="20px" bold color={color}>
+        <Text fontSize={fontSize} fontWeight={600} color={color}>
           {hours}
           {t('h')} :
         </Text>
       ) : null}
-      <Text fontSize="20px" bold color={color}>
+      <Text fontSize={fontSize} fontWeight={600} color={color}>
         {minutes ?? '0'}
         {t('m')} :
       </Text>
-      <Text fontSize="20px" bold color={color}>
+      <Text fontSize={fontSize} fontWeight={600} color={color}>
         {seconds}
         {t('s')}
       </Text>

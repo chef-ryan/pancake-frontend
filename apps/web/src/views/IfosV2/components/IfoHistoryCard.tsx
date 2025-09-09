@@ -7,6 +7,7 @@ import IfoPoolInfoDisplay from './IfoCards/IfoPoolInfoDisplay'
 import { IfoAllocationDisplay } from './IfoAllocationCard'
 import useIfo from '../hooks/useIfo'
 import { useIFOStatus } from '../hooks/ifo/useIFOStatus'
+import { ClaimDisplay } from './IfoCards/ClaimDisplay'
 
 const StyledCard = styled(Card)`
   width: 100%;
@@ -62,6 +63,7 @@ const IfoHistoryCard: React.FC = () => {
               tokenDecimals={tokenDecimals}
               allocatedAmount={saleAmount}
             />
+            <ClaimDisplay pid={0} />
             <IfoPoolInfoDisplay pid={0} ifoStatus={ifoStatus0} variant="history" />
           </FlexGap>
         </CardBody>

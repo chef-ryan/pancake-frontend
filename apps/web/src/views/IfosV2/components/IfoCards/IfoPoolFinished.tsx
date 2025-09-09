@@ -14,7 +14,7 @@ export const IfoPoolFinished: React.FC<{
 
   return (
     <FlexGap flexDirection="column" gap="8px">
-      <ClaimDisplay userStatus={userStatus} pid={pid} />
+      <ClaimDisplay pid={pid} />
 
       {userHasStaked && <Divider />}
       <IfoPoolInfoDisplay pid={pid} userStatus={userStatus} ifoStatus={ifoStatus} variant="finished" />

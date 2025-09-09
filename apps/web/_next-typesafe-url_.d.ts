@@ -39,6 +39,7 @@ declare module "@@@next-typesafe-url" {
     "/ifo/deposit/[ifoId]/[poolIndex]": StaticRoute;
     "/ifo/history": StaticRoute;
     "/ifo": StaticRoute;
+    "/ifo/v2/history": StaticRoute;
     "/ifo/v2": StaticRoute;
     "/increase/[[...currency]]": StaticRoute;
     "/": StaticRoute;
