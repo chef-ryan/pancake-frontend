@@ -22,6 +22,7 @@ import { useBirdeyeTokenPrice } from 'hooks/solana/useBirdeyeTokenPrice'
 import { useClmmAmmConfigs } from 'hooks/solana/useClmmAmmConfigs'
 import { useGetTickPrice } from './useGetTickPrice'
 import { useDependentAmountFromClmm } from './useDependentAmountFromClmm'
+import { useSolanaPoolByMint } from './useSolanaPoolsByMint'
 
 export enum PoolState {
   LOADING,
@@ -181,8 +182,15 @@ export const useSolanaDerivedInfo = (
     }
   }, [feeAmount, invalidPrice, price, token0, token1])
 
-  const poolState = PoolState.NOT_EXISTS
-  const noLiquidity = true
+  const poolInfo = useSolanaPoolByMint(token0?.address, token1?.address, feeAmount)
+  const { poolState, noLiquidity } = useMemo(
+    () => ({
+      poolState: poolInfo ? PoolState.EXISTS : PoolState.NOT_EXISTS,
+      noLiquidity: !poolInfo,
+    }),
+    [poolInfo],
+  )
+
   const poolForPosition: Pool | undefined = mockPool
 
   // Solana CLMM full range bounds are limited to ±443636 ticks (Raydium convention)

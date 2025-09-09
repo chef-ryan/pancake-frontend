@@ -1,8 +1,8 @@
 import { isStableFarm } from '@pancakeswap/farms'
-import { useCurrency } from 'hooks/Tokens'
+import { useCurrency, useUnifiedCurrency } from 'hooks/Tokens'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useFarmV2PublicAPI } from 'state/farms/hooks'
 import { useFarmsV3Public } from 'state/farmsV3/hooks'
 import { isAddressEqual } from 'utils'
@@ -23,8 +23,8 @@ const AddLiquidityPage = () => {
 
   const { currencyIdA, currencyIdB, feeAmount } = useCurrencyParams()
 
-  const currencyA = useCurrency(currencyIdA)
-  const currencyB = useCurrency(currencyIdB)
+  const currencyA = useUnifiedCurrency(currencyIdA)
+  const currencyB = useUnifiedCurrency(currencyIdB)
 
   // Initial prefer farm type if there is a farm for the pair
   const preferFarmType = useMemo(() => {

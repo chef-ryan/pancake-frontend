@@ -734,7 +734,92 @@ export interface operations {
         headers: {
           [name: string]: unknown
         }
-        content?: never
+        content: {
+          'application/json': {
+            success: boolean
+            data: {
+              type: string
+              programId: string
+              id: string
+              rewardDefaultPoolInfos: string
+              rewardDefaultInfos: string[]
+              mintA: {
+                chainId: number
+                address: string
+                programId: string
+                logoURI: string
+                symbol: string
+                name: string
+                decimals: number
+                tags: string[]
+                extensions: any
+              }
+              mintB: {
+                chainId: number
+                address: string
+                programId: string
+                logoURI: string
+                symbol: string
+                name: string
+                decimals: number
+                tags: string[]
+                extensions: any
+              }
+              config: {
+                id: string
+                index: number
+                protocolFeeRate: number
+                tradeFeeRate: number
+                tickSpacing: number
+                fundFeeRate: number
+                defaultRange: number
+                defaultRangePoint: number[]
+              }
+              price: number
+              mintAmountA: number
+              mintAmountB: number
+              feeRate: number
+              openTime: string
+              tvl: number
+              vault: {
+                A: string
+                B: string
+              }
+              poolType: string
+              alt: string
+              day: {
+                volume: number
+                volumeQuote: number
+                volumeFee: number
+                feeApr: number
+                apr: number
+                priceMin: number
+                priceMax: number
+                rewardApr: number[]
+              }
+              week: {
+                volume: number
+                volumeQuote: number
+                volumeFee: number
+                feeApr: number
+                apr: number
+                priceMin: number
+                priceMax: number
+                rewardApr: number[]
+              }
+              month: {
+                volume: number
+                volumeQuote: number
+                volumeFee: number
+                feeApr: number
+                apr: number
+                priceMin: number
+                priceMax: number
+                rewardApr: number[]
+              }
+            }[]
+          }
+        }
       }
     }
   }

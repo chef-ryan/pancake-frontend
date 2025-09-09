@@ -1,9 +1,11 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, isEvm, isSolana } from '@pancakeswap/chains'
 import { CAKE, STABLE_COIN, USDC, USDT } from '@pancakeswap/tokens'
 import { FeeAmount } from '@pancakeswap/v3-sdk'
+import { useClmmAmmConfigs } from 'hooks/solana/useClmmAmmConfigs'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import useNativeCurrency from 'hooks/useNativeCurrency'
+import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
 import { useRouter } from 'next/router'
+import { useMemo } from 'react'
 
 export function useCurrencyParams(): {
   currencyIdA: string | undefined
@@ -12,7 +14,7 @@ export function useCurrencyParams(): {
 } {
   const { chainId } = useActiveChainId()
   const router = useRouter()
-  const native = useNativeCurrency()
+  const native = useUnifiedNativeCurrency()
 
   // Get default currency pair based on chain
   const getDefaultCurrencyPair = () => {
@@ -33,13 +35,31 @@ export function useCurrencyParams(): {
     ]
   }
 
-  const [currencyIdA, currencyIdB, feeAmountFromUrl] =
+  const [currencyIdA, currencyIdB] =
     router.isReady && chainId ? router.query.currency || getDefaultCurrencyPair() : [undefined, undefined, undefined]
 
-  const feeAmount: FeeAmount | undefined =
-    feeAmountFromUrl && Object.values(FeeAmount).includes(parseFloat(feeAmountFromUrl))
-      ? parseFloat(feeAmountFromUrl)
-      : undefined
+  const feeAmount: FeeAmount | undefined = useFeeAmountFromQuery()
 
   return { currencyIdA, currencyIdB, feeAmount }
+}
+
+export const useFeeAmountFromQuery = () => {
+  const { chainId } = useActiveChainId()
+  const router = useRouter()
+  const ammconfig = useClmmAmmConfigs()
+
+  const [, , feeAmountFromUrl] = (router.isReady && chainId && router.query.currency) || [
+    undefined,
+    undefined,
+    undefined,
+  ]
+  return useMemo(
+    () =>
+      feeAmountFromUrl &&
+      ((isEvm(chainId) && Object.values(FeeAmount).includes(parseFloat(feeAmountFromUrl))) ||
+        (isSolana(chainId) && Object.values(ammconfig).find((c) => c.tradeFeeRate === parseFloat(feeAmountFromUrl))))
+        ? parseFloat(feeAmountFromUrl)
+        : undefined,
+    [chainId, ammconfig, feeAmountFromUrl],
+  )
 }

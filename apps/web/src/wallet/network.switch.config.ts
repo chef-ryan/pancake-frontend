@@ -5,4 +5,5 @@ export const SOLANA_SUPPORTED_PATH = [
   '/home',
   '/liquidity/create',
   '/liquidity/select',
+  '/add',
 ]
