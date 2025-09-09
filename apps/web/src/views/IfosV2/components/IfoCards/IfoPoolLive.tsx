@@ -64,6 +64,37 @@ const PoolAction: React.FC<{
   const handleConnectWallet = () => {
     logGTMIfoConnectWalletEvent(isComingSoon)
   }
+
+  if (userHasStaked) {
+    return (
+      <>
+        <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
+          {stakeCurrency?.symbol} {t('Pool')}
+        </Text>
+        <FlexGap alignItems="center" width="100%" gap="8px">
+          <CurrencyLogo currency={stakeCurrency} size="40px" />
+          {!account ? (
+            <ConnectWalletButton scale="sm" onClickCapture={handleConnectWallet} style={{ marginLeft: 'auto' }} />
+          ) : (
+            <Button
+              variant="secondary"
+              scale="sm"
+              onClick={handleDepositClick}
+              disabled={status !== 'live'}
+              style={{
+                height: '40px',
+                marginLeft: 'auto',
+              }}
+              padding="11px 12px 13px 12px"
+            >
+              <AddIcon color="primary" />
+            </Button>
+          )}
+        </FlexGap>
+      </>
+    )
+  }
+
   return (
     <>
       <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
@@ -73,20 +104,6 @@ const PoolAction: React.FC<{
         <CurrencyLogo currency={stakeCurrency} size="40px" />
         {!account ? (
           <ConnectWalletButton scale="sm" onClickCapture={handleConnectWallet} style={{ marginLeft: 'auto' }} />
-        ) : userHasStaked ? (
-          <Button
-            variant="secondary"
-            scale="sm"
-            onClick={handleDepositClick}
-            disabled={status !== 'live'}
-            style={{
-              height: '40px',
-              marginLeft: 'auto',
-            }}
-            padding="11px 12px 13px 12px"
-          >
-            <AddIcon color="primary" />
-          </Button>
         ) : (
           <Button
             scale="sm"
