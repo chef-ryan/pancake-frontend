@@ -7,6 +7,8 @@ import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { styled } from 'styled-components'
 
+import { ASSET_CDN } from 'config/constants/endpoints'
+import { getChainName } from '@pancakeswap/chains'
 import { getChainBasedImageUrl } from '../helpers'
 
 const StyledHero = styled(Box)`
@@ -115,17 +117,31 @@ const Hero = () => {
   )
 }
 
+function getHeadBunny({ chainId = ChainId.BSC, name }: { chainId: ChainId; name: string }) {
+  if (chainId === ChainId.BSC) {
+    return `${ASSET_CDN}/web/ifos/${name}/bsc-v2.png`
+  }
+  return `${ASSET_CDN}/web/ifos/${name}/${getChainName(chainId)}.png`
+}
+
 function HeaderBunny() {
   const { chainId: currentChainId } = useActiveChainId()
   const { isDesktop } = useMatchBreakpoints()
   const bunnyImageUrl = useMemo(() => {
     const chainId = isIfoSupported(currentChainId) ? currentChainId : ChainId.BSC
-    return getChainBasedImageUrl({ chainId, name: 'header-bunny-v2' })
+    return getHeadBunny({ chainId, name: 'header-bunny' })
   }, [currentChainId])
 
   return (
     <BunnyContainer>
-      <img alt="header-bunny" src={bunnyImageUrl} width={isDesktop ? 393 : 302} height={isDesktop ? 197 : 151} />
+      <img
+        alt="header-bunny"
+        src={bunnyImageUrl}
+        style={{
+          width: isDesktop ? 393 : 302,
+          height: isDesktop ? 197 : 151,
+        }}
+      />
     </BunnyContainer>
   )
 }
