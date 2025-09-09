@@ -15,6 +15,8 @@ import { useRouter } from 'next/router'
 
 import { logGTMIfoDepositEvent } from 'utils/customGTMEventTracking'
 import { useAccount } from 'wagmi'
+import { useSetAtom } from 'jotai'
+import { updateIfoVer } from 'views/IfosV2/atom/ifoVersionAtom'
 import { useIFODuration } from '../../hooks/ifo/useIFODuration'
 import type { IFOUserStatus } from '../../ifov2.types'
 import { useIFODepositCallback } from '../../hooks/ifo/useIFODepositCallback'
@@ -64,6 +66,7 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
   const [submittedDeposit, setSubmittedDeposit] = useState<CurrencyAmount<Currency> | undefined>()
 
   const maxAmountInput = useMemo(() => maxAmountSpend(inputBalance), [inputBalance])
+  const update = useSetAtom(updateIfoVer)
 
   const maxDepositAmount = useMemo(() => {
     if (!maxAmountInput) return undefined
@@ -139,6 +142,9 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
       setSubmittedDeposit(depositAmount)
       const hash = await deposit(pid, depositAmount, () => {
         router.back()
+        requestAnimationFrame(() => {
+          update()
+        })
       })
       if (hash) {
         logGTMIfoDepositEvent()

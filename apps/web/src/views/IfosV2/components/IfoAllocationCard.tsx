@@ -32,10 +32,12 @@ export const IfoAllocationDisplay: React.FC<IfoAllocationCardProps> = ({
           variant="secondary"
           wrapperProps={{ flex: 1 }}
           tokenAddress={tokenAddress}
+          showTooltip={false}
           tokenSymbol={symbol}
           tokenDecimals={tokenDecimals}
           endIcon={null}
           buttonText={t('View in Wallet')}
+          showWalletIcon={false}
         />
         <Button
           rel="noopener noreferrer"

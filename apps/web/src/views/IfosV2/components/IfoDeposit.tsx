@@ -35,7 +35,7 @@ const StyledCard = styled(Card)`
 
 const StyledDepositCard = styled(Card)`
   width: 100%;
-  margin: 16px;
+  margin: 0px;
 
   ${({ theme }) => theme.mediaQueries.lg} {
     width: 320px;
@@ -62,6 +62,8 @@ export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
         <Box
           style={{
             background: theme.colors.gradientBubblegum,
+            borderBottomLeftRadius: '24px',
+            borderBottomRightRadius: '24px',
           }}
         >
           <IfoRibbon />

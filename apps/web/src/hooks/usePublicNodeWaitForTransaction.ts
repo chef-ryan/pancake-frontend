@@ -6,7 +6,7 @@ import { CHAINS } from 'config/chains'
 import { PUBLIC_NODES } from 'config/nodes'
 import memoize from 'lodash/memoize'
 import { useCallback } from 'react'
-import { RetryableError, retry } from 'state/multicall/retry'
+import { RetryableError, retry, retryExp } from 'state/multicall/retry'
 import { fallbackWithRank } from 'utils/fallbackWithRank'
 import {
   BlockNotFoundError,
@@ -104,11 +104,11 @@ export function usePublicNodeWaitForTransaction(chainId_?: number) {
       }
       const bufferedAvgBlockTime =
         (selectedChain ? AVERAGE_CHAIN_BLOCK_TIMES[selectedChain] : BSC_BLOCK_TIME) * 1000 + 1000
-      return retry(getTransaction, {
+      return retryExp(getTransaction, {
         n: 10,
-        minWait: bufferedAvgBlockTime,
-        maxWait: bufferedAvgBlockTime * 1.1,
+        base: bufferedAvgBlockTime,
         delay: bufferedAvgBlockTime,
+        factor: 1.5,
       }).promise as Promise<TransactionReceipt>
     },
     [chainId, provider, refetchBlockData, w3WConfig],

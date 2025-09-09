@@ -39,6 +39,8 @@ export interface AddToWalletButtonProps {
   tooltipPlacement?: TooltipOptions['placement']
   wrapperProps?: FlexProps
   buttonText?: string
+  showWalletIcon?: boolean
+  showTooltip?: boolean
 }
 
 const Icons = {
@@ -139,6 +141,8 @@ const AddToWalletButton: React.FC<AddToWalletButtonProps & ButtonProps> = ({
   mr,
   wrapperProps,
   buttonText,
+  showTooltip = true,
+  showWalletIcon = true,
   ...props
 }) => {
   const { t } = useTranslation()
@@ -181,10 +185,10 @@ const AddToWalletButton: React.FC<AddToWalletButtonProps & ButtonProps> = ({
       <Flex alignItems="center" justifyContent="center" ref={targetRef} ml={ml} mr={mr} {...wrapperProps}>
         <Button {...props} title={t('Add to your wallet')} onClick={handleOnClick}>
           {buttonText ?? getWalletText(textOptions, tokenSymbol, t)}
-          {walletIcon}
+          {showWalletIcon && walletIcon}
         </Button>
       </Flex>
-      {tooltipVisible && tooltip}
+      {showTooltip && tooltipVisible && tooltip}
     </>
   )
 }

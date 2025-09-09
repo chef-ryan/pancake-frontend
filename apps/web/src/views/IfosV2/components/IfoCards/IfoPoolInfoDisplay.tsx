@@ -57,37 +57,23 @@ const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus,
   const feeTierTooltipContent = (
     <Text as="div" fontSize="12px">
       <Trans>
-        Tiered Tax by Subscription Multiple
-        <br />
-        Fees decrease as subscription multiple (x) grows:
-        <br />
-        • ≤ 1x : 0%
-        <br />
-        • &gt;1x → 1% fee
-        <br />
-        • ≥50x → 0.8% fee
-        <br />
-        • ≥100x → 0.6% fee
-        <br />
-        • ≥150x → 0.5% fee
-        <br />
-        • ≥200x → 0.4% fee
-        <br />
-        • ≥250x → 0.3% fee
-        <br />
-        • ≥300x → 0.25% fee
-        <br />
-        • ≥400x → 0.2% fee
-        <br />
-        • ≥500x → 0.15% fee
-        <br />
-        • ≥650x → 0.12% fee
-        <br />
-        • ≥800x → 0.1% fee
-        <br />
-        • ≥1500x → 0.05% fee
-        <br />
-        💡 All IFO fees collected will be used for CAKE burn.
+        Tiered Tax based on subscription % : Fees decrease as oversubscription increases.
+        <ul>
+          <li>≤100% Sub → 0% Fee</li>
+          <li>&gt;100% Sub → 1% Fee</li>
+          <li>≥5,000% Sub → 0.8% Fee</li>
+          <li>≥10,000% Sub → 0.6% Fee</li>
+          <li>≥15,000% Sub → 0.5% Fee</li>
+          <li>≥20,000% Sub → 0.4% Fee</li>
+          <li>≥25,000% Sub → 0.3% Fee</li>
+          <li>≥30,000% Sub → 0.25% Fee</li>
+          <li>≥40,000% Sub → 0.20% Fee</li>
+          <li>≥50,000% Sub → 0.15% Fee</li>
+          <li>≥65,000% Sub → 0.12% Fee</li>
+          <li>≥80,000% Sub → 0.10% Fee</li>
+          <li>&gt;150,000% Sub → 0.05% Fee</li>
+        </ul>
+        (All IFO fees collected will be used in CAKE burn)
       </Trans>
     </Text>
   )

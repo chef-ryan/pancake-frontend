@@ -24,7 +24,6 @@ export const useIFODepositCallback = () => {
   const [, setLatestTxReceipt] = useLatestTxReceipt()
   const pools = useIFOPoolInfo()
   const { fetchWithCatchTxError, loading: isPending } = useCatchTxError({ throwUserRejectError: true })
-  const { refetch } = useIFOUserInfo()
   const { writeContractAsync } = useWriteContract()
   const [status, setStatus] = useState<'IDLE' | 'PENDING' | 'CONFIRMING' | 'CONFIRMED'>('IDLE')
   const [txHash, setTxHash] = useState<string>('')
@@ -73,7 +72,6 @@ export const useIFODepositCallback = () => {
         if (receipt?.status) {
           setLatestTxReceipt(receipt)
           toastSuccess(t('Deposit successful'), <ToastDescriptionWithTx bscTrace txHash={receipt.transactionHash} />)
-          updateVersion()
           setStatus('CONFIRMED')
           onSucc?.()
         } else {
@@ -92,7 +90,6 @@ export const useIFODepositCallback = () => {
         setStatus('IDLE')
       } finally {
         onFinish?.()
-        refetch()
       }
     },
     [
@@ -105,7 +102,6 @@ export const useIFODepositCallback = () => {
       toastSuccess,
       t,
       toastWarning,
-      refetch,
       updateVersion,
     ],
   )

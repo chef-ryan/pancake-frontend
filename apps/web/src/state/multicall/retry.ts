@@ -77,4 +77,63 @@ export function retry<T>(
   }
 }
 
-/* eslint-enable */
+export function retryExp<T>(
+  fn: () => Promise<T>,
+  {
+    n,
+    delay = 0,
+    base = 1000,
+    factor = 2,
+  }: {
+    n: number
+    delay?: number
+    base?: number
+    factor?: number
+  },
+): { promise: Promise<T>; cancel: () => void } {
+  let completed = false
+  let rejectCancelled: (error: Error) => void
+
+  const promise = new Promise<T>(async (resolve, reject) => {
+    rejectCancelled = reject
+    let attempt = 0
+
+    // initial delay before first run
+    if (delay > 0) {
+      await wait(delay)
+    }
+
+    while (!completed && attempt <= n) {
+      try {
+        const result = await fn()
+        if (!completed) {
+          completed = true
+          resolve(result)
+        }
+        break
+      } catch (error) {
+        if (completed) break
+
+        if (!(error instanceof RetryableError) || attempt >= n) {
+          reject(error)
+          completed = true
+          break
+        }
+
+        // exponential backoff
+        const backoff = base * Math.pow(factor, attempt)
+        await wait(backoff)
+        attempt++
+      }
+    }
+  })
+
+  return {
+    promise,
+    cancel: () => {
+      if (completed) return
+      completed = true
+      rejectCancelled(new CancelledError())
+    },
+  }
+}
