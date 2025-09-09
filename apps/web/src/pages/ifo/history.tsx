@@ -9,7 +9,7 @@ import HistoryIfos from '../../views/IfosV2/HistoryIfos'
 const View = () => {
   return (
     <IfoProvider>
-      {/* <HistoryIfos /> */}
+      <HistoryIfos />
       <PastIfo />
     </IfoProvider>
   )
