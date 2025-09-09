@@ -18,6 +18,9 @@ const StyledHeading = styled(Heading)`
   font-weight: 600;
 `
 
+const StyledLink = styled(Link)`
+  display: inline-block;
+`
 const DefaultQuestions: React.FC = () => {
   const { pools } = useIfo()
 
@@ -45,20 +48,21 @@ const DefaultQuestions: React.FC = () => {
               to our community.
             </p>
           </Trans>
+          <br />
           <Trans
             components={[
-              <Link
+              <StyledLink
                 key="user"
                 external
                 href="https://docs.pancakeswap.finance/~/revisions/ptnCgCMnEEgu5A8YulQ0/earn/ifo-initial-farm-offering/faq-users"
               />,
-              <Link
+              <StyledLink
                 key="partner"
                 external
                 href="https://docs.pancakeswap.finance/~/revisions/ptnCgCMnEEgu5A8YulQ0/earn/ifo-initial-farm-offering/faq-partners"
               />,
             ]}
-            defaults="<p>More details: <0>User FAQ</0> | <1>Partner FAQ</1></p>"
+            defaults="<p>More details: <br /><0>User FAQ</0> | <1>Partner FAQ</1></p>"
           />
         </>
       ),
