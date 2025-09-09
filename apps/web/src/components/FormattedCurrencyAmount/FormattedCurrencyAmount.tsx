@@ -1,10 +1,10 @@
-import { Currency, CurrencyAmount, Fraction } from '@pancakeswap/sdk'
+import { Fraction, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 
 const CURRENCY_AMOUNT_MIN = new Fraction(1n, 1000000n)
 
 interface FormatterCurrencyAmountProps {
-  currencyAmount?: CurrencyAmount<Currency>
+  currencyAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
   significantDigits?: number
 }
 
