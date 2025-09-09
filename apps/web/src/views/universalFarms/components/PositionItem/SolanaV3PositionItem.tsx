@@ -144,12 +144,14 @@ export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: So
       detailMode={detailMode}
       userPosition={position}
     >
-      {currency0 && currency1 ? (
+      {currency0 && currency1 && pool ? (
         <SolanaV3PositionActions
           removed={position.liquidity.isZero()}
           outOfRange={position.status === POSITION_STATUS.INACTIVE}
           chainId={NonEVMChainId.SOLANA}
           detailMode={detailMode}
+          poolInfo={pool}
+          position={position}
         />
       ) : null}
     </PositionItem>

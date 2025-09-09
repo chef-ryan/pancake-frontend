@@ -1,19 +1,8 @@
 import { Protocol } from '@pancakeswap/farms'
 import { useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Token, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
-import {
-  AutoColumn,
-  FeeTier,
-  FlexGap,
-  Row,
-  Skeleton,
-  Tag,
-  Text,
-  TokenImage,
-  TokenLogo,
-  useMatchBreakpoints,
-} from '@pancakeswap/uikit'
+import { UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { AutoColumn, FeeTier, FlexGap, Row, Skeleton, Tag, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { formatNumber as formatBalance } from '@pancakeswap/utils/formatBalance'
 import { formatNumber } from '@pancakeswap/utils/formatNumber'
 import { DoubleCurrencyLogo, FiatNumberDisplay } from '@pancakeswap/widgets-internal'
@@ -42,11 +31,8 @@ import { usePositionEarningAmount } from 'views/universalFarms/hooks/usePosition
 import { useAccount } from 'wagmi'
 import { IncentraTag } from 'components/Incentra/IncentraTag'
 import { isEvm, isSolana, NonEVMChainId } from '@pancakeswap/chains'
-import { PositionUtils, TokenInfo } from '@pancakeswap/solana-core-sdk'
-import { useSolanaV3RewardInfoFromSimulation } from 'views/universalFarms/hooks/useSolanaV3RewardInfoFromSimulation'
 import { getCurrencyLogoSrcs } from 'components/TokenImage'
-import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
-import { PositionDebugView } from './PositionDebugView'
+import { PositionDebugView } from '../PositionDebugView'
 import {
   InfinityBinPoolPositionAprButton,
   InfinityCLPoolPositionAprButton,
@@ -54,7 +40,10 @@ import {
   SolanaV3PoolPositionAprButton,
   V2PoolPositionAprButton,
   V3PoolPositionAprButton,
-} from '../PoolAprButton'
+} from '../../PoolAprButton'
+import { DetailInfoTitle, DetailInfoDesc, DetailInfoLabel, TagCell } from './styled'
+import { EarningsWithToken } from './EarningsWithToken'
+import { SolanaV3Earnings } from './SolanaV3Earnings'
 
 export const formatPositionAmount = (amount?: UnifiedCurrencyAmount<UnifiedCurrency>) => {
   const minimumFractionDigits = Math.min(amount?.currency.decimals ?? 0, 6)
@@ -318,73 +307,6 @@ const V3Earnings = ({ tokenId, chainId }: { tokenId?: bigint; chainId: number })
   return <Earnings earningsAmount={earningsAmount} earningsBusd={earningsBusd} />
 }
 
-const TokenAvatar = styled(TokenLogo)`
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-`
-
-const EarningsWithToken: React.FC<{
-  currency: UnifiedCurrency
-  earningsAmount: number
-  earningsUsd: number
-}> = ({ currency, earningsAmount, earningsUsd }) => {
-  return (
-    <AutoColumn>
-      <Row gap="8px">
-        <TokenAvatar srcs={getCurrencyLogoSrcs(currency)} />
-        <Text fontSize="12px" color="textSubtle">
-          {formatNumber(earningsAmount)}
-        </Text>
-        <Text fontSize="12px" color="textSubtle" fontWeight={600}>
-          {' '}
-          {currency.symbol}{' '}
-        </Text>
-      </Row>
-      <Row gap="8px" justifyContent="flex-end">
-        <Text fontSize="12px" color="textSubtle">
-          ~${formatNumber(earningsUsd)}
-        </Text>
-      </Row>
-    </AutoColumn>
-  )
-}
-
-const SolanaV3Earnings = ({ pool, position }: { pool: SolanaV3PoolInfo; position: SolanaV3PositionDetail }) => {
-  const { t } = useTranslation()
-  const { breakdownRewardInfo } = useSolanaV3RewardInfoFromSimulation({
-    poolInfo: pool,
-    position,
-  })
-  return (
-    <>
-      <Row gap="8px" alignItems="flex-start">
-        <DetailInfoLabel>{t('Farm Rewards')}:</DetailInfoLabel>
-        {breakdownRewardInfo.rewards.map((r) => (
-          <EarningsWithToken currency={r.mint} earningsAmount={Number(r.amount)} earningsUsd={Number(r.amountUSD)} />
-        ))}
-      </Row>
-      <Row gap="8px" alignItems="flex-start">
-        <DetailInfoLabel>{t('LP Fees')}: </DetailInfoLabel>
-        {breakdownRewardInfo.fee.A?.mint ? (
-          <EarningsWithToken
-            currency={convertRawTokenInfoIntoSPLToken(breakdownRewardInfo.fee.A?.mint as TokenInfo)}
-            earningsAmount={Number(breakdownRewardInfo.fee.A?.amount)}
-            earningsUsd={Number(breakdownRewardInfo.fee.A?.amountUSD)}
-          />
-        ) : null}
-        {breakdownRewardInfo.fee.B?.mint ? (
-          <EarningsWithToken
-            currency={convertRawTokenInfoIntoSPLToken(breakdownRewardInfo.fee.B?.mint as TokenInfo)}
-            earningsAmount={Number(breakdownRewardInfo.fee.B?.amount)}
-            earningsUsd={Number(breakdownRewardInfo.fee.B?.amountUSD)}
-          />
-        ) : null}
-      </Row>
-    </>
-  )
-}
-
 const InfinityBinEarnings = ({ chainId, poolId }: { chainId?: number; poolId?: Address }) => {
   const { address } = useAccount()
   const {
@@ -440,32 +362,3 @@ const InfinityCLEarnings = ({ tokenId, chainId, poolId }: { tokenId?: bigint; ch
 
   return <Earnings earningsAmount={amount} earningsBusd={rewardsUSD} />
 }
-
-const DetailInfoTitle = styled.div<{ $isMobile?: boolean }>`
-  display: flex;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  flex-direction: ${({ $isMobile }) => ($isMobile ? 'column' : 'row')};
-`
-
-const DetailInfoDesc = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 400;
-`
-
-const DetailInfoLabel = styled(Text)`
-  color: ${({ theme }) => theme.colors.textSubtle};
-  font-weight: 600;
-  font-size: 12px;
-`
-
-const TagCell = styled(FlexGap)`
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 16px;
-`
