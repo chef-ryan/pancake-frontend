@@ -12,6 +12,7 @@ import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
 import { calculateSolanaTickLimits, calculateTickLimits, getTickAtLimitStatus } from 'views/PoolDetail/utils'
 import { PriceRange } from './PriceRange'
 import { PositionItem } from './PositionItem'
+import { SolanaV3PositionActions } from '../PositionActions/SolanaV3PositionActions'
 
 type SolanaV3PositionItemProps = {
   position: SolanaV3PositionDetail
@@ -143,13 +144,13 @@ export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: So
       detailMode={detailMode}
       userPosition={position}
     >
-      {/* Solana positions might need different action components */}
-      {/* For now, we'll leave this empty until Solana-specific actions are implemented */}
       {currency0 && currency1 ? (
-        <div>
-          {/* TODO: Implement Solana-specific position actions */}
-          {/* This could include harvest, increase/decrease liquidity, etc. */}
-        </div>
+        <SolanaV3PositionActions
+          removed={position.liquidity.isZero()}
+          outOfRange={position.status === POSITION_STATUS.INACTIVE}
+          chainId={NonEVMChainId.SOLANA}
+          detailMode={detailMode}
+        />
       ) : null}
     </PositionItem>
   )
