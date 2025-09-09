@@ -72,23 +72,27 @@ const DefaultQuestions: React.FC = () => {
       description: (
         <>
           <Trans components={{ p: <p /> }} values={{ symbol }}>
-            <p>Participation only requires %symbol% – no staking or NFT profile needed.</p>
+            <p>1. Participation only requires %symbol% – no staking or NFT profile needed.</p>
           </Trans>
           <Trans components={{ p: <p /> }}>
-            <p>Tiered fee structure replaces flat fees – fees only apply if oversubscribed.</p>
+            <p>2. Tiered fee structure replaces flat fees – fees only apply if oversubscribed.</p>
           </Trans>
           <Trans components={{ p: <p /> }}>
-            <p>iCAKE / veCAKE not used.</p>
+            <p>3. iCAKE / veCAKE not used.</p>
           </Trans>
+          <br />
           <Trans
             components={[
-              <Link
+              <StyledLink
                 external
                 href="https://pancakeswap.finance/voting/proposal/0x79ef496c9737e48d9677a6e291ff2a549dee6729c9996398e453af8ecbf0ceb3"
               />,
-              <Link external href="https://www.notion.so/FAQ-IFO-on-page-267b1792f90280dcb787fec4d84935c6?pvs=21" />,
+              <StyledLink
+                external
+                href="https://www.notion.so/FAQ-IFO-on-page-267b1792f90280dcb787fec4d84935c6?pvs=21"
+              />,
             ]}
-            defaults="<p>More details: <0>User FAQ</0> | <1>Partner FAQ</1></p>"
+            defaults="<p>More details: <br /><0>User FAQ</0> | <1>Partner FAQ</1></p>"
           />
         </>
       ),
@@ -125,13 +129,13 @@ const DefaultQuestions: React.FC = () => {
       description: (
         <>
           <Trans components={{ p: <p /> }}>
-            <p>Only if the IFO is oversubscribed.</p>
+            <p>1. Only if the IFO is oversubscribed.</p>
           </Trans>
           <Trans components={{ p: <p /> }} values={{ symbol }}>
-            <p>Fee is applied to excess %symbol% that didn’t contribute to your allocation.</p>
+            <p>2. Fee is applied to excess %symbol% that didn’t contribute to your allocation.</p>
           </Trans>
           <Trans components={{ p: <p /> }}>
-            <p>Tiered from 1% down to 0.05% depending on oversubscription.</p>
+            <p>3. Tiered from 1% down to 0.05% depending on oversubscription.</p>
           </Trans>
           <Box mt="1rem">
             <Trans
@@ -225,6 +229,7 @@ const DefaultQuestions: React.FC = () => {
             ]}
             defaults="<p>Fill out the <0>Application Form</0></p>"
           />
+          <br />
           <Trans components={{ p: <p /> }}>
             <p>Steps after application:</p>
           </Trans>
@@ -243,13 +248,13 @@ const DefaultQuestions: React.FC = () => {
           <Box mt="1rem">
             <Trans
               components={[
-                <Link external href="https://pancakeswap.notion.site/ifo-terms" />,
-                <Link
+                <StyledLink external href="https://pancakeswap.notion.site/ifo-terms" />,
+                <StyledLink
                   external
                   href="https://docs.pancakeswap.finance/~/revisions/ptnCgCMnEEgu5A8YulQ0/earn/ifo-initial-farm-offering/faq-partners"
                 />,
               ]}
-              defaults="<p>For more info: <0>IFO Partner Terms</0> | <1>Partner FAQ</1></p>"
+              defaults="<p>For more info: <br /><0>IFO Partner Terms</0> | <1>Partner FAQ</1></p>"
             />
           </Box>
         </>
