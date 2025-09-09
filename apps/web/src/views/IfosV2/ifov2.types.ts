@@ -117,10 +117,19 @@ export interface IfoDisplay {
   pools: IfoPoolDisplay[]
 }
 
+export type IFOUserStatus = {
+  stakedAmount: CurrencyAmount<Currency> | undefined
+  stakeRefund: CurrencyAmount<Currency> | undefined
+  claimableAmount: CurrencyAmount<Currency> | undefined
+  claimed: boolean | undefined
+  tax: CurrencyAmount<Currency> | undefined
+}
+
 export interface IfoV2ContextType {
   chainId: number
   ifoContract: ReturnType<typeof getIFOContract>
   config: IFOConfig
   info?: IfoInfo
   pools?: PoolInfo[]
+  users?: (IFOUserStatus | undefined)[]
 }

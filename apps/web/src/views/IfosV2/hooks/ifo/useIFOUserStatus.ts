@@ -1,26 +1,30 @@
 import { type Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { useAtomValue } from 'jotai'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { useAccount } from 'wagmi'
-import { useAtom } from 'jotai'
-import useIfo from '../useIfo'
+
+import { ifoUsersAtom } from '../../atom/ifo.atoms'
+import { useIfoV2Context } from '../../contexts/useIfoV2Context'
+import type { IFOUserStatus } from '../../ifov2.types'
+import { useIFOInfo } from './useIFOInfo'
+import { useIFOPoolInfo } from './useIFOPoolInfo'
 import { useIFOUserInfo } from './useIFOUserInfo'
 
-export type IFOUserStatus = {
-  stakedAmount: CurrencyAmount<Currency> | undefined
-  stakeRefund: CurrencyAmount<Currency> | undefined
-  claimableAmount: CurrencyAmount<Currency> | undefined
-  claimed: boolean | undefined
-  tax: CurrencyAmount<Currency> | undefined
+export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | undefined] => {
+  const { config } = useIfoV2Context()
+  const users = useAtomValue(ifoUsersAtom(config.id))
+  return (users ?? [undefined, undefined]) as [IFOUserStatus | undefined, IFOUserStatus | undefined]
 }
 
-export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | undefined] => {
-  const { data: userInfo } = useIFOUserInfo()
-  const { pools, info } = useIfo()
+export const useIFOUserStatusCtx = () => {
+  const { data: userInfo, isLoading } = useIFOUserInfo()
+  const pools = useIFOPoolInfo()
+  const info = useIFOInfo()
   const pool0Info = pools[0]
   const pool1Info = pools[1]
-  const { data: offeringAndRefundingAmounts } = useViewUserOfferingAndRefundingAmounts()
+  const { data: offeringAndRefundingAmounts, isLoading: isLoading2 } = useViewUserOfferingAndRefundingAmounts()
 
   const stakedAmounts = useMemo(() => {
     if (!userInfo) return [undefined, undefined]
@@ -76,26 +80,29 @@ export const useIFOUserStatus = (): [IFOUserStatus | undefined, IFOUserStatus | 
     ]
   }, [info, offeringAndRefundingAmounts])
 
-  return [
-    pool0Info
-      ? {
-          stakedAmount: stakedAmounts[0],
-          stakeRefund: stakeRefund[0],
-          claimableAmount: claimableAmount[0],
-          claimed: claimed[0],
-          tax: tax[0],
-        }
-      : undefined,
-    pool1Info
-      ? {
-          stakedAmount: stakedAmounts[1],
-          stakeRefund: stakeRefund[1],
-          claimableAmount: claimableAmount[1],
-          claimed: claimed[1],
-          tax: tax[1],
-        }
-      : undefined,
-  ]
+  return {
+    users: [
+      pool0Info
+        ? {
+            stakedAmount: stakedAmounts[0],
+            stakeRefund: stakeRefund[0],
+            claimableAmount: claimableAmount[0],
+            claimed: claimed[0],
+            tax: tax[0],
+          }
+        : undefined,
+      pool1Info
+        ? {
+            stakedAmount: stakedAmounts[1],
+            stakeRefund: stakeRefund[1],
+            claimableAmount: claimableAmount[1],
+            claimed: claimed[1],
+            tax: tax[1],
+          }
+        : undefined,
+    ],
+    isLoading: isLoading || isLoading2,
+  }
 }
 
 export type UserOfferingAndRefundingAmounts = {
@@ -105,7 +112,7 @@ export type UserOfferingAndRefundingAmounts = {
 }
 
 const useViewUserOfferingAndRefundingAmounts = () => {
-  const { ifoContract } = useIfo()
+  const { ifoContract } = useIfoV2Context()
   const { address: account } = useAccount()
   const latestTxReceipt = useLatestTxReceipt()
 

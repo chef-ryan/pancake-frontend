@@ -1,15 +1,18 @@
 import { useAtomValue, useSetAtom } from 'jotai'
 import React, { useEffect } from 'react'
-import { Box, Skeleton, Spinner } from '@pancakeswap/uikit'
+import { Box, Flex, Skeleton, Spinner } from '@pancakeswap/uikit'
 import { useIFOPoolInfoCtx } from '../hooks/ifo/useIFOPoolInfo'
-import { ifoInfoAtom, ifoPoolsAtom } from '../atom/ifo.atoms'
+import { ifoInfoAtom, ifoPoolsAtom, ifoUsersAtom } from '../atom/ifo.atoms'
 import { useIFOInfoCtx } from '../hooks/ifo/useIFOInfo'
+import { useIFOUserStatusCtx } from '../hooks/ifo/useIFOUserStatus'
 
 export const SyncIfoContext = ({ id, children }: { id: string; children: React.ReactNode }) => {
   const pools = useIFOPoolInfoCtx()
   const updatePools = useSetAtom(ifoPoolsAtom(id))
   const updateInfo = useSetAtom(ifoInfoAtom(id))
+  const updateUsers = useSetAtom(ifoUsersAtom(id))
   const info = useIFOInfoCtx()
+  const { users, isLoading } = useIFOUserStatusCtx()
   const infoValue = useAtomValue(ifoInfoAtom(id))
   const poolsValue = useAtomValue(ifoPoolsAtom(id))
   useEffect(() => {
@@ -24,11 +27,15 @@ export const SyncIfoContext = ({ id, children }: { id: string; children: React.R
     }
   }, [info])
 
-  if (!infoValue || !poolsValue || !infoValue.offeringCurrency) {
+  useEffect(() => {
+    updateUsers(users)
+  }, [users])
+
+  if (!infoValue || !poolsValue || !infoValue.offeringCurrency || isLoading) {
     return (
-      <Box width="100%" minHeight="200px" display="flex">
-        <Skeleton />
-      </Box>
+      <Flex width="100%" minHeight="600px" display="flex" alignItems="center" justifyContent="center">
+        <Spinner />
+      </Flex>
     )
   }
   return children

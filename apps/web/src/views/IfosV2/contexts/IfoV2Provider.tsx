@@ -10,7 +10,6 @@ import { ifoVersionAtom } from '../atom/ifoVersionAtom'
 
 import { SyncIfoContext } from './SyncIfoContext'
 import { IfoV2Context } from './IfoV2Context'
-import useIfo from '../hooks/useIfo'
 
 interface ProviderProps {
   id?: string
@@ -38,8 +37,8 @@ export const IfoV2Provider: React.FC<ProviderProps> = ({ id, children }) => {
     chainId,
     customAddress as `0x${string}` | undefined,
   )
-  // info and pools will be attached in useIfo hook
-  const value = { chainId, ifoContract, config, info: undefined, pools: undefined }
+  // info, pools and users will be attached in useIfo hook
+  const value = { chainId, ifoContract, config, info: undefined, pools: undefined, users: undefined }
 
   return (
     <IfoV2Context.Provider value={value}>

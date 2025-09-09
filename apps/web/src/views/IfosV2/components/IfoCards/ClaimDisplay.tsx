@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi'
 import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useIFOClaimCallback } from '../../hooks/ifo/useIFOClaimCallback'
-import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import type { IFOUserStatus } from '../../ifov2.types'
 import useIfo from '../../hooks/useIfo'
 import { formatDollarAmount } from './IfoDepositForm'
 

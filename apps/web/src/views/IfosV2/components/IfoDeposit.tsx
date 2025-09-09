@@ -8,7 +8,6 @@ import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useRouter } from 'next/router'
 import { IfoDepositForm } from './IfoCards/IfoDepositForm'
 import { IfoRibbon } from './IfoCards/IfoRibbon'
-import { useIFOUserStatus } from '../hooks/ifo/useIFOUserStatus'
 import useIfo from '../hooks/useIfo'
 
 const Header = styled(CardHeader)<{ $bannerUrl: string }>`
@@ -45,10 +44,9 @@ const StyledDepositCard = styled(Card)`
 `
 
 export const IfoDeposit: React.FC<{ pid: number }> = ({ pid }) => {
-  const [userStatus0, userStatus1] = useIFOUserStatus()
+  const { info, config, users } = useIfo()
+  const [userStatus0, userStatus1] = users
   const userStatus = pid === 0 ? userStatus0 : userStatus1
-
-  const { info, config } = useIfo()
   const status = info?.status
   const bannerUrl = config?.bannerUrl ?? ''
   const { theme } = useTheme()
@@ -80,10 +78,9 @@ const IfoDepositCard = ({ pid }: { pid: number }) => {
   const { t } = useTranslation()
   const { address: account } = useAccount()
   const router = useRouter()
-  const [userStatus0, userStatus1] = useIFOUserStatus()
+  const { pools, info, users } = useIfo()
+  const [userStatus0, userStatus1] = users
   const userStatus = pid === 0 ? userStatus0 : userStatus1
-
-  const { pools, info } = useIfo()
   const poolInfo = pools?.[pid]
   const stakeCurrency = poolInfo?.stakeCurrency
   const status = info?.status

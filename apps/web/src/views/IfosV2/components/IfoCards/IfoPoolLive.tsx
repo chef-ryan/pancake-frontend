@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
-import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import type { IFOUserStatus } from '../../ifov2.types'
 import useIfo from '../../hooks/useIfo'
 import IfoPoolInfoDisplay from './IfoPoolInfoDisplay'
 

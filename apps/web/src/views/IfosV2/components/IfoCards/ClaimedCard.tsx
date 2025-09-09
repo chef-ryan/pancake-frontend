@@ -4,7 +4,7 @@ import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import useTheme from 'hooks/useTheme'
 import { useChainId } from 'wagmi'
 import useIfo from '../../hooks/useIfo'
-import { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import { IFOUserStatus } from '../../ifov2.types'
 import { formatDollarAmount } from './IfoDepositForm'
 
 declare global {

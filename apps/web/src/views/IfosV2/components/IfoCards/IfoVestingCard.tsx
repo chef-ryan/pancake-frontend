@@ -4,7 +4,6 @@ import { Button, Card, CardBody, CardHeader, FlexGap, Image, Text } from '@panca
 import useTheme from 'hooks/useTheme'
 import NextLink from 'next/link'
 import { styled } from 'styled-components'
-import { useIFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
 import { useIFOClaimCallback } from '../../hooks/ifo/useIFOClaimCallback'
 import { useVestingInfo } from '../../hooks/ifo/useVestingInfo'
@@ -30,10 +29,10 @@ const ProgressBar = styled.div<{ width: number; color: string; left?: number }>`
 export const IfoVestingCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
-  const { config, info, pools } = useIfo()
+  const { config, info, pools, users } = useIfo()
   const name = config.tgeTitle
   const id = config?.id
-  const [userStatus0, userStatus1] = useIFOUserStatus()
+  const [userStatus0, userStatus1] = users
   const { claim, isPending } = useIFOClaimCallback()
   const vesting = useVestingInfo()
 

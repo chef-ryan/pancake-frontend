@@ -8,7 +8,6 @@ import { ChainId } from '@pancakeswap/chains'
 import useTheme from 'hooks/useTheme'
 import { IfoChainBoard } from 'views/Ifos/components/IfoChainBoard'
 import LiveTimer, { SoonTimer } from './Timer'
-import { useIFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
 
 const StyledProgress = styled(Progress)`
@@ -74,11 +73,11 @@ const ChainBoardContainer = styled(Box)`
 
 export const IfoRibbon: React.FC = () => {
   const { isDark } = useTheme()
-  const { info } = useIfo()
+  const { info, users } = useIfo()
   const ifoStatus = info?.status
   const startTimestamp = info?.startTimestamp
   const endTimestamp = info?.endTimestamp
-  const [userStatus0, userStatus1] = useIFOUserStatus()
+  const [userStatus0, userStatus1] = users
   const [currentTime, setCurrentTime] = useState(() => Math.floor(Date.now() / 1000))
 
   // Update current time every second for live progress

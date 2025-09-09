@@ -3,7 +3,7 @@ import { FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
 import { ReactNode } from 'react'
 import { styled } from 'styled-components'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
-import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import type { IFOUserStatus } from '../../ifov2.types'
 import useIfo from '../../hooks/useIfo'
 import { useIfoDisplay } from '../../hooks/useIfoDisplay'
 

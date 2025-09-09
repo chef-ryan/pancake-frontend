@@ -1,13 +1,11 @@
 import { Card, CardBody, FlexGap, useMatchBreakpoints } from '@pancakeswap/uikit'
-import { PoolInfo } from 'views/IfosV2/ifov2.types'
+import { PoolInfo, IFOUserStatus } from 'views/IfosV2/ifov2.types'
 import useTheme from 'hooks/useTheme'
-import { useSetAtom } from 'jotai'
 import IfoAllocationCard from '../IfoAllocationCard'
 import useIfo from '../../hooks/useIfo'
 import { IfoSaleInfoCard } from './IfoSaleInfoCard'
 import { IfoPoolFinished } from './IfoPoolFinished'
 import { IfoVestingCard } from './IfoVestingCard'
-import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 
 interface IfoCardProps {

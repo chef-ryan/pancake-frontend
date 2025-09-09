@@ -1,6 +1,6 @@
 import { FlexGap } from '@pancakeswap/uikit'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
-import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import type { IFOUserStatus } from '../../ifov2.types'
 import { ClaimDisplay } from './ClaimDisplay'
 import { Divider } from './Divider'
 import IfoPoolInfoDisplay from './IfoPoolInfoDisplay'

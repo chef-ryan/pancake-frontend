@@ -3,7 +3,7 @@ import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { ifoVersionAtom } from 'views/IfosV2/atom/ifoVersionAtom'
 import { useAtomValue } from 'jotai'
-import useIfo from '../useIfo'
+import { useIfoV2Context } from '../../contexts/useIfoV2Context'
 
 export type IFOUserInfo = {
   amountPool: bigint
@@ -12,7 +12,7 @@ export type IFOUserInfo = {
 
 export const useIFOUserInfo = () => {
   const { chainId, account } = useAccountActiveChain()
-  const { ifoContract } = useIfo()
+  const { ifoContract } = useIfoV2Context()
   const latestTxReceipt = useLatestTxReceipt()
   const version = useAtomValue(ifoVersionAtom)
 

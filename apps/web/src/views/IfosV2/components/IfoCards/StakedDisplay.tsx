@@ -3,7 +3,7 @@ import { AddIcon, Button, FlexGap, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import { useState } from 'react'
-import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import type { IFOUserStatus } from '../../ifov2.types'
 import { IfoDepositForm, formatDollarAmount } from './IfoDepositForm'
 
 export const StakedDisplay: React.FC<{ userStatus: IFOUserStatus; pid: number }> = ({ userStatus, pid }) => {

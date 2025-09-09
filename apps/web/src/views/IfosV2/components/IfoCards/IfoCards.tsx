@@ -3,8 +3,6 @@ import { styled } from 'styled-components'
 import useTheme from 'hooks/useTheme'
 
 import { useIFOStatus } from '../../hooks/ifo/useIFOStatus'
-import { useIFOPoolInfo } from '../../hooks/ifo/useIFOPoolInfo'
-import { useIFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
 import useIfo from '../../hooks/useIfo'
 import { Footer } from '../Footer'
 import { IfoRibbon } from './IfoRibbon'
@@ -72,12 +70,11 @@ export const IfoCurrentCard = ({ bannerUrl }: { ifoId: string; bannerUrl: string
 }
 
 const IfoCard: React.FC = () => {
-  const pools = useIFOPoolInfo()
+  const { info, pools, users } = useIfo()
   const pool0Info = pools[0]
   const pool1Info = pools[1]
-  const [userStatus0, userStatus1] = useIFOUserStatus()
+  const [userStatus0, userStatus1] = users
   const [ifoStatus0, ifoStatus1] = useIFOStatus()
-  const { info } = useIfo()
   const ifoStatus = info?.status
 
   const cardProps = {

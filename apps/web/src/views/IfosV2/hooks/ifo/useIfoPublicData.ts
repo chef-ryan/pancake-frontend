@@ -5,7 +5,6 @@ import { getStatusByTimestamp } from '../helpers'
 import { useIFOStatus } from './useIFOStatus'
 import type { PoolInfo } from '../../ifov2.types'
 import useIfo from '../useIfo'
-import { useIFOUserStatus } from './useIFOUserStatus'
 
 export type IFOPublicData = {
   startTime: number
@@ -31,7 +30,7 @@ export type IFOPublicData = {
 }
 
 export const useIfoPublicData = (): [IFOPublicData, IFOPublicData] | [IFOPublicData] => {
-  const { pools, info } = useIfo()
+  const { pools, info, users } = useIfo()
   const pool0Info = pools[0]
   const pool1Info = pools[1]
   const stakeCurrency0 = pool0Info?.stakeCurrency as UnsafeCurrency
@@ -40,7 +39,7 @@ export const useIfoPublicData = (): [IFOPublicData, IFOPublicData] | [IFOPublicD
   const startTimestamp = info?.startTimestamp
   const endTimestamp = info?.endTimestamp
   const [status0, status1] = useIFOStatus()
-  const [userStatus0, userStatus1] = useIFOUserStatus()
+  const [userStatus0, userStatus1] = users
 
   const {
     stakedAmount: userStakedAmount,

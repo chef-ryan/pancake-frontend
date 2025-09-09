@@ -3,8 +3,7 @@ import { ClaimedCard } from './ClaimedCard'
 import { IfoSaleInfoCard } from './IfoSaleInfoCard'
 import { IfoPoolLive } from './IfoPoolLive'
 import { IfoVestingCard } from './IfoVestingCard'
-import type { PoolInfo } from '../../ifov2.types'
-import type { IFOUserStatus } from '../../hooks/ifo/useIFOUserStatus'
+import type { PoolInfo, IFOUserStatus } from '../../ifov2.types'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 
 interface IfoCardProps {
