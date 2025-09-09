@@ -120,7 +120,7 @@ function HeaderBunny() {
   const { isDesktop } = useMatchBreakpoints()
   const bunnyImageUrl = useMemo(() => {
     const chainId = isIfoSupported(currentChainId) ? currentChainId : ChainId.BSC
-    return getChainBasedImageUrl({ chainId, name: 'header-bunny' })
+    return getChainBasedImageUrl({ chainId, name: 'header-bunny-v2' })
   }, [currentChainId])
 
   return (

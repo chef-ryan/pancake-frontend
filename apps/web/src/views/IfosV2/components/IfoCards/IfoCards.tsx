@@ -58,8 +58,6 @@ export const IfoCurrentCard = ({ bannerUrl }: { ifoId: string; bannerUrl: string
         <Box
           style={{
             background: theme.colors.gradientBubblegum,
-            borderBottomLeftRadius: '24px',
-            borderBottomRightRadius: '24px',
           }}
         >
           <IfoRibbon />
