@@ -68,7 +68,7 @@ const StepCard = ({
   items: string[]
   circleFill: string
 }) => {
-  const textColor = circleFill === 'cardBorder' ? 'text' : 'invertedContrast'
+  const textColor = 'invertedContrast'
   return (
     <StyledCard>
       <CardBody p="24px">
@@ -138,7 +138,7 @@ const HowToTakePart: React.FC = () => {
         <StepCard
           stepNumber={2}
           title={t('Claim your tokens')}
-          circleFill="cardBorder"
+          circleFill="inputSecondary"
           items={[
             t('After the IFO ends, you can claim the IFO tokens you purchased.'),
             t(
