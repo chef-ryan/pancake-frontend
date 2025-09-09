@@ -4,6 +4,7 @@ import { getContract } from 'utils/contractHelpers'
 import { Address, createPublicClient, custom, http, isAddress, type WalletClient } from 'viem'
 import { bsc } from 'viem/chains'
 import { ifoConfigs } from 'views/IfosV2/config'
+import { getViemClients } from 'utils/viem'
 import { ifoV10Abi as ifoABI } from '../../abi/ifoV10Abi'
 
 function getIfoAddressFromUrl(): `0x${string}` | null {
@@ -28,14 +29,12 @@ function getIFOAddress(ifoId: string): `0x${string}` {
 
 export function getIFOContract(ifoId: string, signer?: WalletClient, chainId?: number, ca?: Address) {
   const ifoAddress = getIFOAddress(ifoId)
+  const publicClient = getViemClients({ chainId })
   return getContract({
     address: ca || ifoAddress,
     abi: ifoABI,
     signer,
     chainId,
-    publicClient: createPublicClient({
-      chain: bsc,
-      transport: http('https://virtual.binance.eu.rpc.tenderly.co/08d597ab-f1d8-43bf-9fbf-6ba2fb94f081'),
-    }),
+    publicClient,
   })
 }
