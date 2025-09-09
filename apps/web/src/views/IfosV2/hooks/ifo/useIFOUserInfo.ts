@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
+import { ifoVersionAtom } from 'views/IfosV2/atom/ifoVersionAtom'
+import { useAtomValue } from 'jotai'
 import useIfo from '../useIfo'
 
 export type IFOUserInfo = {
@@ -12,9 +14,10 @@ export const useIFOUserInfo = () => {
   const { chainId, account } = useAccountActiveChain()
   const { ifoContract } = useIfo()
   const latestTxReceipt = useLatestTxReceipt()
+  const version = useAtomValue(ifoVersionAtom)
 
   return useQuery({
-    queryKey: ['ifoUserInfo', account, chainId, latestTxReceipt],
+    queryKey: ['ifoUserInfo', account, chainId, latestTxReceipt, version],
     queryFn: async (): Promise<[IFOUserInfo, IFOUserInfo]> => {
       if (!account || !ifoContract) throw new Error('IFO contract not found')
 

@@ -1,6 +1,7 @@
 import { Card, CardBody, FlexGap, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { PoolInfo } from 'views/IfosV2/ifov2.types'
 import useTheme from 'hooks/useTheme'
+import { useSetAtom } from 'jotai'
 import IfoAllocationCard from '../IfoAllocationCard'
 import useIfo from '../../hooks/useIfo'
 import { IfoSaleInfoCard } from './IfoSaleInfoCard'

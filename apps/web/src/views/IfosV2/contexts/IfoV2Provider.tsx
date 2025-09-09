@@ -25,8 +25,6 @@ export const IfoV2Provider: React.FC<ProviderProps> = ({ id, children }) => {
   // Preload submitting animation
   useAtomValue(ifoLoadingAnimationAtom)
 
-  const version = useAtomValue(ifoVersionAtom)
-
   const ifoId = (id ?? (query.ifo as string)) || ''
 
   const config = ifoId ? ifoConfigs.find((x) => x.id === ifoId) : ifoConfigs[0]
@@ -44,10 +42,8 @@ export const IfoV2Provider: React.FC<ProviderProps> = ({ id, children }) => {
   const value = { chainId, ifoContract, config, info: undefined, pools: undefined }
 
   return (
-    <IfoV2Context.Provider value={value} key={ifoContract.address}>
-      <SyncIfoContext id={config.id} key={version}>
-        {children}
-      </SyncIfoContext>
+    <IfoV2Context.Provider value={value}>
+      <SyncIfoContext id={config.id}>{children}</SyncIfoContext>
     </IfoV2Context.Provider>
   )
 }

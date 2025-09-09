@@ -12,9 +12,12 @@ interface SubscribeInfoProps {
   stakeCurrency1?: Currency
 }
 
-export const SubscribeInfo: React.FC<SubscribeInfoProps> = ({ stakeCurrency0, stakeCurrency1 }) => {
+const SubscribeInfo: React.FC<SubscribeInfoProps> = ({ stakeCurrency0, stakeCurrency1 }) => {
   const { t } = useTranslation()
   const { theme } = useTheme()
+  if (!(stakeCurrency0 && stakeCurrency1)) {
+    return null
+  }
   return (
     <FlexGap
       alignItems="center"
@@ -63,9 +66,6 @@ export const IfoSaleInfoDisplay: React.FC = () => {
   const stakeCurrency1 = pools?.[1]?.stakeCurrency
   const { icon } = config ?? {}
 
-  if (!info) {
-    return null
-  }
   const { offeringCurrency, totalSalesAmount, status } = info
 
   if (status === 'finished') {

@@ -24,9 +24,9 @@ export const SyncIfoContext = ({ id, children }: { id: string; children: React.R
     }
   }, [info])
 
-  if (!infoValue || !poolsValue) {
+  if (!infoValue || !poolsValue || !infoValue.offeringCurrency) {
     return (
-      <Box width="100%" minHeight="100px" display="flex">
+      <Box width="100%" minHeight="200px" display="flex">
         <Skeleton />
       </Box>
     )

@@ -8,6 +8,7 @@ import { useCurrency } from 'hooks/Tokens'
 import { useAtomValue } from 'jotai'
 import { ifoInfoAtom, ifoPoolsAtom } from 'views/IfosV2/atom/ifo.atoms'
 import { useIfoV2Context } from 'views/IfosV2/contexts/useIfoV2Context'
+import { ifoVersionAtom } from 'views/IfosV2/atom/ifoVersionAtom'
 import { getStatusByTimestamp } from '../helpers'
 import { useVestingInfo } from './useVestingInfo'
 import type { IfoInfo } from '../../ifov2.types'
@@ -28,8 +29,9 @@ export const useIFOInfoCtx = () => {
   const { chainId } = useActiveChainId()
   const vestingInfo = useVestingInfo()
   const { ifoContract } = useIfoV2Context()
+  const version = useAtomValue(ifoVersionAtom)
   const { data: timestamps } = useQuery({
-    queryKey: ['ifoTimestamps', chainId],
+    queryKey: ['ifoTimestamps', chainId, version],
     queryFn: async (): Promise<{ startTimestamp: number; endTimestamp: number }> => {
       const publicClient = getViemClients({ chainId })
       if (!ifoContract || !publicClient) throw new Error('IFO contract not found')

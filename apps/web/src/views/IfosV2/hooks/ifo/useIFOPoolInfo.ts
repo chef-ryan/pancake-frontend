@@ -10,6 +10,7 @@ import { useAtomValue } from 'jotai'
 import { ifoPoolsAtom } from 'views/IfosV2/atom/ifo.atoms'
 import { useIfoV2Context } from 'views/IfosV2/contexts/useIfoV2Context'
 import { CAKE } from '@pancakeswap/tokens'
+import { ifoVersionAtom } from 'views/IfosV2/atom/ifoVersionAtom'
 import { useIFOAddresses } from './useIFOAddresses'
 import type { PoolInfo } from '../../ifov2.types'
 import { mapToPoolInfo, type RawPoolInfo } from './mapToPoolInfo'
@@ -29,9 +30,10 @@ export const useIFOPoolInfoCtx = (): PoolInfo[] => {
   const stakeCurrency1 = useCurrency(addresses?.lpToken1)
   const offeringCurrency = useCurrency(addresses?.offeringToken)
   const cakeAddress = CAKE[chainId as keyof typeof CAKE]?.address ?? zeroAddress
+  const version = useAtomValue(ifoVersionAtom)
 
   const { data } = useQuery({
-    queryKey: ['ifoPoolInfo', chainId, addresses, latestTxReceipt],
+    queryKey: ['ifoPoolInfo', chainId, addresses, latestTxReceipt, version],
     queryFn: async (): Promise<{ raw: RawPoolInfo; taxRateRaw: bigint }[]> => {
       const publicClient = getViemClients({ chainId })
       if (!ifoContract || !publicClient || !addresses) throw new Error('IFO contract not found')

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { useAccount } from 'wagmi'
+import { useAtom } from 'jotai'
 import useIfo from '../useIfo'
 import { useIFOUserInfo } from './useIFOUserInfo'
 
