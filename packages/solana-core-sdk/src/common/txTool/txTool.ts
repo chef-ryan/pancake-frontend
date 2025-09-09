@@ -349,6 +349,7 @@ export class TxBuilder {
         if (this.signAllTransactions) {
           const simulation = await this.connection.simulateTransaction(transaction);
           this.logSimulation(simulation);
+          return simulation;
         }
         throw new Error("Failed to simulate transaction");
       },
