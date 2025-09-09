@@ -90,13 +90,15 @@ export const useIFOPoolInfoCtx = (): PoolInfo[] => {
       .map(({ raw, taxRateRaw }, idx) => {
         const poolToken = ((idx === 0 ? addresses.lpToken0 : addresses.lpToken1) ?? zeroAddress) as Address
         const stakeCurrency = (idx === 0 ? stakeCurrency0 : stakeCurrency1) as Currency
+        const [raisingAmountPool, , , , totalAmountPool] = raw
+        const feeTier = totalAmountPool < raisingAmountPool ? 0 : Number(taxRateRaw) / 1e12
         const mapped = mapToPoolInfo({
           raw,
           pid: idx,
           poolToken,
           stakeCurrency,
           offeringCurrency: offeringCurrency as Currency,
-          feeTier: Number(taxRateRaw) / 1e12,
+          feeTier,
         })
 
         if (!mapped) return undefined
