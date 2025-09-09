@@ -102,7 +102,7 @@ export const CreateLiquiditySelector = () => {
 
   const chainName = getChainName(chainId)
 
-  const { isInfinitySupported, isV2Supported } = useProtocolSupported(chainId)
+  const { isInfinitySupported, isV2Supported } = useProtocolSupported()
 
   return (
     <StyledBox>
@@ -120,7 +120,7 @@ export const CreateLiquiditySelector = () => {
                 </LinkExternal>
               </FlexGap>
 
-              {isInfinitySupported ? (
+              {isInfinitySupported(chainId) ? (
                 <NextLinkFromReactRouter to={`/liquidity/create/${chainName}/infinity`}>
                   <InfinityCard />
                 </NextLinkFromReactRouter>
@@ -148,7 +148,7 @@ export const CreateLiquiditySelector = () => {
                 </StyledCard>
               </NextLinkFromReactRouter>
 
-              {isV2Supported ? (
+              {isV2Supported(chainId) ? (
                 <NextLinkFromReactRouter to={`/liquidity/create/${chainName}/v2`}>
                   <V2Card />
                 </NextLinkFromReactRouter>

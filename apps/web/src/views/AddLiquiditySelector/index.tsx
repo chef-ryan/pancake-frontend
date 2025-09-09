@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
+import { Token, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import {
   AddIcon,
   Button,
@@ -15,7 +15,7 @@ import { PoolTypeFilter, getCurrencyAddress } from '@pancakeswap/widgets-interna
 import { NetworkSelector } from 'components/NetworkSelector'
 import { CommonBasesType } from 'components/SearchModal/types'
 import { CHAIN_QUERY_NAME } from 'config/chains'
-import { useCurrencyByChainId } from 'hooks/Tokens'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import NextLink from 'next/link'
 import { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
@@ -31,6 +31,7 @@ import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { COMPACT_LIQUIDITY_TYPES, LIQUIDITY_TYPES, LiquidityType } from 'utils/types'
 import { Chain } from 'viem/chains'
 import { bscTokens } from '@pancakeswap/tokens'
+import { isStableSwapSupported } from '@pancakeswap/stable-swap-sdk'
 import { PERSIST_CHAIN_KEY } from 'config/constants'
 import { usePoolTypeQuery } from './hooks/usePoolTypeQuery'
 
@@ -53,13 +54,16 @@ export const AddLiquiditySelector = () => {
 
   const { chainId, protocol, currencyIdA, currencyIdB, updateParams } = useSelectIdRouteParams()
   const queryChainName = chainId && CHAIN_QUERY_NAME[chainId]
-  const baseCurrency = useCurrencyByChainId(currencyIdA, chainId)
-  const currencyB = useCurrencyByChainId(currencyIdB, chainId)
+  const baseCurrency = useUnifiedCurrency(currencyIdA, chainId)
+  const currencyB = useUnifiedCurrency(currencyIdB, chainId)
   const quoteCurrency =
     baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped) ? undefined : currencyB
 
   const { data: ssSupportedBaseToken } = useStableSwapSupportedTokens(chainId)
-  const { data: ssSupportedQuoteToken } = useStableSwapSupportedTokens(chainId, baseCurrency?.wrapped)
+  const { data: ssSupportedQuoteToken } = useStableSwapSupportedTokens(
+    chainId,
+    isStableSwapSupported(chainId) ? (baseCurrency?.wrapped as Token) : undefined,
+  )
   const [baseTokensToSelect, quoteTokensToSelect] = useMemo(
     () => (protocol === 'stableSwap' ? [ssSupportedBaseToken, ssSupportedQuoteToken] : [undefined, undefined]),
     [ssSupportedBaseToken, ssSupportedQuoteToken, protocol],

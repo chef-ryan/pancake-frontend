@@ -1,7 +1,6 @@
 import { chainNames, getChainName } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
 import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
-import { Native } from '@pancakeswap/sdk'
 import { CAKE, USDC } from '@pancakeswap/tokens'
 import { SelectIdRoute, zSelectId } from 'dynamicRoute'
 import { useActiveChainId } from 'hooks/useActiveChainId'
@@ -9,6 +8,7 @@ import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
 import { useRouteParams } from 'next-typesafe-url/pages'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo } from 'react'
+import { getUnifiedNativeCurrency } from 'utils/getUnifiedNativeCurrency'
 import { isSupportedProtocol } from 'utils/protocols'
 import { z } from 'zod'
 
@@ -101,7 +101,7 @@ export const useSelectIdRouteParams = () => {
               ? [
                   getChainName(p.chainId!),
                   params.protocol,
-                  params.protocol !== 'stableSwap' ? Native.onChain(p.chainId!).symbol : params.currencyIdA,
+                  params.protocol !== 'stableSwap' ? getUnifiedNativeCurrency(p.chainId!).symbol : params.currencyIdA,
                   params.protocol !== 'stableSwap'
                     ? CAKE[p.chainId!]?.address ?? USDC[p.chainId!]?.address ?? params.currencyIdB
                     : params.currencyIdB,

@@ -5,10 +5,9 @@ import { Breadcrumbs, Link, Text } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 import { useSelectIdRoute } from 'hooks/dynamicRoute/useSelectIdRoute'
-import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
 import { TabMenu } from 'views/BurnDashboard/components/TabMenu'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import { getChainName, isEvm } from '@pancakeswap/chains'
+import { getChainName } from '@pancakeswap/chains'
 import { useProtocolSupported } from '../hooks/useProtocolSupported'
 
 const StyledLink = styled(NextLinkFromReactRouter)`
@@ -24,7 +23,8 @@ export const BreadcrumbNav: React.FC = () => {
   const { chainId } = useActiveChainId()
   const chainName = useMemo(() => getChainName(chainId), [chainId])
 
-  const { isInfinitySupported, isV2Supported } = useProtocolSupported(chainId)
+  const { isInfinitySupported: checkIsInfinitySupported, isV2Supported } = useProtocolSupported()
+  const isInfinitySupported = checkIsInfinitySupported(chainId)
 
   const { protocolName, routeParams } = useSelectIdRoute()
   const protocolFromQuery = routeParams?.selectId?.[1]
@@ -58,7 +58,7 @@ export const BreadcrumbNav: React.FC = () => {
           tabs={[
             { value: 'infinity', label: 'Infinity', disabled: !isInfinitySupported },
             { value: 'v3', label: 'V3' },
-            { value: 'v2', label: 'V2', disabled: !isV2Supported },
+            { value: 'v2', label: 'V2', disabled: !isV2Supported(chainId) },
           ]}
           defaultTab={{
             value: protocolName as 'infinity' | 'v3' | 'v2',

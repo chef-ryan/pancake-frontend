@@ -1,1 +1,8 @@
-export const SOLANA_SUPPORTED_PATH = ['/bridge', '/sol/wallet-test', '/swap', '/home', '/liquidity/create']
+export const SOLANA_SUPPORTED_PATH = [
+  '/bridge',
+  '/sol/wallet-test',
+  '/swap',
+  '/home',
+  '/liquidity/create',
+  '/liquidity/select',
+]
