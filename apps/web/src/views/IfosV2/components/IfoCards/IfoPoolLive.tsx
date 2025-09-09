@@ -15,6 +15,28 @@ export const IfoPoolLive: React.FC<{
   ifoStatus: IFOStatus
   userStatus?: IFOUserStatus
 }> = ({ ifoStatus, pid, userStatus }) => {
+  const router = useRouter()
+  const { config, info, pools } = useIfo()
+  const status = info?.status
+  const isComingSoon = status === 'coming_soon'
+  const poolInfo = pools?.[pid]
+  const ifoId = config?.id
+  if (isComingSoon) {
+    return null
+  }
+
+  return (
+    <FlexGap flexDirection="column" gap="8px">
+      <PoolAction pid={pid} userStatus={userStatus} />
+      <IfoPoolInfoDisplay pid={pid} ifoStatus={ifoStatus} userStatus={userStatus} variant="live" />
+    </FlexGap>
+  )
+}
+
+const PoolAction: React.FC<{
+  pid: number
+  userStatus?: IFOUserStatus
+}> = ({ pid, userStatus }) => {
   const { t } = useTranslation()
   const router = useRouter()
   const { config, info, pools } = useIfo()
@@ -42,9 +64,8 @@ export const IfoPoolLive: React.FC<{
   const handleConnectWallet = () => {
     logGTMIfoConnectWalletEvent(isComingSoon)
   }
-
   return (
-    <FlexGap flexDirection="column" gap="8px">
+    <>
       <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
         {stakeCurrency?.symbol} {t('Pool')}
       </Text>
@@ -80,9 +101,7 @@ export const IfoPoolLive: React.FC<{
           </Button>
         )}
       </FlexGap>
-
-      <IfoPoolInfoDisplay pid={pid} ifoStatus={ifoStatus} userStatus={userStatus} variant="live" />
-    </FlexGap>
+    </>
   )
 }
 
