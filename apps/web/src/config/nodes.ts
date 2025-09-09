@@ -28,15 +28,13 @@ const ARBITRUM_NODES = [
 
 export const SERVER_NODES = {
   [ChainId.BSC]: [
-    // TODO: Using Tenderly Virtual Network for IFO v10 testing
-    'https://virtual.binance.eu.rpc.tenderly.co/08d597ab-f1d8-43bf-9fbf-6ba2fb94f081',
-    // getNodeRealUrl(ChainId.BSC, process.env.SERVER_NODE_REAL_API_ETH) || '',
-    // process.env.NEXT_PUBLIC_NODE_PRODUCTION || '',
-    // getGroveUrl(ChainId.BSC, process.env.NEXT_PUBLIC_GROVE_API_KEY) || '',
-    // 'https://bsc.publicnode.com',
-    // 'https://binance.llamarpc.com',
-    // 'https://bsc-dataseed1.defibit.io',
-    // 'https://bsc-dataseed1.bnbchain.org',
+    getNodeRealUrl(ChainId.BSC, process.env.SERVER_NODE_REAL_API_ETH) || '',
+    process.env.NEXT_PUBLIC_NODE_PRODUCTION || '',
+    getGroveUrl(ChainId.BSC, process.env.NEXT_PUBLIC_GROVE_API_KEY) || '',
+    'https://bsc.publicnode.com',
+    'https://binance.llamarpc.com',
+    'https://bsc-dataseed1.defibit.io',
+    'https://bsc-dataseed1.bnbchain.org',
   ].filter(Boolean),
   [ChainId.BSC_TESTNET]: [
     'https://bsc-testnet-dataseed.bnbchain.org',
@@ -99,16 +97,14 @@ export const SERVER_NODES = {
 
 export const PUBLIC_NODES: Record<ChainId, string[] | readonly string[]> = {
   [ChainId.BSC]: [
-    // TODO: Using Tenderly Virtual Network for IFO v10 testing
-    'https://virtual.binance.eu.rpc.tenderly.co/08d597ab-f1d8-43bf-9fbf-6ba2fb94f081',
-    // process.env.NEXT_PUBLIC_NODE_PRODUCTION || '',
-    // getNodeRealUrl(ChainId.BSC, process.env.NEXT_PUBLIC_NODE_REAL_API_ETH) || '',
-    // process.env.NEXT_PUBLIC_NODIES_BSC || '',
+    process.env.NEXT_PUBLIC_NODE_PRODUCTION || '',
+    getNodeRealUrl(ChainId.BSC, process.env.NEXT_PUBLIC_NODE_REAL_API_ETH) || '',
+    process.env.NEXT_PUBLIC_NODIES_BSC || '',
     // getGroveUrl(ChainId.BSC, process.env.NEXT_PUBLIC_GROVE_API_KEY) || '',
-    // 'https://bsc.publicnode.com',
-    // 'https://binance.llamarpc.com',
-    // 'https://bsc-dataseed1.defibit.io',
-    // 'https://bsc-dataseed1.bnbchain.org',
+    'https://bsc.publicnode.com',
+    'https://binance.llamarpc.com',
+    'https://bsc-dataseed1.defibit.io',
+    'https://bsc-dataseed1.bnbchain.org',
   ].filter(Boolean),
   [ChainId.BSC_TESTNET]: [
     getNodeRealUrl(ChainId.BSC_TESTNET, process.env.SERVER_NODE_REAL_API_ETH) || '',

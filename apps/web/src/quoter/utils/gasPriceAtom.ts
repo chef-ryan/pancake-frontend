@@ -7,9 +7,7 @@ import { fallbackWithRank } from 'utils/fallbackWithRank'
 import { publicClient } from 'utils/viem'
 import { createPublicClient, http, PublicClient } from 'viem'
 
-// TODO: Using Tenderly Virtual Network for IFO v10 testing
-const BSC_CUSTOM_NODE = 'https://virtual.binance.eu.rpc.tenderly.co/08d597ab-f1d8-43bf-9fbf-6ba2fb94f081'
-// const BSC_CUSTOM_NODE = 'https://bsc-dataseed.bnbchain.org'
+const BSC_CUSTOM_NODE = 'https://bsc-dataseed.bnbchain.org'
 
 const gasPriceClients: Record<ChainId, PublicClient> = CHAINS.reduce((clients, chain) => {
   const transport =

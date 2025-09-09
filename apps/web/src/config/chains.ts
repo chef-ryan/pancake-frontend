@@ -44,15 +44,11 @@ const bsc = {
     ...bsc_.rpcUrls,
     public: {
       ...bsc_.rpcUrls,
-      // TODO: Using Tenderly Virtual Network for IFO v10 testing
-      http: ['https://virtual.binance.eu.rpc.tenderly.co/08d597ab-f1d8-43bf-9fbf-6ba2fb94f081'],
-      // http: ['https://bsc-dataseed.bnbchain.org/'],
+      http: ['https://bsc-dataseed.bnbchain.org/'],
     },
     default: {
       ...bsc_.rpcUrls.default,
-      // TODO: Using Tenderly Virtual Network for IFO v10 testing
-      http: ['https://virtual.binance.eu.rpc.tenderly.co/08d597ab-f1d8-43bf-9fbf-6ba2fb94f081'],
-      // http: ['https://bsc-dataseed.bnbchain.org/'],
+      http: ['https://bsc-dataseed.bnbchain.org/'],
     },
   },
 } satisfies Chain
