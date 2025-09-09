@@ -72,6 +72,10 @@ const CountDown: React.FC<{
     segments.push({ value: 0, suffix: t('s') })
   }
 
+  if (segments.length > 3) {
+    segments.pop()
+  }
+
   return (
     <FlexGap gap="4px" alignItems="baseline">
       {segments.map((segment, index) => (
