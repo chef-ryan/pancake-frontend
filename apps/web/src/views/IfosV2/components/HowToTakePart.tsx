@@ -32,11 +32,11 @@ const StyledCard = styled(Card)`
   max-width: 400px;
 `
 
-const StepNumber = styled(Box)`
+const StepNumber = styled(Box)<{ $fill: string }>`
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.colors.primary};
+  background: ${({ theme, $fill }) => theme.colors[$fill]};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,21 +48,47 @@ const StepNumber = styled(Box)`
   }
 `
 
-const StepCard = ({ stepNumber, title, description }: { stepNumber: number; title: string; description: string }) => {
+const BulletList = styled.ul`
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+  li {
+    margin-bottom: 8px;
+  }
+`
+
+const StepCard = ({
+  stepNumber,
+  title,
+  items,
+  circleFill,
+}: {
+  stepNumber: number
+  title: string
+  items: string[]
+  circleFill: string
+}) => {
+  const textColor = circleFill === 'cardBorder' ? 'text' : 'invertedContrast'
   return (
     <StyledCard>
       <CardBody p="24px">
-        <StepNumber>
-          <Text fontSize="24px" fontWeight="bold" color="white">
+        <StepNumber $fill={circleFill}>
+          <Text fontSize="24px" fontWeight="bold" color={textColor}>
             {stepNumber}
           </Text>
         </StepNumber>
         <Heading as="h3" fontSize="24px" mb="16px" color="primary">
           {title}
         </Heading>
-        <Text color="textSubtle" lineHeight="1.5">
-          {description}
-        </Text>
+        <BulletList>
+          {items.map((item) => (
+            <li key={item}>
+              <Text as="span" color="textSubtle" lineHeight="1.5">
+                {item}
+              </Text>
+            </li>
+          ))}
+        </BulletList>
       </CardBody>
     </StyledCard>
   )
@@ -97,20 +123,35 @@ const HowToTakePart: React.FC = () => {
       >
         <StepCard
           stepNumber={1}
-          title={t('Commit %symbol%', { symbol: commitTokensText })}
-          description={t(
-            'When the IFO sales are live, you can "commit" your %symbol% to buy the tokens being sold.\n\nWe recommend committing to the Basic Sale first, but you can do both if you like.',
-            { symbol: commitTokensText },
-          )}
+          title={t('Commit CAKE')}
+          circleFill="secondary"
+          items={[
+            t('Anyone with %symbol% can take part — no KYC required.', { symbol: commitTokensText }),
+            t('When the IFO sale is live, simply commit your %symbol% tokens.', { symbol: commitTokensText }),
+            t(
+              'You can commit as much %symbol% as you like. Your final token allocation will depend on how much you commit compared to the total pool.',
+              { symbol: commitTokensText },
+            ),
+          ]}
         />
 
         <StepCard
           stepNumber={2}
-          title={t('Claim your tokens and achievement')}
-          description={t(
-            'After the IFO sales finish, you can claim any IFO tokens that you bought, and any unspent %symbol%-BNB LP tokens will be returned to your wallet.',
-            { symbol: commitTokensText },
-          )}
+          title={t('Claim your tokens')}
+          circleFill="cardBorder"
+          items={[
+            t('After the IFO ends, you can claim the IFO tokens you purchased.'),
+            t(
+              'If the IFO is oversubscribed (total committed amount > raise goal), unspent %symbol% will be refunded.',
+              {
+                symbol: commitTokensText,
+              },
+            ),
+            t(
+              'A participation fee (0.05%–1%) applies only when the IFO is oversubscribed. The fee decreases as the oversubscription % rises and is deducted from your refunded %symbol%.',
+              { symbol: commitTokensText },
+            ),
+          ]}
         />
       </Flex>
     </SectionWrapper>
