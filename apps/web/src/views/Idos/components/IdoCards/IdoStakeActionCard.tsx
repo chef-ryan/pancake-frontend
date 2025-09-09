@@ -103,7 +103,7 @@ export const IdoStakeActionCard: React.FC<{
             </Text>
           </FlexGap>
           <FlexGap justifyContent="space-between">
-            <Text color="textSubtle">{t('Target Raise')}</Text>
+            <Text color="textSubtle">{t('Raise Goal')}</Text>
             <Text>
               {raiseAmount?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
             </Text>
