@@ -10,6 +10,7 @@ export interface MenuItemProps {
   href?: string;
   variant?: MenuItemVariant;
   statusColor?: keyof Colors;
+  hoverColor?: keyof Colors;
   scrollLayerRef?: React.RefObject<HTMLDivElement>;
   onClick?: MouseEventHandler;
 }
@@ -19,4 +20,5 @@ export type StyledMenuItemProps = {
   $isDisabled?: boolean;
   $variant?: MenuItemVariant;
   $statusColor?: keyof Colors;
+  $hoverColor?: keyof Colors;
 };

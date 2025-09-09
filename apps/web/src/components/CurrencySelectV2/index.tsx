@@ -12,8 +12,8 @@ import {
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import CurrencySearchModalV2, { CurrencySearchModalV2Props } from 'components/SearchModal/CurrencySearchModalV2'
-import { useStablecoinPrice } from 'hooks/useStablecoinPrice'
-import { useCurrencyBalanceWithChain } from 'state/wallet/hooks'
+import { useUnifiedUSDPriceAmount } from 'hooks/useStablecoinPrice'
+import { useUnifiedCurrencyBalance } from 'hooks/useUnifiedCurrencyBalance'
 import styled from 'styled-components'
 import { useAccount } from 'wagmi'
 import { AutoRow, RowBetween } from '../Layout/Row'
@@ -43,10 +43,8 @@ export const CurrencySelectV2 = ({
 }: CurrencySelectV2Props) => {
   const { address: account } = useAccount()
 
-  const selectedCurrencyBalance = useCurrencyBalanceWithChain(
-    account ?? undefined,
+  const selectedCurrencyBalance = useUnifiedCurrencyBalance(
     !hideBalance && selectedCurrency ? selectedCurrency : undefined,
-    chainId,
   )
 
   const { t } = useTranslation()
@@ -63,10 +61,13 @@ export const CurrencySelectV2 = ({
     />,
   )
 
-  const price = useStablecoinPrice(selectedCurrencyBalance && selectedCurrency ? selectedCurrency : undefined, {
-    enabled: Boolean(selectedCurrencyBalance?.greaterThan(0)),
-  })
-  const quoted = selectedCurrencyBalance && price?.quote(selectedCurrencyBalance)
+  const quoted = useUnifiedUSDPriceAmount(
+    selectedCurrencyBalance && selectedCurrency ? selectedCurrency : undefined,
+    Number(selectedCurrencyBalance?.toExact()),
+    {
+      enabled: Boolean(selectedCurrencyBalance?.greaterThan(0)),
+    },
+  )
 
   return (
     <Box width="100%" {...props}>
@@ -102,9 +103,9 @@ export const CurrencySelectV2 = ({
           </AutoRow>
           <RowBetween>
             <div />
-            {quoted && Number.isFinite(+quoted?.toExact()) && (
+            {quoted && Number.isFinite(quoted) && (
               <Text fontSize="12px" color="textSubtle">
-                ~${formatNumber(+quoted.toExact())}
+                ~${formatNumber(quoted)}
               </Text>
             )}
           </RowBetween>

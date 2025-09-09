@@ -8,7 +8,8 @@ import { useSelectIdRoute } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
 import { TabMenu } from 'views/BurnDashboard/components/TabMenu'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import { getChainName } from '@pancakeswap/chains'
+import { getChainName, isEvm } from '@pancakeswap/chains'
+import { useProtocolSupported } from '../hooks/useProtocolSupported'
 
 const StyledLink = styled(NextLinkFromReactRouter)`
   &:hover {
@@ -23,7 +24,7 @@ export const BreadcrumbNav: React.FC = () => {
   const { chainId } = useActiveChainId()
   const chainName = useMemo(() => getChainName(chainId), [chainId])
 
-  const isInfinitySupported = useMemo(() => INFINITY_SUPPORTED_CHAINS.includes(chainId), [chainId])
+  const { isInfinitySupported, isV2Supported } = useProtocolSupported(chainId)
 
   const { protocolName, routeParams } = useSelectIdRoute()
   const protocolFromQuery = routeParams?.selectId?.[1]
@@ -40,7 +41,7 @@ export const BreadcrumbNav: React.FC = () => {
         router.push(`/liquidity/create/${chainName}/${protocol}/${currencyIdA}/${currencyIdB}`)
       } else router.push(`/liquidity/create/${chainName}/${protocol}`)
     },
-    [router, chainName, routeParams],
+    [router, chainName, routeParams, isInfinitySupported],
   )
 
   return (
@@ -57,7 +58,7 @@ export const BreadcrumbNav: React.FC = () => {
           tabs={[
             { value: 'infinity', label: 'Infinity', disabled: !isInfinitySupported },
             { value: 'v3', label: 'V3' },
-            { value: 'v2', label: 'V2' },
+            { value: 'v2', label: 'V2', disabled: !isV2Supported },
           ]}
           defaultTab={{
             value: protocolName as 'infinity' | 'v3' | 'v2',

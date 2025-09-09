@@ -12,6 +12,7 @@ const MenuItem: React.FC<React.PropsWithChildren<MenuItemProps>> = ({
   variant = "default",
   scrollLayerRef,
   statusColor,
+  hoverColor,
   ...props
 }) => {
   const { isMobile } = useMatchBreakpoints();
@@ -45,6 +46,7 @@ const MenuItem: React.FC<React.PropsWithChildren<MenuItemProps>> = ({
         $isDisabled={isDisabled}
         $variant={variant}
         $statusColor={statusColor}
+        $hoverColor={hoverColor}
         {...props}
       >
         {children}

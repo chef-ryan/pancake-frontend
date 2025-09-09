@@ -22,7 +22,7 @@ export const StyledMenuItemContainer = styled.div<StyledMenuItemProps>`
 
 const StyledMenuItem = styled.a.withConfig({
   shouldForwardProp: (props) =>
-    !["$isActive", "$isDisabled", "$variant", "$statusColor", "supportChainIds"].includes(props),
+    !["$isActive", "$isDisabled", "$variant", "$statusColor", "supportChainIds", "$hoverColor"].includes(props),
 })<StyledMenuItemProps>`
   position: relative;
   display: flex;
@@ -61,7 +61,7 @@ const StyledMenuItem = styled.a.withConfig({
   `}
 
   &:hover {
-    background: ${({ theme }) => theme.colors.tertiary};
+    background: ${({ theme, $hoverColor }) => ($hoverColor ? theme.colors[$hoverColor] : theme.colors.tertiary)};
     ${({ $variant }) => $variant === "default" && "border-radius: 16px;"};
   }
 `;

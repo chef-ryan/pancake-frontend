@@ -22,10 +22,11 @@ import { useAllLists } from 'state/lists/hooks'
 import { useListState } from 'state/lists/lists'
 import useListUpdater from 'state/lists/useListUpdater'
 import { styled } from 'styled-components'
-import CurrencySearchV2 from './CurrencySearchV2'
+import { UnifiedChainId } from '@pancakeswap/chains'
 import ImportToken from './ImportToken'
 import Manage from './Manage'
 import { CommonBasesType, CurrencyModalView } from './types'
+import CurrencySearch from './CurrencySearch'
 
 const Footer = styled.div`
   width: 100%;
@@ -142,6 +143,8 @@ export default function CurrencySearchModalV2({
     setHeight(wrapperRef.current.offsetHeight - 330)
   }, [])
 
+  const [selectedChainId, setSelectedChainId] = useState<UnifiedChainId | undefined>(selectedCurrency?.chainId)
+
   return (
     <StyledModalContainer
       drag={isMobile ? 'y' : false}
@@ -166,7 +169,9 @@ export default function CurrencySearchModalV2({
       </ModalHeader>
       <StyledModalBody>
         {modalView === CurrencyModalView.search ? (
-          <CurrencySearchV2
+          <CurrencySearch
+            selectedChainId={chainId}
+            setSelectedChainId={setSelectedChainId}
             onCurrencySelect={handleCurrencySelect}
             selectedCurrency={selectedCurrency}
             otherSelectedCurrency={otherSelectedCurrency}
@@ -177,7 +182,6 @@ export default function CurrencySearchModalV2({
             setImportToken={setImportToken}
             height={height}
             tokensToShow={tokensToShow}
-            chainId={chainId}
           />
         ) : modalView === CurrencyModalView.importToken && importToken ? (
           <ImportToken tokens={[importToken as Token]} handleCurrencySelect={handleCurrencySelect} chainId={chainId} />

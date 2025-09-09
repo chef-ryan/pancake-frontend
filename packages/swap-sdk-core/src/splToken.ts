@@ -1,4 +1,6 @@
 import invariant from 'tiny-invariant'
+import { PublicKey } from '@solana/web3.js'
+import BN from 'bn.js'
 import { BaseCurrency } from './baseCurrency'
 import { type UnifiedCurrency } from './currency'
 
@@ -71,7 +73,7 @@ export class SPLToken extends BaseCurrency<SPLToken> {
 
   public sortsBefore(other: SPLToken): boolean {
     invariant(this.chainId === other.chainId, 'CHAIN_IDS')
-    return this.programId.toLowerCase() < other.programId.toLowerCase()
+    return new BN(new PublicKey(this.address).toBuffer()).lt(new BN(new PublicKey(other.address).toBuffer()))
   }
 
   /* For compatibility */

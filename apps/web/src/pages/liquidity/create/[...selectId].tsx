@@ -11,6 +11,9 @@ import PageLayout from 'components/Layout/Page'
 import { Box } from '@pancakeswap/uikit'
 import { CreateLiquidityV2Form } from 'views/CreateLiquidityPool/V2/CreateLiquidityV2Form'
 import styled from 'styled-components'
+import { isSolana } from '@pancakeswap/chains'
+import { useActiveChainId } from 'hooks/useAccountActiveChain'
+import { CreateSolanaLiquidityV3Form } from 'views/CreateLiquidityPool/Solana/CreateSolanaLiquidityV3Form'
 
 const StyledBox = styled(Box)`
   background: ${({ theme }) => theme.colors.backgroundPage};
@@ -20,6 +23,7 @@ export type RouteType = typeof SelectIdRoute
 
 const CreateLiquidityPage = () => {
   const { routeParams, protocolName } = useSelectIdRoute()
+  const { chainId } = useActiveChainId()
   useDefaultSelectIdRoute()
 
   if (!routeParams) {
@@ -34,7 +38,11 @@ const CreateLiquidityPage = () => {
           {protocolName === 'infinity' ? (
             <CreateLiquidityInfinityForm />
           ) : protocolName === 'v3' ? (
-            <CreateLiquidityV3Form />
+            isSolana(chainId) ? (
+              <CreateSolanaLiquidityV3Form />
+            ) : (
+              <CreateLiquidityV3Form />
+            )
           ) : protocolName === 'v2' ? (
             <CreateLiquidityV2Form />
           ) : null}

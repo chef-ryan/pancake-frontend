@@ -4,6 +4,7 @@ import { Currency, UnifiedCurrency } from './currency'
 import { CurrencyAmount, Percent, Price } from './fractions'
 import { Token } from './token'
 import { SPLNativeCurrency } from './splNativeCurrency'
+import { SPLToken } from './splToken'
 
 export function validateVMTypeInstance(value: bigint, vmType: VMType): void {
   invariant(value >= ZERO, `${value} is not a ${vmType}.`)
@@ -130,8 +131,31 @@ export function sortCurrencies<T extends Currency>(currencies: T[]): T[] {
   })
 }
 
+export function sortUnifiedCurrencies<T extends UnifiedCurrency>(currencies: T[]): T[] {
+  return currencies.sort((a, b) => {
+    if (a.isNative) {
+      return -1
+    }
+    if (b.isNative) {
+      return 1
+    }
+    if (a instanceof Token && b instanceof Token) {
+      return a.sortsBefore(b) ? -1 : 1
+    }
+    if (a instanceof SPLToken && b instanceof SPLToken) {
+      return a.sortsBefore(b) ? -1 : 1
+    }
+    return 0
+  })
+}
+
 export const isCurrencySorted = (currencyA: Currency, currencyB: Currency): boolean => {
   const [currency0] = sortCurrencies([currencyA, currencyB])
+  return currency0 === currencyA
+}
+
+export const isUnifedCurrencySorted = (currencyA: UnifiedCurrency, currencyB: UnifiedCurrency): boolean => {
+  const [currency0] = sortUnifiedCurrencies([currencyA, currencyB])
   return currency0 === currencyA
 }
 

@@ -1,16 +1,21 @@
+import { isSolana, UnifiedChainId } from '@pancakeswap/chains'
 import { useIsMounted } from '@pancakeswap/hooks'
-import { Native } from '@pancakeswap/sdk'
-import { sortCurrencies } from '@pancakeswap/swap-sdk-core'
+import { Native, SOL } from '@pancakeswap/sdk'
+import { sortUnifiedCurrencies } from '@pancakeswap/swap-sdk-core'
 import { CAKE, USDC } from '@pancakeswap/tokens'
 import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
-import { useCurrencyByChainId } from 'hooks/Tokens'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { useActiveChainId } from 'hooks/useAccountActiveChain'
 import { useEffect, useMemo } from 'react'
 import { useInverted } from 'state/infinity/shared'
 import currencyId from 'utils/currencyId'
 
+const getNativeOnChain = (chainId: UnifiedChainId) => {
+  return isSolana(chainId) ? SOL : Native.onChain(chainId)
+}
+
 const isCurrencyIdSorted = (chainId: number, currencyIdA: string, currencyIdB: string) => {
-  const nativeCurrency = Native.onChain(chainId)
+  const nativeCurrency = getNativeOnChain(chainId)
   if (currencyIdA.toUpperCase() === nativeCurrency.symbol.toUpperCase()) return true
   if (currencyIdB.toUpperCase() === nativeCurrency.symbol.toUpperCase()) return false
 
@@ -23,8 +28,8 @@ export const useCurrencies = () => {
   const { currencyIdA: baseCurrencyId, currencyIdB: quoteCurrencyId, chainId, updateParams } = useSelectIdRouteParams()
   const [inverted, setInverted] = useInverted()
 
-  const baseCurrency_ = useCurrencyByChainId(baseCurrencyId, chainId)
-  const quoteCurrency_ = useCurrencyByChainId(quoteCurrencyId, chainId)
+  const baseCurrency_ = useUnifiedCurrency(baseCurrencyId, chainId)
+  const quoteCurrency_ = useUnifiedCurrency(quoteCurrencyId, chainId)
 
   const [baseCurrency, quoteCurrency] = useMemo(() => {
     // Prevent NATIVE-WNATIVE pair
@@ -39,7 +44,7 @@ export const useCurrencies = () => {
       return [undefined, undefined]
     }
 
-    return sortCurrencies([baseCurrency, quoteCurrency])
+    return sortUnifiedCurrencies([baseCurrency, quoteCurrency])
   }, [baseCurrency, quoteCurrency])
 
   const isInverted = useMemo(() => {
@@ -67,7 +72,7 @@ export const useCurrencies = () => {
       if (activeChainId && chainId && activeChainId !== chainId) {
         updateParams({
           chainId: activeChainId,
-          currencyIdA: currencyId(Native.onChain(activeChainId)),
+          currencyIdA: currencyId(getNativeOnChain(activeChainId)),
           currencyIdB: CAKE[activeChainId]?.address ?? USDC[activeChainId]?.address,
         })
       }

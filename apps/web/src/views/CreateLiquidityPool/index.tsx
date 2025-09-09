@@ -1,13 +1,12 @@
-import { useMemo } from 'react'
 import Page from 'components/Layout/Page'
 import styled, { css } from 'styled-components'
-import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
 import { ArrowForwardIcon, Box, Card, CardBody, Container, FlexGap, LinkExternal, Text } from '@pancakeswap/uikit'
 import { useTranslation } from '@pancakeswap/localization'
 import { LightGreyCard, NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { getChainName } from '@pancakeswap/chains'
 import { BreadcrumbNav } from './components/BreadcrumbNav'
+import { useProtocolSupported } from './hooks/useProtocolSupported'
 
 const StyledBox = styled(Box)`
   background: ${({ theme }) => theme.colors.backgroundPage};
@@ -76,13 +75,34 @@ function InfinityCard({ disabled }: { disabled?: boolean }) {
   )
 }
 
+function V2Card({ disabled }: { disabled?: boolean }) {
+  const { t } = useTranslation()
+  return (
+    <StyledCard mt="16px" $disabled={disabled}>
+      <Box>
+        <Text fontSize="20px" color="secondary" bold>
+          {t('V2 Pool')}
+        </Text>
+        <Text small>
+          {t(
+            'Classic pools that let you provide liquidity across the full price range for steady, predictable trading fees.',
+          )}
+        </Text>
+      </Box>
+      <Box>
+        <ArrowForwardIcon width="24px" height="24px" className="arrow-icon" />
+      </Box>
+    </StyledCard>
+  )
+}
+
 export const CreateLiquiditySelector = () => {
   const { t } = useTranslation()
   const { chainId } = useActiveChainId()
 
   const chainName = getChainName(chainId)
 
-  const isInfinitySupported = useMemo(() => INFINITY_SUPPORTED_CHAINS.includes(chainId), [chainId])
+  const { isInfinitySupported, isV2Supported } = useProtocolSupported(chainId)
 
   return (
     <StyledBox>
@@ -128,23 +148,13 @@ export const CreateLiquiditySelector = () => {
                 </StyledCard>
               </NextLinkFromReactRouter>
 
-              <NextLinkFromReactRouter to={`/liquidity/create/${chainName}/v2`}>
-                <StyledCard mt="16px">
-                  <Box>
-                    <Text fontSize="20px" color="secondary" bold>
-                      {t('V2 Pool')}
-                    </Text>
-                    <Text small>
-                      {t(
-                        'Classic pools that let you provide liquidity across the full price range for steady, predictable trading fees.',
-                      )}
-                    </Text>
-                  </Box>
-                  <Box>
-                    <ArrowForwardIcon width="24px" height="24px" className="arrow-icon" />
-                  </Box>
-                </StyledCard>
-              </NextLinkFromReactRouter>
+              {isV2Supported ? (
+                <NextLinkFromReactRouter to={`/liquidity/create/${chainName}/v2`}>
+                  <V2Card />
+                </NextLinkFromReactRouter>
+              ) : (
+                <V2Card disabled />
+              )}
             </CardBody>
           </Card>
         </Container>

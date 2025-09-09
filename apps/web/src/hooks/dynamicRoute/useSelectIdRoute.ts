@@ -5,7 +5,7 @@ import { Native } from '@pancakeswap/sdk'
 import { CAKE, USDC } from '@pancakeswap/tokens'
 import { SelectIdRoute, zSelectId } from 'dynamicRoute'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import useNativeCurrency from 'hooks/useNativeCurrency'
+import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
 import { useRouteParams } from 'next-typesafe-url/pages'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo } from 'react'
@@ -15,7 +15,7 @@ import { z } from 'zod'
 export const useSelectIdRoute = () => {
   const router = useRouter()
   const { chainId: activeChainId } = useActiveChainId()
-  const native = useNativeCurrency(activeChainId)
+  const native = useUnifiedNativeCurrency(activeChainId)
 
   const { data: routeParams, error: routeError, isLoading } = useRouteParams(SelectIdRoute.routeParams)
 
@@ -34,7 +34,7 @@ export const useSelectIdRoute = () => {
             'v3'
       ) as 'infinity' | 'v3' | 'v2' | 'stable'
     )
-  }, [activeChainId, router.query])
+  }, [activeChainId, router.query, protocolFromQuery])
 
   const replaceWithDefaultRoute = useCallback(() => {
     if (!activeChainId || !router.isReady) return
@@ -99,7 +99,7 @@ export const useSelectIdRouteParams = () => {
             ...router.query,
             selectId: hasOnlyChainId
               ? [
-                  p.chainId!,
+                  getChainName(p.chainId!),
                   params.protocol,
                   params.protocol !== 'stableSwap' ? Native.onChain(p.chainId!).symbol : params.currencyIdA,
                   params.protocol !== 'stableSwap'
@@ -107,7 +107,7 @@ export const useSelectIdRouteParams = () => {
                     : params.currencyIdB,
                 ]
               : [
-                  p.chainId ?? params.chainId,
+                  getChainName(p.chainId ?? params.chainId),
                   p.protocol ?? params.protocol,
                   p.currencyIdA ?? params.currencyIdA,
                   p.currencyIdB ?? params.currencyIdB,
