@@ -14,9 +14,9 @@ export const IfoSaleDetailCard: React.FC = () => {
       <CardBody>
         <FlexGap alignItems="flex-start" gap="8px">
           <Box mt="2px">
-            <CheckmarkCircleIcon color={theme.colors.success} width="20px" />
+            <CheckmarkCircleIcon color={theme.colors.primary60} width="20px" />
           </Box>
-          <Text color="success">{t('Eligible to join when this IFO goes live!')}</Text>
+          <Text color="primary60">{t('Eligible to join when this IFO goes live!')}</Text>
         </FlexGap>
         <FlexGap flexDirection="column" gap="16px" mt="16px">
           {pools.map((pool) => (

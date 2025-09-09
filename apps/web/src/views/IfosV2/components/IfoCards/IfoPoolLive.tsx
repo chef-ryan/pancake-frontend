@@ -4,11 +4,13 @@ import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 import ConnectWalletButton from 'components/ConnectWalletButton'
+import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 import type { IFOUserStatus } from '../../ifov2.types'
 import useIfo from '../../hooks/useIfo'
 import IfoPoolInfoDisplay from './IfoPoolInfoDisplay'
+import { formatDollarAmount } from './IfoDepositForm'
 
 export const IfoPoolLive: React.FC<{
   pid: number
@@ -43,10 +45,20 @@ const PoolAction: React.FC<{
   const status = info?.status
   const isComingSoon = status === 'coming_soon'
   const poolInfo = pools?.[pid]
-  const stakeCurrency = poolInfo?.stakeCurrency
+  const stakedAmount = userStatus?.stakedAmount
+  const stakeCurrency = stakedAmount?.currency ?? poolInfo?.stakeCurrency
   const ifoId = config?.id
-  const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
+  const userHasStaked = stakedAmount?.greaterThan(0)
   const { address: account } = useAccount()
+  const amountInDollar = useStablecoinPriceAmount(
+    stakeCurrency ?? undefined,
+    stakedAmount !== undefined && Number.isFinite(+stakedAmount.toSignificant(6))
+      ? +stakedAmount.toSignificant(6)
+      : undefined,
+    {
+      enabled: Boolean(stakedAmount !== undefined && Number.isFinite(+stakedAmount.toSignificant(6))),
+    },
+  )
   if (isComingSoon) {
     return null
   }
@@ -67,31 +79,34 @@ const PoolAction: React.FC<{
 
   if (userHasStaked) {
     return (
-      <>
-        <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
-          {stakeCurrency?.symbol} {t('Pool')}
-        </Text>
-        <FlexGap alignItems="center" width="100%" gap="8px">
-          <CurrencyLogo currency={stakeCurrency} size="40px" />
-          {!account ? (
-            <ConnectWalletButton scale="sm" onClickCapture={handleConnectWallet} style={{ marginLeft: 'auto' }} />
-          ) : (
-            <Button
-              variant="secondary"
-              scale="sm"
-              onClick={handleDepositClick}
-              disabled={status !== 'live'}
-              style={{
-                height: '40px',
-                marginLeft: 'auto',
-              }}
-              padding="11px 12px 13px 12px"
-            >
-              <AddIcon color="primary" />
-            </Button>
+      <FlexGap gap="8px" justifyContent="space-between" alignItems="center">
+        <FlexGap flexDirection="column">
+          <FlexGap gap="8px" alignItems="center">
+            {stakeCurrency && <CurrencyLogo currency={stakeCurrency} size="24px" />}
+            <Text fontSize="12px" bold color="secondary" lineHeight="18px" textTransform="uppercase">
+              {stakeCurrency?.symbol} {t('Pool')} {t('Deposited')}
+            </Text>
+          </FlexGap>
+          <Text fontSize="20px" bold lineHeight="30px">
+            {stakedAmount?.toSignificant(6)}
+          </Text>
+          {Number.isFinite(amountInDollar) && (
+            <Text fontSize="14px" color="textSubtle">
+              {`~${amountInDollar && formatDollarAmount(amountInDollar)} USD`}
+            </Text>
           )}
         </FlexGap>
-      </>
+        <Button
+          variant="secondary"
+          scale="sm"
+          onClick={handleDepositClick}
+          disabled={status !== 'live'}
+          style={{ height: '40px' }}
+          padding="11px 12px 13px 12px"
+        >
+          <AddIcon color="primary" />
+        </Button>
+      </FlexGap>
     )
   }
 
