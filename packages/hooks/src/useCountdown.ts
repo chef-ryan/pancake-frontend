@@ -6,6 +6,7 @@ type Countdown = {
   hours: number
   minutes: number
   seconds: number
+  remaining: number // total seconds remaining
 }
 
 // @param to The target unix timestamp
@@ -19,6 +20,7 @@ export function useCountdown(to: number): Countdown | undefined {
       return setCountdown(undefined)
     }
 
+    const diff = target.diff(relative, 'second')
     const days = target.diff(relative, 'day')
     relative = relative.add(days, 'day')
     const hours = target.diff(relative, 'hour')
@@ -31,6 +33,7 @@ export function useCountdown(to: number): Countdown | undefined {
       hours,
       minutes,
       seconds,
+      remaining: diff,
     })
     return setTimeout(updateCountdown, 1000)
   }, [to])

@@ -37,29 +37,25 @@ const CountdownText = styled(Text)`
 const CountDown: React.FC<{
   time: number
   textColor?: string
-}> = ({ time, textColor }) => {
+  onComplete?: () => void
+}> = ({ time, textColor, onComplete }) => {
   const { t } = useTranslation()
   const { theme } = useTheme()
   const color = textColor ?? theme.colors.secondary
-  const { days, hours, minutes, seconds } = useCountdown(time) ?? { days: 0, hours: 0, minutes: 0, seconds: 0 }
-  const start = useRef(false)
-  const { info } = useIfo()
-  const updateVersion = useSetAtom(updateIfoVer)
+  const { days, hours, minutes, seconds, remaining } = useCountdown(time) ?? {
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  }
+  const triggered = useRef(false)
 
   useEffect(() => {
-    if (!info || info.status !== 'idle') {
-      return
+    if (remaining === 0 && !triggered.current) {
+      triggered.current = true
+      onComplete?.()
     }
-    if (seconds > 0) {
-      start.current = true
-      return
-    }
-    if (start.current) {
-      if (seconds === 0) {
-        updateVersion()
-      }
-    }
-  }, [seconds, info, updateVersion])
+  }, [remaining, triggered.current])
 
   const segments = [
     { value: days, suffix: t('d') },
@@ -93,6 +89,7 @@ export const SoonTimer: React.FC<React.PropsWithChildren<Props>> = ({ startTime,
   const { theme } = useTheme()
   const textColor = theme.colors.secondary
   const { t } = useTranslation()
+  const update = useSetAtom(updateIfoVer)
 
   const countdownDisplay =
     ifoStatus !== 'idle' ? (
@@ -106,7 +103,13 @@ export const SoonTimer: React.FC<React.PropsWithChildren<Props>> = ({ startTime,
           >
             {t('Starts in')}:
           </Text>
-          <CountDown time={startTime} />
+          <CountDown
+            key={startTime}
+            time={startTime}
+            onComplete={() => {
+              update()
+            }}
+          />
         </FlexGap>
       </>
     ) : null
@@ -122,6 +125,7 @@ export const SoonTimer: React.FC<React.PropsWithChildren<Props>> = ({ startTime,
 
 const LiveTimer: React.FC<React.PropsWithChildren<Pick<Props, 'endTime' | 'ifoStatus'>>> = ({ endTime, ifoStatus }) => {
   const { t } = useTranslation()
+  const update = useSetAtom(updateIfoVer)
 
   const timeDisplay =
     ifoStatus !== 'idle' ? (
@@ -133,7 +137,14 @@ const LiveTimer: React.FC<React.PropsWithChildren<Pick<Props, 'endTime' | 'ifoSt
           <Text fontSize={['16px', '16px', '24px']} color="white" fontFamily="Kanit" fontWeight={['600', '600', '400']}>
             {t('Ends in')}:
           </Text>
-          <CountDown time={endTime} textColor="white" />
+          <CountDown
+            key={endTime}
+            time={endTime}
+            textColor="white"
+            onComplete={() => {
+              update()
+            }}
+          />
         </FlexGap>
       </>
     ) : null

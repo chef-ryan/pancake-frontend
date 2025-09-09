@@ -34,38 +34,6 @@ export const ifoConfigs: IFOConfig[] = [
         content: <Trans>After the IFO ends, return to claim your purchased USDT.</Trans>,
       },
     ],
-    faqs: [
-      {
-        title: <Trans>1. Test Environment Notice</Trans>,
-        description: (
-          <Trans>
-            This is a test IFO running on Tenderly Virtual Network. All transactions are simulated and not on mainnet.
-          </Trans>
-        ),
-      },
-      {
-        title: <Trans>2. How to participate?</Trans>,
-        description: (
-          <>
-            <Trans>
-              You can participate using BNB (Native Token) to purchase USDT tokens during the offering period.
-            </Trans>
-            <br />
-            <Trans>Start: {new Date(1756266834 * 1000).toLocaleString()}</Trans>
-            <br />
-            <Trans>End: {new Date(1756349634 * 1000).toLocaleString()}</Trans>
-          </>
-        ),
-      },
-      {
-        title: <Trans>3. Token Distribution</Trans>,
-        description: (
-          <Trans>
-            Tokens will be distributed immediately after the IFO ends. No vesting period is enabled for this test.
-          </Trans>
-        ),
-      },
-    ],
   },
   {
     id: 'ifo-test01',
