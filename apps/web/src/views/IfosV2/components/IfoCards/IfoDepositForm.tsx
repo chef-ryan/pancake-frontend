@@ -65,35 +65,38 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
 
   const maxAmountInput = useMemo(() => maxAmountSpend(inputBalance), [inputBalance])
 
+  const maxDepositAmount = useMemo(() => {
+    if (!maxAmountInput) return undefined
+    if (maxStakePerUser && !maxStakePerUser.equalTo(0)) {
+      const stakedAmount = userStatus?.stakedAmount ?? CurrencyAmount.fromRawAmount(maxStakePerUser.currency, 0)
+      const remainingCap = maxStakePerUser.subtract(stakedAmount)
+      return remainingCap.lessThan(maxAmountInput) ? remainingCap : maxAmountInput
+    }
+    return maxAmountInput
+  }, [maxAmountInput, maxStakePerUser, userStatus?.stakedAmount])
+
   const getPercentAmount = useCallback(
     (percent: number) => {
-      return maxAmountInput.multiply(new Percent(percent, 100))
+      return maxDepositAmount!.multiply(new Percent(percent, 100))
     },
-    [maxAmountInput],
+    [maxDepositAmount],
   )
 
   const handlePercentInput = useCallback(
     (percent: number) => {
-      if (maxAmountInput) {
+      if (maxDepositAmount) {
         const percentAmount = getPercentAmount(percent)
-        if (
-          userStatus?.stakedAmount &&
-          maxStakePerUser &&
-          !maxStakePerUser.equalTo(0) &&
-          percentAmount.greaterThan(maxStakePerUser.subtract(userStatus?.stakedAmount))
-        ) {
-          setValue(maxStakePerUser.subtract(userStatus?.stakedAmount).toExact())
-        } else setValue(percentAmount.toExact())
+        setValue(percentAmount.toExact())
       }
     },
-    [maxAmountInput, getPercentAmount, userStatus?.stakedAmount, maxStakePerUser],
+    [maxDepositAmount, getPercentAmount],
   )
 
   const handleMaxInput = useCallback(() => {
-    if (maxAmountInput) {
-      setValue(maxAmountInput.toExact())
+    if (maxDepositAmount) {
+      setValue(maxDepositAmount.toExact())
     }
-  }, [maxAmountInput])
+  }, [maxDepositAmount])
 
   const tokenBalanceMultiplier = useMemo(
     () => new BigNumber(10).pow(stakeCurrency?.decimals ?? 18),
@@ -222,7 +225,7 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid,
         }
       />
       <PercentageSelector
-        maxAmountInput={maxAmountInput}
+        maxAmountInput={maxDepositAmount}
         value={value}
         onPercent={handlePercentInput}
         getPercentAmount={getPercentAmount}
