@@ -29,17 +29,19 @@ export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, p
   return (
     <StopPropagation>
       <ActionPanelContainer>
-        {!removed && poolInfo?.rawPool ? (
+        {!removed && poolInfo?.rawPool && position ? (
           <>
             <IconButton variant="secondary" onClick={handleRemovePositionClick}>
               <MinusIcon color="primary" width="24px" />
             </IconButton>
-            <SolanaV3RemovePositionModal
-              isOpen={removePositionModal.isOpen}
-              onClose={removePositionModal.onDismiss}
-              pool={poolInfo}
-              position={position}
-            />
+            {removePositionModal.isOpen && (
+              <SolanaV3RemovePositionModal
+                isOpen={removePositionModal.isOpen}
+                onClose={removePositionModal.onDismiss}
+                pool={poolInfo}
+                position={position}
+              />
+            )}
           </>
         ) : null}
         <>
