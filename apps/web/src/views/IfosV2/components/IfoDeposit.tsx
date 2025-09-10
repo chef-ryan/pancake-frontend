@@ -80,9 +80,7 @@ const IfoDepositCard = ({ pid }: { pid: number }) => {
   const { t } = useTranslation()
   const { address: account } = useAccount()
   const router = useRouter()
-  const { pools, info, users } = useIfo()
-  const [userStatus0, userStatus1] = users
-  const userStatus = pid === 0 ? userStatus0 : userStatus1
+  const { pools, info } = useIfo()
   const poolInfo = pools?.[pid]
   const stakeCurrency = poolInfo?.stakeCurrency
   const status = info?.status
@@ -102,7 +100,7 @@ const IfoDepositCard = ({ pid }: { pid: number }) => {
             {t('Deposit to %symbol% Pool', { symbol: stakeCurrency?.symbol })}
           </Text>
           {account ? (
-            <IfoDepositForm userStatus={userStatus} pid={pid} />
+            <IfoDepositForm pid={pid} />
           ) : (
             <ConnectWalletButton width="100%" onClickCapture={handleConnectWallet} />
           )}

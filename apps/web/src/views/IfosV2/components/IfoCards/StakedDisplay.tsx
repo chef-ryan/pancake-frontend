@@ -3,11 +3,13 @@ import { AddIcon, Button, FlexGap, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import { useState } from 'react'
-import type { IFOUserStatus } from '../../ifov2.types'
+import useIfo from '../../hooks/useIfo'
 import { IfoDepositForm, formatDollarAmount } from './IfoDepositForm'
 
-export const StakedDisplay: React.FC<{ userStatus: IFOUserStatus; pid: number }> = ({ userStatus, pid }) => {
+export const StakedDisplay: React.FC<{ pid: number }> = ({ pid }) => {
   const { t } = useTranslation()
+  const { users } = useIfo()
+  const userStatus = users[pid]
   const stakedAmount = userStatus?.stakedAmount
   const stakeCurrency = userStatus?.stakedAmount?.currency
   const [adding, setAdding] = useState(false)
@@ -55,7 +57,7 @@ export const StakedDisplay: React.FC<{ userStatus: IFOUserStatus; pid: number }>
           </Button>
         )}
       </FlexGap>
-      {adding && <IfoDepositForm userStatus={userStatus} pid={pid} onDismiss={() => setAdding(false)} />}
+      {adding && <IfoDepositForm pid={pid} onDismiss={() => setAdding(false)} />}
     </FlexGap>
   )
 }

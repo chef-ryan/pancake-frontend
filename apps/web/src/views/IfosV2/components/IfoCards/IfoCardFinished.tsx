@@ -1,5 +1,4 @@
 import { Card, CardBody, FlexGap, useMatchBreakpoints } from '@pancakeswap/uikit'
-import { PoolInfo, IFOUserStatus } from 'views/IfosV2/ifov2.types'
 import useTheme from 'hooks/useTheme'
 import { IfoAllocationCard } from '../IfoAllocationCard'
 import useIfo from '../../hooks/useIfo'
@@ -8,25 +7,15 @@ import { IfoPoolFinished } from './IfoPoolFinished'
 import { IfoVestingCard } from './IfoVestingCard'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 
-interface IfoCardProps {
-  pool0Info?: PoolInfo
-  pool1Info?: PoolInfo
-  userStatus0?: IFOUserStatus
-  userStatus1?: IFOUserStatus
-  ifoStatus0: IFOStatus
-  ifoStatus1: IFOStatus
-}
-
-export const IfoCardFinished: React.FC<IfoCardProps> = ({
-  pool0Info,
-  pool1Info,
-  userStatus0,
-  userStatus1,
+export const IfoCardFinished: React.FC<{ ifoStatus0: IFOStatus; ifoStatus1: IFOStatus }> = ({
   ifoStatus0,
   ifoStatus1,
 }) => {
   const { isDesktop } = useMatchBreakpoints()
-  const { info } = useIfo()
+  const { info, pools, users } = useIfo()
+  const pool0Info = pools[0]
+  const pool1Info = pools[1]
+  const [userStatus0, userStatus1] = users
 
   const offeringCurrency = info?.offeringCurrency
   const symbol = offeringCurrency?.symbol ?? ''
@@ -62,13 +51,13 @@ export const IfoCardFinished: React.FC<IfoCardProps> = ({
 
   const pool0Card = pool0Info ? (
     <PoolCardWrapper>
-      <IfoPoolFinished pid={pool0Info.pid} userStatus={userStatus0} ifoStatus={ifoStatus0} />
+      <IfoPoolFinished pid={pool0Info.pid} ifoStatus={ifoStatus0} />
     </PoolCardWrapper>
   ) : null
 
   const pool1Card = pool1Info ? (
     <PoolCardWrapper>
-      <IfoPoolFinished pid={pool1Info.pid} userStatus={userStatus1} ifoStatus={ifoStatus1} />
+      <IfoPoolFinished pid={pool1Info.pid} ifoStatus={ifoStatus1} />
     </PoolCardWrapper>
   ) : null
 

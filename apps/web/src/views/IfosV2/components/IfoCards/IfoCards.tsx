@@ -70,21 +70,9 @@ export const IfoCurrentCard = ({ bannerUrl }: { ifoId: string; bannerUrl: string
 }
 
 const IfoCard: React.FC = () => {
-  const { info, pools, users } = useIfo()
-  const pool0Info = pools[0]
-  const pool1Info = pools[1]
-  const [userStatus0, userStatus1] = users
+  const { info } = useIfo()
   const [ifoStatus0, ifoStatus1] = useIFOStatus()
   const ifoStatus = info?.status
-
-  const cardProps = {
-    pool0Info,
-    pool1Info,
-    userStatus0,
-    userStatus1,
-    ifoStatus0,
-    ifoStatus1,
-  }
 
   let content: JSX.Element
   switch (ifoStatus) {
@@ -92,14 +80,14 @@ const IfoCard: React.FC = () => {
       content = <IfoCardComing />
       break
     case 'live':
-      content = <IfoCardLive {...cardProps} />
+      content = <IfoCardLive ifoStatus0={ifoStatus0} ifoStatus1={ifoStatus1} />
       break
     case 'finished':
-      content = <IfoCardFinished {...cardProps} />
+      content = <IfoCardFinished ifoStatus0={ifoStatus0} ifoStatus1={ifoStatus1} />
       break
     case 'idle':
     default:
-      content = <IfoCardIdle {...cardProps} />
+      content = <IfoCardIdle ifoStatus0={ifoStatus0} ifoStatus1={ifoStatus1} />
       break
   }
 

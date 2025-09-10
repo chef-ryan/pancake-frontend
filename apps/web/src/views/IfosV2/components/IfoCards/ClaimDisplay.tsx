@@ -10,9 +10,7 @@ import { useIFOClaimCallback } from '../../hooks/ifo/useIFOClaimCallback'
 import useIfo from '../../hooks/useIfo'
 import { formatDollarAmount } from './IfoDepositForm'
 
-export const ClaimDisplay: React.FC<{
-  pid: number
-}> = ({ pid }) => {
+export const ClaimDisplay: React.FC<{ pid: number }> = ({ pid }) => {
   const { t } = useTranslation()
   const { claim, isPending: isLoading } = useIFOClaimCallback()
   const { info, pools, users } = useIfo()

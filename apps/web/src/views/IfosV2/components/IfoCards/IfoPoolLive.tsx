@@ -1,50 +1,40 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, Button, FlexGap, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
-import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
+import { useRouter } from 'next/router'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
-import type { IFOUserStatus } from '../../ifov2.types'
 import useIfo from '../../hooks/useIfo'
 import IfoPoolInfoDisplay from './IfoPoolInfoDisplay'
 import { formatDollarAmount } from './IfoDepositForm'
 
-export const IfoPoolLive: React.FC<{
-  pid: number
-  ifoStatus: IFOStatus
-  userStatus?: IFOUserStatus
-}> = ({ ifoStatus, pid, userStatus }) => {
-  const router = useRouter()
-  const { config, info, pools } = useIfo()
+export const IfoPoolLive: React.FC<{ pid: number; ifoStatus: IFOStatus }> = ({ ifoStatus, pid }) => {
+  const { info } = useIfo()
   const status = info?.status
   const isComingSoon = status === 'coming_soon'
-  const poolInfo = pools?.[pid]
-  const ifoId = config?.id
   if (isComingSoon) {
     return null
   }
 
   return (
     <FlexGap flexDirection="column" gap="8px">
-      <PoolAction pid={pid} userStatus={userStatus} />
-      <IfoPoolInfoDisplay pid={pid} ifoStatus={ifoStatus} userStatus={userStatus} variant="live" />
+      <PoolAction pid={pid} />
+      <IfoPoolInfoDisplay pid={pid} ifoStatus={ifoStatus} variant="live" />
     </FlexGap>
   )
 }
 
-const PoolAction: React.FC<{
-  pid: number
-  userStatus?: IFOUserStatus
-}> = ({ pid, userStatus }) => {
+const PoolAction: React.FC<{ pid: number }> = ({ pid }) => {
   const { t } = useTranslation()
   const router = useRouter()
-  const { config, info, pools } = useIfo()
+  const { config, info, pools, users } = useIfo()
   const status = info?.status
   const isComingSoon = status === 'coming_soon'
   const poolInfo = pools?.[pid]
+  const userStatus = users[pid]
   const stakedAmount = userStatus?.stakedAmount
   const stakeCurrency = stakedAmount?.currency ?? poolInfo?.stakeCurrency
   const ifoId = config?.id

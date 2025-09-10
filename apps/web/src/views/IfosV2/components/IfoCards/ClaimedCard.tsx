@@ -4,7 +4,6 @@ import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import useTheme from 'hooks/useTheme'
 import { useChainId } from 'wagmi'
 import useIfo from '../../hooks/useIfo'
-import { IFOUserStatus } from '../../ifov2.types'
 import { formatDollarAmount } from './IfoDepositForm'
 
 declare global {
@@ -20,17 +19,15 @@ declare global {
   }
 }
 
-export const ClaimedCard: React.FC<{
-  userStatus: IFOUserStatus | undefined
-  pid: number
-}> = ({ userStatus, pid }) => {
+export const ClaimedCard: React.FC<{ pid: number }> = ({ pid }) => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
+  const { info, users } = useIfo()
+  const userStatus = users[pid]
   const claimed = userStatus?.claimed
   const chainId = useChainId()
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
   const claimableAmount = userStatus?.claimableAmount?.toSignificant(6)
-  const { info } = useIfo()
   const offeringCurrency = info?.offeringCurrency
   const amountInDollar = useStablecoinPriceAmount(
     offeringCurrency ?? undefined,

@@ -1,15 +1,13 @@
 import { FlexGap } from '@pancakeswap/uikit'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
-import type { IFOUserStatus } from '../../ifov2.types'
 import { ClaimDisplay } from './ClaimDisplay'
 import { Divider } from './Divider'
 import IfoPoolInfoDisplay from './IfoPoolInfoDisplay'
+import useIfo from '../../hooks/useIfo'
 
-export const IfoPoolFinished: React.FC<{
-  pid: number
-  userStatus: IFOUserStatus | undefined
-  ifoStatus: IFOStatus
-}> = ({ userStatus, ifoStatus, pid }) => {
+export const IfoPoolFinished: React.FC<{ pid: number; ifoStatus: IFOStatus }> = ({ ifoStatus, pid }) => {
+  const { users } = useIfo()
+  const userStatus = users[pid]
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
 
   return (
@@ -17,7 +15,7 @@ export const IfoPoolFinished: React.FC<{
       <ClaimDisplay pid={pid} />
 
       {userHasStaked && <Divider />}
-      <IfoPoolInfoDisplay pid={pid} userStatus={userStatus} ifoStatus={ifoStatus} variant="finished" />
+      <IfoPoolInfoDisplay pid={pid} ifoStatus={ifoStatus} variant="finished" />
     </FlexGap>
   )
 }

@@ -3,7 +3,6 @@ import { FlexGap, InfoIcon, Text, useTooltip } from '@pancakeswap/uikit'
 import { ReactNode } from 'react'
 import { styled } from 'styled-components'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
-import type { IFOUserStatus } from '../../ifov2.types'
 import useIfo from '../../hooks/useIfo'
 import { useIfoDisplay } from '../../hooks/useIfoDisplay'
 
@@ -26,14 +25,14 @@ const InfoRow: React.FC<InfoRowData & { mt?: string }> = ({ left, right, display
 interface IfoPoolInfoDisplayProps {
   pid: number
   ifoStatus?: IFOStatus
-  userStatus?: IFOUserStatus
   variant: 'live' | 'finished' | 'presale' | 'history'
 }
 
-const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus, userStatus, variant }) => {
+const IfoPoolInfoDisplay: React.FC<IfoPoolInfoDisplayProps> = ({ pid, ifoStatus, variant }) => {
   const { t } = useTranslation()
-  const { pools } = useIfo()
+  const { pools, users } = useIfo()
   const poolInfo = pools?.[pid]
+  const userStatus = users[pid]
   const stakeCurrency = poolInfo?.stakeCurrency
   const { pools: displayPools } = useIfoDisplay()
   const raiseAmountText = displayPools?.[pid]?.raiseAmountText

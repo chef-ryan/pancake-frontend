@@ -18,7 +18,6 @@ import { useAccount } from 'wagmi'
 import { useSetAtom } from 'jotai'
 import { updateIfoVer } from 'views/IfosV2/atom/ifoVersionAtom'
 import { useIFODuration } from '../../hooks/ifo/useIFODuration'
-import type { IFOUserStatus } from '../../ifov2.types'
 import { useIFODepositCallback } from '../../hooks/ifo/useIFODepositCallback'
 import IfoSubmittingCard from '../IfoSubmittingCard'
 import useIfo from '../../hooks/useIfo'
@@ -40,18 +39,18 @@ const StyledText = styled(Text)`
 `
 
 interface IfoDepositFormProps {
-  userStatus: IFOUserStatus | undefined
   pid: number
   onDismiss?: () => void
 }
 
-export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ userStatus, pid, onDismiss }) => {
+export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ pid, onDismiss }) => {
   const { t } = useTranslation()
   const [value, setValue] = useState('')
 
-  const { info, pools } = useIfo()
+  const { info, pools, users } = useIfo()
   const duration = info?.duration ?? 0
   const poolInfo = pools?.[pid]
+  const userStatus = users[pid]
   const stakeCurrency = userStatus?.stakedAmount?.currency ?? poolInfo?.stakeCurrency
   const maxStakePerUser = useMemo(() => {
     if (!poolInfo?.stakeCurrency) return undefined
