@@ -4,8 +4,9 @@ import { useTranslation } from '@pancakeswap/localization'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { useCallback } from 'react'
-import SolanaV3RemovePositionModal from '../Modals/SolanaV3RemovePositionModal'
+import SolanaV3RemovePositionModal from '../Modals/solana/SolanaV3RemovePositionModal'
 import { StopPropagation } from '../StopPropagation'
+import { SolanaV3AddPositionModal } from '../Modals/solana/SolanaV3AddPositionModal'
 
 type ActionPanelProps = {
   removed: boolean
@@ -20,6 +21,7 @@ export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, p
   const { t } = useTranslation()
 
   const removePositionModal = useModalV2()
+  const addPositionModal = useModalV2()
   const handleRemovePositionClick = useCallback(() => {
     removePositionModal.onOpen()
   }, [removePositionModal])
@@ -40,9 +42,19 @@ export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, p
             />
           </>
         ) : null}
-        <IconButton variant="secondary">
-          <AddIcon color="primary" width="24px" />
-        </IconButton>
+        <>
+          <IconButton variant="secondary" onClick={addPositionModal.onOpen}>
+            <AddIcon color="primary" width="24px" />
+          </IconButton>
+          {poolInfo && (
+            <SolanaV3AddPositionModal
+              isOpen={addPositionModal.isOpen}
+              onClose={addPositionModal.onDismiss}
+              pool={poolInfo}
+              position={position}
+            />
+          )}
+        </>
         <Button variant="primary">{t('Harvest')}</Button>
       </ActionPanelContainer>
     </StopPropagation>

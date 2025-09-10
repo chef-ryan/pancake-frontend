@@ -10,6 +10,8 @@ import { SolanaV3Pool } from 'state/pools/solana'
 import { useSolanaTokenPrice } from 'hooks/solana/useSolanaTokenPrice'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
 import { calculateSolanaTickLimits, calculateTickLimits, getTickAtLimitStatus } from 'views/PoolDetail/utils'
+import { usePriceRange } from 'hooks/solana/usePriceRange'
+import { useLiquidityAmount } from 'hooks/solana/useLiquidityAmount'
 import { PriceRange } from './PriceRange'
 import { PositionItem } from './PositionItem'
 import { SolanaV3PositionActions } from '../PositionActions/SolanaV3PositionActions'
@@ -24,51 +26,19 @@ export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: So
   const currency0 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo?.mintA as TokenInfo), [poolInfo?.mintA])
   const currency1 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo?.mintB as TokenInfo), [poolInfo?.mintB])
 
-  const [priceUpper, priceLower] = useMemo(() => {
-    if (!currency0 || !currency1 || !poolInfo) {
-      return [undefined, undefined]
-    }
-    const [upper, lower] = [
-      TickUtils.getTickPrice({
-        poolInfo,
-        tick: position.tickUpper,
-        baseIn: true,
-      }),
-      TickUtils.getTickPrice({
-        poolInfo,
-        tick: position.tickLower,
-        baseIn: true,
-      }),
-    ]
+  const { priceUpper, priceLower } = usePriceRange({
+    tickLower: position.tickLower,
+    tickUpper: position.tickUpper,
+    baseIn: true,
+    poolInfo,
+  })
 
-    return [
-      Price.fromDecimal(currency0, currency1, new BigNumber(upper.price.toString()).toFixed()),
-      Price.fromDecimal(currency0, currency1, new BigNumber(lower.price.toString()).toFixed()),
-    ]
-  }, [poolInfo, position.tickUpper, position.tickLower, currency0, currency1])
-
-  const [amount0, amount1] = useMemo(() => {
-    if (!currency0 || !currency1 || !poolInfo) {
-      return [undefined, undefined]
-    }
-    const { amountA, amountB } = PositionUtils.getAmountsFromLiquidity({
-      poolInfo,
-      ownerPosition: position,
-      liquidity: position.liquidity,
-      slippage: 0,
-      add: false,
-      epochInfo: {
-        epoch: 0,
-        slotIndex: 0,
-        slotsInEpoch: 0,
-        absoluteSlot: 0,
-      },
-    })
-    return [
-      UnifiedCurrencyAmount.fromRawAmount(currency0, amountA.amount.toString()),
-      UnifiedCurrencyAmount.fromRawAmount(currency1, amountB.amount.toString()),
-    ]
-  }, [poolInfo, position.liquidity])
+  const { amount0, amount1 } = useLiquidityAmount({
+    poolInfo,
+    tickLower: position.tickLower,
+    tickUpper: position.tickUpper,
+    liquidity: position.liquidity,
+  })
 
   const tickAtLimit = useMemo(() => {
     const tickLimits = calculateSolanaTickLimits(poolInfo?.config.tickSpacing)

@@ -1113,7 +1113,7 @@ export const useClmmStore = createStore<ClmmState>(
         return
       }
       const [decimalA, decimalB] = [poolInfo.mintA?.decimals ?? 6, poolInfo.mintB?.decimals ?? 6]
-      const res = await PoolUtils.getLiquidityAmountOutFromAmountIn({
+      const res = PoolUtils.getLiquidityAmountOutFromAmountIn({
         poolInfo,
         slippage: 0,
         inputA,

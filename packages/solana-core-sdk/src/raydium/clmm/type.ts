@@ -506,7 +506,7 @@ export interface OpenPositionFromLiquidityExtInfo {
 
 export interface GetAmountParams {
   poolInfo: ApiV3PoolInfoConcentratedItem;
-  ownerPosition: ClmmPositionLayout;
+  ownerPosition: Pick<ClmmPositionLayout, "tickLower" | "tickUpper">;
   liquidity: BN;
   slippage: number;
   add: boolean;
