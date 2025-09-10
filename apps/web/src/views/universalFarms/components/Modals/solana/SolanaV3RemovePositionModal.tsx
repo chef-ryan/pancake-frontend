@@ -7,9 +7,6 @@ import {
   Flex,
   FlexGap,
   useMatchBreakpoints,
-  Heading,
-  FeeTier,
-  AutoColumn,
   PreTitle,
 } from '@pancakeswap/uikit'
 import { PositionUtils, TokenInfo } from '@pancakeswap/solana-core-sdk'
@@ -20,11 +17,8 @@ import BigNumber from 'bignumber.js'
 import { SolanaV3Pool } from 'state/pools/solana'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { Percent, Price, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
-import { useEvent } from 'hooks/useEvent'
-import { POSITION_STATUS, SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
-import { CurrencyLogo, DoubleCurrencyLogo, LightGreyCard } from '@pancakeswap/widgets-internal'
-import { Protocol } from '@pancakeswap/farms'
-import { RangeTag } from 'components/RangeTag'
+import { SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
+import { CurrencyLogo, LightGreyCard } from '@pancakeswap/widgets-internal'
 import { SolanaLiquiditySlippageButton } from 'views/Swap/components/SlippageButton'
 import { StyledInfoCard } from 'views/RemoveLiquidityInfinity/styled'
 import { PRESET_PERCENT } from 'views/RemoveLiquidityInfinity/constants'
@@ -36,9 +30,12 @@ import { NonEVMChainId } from '@pancakeswap/chains'
 import Divider from 'components/Divider'
 import { useSolanaV3RewardInfoFromSimulation } from 'views/universalFarms/hooks/useSolanaV3RewardInfoFromSimulation'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
-import { SolanaV3Earnings } from '../PositionItem/PositionInfo/SolanaV3Earnings'
+import { useSolanaEpochInfo } from 'hooks/solana/useSolanaEpochInfo'
+import { SolanaV3Earnings } from '../../PositionItem/PositionInfo/SolanaV3Earnings'
+import { SolanaV3PoolInfoHeader } from './PooInfoHeader'
 
 const usePositionAmount = ({ poolInfo, position }: { poolInfo: SolanaV3Pool; position: SolanaV3PositionDetail }) => {
+  const { data: epochInfo } = useSolanaEpochInfo()
   return useMemo(() => {
     const { amountA, amountB } = PositionUtils.getAmountsFromLiquidity({
       poolInfo,
@@ -46,7 +43,7 @@ const usePositionAmount = ({ poolInfo, position }: { poolInfo: SolanaV3Pool; pos
       liquidity: position.liquidity,
       slippage: 0,
       add: false,
-      epochInfo: {
+      epochInfo: epochInfo ?? {
         epoch: 0,
         slotIndex: 0,
         slotsInEpoch: 0,
@@ -66,7 +63,7 @@ const usePositionAmount = ({ poolInfo, position }: { poolInfo: SolanaV3Pool; pos
       amountA: new BigNumber(amountA.amount.toString()),
       amountB: new BigNumber(amountB.amount.toString()),
     }
-  }, [poolInfo, position])
+  }, [poolInfo, position, epochInfo])
 }
 
 export default function SolanaV3RemovePositionModal({
@@ -83,10 +80,6 @@ export default function SolanaV3RemovePositionModal({
   const poolInfo = pool.rawPool
   const { t } = useTranslation()
   const [percent, setPercent] = useState(50)
-
-  const handlePercentChanged = useEvent((newValue: number) => {
-    setPercent(Math.ceil(newValue))
-  })
 
   const { solanaAccount } = useAccountActiveChain()
   const currency0 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo.mintA as TokenInfo), [poolInfo.mintA])
@@ -116,10 +109,6 @@ export default function SolanaV3RemovePositionModal({
   )
 
   // const removeLiquidityAct = useClmmStore((s) => s.removeLiquidityAct)
-
-  const handleCloseModal = useEvent(() => {
-    onClose()
-  })
 
   const [sending, setIsSending] = useState(false)
 
@@ -161,53 +150,19 @@ export default function SolanaV3RemovePositionModal({
     //     setIsSending(false)
     //   },
     // })
-  }, [handleCloseModal, percent, poolInfo, position, solanaAccount])
-
-  const PoolInfoHeader = useMemo(() => {
-    return (
-      <AutoColumn gap="16px" mb="16px">
-        <FlexGap gap="16px" alignItems="center">
-          <DoubleCurrencyLogo
-            size={40}
-            currency0={currency0}
-            currency1={currency1}
-            showChainLogoCurrency1
-            margin={false}
-            innerMargin="-8px"
-          />
-          <FlexGap gap="4px" alignItems="center">
-            <Heading as="h2">{poolInfo.mintA.symbol}</Heading>
-            <Heading as="h2" color="textSubtle">
-              /
-            </Heading>
-            <Heading as="h2">{poolInfo.mintB.symbol}</Heading>
-          </FlexGap>
-          <FeeTier type={Protocol.V3} fee={poolInfo.feeRate} denominator={1} />
-        </FlexGap>
-        <FlexGap gap="16px" alignItems="center">
-          <RangeTag
-            scale="sm"
-            lowContrast
-            removed={position.liquidity.isZero()}
-            outOfRange={position.status === POSITION_STATUS.INACTIVE}
-            protocol={Protocol.V3}
-          />
-        </FlexGap>
-      </AutoColumn>
-    )
-  }, [poolInfo])
+  }, [onClose, percent, poolInfo, position, solanaAccount])
 
   return (
-    <ModalV2 isOpen={isOpen} onDismiss={handleCloseModal} closeOnOverlayClick>
+    <ModalV2 isOpen={isOpen} onDismiss={onClose} closeOnOverlayClick>
       <MotionModal
         title={t('Remove Liquidity')}
         minWidth={[null, null, '500px']}
         headerPadding="12px 24px"
         headerBorderColor="transparent"
         bodyPadding={isMobile ? '0 16px 16px' : '0 24px 24px'}
-        onDismiss={handleCloseModal}
+        onDismiss={onClose}
       >
-        {PoolInfoHeader}
+        <SolanaV3PoolInfoHeader poolInfo={poolInfo} currency0={currency0} currency1={currency1} position={position} />
         <Flex mt="24px" justifyContent="space-between" alignItems="center">
           <Text>{t('Slippage Tolerance')}</Text>
           <SolanaLiquiditySlippageButton />
@@ -219,7 +174,13 @@ export default function SolanaV3RemovePositionModal({
           <Text fontSize="32px" bold>
             {percent}%
           </Text>
-          <Slider min={0} max={100} name="remove-position" value={percent} onValueChanged={handlePercentChanged} />
+          <Slider
+            min={0}
+            max={100}
+            name="remove-position"
+            value={percent}
+            onValueChanged={(newValue) => setPercent(Math.ceil(newValue))}
+          />
           <FlexGap mt="16px" gap="8px" justifyContent="space-between">
             {PRESET_PERCENT.map((presetPercent) => (
               <Button

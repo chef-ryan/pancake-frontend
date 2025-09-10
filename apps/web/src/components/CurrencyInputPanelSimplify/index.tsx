@@ -1,6 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Pair, Token, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import {
+  AtomBoxProps,
   Box,
   Button,
   ChevronDownIcon,
@@ -31,7 +32,7 @@ import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { FONT_SIZE, LOGO_SIZE, useFontSize } from './state'
 
-const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'sm' })`
+export const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'sm' })`
   padding: 24px 8px 22px;
   margin-top: 2px;
 
@@ -192,6 +193,7 @@ interface CurrencyInputPanelProps {
   isUserInsufficientBalance?: boolean
   modalTitle?: React.ReactNode
   showSearchHeader?: boolean
+  wrapperProps?: AtomBoxProps
 }
 const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   defaultValue,
@@ -224,6 +226,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   isUserInsufficientBalance,
   modalTitle,
   showSearchHeader,
+  wrapperProps,
 }: CurrencyInputPanelProps) {
   const { unifiedAccount: account, chainId } = useAccountActiveChain()
   const [value, setValue] = useState<string | undefined>(defaultValue)
@@ -347,6 +350,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
       loading={inputLoading}
       inputRef={inputRef}
       wrapperRef={wrapperRef}
+      wrapperProps={wrapperProps}
       top={
         topOptions.show ? (
           <Flex justifyContent="space-between" alignItems="center" width="100%" position="relative">

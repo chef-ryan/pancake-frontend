@@ -1072,7 +1072,7 @@ export class PoolUtils {
     };
   }
 
-  static async getLiquidityAmountOutFromAmountIn({
+  static getLiquidityAmountOutFromAmountIn({
     poolInfo,
     inputA,
     tickLower,
@@ -1092,7 +1092,7 @@ export class PoolUtils {
     add: boolean;
     epochInfo: EpochInfo;
     amountHasFee: boolean;
-  }): Promise<ReturnTypeGetLiquidityAmountOut> {
+  }): ReturnTypeGetLiquidityAmountOut {
     const sqrtPriceX64 = SqrtPriceMath.priceToSqrtPriceX64(
       new Decimal(poolInfo.price),
       poolInfo.mintA.decimals,
@@ -1127,7 +1127,7 @@ export class PoolUtils {
         : LiquidityMath.getLiquidityFromTokenAmountB(sqrtPriceX64A, sqrtPriceX64B, _amount);
     }
 
-    const amountFromLiquidity = await PoolUtils.getAmountsFromLiquidity({
+    const amountFromLiquidity = PoolUtils.getAmountsFromLiquidity({
       epochInfo,
       poolInfo,
       tickLower,
@@ -1146,7 +1146,7 @@ export class PoolUtils {
     };
   }
 
-  static async getAmountsFromLiquidity({
+  static getAmountsFromLiquidity({
     epochInfo,
     poolInfo,
     tickLower,
@@ -1162,7 +1162,7 @@ export class PoolUtils {
     liquidity: BN;
     slippage: number;
     add: boolean;
-  }): Promise<ReturnTypeGetLiquidityAmountOut> {
+  }): ReturnTypeGetLiquidityAmountOut {
     const sqrtPriceX64A = SqrtPriceMath.getSqrtPriceX64FromTick(tickLower);
     const sqrtPriceX64B = SqrtPriceMath.getSqrtPriceX64FromTick(tickUpper);
 
