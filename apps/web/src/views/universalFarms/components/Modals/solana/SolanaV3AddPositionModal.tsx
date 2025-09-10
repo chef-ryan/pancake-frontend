@@ -29,6 +29,7 @@ import CurrencyInputPanelSimplify from 'components/CurrencyInputPanelSimplify'
 import { getCurrencyLogoSrcs } from 'components/TokenImage'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
 import { useAddLiquidityAmount } from 'hooks/solana/useAddLiquidityAmount'
+import { useAddLiquidityCallback } from 'hooks/solana/useAddLiquidityCallback'
 import { useLiquidityAmount, useLiquidityDepositRatio } from 'hooks/solana/useLiquidityAmount'
 import { useLiquidityUsdValue } from 'hooks/solana/useLiquidityUsdValue'
 import { usePriceRange } from 'hooks/solana/usePriceRange'
@@ -65,6 +66,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
   const [fields, setFields] = useState<[string, string]>(['', ''])
   const [sending, setIsSending] = useState(false)
   const poolInfo = pool.rawPool
+  const addLiquidity = useAddLiquidityCallback()
   const currency0 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo.mintA as TokenInfo), [poolInfo.mintA])
   const currency1 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo.mintB as TokenInfo), [poolInfo.mintB])
   const currency0Balance = useUnifiedCurrencyBalance(currency0)
@@ -92,6 +94,11 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
   })
 
   useEffect(() => {
+    setFields(['', ''])
+    setIsSending(false)
+  }, [isOpen])
+
+  useEffect(() => {
     if (focusSide === null) return
     const [field0, field1] = fields
     if (focusSide === 1 && amount0Add?.toExact() !== field0) {
@@ -102,9 +109,37 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
     }
   }, [amount0Add, amount1Add, fields[0], fields[1]])
 
-  const handleConfirm = useCallback(() => {
+  const handleConfirm = useCallback(async () => {
+    if (!liquidityAdd || !amount0Add || !amount1Add) return
+
     setIsSending(true)
-  }, [])
+    try {
+      await addLiquidity({
+        params: {
+          poolInfo,
+          position,
+          liquidity: liquidityAdd,
+          amountMaxA: amount0Add.toExact(),
+          amountMaxB: amount1Add.toExact(),
+        },
+        onSent: () => {
+          setIsSending(false)
+          setFields(['', ''])
+          onClose()
+        },
+        onError: (e: any) => {
+          console.error('Add liquidity error:', e)
+          setIsSending(false)
+        },
+        onFinally: () => {
+          setIsSending(false)
+        },
+      })
+    } catch (e) {
+      console.error(e)
+      setIsSending(false)
+    }
+  }, [addLiquidity, poolInfo, position, liquidityAdd, amount0Add, amount1Add, onClose])
 
   const handleFieldAInput = useCallback((value: string) => {
     setFields((prev) => [value, prev[1]])
