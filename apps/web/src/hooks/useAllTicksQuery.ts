@@ -1,3 +1,4 @@
+import { isSolana } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
 import isUndefinedOrNull from '@pancakeswap/utils/isUndefinedOrNull'
 import { useQuery } from '@tanstack/react-query'
@@ -117,7 +118,7 @@ export async function getPoolTicks({
   if (!chainName) {
     return []
   }
-  const pool = poolAddress.toLowerCase()
+  const pool = isSolana(chainId) ? poolAddress : poolAddress.toLowerCase()
 
   let max = 10
   let after: string | undefined

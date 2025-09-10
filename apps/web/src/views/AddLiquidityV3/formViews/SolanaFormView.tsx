@@ -58,7 +58,7 @@ import { CurrencyField as Field } from 'utils/types'
 import { useTokenRateData } from 'views/AddLiquidityInfinity/components/useTokenToTokenRateData'
 import { getAxisTicks } from 'views/AddLiquidityInfinity/utils'
 import { V3SubmitButton } from 'views/AddLiquidityV3/components/V3SubmitButton'
-import { useDensityChartData } from 'views/AddLiquidityV3/hooks/useDensityChartData'
+import { useSolanaDensityChartData } from 'views/AddLiquidityV3/hooks/useSolanaDensityChartData'
 import {
   useCurrencyInversionEvent,
   useHeaderInvertCurrencies,
@@ -71,6 +71,8 @@ import { Dot } from 'views/Notifications/styles'
 import { LiquiditySlippageButton } from 'views/Swap/components/SlippageButton'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import { useSolanaDerivedInfo } from 'hooks/solana/useSolanaDerivedInfo'
+import { useSolanaPoolByMint } from 'hooks/solana/useSolanaPoolsByMint'
+import { useSolanaOnchainClmmPoolInfo } from 'hooks/solana/useSolanaOnchainPool'
 import { FieldFeeLevel } from 'views/CreateLiquidityPool/components/FieldFeeLevel'
 import { useTotalUsdValue } from '../../AddLiquidity/hooks/useTotalUsdValue'
 import FeeSelector from './V3FormView/components/FeeSelector'
@@ -573,37 +575,43 @@ export function SolanaFormView({
     onStartPriceInput(price?.invert()?.toSignificant(18) ?? '')
   }, [price, onStartPriceInput, handleInvertCurrencies])
 
-  /* const {
-    isLoading: isChartDataLoading,
-    error: chartDataError,
-    formattedData,
-  } = useDensityChartData({
-    currencyA: baseCurrency ?? undefined,
-    currencyB: quoteCurrency ?? undefined,
-    feeAmount,
-  }) */
-
   const {
     isLoading: isChartDataLoading,
     error: chartDataError,
     formattedData,
-  } = useMemo(
-    () => ({
-      isLoading: true,
-      error: undefined,
-      formattedData: [],
-    }),
-    [],
-  )
+  } = useSolanaDensityChartData({
+    currencyA: baseCurrency ?? undefined,
+    currencyB: quoteCurrency ?? undefined,
+    feeAmount,
+  })
 
   // Price Rate Data
+  const solPoolInfo = useSolanaPoolByMint(
+    baseCurrencyWithoutNative?.wrapped?.address,
+    quoteCurrencyWithoutNative?.wrapped?.address,
+    feeAmount,
+  )
+
+  const { data: solOnchain } = useSolanaOnchainClmmPoolInfo(solPoolInfo?.poolId)
+
+  const chartCurrentPrice = useMemo(() => {
+    const onchainP = solOnchain?.poolInfo?.price
+    const baseAddr = baseCurrencyWithoutNative?.wrapped?.address
+    const mintA = (solOnchain as any)?.poolKeys?.mintA?.toBase58?.()
+    if (onchainP && baseAddr && mintA) {
+      const pNum = Number(onchainP)
+      return mintA === baseAddr ? pNum : pNum > 0 ? 1 / pNum : undefined
+    }
+    return price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined
+  }, [solOnchain, baseCurrencyWithoutNative, price, invertPrice])
+
   const { data: rateData } = useTokenRateData({
     period: pricePeriod.value,
     baseCurrency: baseCurrencyWithoutNative ?? undefined,
     quoteCurrency: quoteCurrencyWithoutNative ?? undefined,
     chainId: baseCurrency?.chainId,
     protocol: Protocol.V3,
-    poolId: pool ? Pool.getAddress(pool.token0, pool.token1, pool.fee) : undefined,
+    poolId: solPoolInfo?.poolId,
   })
 
   const handleUseCurrentPrice = useCallback(() => {
@@ -733,7 +741,7 @@ export function SolanaFormView({
                         baseCurrency={baseCurrencyWithoutNative}
                         quoteCurrency={quoteCurrencyWithoutNative}
                         ticksAtLimit={ticksAtLimit}
-                        price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}
+                        price={chartCurrentPrice}
                         priceLower={priceLower}
                         priceUpper={priceUpper}
                         onBothRangeInput={onBothRangePriceInput}

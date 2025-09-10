@@ -3031,6 +3031,7 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
         /** @description Pool ID */
         address: string
       }

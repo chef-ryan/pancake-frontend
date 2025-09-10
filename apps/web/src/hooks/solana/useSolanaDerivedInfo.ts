@@ -23,6 +23,7 @@ import { useClmmAmmConfigs } from 'hooks/solana/useClmmAmmConfigs'
 import { useGetTickPrice } from './useGetTickPrice'
 import { useDependentAmountFromClmm } from './useDependentAmountFromClmm'
 import { useSolanaPoolByMint } from './useSolanaPoolsByMint'
+import { useSolanaOnchainClmmPoolInfo } from './useSolanaOnchainPool'
 
 export enum PoolState {
   LOADING,
@@ -183,6 +184,7 @@ export const useSolanaDerivedInfo = (
   }, [feeAmount, invalidPrice, price, token0, token1])
 
   const poolInfo = useSolanaPoolByMint(token0?.address, token1?.address, feeAmount)
+  const { data: solOnchain } = useSolanaOnchainClmmPoolInfo(poolInfo?.poolId)
   const { poolState, noLiquidity } = useMemo(
     () => ({
       poolState: poolInfo ? PoolState.EXISTS : PoolState.NOT_EXISTS,
@@ -262,8 +264,17 @@ export const useSolanaDerivedInfo = (
 
   const { [Bound.LOWER]: lowerPrice, [Bound.UPPER]: upperPrice } = pricesAtTicks
 
+  const onchainTickCurrent = solOnchain?.computePoolInfo?.tickCurrent
+  const outOfRangeByTick =
+    typeof tickLower === 'number' && typeof tickUpper === 'number' && typeof onchainTickCurrent === 'number'
+      ? onchainTickCurrent < tickLower || onchainTickCurrent > tickUpper
+      : undefined
+
   const outOfRange = Boolean(
-    !invalidRange && price && lowerPrice && upperPrice && (price.lessThan(lowerPrice) || price.greaterThan(upperPrice)),
+    !invalidRange &&
+      (outOfRangeByTick !== undefined
+        ? outOfRangeByTick
+        : price && lowerPrice && upperPrice && (price.lessThan(lowerPrice) || price.greaterThan(upperPrice))),
   )
 
   const independentAmount = useMemo(
@@ -291,11 +302,13 @@ export const useSolanaDerivedInfo = (
     }
   }, [dependentAmount, independentAmount, independentField])
 
+  const tickCurrentForDeposit =
+    typeof onchainTickCurrent === 'number' ? onchainTickCurrent : poolForPosition?.tickCurrent
   const deposit0Disabled = Boolean(
-    typeof tickUpper === 'number' && poolForPosition && poolForPosition.tickCurrent >= tickUpper,
+    typeof tickUpper === 'number' && tickCurrentForDeposit !== undefined && tickCurrentForDeposit >= tickUpper,
   )
   const deposit1Disabled = Boolean(
-    typeof tickLower === 'number' && poolForPosition && poolForPosition.tickCurrent <= tickLower,
+    typeof tickLower === 'number' && tickCurrentForDeposit !== undefined && tickCurrentForDeposit <= tickLower,
   )
 
   const depositADisabled =
