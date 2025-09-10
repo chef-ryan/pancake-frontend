@@ -14,8 +14,8 @@ import { useCallback, useEffect, useState, useMemo } from 'react'
 import { useTranslation } from '@pancakeswap/localization'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
 import BigNumber from 'bignumber.js'
+import BN from 'bn.js'
 import { SolanaV3Pool } from 'state/pools/solana'
-import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { Percent, Price, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { CurrencyLogo, LightGreyCard } from '@pancakeswap/widgets-internal'
@@ -31,6 +31,7 @@ import Divider from 'components/Divider'
 import { useSolanaV3RewardInfoFromSimulation } from 'views/universalFarms/hooks/useSolanaV3RewardInfoFromSimulation'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { useSolanaEpochInfo } from 'hooks/solana/useSolanaEpochInfo'
+import { useRemoveLiquidityCallback } from 'hooks/solana/useRemoveLiquidityCallback'
 import { SolanaV3Earnings } from '../../PositionItem/PositionInfo/SolanaV3Earnings'
 import { SolanaV3PoolInfoHeader } from './PooInfoHeader'
 
@@ -81,7 +82,6 @@ export default function SolanaV3RemovePositionModal({
   const { t } = useTranslation()
   const [percent, setPercent] = useState(50)
 
-  const { solanaAccount } = useAccountActiveChain()
   const currency0 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo.mintA as TokenInfo), [poolInfo.mintA])
   const { data: price0Raw } = useSolanaTokenPrice({ mint: currency0?.wrapped.address, enabled: Boolean(currency0) })
   const currency1 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo.mintB as TokenInfo), [poolInfo.mintB])
@@ -108,49 +108,61 @@ export default function SolanaV3RemovePositionModal({
     [positionCurrencyAmountA, positionCurrencyAmountB, percent],
   )
 
-  // const removeLiquidityAct = useClmmStore((s) => s.removeLiquidityAct)
+  const removeLiquidity = useRemoveLiquidityCallback()
 
   const [sending, setIsSending] = useState(false)
 
   useEffect(() => {
     setPercent(0)
+    setIsSending(false)
   }, [isOpen])
 
-  const handleConfirm = useCallback(() => {
+  const handleConfirm = useCallback(async () => {
     // logGTMPoolLiquiditySubCmfEvent()
+    if (!position || position.liquidity.isZero()) return
+
     setIsSending(true)
-    // removeLiquidityAct({
-    //   poolInfo,
-    //   position,
-    //   liquidity: new BigNumber(position.liquidity.toString()).multipliedBy(percent / 100).toFixed(0),
-    //   amountMinA: minTokenAmount[0],
-    //   amountMinB: minTokenAmount[1],
-    //   needRefresh: percent <= 100,
-    //   closePosition: percent === 100 ? closePosition : undefined,
-    //   onSent: () => {
-    //     logGTMPoolLiquiditySubSuccessEvent({
-    //       walletAddress: wallet?.adapter.publicKey?.toString() ?? '',
-    //       token0: poolInfo.mintA.address,
-    //       token1: poolInfo.mintB.address,
-    //       token0Amt: minTokenAmount[0],
-    //       token1Amt: minTokenAmount[1],
-    //       feeTier: toPercentString(poolInfo.feeRate * 100),
-    //     })
-    //     setIsSending(false)
-    //     setPercent(0)
-    //     setTokenAmount(['', ''])
-    //     setMinTokenAmount(['', ''])
-    //     handleCloseModal()
-    //   },
-    //   onError: (e: any) => {
-    //     logGTMSolErrorLogEvent({
-    //       action: 'Remove Liquidity Fail',
-    //       e,
-    //     })
-    //     setIsSending(false)
-    //   },
-    // })
-  }, [onClose, percent, poolInfo, position, solanaAccount])
+    try {
+      await removeLiquidity({
+        params: {
+          poolInfo,
+          position,
+          liquidity: new BN(
+            new BigNumber(position.liquidity.toString()).multipliedBy(percent).dividedBy(100).toFixed(0),
+          ),
+          amountMinA: amount0.toExact(),
+          amountMinB: amount1.toExact(),
+          closePosition: percent === 100,
+        },
+        onSent: () => {
+          // logGTMPoolLiquiditySubSuccessEvent({
+          //   walletAddress: wallet?.adapter.publicKey?.toString() ?? '',
+          //   token0: poolInfo.mintA.address,
+          //   token1: poolInfo.mintB.address,
+          //   token0Amt: minTokenAmount[0],
+          //   token1Amt: minTokenAmount[1],
+          //   feeTier: toPercentString(poolInfo.feeRate * 100),
+          // })
+          setIsSending(false)
+          setPercent(0)
+          onClose()
+        },
+        onError: (e: any) => {
+          // logGTMSolErrorLogEvent({
+          //   action: 'Remove Liquidity Fail',
+          //   e,
+          // })
+          setIsSending(false)
+        },
+        onFinally: () => {
+          setIsSending(false)
+        },
+      })
+    } catch (e) {
+      console.error(e)
+      setIsSending(false)
+    }
+  }, [onClose, percent, poolInfo, position, removeLiquidity, amount0, amount1])
 
   return (
     <ModalV2 isOpen={isOpen} onDismiss={onClose} closeOnOverlayClick>
@@ -211,7 +223,12 @@ export default function SolanaV3RemovePositionModal({
           <SolanaV3Earnings pool={pool} position={position} rowProps={{ justifyContent: 'space-between' }} />
         </LightGreyCard>
         <FlexGap flexDirection="column" gap="16px" mt="16px">
-          <Button width="100%" disabled={!position.liquidity.isZero()} isLoading={sending} onClick={handleConfirm}>
+          <Button
+            width="100%"
+            disabled={position.liquidity.isZero() || percent === 0}
+            isLoading={sending}
+            onClick={handleConfirm}
+          >
             {sending ? t('Confirming...') : t('Remove')}
           </Button>
         </FlexGap>
