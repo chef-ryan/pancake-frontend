@@ -3,7 +3,7 @@ import { ChainId } from '@pancakeswap/chains'
 import IfoProvider from 'views/Ifos/contexts/IfoContext'
 import { NextPageWithLayout } from 'utils/page.types'
 import IfoLayout from 'views/IfosV2/components/IfoLayout'
-import Hero from 'views/Ifos/components/Hero'
+import Hero from 'views/IfosV2/components/Hero'
 import dynamic from 'next/dynamic'
 import IFO from 'views/IfosV2/ifo'
 

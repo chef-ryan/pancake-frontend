@@ -3,7 +3,7 @@ import { Flex, LogoWithTextIcon } from '@pancakeswap/uikit'
 import ConnectW3WButton, { DisconnectW3WButton } from 'components/ConnectW3WButton'
 import { styled } from 'styled-components'
 import { useAccount } from 'wagmi'
-import Hero from '../Ifos/components/Hero'
+import Hero from './components/Hero'
 
 export const Wrapper = styled.div`
   background: ${({ theme }) => theme.colors.gradientBubblegum};
