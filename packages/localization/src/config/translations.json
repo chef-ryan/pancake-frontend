@@ -4121,7 +4121,6 @@
   "Vesting duration": "Vesting duration",
   "IFO v10 Test - USDT Offering": "IFO v10 Test - USDT Offering",
   "Testing on Tenderly Virtual Network": "Testing on Tenderly Virtual Network",
-  "This is a test IFO v10 configuration for development and testing purposes.": "This is a test IFO v10 configuration for development and testing purposes.",
   "Raise Goal": "Raise Goal",
   "Anyone with %symbol% can take part — no KYC required.": "Anyone with %symbol% can take part — no KYC required.",
   "When the IFO sale is live, simply commit your %symbol% tokens.": "When the IFO sale is live, simply commit your %symbol% tokens.",
@@ -4148,5 +4147,8 @@
   "How many tokens will I get?": "How many tokens will I get?",
   "Are there token vesting schedules?": "Are there token vesting schedules?",
   "[Partners] How do I apply for an IFO?": "[Partners] How do I apply for an IFO?",
-  "Target Raise": "Target Raise"
+  "Target Raise": "Target Raise",
+  "Early access to tokens with CAKE": "Early access to tokens with CAKE",
+  "Get exclusive early access to new tokens with CAKE": "Get exclusive early access to new tokens with CAKE",
+  "This is an IFO configured for dry-run purpose.": "This is an IFO configured for dry-run purpose."
 }

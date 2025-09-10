@@ -17,7 +17,8 @@ export const ifoConfigs: IFOConfig[] = [
     tgeSubtitle: <Trans>Testing on Tenderly Virtual Network</Trans>,
     description: (
       <div>
-        <Trans>This is an IFO configured for dry-run purpose.</Trans>
+        This is an IFO configured for dry-run purpose. This is an IFO configured for dry-run purpose. This is an IFO
+        configured for dry-run purpose. This is an IFO configured for dry-run purpose.
       </div>
     ),
     howTo: [
