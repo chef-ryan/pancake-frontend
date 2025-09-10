@@ -23,8 +23,8 @@ const StyledHero = styled(Box)`
 const BunnyContainer = styled(Box)`
   z-index: 1;
   position: absolute;
-  right: -20%;
-  bottom: -15%;
+  right: 0%;
+  bottom: -1%;
 
   ${({ theme }) => theme.mediaQueries.md} {
     right: 10%;
@@ -42,15 +42,17 @@ const StyledHeading = styled(Heading)`
 `
 
 const StyledButton = styled(Button)`
-  background-color: ${({ theme }) => theme.colors.tertiary};
-  color: ${({ theme }) => theme.colors.primary};
-  padding: 4px 13px;
+  background-color: ${({ theme }) => theme.colors.textSubtle};
+  color: ${({ theme }) => theme.colors.invertedContrast};
+  padding: 8px 13px;
   height: auto;
   text-transform: uppercase;
   align-self: flex-start;
   font-size: 12px;
   box-shadow: ${({ theme }) => theme.shadows.inset};
-  border-radius: 8px;
+  border-radius: 20px;
+  ${({ theme }) => theme.mediaQueries.md} {
+  }
 `
 
 const DesktopButton = styled(Button)`
@@ -95,10 +97,17 @@ const Hero = () => {
           >
             <Box>
               <StyledHeading as="h1" mb={['12px', '12px', '24px']}>
-                {t('IFO: Initial Farm Offerings')}
+                CAKE.PAD
               </StyledHeading>
-              <StyledSubTitle bold>
-                {isMobile ? t('Buy new tokens using CAKE') : t('Buy new tokens launching on PancakeSwap using CAKE')}
+              <StyledSubTitle
+                bold
+                style={{
+                  maxWidth: isMobile ? '60%' : '100%',
+                }}
+              >
+                {isMobile
+                  ? t('Early access to tokens with CAKE')
+                  : t('Get exclusive early access to new tokens with CAKE')}
               </StyledSubTitle>
             </Box>
             {isMobile ? (
@@ -117,18 +126,18 @@ const Hero = () => {
   )
 }
 
-function getHeadBunny(isDesktop: boolean) {
-  if (isDesktop) {
-    return `${ASSET_CDN}/web/ifos/v2/bunny.png`
+function getHeadBunny(isMobile: boolean) {
+  if (isMobile) {
+    return `${ASSET_CDN}/web/ifos/v2/bunny-mobile.png`
   }
-  return `${ASSET_CDN}/web/ifos/v2/bunny-mobile.png`
+  return `${ASSET_CDN}/web/ifos/v2/bunny.png`
 }
 
 function HeaderBunny() {
   const { chainId: currentChainId } = useActiveChainId()
-  const { isDesktop } = useMatchBreakpoints()
+  const { isDesktop, isMobile } = useMatchBreakpoints()
   const bunnyImageUrl = useMemo(() => {
-    return getHeadBunny(isDesktop)
+    return getHeadBunny(isMobile)
   }, [currentChainId])
 
   return (
@@ -137,8 +146,8 @@ function HeaderBunny() {
         alt="header-bunny"
         src={bunnyImageUrl}
         style={{
-          width: isDesktop ? 393 : 302,
-          height: isDesktop ? 197 : 151,
+          width: isDesktop ? 393 : 207,
+          height: isDesktop ? 197 : 192,
         }}
       />
     </BunnyContainer>

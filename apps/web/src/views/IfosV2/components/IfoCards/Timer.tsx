@@ -24,7 +24,7 @@ const FlexGap = styled(Flex)<{ gap: string }>`
 const CountdownText = styled(Text)`
   font-family: Kanit;
   font-size: 16px;
-  font-weight: 400;
+  font-weight: 600;
 
   ${({ theme }) => theme.mediaQueries.md} {
     font-size: 24px;
@@ -98,7 +98,7 @@ export const SoonTimer: React.FC<React.PropsWithChildren<Props>> = ({ startTime,
           <Text
             fontSize={['16px', '16px', '24px']}
             fontFamily="Kanit"
-            fontWeight={['600', '600', '400']}
+            fontWeight={['600', '400', '400']}
             color={textColor}
           >
             {t('Starts in')}:

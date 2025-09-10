@@ -11,13 +11,13 @@ export const ifoConfigs: IFOConfig[] = [
     icon: 'https://proofs.pancakeswap.com/cms/uploads/27729a23a3b3e0e5ab75da585f04217c4b036b0f92b54bf6a7393afe1f157be6.png', // TODO: Replace with actual icon
     projectUrl: 'https://pancakeswap.finance/',
     chainId: ChainId.BSC,
-    bannerUrl: `https://proofs.pancakeswap.com/cms/uploads/495262706d9d431db12f564544d807e4b8d1e7f39e8b26b170d16f6a26212987.png`, // TODO: Replace with actual banner
-    contractAddress: '0x097200FE8B754Fca013Ee21a3310F03Bc4C670fC', // IFO v10 contract address
+    bannerUrl: 'https://assets.pancakeswap.finance/web/ifos/bg/krs-bg.png',
+    contractAddress: '0x2b2826CdcC43C20190deCd2198F4736a5c216FDe', // IFO v10 contract address
     tgeTitle: <Trans>IFO v10 Test - USDT Offering</Trans>,
     tgeSubtitle: <Trans>Testing on Tenderly Virtual Network</Trans>,
     description: (
       <div>
-        <Trans>This is a test IFO v10 configuration for development and testing purposes.</Trans>
+        <Trans>This is an IFO configured for dry-run purpose.</Trans>
       </div>
     ),
     howTo: [
