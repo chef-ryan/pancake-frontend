@@ -18,10 +18,28 @@ const GradientText = styled(Heading)`
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   -webkit-text-stroke: 1px rgba(0, 0, 0, 0.5);
+  font-size: 16px;
+  font-weight: 600;
+
+  ${({ theme }) => theme.mediaQueries.md} {
+    font-size: 24px;
+  }
 `
 
 const FlexGap = styled(Flex)<{ gap: string }>`
   gap: ${({ gap }) => gap};
+`
+
+const CountdownText = styled(Text)`
+  font-size: 16px;
+
+  ${({ theme }) => theme.mediaQueries.md} {
+    font-size: 20px;
+  }
+`
+
+const CountdownNumber = styled(CountdownText)`
+  font-weight: 600;
 `
 
 const USE_BLOCK_TIMESTAMP_UNTIL = 3
@@ -47,31 +65,27 @@ export const SoonTimer: React.FC<React.PropsWithChildren<Props>> = ({ publicIfoD
     status !== 'idle' ? (
       <>
         <FlexGap gap="8px" alignItems="center">
-          <Heading as="h3" scale="lg" color={textColor}>
+          <CountdownText as="h3" color={textColor}>
             {t('Starts in')}
-          </Heading>
+          </CountdownText>
           <FlexGap gap="4px" alignItems="baseline">
             {timeUntil.days ? (
               <>
-                <Heading scale="lg" color={textColor}>
-                  {timeUntil.days}
-                </Heading>
-                <Text color={textColor}>{t('d')}</Text>
+                <CountdownNumber color={textColor}>{timeUntil.days}</CountdownNumber>
+                <CountdownText color={textColor}>{t('d')}</CountdownText>
               </>
             ) : null}
             {timeUntil.days || timeUntil.hours ? (
               <>
-                <Heading color={textColor} scale="lg">
-                  {timeUntil.hours}
-                </Heading>
-                <Text color={textColor}>{t('h')}</Text>
+                <CountdownNumber color={textColor}>{timeUntil.hours}</CountdownNumber>
+                <CountdownText color={textColor}>{t('h')}</CountdownText>
               </>
             ) : null}
             <>
-              <Heading color={textColor} scale="lg">
+              <CountdownNumber color={textColor}>
                 {!timeUntil.days && !timeUntil.hours && timeUntil.minutes === 0 ? '< 1' : timeUntil.minutes}
-              </Heading>
-              <Text color={textColor}>{t('m')}</Text>
+              </CountdownNumber>
+              <CountdownText color={textColor}>{t('m')}</CountdownText>
             </>
           </FlexGap>
         </FlexGap>
@@ -96,7 +110,7 @@ export const SoonTimer: React.FC<React.PropsWithChildren<Props>> = ({ publicIfoD
 
 const EndInHeading = styled(Heading)`
   color: white;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1.1;
 
@@ -129,27 +143,27 @@ const LiveTimer: React.FC<React.PropsWithChildren<Props>> = ({ publicIfoData }) 
         <PocketWatchIcon width="42px" mr="8px" />
         <FlexGap gap="8px" alignItems="center">
           <LiveNowHeading textTransform="uppercase" as="h3">{`${t('Live Now')}!`}</LiveNowHeading>
-          <EndInHeading as="h3" scale="lg" color="white">
+          <EndInHeading as="h3" color="white">
             {t('Ends in')}
           </EndInHeading>
           <FlexGap gap="4px" alignItems="baseline">
             {timeUntil.days ? (
               <>
-                <GradientText scale="lg">{timeUntil.days}</GradientText>
-                <Text color="white">{t('d')}</Text>
+                <GradientText>{timeUntil.days}</GradientText>
+                <CountdownText color="white">{t('d')}</CountdownText>
               </>
             ) : null}
             {timeUntil.days || timeUntil.hours ? (
               <>
-                <GradientText scale="lg">{timeUntil.hours}</GradientText>
-                <Text color="white">{t('h')}</Text>
+                <GradientText>{timeUntil.hours}</GradientText>
+                <CountdownText color="white">{t('h')}</CountdownText>
               </>
             ) : null}
             <>
-              <GradientText scale="lg">
+              <GradientText>
                 {!timeUntil.days && !timeUntil.hours && timeUntil.minutes === 0 ? '< 1' : timeUntil.minutes}
               </GradientText>
-              <Text color="white">{t('m')}</Text>
+              <CountdownText color="white">{t('m')}</CountdownText>
             </>
           </FlexGap>
         </FlexGap>
