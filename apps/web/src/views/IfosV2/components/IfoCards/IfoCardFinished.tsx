@@ -2,6 +2,7 @@ import { Card, CardBody, FlexGap, useMatchBreakpoints } from '@pancakeswap/uikit
 import useTheme from 'hooks/useTheme'
 import { IfoAllocationCard } from '../IfoAllocationCard'
 import useIfo from '../../hooks/useIfo'
+import { getAllocationCurrencyAmount } from '../../helpers'
 import { IfoSaleInfoCard } from './IfoSaleInfoCard'
 import { IfoPoolFinished } from './IfoPoolFinished'
 import { IfoVestingCard } from './IfoVestingCard'
@@ -22,12 +23,7 @@ export const IfoCardFinished: React.FC<{ ifoStatus0: IFOStatus; ifoStatus1: IFOS
   const tokenAddress = offeringCurrency?.wrapped.address ?? ''
   const tokenDecimals = offeringCurrency?.decimals ?? 18
 
-  const allocationCurrencyAmount = (() => {
-    if (userStatus0?.claimableAmount && userStatus1?.claimableAmount) {
-      return userStatus0.claimableAmount.add(userStatus1.claimableAmount)
-    }
-    return userStatus0?.claimableAmount ?? userStatus1?.claimableAmount
-  })()
+  const allocationCurrencyAmount = getAllocationCurrencyAmount(users)
 
   const allocatedAmount = allocationCurrencyAmount?.toSignificant(6)
 

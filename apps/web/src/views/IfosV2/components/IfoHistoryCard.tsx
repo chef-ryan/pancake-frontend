@@ -8,6 +8,7 @@ import { IfoAllocationDisplay } from './IfoAllocationCard'
 import useIfo from '../hooks/useIfo'
 import { useIFOStatus } from '../hooks/ifo/useIFOStatus'
 import { ClaimDisplay } from './IfoCards/ClaimDisplay'
+import { getAllocationCurrencyAmount } from '../helpers'
 
 const StyledCard = styled(Card)`
   width: 100%;
@@ -32,15 +33,14 @@ const Header = styled(CardHeader)<{ $bannerUrl: string }>`
 
 const IfoHistoryCard: React.FC = () => {
   const [expanded, setExpanded] = useState(false)
-  const { config, info, pools } = useIfo()
+  const { config, info, users } = useIfo()
   const [ifoStatus0] = useIFOStatus()
-
-  const pool0 = pools?.[0]
 
   const symbol = info?.offeringCurrency?.symbol ?? ''
   const tokenAddress = info?.offeringCurrency?.wrapped.address ?? ''
   const tokenDecimals = info?.offeringCurrency?.decimals ?? 18
-  const saleAmount = pool0?.saleAmount?.toSignificant(6)
+  const allocationCurrencyAmount = getAllocationCurrencyAmount(users)
+  const allocatedAmount = allocationCurrencyAmount?.toSignificant(6)
   if (info?.status !== 'finished') {
     return null
   }
@@ -61,7 +61,7 @@ const IfoHistoryCard: React.FC = () => {
               symbol={symbol}
               tokenAddress={tokenAddress}
               tokenDecimals={tokenDecimals}
-              allocatedAmount={saleAmount}
+              allocatedAmount={allocatedAmount}
             />
             <ClaimDisplay pid={0} />
             <IfoPoolInfoDisplay pid={0} ifoStatus={ifoStatus0} variant="history" />
