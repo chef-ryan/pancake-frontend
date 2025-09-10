@@ -22,8 +22,8 @@ export type RemoveLiquidityCallbackProps = {
     closePosition?: boolean
   }
   harvest?: boolean
-  onSent: (txId: string) => void
-  onError: (error: any) => void
+  onSent?: (txId: string) => void
+  onError?: (error: any) => void
   onFinally?: () => void
   onConfirmed?: () => void
 }

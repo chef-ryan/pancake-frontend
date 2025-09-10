@@ -3,7 +3,8 @@ import { AddIcon, Button, Flex, IconButton, MinusIcon, useModalV2 } from '@panca
 import { useTranslation } from '@pancakeswap/localization'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
+import { useHarvestRewardCallback } from 'hooks/solana/useHarvestRewardCallback'
 import SolanaV3RemovePositionModal from '../Modals/solana/SolanaV3RemovePositionModal'
 import { StopPropagation } from '../StopPropagation'
 import { SolanaV3AddPositionModal } from '../Modals/solana/SolanaV3AddPositionModal'
@@ -25,6 +26,17 @@ export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, p
   const handleRemovePositionClick = useCallback(() => {
     removePositionModal.onOpen()
   }, [removePositionModal])
+  const harvestReward = useHarvestRewardCallback()
+  const [sending, setSending] = useState(false)
+  const handleHarvest = useCallback(async () => {
+    if (!poolInfo) return
+    setSending(true)
+    await harvestReward({
+      params: { poolInfo: poolInfo.rawPool, position },
+      onSent: () => setSending(false),
+      onFinally: () => setSending(false),
+    })
+  }, [harvestReward, poolInfo, position])
 
   return (
     <StopPropagation>
@@ -57,7 +69,9 @@ export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, p
             />
           )}
         </>
-        <Button variant="primary">{t('Harvest')}</Button>
+        <Button variant="primary" isLoading={sending} onClick={handleHarvest}>
+          {t('Harvest')}
+        </Button>
       </ActionPanelContainer>
     </StopPropagation>
   )
