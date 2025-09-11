@@ -1,15 +1,15 @@
-import { Raydium, TokenInfo, ZERO } from '@pancakeswap/solana-core-sdk'
+import { TokenInfo, ZERO } from '@pancakeswap/solana-core-sdk'
 import { useCallback, useMemo } from 'react'
 import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
 import { SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { removeLiquidity } from 'state/pools/solana/actions'
 import { useQuery } from '@tanstack/react-query'
-import { QUERY_SETTINGS_IMMUTABLE, SLOW_INTERVAL } from 'config/constants'
+import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
 import { useSolanaTokenPrices } from 'hooks/solana/useSolanaTokenPrice'
 import BigNumber from 'bignumber.js'
-import { useWallet } from '@solana/wallet-adapter-react'
 import PQueue from 'p-queue'
+import { useRaydium } from 'hooks/solana/useRaydium'
 
 const simulationQueue = new PQueue({
   interval: 1000,
@@ -37,17 +37,10 @@ const DEFAULT_SIMULATION_RESULT = {
 
 export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: SolanaV3RewardInfoFromSimulationProps) => {
   const connection = useSolanaConnectionWithRpcAtom()
-  const { publicKey, signAllTransactions } = useWallet()
+  const raydium = useRaydium()
   const simulation = useCallback(async () => {
     const result = await simulationQueue.add(async () => {
-      const raydium = await Raydium.load({
-        connection,
-        disableFeatureCheck: true,
-        loopMultiTxStatus: true,
-        blockhashCommitment: 'finalized',
-      })
-      raydium.setOwner(publicKey || undefined)
-      raydium.setSignAllTransactions(signAllTransactions)
+      if (!raydium) return DEFAULT_SIMULATION_RESULT
 
       try {
         const simulationResult = await removeLiquidity({
@@ -62,12 +55,12 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
         })
         return simulationResult || DEFAULT_SIMULATION_RESULT
       } catch (error) {
-        console.error('debug sim', error)
+        console.error('simulation error', error)
         return DEFAULT_SIMULATION_RESULT
       }
     })
     return result
-  }, [connection, poolInfo, position, publicKey, signAllTransactions])
+  }, [connection, poolInfo, position])
   const { data } = useQuery({
     queryKey: ['solana-v3-reward-info-from-simulation', poolInfo.poolId, position.nftMint.toBase58()],
     queryFn: simulation,
