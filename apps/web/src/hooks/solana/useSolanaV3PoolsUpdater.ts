@@ -19,7 +19,7 @@ export const useSolanaV3PoolsUpdater = (
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!connection || !poolInfos || !initialFetch || isInitialFetched) return
+    if (!connection || !poolInfos || poolInfos.length === 0 || !initialFetch || isInitialFetched || loading) return
     setLoading(true)
 
     const fetchPoolInfoFromRpc = async (poolInfo: SolanaV3Pool) => {
@@ -46,7 +46,7 @@ export const useSolanaV3PoolsUpdater = (
       setLoading(false)
       setIsInitialFetched(true)
     })
-  }, [connection, poolInfos, initialFetch, isInitialFetched, updateSolanaV3Pool])
+  }, [connection, poolInfos, initialFetch, isInitialFetched, updateSolanaV3Pool, loading])
 
   useEffect(() => {
     if (!connection || !poolInfos || !enabledSubscribe) return undefined
