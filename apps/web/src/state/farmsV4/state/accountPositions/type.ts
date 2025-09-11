@@ -2,6 +2,7 @@ import type { Protocol } from '@pancakeswap/farms'
 import type { PoolKey } from '@pancakeswap/infinity-sdk'
 import type { ERC20Token, Pair } from '@pancakeswap/sdk'
 import type { LegacyStableSwapPair } from '@pancakeswap/smart-router/legacy-router'
+import { PositionInfoLayout } from '@pancakeswap/solana-core-sdk'
 import type { CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import type { Address, Hex } from 'viem'
 
@@ -89,6 +90,9 @@ export type UnifiedPositionDetail =
   | InfinityCLPositionDetail
   | V2LPDetail
   | StableLPDetail
+  | SolanaV3PositionDetail
+
+export type SolanaV3PositionDetail = ReturnType<typeof PositionInfoLayout.decode> & { status: POSITION_STATUS }
 
 export type V2LPDetail = {
   nativeBalance: CurrencyAmount<ERC20Token>

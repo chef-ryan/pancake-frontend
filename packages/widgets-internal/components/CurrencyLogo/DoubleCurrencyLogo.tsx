@@ -1,4 +1,4 @@
-import { Currency } from "@pancakeswap/sdk";
+import { Currency, UnifiedCurrency } from "@pancakeswap/sdk";
 import { useMemo } from "react";
 import { styled } from "styled-components";
 
@@ -16,8 +16,8 @@ const Wrapper = styled.div<{ margin: boolean }>`
 interface DoubleCurrencyLogoProps {
   margin?: boolean;
   size?: number;
-  currency0?: Currency;
-  currency1?: Currency;
+  currency0?: UnifiedCurrency;
+  currency1?: UnifiedCurrency;
   innerMargin?: string | number;
   showChainLogo?: boolean;
   showChainLogoCurrency1?: boolean;

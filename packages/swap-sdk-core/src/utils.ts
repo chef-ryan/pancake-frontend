@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant'
 import { ONE, THREE, TWO, VMType, VM_TYPE_MAXIMA, ZERO, ZERO_ADDRESS } from './constants'
-import { Currency } from './currency'
+import { Currency, UnifiedCurrency } from './currency'
 import { CurrencyAmount, Percent, Price } from './fractions'
 import { Token } from './token'
 
@@ -134,7 +134,7 @@ export const isCurrencySorted = (currencyA: Currency, currencyB: Currency): bool
   return currency0 === currencyA
 }
 
-export function getCurrencyAddress(currency: Currency) {
+export function getCurrencyAddress(currency: UnifiedCurrency) {
   if (currency.isNative) {
     return ZERO_ADDRESS
   }
