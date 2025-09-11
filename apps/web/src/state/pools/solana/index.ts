@@ -5,6 +5,7 @@ import { atomFamily } from 'jotai/utils'
 export type SolanaV3Pool = ApiV3PoolInfoConcentratedItem & {
   liquidity?: bigint
   tickCurrent?: number
+  isFarming?: boolean
 }
 
 export const solanaV3PoolIdsAtom = atom<string[]>([])
