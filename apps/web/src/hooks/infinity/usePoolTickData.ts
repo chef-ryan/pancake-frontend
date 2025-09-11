@@ -44,9 +44,12 @@ export function usePoolActiveLiquidity(
   const { data } = useActiveLiquidityByPool({
     currencyA: currency0,
     currencyB: currency1,
-    tickSpacing: pool?.tickSpacing,
-    pool: pool as any,
     ticks,
+    pool: {
+      tickSpacing: pool?.tickSpacing,
+      tickCurrent: pool?.tickCurrent,
+      liquidity: pool?.liquidity,
+    },
   })
 
   return useMemo(() => {

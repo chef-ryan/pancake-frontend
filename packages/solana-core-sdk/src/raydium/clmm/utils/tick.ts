@@ -384,7 +384,10 @@ export class TickUtils {
     tick,
     baseIn,
   }: {
-    poolInfo: ApiV3PoolInfoConcentratedItem;
+    poolInfo: {
+      mintA: { decimals: number };
+      mintB: { decimals: number };
+    };
     tick: number;
     baseIn: boolean;
   }): ReturnTypeGetTickPrice {
@@ -405,7 +408,13 @@ export class TickUtils {
     price,
     baseIn,
   }: {
-    poolInfo: ApiV3PoolInfoConcentratedItem;
+    poolInfo: {
+      mintA: { decimals: number };
+      mintB: { decimals: number };
+      config: {
+        tickSpacing: ApiV3PoolInfoConcentratedItem["config"]["tickSpacing"];
+      };
+    };
     price: Decimal;
     baseIn: boolean;
   }): ReturnTypeGetPriceAndTick {

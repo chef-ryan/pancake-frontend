@@ -4,7 +4,7 @@ import { ChartEntry } from '@pancakeswap/widgets-internal'
 import { useCallback, useMemo } from 'react'
 import { NonEVMChainId } from '@pancakeswap/chains'
 import { useSolanaPoolByMint } from 'hooks/solana/useSolanaPoolsByMint'
-import { useSolanaOnchainClmmPoolInfo } from 'hooks/solana/useSolanaOnchainPool'
+import { useSolanaOnchainClmmPool } from 'hooks/solana/useSolanaOnchainPool'
 import useAllTicksQuery from 'hooks/useAllTicksQuery'
 import { Protocol } from '@pancakeswap/farms'
 import { useActiveLiquidityByPool } from 'hooks/v3/usePoolTickData'
@@ -24,7 +24,7 @@ export function useSolanaDensityChartData({
   const token1 = currencyB?.wrapped?.address
   const solPool = useSolanaPoolByMint(token0, token1, feeAmount)
 
-  const { data: pool, isLoading, error } = useSolanaOnchainClmmPoolInfo(solPool?.poolId)
+  const { data: pool, isLoading, error } = useSolanaOnchainClmmPool(solPool?.poolId)
 
   const { data: ticks } = useAllTicksQuery({
     chainId: solPool?.chainId,
@@ -38,9 +38,12 @@ export function useSolanaDensityChartData({
   const { data } = useActiveLiquidityByPool({
     currencyA,
     currencyB,
-    tickSpacing: pool?.computePoolInfo.tickSpacing,
-    pool: pool as any,
     ticks,
+    pool: {
+      tickSpacing: pool?.computePoolInfo.tickSpacing,
+      tickCurrent: pool?.computePoolInfo.tickCurrent,
+      liquidity: pool?.computePoolInfo.liquidity ? BigInt(pool?.computePoolInfo.liquidity.toString()) : undefined,
+    },
   })
 
   const formatData = useCallback(() => {
@@ -63,7 +66,7 @@ export function useSolanaDensityChartData({
   return useMemo(() => {
     return {
       isLoading,
-      error,
+      error: error ?? undefined,
       formattedData: !isLoading ? formatData() : undefined,
     }
   }, [isLoading, error, formatData])

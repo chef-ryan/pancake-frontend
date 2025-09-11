@@ -10,47 +10,27 @@ import {
 import { FeeAmount, Pool, Position, TickMath, encodeSqrtRatioX96, priceToClosestTick } from '@pancakeswap/v3-sdk'
 import { Bound } from 'config/constants/types'
 import { ReactNode, useMemo } from 'react'
-import { TickUtils } from '@pancakeswap/solana-core-sdk'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
-import Decimal from 'decimal.js'
 import { UnifiedBalance, useUnifiedCurrencyBalances } from 'hooks/useUnifiedCurrencyBalance'
 import tryParseCurrencyAmount from 'utils/tryParseCurrencyAmount'
 import { CurrencyField as Field } from 'utils/types'
 import { MintState } from 'views/AddLiquidityV3/formViews/V3FormView/form/reducer'
 import { useAccountActiveChain } from 'hooks/useAccountActiveChain'
-import { useBirdeyeTokenPrice } from 'hooks/solana/useBirdeyeTokenPrice'
 import { useClmmAmmConfigs } from 'hooks/solana/useClmmAmmConfigs'
-import { useGetTickPrice } from './useGetTickPrice'
+import { tryParsePriceSolana } from 'hooks/v3/utils/tryParsePriceSolana'
+import { tryParseTickSolana } from 'hooks/v3/utils/tryParseTickSolana'
+import { convertPoolPrice } from 'hooks/v3/utils/convertPoolPrice'
+
+import { tryParsePrice } from 'hooks/v3/utils'
 import { useDependentAmountFromClmm } from './useDependentAmountFromClmm'
 import { useSolanaPoolByMint } from './useSolanaPoolsByMint'
-import { useSolanaOnchainClmmPoolInfo } from './useSolanaOnchainPool'
+import { useSolanaOnchainClmmPool } from './useSolanaOnchainPool'
 
 export enum PoolState {
   LOADING,
   EXISTS,
   NOT_EXISTS,
   INVALID,
-}
-
-function tryParseTickSolana(
-  tickSpacing: number | undefined,
-  price: MintState['leftRangeTypedValue'] | MintState['rightRangeTypedValue'],
-  token0?: Token,
-  token1?: Token,
-): number | undefined {
-  if (!price || !tickSpacing || typeof price === 'boolean' || !token0 || !token1) return undefined
-  try {
-    const poolInfo = {
-      config: { tickSpacing },
-      mintA: { decimals: token0.decimals },
-      mintB: { decimals: token1.decimals },
-    } as any
-    const pDec = new Decimal(price.toSignificant(18))
-    const res = TickUtils.getPriceAndTick({ poolInfo, price: pDec, baseIn: true })
-    return res?.tick
-  } catch {
-    return undefined
-  }
 }
 
 const checkAndParseMaxTick = (tick: number) => (tick === TickMath.MAX_TICK ? TickMath.MAX_TICK - 1 : tick)
@@ -125,13 +105,8 @@ export const useSolanaDerivedInfo = (
     return cfg?.tickSpacing
   }, [ammConfigs, feeAmount])
 
-  // Birdeye prices for market price fallback
-  const baseMint = token0?.address
-  const quoteMint = token1?.address
-  const { data: beePrices } = useBirdeyeTokenPrice({
-    mintList: [baseMint, quoteMint],
-    enabled: Boolean(baseMint && quoteMint),
-  })
+  const poolInfo = useSolanaPoolByMint(token0?.address, token1?.address, feeAmount)
+  const { data: PoolOnchain } = useSolanaOnchainClmmPool(poolInfo?.poolId)
 
   const invertPrice = Boolean(baseToken && token0 && !baseToken.equals(token0))
 
@@ -152,20 +127,11 @@ export const useSolanaDerivedInfo = (
         return (invertPrice ? p?.invert() : p) ?? undefined
       }
     }
-    if (token0 && token1 && beePrices) {
-      const p0 = beePrices[token0.address]?.value
-      const p1 = beePrices[token1.address]?.value
-      if (p0 && p1) {
-        const ratio = p1 / p0
-        const scale = 1_000_000n
-        const baseQ = scale
-        const quoteQ = BigInt(Math.max(1, Math.round(ratio * Number(scale))))
-        const p = new Price(token0 as Token, token1 as Token, baseQ, quoteQ)
-        return invertPrice ? p.invert() : p
-      }
+    if (token0 && token1 && PoolOnchain) {
+      return tryParsePrice(token0, token1, PoolOnchain?.computePoolInfo.currentPrice.toFixed())
     }
     return undefined
-  }, [startPriceTypedValue, invertPrice, token0, token1, beePrices])
+  }, [startPriceTypedValue, invertPrice, token0, token1, PoolOnchain])
 
   const invalidPrice = useMemo(() => {
     const sqrtRatioX96 = price ? encodeSqrtRatioX96(price.numerator, price.denominator) : undefined
@@ -183,8 +149,6 @@ export const useSolanaDerivedInfo = (
     }
   }, [feeAmount, invalidPrice, price, token0, token1])
 
-  const poolInfo = useSolanaPoolByMint(token0?.address, token1?.address, feeAmount)
-  const { data: solOnchain } = useSolanaOnchainClmmPoolInfo(poolInfo?.poolId)
   const { poolState, noLiquidity } = useMemo(
     () => ({
       poolState: poolInfo ? PoolState.EXISTS : PoolState.NOT_EXISTS,
@@ -207,8 +171,6 @@ export const useSolanaDerivedInfo = (
     }
   }, [tickSpacing])
 
-  const getSolTickPrice = useGetTickPrice(token0, token1, feeAmount)
-
   const ticks: { [key: string]: number | undefined } = useMemo(() => {
     return {
       [Bound.LOWER]:
@@ -217,18 +179,26 @@ export const useSolanaDerivedInfo = (
           : (invertPrice && typeof rightRangeTypedValue === 'boolean') ||
             (!invertPrice && typeof leftRangeTypedValue === 'boolean')
           ? tickSpaceLimits[Bound.LOWER]
-          : invertPrice
-          ? tryParseTickSolana(tickSpacing, rightRangeTypedValue, token0 as Token, token1 as Token)
-          : tryParseTickSolana(tickSpacing, leftRangeTypedValue, token0 as Token, token1 as Token),
+          : tryParseTickSolana({
+              tickSpacing,
+              price: invertPrice ? rightRangeTypedValue : leftRangeTypedValue,
+              token0Decimal: token0?.decimals,
+              token1Decimal: token1?.decimals,
+              baseIn: !invertPrice,
+            }),
       [Bound.UPPER]:
         typeof existingPosition?.tickUpper === 'number'
           ? checkAndParseMaxTick(existingPosition.tickUpper)
           : (!invertPrice && typeof rightRangeTypedValue === 'boolean') ||
             (invertPrice && typeof leftRangeTypedValue === 'boolean')
           ? tickSpaceLimits[Bound.UPPER]
-          : invertPrice
-          ? tryParseTickSolana(tickSpacing, leftRangeTypedValue, token0 as Token, token1 as Token)
-          : tryParseTickSolana(tickSpacing, rightRangeTypedValue, token0 as Token, token1 as Token),
+          : tryParseTickSolana({
+              tickSpacing,
+              price: invertPrice ? leftRangeTypedValue : rightRangeTypedValue,
+              token0Decimal: token0?.decimals,
+              token1Decimal: token1?.decimals,
+              baseIn: !invertPrice,
+            }),
     }
   }, [
     existingPosition,
@@ -256,15 +226,31 @@ export const useSolanaDerivedInfo = (
   const pricesAtTicks = useMemo(() => {
     return {
       [Bound.LOWER]:
-        typeof ticks[Bound.LOWER] === 'number' ? getSolTickPrice(ticks[Bound.LOWER] as number)?.price : undefined,
+        typeof ticks[Bound.LOWER] === 'number'
+          ? tryParsePriceSolana({
+              tick: ticks[Bound.LOWER],
+              tickSpacing,
+              token0,
+              token1,
+              baseIn: !invertPrice,
+            })
+          : undefined,
       [Bound.UPPER]:
-        typeof ticks[Bound.UPPER] === 'number' ? getSolTickPrice(ticks[Bound.UPPER] as number)?.price : undefined,
+        typeof ticks[Bound.UPPER] === 'number'
+          ? tryParsePriceSolana({
+              tick: ticks[Bound.UPPER],
+              tickSpacing,
+              token0,
+              token1,
+              baseIn: !invertPrice,
+            })
+          : undefined,
     }
-  }, [getSolTickPrice, ticks])
+  }, [ticks, invertPrice, tickSpacing, token0, token1])
 
   const { [Bound.LOWER]: lowerPrice, [Bound.UPPER]: upperPrice } = pricesAtTicks
 
-  const onchainTickCurrent = solOnchain?.computePoolInfo?.tickCurrent
+  const onchainTickCurrent = PoolOnchain?.computePoolInfo.tickCurrent
   const outOfRangeByTick =
     typeof tickLower === 'number' && typeof tickUpper === 'number' && typeof onchainTickCurrent === 'number'
       ? onchainTickCurrent < tickLower || onchainTickCurrent > tickUpper

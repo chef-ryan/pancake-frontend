@@ -1,3 +1,4 @@
+import { isSolana } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
 import { Currency, isUnifedCurrencySorted, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { useQuery } from '@tanstack/react-query'
@@ -98,10 +99,11 @@ export const useTokenRateData = ({
   const parsePrice = useCallback(
     (priceValue?: number) => {
       const basePrice = tryParsePrice(baseCurrency as Currency, quoteCurrency as Currency, priceValue?.toString())
-      const price = isSorted ? basePrice?.invert() : basePrice
+      // todo:@eric api's data is inconsistent
+      const price = isSorted && !isSolana(chainId) ? basePrice?.invert() : basePrice
       return price && price?.denominator !== 0n ? parseFloat(price.toFixed(18)) : 0
     },
-    [baseCurrency, quoteCurrency, isSorted],
+    [baseCurrency, quoteCurrency, isSorted, chainId],
   )
 
   const tokenRateData = useMemo(

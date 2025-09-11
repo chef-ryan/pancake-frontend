@@ -1,5 +1,4 @@
 import { PoolInfo } from '@pancakeswap/solana-clmm-sdk'
-import { SPLToken } from '@pancakeswap/swap-sdk-core'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { solExplorerApiClient } from 'state/info/api/client'

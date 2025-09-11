@@ -75,7 +75,7 @@ export function AddSolanaLiquidityV3Layout({ children }: { children: React.React
         currency1={currencyB}
         isInverted={inverted}
         onInvertPrices={handleInvertCurrencies}
-        poolId={poolInfo?.id}
+        poolId={poolInfo?.poolId}
         overrideAprDisplay={{ aprDisplay: <></>, roiCalculator: <></> }}
       />
       {children}

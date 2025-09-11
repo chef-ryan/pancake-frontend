@@ -72,7 +72,7 @@ import { LiquiditySlippageButton } from 'views/Swap/components/SlippageButton'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import { useSolanaDerivedInfo } from 'hooks/solana/useSolanaDerivedInfo'
 import { useSolanaPoolByMint } from 'hooks/solana/useSolanaPoolsByMint'
-import { useSolanaOnchainClmmPoolInfo } from 'hooks/solana/useSolanaOnchainPool'
+import { useSolanaOnchainClmmPool } from 'hooks/solana/useSolanaOnchainPool'
 import { FieldFeeLevel } from 'views/CreateLiquidityPool/components/FieldFeeLevel'
 import { useTotalUsdValue } from '../../AddLiquidity/hooks/useTotalUsdValue'
 import FeeSelector from './V3FormView/components/FeeSelector'
@@ -161,7 +161,7 @@ export function SolanaFormView({
   }, [quoteCurrency])
 
   const positionManager = useV3NFTPositionManagerContract()
-  const { account, chainId, isWrongNetwork } = useAccountActiveChain()
+  const { solanaAccount: account, chainId, isWrongNetwork } = useAccountActiveChain()
   const addTransaction = useTransactionAdder()
 
   const [pricePeriod, setPricePeriod] = useState<Liquidity.PresetRangeItem>(Liquidity.PRESET_RANGE_ITEMS[0])
@@ -199,16 +199,6 @@ export function SolanaFormView({
     undefined,
     formState,
   )
-  const hasZapV3Pool = useMemo(() => {
-    if (pool) {
-      const zapV3Whitelist = ZAP_V3_POOL_ADDRESSES[pool.chainId]
-      if (zapV3Whitelist) {
-        if (zapV3Whitelist.length === 0) return true
-        return zapV3Whitelist.includes(Pool.getAddress(pool.token0, pool.token1, pool.fee))
-      }
-    }
-    return false
-  }, [pool])
   const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput, onBothRangeInput } =
     useV3MintActionHandlers(noLiquidity)
 
@@ -531,10 +521,6 @@ export function SolanaFormView({
     [activeQuickAction, feeAmount, handleRefresh, setShowCapitalEfficiencyWarning],
   )
 
-  const handleOnZapSubmit = useCallback(() => {
-    router.push('/liquidity/positions')
-  }, [router])
-
   const invertRange = useCallback(() => {
     if (!ticksAtLimit[Bound.LOWER] && !ticksAtLimit[Bound.UPPER]) {
       onLeftRangeInput((invertPrice ? priceLower : priceUpper?.invert()) ?? undefined)
@@ -592,18 +578,9 @@ export function SolanaFormView({
     feeAmount,
   )
 
-  const { data: solOnchain } = useSolanaOnchainClmmPoolInfo(solPoolInfo?.poolId)
-
   const chartCurrentPrice = useMemo(() => {
-    const onchainP = solOnchain?.poolInfo?.price
-    const baseAddr = baseCurrencyWithoutNative?.wrapped?.address
-    const mintA = (solOnchain as any)?.poolKeys?.mintA?.toBase58?.()
-    if (onchainP && baseAddr && mintA) {
-      const pNum = Number(onchainP)
-      return mintA === baseAddr ? pNum : pNum > 0 ? 1 / pNum : undefined
-    }
     return price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined
-  }, [solOnchain, baseCurrencyWithoutNative, price, invertPrice])
+  }, [price, invertPrice])
 
   const { data: rateData } = useTokenRateData({
     period: pricePeriod.value,
@@ -844,21 +821,6 @@ export function SolanaFormView({
               !feeAmount || invalidPool || (noLiquidity && !startPriceTypedValue) || (!priceLower && !priceUpper)
             }
           >
-            {hasZapV3Pool && hasInsufficentBalance && (
-              <Box mb="8px">
-                <ZapLiquidityWidget
-                  tickLower={tickLower}
-                  tickUpper={tickUpper}
-                  pool={pool}
-                  baseCurrency={baseCurrency}
-                  baseCurrencyAmount={formattedAmounts[Field.CURRENCY_A]}
-                  quoteCurrency={quoteCurrency}
-                  quoteCurrencyAmount={formattedAmounts[Field.CURRENCY_B]}
-                  onSubmit={handleOnZapSubmit}
-                />
-              </Box>
-            )}
-
             <LockedDeposit locked={depositADisabled}>
               <Box mb="8px">
                 <CurrencyInputPanelSimplify

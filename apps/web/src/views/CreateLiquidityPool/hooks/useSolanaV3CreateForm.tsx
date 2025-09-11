@@ -78,15 +78,6 @@ export const useSolanaV3CreateForm = () => {
   const formState = useV3FormState()
   const { independentField, typedValue, startPriceTypedValue, leftRangeTypedValue, rightRangeTypedValue } = formState
 
-  const derived = useSolanaDerivedInfo(
-    baseCurrency ?? undefined,
-    quoteCurrency ?? undefined,
-    feeAmount as any,
-    baseCurrency ?? undefined,
-    undefined,
-    formState,
-  )
-
   const {
     pool,
     ticks,
@@ -105,7 +96,14 @@ export const useSolanaV3CreateForm = () => {
     invertPrice,
     ticksAtLimit,
     tickSpaceLimits,
-  } = derived
+  } = useSolanaDerivedInfo(
+    baseCurrency ?? undefined,
+    quoteCurrency ?? undefined,
+    feeAmount as any,
+    baseCurrency ?? undefined,
+    undefined,
+    formState,
+  )
 
   // const ammConfigs = useClmmAmmConfigs()
   const getPriceAndTick = useGetPriceAndTick(baseCurrency, quoteCurrency, feeAmount)

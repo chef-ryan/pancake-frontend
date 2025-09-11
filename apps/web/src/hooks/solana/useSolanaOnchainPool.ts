@@ -5,11 +5,11 @@ import { useRaydiumClient } from './useRaydiumClient'
 
 export type SolanaOnchainClmmPoolData = Awaited<ReturnType<InstanceType<typeof Raydium>['clmm']['getPoolInfoFromRpc']>>
 
-export async function getSolanaOnchainClmmPoolInfo(raydium: Raydium, poolId: string) {
+export async function getSolanaOnchainClmmPool(raydium: Raydium, poolId: string) {
   return raydium.clmm.getPoolInfoFromRpc(poolId)
 }
 
-export function useSolanaOnchainClmmPoolInfo(poolId?: string) {
+export function useSolanaOnchainClmmPool(poolId?: string) {
   const raydium = useRaydiumClient()
 
   const { data, isLoading, error } = useQuery<SolanaOnchainClmmPoolData>({
@@ -17,7 +17,7 @@ export function useSolanaOnchainClmmPoolInfo(poolId?: string) {
     enabled: Boolean(poolId && raydium),
     queryFn: async () => {
       if (!poolId || !raydium) throw new Error('poolId and raydium client required')
-      return getSolanaOnchainClmmPoolInfo(raydium, poolId)
+      return getSolanaOnchainClmmPool(raydium, poolId)
     },
     staleTime: 30_000,
   })

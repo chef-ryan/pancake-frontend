@@ -1,5 +1,5 @@
 import { Protocol } from '@pancakeswap/farms'
-import { Currency } from '@pancakeswap/sdk'
+import { Currency, UnifiedCurrency } from '@pancakeswap/sdk'
 import { FeeAmount, Pool, TICK_SPACINGS, tickToPrice } from '@pancakeswap/v3-sdk'
 import useAllTicksQuery, { TickData } from 'hooks/useAllTicksQuery'
 import { useMemo } from 'react'
@@ -85,9 +85,12 @@ export function usePoolActiveLiquidity(
   const { data } = useActiveLiquidityByPool({
     currencyA,
     currencyB,
-    tickSpacing: feeAmount ? TICK_SPACINGS[feeAmount] : undefined,
-    pool,
     ticks,
+    pool: {
+      tickSpacing: feeAmount ? TICK_SPACINGS[feeAmount] : undefined,
+      tickCurrent: pool?.tickCurrent,
+      liquidity: pool?.liquidity,
+    },
   })
 
   return useMemo(() => {
@@ -119,20 +122,22 @@ export function usePoolActiveLiquidity(
 export function useActiveLiquidityByPool({
   currencyA,
   currencyB,
-  pool,
   ticks,
-  tickSpacing,
+  pool: { tickSpacing, tickCurrent, liquidity },
 }: {
-  currencyA: Currency | undefined
-  currencyB: Currency | undefined
-  tickSpacing: number | undefined
+  currencyA: UnifiedCurrency | undefined
+  currencyB: UnifiedCurrency | undefined
   ticks: TickData[] | undefined
-  pool: Pool | null
+  pool: {
+    tickSpacing: number | undefined
+    tickCurrent: number | undefined
+    liquidity: bigint | undefined
+  }
 }): {
   data: TickProcessed[] | undefined
   activeTick: number | undefined
 } {
-  const activeTick = useMemo(() => getActiveTick(pool?.tickCurrent, tickSpacing), [pool, tickSpacing])
+  const activeTick = useMemo(() => getActiveTick(tickCurrent, tickSpacing), [tickCurrent, tickSpacing])
   return useMemo(() => {
     if (!currencyA || !currencyB || !ticks || activeTick === undefined) {
       return {
@@ -159,7 +164,7 @@ export function useActiveLiquidityByPool({
     }
 
     const activeTickProcessed: TickProcessed = {
-      liquidityActive: BigInt(pool?.liquidity ?? 0),
+      liquidityActive: BigInt(liquidity ?? 0),
       tick: activeTick,
       liquidityNet: Number(ticks[pivot].tick) === activeTick ? BigInt(ticks[pivot].liquidityNet) : 0n,
       price0: tickToPrice(token0, token1, activeTick).toFixed(PRICE_FIXED_DIGITS),
@@ -175,5 +180,5 @@ export function useActiveLiquidityByPool({
       data: ticksProcessed,
       activeTick,
     }
-  }, [currencyA, currencyB, activeTick, pool, ticks])
+  }, [currencyA, currencyB, activeTick, liquidity, ticks])
 }
