@@ -68,6 +68,7 @@ export interface IPoolsFilterPanelProps {
   onChange: (value: Partial<IPoolsFilterPanelProps['value']>) => void
   showNetworkFilter?: boolean
   showProtocolMenu?: boolean
+  includeSolana?: boolean
 }
 export const PoolsFilterPanel: React.FC<React.PropsWithChildren<IPoolsFilterPanelProps>> = ({
   value,
@@ -75,11 +76,12 @@ export const PoolsFilterPanel: React.FC<React.PropsWithChildren<IPoolsFilterPane
   onChange,
   showNetworkFilter = true,
   showProtocolMenu = true,
+  includeSolana = true,
 }) => {
   const { chainId: activeChainId } = useActiveChainId()
   const { selectedNetwork, selectedProtocolIndex: selectedType } = value
   const { t } = useTranslation()
-  const allChainsOpts = useAllChainsOpts()
+  const allChainsOpts = useAllChainsOpts({ includeSolana })
 
   const handleProtocolIndexChange: IProtocolMenuProps['onChange'] = (index) => {
     onChange({ selectedProtocolIndex: index })

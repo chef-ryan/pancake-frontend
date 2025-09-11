@@ -1,3 +1,4 @@
+import { isSolana } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
 import { SORT_ORDER } from '@pancakeswap/uikit'
 import { CHAIN_QUERY_NAME } from 'config/chains'
@@ -33,7 +34,8 @@ export function parseUrlToSearchQuery(): FarmQuery {
 
   const chains = (() => {
     const nets = url.getAll('network').map((n) => Number(n))
-    return nets.length ? nets : DEFAULT_CHAINS
+    // @NOTE: remove solana from default chains in pools list page
+    return nets.length ? nets : DEFAULT_CHAINS.filter((c) => !isSolana(c))
   })()
 
   const [sortOrder, sortBy] = (() => {

@@ -1,3 +1,4 @@
+import { isSolana } from '@pancakeswap/chains'
 import { supportedChainIdV4 } from '@pancakeswap/farms'
 import { Native, ZERO_ADDRESS } from '@pancakeswap/sdk'
 import { TokenInfo } from '@pancakeswap/token-lists'
@@ -8,6 +9,7 @@ export const tokensMapAtom = atom((get) => {
   const state = get(listsAtom)
 
   const nativeTokens = supportedChainIdV4
+    .filter((x) => !isSolana(x))
     .map((x) => Native.onChain(x))
     .map((native) => {
       return {
