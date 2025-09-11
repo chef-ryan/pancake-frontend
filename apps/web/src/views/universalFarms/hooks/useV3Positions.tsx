@@ -7,7 +7,6 @@ import { useMemo } from 'react'
 import { useAccountV3Positions, useV3PoolsLength } from 'state/farmsV4/hooks'
 import { POSITION_STATUS, PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { useAccount } from 'wagmi'
-import { V3PositionItem } from '../components'
 import { useAllEvmChainIds } from './useMultiChains'
 
 const getPoolStatus = (pos: PositionDetail, pool: Pool | null) => {

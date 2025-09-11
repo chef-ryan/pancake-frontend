@@ -244,7 +244,7 @@ export const PositionPage = () => {
         return selectedPoolTypes.includes(protocol)
       })
       .filter((item) => matchPositionSearch(item, search))
-  }, [infinityPositions, v3Positions, v2Positions, stablePositions, selectedPoolTypes, search])
+  }, [infinityPositions, v3Positions, solanaPositions, v2Positions, stablePositions, selectedPoolTypes, search])
 
   const visibleList = useMemo(() => {
     return allPositionList.slice(0, cursorVisible)

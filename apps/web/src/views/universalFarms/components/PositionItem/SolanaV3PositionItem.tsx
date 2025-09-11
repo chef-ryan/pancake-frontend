@@ -6,7 +6,7 @@ import { Price, UnifiedCurrencyAmount, ZERO_ADDRESS } from '@pancakeswap/swap-sd
 import { Protocol } from '@pancakeswap/farms'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { POSITION_STATUS, SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
-import { SolanaV3Pool } from 'state/pools/solana'
+import { SolanaV3Pool, useSolanaV3Pool } from 'state/pools/solana'
 import { useSolanaTokenPrice } from 'hooks/solana/useSolanaTokenPrice'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
 import { calculateSolanaTickLimits, calculateTickLimits, getTickAtLimitStatus } from 'views/PoolDetail/utils'
@@ -18,11 +18,12 @@ import { SolanaV3PositionActions } from '../PositionActions/SolanaV3PositionActi
 
 type SolanaV3PositionItemProps = {
   position: SolanaV3PositionDetail
-  poolInfo: SolanaV3Pool | undefined
+  // poolInfo: SolanaV3Pool | undefined
   detailMode?: boolean
 }
 
-export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: SolanaV3PositionItemProps) => {
+export const SolanaV3PositionItem = memo(({ position, detailMode }: SolanaV3PositionItemProps) => {
+  const poolInfo = useSolanaV3Pool(position.poolId.toBase58()) ?? undefined
   const currency0 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo?.mintA as TokenInfo), [poolInfo?.mintA])
   const currency1 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo?.mintB as TokenInfo), [poolInfo?.mintB])
 
