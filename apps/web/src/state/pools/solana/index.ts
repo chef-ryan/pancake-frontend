@@ -49,5 +49,5 @@ export const allSolanaV3PoolsAtom = atom((get) => {
 })
 
 export const useSolanaV3Pool = (poolId: string | undefined) => {
-  return useAtomValue(poolId ? solanaV3PoolsAtomFamily(poolId) : null)
+  return useAtomValue(solanaV3PoolsAtomFamily(poolId ?? ''))
 }
