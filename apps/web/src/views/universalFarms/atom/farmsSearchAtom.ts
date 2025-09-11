@@ -1,17 +1,12 @@
-import { ChainId, isTestnetChainId } from '@pancakeswap/chains'
-import { supportedChainIdV4 } from '@pancakeswap/farms'
-import { getCurrencyAddress, Native, ZERO_ADDRESS } from '@pancakeswap/sdk'
+import { isTestnetChainId } from '@pancakeswap/chains'
 import { SmartRouter } from '@pancakeswap/smart-router'
-import { TokenInfo } from '@pancakeswap/token-lists'
 import { Loadable } from '@pancakeswap/utils/Loadable'
 import uniqBy from '@pancakeswap/utils/uniqBy'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import isEqual from 'lodash/isEqual'
 import keyBy from 'lodash/keyBy'
-import qs from 'qs'
 import { atomWithLoadable } from 'quoter/atom/atomWithLoadable'
-import { Protocol } from 'quoter/utils/edgeQueries.util'
 import {
   batchGetCakeApr,
   batchGetLpAprData,
@@ -23,65 +18,15 @@ import { FarmInfo, farmToPoolInfo, getFarmKey, SerializedFarmInfo } from 'state/
 import { farmFilters } from 'state/farmsV4/search/filters'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { userShowTestnetAtom } from 'state/user/hooks/useUserShowTestnet'
+import { FarmV4SupportedChainId } from '@pancakeswap/farms'
 import { tokensMapAtom } from './tokensMapAtom'
-
-async function fetchFarmList({
-  extend = false,
-  protocols,
-  address,
-  chains,
-}: {
-  extend?: boolean
-  protocols?: Protocol[]
-  address?: string
-  chains?: ChainId[]
-}) {
-  const queryStr = qs.stringify({
-    extend: extend ? 1 : undefined,
-    protocols: protocols ? protocols.join(',') : undefined,
-    address,
-    chains: chains?.join(','),
-  })
-  const api = `${process.env.NEXT_PUBLIC_EDGE_ENDPOINT || ''}/api/farm/list?${queryStr}`
-  const response = await fetch(api, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-  if (!response.ok) {
-    throw new Error(`Failed to fetch farms: ${response.statusText}`)
-  }
-  const resp = (await response.json()) as {
-    data: SerializedFarmInfo[]
-    lastUpdated: number
-  }
-  return resp.data
-}
-
-const farmListAtom = atomWithLoadable<SerializedFarmInfo[]>(async () => {
-  return fetchFarmList({
-    extend: false,
-  })
-})
-
-const extendListAtom = atomFamily((params: { protocols: Protocol[]; chains: ChainId[]; address?: string }) => {
-  const { protocols, address, chains } = params
-  return atomWithLoadable<SerializedFarmInfo[]>(async () => {
-    return fetchFarmList({
-      extend: true,
-      protocols,
-      address,
-      chains,
-    })
-  })
-}, isEqual)
+import { baseFarmListAtom, extendFarmListAtom } from './farmSearch.fetch'
+import { filterTokens, isInWhitelist } from './farmSearch.filter'
+import { parseExtendSearchParams } from './farmSearch.parser'
 
 export const farmsSearchPagingAtom = atomFamily((_: FarmQuery) => {
   return atom(0)
 }, isEqual)
-
-const IS_ADDRESS_REG = /^0x[a-fA-F0-9]{40,64}$/
 
 const searchAtom = atomFamily((query: FarmQuery) => {
   return atom((get) => {
@@ -98,68 +43,18 @@ const searchAtom = atomFamily((query: FarmQuery) => {
       queryChains.push(activeChainId)
     }
 
-    const lists = [get(farmListAtom)]
-    if (activeChainId) {
-      const prts = keywords
-        .trim()
-        .split(/(\s+|,|-|\/)/)
-        .map((x) => x.trim())
-        .filter((x) => x)
-        .slice(0, 3) // max 3
-      // Extend Symbol if Required
+    const extendSearchList = parseExtendSearchParams(keywords, protocols, queryChains, symbolsMap)
 
-      for (const prt of prts) {
-        const relatedTokens = symbolsMap[prt.toLowerCase()]
-        if (relatedTokens) {
-          for (const token of relatedTokens) {
-            if (supportedChainIdV4.includes(token.chainId)) {
-              if (token.address === ZERO_ADDRESS) {
-                const { wrapped } = Native.onChain(token.chainId)
-                const extendToken = get(
-                  extendListAtom({
-                    protocols,
-                    chains: [token.chainId],
-                    address: wrapped.address,
-                  }),
-                )
-                lists.push(extendToken)
-              }
-              const extendToken = get(
-                extendListAtom({
-                  protocols,
-                  chains: [token.chainId],
-                  address: token.address,
-                }),
-              )
-              lists.push(extendToken)
-            }
-          }
-        }
-      }
-
-      if (IS_ADDRESS_REG.test(keywords.trim())) {
-        lists.push(
-          get(
-            extendListAtom({
-              protocols,
-              address: keywords.trim(),
-              chains: [activeChainId],
-            }),
-          ),
-        )
-      }
-    }
-
-    if (queryChains.length) {
-      lists.push(
-        get(
-          extendListAtom({
-            protocols,
-            chains: queryChains,
-          }),
-        ),
-      )
-    }
+    const baseList = [
+      get(
+        baseFarmListAtom({
+          protocols,
+          chains: queryChains as FarmV4SupportedChainId[],
+        }),
+      ),
+    ]
+    const extendList = extendSearchList.map((params) => get(extendFarmListAtom(params)))
+    const lists = [...baseList, ...extendList]
 
     const farms = uniqBy(
       lists
@@ -182,10 +77,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
     })
 
     const filtered = farmFilters.search(
-      farms
-        .filter(farmFilters.chainFilter(queryChains))
-        .filter(farmFilters.protocolFilter(protocols))
-        .filter(filterTokens(tokensMap)),
+      farms.filter(farmFilters.chainFilter(queryChains)).filter(farmFilters.protocolFilter(protocols)),
       query.keywords,
     )
     const sorted = farmFilters.sortFunction(filtered, sortBy, activeChainId)
@@ -261,36 +153,21 @@ export const farmsSearchAtom = atomFamily((query) => {
   return atom((get) => {
     const sliced = get(farmsWithPagingAtom(query))
     const withFilledData = get(farmsWithFilledDataAtom(query))
+    const checkWhitelist = isInWhitelist(get(tokensMapAtom).tokensMap)
 
-    if (withFilledData.isPending()) {
-      return sliced
-    }
-    return withFilledData
+    const resultList = withFilledData.isPending() ? sliced : withFilledData
+
+    return resultList.map((list) => {
+      for (const pool of list) {
+        const whitelisted = checkWhitelist(pool.farm!)
+        pool.farm!.inWhitelist = whitelisted
+      }
+      const whiteListFarms = list.filter((pool) => pool.farm?.inWhitelist)
+      const nonWhiteListFarms = list.filter((pool) => !pool.farm?.inWhitelist)
+      if (whiteListFarms.length > 0) {
+        return whiteListFarms
+      }
+      return nonWhiteListFarms
+    })
   })
 }, isEqual)
-
-const filterTokens = (tokensMap: Record<string, TokenInfo>) => {
-  return (farm: FarmInfo) => {
-    const [token0, token1] = SmartRouter.getCurrenciesOfPool(farm.pool)
-    if (!token0 || !token1) return false
-    const key0 = `${token0.chainId}:${getCurrencyAddress(token0)}`.toLowerCase()
-    const key1 = `${token0.chainId}:${getCurrencyAddress(token1)}`.toLowerCase()
-    if (token0.isNative) {
-      const keyWrapped = `${token0.chainId}:${token0.wrapped.address}`.toLowerCase()
-      if (tokensMap[keyWrapped]) {
-        return true
-      }
-    }
-    if (token1.isNative) {
-      const keyWrapped = `${token1.chainId}:${token1.wrapped.address}`.toLowerCase()
-      if (tokensMap[keyWrapped]) {
-        return true
-      }
-    }
-
-    if (!tokensMap[key0] || !tokensMap[key1]) {
-      return false
-    }
-    return true
-  }
-}

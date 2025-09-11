@@ -20,7 +20,11 @@ export default async function handler(req: NextRequest) {
     const pools = await edgeFarmQueries.queryFarms({
       extend: query.extend,
       protocols: query.protocols || [],
-      address: query.address,
+      tokens: query.address
+        ? query.chains.map((id) => {
+            return `${id}:${query.address}`
+          })
+        : undefined,
       chains: query.chains as FarmV4SupportedChainId[],
     })
 

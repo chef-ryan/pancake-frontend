@@ -17,6 +17,7 @@ import { APIChain, getEdgeChainName } from 'quoter/utils/edgeQueries.util'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { explorerApiClient } from 'state/info/api/client'
 import { Address } from 'viem/accounts'
+import chunk from '@pancakeswap/utils/chunk'
 import { normalizeAddress, safeGetAddress, SerializedFarmInfo } from './farm.util'
 
 const DEFAULT_PROTOCOLS: Protocol[] = Object.values(Protocol)
@@ -111,10 +112,10 @@ async function fetchFarms(query: {
   extend: boolean
   protocols: Protocol[]
   chains: FarmV4SupportedChainId[]
-  address?: string
+  tokens?: string[]
 }) {
   // const protocols = DEFAULT_PROTOCOLS
-  const { extend, protocols: _protocols, address, chains } = query
+  const { extend, protocols: _protocols, tokens, chains } = query
   const protocols = _protocols.length > 0 ? _protocols : DEFAULT_PROTOCOLS
   const chainIds = chains.length > 0 ? chains : supportedChainIdV4
   if (!extend) {
@@ -122,8 +123,20 @@ async function fetchFarms(query: {
     const explorerPools = await fetchAllExplorerPools(protocols, Array.from(chainIds))
     return [...farmPools, ...explorerPools]
   }
-  if (address) {
-    return fetchAllExplorerPoolsByAddress(Array.from(chainIds), address)
+  if (tokens && tokens.length > 0) {
+    const addressRelated = await Promise.all([
+      fetchAllExplorerPoolsByAddress(
+        Array.from(chainIds),
+        tokens,
+        protocols.filter((x) => x.match(/infinity/)),
+      ),
+      fetchAllExplorerPoolsByAddress(
+        Array.from(chainIds),
+        tokens,
+        protocols.filter((x) => !x.match(/infinity/)),
+      ),
+    ])
+    return addressRelated.flat()
   }
   return fetchAllExplorerPools(protocols, Array.from(chainIds))
 }
@@ -132,7 +145,7 @@ async function queryFarms(query: {
   extend: boolean
   protocols: Protocol[]
   chains: FarmV4SupportedChainId[]
-  address?: string
+  tokens?: string[]
 }) {
   try {
     const { extend } = query
@@ -192,55 +205,44 @@ async function queryFarms(query: {
 }
 
 async function fetchAllExplorerPools(protocols: Protocol[], chains: FarmV4SupportedChainId[]) {
-  const queries = protocols.map((protocol) => ({
+  const poolQuery = {
     baseUrl: `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`,
-    protocols: [protocol],
+    protocols,
     chains: chains.map((chain) => getEdgeChainName(chain)),
-    maxPages: 1, // Max check 3 pages for random extending
+    maxPages: 2,
     orderBy: 'volumeUSD24h' as const,
-  }))
-  const poolQueries = queries.map((query) => edgeQueries.fetchAllPools(query))
-  const pools = await Promise.allSettled(poolQueries)
-  const poolResults = pools
-    .filter((result) => result.status === 'fulfilled')
-    .flatMap((result) => (result as PromiseFulfilledResult<InfinityRouter.RemotePoolBase[]>).value)
-    .map(normalizeAddress)
-    .filter((x) => x) as InfinityRouter.RemotePoolBase[]
-
-  return uniqBy(poolResults, (p) => `${p.chainId}:${p.id}`)
+  }
+  const pools = await edgeQueries.fetchAllPools(poolQuery)
+  return pools.map(normalizeAddress).filter((x) => x) as InfinityRouter.RemotePoolBase[]
 }
 
-async function fetchAllExplorerPoolsByAddress(chains: FarmV4SupportedChainId[], address: string) {
+async function fetchAllExplorerPoolsByAddress(
+  chains: FarmV4SupportedChainId[],
+  tokens: string[],
+  protocols: Protocol[],
+) {
+  if (!protocols.length) return []
   const baseUrl = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`
-  const protocolsSet = [
-    ['v2', 'v3', 'stable'],
-    ['infinityBin', 'infinityCl'],
-  ]
-  const queries = protocolsSet
-    .map((protocols) => {
-      return chains.map((chain) => {
-        const chainName = getEdgeChainName(chain)
-        return [protocols, chain, chainName] as [Protocol[], ChainId, APIChain]
-      })
-    })
-    .flat()
+  const chainNames = chains.map((chain) => getEdgeChainName(chain))
 
-  const poolQueries = queries.map(([protocols, chain, chainName]) => {
-    const poolAddress = `${chain}:${address}`
-    return edgeQueries.fetchAllPools({ baseUrl, protocols, chains: [chainName], pools: [poolAddress], maxPages: 1 })
-  })
-  const tokensQuery = queries.map(([protocols, chain, chainName]) => {
-    const tokenAddress = `${chain}:${address}`
-    return edgeQueries.fetchAllPools({ baseUrl, protocols, chains: [chainName], tokens: [tokenAddress], maxPages: 1 })
-  })
-  const pools = await Promise.allSettled([...poolQueries, ...tokensQuery])
-  const poolResults = pools
-    .filter((result) => result.status === 'fulfilled')
-    .flatMap((result) => (result as PromiseFulfilledResult<InfinityRouter.RemotePoolBase[]>).value)
+  if (!tokens.length) return []
+
+  const chunks = chunk(tokens, 20)
+  const allPools = await Promise.all(
+    chunks.map((tokenChunk) => {
+      return edgeQueries.fetchAllPools({
+        baseUrl,
+        protocols,
+        chains: chainNames,
+        tokens: tokenChunk,
+        maxPages: 1,
+      })
+    }),
+  )
+  return allPools
+    .flat()
     .map(normalizeAddress)
     .filter((x) => x) as InfinityRouter.RemotePoolBase[]
-
-  return [...poolResults]
 }
 
 export default {
