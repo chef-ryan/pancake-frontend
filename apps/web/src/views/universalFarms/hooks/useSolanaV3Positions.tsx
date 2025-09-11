@@ -106,7 +106,7 @@ export const useSolanaV3PositionItems = ({
       const pool = poolsMap.get(pos.poolId.toBase58())
       if (!pool) return false
 
-      // Token filter - now we can use real token addresses
+      // Token filter
       const matchesTokens =
         !selectedTokens?.length ||
         selectedTokens.some(
@@ -119,7 +119,7 @@ export const useSolanaV3PositionItems = ({
       const matchesStatus = positionStatus === POSITION_STATUS.ALL || pos.status === positionStatus
 
       // Farms only filter
-      const matchesFarms = !farmsOnly
+      const matchesFarms = farmsOnly ? pool.isFarming : true
 
       return matchesNetwork && matchesTokens && matchesStatus && matchesFarms
     })

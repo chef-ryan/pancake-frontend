@@ -5,10 +5,9 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { useMemo } from 'react'
 import { addSolanaV3PoolAtom, allSolanaV3PoolsAtom, SolanaV3Pool, solanaV3PoolIdsAtom } from 'state/pools/solana'
 
-async function fetchSolanaPoolsData(
-  poolIds: (string | undefined)[],
-): Promise<(ApiV3PoolInfoConcentratedItem | null)[]> {
+async function fetchSolanaPoolsData(poolIds: (string | undefined)[]): Promise<(SolanaV3Pool | null)[]> {
   const validPoolIds = poolIds.filter(Boolean) as string[]
+  const timestamp = Date.now()
 
   if (validPoolIds.length === 0) {
     return poolIds.map(() => null)
@@ -26,10 +25,16 @@ async function fetchSolanaPoolsData(
     const responseData = await response.json()
     const poolsData = responseData.data || responseData || []
 
-    const poolDataMap = new Map<string, ApiV3PoolInfoConcentratedItem>()
-    poolsData.forEach((pool: ApiV3PoolInfoConcentratedItem) => {
+    const poolDataMap = new Map<string, SolanaV3Pool>()
+    poolsData.forEach((pool: SolanaV3Pool) => {
       if (pool && pool.id) {
-        poolDataMap.set(pool.id, pool)
+        let isFarming = false
+        if (pool.rewardDefaultInfos && pool.rewardDefaultInfos.length > 0) {
+          isFarming = pool.rewardDefaultInfos.some(
+            (reward) => Number(reward.endTime ?? 0) * 1000 > timestamp && reward.perSecond > 0,
+          )
+        }
+        poolDataMap.set(pool.id, { ...pool, isFarming } as SolanaV3Pool)
       }
     })
 
