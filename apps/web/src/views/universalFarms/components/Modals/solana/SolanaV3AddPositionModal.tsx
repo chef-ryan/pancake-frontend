@@ -1,6 +1,6 @@
 import { useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { TokenInfo } from '@pancakeswap/solana-core-sdk'
+import { TokenInfo, wSolToSolToken } from '@pancakeswap/solana-core-sdk'
 import { Percent, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import {
   ArrowForwardIcon,
@@ -67,8 +67,14 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
   const [sending, setIsSending] = useState(false)
   const poolInfo = pool.rawPool
   const addLiquidity = useAddLiquidityCallback()
-  const currency0 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo.mintA as TokenInfo), [poolInfo.mintA])
-  const currency1 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo.mintB as TokenInfo), [poolInfo.mintB])
+  const currency0 = useMemo(
+    () => convertRawTokenInfoIntoSPLToken(wSolToSolToken(poolInfo.mintA as TokenInfo)),
+    [poolInfo.mintA],
+  )
+  const currency1 = useMemo(
+    () => convertRawTokenInfoIntoSPLToken(wSolToSolToken(poolInfo.mintB as TokenInfo)),
+    [poolInfo.mintB],
+  )
   const currency0Balance = useUnifiedCurrencyBalance(currency0)
   const currency1Balance = useUnifiedCurrencyBalance(currency1)
 
