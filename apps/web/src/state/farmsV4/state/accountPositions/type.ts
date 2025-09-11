@@ -3,7 +3,7 @@ import type { PoolKey } from '@pancakeswap/infinity-sdk'
 import type { ERC20Token, Pair } from '@pancakeswap/sdk'
 import type { LegacyStableSwapPair } from '@pancakeswap/smart-router/legacy-router'
 import { PositionInfoLayout } from '@pancakeswap/solana-core-sdk'
-import type { CurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import type { CurrencyAmount, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import type { Address, Hex } from 'viem'
 
 export enum POSITION_STATUS {
@@ -60,6 +60,8 @@ export type InfinityBinPositionDetail = {
 }
 
 export type SolanaV3PositionDetail = ReturnType<typeof PositionInfoLayout.decode> & {
+  token0: UnifiedCurrency | undefined
+  token1: UnifiedCurrency | undefined
   status: POSITION_STATUS
   protocol: Protocol.V3
   chainId: number

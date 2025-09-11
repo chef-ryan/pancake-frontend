@@ -1,7 +1,7 @@
-import { ClmmPositionLayout, PositionUtils } from '@pancakeswap/solana-core-sdk'
+import { ClmmPositionLayout, PositionUtils, TokenInfo } from '@pancakeswap/solana-core-sdk'
 import { INetworkProps, ITokenProps } from '@pancakeswap/widgets-internal'
 import { useMemo } from 'react'
-import { POSITION_STATUS, SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
+import { POSITION_STATUS } from 'state/farmsV4/state/accountPositions/type'
 import { useSolanaPositionsInfoByAccount } from 'state/token/solanaPositionsInfo'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useSolanaV3Pools } from 'hooks/solana/useSolanaV3Pools'
@@ -9,7 +9,7 @@ import { NonEVMChainId } from '@pancakeswap/chains'
 import { SolanaV3Pool } from 'state/pools/solana'
 import { useSolanaV3PoolsUpdater } from 'hooks/solana/useSolanaV3PoolsUpdater'
 import { Protocol } from '@pancakeswap/farms'
-import { SolanaV3PositionItem } from '../components/PositionItem/SolanaV3PositionItem'
+import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
 
 const getSolanaPoolStatus = (pos: ClmmPositionLayout, pool: SolanaV3Pool | undefined) => {
   if (pos.liquidity.isZero()) {
@@ -87,13 +87,16 @@ export const useSolanaV3PositionItems = ({
   const poolsMap = useMemo(() => new Map(pools.filter((pool) => !!pool).map((pool) => [pool.id, pool])), [pools])
 
   const v3PositionsWithStatus = useMemo(() => {
-    return positionInfos?.map((pos) =>
-      Object.assign(pos, {
-        status: getSolanaPoolStatus(pos, poolsMap.get(pos.poolId.toBase58())),
+    return positionInfos?.map((pos) => {
+      const pool = poolsMap.get(pos.poolId.toBase58())
+      return Object.assign(pos, {
+        status: getSolanaPoolStatus(pos, pool),
         protocol: Protocol.V3,
         chainId: NonEVMChainId.SOLANA,
-      }),
-    )
+        token0: pool ? convertRawTokenInfoIntoSPLToken(pool?.mintA as TokenInfo) : undefined,
+        token1: pool ? convertRawTokenInfoIntoSPLToken(pool?.mintB as TokenInfo) : undefined,
+      })
+    })
   }, [positionInfos, poolsMap])
 
   // Filter positions based on criteria (similar to useV3Positions)
@@ -127,22 +130,6 @@ export const useSolanaV3PositionItems = ({
     () => filteredSolanaPositions?.sort((a, b) => a.status - b.status),
     [filteredSolanaPositions],
   )
-
-  // Create position list components
-  // const solanaPositions = useMemo(
-  //   () =>
-  //     sortedSolanaPositions?.map((pos, index) => {
-  //       const key = `solana-v3-${pos.nftMint.toBase58()}-${index}`
-  //       return (
-  //         <SolanaV3PositionItem
-  //           key={key}
-  //           position={pos as SolanaV3PositionDetail}
-  //           // poolInfo={poolsMap.get(pos.poolId.toBase58())}
-  //         />
-  //       )
-  //     }),
-  //   [sortedSolanaPositions],
-  // )
 
   return {
     solanaLoading: solanaLoading || poolsLoading,
