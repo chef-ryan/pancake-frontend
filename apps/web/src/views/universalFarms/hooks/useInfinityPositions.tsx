@@ -12,7 +12,7 @@ import { getHookByAddress } from 'utils/getHookByAddress'
 import { isInfinityProtocol } from 'utils/protocols'
 import { usePoolFeatureAndType } from 'views/AddLiquiditySelector/hooks/usePoolTypeQuery'
 import { useAccount } from 'wagmi'
-import { useAllChainIds } from './useMultiChains'
+import { useAllEvmChainIds } from './useMultiChains'
 import { usePositionEarningAmount } from './usePositionEarningAmount'
 
 type InfinityPositionsParams = {
@@ -100,7 +100,7 @@ export const useInfinityPositions = ({
 
 export const useInfinityPositionsData = () => {
   const { address: account } = useAccount()
-  const allChainIds = useAllChainIds()
+  const allChainIds = useAllEvmChainIds()
   const { data: infinityCLPositions, pending: infinityCLLoading } = useAccountInfinityCLPositions(allChainIds, account)
   const { data: infinityBinPositions, pending: infinityBinLoading } = useAccountInfinityBinPositions(
     account,
