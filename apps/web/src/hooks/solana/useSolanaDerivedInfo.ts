@@ -19,7 +19,6 @@ import { useAccountActiveChain } from 'hooks/useAccountActiveChain'
 import { useClmmAmmConfigs } from 'hooks/solana/useClmmAmmConfigs'
 import { tryParsePriceSolana } from 'hooks/v3/utils/tryParsePriceSolana'
 import { tryParseTickSolana } from 'hooks/v3/utils/tryParseTickSolana'
-import { convertPoolPrice } from 'hooks/v3/utils/convertPoolPrice'
 
 import { tryParsePrice } from 'hooks/v3/utils'
 import { useDependentAmountFromClmm } from './useDependentAmountFromClmm'
@@ -309,48 +308,6 @@ export const useSolanaDerivedInfo = (
       (deposit0Disabled && poolForPosition && token1 && poolForPosition.token0.equals(token1)) ||
         (deposit1Disabled && poolForPosition && token1 && poolForPosition.token1.equals(token1)),
     )
-
-  /* const position: Position | undefined = useMemo(() => {
-    if (
-      !poolForPosition ||
-      !token0 ||
-      !token1 ||
-      typeof tickLower !== 'number' ||
-      typeof tickUpper !== 'number' ||
-      invalidRange
-    ) {
-      return undefined
-    }
-
-    const amount0 = !deposit0Disabled
-      ? parsedAmounts?.[token0.equals(poolForPosition.token0) ? Field.CURRENCY_A : Field.CURRENCY_B]?.quotient
-      : BIG_INT_ZERO
-    const amount1 = !deposit1Disabled
-      ? parsedAmounts?.[token0.equals(poolForPosition.token0) ? Field.CURRENCY_B : Field.CURRENCY_A]?.quotient
-      : BIG_INT_ZERO
-
-    if (amount0 !== undefined && amount1 !== undefined) {
-      return Position.fromAmounts({
-        pool: poolForPosition,
-        tickLower,
-        tickUpper,
-        amount0,
-        amount1,
-        useFullPrecision: true,
-      })
-    }
-    return undefined
-  }, [
-    parsedAmounts,
-    poolForPosition,
-    token0,
-    token1,
-    deposit0Disabled,
-    deposit1Disabled,
-    invalidRange,
-    tickLower,
-    tickUpper,
-  ]) */
 
   let hasInsufficentBalance = false
   let errorMessage: ReactNode | undefined

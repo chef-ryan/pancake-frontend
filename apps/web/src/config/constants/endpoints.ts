@@ -1,3 +1,4 @@
+import { API_URLS } from '@pancakeswap/solana-core-sdk'
 import { ChainId, STABLESWAP_SUBGRAPHS, V2_SUBGRAPHS, V3_SUBGRAPHS } from '@pancakeswap/chains'
 
 export const THE_GRAPH_PROXY_API = 'https://thegraph.pancakeswap.com'
@@ -82,3 +83,19 @@ export const WALLET_API = 'https://wallet-api.pancakeswap.com'
 export const BINANCE_DATA_API = 'https://data-api.binance.vision/api'
 
 export const PREDICTION_PRICE_API = '/api/prediction/price'
+
+export const urlConfigs = {
+  ...API_URLS,
+  BASE_HOST: process.env.NEXT_PUBLIC_SOLANA_EXPLORE_API_ENDPOINT ?? API_URLS.BASE_HOST,
+  POOL_LIST: '/cached/v1/pools/info/list',
+  MINT_PRICE: '/cached/v1/tokens/price',
+  INFO: '/cached/v1/pools/stats/overview',
+  POOL_SEARCH_BY_ID: '/cached/v1/pools/info/ids',
+  POOL_POSITION_LINE: '/cached/v1/pools/line/position',
+  POOL_LIQUIDITY_LINE: '/cached/v1/pools/line/liquidity',
+  POOL_TVL_LINE: '/cached/v1/pools/line/tvl',
+  POOL_KEY_BY_ID: '/cached/v1/pools/info/ids',
+  BIRDEYE_TOKEN_PRICE: '/cached/v1/tokens/birdeye/defi/multi_price',
+  TOKEN_LIST: 'https://api-v3.raydium.io/mint/list',
+  PCS_TOKEN_LIST: 'https://tokens.pancakeswap.finance/pancakeswap-solana-default.json',
+}

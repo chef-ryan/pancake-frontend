@@ -1,11 +1,24 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import BN from 'bn.js'
+import Decimal from 'decimal.js'
 import { UnifiedCurrency, UnifiedCurrencyAmount, UnifiedToken } from '@pancakeswap/swap-sdk-core'
 import { PoolUtils } from '@pancakeswap/solana-core-sdk'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
+import { useUserSlippage } from '@pancakeswap/utils/user'
 import { useSolanaEpochInfo } from './useSolanaEpochInfo'
 
-export function useDependentAmountFromClmm(params: {
+export function useDependentAmountFromClmm({
+  independentAmount,
+  token0,
+  token1,
+  tickSpacing,
+  price,
+  tickLower,
+  tickUpper,
+  outOfRange,
+  invalidRange,
+  dependentCurrency,
+}: {
   independentAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
   token0?: UnifiedToken
   token1?: UnifiedToken
@@ -17,19 +30,8 @@ export function useDependentAmountFromClmm(params: {
   invalidRange: boolean
   dependentCurrency?: UnifiedCurrency
 }) {
-  const {
-    independentAmount,
-    token0,
-    token1,
-    tickSpacing,
-    price,
-    tickLower,
-    tickUpper,
-    outOfRange,
-    invalidRange,
-    dependentCurrency,
-  } = params
-
+  const [allowedSlippage] = useUserSlippage() // custom from users
+  const slippagePercent = useMemo(() => allowedSlippage / 10_000, [allowedSlippage])
   const epochInfo = useSolanaEpochInfo()
   const [dependentAmount, setDependentAmount] = useState<UnifiedCurrencyAmount<UnifiedCurrency> | undefined>(undefined)
 
@@ -69,15 +71,21 @@ export function useDependentAmountFromClmm(params: {
         tickLower: Math.min(tickLower, tickUpper),
         tickUpper: Math.max(tickLower, tickUpper),
         amount: amountBN,
-        slippage: 0,
+        slippage: slippagePercent,
         add: true,
         epochInfo,
         amountHasFee: true,
       })
 
-      const rawOut = inputA ? res.amountB.amount : res.amountA.amount
+      const rawOut = inputA ? res.amountSlippageB.amount : res.amountSlippageA.amount
       setDependentAmount(
-        tryParseAmount(rawOut.div(new BN(10 ** dependentCurrency.decimals)).toString(), dependentCurrency),
+        tryParseAmount(
+          new Decimal(rawOut.toString())
+            .mul(1 + slippagePercent)
+            .div(10 ** dependentCurrency.decimals)
+            .toString(),
+          dependentCurrency,
+        ),
       )
     } catch {
       setDependentAmount(undefined)
@@ -94,6 +102,7 @@ export function useDependentAmountFromClmm(params: {
     outOfRange,
     invalidRange,
     dependentCurrency,
+    slippagePercent,
   ])
 
   useEffect(() => {

@@ -99,11 +99,10 @@ export const useTokenRateData = ({
   const parsePrice = useCallback(
     (priceValue?: number) => {
       const basePrice = tryParsePrice(baseCurrency as Currency, quoteCurrency as Currency, priceValue?.toString())
-      // todo:@eric api's data is inconsistent
-      const price = isSorted && !isSolana(chainId) ? basePrice?.invert() : basePrice
+      const price = isSorted ? basePrice?.invert() : basePrice
       return price && price?.denominator !== 0n ? parseFloat(price.toFixed(18)) : 0
     },
-    [baseCurrency, quoteCurrency, isSorted, chainId],
+    [baseCurrency, quoteCurrency, isSorted],
   )
 
   const tokenRateData = useMemo(

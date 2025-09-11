@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Raydium } from '@pancakeswap/solana-core-sdk'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { urlConfigs } from 'config/constants/endpoints'
+
 import { useSolanaConnectionWithRpcAtom } from './useSolanaConnectionWithRpcAtom'
 
 /**
@@ -33,7 +35,7 @@ export function useRaydiumClient() {
         setClient(cacheRef.current.client)
         return
       }
-      const raydium = await Raydium.load({ connection, owner: publicKey, disableFeatureCheck: true })
+      const raydium = await Raydium.load({ connection, owner: publicKey, urlConfigs, disableFeatureCheck: true })
       if (cancelled) return
       cacheRef.current = { rpc, owner: owner!, client: raydium }
       setClient(raydium)
