@@ -42,7 +42,7 @@ export const getImageUrlsFromToken = (token?: UnifiedCurrency & { logoURI?: stri
   return [...uriLocations, imageUri]
 }
 
-const _getCurrencyLogoSrcs = (currency: Currency & { logoURI?: string | undefined }) => {
+const _getCurrencyLogoSrcs = (currency: UnifiedCurrency & { logoURI?: string | undefined }) => {
   const allUrls = () => {
     const uriLocations = currency instanceof WrappedTokenInfo && currency.logoURI ? uriToHttp(currency.logoURI) : []
     const imageUrls = getImageUrlsFromToken(currency)

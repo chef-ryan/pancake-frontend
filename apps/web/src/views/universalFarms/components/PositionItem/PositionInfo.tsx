@@ -1,7 +1,7 @@
 import { Protocol } from '@pancakeswap/farms'
 import { useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Token } from '@pancakeswap/swap-sdk-core'
+import { Currency, CurrencyAmount, Token, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { FeeTier, FlexGap, Row, Skeleton, Tag, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { formatNumber as formatBalance } from '@pancakeswap/utils/formatBalance'
 import { formatNumber } from '@pancakeswap/utils/formatNumber'
@@ -38,20 +38,20 @@ import {
 } from '../PoolAprButton'
 import { PositionDebugView } from './PositionDebugView'
 
-export const formatPositionAmount = (amount?: CurrencyAmount<Token | Currency>) => {
+export const formatPositionAmount = (amount?: UnifiedCurrencyAmount<UnifiedCurrency>) => {
   const minimumFractionDigits = Math.min(amount?.currency.decimals ?? 0, 6)
   return amount && !amount.equalTo(0) ? amount.toFixed(minimumFractionDigits) : '0'
 }
 
-const displayTokenReserve = (amount?: CurrencyAmount<Token | Currency>) => {
+const displayTokenReserve = (amount?: UnifiedCurrencyAmount<UnifiedCurrency>) => {
   const symbol = amount?.currency.symbol ?? '-'
   return `${formatNumber(formatPositionAmount(amount))} ${symbol}`
 }
 
 export type PositionInfoProps = {
   chainId: number
-  currency0?: Currency
-  currency1?: Currency
+  currency0?: UnifiedCurrency
+  currency1?: UnifiedCurrency
   removed: boolean
   outOfRange: boolean
   desc?: React.ReactNode
@@ -62,8 +62,8 @@ export type PositionInfoProps = {
   isStaked?: boolean
   protocol: Protocol
   totalPriceUSD: number
-  amount0?: CurrencyAmount<Token | Currency>
-  amount1?: CurrencyAmount<Token | Currency>
+  amount0?: UnifiedCurrencyAmount<UnifiedCurrency>
+  amount1?: UnifiedCurrencyAmount<UnifiedCurrency>
   pool?: PoolInfo | null
   poolId?: `0x${string}`
   detailMode?: boolean
