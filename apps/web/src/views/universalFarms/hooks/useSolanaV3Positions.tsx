@@ -129,23 +129,24 @@ export const useSolanaV3PositionItems = ({
   )
 
   // Create position list components
-  const solanaPositions = useMemo(
-    () =>
-      sortedSolanaPositions?.map((pos, index) => {
-        const key = `solana-v3-${pos.nftMint.toBase58()}-${index}`
-        return (
-          <SolanaV3PositionItem
-            key={key}
-            position={pos as SolanaV3PositionDetail}
-            poolInfo={poolsMap.get(pos.poolId.toBase58())}
-          />
-        )
-      }),
-    [sortedSolanaPositions],
-  )
+  // const solanaPositions = useMemo(
+  //   () =>
+  //     sortedSolanaPositions?.map((pos, index) => {
+  //       const key = `solana-v3-${pos.nftMint.toBase58()}-${index}`
+  //       return (
+  //         <SolanaV3PositionItem
+  //           key={key}
+  //           position={pos as SolanaV3PositionDetail}
+  //           // poolInfo={poolsMap.get(pos.poolId.toBase58())}
+  //         />
+  //       )
+  //     }),
+  //   [sortedSolanaPositions],
+  // )
 
   return {
     solanaLoading: solanaLoading || poolsLoading,
-    solanaPositions: solanaPositions || [],
+    solanaPositions: sortedSolanaPositions || [],
+    poolsLength: poolsMap.size,
   }
 }

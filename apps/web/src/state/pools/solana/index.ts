@@ -1,5 +1,5 @@
 import { ApiV3PoolInfoConcentratedItem } from '@pancakeswap/solana-core-sdk'
-import { atom } from 'jotai'
+import { atom, useAtomValue } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 
 export type SolanaV3Pool = ApiV3PoolInfoConcentratedItem & {
@@ -47,3 +47,7 @@ export const allSolanaV3PoolsAtom = atom((get) => {
   const ids = get(solanaV3PoolIdsAtom)
   return ids.map((id) => get(solanaV3PoolsAtomFamily(id)))
 })
+
+export const useSolanaV3Pool = (poolId: string | undefined) => {
+  return useAtomValue(poolId ? solanaV3PoolsAtomFamily(poolId) : null)
+}
