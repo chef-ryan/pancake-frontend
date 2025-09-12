@@ -80,6 +80,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
       farms.filter(farmFilters.chainFilter(queryChains)).filter(farmFilters.protocolFilter(protocols)),
       query.keywords,
     )
+    console.log(`[farm]`, farms, filtered, queryChains, protocols, keywords)
     const sorted = farmFilters.sortFunction(filtered, sortBy, activeChainId)
 
     const hasPending = lists.some((x) => x.isPending())
@@ -169,5 +170,27 @@ export const farmsSearchAtom = atomFamily((query) => {
       }
       return nonWhiteListFarms
     })
+  })
+}, isEqual)
+
+export const farmsSearchV2Atom = atomFamily((query) => {
+  return atom((get) => {
+    const sliced = get(farmsWithPagingAtom(query))
+    const withFilledData = get(farmsWithFilledDataAtom(query))
+    const checkWhitelist = isInWhitelist(get(tokensMapAtom).tokensMap)
+
+    const anyPending = withFilledData.isPending()
+    const resultList = withFilledData.isPending() ? sliced : withFilledData
+
+    return {
+      list: resultList.map((list) => {
+        for (const pool of list) {
+          const whitelisted = checkWhitelist(pool.farm!)
+          pool.farm!.inWhitelist = whitelisted
+        }
+        return list
+      }),
+      isLoading: anyPending,
+    }
   })
 }, isEqual)

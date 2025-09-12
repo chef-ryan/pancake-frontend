@@ -12,7 +12,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { getFarmKey } from 'state/farmsV4/search/farm.util'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { getPoolDetailPageLink } from 'utils/getPoolLink'
-import { farmsSearchAtom, farmsSearchPagingAtom } from './atom/farmsSearchAtom'
+import { farmsSearchAtom, farmsSearchPagingAtom, farmsSearchV2Atom } from './atom/farmsSearchAtom'
 import { searchQueryAtom, updateFilterAtom, updateSortAtom } from './atom/searchQueryAtom'
 import {
   Card,
@@ -124,7 +124,7 @@ const List = () => {
   }, [])
 
   const setPaging = useSetAtom(farmsSearchPagingAtom(query))
-  const _list = useAtomValue(farmsSearchAtom(query))
+  const { list: _list, isLoading: isLoadingFarmList } = useAtomValue(farmsSearchV2Atom(query))
   const handleSort = useCallback(
     ({ order, dataIndex }) => {
       updateSort({
@@ -144,12 +144,18 @@ const List = () => {
   const listPrepared = useTokenListPrepared(DEFAULT_ACTIVE_LIST_URLS)
 
   const list = _list.unwrapOr([])
-  const pending = listPrepared.isPending() && _list.isPending() && list.length === 0
+  const pending = listPrepared.isPending() && _list.isPending() && isLoadingFarmList
   const isExtending = _list.isPending() && list.length > 0
   const { t } = useTranslation()
+  const noResults = list.length === 0 && !pending && !isExtending
 
   return (
     <>
+      {noResults && (
+        <Flex justifyContent="center" alignItems="center" width="100%" style={{ height: '40px' }}>
+          {t('No results found')}
+        </Flex>
+      )}
       <PoolsContent>
         {isExtending && (
           <Flex
@@ -187,6 +193,7 @@ const List = () => {
           </StyledLoadingTable>
         )}
       </PoolsContent>
+
       {list.length > 0 && <div ref={observerRef} />}
     </>
   )

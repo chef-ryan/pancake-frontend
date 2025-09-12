@@ -427,7 +427,7 @@ async function fetchAllPools({
       // eslint-disable-next-line no-await-in-loop
       const response = await fetch(url, {
         headers: {
-          'x-api-key': process.env.EXPLORER_API_KEY || '',
+          ...(typeof window === 'undefined' ? { 'x-api-key': process.env.EXPLORE_API_KEY || '' } : {}),
           'Content-Type': 'application/json',
         },
       })

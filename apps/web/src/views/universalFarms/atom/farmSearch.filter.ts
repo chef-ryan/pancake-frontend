@@ -37,9 +37,12 @@ export const isInWhitelist = (tokensMap: Record<string, TokenInfo>) => {
     const key0 = `${token0.chainId}:${getCurrencyAddress(token0)}`.toLowerCase()
     const key1 = `${token0.chainId}:${getCurrencyAddress(token1)}`.toLowerCase()
 
-    if (!tokensMap[key0] || !tokensMap[key1]) {
-      return false
+    const token0Whitelist = token0.isNative || tokensMap[key0]
+    const token1Whitelist = token1.isNative || tokensMap[key1]
+
+    if (token0Whitelist && token1Whitelist) {
+      return true
     }
-    return true
+    return false
   }
 }
