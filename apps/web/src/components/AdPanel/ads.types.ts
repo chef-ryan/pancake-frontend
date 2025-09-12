@@ -1,3 +1,5 @@
+import { CSSProperties } from 'react'
+
 export enum Priority {
   FIRST_AD = 6,
   VERY_HIGH = 5,
@@ -86,4 +88,24 @@ export type PickConfig = {
 export type PicksConfig = {
   update: number
   configs: PickConfig[]
+}
+
+export interface RemoteAds {
+  id: string
+  imgUrl: string
+  texts: Array<
+    | string
+    | {
+        i18nText: string
+        highlight?: boolean
+        style?: CSSProperties
+      }
+  >
+  actions: Array<{
+    type: 'button'
+    i18nText: string
+    link: string
+    external?: boolean
+    style?: CSSProperties
+  }>
 }

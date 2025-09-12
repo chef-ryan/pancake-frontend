@@ -3,7 +3,7 @@ import { BodyText } from '../BodyText'
 import { AdButton } from '../Button'
 import { AdCard } from '../Card'
 import { AdsIds, useAdsConfig } from '../hooks/useAdsConfig'
-import { AdsConfig, AdTextConfig } from '../types'
+import { AdsConfig, AdTextConfig } from '../ads.types'
 
 export const AdCommon = (props: { id: AdsIds }) => {
   const config = useAdsConfig(props.id)

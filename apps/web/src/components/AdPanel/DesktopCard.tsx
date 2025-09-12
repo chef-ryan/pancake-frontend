@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai'
 import styled from 'styled-components'
 import { swapDetailsCollapseAtom, chartDisplayAtom } from 'views/SwapSimplify/InfinitySwap/atoms'
 import { AdPlayer } from './AdPlayer'
-import { AdPlayerProps } from './types'
+import { AdPlayerProps } from './ads.types'
 import { useShowAdPanel } from './useShowAdPanel'
 
 interface DesktopCardProps extends AdPlayerProps {

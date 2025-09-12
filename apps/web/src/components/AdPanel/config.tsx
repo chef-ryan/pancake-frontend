@@ -9,8 +9,11 @@ import { AdPCSX } from './Ads/AdPCSX'
 import { AdSolana } from './Ads/AdSolana'
 import { AdSpringboard } from './Ads/AdSpringboard'
 import { ExpandableAd } from './Expandable/ExpandableAd'
-import { AdSlide, Priority } from './types'
+import { AdSlide, Priority } from './ads.types'
 import { useShouldRenderAdIfo } from './useShouldRenderAdIfo'
+import { useJsonAdsConfig } from './hooks/useJsonAdsConfig'
+
+const JSON_ADS_URL = 'https://proofs.pancakeswap.com/web/promotions/json-ads.json'
 
 export const useAdConfig = () => {
   const { isDesktop } = useMatchBreakpoints()
@@ -18,6 +21,7 @@ export const useAdConfig = () => {
   const shouldRenderAdIfo = useShouldRenderAdIfo()
   const configs = useAdsConfigs()
   const tradingCompetitionAds = useTradingCompetitionAds()
+  const jsonAdsList = useJsonAdsConfig(JSON_ADS_URL)
   const commonAdConfigs = useMemo(() => {
     return Object.entries(configs)
       .map(([key, value]) => {
@@ -40,6 +44,7 @@ export const useAdConfig = () => {
         component: <ExpandableAd />,
         priority: Priority.FIRST_AD,
       },
+      ...jsonAdsList,
       ...commonAdConfigs,
       {
         id: 'ad-cross-chain',
@@ -65,7 +70,7 @@ export const useAdConfig = () => {
         component: <AdPCSX />,
       },
     ],
-    [shouldRenderAdIfo, commonAdConfigs, tradingCompetitionAds],
+    [shouldRenderAdIfo, commonAdConfigs, tradingCompetitionAds, jsonAdsList],
   )
 
   return useMemo(

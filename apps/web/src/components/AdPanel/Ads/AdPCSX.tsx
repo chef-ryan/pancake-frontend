@@ -4,7 +4,7 @@ import { BodyText } from '../BodyText'
 import { AdButton } from '../Button'
 import { AdCard } from '../Card'
 
-import { AdPlayerProps } from '../types'
+import { AdPlayerProps } from '../ads.types'
 import { getImageUrl } from '../utils'
 
 const learnMoreLink =

@@ -1,6 +1,6 @@
 import { atom, useAtomValue } from 'jotai'
 import { AdPicks } from '../Ads/AdPicks'
-import { AdSlide, PicksConfig } from '../types'
+import { AdSlide, PicksConfig } from '../ads.types'
 
 const picksConfigAtom = atom(async () => {
   const time = Math.floor((Date.now() / 1000) * 60 * 5) // Cache 5min

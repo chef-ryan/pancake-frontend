@@ -5,7 +5,7 @@ import { BodyText } from '../BodyText'
 import { AdButton } from '../Button'
 import { AdCard } from '../Card'
 import { Countdown } from '../Countdown'
-import { AdPlayerProps } from '../types'
+import { AdPlayerProps } from '../ads.types'
 import { getImageUrl } from '../utils'
 
 export const AdIfo = (props: AdPlayerProps) => {

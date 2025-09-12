@@ -2,7 +2,7 @@ import { BodyText } from '../BodyText'
 import { AdButton } from '../Button'
 import { AdCard } from '../Card'
 import { Title } from '../Title'
-import { AdPlayerProps } from '../types'
+import { AdPlayerProps } from '../ads.types'
 import { getImageUrl } from '../utils'
 
 export const TitleContentAd = (props: AdPlayerProps) => {
