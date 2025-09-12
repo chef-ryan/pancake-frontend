@@ -93,6 +93,7 @@ export type PicksConfig = {
 export interface RemoteAds {
   id: string
   imgUrl: string
+  priority: number
   texts: Array<
     | string
     | {

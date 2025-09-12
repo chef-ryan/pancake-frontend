@@ -19,23 +19,8 @@ export const useAdConfig = () => {
   const { isDesktop } = useMatchBreakpoints()
   const MAX_ADS = isDesktop ? 6 : 4
   const shouldRenderAdIfo = useShouldRenderAdIfo()
-  const configs = useAdsConfigs()
   const tradingCompetitionAds = useTradingCompetitionAds()
   const jsonAdsList = useJsonAdsConfig(JSON_ADS_URL)
-  const commonAdConfigs = useMemo(() => {
-    return Object.entries(configs)
-      .map(([key, value]) => {
-        if (value.ad) {
-          return {
-            id: value.id,
-            component: <AdCommon id={key as AdsIds} />,
-            priority: value.priority || undefined,
-          }
-        }
-        return undefined
-      })
-      .filter(Boolean) as { id: string; component: JSX.Element; priority?: number }[]
-  }, [configs])
 
   const adList: Array<AdSlide> = useMemo(
     () => [
@@ -45,7 +30,6 @@ export const useAdConfig = () => {
         priority: Priority.FIRST_AD,
       },
       ...jsonAdsList,
-      // ...commonAdConfigs,
       {
         id: 'ad-cross-chain',
         component: <AdCrossChain />,
@@ -70,7 +54,7 @@ export const useAdConfig = () => {
         component: <AdPCSX />,
       },
     ],
-    [shouldRenderAdIfo, commonAdConfigs, tradingCompetitionAds, jsonAdsList],
+    [shouldRenderAdIfo, tradingCompetitionAds, jsonAdsList],
   )
 
   return useMemo(
