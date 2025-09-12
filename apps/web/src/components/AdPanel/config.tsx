@@ -45,7 +45,7 @@ export const useAdConfig = () => {
         priority: Priority.FIRST_AD,
       },
       ...jsonAdsList,
-      ...commonAdConfigs,
+      // ...commonAdConfigs,
       {
         id: 'ad-cross-chain',
         component: <AdCrossChain />,
