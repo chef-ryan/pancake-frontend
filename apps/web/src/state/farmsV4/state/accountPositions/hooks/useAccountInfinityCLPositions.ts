@@ -36,6 +36,6 @@ export const useAccountInfinityCLPositions = (chainIds: number[], account?: Addr
   const dataWithFarming = usePositionsWithFarming({ positions: data })
   return {
     data: dataWithFarming,
-    pending,
+    pending: !account ? false : pending,
   }
 }
