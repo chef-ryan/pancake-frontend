@@ -106,8 +106,13 @@ export const PoolsFilterPanel: React.FC<React.PropsWithChildren<IPoolsFilterPane
     [debouncedOnChange],
   )
 
+  const debouncedSetSearchText = useCallback(
+    debounce((val: string) => setSearchText(val), 500),
+    [],
+  )
+
   useEffect(() => {
-    setSearchText(value.search ?? '')
+    debouncedSetSearchText(value.search ?? '')
   }, [value.search])
 
   const protocols = usePoolProtocols()
