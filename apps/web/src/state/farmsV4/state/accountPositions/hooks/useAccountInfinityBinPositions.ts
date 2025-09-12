@@ -38,7 +38,7 @@ export const useAccountInfinityBinPositions = (account: Address | undefined, cha
   const dataWithFarming = usePositionsWithFarming({ positions: data })
   return {
     data: dataWithFarming,
-    pending,
+    pending: !account ? false : pending,
   }
 }
 
