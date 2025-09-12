@@ -1,4 +1,4 @@
-import { ChainId, chainNames } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId, chainNames } from '@pancakeswap/chains'
 import memoize from '@pancakeswap/utils/memoize'
 import {
   Chain,
@@ -96,3 +96,11 @@ export const CHAINS: [Chain, ...Chain[]] = [
   scrollSepolia,
   monadTestnet,
 ]
+
+// Minimal Solana chain descriptor for explorer and non‑EVM utilities
+export const SOLANA_CHAIN = {
+  id: NonEVMChainId.SOLANA,
+  blockExplorers: {
+    default: { name: 'Solscan', url: 'https://solscan.io' },
+  },
+} as const

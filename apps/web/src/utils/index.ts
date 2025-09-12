@@ -3,64 +3,73 @@ import { Currency } from '@pancakeswap/sdk'
 import { TokenAddressMap } from '@pancakeswap/token-lists'
 import { multiChainScanName } from 'state/info/constant'
 import { bsc } from 'wagmi/chains'
-import { chains } from './wagmi'
+import { SOLANA_CHAIN } from 'config/chains'
+import { chains as evmChains } from './wagmi'
 
 export * from './safeGetAddress'
 
-// returns the checksummed address if the address is valid, otherwise returns undefined
+// Extend chain metadata with Solana descriptor from config
+const UNIFIED_CHAINS = [...evmChains, SOLANA_CHAIN as any]
 
-function getSolExplorerLink(
-  data: string | number | undefined | null,
-  type: 'transaction' | 'token' | 'address' | 'block' | 'countdown' | 'nft',
-) {
+type ExplorerType = 'transaction' | 'token' | 'address' | 'block' | 'countdown' | 'nft'
+
+const defaultEvmBuilder = (baseUrl: string, data: string | number, type: ExplorerType) => {
   switch (type) {
     case 'transaction':
-      return `https://solscan.io/tx/${data}`
-    case 'address':
-      return `https://solscan.io/account/${data}`
+      return `${baseUrl}/tx/${data}`
     case 'token':
-      return `https://solscan.io/token/${data}`
+      return `${baseUrl}/token/${data}`
+    case 'block':
+      return `${baseUrl}/block/${data}`
+    case 'countdown':
+      return `${baseUrl}/block/countdown/${data}`
+    case 'nft':
+      return `${baseUrl}/nft/${data}`
     default:
-      throw new Error(`Unsupported Solana explorer type: ${type}`)
+      return `${baseUrl}/address/${data}`
   }
+}
+
+const solanaBuilder = (baseUrl: string, data: string | number, type: ExplorerType) => {
+  switch (type) {
+    case 'transaction':
+      return `${baseUrl}/tx/${data}`
+    case 'address':
+      return `${baseUrl}/account/${data}`
+    case 'token':
+      return `${baseUrl}/token/${data}`
+    case 'block':
+      return `${baseUrl}/block/${data}`
+    case 'nft':
+      return `${baseUrl}/nft/${data}`
+    case 'countdown':
+    default:
+      return baseUrl
+  }
+}
+
+const EXPLORER_BUILDERS: Partial<
+  Record<number, (baseUrl: string, data: string | number, type: ExplorerType) => string>
+> = {
+  [NonEVMChainId.SOLANA]: solanaBuilder,
 }
 
 export function getBlockExploreLink(
   data: string | number | undefined | null,
-  type: 'transaction' | 'token' | 'address' | 'block' | 'countdown' | 'nft',
+  type: ExplorerType,
   chainIdOverride?: number,
 ): string {
   const chainId = chainIdOverride || ChainId.BSC
-  if (chainId === NonEVMChainId.SOLANA) {
-    return getSolExplorerLink(data, type)
-  }
-  const chain = chains.find((c) => c.id === chainId)
+  const chain = UNIFIED_CHAINS.find((c) => c.id === chainId)
   if (!chain || !data) return bsc.blockExplorers.default.url
-  switch (type) {
-    case 'transaction': {
-      return `${chain?.blockExplorers?.default.url}/tx/${data}`
-    }
-    case 'token': {
-      return `${chain?.blockExplorers?.default.url}/token/${data}`
-    }
-    case 'block': {
-      return `${chain?.blockExplorers?.default.url}/block/${data}`
-    }
-    case 'countdown': {
-      return `${chain?.blockExplorers?.default.url}/block/countdown/${data}`
-    }
-    case 'nft': {
-      return `${chain?.blockExplorers?.default.url}/nft/${data}`
-    }
-    default: {
-      return `${chain?.blockExplorers?.default.url}/address/${data}`
-    }
-  }
+  const baseUrl = (chain as any)?.blockExplorers?.default?.url as string
+  const builder = EXPLORER_BUILDERS[chain.id] || defaultEvmBuilder
+  return builder(baseUrl, data, type)
 }
 
 export function getBlockExploreName(chainIdOverride?: number) {
   const chainId = chainIdOverride || ChainId.BSC
-  const chain = chains.find((c) => c.id === chainId)
+  const chain = UNIFIED_CHAINS.find((c) => c.id === chainId)
 
   return multiChainScanName[chain?.id || -1] || chain?.blockExplorers?.default.name || bsc.blockExplorers.default.name
 }
