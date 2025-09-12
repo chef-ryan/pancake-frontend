@@ -41,7 +41,7 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ ...boxProps }) => 
   const { baseCurrency, quoteCurrency } = useCurrencies()
 
   // Fetch existing Solana pools for the selected pair to disable used fee tiers
-  const { data: existingSolanaFeeTiers } = useSolanaExistingFeeTiers(
+  const existingSolanaFeeTiers = useSolanaExistingFeeTiers(
     baseCurrency?.wrapped.address,
     quoteCurrency?.wrapped.address,
     chainId === NonEVMChainId.SOLANA,

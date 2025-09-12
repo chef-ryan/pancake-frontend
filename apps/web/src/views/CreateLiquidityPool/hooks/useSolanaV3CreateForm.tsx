@@ -48,7 +48,7 @@ import { useCurrencies } from './useCurrencies'
 export const useSolanaV3CreateForm = () => {
   const { t } = useTranslation()
   const router = useRouter()
-  const { account, chainId, isWrongNetwork } = useAccountActiveChain()
+  const { solanaAccount: account, isWrongNetwork } = useAccountActiveChain()
   const { onOpen: onOpenPreviewModal, isOpen: isPreviewModalOpen, onDismiss: onDismissPreviewModal } = useModalV2()
   const { toastError, toastSuccess } = useToast()
 
