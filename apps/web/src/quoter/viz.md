@@ -1,10 +1,10 @@
 # Quote Routing Visualization
 
-This document visualize the `quoter` function of pancakeswap.
+This document visualizes the `quoter` function of PancakeSwap.
 
 1. Visualize the flow of the algorithm.
 
-2. Visualize how calls happens
+2. Visualize how calls happen
 
    - For api calls , using the api path as a node
    - For contract calls using `call [contractName].[contractFunction]
@@ -24,18 +24,21 @@ This document visualize the `quoter` function of pancakeswap.
 
 ### Related Files
 
-- `apps/web/src/quoter/atom/bestSameChainAtom.ts`
+- `apps/web/src/hooks/useCurrencyUsdPrice.ts`
+- `apps/web/src/quote-worker.ts`
 - `apps/web/src/quoter/atom/availableBridgeRoutesAtom.ts`
-- `apps/web/src/quoter/utils/crosschain-utils/CrossChainPatternClassifier.ts`
-- `apps/web/src/quoter/atom/routingStrategy.ts`
-- `apps/web/src/quoter/atom/bestXAPIAtom.ts`
-- `apps/web/src/quoter/atom/bestSVMOrderAtom.ts`
+- `apps/web/src/quoter/atom/bestAMMTradeFromQuoterWorker2Atom.ts`
 - `apps/web/src/quoter/atom/bestAMMTradeFromQuoterWorkerAtom.ts`
 - `apps/web/src/quoter/atom/bestRoutingSDKTradeAtom.ts`
-- `apps/web/src/quoter/atom/bestAMMTradeFromQuoterWorker2Atom.ts`
-- `apps/web/src/quote-worker.ts`
-- `apps/web/src/hooks/useCurrencyUsdPrice.ts`
+- `apps/web/src/quoter/atom/bestSVMOrderAtom.ts`
+- `apps/web/src/quoter/atom/bestSameChainAtom.ts`
+- `apps/web/src/quoter/atom/bestXAPIAtom.ts`
+- `apps/web/src/quoter/atom/bridgeOnlyQuoteAtom.ts`
+- `apps/web/src/quoter/atom/routingStrategy.ts`
+- `apps/web/src/quoter/utils/crosschain-utils/CrossChainPatternClassifier.ts`
+- `apps/web/src/quoter/utils/crosschain-utils/utils/ContextBuilder.ts`
 - `apps/web/src/quoter/utils/gasPriceAtom.ts`
+- `apps/web/src/quoter/utils/getVerifiedTrade.ts`
 
 ### Flowchart
 
@@ -47,15 +50,14 @@ flowchart TD
 
     B --> R[availableBridgeRoutesAtom]
     R --> R1["GET BRIDGE_API_ENDPOINT/v1/routes"]
-
-    B --> P[CrossChainPatternClassifier]
+    R --> P[CrossChainPatternClassifier]
     P --> METADATA["POST BRIDGE_API_ENDPOINT/v1/metadata"]
     P --> S
 
     S --> RS[routingStrategyAtom]
     RS --> RS1["GET PROOF_API/cms-config/tokens-routing-config.json"]
 
-    S --> QA[bestXApiAtom]
+    S --> QA[bestXAPIAtom]
     QA --> QA1["POST QUOTING_API"]
 
     S --> SVM[bestSVMOrderAtom]
@@ -69,17 +71,18 @@ flowchart TD
     BW3 --> EP1
     EP1 --> W[quote-worker]
 
-    USD[currencyUSDPriceAtom]
-    USD --> WALLET["GET WALLET_API/v1/prices/list"]
-    USD --> BW1
-    USD --> BW2
-    USD --> BW3
+    BW2 --> V[getVerifiedTrade]
+    V --> V1["call ViemClient.multicall"]
 
-    GP[gasPriceWeiAtom]
+    BW1 --> USD[currencyUSDPriceAtom]
+    BW2 --> USD
+    BW3 --> USD
+    USD --> WALLET["GET WALLET_API/v1/prices/list"]
+
+    BW1 --> GP[gasPriceWeiAtom]
+    BW2 --> GP
+    BW3 --> GP
     GP --> GAS["call PublicClient.getGasPrice"]
-    GP --> BW1
-    GP --> BW2
-    GP --> BW3
 ```
 
 ## Part II (quoter-worker -> Smart Router)
