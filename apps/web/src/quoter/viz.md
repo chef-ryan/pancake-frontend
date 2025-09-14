@@ -5,6 +5,7 @@ This document visualize the `quoter` function of pancakeswap.
 1. Visualize the flow of the algorithm.
 
 2. Visualize how calls happens
+
    - For api calls , using the api path as a node
    - For contract calls using `call [contractName].[contractFunction]
 
@@ -16,6 +17,27 @@ This document visualize the `quoter` function of pancakeswap.
    - Part V: The `svm` related flow, entry is `bestSVMOrderAtom`
 
 ## Part I ( apps/web/quoter )
+
+### Entry
+
+`apps/web/src/quoter/atom/bestCrossChainAtom.ts`
+
+### Related Files
+
+- `apps/web/src/quoter/atom/bestSameChainAtom.ts`
+- `apps/web/src/quoter/atom/availableBridgeRoutesAtom.ts`
+- `apps/web/src/quoter/utils/crosschain-utils/CrossChainPatternClassifier.ts`
+- `apps/web/src/quoter/atom/routingStrategy.ts`
+- `apps/web/src/quoter/atom/bestXAPIAtom.ts`
+- `apps/web/src/quoter/atom/bestSVMOrderAtom.ts`
+- `apps/web/src/quoter/atom/bestAMMTradeFromQuoterWorkerAtom.ts`
+- `apps/web/src/quoter/atom/bestRoutingSDKTradeAtom.ts`
+- `apps/web/src/quoter/atom/bestAMMTradeFromQuoterWorker2Atom.ts`
+- `apps/web/src/quote-worker.ts`
+- `apps/web/src/hooks/useCurrencyUsdPrice.ts`
+- `apps/web/src/quoter/utils/gasPriceAtom.ts`
+
+### Flowchart
 
 ```mermaid
 flowchart TD
@@ -59,25 +81,6 @@ flowchart TD
     GP --> BW2
     GP --> BW3
 ```
-
-### Entry
-
-`apps/web/src/quoter/atom/bestCrossChainAtom.ts`
-
-### Related Files
-
-- `apps/web/src/quoter/atom/bestSameChainAtom.ts`
-- `apps/web/src/quoter/atom/availableBridgeRoutesAtom.ts`
-- `apps/web/src/quoter/utils/crosschain-utils/CrossChainPatternClassifier.ts`
-- `apps/web/src/quoter/atom/routingStrategy.ts`
-- `apps/web/src/quoter/atom/bestXAPIAtom.ts`
-- `apps/web/src/quoter/atom/bestSVMOrderAtom.ts`
-- `apps/web/src/quoter/atom/bestAMMTradeFromQuoterWorkerAtom.ts`
-- `apps/web/src/quoter/atom/bestRoutingSDKTradeAtom.ts`
-- `apps/web/src/quoter/atom/bestAMMTradeFromQuoterWorker2Atom.ts`
-- `apps/web/src/quote-worker.ts`
-- `apps/web/src/hooks/useCurrencyUsdPrice.ts`
-- `apps/web/src/quoter/utils/gasPriceAtom.ts`
 
 ## Part II (quoter-worker -> Smart Router)
 
