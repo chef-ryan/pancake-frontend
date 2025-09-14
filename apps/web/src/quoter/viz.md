@@ -84,6 +84,16 @@ flowchart TD
 
 ## Part II (quoter-worker -> Smart Router)
 
+### Entry
+
+`apps/web/src/quote-worker.ts`
+
+### Related Files
+
+- `packages/smart-router/evm/v3-router/getBestTrade.ts`
+
+### Flowchart
+
 ```mermaid
 flowchart TD
     QW[quote-worker]
@@ -96,15 +106,9 @@ flowchart TD
     SR -->|result| MAIN[main thread]
 ```
 
-### Entry
-
-`apps/web/src/quote-worker.ts`
-
-### Related Files
-
-- `packages/smart-router/evm/v3-router/getBestTrade.ts`
-
 ## Part III (quoter-worker -> Routing SDK)
+
+### Flowchart
 
 ```mermaid
 flowchart TD
@@ -123,6 +127,17 @@ flowchart TD
 - `packages/routing-sdk/src/findBestTrade.ts`
 
 ## Part IV (edge API)
+
+### Entry
+
+`apps/web/src/pages/api/pools/candidates.ts`
+
+### Related Files
+
+- `apps/web/src/quoter/utils/edgeQueries.util.ts`
+- `apps/web/src/quoter/utils/edgePoolQueries.ts`
+
+### Flowchart
 
 ```mermaid
 flowchart TD
@@ -144,27 +159,7 @@ flowchart TD
     EDGE_FULL -->|response| RES
 ```
 
-### Entry
-
-`apps/web/src/pages/api/pools/candidates.ts`
-
-### Related Files
-
-- `apps/web/src/quoter/utils/edgeQueries.util.ts`
-- `apps/web/src/quoter/utils/edgePoolQueries.ts`
-
 ## Part V (svm flow)
-
-```mermaid
-flowchart TD
-    SVM[bestSVMOrderAtom]
-    SVM --> SLIPPAGE[solanaUserSlippageAtomWithLocalStorage]
-    SVM --> PRIORITY[solanaPriorityFeeAtomWithLocalStorage]
-    SVM --> GS[getBestSolanaTrade]
-    GS --> ULTRA["GET ULTRA_API_ENDPOINT/ultra/v1/order"]
-    ULTRA --> PARSE[parseSVMTradeIntoSVMOrder]
-    PARSE --> RESULT[InterfaceOrder]
-```
 
 ### Entry
 
@@ -176,3 +171,16 @@ flowchart TD
 - `packages/utils/user/solanaPriorityFee.ts`
 - `packages/solana-router-sdk/src/getBestTrade.ts`
 - `apps/web/src/quoter/utils/svm-utils/parseSVMTradeIntoSVMOrder.ts`
+
+### Flowchart
+
+```mermaid
+flowchart TD
+    SVM[bestSVMOrderAtom]
+    SVM --> SLIPPAGE[solanaUserSlippageAtomWithLocalStorage]
+    SVM --> PRIORITY[solanaPriorityFeeAtomWithLocalStorage]
+    SVM --> GS[getBestSolanaTrade]
+    GS --> ULTRA["GET ULTRA_API_ENDPOINT/ultra/v1/order"]
+    ULTRA --> PARSE[parseSVMTradeIntoSVMOrder]
+    PARSE --> RESULT[InterfaceOrder]
+```
