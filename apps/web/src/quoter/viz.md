@@ -10,33 +10,30 @@ This document visualizes the `quoter` function of PancakeSwap.
    - For contract calls using `call [contractName].[contractFunction]
 
 3. Parts
-   - Part I: flow in `apps/web`, entry is `bestCrossChainQuoteAtom`
-   - Part II: The `quoter-worker` -> `Smart Router`
-   - Part III: The `quoter-worker` -> `Routing SDK`
-   - Part IV: The `edge API`
-   - Part V: The `svm` related flow, entry is `bestSVMOrderAtom`
+   - Part I: Same Chain Quoter in `apps/web`
+   - Part II: Cross Chain Quoter in `apps/web`
+   - Part III: The `quoter-worker` -> `Smart Router`
+   - Part IV: The `quoter-worker` -> `Routing SDK`
+   - Part V: The `edge API`
+   - Part VI: The `svm` related flow, entry is `bestSVMOrderAtom`
 
-## Part I ( apps/web/quoter )
+## Part I (Same Chain Quoter in apps/web)
 
 ### Entry
 
-`apps/web/src/quoter/atom/bestCrossChainAtom.ts`
+`apps/web/src/quoter/atom/bestSameChainAtom.ts`
 
 ### Related Files
 
 - `apps/web/src/hooks/useCurrencyUsdPrice.ts`
 - `apps/web/src/quote-worker.ts`
-- `apps/web/src/quoter/atom/availableBridgeRoutesAtom.ts`
 - `apps/web/src/quoter/atom/bestAMMTradeFromQuoterWorker2Atom.ts`
 - `apps/web/src/quoter/atom/bestAMMTradeFromQuoterWorkerAtom.ts`
 - `apps/web/src/quoter/atom/bestRoutingSDKTradeAtom.ts`
 - `apps/web/src/quoter/atom/bestSVMOrderAtom.ts`
 - `apps/web/src/quoter/atom/bestSameChainAtom.ts`
 - `apps/web/src/quoter/atom/bestXAPIAtom.ts`
-- `apps/web/src/quoter/atom/bridgeOnlyQuoteAtom.ts`
 - `apps/web/src/quoter/atom/routingStrategy.ts`
-- `apps/web/src/quoter/utils/crosschain-utils/CrossChainPatternClassifier.ts`
-- `apps/web/src/quoter/utils/crosschain-utils/utils/ContextBuilder.ts`
 - `apps/web/src/quoter/utils/gasPriceAtom.ts`
 - `apps/web/src/quoter/utils/getVerifiedTrade.ts`
 
@@ -44,16 +41,7 @@ This document visualizes the `quoter` function of PancakeSwap.
 
 ```mermaid
 flowchart TD
-    A[bestCrossChainQuoteAtom]
-    A -->|cross-chain| B[bestCrossChainQuoteWithoutPlaceHolderAtom]
-    A -->|same chain| S[bestSameChainAtom]
-
-    B --> R[availableBridgeRoutesAtom]
-    R --> R1["GET BRIDGE_API_ENDPOINT/v1/routes"]
-    R --> P[CrossChainPatternClassifier]
-    P --> METADATA["POST BRIDGE_API_ENDPOINT/v1/metadata"]
-    P --> S
-
+    S[bestSameChainAtom]
     S --> RS[routingStrategyAtom]
     RS --> RS1["GET PROOF_API/cms-config/tokens-routing-config.json"]
 
@@ -87,7 +75,37 @@ flowchart TD
     GP --> GAS["call PublicClient.getGasPrice"]
 ```
 
-## Part II (quoter-worker -> Smart Router)
+## Part II (Cross Chain Quoter in apps/web)
+
+### Entry
+
+`apps/web/src/quoter/atom/bestCrossChainAtom.ts`
+
+### Related Files
+
+- `apps/web/src/quoter/atom/availableBridgeRoutesAtom.ts`
+- `apps/web/src/quoter/atom/bestCrossChainAtom.ts`
+- `apps/web/src/quoter/atom/bridgeOnlyQuoteAtom.ts`
+- `apps/web/src/quoter/atom/bestSameChainAtom.ts`
+- `apps/web/src/quoter/utils/crosschain-utils/CrossChainPatternClassifier.ts`
+- `apps/web/src/quoter/utils/crosschain-utils/utils/ContextBuilder.ts`
+
+### Flowchart
+
+```mermaid
+flowchart TD
+    A[bestCrossChainQuoteAtom]
+    A -->|cross-chain| B[bestCrossChainQuoteWithoutPlaceHolderAtom]
+    A -->|same chain| S[bestSameChainAtom]
+
+    B --> R[availableBridgeRoutesAtom]
+    R --> R1["GET BRIDGE_API_ENDPOINT/v1/routes"]
+    R --> P[CrossChainPatternClassifier]
+    P --> METADATA["POST BRIDGE_API_ENDPOINT/v1/metadata"]
+    P --> S
+```
+
+## Part III (quoter-worker -> Smart Router)
 
 ### Entry
 
@@ -107,7 +125,7 @@ flowchart TD
     SR -->|result| MAIN[main thread]
 ```
 
-## Part III (quoter-worker -> Routing SDK)
+## Part IV (quoter-worker -> Routing SDK)
 
 ### Entry
 
@@ -124,7 +142,7 @@ flowchart TD
     QA -->|result| MAIN[main thread]
 ```
 
-## Part IV (edge API)
+## Part V (edge API)
 
 ### Entry
 
@@ -157,7 +175,7 @@ flowchart TD
     EDGE_FULL -->|response| RES
 ```
 
-## Part V (svm flow)
+## Part VI (svm flow)
 
 ### Entry
 
