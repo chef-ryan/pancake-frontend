@@ -6,7 +6,7 @@ resolve routing, and the external APIs and smart contracts contacted along the
 way. The diagrams below break down the cross‑chain and same‑chain flows, the
 quote worker logic, and the `/api/pools/candidates` helper endpoint.
 
-## quoter atom
+## Part I (atom)
 
 ```mermaid
 flowchart TD
@@ -43,7 +43,7 @@ flowchart TD
     BW3 --> EP2
 ```
 
-## quote-worker flow
+## Part II (worker)
 
 ```mermaid
 flowchart TD
@@ -61,7 +61,7 @@ flowchart TD
     RS2 -->|result| MAIN
 ```
 
-## /api/pools/candidates flow
+## Part III (edge API)
 
 ```mermaid
 flowchart TD
