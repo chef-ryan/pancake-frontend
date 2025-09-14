@@ -66,13 +66,15 @@ flowchart TD
     S --> BW2[bestRoutingSDKTradeAtom]
     S --> BW3[bestAMMTradeFromQuoterWorker2Atom]
 
-    BW1 --> EP1["GET EDGE_ENDPOINT/api/pools/candidates"]
-    BW2 --> EP1
-    BW3 --> EP1
-    EP1 --> W[quote-worker]
+    BW1 --> EP1a["GET EDGE_ENDPOINT/api/pools/candidates"]
+    EP1a --> SR[SmartRouter.getBestTrade]
+    BW2 --> EP1b["GET EDGE_ENDPOINT/api/pools/candidates"]
+    EP1b --> RS[routing-sdk.findBestTrade]
+    BW3 --> EP1c["GET EDGE_ENDPOINT/api/pools/candidates"]
+    EP1c --> SR
 
     BW2 --> V[getVerifiedTrade]
-    V --> V1["call ViemClient.multicall"]
+    V --> V1["call multi Quoter.quote"]
 
     BW1 --> USD[currencyUSDPriceAtom]
     BW2 --> USD
@@ -102,10 +104,9 @@ flowchart TD
     QW[quote-worker]
     QW --> SR[SmartRouter.getBestTrade]
     SR --> WA["GET WALLET_API/v1/prices"]
-    WA --> M3["call Multicall3.tryBlockAndAggregate"]
-    M3 --> V2["call PancakePair.getReserves"]
-    M3 --> V3["call PancakeV3Pool.slot0"]
-    M3 --> ST["call StableSwap.getReserves"]
+    SR --> V2["call multi PancakePair.getReserves"]
+    SR --> V3["call multi PancakeV3Pool.slot0"]
+    SR --> ST["call multi StableSwap.getReserves"]
     SR -->|result| MAIN[main thread]
 ```
 
