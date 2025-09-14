@@ -5,7 +5,6 @@ This document visualize the `quoter` function of pancakeswap.
 1. Visualize the flow of the algorithm.
 
 2. Visualize how calls happens
-
    - For api calls , using the api path as a node
    - For contract calls using `call [contractName].[contractFunction]
 
@@ -61,6 +60,25 @@ flowchart TD
     GP --> BW3
 ```
 
+### Entry
+
+`apps/web/src/quoter/atom/bestCrossChainAtom.ts`
+
+### Related Files
+
+- `apps/web/src/quoter/atom/bestSameChainAtom.ts`
+- `apps/web/src/quoter/atom/availableBridgeRoutesAtom.ts`
+- `apps/web/src/quoter/utils/crosschain-utils/CrossChainPatternClassifier.ts`
+- `apps/web/src/quoter/atom/routingStrategy.ts`
+- `apps/web/src/quoter/atom/bestXAPIAtom.ts`
+- `apps/web/src/quoter/atom/bestSVMOrderAtom.ts`
+- `apps/web/src/quoter/atom/bestAMMTradeFromQuoterWorkerAtom.ts`
+- `apps/web/src/quoter/atom/bestRoutingSDKTradeAtom.ts`
+- `apps/web/src/quoter/atom/bestAMMTradeFromQuoterWorker2Atom.ts`
+- `apps/web/src/quote-worker.ts`
+- `apps/web/src/hooks/useCurrencyUsdPrice.ts`
+- `apps/web/src/quoter/utils/gasPriceAtom.ts`
+
 ## Part II (quoter-worker -> Smart Router)
 
 ```mermaid
@@ -75,6 +93,14 @@ flowchart TD
     SR -->|result| MAIN[main thread]
 ```
 
+### Entry
+
+`apps/web/src/quote-worker.ts`
+
+### Related Files
+
+- `packages/smart-router/evm/v3-router/getBestTrade.ts`
+
 ## Part III (quoter-worker -> Routing SDK)
 
 ```mermaid
@@ -84,6 +110,14 @@ flowchart TD
     RS --> QA["POST QUOTING_API"]
     QA -->|result| MAIN[main thread]
 ```
+
+### Entry
+
+`apps/web/src/quote-worker.ts`
+
+### Related Files
+
+- `packages/routing-sdk/src/findBestTrade.ts`
 
 ## Part IV (edge API)
 
@@ -107,6 +141,15 @@ flowchart TD
     EDGE_FULL -->|response| RES
 ```
 
+### Entry
+
+`apps/web/src/pages/api/pools/candidates.ts`
+
+### Related Files
+
+- `apps/web/src/quoter/utils/edgeQueries.util.ts`
+- `apps/web/src/quoter/utils/edgePoolQueries.ts`
+
 ## Part V (svm flow)
 
 ```mermaid
@@ -119,3 +162,14 @@ flowchart TD
     ULTRA --> PARSE[parseSVMTradeIntoSVMOrder]
     PARSE --> RESULT[InterfaceOrder]
 ```
+
+### Entry
+
+`apps/web/src/quoter/atom/bestSVMOrderAtom.ts`
+
+### Related Files
+
+- `packages/utils/user/slippage.ts`
+- `packages/utils/user/solanaPriorityFee.ts`
+- `packages/solana-router-sdk/src/getBestTrade.ts`
+- `apps/web/src/quoter/utils/svm-utils/parseSVMTradeIntoSVMOrder.ts`
