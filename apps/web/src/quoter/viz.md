@@ -91,18 +91,15 @@ flowchart TD
 
 ### Entry
 
-`apps/web/src/quote-worker.ts`
+`packages/smart-router/evm/v3-router/getBestTrade.ts`
 
 ### Related Files
-
-- `packages/smart-router/evm/v3-router/getBestTrade.ts`
 
 ### Flowchart
 
 ```mermaid
 flowchart TD
-    QW[quote-worker]
-    QW --> SR[SmartRouter.getBestTrade]
+    SR[SmartRouter.getBestTrade]
     SR --> WA["GET WALLET_API/v1/prices"]
     SR --> V2["call multi PancakePair.getReserves"]
     SR --> V3["call multi PancakeV3Pool.slot0"]
@@ -112,23 +109,20 @@ flowchart TD
 
 ## Part III (quoter-worker -> Routing SDK)
 
+### Entry
+
+`packages/routing-sdk/src/findBestTrade.ts`
+
+### Related Files
+
 ### Flowchart
 
 ```mermaid
 flowchart TD
-    QW[quote-worker]
-    QW --> RS[routing-sdk.findBestTrade]
+    RS[routing-sdk.findBestTrade]
     RS --> QA["POST QUOTING_API"]
     QA -->|result| MAIN[main thread]
 ```
-
-### Entry
-
-`apps/web/src/quote-worker.ts`
-
-### Related Files
-
-- `packages/routing-sdk/src/findBestTrade.ts`
 
 ## Part IV (edge API)
 
