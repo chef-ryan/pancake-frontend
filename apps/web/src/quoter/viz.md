@@ -5,7 +5,6 @@ This document visualizes the `quoter` function of PancakeSwap.
 1. Visualize the flow of the algorithm.
 
 2. Visualize how calls happen
-
    - For api calls , using the api path as a node
    - For contract calls using `call [contractName].[contractFunction]
 
@@ -113,17 +112,32 @@ flowchart TD
 
 ### Related Files
 
+- `apps/web/src/quote-worker.ts`
+- `packages/smart-router/evm/v3-router/getRoutesWithValidQuote.ts`
+- `packages/smart-router/evm/v3-router/providers/onChainQuoteProvider.ts`
+- `packages/smart-router/evm/v3-router/functions/computeAllRoutesNew.ts`
+- `packages/smart-router/evm/v3-router/functions/getBestRouteCombinationByQuotes.ts`
+
 ### Flowchart
 
 ```mermaid
 flowchart TD
     SR[SmartRouter.getBestTrade]
+    SR --> CP[poolProvider.getCandidatePools]
+    CP --> V2["call multi PancakePair.getReserves"]
+    CP --> V3["call multi PancakeV3Pool.slot0"]
+    CP --> ST["call multi StableSwap.getReserves"]
     SR --> WA["GET WALLET_API/v1/prices"]
-    SR --> V2["call multi PancakePair.getReserves"]
-    SR --> V3["call multi PancakeV3Pool.slot0"]
-    SR --> ST["call multi StableSwap.getReserves"]
-    SR -->|result| MAIN[main thread]
+    SR --> RT[computeAllRoutesNew]
+    SR --> GM[createGasModel]
+    SR --> VQ[getRoutesWithValidQuote]
+    VQ --> QC["call multicall Quoter.quote"]
+    SR --> BR[getBestRouteCombinationByQuotes]
+    BR -->|result| MAIN[main thread]
 ```
+
+This phase gathers candidate pools, computes viable routes, quotes them through the on-chain quoter contracts, and finally
+selects the optimal route combination based on gas and output metrics.
 
 ## Part IV (quoter-worker -> Routing SDK)
 
@@ -133,14 +147,25 @@ flowchart TD
 
 ### Related Files
 
+- `apps/web/src/quote-worker.ts`
+- `packages/routing-sdk/src/graph/index.ts`
+- `packages/routing-sdk/src/utils/getBetterTrade.ts`
+- `packages/routing-sdk/src/stream/index.ts`
+
 ### Flowchart
 
 ```mermaid
 flowchart TD
     RS[routing-sdk.findBestTrade]
-    RS --> QA["POST QUOTING_API"]
-    QA -->|result| MAIN[main thread]
+    RS --> GP[groupPoolsByType]
+    RS --> CG[createGraph]
+    RS --> ST[getBestTradeByStreams]
+    ST --> PC[priceCalculator.evaluate]
+    RS -->|best trade| MAIN[main thread]
 ```
+
+The routing SDK operates off chain: pools are grouped, a graph is built, and a price calculator evaluates possible streams of
+routes to determine the best trade. No on-chain quoter calls are performed in this phase.
 
 ## Part V (edge API)
 
