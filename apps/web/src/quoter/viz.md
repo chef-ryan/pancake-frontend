@@ -1,12 +1,22 @@
 # Quote Routing Visualization
 
-This document sketches the background for how the quoter computes prices in
-PancakeSwap. It follows the atoms that initiate a quote, the worker threads that
-resolve routing, and the external APIs and smart contracts contacted along the
-way. The diagrams below break down the cross‑chain and same‑chain flows, the
-quote worker logic, and the `/api/pools/candidates` helper endpoint.
+This document visualize the `quoter` function of pancakeswap.
 
-## Part I (atom)
+1. Visualize the flow of the algorithm.
+
+2. Visualize how calls happens
+
+   - For api calls , using the api path as a node
+   - For contract calls using `call [contractName].[contractFunction]
+
+3. Parts
+   - Part I: flow in `apps/web`, entry is `bestCrossChainQuoteAtom`
+   - Part II: The `quoter-worker` -> `Smart Router`
+   - Part III: The `quoter-worker` -> `Routing SDK`
+   - Path IV: The `edge API`
+   - Path V: The `svm` related flow, entry is `bestSVMOrderAtom`
+
+## Part I ( apps/web/quoter )
 
 ```mermaid
 flowchart TD
