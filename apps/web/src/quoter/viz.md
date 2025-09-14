@@ -13,8 +13,8 @@ This document visualize the `quoter` function of pancakeswap.
    - Part I: flow in `apps/web`, entry is `bestCrossChainQuoteAtom`
    - Part II: The `quoter-worker` -> `Smart Router`
    - Part III: The `quoter-worker` -> `Routing SDK`
-   - Path IV: The `edge API`
-   - Path V: The `svm` related flow, entry is `bestSVMOrderAtom`
+   - Part IV: The `edge API`
+   - Part V: The `svm` related flow, entry is `bestSVMOrderAtom`
 
 ## Part I ( apps/web/quoter )
 
@@ -40,48 +40,52 @@ flowchart TD
     S --> SVM[bestSVMOrderAtom]
 
     S --> BW1[bestAMMTradeFromQuoterWorkerAtom]
-    BW1 --> W[quote-worker]
-    BW1 --> EP1["GET EDGE_ENDPOINT/api/pools/candidates"]
-
     S --> BW2[bestRoutingSDKTradeAtom]
-    BW2 --> W
-    BW2 --> EP1
-
     S --> BW3[bestAMMTradeFromQuoterWorker2Atom]
-    BW3 --> W
+
+    BW1 --> EP1["GET EDGE_ENDPOINT/api/pools/candidates"]
+    BW2 --> EP1
     BW3 --> EP1
+    EP1 --> W[quote-worker]
 
     USD[currencyUSDPriceAtom]
-    GP[gasPriceWeiAtom]
+    USD --> WALLET["GET WALLET_API/v1/prices/list"]
     USD --> BW1
     USD --> BW2
     USD --> BW3
+
+    GP[gasPriceWeiAtom]
+    GP --> GAS["call PublicClient.getGasPrice"]
     GP --> BW1
     GP --> BW2
     GP --> BW3
 ```
 
-## Part II (worker)
+## Part II (quoter-worker -> Smart Router)
 
 ```mermaid
 flowchart TD
     QW[quote-worker]
-    QW --> SR2[SmartRouter.getBestTrade]
-    QW --> RS2[routing-sdk.findBestTrade]
-
-    SR2 --> WA2["GET WALLET_API/v1/prices"]
-    SR2 --> M32["call Multicall3.tryBlockAndAggregate"]
-    M32 --> V22["call PancakePair.getReserves"]
-    M32 --> V32["call PancakeV3Pool.slot0"]
-    M32 --> ST2["call StableSwap.getReserves"]
-
-    RS2 --> QA2["POST QUOTING_API"]
-
-    SR2 -->|result| MAIN[main thread]
-    RS2 -->|result| MAIN
+    QW --> SR[SmartRouter.getBestTrade]
+    SR --> WA["GET WALLET_API/v1/prices"]
+    WA --> M3["call Multicall3.tryBlockAndAggregate"]
+    M3 --> V2["call PancakePair.getReserves"]
+    M3 --> V3["call PancakeV3Pool.slot0"]
+    M3 --> ST["call StableSwap.getReserves"]
+    SR -->|result| MAIN[main thread]
 ```
 
-## Part III (edge API)
+## Part III (quoter-worker -> Routing SDK)
+
+```mermaid
+flowchart TD
+    QW[quote-worker]
+    QW --> RS[routing-sdk.findBestTrade]
+    RS --> QA["POST QUOTING_API"]
+    QA -->|result| MAIN[main thread]
+```
+
+## Part IV (edge API)
 
 ```mermaid
 flowchart TD
@@ -101,4 +105,17 @@ flowchart TD
     EDGE_FULL --> STF
     EDGE_LITE -->|response| RES[Return candidates JSON]
     EDGE_FULL -->|response| RES
+```
+
+## Part V (svm flow)
+
+```mermaid
+flowchart TD
+    SVM[bestSVMOrderAtom]
+    SVM --> SLIPPAGE[solanaUserSlippageAtomWithLocalStorage]
+    SVM --> PRIORITY[solanaPriorityFeeAtomWithLocalStorage]
+    SVM --> GS[getBestSolanaTrade]
+    GS --> ULTRA["GET ULTRA_API_ENDPOINT/ultra/v1/order"]
+    ULTRA --> PARSE[parseSVMTradeIntoSVMOrder]
+    PARSE --> RESULT[InterfaceOrder]
 ```
