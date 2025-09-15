@@ -1,6 +1,6 @@
 import { Protocol } from '@pancakeswap/farms'
 import { HookData } from '@pancakeswap/infinity-sdk'
-import { Currency } from '@pancakeswap/swap-sdk-core'
+import { Currency, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { Address } from 'viem'
 import { FarmInfo } from '../search/farm.util'
 
@@ -8,16 +8,16 @@ type Prettify<T> = {
   [K in keyof T]: T[K]
 } & object
 
-export type PoolInfo = Prettify<V2PoolInfo | StablePoolInfo | V3PoolInfo | InfinityPoolInfo>
+export type PoolInfo = Prettify<V2PoolInfo | StablePoolInfo | V3PoolInfo | InfinityPoolInfo | SolanaV3PoolInfo>
 
 export type BasePoolInfo = {
   pid?: number
   chainId: number
-  lpAddress: Address
+  lpAddress: Address | string
   stableSwapAddress?: Address
   protocol: Protocol
-  token0: Currency
-  token1: Currency
+  token0: UnifiedCurrency
+  token1: UnifiedCurrency
   token0Price?: `${number}`
   token1Price?: `${number}`
   tvlToken0?: `${number}`
@@ -40,8 +40,15 @@ export type BasePoolInfo = {
   farm?: FarmInfo
 }
 
+export type SolanaV3PoolInfo = BasePoolInfo & {
+  protocol: Protocol.V3
+  lpAddress: string
+  poolId: string
+}
+
 export type V3PoolInfo = BasePoolInfo & {
   protocol: Protocol.V3
+  lpAddress: Address
 }
 
 export type V2PoolInfo = BasePoolInfo & {
