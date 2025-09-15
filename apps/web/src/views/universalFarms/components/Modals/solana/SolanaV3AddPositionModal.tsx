@@ -90,6 +90,8 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
   const {
     amount0: amount0Add,
     amount1: amount1Add,
+    amountSlippage0: amount0AddWithSlippage,
+    amountSlippage1: amount1AddWithSlippage,
     liquidity: liquidityAdd,
   } = useAddLiquidityAmount({
     poolInfo,
@@ -116,7 +118,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
   }, [amount0Add, amount1Add, fields[0], fields[1]])
 
   const handleConfirm = useCallback(async () => {
-    if (!liquidityAdd || !amount0Add || !amount1Add) return
+    if (!liquidityAdd || !amount0AddWithSlippage || !amount1AddWithSlippage) return
 
     setIsSending(true)
     try {
@@ -125,8 +127,8 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
           poolInfo,
           position,
           liquidity: liquidityAdd,
-          amountMaxA: amount0Add.toExact(),
-          amountMaxB: amount1Add.toExact(),
+          amountMaxA: amount0AddWithSlippage.toExact(),
+          amountMaxB: amount1AddWithSlippage.toExact(),
         },
         onSent: () => {
           setIsSending(false)
