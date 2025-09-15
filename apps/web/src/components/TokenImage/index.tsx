@@ -63,7 +63,7 @@ export const TokenPairLogo = forwardRef<HTMLDivElement, React.PropsWithChildren<
 TokenPairLogo.displayName = 'TokenPairLogo'
 
 interface TokenImageProps extends ImageProps {
-  token: UnifiedToken
+  token: UnifiedCurrency
 }
 
 export const TokenImage: React.FC<React.PropsWithChildren<TokenImageProps>> = ({ token, ...props }) => {
