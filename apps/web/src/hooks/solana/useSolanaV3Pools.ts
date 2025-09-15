@@ -1,7 +1,9 @@
 import { ApiV3PoolInfoConcentratedItem } from '@pancakeswap/solana-core-sdk'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { SLOW_INTERVAL } from 'config/constants'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useMemo } from 'react'
+import { addSolanaV3PoolAtom, allSolanaV3PoolsAtom, SolanaV3Pool, solanaV3PoolIdsAtom } from 'state/pools/solana'
 
 async function fetchSolanaPoolsData(
   poolIds: (string | undefined)[],
@@ -43,27 +45,28 @@ async function fetchSolanaPoolsData(
   }
 }
 
-export function useSolanaV3Pools(poolIds: (string | undefined)[]): (ApiV3PoolInfoConcentratedItem | null)[] {
-  const poolIdsString = useMemo(() => JSON.stringify(poolIds), [poolIds])
+export function useSolanaV3Pools(poolIds: (string | undefined)[]): (SolanaV3Pool | null)[] {
+  const addSolanaV3Pool = useSetAtom(addSolanaV3PoolAtom)
+  const allSolanaV3Pools = useAtomValue(allSolanaV3PoolsAtom)
+  const allSolanaV3PoolsId = useAtomValue(solanaV3PoolIdsAtom)
+  const poolsNotFetched = useMemo(() => {
+    return poolIds.filter((poolId) => poolId !== undefined && !allSolanaV3PoolsId.includes(poolId))
+  }, [poolIds, allSolanaV3PoolsId])
+  const poolIdsString = useMemo(() => JSON.stringify(poolsNotFetched), [poolsNotFetched])
 
-  const { data: poolInfos } = useQuery({
+  useQuery({
     queryKey: ['solanaV3Pools', poolIdsString],
-    queryFn: () => fetchSolanaPoolsData(poolIds),
-    enabled: poolIds.some((poolId) => poolId !== undefined),
+    queryFn: () =>
+      fetchSolanaPoolsData(poolsNotFetched).then((pools) => pools.forEach((pool) => addSolanaV3Pool(pool))),
+    enabled: poolsNotFetched.length > 0,
     placeholderData: keepPreviousData,
     refetchInterval: SLOW_INTERVAL,
   })
 
-  return useMemo(() => {
-    if (!poolInfos) {
-      return poolIds.map(() => null)
-    }
-
-    return poolInfos
-  }, [poolIds, poolInfos])
+  return allSolanaV3Pools
 }
 
-export function useSolanaV3Pool(poolId: string | undefined): ApiV3PoolInfoConcentratedItem | null {
+export function useSolanaV3Pool(poolId: string | undefined): SolanaV3Pool | null {
   const poolIds = useMemo(() => [poolId], [poolId])
 
   return useSolanaV3Pools(poolIds)[0]
