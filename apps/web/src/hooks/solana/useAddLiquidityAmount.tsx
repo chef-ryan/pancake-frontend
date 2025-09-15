@@ -37,7 +37,7 @@ export const useAddLiquidityAmount = ({ poolInfo, tickLower, tickUpper, side, am
     const { amountA, amountSlippageA, amountB, amountSlippageB, liquidity } =
       PoolUtils.getLiquidityAmountOutFromAmountIn({
         poolInfo,
-        slippage,
+        slippage: 0,
         inputA: side === 0,
         tickUpper: Math.max(tickLower, tickUpper),
         tickLower: Math.min(tickLower, tickUpper),
@@ -52,12 +52,12 @@ export const useAddLiquidityAmount = ({ poolInfo, tickLower, tickUpper, side, am
     return {
       amount0: UnifiedCurrencyAmount.fromRawAmount(currency0, amountA.amount.toString()),
       amountSlippage0: UnifiedCurrencyAmount.fromRawAmount(currency0, amountSlippageA.amount.toString())
-        .multiply(1 + slippage)
-        .divide(10 ** currency0.decimals),
+        .multiply(10000 + slippage)
+        .divide(10000),
       amount1: UnifiedCurrencyAmount.fromRawAmount(currency1, amountB.amount.toString()),
       amountSlippage1: UnifiedCurrencyAmount.fromRawAmount(currency1, amountSlippageB.amount.toString())
-        .multiply(1 + slippage)
-        .divide(10 ** currency1.decimals),
+        .multiply(10000 + slippage)
+        .divide(10000),
       liquidity,
     }
   }, [poolInfo, tickLower, tickUpper, side, amount, slippage, currency0, currency1])
