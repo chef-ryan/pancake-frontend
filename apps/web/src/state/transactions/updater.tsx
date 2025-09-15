@@ -1,6 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, Text, useToast } from '@pancakeswap/uikit'
-import { ToastDescriptionWithTx } from 'components/Toast'
+import { SolanaDescriptionWithTx, ToastDescriptionWithTx } from 'components/Toast'
 import { FAST_INTERVAL } from 'config/constants'
 import forEach from 'lodash/forEach'
 import merge from 'lodash/merge'
@@ -16,9 +16,11 @@ import {
 import { usePublicClient } from 'wagmi'
 import { retry, RetryableError } from 'state/multicall/retry'
 import { useQuery } from '@tanstack/react-query'
-import { AVERAGE_CHAIN_BLOCK_TIMES } from '@pancakeswap/chains'
+import { AVERAGE_CHAIN_BLOCK_TIMES, NonEVMChainId } from '@pancakeswap/chains'
 import { BSC_BLOCK_TIME } from 'config'
 import { useFetchBlockData } from '@pancakeswap/wagmi'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
 import {
   FarmTransactionStatus,
   MsgStatus,
@@ -27,14 +29,16 @@ import {
   finalizeTransaction,
 } from './actions'
 import { fetchCelerApi } from './fetchCelerApi'
-import { useAllChainTransactions } from './hooks'
+import { useAllChainTransactions, useSolanaTransactions } from './hooks'
 import { TransactionDetails } from './reducer'
 
 export function shouldCheck(
   fetchedTransactions: { [txHash: string]: TransactionDetails },
   tx: TransactionDetails,
+  forEvm = true,
 ): boolean {
   if (tx.receipt) return false
+  if (forEvm && !tx.hash.startsWith('0x')) return false // only check evm tx
   return !fetchedTransactions[tx.hash]
 }
 
@@ -54,7 +58,7 @@ export const Updater: React.FC<{ chainId: number }> = ({ chainId }) => {
     if (!chainId || !provider) return
 
     forEach(
-      pickBy(transactions, (transaction) => shouldCheck(fetchedTransactions.current, transaction)),
+      pickBy(transactions, (transaction) => shouldCheck(fetchedTransactions.current, transaction, true)),
       (transaction) => {
         const getTransaction = async () => {
           try {
@@ -219,6 +223,50 @@ export const Updater: React.FC<{ chainId: number }> = ({ chainId }) => {
     refetchOnReconnect: false,
     refetchOnMount: false,
   })
+
+  return null
+}
+
+export const SolanaTransactionUpdater = () => {
+  const { toastError, toastSuccess } = useToast()
+  const { solanaAccount } = useAccountActiveChain()
+  const transactions = useSolanaTransactions()
+  const connection = useSolanaConnectionWithRpcAtom()
+  const fetchedTransactions = useRef<{ [txHash: string]: TransactionDetails }>({})
+
+  useEffect(() => {
+    if (!solanaAccount || !connection) return
+
+    forEach(
+      pickBy(transactions, (transaction) => shouldCheck(fetchedTransactions.current, transaction, false)),
+      (transaction) => {
+        const getTransaction = async () => {
+          try {
+            const txId = transaction.hash
+            const tx = await connection.getSignatureStatus(txId)
+            if (!tx) {
+              throw new RetryableError(`Transaction not found: ${txId}`)
+            }
+            if (tx.value?.err) {
+              fetchedTransactions.current[txId] = transactions[txId]
+              toastError('Transaction failed', <SolanaDescriptionWithTx txHash={txId} />)
+              return
+            }
+            toastSuccess('Transaction confirmed', <SolanaDescriptionWithTx txHash={txId} />)
+          } catch (error) {
+            console.error('Error fetching Solana transaction:', error)
+            throw error
+          }
+        }
+        retry(getTransaction, {
+          n: 10,
+          minWait: 5000,
+          maxWait: 10000,
+          delay: BSC_BLOCK_TIME * 1000 + 1000,
+        })
+      },
+    )
+  }, [solanaAccount, connection, transactions])
 
   return null
 }
