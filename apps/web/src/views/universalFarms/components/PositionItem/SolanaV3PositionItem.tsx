@@ -111,7 +111,7 @@ export const SolanaV3PositionItem = memo(({ position, detailMode }: SolanaV3Posi
       fee={poolInfo?.feeRate ?? 0}
       feeTierBase={1}
       protocol={Protocol.V3}
-      isStaked={false}
+      isStaked={poolInfo?.isFarming}
       detailMode={detailMode}
       userPosition={position}
     >
