@@ -128,7 +128,7 @@ const SubPanel = styled(Flex)`
 `
 
 const EmptyListPlaceholder = ({ text, imageUrl }: { text: string; imageUrl?: string }) => {
-  const { address: account } = useAccount()
+  const { account, solanaAccount } = useAccountActiveChain()
 
   return (
     <FlexGap alignItems="center" flexDirection="column" gap="16px">
@@ -141,7 +141,7 @@ const EmptyListPlaceholder = ({ text, imageUrl }: { text: string; imageUrl?: str
       <Text fontSize="14px" color="textSubtle" textAlign="center">
         {text}
       </Text>
-      {!account ? <ConnectWalletButton /> : null}
+      {!account && !solanaAccount ? <ConnectWalletButton /> : null}
     </FlexGap>
   )
 }

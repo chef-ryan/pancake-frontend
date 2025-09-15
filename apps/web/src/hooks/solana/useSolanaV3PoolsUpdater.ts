@@ -38,13 +38,13 @@ export const useSolanaV3PoolsUpdater = (
           liquidity: BigInt(info.liquidity.toString()),
           tickCurrent: info.tickCurrent,
         })
-        setIsInitialFetched(true)
       } catch (error) {
         console.error('fetchPoolInfoFromRpc error', error)
       }
     }
     Promise.all(poolInfos.map(fetchPoolInfoFromRpc)).finally(() => {
       setLoading(false)
+      setIsInitialFetched(true)
     })
   }, [connection, poolInfos, initialFetch, isInitialFetched, updateSolanaV3Pool])
 

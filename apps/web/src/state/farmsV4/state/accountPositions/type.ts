@@ -59,6 +59,12 @@ export type InfinityBinPositionDetail = {
   poolActiveLiquidity?: bigint
 }
 
+export type SolanaV3PositionDetail = ReturnType<typeof PositionInfoLayout.decode> & {
+  status: POSITION_STATUS
+  protocol: Protocol.V3
+  chainId: number
+}
+
 export type PositionDetail = {
   // detail read from contract
   nonce: bigint
@@ -91,8 +97,6 @@ export type UnifiedPositionDetail =
   | V2LPDetail
   | StableLPDetail
   | SolanaV3PositionDetail
-
-export type SolanaV3PositionDetail = ReturnType<typeof PositionInfoLayout.decode> & { status: POSITION_STATUS }
 
 export type V2LPDetail = {
   nativeBalance: CurrencyAmount<ERC20Token>

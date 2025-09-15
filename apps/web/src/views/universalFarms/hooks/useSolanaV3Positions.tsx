@@ -1,13 +1,14 @@
 import { ClmmPositionLayout, PositionUtils } from '@pancakeswap/solana-core-sdk'
 import { INetworkProps, ITokenProps } from '@pancakeswap/widgets-internal'
 import { useMemo } from 'react'
-import { POSITION_STATUS } from 'state/farmsV4/state/accountPositions/type'
+import { POSITION_STATUS, SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { useSolanaPositionsInfoByAccount } from 'state/token/solanaPositionsInfo'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useSolanaV3Pools } from 'hooks/solana/useSolanaV3Pools'
 import { NonEVMChainId } from '@pancakeswap/chains'
 import { SolanaV3Pool } from 'state/pools/solana'
 import { useSolanaV3PoolsUpdater } from 'hooks/solana/useSolanaV3PoolsUpdater'
+import { Protocol } from '@pancakeswap/farms'
 import { SolanaV3PositionItem } from '../components/PositionItem/SolanaV3PositionItem'
 
 const getSolanaPoolStatus = (pos: ClmmPositionLayout, pool: SolanaV3Pool | undefined) => {
@@ -89,6 +90,8 @@ export const useSolanaV3PositionItems = ({
     return positionInfos?.map((pos) =>
       Object.assign(pos, {
         status: getSolanaPoolStatus(pos, poolsMap.get(pos.poolId.toBase58())),
+        protocol: Protocol.V3,
+        chainId: NonEVMChainId.SOLANA,
       }),
     )
   }, [positionInfos, poolsMap])
@@ -130,7 +133,13 @@ export const useSolanaV3PositionItems = ({
     () =>
       sortedSolanaPositions?.map((pos, index) => {
         const key = `solana-v3-${pos.nftMint.toBase58()}-${index}`
-        return <SolanaV3PositionItem key={key} position={pos} poolInfo={poolsMap.get(pos.poolId.toBase58())} />
+        return (
+          <SolanaV3PositionItem
+            key={key}
+            position={pos as SolanaV3PositionDetail}
+            poolInfo={poolsMap.get(pos.poolId.toBase58())}
+          />
+        )
       }),
     [sortedSolanaPositions],
   )
