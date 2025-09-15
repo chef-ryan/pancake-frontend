@@ -109,13 +109,13 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
   useEffect(() => {
     if (focusSide === null) return
     const [field0, field1] = fields
-    if (focusSide === 1 && amount0Add?.toExact() !== field0) {
-      setFields((prev) => [amount0Add?.toExact() ?? '', prev[1]])
+    if (focusSide === 1 && amount0AddWithSlippage?.toExact() !== field0) {
+      setFields((prev) => [amount0AddWithSlippage?.toExact() ?? '', prev[1]])
     }
-    if (focusSide === 0 && amount1Add?.toExact() !== field1) {
-      setFields((prev) => [prev[0], amount1Add?.toExact() ?? ''])
+    if (focusSide === 0 && amount1AddWithSlippage?.toExact() !== field1) {
+      setFields((prev) => [prev[0], amount1AddWithSlippage?.toExact() ?? ''])
     }
-  }, [amount0Add, amount1Add, fields[0], fields[1]])
+  }, [amount0AddWithSlippage, amount1AddWithSlippage, fields[0], fields[1]])
 
   const handleConfirm = useCallback(async () => {
     if (!liquidityAdd || !amount0AddWithSlippage || !amount1AddWithSlippage) return
