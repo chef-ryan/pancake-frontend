@@ -13,6 +13,7 @@ export const PANCAKE_ARB_DEFAULT = 'https://tokens.pancakeswap.finance/pancakesw
 export const PANCAKE_LINEA_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-linea-default.json'
 export const PANCAKE_BASE_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-base-default.json'
 export const PANCAKE_OPBNB_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-opbnb-default.json'
+export const PANCAKE_SOLANA_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-solana-default.json'
 
 export const PANCAKE_MONAD_TESTNET_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-monad-testnet-default.json'
 
