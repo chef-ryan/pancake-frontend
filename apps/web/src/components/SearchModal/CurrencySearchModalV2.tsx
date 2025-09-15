@@ -54,9 +54,9 @@ const StyledModalBody = styled(ModalBody)`
 `
 
 export interface CurrencySearchModalV2Props extends InjectedModalProps {
-  selectedCurrency?: Currency | null
+  selectedCurrency?: UnifiedCurrency | null
   onCurrencySelect?: (currency: UnifiedCurrency) => void
-  otherSelectedCurrency?: Currency | null
+  otherSelectedCurrency?: UnifiedCurrency | null
   showCommonBases?: boolean
   commonBasesType?: CommonBasesType
   showSearchInput?: boolean

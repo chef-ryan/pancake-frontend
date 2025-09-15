@@ -22,7 +22,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { useInverted } from 'state/infinity/shared'
 import styled from 'styled-components'
-import { Currency } from '@pancakeswap/sdk'
+import { Currency } from '@pancakeswap/swap-sdk-core'
+import { isSolana } from '@pancakeswap/chains'
 import { truncateText } from 'utils'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useCurrencies } from '../../hooks/useCurrencies'
@@ -58,7 +59,9 @@ export const FieldStartingPrice: React.FC<FieldStartingPriceProps> = ({
   const { switchCurrencies: switchCurrenciesDefault } = useSelectIdRouteParams()
   const switchCurrencies = switchCurrenciesProp || switchCurrenciesDefault
 
-  const [, , marketPrice] = usePoolMarketPrice(currency0, currency1)
+  const b = currency0 && !isSolana(currency0.chainId) ? (currency0 as unknown as Currency) : undefined
+  const q = currency1 && !isSolana(currency1.chainId) ? (currency1 as unknown as Currency) : undefined
+  const [, , marketPrice] = usePoolMarketPrice(b, q)
 
   const updatePrice = useCallback(
     (input: string | null) => {
@@ -76,9 +79,11 @@ export const FieldStartingPrice: React.FC<FieldStartingPriceProps> = ({
 
   useEffect(() => {
     if (isMounted && prevInverted !== inverted && startPrice !== null) {
+      const b = baseCurrency && !isSolana(baseCurrency.chainId) ? (baseCurrency as unknown as Currency) : undefined
+      const q = quoteCurrency && !isSolana(quoteCurrency.chainId) ? (quoteCurrency as unknown as Currency) : undefined
       const newPrice = prevInverted
-        ? tryParsePrice(quoteCurrency, baseCurrency, startPrice.toString())
-        : tryParsePrice(baseCurrency, quoteCurrency, startPrice.toString())
+        ? tryParsePrice(q, b, startPrice.toString())
+        : tryParsePrice(b, q, startPrice.toString())
       const revertPrice = newPrice?.invert()
       updatePrice(revertPrice?.denominator ? revertPrice.toFixed(8) : null)
     }
@@ -132,7 +137,14 @@ export const FieldStartingPrice: React.FC<FieldStartingPriceProps> = ({
           </FlexGap>
         )}
       </FlexGap>
-      <StartingPriceInput value={startPrice} onUserInput={updatePrice} unit={unit} currency={quoteCurrency} />
+      <StartingPriceInput
+        value={startPrice}
+        onUserInput={updatePrice}
+        unit={unit}
+        currency={
+          quoteCurrency && !isSolana(quoteCurrency.chainId) ? (quoteCurrency as unknown as Currency) : undefined
+        }
+      />
     </Box>
   )
 }

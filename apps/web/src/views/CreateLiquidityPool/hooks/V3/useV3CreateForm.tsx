@@ -8,7 +8,8 @@ import { tryParsePrice } from 'hooks/v3/utils'
 import { V3SubmitButton } from 'views/AddLiquidityV3/components/V3SubmitButton'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount } from '@pancakeswap/sdk'
+import { Currency, CurrencyAmount, isUnifedCurrencySorted, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
+import { isSolana } from '@pancakeswap/chains'
 import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { CurrencyField as Field } from 'utils/types'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
@@ -98,6 +99,9 @@ export const useV3CreateForm = () => {
   const formState = useV3FormState()
   const { independentField, typedValue, startPriceTypedValue, leftRangeTypedValue, rightRangeTypedValue } = formState
 
+  const b = baseCurrency && !isSolana(baseCurrency.chainId) ? (baseCurrency as unknown as Currency) : undefined
+  const q = quoteCurrency && !isSolana(quoteCurrency.chainId) ? (quoteCurrency as unknown as Currency) : undefined
+
   const {
     pool,
     ticks,
@@ -118,14 +122,7 @@ export const useV3CreateForm = () => {
     invertPrice,
     ticksAtLimit,
     tickSpaceLimits,
-  } = useV3DerivedInfo(
-    baseCurrency ?? undefined,
-    quoteCurrency ?? undefined,
-    feeAmount,
-    baseCurrency ?? undefined,
-    undefined,
-    formState,
-  )
+  } = useV3DerivedInfo(b, q, feeAmount, b, undefined, formState)
 
   // Currency validation
   const addIsWarning = useIsTransactionWarning(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
@@ -186,9 +183,11 @@ export const useV3CreateForm = () => {
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
 
   // Left and Right values for displaying in Preview Modal
-  const tokenA = (baseCurrency ?? undefined)?.wrapped
-  const tokenB = (quoteCurrency ?? undefined)?.wrapped
-  const isSorted = tokenA && tokenB && tokenA.sortsBefore(tokenB)
+  const isSorted = Boolean(
+    baseCurrency &&
+      quoteCurrency &&
+      isUnifedCurrencySorted(baseCurrency as unknown as UnifiedCurrency, quoteCurrency as unknown as UnifiedCurrency),
+  )
 
   const rangeLeftPrice = isSorted ? priceLower : priceUpper?.invert()
   const rangeRightPrice = isSorted ? priceUpper : priceLower?.invert()
@@ -268,16 +267,16 @@ export const useV3CreateForm = () => {
 
   // Range Inputs
   const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
-    useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, feeAmount, tickLower, tickUpper, pool)
+    useRangeHopCallbacks(b ?? undefined, q ?? undefined, feeAmount, tickLower, tickUpper, pool)
 
   const onBothRangePriceInput = useCallback(
     (leftRangeValue: string, rightRangeValue: string) => {
       onBothRangeInput({
-        leftTypedValue: tryParsePrice(baseCurrency?.wrapped, quoteCurrency?.wrapped, leftRangeValue),
-        rightTypedValue: tryParsePrice(baseCurrency?.wrapped, quoteCurrency?.wrapped, rightRangeValue),
+        leftTypedValue: tryParsePrice(b?.wrapped, q?.wrapped, leftRangeValue),
+        rightTypedValue: tryParsePrice(b?.wrapped, q?.wrapped, rightRangeValue),
       })
     },
-    [baseCurrency, quoteCurrency, onBothRangeInput],
+    [b, q, onBothRangeInput],
   )
 
   const onLeftRangePriceInput = useCallback(
@@ -364,7 +363,7 @@ export const useV3CreateForm = () => {
       return
     }
 
-    const useNative = baseCurrency.isNative ? baseCurrency : quoteCurrency.isNative ? quoteCurrency : undefined
+    const useNative = b?.isNative ? b : q?.isNative ? q : undefined
 
     const { calldata, value } = NonfungiblePositionManager.addCallParameters(position, {
       slippageTolerance: basisPointsToPercent(allowedSlippage),

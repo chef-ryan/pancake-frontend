@@ -6,6 +6,8 @@ import { tryParsePrice } from 'hooks/v3/utils'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useActiveIdQueryState, useBinStepQueryState, useStartingPriceQueryState } from 'state/infinity/create'
 import { useInverted } from 'state/infinity/shared'
+import { isSolana } from '@pancakeswap/chains'
+import { Currency } from '@pancakeswap/swap-sdk-core'
 import { useCurrencies } from '../hooks/useCurrencies'
 
 type FieldBinStepProps = BoxProps
@@ -15,6 +17,8 @@ export const FieldBinStep: React.FC<FieldBinStepProps> = ({ ...boxProps }) => {
   const [binStep, setBinStep] = useBinStepQueryState()
   const [activeId, setActiveId] = useActiveIdQueryState()
   const { currency0, currency1 } = useCurrencies()
+  const c0 = currency0 && !isSolana(currency0.chainId) ? (currency0 as unknown as Currency) : undefined
+  const c1 = currency1 && !isSolana(currency1.chainId) ? (currency1 as unknown as Currency) : undefined
   const [startPrice] = useStartingPriceQueryState()
   const [inverted] = useInverted()
 
@@ -30,9 +34,7 @@ export const FieldBinStep: React.FC<FieldBinStepProps> = ({ ...boxProps }) => {
     (value: string) => {
       setBinStep(value === '' ? null : Number(value))
       if (startPrice && value !== '' && activeId !== null && currency0 && currency1) {
-        const price = inverted
-          ? tryParsePrice(currency1, currency0, startPrice)
-          : tryParsePrice(currency0, currency1, startPrice)
+        const price = inverted ? tryParsePrice(c1, c0, startPrice) : tryParsePrice(c0, c1, startPrice)
         if (!price) return
         const newActiveId = getIdFromCurrencyPrice(inverted ? price.invert() : price, Number(value))
         setActiveId(newActiveId)

@@ -10,6 +10,7 @@ import { useAddLiquidityV2FormState } from 'state/mint/reducer'
 import { useDerivedMintInfo, useMintActionHandlers } from 'state/mint/hooks'
 import { ReactNode, useCallback, useMemo, useState } from 'react'
 import { Currency, CurrencyAmount, isCurrencySorted, Pair, Price, Token } from '@pancakeswap/sdk'
+import { isSolana } from '@pancakeswap/chains'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { CurrencyField as Field } from 'utils/types'
 import { BIG_INT_ZERO, V2_ROUTER_ADDRESS } from 'config/constants/exchange'
@@ -70,6 +71,9 @@ export const useV2CreateForm = () => {
 
   // Shared Create Liquidity State
   const { baseCurrency, quoteCurrency } = useCurrencies()
+  const evmBase = baseCurrency && !isSolana(baseCurrency.chainId) ? (baseCurrency as unknown as Currency) : undefined
+  const evmQuote =
+    quoteCurrency && !isSolana(quoteCurrency.chainId) ? (quoteCurrency as unknown as Currency) : undefined
   const [startPriceTypedValue] = useStartingPriceQueryState()
 
   // Transaction Actions
@@ -94,8 +98,8 @@ export const useV2CreateForm = () => {
   const routerContract = useRouterContract()
   const { independentField, typedValue, otherTypedValue } = useAddLiquidityV2FormState()
   const { dependentField, currencies, currencyBalances, noLiquidity, isOneWeiAttack, pairState } = useDerivedMintInfo(
-    baseCurrency ?? undefined,
-    quoteCurrency ?? undefined,
+    evmBase ?? undefined,
+    evmQuote ?? undefined,
   )
 
   // Validation
@@ -119,28 +123,28 @@ export const useV2CreateForm = () => {
 
   // Calculate amounts based on starting price
   const pair = useMemo(() => {
-    if (!baseCurrency || !quoteCurrency || !startPriceTypedValue) return undefined
+    if (!evmBase || !evmQuote || !startPriceTypedValue) return undefined
 
-    const baseCurrencyAmount = tryParseCurrencyAmount('1', baseCurrency.wrapped)
-    const quoteCurrencyAmount = tryParseCurrencyAmount(startPriceTypedValue, quoteCurrency.wrapped)
+    const baseCurrencyAmount = tryParseCurrencyAmount('1', evmBase.wrapped)
+    const quoteCurrencyAmount = tryParseCurrencyAmount(startPriceTypedValue, evmQuote.wrapped)
 
     if (!baseCurrencyAmount || !quoteCurrencyAmount) return undefined
 
     return new Pair(baseCurrencyAmount, quoteCurrencyAmount)
-  }, [baseCurrency, quoteCurrency, startPriceTypedValue])
+  }, [evmBase, evmQuote, startPriceTypedValue])
 
   const independentAmount: CurrencyAmount<Currency> | undefined = useMemo(() => {
-    return tryParseAmount(typedValue, currencies[independentField])
+    return tryParseAmount(typedValue, currencies[independentField] as any)
   }, [typedValue, currencies, independentField])
 
   const dependentAmount: CurrencyAmount<Currency> | undefined = useMemo(() => {
     if (independentAmount) {
       // we wrap the currencies just to get the price in terms of the other token
       const wrappedIndependentAmount = independentAmount?.wrapped
-      const [tokenA, tokenB] = [baseCurrency?.wrapped, quoteCurrency?.wrapped]
+      const [tokenA, tokenB] = [evmBase?.wrapped, evmQuote?.wrapped]
 
       if (tokenA && tokenB && wrappedIndependentAmount && pair) {
-        const dependentCurrency = dependentField === Field.CURRENCY_B ? quoteCurrency : baseCurrency
+        const dependentCurrency = dependentField === Field.CURRENCY_B ? evmQuote : evmBase
         const dependentTokenAmount =
           dependentField === Field.CURRENCY_B
             ? pair.priceOf(tokenA).quote(wrappedIndependentAmount)
@@ -220,9 +224,9 @@ export const useV2CreateForm = () => {
     if (!pair || pair.reserve0.quotient === BIG_INT_ZERO || pair.reserve1.quotient === BIG_INT_ZERO) {
       return undefined
     }
-    const wrappedCurrencyA = baseCurrency?.wrapped
+    const wrappedCurrencyA = evmBase?.wrapped
     return wrappedCurrencyA ? pair.priceOf(wrappedCurrencyA) : undefined
-  }, [baseCurrency, noLiquidity, pair, parsedAmounts])
+  }, [evmBase, noLiquidity, pair, parsedAmounts])
 
   const pairExplorerLink = useMemo(
     () => (pair && getBlockExploreLink(Pair.getAddress(pair.token0, pair.token1), 'address', chainId)) || undefined,

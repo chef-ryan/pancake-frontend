@@ -24,7 +24,8 @@ import { useActiveIdQueryState, useBinStepQueryState, useStartingPriceQueryState
 import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { useBinRangeQueryState, useClRangeQueryState, useInverted } from 'state/infinity/shared'
 import styled from 'styled-components'
-import { Currency } from '@pancakeswap/sdk'
+import { Currency } from '@pancakeswap/swap-sdk-core'
+import { isSolana } from '@pancakeswap/chains'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { truncateText } from 'utils'
 import { useInfinityCreateFormQueryState } from '../hooks/useInfinityFormState/useInfinityFormQueryState'
@@ -55,14 +56,18 @@ export const FieldStartingPrice: React.FC<FieldStartingPriceProps> = ({ ...boxPr
 
   const { switchCurrencies } = useSelectIdRouteParams()
 
-  const [, , marketPrice] = usePoolMarketPrice(currency0, currency1)
+  const b = currency0 && !isSolana(currency0.chainId) ? (currency0 as unknown as Currency) : undefined
+  const q = currency1 && !isSolana(currency1.chainId) ? (currency1 as unknown as Currency) : undefined
+  const [, , marketPrice] = usePoolMarketPrice(b, q)
 
   const updatePriceToBinId = useCallback(
     (value: string) => {
       if (isBin && binStep !== null) {
+        const c0 = currency0 && !isSolana(currency0.chainId) ? (currency0 as unknown as Currency) : undefined
+        const c1 = currency1 && !isSolana(currency1.chainId) ? (currency1 as unknown as Currency) : undefined
         const price = inverted
-          ? tryParsePrice(currency1, currency0, new BigNumber(value).toJSON())
-          : tryParsePrice(currency0, currency1, new BigNumber(value).toJSON())
+          ? tryParsePrice(c1, c0, new BigNumber(value).toJSON())
+          : tryParsePrice(c0, c1, new BigNumber(value).toJSON())
         if (!price) {
           setActiveId(null)
         } else {
@@ -127,9 +132,11 @@ export const FieldStartingPrice: React.FC<FieldStartingPriceProps> = ({ ...boxPr
 
   useEffect(() => {
     if (isMounted && prevInverted !== inverted && startPrice !== null) {
+      const b = baseCurrency && !isSolana(baseCurrency.chainId) ? (baseCurrency as unknown as Currency) : undefined
+      const q = quoteCurrency && !isSolana(quoteCurrency.chainId) ? (quoteCurrency as unknown as Currency) : undefined
       const newPrice = prevInverted
-        ? tryParsePrice(quoteCurrency, baseCurrency, startPrice.toString())
-        : tryParsePrice(baseCurrency, quoteCurrency, startPrice.toString())
+        ? tryParsePrice(q, b, startPrice.toString())
+        : tryParsePrice(b, q, startPrice.toString())
       const revertPrice = newPrice?.invert()
       updatePrice(revertPrice?.denominator ? revertPrice.toFixed(8) : null)
     }
@@ -183,7 +190,14 @@ export const FieldStartingPrice: React.FC<FieldStartingPriceProps> = ({ ...boxPr
           </FlexGap>
         </FlexGap>
       )}
-      <StartingPriceInput value={startPrice} onUserInput={updatePrice} unit={unit} currency={quoteCurrency} />
+      <StartingPriceInput
+        value={startPrice}
+        onUserInput={updatePrice}
+        unit={unit}
+        currency={
+          quoteCurrency && !isSolana(quoteCurrency.chainId) ? (quoteCurrency as unknown as Currency) : undefined
+        }
+      />
     </Box>
   )
 }

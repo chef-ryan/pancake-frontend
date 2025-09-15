@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Price, Token } from '@pancakeswap/sdk'
+import { Currency, isUnifedCurrencySorted, Price, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { AutoColumn, FlexGap, Text, Input, Button, Box, RowBetween, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { priceToClosestTick, FeeAmount } from '@pancakeswap/v3-sdk'
 import { ZoomLevels } from '@pancakeswap/widgets-internal'
@@ -7,7 +7,7 @@ import { Bound } from 'config/constants/types'
 import { useMemo, useState, useCallback } from 'react'
 import { formatRangeSelectorPrice } from 'utils/formatRangeSelectorPrice'
 import { styled } from 'styled-components'
-import { QUICK_ACTION_CONFIGS } from 'views/AddLiquidityV3/types'
+import { useQuickActionConfigs } from 'views/AddLiquidityV3/hooks/useQuickActionConfigs'
 import StepCounter from './StepCounter'
 
 const CustomInputContainer = styled(Box)<{ $small?: boolean }>`
@@ -81,30 +81,30 @@ export default function V3RangeSelector({
   tickSpaceLimits,
   quickAction,
   handleQuickAction,
+  defaultRangePoints,
 }: {
-  priceLower?: Price<Token, Token>
-  priceUpper?: Price<Token, Token>
-  getDecrementLower: () => Price<Token, Token> | undefined
-  getIncrementLower: () => Price<Token, Token> | undefined
-  getDecrementUpper: () => Price<Token, Token> | undefined
-  getIncrementUpper: () => Price<Token, Token> | undefined
+  priceLower?: Price<Currency, Currency>
+  priceUpper?: Price<Currency, Currency>
+  getDecrementLower: () => Price<Currency, Currency> | undefined
+  getIncrementLower: () => Price<Currency, Currency> | undefined
+  getDecrementUpper: () => Price<Currency, Currency> | undefined
+  getIncrementUpper: () => Price<Currency, Currency> | undefined
   onLeftRangeInput: (typedValue: Price<Currency, Currency> | undefined) => void
   onRightRangeInput: (typedValue: Price<Currency, Currency> | undefined) => void
-  currencyA?: Currency | undefined | null
-  currencyB?: Currency | undefined | null
+  currencyA?: UnifiedCurrency | undefined | null
+  currencyB?: UnifiedCurrency | undefined | null
   feeAmount?: FeeAmount
   ticksAtLimit: { [bound in Bound]?: boolean | undefined }
   tickSpaceLimits?: { [bound in Bound]?: number | undefined }
   quickAction: number | null
   handleQuickAction: (value: number | null, zoomLevel: ZoomLevels) => void
+  defaultRangePoints?: number[]
 }) {
   const { t } = useTranslation()
   const { isMobile, isTablet } = useMatchBreakpoints()
   const isSmallScreen = isMobile || isTablet
 
-  const tokenA = (currencyA ?? undefined)?.wrapped
-  const tokenB = (currencyB ?? undefined)?.wrapped
-  const isSorted = tokenA && tokenB && tokenA.sortsBefore(tokenB)
+  const isSorted = Boolean(currencyA && currencyB && isUnifedCurrencySorted(currencyA, currencyB))
 
   const leftPrice = isSorted ? priceLower : priceUpper?.invert()
   const rightPrice = isSorted ? priceUpper : priceLower?.invert()
@@ -145,32 +145,30 @@ export default function V3RangeSelector({
     return formatRangeSelectorPrice(rightPrice)
   }, [isSorted, rightPrice, tickSpaceLimits, ticksAtLimit])
 
-  // const haveRange = useMemo(() => priceLower !== undefined && priceUpper !== undefined, [priceLower, priceUpper])
-
-  // Get quick action configs for current fee tier - reuse existing configs
-  const quickActionConfigs = useMemo(() => {
-    if (!feeAmount) return {}
-    return QUICK_ACTION_CONFIGS[feeAmount] || {}
-  }, [feeAmount])
+  const quickActionConfigs = useQuickActionConfigs({
+    defaultRangePoints,
+    feeAmount,
+  })
 
   // Custom input state - completely separate from quick actions
   const [customInput, setCustomInput] = useState('')
 
   // Calculate zoom level based purely on percentage - ensure range is always visible
-  const calculateZoomLevel = useCallback((percentage: number): ZoomLevels => {
-    const initialMin = 1 - percentage / 100
-    const initialMax = 1 + percentage / 100
+  const calculateZoomLevel = useCallback(
+    (percentage: number): ZoomLevels => {
+      const initialMin = 1 - percentage / 100
+      const initialMax = 1 + percentage / 100
+      const { min, max } = quickActionConfigs ? Object.values(quickActionConfigs)[0] : { min: 0.00001, max: 20 }
 
-    const min = feeAmount ? Object.values(QUICK_ACTION_CONFIGS[feeAmount])[0]?.min : 0.00001
-    const max = feeAmount ? Object.values(QUICK_ACTION_CONFIGS[feeAmount])[0]?.max : 20
-
-    return {
-      initialMin,
-      initialMax,
-      min,
-      max,
-    }
-  }, [])
+      return {
+        initialMin,
+        initialMax,
+        min,
+        max,
+      }
+    },
+    [quickActionConfigs],
+  )
 
   // Handle predefined quick action clicks
   const handleQuickActionClick = useCallback(
@@ -183,7 +181,7 @@ export default function V3RangeSelector({
       handleQuickAction(percentage, zoomLevel)
       setCustomInput('') // Clear custom input when using quick action
     },
-    [handleQuickAction, calculateZoomLevel],
+    [quickAction, handleQuickAction, calculateZoomLevel],
   )
 
   // Handle custom input - ONLY update input value with 0-100 validation
@@ -275,18 +273,19 @@ export default function V3RangeSelector({
 
       {/* Quick Action Buttons with Simple Validation */}
       <ButtonsContainer width="100%" justifyContent="space-between">
-        {Object.entries(quickActionConfigs)
-          ?.sort(([a], [b]) => +a - +b)
-          .map(([percentage]) => (
-            <QuickActionButton
-              key={percentage}
-              onClick={() => handleQuickActionClick(Number(percentage))}
-              $isActive={Number(percentage) === quickAction}
-              width="100%"
-            >
-              {percentage}%
-            </QuickActionButton>
-          ))}
+        {quickActionConfigs &&
+          Object.entries(quickActionConfigs)
+            ?.sort(([a], [b]) => +a - +b)
+            .map(([percentage]) => (
+              <QuickActionButton
+                key={percentage}
+                onClick={() => handleQuickActionClick(Number(percentage))}
+                $isActive={Number(percentage) === quickAction}
+                width="100%"
+              >
+                {percentage}%
+              </QuickActionButton>
+            ))}
 
         <QuickActionButton
           width="100%"

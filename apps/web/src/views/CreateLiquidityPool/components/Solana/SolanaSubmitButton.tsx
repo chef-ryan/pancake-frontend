@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount } from '@pancakeswap/sdk'
+import { UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { AutoColumn, Button } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { CommitButton } from 'components/CommitButton'
@@ -13,8 +13,8 @@ export interface SolanaSubmitButtonProps {
   isWrongNetwork: boolean
   isValid: boolean
   parsedAmounts: {
-    CURRENCY_A?: CurrencyAmount<Currency>
-    CURRENCY_B?: CurrencyAmount<Currency>
+    CURRENCY_A?: UnifiedCurrencyAmount<UnifiedCurrency>
+    CURRENCY_B?: UnifiedCurrencyAmount<UnifiedCurrency>
   }
   onClick: () => void | Promise<void>
   attemptingTxn: boolean

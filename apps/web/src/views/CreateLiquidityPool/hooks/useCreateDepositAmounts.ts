@@ -1,4 +1,5 @@
 import { Currency, CurrencyAmount, isCurrencySorted } from '@pancakeswap/swap-sdk-core'
+import { isSolana } from '@pancakeswap/chains'
 import {
   encodeSqrtRatioX96,
   maxLiquidityForAmount0Imprecise,
@@ -42,7 +43,9 @@ export const useCreateDepositAmountsEnabled = () => {
   const { isCl, isBin } = useInfinityCreateFormQueryState()
   const { lowerTick, upperTick, tickSpacing } = useInfinityCLQueryState()
   const { lowerBinId, upperBinId, activeId } = useInfinityBinQueryState()
-  const { lowerPrice, upperPrice } = useCLPriceRange(baseCurrency, quoteCurrency, tickSpacing ?? undefined)
+  const b = baseCurrency && !isSolana(baseCurrency.chainId) ? (baseCurrency as unknown as Currency) : undefined
+  const q = quoteCurrency && !isSolana(quoteCurrency.chainId) ? (quoteCurrency as unknown as Currency) : undefined
+  const { lowerPrice, upperPrice } = useCLPriceRange(b, q, tickSpacing ?? undefined)
 
   const isDepositEnabled = useMemo(() => {
     if (isCl) {
@@ -139,7 +142,9 @@ export const useClDepositAmounts = () => {
     let amount1: CurrencyAmount<Currency> | undefined
 
     if (lastEdit.lastEditCurrency === 0) {
-      amount0 = tryParseCurrencyAmount(lastEdit.lastEditAmount, currency0)
+      const c0 = currency0 && !isSolana(currency0.chainId) ? (currency0 as unknown as Currency) : undefined
+      const c1 = currency1 && !isSolana(currency1.chainId) ? (currency1 as unknown as Currency) : undefined
+      amount0 = tryParseCurrencyAmount(lastEdit.lastEditAmount, c0)
 
       if (!amount0 || amount0.equalTo(0) || startPriceFraction.equalTo(0)) return [undefined, undefined]
 
@@ -157,12 +162,14 @@ export const useClDepositAmounts = () => {
           false,
         )
 
-        amount1 = CurrencyAmount.fromRawAmount(currency1, amount1Raw)
+        amount1 = c1 ? CurrencyAmount.fromRawAmount(c1, amount1Raw) : undefined
       } else {
-        amount1 = CurrencyAmount.fromRawAmount(currency1, 0n)
+        amount1 = c1 ? CurrencyAmount.fromRawAmount(c1, 0n) : undefined
       }
     } else {
-      amount1 = tryParseCurrencyAmount(lastEdit.lastEditAmount, currency1)
+      const c0 = currency0 && !isSolana(currency0.chainId) ? (currency0 as unknown as Currency) : undefined
+      const c1 = currency1 && !isSolana(currency1.chainId) ? (currency1 as unknown as Currency) : undefined
+      amount1 = tryParseCurrencyAmount(lastEdit.lastEditAmount, c1)
 
       if (!amount1 || amount1.equalTo(0) || startPriceFraction.equalTo(0)) return [undefined, undefined]
 
@@ -176,9 +183,9 @@ export const useClDepositAmounts = () => {
           true,
         )
 
-        amount0 = CurrencyAmount.fromRawAmount(currency0, rawAmount0)
+        amount0 = c0 ? CurrencyAmount.fromRawAmount(c0, rawAmount0) : undefined
       } else {
-        amount0 = CurrencyAmount.fromRawAmount(currency0, 0n)
+        amount0 = c0 ? CurrencyAmount.fromRawAmount(c0, 0n) : undefined
       }
     }
     return [amount0, amount1]
@@ -236,20 +243,23 @@ export const useBinDepositAmounts = () => {
   const handleDepositAmountChange = useCallback(
     (amount: string, currency: 0 | 1) => {
       if (!currency0 || !currency1) return
+      const c0 = !isSolana(currency0.chainId) ? (currency0 as unknown as Currency) : undefined
+      const c1 = !isSolana(currency1.chainId) ? (currency1 as unknown as Currency) : undefined
+      if (!c0 || !c1) return
       const rawAmount = amount === '' ? null : amount
-      const parsedAmount = parseUnits(rawAmount ?? '0', currency === 0 ? currency0.decimals : currency1.decimals)
+      const parsedAmount = parseUnits(rawAmount ?? '0', currency === 0 ? c0.decimals : c1.decimals)
 
       if (currency === 0) {
         setInputValue0(amount)
         setDepositCurrencyAmounts({
           ...depositCurrencyAmounts,
-          depositCurrencyAmount0: amount === '' ? null : CurrencyAmount.fromRawAmount(currency0, parsedAmount),
+          depositCurrencyAmount0: amount === '' ? null : CurrencyAmount.fromRawAmount(c0, parsedAmount),
         })
       } else {
         setInputValue1(amount)
         setDepositCurrencyAmounts({
           ...depositCurrencyAmounts,
-          depositCurrencyAmount1: amount === '' ? null : CurrencyAmount.fromRawAmount(currency1, parsedAmount),
+          depositCurrencyAmount1: amount === '' ? null : CurrencyAmount.fromRawAmount(c1, parsedAmount),
         })
       }
     },

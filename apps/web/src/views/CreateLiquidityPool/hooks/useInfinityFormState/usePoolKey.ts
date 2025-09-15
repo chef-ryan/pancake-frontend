@@ -25,10 +25,14 @@ export const usePoolKey = (): PoolKey | undefined => {
 
   return useMemo(() => {
     if (!currency0 || !currency1) return undefined
+    // Only build PoolKey for EVM currencies with hex addresses
+    const addr0 = currency0.isNative ? zeroAddress : currency0.wrapped.address
+    const addr1 = currency1.wrapped.address
+    if (!addr0.startsWith('0x') || !addr1.startsWith('0x')) return undefined
 
     const commonPoolKey = {
-      currency0: currency0.isNative ? zeroAddress : currency0.wrapped.address,
-      currency1: currency1.wrapped.address,
+      currency0: addr0 as `0x${string}`,
+      currency1: addr1 as `0x${string}`,
       hooks: selectedHook?.address ?? zeroAddress,
       poolManager: getPoolManagerAddress(poolType, chainId) ?? '0x',
       fee: feeTierSetting === 'static' ? parseFloat(Number(lpFee ?? 0).toFixed(0)) : DYNAMIC_FEE_FLAG,

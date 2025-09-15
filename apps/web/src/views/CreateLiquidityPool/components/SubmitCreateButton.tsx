@@ -1,6 +1,7 @@
 import { getCurrencyPriceFromId, MAX_BIN_STEP, MIN_BIN_STEP } from '@pancakeswap/infinity-sdk'
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency, isCurrencySorted, Price } from '@pancakeswap/swap-sdk-core'
+import { isSolana } from '@pancakeswap/chains'
 import {
   AutoColumn,
   Box,
@@ -164,9 +165,11 @@ export const SubmitCreateButton: React.FC<SubmitCreateButtonProps> = ({ ...boxPr
 
   // CL
   const { tickSpacing } = useInfinityCLQueryState()
+  const c0 = currency0 && !isSolana(currency0.chainId) ? (currency0 as unknown as Currency) : undefined
+  const c1 = currency1 && !isSolana(currency1.chainId) ? (currency1 as unknown as Currency) : undefined
   const { lowerPrice, upperPrice, minPrice, maxPrice } = useCLPriceRange(
-    currency0,
-    currency1,
+    c0,
+    c1,
     tickSpacing ?? undefined,
     formatPreviewPrice,
   )
@@ -215,10 +218,7 @@ export const SubmitCreateButton: React.FC<SubmitCreateButtonProps> = ({ ...boxPr
     () => Boolean(depositCurrencyAmount0 || depositCurrencyAmount1),
     [depositCurrencyAmount0, depositCurrencyAmount1],
   )
-  const currencies = useMemo(
-    () => ({ [Field.CURRENCY_A]: currency0, [Field.CURRENCY_B]: currency1 }),
-    [currency0, currency1],
-  )
+  const currencies = useMemo(() => ({ [Field.CURRENCY_A]: c0, [Field.CURRENCY_B]: c1 }), [c0, c1])
   const shouldShowApprovalGroup = useMemo(
     () =>
       isDepositFilled &&
@@ -337,14 +337,14 @@ export const SubmitCreateButton: React.FC<SubmitCreateButtonProps> = ({ ...boxPr
   ])
 
   const currency0UsdValue = useStablecoinPriceAmount(
-    currency0,
+    c0,
     depositCurrencyAmount0 ? Number(depositCurrencyAmount0.toExact()) : undefined,
     {
       enabled: Boolean(depositCurrencyAmount0),
     },
   )
   const currency1UsdValue = useStablecoinPriceAmount(
-    currency1,
+    c1,
     depositCurrencyAmount1 ? Number(depositCurrencyAmount1.toExact()) : undefined,
   )
   const lowLiquidity = useMemo(() => {
@@ -357,21 +357,21 @@ export const SubmitCreateButton: React.FC<SubmitCreateButtonProps> = ({ ...boxPr
 
   // Get Bin min and max price for the preview modal
   const [minPriceBin, maxPriceBin] = useMemo(() => {
-    if (!currency0 || !currency1 || binStep === null) return [undefined, undefined]
+    if (!c0 || !c1 || binStep === null) return [undefined, undefined]
 
     let lowerPrice: Price<Currency, Currency> | undefined
     let upperPrice: Price<Currency, Currency> | undefined
 
     if (lowerBinId) {
-      lowerPrice = getCurrencyPriceFromId(lowerBinId, binStep, currency0, currency1)
+      lowerPrice = getCurrencyPriceFromId(lowerBinId, binStep, c0, c1)
     }
 
     if (upperBinId) {
-      upperPrice = getCurrencyPriceFromId(upperBinId, binStep, currency0, currency1)
+      upperPrice = getCurrencyPriceFromId(upperBinId, binStep, c0, c1)
     }
 
     return inverted ? [upperPrice?.invert(), lowerPrice?.invert()] : [lowerPrice, upperPrice]
-  }, [currency0, currency1, binStep, lowerBinId, upperBinId, inverted])
+  }, [c0, c1, binStep, lowerBinId, upperBinId, inverted])
 
   return (
     <Box {...boxProps}>
@@ -385,8 +385,8 @@ export const SubmitCreateButton: React.FC<SubmitCreateButtonProps> = ({ ...boxPr
             maxBinId={maxBinId}
             binStep={binStep}
             inverted={inverted}
-            baseCurrency={currency0}
-            quoteCurrency={currency1}
+            baseCurrency={c0}
+            quoteCurrency={c1}
           />
         )}
       </AutoColumn>

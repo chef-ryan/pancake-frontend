@@ -6,7 +6,7 @@ export default function LiquidityFormProvider({
   onAddLiquidityCallback,
 }: {
   children: React.ReactNode
-  onAddLiquidityCallback?: (hash: `0x${string}`) => void
+  onAddLiquidityCallback?: (hash: string) => void
 }) {
   const formAtom = useMemo(() => createFormAtom(), [])
 

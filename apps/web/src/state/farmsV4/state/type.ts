@@ -45,11 +45,13 @@ export type BasePoolInfo = {
 
 type SolanaPoolResp =
   paths['/cached/v1/pools/info/ids']['get']['responses']['200']['content']['application/json']['data'][0]
-export type SolV3PoolInfo = Omit<BasePoolInfo, 'token0' | 'token1'> & {
+export type SolV3PoolInfo = Omit<BasePoolInfo, 'token0' | 'token1' | 'lpAddress' | 'stableSwapAddress'> & {
   protocol: Protocol.V3
   solanaData: SolanaPoolResp
   token0: UnifiedCurrency
   token1: UnifiedCurrency
+  lpAddress: string
+  poolId: string
 }
 
 export type V3PoolInfo = BasePoolInfo & {

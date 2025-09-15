@@ -2,19 +2,20 @@ import { NonEVMChainId } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
 import { isSolWSol, SOL } from '@pancakeswap/sdk'
 import { SPLToken } from '@pancakeswap/swap-sdk-core'
+import type { SolV3PoolInfo } from 'state/farmsV4/state/type'
 import type { paths } from 'state/info/api/solSchema'
 
 type SolanaPoolInfoFromApi =
   paths['/cached/v1/pools/info/ids']['get']['responses']['200']['content']['application/json']['data'][0]
 
-export const normalizeSolanaPoolInfo = (solanaPoolInfo?: SolanaPoolInfoFromApi) => {
+export const normalizeSolanaPoolInfo = (solanaPoolInfo?: SolanaPoolInfoFromApi): SolV3PoolInfo | null => {
   if (!solanaPoolInfo) return null
   const token0 = new SPLToken({ ...solanaPoolInfo.mintA, chainId: NonEVMChainId.SOLANA })
   const token1 = new SPLToken({ ...solanaPoolInfo.mintB, chainId: NonEVMChainId.SOLANA })
 
   return {
     chainId: NonEVMChainId.SOLANA,
-    lpAddress: solanaPoolInfo.id as `0x${string}`,
+    lpAddress: solanaPoolInfo.id,
     poolId: solanaPoolInfo.id,
     protocol: Protocol.V3 as const,
     token0,

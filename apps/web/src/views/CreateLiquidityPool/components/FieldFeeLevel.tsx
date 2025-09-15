@@ -17,8 +17,13 @@ import {
   Text,
   Toggle,
   useMatchBreakpoints,
+  Select,
 } from '@pancakeswap/uikit'
+import type { OptionProps } from '@pancakeswap/uikit'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { NonEVMChainId } from '@pancakeswap/chains'
+import { useActiveChainId } from 'hooks/useAccountActiveChain'
+import { useSolanaClmmFeeTiers } from 'hooks/solana/useSolanaClmmFeeTiers'
 import { useFeeLevelQueryState, useFeeTierSettingQueryState } from 'state/infinity/create'
 import { escapeRegExp } from 'utils'
 import { useInfinityCreateFormQueryState } from '../hooks/useInfinityFormState/useInfinityFormQueryState'
@@ -53,6 +58,16 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ allowCustomFee, ..
 
   const { poolType } = useInfinityCreateFormQueryState()
   const [inputValue, setInputValue] = useState<string | null>(null)
+  const { chainId } = useActiveChainId()
+  const solanaFeeTiers = useSolanaClmmFeeTiers()
+
+  // Build dynamic options depending on chain (Solana uses CLMM config)
+  const options = useMemo(() => {
+    if (chainId === NonEVMChainId.SOLANA) {
+      return solanaFeeTiers
+    }
+    return PRESET_FEE_LEVELS_INFINITY
+  }, [chainId, solanaFeeTiers])
 
   const tips = useMemo(() => {
     if (!feeLevel || feeTierSetting === 'dynamic') return null
@@ -112,13 +127,13 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ allowCustomFee, ..
 
   const handleMenuItemClick = useCallback(
     (index: number) => {
-      if (index < PRESET_FEE_LEVELS_INFINITY.length) {
-        handleQuickSelect(PRESET_FEE_LEVELS_INFINITY[index])
+      if (index < options.length) {
+        handleQuickSelect(options[index])
       }
       // For custom fee input, we don't need to do anything here
       // as the input will be handled separately
     },
-    [handleQuickSelect],
+    [handleQuickSelect, options],
   )
 
   const handleFeeTierSettingChange = useCallback(
@@ -129,14 +144,14 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ allowCustomFee, ..
   )
 
   const activeIndex = useMemo(() => {
-    const presetIndex = PRESET_FEE_LEVELS_INFINITY.findIndex((preset) => preset === feeLevel)
+    const presetIndex = options.findIndex((preset) => preset === feeLevel)
     if (presetIndex !== -1) {
       return presetIndex
     }
 
     // If custom fee or unknown fee level is set, don't set it to active
     return -1
-  }, [feeLevel, allowCustomFee])
+  }, [feeLevel, allowCustomFee, options])
 
   const prevFeeLevel = usePreviousValue(feeLevel)
 
@@ -152,6 +167,22 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ allowCustomFee, ..
     }
   }, [feeLevel, prevFeeLevel])
 
+  // Build Select options and change handler (Solana)
+  const selectOptions: OptionProps[] = useMemo(
+    () => options.map((v) => ({ label: `${v}%`, value: String(v) })),
+    [options],
+  )
+
+  const handleSelectChange = useCallback(
+    (opt: OptionProps) => {
+      const v = Number(opt.value)
+      if (!Number.isNaN(v)) {
+        handleQuickSelect(v)
+      }
+    },
+    [handleQuickSelect],
+  )
+
   return (
     <Box {...boxProps}>
       <FlexGap justifyContent="space-between" alignItems="center">
@@ -165,59 +196,71 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ allowCustomFee, ..
           />
         </FlexGap>
 
-        <FlexGap gap="4px" alignItems="center">
-          <PreTitle>{t('Dynamic Fee')}</PreTitle>
-          <QuestionHelper
-            color="secondary"
-            placement="auto"
-            text={
-              <>
-                <Text>{t('Static: The fee remains fixed at the specified level once the pool is created.')}</Text>
-                <Text mt="12px">
-                  {t(
-                    'Dynamic: The fee can be modified using hook after the pool is created. Initial fee level is set to 0',
-                  )}
-                </Text>
-              </>
-            }
-          />
-          <Toggle checked={feeTierSetting === 'dynamic'} onChange={handleFeeTierSettingChange} scale="sm" />
-        </FlexGap>
+        {chainId !== NonEVMChainId.SOLANA && (
+          <FlexGap gap="4px" alignItems="center">
+            <PreTitle>{t('Dynamic Fee')}</PreTitle>
+            <QuestionHelper
+              color="secondary"
+              placement="auto"
+              text={
+                <>
+                  <Text>{t('Static: The fee remains fixed at the specified level once the pool is created.')}</Text>
+                  <Text mt="12px">
+                    {t(
+                      'Dynamic: The fee can be modified using hook after the pool is created. Initial fee level is set to 0',
+                    )}
+                  </Text>
+                </>
+              }
+            />
+            <Toggle checked={feeTierSetting === 'dynamic'} onChange={handleFeeTierSettingChange} scale="sm" />
+          </FlexGap>
+        )}
       </FlexGap>
 
-      <DynamicSection disabled={feeTierSetting === 'dynamic'}>
-        <ButtonMenu
-          activeIndex={activeIndex}
-          onItemClick={handleMenuItemClick}
-          variant="subtle"
-          fullWidth={!isMobile}
-          scale={isMobile ? 'sm' : 'md'}
-        >
-          <ButtonMenuItem padding={isMobile ? '0 8px' : '0 16px'}>{PRESET_FEE_LEVELS_INFINITY[0]}%</ButtonMenuItem>
-          <ButtonMenuItem padding={isMobile ? '0 8px' : '0 16px'}>{PRESET_FEE_LEVELS_INFINITY[1]}%</ButtonMenuItem>
-          <ButtonMenuItem padding={isMobile ? '0 8px' : '0 16px'}>{PRESET_FEE_LEVELS_INFINITY[2]}%</ButtonMenuItem>
+      {chainId === NonEVMChainId.SOLANA ? (
+        <Select
+          options={selectOptions}
+          defaultOptionIndex={activeIndex >= 0 ? activeIndex : 0}
+          onOptionChange={handleSelectChange}
+        />
+      ) : (
+        <DynamicSection disabled={feeTierSetting === 'dynamic'}>
+          <ButtonMenu
+            activeIndex={activeIndex}
+            onItemClick={handleMenuItemClick}
+            variant="subtle"
+            fullWidth={!isMobile}
+            scale={isMobile ? 'sm' : 'md'}
+          >
+            {options.map((opt) => (
+              <ButtonMenuItem key={opt} padding={isMobile ? '0 8px' : '0 16px'}>
+                {opt}%
+              </ButtonMenuItem>
+            ))}
 
-          {allowCustomFee ? (
-            <ButtonMenuItem padding="0">
-              <InputGroup scale={isMobile ? 'sm' : 'md'} endIcon={<>%</>}>
-                <StyledInput
-                  pattern={`^[0-9]*[.,]?[0-9]{0,${decimals}}$`}
-                  inputMode="decimal"
-                  placeholder={t('Custom')}
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={inputValue ?? ''}
-                  onBlur={handleInputBlur}
-                  onChange={handleInputChange}
-                />
-              </InputGroup>
-            </ButtonMenuItem>
-          ) : (
-            <></>
-          )}
-        </ButtonMenu>
-      </DynamicSection>
+            {allowCustomFee ? (
+              <ButtonMenuItem padding="0">
+                <InputGroup scale={isMobile ? 'sm' : 'md'} endIcon={<>%</>}>
+                  <StyledInput
+                    pattern={`^[0-9]*[.,]?[0-9]{0,${decimals}}$`}
+                    inputMode="decimal"
+                    placeholder={t('Custom')}
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    value={inputValue ?? ''}
+                    onBlur={handleInputBlur}
+                    onChange={handleInputChange}
+                  />
+                </InputGroup>
+              </ButtonMenuItem>
+            ) : (
+              <></>
+            )}
+          </ButtonMenu>
+        </DynamicSection>
+      )}
 
       {tips}
     </Box>

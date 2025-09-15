@@ -1,12 +1,12 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency } from '@pancakeswap/sdk'
+import { UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { Text, Heading } from '@pancakeswap/uikit'
 import { LightGreyCard, LightCardProps } from 'components/Card'
 
 interface RangePriceSectionProps extends LightCardProps {
   title: string
-  currency0?: Currency
-  currency1?: Currency
+  currency0?: UnifiedCurrency
+  currency1?: UnifiedCurrency
   price: string
 }
 

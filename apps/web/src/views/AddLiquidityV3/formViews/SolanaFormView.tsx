@@ -1,9 +1,16 @@
 import BN from 'bn.js'
 import { Protocol } from '@pancakeswap/farms'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Percent, isSolWSol, isUnifedCurrencySorted } from '@pancakeswap/sdk'
-import { useStablecoinPrice } from 'hooks/useStablecoinPrice'
-import { Price } from '@pancakeswap/swap-sdk-core'
+import {
+  Price,
+  Currency,
+  UnifiedCurrency,
+  UnifiedCurrencyAmount,
+  Percent,
+  isUnifedCurrencySorted,
+} from '@pancakeswap/swap-sdk-core'
+import { isSolWSol } from '@pancakeswap/sdk'
+import { useUnifiedUSDPriceAmount } from 'hooks/useStablecoinPrice'
 import {
   AutoColumn,
   Box,
@@ -20,7 +27,6 @@ import {
   RowBetween,
   SwapHorizIcon,
   Text,
-  Toggle,
   useMatchBreakpoints,
   useModal,
   useTooltip,
@@ -34,39 +40,35 @@ import {
   PricePeriodRangeChart,
   ZOOM_LEVELS,
   ZoomLevels,
+  DoubleCurrencyLogo,
 } from '@pancakeswap/widgets-internal'
 import BigNumber from 'bignumber.js'
 import CurrencyInputPanelSimplify from 'components/CurrencyInputPanelSimplify'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
 import { LightGreyCard } from 'components/Card'
 import Divider from 'components/Divider'
-import { DoubleCurrencyLogo } from 'components/Logo'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { RangePriceSection } from 'components/RangePriceSection'
 import { RangeTag } from 'components/RangeTag'
 import { Bound } from 'config/constants/types'
-import { useIsTransactionUnsupported, useIsTransactionWarning } from 'hooks/Trades'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { ApprovalState } from 'hooks/useApproveCallback'
-import { useUnifiedNativeCurrency } from 'hooks/useNativeCurrency'
 import { usePoolMarketPriceSlippage } from 'hooks/usePoolMarketPriceSlippage'
 import { tryParsePrice } from 'hooks/v3/utils'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from 'styled-components'
 import { logGTMClickAddLiquidityConfirmEvent, logGTMClickAddLiquidityEvent } from 'utils/customGTMEventTracking'
-import { formatPrice, formatCurrencyAmount } from 'utils/formatCurrencyAmount'
-import { maxAmountSpend } from 'utils/maxAmountSpend'
+import { formatPrice } from 'utils/formatCurrencyAmount'
+import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
 import { CurrencyField as Field } from 'utils/types'
 import { useTokenRateData } from 'views/AddLiquidityInfinity/components/useTokenToTokenRateData'
 import { getAxisTicks } from 'views/AddLiquidityInfinity/utils'
-import { V3SubmitButton } from 'views/AddLiquidityV3/components/V3SubmitButton'
+import { SolanaSubmitButton } from 'views/CreateLiquidityPool/components/Solana/SolanaSubmitButton'
 import { useSolanaDensityChartData } from 'views/AddLiquidityV3/hooks/useSolanaDensityChartData'
 import {
   useCurrencyInversionEvent,
   useHeaderInvertCurrencies,
 } from 'views/AddLiquidityV3/hooks/useHeaderInvertCurrencies'
-import { useNativeCurrencyInstead } from 'views/AddLiquidityV3/hooks/useNativeCurrencyInstead'
 import { HandleFeePoolSelectFn, QUICK_ACTION_CONFIGS } from 'views/AddLiquidityV3/types'
 import { MarketPriceSlippageWarning } from 'views/CreateLiquidityPool/components/SubmitCreateButton'
 import { Dot } from 'views/Notifications/styles'
@@ -77,15 +79,10 @@ import { useSolanaPoolByMint } from 'hooks/solana/useSolanaPoolsByMint'
 import { useRaydiumClient } from 'hooks/solana/useRaydiumClient'
 import { FieldFeeLevel } from 'views/CreateLiquidityPool/components/FieldFeeLevel'
 import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
-import { multiplyPriceByAmount } from 'utils/prices'
-import { useSolanaOnchainClmmPool } from 'hooks/solana/useSolanaOnchainPool'
 import { TxVersion } from '@pancakeswap/solana-core-sdk'
 
-import { useTotalUsdValue } from '../../AddLiquidity/hooks/useTotalUsdValue'
 import LockedDeposit from './V3FormView/components/LockedDeposit'
 import V3RangeSelector from './V3FormView/components/V3RangeSelector'
-import { useInitialRange } from './V3FormView/form/hooks/useInitialRange'
-import { useRangeHopCallbacks } from './V3FormView/form/hooks/useRangeHopCallbacks'
 import { useV3MintActionHandlers } from './V3FormView/form/hooks/useV3MintActionHandlers'
 import { useV3FormAddLiquidityCallback, useV3FormState } from './V3FormView/form/reducer'
 
@@ -122,14 +119,12 @@ const CurrentPriceButton = styled(Button).attrs({ scale: 'xs', variant: 'text' }
 `
 
 interface SolanaFormViewPropsType {
-  baseCurrency?: Currency | null
-  quoteCurrency?: Currency | null
+  baseCurrency?: UnifiedCurrency | null
+  quoteCurrency?: UnifiedCurrency | null
   currencyIdA?: string
   currencyIdB?: string
   feeAmount?: number
 }
-
-const approveCb = () => Promise.resolve(undefined)
 
 export function SolanaFormView({
   feeAmount,
@@ -140,7 +135,6 @@ export function SolanaFormView({
 }: SolanaFormViewPropsType) {
   const router = useRouter()
   const { isMobile } = useMatchBreakpoints()
-  const native = useUnifiedNativeCurrency()
 
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirm
   const [txnErrorMessage, setTxnErrorMessage] = useState<string | undefined>()
@@ -151,34 +145,13 @@ export function SolanaFormView({
   } = useTranslation()
   const expertMode = useIsExpertMode()
 
-  const { canUseNativeCurrency, handleUseNative, useNativeInstead } = useNativeCurrencyInstead({
-    baseCurrency,
-    quoteCurrency,
-    feeAmount,
-  })
-
-  // Negate the effect of useNativeCurrencyInstead when we need actual WNATIVE currency
-  const baseCurrencyWithoutNative = useMemo(() => {
-    return baseCurrency?.isNative ? (baseCurrency.wrapped as Currency) : baseCurrency
-  }, [baseCurrency])
-  const quoteCurrencyWithoutNative = useMemo(() => {
-    return quoteCurrency?.isNative ? (quoteCurrency.wrapped as Currency) : quoteCurrency
-  }, [quoteCurrency])
-
-  // Price Rate Data
-  const solPoolInfo = useSolanaPoolByMint(
-    baseCurrencyWithoutNative?.wrapped?.address,
-    quoteCurrencyWithoutNative?.wrapped?.address,
-    feeAmount,
-  )
-  const { data: poolOnChain } = useSolanaOnchainClmmPool(solPoolInfo?.poolId)
+  const solPoolInfo = useSolanaPoolByMint(baseCurrency?.wrapped?.address, quoteCurrency?.wrapped?.address, feeAmount)
 
   const { solanaAccount: account, isWrongNetwork } = useAccountActiveChain()
 
   const [pricePeriod, setPricePeriod] = useState<Liquidity.PresetRangeItem>(Liquidity.PRESET_RANGE_ITEMS[0])
   const axisTicks = useMemo(() => getAxisTicks(pricePeriod.value, isMobile), [pricePeriod.value, isMobile])
 
-  // mint state
   const formState = useV3FormState()
   const { independentField, typedValue, startPriceTypedValue, leftRangeTypedValue, rightRangeTypedValue } = formState
 
@@ -193,7 +166,6 @@ export function SolanaFormView({
     noLiquidity,
     currencies,
     errorMessage,
-    hasInsufficentBalance,
     invalidPool,
     invalidRange,
     outOfRange,
@@ -239,7 +211,6 @@ export function SolanaFormView({
 
   const isValid = !errorMessage && !invalidRange
 
-  // modal and loading
   // capital efficiency warning
   const [showCapitalEfficiencyWarning, setShowCapitalEfficiencyWarning] = useState<boolean>(false)
 
@@ -261,21 +232,6 @@ export function SolanaFormView({
 
   const onAddLiquidityCallback = useV3FormAddLiquidityCallback()
 
-  // Current token prices
-  const baseCurrencyCurrentPrice = useStablecoinPrice(baseCurrency)
-  const quoteCurrencyCurrentPrice = useStablecoinPrice(quoteCurrency)
-  const currentPrice = useMemo(() => {
-    if (
-      !baseCurrencyCurrentPrice ||
-      !quoteCurrencyCurrentPrice ||
-      !baseCurrency ||
-      !quoteCurrency ||
-      quoteCurrencyCurrentPrice.numerator === 0n
-    )
-      return undefined
-    return baseCurrencyCurrentPrice.divide(quoteCurrencyCurrentPrice)
-  }, [baseCurrency, quoteCurrency, baseCurrencyCurrentPrice, quoteCurrencyCurrentPrice])
-
   const [txHash, setTxHash] = useState<string>('')
 
   // get formatted amounts
@@ -288,18 +244,25 @@ export function SolanaFormView({
   )
 
   // Get Total USD Value of input amounts
-  const { totalUsdValue } = useTotalUsdValue({
-    parsedAmountA: parsedAmounts[Field.CURRENCY_A],
-    parsedAmountB: parsedAmounts[Field.CURRENCY_B],
-  })
+  const usdA = useUnifiedUSDPriceAmount(
+    parsedAmounts[Field.CURRENCY_A]?.currency,
+    parsedAmounts[Field.CURRENCY_A] ? Number(parsedAmounts[Field.CURRENCY_A]?.toExact()) : undefined,
+    { enabled: Boolean(parsedAmounts[Field.CURRENCY_A]) },
+  )
+  const usdB = useUnifiedUSDPriceAmount(
+    parsedAmounts[Field.CURRENCY_B]?.currency,
+    parsedAmounts[Field.CURRENCY_B] ? Number(parsedAmounts[Field.CURRENCY_B]?.toExact()) : undefined,
+    { enabled: Boolean(parsedAmounts[Field.CURRENCY_B]) },
+  )
+  const totalUsdValue = (usdA ?? 0) + (usdB ?? 0)
 
   // Get the max amounts user can add
-  const maxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = useMemo(
+  const maxAmounts: { [field in Field]?: UnifiedCurrencyAmount<UnifiedCurrency> } = useMemo(
     () =>
       [Field.CURRENCY_A, Field.CURRENCY_B].reduce((accumulator, field) => {
         return {
           ...accumulator,
-          [field]: maxAmountSpend(currencyBalances[field]),
+          [field]: maxUnifiedAmountSpend(currencyBalances[field] as UnifiedCurrencyAmount<UnifiedCurrency> | undefined),
         }
       }, {}),
     [currencyBalances],
@@ -343,7 +306,7 @@ export function SolanaFormView({
 
       // Map parsed amounts to pool mintA/mintB order
       const currencyA = currencies[Field.CURRENCY_A]
-      const mintAAddr = solPoolInfo?.token0?.address
+      const mintAAddr = (solPoolInfo?.token0 as any)?.address
       const aIsMintA = currencyA?.wrapped?.address === mintAAddr
       const amountAQuot = parsedAmounts[Field.CURRENCY_A]?.quotient
       const amountBQuot = parsedAmounts[Field.CURRENCY_B]?.quotient
@@ -391,37 +354,35 @@ export function SolanaFormView({
     setTxHash('')
     setTxnErrorMessage(undefined)
   }, [onFieldAInput, txHash])
-  const addIsUnsupported = useIsTransactionUnsupported(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
 
-  // get value and prices at ticks
-  const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
 
-  useInitialRange(baseCurrency?.wrapped, quoteCurrency?.wrapped)
-
-  const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
-    useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, feeAmount, tickLower, tickUpper, pool)
+  const getDecrementLower = useCallback(() => undefined, [])
+  const getIncrementLower = useCallback(() => undefined, [])
+  const getDecrementUpper = useCallback(() => undefined, [])
+  const getIncrementUpper = useCallback(() => undefined, [])
+  const getSetFullRange = useCallback(() => undefined, [])
   // we need an existence check on parsed amounts for single-asset deposits
   const translationData = useMemo(() => {
     if (depositADisabled) {
       return {
-        amount: formatCurrencyAmount(parsedAmounts[Field.CURRENCY_B], 4, locale),
+        amount: parsedAmounts[Field.CURRENCY_B]?.toSignificant(4) ?? '-',
         symbol: currencies[Field.CURRENCY_B]?.symbol ? currencies[Field.CURRENCY_B].symbol : '',
       }
     }
     if (depositBDisabled) {
       return {
-        amount: formatCurrencyAmount(parsedAmounts[Field.CURRENCY_A], 4, locale),
+        amount: parsedAmounts[Field.CURRENCY_A]?.toSignificant(4) ?? '-',
         symbol: currencies[Field.CURRENCY_A]?.symbol ? currencies[Field.CURRENCY_A].symbol : '',
       }
     }
     return {
-      amountA: formatCurrencyAmount(parsedAmounts[Field.CURRENCY_A], 4, locale),
+      amountA: parsedAmounts[Field.CURRENCY_A]?.toSignificant(4) ?? '-',
       symbolA: currencies[Field.CURRENCY_A]?.symbol ? currencies[Field.CURRENCY_A].symbol : '',
-      amountB: formatCurrencyAmount(parsedAmounts[Field.CURRENCY_B], 4, locale),
+      amountB: parsedAmounts[Field.CURRENCY_B]?.toSignificant(4) ?? '-',
       symbolB: currencies[Field.CURRENCY_B]?.symbol ? currencies[Field.CURRENCY_B].symbol : '',
     }
-  }, [depositADisabled, depositBDisabled, parsedAmounts, locale, currencies])
+  }, [depositADisabled, depositBDisabled, parsedAmounts, currencies])
 
   const pendingText = useMemo(
     () =>
@@ -429,180 +390,6 @@ export function SolanaFormView({
         ? t('Supplying %amountA% %symbolA% and %amountB% %symbolB%', translationData)
         : t('Supplying %amount% %symbol%', translationData),
     [t, outOfRange, translationData],
-  )
-
-  const [activeQuickAction, setActiveQuickAction] = useState<number>()
-  const isQuickButtonUsed = useRef(false)
-  const [quickAction, setQuickAction] = useState<number | null>(null)
-  const [customZoomLevel, setCustomZoomLevel] = useState<ZoomLevels | undefined>(undefined)
-
-  const [onPresentAddLiquidityModal] = useModal(
-    <TransactionConfirmationModal
-      minWidth={['100%', null, '420px']}
-      title={t('Add Liquidity')}
-      customOnDismiss={handleDismissConfirmation}
-      attemptingTxn={attemptingTxn}
-      hash={txHash}
-      errorMessage={txnErrorMessage}
-      content={() => {
-        const currencyA = currencies[Field.CURRENCY_A]
-        const currencyB = currencies[Field.CURRENCY_B]
-
-        return (
-          <ConfirmationModalContent
-            topContent={() => (
-              <AutoColumn gap="md" style={{ marginTop: '0.5rem' }}>
-                <RowBetween style={{ marginBottom: '0.5rem' }}>
-                  <FlexGap gap="8px" alignItems="center">
-                    <DoubleCurrencyLogo currency0={currencyA} currency1={currencyB} size={24} />
-                    <Text bold>
-                      {currencyA?.symbol}-{currencyB?.symbol}
-                    </Text>
-                  </FlexGap>
-                  <RangeTag removed={false} outOfRange={Boolean(outOfRange)} />
-                </RowBetween>
-
-                <LightGreyCard>
-                  <AutoColumn gap="sm">
-                    <RowBetween>
-                      <FlexGap gap="4px" alignItems="center">
-                        <CurrencyLogo currency={currencyA} />
-                        <Text>{currencyA?.symbol}</Text>
-                      </FlexGap>
-                      <Box>
-                        <Text>{parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) || '-'}</Text>
-                        <Text fontSize="10px" color="textSubtle" textAlign="right">
-                          ~
-                          {formatDollarAmount(
-                            multiplyPriceByAmount(
-                              baseCurrencyCurrentPrice,
-                              parseFloat(parsedAmounts[Field.CURRENCY_A]?.toExact() || '0'),
-                            ),
-                          )}
-                        </Text>
-                      </Box>
-                    </RowBetween>
-                    <RowBetween>
-                      <FlexGap gap="4px" alignItems="center">
-                        <CurrencyLogo currency={currencyB} />
-                        <Text>{currencyB?.symbol}</Text>
-                      </FlexGap>
-                      <Box>
-                        <Text>{parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) || '-'}</Text>
-                        <Text fontSize="10px" color="textSubtle" textAlign="right">
-                          ~
-                          {formatDollarAmount(
-                            multiplyPriceByAmount(
-                              quoteCurrencyCurrentPrice,
-                              parseFloat(parsedAmounts[Field.CURRENCY_B]?.toExact() || '0'),
-                            ),
-                          )}
-                        </Text>
-                      </Box>
-                    </RowBetween>
-                    <Divider />
-                    <RowBetween>
-                      <Text color="textSubtle">{t('Fee Tier')}</Text>
-                      <Text>{((feeAmount ?? (pool as any)?.fee ?? 0) / 10000).toString()}%</Text>
-                    </RowBetween>
-                  </AutoColumn>
-                </LightGreyCard>
-
-                <AutoColumn gap="md">
-                  <RowBetween>
-                    <div />
-                  </RowBetween>
-
-                  <RowBetween>
-                    <RangePriceSection
-                      width="48%"
-                      title={t('Min Price')}
-                      currency0={isSorted ? quoteCurrency : baseCurrency}
-                      currency1={isSorted ? baseCurrency : quoteCurrency}
-                      price={formatTickPrice(minPrice, ticksAtLimit, Bound.LOWER, locale)}
-                    />
-                    <RangePriceSection
-                      width="48%"
-                      title={t('Max Price')}
-                      currency0={isSorted ? quoteCurrency : baseCurrency}
-                      currency1={isSorted ? baseCurrency : quoteCurrency}
-                      price={formatTickPrice(maxPrice, ticksAtLimit, Bound.UPPER, locale)}
-                    />
-                  </RowBetween>
-                  <RangePriceSection
-                    title={t('Current Price')}
-                    currency0={isSorted ? quoteCurrency : baseCurrency}
-                    currency1={isSorted ? baseCurrency : quoteCurrency}
-                    price={formatPrice(displayedPrice, 6, locale)}
-                  />
-                </AutoColumn>
-
-                <LightGreyCard>
-                  <RowBetween>
-                    <Text color="textSubtle">{t('Total Deposit')}</Text>
-                    <Text>~{formatDollarAmount(totalUsdValue, 2, false)}</Text>
-                  </RowBetween>
-                </LightGreyCard>
-              </AutoColumn>
-            )}
-            bottomContent={() => (
-              <Button width="100%" mt="16px" onClick={onAdd}>
-                {t('Add')}
-              </Button>
-            )}
-          />
-        )
-      }}
-      pendingText={pendingText}
-    />,
-    true,
-    true,
-    'TransactionConfirmationModal',
-  )
-
-  const addIsWarning = useIsTransactionWarning(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
-
-  const handleButtonSubmit = useCallback(() => {
-    // eslint-disable-next-line no-unused-expressions
-    expertMode ? onAdd() : onPresentAddLiquidityModal()
-    logGTMClickAddLiquidityEvent()
-  }, [expertMode, onAdd, onPresentAddLiquidityModal])
-
-  const poolCurrentPrice = useMemo(() => {
-    if (!pool) return undefined
-    return new Price(pool.token0, pool.token1, 2n ** 192n, pool.sqrtRatioX96 * pool.sqrtRatioX96)
-  }, [pool])
-  const [marketPrice, marketPriceSlippage] = usePoolMarketPriceSlippage(pool?.token0, pool?.token1, poolCurrentPrice)
-  const displayMarketPriceSlippageWarning = useMemo(() => {
-    if (marketPriceSlippage === undefined) return false
-    const slippage = new BigNumber(marketPriceSlippage.toFixed(0)).abs()
-    return slippage.gt(5) // 5% slippage
-  }, [marketPriceSlippage])
-
-  const buttons = (
-    <V3SubmitButton
-      addIsUnsupported={addIsUnsupported}
-      addIsWarning={addIsWarning}
-      account={account ?? undefined}
-      isWrongNetwork={Boolean(isWrongNetwork)}
-      approvalA={ApprovalState.APPROVED}
-      approvalB={ApprovalState.APPROVED}
-      isValid={isValid}
-      showApprovalA={false}
-      approveACallback={approveCb}
-      revokeACallback={approveCb}
-      currencies={currencies}
-      showApprovalB={false}
-      approveBCallback={approveCb}
-      revokeBCallback={approveCb}
-      parsedAmounts={parsedAmounts}
-      onClick={handleButtonSubmit}
-      attemptingTxn={attemptingTxn}
-      errorMessage={errorMessage}
-      buttonText={t('Add')}
-      depositADisabled={depositADisabled}
-      depositBDisabled={depositBDisabled}
-    />
   )
 
   // Sorted orientation vs token0/token1 for display purposes
@@ -618,6 +405,181 @@ export function SolanaFormView({
   const maxPrice = useMemo(
     () => (isSorted ? pricesAtTicks[Bound.UPPER] : pricesAtTicks[Bound.LOWER]?.invert()),
     [isSorted, pricesAtTicks],
+  )
+
+  const [activeQuickAction, setActiveQuickAction] = useState<number>()
+  const isQuickButtonUsed = useRef(false)
+  const [quickAction, setQuickAction] = useState<number | null>(null)
+  const [customZoomLevel, setCustomZoomLevel] = useState<ZoomLevels | undefined>(undefined)
+
+  const confirmationContent = useCallback(() => {
+    const currencyA = currencies[Field.CURRENCY_A]
+    const currencyB = currencies[Field.CURRENCY_B]
+
+    return (
+      <ConfirmationModalContent
+        topContent={() => (
+          <AutoColumn gap="md" style={{ marginTop: '0.5rem' }}>
+            <RowBetween style={{ marginBottom: '0.5rem' }}>
+              <FlexGap gap="8px" alignItems="center">
+                <DoubleCurrencyLogo currency0={currencyA} currency1={currencyB} size={24} />
+                <Text bold>
+                  {currencyA?.symbol}-{currencyB?.symbol}
+                </Text>
+              </FlexGap>
+              <RangeTag removed={false} outOfRange={Boolean(outOfRange)} />
+            </RowBetween>
+
+            <LightGreyCard>
+              <AutoColumn gap="sm">
+                <RowBetween>
+                  <FlexGap gap="4px" alignItems="center">
+                    <CurrencyLogo currency={currencyA} />
+                    <Text>{currencyA?.symbol}</Text>
+                  </FlexGap>
+                  <Box>
+                    <Text>{parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) || '-'}</Text>
+                    <Text fontSize="10px" color="textSubtle" textAlign="right">
+                      ~{formatDollarAmount(usdA)}
+                    </Text>
+                  </Box>
+                </RowBetween>
+                <RowBetween>
+                  <FlexGap gap="4px" alignItems="center">
+                    <CurrencyLogo currency={currencyB} />
+                    <Text>{currencyB?.symbol}</Text>
+                  </FlexGap>
+                  <Box>
+                    <Text>{parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) || '-'}</Text>
+                    <Text fontSize="10px" color="textSubtle" textAlign="right">
+                      ~{formatDollarAmount(usdB)}
+                    </Text>
+                  </Box>
+                </RowBetween>
+                <Divider />
+                <RowBetween>
+                  <Text color="textSubtle">{t('Fee Tier')}</Text>
+                  <Text>{((feeAmount ?? (pool as any)?.fee ?? 0) / 10000).toString()}%</Text>
+                </RowBetween>
+              </AutoColumn>
+            </LightGreyCard>
+
+            <AutoColumn gap="md">
+              <RowBetween>
+                <div />
+              </RowBetween>
+
+              <RowBetween>
+                <RangePriceSection
+                  width="48%"
+                  title={t('Min Price')}
+                  currency0={(isSorted ? quoteCurrency : baseCurrency) ?? undefined}
+                  currency1={(isSorted ? baseCurrency : quoteCurrency) ?? undefined}
+                  price={formatTickPrice(minPrice, ticksAtLimit, Bound.LOWER, locale)}
+                />
+                <RangePriceSection
+                  width="48%"
+                  title={t('Max Price')}
+                  currency0={(isSorted ? quoteCurrency : baseCurrency) ?? undefined}
+                  currency1={(isSorted ? baseCurrency : quoteCurrency) ?? undefined}
+                  price={formatTickPrice(maxPrice, ticksAtLimit, Bound.UPPER, locale)}
+                />
+              </RowBetween>
+              <RangePriceSection
+                title={t('Current Price')}
+                currency0={(isSorted ? quoteCurrency : baseCurrency) ?? undefined}
+                currency1={(isSorted ? baseCurrency : quoteCurrency) ?? undefined}
+                price={formatPrice(displayedPrice, 6, locale)}
+              />
+            </AutoColumn>
+
+            <LightGreyCard>
+              <RowBetween>
+                <Text color="textSubtle">{t('Total Deposit')}</Text>
+                <Text>~{formatDollarAmount(totalUsdValue, 2, false)}</Text>
+              </RowBetween>
+            </LightGreyCard>
+          </AutoColumn>
+        )}
+        bottomContent={() => (
+          <Button width="100%" mt="16px" onClick={onAdd}>
+            {t('Add')}
+          </Button>
+        )}
+      />
+    )
+  }, [
+    baseCurrency,
+    currencies,
+    displayedPrice,
+    feeAmount,
+    isSorted,
+    locale,
+    maxPrice,
+    minPrice,
+    onAdd,
+    outOfRange,
+    parsedAmounts,
+    pool,
+    quoteCurrency,
+    t,
+    ticksAtLimit,
+    totalUsdValue,
+    usdA,
+    usdB,
+  ])
+
+  const [onPresentAddLiquidityModal] = useModal(
+    <TransactionConfirmationModal
+      minWidth={['100%', null, '420px']}
+      title={t('Add Liquidity')}
+      customOnDismiss={handleDismissConfirmation}
+      attemptingTxn={attemptingTxn}
+      hash={txHash}
+      errorMessage={txnErrorMessage}
+      content={confirmationContent}
+      pendingText={pendingText}
+    />,
+    true,
+    true,
+    'TransactionConfirmationModal',
+  )
+
+  const handleButtonSubmit = useCallback(() => {
+    if (expertMode) {
+      onAdd()
+    } else {
+      onPresentAddLiquidityModal()
+    }
+    logGTMClickAddLiquidityEvent()
+  }, [expertMode, onAdd, onPresentAddLiquidityModal])
+
+  const poolCurrentPrice = useMemo(() => {
+    if (!pool) return undefined
+    return new Price(pool.token0 as any, pool.token1 as any, 2n ** 192n, pool.sqrtRatioX96 * pool.sqrtRatioX96)
+  }, [pool])
+  const [, marketPriceSlippage] = usePoolMarketPriceSlippage(pool?.token0, pool?.token1, poolCurrentPrice)
+  const displayMarketPriceSlippageWarning = useMemo(() => {
+    if (marketPriceSlippage === undefined) return false
+    const slippage = new BigNumber(marketPriceSlippage.toFixed(0)).abs()
+    return slippage.gt(5) // 5% slippage
+  }, [marketPriceSlippage])
+
+  const buttons = (
+    <SolanaSubmitButton
+      addIsUnsupported={false}
+      addIsWarning={false}
+      account={account ?? undefined}
+      isWrongNetwork={Boolean(isWrongNetwork)}
+      isValid={isValid}
+      parsedAmounts={parsedAmounts as any}
+      onClick={handleButtonSubmit}
+      attemptingTxn={attemptingTxn}
+      errorMessage={errorMessage}
+      buttonText={t('Add')}
+      depositADisabled={depositADisabled}
+      depositBDisabled={depositBDisabled}
+    />
   )
 
   useEffect(() => {
@@ -690,7 +652,7 @@ export function SolanaFormView({
         }
       }
     },
-    [activeQuickAction, feeAmount, handleRefresh, setShowCapitalEfficiencyWarning],
+    [feeAmount, handleRefresh, setShowCapitalEfficiencyWarning],
   )
 
   const invertRange = useCallback(() => {
@@ -749,16 +711,16 @@ export function SolanaFormView({
 
   const { data: rateData } = useTokenRateData({
     period: pricePeriod.value,
-    baseCurrency: baseCurrencyWithoutNative ?? undefined,
-    quoteCurrency: quoteCurrencyWithoutNative ?? undefined,
+    baseCurrency: baseCurrency ?? undefined,
+    quoteCurrency: quoteCurrency ?? undefined,
     chainId: baseCurrency?.chainId,
     protocol: Protocol.V3,
     poolId: solPoolInfo?.poolId,
   })
 
   const handleUseCurrentPrice = useCallback(() => {
-    onStartPriceInput(currentPrice?.toSignificant(18) ?? '')
-  }, [currentPrice, onStartPriceInput])
+    onStartPriceInput(price?.toSignificant(18) ?? '')
+  }, [price, onStartPriceInput])
 
   const {
     tooltip: currentPriceTooltip,
@@ -780,7 +742,7 @@ export function SolanaFormView({
                   <FlexGap gap="8px" justifyContent="space-between" alignItems="center" flexWrap="wrap">
                     <PreTitle mb="8px">{t('Set Starting Price')}</PreTitle>
 
-                    {currentPrice ? (
+                    {price ? (
                       <FlexGap mb="8px" justifyContent="space-between" alignItems="center" flexWrap="wrap">
                         <div />
                         <FlexGap gap="4px" alignItems="center" flexWrap="wrap">
@@ -792,7 +754,7 @@ export function SolanaFormView({
                             {currentPriceTooltipVisible && currentPriceTooltip}
                           </div>
                           <Text color="textSubtle" small>
-                            {currentPrice.toSignificant(8)} {quoteCurrency?.symbol} per {baseCurrency?.symbol}
+                            {price.toSignificant(8)} {quoteCurrency?.symbol} per {baseCurrency?.symbol}
                           </Text>
                           <SwapHorizIcon
                             role="button"
@@ -802,12 +764,7 @@ export function SolanaFormView({
                           />
                         </FlexGap>
                       </FlexGap>
-                    ) : (
-                      <Liquidity.RateToggle
-                        currencyA={baseCurrency}
-                        handleRateToggle={handleInvertStartPriceCurrencies}
-                      />
-                    )}
+                    ) : null}
                   </FlexGap>
                   <Message variant="warning" my="8px">
                     <MessageText>
@@ -880,8 +837,8 @@ export function SolanaFormView({
                             ? QUICK_ACTION_CONFIGS?.[feeAmount]?.[activeQuickAction]
                             : undefined)
                         }
-                        baseCurrency={baseCurrencyWithoutNative}
-                        quoteCurrency={quoteCurrencyWithoutNative}
+                        baseCurrency={baseCurrency as any}
+                        quoteCurrency={quoteCurrency as any}
                         ticksAtLimit={ticksAtLimit}
                         price={chartCurrentPrice}
                         priceLower={priceLower}
@@ -918,6 +875,7 @@ export function SolanaFormView({
                     tickSpaceLimits={tickSpaceLimits}
                     quickAction={quickAction}
                     handleQuickAction={handleQuickAction}
+                    defaultRangePoints={solPoolInfo?.solanaData?.config?.defaultRangePoint}
                   />
                 )}
 
@@ -1026,12 +984,6 @@ export function SolanaFormView({
               />
             </LockedDeposit>
             <Column mt="16px" gap="16px">
-              {canUseNativeCurrency && (
-                <RowBetween>
-                  <Text color="textSubtle">Use {native.symbol} instead</Text>
-                  <Toggle scale="sm" checked={useNativeInstead} onChange={handleUseNative} />
-                </RowBetween>
-              )}
               <RowBetween>
                 <Text color="textSubtle">{t('Total')}</Text>
                 <Text>~{formatDollarAmount(totalUsdValue, 2, false)}</Text>

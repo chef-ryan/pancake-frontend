@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { solExplorerApiClient } from 'state/info/api/client'
 import { normalizeSolanaPoolInfo } from 'utils/normalizeSolanaPoolInfo'
 
-export const useSolanaPoolsByMint = (token0?: string, token1?: string, enabled: boolean = false) => {
+export const useSolanaPoolsByMint = (token0?: string, token1?: string, enabled: boolean = true) => {
   return useQuery({
     queryKey: ['solana-pools-by-mint', token0, token1],
     enabled: Boolean(token0 && token1 && enabled),

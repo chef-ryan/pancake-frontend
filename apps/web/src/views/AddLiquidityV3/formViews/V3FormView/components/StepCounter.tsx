@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Price } from '@pancakeswap/swap-sdk-core'
+import { BaseCurrency, Price } from '@pancakeswap/swap-sdk-core'
 import { AddCircleIcon, AutoColumn, AutoRow, IconButton, RemoveIcon, Text } from '@pancakeswap/uikit'
 import { FeeAmount } from '@pancakeswap/v3-sdk'
 import { LightSecondaryCard, NumericalInput } from '@pancakeswap/widgets-internal'
@@ -9,9 +9,9 @@ import { ReactNode, useCallback, useEffect, useState } from 'react'
 
 interface StepCounterProps {
   value: string
-  onUserInput: (value: Price<Currency, Currency> | undefined) => void
-  decrement: () => Price<Currency, Currency> | undefined
-  increment: () => Price<Currency, Currency> | undefined
+  onUserInput: (value: Price<any, any> | undefined) => void
+  decrement: () => Price<any, any> | undefined
+  increment: () => Price<any, any> | undefined
   decrementDisabled?: boolean
   incrementDisabled?: boolean
   feeAmount?: FeeAmount
@@ -19,8 +19,8 @@ interface StepCounterProps {
   width?: string
   locked?: boolean // disable input
   title: ReactNode
-  tokenA: Currency | undefined | null
-  tokenB: Currency | undefined | null
+  tokenA: BaseCurrency | undefined | null
+  tokenB: BaseCurrency | undefined | null
 }
 
 const StepCounter = ({
@@ -59,7 +59,7 @@ const StepCounter = ({
   const handleOnBlur = useCallback(() => {
     setUseLocalValue(false)
     setActive(false)
-    onUserInput(tryParsePrice(tokenA?.wrapped, tokenB?.wrapped, localValue)) // trigger update on parent value
+    onUserInput(tryParsePrice((tokenA as any)?.wrapped, (tokenB as any)?.wrapped, localValue)) // trigger update on parent value
   }, [tokenA, tokenB, localValue, onUserInput])
 
   // for button clicks

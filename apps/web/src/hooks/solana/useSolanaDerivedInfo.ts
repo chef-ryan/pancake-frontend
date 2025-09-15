@@ -45,7 +45,7 @@ export const useSolanaDerivedInfo = (
   pool?: Pool | null
   poolState: PoolState
   ticks: { [bound in Bound]?: number | undefined }
-  price?: Price<Token, Token>
+  price?: Price<Currency, Currency>
   pricesAtTicks: { [bound in Bound]?: Price<Currency, Currency> | undefined }
   currencies: { [field in Field]?: UnifiedCurrency }
   currencyBalances: { [field in Field]?: UnifiedBalance }
@@ -109,7 +109,7 @@ export const useSolanaDerivedInfo = (
 
   const invertPrice = Boolean(baseToken && token0 && !baseToken.equals(token0))
 
-  const price: Price<Token, Token> | undefined = useMemo(() => {
+  const price: Price<Currency, Currency> | undefined = useMemo(() => {
     if (startPriceTypedValue) {
       const parsedQuoteAmount = tryParseCurrencyAmount(startPriceTypedValue, (invertPrice ? token0 : token1) as Token)
       if (parsedQuoteAmount && token0 && token1) {

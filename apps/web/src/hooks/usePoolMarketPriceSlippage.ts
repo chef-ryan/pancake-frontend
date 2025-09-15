@@ -3,18 +3,15 @@ import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 import { useCurrencyUsdPrice } from './useCurrencyUsdPrice'
 import { tryParsePrice } from './v3/utils'
+import { useUnifiedTokenUsdPrice } from './useUnifiedTokenUsdPrice'
 
 export const usePoolMarketPriceSlippage = (
   currency0?: Currency,
   currency1?: Currency,
   poolCurrencyPrice?: Price<Currency, Currency>,
 ) => {
-  const { data: currency0marketPrice } = useCurrencyUsdPrice(currency0, {
-    enabled: Boolean(currency0),
-  })
-  const { data: currency1marketPrice } = useCurrencyUsdPrice(currency1, {
-    enabled: Boolean(currency1),
-  })
+  const { data: currency0marketPrice } = useUnifiedTokenUsdPrice(currency0, Boolean(currency0))
+  const { data: currency1marketPrice } = useUnifiedTokenUsdPrice(currency1, Boolean(currency1))
 
   return useMemo(() => {
     if (!currency1marketPrice || !currency0marketPrice || !poolCurrencyPrice) return [undefined, undefined, undefined]

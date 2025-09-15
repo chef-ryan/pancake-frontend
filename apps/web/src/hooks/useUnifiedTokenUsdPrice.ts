@@ -5,9 +5,9 @@ import { Currency, UnifiedCurrency } from '@pancakeswap/sdk'
 import { useCurrencyUsdPrice } from './useCurrencyUsdPrice'
 import { useSolanaTokenPrice } from './solana/useSolanaTokenPrice'
 
-export function useUnifiedTokenUsdPrice(currency: UnifiedCurrency, enabled: boolean = true) {
-  const isSolana = currency.chainId === NonEVMChainId.SOLANA
-  const isEvm = currency.chainId in ChainId
+export function useUnifiedTokenUsdPrice(currency?: UnifiedCurrency, enabled: boolean = true) {
+  const isSolana = currency?.chainId === NonEVMChainId.SOLANA
+  const isEvm = currency?.chainId && currency?.chainId in ChainId
 
   const evmPrice = useCurrencyUsdPrice(isEvm ? (currency as Currency) : undefined, { enabled })
   const solanaPriceResult = useSolanaTokenPrice({

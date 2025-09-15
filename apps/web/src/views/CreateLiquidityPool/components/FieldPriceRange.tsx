@@ -8,6 +8,8 @@ import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { useCLPriceRangeCallback } from 'hooks/infinity/useCLPriceRangeCallback'
 import { useMemo } from 'react'
 import { useActiveIdQueryState, useBinStepQueryState, useClTickSpacingQueryState } from 'state/infinity/create'
+import { isSolana } from '@pancakeswap/chains'
+import { Currency } from '@pancakeswap/swap-sdk-core'
 import { useBinIdRange } from '../hooks/useBinIdRange'
 import { useCurrencies } from '../hooks/useCurrencies'
 import { useInfinityCreateFormQueryState } from '../hooks/useInfinityFormState/useInfinityFormQueryState'
@@ -34,9 +36,13 @@ export const FieldPriceRange: React.FC<FieldPriceRangeProps> = ({ ...boxProps })
     )
   }, [binStep])
 
+  const baseEvm = baseCurrency && !isSolana(baseCurrency.chainId) ? (baseCurrency as unknown as Currency) : undefined
+  const quoteEvm =
+    quoteCurrency && !isSolana(quoteCurrency.chainId) ? (quoteCurrency as unknown as Currency) : undefined
+
   const { quickAction, handleQuickAction } = useCLPriceRangeCallback(
-    baseCurrency,
-    quoteCurrency,
+    baseEvm,
+    quoteEvm,
     tickSpacing,
     startPriceAsFraction,
   )
@@ -46,13 +52,13 @@ export const FieldPriceRange: React.FC<FieldPriceRangeProps> = ({ ...boxProps })
       <AutoColumn gap="16px">
         <RowBetween>
           <PreTitle>{t('Set Price Range')}</PreTitle>
-          <Liquidity.RateToggle currencyA={baseCurrency} handleRateToggle={switchCurrencies} />
+          <Liquidity.RateToggle currencyA={baseEvm} handleRateToggle={switchCurrencies} />
         </RowBetween>
         {poolType === 'Bin' ? (
           <DynamicSection disabled={!activeId || !isBinStepValid}>
             <BinRangeSelector
-              currency0={currency0}
-              currency1={currency1}
+              currency0={baseEvm}
+              currency1={quoteEvm}
               binStep={binStep}
               activeBinId={activeId}
               minBinId={minBinId}
@@ -64,8 +70,8 @@ export const FieldPriceRange: React.FC<FieldPriceRangeProps> = ({ ...boxProps })
           <DynamicSection disabled={!tickSpacing}>
             <CLRangeSelector
               currentPrice={startPriceAsFraction}
-              baseCurrency={baseCurrency}
-              quoteCurrency={quoteCurrency}
+              baseCurrency={baseEvm}
+              quoteCurrency={quoteEvm}
               tickSpacing={tickSpacing ?? undefined}
               quickAction={quickAction}
               handleQuickAction={handleQuickAction}

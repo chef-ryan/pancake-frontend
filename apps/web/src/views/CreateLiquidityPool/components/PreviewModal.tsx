@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount } from '@pancakeswap/sdk'
+import { UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import {
   AutoRow,
   Box,
@@ -15,15 +15,14 @@ import {
 import truncateHash from '@pancakeswap/utils/truncateHash'
 import { CurrencyLogo, DoubleCurrencyLogo, LightGreyCard } from '@pancakeswap/widgets-internal'
 import Divider from 'components/Divider'
-import { useStablecoinPrice } from 'hooks/useStablecoinPrice'
+import { useUnifiedUSDPriceAmount } from 'hooks/useStablecoinPrice'
 import React, { useState } from 'react'
-import { multiplyPriceByAmount } from 'utils/prices'
 import { CurrencyField as Field } from 'utils/types'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 
 interface PreviewModalProps extends ModalV2Props {
-  currencies: { [field in Field]?: Currency }
-  parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> }
+  currencies: { [field in Field]?: UnifiedCurrency }
+  parsedAmounts: { [field in Field]?: UnifiedCurrencyAmount<UnifiedCurrency> }
 
   // V3 and V2 main fee tier display
   feeTier?: React.ReactNode
@@ -56,8 +55,14 @@ export const PreviewModal = ({
 
   const { [Field.CURRENCY_A]: currencyA, [Field.CURRENCY_B]: currencyB } = currencies
 
-  const currencyAUsdValue = useStablecoinPrice(currencyA)
-  const currencyBUsdValue = useStablecoinPrice(currencyB)
+  const currencyAUsdValue = useUnifiedUSDPriceAmount(
+    currencyA,
+    parsedAmounts[Field.CURRENCY_A] ? Number(parsedAmounts[Field.CURRENCY_A]!.toExact()) : undefined,
+  )
+  const currencyBUsdValue = useUnifiedUSDPriceAmount(
+    currencyB,
+    parsedAmounts[Field.CURRENCY_B] ? Number(parsedAmounts[Field.CURRENCY_B]!.toExact()) : undefined,
+  )
 
   const [ackAccepted, setAckAccepted] = useState(false)
 
@@ -97,13 +102,7 @@ export const PreviewModal = ({
                 {parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) || '-'}
               </Text>
               <Text fontSize="12px" color="textSubtle" textAlign="right">
-                ~
-                {formatDollarAmount(
-                  multiplyPriceByAmount(
-                    currencyAUsdValue,
-                    parseFloat(parsedAmounts[Field.CURRENCY_A]?.toExact() || '0'),
-                  ),
-                )}
+                ~{formatDollarAmount(currencyAUsdValue)}
               </Text>
             </Box>
           </FlexGap>
@@ -118,13 +117,7 @@ export const PreviewModal = ({
                 {parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) || '-'}
               </Text>
               <Text fontSize="12px" color="textSubtle" textAlign="right">
-                ~
-                {formatDollarAmount(
-                  multiplyPriceByAmount(
-                    currencyBUsdValue,
-                    parseFloat(parsedAmounts[Field.CURRENCY_B]?.toExact() || '0'),
-                  ),
-                )}
+                ~{formatDollarAmount(currencyBUsdValue)}
               </Text>
             </Box>
           </FlexGap>

@@ -7,10 +7,10 @@ import { tryParsePrice } from 'hooks/v3/utils'
 import { SolanaSubmitButton } from 'views/CreateLiquidityPool/components/Solana/SolanaSubmitButton'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, isUnifedCurrencySorted } from '@pancakeswap/sdk'
+import { UnifiedCurrency, UnifiedCurrencyAmount, isUnifedCurrencySorted } from '@pancakeswap/swap-sdk-core'
 import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { CurrencyField as Field } from 'utils/types'
-import { maxAmountSpend } from 'utils/maxAmountSpend'
+import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
 import { useRouter } from 'next/router'
 import { logGTMClickAddLiquidityConfirmEvent, logGTMClickAddLiquidityEvent } from 'utils/customGTMEventTracking'
 import { useIsExpertMode, useUserSlippage } from '@pancakeswap/utils/user'
@@ -74,6 +74,8 @@ export const useSolanaV3CreateForm = () => {
   const [showCapitalEfficiencyWarning, setShowCapitalEfficiencyWarning] = useState<boolean>(false)
   const [activeQuickAction, setActiveQuickAction] = useState<number>()
   const isQuickButtonUsed = useRef(false)
+  const [quickAction, setQuickAction] = useState<number | null>(null)
+  const [customZoomLevel, setCustomZoomLevel] = useState<ZoomLevels | undefined>(undefined)
 
   const formState = useV3FormState()
   const { independentField, typedValue, startPriceTypedValue, leftRangeTypedValue, rightRangeTypedValue } = formState
@@ -109,8 +111,8 @@ export const useSolanaV3CreateForm = () => {
   const getPriceAndTick = useGetPriceAndTick(baseCurrency, quoteCurrency, feeAmount)
 
   // Currency validation
-  const addIsWarning = useIsTransactionWarning(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
-  const addIsUnsupported = useIsTransactionUnsupported(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
+  const addIsWarning = false
+  const addIsUnsupported = false
   const isValid = !errorMessage && !invalidRange
 
   // Derivative States
@@ -123,12 +125,12 @@ export const useSolanaV3CreateForm = () => {
   }, [independentField, typedValue, dependentField, parsedAmounts])
 
   // Get the max amounts user can add
-  const maxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = useMemo(
+  const maxAmounts: { [field in Field]?: UnifiedCurrencyAmount<UnifiedCurrency> } = useMemo(
     () =>
       [Field.CURRENCY_A, Field.CURRENCY_B].reduce((accumulator, field) => {
         return {
           ...accumulator,
-          [field]: maxAmountSpend(currencyBalances[field]),
+          [field]: maxUnifiedAmountSpend(currencyBalances[field]),
         }
       }, {}),
     [currencyBalances],
@@ -220,8 +222,12 @@ export const useSolanaV3CreateForm = () => {
   ])
 
   // Range Inputs
-  const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
-    useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, feeAmount, tickLower, tickUpper, pool)
+  // Disable EVM range hop callbacks for Solana create flow
+  const getDecrementLower = useCallback(() => undefined, [])
+  const getIncrementLower = useCallback(() => undefined, [])
+  const getDecrementUpper = useCallback(() => undefined, [])
+  const getIncrementUpper = useCallback(() => undefined, [])
+  const getSetFullRange = useCallback(() => undefined, [])
 
   const onBothRangePriceInput = useCallback(
     (leftRangeValue: string, rightRangeValue: string) => {
@@ -339,8 +345,8 @@ export const useSolanaV3CreateForm = () => {
       const token0 = baseCurrency.wrapped
       const token1 = quoteCurrency.wrapped
       const { txId, openPositionTxId } = await createClmm({
-        mintA: token0,
-        mintB: token1,
+        mintA: token0 as any,
+        mintB: token1 as any,
         tradeFeeRate: feeAmount,
         initialPrice: parseFloat(price.toSignificant(18)),
         position:
@@ -348,8 +354,8 @@ export const useSolanaV3CreateForm = () => {
             ? {
                 tickLower,
                 tickUpper,
-                amountA: parsedAmounts[Field.CURRENCY_A],
-                amountB: parsedAmounts[Field.CURRENCY_B],
+                amountA: parsedAmounts[Field.CURRENCY_A] as any,
+                amountB: parsedAmounts[Field.CURRENCY_B] as any,
               }
             : undefined,
       })

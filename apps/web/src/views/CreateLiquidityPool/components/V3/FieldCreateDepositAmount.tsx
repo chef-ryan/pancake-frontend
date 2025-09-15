@@ -1,17 +1,18 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AutoColumn, Box, BoxProps, PreTitle } from '@pancakeswap/uikit'
 import { CurrencyField as Field } from 'utils/types'
-import { Currency, CurrencyAmount, Percent } from '@pancakeswap/sdk'
+import { UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { Percent } from '@pancakeswap/sdk'
 
 import LockedDeposit from 'views/AddLiquidityV3/formViews/V3FormView/components/LockedDeposit'
 import CurrencyInputPanelSimplify from 'components/CurrencyInputPanelSimplify'
 
 type FieldDepositAmountProps = {
-  currencies: { [field in Field]?: Currency }
+  currencies: { [field in Field]?: UnifiedCurrency }
   onFieldAInput: (value: string) => void
   onFieldBInput: (value: string) => void
   formattedAmounts: { [field in Field]?: string }
-  maxAmounts: { [field in Field]?: CurrencyAmount<Currency> }
+  maxAmounts: { [field in Field]?: UnifiedCurrencyAmount<UnifiedCurrency> }
   depositADisabled: boolean
   depositBDisabled: boolean
 } & BoxProps

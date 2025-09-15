@@ -13,6 +13,7 @@ import { resetMintState } from 'state/mint/actions'
 import { useAddLiquidityV2FormDispatch } from 'state/mint/reducer'
 import { isSolana } from '@pancakeswap/chains'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { Currency } from '@pancakeswap/swap-sdk-core'
 
 import StableFormView from '../formViews/StableFormView'
 import V2FormView from '../formViews/V2FormView'
@@ -62,11 +63,14 @@ export function UniversalAddLiquidity({
 
   const baseCurrency = useUnifiedCurrency(currencyIdA)
   const currencyB = useUnifiedCurrency(currencyIdB)
+  const evmBase: Currency | undefined =
+    baseCurrency && !isSolana(baseCurrency.chainId) ? (baseCurrency as any) : undefined
+  const evmQuote: Currency | undefined = currencyB && !isSolana(currencyB.chainId) ? (currencyB as any) : undefined
   useWarningLiquidity(currencyIdA, currencyIdB)
 
   const stableConfig = useStableConfig({
-    tokenA: baseCurrency,
-    tokenB: currencyB,
+    tokenA: evmBase,
+    tokenB: evmQuote,
   })
 
   const quoteCurrency =
@@ -122,20 +126,20 @@ export function UniversalAddLiquidity({
             ) : (
               <V3FormView
                 feeAmount={feeAmount}
-                baseCurrency={baseCurrency}
-                quoteCurrency={quoteCurrency}
+                baseCurrency={evmBase}
+                quoteCurrency={evmQuote}
                 currencyIdA={currencyIdA}
                 currencyIdB={currencyIdB}
               />
             ))}
           {selectorType === SELECTOR_TYPE.V2 && (
-            <AddLiquidity currencyA={baseCurrency} currencyB={quoteCurrency}>
+            <AddLiquidity currencyA={evmBase} currencyB={evmQuote}>
               {(props) => <V2FormView {...props} />}
             </AddLiquidity>
           )}
           {selectorType === SELECTOR_TYPE.STABLE && (
             <StableConfigContext.Provider value={stableConfig}>
-              <AddStableLiquidity currencyA={baseCurrency} currencyB={quoteCurrency}>
+              <AddStableLiquidity currencyA={evmBase} currencyB={evmQuote}>
                 {(props) => (
                   <StableFormView {...props} stableTotalFee={stableConfig?.stableSwapConfig?.stableTotalFee} />
                 )}

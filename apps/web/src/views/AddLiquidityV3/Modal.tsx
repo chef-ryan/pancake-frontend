@@ -84,14 +84,12 @@ export function AddLiquidityV3Modal({
   }, [onDismiss, router])
 
   const onAddLiquidityCallback = useCallback(
-    (hash: `0x${string}`) => {
-      if (hash) {
+    (hash: string) => {
+      if (hash && hash.startsWith('0x')) {
         waitForTransaction({
-          hash,
+          hash: hash as `0x${string}`,
           chainId: currency0?.chainId,
-        }).then(() => {
-          dismiss()
-        })
+        }).then(() => dismiss())
       } else {
         dismiss()
       }

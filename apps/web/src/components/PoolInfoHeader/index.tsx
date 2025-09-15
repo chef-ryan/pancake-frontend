@@ -1,7 +1,7 @@
 import { Protocol } from '@pancakeswap/farms'
 import { HookData } from '@pancakeswap/infinity-sdk'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Percent } from '@pancakeswap/sdk'
+import { Percent, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import {
   AutoColumn,
   Box,
@@ -23,7 +23,7 @@ import { CurrencyLogo, DoubleCurrencyLogo, FeeTierTooltip, Liquidity } from '@pa
 import { InfinityFeeTierBreakdown } from 'components/FeeTierBreakdown'
 import { LinkType, MiniUniversalFarmsOverlay } from 'components/MiniUniversalFarms/MiniUniversalFarmsOverlay'
 import { getFarmAprInfo } from 'state/farmsV4/search/farm.util'
-import { PoolInfo } from 'state/farmsV4/state/type'
+import { PoolInfo, UnifedPoolInfo } from 'state/farmsV4/state/type'
 import { getBlockExploreLink } from 'utils'
 import { isInfinityProtocol } from 'utils/protocols'
 import { Tooltips } from 'components/Tooltips'
@@ -31,10 +31,10 @@ import { PoolFeaturesModal } from 'views/PoolDetail/components/PoolFeaturesModal
 import { PoolGlobalAprButtonV3 } from 'views/universalFarms/components/PoolAprButtonV3'
 
 interface PoolInfoHeaderProps {
-  poolId?: `0x${string}`
-  poolInfo: PoolInfo | null | undefined
-  currency0?: Currency
-  currency1?: Currency
+  poolId?: string
+  poolInfo: UnifedPoolInfo | null | undefined
+  currency0?: UnifiedCurrency
+  currency1?: UnifiedCurrency
   chainId?: number
   isInverted?: boolean
   hookData?: HookData
@@ -213,9 +213,11 @@ export const PoolInfoHeader = ({
                   {poolInfo?.protocol ? (
                     <AutoColumn rowGap="4px">
                       <Box>
-                        {isInfinityProtocol(poolInfo.protocol) ? (
+                        {isInfinityProtocol(poolInfo.protocol) &&
+                        typeof poolId === 'string' &&
+                        poolId.startsWith('0x') ? (
                           <InfinityFeeTierBreakdown
-                            poolId={poolId}
+                            poolId={poolId as `0x${string}`}
                             chainId={chainId}
                             hookData={hookData}
                             infoIconVisible={false}
@@ -313,25 +315,29 @@ export const PoolInfoHeader = ({
                     <Text fontSize={12} bold color="textSubtle" textTransform="uppercase" width="max-content">
                       {t('Est. APR')}
                     </Text>
-                    {overrideAprDisplay?.roiCalculator || (
-                      <PoolGlobalAprButtonV3
-                        pool={poolInfo}
-                        showApyText={false}
-                        color="text"
-                        aprInfo={getFarmAprInfo(poolInfo.farm)}
-                        fontSize={isMobile ? '20px' : '24px'}
-                      />
-                    )}
+                    {overrideAprDisplay?.roiCalculator ||
+                      (typeof (poolInfo as any).lpAddress === 'string' &&
+                        (poolInfo as any).lpAddress.startsWith('0x') && (
+                          <PoolGlobalAprButtonV3
+                            pool={poolInfo as unknown as PoolInfo}
+                            showApyText={false}
+                            color="text"
+                            aprInfo={getFarmAprInfo(poolInfo.farm)}
+                            fontSize={isMobile ? '20px' : '24px'}
+                          />
+                        ))}
                   </FlexGap>
-                  {overrideAprDisplay?.aprDisplay || (
-                    <PoolGlobalAprButtonV3
-                      pool={poolInfo}
-                      showApyButton={false}
-                      color="text"
-                      aprInfo={getFarmAprInfo(poolInfo.farm)}
-                      fontSize={isMobile ? '20px' : '24px'}
-                    />
-                  )}
+                  {overrideAprDisplay?.aprDisplay ||
+                    (typeof (poolInfo as any).lpAddress === 'string' &&
+                      (poolInfo as any).lpAddress.startsWith('0x') && (
+                        <PoolGlobalAprButtonV3
+                          pool={poolInfo as unknown as PoolInfo}
+                          showApyButton={false}
+                          color="text"
+                          aprInfo={getFarmAprInfo(poolInfo.farm)}
+                          fontSize={isMobile ? '20px' : '24px'}
+                        />
+                      ))}
                 </AutoColumn>
               </Box>
             </FlexGap>
