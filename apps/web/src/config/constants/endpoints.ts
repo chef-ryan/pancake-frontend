@@ -1,4 +1,3 @@
-import { API_URLS } from '@pancakeswap/solana-core-sdk'
 import { ChainId, STABLESWAP_SUBGRAPHS, V2_SUBGRAPHS, V3_SUBGRAPHS } from '@pancakeswap/chains'
 
 export const THE_GRAPH_PROXY_API = 'https://thegraph.pancakeswap.com'
@@ -85,8 +84,7 @@ export const BINANCE_DATA_API = 'https://data-api.binance.vision/api'
 export const PREDICTION_PRICE_API = '/api/prediction/price'
 
 export const urlConfigs = {
-  ...API_URLS,
-  BASE_HOST: process.env.NEXT_PUBLIC_SOLANA_EXPLORE_API_ENDPOINT ?? API_URLS.BASE_HOST,
+  BASE_HOST: process.env.NEXT_PUBLIC_SOLANA_EXPLORE_API_ENDPOINT,
   POOL_LIST: '/cached/v1/pools/info/list',
   MINT_PRICE: '/cached/v1/tokens/price',
   INFO: '/cached/v1/pools/stats/overview',
