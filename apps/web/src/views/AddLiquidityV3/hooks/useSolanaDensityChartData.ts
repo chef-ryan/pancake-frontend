@@ -8,6 +8,7 @@ import { useSolanaOnchainClmmPool } from 'hooks/solana/useSolanaOnchainPool'
 import useAllTicksQuery from 'hooks/useAllTicksQuery'
 import { Protocol } from '@pancakeswap/farms'
 import { useActiveLiquidityByPool } from 'hooks/v3/usePoolTickData'
+import { Currency } from '@pancakeswap/solana-core-sdk'
 
 export function useSolanaDensityChartData({
   currencyA,
@@ -36,8 +37,8 @@ export function useSolanaDensityChartData({
   })
 
   const { data } = useActiveLiquidityByPool({
-    currencyA,
-    currencyB,
+    currencyA: currencyA as any,
+    currencyB: currencyB as any,
     ticks,
     pool: {
       tickSpacing: pool?.computePoolInfo.tickSpacing,

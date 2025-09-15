@@ -233,11 +233,9 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ allowCustomFee, ..
             fullWidth={!isMobile}
             scale={isMobile ? 'sm' : 'md'}
           >
-            {options.map((opt) => (
-              <ButtonMenuItem key={opt} padding={isMobile ? '0 8px' : '0 16px'}>
-                {opt}%
-              </ButtonMenuItem>
-            ))}
+            <ButtonMenuItem padding={isMobile ? '0 8px' : '0 16px'}>{PRESET_FEE_LEVELS_INFINITY[0]}%</ButtonMenuItem>
+            <ButtonMenuItem padding={isMobile ? '0 8px' : '0 16px'}>{PRESET_FEE_LEVELS_INFINITY[1]}%</ButtonMenuItem>
+            <ButtonMenuItem padding={isMobile ? '0 8px' : '0 16px'}>{PRESET_FEE_LEVELS_INFINITY[2]}%</ButtonMenuItem>
 
             {allowCustomFee ? (
               <ButtonMenuItem padding="0">
