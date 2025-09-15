@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js'
 import { Price, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { Protocol } from '@pancakeswap/farms'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
-import { POSITION_STATUS } from 'state/farmsV4/state/accountPositions/type'
+import { POSITION_STATUS, SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { SolanaV3Pool } from 'state/pools/solana'
 import { useSolanaTokenPrice } from 'hooks/solana/useSolanaTokenPrice'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
@@ -14,7 +14,7 @@ import { PriceRange } from './PriceRange'
 import { PositionItem } from './PositionItem'
 
 type SolanaV3PositionItemProps = {
-  position: ReturnType<typeof PositionInfoLayout.decode> & { status: POSITION_STATUS }
+  position: SolanaV3PositionDetail
   poolInfo: SolanaV3Pool | undefined
   detailMode?: boolean
 }
@@ -91,6 +91,7 @@ export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: So
       liquidity: BigInt(position.liquidity.toString()),
       chainId: NonEVMChainId.SOLANA,
       tvlUsd: poolInfo.tvl.toString() as `${number}`,
+      rawPool: poolInfo,
     } satisfies SolanaV3PoolInfo
   }, [currency0, currency1, poolInfo?.feeRate, position.liquidity, position.poolId])
 

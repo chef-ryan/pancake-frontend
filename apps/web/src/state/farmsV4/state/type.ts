@@ -2,6 +2,7 @@ import { Protocol } from '@pancakeswap/farms'
 import { HookData } from '@pancakeswap/infinity-sdk'
 import { Currency, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { Address } from 'viem'
+import { SolanaV3Pool } from 'state/pools/solana'
 import { FarmInfo } from '../search/farm.util'
 
 type Prettify<T> = {
@@ -44,6 +45,7 @@ export type SolanaV3PoolInfo = BasePoolInfo & {
   protocol: Protocol.V3
   lpAddress: string
   poolId: string
+  rawPool: SolanaV3Pool
 }
 
 export type V3PoolInfo = BasePoolInfo & {
