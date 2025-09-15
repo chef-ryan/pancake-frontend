@@ -4,12 +4,12 @@ import { useCallback } from 'react'
 import { SolanaV3Pool } from 'state/pools/solana'
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
-import { confirmTransaction, TxVersion } from '@pancakeswap/solana-core-sdk'
+import { TxVersion } from '@pancakeswap/solana-core-sdk'
 import { useSolanaPriorityFee } from 'components/WalletModalV2/hooks/useSolanaPriorityFee'
-import { retry, RetryableError } from 'state/multicall/retry'
+import { useTranslation } from '@pancakeswap/localization'
+import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import useSolanaTxError from '../../components/WalletModalV2/hooks/useSolanaTxError'
 import { useRaydium } from './useRaydium'
-import { useSolanaConnectionWithRpcAtom } from './useSolanaConnectionWithRpcAtom'
 
 export type AddLiquidityCallbackProps = {
   params: {
@@ -27,26 +27,9 @@ export type AddLiquidityCallbackProps = {
 
 export const useAddLiquidityCallback = () => {
   const raydium = useRaydium()
+  const { t } = useTranslation()
   const { computeBudgetConfig } = useSolanaPriorityFee()
-  const [slippage] = useSolanaUserSlippage()
   const { executeSolanaTransaction, handleSolanaError } = useSolanaTxError()
-  const connection = useSolanaConnectionWithRpcAtom()
-
-  const retryWaitForSolanaTransaction = useCallback(
-    async (txId?: string) => {
-      if (!txId) return undefined
-      const waitTx = async () => {
-        try {
-          await confirmTransaction(connection, txId)
-        } catch (error) {
-          throw new RetryableError()
-        }
-      }
-      const { promise } = retry(waitTx, { n: 5, minWait: 3000, maxWait: 5000 })
-      return promise
-    },
-    [connection],
-  )
 
   return useCallback(
     async ({ params, onSent, onError, onFinally, onConfirmed }: AddLiquidityCallbackProps) => {
@@ -72,28 +55,35 @@ export const useAddLiquidityCallback = () => {
         computeBudgetConfig,
         txVersion: TxVersion.V0,
       })
-
-      // eslint-disable-next-line consistent-return
-      return (
-        executeSolanaTransaction(async () => {
+      const executeAdd = async () => {
+        try {
           const { txId, signedTx } = await execute()
           onSent?.(txId)
           return { hash: txId }
-        })
-          // .then(async ({ hash }) => {
-          //   await retryWaitForSolanaTransaction(hash)
-          //   return { hash }
-          // })
-          .catch((e) => {
-            handleSolanaError(e)
-            onError?.(e)
-            return { hash: '' }
-          })
-          .finally(() => {
-            onFinally?.()
-            return { hash: '' }
-          })
-      )
+        } catch (e) {
+          handleSolanaError(e)
+          onError?.(e)
+          return { hash: '' }
+        } finally {
+          onFinally?.()
+        }
+      }
+
+      const executeMeta = () => {
+        const amountA = formatNumber(Number(amountMaxA))
+        const amountB = formatNumber(Number(amountMaxB))
+        return {
+          summary: `Add ${amountA} ${poolInfo.mintA.symbol} and ${amountB} ${poolInfo.mintB.symbol}`,
+          type: 'increase-liquidity-v3' as const,
+          translatableSummary: {
+            text: 'Add %amountA% %tokenASymbol% and %amountB% %tokenBSymbol%',
+            data: { amountA, tokenASymbol: poolInfo.mintA.symbol, amountB, tokenBSymbol: poolInfo.mintB.symbol },
+          },
+        }
+      }
+
+      // eslint-disable-next-line consistent-return
+      return executeSolanaTransaction(executeAdd, executeMeta)
     },
     [raydium, computeBudgetConfig, executeSolanaTransaction, handleSolanaError],
   )
