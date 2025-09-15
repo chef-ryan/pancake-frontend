@@ -17,11 +17,12 @@ import {
   InfinityBinPositionDetail,
   InfinityCLPositionDetail,
   PositionDetail,
+  SolanaV3PositionDetail,
   StableLPDetail,
   UnifiedPositionDetail,
   V2LPDetail,
 } from 'state/farmsV4/state/accountPositions/type'
-import { InfinityPoolInfo, PoolInfo } from 'state/farmsV4/state/type'
+import { InfinityPoolInfo, PoolInfo, SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import styled from 'styled-components'
 import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem'
@@ -29,10 +30,12 @@ import { useV2CakeEarning, useV3CakeEarning } from 'views/universalFarms/hooks/u
 import { usePositionEarningAmount } from 'views/universalFarms/hooks/usePositionEarningAmount'
 import { useAccount } from 'wagmi'
 import { IncentraTag } from 'components/Incentra/IncentraTag'
+import { NonEVMChainId } from '@pancakeswap/chains'
 import {
   InfinityBinPoolPositionAprButton,
   InfinityCLPoolPositionAprButton,
   PoolGlobalAprButton,
+  SolanaV3PoolPositionAprButton,
   V2PoolPositionAprButton,
   V3PoolPositionAprButton,
 } from '../PoolAprButton'
@@ -212,6 +215,14 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
       return <PoolGlobalAprButton pool={pool} detailMode={detailMode} />
     }
     if (pool.protocol === Protocol.V3) {
+      if (chainId === NonEVMChainId.SOLANA) {
+        return (
+          <SolanaV3PoolPositionAprButton
+            pool={pool as SolanaV3PoolInfo}
+            userPosition={userPosition as SolanaV3PositionDetail}
+          />
+        )
+      }
       return <V3PoolPositionAprButton pool={pool} userPosition={userPosition as PositionDetail} />
     }
     if (pool.protocol === Protocol.InfinityCLAMM) {

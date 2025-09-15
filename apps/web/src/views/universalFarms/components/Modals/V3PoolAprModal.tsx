@@ -2,6 +2,7 @@ import useV3DerivedInfo from 'hooks/v3/useV3DerivedInfo'
 import React, { useMemo } from 'react'
 import { useExtraV3PositionInfo } from 'state/farmsV4/hooks'
 import { useV3FormState } from 'views/AddLiquidityV3/formViews/V3FormView/form/reducer'
+import { Currency } from '@pancakeswap/swap-sdk-core'
 import { BasicAPRModal, BasicPoolAprModalProps } from './BasicPoolAPRModal'
 
 export const V3PoolAprModal: React.FC<BasicPoolAprModalProps> = ({ modal, ...props }) => {
@@ -18,10 +19,10 @@ export const V3PoolAprModal: React.FC<BasicPoolAprModalProps> = ({ modal, ...pro
   )
   const formState = useV3FormState()
   const { pool, price, currencyBalances } = useV3DerivedInfo(
-    poolInfo?.token0 ?? undefined,
-    poolInfo?.token1 ?? undefined,
+    (poolInfo?.token0 as Currency) ?? undefined,
+    (poolInfo?.token1 as Currency) ?? undefined,
     poolInfo?.feeTier,
-    poolInfo?.token0 ?? undefined,
+    (poolInfo?.token0 as Currency) ?? undefined,
     position,
     formState,
   )
