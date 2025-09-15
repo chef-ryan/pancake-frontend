@@ -121,7 +121,7 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
   const tags = useMemo(() => {
     return (
       <>
-        {(isInfinityProtocol(protocol) ? isStaked && !outOfRange && !removed : isStaked) && (
+        {(isInfinityProtocol(protocol) || isSolana(chainId) ? isStaked && !outOfRange && !removed : isStaked) && (
           <Tag variant="primary60">{t('Farming')}</Tag>
         )}
         {![Protocol.STABLE, Protocol.V2].includes(protocol) && (
