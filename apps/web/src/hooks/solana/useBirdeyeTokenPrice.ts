@@ -4,6 +4,8 @@ import useSWR from 'swr'
 
 import { WSOLMint } from '@pancakeswap/solana-core-sdk'
 import { PublicKey } from '@solana/web3.js'
+import { isValidPublicKey } from 'utils/solana/publicKeys'
+import { solToWSol } from '@pancakeswap/sdk'
 
 export interface BirdEyeTokenPrice {
   value: number
@@ -21,7 +23,7 @@ const fetcher = async ([url, mintList]: [string, string]) => {
 }
 
 export const useBirdeyeTokenPrice = (props: {
-  mintList: (string | PublicKey | undefined)[]
+  mintList: (string | undefined)[]
   refreshInterval?: number
   timeout?: number
   enabled?: boolean
@@ -29,7 +31,7 @@ export const useBirdeyeTokenPrice = (props: {
   const { mintList, refreshInterval = 2 * 60 * 1000, enabled = true } = props || {}
 
   const readyList = useMemo(
-    () => Array.from(new Set(mintList.filter((m) => !!m && typeof m === 'string' && m.length === 44))),
+    () => Array.from(new Set(mintList.filter((m) => !!m && isValidPublicKey(m)).map((m) => solToWSol(m!).toString()))),
     [JSON.stringify(mintList)],
   )
 

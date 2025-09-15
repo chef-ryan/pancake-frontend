@@ -1,12 +1,13 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
-import { Box, Breadcrumbs, Container, FlexGap, Text } from '@pancakeswap/uikit'
+import { Box, Breadcrumbs, Container, FlexGap, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 import { useTranslation } from '@pancakeswap/localization'
 import { useUnifiedCurrency } from 'hooks/Tokens'
 import { useActiveChainId } from 'hooks/useAccountActiveChain'
 import { useSolanaPoolByMint } from 'hooks/solana/useSolanaPoolsByMint'
 import { PoolInfoHeader } from 'components/PoolInfoHeader'
+import { SolanaPoolDerivedAprText } from 'views/universalFarms/components/SolanaPoolDerivedAprButton'
 
 import { useCurrencyParams } from '../hooks/useCurrencyParams'
 import { useHeaderInvertCurrencies } from '../hooks/useHeaderInvertCurrencies'
@@ -23,6 +24,7 @@ const LinkText = styled(Text)`
 export function AddSolanaLiquidityV3Layout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation()
   const { chainId } = useActiveChainId()
+  const { isMobile } = useMatchBreakpoints()
   const { currencyIdA, currencyIdB, feeAmount } = useCurrencyParams()
 
   const baseCurrency = useUnifiedCurrency(currencyIdA)
@@ -71,7 +73,14 @@ export function AddSolanaLiquidityV3Layout({ children }: { children: React.React
         isInverted={inverted}
         onInvertPrices={handleInvertCurrencies}
         poolId={poolInfo?.poolId}
-        overrideAprDisplay={{ aprDisplay: <></>, roiCalculator: <></> }}
+        overrideAprDisplay={{
+          aprDisplay: poolInfo ? (
+            <SolanaPoolDerivedAprText pool={poolInfo as any} fontSize={isMobile ? '20px' : '24px'} />
+          ) : (
+            <></>
+          ),
+          roiCalculator: undefined,
+        }}
       />
       {children}
     </Container>
