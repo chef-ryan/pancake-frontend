@@ -20,9 +20,10 @@ export const useLiquidityAmount = ({ poolInfo, tickLower, tickUpper, liquidity }
   const currency1 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo?.mintB as TokenInfo), [poolInfo?.mintB])
   const { data: epochInfo } = useSolanaEpochInfo()
   const [amount0, amount1] = useMemo(() => {
-    if (!currency0 || !currency1 || !poolInfo || !epochInfo || !liquidity) {
+    if (!currency0 || !currency1 || !poolInfo || !epochInfo || !liquidity || !poolInfo.price) {
       return [undefined, undefined]
     }
+
     const { amountA, amountB } = PositionUtils.getAmountsFromLiquidity({
       poolInfo,
       ownerPosition: { tickLower, tickUpper },

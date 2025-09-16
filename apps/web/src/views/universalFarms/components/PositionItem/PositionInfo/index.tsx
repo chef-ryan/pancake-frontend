@@ -262,13 +262,19 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
       <DetailInfoDesc>
         {desc}
         <Row gap="sm">
-          <FiatNumberDisplay
-            prefix="~"
-            value={totalPriceUSD}
-            style={{ color: theme.colors.textSubtle, fontSize: '12px' }}
-            showFullDigitsTooltip={false}
-          />
-          ({displayTokenReserve(amount0)} / {displayTokenReserve(amount1)})
+          {!amount0 || !amount1 ? (
+            <Skeleton width={80} />
+          ) : (
+            <>
+              <FiatNumberDisplay
+                prefix="~"
+                value={totalPriceUSD}
+                style={{ color: theme.colors.textSubtle, fontSize: '12px' }}
+                showFullDigitsTooltip={false}
+              />
+              ({displayTokenReserve(amount0)} / {displayTokenReserve(amount1)})
+            </>
+          )}
         </Row>
         {showAPR && (
           <Row gap="8px">
