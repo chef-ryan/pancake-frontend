@@ -32,7 +32,7 @@ export function useDependentAmountFromClmm({
 }) {
   const [allowedSlippage] = useUserSlippage() // custom from users
   const slippagePercent = useMemo(() => allowedSlippage / 10_000, [allowedSlippage])
-  const epochInfo = useSolanaEpochInfo()
+  const { data: epochInfo } = useSolanaEpochInfo()
   const [dependentAmount, setDependentAmount] = useState<UnifiedCurrencyAmount<UnifiedCurrency> | undefined>(undefined)
 
   const computePairAmount = useCallback(async () => {

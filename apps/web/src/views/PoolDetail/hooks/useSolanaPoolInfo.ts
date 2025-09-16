@@ -2,7 +2,7 @@ import { NonEVMChainId } from '@pancakeswap/chains'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
 import { useMemo } from 'react'
-import { SolV3PoolInfo } from 'state/farmsV4/state/type'
+import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { solExplorerApiClient } from 'state/info/api/client'
 import { normalizeSolanaPoolInfo } from 'utils/normalizeSolanaPoolInfo'
 
@@ -27,7 +27,7 @@ export const useSolanaPoolInfo = (
   poolId: string | undefined,
   chainId: number | undefined,
 ): {
-  data: SolV3PoolInfo | null
+  data: SolanaV3PoolInfo | null
   isLoading: boolean
   error: Error | null
 } => {

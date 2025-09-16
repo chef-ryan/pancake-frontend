@@ -12,7 +12,7 @@ type Prettify<T> = {
 
 export type PoolInfo = Prettify<V2PoolInfo | StablePoolInfo | V3PoolInfo | InfinityPoolInfo>
 
-export type UnifedPoolInfo = Prettify<V2PoolInfo | StablePoolInfo | V3PoolInfo | InfinityPoolInfo | SolV3PoolInfo>
+export type UnifedPoolInfo = Prettify<V2PoolInfo | StablePoolInfo | V3PoolInfo | InfinityPoolInfo | SolanaV3PoolInfo>
 
 export type BasePoolInfo = {
   pid?: number
@@ -44,8 +44,9 @@ export type BasePoolInfo = {
   farm?: FarmInfo
 }
 
-export type SolanaV3PoolInfo = BasePoolInfo & {
+export type SolanaV3PoolInfo = Omit<BasePoolInfo, 'lpAddress'> & {
   protocol: Protocol.V3
+  lpAddress: string
   nftMint: PublicKey
   poolId: string
   rawPool: SolanaV3Pool

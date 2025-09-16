@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai'
-import { useSolanaTokenList } from 'hooks/useSolanaTokenList'
+import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
 import { useMemo } from 'react'
 import {
   getMultipleAccountsInfo,

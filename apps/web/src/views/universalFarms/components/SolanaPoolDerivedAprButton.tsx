@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import BN from 'bn.js'
 import { Text, useTooltip } from '@pancakeswap/uikit'
-import type { SolV3PoolInfo } from 'state/farmsV4/state/type'
+import type { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { useSolanaOnchainClmmPool } from 'hooks/solana/useSolanaOnchainPool'
 import { useBirdeyeTokenPrice } from 'hooks/solana/useBirdeyeTokenPrice'
 import { AprKey, useClmmApr } from 'hooks/solana/useClmmApr'
@@ -9,7 +9,10 @@ import { useV3FormState } from 'views/AddLiquidityV3/formViews/V3FormView/form/r
 import { useSolanaDerivedInfo } from 'hooks/solana/useSolanaDerivedInfo'
 import { AprTooltipContent } from './PoolAprButtonV3/AprTooltipContent'
 
-export const SolanaPoolDerivedAprText: React.FC<{ pool: SolV3PoolInfo; fontSize?: string }> = ({ pool, fontSize }) => {
+export const SolanaPoolDerivedAprText: React.FC<{ pool: SolanaV3PoolInfo; fontSize?: string }> = ({
+  pool,
+  fontSize,
+}) => {
   const { data: onchain } = useSolanaOnchainClmmPool(pool.poolId)
 
   // Derive ticks from current form state
@@ -35,7 +38,7 @@ export const SolanaPoolDerivedAprText: React.FC<{ pool: SolV3PoolInfo; fontSize?
   }, [birdeyePrices, mintA, mintB, rewardMints])
 
   const aprData = useClmmApr({
-    poolInfo: pool.solanaData as any,
+    poolInfo: pool.rawPool,
     poolLiquidity: (onchain?.computePoolInfo?.liquidity as BN) ?? new BN(0),
     positionInfo: { tickLower: ticks?.LOWER, tickUpper: ticks?.UPPER, liquidity: new BN(1) },
     timeBasis: AprKey.Day,

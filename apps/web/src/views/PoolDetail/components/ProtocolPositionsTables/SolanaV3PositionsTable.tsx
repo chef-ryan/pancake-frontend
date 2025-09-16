@@ -19,7 +19,7 @@ import {
   PoolUtils,
 } from '@pancakeswap/solana-core-sdk'
 import { PancakeClmmProgramId } from '@pancakeswap/solana-clmm-sdk'
-import { PoolInfo, SolV3PoolInfo } from 'state/farmsV4/state/type'
+import { PoolInfo, SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { useBirdeyeTokenPrice } from 'hooks/solana/useBirdeyeTokenPrice'
 import { formatAmount } from '@pancakeswap/utils/formatInfoNumbers'
 import { formatPercentage, formatPoolDetailFiatNumber } from 'views/PoolDetail/utils'
@@ -171,7 +171,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
   const chainId = useChainIdByQuery()
 
   const solPoolId = useMemo(
-    () => (poolInfo as SolV3PoolInfo | any)?.poolId || (poolInfo as any)?.solanaData?.id,
+    () => (poolInfo as SolanaV3PoolInfo | any)?.poolId || (poolInfo as any)?.solanaData?.id,
     [poolInfo],
   )
 
@@ -283,7 +283,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
   ])
 
   const tokenMints = useMemo(() => {
-    const solData = (poolInfo as SolV3PoolInfo | any)?.solanaData
+    const solData = (poolInfo as SolanaV3PoolInfo | any)?.solanaData
     const mintA = solData?.mintA?.address
     const mintB = solData?.mintB?.address
     const rewardMints = (data?.computePoolInfo?.rewardInfos || [])
@@ -297,7 +297,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
   const computed = useMemo(() => {
     const base = data?.baseRows ?? []
     if (!rowsDisplay.length) return { rows: [], totalLiq: 0, totalEarn: 0, totalApr: 0 }
-    const solData = (poolInfo as SolV3PoolInfo | any)?.solanaData
+    const solData = (poolInfo as SolanaV3PoolInfo | any)?.solanaData
     const mintA = solData?.mintA?.address
     const mintB = solData?.mintB?.address
     const priceA = mintA ? priceMap?.[mintA]?.value ?? 0 : 0

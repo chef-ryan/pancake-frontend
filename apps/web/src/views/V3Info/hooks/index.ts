@@ -24,7 +24,7 @@ import {
 } from 'state/info/types'
 import { transformPoolData } from 'state/info/utils'
 import { getPercentChange } from 'views/V3Info/utils/data'
-import { type SolV3PoolInfo } from 'state/farmsV4/state/type'
+import { type SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { fetchPoolChartData } from '../data/pool/chartData'
 import { fetchedPoolData } from '../data/pool/poolData'
 import { PoolTickData, fetchTicksSurroundingPrice } from '../data/pool/tickData'
@@ -419,7 +419,7 @@ export const usePoolTickData = (address?: string): PoolTickData | undefined => {
         signal,
         protocol: Protocol.V3,
         tickSpacing: isSolana(chainId)
-          ? (poolInfo as SolV3PoolInfo).solanaData.config.tickSpacing
+          ? (poolInfo as SolanaV3PoolInfo).rawPool.config.tickSpacing
           : FEE_TIER_TO_TICK_SPACING(poolInfo.feeTier),
       })
     },

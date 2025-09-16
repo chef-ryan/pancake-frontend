@@ -11,7 +11,7 @@ import { useClmmAmmConfigs } from './useClmmAmmConfigs'
  * using CLMM AMM config tick spacing, and returns both the snapped tick and price.
  * For non-Solana chains or missing data, it returns undefined.
  */
-export const useGetPriceAndTick = (baseCurrency?: any, quoteCurrency?: any, feeAmount?: number) => {
+export const useGetPriceAndTick = (baseCurrency?: any, quoteCurrency?: any, feeAmount?: number | null) => {
   const { chainId } = useActiveChainId()
   const ammConfigs = useClmmAmmConfigs()
 

@@ -1,14 +1,11 @@
 import { NonEVMChainId } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
-import { isSolWSol, SOL } from '@pancakeswap/sdk'
+import { ApiV3PoolInfoConcentratedItem } from '@pancakeswap/solana-core-sdk'
 import { SPLToken } from '@pancakeswap/swap-sdk-core'
-import type { SolV3PoolInfo } from 'state/farmsV4/state/type'
-import type { paths } from 'state/info/api/solSchema'
+import { PublicKey } from '@solana/web3.js'
+import type { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 
-type SolanaPoolInfoFromApi =
-  paths['/cached/v1/pools/info/ids']['get']['responses']['200']['content']['application/json']['data'][0]
-
-export const normalizeSolanaPoolInfo = (solanaPoolInfo?: SolanaPoolInfoFromApi): SolV3PoolInfo | null => {
+export const normalizeSolanaPoolInfo = (solanaPoolInfo?: ApiV3PoolInfoConcentratedItem): SolanaV3PoolInfo | null => {
   if (!solanaPoolInfo) return null
   const token0 = new SPLToken({ ...solanaPoolInfo.mintA, chainId: NonEVMChainId.SOLANA })
   const token1 = new SPLToken({ ...solanaPoolInfo.mintB, chainId: NonEVMChainId.SOLANA })
@@ -35,6 +32,7 @@ export const normalizeSolanaPoolInfo = (solanaPoolInfo?: SolanaPoolInfoFromApi):
     feeTierBase: 1e6, // Base for percentage calculations
     isFarming: false,
     isDynamicFee: false,
-    solanaData: solanaPoolInfo,
+    rawPool: solanaPoolInfo,
+    nftMint: PublicKey.default,
   }
 }
