@@ -28,6 +28,7 @@ export interface FarmQuery {
   sortBy: keyof PoolInfo | null
   sortOrder: SORT_ORDER
   activeChainId?: ChainId
+  symbols?: string[]
 }
 
 function getPoolId(farm: UniversalFarmConfig) {
@@ -121,9 +122,10 @@ async function fetchFarms(query: {
   protocols: Protocol[]
   chains: FarmV4SupportedChainId[]
   tokens?: string[]
+  symbols?: string[]
 }) {
   // const protocols = DEFAULT_PROTOCOLS
-  const { extend, protocols: _protocols, tokens, chains } = query
+  const { extend, protocols: _protocols, tokens, symbols, chains } = query
   const protocols = _protocols.length > 0 ? _protocols : DEFAULT_PROTOCOLS
   const chainIds = chains.length > 0 ? chains : supportedChainIdV4
   if (!extend) {
@@ -133,18 +135,10 @@ async function fetchFarms(query: {
     ])
   }
   if (tokens && tokens.length > 0) {
-    return mergePromiseList([
-      fetchAllExplorerPoolsByAddress(
-        Array.from(chainIds),
-        tokens,
-        protocols.filter((x) => x.match(/infinity/)),
-      ),
-      fetchAllExplorerPoolsByAddress(
-        Array.from(chainIds),
-        tokens,
-        protocols.filter((x) => !x.match(/infinity/)),
-      ),
-    ])
+    return fetchAllExplorerPoolsByAddress(Array.from(chainIds), tokens, protocols)
+  }
+  if (symbols && symbols.length > 0) {
+    return fetchAllExplorerPoolsBySymbols(Array.from(chainIds), symbols, protocols)
   }
   return fetchAllExplorerPools(protocols, Array.from(chainIds))
 }
@@ -154,6 +148,7 @@ async function queryFarms(query: {
   protocols: Protocol[]
   chains: FarmV4SupportedChainId[]
   tokens?: string[]
+  symbols?: string[]
 }) {
   try {
     const { extend } = query
@@ -247,6 +242,36 @@ async function fetchAllExplorerPoolsByAddress(
       })
     }),
   )
+  return allPools
+    .flat()
+    .map(normalizeAddress)
+    .filter((x) => x) as InfinityRouter.RemotePoolBase[]
+}
+
+async function fetchAllExplorerPoolsBySymbols(
+  chains: FarmV4SupportedChainId[],
+  symbols: string[],
+  protocols: Protocol[],
+) {
+  if (!protocols.length) return []
+  if (!symbols.length) return []
+
+  const baseUrl = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`
+  const chainNames = chains.map((chain) => getEdgeChainName(chain))
+
+  const chunks = chunk(symbols, 20)
+  const allPools = await mergePromiseList(
+    chunks.map((symbolChunk) => {
+      return edgeQueries.fetchAllPools({
+        baseUrl,
+        protocols,
+        chains: chainNames,
+        symbols: symbolChunk,
+        maxPages: 1,
+      })
+    }),
+  )
+
   return allPools
     .flat()
     .map(normalizeAddress)

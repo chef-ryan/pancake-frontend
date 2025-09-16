@@ -33,7 +33,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
   return atom((get) => {
     const { protocols, chains: _chains, sortBy, activeChainId, keywords } = query
     const useShowTestnet = get(userShowTestnetAtom)
-    const { tokensMap, symbolsMap } = get(tokensMapAtom)
+    const { tokensMap } = get(tokensMapAtom)
     const queryChains = _chains.filter((chain) => {
       if (isTestnetChainId(chain) && !useShowTestnet) {
         return false
@@ -44,7 +44,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
       queryChains.push(activeChainId)
     }
 
-    const extendSearchList = parseExtendSearchParams(keywords, protocols, queryChains, symbolsMap)
+    const extendSearchList = parseExtendSearchParams(keywords, protocols, queryChains)
 
     const baseList = get(
       baseFarmListAtom({
