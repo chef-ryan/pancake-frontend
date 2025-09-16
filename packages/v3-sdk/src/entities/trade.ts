@@ -183,7 +183,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
     let spotOutputAmount = CurrencyAmount.fromRawAmount(this.outputAmount.currency, 0)
     for (const { route, inputAmount } of this.swaps) {
       const { midPrice } = route
-      spotOutputAmount = spotOutputAmount.add(midPrice.quote(inputAmount))
+      spotOutputAmount = spotOutputAmount.add(midPrice.quote(inputAmount) as CurrencyAmount<TOutput>)
     }
 
     const priceImpact = spotOutputAmount.subtract(this.outputAmount).divide(spotOutputAmount)

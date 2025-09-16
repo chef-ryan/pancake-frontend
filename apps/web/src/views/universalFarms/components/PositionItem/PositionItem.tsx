@@ -1,20 +1,77 @@
-import { Column, Flex, useMatchBreakpoints } from '@pancakeswap/uikit'
-import { TokenPairLogo } from 'components/TokenImage'
+import { Box, Column, Flex, useMatchBreakpoints, useTooltip, TokenImage, TokenLogo } from '@pancakeswap/uikit'
+import { getCurrencyLogoSrcs, TokenPairLogo } from 'components/TokenImage'
 import { CHAIN_QUERY_NAME } from 'config/chains'
 import { PERSIST_CHAIN_KEY } from 'config/constants'
 import { useRouter } from 'next/router'
 import React, { PropsWithChildren, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { addQueryToPath } from 'utils/addQueryToPath'
-import { PositionInfo, PositionInfoProps } from './PositionInfo'
-import { PositionItemSkeleton } from './PositionItemSkeleton'
+import { useTranslation } from '@pancakeswap/localization'
+import { NonEVMChainId } from '@pancakeswap/chains'
+import { UnifiedCurrency } from '@pancakeswap/sdk'
+import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
+import { AddressChip } from './AddressChip'
 import { Container } from './styled'
+import { PositionItemSkeleton } from './PositionItemSkeleton'
+import { PositionInfo, PositionInfoProps } from './PositionInfo'
 
 type PositionItemProps = PositionInfoProps
+
+const SolanaPoolAddressTooltip: React.FC<{
+  chainId: number
+  currency0: UnifiedCurrency | undefined
+  currency1: UnifiedCurrency | undefined
+  poolId: string | undefined
+}> = ({ chainId, currency0, currency1, poolId }) => {
+  const { t } = useTranslation()
+
+  if (!currency0 || !currency1 || chainId !== NonEVMChainId.SOLANA || !poolId) {
+    return null
+  }
+  return (
+    <Box>
+      <AddressChip address={poolId} label={`${t('Pool id')}:`} mb="2" textProps={{ fontSize: 'xs', ml: '2px' }} />
+      <AddressChip
+        address={currency0.wrapped.address}
+        label={
+          <TokenLogo
+            srcs={getCurrencyLogoSrcs(currency0)}
+            sizes="xs"
+            width={16}
+            height={16}
+            style={{ borderRadius: '50%' }}
+          />
+        }
+        textProps={{ fontSize: 'xs' }}
+      />
+      <AddressChip
+        address={currency1.wrapped.address}
+        label={
+          <TokenLogo
+            srcs={getCurrencyLogoSrcs(currency1)}
+            sizes="xs"
+            width={16}
+            height={16}
+            style={{ borderRadius: '50%' }}
+          />
+        }
+        textProps={{ fontSize: 'xs' }}
+      />
+    </Box>
+  )
+}
 
 export const PositionItem: React.FC<PropsWithChildren<PositionItemProps>> = (props) => {
   const { isDesktop } = useMatchBreakpoints()
   const { link, currency0, currency1, chainId, children, miniMode = !isDesktop } = props
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(
+    <SolanaPoolAddressTooltip
+      chainId={chainId}
+      currency0={currency0}
+      currency1={currency1}
+      poolId={(props.pool as SolanaV3PoolInfo)?.poolId}
+    />,
+  )
 
   const router = useRouter()
   const linkWithChain = useMemo(
@@ -42,6 +99,7 @@ export const PositionItem: React.FC<PropsWithChildren<PositionItemProps>> = (pro
     <Container $withLink={Boolean(linkWithChain)}>
       {!miniMode && (
         <TokenPairLogo
+          ref={targetRef}
           width={48}
           height={48}
           variant="inverted"
@@ -50,6 +108,7 @@ export const PositionItem: React.FC<PropsWithChildren<PositionItemProps>> = (pro
           withChainLogo
         />
       )}
+      {tooltipVisible && tooltip}
       <DetailsContainer>
         <Column gap="8px">
           <PositionInfo {...props} />

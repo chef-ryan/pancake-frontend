@@ -36,6 +36,7 @@ import {
   InfinityCLPositionDetail,
   POSITION_STATUS,
   PositionDetail,
+  SolanaV3PositionDetail,
   StableLPDetail,
   V2LPDetail,
 } from 'state/farmsV4/state/accountPositions/type'
@@ -45,6 +46,7 @@ import {
   InfinityCLPoolInfo,
   InfinityPoolInfo,
   PoolInfo,
+  SolanaV3PoolInfo,
 } from 'state/farmsV4/state/type'
 import { useBinRangeQueryState, useClRangeQueryState, useLiquidityShapeQueryState } from 'state/infinity/shared'
 import {
@@ -56,8 +58,10 @@ import { usePool } from 'views/AddLiquidityInfinity/hooks/usePool'
 import { useV3FormState } from 'views/AddLiquidityV3/formViews/V3FormView/form/reducer'
 import { useLmPoolLiquidity } from 'views/Farms/hooks/useLmPoolLiquidity'
 import { useAccount } from 'wagmi'
+import { Address } from 'viem/accounts'
 import { getActiveLiquidityFromShape } from '../utils/getActiveLiquidityFromShape'
 import { useBinAmountsFromUsdValue } from './useBinAmountsFromUsdValue'
+import { getPositionAprCore } from '../utils/getSolanaV3PositionAprCode'
 
 const V3_LP_FEE_RATE = {
   [FeeAmount.LOWEST]: 0.67,
@@ -67,7 +71,7 @@ const V3_LP_FEE_RATE = {
 }
 
 export const useV2PositionApr = (pool: PoolInfo, userPosition: StableLPDetail | V2LPDetail) => {
-  const key = useMemo(() => `${pool?.chainId}:${pool?.lpAddress}` as const, [pool?.chainId, pool?.lpAddress])
+  const key = useMemo(() => `${pool?.chainId}:${pool?.lpAddress as Address}` as const, [pool?.chainId, pool?.lpAddress])
   const { lpApr: globalLpApr, cakeApr: globalCakeApr, merklApr, incentraApr } = usePoolApr(key, pool)
   const numerator = useMemo(() => {
     const lpAprNumerator = new BN(globalLpApr).times(globalCakeApr?.userTvlUsd ?? BIG_ZERO)
@@ -105,11 +109,11 @@ export const useV2PositionApr = (pool: PoolInfo, userPosition: StableLPDetail | 
 }
 
 export const useV3PositionApr = (pool: PoolInfo, userPosition: PositionDetail) => {
-  const key = useMemo(() => `${pool.chainId}:${pool.lpAddress}` as const, [pool.chainId, pool.lpAddress])
+  const key = useMemo(() => `${pool.chainId}:${pool.lpAddress as Address}` as const, [pool.chainId, pool.lpAddress])
   const { removed, outOfRange, position } = useExtraV3PositionInfo(userPosition)
   const { cakeApr: globalCakeApr, merklApr: merklApr_, incentraApr: incentraApr_ } = usePoolApr(key, pool)
-  const { data: token0UsdPrice_ } = useCurrencyUsdPrice(pool.token0)
-  const { data: token1UsdPrice_ } = useCurrencyUsdPrice(pool.token1)
+  const { data: token0UsdPrice_ } = useCurrencyUsdPrice(pool.token0 as Currency)
+  const { data: token1UsdPrice_ } = useCurrencyUsdPrice(pool.token1 as Currency)
 
   const [token0UsdPrice, token1UsdPrice] = useMemo(() => {
     if (token0UsdPrice_ && token1UsdPrice_) return [token0UsdPrice_, token1UsdPrice_]
@@ -210,6 +214,18 @@ export const useV3PositionApr = (pool: PoolInfo, userPosition: PositionDetail) =
     merklApr,
     incentraApr,
   }
+}
+
+export const useSolanaV3PositionApr = (pool: SolanaV3PoolInfo, userPosition: SolanaV3PositionDetail) => {
+  const apr = useMemo(() => {
+    return getPositionAprCore({
+      poolInfo: pool.rawPool,
+      positionAccount: userPosition,
+      inRange: userPosition.status === POSITION_STATUS.ACTIVE,
+    })
+  }, [pool, userPosition])
+
+  return apr
 }
 
 const usePositionTVLUsd = ({

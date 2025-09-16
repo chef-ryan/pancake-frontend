@@ -40,6 +40,9 @@ export const useAccountV3Positions = (chainIds: number[], account?: Address | nu
   })
 
   return useMemo(() => {
+    if (!account) {
+      return { data: [] as PositionDetail[], pending: false }
+    }
     if (!data) {
       return { data: [] as PositionDetail[], pending: isPending }
     }
@@ -62,5 +65,5 @@ export const useAccountV3Positions = (chainIds: number[], account?: Address | nu
       data: filteredData,
       pending: isPending,
     }
-  }, [data, isPending, allTokens])
+  }, [data, isPending, allTokens, account])
 }

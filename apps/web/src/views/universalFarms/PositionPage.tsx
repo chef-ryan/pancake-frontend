@@ -28,6 +28,7 @@ import styled from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import ConnectWalletButton from 'components/ConnectWalletButton'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import {
   AddLiquidityButton,
   Card,
@@ -47,6 +48,7 @@ import { useStablePositions } from './hooks/useStablePositions'
 import { positionEarningAmountAtom } from './hooks/usePositionEarningAmount'
 import { getPositionKey } from './components/PositionItem/PositionCard'
 import { matchPositionSearch } from './utils/matchPositionSearch'
+import { useSolanaV3PositionItems } from './hooks/useSolanaV3Positions'
 
 const ToggleWrapper = styled.div`
   display: inline-flex;
@@ -126,7 +128,7 @@ const SubPanel = styled(Flex)`
 `
 
 const EmptyListPlaceholder = ({ text, imageUrl }: { text: string; imageUrl?: string }) => {
-  const { address: account } = useAccount()
+  const { account, solanaAccount } = useAccountActiveChain()
 
   return (
     <FlexGap alignItems="center" flexDirection="column" gap="16px">
@@ -139,7 +141,7 @@ const EmptyListPlaceholder = ({ text, imageUrl }: { text: string; imageUrl?: str
       <Text fontSize="14px" color="textSubtle" textAlign="center">
         {text}
       </Text>
-      {!account ? <ConnectWalletButton /> : null}
+      {!account && !solanaAccount ? <ConnectWalletButton /> : null}
     </FlexGap>
   )
 }
@@ -149,6 +151,7 @@ const NUMBER_OF_FARMS_VISIBLE = 10
 export const PositionPage = () => {
   const { t } = useTranslation()
   const { address: account } = useAccount()
+  const { solanaAccount } = useAccountActiveChain()
 
   const { observerRef, isIntersecting } = useIntersectionObserver()
   const [cursorVisible, setCursorVisible] = useState(NUMBER_OF_FARMS_VISIBLE)
@@ -208,6 +211,12 @@ export const PositionPage = () => {
     positionStatus,
     farmsOnly,
   })
+  const { solanaPositions, solanaLoading } = useSolanaV3PositionItems({
+    selectedNetwork,
+    selectedTokens,
+    positionStatus,
+    farmsOnly,
+  })
   const { v2Positions, v2Loading, v2PoolsLength } = useV2Positions({
     selectedNetwork,
     selectedTokens,
@@ -225,6 +234,7 @@ export const PositionPage = () => {
     const unifiedList = [
       ...infinityPositions,
       ...v3Positions,
+      ...solanaPositions,
       ...v2Positions,
       ...stablePositions,
     ] as UnifiedPositionDetail[]
@@ -234,19 +244,19 @@ export const PositionPage = () => {
         return selectedPoolTypes.includes(protocol)
       })
       .filter((item) => matchPositionSearch(item, search))
-  }, [infinityPositions, v3Positions, v2Positions, stablePositions, selectedPoolTypes, search])
+  }, [infinityPositions, v3Positions, solanaPositions, v2Positions, stablePositions, selectedPoolTypes, search])
 
   const visibleList = useMemo(() => {
     return allPositionList.slice(0, cursorVisible)
   }, [allPositionList, cursorVisible])
 
   const mainSection = useMemo(() => {
-    if (!account) {
+    if (!account && !solanaAccount) {
       return <EmptyListPlaceholder text={t('Please Connect Wallet to view positions.')} />
     }
 
-    const isAnyLoading = infinityLoading || v3Loading || v2Loading || stableLoading
-    const isAllLoading = infinityLoading && v3Loading && v2Loading && stableLoading
+    const isAnyLoading = infinityLoading || v3Loading || solanaLoading || v2Loading || stableLoading
+    const isAllLoading = infinityLoading && v3Loading && solanaLoading && v2Loading && stableLoading
 
     if (isAllLoading) {
       return (

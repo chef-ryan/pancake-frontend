@@ -3,9 +3,11 @@ import { getDefaultStore } from 'jotai'
 import {
   InfinityBinPositionDetail,
   InfinityCLPositionDetail,
+  SolanaV3PositionDetail,
   UnifiedPositionDetail,
 } from 'state/farmsV4/state/accountPositions/type'
 import { Native, ZERO_ADDRESS } from '@pancakeswap/sdk'
+import { isSolana } from '@pancakeswap/chains'
 import { tokensMapAtom } from '../atom/tokensMapAtom'
 
 const store = getDefaultStore()
@@ -55,6 +57,12 @@ export function matchPositionSearch(pos: UnifiedPositionDetail, search: string) 
       break
     }
     case Protocol.V3: {
+      if (isSolana(pos.chainId)) {
+        const { token0, token1 } = pos as SolanaV3PositionDetail
+        if (!token0 || !token1) break
+        tags.push(...[token0.symbol.toLowerCase(), token1.symbol.toLowerCase(), 'v3'])
+        break
+      }
       const symbolTags0 = getSymbolTags(pos.chainId, (pos as any).token0)
       const symbolTags1 = getSymbolTags(pos.chainId, (pos as any).token1)
       tags.push(...symbolTags0, ...symbolTags1, 'v3')

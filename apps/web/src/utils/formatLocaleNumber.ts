@@ -1,7 +1,7 @@
-import { Currency, CurrencyAmount, Price } from '@pancakeswap/sdk'
+import { Currency, CurrencyAmount, Price, UnifiedCurrency } from '@pancakeswap/sdk'
 
 interface FormatLocaleNumberArgs {
-  number: CurrencyAmount<Currency> | Price<Currency, Currency> | number
+  number: CurrencyAmount<Currency> | Price<UnifiedCurrency, UnifiedCurrency> | number
   locale: string | undefined
   options?: Intl.NumberFormatOptions
   sigFigs?: number

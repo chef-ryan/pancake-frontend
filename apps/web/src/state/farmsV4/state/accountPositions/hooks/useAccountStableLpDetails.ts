@@ -39,11 +39,17 @@ export const useAccountStableLpDetails = (chainIds: number[], account?: Address 
     staleTime: SLOW_INTERVAL,
   })
 
-  return useMemo(
-    () => ({
-      data: data ?? [],
+  return useMemo(() => {
+    if (!account) {
+      return { data: [] as StableLPDetail[], pending: false }
+    }
+    if (!data) {
+      return { data: [] as StableLPDetail[], pending: isPending }
+    }
+
+    return {
+      data,
       pending: isPending,
-    }),
-    [data, isPending],
-  )
+    }
+  }, [data, isPending, account])
 }

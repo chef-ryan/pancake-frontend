@@ -156,3 +156,9 @@ export const LiquiditySlippageButton = () => {
 
   return <SlippageButtonView tolerance={userSlippageTolerance} slippageModalContent={<EVMLiquiditySlippageSetting />} />
 }
+
+export const SolanaLiquiditySlippageButton = () => {
+  const [solanaSlippageTolerance] = useSolanaUserSlippage()
+
+  return <SlippageButtonView tolerance={solanaSlippageTolerance} slippageModalContent={<SolanaSlippageSetting />} />
+}

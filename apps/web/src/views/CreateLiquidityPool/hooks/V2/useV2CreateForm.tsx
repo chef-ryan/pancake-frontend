@@ -151,7 +151,7 @@ export const useV2CreateForm = () => {
             : pair.priceOf(tokenB).quote(wrappedIndependentAmount)
         return dependentCurrency?.isNative
           ? CurrencyAmount.fromRawAmount(dependentCurrency, dependentTokenAmount.quotient)
-          : dependentTokenAmount
+          : (dependentTokenAmount as CurrencyAmount<Currency>)
       }
       return undefined
     }

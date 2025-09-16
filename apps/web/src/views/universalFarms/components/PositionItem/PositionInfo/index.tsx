@@ -1,8 +1,8 @@
 import { Protocol } from '@pancakeswap/farms'
 import { useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Token } from '@pancakeswap/swap-sdk-core'
-import { FeeTier, FlexGap, Row, Skeleton, Tag, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { AutoColumn, FeeTier, FlexGap, Row, Skeleton, Tag, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { formatNumber as formatBalance } from '@pancakeswap/utils/formatBalance'
 import { formatNumber } from '@pancakeswap/utils/formatNumber'
 import { DoubleCurrencyLogo, FiatNumberDisplay } from '@pancakeswap/widgets-internal'
@@ -17,11 +17,18 @@ import {
   InfinityBinPositionDetail,
   InfinityCLPositionDetail,
   PositionDetail,
+  SolanaV3PositionDetail,
   StableLPDetail,
   UnifiedPositionDetail,
   V2LPDetail,
 } from 'state/farmsV4/state/accountPositions/type'
-import { InfinityPoolInfo, PoolInfo } from 'state/farmsV4/state/type'
+import {
+  InfinityBinPoolInfo,
+  InfinityCLPoolInfo,
+  InfinityPoolInfo,
+  PoolInfo,
+  SolanaV3PoolInfo,
+} from 'state/farmsV4/state/type'
 import styled from 'styled-components'
 import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem'
@@ -29,29 +36,35 @@ import { useV2CakeEarning, useV3CakeEarning } from 'views/universalFarms/hooks/u
 import { usePositionEarningAmount } from 'views/universalFarms/hooks/usePositionEarningAmount'
 import { useAccount } from 'wagmi'
 import { IncentraTag } from 'components/Incentra/IncentraTag'
+import { isEvm, isSolana, NonEVMChainId } from '@pancakeswap/chains'
+import { getCurrencyLogoSrcs } from 'components/TokenImage'
+import { PositionDebugView } from '../PositionDebugView'
 import {
   InfinityBinPoolPositionAprButton,
   InfinityCLPoolPositionAprButton,
   PoolGlobalAprButton,
+  SolanaV3PoolPositionAprButton,
   V2PoolPositionAprButton,
   V3PoolPositionAprButton,
-} from '../PoolAprButton'
-import { PositionDebugView } from './PositionDebugView'
+} from '../../PoolAprButton'
+import { DetailInfoTitle, DetailInfoDesc, DetailInfoLabel, TagCell } from './styled'
+import { EarningsWithToken } from './EarningsWithToken'
+import { SolanaV3Earnings } from './SolanaV3Earnings'
 
-export const formatPositionAmount = (amount?: CurrencyAmount<Token | Currency>) => {
+export const formatPositionAmount = (amount?: UnifiedCurrencyAmount<UnifiedCurrency>) => {
   const minimumFractionDigits = Math.min(amount?.currency.decimals ?? 0, 6)
   return amount && !amount.equalTo(0) ? amount.toFixed(minimumFractionDigits) : '0'
 }
 
-const displayTokenReserve = (amount?: CurrencyAmount<Token | Currency>) => {
+const displayTokenReserve = (amount?: UnifiedCurrencyAmount<UnifiedCurrency>) => {
   const symbol = amount?.currency.symbol ?? '-'
   return `${formatNumber(formatPositionAmount(amount))} ${symbol}`
 }
 
 export type PositionInfoProps = {
   chainId: number
-  currency0?: Currency
-  currency1?: Currency
+  currency0?: UnifiedCurrency
+  currency1?: UnifiedCurrency
   removed: boolean
   outOfRange: boolean
   desc?: React.ReactNode
@@ -62,9 +75,9 @@ export type PositionInfoProps = {
   isStaked?: boolean
   protocol: Protocol
   totalPriceUSD: number
-  amount0?: CurrencyAmount<Token | Currency>
-  amount1?: CurrencyAmount<Token | Currency>
-  pool?: PoolInfo | null
+  amount0?: UnifiedCurrencyAmount<UnifiedCurrency>
+  amount1?: UnifiedCurrencyAmount<UnifiedCurrency>
+  pool?: PoolInfo | SolanaV3PoolInfo | null
   poolId?: `0x${string}`
   detailMode?: boolean
   userPosition?: UnifiedPositionDetail
@@ -108,7 +121,7 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
   const tags = useMemo(() => {
     return (
       <>
-        {(isInfinityProtocol(protocol) ? isStaked && !outOfRange && !removed : isStaked) && (
+        {(isInfinityProtocol(protocol) || isSolana(chainId) ? isStaked && !outOfRange && !removed : isStaked) && (
           <Tag variant="primary60">{t('Farming')}</Tag>
         )}
         {![Protocol.STABLE, Protocol.V2].includes(protocol) && (
@@ -209,18 +222,38 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
       return <Skeleton width={60} />
     }
     if (!userPosition) {
-      return <PoolGlobalAprButton pool={pool} detailMode={detailMode} />
+      return <PoolGlobalAprButton pool={pool as PoolInfo} detailMode={detailMode} />
     }
     if (pool.protocol === Protocol.V3) {
-      return <V3PoolPositionAprButton pool={pool} userPosition={userPosition as PositionDetail} />
+      if (chainId === NonEVMChainId.SOLANA) {
+        return (
+          <SolanaV3PoolPositionAprButton
+            pool={pool as SolanaV3PoolInfo}
+            userPosition={userPosition as SolanaV3PositionDetail}
+          />
+        )
+      }
+      return <V3PoolPositionAprButton pool={pool as PoolInfo} userPosition={userPosition as PositionDetail} />
     }
     if (pool.protocol === Protocol.InfinityCLAMM) {
-      return <InfinityCLPoolPositionAprButton pool={pool} userPosition={userPosition as InfinityCLPositionDetail} />
+      return (
+        <InfinityCLPoolPositionAprButton
+          pool={pool as InfinityCLPoolInfo}
+          userPosition={userPosition as InfinityCLPositionDetail}
+        />
+      )
     }
     if (pool.protocol === Protocol.InfinityBIN) {
-      return <InfinityBinPoolPositionAprButton pool={pool} userPosition={userPosition as InfinityBinPositionDetail} />
+      return (
+        <InfinityBinPoolPositionAprButton
+          pool={pool as InfinityBinPoolInfo}
+          userPosition={userPosition as InfinityBinPositionDetail}
+        />
+      )
     }
-    return <V2PoolPositionAprButton pool={pool} userPosition={userPosition as V2LPDetail | StableLPDetail} />
+    return (
+      <V2PoolPositionAprButton pool={pool as PoolInfo} userPosition={userPosition as V2LPDetail | StableLPDetail} />
+    )
   }, [detailMode, pool, userPosition])
 
   return (
@@ -245,8 +278,8 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
         )}
         {isStaked ? (
           [Protocol.STABLE, Protocol.V2].includes(protocol) ? (
-            <V2Earnings pool={pool} />
-          ) : Protocol.V3 === protocol && chainId ? (
+            <V2Earnings pool={pool as PoolInfo} />
+          ) : Protocol.V3 === protocol && chainId && isEvm(chainId) ? (
             <V3Earnings tokenId={tokenId} chainId={chainId} />
           ) : null
         ) : null}
@@ -254,6 +287,9 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
           <InfinityCLEarnings tokenId={tokenId} chainId={chainId} poolId={poolId} />
         ) : Protocol.InfinityBIN === protocol ? (
           <InfinityBinEarnings chainId={chainId} poolId={poolId} />
+        ) : null}
+        {Protocol.V3 === protocol && chainId && isSolana(chainId) ? (
+          <SolanaV3Earnings pool={pool as SolanaV3PoolInfo} position={userPosition as SolanaV3PositionDetail} />
         ) : null}
       </DetailInfoDesc>
     </>
@@ -344,32 +380,3 @@ const InfinityCLEarnings = ({ tokenId, chainId, poolId }: { tokenId?: bigint; ch
 
   return <Earnings earningsAmount={amount} earningsBusd={rewardsUSD} />
 }
-
-const DetailInfoTitle = styled.div<{ $isMobile?: boolean }>`
-  display: flex;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  flex-direction: ${({ $isMobile }) => ($isMobile ? 'column' : 'row')};
-`
-
-const DetailInfoDesc = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 400;
-`
-
-const DetailInfoLabel = styled(Text)`
-  color: ${({ theme }) => theme.colors.textSubtle};
-  font-weight: 600;
-  font-size: 12px;
-`
-
-const TagCell = styled(FlexGap)`
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 16px;
-`

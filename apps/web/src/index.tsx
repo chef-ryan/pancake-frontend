@@ -6,7 +6,7 @@ import { UpdatePositionsReminder } from 'views/Farms/components/UpdatePositionsR
 import { useAccount } from 'wagmi'
 import ListsUpdater from './state/lists/updater'
 import MulticallUpdater from './state/multicall/updater'
-import TransactionUpdater from './state/transactions/updater'
+import TransactionUpdater, { SolanaTransactionUpdater } from './state/transactions/updater'
 import { chains } from './utils/wagmi'
 
 export function Updaters() {
@@ -17,6 +17,7 @@ export function Updaters() {
       {chains.map((chain) => (
         <TransactionUpdater key={`trxUpdater#${chain.id}`} chainId={chain.id} />
       ))}
+      <SolanaTransactionUpdater />
       <MulticallUpdater />
     </>
   )

@@ -371,8 +371,8 @@ async function getBestTrade({
             price !== undefined,
             `Failed to get price, base ${v2.currency.symbol}, quote ${finish.currency.symbol}`,
           )
-          const gasSpentInQuote = price.quote(gasPriceInV2.multiply(gasSpent))
-          const newQuote = adjustQuoteByGas(price.quote(quote.wrapped), gasSpentInQuote)
+          const gasSpentInQuote = price.quote(gasPriceInV2.multiply(gasSpent)) as CurrencyAmount<Currency>
+          const newQuote = adjustQuoteByGas(price.quote(quote.wrapped) as CurrencyAmount<Currency>, gasSpentInQuote)
           // const newQuote = price.quote(quote);
           const bestSource = getBestSource(v2)
           const v2BestQuote = getBestQuote(v2)

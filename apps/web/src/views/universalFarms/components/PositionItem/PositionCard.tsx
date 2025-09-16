@@ -3,18 +3,27 @@ import {
   InfinityBinPositionDetail,
   InfinityCLPositionDetail,
   PositionDetail,
+  SolanaV3PositionDetail,
   StableLPDetail,
   V2LPDetail,
 } from 'state/farmsV4/state/accountPositions/type'
 import { getKeyForPools } from 'state/farmsV4/hooks'
+import { isSolana } from '@pancakeswap/chains'
 import { InfinityPositionActions } from '../PositionActions/InfinityPositionActions'
 import { InfinityBinPositionItem } from './InfinityBinPositionItem'
 import { InfinityCLPositionItem } from './InfinityCLPositionItem'
 import { StablePositionItem } from './StablePositionItem'
 import { V2PositionItem } from './V2PositionItem'
 import { V3PositionItem } from './V3PositionItem'
+import { SolanaV3PositionItem } from './SolanaV3PositionItem'
 
-type Position = InfinityCLPositionDetail | InfinityBinPositionDetail | PositionDetail | V2LPDetail | StableLPDetail
+type Position =
+  | InfinityCLPositionDetail
+  | InfinityBinPositionDetail
+  | PositionDetail
+  | V2LPDetail
+  | StableLPDetail
+  | SolanaV3PositionDetail
 
 interface PositionCardProps {
   data: Position
@@ -46,6 +55,9 @@ export const PositionCard = ({ data, poolLength, allInfinityPositions }: Positio
         />
       )
     case Protocol.V3:
+      if (isSolana(data.chainId) || data.chainId === undefined) {
+        return <SolanaV3PositionItem position={data as SolanaV3PositionDetail} />
+      }
       return <V3PositionItem data={data as PositionDetail} poolLength={poolLength} />
     case Protocol.V2:
       return <V2PositionItem data={data as V2LPDetail} poolLength={poolLength} />
@@ -73,6 +85,13 @@ export const getPositionKey = (data: Position) => {
         tokenId: (data as InfinityBinPositionDetail).activeId.toString(),
       })
     case Protocol.V3:
+      if (isSolana(data.chainId)) {
+        return getKeyForPools({
+          chainId: data.chainId,
+          protocol: data.protocol,
+          tokenId: (data as SolanaV3PositionDetail).nftMint.toBase58(),
+        })
+      }
       return getKeyForPools({
         chainId: data.chainId,
         protocol: data.protocol,

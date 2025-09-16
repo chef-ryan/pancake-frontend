@@ -1,6 +1,7 @@
 import { getCurrencyPriceFromId } from '@pancakeswap/infinity-sdk'
 import { FeeAmount, nearestUsableTick, TICK_SPACINGS, TickMath, tickToPrice } from '@pancakeswap/v3-sdk'
 import { Bound } from '@pancakeswap/widgets-internal'
+import { MAX_TICK, MIN_TICK, TickUtils } from '@pancakeswap/solana-core-sdk'
 import { formatPercentage } from './formatting'
 
 /**
@@ -45,6 +46,17 @@ export const calculateTickLimits = (
   return {
     [Bound.LOWER]: tickSpacing ? nearestUsableTick(TickMath.MIN_TICK, tickSpacing) : undefined,
     [Bound.UPPER]: tickSpacing ? nearestUsableTick(TickMath.MAX_TICK, tickSpacing) : undefined,
+  }
+}
+
+export const calculateSolanaTickLimits = (
+  tickSpacing: number | undefined,
+): {
+  [bound in Bound]: number | undefined
+} => {
+  return {
+    [Bound.LOWER]: tickSpacing ? TickUtils.nearestUsableTick(MIN_TICK, tickSpacing) : undefined,
+    [Bound.UPPER]: tickSpacing ? TickUtils.nearestUsableTick(MAX_TICK, tickSpacing) : undefined,
   }
 }
 

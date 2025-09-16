@@ -1,4 +1,4 @@
-import { AtomBox, SwapCSS } from "@pancakeswap/uikit";
+import { AtomBox, AtomBoxProps, SwapCSS } from "@pancakeswap/uikit";
 
 import { NumericalInput, NumericalInputProps } from "./NumericalInput";
 
@@ -13,6 +13,7 @@ interface CurrencyInputPanelProps extends Omit<NumericalInputProps, "onBlur" | "
   inputFontSize?: string;
   wrapperRef?: React.RefObject<HTMLDivElement>;
   inputRef?: React.RefObject<HTMLInputElement>;
+  wrapperProps?: AtomBoxProps;
 }
 export function CurrencyInputPanelSimplify({
   value,
@@ -29,6 +30,7 @@ export function CurrencyInputPanelSimplify({
   inputLeft,
   inputFontSize,
   wrapperRef,
+  wrapperProps,
   inputRef,
 }: CurrencyInputPanelProps) {
   return (
@@ -44,6 +46,7 @@ export function CurrencyInputPanelSimplify({
         backgroundColor="backgroundAlt"
         zIndex="1"
         ref={wrapperRef}
+        {...wrapperProps}
       >
         <AtomBox
           as="label"

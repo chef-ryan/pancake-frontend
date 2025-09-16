@@ -70,7 +70,7 @@ export const PoolsPage = () => {
     <FarmSearchContextProvider>
       <Card>
         <CardHeader p={isMobile ? '16px' : undefined}>
-          <PoolsFilterPanel onChange={handleFilterChange} value={poolsFilter}>
+          <PoolsFilterPanel onChange={handleFilterChange} value={poolsFilter} includeSolana={false}>
             {(isMobile || isMd) && (
               <>
                 <CreatePoolButton scale="sm" width="100%" height="40px" />

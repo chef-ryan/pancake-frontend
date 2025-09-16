@@ -1,12 +1,11 @@
 import invariant from 'tiny-invariant'
 
 import { BigintIsh, Rounding } from '../constants'
-import { Currency } from '../currency'
-import { Token } from '../token'
-import { CurrencyAmount } from './currencyAmount'
+import { UnifiedCurrency } from '../currency'
 import { Fraction } from './fraction'
+import { UnifiedCurrencyAmount } from './unifiedCurrencyAmount'
 
-export class Price<TBase extends Currency, TQuote extends Currency> extends Fraction {
+export class Price<TBase extends UnifiedCurrency, TQuote extends UnifiedCurrency> extends Fraction {
   public readonly baseCurrency: TBase // input i.e. denominator
 
   public readonly quoteCurrency: TQuote // output i.e. numerator
@@ -20,7 +19,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> extends Frac
   public constructor(
     ...args:
       | [TBase, TQuote, BigintIsh, BigintIsh]
-      | [{ baseAmount: CurrencyAmount<TBase>; quoteAmount: CurrencyAmount<TQuote> }]
+      | [{ baseAmount: UnifiedCurrencyAmount<TBase>; quoteAmount: UnifiedCurrencyAmount<TQuote> }]
   ) {
     let baseCurrency: TBase
     let quoteCurrency: TQuote
@@ -57,7 +56,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> extends Frac
    * Multiply the price by another price, returning a new price. The other price must have the same base currency as this price's quote currency
    * @param other the other price
    */
-  public multiply<TOtherQuote extends Currency>(other: Price<TQuote, TOtherQuote>): Price<TBase, TOtherQuote> {
+  public multiply<TOtherQuote extends UnifiedCurrency>(other: Price<TQuote, TOtherQuote>): Price<TBase, TOtherQuote> {
     invariant(this.quoteCurrency.equals(other.baseCurrency), 'TOKEN')
     const fraction = super.multiply(other)
     return new Price(this.baseCurrency, other.quoteCurrency, fraction.denominator, fraction.numerator)
@@ -67,10 +66,10 @@ export class Price<TBase extends Currency, TQuote extends Currency> extends Frac
    * Return the amount of quote currency corresponding to a given amount of the base currency
    * @param currencyAmount the amount of base currency to quote against the price
    */
-  public quote(currencyAmount: CurrencyAmount<TBase>): CurrencyAmount<TQuote> {
+  public quote(currencyAmount: UnifiedCurrencyAmount<TBase>): UnifiedCurrencyAmount<TQuote> {
     invariant(currencyAmount.currency.equals(this.baseCurrency), 'TOKEN')
     const result = super.multiply(currencyAmount)
-    return CurrencyAmount.fromFractionalAmount(this.quoteCurrency, result.numerator, result.denominator)
+    return UnifiedCurrencyAmount.fromFractionalAmount(this.quoteCurrency, result.numerator, result.denominator)
   }
 
   /**
@@ -89,7 +88,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> extends Frac
     return this.adjustedForDecimals.toFixed(decimalPlaces, format, rounding)
   }
 
-  public get wrapped(): Price<Token, Token> {
+  public get wrapped(): Price<TBase['wrapped'], TQuote['wrapped']> {
     return new Price(this.baseCurrency.wrapped, this.quoteCurrency.wrapped, this.denominator, this.numerator)
   }
 
@@ -100,7 +99,7 @@ export class Price<TBase extends Currency, TQuote extends Currency> extends Frac
    * @param value
    * @returns Price<TBase, TQuote> | undefined
    */
-  public static fromDecimal<TBase extends Currency, TQuote extends Currency>(
+  public static fromDecimal<TBase extends UnifiedCurrency, TQuote extends UnifiedCurrency>(
     base: TBase,
     quote: TQuote,
     value: string

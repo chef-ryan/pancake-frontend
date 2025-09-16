@@ -46,8 +46,8 @@ export const BasicAPRModal: React.FC<PoolAprModalProps> = ({
 }) => {
   const { t } = useTranslation()
   const cakePrice = useCakePrice()
-  const { data: token0PriceUsd } = useCurrencyUsdPrice(poolInfo.token0, { enabled: !!poolInfo.token0 })
-  const { data: token1PriceUsd } = useCurrencyUsdPrice(poolInfo.token1, { enabled: !!poolInfo.token1 })
+  const { data: token0PriceUsd } = useCurrencyUsdPrice(poolInfo.token0 as Currency, { enabled: !!poolInfo.token0 })
+  const { data: token1PriceUsd } = useCurrencyUsdPrice(poolInfo.token1 as Currency, { enabled: !!poolInfo.token1 })
   const [priceTimeWindow, setPriceTimeWindow] = useState(PairDataTimeWindowEnum.DAY)
   const sqrtRatioX96 = useMemo(() => price && encodeSqrtRatioX96(price.numerator, price.denominator), [price])
   const tickCurrent = useMemo(
@@ -56,8 +56,8 @@ export const BasicAPRModal: React.FC<PoolAprModalProps> = ({
   )
   const activeTick = useMemo(() => getActiveTick(tickCurrent, poolInfo.feeTier), [tickCurrent, poolInfo.feeTier])
   const { ticks: ticksData } = useAllV3Ticks({
-    currencyA: poolInfo.token0,
-    currencyB: poolInfo.token1,
+    currencyA: poolInfo.token0 as Currency,
+    currencyB: poolInfo.token1 as Currency,
     feeAmount: poolInfo.feeTier,
     activeTick,
     enabled: modal.isOpen,
@@ -77,7 +77,7 @@ export const BasicAPRModal: React.FC<PoolAprModalProps> = ({
         ),
     [currencyBalances.CURRENCY_A, currencyBalances.CURRENCY_B, token0PriceUsd, token1PriceUsd, position],
   )
-  const lmPoolLiquidity = useLmPoolLiquidity(poolInfo.lpAddress, poolInfo.chainId)
+  const lmPoolLiquidity = useLmPoolLiquidity(poolInfo.lpAddress as `0x${string}`, poolInfo.chainId)
   const cakeAprFactor = useMemo(() => {
     if (!cakeApr?.poolWeight || !cakeApr?.cakePerYear) return new BigNumber(0)
 
@@ -102,8 +102,8 @@ export const BasicAPRModal: React.FC<PoolAprModalProps> = ({
       depositAmountInUsd={depositUsdAsBN?.toString()}
       max={depositUsdAsBN?.toString()}
       price={price}
-      currencyA={poolInfo.token0.wrapped}
-      currencyB={poolInfo.token1.wrapped}
+      currencyA={poolInfo.token0.wrapped as Currency}
+      currencyB={poolInfo.token1.wrapped as Currency}
       currencyAUsdPrice={token0PriceUsd}
       currencyBUsdPrice={token1PriceUsd}
       sqrtRatioX96={sqrtRatioX96}

@@ -2,7 +2,8 @@ import { Protocol } from '@pancakeswap/farms'
 import { HookData } from '@pancakeswap/infinity-sdk'
 import { Currency, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { Address } from 'viem'
-import { paths } from 'state/info/api/solSchema'
+import { SolanaV3Pool } from 'state/pools/solana'
+import { PublicKey } from '@solana/web3.js'
 import { FarmInfo } from '../search/farm.util'
 
 type Prettify<T> = {
@@ -19,8 +20,8 @@ export type BasePoolInfo = {
   lpAddress: Address
   stableSwapAddress?: Address
   protocol: Protocol
-  token0: Currency
-  token1: Currency
+  token0: UnifiedCurrency
+  token1: UnifiedCurrency
   token0Price?: `${number}`
   token1Price?: `${number}`
   tvlToken0?: `${number}`
@@ -43,31 +44,34 @@ export type BasePoolInfo = {
   farm?: FarmInfo
 }
 
-type SolanaPoolResp =
-  paths['/cached/v1/pools/info/ids']['get']['responses']['200']['content']['application/json']['data'][0]
-export type SolV3PoolInfo = Omit<BasePoolInfo, 'token0' | 'token1' | 'lpAddress' | 'stableSwapAddress'> & {
+export type SolanaV3PoolInfo = BasePoolInfo & {
   protocol: Protocol.V3
-  solanaData: SolanaPoolResp
-  token0: UnifiedCurrency
-  token1: UnifiedCurrency
-  lpAddress: string
+  nftMint: PublicKey
   poolId: string
+  rawPool: SolanaV3Pool
 }
 
 export type V3PoolInfo = BasePoolInfo & {
   protocol: Protocol.V3
+  lpAddress: Address
+  token0: Currency
+  token1: Currency
 }
 
 export type V2PoolInfo = BasePoolInfo & {
   protocol: Protocol.V2
   // V2 farming pools should have a bCakeWrapperAddress
   bCakeWrapperAddress?: Address
+  token0: Currency
+  token1: Currency
 }
 
 export type StablePoolInfo = BasePoolInfo & {
   protocol: Protocol.STABLE
   // Stable farming pools should have a bCakeWrapperAddress
   bCakeWrapperAddress?: Address
+  token0: Currency
+  token1: Currency
 }
 
 export type InfinityPoolInfo = InfinityBinPoolInfo | InfinityCLPoolInfo
@@ -79,6 +83,8 @@ type InfinityAdditionalPoolInfo = {
   hookData?: HookData
   hookAddress?: Address
   dynamic?: boolean
+  token0: Currency
+  token1: Currency
 }
 
 export type InfinityBinPoolInfo = Prettify<

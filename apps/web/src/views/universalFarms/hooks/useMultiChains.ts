@@ -1,4 +1,4 @@
-import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
+import { ChainId, isEvm, NonEVMChainId } from '@pancakeswap/chains'
 import { CHAINS } from 'config/chains'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import { useActiveChainId } from 'hooks/useActiveChainId'
@@ -28,10 +28,15 @@ export const useAllChain = () => {
 
 export const useAllChainIds = () => {
   const allChains = useAllChain()
-  return useMemo(() => allChains.map((chain) => chain.id), [allChains])
+  return useMemo(() => allChains.map((chain) => chain.id).concat(NonEVMChainId.SOLANA), [allChains])
 }
 
-export const useAllChainsOpts = (opts?: { includeSolana?: boolean }) => {
+export const useAllEvmChainIds = () => {
+  const allChains = useAllChain()
+  return useMemo(() => allChains.map((chain) => chain.id).filter((id) => isEvm(id)), [allChains])
+}
+
+export const useAllChainsOpts = ({ includeSolana = true }: { includeSolana?: boolean } = {}) => {
   const chains = useAllChain()
   const evmChains = chains.map((chain) => ({
     icon: `${ASSET_CDN}/web/chains/${chain.id}.png`,
@@ -39,7 +44,8 @@ export const useAllChainsOpts = (opts?: { includeSolana?: boolean }) => {
     label: chain.name,
   }))
 
-  if (opts?.includeSolana) {
+  if (includeSolana) {
+    // non-evm chains
     evmChains.unshift({
       icon: `${ASSET_CDN}/web/chains/${NonEVMChainId.SOLANA}.png`,
       value: NonEVMChainId.SOLANA,

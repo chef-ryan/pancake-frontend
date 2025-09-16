@@ -18,6 +18,7 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useSafeTxHashTransformer } from 'hooks/useSafeTxHashTransformer'
+import { isSolana, NonEVMChainId } from '@pancakeswap/chains'
 import {
   CrossChainFarmStepType,
   CrossChainFarmTransactionType,
@@ -54,8 +55,9 @@ export function useTransactionAdder(overrideChainId?: number): (
     receipt?: SerializableTransactionReceipt
   },
 ) => void {
-  const { unifiedAccount, chainId: activeChainId } = useAccountActiveChain()
+  const { solanaAccount, account: evmAccount, chainId: activeChainId } = useAccountActiveChain()
   const chainId = overrideChainId ?? activeChainId
+  const from = isSolana(chainId) ? solanaAccount : evmAccount
 
   const dispatch = useAppDispatch()
   const safeTxHashTransformer = useSafeTxHashTransformer()
@@ -83,7 +85,7 @@ export function useTransactionAdder(overrideChainId?: number): (
         receipt?: SerializableTransactionReceipt
       } = {},
     ) => {
-      if (!unifiedAccount) return
+      if (!from) return
       if (!chainId) return
 
       let hash: Hash | string | undefined
@@ -108,7 +110,7 @@ export function useTransactionAdder(overrideChainId?: number): (
       dispatch(
         addTransaction({
           hash,
-          from: unifiedAccount,
+          from,
           chainId,
           approval,
           summary,
@@ -121,7 +123,7 @@ export function useTransactionAdder(overrideChainId?: number): (
         }),
       )
     },
-    [unifiedAccount, chainId, safeTxHashTransformer, dispatch],
+    [from, chainId, safeTxHashTransformer, dispatch],
   )
 }
 
@@ -186,6 +188,22 @@ export function useAllChainTransactions(chainId?: number): { [txHash: string]: T
     }
     return {}
   }, [account, chainId, state])
+}
+
+export function useSolanaTransactions(): { [txId: string]: TransactionDetails } {
+  const { solanaAccount } = useAccountActiveChain()
+
+  const state = useSelector<AppState, AppState['transactions']>((s) => s.transactions)
+
+  return useMemo(() => {
+    if (solanaAccount) {
+      return pickBy(
+        state[NonEVMChainId.SOLANA],
+        (transactionDetails) => transactionDetails.from.toLowerCase() === solanaAccount?.toLowerCase(),
+      )
+    }
+    return {}
+  }, [solanaAccount, state])
 }
 
 export function useIsTransactionPending(transactionHash?: string): boolean {

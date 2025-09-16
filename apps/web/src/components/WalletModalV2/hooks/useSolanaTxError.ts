@@ -1,7 +1,9 @@
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { useToast } from '@pancakeswap/uikit'
 import { SolanaDescriptionWithTx } from 'components/Toast'
 import React, { useCallback, useState } from 'react'
+import { useTransactionAdder } from 'state/transactions/hooks'
 
 /**
  * Solana-specific transaction error handling hook
@@ -11,6 +13,7 @@ export default function useSolanaTxError() {
   const { t } = useTranslation()
   const { toastError, toastSuccess } = useToast()
   const [loading, setLoading] = useState(false)
+  const addTransaction = useTransactionAdder(NonEVMChainId.SOLANA)
 
   const handleSolanaError = useCallback(
     (error: any) => {
@@ -46,13 +49,25 @@ export default function useSolanaTxError() {
   )
 
   const executeSolanaTransaction = useCallback(
-    async (txCallback: () => Promise<{ hash: string; status?: number }>) => {
+    async (
+      txCallback: () => Promise<{ hash: string; status?: number }>,
+      txMeta?: () => Parameters<typeof addTransaction>[1],
+    ) => {
       let txResult: { hash: string; status?: number } | null = null
 
       try {
         setLoading(true)
 
         txResult = await txCallback()
+
+        if (txResult && txResult.hash && typeof txResult.status === 'undefined') {
+          addTransaction(
+            {
+              hash: txResult.hash,
+            },
+            { ...txMeta?.() },
+          )
+        }
 
         if (!txResult) {
           throw new Error('Transaction failed to execute')

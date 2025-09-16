@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, isEvm } from '@pancakeswap/chains'
 import { Protocol, supportedChainIdV4 } from '@pancakeswap/farms'
 import { atom, useAtom, useAtomValue } from 'jotai'
 import isEqual from 'lodash/isEqual'
@@ -32,7 +32,7 @@ export type ExtendPoolsQuery = FetchPoolsProps & {
 export const DEFAULT_QUERIES = {
   protocols: Object.values(Protocol),
   orderBy: PoolSortBy.VOL,
-  chains: [...supportedChainIdV4],
+  chains: [...supportedChainIdV4.filter((id) => isEvm(id))] as ChainId[],
   pools: [],
   tokens: [],
   before: '',

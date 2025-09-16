@@ -86,7 +86,7 @@ export function useSolanaPriorityFee() {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const data: PriorityFeeData = await response.json()
+      const { data } = (await response.json()) as { data: PriorityFeeData }
 
       const newConfig: PriorityFeeConfig = {
         [PriorityLevel.Fast]: data.default.m / 10 ** 9, // Medium -> Fast

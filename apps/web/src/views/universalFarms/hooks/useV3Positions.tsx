@@ -7,7 +7,7 @@ import { useMemo } from 'react'
 import { useAccountV3Positions, useV3PoolsLength } from 'state/farmsV4/hooks'
 import { POSITION_STATUS, PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { useAccount } from 'wagmi'
-import { useAllChainIds } from './useMultiChains'
+import { useAllEvmChainIds } from './useMultiChains'
 
 const getPoolStatus = (pos: PositionDetail, pool: Pool | null) => {
   if (pos.liquidity === 0n) {
@@ -31,7 +31,7 @@ export const useV3Positions = ({
   farmsOnly: boolean
 }) => {
   const { address: account } = useAccount()
-  const allChainIds = useAllChainIds()
+  const allChainIds = useAllEvmChainIds()
   const { data: v3Positions, pending: v3Loading } = useAccountV3Positions(allChainIds, account)
   const v3PoolKeys = useMemo(
     () =>

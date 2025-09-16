@@ -43,7 +43,7 @@ export const SendAssets: React.FC<SendAssetsProps> = ({ assets, isLoading, onBac
   }, [])
 
   // Get unique networks from assets
-  const allChainsOpts = useAllChainsOpts({ includeSolana: true })
+  const allChainsOpts = useAllChainsOpts()
 
   const filteredTokens = useMemo(() => {
     // First filter by networks if any are selected

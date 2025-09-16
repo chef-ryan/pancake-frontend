@@ -42,7 +42,7 @@ export const getImageUrlsFromToken = (token?: UnifiedCurrency & { logoURI?: stri
   return [...uriLocations, imageUri]
 }
 
-const _getCurrencyLogoSrcs = (currency: Currency & { logoURI?: string | undefined }) => {
+const _getCurrencyLogoSrcs = (currency: UnifiedCurrency & { logoURI?: string | undefined }) => {
   const allUrls = () => {
     const uriLocations = currency instanceof WrappedTokenInfo && currency.logoURI ? uriToHttp(currency.logoURI) : []
     const imageUrls = getImageUrlsFromToken(currency)
@@ -60,7 +60,7 @@ const _getCurrencyLogoSrcs = (currency: Currency & { logoURI?: string | undefine
     }
     return []
   }
-  const addr = getCurrencyAddress(currency)
+  const addr = getCurrencyAddress(currency as Currency)
   const pxImage = makeBlockiesUrl(addr)
   const list = allUrls()?.filter((x) => x)
   list.push(pxImage)
@@ -69,5 +69,5 @@ const _getCurrencyLogoSrcs = (currency: Currency & { logoURI?: string | undefine
 
 export const getCurrencyLogoSrcs = memoize(
   _getCurrencyLogoSrcs,
-  (currency) => `${currency.chainId}-${getCurrencyAddress(currency)}`,
+  (currency) => `${currency.chainId}-${getCurrencyAddress(currency as Currency)}`,
 )

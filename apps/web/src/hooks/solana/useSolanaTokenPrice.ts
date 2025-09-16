@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { atomWithLoadable } from 'quoter/atom/atomWithLoadable'
 import { isEqual } from 'utils/hash'
+import BigNumber from 'bignumber.js'
 
 import { PublicKey } from '@solana/web3.js'
 
@@ -53,7 +54,7 @@ export const useSolanaTokenPrice = (props: {
   const isEmptyResult = loadable.isNothing()
 
   return {
-    data: mint ? data[mint?.toLowerCase()] : undefined,
+    data: mint ? (data[mint?.toLowerCase()] as number) : undefined,
     isLoading,
     error,
     isEmptyResult,
@@ -88,4 +89,19 @@ export const useSolanaTokenPrices = (props: {
     }),
     [data, isLoading, error, isEmptyResult],
   )
+}
+
+export const useSolanaTokenPriceAmount = (props: {
+  mint: string | undefined
+  amount: number | undefined
+  enabled?: boolean
+}) => {
+  const { mint, amount, enabled = true } = props || {}
+  const { data: price } = useSolanaTokenPrice({ mint, enabled })
+  return useMemo(() => {
+    if (!price || !amount) {
+      return undefined
+    }
+    return new BigNumber(price).times(amount).toNumber()
+  }, [price, amount])
 }

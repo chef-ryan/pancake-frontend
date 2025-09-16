@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Fraction, Price } from '@pancakeswap/sdk'
+import { Currency, CurrencyAmount, Fraction, Price, UnifiedCurrency } from '@pancakeswap/sdk'
 import formatLocaleNumber from './formatLocaleNumber'
 
 export function formatCurrencyAmount(
@@ -22,7 +22,11 @@ export function formatCurrencyAmount(
   return formatLocaleNumber({ number: amount, locale, sigFigs, fixedDecimals })
 }
 
-export function formatPrice(price: Price<Currency, Currency> | undefined, sigFigs: number, locale: string): string {
+export function formatPrice(
+  price: Price<UnifiedCurrency, UnifiedCurrency> | undefined,
+  sigFigs: number,
+  locale: string,
+): string {
   if (!price) {
     return '-'
   }

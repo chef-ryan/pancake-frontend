@@ -1,15 +1,15 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Price } from '@pancakeswap/swap-sdk-core'
+import { Currency, Price, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { Flex, FlexGap, IconButton, SwapHorizIcon, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { Bound } from '@pancakeswap/widgets-internal'
 import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
 import { memo, useCallback, useMemo, useState } from 'react'
 
 type PriceRangeProps = {
-  quote?: Currency
-  base?: Currency
-  priceUpper?: Price<Currency, Currency>
-  priceLower?: Price<Currency, Currency>
+  quote?: UnifiedCurrency
+  base?: UnifiedCurrency
+  priceUpper?: Price<UnifiedCurrency, UnifiedCurrency>
+  priceLower?: Price<UnifiedCurrency, UnifiedCurrency>
   tickAtLimit: {
     LOWER?: boolean
     UPPER?: boolean

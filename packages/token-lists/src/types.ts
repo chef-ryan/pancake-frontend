@@ -7,6 +7,7 @@ export interface TokenInfo {
   readonly decimals: number
   readonly symbol: string
   readonly logoURI?: string
+  readonly programId?: string
   readonly tags?: string[]
   readonly extensions?: {
     readonly [key: string]:

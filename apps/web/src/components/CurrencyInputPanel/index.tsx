@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, Pair, Percent, Token, UnifiedCurrency } from '@pancakeswap/sdk'
+import { Currency, Pair, Percent, Token, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { WrappedTokenInfo } from '@pancakeswap/token-lists'
 import { ArrowDropDownIcon, Box, Button, CopyButton, Flex, Loading, Skeleton, Text, useModal } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
@@ -14,11 +14,14 @@ import { StablePair } from 'views/AddLiquidity/AddStableLiquidity/hooks/useStabl
 
 import { FiatLogo } from 'components/Logo/CurrencyLogo'
 import { useCurrencyBalance } from 'state/wallet/hooks'
-import { useAccount } from 'wagmi'
 import { CommonBasesType } from 'components/SearchModal/types'
-import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 
+import { isEvm, isSolana } from '@pancakeswap/chains'
+import { useSolanaTokenPriceAmount } from 'hooks/solana/useSolanaTokenPrice'
+import { useSolanaTokenBalance } from 'state/token/solanaTokenBalances'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import AddToWalletButton from '../AddToWallet/AddToWalletButton'
+import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 
 const InputRow = styled.div<{ selected: boolean }>`
   display: flex;
@@ -39,15 +42,15 @@ interface CurrencyInputPanelProps {
   onMax?: () => void
   showQuickInputButton?: boolean
   showMaxButton: boolean
-  maxAmount?: CurrencyAmount<Currency>
+  maxAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
   lpPercent?: string
   label?: string
   onCurrencySelect?: (currency: UnifiedCurrency) => void
-  currency?: Currency | null
+  currency?: UnifiedCurrency | null
   disableCurrencySelect?: boolean
   hideBalance?: boolean
   pair?: Pair | StablePair | null
-  otherCurrency?: Currency | null
+  otherCurrency?: UnifiedCurrency | null
   id: string
   showCommonBases?: boolean
   commonBasesType?: CommonBasesType
@@ -93,19 +96,47 @@ const CurrencyInputPanel = memo(function CurrencyInputPanel({
   title,
   hideBalanceComp,
 }: CurrencyInputPanelProps) {
-  const { address: account } = useAccount()
+  const { account: evmAccount, solanaAccount } = useAccountActiveChain()
 
-  const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
+  const selectedEvmCurrencyBalance = useCurrencyBalance(
+    evmAccount ?? undefined,
+    isEvm(currency?.chainId) ? currency ?? undefined : undefined,
+  )
+  const { balance: selectedSolanaCurrencyBalanceBN } = useSolanaTokenBalance(
+    solanaAccount,
+    isSolana(currency?.chainId) ? currency?.wrapped.address : undefined,
+  )
+  const selectedCurrencyBalance = useMemo(
+    () =>
+      currency
+        ? isEvm(currency.chainId)
+          ? selectedEvmCurrencyBalance
+          : UnifiedCurrencyAmount.fromRawAmount(currency, selectedSolanaCurrencyBalanceBN.toString())
+        : undefined,
+    [currency, selectedEvmCurrencyBalance, selectedSolanaCurrencyBalanceBN],
+  )
+  const accountConnected = useMemo(
+    () => (isEvm(currency?.chainId) ? Boolean(evmAccount) : Boolean(solanaAccount)),
+    [currency?.chainId, evmAccount, solanaAccount],
+  )
   const { t } = useTranslation()
 
   const mode = id
   const token = pair ? pair.liquidityToken : currency?.isToken ? currency : null
   const tokenAddress = token ? safeGetAddress(token.address) : null
 
-  const amountInDollar = useStablecoinPriceAmount(
-    showUSDPrice ? currency ?? undefined : undefined,
-    value !== undefined && Number.isFinite(+value) ? +value : undefined,
+  const amountInDollarForEvmCurrency = useStablecoinPriceAmount(
+    showUSDPrice ? (currency as Currency) ?? undefined : undefined,
+    isEvm(currency?.chainId) && value !== undefined && Number.isFinite(+value) ? +value : undefined,
   )
+
+  const amountInDollarForSolanaCurrency = useSolanaTokenPriceAmount({
+    mint: currency?.wrapped.address,
+    enabled: showUSDPrice && isSolana(currency?.chainId),
+    amount: value !== undefined && Number.isFinite(+value) ? +value : undefined,
+  })
+
+  const amountInDollar = isEvm(currency?.chainId) ? amountInDollarForEvmCurrency : amountInDollarForSolanaCurrency
 
   const [onPresentCurrencyModal] = useModal(
     <CurrencySearchModal
@@ -218,7 +249,7 @@ const CurrencyInputPanel = memo(function CurrencyInputPanel({
             ) : null}
           </Flex>
 
-          {account && !hideBalanceComp && (
+          {accountConnected && !hideBalanceComp && (
             <Text
               data-dd-action-name="Token balance"
               onClick={!disabled ? onMax : undefined}
@@ -255,7 +286,7 @@ const CurrencyInputPanel = memo(function CurrencyInputPanel({
             </Flex>
           )}
           <InputRow selected={disableCurrencySelect}>
-            {account && currency && selectedCurrencyBalance?.greaterThan(0) && !disabled && label !== 'To' && (
+            {accountConnected && currency && selectedCurrencyBalance?.greaterThan(0) && !disabled && label !== 'To' && (
               <Flex alignItems="right" justifyContent="right">
                 {maxAmount?.greaterThan(0) &&
                   showQuickInputButton &&
