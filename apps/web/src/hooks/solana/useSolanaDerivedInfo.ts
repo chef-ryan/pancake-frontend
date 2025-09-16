@@ -159,6 +159,7 @@ export const useSolanaDerivedInfo = (
   const poolForPosition: Pool | undefined = mockPool
 
   // Solana CLMM full range bounds are limited to ±443636 ticks (Raydium convention)
+  // todo:@eric
   const tickSpaceLimits: { [bound in Bound]: number | undefined } = useMemo(() => {
     if (tickSpacing === undefined) return { [Bound.LOWER]: undefined, [Bound.UPPER]: undefined }
     const SOLANA_TICK_LIMIT = 443636

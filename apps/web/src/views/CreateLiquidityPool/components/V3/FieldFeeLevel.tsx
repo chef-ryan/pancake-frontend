@@ -19,24 +19,32 @@ import MenuItem from '@pancakeswap/uikit/components/MenuItem/MenuItem'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFeeLevelQueryState } from 'state/infinity/create'
 import { useActiveChainId } from 'hooks/useAccountActiveChain'
-import { NonEVMChainId } from '@pancakeswap/chains'
+import { isSolana, NonEVMChainId } from '@pancakeswap/chains'
 import { useSolanaClmmFeeTiers } from 'hooks/solana/useSolanaClmmFeeTiers'
 import { useSolanaExistingFeeTiers } from 'hooks/solana/useSolanaExistingFeeTiers'
 import { useCurrencies } from '../../hooks/useCurrencies'
 
 import { PRESET_FEE_LEVELS_V3 } from '../../constants'
 
-export type FieldFeeLevelProps = BoxProps
+export type FieldFeeLevelProps = Omit<BoxProps, 'onSelect'> & {
+  feeAmount?: number
+  onSelect?: (index: number, option: number) => void
+}
+
+const parseFeeAsReadable = (fee: number) => {
+  return `${fee / 1e4}%`
+}
 
 const decimals = 4
 
-export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ ...boxProps }) => {
+export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ feeAmount, onSelect, ...boxProps }) => {
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
   const { theme } = useTheme()
   const [feeLevel, setFeeLevel] = useFeeLevelQueryState()
   const [inputValue, setInputValue] = useState<string | null>(null)
   const { chainId } = useActiveChainId()
+  const isSolanaChain = isSolana(chainId)
   const solanaFeeTiers = useSolanaClmmFeeTiers()
   const { baseCurrency, quoteCurrency } = useCurrencies()
 
@@ -44,22 +52,16 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ ...boxProps }) => 
   const existingSolanaFeeTiers = useSolanaExistingFeeTiers(
     baseCurrency?.wrapped.address,
     quoteCurrency?.wrapped.address,
-    chainId === NonEVMChainId.SOLANA,
+    isSolanaChain,
   )
 
   // Build dynamic options depending on chain
   const options = useMemo(() => {
-    if (chainId === NonEVMChainId.SOLANA) {
+    if (isSolanaChain) {
       return solanaFeeTiers
     }
     return PRESET_FEE_LEVELS_V3
-  }, [chainId, solanaFeeTiers])
-
-  // Compute disabled tiers if existing pools are present for the selected pair
-  const disabledSet = useMemo(() => {
-    if (chainId !== NonEVMChainId.SOLANA) return new Set<number>()
-    return existingSolanaFeeTiers ?? new Set<number>()
-  }, [chainId, existingSolanaFeeTiers])
+  }, [isSolanaChain, solanaFeeTiers])
 
   const handleQuickSelect = useCallback(
     (presetFeeLevel: number) => {
@@ -72,12 +74,35 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ ...boxProps }) => 
   const handleMenuItemClick = useCallback(
     (index: number) => {
       if (index < options.length) {
-        const tier = options[index]
-        if (disabledSet.has(tier)) return
         handleQuickSelect(options[index])
+        onSelect?.(index, options[index])
       }
     },
-    [handleQuickSelect, options, disabledSet],
+    [handleQuickSelect, options, onSelect],
+  )
+
+  const renderItems = useMemo(
+    () =>
+      options.map((o, idx) => ({
+        label: (
+          <FlexGap gap="8px" alignItems="center">
+            <Text bold fontSize="16px" color="textSubtle">
+              {parseFeeAsReadable(o)}
+            </Text>
+            {!existingSolanaFeeTiers.has(o) && (
+              <Text fontSize="12px" color="textSubtle">
+                {t('Not Created')}
+              </Text>
+            )}
+          </FlexGap>
+        ),
+        value: o,
+        onClick: (e) => {
+          e.preventDefault()
+          handleMenuItemClick(idx)
+        },
+      })),
+    [existingSolanaFeeTiers, t, options, handleMenuItemClick],
   )
 
   const activeIndex = useMemo(() => {
@@ -99,38 +124,28 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ ...boxProps }) => 
     }
   }, [feeLevel, prevFeeLevel])
 
-  // Auto-select a default Solana fee tier when none selected or current is disabled
+  // Auto-select a default Solana fee tier when none selected
   useEffect(() => {
-    if (chainId !== NonEVMChainId.SOLANA) return
-    if (!options.length) return
-    const current = feeLevel ?? undefined
-    if (current && !disabledSet.has(current)) return
-    // Prefer 0.25% if available and not disabled, else first available
-    const preferred = 0.25
-    const candidate = options.find((v) => v === preferred && !disabledSet.has(v))
-    const firstAvailable = candidate ?? options.find((v) => !disabledSet.has(v))
+    if (!isSolanaChain || feeLevel || !options.length) return
+    const firstAvailable = options.find((v) => !existingSolanaFeeTiers.has(v))
     if (firstAvailable !== undefined) {
       setFeeLevel(firstAvailable)
       setInputValue(firstAvailable.toString())
     }
-  }, [chainId, options, disabledSet, feeLevel, setFeeLevel])
+  }, [isSolanaChain, options, existingSolanaFeeTiers, feeLevel, setFeeLevel])
+
+  useEffect(() => {
+    if (feeAmount && feeAmount !== feeLevel) {
+      setFeeLevel(feeAmount)
+    }
+  }, [feeLevel, setFeeLevel, feeAmount])
 
   const renderSolanaDropdown = () => {
     return (
       <Card>
         <Flex p="16px" flexDirection="row" justifyContent="space-between" alignItems="center">
           <Text>{t('Pick a fee tier')}</Text>
-          <DropdownMenu
-            items={options.map((o, idx) => ({
-              label: o.toString(),
-              value: o,
-              disabled: disabledSet.has(o),
-              onClick: (e) => {
-                e.preventDefault()
-                handleMenuItemClick(idx)
-              },
-            }))}
-          >
+          <DropdownMenu trigger="click" items={renderItems}>
             <MenuItem hoverColor="white">
               <Flex
                 flexDirection="row"
@@ -141,7 +156,7 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ ...boxProps }) => 
                 border={`1px solid ${theme.colors.cardBorder}`}
                 p="8px"
               >
-                <Text lineHeight="1.2">{feeLevel ?? ''}</Text>
+                <Text lineHeight="1.2">{feeLevel ? parseFeeAsReadable(feeLevel) : ''}</Text>
                 <ArrowDropDownIcon color="text" />
               </Flex>
             </MenuItem>

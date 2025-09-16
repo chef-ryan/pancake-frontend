@@ -69,7 +69,7 @@ import {
   useCurrencyInversionEvent,
   useHeaderInvertCurrencies,
 } from 'views/AddLiquidityV3/hooks/useHeaderInvertCurrencies'
-import { HandleFeePoolSelectFn, QUICK_ACTION_CONFIGS } from 'views/AddLiquidityV3/types'
+import { QUICK_ACTION_CONFIGS } from 'views/AddLiquidityV3/types'
 import { MarketPriceSlippageWarning } from 'views/CreateLiquidityPool/components/SubmitCreateButton'
 import { Dot } from 'views/Notifications/styles'
 import { LiquiditySlippageButton } from 'views/Swap/components/SlippageButton'
@@ -77,7 +77,7 @@ import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import { useSolanaDerivedInfo } from 'hooks/solana/useSolanaDerivedInfo'
 import { useSolanaPoolByMint } from 'hooks/solana/useSolanaPoolsByMint'
 import { useRaydiumClient } from 'hooks/solana/useRaydiumClient'
-import { FieldFeeLevel } from 'views/CreateLiquidityPool/components/FieldFeeLevel'
+import { FieldFeeLevel } from 'views/CreateLiquidityPool/components/V3/FieldFeeLevel'
 import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
 import { TxVersion } from '@pancakeswap/solana-core-sdk'
 
@@ -270,10 +270,9 @@ export function SolanaFormView({
 
   const [allowedSlippage] = useUserSlippage() // custom from users
 
-  const handleFeePoolSelect = useCallback<HandleFeePoolSelectFn>(
-    ({ feeAmount: newFeeAmount }) => {
-      // Avoid replacing stable and v2 due to navigation issues when using universal farms overlay
-      if (!newFeeAmount || router.pathname.includes('stable') || router.pathname.includes('v2')) {
+  const handleFeePoolSelect = useCallback(
+    (_idx: number, newFeeAmount: number) => {
+      if (!newFeeAmount) {
         return
       }
       router.replace(
@@ -931,7 +930,7 @@ export function SolanaFormView({
       <Card style={{ height: 'fit-content' }}>
         <CardBody>
           <DynamicSection disabled={!baseCurrency || !quoteCurrency}>
-            <FieldFeeLevel />
+            <FieldFeeLevel onSelect={handleFeePoolSelect} feeAmount={feeAmount} />
           </DynamicSection>
           <DynamicSection
             mt="16px"

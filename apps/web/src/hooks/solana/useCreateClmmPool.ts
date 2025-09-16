@@ -48,7 +48,8 @@ export function useCreateClmmPool() {
         ammConfig: {
           ...cfg,
           id: new PublicKey(cfg.id),
-        } as any,
+          description: cfg.description ?? '',
+        },
         initialPrice: new Decimal(initialPrice),
         forerunCreate: true,
         txVersion: TxVersion.V0,
@@ -76,6 +77,8 @@ export function useCreateClmmPool() {
         base: baseIsA ? 'MintA' : 'MintB',
         baseAmount: baseIsA ? amountA : amountB,
         otherAmountMax: baseIsA ? amountB : amountA,
+        txVersion: TxVersion.V0,
+        nft2022: true,
       })
 
       createBuild.builder.addInstruction({ ...(openBuild.builder.AllTxData as any) })

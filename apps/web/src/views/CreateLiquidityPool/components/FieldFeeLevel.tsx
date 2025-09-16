@@ -151,7 +151,7 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ allowCustomFee, ..
 
     // If custom fee or unknown fee level is set, don't set it to active
     return -1
-  }, [feeLevel, allowCustomFee, options])
+  }, [feeLevel, options])
 
   const prevFeeLevel = usePreviousValue(feeLevel)
 
@@ -169,7 +169,7 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ allowCustomFee, ..
 
   // Build Select options and change handler (Solana)
   const selectOptions: OptionProps[] = useMemo(
-    () => options.map((v) => ({ label: `${v}%`, value: String(v) })),
+    () => options.map((v) => ({ label: `${v / 1e4}%`, value: String(v) })),
     [options],
   )
 

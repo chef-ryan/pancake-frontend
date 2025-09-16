@@ -14,10 +14,8 @@ import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
 import { useRouter } from 'next/router'
 import { logGTMClickAddLiquidityConfirmEvent, logGTMClickAddLiquidityEvent } from 'utils/customGTMEventTracking'
 import { useIsExpertMode, useUserSlippage } from '@pancakeswap/utils/user'
-import { useIsTransactionUnsupported, useIsTransactionWarning } from 'hooks/Trades'
 
 import V3RangeSelector from 'views/AddLiquidityV3/formViews/V3FormView/components/V3RangeSelector'
-import { useRangeHopCallbacks } from 'views/AddLiquidityV3/formViews/V3FormView/form/hooks/useRangeHopCallbacks'
 import { Bound, ZoomLevels } from '@pancakeswap/widgets-internal'
 import {
   AutoColumn,
@@ -60,12 +58,7 @@ export const useSolanaV3CreateForm = () => {
   const { switchCurrencies: switchCurrenciesRoute } = useSelectIdRouteParams()
   const { baseCurrency, quoteCurrency } = useCurrencies()
 
-  const [feeLevel] = useFeeLevelQueryState()
-  const feeAmount = useMemo(() => {
-    if (!feeLevel) return undefined
-    // Solana: fee level is percent (e.g. 0.25) -> basis points
-    return feeLevel * 1e4
-  }, [feeLevel])
+  const [feeAmount] = useFeeLevelQueryState()
 
   // V3 Form State
   const [txHash, setTxHash] = useState<string>('')
@@ -81,7 +74,6 @@ export const useSolanaV3CreateForm = () => {
   const { independentField, typedValue, startPriceTypedValue, leftRangeTypedValue, rightRangeTypedValue } = formState
 
   const {
-    pool,
     ticks,
     dependentField,
     price,
@@ -146,8 +138,10 @@ export const useSolanaV3CreateForm = () => {
     [baseCurrency, quoteCurrency],
   )
 
-  const rangeLeftPrice = isSorted ? priceLower : priceUpper?.invert()
-  const rangeRightPrice = isSorted ? priceUpper : priceLower?.invert()
+  const [rangeLeftPrice, rangeRightPrice] = useMemo(
+    () => [isSorted ? priceLower : priceUpper?.invert(), isSorted ? priceUpper : priceLower?.invert()],
+    [isSorted, priceLower, priceUpper],
+  )
   const rangeLeftValue = useMemo(() => {
     if (ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]) return '0'
 
@@ -222,7 +216,7 @@ export const useSolanaV3CreateForm = () => {
   ])
 
   // Range Inputs
-  // Disable EVM range hop callbacks for Solana create flow
+  // todo:@eric
   const getDecrementLower = useCallback(() => undefined, [])
   const getIncrementLower = useCallback(() => undefined, [])
   const getDecrementUpper = useCallback(() => undefined, [])
@@ -271,19 +265,6 @@ export const useSolanaV3CreateForm = () => {
     [getPriceAndTick, onRightRangeInput, ticks, getDecrementLower, onLeftRangeInput, baseCurrency, quoteCurrency],
   )
 
-  // Auto-suggest range around start price (0.5x to 1.5x) for Solana when user hasn't set a range
-  useEffect(() => {
-    if (!startPriceTypedValue) return
-    if (isQuickButtonUsed.current) return
-    const hasRange = Boolean(leftRangeTypedValue) || Boolean(rightRangeTypedValue)
-    if (hasRange) return
-    const val = Number(startPriceTypedValue)
-    if (!Number.isFinite(val) || val <= 0) return
-    const left = (val * 0.5).toString()
-    const right = (val * 1.5).toString()
-    onBothRangePriceInput(left, right)
-  }, [startPriceTypedValue, leftRangeTypedValue, rightRangeTypedValue, onBothRangePriceInput])
-
   // Range refresh function to set ranges based on zoom levels
   const handleRefresh = useCallback(
     (zoomLevel?: ZoomLevels) => {
@@ -330,7 +311,7 @@ export const useSolanaV3CreateForm = () => {
         }
       }
     },
-    [activeQuickAction, feeAmount, handleRefresh, setShowCapitalEfficiencyWarning],
+    [feeAmount, handleRefresh, setShowCapitalEfficiencyWarning],
   )
 
   const createClmm = useCreateClmmPool()
@@ -368,7 +349,19 @@ export const useSolanaV3CreateForm = () => {
       setAttemptingTxn(false)
       setTxnErrorMessage(e?.message || String(e))
     }
-  }, [baseCurrency, quoteCurrency, price, feeAmount, t, router, createClmm, parsedAmounts, tickLower, tickUpper])
+  }, [
+    baseCurrency,
+    quoteCurrency,
+    price,
+    feeAmount,
+    t,
+    router,
+    createClmm,
+    parsedAmounts,
+    tickLower,
+    tickUpper,
+    toastSuccess,
+  ])
 
   // Button Submit, with handle expert mode
   const handleButtonSubmit = useCallback(() => {
@@ -555,6 +548,10 @@ export const useSolanaV3CreateForm = () => {
       />
     )
   }, [
+    invertPrice,
+    rangeLeftValue,
+    rangeRightValue,
+    switchCurrencies,
     currencies,
     parsedAmounts,
     onAdd,
@@ -562,8 +559,6 @@ export const useSolanaV3CreateForm = () => {
     onDismissPreviewModal,
     feeAmount,
     price,
-    priceLower,
-    priceUpper,
     baseCurrency,
     quoteCurrency,
     t,

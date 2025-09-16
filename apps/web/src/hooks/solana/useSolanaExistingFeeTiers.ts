@@ -8,7 +8,6 @@ export const useSolanaExistingFeeTiers = (token0?: string, token1?: string, enab
     const tiers = pools
       .map((p) => p?.config?.tradeFeeRate ?? p?.feeRate)
       .filter((v): v is number => typeof v === 'number' && !Number.isNaN(v))
-      .map((v) => v / 10000)
     return new Set(tiers)
   }, [pools])
 }

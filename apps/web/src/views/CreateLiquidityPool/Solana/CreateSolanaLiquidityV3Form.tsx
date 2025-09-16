@@ -1,7 +1,7 @@
+import { useMemo } from 'react'
 import { AutoColumn, Box, Card, CardBody, DynamicSection } from '@pancakeswap/uikit'
 import { Protocol } from '@pancakeswap/farms'
 import { useFeeLevelQueryState } from 'state/infinity/create'
-import { useDebounce } from '@pancakeswap/hooks'
 import { CurrencyField as Field } from 'utils/types'
 import { MevProtectToggle } from 'views/Mev/MevProtectToggle'
 import { FieldSelectCurrencies } from '../components/FieldSelectCurrencies'
@@ -38,10 +38,7 @@ export const CreateSolanaLiquidityV3Form = () => {
   } = useSolanaV3CreateForm()
 
   const [feeLevel] = useFeeLevelQueryState()
-
-  const poolExists_ = noLiquidity === false && !!feeLevel
-  const poolExists = useDebounce(poolExists_, 400)
-
+  const poolExists = useMemo(() => noLiquidity === false && !!feeLevel, [feeLevel, noLiquidity])
   const currenciesExist = currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B]
 
   return (
@@ -100,7 +97,6 @@ export const CreateSolanaLiquidityV3Form = () => {
               }
             >
               <FieldSlippageTolerance />
-              <MevProtectToggle />
             </DynamicSection>
 
             <DynamicSection
