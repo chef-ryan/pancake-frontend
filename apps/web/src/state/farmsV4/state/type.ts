@@ -3,18 +3,19 @@ import { HookData } from '@pancakeswap/infinity-sdk'
 import { Currency, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { Address } from 'viem'
 import { SolanaV3Pool } from 'state/pools/solana'
+import { PublicKey } from '@solana/web3.js'
 import { FarmInfo } from '../search/farm.util'
 
 type Prettify<T> = {
   [K in keyof T]: T[K]
 } & object
 
-export type PoolInfo = Prettify<V2PoolInfo | StablePoolInfo | V3PoolInfo | InfinityPoolInfo | SolanaV3PoolInfo>
+export type PoolInfo = Prettify<V2PoolInfo | StablePoolInfo | V3PoolInfo | InfinityPoolInfo>
 
 export type BasePoolInfo = {
   pid?: number
   chainId: number
-  lpAddress: Address | string
+  lpAddress: Address
   stableSwapAddress?: Address
   protocol: Protocol
   token0: UnifiedCurrency
@@ -43,7 +44,7 @@ export type BasePoolInfo = {
 
 export type SolanaV3PoolInfo = BasePoolInfo & {
   protocol: Protocol.V3
-  lpAddress: string
+  nftMint: PublicKey
   poolId: string
   rawPool: SolanaV3Pool
 }
@@ -51,18 +52,24 @@ export type SolanaV3PoolInfo = BasePoolInfo & {
 export type V3PoolInfo = BasePoolInfo & {
   protocol: Protocol.V3
   lpAddress: Address
+  token0: Currency
+  token1: Currency
 }
 
 export type V2PoolInfo = BasePoolInfo & {
   protocol: Protocol.V2
   // V2 farming pools should have a bCakeWrapperAddress
   bCakeWrapperAddress?: Address
+  token0: Currency
+  token1: Currency
 }
 
 export type StablePoolInfo = BasePoolInfo & {
   protocol: Protocol.STABLE
   // Stable farming pools should have a bCakeWrapperAddress
   bCakeWrapperAddress?: Address
+  token0: Currency
+  token1: Currency
 }
 
 export type InfinityPoolInfo = InfinityBinPoolInfo | InfinityCLPoolInfo
@@ -74,6 +81,8 @@ type InfinityAdditionalPoolInfo = {
   hookData?: HookData
   hookAddress?: Address
   dynamic?: boolean
+  token0: Currency
+  token1: Currency
 }
 
 export type InfinityBinPoolInfo = Prettify<

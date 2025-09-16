@@ -8,7 +8,7 @@ import {
   PositionDetail,
   SolanaV3PositionDetail,
 } from 'state/farmsV4/state/accountPositions/type'
-import { ChainIdAddressKey, PoolInfo } from 'state/farmsV4/state/type'
+import { ChainIdAddressKey, PoolInfo, SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { getMerklLink } from 'utils/getMerklLink'
 import { isInfinityProtocol } from 'utils/protocols'
 
@@ -23,7 +23,7 @@ import { AprButton } from './AprButton'
 import { AprTooltipContent, BCakeWrapperFarmAprTipContent } from './AprTooltipContent'
 
 type PoolGlobalAprButtonProps = {
-  pool: PoolInfo
+  pool: PoolInfo | SolanaV3PoolInfo
   lpApr: number
   cakeApr: CakeApr[ChainIdAddressKey]
   solanaRewardsApr?: number
@@ -97,7 +97,7 @@ export const PoolAprButton: React.FC<PoolGlobalAprButtonProps> = ({
             isEvm(pool.chainId) ? (
               <V3PoolAprModal
                 modal={modal}
-                poolInfo={pool}
+                poolInfo={pool as PoolInfo}
                 cakeApr={cakeApr}
                 positionDetail={userPosition as PositionDetail}
               />

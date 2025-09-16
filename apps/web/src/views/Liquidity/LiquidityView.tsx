@@ -310,8 +310,10 @@ export const LiquidityView = () => {
     const feeValue0Wrapped = feeValue0?.wrapped
     const feeValue1Wrapped = feeValue1?.wrapped
 
-    const amount0 = price0 && feeValue0Wrapped ? price0.quote(feeValue0Wrapped) : undefined
-    const amount1 = price1 && feeValue1Wrapped ? price1.quote(feeValue1Wrapped) : undefined
+    const amount0 =
+      price0 && feeValue0Wrapped ? (price0.quote(feeValue0Wrapped) as CurrencyAmount<Currency>) : undefined
+    const amount1 =
+      price1 && feeValue1Wrapped ? (price1.quote(feeValue1Wrapped) as CurrencyAmount<Currency>) : undefined
 
     if (amount0 && amount1) return amount0.add(amount1)
     if (amount0) return amount0
@@ -323,8 +325,8 @@ export const LiquidityView = () => {
   const fiatValueOfLiquidity: CurrencyAmount<Currency> | null = useMemo(() => {
     if (!position) return null
 
-    const amount0 = price0 ? price0.quote(position.amount0) : undefined
-    const amount1 = price1 ? price1.quote(position.amount1) : undefined
+    const amount0 = price0 ? (price0.quote(position.amount0) as CurrencyAmount<Currency>) : undefined
+    const amount1 = price1 ? (price1.quote(position.amount1) as CurrencyAmount<Currency>) : undefined
 
     if (amount0 && amount1) return amount0.add(amount1)
     if (amount0) return amount0

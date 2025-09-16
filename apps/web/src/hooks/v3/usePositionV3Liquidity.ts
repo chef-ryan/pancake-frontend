@@ -40,8 +40,8 @@ export function useV3LiquidityTotal({
         return Boolean(position)
       })
       .map((position) => {
-        const amount0 = price0.quote(position.amount0)
-        const amount1 = price1.quote(position.amount1)
+        const amount0 = price0.quote(position.amount0) as CurrencyAmount<Currency>
+        const amount1 = price1.quote(position.amount1) as CurrencyAmount<Currency>
         return amount0.add(amount1)
       })
 

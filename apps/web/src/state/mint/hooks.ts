@@ -129,8 +129,8 @@ export function useDerivedMintInfo(
         const dependentCurrency = dependentField === Field.CURRENCY_B ? currencyB : currencyA
         const dependentTokenAmount =
           dependentField === Field.CURRENCY_B
-            ? pair.priceOf(tokenA).quote(wrappedIndependentAmount)
-            : pair.priceOf(tokenB).quote(wrappedIndependentAmount)
+            ? (pair.priceOf(tokenA).quote(wrappedIndependentAmount) as CurrencyAmount<Token>)
+            : (pair.priceOf(tokenB).quote(wrappedIndependentAmount) as CurrencyAmount<Token>)
         return dependentCurrency?.isNative
           ? CurrencyAmount.fromRawAmount(dependentCurrency, dependentTokenAmount.quotient)
           : dependentTokenAmount

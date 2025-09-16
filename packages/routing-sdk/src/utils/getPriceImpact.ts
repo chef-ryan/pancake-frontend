@@ -1,4 +1,4 @@
-import { CurrencyAmount, Percent, TradeType, Price, Currency } from '@pancakeswap/swap-sdk-core'
+import { CurrencyAmount, Percent, TradeType, Price, Currency, Token } from '@pancakeswap/swap-sdk-core'
 
 import { Trade, Route } from '../types'
 
@@ -24,9 +24,9 @@ export function getMidPrice({ path, pools }: Pick<Route, 'path' | 'pools'>) {
   for (const pool of pools) {
     const input = path[i].wrapped
     const output = path[i + 1].wrapped
-    const poolPrice = pool.getCurrentPrice(input, output).wrapped
+    const poolPrice = pool.getCurrentPrice(input, output).wrapped as Price<Token, Token>
 
-    price = price ? price.wrapped.multiply(poolPrice) : poolPrice
+    price = price ? (price.wrapped.multiply(poolPrice) as Price<Token, Token>) : poolPrice
     i += 1
   }
 

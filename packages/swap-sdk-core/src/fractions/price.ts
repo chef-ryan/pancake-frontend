@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant'
 
 import { BigintIsh, Rounding } from '../constants'
-import { UnifiedCurrency, UnifiedToken } from '../currency'
+import { UnifiedCurrency } from '../currency'
 import { Fraction } from './fraction'
 import { UnifiedCurrencyAmount } from './unifiedCurrencyAmount'
 
@@ -88,7 +88,7 @@ export class Price<TBase extends UnifiedCurrency, TQuote extends UnifiedCurrency
     return this.adjustedForDecimals.toFixed(decimalPlaces, format, rounding)
   }
 
-  public get wrapped(): Price<UnifiedToken, UnifiedToken> {
+  public get wrapped(): Price<TBase['wrapped'], TQuote['wrapped']> {
     return new Price(this.baseCurrency.wrapped, this.quoteCurrency.wrapped, this.denominator, this.numerator)
   }
 
