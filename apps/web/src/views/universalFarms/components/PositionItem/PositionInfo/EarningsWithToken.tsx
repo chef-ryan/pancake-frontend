@@ -1,14 +1,7 @@
 import { UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { AutoColumn, Row, TokenLogo, Text } from '@pancakeswap/uikit'
 import { formatNumber } from '@pancakeswap/utils/formatNumber'
-import styled from 'styled-components'
-import { getCurrencyLogoSrcs } from 'utils/tokenImages'
-
-const TokenAvatar = styled(TokenLogo)`
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-`
+import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 
 export const EarningsWithToken: React.FC<{
   currency: UnifiedCurrency
@@ -18,7 +11,7 @@ export const EarningsWithToken: React.FC<{
   return (
     <AutoColumn>
       <Row gap="8px">
-        <TokenAvatar srcs={getCurrencyLogoSrcs(currency)} />
+        <CurrencyLogo currency={currency} size="16px" />
         <Text fontSize="12px" color="textSubtle">
           {formatNumber(earningsAmount)}
         </Text>
