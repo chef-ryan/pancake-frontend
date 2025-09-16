@@ -212,8 +212,8 @@ export default function SolanaV3RemovePositionModal({
 const RemovedAmountInfo: React.FC<{
   currency0: UnifiedCurrency
   currency1: UnifiedCurrency
-  amount0: UnifiedCurrencyAmount<UnifiedCurrency>
-  amount1: UnifiedCurrencyAmount<UnifiedCurrency>
+  amount0: UnifiedCurrencyAmount<UnifiedCurrency> | undefined
+  amount1: UnifiedCurrencyAmount<UnifiedCurrency> | undefined
   price0: Price<UnifiedCurrency, UnifiedCurrency> | undefined
   price1: Price<UnifiedCurrency, UnifiedCurrency> | undefined
 }> = ({ currency0, currency1, amount0, amount1, price0, price1 }) => {
