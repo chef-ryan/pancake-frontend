@@ -99,11 +99,11 @@ export const useRemoveLiquidityCallback = () => {
       }
 
       const executeMeta = () => {
-        const amountA = formatNumber(Number(amountMinA))
-        const amountB = formatNumber(Number(amountMinB))
+        const amountA_ = formatNumber(Number(amountA))
+        const amountB_ = formatNumber(Number(amountB))
         const action = harvest ? 'Harvest' : closePosition ? 'Remove and close' : 'Remove'
         return {
-          summary: `${action} ${amountA} ${poolInfo.mintA.symbol} and ${amountB} ${poolInfo.mintB.symbol}`,
+          summary: `${action} ${amountA_} ${poolInfo.mintA.symbol} and ${amountB_} ${poolInfo.mintB.symbol}`,
           type: harvest ? ('collect-fee' as const) : ('remove-liquidity-v3' as const),
           translatableSummary: {
             text: harvest
@@ -111,7 +111,12 @@ export const useRemoveLiquidityCallback = () => {
               : closePosition
               ? 'Remove %amountA% %tokenASymbol% and %amountB% %tokenBSymbol% and close position'
               : 'Remove %amountA% %tokenASymbol% and %amountB% %tokenBSymbol%',
-            data: { amountA, tokenASymbol: poolInfo.mintA.symbol, amountB, tokenBSymbol: poolInfo.mintB.symbol },
+            data: {
+              amountA: amountA_,
+              tokenASymbol: poolInfo.mintA.symbol,
+              amountB: amountB_,
+              tokenBSymbol: poolInfo.mintB.symbol,
+            },
           },
         }
       }
