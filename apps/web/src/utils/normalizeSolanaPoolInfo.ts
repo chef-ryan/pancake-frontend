@@ -4,8 +4,11 @@ import { ApiV3PoolInfoConcentratedItem } from '@pancakeswap/solana-core-sdk'
 import { SPLToken } from '@pancakeswap/swap-sdk-core'
 import { PublicKey } from '@solana/web3.js'
 import type { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
+import { SolanaV3Pool } from 'state/pools/solana'
 
-export const normalizeSolanaPoolInfo = (solanaPoolInfo?: ApiV3PoolInfoConcentratedItem): SolanaV3PoolInfo | null => {
+export const normalizeSolanaPoolInfo = (
+  solanaPoolInfo?: Omit<ApiV3PoolInfoConcentratedItem, 'type'> & { type: string },
+): SolanaV3PoolInfo | null => {
   if (!solanaPoolInfo) return null
   const token0 = new SPLToken({ ...solanaPoolInfo.mintA, chainId: NonEVMChainId.SOLANA })
   const token1 = new SPLToken({ ...solanaPoolInfo.mintB, chainId: NonEVMChainId.SOLANA })
@@ -32,7 +35,7 @@ export const normalizeSolanaPoolInfo = (solanaPoolInfo?: ApiV3PoolInfoConcentrat
     feeTierBase: 1e6, // Base for percentage calculations
     isFarming: false,
     isDynamicFee: false,
-    rawPool: solanaPoolInfo,
+    rawPool: solanaPoolInfo as SolanaV3Pool,
     nftMint: PublicKey.default,
   }
 }

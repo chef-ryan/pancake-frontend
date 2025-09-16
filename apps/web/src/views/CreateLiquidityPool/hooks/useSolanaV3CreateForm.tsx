@@ -457,7 +457,7 @@ export const useSolanaV3CreateForm = () => {
           onRightRangeInput={handleRightRangeInputProxied}
           currencyA={baseCurrency}
           currencyB={quoteCurrency}
-          feeAmount={feeAmount}
+          feeAmount={feeAmount ?? undefined}
           ticksAtLimit={ticksAtLimit}
           tickSpaceLimits={tickSpaceLimits}
           quickAction={activeQuickAction ?? null}

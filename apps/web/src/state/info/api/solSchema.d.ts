@@ -741,8 +741,23 @@ export interface operations {
               type: string
               programId: string
               id: string
-              rewardDefaultPoolInfos: string
-              rewardDefaultInfos: string[]
+              rewardDefaultPoolInfos: 'Ecosystem' | 'Fusion' | 'Raydium' | 'Clmm'
+              rewardDefaultInfos: {
+                startTime?: number
+                endTime?: number
+                mint: {
+                  chainId: number
+                  address: string
+                  programId: string
+                  logoURI: string
+                  symbol: string
+                  name: string
+                  decimals: number
+                  tags: string[]
+                  extensions: any
+                }
+                perSecond: number
+              }[]
               mintA: {
                 chainId: number
                 address: string
@@ -845,8 +860,23 @@ export interface operations {
               type: string
               programId: string
               id: string
-              rewardDefaultPoolInfos: string
-              rewardDefaultInfos: string[]
+              rewardDefaultPoolInfos: 'Ecosystem' | 'Fusion' | 'Raydium' | 'Clmm'
+              rewardDefaultInfos: {
+                startTime?: number
+                endTime?: number
+                mint: {
+                  chainId: number
+                  address: string
+                  programId: string
+                  logoURI: string
+                  symbol: string
+                  name: string
+                  decimals: number
+                  tags: string[]
+                  extensions: any
+                }
+                perSecond: number
+              }[]
               mintA: {
                 chainId: number
                 address: string

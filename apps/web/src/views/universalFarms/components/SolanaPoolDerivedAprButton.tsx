@@ -23,8 +23,8 @@ export const SolanaPoolDerivedAprText: React.FC<{ pool: SolanaV3PoolInfo; fontSi
   const rewardMints = (onchain?.computePoolInfo?.rewardInfos || [])
     .map((ri: any) => ri?.tokenMint?.toBase58?.())
     .filter(Boolean) as string[]
-  const mintA = (pool as any)?.solanaData?.mintA?.address
-  const mintB = (pool as any)?.solanaData?.mintB?.address
+  const mintA = pool?.rawPool?.mintA?.address
+  const mintB = pool?.rawPool?.mintB?.address
   const { data: birdeyePrices } = useBirdeyeTokenPrice({ mintList: [mintA, mintB, ...rewardMints] })
 
   const tokenPrices = useMemo(() => {

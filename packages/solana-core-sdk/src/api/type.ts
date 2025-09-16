@@ -240,13 +240,13 @@ export interface ApiV3PoolInfoBaseItem {
   day: ApiV3PoolInfoCountItem;
   week: ApiV3PoolInfoCountItem;
   month: ApiV3PoolInfoCountItem;
-  pooltype: PoolTypeItem[];
+  pooltype?: PoolTypeItem[];
 
-  farmUpcomingCount: number;
-  farmOngoingCount: number;
-  farmFinishedCount: number;
+  farmUpcomingCount?: number;
+  farmOngoingCount?: number;
+  farmFinishedCount?: number;
 
-  burnPercent: number;
+  burnPercent?: number;
 }
 export type ApiV3PoolInfoConcentratedItem = ApiV3PoolInfoBaseItem & {
   type: "Concentrated";
@@ -287,16 +287,16 @@ export enum PoolFetchType {
 export interface FetchPoolParams {
   type?: PoolFetchType;
   sort?:
-    | "liquidity"
-    | "volume24h"
-    | "volume7d"
-    | "volume30d"
-    | "fee24h"
-    | "fee7d"
-    | "fee30d"
-    | "apr24h"
-    | "apr7d"
-    | "apr30d";
+  | "liquidity"
+  | "volume24h"
+  | "volume7d"
+  | "volume30d"
+  | "fee24h"
+  | "fee7d"
+  | "fee30d"
+  | "apr24h"
+  | "apr7d"
+  | "apr30d";
   order?: "desc" | "asc";
   pageSize?: number;
   page?: number;
@@ -379,7 +379,7 @@ export interface ApiClmmConfigV3 {
   tradeFeeRate: number;
   tickSpacing: number;
   fundFeeRate: number;
-  description: string;
+  description?: string;
   defaultRange: number;
   defaultRangePoint: number[];
 }

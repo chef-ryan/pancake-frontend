@@ -298,7 +298,7 @@ export function SolanaFormView({
     try {
       if (!baseCurrency || !quoteCurrency) return
       if (!raydium) return
-      const poolInfo = solPoolInfo?.solanaData as any
+      const poolInfo = solPoolInfo?.rawPool as any
       if (!poolInfo || !ticks?.[Bound.LOWER] || !ticks?.[Bound.UPPER]) return
 
       setAttemptingTxn(true)
@@ -874,7 +874,7 @@ export function SolanaFormView({
                     tickSpaceLimits={tickSpaceLimits}
                     quickAction={quickAction}
                     handleQuickAction={handleQuickAction}
-                    defaultRangePoints={solPoolInfo?.solanaData?.config?.defaultRangePoint}
+                    defaultRangePoints={solPoolInfo?.rawPool?.config?.defaultRangePoint}
                   />
                 )}
 

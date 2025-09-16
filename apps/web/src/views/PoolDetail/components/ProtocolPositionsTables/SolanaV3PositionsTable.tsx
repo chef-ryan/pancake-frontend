@@ -36,7 +36,7 @@ import { EmptyPositionCard, LoadingCard } from './UtilityCards'
 import { PriceRangeDisplay } from './PriceRangeDisplay'
 
 interface V3PositionsTableProps {
-  poolInfo: PoolInfo
+  poolInfo: SolanaV3PoolInfo
 }
 
 type SolanaPositionRow = {
@@ -61,7 +61,7 @@ const fetchSolanaPositions = async ({
   endpoint: string
   account: string
   poolId: string
-  poolInfo: PoolInfo
+  poolInfo: SolanaV3PoolInfo
 }) => {
   const connection = new Connection(endpoint, 'confirmed')
   const owner = new PublicKey(account)
@@ -170,10 +170,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
   const endpoint = useAtomValue(rpcUrlAtom)
   const chainId = useChainIdByQuery()
 
-  const solPoolId = useMemo(
-    () => (poolInfo as SolanaV3PoolInfo | any)?.poolId || (poolInfo as any)?.solanaData?.id,
-    [poolInfo],
-  )
+  const solPoolId = poolInfo?.poolId
 
   const { data, isLoading } = useQuery({
     queryKey: ['solana-v3-positions', endpoint, solanaAccount, chainId, solPoolId],
@@ -283,7 +280,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
   ])
 
   const tokenMints = useMemo(() => {
-    const solData = (poolInfo as SolanaV3PoolInfo | any)?.solanaData
+    const solData = poolInfo?.rawPool
     const mintA = solData?.mintA?.address
     const mintB = solData?.mintB?.address
     const rewardMints = (data?.computePoolInfo?.rewardInfos || [])
@@ -297,7 +294,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
   const computed = useMemo(() => {
     const base = data?.baseRows ?? []
     if (!rowsDisplay.length) return { rows: [], totalLiq: 0, totalEarn: 0, totalApr: 0 }
-    const solData = (poolInfo as SolanaV3PoolInfo | any)?.solanaData
+    const solData = poolInfo.rawPool
     const mintA = solData?.mintA?.address
     const mintB = solData?.mintB?.address
     const priceA = mintA ? priceMap?.[mintA]?.value ?? 0 : 0
@@ -326,7 +323,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         const tb = data?.tableBase?.find((tb) => tb.tokenId === row.tokenId)
         const aprRes = tb
           ? PoolUtils.estimateAprsForPriceRangeDelta({
-              poolInfo: data!.apiPoolInfo,
+              poolInfo: data!.apiPoolInfo as any,
               poolLiquidity: data!.computePoolInfo.liquidity,
               aprType: 'day',
               mintPrice,
@@ -365,7 +362,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
 
   return (
     <PositionsTable
-      poolInfo={poolInfo}
+      poolInfo={poolInfo as PoolInfo}
       totalLiquidityUSD={computed.totalLiq}
       totalApr={computed.totalApr}
       totalEarnings={formatPoolDetailFiatNumber(computed.totalEarn)}
