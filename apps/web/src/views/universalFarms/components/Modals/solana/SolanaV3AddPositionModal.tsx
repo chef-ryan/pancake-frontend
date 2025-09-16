@@ -150,14 +150,22 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
     }
   }, [addLiquidity, poolInfo, position, liquidityAdd, amount0Add, amount1Add, onClose])
 
-  const handleFieldAInput = useCallback((value: string) => {
-    setFields((prev) => [value, prev[1]])
-    setFocusSide(0)
-  }, [])
-  const handleFieldBInput = useCallback((value: string) => {
-    setFields((prev) => [prev[0], value])
-    setFocusSide(1)
-  }, [])
+  const handleFieldAInput = useCallback(
+    (value: string) => {
+      if (value === fields[0]) return
+      setFields((prev) => [value, prev[1]])
+      setFocusSide(0)
+    },
+    [fields[0]],
+  )
+  const handleFieldBInput = useCallback(
+    (value: string) => {
+      if (value === fields[1]) return
+      setFields((prev) => [prev[0], value])
+      setFocusSide(1)
+    },
+    [fields[1]],
+  )
 
   return (
     <ModalV2 isOpen={isOpen} onDismiss={onClose} closeOnOverlayClick>
