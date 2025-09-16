@@ -404,6 +404,7 @@ const PositionChanges: React.FC<{
     tickUpper: position.tickUpper,
     liquidity: position.liquidity,
   })
+
   const { totalUsdValue } = useLiquidityUsdValue({
     poolInfo,
     tickLower: position.tickLower,

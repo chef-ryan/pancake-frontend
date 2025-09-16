@@ -66,7 +66,7 @@ export const SolanaV3PositionItem = memo(({ position, detailMode }: SolanaV3Posi
       tvlUsd: poolInfo.tvl.toString() as `${number}`,
       rawPool: poolInfo,
     } satisfies SolanaV3PoolInfo
-  }, [currency0, currency1, poolInfo?.feeRate, position.liquidity, position.poolId])
+  }, [currency0, currency1, poolInfo, position.liquidity, position.poolId])
 
   const { data: currency0Price } = useSolanaTokenPrice({
     mint: currency0?.wrapped.address,
