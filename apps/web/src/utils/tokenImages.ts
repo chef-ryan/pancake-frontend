@@ -60,7 +60,7 @@ const _getCurrencyLogoSrcs = (currency: UnifiedCurrency & { logoURI?: string | u
     }
     return []
   }
-  const addr = getCurrencyAddress(currency)
+  const addr = getCurrencyAddress(currency as Currency)
   const pxImage = makeBlockiesUrl(addr)
   const list = allUrls()?.filter((x) => x)
   list.push(pxImage)
@@ -69,5 +69,5 @@ const _getCurrencyLogoSrcs = (currency: UnifiedCurrency & { logoURI?: string | u
 
 export const getCurrencyLogoSrcs = memoize(
   _getCurrencyLogoSrcs,
-  (currency) => `${currency.chainId}-${getCurrencyAddress(currency)}`,
+  (currency) => `${currency.chainId}-${getCurrencyAddress(currency as Currency)}`,
 )

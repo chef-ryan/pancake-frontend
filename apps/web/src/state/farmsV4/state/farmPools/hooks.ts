@@ -1,4 +1,4 @@
-import { isTestnetChainId } from '@pancakeswap/chains'
+import { ChainId, isEvm, isTestnetChainId } from '@pancakeswap/chains'
 import { Protocol, UniversalFarmConfig, fetchAllUniversalFarms, masterChefV3Addresses } from '@pancakeswap/farms'
 import { masterChefAddresses } from '@pancakeswap/farms/src/const'
 import { masterChefV3ABI } from '@pancakeswap/v3-sdk'
@@ -30,7 +30,9 @@ type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
 type ArrayItemType<T> = T extends Array<infer U> ? U : T
 
 export async function fetchFarmData(showTestnet: boolean) {
-  const chainId = showTestnet ? DEFAULT_CHAINS : DEFAULT_CHAINS.filter((c) => !isTestnetChainId(c))
+  const chainId = showTestnet
+    ? DEFAULT_CHAINS
+    : DEFAULT_CHAINS.filter((c) => isEvm(c) && !isTestnetChainId(c as ChainId))
 
   const [pools, farmConfig] = await Promise.all([
     fetchFarmPools({ chainId, protocols: DEFAULT_PROTOCOLS }),

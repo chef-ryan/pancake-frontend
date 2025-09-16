@@ -2,7 +2,7 @@ import { memo, useMemo, useState } from 'react'
 import { PositionInfoLayout, PositionUtils, TickUtils, TokenInfo } from '@pancakeswap/solana-core-sdk'
 import { NonEVMChainId } from '@pancakeswap/chains'
 import BigNumber from 'bignumber.js'
-import { Price, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { Price, UnifiedCurrencyAmount, ZERO_ADDRESS } from '@pancakeswap/swap-sdk-core'
 import { Protocol } from '@pancakeswap/farms'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { POSITION_STATUS, SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
@@ -51,7 +51,8 @@ export const SolanaV3PositionItem = memo(({ position, poolInfo, detailMode }: So
     }
     return {
       pid: 0,
-      lpAddress: position.nftMint.toBase58(),
+      nftMint: position.nftMint,
+      lpAddress: ZERO_ADDRESS,
       protocol: Protocol.V3,
       token0: currency0,
       token1: currency1,

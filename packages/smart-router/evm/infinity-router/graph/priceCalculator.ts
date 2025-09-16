@@ -102,7 +102,7 @@ export function createPriceCalculator({ graph, quote, gasPriceWei }: Params) {
 
   function getGasPriceInBase(base: Vertice): CurrencyAmount<Currency> | undefined {
     const basePrice = getQuotePrice(base)
-    return gasPriceInQuote ? basePrice?.invert().quote(gasPriceInQuote) : undefined
+    return gasPriceInQuote ? (basePrice?.invert().quote(gasPriceInQuote) as CurrencyAmount<Currency>) : undefined
   }
 
   return {

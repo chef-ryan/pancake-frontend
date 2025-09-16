@@ -144,7 +144,7 @@ export const InfinityCLPosition = () => {
       try {
         // Check if currencies are compatible before quoting
         if (positionAmount0.currency.equals(price0.baseCurrency)) {
-          amount0 = price0.quote(positionAmount0)
+          amount0 = price0.quote(positionAmount0) as CurrencyAmount<Currency>
         } else {
           console.warn('Currency mismatch for price0.quote(positionAmount0)', {
             positionAmount0Currency: positionAmount0.currency.symbol,
@@ -161,7 +161,7 @@ export const InfinityCLPosition = () => {
       try {
         // Check if currencies are compatible before quoting
         if (positionAmount1.currency.equals(price1.baseCurrency)) {
-          amount1 = price1.quote(positionAmount1)
+          amount1 = price1.quote(positionAmount1) as CurrencyAmount<Currency>
         } else {
           console.warn('Currency mismatch for price1.quote(positionAmount1)', {
             positionAmount1Currency: positionAmount1.currency.symbol,

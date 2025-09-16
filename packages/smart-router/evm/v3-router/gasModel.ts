@@ -140,13 +140,13 @@ export async function createGasModel({
         const price =
           priceInNative || (nativePool && getTokenPrice(nativePool, nativeWrappedToken, quoteCurrency.wrapped))
         if (price) {
-          gasCostInToken = price.quote(totalGasCostNativeCurrency)
+          gasCostInToken = price.quote(totalGasCostNativeCurrency) as CurrencyAmount<Currency>
         }
       }
 
       const nativeTokenUsdPrice = nativePriceInUsd || (usdPool && getTokenPrice(usdPool, nativeWrappedToken, usdToken))
       if (nativeTokenUsdPrice) {
-        gasCostInUSD = nativeTokenUsdPrice.quote(totalGasCostNativeCurrency)
+        gasCostInUSD = nativeTokenUsdPrice.quote(totalGasCostNativeCurrency) as CurrencyAmount<Currency>
       }
     } catch (e) {
       // console.warn('Cannot estimate gas cost', e)

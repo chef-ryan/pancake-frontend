@@ -22,7 +22,13 @@ import {
   UnifiedPositionDetail,
   V2LPDetail,
 } from 'state/farmsV4/state/accountPositions/type'
-import { InfinityPoolInfo, PoolInfo, SolanaV3PoolInfo } from 'state/farmsV4/state/type'
+import {
+  InfinityBinPoolInfo,
+  InfinityCLPoolInfo,
+  InfinityPoolInfo,
+  PoolInfo,
+  SolanaV3PoolInfo,
+} from 'state/farmsV4/state/type'
 import styled from 'styled-components'
 import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem'
@@ -71,7 +77,7 @@ export type PositionInfoProps = {
   totalPriceUSD: number
   amount0?: UnifiedCurrencyAmount<UnifiedCurrency>
   amount1?: UnifiedCurrencyAmount<UnifiedCurrency>
-  pool?: PoolInfo | null
+  pool?: PoolInfo | SolanaV3PoolInfo | null
   poolId?: `0x${string}`
   detailMode?: boolean
   userPosition?: UnifiedPositionDetail
@@ -216,7 +222,7 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
       return <Skeleton width={60} />
     }
     if (!userPosition) {
-      return <PoolGlobalAprButton pool={pool} detailMode={detailMode} />
+      return <PoolGlobalAprButton pool={pool as PoolInfo} detailMode={detailMode} />
     }
     if (pool.protocol === Protocol.V3) {
       if (chainId === NonEVMChainId.SOLANA) {
@@ -227,15 +233,27 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
           />
         )
       }
-      return <V3PoolPositionAprButton pool={pool} userPosition={userPosition as PositionDetail} />
+      return <V3PoolPositionAprButton pool={pool as PoolInfo} userPosition={userPosition as PositionDetail} />
     }
     if (pool.protocol === Protocol.InfinityCLAMM) {
-      return <InfinityCLPoolPositionAprButton pool={pool} userPosition={userPosition as InfinityCLPositionDetail} />
+      return (
+        <InfinityCLPoolPositionAprButton
+          pool={pool as InfinityCLPoolInfo}
+          userPosition={userPosition as InfinityCLPositionDetail}
+        />
+      )
     }
     if (pool.protocol === Protocol.InfinityBIN) {
-      return <InfinityBinPoolPositionAprButton pool={pool} userPosition={userPosition as InfinityBinPositionDetail} />
+      return (
+        <InfinityBinPoolPositionAprButton
+          pool={pool as InfinityBinPoolInfo}
+          userPosition={userPosition as InfinityBinPositionDetail}
+        />
+      )
     }
-    return <V2PoolPositionAprButton pool={pool} userPosition={userPosition as V2LPDetail | StableLPDetail} />
+    return (
+      <V2PoolPositionAprButton pool={pool as PoolInfo} userPosition={userPosition as V2LPDetail | StableLPDetail} />
+    )
   }, [detailMode, pool, userPosition])
 
   return (
@@ -260,7 +278,7 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
         )}
         {isStaked ? (
           [Protocol.STABLE, Protocol.V2].includes(protocol) ? (
-            <V2Earnings pool={pool} />
+            <V2Earnings pool={pool as PoolInfo} />
           ) : Protocol.V3 === protocol && chainId && isEvm(chainId) ? (
             <V3Earnings tokenId={tokenId} chainId={chainId} />
           ) : null

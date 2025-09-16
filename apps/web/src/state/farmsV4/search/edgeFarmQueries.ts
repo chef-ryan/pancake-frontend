@@ -1,4 +1,4 @@
-import { ChainId, chainNamesInKebabCase } from '@pancakeswap/chains'
+import { ChainId, chainNamesInKebabCase, isEvm } from '@pancakeswap/chains'
 import {
   FarmV4SupportedChainId,
   fetchAllUniversalFarms,
@@ -58,7 +58,7 @@ function getPoolId(farm: UniversalFarmConfig) {
 export type ChainNameKebab = (typeof chainNamesInKebabCase)[keyof typeof chainNamesInKebabCase]
 
 async function fetchExplorerFarmPools(protocols: Protocol[], chainIds: FarmV4SupportedChainId[]) {
-  const chains = chainIds.map((chainId) => getEdgeChainName(chainId))
+  const chains = chainIds.filter((id) => isEvm(id)).map((chainId) => getEdgeChainName(chainId as ChainId))
   const resp = await explorerApiClient.GET('/cached/pools/farming', {
     params: {
       query: {
@@ -209,7 +209,7 @@ async function fetchAllExplorerPools(protocols: Protocol[], chains: FarmV4Suppor
   const poolQuery = {
     baseUrl: `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`,
     protocols,
-    chains: chains.map((chain) => getEdgeChainName(chain)),
+    chains: chains.filter((id) => isEvm(id)).map((chain) => getEdgeChainName(chain as ChainId)),
     maxPages: 2,
     orderBy: 'volumeUSD24h' as const,
   }
@@ -225,7 +225,7 @@ async function fetchAllExplorerPoolsByAddress(
 ) {
   if (!protocols.length) return []
   const baseUrl = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`
-  const chainNames = chains.map((chain) => getEdgeChainName(chain))
+  const chainNames = chains.filter((id) => isEvm(id)).map((chain) => getEdgeChainName(chain as ChainId))
 
   if (!addresses.length) return []
 
