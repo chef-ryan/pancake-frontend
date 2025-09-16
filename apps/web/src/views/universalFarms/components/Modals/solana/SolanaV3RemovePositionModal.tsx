@@ -32,40 +32,9 @@ import { useSolanaV3RewardInfoFromSimulation } from 'views/universalFarms/hooks/
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { useSolanaEpochInfo } from 'hooks/solana/useSolanaEpochInfo'
 import { useRemoveLiquidityCallback } from 'hooks/solana/useRemoveLiquidityCallback'
+import { useLiquidityAmount } from 'hooks/solana/useLiquidityAmount'
 import { SolanaV3Earnings } from '../../PositionItem/PositionInfo/SolanaV3Earnings'
 import { SolanaV3PoolInfoHeader } from './PooInfoHeader'
-
-const usePositionAmount = ({ poolInfo, position }: { poolInfo: SolanaV3Pool; position: SolanaV3PositionDetail }) => {
-  const { data: epochInfo } = useSolanaEpochInfo()
-  return useMemo(() => {
-    const { amountA, amountB } = PositionUtils.getAmountsFromLiquidity({
-      poolInfo,
-      ownerPosition: position,
-      liquidity: position.liquidity,
-      slippage: 0,
-      add: false,
-      epochInfo: epochInfo ?? {
-        epoch: 0,
-        slotIndex: 0,
-        slotsInEpoch: 0,
-        absoluteSlot: 0,
-      },
-    })
-
-    return {
-      currencyAmountA: UnifiedCurrencyAmount.fromRawAmount(
-        convertRawTokenInfoIntoSPLToken(poolInfo.mintA as TokenInfo),
-        amountA.amount.toString(),
-      ),
-      currencyAmountB: UnifiedCurrencyAmount.fromRawAmount(
-        convertRawTokenInfoIntoSPLToken(poolInfo.mintB as TokenInfo),
-        amountB.amount.toString(),
-      ),
-      amountA: new BigNumber(amountA.amount.toString()),
-      amountB: new BigNumber(amountB.amount.toString()),
-    }
-  }, [poolInfo, position, epochInfo])
-}
 
 export default function SolanaV3RemovePositionModal({
   isOpen,
@@ -96,14 +65,16 @@ export default function SolanaV3RemovePositionModal({
   )
   const { isMobile } = useMatchBreakpoints()
 
-  const { currencyAmountA: positionCurrencyAmountA, currencyAmountB: positionCurrencyAmountB } = usePositionAmount({
+  const { amount0: positionCurrencyAmountA, amount1: positionCurrencyAmountB } = useLiquidityAmount({
     poolInfo,
-    position,
+    tickLower: position.tickLower,
+    tickUpper: position.tickUpper,
+    liquidity: position.liquidity,
   })
   const [amount0, amount1] = useMemo(
     () => [
-      positionCurrencyAmountA.multiply(new Percent(percent, 100)),
-      positionCurrencyAmountB.multiply(new Percent(percent, 100)),
+      positionCurrencyAmountA?.multiply(new Percent(percent, 100)),
+      positionCurrencyAmountB?.multiply(new Percent(percent, 100)),
     ],
     [positionCurrencyAmountA, positionCurrencyAmountB, percent],
   )
@@ -119,7 +90,8 @@ export default function SolanaV3RemovePositionModal({
 
   const handleConfirm = useCallback(async () => {
     // logGTMPoolLiquiditySubCmfEvent()
-    if (!position || position.liquidity.isZero()) return
+    if (!position || position.liquidity.isZero() || !amount0 || !amount1 || (amount0.equalTo(0) && amount1.equalTo(0)))
+      return
 
     setIsSending(true)
     try {
@@ -130,8 +102,8 @@ export default function SolanaV3RemovePositionModal({
           liquidity: new BN(
             new BigNumber(position.liquidity.toString()).multipliedBy(percent).dividedBy(100).toFixed(0),
           ),
-          amountMinA: amount0.toExact(),
-          amountMinB: amount1.toExact(),
+          amountA: amount0.toExact(),
+          amountB: amount1.toExact(),
           closePosition: percent === 100,
         },
         onSent: () => {

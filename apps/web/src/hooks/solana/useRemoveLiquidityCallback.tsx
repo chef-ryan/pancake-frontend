@@ -16,8 +16,8 @@ export type RemoveLiquidityCallbackProps = {
     poolInfo: SolanaV3Pool
     position: SolanaV3PositionDetail
     liquidity: BN
-    amountMinA: string
-    amountMinB: string
+    amountA: string
+    amountB: string
     closePosition?: boolean
   }
   harvest?: boolean
@@ -36,19 +36,19 @@ export const useRemoveLiquidityCallback = () => {
 
   return useCallback(
     async ({ params, harvest, onSent, onError, onFinally, onConfirmed }: RemoveLiquidityCallbackProps) => {
-      const { poolInfo, position, liquidity, amountMinA, amountMinB, closePosition: _closePosition } = params
+      const { poolInfo, position, liquidity, amountA, amountB, closePosition: _closePosition } = params
       if (!raydium || !position) return
 
       const [_amountMinA, _amountMinB] = [
         new BN(
-          new BigNumber(amountMinA)
+          new BigNumber(amountA)
             .multipliedBy(10000 - slippage)
             .dividedBy(10000)
             .multipliedBy(10 ** poolInfo.mintA.decimals)
             .toFixed(0),
         ),
         new BN(
-          new BigNumber(amountMinB)
+          new BigNumber(amountB)
             .multipliedBy(10000 - slippage)
             .dividedBy(10000)
             .multipliedBy(10 ** poolInfo.mintB.decimals)
