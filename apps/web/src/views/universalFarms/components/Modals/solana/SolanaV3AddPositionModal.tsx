@@ -44,6 +44,7 @@ import styled from 'styled-components'
 import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
 import { calculateSolanaTickLimits, getTickAtLimitStatus } from 'views/PoolDetail/utils'
 import { SolanaLiquiditySlippageButton } from 'views/Swap/components/SlippageButton'
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { SolanaV3PoolInfoHeader } from './PooInfoHeader'
 import { PriceRangeBar } from './PriceRangeBar'
 
@@ -181,6 +182,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
           </Flex>
           <StyledInputCard gap="0px">
             <CurrencyInputPanelSimplify
+              customChainId={NonEVMChainId.SOLANA}
               showUSDPrice
               currency={currency0}
               title={<>&nbsp;</>}
@@ -206,6 +208,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
             <hr />
             <CurrencyInputPanelSimplify
               title={<>&nbsp;</>}
+              customChainId={NonEVMChainId.SOLANA}
               showUSDPrice
               currency={currency1}
               wrapperProps={{ backgroundColor: 'cardSecondary' }}
