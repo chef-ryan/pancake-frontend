@@ -55,12 +55,27 @@ export default function SolanaV3RemovePositionModal({
   const { data: price0Raw } = useSolanaTokenPrice({ mint: currency0?.wrapped.address, enabled: Boolean(currency0) })
   const currency1 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo.mintB as TokenInfo), [poolInfo.mintB])
   const { data: price1Raw } = useSolanaTokenPrice({ mint: currency1?.wrapped.address, enabled: Boolean(currency1) })
+
   const price0 = useMemo(
-    () => Price.fromDecimal(currency0, USDT[NonEVMChainId.SOLANA], price0Raw?.toString() ?? '0'),
+    () =>
+      Price.fromDecimal(
+        currency0,
+        USDT[NonEVMChainId.SOLANA],
+        new BigNumber(price0Raw?.toString() ?? '0')
+          .times(10 ** (currency0.decimals - USDT[NonEVMChainId.SOLANA].decimals))
+          .toString(),
+      ),
     [price0Raw, currency0],
   )
   const price1 = useMemo(
-    () => Price.fromDecimal(currency1, USDT[NonEVMChainId.SOLANA], price1Raw?.toString() ?? '0'),
+    () =>
+      Price.fromDecimal(
+        currency1,
+        USDT[NonEVMChainId.SOLANA],
+        new BigNumber(price1Raw?.toString() ?? '0')
+          .times(10 ** (currency1.decimals - USDT[NonEVMChainId.SOLANA].decimals))
+          .toString(),
+      ),
     [price1Raw, currency1],
   )
   const { isMobile } = useMatchBreakpoints()
