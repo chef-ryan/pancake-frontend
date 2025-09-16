@@ -29,6 +29,7 @@ import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
 import { StablePair } from 'views/AddLiquidity/AddStableLiquidity/hooks/useStableLPDerivedMintInfo'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { isSolana } from '@pancakeswap/chains'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { FONT_SIZE, LOGO_SIZE, useFontSize } from './state'
 
@@ -157,6 +158,7 @@ const useSizeAdaption = (value: string, currencySymbol?: string, otherCurrencySy
 
 interface CurrencyInputPanelProps {
   defaultValue: string | undefined
+  customChainId?: number
   onUserInput: (value: string) => void
   onInputBlur?: () => void
   onPercentInput?: (percent: number) => void
@@ -227,8 +229,13 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   modalTitle,
   showSearchHeader,
   wrapperProps,
+  customChainId,
 }: CurrencyInputPanelProps) {
-  const { unifiedAccount: account, chainId } = useAccountActiveChain()
+  const { account: evmAccount, solanaAccount, unifiedAccount, chainId } = useAccountActiveChain()
+  const account = useMemo(() => {
+    if (!customChainId) return unifiedAccount
+    return isSolana(customChainId) ? solanaAccount : evmAccount
+  }, [customChainId, evmAccount, solanaAccount, unifiedAccount])
   const [value, setValue] = useState<string | undefined>(defaultValue)
 
   const selectedCurrencyBalance = useUnifiedCurrencyBalance(currency ?? undefined)
