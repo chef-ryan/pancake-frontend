@@ -27,7 +27,11 @@ export const SolanaV3Earnings = ({
       <Row gap="8px" alignItems="flex-start" {...rowProps}>
         <DetailInfoLabel>{t('Farm Rewards')}:</DetailInfoLabel>
         {breakdownRewardInfo.rewards.map((r) => (
-          <EarningsWithToken currency={r.mint} earningsAmount={Number(r.amount)} earningsUsd={Number(r.amountUSD)} />
+          <EarningsWithToken
+            currency={convertRawTokenInfoIntoSPLToken(r.mint as TokenInfo)}
+            earningsAmount={Number(r.amount)}
+            earningsUsd={Number(r.amountUSD)}
+          />
         ))}
       </Row>
       <Row gap="8px" alignItems="flex-start" {...rowProps}>
