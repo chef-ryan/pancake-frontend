@@ -81,7 +81,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
     /* trigger by extend search */
     const extendResults = extendList.map((list) => list.map((x) => buildFarmList(x)).unwrapOr([])).flat()
 
-    const fullList = [...baseResults, ...extendResults]
+    const fullList = uniqBy([...baseResults, ...extendResults], (x) => `${x.chainId}-${x.id}`)
 
     const filtered = farmFilters.search(
       fullList.filter(farmFilters.chainFilter(queryChains)).filter(farmFilters.protocolFilter(protocols)),
