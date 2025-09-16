@@ -197,7 +197,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               wrapperProps={{ backgroundColor: 'cardSecondary' }}
               id="add-liquidity-input-tokena"
               showMaxButton
-              disabled={amount0?.equalTo(0)}
+              disabled={position.liquidity.isZero() ? amount0Add?.equalTo(0) : amount0?.equalTo(0)}
               disableCurrencySelect
               defaultValue={amount0?.equalTo(0) ? '' : fields[0] ?? '0'}
               onUserInput={handleFieldAInput}
@@ -222,7 +222,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               wrapperProps={{ backgroundColor: 'cardSecondary' }}
               id="add-liquidity-input-tokenb"
               showMaxButton
-              disabled={amount1?.equalTo(0)}
+              disabled={position.liquidity.isZero() ? amount1Add?.equalTo(0) : amount1?.equalTo(0)}
               disableCurrencySelect
               defaultValue={amount1?.equalTo(0) ? '' : fields[1] ?? '0'}
               onUserInput={handleFieldBInput}
