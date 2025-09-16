@@ -204,7 +204,7 @@ export interface ApiV3PoolInfoCountItem {
   rewardApr: number[];
 }
 
-type PoolTypeItem = "StablePool" | "OpenBookMarket";
+export type PoolTypeItem = "StablePool" | "OpenBookMarket";
 
 type FarmRewardInfoOld = {
   mint: ApiV3Token;
@@ -240,7 +240,7 @@ export interface ApiV3PoolInfoBaseItem {
   day: ApiV3PoolInfoCountItem;
   week: ApiV3PoolInfoCountItem;
   month: ApiV3PoolInfoCountItem;
-  pooltype?: PoolTypeItem[];
+  pooltype: PoolTypeItem[];
 
   farmUpcomingCount?: number;
   farmOngoingCount?: number;
@@ -379,7 +379,7 @@ export interface ApiClmmConfigV3 {
   tradeFeeRate: number;
   tickSpacing: number;
   fundFeeRate: number;
-  description?: string;
+  description: string;
   defaultRange: number;
   defaultRangePoint: number[];
 }

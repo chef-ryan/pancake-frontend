@@ -112,7 +112,7 @@ export const PoolInfo = () => {
       const { feeApr, rewardApr } = (poolInfo as SolanaV3PoolInfo).rawPool.day
       return {
         lpApr: `${feeApr / 100}`,
-        cakeApr: { value: rewardApr.reduce((acc: number, i: number) => acc + i / 100, 0) },
+        cakeApr: { value: `${rewardApr.reduce((acc: number, i: number) => acc + i / 100, 0)}` },
         merklApr: '0',
         incentraApr: '0',
       } satisfies AprInfo

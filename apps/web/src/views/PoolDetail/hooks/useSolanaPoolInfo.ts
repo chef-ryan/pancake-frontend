@@ -1,4 +1,5 @@
 import { NonEVMChainId } from '@pancakeswap/chains'
+import { PoolTypeItem } from '@pancakeswap/solana-core-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
 import { useMemo } from 'react'
@@ -16,7 +17,14 @@ const fetchSolanaPoolInfo = async (poolId: string, signal?: AbortSignal) => {
         },
       },
     })
-    return resp.data?.data?.[0] ?? null
+    const pool = resp.data?.data?.[0]
+    return pool
+      ? {
+          ...pool,
+          pooltype: [] as PoolTypeItem[],
+          config: { ...pool.config, description: '' },
+        }
+      : null
   } catch (error) {
     console.error('Error fetching Solana pool info:', error)
     throw error

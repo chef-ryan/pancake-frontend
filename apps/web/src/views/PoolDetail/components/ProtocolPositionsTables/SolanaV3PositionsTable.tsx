@@ -31,7 +31,6 @@ import { AprTooltipContent } from 'views/universalFarms/components/PoolAprButton
 import { AprKey, getAprForPriceRange } from 'hooks/solana/useClmmApr'
 import { useSolanaOnchainClmmPool } from 'hooks/solana/useSolanaOnchainPool'
 
-import { PrimaryOutlineButton } from '../styles'
 import { PositionsTable } from './PositionsTable'
 import { EmptyPositionCard, LoadingCard } from './UtilityCards'
 import { PriceRangeDisplay } from './PriceRangeDisplay'
@@ -166,7 +165,6 @@ const fetchSolanaPositions = async ({
 }
 
 export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) => {
-  const { t } = useTranslation()
   const { solanaAccount } = useAccountActiveChain()
   const endpoint = useAtomValue(rpcUrlAtom)
   const chainId = useChainIdByQuery()
@@ -323,16 +321,18 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
           if (m) mintPrice[m] = { value: priceMap?.[m]?.value ?? 0 }
         })
         const tb = data?.tableBase?.find((tb) => tb.tokenId === row.tokenId)
-        const aprRes = getAprForPriceRange({
-          poolInfo: poolInfo.rawPool,
-          poolLiquidity: (poolOnchain?.computePoolInfo?.liquidity as BN) ?? new BN(0),
-          tickLower: tb.data.tickLower,
-          tickUpper: tb.data.tickUpper,
-          planType: 'D',
-          tokenPrices: priceMap,
-          timeBasis: AprKey.Day,
-          liquidity: tb.liquidity ?? new BN(1),
-        })
+        const aprRes = tb
+          ? getAprForPriceRange({
+              poolInfo: poolInfo.rawPool,
+              poolLiquidity: (poolOnchain?.computePoolInfo?.liquidity as BN) ?? new BN(0),
+              tickLower: tb.data.tickLower,
+              tickUpper: tb.data.tickUpper,
+              planType: 'D',
+              tokenPrices: priceMap,
+              timeBasis: AprKey.Day,
+              liquidity: tb.raw.liquidity ?? new BN(1),
+            })
+          : { apr: 0, fee: { apr: 0 } }
         aprValue = aprRes?.apr || 0
         feeAprValue = aprRes.fee.apr || 0
       } catch (e) {

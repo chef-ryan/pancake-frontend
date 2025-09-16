@@ -1,4 +1,5 @@
 import { PoolInfo } from '@pancakeswap/solana-clmm-sdk'
+import { PoolTypeItem } from '@pancakeswap/solana-core-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { solExplorerApiClient } from 'state/info/api/client'
@@ -28,6 +29,12 @@ export const useSolanaPoolByMint = (token0?: string, token1?: string, feeAmount?
   const { data: poolsByMint } = useSolanaPoolsByMint(token0, token1)
   return useMemo(() => {
     const pool = poolsByMint?.find((p) => p.config.tradeFeeRate === feeAmount)
-    return normalizeSolanaPoolInfo(pool)
+    return pool
+      ? normalizeSolanaPoolInfo({
+          ...pool,
+          pooltype: [] as PoolTypeItem[],
+          config: { ...pool.config, description: '' },
+        })
+      : undefined
   }, [poolsByMint, feeAmount])
 }
