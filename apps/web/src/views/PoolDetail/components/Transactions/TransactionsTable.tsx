@@ -15,12 +15,11 @@ import orderBy from 'lodash/orderBy'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { ChainLinkSupportChains, multiChainId } from 'state/info/constant'
 import { useChainIdByQuery, useChainNameByQuery } from 'state/info/hooks'
-import { getBlockExploreLink } from 'utils'
+import { getBlockExploreLink, safeGetUnifiedAddress } from 'utils'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
 import { Arrow, Break, PageButtons, TableWrapper } from 'views/Info/components/InfoTables/shared'
 import HoverInlineText from 'views/V3Info/components/HoverInlineText'
-import { shortenAddress } from 'views/V3Info/utils'
 import { formatTime } from 'views/V3Info/utils/date'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import {
@@ -59,6 +58,12 @@ const DataRow = ({ transaction }: { transaction: Transaction; color?: string }) 
   )
   const outputTokenSymbol = transaction.amount0 > 0 ? token0Symbol : token1Symbol
   const inputTokenSymbol = transaction.amount1 < 0 ? token1Symbol : token0Symbol
+
+  const sender = useMemo(() => {
+    const parsed = safeGetUnifiedAddress(chainId, transaction.sender)
+    const chars = 4
+    return parsed ? `${parsed.substring(0, chars + 2)}...${parsed.substring(42 - chars)}` : '-'
+  }, [chainId, transaction.sender])
 
   return (
     <ResponsiveGrid>
@@ -111,7 +116,7 @@ const DataRow = ({ transaction }: { transaction: Transaction; color?: string }) 
               fontWeight={400}
               color="primary60"
             >
-              {shortenAddress(transaction.sender)}
+              {sender}
             </ScanLink>
           </Flex>
         </Text>

@@ -3,7 +3,14 @@ import { useTranslation } from '@pancakeswap/localization'
 import { AutoColumn, Box, Card, CardBody, FlexGap, Grid, Text } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import React, { useCallback, useEffect, useState } from 'react'
-import { InfinityBinPoolInfo, InfinityCLPoolInfo, PoolInfo, StablePoolInfo, V2PoolInfo } from 'state/farmsV4/state/type'
+import {
+  InfinityBinPoolInfo,
+  InfinityCLPoolInfo,
+  PoolInfo,
+  SolanaV3PoolInfo,
+  StablePoolInfo,
+  V2PoolInfo,
+} from 'state/farmsV4/state/type'
 import { useChainIdByQuery } from 'state/info/hooks'
 import { getRewardProvider } from 'views/universalFarms/components/FarmStatusDisplay/hooks'
 import { useCheckShouldSwitchNetwork } from 'views/universalFarms/hooks'
@@ -87,7 +94,7 @@ const MyPositionsInner: React.FC<{ poolInfo: PoolInfo }> = ({ poolInfo }) => {
   return (
     <AutoColumn gap="lg">
       {isSolanaChain ? (
-        <SolanaV3PositionsTable poolInfo={poolInfo} />
+        <SolanaV3PositionsTable poolInfo={poolInfo as SolanaV3PoolInfo} />
       ) : (
         (() => {
           switch (poolInfo.protocol) {

@@ -37,7 +37,7 @@ import { useHookByPoolId } from 'hooks/infinity/useHooksList'
 import { useUnifiedCurrency } from 'hooks/Tokens'
 import { NextSeo } from 'next-seo'
 import { useMemo, useState } from 'react'
-import { InfinityPoolInfo, PoolInfo as PoolInfoType } from 'state/farmsV4/state/type'
+import { InfinityPoolInfo, PoolInfo as PoolInfoType, SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { useChainIdByQuery } from 'state/info/hooks'
 import { getBlockExploreLink } from 'utils'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
@@ -48,6 +48,7 @@ import { PoolGlobalAprButtonV3 } from 'views/universalFarms/components/PoolAprBu
 import { RewardInfoCard } from 'views/universalFarms/components/RewardInfoCard'
 import LiquiditySunsetWarning from 'components/Liquidity/LiquiditySunsetWarning'
 import { isSolana } from '@pancakeswap/chains'
+import { AprInfo } from 'state/farmsV4/hooks'
 import { usePoolInfoByQuery } from '../hooks/usePoolInfo'
 import { usePoolSymbol } from '../hooks/usePoolSymbol'
 import { useFlipCurrentPrice } from '../state/flipCurrentPrice'
@@ -83,6 +84,7 @@ export const PoolInfo = () => {
   const protocol = poolInfo?.protocol
 
   const chainId = useChainIdByQuery()
+  const isSolanaChain = isSolana(chainId)
 
   const isSmallScreen = isMobile || isMd
 
@@ -104,6 +106,19 @@ export const PoolInfo = () => {
 
   const poolId = (poolInfo as InfinityPoolInfo)?.poolId
   const hookData = useHookByPoolId(chainId, poolId)
+
+  const aprInfo = useMemo(() => {
+    if (isSolanaChain && poolInfo) {
+      const { feeApr, rewardApr } = (poolInfo as SolanaV3PoolInfo).rawPool.day
+      return {
+        lpApr: `${feeApr / 100}`,
+        cakeApr: { value: rewardApr.reduce((acc: number, i: number) => acc + i / 100, 0) },
+        merklApr: '0',
+        incentraApr: '0',
+      } satisfies AprInfo
+    }
+    return undefined
+  }, [poolInfo, isSolanaChain])
 
   if (!poolInfo)
     return (
@@ -345,9 +360,16 @@ export const PoolInfo = () => {
                     <Text fontSize={12} bold color="textSubtle" textTransform="uppercase" minWidth="max-content">
                       {t('Est. APR')}
                     </Text>
-                    <PoolGlobalAprButtonV3 pool={poolInfo} showApyText={false} />
+                    {isSolanaChain ? null : <PoolGlobalAprButtonV3 pool={poolInfo} showApyText={false} />}
                   </FlexGap>
-                  {poolInfo ? <PoolGlobalAprButtonV3 pool={poolInfo} showApyButton={false} /> : null}
+                  {poolInfo ? (
+                    <PoolGlobalAprButtonV3
+                      clickable={!isSolanaChain}
+                      aprInfo={aprInfo}
+                      pool={poolInfo}
+                      showApyButton={false}
+                    />
+                  ) : null}
                 </AutoColumn>
               </LightGreyCard>
             </FlexGap>
@@ -373,17 +395,13 @@ export const PoolInfo = () => {
             >
               <span style={{ fontSize: isSmallScreen ? '12px' : '16px' }}>{t('My Positions')}</span>
             </Tab>
-            {isSolana(chainId) ? (
-              <></>
-            ) : (
-              <Tab
-                isActive={tab === PoolDetailTab.Transactions}
-                onClick={() => setTab(PoolDetailTab.Transactions)}
-                key="transactions"
-              >
-                <span style={{ fontSize: isSmallScreen ? '12px' : '16px' }}>{t('Transactions')}</span>
-              </Tab>
-            )}
+            <Tab
+              isActive={tab === PoolDetailTab.Transactions}
+              onClick={() => setTab(PoolDetailTab.Transactions)}
+              key="transactions"
+            >
+              <span style={{ fontSize: isSmallScreen ? '12px' : '16px' }}>{t('Transactions')}</span>
+            </Tab>
           </TabMenu>
         </Box>
 

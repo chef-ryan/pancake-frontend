@@ -37,7 +37,7 @@ type GetAprForRangeParams = {
   liquidity: BN
 }
 
-function getAprForPriceRange({
+export function getAprForPriceRange({
   poolInfo,
   poolLiquidity,
   tickLower,

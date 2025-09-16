@@ -16,7 +16,6 @@ import {
   LiquidityMath,
   SqrtPriceMath,
   TickUtils,
-  PoolUtils,
 } from '@pancakeswap/solana-core-sdk'
 import { PancakeClmmProgramId } from '@pancakeswap/solana-clmm-sdk'
 import { PoolInfo, SolanaV3PoolInfo } from 'state/farmsV4/state/type'
@@ -29,6 +28,8 @@ import { displayApr } from '@pancakeswap/utils/displayApr'
 import { useChainIdByQuery } from 'state/info/hooks'
 import { Tooltips } from 'components/Tooltips'
 import { AprTooltipContent } from 'views/universalFarms/components/PoolAprButtonV3/AprTooltipContent'
+import { AprKey, getAprForPriceRange } from 'hooks/solana/useClmmApr'
+import { useSolanaOnchainClmmPool } from 'hooks/solana/useSolanaOnchainPool'
 
 import { PrimaryOutlineButton } from '../styles'
 import { PositionsTable } from './PositionsTable'
@@ -171,6 +172,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
   const chainId = useChainIdByQuery()
 
   const solPoolId = poolInfo?.poolId
+  const { data: poolOnchain } = useSolanaOnchainClmmPool(poolInfo?.poolId)
 
   const { data, isLoading } = useQuery({
     queryKey: ['solana-v3-positions', endpoint, solanaAccount, chainId, solPoolId],
@@ -321,20 +323,18 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
           if (m) mintPrice[m] = { value: priceMap?.[m]?.value ?? 0 }
         })
         const tb = data?.tableBase?.find((tb) => tb.tokenId === row.tokenId)
-        const aprRes = tb
-          ? PoolUtils.estimateAprsForPriceRangeDelta({
-              poolInfo: data!.apiPoolInfo as any,
-              poolLiquidity: data!.computePoolInfo.liquidity,
-              aprType: 'day',
-              mintPrice,
-              liquidity: tb.raw.liquidity,
-              positionTickLowerIndex: tb.data.tickLower,
-              positionTickUpperIndex: tb.data.tickUpper,
-              chainTime: Math.floor(Date.now() / 1000),
-            })
-          : { apr: 0, feeApr: 0, rewardsApr: [] as number[] }
+        const aprRes = getAprForPriceRange({
+          poolInfo: poolInfo.rawPool,
+          poolLiquidity: (poolOnchain?.computePoolInfo?.liquidity as BN) ?? new BN(0),
+          tickLower: tb.data.tickLower,
+          tickUpper: tb.data.tickUpper,
+          planType: 'D',
+          tokenPrices: priceMap,
+          timeBasis: AprKey.Day,
+          liquidity: tb.liquidity ?? new BN(1),
+        })
         aprValue = aprRes?.apr || 0
-        feeAprValue = aprRes?.feeApr || 0
+        feeAprValue = aprRes.fee.apr || 0
       } catch (e) {
         console.error(e)
       }
@@ -355,7 +355,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
     })
     const totalApr = totalLiq > 0 ? aprWeightedSum / totalLiq : 0
     return { rows, totalLiq, totalEarn, totalApr }
-  }, [data, priceMap, poolInfo, rowsDisplay])
+  }, [poolOnchain?.computePoolInfo?.liquidity, data, priceMap, poolInfo, rowsDisplay])
 
   if (isLoading) return <LoadingCard />
   if (!computed.rows.length) return <EmptyPositionCard />
@@ -367,16 +367,6 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
       totalApr={computed.totalApr}
       totalEarnings={formatPoolDetailFiatNumber(computed.totalEarn)}
       data={computed.rows.map((r) => r.tableRow)}
-      harvestAllButton={
-        <PrimaryOutlineButton
-          as="a"
-          href="https://solana.pancakeswap.finance/positions"
-          target="_blank"
-          rel="noreferrer"
-        >
-          {t('Open Positions')}
-        </PrimaryOutlineButton>
-      }
       onRowClick={() => {
         window.open('https://solana.pancakeswap.finance/positions', '_blank')
       }}

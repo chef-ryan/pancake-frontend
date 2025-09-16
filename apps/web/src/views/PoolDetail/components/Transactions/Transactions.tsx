@@ -1,5 +1,4 @@
 import { Protocol } from '@pancakeswap/farms'
-import { useTranslation } from '@pancakeswap/localization'
 import { AutoColumn } from '@pancakeswap/uikit'
 import { useChainIdByQuery } from 'state/info/hooks'
 import { useRouterQuery } from 'views/PoolDetail/hooks/useRouterQuery'
@@ -12,7 +11,6 @@ type TransactionProps = {
 }
 
 export const Transactions: React.FC<TransactionProps> = ({ protocol }) => {
-  const { t } = useTranslation()
   const { id: address } = useRouterQuery()
   const chainId = useChainIdByQuery()
   const { data: transactions } = usePoolTransactions(address, protocol, chainId)

@@ -316,6 +316,7 @@ export const PoolInfoHeader = ({
                       {t('Est. APR')}
                     </Text>
                     {overrideAprDisplay?.roiCalculator ||
+                      // todo:@eric
                       (typeof (poolInfo as any).lpAddress === 'string' &&
                         (poolInfo as any).lpAddress.startsWith('0x') && (
                           <PoolGlobalAprButtonV3
