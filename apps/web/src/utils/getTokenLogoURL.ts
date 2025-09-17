@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, isSolana, NonEVMChainId } from '@pancakeswap/chains'
 import { Token } from '@pancakeswap/sdk'
 import memoize from 'lodash/memoize'
 import { safeGetAddress } from 'utils'
@@ -12,14 +12,15 @@ const mapping = {
   [ChainId.ARBITRUM_ONE]: 'arbitrum',
   [ChainId.LINEA]: 'linea',
   [ChainId.BASE]: 'base',
+  [NonEVMChainId.SOLANA]: 'solana',
 }
 
 const getTokenLogoURL = memoize(
   (token?: Token) => {
     if (token && mapping[token.chainId] && isAddress(token.address)) {
-      return `https://assets-cdn.trustwallet.com/blockchains/${mapping[token.chainId]}/assets/${safeGetAddress(
-        token.address,
-      )}/logo.png`
+      return `https://assets-cdn.trustwallet.com/blockchains/${mapping[token.chainId]}/assets/${
+        isSolana(token.chainId) ? token.address : safeGetAddress(token.address)
+      }/logo.png`
     }
     return null
   },

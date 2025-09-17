@@ -16,8 +16,8 @@ export type RemoveLiquidityCallbackProps = {
     poolInfo: SolanaV3Pool
     position: SolanaV3PositionDetail
     liquidity: BN
-    amountMinA: string
-    amountMinB: string
+    amountA: string
+    amountB: string
     closePosition?: boolean
   }
   harvest?: boolean
@@ -36,19 +36,19 @@ export const useRemoveLiquidityCallback = () => {
 
   return useCallback(
     async ({ params, harvest, onSent, onError, onFinally, onConfirmed }: RemoveLiquidityCallbackProps) => {
-      const { poolInfo, position, liquidity, amountMinA, amountMinB, closePosition: _closePosition } = params
+      const { poolInfo, position, liquidity, amountA, amountB, closePosition: _closePosition } = params
       if (!raydium || !position) return
 
       const [_amountMinA, _amountMinB] = [
         new BN(
-          new BigNumber(amountMinA)
+          new BigNumber(amountA)
             .multipliedBy(10000 - slippage)
             .dividedBy(10000)
             .multipliedBy(10 ** poolInfo.mintA.decimals)
             .toFixed(0),
         ),
         new BN(
-          new BigNumber(amountMinB)
+          new BigNumber(amountB)
             .multipliedBy(10000 - slippage)
             .dividedBy(10000)
             .multipliedBy(10 ** poolInfo.mintB.decimals)
@@ -99,11 +99,11 @@ export const useRemoveLiquidityCallback = () => {
       }
 
       const executeMeta = () => {
-        const amountA = formatNumber(Number(amountMinA))
-        const amountB = formatNumber(Number(amountMinB))
+        const amountA_ = formatNumber(Number(amountA))
+        const amountB_ = formatNumber(Number(amountB))
         const action = harvest ? 'Harvest' : closePosition ? 'Remove and close' : 'Remove'
         return {
-          summary: `${action} ${amountA} ${poolInfo.mintA.symbol} and ${amountB} ${poolInfo.mintB.symbol}`,
+          summary: `${action} ${amountA_} ${poolInfo.mintA.symbol} and ${amountB_} ${poolInfo.mintB.symbol}`,
           type: harvest ? ('collect-fee' as const) : ('remove-liquidity-v3' as const),
           translatableSummary: {
             text: harvest
@@ -111,7 +111,12 @@ export const useRemoveLiquidityCallback = () => {
               : closePosition
               ? 'Remove %amountA% %tokenASymbol% and %amountB% %tokenBSymbol% and close position'
               : 'Remove %amountA% %tokenASymbol% and %amountB% %tokenBSymbol%',
-            data: { amountA, tokenASymbol: poolInfo.mintA.symbol, amountB, tokenBSymbol: poolInfo.mintB.symbol },
+            data: {
+              amountA: amountA_,
+              tokenASymbol: poolInfo.mintA.symbol,
+              amountB: amountB_,
+              tokenBSymbol: poolInfo.mintB.symbol,
+            },
           },
         }
       }

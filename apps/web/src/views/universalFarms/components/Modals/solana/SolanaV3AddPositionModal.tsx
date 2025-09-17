@@ -44,6 +44,7 @@ import styled from 'styled-components'
 import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
 import { calculateSolanaTickLimits, getTickAtLimitStatus } from 'views/PoolDetail/utils'
 import { SolanaLiquiditySlippageButton } from 'views/Swap/components/SlippageButton'
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { SolanaV3PoolInfoHeader } from './PooInfoHeader'
 import { PriceRangeBar } from './PriceRangeBar'
 
@@ -149,14 +150,22 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
     }
   }, [addLiquidity, poolInfo, position, liquidityAdd, amount0Add, amount1Add, onClose])
 
-  const handleFieldAInput = useCallback((value: string) => {
-    setFields((prev) => [value, prev[1]])
-    setFocusSide(0)
-  }, [])
-  const handleFieldBInput = useCallback((value: string) => {
-    setFields((prev) => [prev[0], value])
-    setFocusSide(1)
-  }, [])
+  const handleFieldAInput = useCallback(
+    (value: string) => {
+      if (value === fields[0]) return
+      setFields((prev) => [value, prev[1]])
+      setFocusSide(0)
+    },
+    [fields[0]],
+  )
+  const handleFieldBInput = useCallback(
+    (value: string) => {
+      if (value === fields[1]) return
+      setFields((prev) => [prev[0], value])
+      setFocusSide(1)
+    },
+    [fields[1]],
+  )
 
   return (
     <ModalV2 isOpen={isOpen} onDismiss={onClose} closeOnOverlayClick>
@@ -181,13 +190,14 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
           </Flex>
           <StyledInputCard gap="0px">
             <CurrencyInputPanelSimplify
+              customChainId={NonEVMChainId.SOLANA}
               showUSDPrice
               currency={currency0}
               title={<>&nbsp;</>}
               wrapperProps={{ backgroundColor: 'cardSecondary' }}
               id="add-liquidity-input-tokena"
               showMaxButton
-              disabled={amount0?.equalTo(0)}
+              disabled={position.liquidity.isZero() ? amount0Add?.equalTo(0) : amount0?.equalTo(0)}
               disableCurrencySelect
               defaultValue={amount0?.equalTo(0) ? '' : fields[0] ?? '0'}
               onUserInput={handleFieldAInput}
@@ -206,12 +216,13 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
             <hr />
             <CurrencyInputPanelSimplify
               title={<>&nbsp;</>}
+              customChainId={NonEVMChainId.SOLANA}
               showUSDPrice
               currency={currency1}
               wrapperProps={{ backgroundColor: 'cardSecondary' }}
               id="add-liquidity-input-tokenb"
               showMaxButton
-              disabled={amount1?.equalTo(0)}
+              disabled={position.liquidity.isZero() ? amount1Add?.equalTo(0) : amount1?.equalTo(0)}
               disableCurrencySelect
               defaultValue={amount1?.equalTo(0) ? '' : fields[1] ?? '0'}
               onUserInput={handleFieldBInput}
@@ -393,6 +404,7 @@ const PositionChanges: React.FC<{
     tickUpper: position.tickUpper,
     liquidity: position.liquidity,
   })
+
   const { totalUsdValue } = useLiquidityUsdValue({
     poolInfo,
     tickLower: position.tickLower,
