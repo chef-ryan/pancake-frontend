@@ -59,6 +59,8 @@ import { useV3FormState } from 'views/AddLiquidityV3/formViews/V3FormView/form/r
 import { useLmPoolLiquidity } from 'views/Farms/hooks/useLmPoolLiquidity'
 import { useAccount } from 'wagmi'
 import { Address } from 'viem/accounts'
+import { useSolanaTokenPrices } from 'hooks/solana/useSolanaTokenPrice'
+import uniq from 'lodash/uniq'
 import { getActiveLiquidityFromShape } from '../utils/getActiveLiquidityFromShape'
 import { useBinAmountsFromUsdValue } from './useBinAmountsFromUsdValue'
 import { getPositionAprCore } from '../utils/getSolanaV3PositionAprCode'
@@ -217,15 +219,41 @@ export const useV3PositionApr = (pool: PoolInfo, userPosition: PositionDetail) =
 }
 
 export const useSolanaV3PositionApr = (pool: SolanaV3PoolInfo, userPosition: SolanaV3PositionDetail) => {
+  const mints = useMemo(() => {
+    return uniq([
+      pool.token0.wrapped.address,
+      pool.token1.wrapped.address,
+      ...pool.rawPool.rewardDefaultInfos.map((i) => i.mint.address),
+    ])
+  }, [pool])
+  const { data: pricesData, isLoading } = useSolanaTokenPrices({
+    mints,
+    enabled: !!pool.token1,
+  })
+
   const apr = useMemo(() => {
+    const mintPrices = Object.entries(pricesData).reduce((acc, [mint, value]) => {
+      const addr = mints.find((i) => i.toLowerCase() === mint.toLowerCase())
+      if (addr) {
+        return {
+          ...acc,
+          [addr]: { value },
+        }
+      }
+      return acc
+    }, {})
     return getPositionAprCore({
       poolInfo: pool.rawPool,
       positionAccount: userPosition,
+      mintPrices,
       inRange: userPosition.status === POSITION_STATUS.ACTIVE,
     })
-  }, [pool, userPosition])
+  }, [pool, userPosition, pricesData, mints])
 
-  return apr
+  return {
+    apr,
+    isLoading,
+  }
 }
 
 const usePositionTVLUsd = ({

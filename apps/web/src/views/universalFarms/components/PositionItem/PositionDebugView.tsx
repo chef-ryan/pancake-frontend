@@ -2,7 +2,11 @@ import { useTooltip } from '@pancakeswap/uikit'
 import React from 'react'
 import { stringify } from 'viem'
 
-export const PositionDebugView: React.FC<React.PropsWithChildren<{ json: unknown }>> = ({ children, json }) => {
+export const PositionDebugView: React.FC<
+  React.PropsWithChildren<{
+    json: unknown
+  }>
+> = ({ children, json }) => {
   const isDevelopmentOrPreview =
     window?.location?.hostname === 'localhost' || process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview'
 
@@ -29,4 +33,8 @@ export const PositionDebugView: React.FC<React.PropsWithChildren<{ json: unknown
       {tooltipVisible && tooltip}
     </div>
   )
+}
+
+export const SimpleDebugView = ({ json }: { json: unknown }) => {
+  return <PositionDebugView json={json}>⚙️</PositionDebugView>
 }

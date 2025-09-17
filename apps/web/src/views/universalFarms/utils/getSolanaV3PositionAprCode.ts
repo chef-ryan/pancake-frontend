@@ -1,17 +1,24 @@
 import { PoolUtils } from '@pancakeswap/solana-core-sdk'
-import { Price, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
-import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { SolanaV3Pool } from 'state/pools/solana'
+import BN from 'bn.js'
 
 export type GetAprPositionParameters = {
   poolInfo: SolanaV3Pool
   positionAccount: SolanaV3PositionDetail
+  mintPrices: Record<string, { value: number }> | undefined
+  chainTimeOffsetMs?: number
   inRange?: boolean
 }
 
-export function getPositionAprCore({ poolInfo, positionAccount, inRange = true }: GetAprPositionParameters) {
-  if (positionAccount.liquidity.isZero()) {
+export function getPositionAprCore({
+  poolInfo,
+  positionAccount,
+  chainTimeOffsetMs = 0,
+  inRange = true,
+  mintPrices,
+}: GetAprPositionParameters) {
+  if (positionAccount.liquidity.isZero() || !mintPrices) {
     return {
       fee: {
         apr: 0,
@@ -41,9 +48,13 @@ export function getPositionAprCore({ poolInfo, positionAccount, inRange = true }
     }
   }
 
-  const planCApr = PoolUtils.estimateAprsForPriceRangeMultiplier({
+  const planCApr = PoolUtils.estimateAprsForPriceRangeDelta({
     poolInfo,
     aprType: 'day',
+    poolLiquidity: new BN(poolInfo.liquidity?.toString() || '0'),
+    liquidity: positionAccount.liquidity,
+    mintPrice: mintPrices,
+    chainTime: (Date.now() + chainTimeOffsetMs) / 1000,
     positionTickLowerIndex: Math.min(positionAccount.tickLower, positionAccount.tickUpper),
     positionTickUpperIndex: Math.max(positionAccount.tickLower, positionAccount.tickUpper),
   })
