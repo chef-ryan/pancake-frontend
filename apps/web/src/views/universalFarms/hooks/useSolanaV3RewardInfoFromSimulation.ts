@@ -10,6 +10,7 @@ import { useSolanaTokenPrices } from 'hooks/solana/useSolanaTokenPrice'
 import BigNumber from 'bignumber.js'
 import PQueue from 'p-queue'
 import { useRaydium } from 'hooks/solana/useRaydium'
+import uniq from 'lodash/uniq'
 
 const simulationQueue = new PQueue({
   interval: 1000,
@@ -77,8 +78,17 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
 
   const rewards = data?.rewardAmounts ?? []
 
-  const tokenPrices = useSolanaTokenPrices({
-    mints: poolInfo.rawPool.rewardDefaultInfos.map((r) => r.mint.address),
+  const mints = useMemo(() => {
+    return uniq([
+      poolInfo.rawPool.mintA.address,
+      poolInfo.rawPool.mintB.address,
+      ...poolInfo.rawPool.rewardDefaultInfos.map((r) => r.mint.address),
+    ])
+  }, [poolInfo])
+
+  const { data: tokenPrices } = useSolanaTokenPrices({
+    mints,
+    enabled: mints.length > 0,
   })
 
   const totalRewards = useMemo(() => {
@@ -89,7 +99,7 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
         if (!rewardMint) return '0'
         return new BigNumber(r.toString())
           .div(10 ** (rewardMint.decimals || 0))
-          .multipliedBy(tokenPrices[rewardMint.address]?.value || 0)
+          .multipliedBy(tokenPrices[rewardMint.address.toLowerCase()] || 0)
           .toString()
       })
       .reduce((acc, cur) => acc.plus(cur), new BigNumber(0))
@@ -99,11 +109,11 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
     if (!poolInfo || !tokenPrices) return new BigNumber(0)
     return new BigNumber(tokenFees.tokenFeeAmountA?.toString() || 0)
       .div(10 ** poolInfo.rawPool.mintA.decimals)
-      .multipliedBy(tokenPrices[poolInfo.rawPool.mintA.address]?.value || 0)
+      .multipliedBy(tokenPrices[poolInfo.rawPool.mintA.address.toLowerCase()] || 0)
       .plus(
         new BigNumber(tokenFees.tokenFeeAmountB?.toString() || 0)
           .div(10 ** poolInfo.rawPool.mintB.decimals)
-          .multipliedBy(tokenPrices[poolInfo.rawPool.mintB.address]?.value || 0),
+          .multipliedBy(tokenPrices[poolInfo.rawPool.mintB.address.toLowerCase()] || 0),
       )
       .plus(totalRewards)
   }, [poolInfo, tokenPrices, totalRewards])
@@ -127,7 +137,7 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
               .toString() || '0',
           amountUSD: new BigNumber(tokenFees.tokenFeeAmountA?.toString() || 0)
             .div(10 ** poolInfo.rawPool.mintA.decimals)
-            .multipliedBy(tokenPrices[poolInfo.rawPool.mintA.address]?.value || 0)
+            .multipliedBy(tokenPrices[poolInfo.rawPool.mintA.address.toLowerCase()] || 0)
             .toFixed(4),
         },
         B: {
@@ -138,7 +148,7 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
               .toString() || '0',
           amountUSD: new BigNumber(tokenFees.tokenFeeAmountB?.toString() || 0)
             .div(10 ** poolInfo.rawPool.mintB.decimals)
-            .multipliedBy(tokenPrices[poolInfo.rawPool.mintB.address]?.value || 0)
+            .multipliedBy(tokenPrices[poolInfo.rawPool.mintB.address.toLowerCase()] || 0)
             .toFixed(4),
         },
       },
@@ -150,7 +160,7 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
           return {
             mint: rewardMint,
             amount: amount.toFixed(rewardMint.decimals || 6),
-            amountUSD: amount.multipliedBy(tokenPrices[rewardMint.address]?.value || 0).toFixed(4),
+            amountUSD: amount.multipliedBy(tokenPrices[rewardMint.address.toLowerCase()] || 0).toFixed(4),
           }
         })
         .filter((r) => !!r.mint),
