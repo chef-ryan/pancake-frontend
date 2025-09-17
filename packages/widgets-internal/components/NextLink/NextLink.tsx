@@ -9,6 +9,7 @@ interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   innerRef?: React.Ref<HTMLAnchorElement>;
   // next
   prefetch?: boolean;
+  shallow?: boolean;
 }
 
 const A = styled("a").withConfig({
@@ -18,13 +19,15 @@ const A = styled("a").withConfig({
 /**
  * temporary solution for migrating React Router to Next.js Link
  */
-const NextLinkFromReactRouter = forwardRef<any, LinkProps>(({ to, replace, children, prefetch, ...props }, ref) => (
-  // Add legacyBehavior to avoid hydration error
-  <NextLink legacyBehavior href={to as string} replace={replace} passHref prefetch={prefetch}>
-    <A ref={ref} {...props}>
-      {children}
-    </A>
-  </NextLink>
-));
+const NextLinkFromReactRouter = forwardRef<any, LinkProps>(
+  ({ to, replace, children, prefetch, shallow, ...props }, ref) => (
+    // Add legacyBehavior to avoid hydration error
+    <NextLink legacyBehavior href={to as string} replace={replace} passHref prefetch={prefetch} shallow={shallow}>
+      <A ref={ref} {...props}>
+        {children}
+      </A>
+    </NextLink>
+  )
+);
 
 export default NextLinkFromReactRouter;
