@@ -22,11 +22,13 @@ import { useActiveChainId } from 'hooks/useAccountActiveChain'
 import { isSolana, NonEVMChainId } from '@pancakeswap/chains'
 import { useSolanaClmmFeeTiers } from 'hooks/solana/useSolanaClmmFeeTiers'
 import { useSolanaExistingFeeTiers } from 'hooks/solana/useSolanaExistingFeeTiers'
-import { useCurrencies } from '../../hooks/useCurrencies'
+import { UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 
 import { PRESET_FEE_LEVELS_V3 } from '../../constants'
 
 export type FieldFeeLevelProps = Omit<BoxProps, 'onSelect'> & {
+  baseCurrency?: UnifiedCurrency
+  quoteCurrency?: UnifiedCurrency
   feeAmount?: number
   onSelect?: (index: number, option: number) => void
 }
@@ -37,7 +39,13 @@ const parseFeeAsReadable = (fee: number) => {
 
 const decimals = 4
 
-export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ feeAmount, onSelect, ...boxProps }) => {
+export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({
+  baseCurrency,
+  quoteCurrency,
+  feeAmount,
+  onSelect,
+  ...boxProps
+}) => {
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
   const { theme } = useTheme()
@@ -46,7 +54,6 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ feeAmount, onSelec
   const { chainId } = useActiveChainId()
   const isSolanaChain = isSolana(chainId)
   const solanaFeeTiers = useSolanaClmmFeeTiers()
-  const { baseCurrency, quoteCurrency } = useCurrencies()
 
   // Fetch existing Solana pools for the selected pair to disable used fee tiers
   const existingSolanaFeeTiers = useSolanaExistingFeeTiers(
@@ -127,12 +134,13 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({ feeAmount, onSelec
   // Auto-select a default Solana fee tier when none selected
   useEffect(() => {
     if (!isSolanaChain || feeLevel || !options.length) return
-    const firstAvailable = options.find((v) => !existingSolanaFeeTiers.has(v))
+    const firstAvailable = options[0]
     if (firstAvailable !== undefined) {
       setFeeLevel(firstAvailable)
       setInputValue(firstAvailable.toString())
+      onSelect?.(0, firstAvailable)
     }
-  }, [isSolanaChain, options, existingSolanaFeeTiers, feeLevel, setFeeLevel])
+  }, [onSelect, isSolanaChain, options, existingSolanaFeeTiers, feeLevel, setFeeLevel])
 
   useEffect(() => {
     if (feeAmount && feeAmount !== feeLevel) {

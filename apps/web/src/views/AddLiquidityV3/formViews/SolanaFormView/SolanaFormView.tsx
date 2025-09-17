@@ -930,7 +930,12 @@ export function SolanaFormView({
       <Card style={{ height: 'fit-content' }}>
         <CardBody>
           <DynamicSection disabled={!baseCurrency || !quoteCurrency}>
-            <FieldFeeLevel onSelect={handleFeePoolSelect} feeAmount={feeAmount} />
+            <FieldFeeLevel
+              baseCurrency={baseCurrency ?? undefined}
+              quoteCurrency={quoteCurrency ?? undefined}
+              onSelect={handleFeePoolSelect}
+              feeAmount={feeAmount}
+            />
           </DynamicSection>
           <DynamicSection
             mt="16px"
