@@ -21,6 +21,8 @@ import { BSC_BLOCK_TIME } from 'config'
 import { useFetchBlockData } from '@pancakeswap/wagmi'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
+import { TxVersion } from '@pancakeswap/solana-core-sdk'
+import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import {
   FarmTransactionStatus,
   MsgStatus,
@@ -37,6 +39,7 @@ export function shouldCheck(
   tx: TransactionDetails,
   forEvm = true,
 ): boolean {
+  if (!forEvm && tx.addedTime < Date.now() - 100 * 1000) return false // only check non-evm tx for first 100s
   if (tx.receipt) return false
   if (forEvm && !tx.hash.startsWith('0x')) return false // only check evm tx
   return !fetchedTransactions[tx.hash]
@@ -233,6 +236,8 @@ export const SolanaTransactionUpdater = () => {
   const transactions = useSolanaTransactions()
   const connection = useSolanaConnectionWithRpcAtom()
   const fetchedTransactions = useRef<{ [txHash: string]: TransactionDetails }>({})
+  const dispatch = useAppDispatch()
+  const [, setLatestTxReceipt] = useLatestTxReceipt()
 
   useEffect(() => {
     if (!solanaAccount || !connection) return
@@ -244,18 +249,51 @@ export const SolanaTransactionUpdater = () => {
           try {
             const txId = transaction.hash
             const tx = await connection.getSignatureStatus(txId)
-            if (!tx) {
-              throw new RetryableError(`Transaction not found: ${txId}`)
+            if (!tx || !tx.value) {
+              throw new TransactionNotFoundError({
+                hash: txId,
+              })
             }
             if (tx.value?.err) {
-              fetchedTransactions.current[txId] = transactions[txId]
               toastError('Transaction failed', <SolanaDescriptionWithTx txHash={txId} />)
-              return
+            } else {
+              toastSuccess('Transaction confirmed', <SolanaDescriptionWithTx txHash={txId} />)
             }
-            toastSuccess('Transaction confirmed', <SolanaDescriptionWithTx txHash={txId} />)
+
+            const txInfo = await connection.getTransaction(txId, {
+              commitment: 'confirmed',
+              maxSupportedTransactionVersion: TxVersion.V0,
+            })
+
+            if (!txInfo) {
+              throw new TransactionReceiptNotFoundError({
+                hash: txId,
+              })
+            }
+
+            const receipt = {
+              from: solanaAccount,
+              to: '',
+              blockHash: txInfo?.transaction.message.recentBlockhash || '',
+              blockNumber: txInfo?.slot || 0,
+              transactionHash: txId,
+              status: tx.value?.err ? 0 : 1,
+              contractAddress: '',
+              transactionIndex: 0,
+            }
+
+            dispatch(finalizeTransaction({ chainId: NonEVMChainId.SOLANA as number, hash: txId, receipt }))
+            setLatestTxReceipt({
+              status: tx.value?.err ? 'reverted' : 'success',
+              blockHash: receipt.blockHash as `0x${string}`,
+            })
           } catch (error) {
             console.error('Error fetching Solana transaction:', error)
-            throw error
+            if (error instanceof TransactionNotFoundError || error instanceof TransactionReceiptNotFoundError) {
+              throw new RetryableError(`Transaction not found: ${transaction.hash}`)
+            }
+          } finally {
+            merge(fetchedTransactions.current, { [transaction.hash]: transactions[transaction.hash] })
           }
         }
         retry(getTransaction, {
@@ -266,7 +304,7 @@ export const SolanaTransactionUpdater = () => {
         })
       },
     )
-  }, [solanaAccount, connection, transactions])
+  }, [solanaAccount, connection, transactions, dispatch, toastError, toastSuccess, setLatestTxReceipt])
 
   return null
 }

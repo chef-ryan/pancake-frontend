@@ -13,6 +13,7 @@ import { Connection, PublicKey } from '@solana/web3.js'
 import { rpcUrlAtom } from '@pancakeswap/utils/user'
 import memoize from '@pancakeswap/utils/memoize'
 import { PANCAKE_CLMM_PROGRAM_ID, SLOW_INTERVAL } from 'config/constants'
+import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { walletBalancesAtomFamily } from './atomFamily'
 
 export const useSolanaPositionNFTsByAccount = (walletAddress?: string | null) => {
@@ -63,12 +64,15 @@ const getSolanaPositionMints = memoize((nfts: TokenAccount[]) => {
   })
 })
 
+export const SOLANA_POSITION_INFO_QUERY_KEY = 'solana-position-info'
+
 export const useSolanaPositionsInfoByAccount = (walletAddress?: string | null) => {
   const nfts = useSolanaPositionNFTsByAccount(walletAddress)
   const rpc = useAtomValue(rpcUrlAtom)
+  const [latestTxReceipt] = useLatestTxReceipt()
 
   return useQuery({
-    queryKey: ['solana-position-info', walletAddress],
+    queryKey: [SOLANA_POSITION_INFO_QUERY_KEY, walletAddress, latestTxReceipt?.blockHash],
     queryFn: () => solanaPositionInfoFetcher(rpc, getSolanaPositionMints(nfts)),
     enabled: Boolean(walletAddress) && nfts.length > 0,
     staleTime: SLOW_INTERVAL,
