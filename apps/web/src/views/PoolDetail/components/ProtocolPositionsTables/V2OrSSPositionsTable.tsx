@@ -164,19 +164,19 @@ const V2PositionWithApr: React.FC<{
 
     const actions = (
       <FlexGap gap="8px" alignItems="center" justifyContent="flex-end">
-        <NextLinkFromReactRouter to={removeLiquidityUrl}>
+        <NextLinkFromReactRouter to={removeLiquidityUrl} shallow>
           <ActionButton isIcon onClick={(e: React.MouseEvent) => e.stopPropagation()}>
             <MinusIcon />
           </ActionButton>
         </NextLinkFromReactRouter>
-        <NextLinkFromReactRouter to={addLiquidityUrl}>
+        <NextLinkFromReactRouter to={addLiquidityUrl} shallow>
           <ActionButton isIcon onClick={(e: React.MouseEvent) => e.stopPropagation()}>
             <AddIcon />
           </ActionButton>
         </NextLinkFromReactRouter>
 
         {poolInfo.protocol === 'v2' && V2_MIGRATE_PAGE_SUPPORTED_CHAINS.includes(poolInfo.chainId) && (
-          <NextLinkFromReactRouter to={migrateUrl}>
+          <NextLinkFromReactRouter to={migrateUrl} shallow>
             <ActionButton onClick={(e: React.MouseEvent) => e.stopPropagation()}>{t('Migrate')}</ActionButton>
           </NextLinkFromReactRouter>
         )}
