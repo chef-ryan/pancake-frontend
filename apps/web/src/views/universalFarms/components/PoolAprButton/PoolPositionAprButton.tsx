@@ -89,7 +89,7 @@ export const SolanaV3PoolPositionAprButton: React.FC<
 
   return (
     <PoolAprButton
-      cakeApr={{} as CakeApr[ChainIdAddressKey]}
+      cakeApr={{ value: Math.max(apr - fee.apr, 0).toString() as `${number}` } as CakeApr[ChainIdAddressKey]}
       pool={pool}
       lpApr={fee.apr}
       solanaRewardsApr={farmApr}
