@@ -40,14 +40,13 @@ export const PoolAprButton: React.FC<PoolGlobalAprButtonProps> = ({
   cakeApr,
   merklApr,
   incentraApr,
-  solanaRewardsApr,
   userPosition,
   onAPRTextClick,
   showApyButton,
 }) => {
   const baseApr = useMemo(() => {
-    return sumApr(lpApr, cakeApr?.value, merklApr, incentraApr, solanaRewardsApr)
-  }, [lpApr, cakeApr?.value, merklApr, incentraApr, solanaRewardsApr])
+    return sumApr(lpApr, cakeApr?.value, merklApr, incentraApr)
+  }, [lpApr, cakeApr?.value, merklApr, incentraApr])
   const hasBCake = pool.protocol === 'v2' || pool.protocol === 'stable'
   const merklLink = getMerklLink({
     hasMerkl: Boolean(merklApr),
