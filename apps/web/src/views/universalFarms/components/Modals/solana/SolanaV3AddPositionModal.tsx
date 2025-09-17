@@ -203,7 +203,14 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               onUserInput={handleFieldAInput}
               onPercentInput={(percent) => {
                 setFocusSide(0)
-                handleFieldAInput(currency0Balance?.multiply(new Percent(percent, 100)).toExact() ?? '')
+                if (percent === 100) {
+                  const max = maxUnifiedAmountSpend(currency0Balance)
+                  if (max) {
+                    handleFieldAInput(max.toExact() ?? '')
+                  }
+                } else {
+                  handleFieldAInput(currency0Balance?.multiply(new Percent(percent, 100)).toExact() ?? '')
+                }
               }}
               maxAmount={currency0Balance}
               onMax={() => {
@@ -228,7 +235,14 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               onUserInput={handleFieldBInput}
               onPercentInput={(percent) => {
                 setFocusSide(1)
-                handleFieldBInput(currency1Balance?.multiply(new Percent(percent, 100)).toExact() ?? '')
+                if (percent === 100) {
+                  const max = maxUnifiedAmountSpend(currency1Balance)
+                  if (max) {
+                    handleFieldBInput(max.toExact() ?? '')
+                  }
+                } else {
+                  handleFieldBInput(currency1Balance?.multiply(new Percent(percent, 100)).toExact() ?? '')
+                }
               }}
               maxAmount={currency1Balance}
               onMax={() => {
