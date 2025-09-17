@@ -15,7 +15,7 @@ type TokenUsdPrice = {
 export type CurrencyParams =
   | {
       chainId: ChainId
-      address: Address
+      address: string
       isNative?: false
     }
   | {

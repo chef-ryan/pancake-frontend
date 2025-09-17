@@ -1,4 +1,4 @@
-import { Currency, Price, Token, UnifiedToken } from '@pancakeswap/swap-sdk-core'
+import { Currency, Price, Token, UnifiedCurrency, UnifiedToken } from '@pancakeswap/swap-sdk-core'
 import {
   encodeSqrtRatioX96,
   FeeAmount,
@@ -8,11 +8,7 @@ import {
   TickMath,
 } from '@pancakeswap/v3-sdk'
 
-export function tryParsePrice(
-  baseToken?: Token | Currency | UnifiedToken,
-  quoteToken?: Token | Currency | UnifiedToken,
-  value?: string,
-) {
+export function tryParsePrice(baseToken?: UnifiedCurrency | null, quoteToken?: UnifiedCurrency | null, value?: string) {
   if (!baseToken || !quoteToken || !value) {
     return undefined
   }
@@ -27,6 +23,7 @@ export function tryParsePrice(
   const withoutDecimals = BigInt((whole ?? '') + (fraction ?? ''))
 
   // SPLToken is not a subtype of Currency at the type level; cast to Currency for construction.
+  // todo:@eric
   return new Price(
     baseToken as unknown as Currency,
     quoteToken as unknown as Currency,

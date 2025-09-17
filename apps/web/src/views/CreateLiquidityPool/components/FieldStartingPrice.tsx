@@ -24,7 +24,7 @@ import { useActiveIdQueryState, useBinStepQueryState, useStartingPriceQueryState
 import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { useBinRangeQueryState, useClRangeQueryState, useInverted } from 'state/infinity/shared'
 import styled from 'styled-components'
-import { Currency } from '@pancakeswap/sdk'
+import { UnifiedCurrency } from '@pancakeswap/sdk'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { truncateText } from 'utils'
 import { useInfinityCreateFormQueryState } from '../hooks/useInfinityFormState/useInfinityFormQueryState'
@@ -192,7 +192,7 @@ type StartingPriceInputProps = {
   value: string | null
   onUserInput: (input: string) => void
   unit: string
-  currency?: Currency
+  currency?: UnifiedCurrency | null
 }
 
 const StartingPriceInput: React.FC<StartingPriceInputProps> = ({ value, onUserInput, unit, currency }) => {

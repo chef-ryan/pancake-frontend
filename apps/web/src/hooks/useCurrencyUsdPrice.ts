@@ -1,5 +1,5 @@
 import { isTestnetChainId } from '@pancakeswap/chains'
-import { Currency, getCurrencyAddress } from '@pancakeswap/sdk'
+import { Currency, getCurrencyAddress, UnifiedCurrency } from '@pancakeswap/sdk'
 import { useQuery } from '@tanstack/react-query'
 
 import { SLOW_INTERVAL } from 'config/constants'
@@ -11,7 +11,7 @@ type Config = {
   enabled?: boolean
 }
 
-export function useCurrencyUsdPrice(currency: Currency | undefined | null, { enabled = true }: Config = {}) {
+export function useCurrencyUsdPrice(currency: UnifiedCurrency | undefined | null, { enabled = true }: Config = {}) {
   return useQuery<number>({
     queryKey: ['currencyPrice', currency?.chainId, currency?.wrapped.address],
     queryFn: async () => {
