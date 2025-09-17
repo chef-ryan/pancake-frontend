@@ -7,7 +7,7 @@ import { tryParsePrice } from 'hooks/v3/utils'
 import { SolanaSubmitButton } from 'views/CreateLiquidityPool/components/Solana/SolanaSubmitButton'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useTranslation } from '@pancakeswap/localization'
-import { UnifiedCurrency, UnifiedCurrencyAmount, isUnifedCurrencySorted } from '@pancakeswap/swap-sdk-core'
+import { SPLToken, UnifiedCurrency, UnifiedCurrencyAmount, isUnifedCurrencySorted } from '@pancakeswap/swap-sdk-core'
 import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { CurrencyField as Field } from 'utils/types'
 import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
@@ -15,7 +15,7 @@ import { useRouter } from 'next/router'
 import { logGTMClickAddLiquidityConfirmEvent, logGTMClickAddLiquidityEvent } from 'utils/customGTMEventTracking'
 import { useIsExpertMode, useUserSlippage } from '@pancakeswap/utils/user'
 
-import V3RangeSelector from 'views/AddLiquidityV3/formViews/V3FormView/components/V3RangeSelector'
+import { RangeSelector as V3RangeSelector } from 'views/AddLiquidityV3/formViews/SolanaFormView/RangeSelector'
 import { Bound, ZoomLevels } from '@pancakeswap/widgets-internal'
 import {
   AutoColumn,
@@ -138,45 +138,41 @@ export const useSolanaV3CreateForm = () => {
     [baseCurrency, quoteCurrency],
   )
 
-  const [rangeLeftPrice, rangeRightPrice] = useMemo(
-    () => [isSorted ? priceLower : priceUpper?.invert(), isSorted ? priceUpper : priceLower?.invert()],
-    [isSorted, priceLower, priceUpper],
-  )
   const rangeLeftValue = useMemo(() => {
     if (ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]) return '0'
 
     if (
       tickSpaceLimits?.[Bound.LOWER] !== undefined &&
-      rangeLeftPrice &&
-      priceToClosestTick(rangeLeftPrice) <= tickSpaceLimits[Bound.LOWER]
+      priceLower &&
+      priceToClosestTick(priceLower) <= tickSpaceLimits[Bound.LOWER]
     ) {
       return '0'
     }
 
-    return formatPreviewPrice(rangeLeftPrice)
-  }, [isSorted, rangeLeftPrice, tickSpaceLimits, ticksAtLimit])
+    return formatPreviewPrice(priceLower)
+  }, [isSorted, priceLower, tickSpaceLimits, ticksAtLimit])
 
   const rangeRightValue = useMemo(() => {
     if (ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]) return '∞'
 
     if (
       tickSpaceLimits?.[Bound.LOWER] !== undefined &&
-      rangeRightPrice &&
-      priceToClosestTick(rangeRightPrice) <= tickSpaceLimits[Bound.LOWER]
+      priceUpper &&
+      priceToClosestTick(priceUpper) <= tickSpaceLimits[Bound.LOWER]
     ) {
       return '0'
     }
 
     if (
       tickSpaceLimits?.[Bound.UPPER] !== undefined &&
-      rangeRightPrice &&
-      priceToClosestTick(rangeRightPrice) >= tickSpaceLimits[Bound.UPPER]
+      priceUpper &&
+      priceToClosestTick(priceUpper) >= tickSpaceLimits[Bound.UPPER]
     ) {
       return '∞'
     }
 
-    return formatPreviewPrice(rangeRightPrice)
-  }, [isSorted, rangeRightPrice, tickSpaceLimits, ticksAtLimit])
+    return formatPreviewPrice(priceUpper)
+  }, [isSorted, priceUpper, tickSpaceLimits, ticksAtLimit])
 
   const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput, onBothRangeInput } =
     useV3MintActionHandlers(noLiquidity, false)
@@ -323,11 +319,11 @@ export const useSolanaV3CreateForm = () => {
     }
     try {
       setAttemptingTxn(true)
-      const token0 = baseCurrency.wrapped
-      const token1 = quoteCurrency.wrapped
+      const token0 = isSorted ? baseCurrency.wrapped : quoteCurrency.wrapped
+      const token1 = isSorted ? quoteCurrency.wrapped : baseCurrency.wrapped
       const { txId, openPositionTxId } = await createClmm({
-        mintA: token0 as any,
-        mintB: token1 as any,
+        mintA: token0 as SPLToken,
+        mintB: token1 as SPLToken,
         tradeFeeRate: feeAmount,
         initialPrice: parseFloat(price.toSignificant(18)),
         position:
@@ -335,8 +331,8 @@ export const useSolanaV3CreateForm = () => {
             ? {
                 tickLower,
                 tickUpper,
-                amountA: parsedAmounts[Field.CURRENCY_A] as any,
-                amountB: parsedAmounts[Field.CURRENCY_B] as any,
+                amountA: parsedAmounts[isSorted ? Field.CURRENCY_A : Field.CURRENCY_B] as any,
+                amountB: parsedAmounts[isSorted ? Field.CURRENCY_B : Field.CURRENCY_A] as any,
               }
             : undefined,
       })
@@ -350,6 +346,7 @@ export const useSolanaV3CreateForm = () => {
       setTxnErrorMessage(e?.message || String(e))
     }
   }, [
+    isSorted,
     baseCurrency,
     quoteCurrency,
     price,

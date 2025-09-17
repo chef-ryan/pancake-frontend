@@ -25,7 +25,8 @@ export const tryParsePriceSolana = ({
       mintB: { decimals: token1.decimals },
     }
     const priceDecimal = TickUtils.getTickPrice({ poolInfo, tick, baseIn })?.price
-    return tryParsePrice(token0, token1, priceDecimal.toFixed())
+    const [t0, t1] = baseIn ? [token0, token1] : [token1, token0]
+    return tryParsePrice(t0, t1, priceDecimal.toFixed())
   } catch {
     return undefined
   }

@@ -1,8 +1,9 @@
 import { atom, useAtom } from 'jotai'
 import { Raydium, SignAllTransactions, JupTokenType } from '@pancakeswap/solana-core-sdk'
-import { useCallback, useEffect, useRef, useMemo } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey } from '@solana/web3.js'
+import { urlConfigs } from 'config/constants/endpoints'
 import { useSolanaConnectionWithRpcAtom } from './useSolanaConnectionWithRpcAtom'
 
 export const WALLET_STORAGE_KEY = 'walletName'
@@ -12,12 +13,8 @@ export const raydiumAtom = atom<Raydium | undefined>(undefined)
 export const useRaydium = () => {
   const [raydium, setRaydium] = useAtom(raydiumAtom)
   const connection = useSolanaConnectionWithRpcAtom()
-  const { publicKey: _publicKey, signAllTransactions, wallet, connected } = useWallet()
+  const { publicKey, signAllTransactions, wallet, connected } = useWallet()
   const walletRef = useRef(wallet)
-
-  const publicKey = useMemo(() => {
-    return _publicKey
-  }, [_publicKey])
 
   const initRaydium = useCallback(
     async ({
@@ -37,11 +34,13 @@ export const useRaydium = () => {
         const raydiumInstance = await Raydium.load({
           connection,
           owner: publicKey,
+          urlConfigs,
           jupTokenType: JupTokenType.Strict,
           logRequests: !isDev,
           disableFeatureCheck: true,
           loopMultiTxStatus: true,
           blockhashCommitment: 'finalized',
+          disableLoadToken: true,
         })
 
         if (signAllTransactions) {

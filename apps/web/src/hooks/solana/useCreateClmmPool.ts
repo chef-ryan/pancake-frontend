@@ -6,7 +6,7 @@ import Decimal from 'decimal.js'
 import BN from 'bn.js'
 import { Currency, CurrencyAmount, SPLToken } from '@pancakeswap/swap-sdk-core'
 import { useClmmAmmConfigs } from './useClmmAmmConfigs'
-import { useRaydiumClient } from './useRaydiumClient'
+import { useRaydium } from './useRaydium'
 
 type CreateArgs = {
   mintA: SPLToken
@@ -23,7 +23,7 @@ type CreateArgs = {
 }
 
 export function useCreateClmmPool() {
-  const raydium = useRaydiumClient()
+  const raydium = useRaydium()
   const ammConfigs = useClmmAmmConfigs()
 
   return useCallback(

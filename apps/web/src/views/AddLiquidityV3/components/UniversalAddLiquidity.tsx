@@ -19,7 +19,7 @@ import StableFormView from '../formViews/StableFormView'
 import V2FormView from '../formViews/V2FormView'
 import V3FormView from '../formViews/V3FormView'
 import { SELECTOR_TYPE } from '../types'
-import { SolanaFormView } from '../formViews/SolanaFormView'
+import { SolanaFormView } from '../formViews/SolanaFormView/SolanaFormView'
 import { useFeeAmountFromQuery } from '../hooks/useCurrencyParams'
 
 /* two-column layout where DepositAmount is moved at the very end on mobile. */

@@ -76,15 +76,15 @@ import { LiquiditySlippageButton } from 'views/Swap/components/SlippageButton'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import { useSolanaDerivedInfo } from 'hooks/solana/useSolanaDerivedInfo'
 import { useSolanaPoolByMint } from 'hooks/solana/useSolanaPoolsByMint'
-import { useRaydiumClient } from 'hooks/solana/useRaydiumClient'
 import { FieldFeeLevel } from 'views/CreateLiquidityPool/components/V3/FieldFeeLevel'
 import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
 import { TxVersion } from '@pancakeswap/solana-core-sdk'
+import { useRaydium } from 'hooks/solana/useRaydium'
 
-import LockedDeposit from './V3FormView/components/LockedDeposit'
-import V3RangeSelector from './V3FormView/components/V3RangeSelector'
-import { useV3MintActionHandlers } from './V3FormView/form/hooks/useV3MintActionHandlers'
-import { useV3FormAddLiquidityCallback, useV3FormState } from './V3FormView/form/reducer'
+import LockedDeposit from '../V3FormView/components/LockedDeposit'
+import { RangeSelector } from './RangeSelector'
+import { useV3MintActionHandlers } from '../V3FormView/form/hooks/useV3MintActionHandlers'
+import { useV3FormAddLiquidityCallback, useV3FormState } from '../V3FormView/form/reducer'
 
 const StyledInput = styled(NumericalInput)`
   background-color: ${({ theme }) => theme.colors.input};
@@ -96,7 +96,7 @@ const StyledInput = styled(NumericalInput)`
   margin-bottom: 16px;
 `
 
-export const LeftContainer = styled(AutoColumn)`
+const LeftContainer = styled(AutoColumn)`
   height: fit-content;
 
   grid-column: 1;
@@ -291,7 +291,7 @@ export function SolanaFormView({
     [currencyIdA, currencyIdB, router],
   )
 
-  const raydium = useRaydiumClient()
+  const raydium = useRaydium()
 
   const onAdd = useCallback(async () => {
     logGTMClickAddLiquidityConfirmEvent()
@@ -858,7 +858,7 @@ export function SolanaFormView({
 
               <DynamicSection disabled={!feeAmount || invalidPool || (noLiquidity && !startPriceTypedValue)} gap="16px">
                 {!showCapitalEfficiencyWarning && (
-                  <V3RangeSelector
+                  <RangeSelector
                     priceLower={priceLower}
                     priceUpper={priceUpper}
                     getDecrementLower={getDecrementLower}

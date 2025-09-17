@@ -12,7 +12,6 @@ import { Bound } from 'config/constants/types'
 import { ReactNode, useMemo } from 'react'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
 import { UnifiedBalance, useUnifiedCurrencyBalances } from 'hooks/useUnifiedCurrencyBalance'
-import tryParseCurrencyAmount from 'utils/tryParseCurrencyAmount'
 import { CurrencyField as Field } from 'utils/types'
 import { MintState } from 'views/AddLiquidityV3/formViews/V3FormView/form/reducer'
 import { useAccountActiveChain } from 'hooks/useAccountActiveChain'
@@ -21,6 +20,7 @@ import { tryParsePriceSolana } from 'hooks/v3/utils/tryParsePriceSolana'
 import { tryParseTickSolana } from 'hooks/v3/utils/tryParseTickSolana'
 
 import { tryParsePrice } from 'hooks/v3/utils'
+import tryParseCurrencyAmount from 'utils/tryParseCurrencyAmount'
 import { useDependentAmountFromClmm } from './useDependentAmountFromClmm'
 import { useSolanaPoolByMint } from './useSolanaPoolsByMint'
 import { useSolanaOnchainClmmPool } from './useSolanaOnchainPool'
@@ -126,6 +126,7 @@ export const useSolanaDerivedInfo = (
         return (invertPrice ? p?.invert() : p) ?? undefined
       }
     }
+
     if (token0 && token1 && PoolOnchain) {
       return tryParsePrice(token0, token1, PoolOnchain?.computePoolInfo.currentPrice.toFixed())
     }
@@ -224,11 +225,13 @@ export const useSolanaDerivedInfo = (
   const invalidRange = Boolean(typeof tickLower === 'number' && typeof tickUpper === 'number' && tickLower >= tickUpper)
 
   const pricesAtTicks = useMemo(() => {
+    const tickLower = ticks[invertPrice ? Bound.UPPER : Bound.LOWER]
+    const tickUpper = ticks[invertPrice ? Bound.LOWER : Bound.UPPER]
     return {
       [Bound.LOWER]:
-        typeof ticks[Bound.LOWER] === 'number'
+        typeof tickLower === 'number'
           ? tryParsePriceSolana({
-              tick: ticks[Bound.LOWER],
+              tick: tickLower,
               tickSpacing,
               token0,
               token1,
@@ -236,9 +239,9 @@ export const useSolanaDerivedInfo = (
             })
           : undefined,
       [Bound.UPPER]:
-        typeof ticks[Bound.UPPER] === 'number'
+        typeof tickUpper === 'number'
           ? tryParsePriceSolana({
-              tick: ticks[Bound.UPPER],
+              tick: tickUpper,
               tickSpacing,
               token0,
               token1,
@@ -256,12 +259,18 @@ export const useSolanaDerivedInfo = (
       ? onchainTickCurrent < tickLower || onchainTickCurrent > tickUpper
       : undefined
 
-  const outOfRange = Boolean(
-    !invalidRange &&
-      (outOfRangeByTick !== undefined
-        ? outOfRangeByTick
-        : price && lowerPrice && upperPrice && (price.lessThan(lowerPrice) || price.greaterThan(upperPrice))),
-  )
+  const outOfRange = useMemo(() => {
+    const currentPrice = invertPrice ? price?.invert() : price
+    return Boolean(
+      !invalidRange &&
+        (outOfRangeByTick !== undefined
+          ? outOfRangeByTick
+          : currentPrice &&
+            lowerPrice &&
+            upperPrice &&
+            (currentPrice.lessThan(lowerPrice) || currentPrice.greaterThan(upperPrice))),
+    )
+  }, [invalidRange, invertPrice, lowerPrice, outOfRangeByTick, price, upperPrice])
 
   const independentAmount = useMemo(
     () => tryParseAmount(typedValue, independentField ? currencies[independentField] : undefined),

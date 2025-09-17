@@ -23,7 +23,6 @@ import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { useInverted } from 'state/infinity/shared'
 import styled from 'styled-components'
 import { Currency } from '@pancakeswap/swap-sdk-core'
-import { isSolana } from '@pancakeswap/chains'
 import { truncateText } from 'utils'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useCurrencies } from '../../hooks/useCurrencies'
@@ -59,8 +58,9 @@ export const FieldStartingPrice: React.FC<FieldStartingPriceProps> = ({
   const { switchCurrencies: switchCurrenciesDefault } = useSelectIdRouteParams()
   const switchCurrencies = switchCurrenciesProp || switchCurrenciesDefault
 
-  const b = currency0 && !isSolana(currency0.chainId) ? (currency0 as unknown as Currency) : undefined
-  const q = currency1 && !isSolana(currency1.chainId) ? (currency1 as unknown as Currency) : undefined
+  // todo:@eric
+  const b = currency0 ? (currency0 as unknown as Currency) : undefined
+  const q = currency1 ? (currency1 as unknown as Currency) : undefined
   const [, , marketPrice] = usePoolMarketPrice(b, q)
 
   const updatePrice = useCallback(
@@ -79,8 +79,8 @@ export const FieldStartingPrice: React.FC<FieldStartingPriceProps> = ({
 
   useEffect(() => {
     if (isMounted && prevInverted !== inverted && startPrice !== null) {
-      const b = baseCurrency && !isSolana(baseCurrency.chainId) ? (baseCurrency as unknown as Currency) : undefined
-      const q = quoteCurrency && !isSolana(quoteCurrency.chainId) ? (quoteCurrency as unknown as Currency) : undefined
+      const b = baseCurrency ? (baseCurrency as unknown as Currency) : undefined
+      const q = quoteCurrency ? (quoteCurrency as unknown as Currency) : undefined
       const newPrice = prevInverted
         ? tryParsePrice(q, b, startPrice.toString())
         : tryParsePrice(b, q, startPrice.toString())
@@ -141,9 +141,7 @@ export const FieldStartingPrice: React.FC<FieldStartingPriceProps> = ({
         value={startPrice}
         onUserInput={updatePrice}
         unit={unit}
-        currency={
-          quoteCurrency && !isSolana(quoteCurrency.chainId) ? (quoteCurrency as unknown as Currency) : undefined
-        }
+        currency={quoteCurrency as unknown as Currency}
       />
     </Box>
   )

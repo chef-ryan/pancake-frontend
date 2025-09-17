@@ -9,6 +9,7 @@ import type { SPLToken } from '@pancakeswap/swap-sdk-core'
 import { useQuery } from '@tanstack/react-query'
 import { SOLANA_LISTS_CONFIG, TokenListKey, USER_ADDED_KEY, convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
 import { atomWithStorage } from 'jotai/utils'
+import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
 
 // Custom hook for individual token list queries
 function useTokenListQuery(listKey: TokenListKey, enabled: boolean) {
@@ -28,8 +29,7 @@ function useTokenListQuery(listKey: TokenListKey, enabled: boolean) {
       return res.json()
     },
     retry: 3,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    ...QUERY_SETTINGS_IMMUTABLE,
     enabled: isEnabled && enabled,
     select: (data) => {
       return listConfig.parser(data).filter((token) => token.name && token.symbol)
