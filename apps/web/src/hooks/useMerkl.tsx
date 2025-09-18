@@ -19,6 +19,7 @@ import { useWalletClient } from 'wagmi'
 import { useMasterchefV3 } from 'hooks/useContract'
 import { isAddressEqual } from 'utils'
 import { useCurrentBlockTimestamp as useBlockTimestamp } from 'state/block/hooks'
+import { isEvm } from '@pancakeswap/chains'
 import { supportedChainIdV4 } from '@pancakeswap/farms'
 
 export const MERKL_API_V4 = 'https://api.merkl.xyz/v4'
@@ -44,8 +45,9 @@ export function useMerklInfo(poolAddress?: string): {
   const { data, isPending, refetch } = useQuery({
     queryKey: [`fetchMerklPools`],
     queryFn: async () => {
+      const evmChains = supportedChainIdV4.filter((chainId) => isEvm(chainId))
       const responsev4 = await fetch(
-        `${MERKL_API_V4}/opportunities?${supportedChainIdV4.join(
+        `${MERKL_API_V4}/opportunities?${evmChains.join(
           ',',
         )}&test=false&mainProtocolId=pancake-swap&action=POOL,HOLD&status=LIVE`,
       )

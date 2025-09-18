@@ -12,7 +12,7 @@ import { usePositionIsFarming } from './useIsFarming'
 
 interface InfinityCakeAPRProps {
   chainId?: number
-  poolId?: Address
+  poolId?: string
   tvlUSD?: `${number}` | BigNumber
   cakePrice?: BigNumber
 }

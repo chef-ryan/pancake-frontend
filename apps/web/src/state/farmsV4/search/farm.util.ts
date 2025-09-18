@@ -1,5 +1,5 @@
-import { ChainId } from '@pancakeswap/chains'
-import { supportedChainIdV4 } from '@pancakeswap/farms'
+import { ChainId, isEvm, NonEVMChainId } from '@pancakeswap/chains'
+import { FarmV4SupportedChainId, supportedChainIdV4 } from '@pancakeswap/farms'
 import {
   BinPoolManagerAbi,
   CLPoolManagerAbi,
@@ -49,10 +49,10 @@ type CakeAprItem = {
 }
 
 export type FarmProps = {
-  id: Address
-  chainId: ChainId
+  id: string
+  chainId: FarmV4SupportedChainId
   lpApr?: `${number}`
-  lpAddress?: `0x${string}`
+  lpAddress?: Address
   merklApr?: `${number}`
   incentraApr?: `${number}`
   // cakeApr: CakeAprValue
@@ -81,7 +81,7 @@ export const isDynamic = (pool?: InfinityClPool | InfinityBinPool) => {
 export const farmPropsToPoolInfoBase = (farm: FarmProps, token0: Currency, token1: Currency): BasePoolInfo => {
   const base: BasePoolInfo = {
     chainId: farm.chainId,
-    lpAddress: farm.lpAddress || '0x',
+    lpAddress: farm.lpAddress || farm.id,
     protocol: farm.protocol,
     token0,
     token1: token1.asToken,
@@ -117,7 +117,7 @@ export const farmToPoolInfo = (farm: FarmInfo): PoolInfo => {
 export const getPoolInfoForInfiFee = (farm: FarmInfo) => {
   const pool = farm.pool as InfinityClPool | InfinityBinPool
 
-  const hookData = pool.hooks ? findHook(pool.hooks, farm.chainId) : undefined
+  const hookData = pool.hooks ? findHook(pool.hooks, farm.chainId as ChainId) : undefined
   const isDynamic = pool.fee === DYNAMIC_FEE_FLAG
   return {
     protocolFee: pool.protocolFee!,
@@ -133,7 +133,7 @@ export const getFarmHookData = (farm?: FarmInfo) => {
     return undefined
   }
   const pool = farm.pool as InfinityClPool | InfinityBinPool
-  const hookData = pool.hooks ? findHook(pool.hooks, farm.chainId) : undefined
+  const hookData = pool.hooks ? findHook(pool.hooks, farm.chainId as ChainId) : undefined
   return hookData
 }
 
@@ -151,24 +151,36 @@ export const getFarmAprInfo = (farm?: FarmInfo) => {
   return aprInfo
 }
 
-export const safeGetAddress = (address: Address) => {
-  try {
-    return checksumAddress(address)
-  } catch (error) {
+export const safeGetAddress = (address: string) => {
+  if (!address) {
     return undefined
   }
+
+  if (address.startsWith('0x')) {
+    try {
+      return checksumAddress(address as Address)
+    } catch (error) {
+      return address.toLowerCase()
+    }
+  }
+
+  return address
 }
 
 export const getFarmKey = (farm: Pick<FarmProps, 'chainId' | 'id'>) => {
-  return `${farm.chainId}:${farm.id}`.toLowerCase()
+  const key = `${farm.chainId}:${farm.id}`
+  return isEvm(Number(farm.chainId)) ? key.toLowerCase() : key
 }
 
 export const normalizeAddress = (pool: InfinityRouter.RemotePoolBase) => {
   if (pool.id) {
+    if (pool.chainId === NonEVMChainId.SOLANA) {
+      return pool
+    }
     const id = safeGetAddress(pool.id)
     if (id) {
       // eslint-disable-next-line no-param-reassign
-      pool.id = id
+      pool.id = id as `0x${string}`
     }
   }
   return pool
@@ -255,10 +267,10 @@ export function parseFarmSearchQuery(raw: string) {
     .split(',')
     .filter((x) => x)
     .map((c) => Number(c))
-    .filter((c) => !Number.isNaN(c)) as ChainId[]
+    .filter((c) => !Number.isNaN(c)) as FarmV4SupportedChainId[]
 
   for (const chainId of chains) {
-    if (!supportedChainIdV4.includes(chainId as any)) {
+    if (!supportedChainIdV4.includes(chainId)) {
       throw new Error('Invalid chainId')
     }
   }

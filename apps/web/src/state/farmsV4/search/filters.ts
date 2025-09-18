@@ -1,5 +1,5 @@
-import { ChainId } from '@pancakeswap/chains'
-import { Protocol } from '@pancakeswap/farms'
+import { ChainId, isEvm } from '@pancakeswap/chains'
+import { FarmV4SupportedChainId, Protocol } from '@pancakeswap/farms'
 import { Native } from '@pancakeswap/sdk'
 import { PoolType, SmartRouter } from '@pancakeswap/smart-router'
 import { Currency, getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
@@ -8,7 +8,7 @@ import { PoolInfo } from 'state/farmsV4/state/type'
 import { getCurrencySymbol } from 'utils/getTokenAlias'
 import { FarmInfo } from './farm.util'
 
-const chainFilter = (chains: ChainId[]) => {
+const chainFilter = (chains: FarmV4SupportedChainId[]) => {
   return (farm: FarmInfo): boolean => {
     if (!chains || chains.length === 0) return true
     const { chainId } = farm
@@ -145,15 +145,17 @@ function tokenSearchTags(token: Currency) {
   // If native token
   if (token.isNative && token.wrapped?.symbol) {
     tags.push(getCurrencySymbol(token.wrapped).toLowerCase())
-  } else if (Native.onChain(chainId).wrapped.equals(token)) {
-    tags.push(getCurrencySymbol(Native.onChain(chainId)).toLowerCase())
+  } else if (isEvm(chainId) && Native.onChain(chainId as ChainId).wrapped.equals(token)) {
+    tags.push(getCurrencySymbol(Native.onChain(chainId as ChainId)).toLowerCase())
   }
 
   // If native wrapped token
-  const native = Native.onChain(chainId)
-  if (native.wrapped.equals(token)) {
-    // add native
-    tags.push(getCurrencySymbol(native).toLowerCase())
+  if (isEvm(chainId)) {
+    const native = Native.onChain(chainId as ChainId)
+    if (native.wrapped.equals(token)) {
+      // add native
+      tags.push(getCurrencySymbol(native).toLowerCase())
+    }
   }
   return tags
 }
@@ -204,8 +206,7 @@ const sortFunction = (farms: FarmInfo[], sortField: keyof PoolInfo | null, activ
     const sameChain = farm.chainId === activeChainId ? 1 : 0
     const w = aprWeight * 0.1 + tvlWeight * 0.3 + volWeight * 0.6 // Adjust weights as needed
 
-    const total = w * 0.9 + sameChain * 10 // Boost weight for active chain
-    return total + (farm.inWhitelist ? 100 : 0) // Boost weight for whitelist farms
+    return w * 0.9 + sameChain * 10 // Boost weight for active chain
   }
 
   const weightedFarms: Weighted<FarmInfo>[] = farms.map((farm) => ({

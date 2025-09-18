@@ -12,7 +12,11 @@ export const supportedChainIdV4 = [
   ChainId.LINEA,
   ChainId.ARBITRUM_ONE,
   NonEVMChainId.SOLANA,
+<<<<<<< HEAD
 ] as const
+=======
+] as const satisfies readonly (ChainId | NonEVMChainId)[]
+>>>>>>> 850ed5a8b (add support for sol farm list)
 
 export const supportedChainIdV2 = [
   ChainId.GOERLI,

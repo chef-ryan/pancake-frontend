@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 import {
   encodeHooksRegistration,
   HookData,
@@ -7,7 +7,7 @@ import {
   INFI_CL_POOL_MANAGER_ADDRESSES,
 } from '@pancakeswap/infinity-sdk'
 
-import { Currency, CurrencyAmount, Percent } from '@pancakeswap/swap-sdk-core'
+import { Currency, CurrencyAmount, Percent, SPLToken } from '@pancakeswap/swap-sdk-core'
 import { checksumAddress } from 'viem'
 import { Address } from 'viem/accounts'
 import {
@@ -16,6 +16,7 @@ import {
   InfinityClPool,
   PoolType,
   StablePool,
+  SVMPool,
   V2Pool,
   V3Pool,
   WithTvl,
@@ -72,6 +73,7 @@ export function parseRemotePool(remote: RemotePool) {
     return parseRemoteV2Pool(remote as RemotePoolV2)
   }
   if (remote.protocol === 'v3') {
+    if (remote.chainId === NonEVMChainId.SOLANA) return parseRemoteV3Pool(remote as RemotePoolV3)
     return parseRemoteV3Pool(remote as RemotePoolV3)
   }
   if (remote.protocol === 'stable') {
@@ -106,19 +108,33 @@ export function parseRemoteV2Pool(remote: RemotePoolV2) {
 }
 
 export function parseRemoteV3Pool(remote: RemotePoolV3) {
-  const chainId = remote.chainId as ChainId
-  const currency0 = getValidToken(chainId, remote.token0)
-  const currency1 = getValidToken(chainId, remote.token1)
+  const { chainId } = remote
+  const isSol = chainId === NonEVMChainId.SOLANA
   return {
     type: PoolType.V3,
-    token0: currency0,
-    token1: currency1,
+    token0: isSol ? parseSolanaToken(chainId, remote.token0) : getValidToken(chainId, remote.token0),
+    token1: isSol ? parseSolanaToken(chainId, remote.token1) : getValidToken(chainId, remote.token1),
     fee: remote.feeTier,
     liquidity: remote.liquidity ? BigInt(remote.liquidity) : 0n,
     sqrtRatioX96: 0n,
     token0ProtocolFee: new Percent(0, 1_000_000),
     token1ProtocolFee: new Percent(0, 1_000_000),
   } as V3Pool
+}
+
+const DEFAULT_SOLANA_PROGRAM_ID = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'
+
+function parseSolanaToken(chainId: NonEVMChainId, token: RemoteToken): SPLToken {
+  const programId = DEFAULT_SOLANA_PROGRAM_ID
+
+  return new SPLToken({
+    chainId,
+    address: token.id,
+    decimals: token.decimals,
+    symbol: token.symbol,
+    logoURI: '',
+    programId,
+  })
 }
 
 export function toLocalInfinityPool(

@@ -18,7 +18,7 @@ export type BasePoolInfo = {
   pid?: number
   chainId: number
   lpAddress: Address
-  stableSwapAddress?: Address
+  stableSwapAddress?: string
   protocol: Protocol
   token0: UnifiedCurrency
   token1: UnifiedCurrency
@@ -80,9 +80,9 @@ export type InfinityPoolInfo = InfinityBinPoolInfo | InfinityCLPoolInfo
 type InfinityAdditionalPoolInfo = {
   /** @deprecated use poolId instead */
   lpAddress: string
-  poolId: Address
+  poolId: string
   hookData?: HookData
-  hookAddress?: Address
+  hookAddress?: string
   dynamic?: boolean
   token0: Currency
   token1: Currency
@@ -103,4 +103,4 @@ export type InfinityCLPoolInfo = Prettify<
     }
 >
 
-export type ChainIdAddressKey = `${number}:${Address}`
+export type ChainIdAddressKey = `${number}:${string}`

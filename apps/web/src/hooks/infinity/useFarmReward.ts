@@ -27,7 +27,7 @@ const FETCH_OPTIONS = {
 interface PoolFarmRewardsProps {
   chainId?: number
   address?: Address
-  poolId?: Address
+  poolId?: string
   timestamp?: number
 }
 

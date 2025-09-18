@@ -3,7 +3,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { Box, Flex, FlexGap, Loading, Skeleton, TableView, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { DoubleCurrencyLogo, FiatNumberDisplay, Liquidity } from '@pancakeswap/widgets-internal'
 import { useHookByPoolId } from 'hooks/infinity/useHooksList'
-import { getFarmAprInfo } from 'state/farmsV4/search/farm.util'
+import { getFarmAprInfo, getFarmKey } from 'state/farmsV4/search/farm.util'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { InfinityPoolInfo, PoolInfo } from 'state/farmsV4/state/type'
 import styled from 'styled-components'
@@ -143,7 +143,7 @@ const PoolTokenOverview = ({ data }: { data: PoolInfo }) => {
 const PoolFeatures = ({ data }: { data: PoolInfo }) => {
   const hookData = useHookByPoolId(
     data.chainId,
-    isInfinityProtocol(data.protocol) ? (data as InfinityPoolInfo)?.poolId : undefined,
+    isInfinityProtocol(data.protocol) ? ((data as InfinityPoolInfo)?.poolId as `0x${string}`) : undefined,
   )
 
   return (
@@ -169,7 +169,7 @@ const ListItem = ({ pool, onPoolClick }: { pool: PoolInfo; onPoolClick?: (pool: 
 
   const hookData = useHookByPoolId(
     pool.chainId,
-    isInfinityProtocol(pool.protocol) ? (pool as InfinityPoolInfo)?.poolId : undefined,
+    isInfinityProtocol(pool.protocol) ? ((pool as InfinityPoolInfo)?.poolId as `0x${string}`) : undefined,
   )
 
   if (!token0 || !token1) {
@@ -177,7 +177,10 @@ const ListItem = ({ pool, onPoolClick }: { pool: PoolInfo; onPoolClick?: (pool: 
   }
 
   return (
-    <MobileCard key={`${pool.chainId}-${pool.lpAddress}`} onClick={() => onPoolClick?.(pool)}>
+    <MobileCard
+      key={pool.farm ? getFarmKey(pool.farm) : `${pool.chainId}-${pool.lpAddress}`}
+      onClick={() => onPoolClick?.(pool)}
+    >
       <MobileRow>
         <PoolPairCell>
           <DoubleCurrencyLogo currency0={token0} currency1={token1} size={32} showChainLogoCurrency1 />
@@ -220,7 +223,11 @@ const ListView = ({ pools, onPoolClick }: { pools: PoolInfo[]; onPoolClick?: (po
   return (
     <Box>
       {pools.map((pool) => (
-        <ListItem key={`${pool.chainId}-${pool.lpAddress}`} pool={pool} onPoolClick={onPoolClick} />
+        <ListItem
+          key={pool.farm ? getFarmKey(pool.farm) : `${pool.chainId}-${pool.lpAddress}`}
+          pool={pool}
+          onPoolClick={onPoolClick}
+        />
       ))}
     </Box>
   )

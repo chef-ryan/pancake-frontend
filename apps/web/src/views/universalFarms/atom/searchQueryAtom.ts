@@ -14,6 +14,7 @@ export const searchQueryAtom = atom((get) => {
   return {
     ...query,
     activeChainId: isEvm(chainId as number) ? (chainId as ChainId) : ChainId.BSC,
+    page: 0,
   }
 })
 

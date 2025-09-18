@@ -1,7 +1,9 @@
-import { ChainId } from '@pancakeswap/chains'
 import { FarmV4SupportedChainId, Protocol, supportedChainIdV4 } from '@pancakeswap/farms'
 
-const IS_ADDRESS_REG = /^0x[a-fA-F0-9]{40,64}$/
+const HEX_ADDRESS_REG = /^0x[a-fA-F0-9]{40,64}$/
+const SOL_ADDRESS_REG = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/
+
+const isAddressKeyword = (keyword: string) => HEX_ADDRESS_REG.test(keyword) || SOL_ADDRESS_REG.test(keyword)
 
 export interface ExtendSearchParam {
   protocols: Protocol[]
@@ -10,49 +12,58 @@ export interface ExtendSearchParam {
   symbols?: string[]
 }
 
-function parseTokenExtendSearch(keywords: string, protocols: Protocol[], chains: ChainId[]): ExtendSearchParam[] {
+function parseTokenExtendSearch(
+  keywords: string,
+  protocols: Protocol[],
+  chains: FarmV4SupportedChainId[],
+): ExtendSearchParam[] {
   const symbols = keywords
     .trim()
     .split(/(\s+|,|-|\/)/)
     .map((x) => x.trim())
-    .filter((x) => x && !IS_ADDRESS_REG.test(x))
+    .filter((x) => x && !isAddressKeyword(x))
     .slice(0, 3)
 
   return [
     {
       protocols,
-      chains: chains as FarmV4SupportedChainId[],
+      chains,
       symbols,
     },
   ].filter((x) => x.symbols && x.symbols.length > 0)
 }
 
-const parseFarmSearchAddress = (keywords: string, protocols: Protocol[], chains: ChainId[]): ExtendSearchParam[] => {
-  if (IS_ADDRESS_REG.test(keywords.trim())) {
+const parseFarmSearchAddress = (
+  keywords: string,
+  protocols: Protocol[],
+  chains: FarmV4SupportedChainId[],
+): ExtendSearchParam[] => {
+  const trimmedKeyword = keywords.trim()
+  if (isAddressKeyword(trimmedKeyword)) {
     return [
       {
         protocols,
-        tokens: chains.map((chain) => `${chain}:${keywords.trim()}`),
-        chains: chains as FarmV4SupportedChainId[],
+        tokens: chains.map((chain) => `${chain}:${trimmedKeyword}`),
+        chains,
       },
     ].filter((x) => x.tokens && x.tokens.length > 0)
   }
   return []
 }
 
-const parseQueryChain = (chains: ChainId[], protocols: Protocol[]): ExtendSearchParam[] => {
+const parseQueryChain = (chains: FarmV4SupportedChainId[], protocols: Protocol[]): ExtendSearchParam[] => {
   if (chains.length === 0) {
     return []
   }
   return [
     {
       protocols,
-      chains: chains as FarmV4SupportedChainId[],
+      chains,
     },
   ]
 }
 
-export const parseExtendSearchParams = (keywords: string, protocols: Protocol[], chains: ChainId[]) => {
+export const parseExtendSearchParams = (keywords: string, protocols: Protocol[], chains: FarmV4SupportedChainId[]) => {
   if (!keywords || keywords.trim().length === 0) {
     return []
   }

@@ -61,7 +61,7 @@ export const useMultiChainPoolsFarmingStatus = (pools: UniversalFarmConfig[]) =>
   )
 }
 
-export const usePositionIsFarming = ({ chainId, poolId }: { chainId?: number; poolId?: Address }) => {
+export const usePositionIsFarming = ({ chainId, poolId }: { chainId?: number; poolId?: string }) => {
   const { data: campaignsByPoolId } = useQuery({
     queryKey: ['CampaignsByPoolId', poolId, chainId],
     queryFn: async () =>

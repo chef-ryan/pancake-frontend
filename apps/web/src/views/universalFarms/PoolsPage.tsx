@@ -1,7 +1,7 @@
 import { useIntersectionObserver } from '@pancakeswap/hooks'
 import { Flex, Loading, Spinner, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
-import { Suspense, useCallback, useEffect, useMemo } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import isEqual from 'lodash/isEqual'
 
@@ -12,7 +12,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { getFarmKey } from 'state/farmsV4/search/farm.util'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { getPoolDetailPageLink } from 'utils/getPoolLink'
-import { farmsSearchPagingAtom, farmsSearchV2Atom } from './atom/farmsSearchAtom'
+import { farmsSearchV2Atom } from './atom/farmsSearchAtom'
 import { searchQueryAtom, updateFilterAtom, updateSortAtom } from './atom/searchQueryAtom'
 import {
   Card,
@@ -96,6 +96,7 @@ const List = () => {
   const columns = useColumnConfig()
 
   const query = useAtomValue(searchQueryAtom)
+  const [page, setPage] = useState(0)
   const updateSort = useSetAtom(updateSortAtom)
   const { observerRef, isIntersecting } = useIntersectionObserver()
 
@@ -123,8 +124,12 @@ const List = () => {
     return getFarmKey(farm)
   }, [])
 
-  const setPaging = useSetAtom(farmsSearchPagingAtom(query))
-  const { list: _list, isLoading: isLoadingFarmList } = useAtomValue(farmsSearchV2Atom(query))
+  const { list: _list, isLoading: isLoadingFarmList } = useAtomValue(
+    farmsSearchV2Atom({
+      ...query,
+      page,
+    }),
+  )
   const handleSort = useCallback(
     ({ order, dataIndex }) => {
       updateSort({
@@ -137,14 +142,14 @@ const List = () => {
 
   useEffect(() => {
     if (isIntersecting) {
-      setPaging((v) => v + 1)
+      setPage((v) => v + 1)
     }
-  }, [isIntersecting, setPaging])
+  }, [isIntersecting, setPage])
 
   const listPrepared = useTokenListPrepared(DEFAULT_ACTIVE_LIST_URLS)
 
   const list = _list.unwrapOr([])
-  const pending = listPrepared.isPending() && _list.isPending() && isLoadingFarmList
+  const pending = listPrepared.isPending() && isLoadingFarmList
   const isExtending = _list.isPending() && list.length > 0
   const { t } = useTranslation()
   const noResults = list.length === 0 && !pending && !isExtending

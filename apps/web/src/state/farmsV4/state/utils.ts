@@ -23,13 +23,13 @@ export const parseFarmPools = async (
 
   const result = await Promise.all(
     data.map(async (pool) => {
-      let stableSwapAddress: Address | undefined
+      let stableSwapAddress: string | undefined
       let lpAddress = safeGetAddress(pool.id) ?? pool.id
       let feeTier = Number(pool.feeTier ?? 2500)
       if (pool.protocol === 'stable') {
         const pairs = await LegacyRouter.getStableSwapPairs(pool.chainId)
         const stableConfig = pairs?.find((pair) => {
-          return safeGetAddress(pair.stableSwapAddress) === safeGetAddress(pool.id as Address)
+          return safeGetAddress(pair.stableSwapAddress) === safeGetAddress(pool.id)
         })
         if (stableConfig) {
           stableSwapAddress = safeGetAddress(stableConfig.stableSwapAddress)

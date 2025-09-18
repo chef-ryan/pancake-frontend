@@ -1,4 +1,5 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
+import { FarmV4SupportedChainId } from '@pancakeswap/farms'
 import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
 import { OnChainProvider } from '@pancakeswap/smart-router'
 import { NextResponse } from 'next/server'
@@ -89,7 +90,7 @@ export function parseTvQuery(raw: string) {
   }
 }
 
-export function getEdgeChainName(chainId: ChainId): APIChain {
+export function getEdgeChainName(chainId: FarmV4SupportedChainId): APIChain {
   switch (chainId) {
     case ChainId.BSC:
       return 'bsc'
@@ -109,6 +110,8 @@ export function getEdgeChainName(chainId: ChainId): APIChain {
       return 'linea'
     case ChainId.ARBITRUM_ONE:
       return 'arbitrum'
+    case NonEVMChainId.SOLANA:
+      return 'sol'
     default:
       throw new Error('Invalid chain id')
   }
@@ -124,6 +127,7 @@ export type APIChain =
   | 'polygon-zkevm'
   | 'linea'
   | 'arbitrum'
+  | 'sol'
 
 export const safeGetAddress = (address: Address) => {
   try {
