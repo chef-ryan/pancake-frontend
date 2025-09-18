@@ -8,14 +8,15 @@ import {
   FlexGap,
   useMatchBreakpoints,
   PreTitle,
+  Checkbox,
+  QuestionHelper,
 } from '@pancakeswap/uikit'
-import { PositionUtils, TokenInfo } from '@pancakeswap/solana-core-sdk'
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import { TokenInfo } from '@pancakeswap/solana-core-sdk'
+import { useCallback, useEffect, useState, useMemo, ChangeEvent } from 'react'
 import { useTranslation } from '@pancakeswap/localization'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
-import { SolanaV3Pool } from 'state/pools/solana'
 import { Percent, Price, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { CurrencyLogo, LightGreyCard } from '@pancakeswap/widgets-internal'
@@ -30,7 +31,6 @@ import { NonEVMChainId } from '@pancakeswap/chains'
 import Divider from 'components/Divider'
 import { useSolanaV3RewardInfoFromSimulation } from 'views/universalFarms/hooks/useSolanaV3RewardInfoFromSimulation'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
-import { useSolanaEpochInfo } from 'hooks/solana/useSolanaEpochInfo'
 import { useRemoveLiquidityCallback } from 'hooks/solana/useRemoveLiquidityCallback'
 import { useLiquidityAmount } from 'hooks/solana/useLiquidityAmount'
 import { SolanaV3Earnings } from '../../PositionItem/PositionInfo/SolanaV3Earnings'
@@ -50,6 +50,8 @@ export default function SolanaV3RemovePositionModal({
   const poolInfo = pool.rawPool
   const { t } = useTranslation()
   const [percent, setPercent] = useState(50)
+  const [closePosition, setClosePosition] = useState(true)
+  const [closePositionOpen, setClosePositionOpen] = useState(false)
 
   const currency0 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo.mintA as TokenInfo), [poolInfo.mintA])
   const { data: price0Raw } = useSolanaTokenPrice({ mint: currency0?.wrapped.address, enabled: Boolean(currency0) })
@@ -98,9 +100,21 @@ export default function SolanaV3RemovePositionModal({
 
   const [sending, setIsSending] = useState(false)
 
+  const handleClosePositionChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setClosePosition(!event.target.checked)
+  }, [])
+
   useEffect(() => {
     setPercent(0)
     setIsSending(false)
+  }, [isOpen])
+
+  useEffect(() => {
+    setClosePositionOpen(percent === 100)
+  }, [percent])
+
+  useEffect(() => {
+    setClosePosition(true)
   }, [isOpen])
 
   const handleConfirm = useCallback(async () => {
@@ -119,7 +133,7 @@ export default function SolanaV3RemovePositionModal({
           ),
           amountA: amount0.toExact(),
           amountB: amount1.toExact(),
-          closePosition: percent === 100,
+          closePosition: percent === 100 ? closePosition : false,
         },
         onSent: () => {
           // logGTMPoolLiquiditySubSuccessEvent({
@@ -193,6 +207,19 @@ export default function SolanaV3RemovePositionModal({
               </Button>
             ))}
           </FlexGap>
+          {closePositionOpen && (
+            <FlexGap gap="4px" alignItems="center" mt="16px">
+              <Checkbox scale="xs" checked={!closePosition} onChange={handleClosePositionChange} />
+              <Text fontSize="sm" color="textSubtle">
+                {t('Keep my position open')}
+              </Text>
+              <QuestionHelper
+                text={t(
+                  'You can remove all your tokens and still keep your position open in order to add position seamless next time.',
+                )}
+              />
+            </FlexGap>
+          )}
         </StyledInfoCard>
         <PreTitle mt="24px" textTransform="uppercase">
           {t('You will receive')}
