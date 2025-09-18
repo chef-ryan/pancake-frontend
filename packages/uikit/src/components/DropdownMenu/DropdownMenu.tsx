@@ -247,7 +247,7 @@ const DropdownMenu: React.FC<React.PropsWithChildren<DropdownMenuProps>> = ({
         >
           {filteredItems.map((item) => (
             <MenuItem
-              key={itemKey?.(item) ?? item?.label?.toString() ?? `delimiter${index}`}
+              key={itemKey?.(item) ?? item.key ?? item?.label?.toString() ?? `delimiter${index}`}
               item={item}
               activeItem={activeItem}
               activeSubItemChildItem={activeSubItemChildItem}

@@ -91,6 +91,7 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({
   const renderItems = useMemo(
     () =>
       options.map((o, idx) => ({
+        key: o.toString(),
         label: (
           <FlexGap gap="8px" alignItems="center">
             <Text bold fontSize="16px" color="textSubtle">

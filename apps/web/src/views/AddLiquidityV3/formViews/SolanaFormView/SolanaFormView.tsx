@@ -80,6 +80,7 @@ import { FieldFeeLevel } from 'views/CreateLiquidityPool/components/V3/FieldFeeL
 import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
 import { TxVersion } from '@pancakeswap/solana-core-sdk'
 import { useRaydium } from 'hooks/solana/useRaydium'
+import { useRangeHopCallbacks } from 'views/CreateLiquidityPool/hooks/useRangeHopCallbacks'
 
 import LockedDeposit from '../V3FormView/components/LockedDeposit'
 import { RangeSelector } from './RangeSelector'
@@ -355,12 +356,10 @@ export function SolanaFormView({
   }, [onFieldAInput, txHash])
 
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
+  const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
 
-  const getDecrementLower = useCallback(() => undefined, [])
-  const getIncrementLower = useCallback(() => undefined, [])
-  const getDecrementUpper = useCallback(() => undefined, [])
-  const getIncrementUpper = useCallback(() => undefined, [])
-  const getSetFullRange = useCallback(() => undefined, [])
+  const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
+    useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, feeAmount, tickLower, tickUpper, pool)
   // we need an existence check on parsed amounts for single-asset deposits
   const translationData = useMemo(() => {
     if (depositADisabled) {

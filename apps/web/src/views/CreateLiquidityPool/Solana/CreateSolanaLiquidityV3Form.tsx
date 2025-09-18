@@ -96,19 +96,6 @@ export const CreateSolanaLiquidityV3Form = () => {
                 !rightRangeTypedValue
               }
             >
-              <FieldSlippageTolerance />
-            </DynamicSection>
-
-            <DynamicSection
-              disabled={
-                poolExists ||
-                !currenciesExist ||
-                !startPriceTypedValue ||
-                !feeLevel ||
-                !leftRangeTypedValue ||
-                !rightRangeTypedValue
-              }
-            >
               {buttons}
             </DynamicSection>
           </AutoColumn>

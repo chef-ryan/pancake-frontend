@@ -42,6 +42,7 @@ import { useGetPriceAndTick } from 'hooks/solana/useGetPriceAndTick'
 import { ToastDescriptionWithTx } from 'components/Toast'
 import { useCreateClmmPool } from 'hooks/solana/useCreateClmmPool'
 import { useCurrencies } from './useCurrencies'
+import { useRangeHopCallbacks } from './useRangeHopCallbacks'
 
 export const useSolanaV3CreateForm = () => {
   const { t } = useTranslation()
@@ -52,7 +53,6 @@ export const useSolanaV3CreateForm = () => {
 
   // User Settings
   const expertMode = useIsExpertMode()
-  const [allowedSlippage] = useUserSlippage()
 
   // Shared Create Liquidity State
   const { switchCurrencies: switchCurrenciesRoute } = useSelectIdRouteParams()
@@ -90,6 +90,7 @@ export const useSolanaV3CreateForm = () => {
     invertPrice,
     ticksAtLimit,
     tickSpaceLimits,
+    pool,
   } = useSolanaDerivedInfo(
     baseCurrency ?? undefined,
     quoteCurrency ?? undefined,
@@ -211,13 +212,8 @@ export const useSolanaV3CreateForm = () => {
     onFieldBInput,
   ])
 
-  // Range Inputs
-  // todo:@eric
-  const getDecrementLower = useCallback(() => undefined, [])
-  const getIncrementLower = useCallback(() => undefined, [])
-  const getDecrementUpper = useCallback(() => undefined, [])
-  const getIncrementUpper = useCallback(() => undefined, [])
-  const getSetFullRange = useCallback(() => undefined, [])
+  const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
+    useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, feeAmount, tickLower, tickUpper, pool)
 
   const onBothRangePriceInput = useCallback(
     (leftRangeValue: string, rightRangeValue: string) => {

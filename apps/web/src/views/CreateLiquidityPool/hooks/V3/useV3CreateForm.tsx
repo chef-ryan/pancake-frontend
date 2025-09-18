@@ -8,8 +8,13 @@ import { tryParsePrice } from 'hooks/v3/utils'
 import { V3SubmitButton } from 'views/AddLiquidityV3/components/V3SubmitButton'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount, isUnifedCurrencySorted, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
-import { isSolana } from '@pancakeswap/chains'
+import {
+  Currency,
+  CurrencyAmount,
+  isUnifedCurrencySorted,
+  NativeCurrency,
+  UnifiedCurrency,
+} from '@pancakeswap/swap-sdk-core'
 import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { CurrencyField as Field } from 'utils/types'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
@@ -99,9 +104,6 @@ export const useV3CreateForm = () => {
   const formState = useV3FormState()
   const { independentField, typedValue, startPriceTypedValue, leftRangeTypedValue, rightRangeTypedValue } = formState
 
-  const b = baseCurrency && !isSolana(baseCurrency.chainId) ? (baseCurrency as unknown as Currency) : undefined
-  const q = quoteCurrency && !isSolana(quoteCurrency.chainId) ? (quoteCurrency as unknown as Currency) : undefined
-
   const {
     pool,
     ticks,
@@ -122,7 +124,14 @@ export const useV3CreateForm = () => {
     invertPrice,
     ticksAtLimit,
     tickSpaceLimits,
-  } = useV3DerivedInfo(b, q, feeAmount, b, undefined, formState)
+  } = useV3DerivedInfo(
+    (baseCurrency as Currency) ?? undefined,
+    (quoteCurrency as Currency) ?? undefined,
+    feeAmount,
+    (baseCurrency as Currency) ?? undefined,
+    undefined,
+    formState,
+  )
 
   // Currency validation
   const addIsWarning = useIsTransactionWarning(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
@@ -267,16 +276,23 @@ export const useV3CreateForm = () => {
 
   // Range Inputs
   const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
-    useRangeHopCallbacks(b ?? undefined, q ?? undefined, feeAmount, tickLower, tickUpper, pool)
+    useRangeHopCallbacks(
+      (baseCurrency as Currency) ?? undefined,
+      (quoteCurrency as Currency) ?? undefined,
+      feeAmount,
+      tickLower,
+      tickUpper,
+      pool,
+    )
 
   const onBothRangePriceInput = useCallback(
     (leftRangeValue: string, rightRangeValue: string) => {
       onBothRangeInput({
-        leftTypedValue: tryParsePrice(b?.wrapped, q?.wrapped, leftRangeValue),
-        rightTypedValue: tryParsePrice(b?.wrapped, q?.wrapped, rightRangeValue),
+        leftTypedValue: tryParsePrice(baseCurrency?.wrapped, quoteCurrency?.wrapped, leftRangeValue),
+        rightTypedValue: tryParsePrice(baseCurrency?.wrapped, quoteCurrency?.wrapped, rightRangeValue),
       })
     },
-    [b, q, onBothRangeInput],
+    [baseCurrency, quoteCurrency, onBothRangeInput],
   )
 
   const onLeftRangePriceInput = useCallback(
@@ -363,7 +379,11 @@ export const useV3CreateForm = () => {
       return
     }
 
-    const useNative = b?.isNative ? b : q?.isNative ? q : undefined
+    const useNative = baseCurrency?.isNative
+      ? (baseCurrency as NativeCurrency)
+      : quoteCurrency?.isNative
+      ? (quoteCurrency as NativeCurrency)
+      : undefined
 
     const { calldata, value } = NonfungiblePositionManager.addCallParameters(position, {
       slippageTolerance: basisPointsToPercent(allowedSlippage),
