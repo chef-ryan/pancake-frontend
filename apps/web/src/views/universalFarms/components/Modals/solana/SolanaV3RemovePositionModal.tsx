@@ -207,7 +207,7 @@ export default function SolanaV3RemovePositionModal({
             price1={price1}
           />
           <Divider style={{ margin: '16px 0' }} />
-          <SolanaV3Earnings pool={pool} position={position} rowProps={{ justifyContent: 'space-between' }} />
+          <SolanaV3Earnings pool={pool} position={position} />
         </LightGreyCard>
         <FlexGap flexDirection="column" gap="16px" mt="16px">
           <Button
