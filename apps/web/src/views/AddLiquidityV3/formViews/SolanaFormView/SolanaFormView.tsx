@@ -31,7 +31,7 @@ import {
   useModal,
   useTooltip,
 } from '@pancakeswap/uikit'
-import { useIsExpertMode, useUserSlippage } from '@pancakeswap/utils/user'
+import { useIsExpertMode } from '@pancakeswap/utils/user'
 import { FeeAmount } from '@pancakeswap/v3-sdk'
 import {
   ConfirmationModalContent,
@@ -269,8 +269,6 @@ export function SolanaFormView({
     [currencyBalances],
   )
 
-  const [allowedSlippage] = useUserSlippage() // custom from users
-
   const handleFeePoolSelect = useCallback(
     (_idx: number, newFeeAmount: number) => {
       if (!newFeeAmount) {
@@ -307,17 +305,16 @@ export function SolanaFormView({
       // Map parsed amounts to pool mintA/mintB order
       const currencyA = currencies[Field.CURRENCY_A]
       const mintAAddr = (solPoolInfo?.token0 as any)?.address
-      const aIsMintA = currencyA?.wrapped?.address === mintAAddr
+      const baseIsMintA = currencyA?.wrapped?.address === mintAAddr
       const amountAQuot = parsedAmounts[Field.CURRENCY_A]?.quotient
       const amountBQuot = parsedAmounts[Field.CURRENCY_B]?.quotient
-      const mintAAmount = new BN((aIsMintA ? amountAQuot : amountBQuot)?.toString() ?? '0')
-      const mintBAmount = new BN((aIsMintA ? amountBQuot : amountAQuot)?.toString() ?? '0')
+      const mintAAmount = new BN((baseIsMintA ? amountAQuot : amountBQuot)?.toString() ?? '0')
+      const mintBAmount = new BN((baseIsMintA ? amountBQuot : amountAQuot)?.toString() ?? '0')
 
       if (mintAAmount.isZero() && mintBAmount.isZero()) {
         setTxnErrorMessage(t('Enter an amount'))
         return
       }
-      const baseIsMintA = mintAAmount.gte(mintBAmount)
       const base: 'MintA' | 'MintB' = baseIsMintA ? 'MintA' : 'MintB'
       const baseAmount = baseIsMintA ? mintAAmount : mintBAmount
       const otherAmountMax = baseIsMintA ? mintBAmount : mintAAmount
