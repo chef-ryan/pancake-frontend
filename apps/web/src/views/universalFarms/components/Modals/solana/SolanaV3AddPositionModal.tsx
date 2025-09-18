@@ -209,7 +209,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               error={insufficientBalance0}
               disabled={position.liquidity.isZero() ? amount0Add?.equalTo(0) : amount0?.equalTo(0)}
               disableCurrencySelect
-              defaultValue={amount0?.equalTo(0) ? '' : fields[0] ?? '0'}
+              defaultValue={!position.liquidity.isZero() && amount0?.equalTo(0) ? '' : fields[0] ?? '0'}
               onUserInput={handleFieldAInput}
               onPercentInput={(percent) => {
                 setFocusSide(0)
@@ -240,7 +240,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               error={insufficientBalance1}
               disabled={position.liquidity.isZero() ? amount1Add?.equalTo(0) : amount1?.equalTo(0)}
               disableCurrencySelect
-              defaultValue={amount1?.equalTo(0) ? '' : fields[1] ?? '0'}
+              defaultValue={!position.liquidity.isZero() && amount1?.equalTo(0) ? '' : fields[1] ?? '0'}
               onUserInput={handleFieldBInput}
               onPercentInput={(percent) => {
                 setFocusSide(1)
@@ -265,8 +265,8 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
             poolInfo={poolInfo}
             position={position}
             liquidityAdd={liquidityAdd}
-            amount0Add={amount0Add}
-            amount1Add={amount1Add}
+            amount0Add={focusSide === 0 ? amount0Add : amount0AddWithSlippage}
+            amount1Add={focusSide === 1 ? amount1Add : amount1AddWithSlippage}
           />
 
           <Button
