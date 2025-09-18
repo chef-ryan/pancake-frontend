@@ -62,14 +62,14 @@ export function getPositionAprCore({
   const total = [planCApr.feeApr, ...slicedRewardApr].reduce((a, b) => a + b, 0)
   return {
     fee: {
-      apr: planCApr.feeApr,
+      apr: planCApr.feeApr / 100,
       percentInTotal: (planCApr.feeApr / total) * 100,
     },
     rewards: slicedRewardApr.map((i, idx) => ({
-      apr: i,
+      apr: i / 100,
       percentInTotal: (i / total) * 100,
       mint: poolInfo.rewardDefaultInfos[idx].mint,
     })),
-    apr: Number.isNaN(planCApr.apr) ? 0 : planCApr.apr,
+    apr: Number.isNaN(planCApr.apr) ? 0 : planCApr.apr / 100,
   }
 }
