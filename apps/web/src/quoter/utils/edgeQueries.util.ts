@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
 import { OnChainProvider } from '@pancakeswap/smart-router'
 import { NextResponse } from 'next/server'
@@ -89,7 +89,7 @@ export function parseTvQuery(raw: string) {
   }
 }
 
-export function getEdgeChainName(chainId: ChainId): APIChain {
+export function getEdgeChainName(chainId: UnifiedChainId): APIChain {
   switch (chainId) {
     case ChainId.BSC:
       return 'bsc'
