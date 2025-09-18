@@ -61,11 +61,11 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
       }
     })
     return result
-  }, [connection, poolInfo, position])
+  }, [connection, poolInfo, position, raydium])
   const { data } = useQuery({
     queryKey: ['solana-v3-reward-info-from-simulation', poolInfo.poolId, position.nftMint.toBase58()],
     queryFn: simulation,
-    enabled: Boolean(poolInfo && position),
+    enabled: Boolean(poolInfo && position && raydium),
     ...QUERY_SETTINGS_IMMUTABLE,
   })
 
