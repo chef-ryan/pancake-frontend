@@ -18,7 +18,7 @@ const simulationQueue = new PQueue({
 })
 
 export type SolanaV3RewardInfoFromSimulationProps = {
-  poolInfo: SolanaV3PoolInfo
+  poolInfo: SolanaV3PoolInfo | undefined
   position: SolanaV3PositionDetail
 }
 
@@ -41,7 +41,7 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
   const raydium = useRaydium()
   const simulation = useCallback(async () => {
     const result = await simulationQueue.add(async () => {
-      if (!raydium) return DEFAULT_SIMULATION_RESULT
+      if (!raydium || !poolInfo) return DEFAULT_SIMULATION_RESULT
 
       try {
         const simulationResult = await removeLiquidity({
@@ -63,7 +63,7 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
     return result
   }, [connection, poolInfo, position, raydium])
   const { data } = useQuery({
-    queryKey: ['solana-v3-reward-info-from-simulation', poolInfo.poolId, position.nftMint.toBase58()],
+    queryKey: ['solana-v3-reward-info-from-simulation', poolInfo?.poolId, position.nftMint.toBase58()],
     queryFn: simulation,
     enabled: Boolean(poolInfo && position && raydium),
     ...QUERY_SETTINGS_IMMUTABLE,
@@ -80,9 +80,9 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
 
   const mints = useMemo(() => {
     return uniq([
-      poolInfo.rawPool.mintA.address,
-      poolInfo.rawPool.mintB.address,
-      ...poolInfo.rawPool.rewardDefaultInfos.map((r) => r.mint.address),
+      poolInfo?.rawPool.mintA.address,
+      poolInfo?.rawPool.mintB.address,
+      ...(poolInfo?.rawPool?.rewardDefaultInfos?.map((r) => r.mint.address) || []),
     ])
   }, [poolInfo])
 
