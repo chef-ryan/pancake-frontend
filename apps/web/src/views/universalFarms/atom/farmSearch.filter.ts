@@ -1,3 +1,4 @@
+import { isEvm, NonEVMChainId } from '@pancakeswap/chains'
 import { Currency, getCurrencyAddress } from '@pancakeswap/sdk'
 import { SmartRouter } from '@pancakeswap/smart-router'
 import { TokenInfo } from '@pancakeswap/token-lists'
@@ -11,11 +12,17 @@ export const filterTokens = (tokensMap: Record<string, TokenInfo>) => {
 }
 
 function isTokenWhitelisted(token: Currency, tokensMap: Record<string, TokenInfo>) {
+  if (token.chainId === NonEVMChainId.SOLANA) {
+    return true
+  }
   const key = `${token.chainId}:${getCurrencyAddress(token)}`.toLowerCase()
   return Boolean(token.isNative || tokensMap[key])
 }
 
 function isFarmWhitelisted(farm: FarmInfo, tokensMap: Record<string, TokenInfo>) {
+  if (!isEvm(Number(farm.chainId))) {
+    return true
+  }
   const [token0, token1] = SmartRouter.getCurrenciesOfPool(farm.pool)
   if (!token0 || !token1) return false
   return isTokenWhitelisted(token0, tokensMap) && isTokenWhitelisted(token1, tokensMap)
@@ -23,6 +30,9 @@ function isFarmWhitelisted(farm: FarmInfo, tokensMap: Record<string, TokenInfo>)
 
 export const isInWhitelist = (tokensMap: Record<string, TokenInfo>) => {
   return (farm: FarmInfo) => {
+    if (farm.chainId === NonEVMChainId.SOLANA) {
+      return true
+    }
     return isFarmWhitelisted(farm, tokensMap)
   }
 }

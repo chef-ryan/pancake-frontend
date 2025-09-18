@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId, isEvm } from '@pancakeswap/chains'
 import { BinPoolManagerAbi, CLPoolManagerAbi, DYNAMIC_FEE_FLAG, findHook } from '@pancakeswap/infinity-sdk'
 import { InfinityBinPool, InfinityClPool } from '@pancakeswap/smart-router'
 import { fetchStableSwapData } from '@pancakeswap/stable-swap-sdk'
@@ -30,6 +30,80 @@ interface FillItem<T> {
   value: T
 }
 
+const SOLANA_POOL_INFO_ENDPOINT = 'https://sol-explorer.pancakeswap.com/api/cached/v1/pools/info/ids'
+
+type SolanaAprSummary = {
+  lpApr: number
+  farmApr: number
+}
+
+type SolanaAprResponse = {
+  data?: Array<{
+    id: string
+    day?: {
+      feeApr?: number
+      apr?: number
+      rewardApr?: number[]
+    }
+    week?: {
+      feeApr?: number
+      apr?: number
+      rewardApr?: number[]
+    }
+  }>
+}
+
+const fetchSolanaPoolApr = memoizeAsync(
+  async (ids: string[]) => {
+    if (!ids.length) {
+      return {} as Record<string, SolanaAprSummary>
+    }
+
+    const query = ids.map((id) => encodeURIComponent(id)).join(',')
+    const url = `${SOLANA_POOL_INFO_ENDPOINT}?ids=${query}`
+
+    try {
+      const response = await fetch(url)
+      if (!response.ok) {
+        throw new Error(`Failed to fetch solana apr: ${response.status}`)
+      }
+      const data = (await response.json()) as SolanaAprResponse
+      const aprMap = (data.data ?? []).reduce<Record<string, SolanaAprSummary>>((acc, pool) => {
+        const rewards = pool.day?.rewardApr ?? []
+        const farmApr = rewards.reduce((sum, apr) => sum + (apr ?? 0), 0)
+        const lpApr = pool.day?.apr ?? 0
+        acc[pool.id] = {
+          farmApr,
+          lpApr,
+        }
+        return acc
+      }, {})
+      return aprMap
+    } catch (error) {
+      console.error('[batch] Failed to fetch solana apr', error)
+      return {} as Record<string, SolanaAprSummary>
+    }
+  },
+  {
+    resolver: (ids: string[]) => ids.slice().sort().join(','),
+  },
+)
+
+async function batchGetSolanaCakeApr(pools: PoolInfo[]) {
+  const ids = pools.map((pool) => pool.farm!.id)
+  const aprMap = await fetchSolanaPoolApr(ids)
+  return pools.map((pool) => {
+    const farm = pool.farm!
+    const aprInfo = aprMap[farm.id] || { farmApr: 0, lpApr: 0 }
+    return {
+      id: getFarmKey(farm),
+      value: {
+        value: `${aprInfo.farmApr}` as `${number}`,
+      },
+    }
+  })
+}
+
 const fetchAllCampaigns = memoizeAsync(
   async (chains: ChainId[]) => {
     const list = await Promise.all(
@@ -56,7 +130,9 @@ const getCakePrice = memoizeAsync(async () => {
 })
 
 async function batchGetInfinityCakeApr(pools: PoolInfo[]) {
-  const chains = Array.from(new Set(pools.map((pool) => Number(pool.farm!.chainId))))
+  const chains = Array.from(new Set(pools.map((pool) => Number(pool.farm!.chainId)))).filter((chainId) =>
+    isEvm(chainId),
+  )
   const [allCampaigns, cakePrice] = await Promise.all([fetchAllCampaigns(chains), getCakePrice()])
   const result: FillItem<CakeAprValue>[] = []
   for (const pool of pools) {
@@ -66,7 +142,7 @@ async function batchGetInfinityCakeApr(pools: PoolInfo[]) {
 
     const cakeApr = getInfinityCakeAPR({
       chainId: Number(farm.chainId),
-      poolId: farm.id,
+      poolId: farm.id as `0x${string}`,
       cakePrice,
       campaigns,
       tvlUSD: `${farm.tvlUSD}`,
@@ -104,11 +180,18 @@ async function batchGetOtherCakeApr(pools: PoolInfo[]) {
 
 export const batchGetCakeApr = createBatchProcessor<PoolInfo, FillItem<CakeAprValue>>({
   groupBy: (pools: PoolInfo[]) => {
-    return groupBy(pools, (pool) => (isInfinityProtocol(pool.farm!.protocol) ? 'infinity' : 'other'))
+    return groupBy(pools, (pool) => {
+      const farm = pool.farm!
+      if (Number(farm.chainId) === NonEVMChainId.SOLANA) {
+        return 'solana'
+      }
+      return isInfinityProtocol(farm.protocol) ? 'infinity' : 'other'
+    })
   },
   groups: {
     infinity: batchGetInfinityCakeApr,
     other: batchGetOtherCakeApr,
+    solana: batchGetSolanaCakeApr,
   },
 })
 
@@ -118,9 +201,15 @@ const cachedGetLpApr = memoizeAsync(getLpApr, {
   },
 })
 export async function batchGetLpAprData(pools: PoolInfo[]) {
+  const solanaPools = pools.filter((pool) => Number(pool.farm?.chainId) === NonEVMChainId.SOLANA)
+  const solanaAprMap = await fetchSolanaPoolApr(solanaPools.map((pool) => pool.farm!.id))
+
   const lpAprs = await Promise.allSettled(
     pools.map((pool) => {
       const farm = pool.farm!
+      if (Number(farm.chainId) === NonEVMChainId.SOLANA) {
+        return Promise.resolve(solanaAprMap[farm.id]?.lpApr ?? 0)
+      }
       if (farm.protocol === 'stable') {
         return 0
       }
@@ -128,9 +217,9 @@ export async function batchGetLpAprData(pools: PoolInfo[]) {
       return cachedGetLpApr(
         {
           protocol: farm.protocol,
-          chainId: farm.chainId,
+          chainId: farm.chainId as ChainId,
           lpAddress: farm.lpAddress,
-          poolId: farm.id,
+          poolId: farm.id as `0x${string}`,
         },
         true,
       )
@@ -140,10 +229,10 @@ export async function batchGetLpAprData(pools: PoolInfo[]) {
   return pools.map((pool, index) => {
     const result = lpAprs[index]
     const farm = pool.farm!
-    const apr = result.status === 'fulfilled' ? `${result.value}` : '0'
+    const apr = result.status === 'fulfilled' ? Number(result.value) : 0
     return {
       id: getFarmKey(farm),
-      value: Number(apr),
+      value: apr,
     }
   })
 }
@@ -300,7 +389,7 @@ export const fillBinPoolData = memoizeAsync(
 )
 
 const fillStablePoolData = async (farm: FarmInfo) => {
-  const stablePools = await fetchStableSwapData(farm.chainId)
+  const stablePools = await fetchStableSwapData(farm.chainId as ChainId)
   const relatedPool = stablePools.find((x) => x.stableSwapAddress.toLowerCase() === farm.id.toLowerCase())
 
   if (relatedPool) {
@@ -312,6 +401,9 @@ const fillStablePoolData = async (farm: FarmInfo) => {
 
 export const fillOnchainPoolData = memoizeAsync(
   async (farm: FarmInfo) => {
+    if (!isEvm(Number(farm.chainId))) {
+      return farm
+    }
     if (farm.protocol === 'infinityCl') {
       return fillClPoolData(farm)
     }

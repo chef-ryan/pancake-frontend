@@ -61,7 +61,13 @@ const composeFarmConfig = async (farm: PoolInfo) => {
   if (farm.protocol !== 'stable' && farm.protocol !== 'v2') return farm
 
   const farmConfig = await fetchAllUniversalFarmsMap()
-  const localFarm = farmConfig[getFarmConfigKey(farm)] as V2PoolInfo | StablePoolInfo | undefined
+  if (!farm.lpAddress) {
+    return farm
+  }
+  const localFarm = farmConfig[getFarmConfigKey({ lpAddress: farm.lpAddress, chainId: farm.chainId })] as
+    | V2PoolInfo
+    | StablePoolInfo
+    | undefined
 
   if (!localFarm) {
     return farm

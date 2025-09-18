@@ -23,12 +23,13 @@ import { FarmInfo, normalizeAddress, safeGetAddress } from './farm.util'
 const DEFAULT_PROTOCOLS: Protocol[] = Object.values(Protocol)
 export interface FarmQuery {
   keywords: string
-  chains: ChainId[]
+  chains: FarmV4SupportedChainId[]
   protocols: Protocol[]
   sortBy: keyof PoolInfo | null
   sortOrder: SORT_ORDER
   activeChainId?: ChainId
   symbols?: string[]
+  page: number
 }
 
 function getPoolId(farm: UniversalFarmConfig) {
@@ -58,7 +59,7 @@ function getPoolId(farm: UniversalFarmConfig) {
 export type ChainNameKebab = (typeof chainNamesInKebabCase)[keyof typeof chainNamesInKebabCase]
 
 async function fetchExplorerFarmPools(protocols: Protocol[], chainIds: FarmV4SupportedChainId[]) {
-  const chains = chainIds.filter((id) => isEvm(id)).map((chainId) => getEdgeChainName(chainId as ChainId))
+  const chains = chainIds.map((chainId) => getEdgeChainName(chainId)).filter((x) => x !== 'sol')
   const resp = await explorerApiClient.GET('/cached/pools/farming', {
     params: {
       query: {
@@ -209,7 +210,7 @@ async function fetchAllExplorerPools(protocols: Protocol[], chains: FarmV4Suppor
   const poolQuery = {
     baseUrl: `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`,
     protocols,
-    chains: chains.filter((id) => isEvm(id)).map((chain) => getEdgeChainName(chain as ChainId)),
+    chains: chains.map((chain) => getEdgeChainName(chain)),
     maxPages: 2,
     orderBy: 'volumeUSD24h' as const,
   }
@@ -225,7 +226,7 @@ async function fetchAllExplorerPoolsByAddress(
 ) {
   if (!protocols.length) return []
   const baseUrl = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`
-  const chainNames = chains.filter((id) => isEvm(id)).map((chain) => getEdgeChainName(chain as ChainId))
+  const chainNames = chains.map((chain) => getEdgeChainName(chain))
 
   if (!addresses.length) return []
 

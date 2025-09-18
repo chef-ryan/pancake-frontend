@@ -17,7 +17,7 @@ export const useAllChain = () => {
   return useMemo(
     () =>
       CHAINS.filter((chain) => {
-        if ('testnet' in chain && chain.testnet && chain.id !== ChainId.MONAD_TESTNET) {
+        if ('testnet' in chain && chain.testnet) {
           return showTestnet
         }
         return true

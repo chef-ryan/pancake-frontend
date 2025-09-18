@@ -180,7 +180,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         endpoint,
         account: solanaAccount!,
         poolInfo,
-        poolId: solPoolId,
+        poolId: solPoolId!,
       }),
   })
 

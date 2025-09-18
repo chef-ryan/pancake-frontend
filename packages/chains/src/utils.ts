@@ -11,7 +11,7 @@ export function getChainName(chainId: UnifiedChainId) {
   return chainNames[chainId]
 }
 
-export function getChainNameInKebabCase(chainId: ChainId) {
+export function getChainNameInKebabCase(chainId: UnifiedChainId) {
   return chainNamesInKebabCase[chainId]
 }
 
@@ -28,8 +28,8 @@ export function getChainIdByChainName(chainName?: string): UnifiedChainId | unde
   return chainNameToChainId[chainName] ?? undefined
 }
 
-export function isTestnetChainId(chainId: ChainId) {
-  return testnetChainIds.includes(chainId)
+export function isTestnetChainId(chainId: UnifiedChainId) {
+  return testnetChainIds.includes(chainId as ChainId)
 }
 
 export function isEvm(chainId?: number) {

@@ -17,8 +17,8 @@ export type UnifedPoolInfo = Prettify<V2PoolInfo | StablePoolInfo | V3PoolInfo |
 export type BasePoolInfo = {
   pid?: number
   chainId: number
-  lpAddress: Address
-  stableSwapAddress?: Address
+  lpAddress?: Address
+  stableSwapAddress?: string
   protocol: Protocol
   token0: UnifiedCurrency
   token1: UnifiedCurrency
@@ -42,14 +42,15 @@ export type BasePoolInfo = {
   isActiveFarm?: boolean
   isDynamicFee?: boolean
   farm?: FarmInfo
+  poolId?: Address
 }
 
-export type SolanaV3PoolInfo = Omit<BasePoolInfo, 'lpAddress'> & {
+export type SolanaV3PoolInfo = Omit<BasePoolInfo, 'lpAddress' | 'poolId'> & {
   protocol: Protocol.V3
   lpAddress: string
   nftMint: PublicKey
-  poolId: string
   rawPool: SolanaV3Pool
+  poolId?: string
 }
 
 export type V3PoolInfo = BasePoolInfo & {
@@ -103,4 +104,4 @@ export type InfinityCLPoolInfo = Prettify<
     }
 >
 
-export type ChainIdAddressKey = `${number}:${Address}`
+export type ChainIdAddressKey = `${number}:${string}`

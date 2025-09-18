@@ -53,6 +53,7 @@ export function parseUrlToSearchQuery(): FarmQuery {
     protocols: getProtocolsByIndex(selectedProtocolIndex),
     sortBy,
     sortOrder,
+    page: 0,
   }
 }
 

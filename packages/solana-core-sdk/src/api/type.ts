@@ -287,16 +287,16 @@ export enum PoolFetchType {
 export interface FetchPoolParams {
   type?: PoolFetchType;
   sort?:
-  | "liquidity"
-  | "volume24h"
-  | "volume7d"
-  | "volume30d"
-  | "fee24h"
-  | "fee7d"
-  | "fee30d"
-  | "apr24h"
-  | "apr7d"
-  | "apr30d";
+    | "liquidity"
+    | "volume24h"
+    | "volume7d"
+    | "volume30d"
+    | "fee24h"
+    | "fee7d"
+    | "fee30d"
+    | "apr24h"
+    | "apr7d"
+    | "apr30d";
   order?: "desc" | "asc";
   pageSize?: number;
   page?: number;

@@ -48,6 +48,9 @@ export async function fetchFarmData(showTestnet: boolean) {
   const farms = pools.length ? (pools as PoolInfo[]) : farmConfig
   const poolsWithStatus: ((PoolInfo | UniversalFarmConfig) & { isActiveFarm?: boolean })[] = farms.map(
     (f: PoolInfo | UniversalFarmConfig) => {
+      if (!f.lpAddress) {
+        return f
+      }
       if (isInfinityProtocol(f.protocol)) {
         return {
           ...f,

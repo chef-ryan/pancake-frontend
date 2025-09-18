@@ -17,7 +17,7 @@ import { isInfinityProtocol } from 'utils/protocols'
 import { publicClient } from 'utils/wagmi'
 import { erc20Abi } from 'viem'
 
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, isEvm } from '@pancakeswap/chains'
 import { INCENTRA_API, IncentraCampaign } from 'hooks/useIncentra'
 import { ChainIdAddressKey, InfinityPoolInfo, PoolInfo, StablePoolInfo, V2PoolInfo, V3PoolInfo } from '../type'
 import { AprValue, CakeApr, IncentraApr, MerklApr } from './atom'
@@ -148,8 +148,9 @@ export const getMerklApr = async (result: any, chainId: number) => {
 }
 
 export const getAllNetworkMerklApr = async (signal?: AbortSignal) => {
+  const evmChains = supportedChainIdV4.filter((chainId) => isEvm(chainId)) as ChainId[]
   const resp = await fetch(
-    `https://api.merkl.xyz/v4/opportunities/?chainId=${supportedChainIdV4.join(
+    `https://api.merkl.xyz/v4/opportunities/?chainId=${evmChains.join(
       ',',
     )}&test=false&mainProtocolId=pancake-swap&action=POOL,HOLD&status=LIVE`,
     { signal },
@@ -162,7 +163,7 @@ export const getAllNetworkMerklApr = async (signal?: AbortSignal) => {
         opportunity?.protocol?.id?.toLowerCase().startsWith('pancake-swap') ||
         opportunity?.protocol?.id?.toLowerCase().startsWith('pancakeswap'),
     )
-    const aprs = await Promise.all(supportedChainIdV4.map((chainId) => getMerklApr(pancakeResult, chainId)))
+    const aprs = await Promise.all(evmChains.map((chainId) => getMerklApr(pancakeResult, chainId)))
     return aprs.reduce((acc, apr) => Object.assign(acc, apr), {})
   }
   throw resp
@@ -184,7 +185,8 @@ export const getAllNetworkIncentraApr = async (signal?: AbortSignal) => {
   const json = (await resp.json()) as { err: string | null; campaigns: IncentraCampaign[] }
   if (json.err) throw new Error(`Incentra API error: ${json.err}`)
 
-  const filteredCampaigns = json.campaigns.filter((c) => supportedChainIdV4.includes(Number(c.chainId)))
+  const evmChains = supportedChainIdV4.filter((chainId) => isEvm(chainId)) as ChainId[]
+  const filteredCampaigns = json.campaigns.filter((c) => evmChains.includes(Number(c.chainId) as ChainId))
 
   const aprs = filteredCampaigns.reduce((acc, campaign) => {
     const poolId = safeGetAddress(campaign.pools.poolId)
@@ -364,7 +366,7 @@ const getV2PoolsCakeAprByChainId = async (
 
   const totalSupplyCalls = validPools.map((pool) => {
     return {
-      address: pool.lpAddress,
+      address: pool.lpAddress!,
       functionName: 'totalSupply',
       abi: erc20Abi,
     } as const

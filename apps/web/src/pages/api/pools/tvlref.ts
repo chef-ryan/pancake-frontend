@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import type { FarmV4SupportedChainId } from '@pancakeswap/farms'
 import { getCorsHeaders, handleCors } from 'edge/cors'
 import { NextRequest, NextResponse } from 'next/server'
 import { edgeQueries } from 'quoter/utils/edgePoolQueries'
@@ -16,7 +16,7 @@ export default async function handler(req: NextRequest) {
   const raw = new URL(req.url).search.slice(1)
   try {
     const { chainId, protocols } = parseTvQuery(raw)
-    const chain = getEdgeChainName(chainId as ChainId)
+    const chain = getEdgeChainName(chainId as FarmV4SupportedChainId)
     if (!chain) {
       return NextResponse.json({ error: `invalid chainId` }, { status: 400 })
     }

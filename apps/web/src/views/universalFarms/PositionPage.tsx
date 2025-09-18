@@ -333,7 +333,7 @@ export const PositionPage = () => {
   return (
     <Card>
       <CardHeader p={isMobile ? '16px' : undefined}>
-        <PoolsFilterPanel onChange={handleFilterChange} value={poolsFilter}>
+        <PoolsFilterPanel onChange={handleFilterChange} value={poolsFilter} includeSolana>
           {(isMobile || isMd) && <AddLiquidityButton scale="sm" height="40px" width="100%" />}
           {isMobile ? (
             <ControlWrapper>

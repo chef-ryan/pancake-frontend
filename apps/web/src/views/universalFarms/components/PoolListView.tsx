@@ -1,7 +1,7 @@
 import { BottomDrawer, Button, ChevronRightIcon, Column, MoreIcon } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
 import { memo, ReactNode, useCallback, useState } from 'react'
-import { getFarmAprInfo } from 'state/farmsV4/search/farm.util'
+import { getFarmAprInfo, getFarmKey } from 'state/farmsV4/search/farm.util'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import styled from 'styled-components'
 import { getPoolDetailPageLink } from 'utils/getPoolLink'
@@ -45,7 +45,15 @@ export const ListView = <T extends PoolInfo>({ data, getItemKey, onRowClick }: I
   )
 
   const getListItemKey = useCallback(
-    (item: T) => (getItemKey ? getItemKey(item) : [item.chainId, item.protocol, item.lpAddress].join(':')),
+    (item: T) => {
+      if (getItemKey) {
+        return getItemKey(item)
+      }
+      if (item.farm) {
+        return getFarmKey(item.farm)
+      }
+      return [item.chainId, item.protocol, item.lpAddress ?? item.poolId ?? ''].join(':')
+    },
     [getItemKey],
   )
 

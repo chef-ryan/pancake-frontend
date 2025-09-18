@@ -230,7 +230,7 @@ export const V2OrSSPositionsTable: React.FC<V2PositionsTableProps> = ({ poolInfo
   )
 
   // V2 farm actions and earnings
-  const { onHarvest } = useV2FarmActions(poolInfo.lpAddress, poolInfo.bCakeWrapperAddress)
+  const { onHarvest } = useV2FarmActions(poolInfo.lpAddress!, poolInfo.bCakeWrapperAddress)
   const { earningsBusd } = useV2CakeEarning(poolInfo)
 
   const handleHarvestAll = useCallback(async () => {

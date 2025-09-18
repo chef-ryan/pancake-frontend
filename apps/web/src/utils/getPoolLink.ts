@@ -61,7 +61,7 @@ export async function getLinkForPool(pool: PoolInfo, type: 'detail' | 'info'): P
       return toLink(ssPair.stableSwapAddress, '', 'type=stableSwap')
     }
   }
-  return toLink(lpAddress, protocol)
+  return toLink(lpAddress!, protocol)
 }
 
 export const getPoolDetailPageLink = (pool: PoolInfo) => getLinkForPool(pool, 'detail')

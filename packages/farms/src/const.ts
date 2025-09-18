@@ -12,7 +12,7 @@ export const supportedChainIdV4 = [
   ChainId.LINEA,
   ChainId.ARBITRUM_ONE,
   NonEVMChainId.SOLANA,
-] as const
+] as const satisfies readonly (ChainId | NonEVMChainId)[]
 
 export const supportedChainIdV2 = [
   ChainId.GOERLI,

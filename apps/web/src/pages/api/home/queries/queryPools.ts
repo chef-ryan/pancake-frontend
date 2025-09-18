@@ -70,27 +70,29 @@ export const queryPools = cacheByLRU(async () => {
     const key = `${chainId}-${checksumAddress(address)}`
     return tokenMap[key]?.logoURI
   }
-  return tops.map((p, i) => {
-    const chain = getChainName(p.chainId)
-    const link = `/liquidity/pool/${chain}/${p.lpAddress}`
-    return {
-      id: checksumAddress(p.lpAddress),
-      link,
-      protocol: p.protocol,
-      token0: {
-        id: p.token0.wrapped.address,
-        symbol: p.token0.wrapped.symbol,
+  return tops
+    .filter((p) => p.lpAddress)
+    .map((p, i) => {
+      const chain = getChainName(p.chainId)
+      const link = `/liquidity/pool/${chain}/${p.lpAddress}`
+      return {
+        id: checksumAddress(p.lpAddress!),
+        link,
+        protocol: p.protocol,
+        token0: {
+          id: p.token0.wrapped.address,
+          symbol: p.token0.wrapped.symbol,
+          chainId: p.chainId,
+          icon: tokenLogo(p.chainId, p.token0.isNative ? ZERO_ADDRESS : p.token0.wrapped.address),
+        },
+        token1: {
+          id: p.token1.wrapped.address,
+          symbol: p.token1.wrapped.symbol,
+          chainId: p.chainId,
+          icon: tokenLogo(p.chainId, p.token1.isNative ? ZERO_ADDRESS : p.token1.wrapped.address),
+        },
         chainId: p.chainId,
-        icon: tokenLogo(p.chainId, p.token0.isNative ? ZERO_ADDRESS : p.token0.wrapped.address),
-      },
-      token1: {
-        id: p.token1.wrapped.address,
-        symbol: p.token1.wrapped.symbol,
-        chainId: p.chainId,
-        icon: tokenLogo(p.chainId, p.token1.isNative ? ZERO_ADDRESS : p.token1.wrapped.address),
-      },
-      chainId: p.chainId,
-      apr24h: Number(p.lpApr) + aprs[i],
-    } as HomePagePoolInfo
-  })
+        apr24h: Number(p.lpApr) + aprs[i],
+      } as HomePagePoolInfo
+    })
 }, getHomeCacheSettings('pools'))

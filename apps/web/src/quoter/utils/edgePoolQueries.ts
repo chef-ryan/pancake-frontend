@@ -353,7 +353,7 @@ type FetchAllPoolsParams = {
   orderBy?: 'tvlUSD' | 'volumeUSD24h' | 'apr24h'
   protocols: Array<'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'>
   chains: Array<
-    'bsc' | 'bsc-testnet' | 'ethereum' | 'base' | 'opbnb' | 'zksync' | 'polygon-zkevm' | 'linea' | 'arbitrum'
+    'bsc' | 'bsc-testnet' | 'ethereum' | 'base' | 'opbnb' | 'zksync' | 'polygon-zkevm' | 'linea' | 'arbitrum' | 'sol'
   >
   pools?: string[]
   tokens?: string[]
