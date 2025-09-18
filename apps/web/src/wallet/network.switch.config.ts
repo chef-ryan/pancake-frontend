@@ -8,4 +8,5 @@ export const SOLANA_SUPPORTED_PATH = [
   '/add', // add liquidity
   '/liquidity/positions', // positions
   '/liquidity/pool/', // pool detail
+  '/liquidity/pools', // pool list
 ]
