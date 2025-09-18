@@ -74,15 +74,16 @@ export default function useSolanaTxError() {
         }
 
         // Show success toast with transaction hash
-
-        toastSuccess(
-          `${t('Transaction Submitted')}!`,
-          React.createElement(
-            SolanaDescriptionWithTx,
-            { txHash: txResult.hash },
-            t('Your transaction has been submitted to the network'),
-          ),
-        )
+        if (txResult.hash) {
+          toastSuccess(
+            `${t('Transaction Submitted')}!`,
+            React.createElement(
+              SolanaDescriptionWithTx,
+              { txHash: txResult.hash },
+              t('Your transaction has been submitted to the network'),
+            ),
+          )
+        }
 
         return txResult
       } catch (error: any) {
