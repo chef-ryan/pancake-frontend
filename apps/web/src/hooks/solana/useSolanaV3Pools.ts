@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { SLOW_INTERVAL } from 'config/constants'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useMemo } from 'react'
+import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { addSolanaV3PoolAtom, allSolanaV3PoolsAtom, SolanaV3Pool, solanaV3PoolIdsAtom } from 'state/pools/solana'
 
 async function fetchSolanaPoolsData(poolIds: (string | undefined)[]): Promise<(SolanaV3Pool | null)[]> {
@@ -58,9 +59,10 @@ export function useSolanaV3Pools(poolIds: (string | undefined)[]): (SolanaV3Pool
     return poolIds.filter((poolId) => poolId !== undefined && !allSolanaV3PoolsId.includes(poolId))
   }, [poolIds, allSolanaV3PoolsId])
   const poolIdsString = useMemo(() => JSON.stringify(poolsNotFetched), [poolsNotFetched])
+  const [latestTxReceipt] = useLatestTxReceipt()
 
   useQuery({
-    queryKey: ['solanaV3Pools', poolIdsString],
+    queryKey: ['solanaV3Pools', poolIdsString, latestTxReceipt?.blockHash],
     queryFn: () =>
       fetchSolanaPoolsData(poolsNotFetched).then((pools) => pools.forEach((pool) => addSolanaV3Pool(pool))),
     enabled: poolsNotFetched.length > 0,

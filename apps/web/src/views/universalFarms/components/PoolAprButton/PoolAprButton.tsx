@@ -32,6 +32,7 @@ type PoolGlobalAprButtonProps = {
   userPosition?: PositionDetail | InfinityBinPositionDetail | InfinityCLPositionDetail | SolanaV3PositionDetail
   onAPRTextClick?: () => void
   showApyButton?: boolean
+  loading?: boolean
 }
 
 export const PoolAprButton: React.FC<PoolGlobalAprButtonProps> = ({
@@ -40,14 +41,14 @@ export const PoolAprButton: React.FC<PoolGlobalAprButtonProps> = ({
   cakeApr,
   merklApr,
   incentraApr,
-  solanaRewardsApr,
   userPosition,
   onAPRTextClick,
   showApyButton,
+  loading = false,
 }) => {
   const baseApr = useMemo(() => {
-    return sumApr(lpApr, cakeApr?.value, merklApr, incentraApr, solanaRewardsApr)
-  }, [lpApr, cakeApr?.value, merklApr, incentraApr, solanaRewardsApr])
+    return sumApr(lpApr, cakeApr?.value, merklApr, incentraApr)
+  }, [lpApr, cakeApr?.value, merklApr, incentraApr])
   const hasBCake = pool.protocol === 'v2' || pool.protocol === 'stable'
   const merklLink = getMerklLink({
     hasMerkl: Boolean(merklApr),
@@ -83,6 +84,7 @@ export const PoolAprButton: React.FC<PoolGlobalAprButtonProps> = ({
       <AprButton
         hasFarm={Number(cakeApr?.value) > 0}
         ref={targetRef}
+        loading={loading}
         baseApr={baseApr}
         onClick={modal.onOpen}
         onAPRTextClick={onAPRTextClick ?? modal.onOpen}

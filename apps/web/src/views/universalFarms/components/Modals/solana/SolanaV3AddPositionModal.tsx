@@ -78,6 +78,15 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
   )
   const currency0Balance = useUnifiedCurrencyBalance(currency0)
   const currency1Balance = useUnifiedCurrencyBalance(currency1)
+  const maxCurrency0 = useMemo(() => maxUnifiedAmountSpend(currency0Balance), [currency0Balance])
+  const maxCurrency1 = useMemo(() => maxUnifiedAmountSpend(currency1Balance), [currency1Balance])
+  const [insufficientBalance0, insufficientBalance1] = useMemo(() => {
+    if (!solanaAccount) return [false, false]
+    const [field0, field1] = fields
+    const input0Insufficient = field0 ? maxCurrency0.toExact() < field0 : false
+    const input1Insufficient = field1 ? maxCurrency1.toExact() < field1 : false
+    return [input0Insufficient, input1Insufficient]
+  }, [fields, solanaAccount, maxCurrency0, maxCurrency1])
 
   const { amount0, amount1 } = useLiquidityAmount({
     poolInfo,
@@ -197,19 +206,25 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               wrapperProps={{ backgroundColor: 'cardSecondary' }}
               id="add-liquidity-input-tokena"
               showMaxButton
+              error={insufficientBalance0}
               disabled={position.liquidity.isZero() ? amount0Add?.equalTo(0) : amount0?.equalTo(0)}
               disableCurrencySelect
               defaultValue={amount0?.equalTo(0) ? '' : fields[0] ?? '0'}
               onUserInput={handleFieldAInput}
               onPercentInput={(percent) => {
                 setFocusSide(0)
-                handleFieldAInput(currency0Balance?.multiply(new Percent(percent, 100)).toExact() ?? '')
+                if (percent === 100) {
+                  if (maxCurrency0) {
+                    handleFieldAInput(maxCurrency0.toExact() ?? '')
+                  }
+                } else {
+                  handleFieldAInput(currency0Balance?.multiply(new Percent(percent, 100)).toExact() ?? '')
+                }
               }}
               maxAmount={currency0Balance}
               onMax={() => {
-                const max = maxUnifiedAmountSpend(currency0Balance)
-                if (max) {
-                  handleFieldAInput(max.toExact() ?? '')
+                if (maxCurrency0) {
+                  handleFieldAInput(maxCurrency0.toExact() ?? '')
                 }
               }}
             />
@@ -222,19 +237,25 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               wrapperProps={{ backgroundColor: 'cardSecondary' }}
               id="add-liquidity-input-tokenb"
               showMaxButton
+              error={insufficientBalance1}
               disabled={position.liquidity.isZero() ? amount1Add?.equalTo(0) : amount1?.equalTo(0)}
               disableCurrencySelect
               defaultValue={amount1?.equalTo(0) ? '' : fields[1] ?? '0'}
               onUserInput={handleFieldBInput}
               onPercentInput={(percent) => {
                 setFocusSide(1)
-                handleFieldBInput(currency1Balance?.multiply(new Percent(percent, 100)).toExact() ?? '')
+                if (percent === 100) {
+                  if (maxCurrency1) {
+                    handleFieldBInput(maxCurrency1.toExact() ?? '')
+                  }
+                } else {
+                  handleFieldBInput(currency1Balance?.multiply(new Percent(percent, 100)).toExact() ?? '')
+                }
               }}
               maxAmount={currency1Balance}
               onMax={() => {
-                const max = maxUnifiedAmountSpend(currency1Balance)
-                if (max) {
-                  handleFieldBInput(max.toExact() ?? '')
+                if (maxCurrency1) {
+                  handleFieldBInput(maxCurrency1.toExact() ?? '')
                 }
               }}
             />
@@ -248,8 +269,17 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
             amount1Add={amount1Add}
           />
 
-          <Button width="100%" disabled={!liquidityAdd} isLoading={sending} onClick={handleConfirm}>
-            {sending ? t('Confirming...') : t('Add')}
+          <Button
+            width="100%"
+            disabled={!liquidityAdd || insufficientBalance0 || insufficientBalance1}
+            isLoading={sending}
+            onClick={handleConfirm}
+          >
+            {insufficientBalance0 || insufficientBalance1
+              ? t('Insufficient Balance')
+              : sending
+              ? t('Confirming...')
+              : t('Add')}
           </Button>
         </AutoColumn>
       </MotionModal>

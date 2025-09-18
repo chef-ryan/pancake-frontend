@@ -35,6 +35,7 @@ import {
 import { CakeApr } from 'state/farmsV4/atom'
 import { APRBreakdownModal } from './AprBreakdownModal'
 import { PoolAprButton } from './PoolAprButton'
+import { SimpleDebugView } from '../PositionItem/PositionDebugView'
 
 type PoolPositionAprButtonProps<TPosition, TPoolInfo = PoolInfo> = {
   pool: TPoolInfo
@@ -84,18 +85,23 @@ export const V3PoolPositionAprButton: React.FC<PoolPositionAprButtonProps<Positi
 export const SolanaV3PoolPositionAprButton: React.FC<
   PoolPositionAprButtonProps<SolanaV3PositionDetail, SolanaV3PoolInfo>
 > = ({ pool, userPosition }) => {
-  const { fee, rewards, apr } = useSolanaV3PositionApr(pool, userPosition)
-  const farmApr = rewards.reduce((acc, reward) => acc + reward.apr, 0)
+  const { apr: solanaApr, isLoading } = useSolanaV3PositionApr(pool, userPosition)
+  const { fee, rewards, apr } = solanaApr ?? {}
+  const farmApr = rewards?.reduce((acc, reward) => acc + reward.apr, 0)
 
   return (
-    <PoolAprButton
-      cakeApr={{} as CakeApr[ChainIdAddressKey]}
-      pool={pool}
-      lpApr={fee.apr}
-      solanaRewardsApr={farmApr}
-      userPosition={userPosition}
-      showApyButton={false}
-    />
+    <>
+      <SimpleDebugView json={{ fee, rewards, apr }} />
+      <PoolAprButton
+        loading={isLoading}
+        cakeApr={{ value: Math.max(apr - fee?.apr, 0).toString() as `${number}` } as CakeApr[ChainIdAddressKey]}
+        pool={pool}
+        lpApr={fee.apr}
+        solanaRewardsApr={farmApr}
+        userPosition={userPosition}
+        showApyButton={false}
+      />
+    </>
   )
 }
 

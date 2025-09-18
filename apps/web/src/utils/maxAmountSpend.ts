@@ -1,4 +1,6 @@
+import { isSolana } from '@pancakeswap/chains'
 import { Currency, CurrencyAmount, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
+import { PublicKey } from '@solana/web3.js'
 import { BIG_INT_ZERO, MIN_BNB, MIN_SOL_RESERVER } from 'config/constants/exchange'
 
 type NullableCurrencyAmount = CurrencyAmount<Currency> | undefined
@@ -22,7 +24,10 @@ export function maxUnifiedAmountSpend<T extends NullableCurrencyAmount | Unified
   currencyAmount?: T,
 ): T {
   if (!currencyAmount) return undefined as T
-  if (!currencyAmount.currency?.isNative) {
+  const isNative = isSolana(currencyAmount.currency.chainId)
+    ? currencyAmount.currency.isNative || currencyAmount.currency.address === PublicKey.default.toBase58()
+    : currencyAmount.currency.isNative
+  if (!isNative) {
     return currencyAmount
   }
   if (currencyAmount.currency.symbol.toLowerCase() === 'sol' && currencyAmount.quotient > MIN_SOL_RESERVER) {

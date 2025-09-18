@@ -2,7 +2,7 @@ import { Protocol } from '@pancakeswap/farms'
 import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, Flex, FlexGap, MinusIcon, Text, useToast } from '@pancakeswap/uikit'
 import { displayApr } from '@pancakeswap/utils/displayApr'
-import { CurrencyLogo, NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
+import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { ToastDescriptionWithTx } from 'components/Toast'
 import { CHAIN_QUERY_NAME } from 'config/chains'
 import { PERSIST_CHAIN_KEY } from 'config/constants'
@@ -162,23 +162,22 @@ const V2PositionWithApr: React.FC<{
     const removeLiquidityUrl = `${baseUrl}/remove/${token0Address}/${token1Address}?${chainPersistQuery}`
     const migrateUrl = `/v2/migrate/${poolInfo.lpAddress}?${chainPersistQuery}`
 
+    const handleRemove = () => router.push(removeLiquidityUrl)
+    const handleAdd = () => router.push(addLiquidityUrl)
+    const handleMigrate = () => router.push(migrateUrl)
+
     const actions = (
       <FlexGap gap="8px" alignItems="center" justifyContent="flex-end">
-        <NextLinkFromReactRouter to={removeLiquidityUrl}>
-          <ActionButton isIcon onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-            <MinusIcon />
-          </ActionButton>
-        </NextLinkFromReactRouter>
-        <NextLinkFromReactRouter to={addLiquidityUrl}>
-          <ActionButton isIcon onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-            <AddIcon />
-          </ActionButton>
-        </NextLinkFromReactRouter>
+        <ActionButton isIcon onClick={handleRemove}>
+          <MinusIcon />
+        </ActionButton>
+
+        <ActionButton isIcon onClick={handleAdd}>
+          <AddIcon />
+        </ActionButton>
 
         {poolInfo.protocol === 'v2' && V2_MIGRATE_PAGE_SUPPORTED_CHAINS.includes(poolInfo.chainId) && (
-          <NextLinkFromReactRouter to={migrateUrl}>
-            <ActionButton onClick={(e: React.MouseEvent) => e.stopPropagation()}>{t('Migrate')}</ActionButton>
-          </NextLinkFromReactRouter>
+          <ActionButton onClick={handleMigrate}>{t('Migrate')}</ActionButton>
         )}
       </FlexGap>
     )
