@@ -23,31 +23,32 @@ export const SolanaV3Earnings = ({
     position,
   })
   const { isMobile } = useMatchBreakpoints()
+  const maxColumn = Math.max(breakdownRewardInfo.rewards.length, 2)
   return (
     <>
-      <Grid gridGap="8px" alignItems="flex-start" gridTemplateColumns={isMobile ? '1fr' : 'auto 1fr'}>
+      <Grid gridGap="8px" alignItems="flex-start" gridTemplateColumns={isMobile ? '1fr' : '80px 1fr'}>
         <DetailInfoLabel>{t('Farm Rewards')}:</DetailInfoLabel>
-        <Grid gridTemplateColumns={isMobile ? '1fr 1fr' : '2fr 2fr'} gridGap="8px">
+        <Grid gridTemplateColumns={isMobile ? '1fr 1fr' : `repeat(${maxColumn}, minmax(120px, 1fr))`} gridGap="8px">
           {breakdownRewardInfo.rewards.map((r, index) => (
             <EarningsWithToken
               key={index}
               currency={convertRawTokenInfoIntoSPLToken(r.mint as TokenInfo)}
               earningsAmount={Number(r.amount)}
               earningsUsd={Number(r.amountUSD)}
-              rowProps={{ justifyContent: 'space-between' }}
+              rowProps={{ justifyContent: isMobile ? 'space-between' : 'flex-end' }}
             />
           ))}
         </Grid>
       </Grid>
-      <Grid gridGap="8px" alignItems="flex-start" gridTemplateColumns={isMobile ? '1fr' : 'auto 1fr'}>
+      <Grid gridGap="8px" alignItems="flex-start" gridTemplateColumns={isMobile ? '1fr' : '90px 1fr'}>
         <DetailInfoLabel>{t('LP Fees')}: </DetailInfoLabel>
-        <Grid gridTemplateColumns={isMobile ? '1fr 1fr' : '2fr 2fr'} gridGap="8px">
+        <Grid gridTemplateColumns={isMobile ? '1fr 1fr' : `repeat(${maxColumn}, minmax(120px, 1fr))`} gridGap="8px">
           {breakdownRewardInfo.fee.A?.mint ? (
             <EarningsWithToken
               currency={convertRawTokenInfoIntoSPLToken(breakdownRewardInfo.fee.A?.mint as TokenInfo)}
               earningsAmount={Number(breakdownRewardInfo.fee.A?.amount)}
               earningsUsd={Number(breakdownRewardInfo.fee.A?.amountUSD)}
-              rowProps={{ justifyContent: 'space-between' }}
+              rowProps={{ justifyContent: isMobile ? 'space-between' : 'flex-end' }}
             />
           ) : null}
           {breakdownRewardInfo.fee.B?.mint ? (
@@ -55,7 +56,7 @@ export const SolanaV3Earnings = ({
               currency={convertRawTokenInfoIntoSPLToken(breakdownRewardInfo.fee.B?.mint as TokenInfo)}
               earningsAmount={Number(breakdownRewardInfo.fee.B?.amount)}
               earningsUsd={Number(breakdownRewardInfo.fee.B?.amountUSD)}
-              rowProps={{ justifyContent: 'space-between' }}
+              rowProps={{ justifyContent: isMobile ? 'space-between' : 'flex-end' }}
             />
           ) : null}
         </Grid>
