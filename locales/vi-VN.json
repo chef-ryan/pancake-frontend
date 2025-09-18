@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "Quyền bỏ phiếu được tính bằng số tiền đặt cọc và thời lượng đặt cọc còn lại của vị thế đặt cọc CAKE có thời hạn cố định tại khối.",
   "CAKE locked:": "CAKE đã khóa:",
   "Go to Pools": "Vào Quỹ",
-  "CAKE Emission Projection": "Dự tính phát xạ CAKE",
   "Boosted by vCAKE": "Được tăng cường bởi vCAKE",
   "Boosting Expired": "Tăng cường đã hết hạn",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "Tăng cường vCAKE đã hết hạn tại khối ảnh chụp nhanh. Hãy gia hạn vị thế đặt cọc thời hạn cố định của bạn để kích hoạt tăng cường cho các đề xuất bỏ phiếu trong tương lai.",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "Lỗi khi tạo quà tặng ${reason}",
   "Create Gift Successfully": "Tạo quà tặng thành công",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "Vừa gửi cho bạn %totalUsd%! 🎉 Hãy chạm vào liên kết này để nhận: 👉 %claimLink%\n\nVui lòng kết nối ví của bạn để nhận!\n\nHoặc, bạn có thể điền thủ công mã %code% trên ví PancakeSwap để nhận.",
-  "Introducing Pancake Gifts.": "Giới thiệu Pancake Gifts.",
-  "Gift Now": "Tặng quà ngay",
   "Chart Information": "Thông tin biểu đồ",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "Dữ liệu giá được hiển thị chỉ nhằm mục đích tham khảo và có thể không phản ánh chính xác giá giao dịch.",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "Biểu đồ này hiển thị dữ liệu giá tổng hợp từ nhiều nguồn. Số lượng đầu ra thực tế cho một yêu cầu hoán đổi hoặc giá từ một quỹ PancakeSwap cụ thể có thể sẽ khác.",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "Giờ đây, bạn có thể kiếm phần thưởng trên cả Incentra và Farms đồng thời.",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "Stake token LP của bạn trong Farm và tích lũy cả phần thưởng từ Incentra và Farm.",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "Nhận phần thưởng Farm của bạn trên PancakeSwap và phần thưởng Incentra của bạn trên",
-  "Incentra's website": "trang web của Incentra"
+  "Incentra's website": "trang web của Incentra",
+  "CAKE Burn Dashboard": "Bảng điều khiển đốt CAKE",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Cảnh báo: <0>%token%</0> hiện chưa được xác minh. Luôn xác nhận địa chỉ và tự nghiên cứu trước khi giao dịch hoặc tương tác với pool này.",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Giao dịch Binance Alpha Token để giành chiến thắng $250,000.",
+  "Trade with Social Login to Win $15,000": "Giao dịch bằng đăng nhập xã hội để giành chiến thắng $15,000",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "Biến LP thành sức mạnh vay. Nhận lisUSD ngay lập tức!",
+  "Borrow Here": "Vay tại đây"
 }

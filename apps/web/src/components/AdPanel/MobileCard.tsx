@@ -1,7 +1,7 @@
 import { BoxProps, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { AdPlayer } from './AdPlayer'
 import { StaticContainer } from './StaticContainer'
-import { AdPlayerProps } from './types'
+import { AdPlayerProps } from './ads.types'
 import { useShowAdPanel } from './useShowAdPanel'
 
 interface MobileCardProps extends BoxProps, AdPlayerProps {

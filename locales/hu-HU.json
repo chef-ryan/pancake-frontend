@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "A szavazati erő kiszámítása a tét összegének és a blokkban lévő, határozott idejű CAKE tét pozíció hátralévő tét időtartamának felhasználásával történik.",
   "CAKE locked:": "Zárolt CAKE:",
   "Go to Pools": "Ugrás ide: Összevont alapok",
-  "CAKE Emission Projection": "CAKE kibocsátás tippelése",
   "Boosted by vCAKE": "A vCAKE által felturbózva",
   "Boosting Expired": "Gyorsítás Lejárt",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "A vCAKE felturbózása lejárt a pillanatképblokkban. Újítsa meg határozott idejű tétpozícióját, hogy a jövőbeni szavazási javaslatoknál aktiválhassa a turbózást.",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "Ajándéklétrehozási hiba ${reason}",
   "Create Gift Successfully": "Ajándék létrehozása sikeres",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "Most kaptál: %totalUsd%! 🎉 Koppints erre a linkre és igényeld: 👉 %claimLink%\n\nAz igényléshez csatlakoztasd a tárcádat!\n\nAz igényléshez akár manuálisan is beírhatod a kódot: %code% on PancakeSwap-tárcába.",
-  "Introducing Pancake Gifts.": "Bemutatjuk a Pancake ajándékokat.",
-  "Gift Now": "Ajándék most",
   "Chart Information": "Táblázatinformáció",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "A megjelenített áradatok csak tájékoztató jellegűek, és nem feltétlenül tükrözik a pontos kereskedési árakat.",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "Ez a táblázat több forrásból származó összesített áradatokat mutat. A cserekérelemhez tartozó, tényleges kimeneti összegek vagy egy adott PancakeSwap-alap árai eltérőek lehetnek.",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "Mostantól egyidejűleg szerezhetők jutalmak az Incentra és a Farms felületeken.",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "Stakeld LP tokenedet a Farmon, és halmozz fel Incentra és Farm jutalmakat is.",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "Igényeld Farm jutalmaidat a PancakeSwapon, Incentra jutalmaidat pedig",
-  "Incentra's website": "Incentra weboldalán"
+  "Incentra's website": "Incentra weboldalán",
+  "CAKE Burn Dashboard": "CAKE Égetési Irányítópult",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Figyelem: A(z) <0>%token%</0> jelenleg nem ellenőrzött. Mindig erősítse meg a címet, és végezzen saját kutatást, mielőtt kereskedne vagy interakcióba lépne ezzel a poollal.",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Kereskedj Binance Alpha Tokenekkel és nyerj 250 000 $-t.",
+  "Trade with Social Login to Win $15,000": "Kereskedj közösségi bejelentkezéssel, és nyerj 15 000 $-t.",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "Alakítsd át LP-det Kölcsönzési Erővé. Szerezz lisUSD-t azonnal!",
+  "Borrow Here": "Kölcsönözz itt"
 }

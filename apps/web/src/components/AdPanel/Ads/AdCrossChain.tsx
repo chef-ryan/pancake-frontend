@@ -4,7 +4,7 @@ import { ASSET_CDN } from 'config/constants/endpoints'
 import { BodyText } from '../BodyText'
 import { AdButton } from '../Button'
 import { AdCard } from '../Card'
-import { AdPlayerProps } from '../types'
+import { AdPlayerProps } from '../ads.types'
 
 const learnMoreLink =
   'https://blog.pancakeswap.finance/articles/crosschain-swaps?utm_source=Website&utm_medium=banner&utm_campaign=homepage&utm_id=Crosschain'

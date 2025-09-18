@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "O poder de votação é calculado usando o valor em stake e o prazo restante do stake da posição em stake CAKE de prazo fixo no bloco.",
   "CAKE locked:": "CAKE bloqueado:",
   "Go to Pools": "Vá para Pools",
-  "CAKE Emission Projection": "Projeção de emissão de CAKE",
   "Boosted by vCAKE": "Impulsionado por vCAKE",
   "Boosting Expired": "Impulso Expirado",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "Seu impulso vCAKE expirou no bloco do snapshot. Renove sua posição em stake de prazo fixo para ativar o impulso para futuras propostas de votação.",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "Erro ao criar presente: ${reason}",
   "Create Gift Successfully": "Presente criado com sucesso",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "Acabei de enviar %totalUsd%! 🎉 Toque neste link para resgatar: 👉 %claimLink%\n\nConecte sua carteira para fazer o resgate!\n\nComo alternativa, você pode inserir manualmente o código %code% na carteira PancakeSwap para resgatar.",
-  "Introducing Pancake Gifts.": "Apresentando os Presentes Pancake.",
-  "Gift Now": "Presentear agora",
   "Chart Information": "Mais informações",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "Os dados de preço exibidos são apenas para referência e podem não refletir os valores exatos de negociação.",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "Este gráfico mostra dados de preço agregados de várias fontes. Os valores reais para uma solicitação de swap ou os preços de uma pool específica do PancakeSwap podem variar.",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "Incentivos agora podem ser ganhos tanto na Incentra quanto nas Farms ao mesmo tempo.",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "Faça stake do seu token LP na Farm e acumule recompensas tanto da Incentra quanto da Farm.",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "Resgate suas recompensas da Farm na PancakeSwap e suas recompensas da Incentra em",
-  "Incentra's website": "site da Incentra"
+  "Incentra's website": "site da Incentra",
+  "CAKE Burn Dashboard": "Dashboard de Queima de CAKE",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Atenção: <0>%token%</0> não foi verificado. Sempre confirme o endereço e faça sua própria pesquisa antes de negociar ou interagir com esta pool.",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Negocie Tokens Alpha Binance para Ganhar $250.000.",
+  "Trade with Social Login to Win $15,000": "Negocie com Login Social para Ganhar $15.000",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "Transforme LP em Poder de Empréstimo. Obtenha lisUSD Instantaneamente!",
+  "Borrow Here": "Empreste Aqui"
 }

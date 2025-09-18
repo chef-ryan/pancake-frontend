@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "投票パワーは、ステーキング量とブロックの定期CAKEステーキングポジションの残りのステーキング期間を使用して計算されます。",
   "CAKE locked:": "ロック中のCAKE：",
   "Go to Pools": "プールに移動",
-  "CAKE Emission Projection": "CAKE排出量の予測",
   "Boosted by vCAKE": "vCAKEで強化",
   "Boosting Expired": "強化が期限切れになりました",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "vCAKE強化はスナップショットブロックで期限切れになりました。定期ステーキングポジションを更新して、今後の投票提案の強化を有効にしてください。",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "ギフト作成エラー：${reason}",
   "Create Gift Successfully": "ギフトを作成しました",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "あなたに%totalUsd%を送りました！🎉 このリンクをタップして受け取ってください：👉 %claimLink%\n\n受け取るにはウォレットを接続してください！\n\nまたは、PancakeSwapウォレットでコード「%code%」を手動で入力して受け取ることもできます。",
-  "Introducing Pancake Gifts.": "Pancakeギフトのご紹介。",
-  "Gift Now": "今すぐ贈る",
   "Chart Information": "チャート情報",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "表示されている価格データは参考目的のみであり、実際の取引価格を正確に反映していない可能性があります。",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "このチャートは複数のソースからの統合価格データを表示しています。スワップリクエストの実際の出力量や特定のPancakeSwapプールからの価格は異なる場合があります。",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "IncentraとFarmsの両方で、同時にインセンティブを獲得できるようになりました。",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "FarmにLPトークンをステーキングすると、IncentraとFarmの両方の報酬を獲得できます。",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "Farm報酬はPancakeSwapで、Incentra報酬は",
-  "Incentra's website": "Incentraのウェブサイトで請求してください。"
+  "Incentra's website": "Incentraのウェブサイトで請求してください。",
+  "CAKE Burn Dashboard": "CAKEバーンダッシュボード",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "注意：<0>%token%</0> は現在未認証です。取引またはこのプールとやり取りする前に、必ずアドレスを確認し、ご自身で調査を行ってください。",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Binance Alphaトークンをトレードして$250,000を獲得しましょう。",
+  "Trade with Social Login to Win $15,000": "ソーシャルログインでトレードして$15,000を獲得しましょう",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "LPを担保に借入力を強化。lisUSDを即座に獲得！",
+  "Borrow Here": "こちらで借りる"
 }

@@ -18,6 +18,9 @@
   "extendedTranslationFiles": [
     "packages/localization/src/config/translation.extend.json"
   ],
+  "external": [
+    "https://proofs.pancakeswap.com/cms-config/ads-config.json"
+  ],
   "translationDir": "locales",
   "languages": [
     "ar-SA",

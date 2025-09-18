@@ -187,7 +187,12 @@ export const useAddMevRpc = (onSuccess?: () => void, onBeforeStart?: () => void,
 
 export async function getWalletType(connector?: Connector, mevParam?: string | null): Promise<WalletType> {
   if (!connector || typeof connector.getProvider !== 'function') return WalletType.mevNotSupported
-  const provider = (await connector.getProvider()) as any
+  let provider = (await connector.getProvider()) as any
+
+  // If Privy's Smart Account connector is used, we need the inside walletProvider
+  if (provider && provider?.walletProvider) {
+    provider = provider.walletProvider
+  }
 
   // check WalletConnect + supported wallets
   if (provider.isWalletConnect) {

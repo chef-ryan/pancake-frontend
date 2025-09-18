@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "Röststyrkan beräknas med hjälp av insatsbeloppet och den återstående insatstiden för den tidsbegränsade CAKE-insatsen i blocket.",
   "CAKE locked:": "CAKE låst:",
   "Go to Pools": "Gå till Pools",
-  "CAKE Emission Projection": "CAKE-emissionsprognos",
   "Boosted by vCAKE": "Boostad av vCAKE",
   "Boosting Expired": "Boostingen har upphört",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "Din vCAKE-boosting löpte ut vid snapshot-blocket. Förnya din tidsbegränsade insatsposition för att aktivera boosten för framtida röstningsförslag.",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "Fel när gåva skapades ${reason}",
   "Create Gift Successfully": "Gåva skapad",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "Har just skickat %totalUsd% till dig! 🎉 Klicka på den här länken för att lösa in: 👉 %claimLink%\n\nAnslut din plånbok för att lösa in!\n\nAlternativt kan du ange koden %code% manuellt i PancakeSwap-plånboken för att lösa in.",
-  "Introducing Pancake Gifts.": "Vi presenterar Pancake-gåvor.",
-  "Gift Now": "Ge bort nu",
   "Chart Information": "Diagraminformation",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "Prisuppgifterna som visas är endast referensvärden och kanske inte återspeglar de exakta handelspriserna.",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "Diagrammet visar aggregerade prisdata från flera källor. De faktiska utgångsbeloppen för en swapbegäran eller priserna från en specifik PancakeSwap-pool kan variera.",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "Incitament kan nu tjänas på BÅDE Incentra och Farms samtidigt.",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "Staka dina LP-token i Farmen och ackumulera både Incentra- och Farm-belöningar.",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "Hämta ut dina Farm-belöningar på PancakeSwap och dina Incentra-belöningar på",
-  "Incentra's website": "Incentras webbplats"
+  "Incentra's website": "Incentras webbplats",
+  "CAKE Burn Dashboard": "CAKE Burn-översikt",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Varning: <0>%token%</0> är för närvarande overifierad. Bekräfta alltid adressen och gör din egen efterforskning innan du handlar eller interagerar med denna pool.",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Handla Binance Alpha Tokens för att vinna $250 000.",
+  "Trade with Social Login to Win $15,000": "Handla med Social Login för att vinna $15 000.",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "Omvandla LP till Lånekraft. Få lisUSD Omedelbart!",
+  "Borrow Here": "Låna här"
 }

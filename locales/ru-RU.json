@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "Влияние в голосовании рассчитывается по сумме вложения и оставшейся продолжительности позиции вложения CAKE с фиксированным сроком в блоке.",
   "CAKE locked:": "CAKE заблокированы:",
   "Go to Pools": "Перейти к пулам",
-  "CAKE Emission Projection": "Прогноз эмиссии CAKE",
   "Boosted by vCAKE": "Усилено через vCAKE",
   "Boosting Expired": "Срок усиления истек",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "Срок усиления vCAKE в блоке снимка истек. Чтобы активировать усиление для будущих предложений по голосованию, возобновите позицию вложения с фиксированным сроком.",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "Ошибка создания подарка: ${reason}",
   "Create Gift Successfully": "Подарок успешно создан",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "Я только что прислал(-ла) тебе %totalUsd%! 🎉 Нажми на эту ссылку, чтобы получить подарок: 👉 %claimLink%\n\nПодключи свой кошелек, чтобы завершить получение!\n\nИли введи вручную код %code% в кошельке PancakeSwap.",
-  "Introducing Pancake Gifts.": "Представляем Pancake Gifts.",
-  "Gift Now": "Подарить сейчас",
   "Chart Information": "Данные графика",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "Показанные ценовые данные приведены только для ознакомления и могут не отражать точные цены торгов.",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "На этом графике показаны сводные данные о цене из разных источников. Фактическая сумма по запросу на обмен или цены в конкретном пуле PancakeSwap могут быть другими.",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "Теперь инсентивы можно получать одновременно и на Incentra, и на Фермах.",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "Застейкайте свой LP токен на Ферме и накапливайте награды Incentra и Фермы.",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "Заберите свои награды Фермы на PancakeSwap, а награды Incentra — на",
-  "Incentra's website": "веб-сайте Incentra"
+  "Incentra's website": "веб-сайте Incentra",
+  "CAKE Burn Dashboard": "Панель сжигания CAKE",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Внимание: <0>%token%</0> в настоящее время не верифицирован. Всегда подтверждайте адрес и проводите собственное исследование перед торговлей или взаимодействием с этим пулом.",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Торгуйте токенами Binance Alpha, чтобы выиграть $250 000.",
+  "Trade with Social Login to Win $15,000": "Торгуйте с помощью социального входа и выиграйте $15 000",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "Превратите LP в залоговую мощность. Получите lisUSD мгновенно!",
+  "Borrow Here": "Занять здесь"
 }

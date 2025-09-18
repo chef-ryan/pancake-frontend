@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "Kekuatan suara dihitung dengan menggunakan jumlah penumpukan dan sisa durasi penumpukan dari posisi penumpukan CAKE termin tetap di blok tersebut.",
   "CAKE locked:": "CAKE terkunci:",
   "Go to Pools": "Pergi ke Pool",
-  "CAKE Emission Projection": "Proyeksi Emisi CAKE",
   "Boosted by vCAKE": "Ditingkatkan dengan vCAKE",
   "Boosting Expired": "Peningkatan Kedaluwarsa",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "Peningkatan vCAKE Anda telah kedaluwarsa di blok snapshot. Perbarui posisi penumpukan termin tetap Anda guna mengaktifkan peningkatan untuk proposal pemberian suara di masa mendatang.",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "Eror Pembuatan Kado ${reason}",
   "Create Gift Successfully": "Pembuatan Kado Berhasil",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "Baru saja mengirimkan %totalUsd% kepada Anda! 🎉 Ketuk tautan ini untuk mengklaimnya: 👉 %claimLink%\n\nHubungkan dompet Anda untuk mengklaimnya!\n\nAtau, Anda dapat memasukkan kode %code% secara manual di dompet PancakeSwap untuk mengklaim.",
-  "Introducing Pancake Gifts.": "Memperkenalkan Kado Pancake.",
-  "Gift Now": "Beri Kado Sekarang",
   "Chart Information": "Informasi Bagan",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "Data harga yang ditampilkan hanya untuk referensi dan mungkin tidak mencerminkan harga perdagangan yang sebenarnya.",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "Bagan ini menampilkan data harga agregat dari berbagai sumber. Jumlah output aktual untuk permintaan pertukaran atau harga dari pool PancakeSwap tertentu mungkin berbeda.",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "Insentif kini dapat diperoleh di KEDUA Incentra dan Farm secara bersamaan.",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "Stake token LP Anda di Farm dan dapatkan hadiah Incentra serta Farm.",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "Klaim hadiah Farm Anda di PancakeSwap dan hadiah Incentra Anda di",
-  "Incentra's website": "situs web Incentra"
+  "Incentra's website": "situs web Incentra",
+  "CAKE Burn Dashboard": "Dashboard Pembakaran CAKE",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Perhatian: <0>%token%</0> saat ini belum terverifikasi. Selalu konfirmasi alamat dan lakukan riset Anda sendiri sebelum melakukan trading atau berinteraksi dengan pool ini.",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Tradingkan Token Binance Alpha untuk Memenangkan $250.000.",
+  "Trade with Social Login to Win $15,000": "Trading dengan Login Sosial untuk Memenangkan $15.000",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "Ubah LP menjadi Daya Pinjam. Dapatkan lisUSD Seketika!",
+  "Borrow Here": "Pinjam Di Sini"
 }

@@ -1,37 +1,24 @@
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useTradingCompetitionAds } from 'components/AdPanel/Ads/AdTradingCompetition'
-import { AdsIds, useAdsConfigs } from 'components/AdPanel/hooks/useAdsConfig'
 import { useMemo } from 'react'
-import { AdCommon } from './Ads/AdCommon'
 import { AdCrossChain } from './Ads/AdCrossChain'
 import { AdIfo } from './Ads/AdIfo'
 import { AdPCSX } from './Ads/AdPCSX'
 import { AdSolana } from './Ads/AdSolana'
 import { AdSpringboard } from './Ads/AdSpringboard'
 import { ExpandableAd } from './Expandable/ExpandableAd'
-import { AdSlide, Priority } from './types'
+import { AdSlide, Priority } from './ads.types'
 import { useShouldRenderAdIfo } from './useShouldRenderAdIfo'
+import { useJsonAdsConfig } from './hooks/useJsonAdsConfig'
+
+const JSON_ADS_URL = 'https://proofs.pancakeswap.com/cms-config/ads-config.json'
 
 export const useAdConfig = () => {
   const { isDesktop } = useMatchBreakpoints()
   const MAX_ADS = isDesktop ? 6 : 4
   const shouldRenderAdIfo = useShouldRenderAdIfo()
-  const configs = useAdsConfigs()
   const tradingCompetitionAds = useTradingCompetitionAds()
-  const commonAdConfigs = useMemo(() => {
-    return Object.entries(configs)
-      .map(([key, value]) => {
-        if (value.ad) {
-          return {
-            id: value.id,
-            component: <AdCommon id={key as AdsIds} />,
-            priority: value.priority || undefined,
-          }
-        }
-        return undefined
-      })
-      .filter(Boolean) as { id: string; component: JSX.Element; priority?: number }[]
-  }, [configs])
+  const jsonAdsList = useJsonAdsConfig(JSON_ADS_URL)
 
   const adList: Array<AdSlide> = useMemo(
     () => [
@@ -40,7 +27,7 @@ export const useAdConfig = () => {
         component: <ExpandableAd />,
         priority: Priority.FIRST_AD,
       },
-      ...commonAdConfigs,
+      ...jsonAdsList,
       {
         id: 'ad-cross-chain',
         component: <AdCrossChain />,
@@ -65,7 +52,7 @@ export const useAdConfig = () => {
         component: <AdPCSX />,
       },
     ],
-    [shouldRenderAdIfo, commonAdConfigs, tradingCompetitionAds],
+    [shouldRenderAdIfo, tradingCompetitionAds, jsonAdsList],
   )
 
   return useMemo(

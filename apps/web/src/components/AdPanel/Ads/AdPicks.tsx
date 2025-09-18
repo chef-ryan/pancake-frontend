@@ -17,7 +17,7 @@ import { AdTag } from '../AdTag'
 import { BodyText } from '../BodyText'
 import { AdCard } from '../Card'
 import { PickBaseCoin } from '../PickBaseCoin'
-import { PickConfig } from '../types'
+import { PickConfig } from '../ads.types'
 
 const usePicksData = (poolId: `0x{string}`, chain: string) => {
   const chainId = getChainId(chain)!

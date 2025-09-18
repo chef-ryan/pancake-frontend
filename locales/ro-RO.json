@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "Poziția de vot este calculată folosind suma stakingului și durata de staking rămasă a următoarei poziții de staking de CAKE pe termen fix la blocare.",
   "CAKE locked:": "CAKE blocat:",
   "Go to Pools": "Accesează portofoliile",
-  "CAKE Emission Projection": "Proiecție a emisiunilor CAKE",
   "Boosted by vCAKE": "Amplificat de vCAKE",
   "Boosting Expired": "Amplificare expirată",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "Amplificarea ta vCAKE a expirat la blocarea instantaneului. Reînnoiește poziția de staking pe termen fix pentru a activa amplificatorul pentru propuneri de vot viitoare.",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "Eroare la crearea cadoului ${reason}",
   "Create Gift Successfully": "Creare cadou reușită",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "Tocmai ți-am trimis %totalUsd%! 🎉 Atinge acest link pentru a-l revendica: 👉 %claimLink%\n\nConectează-te la portofel pentru a-l revendica!\n\nAlternativ, poți introduce manual codul %code% în portofelul PancakeSwap pentru a-l revendica.",
-  "Introducing Pancake Gifts.": "Introducerea cadourilor Pancake.",
-  "Gift Now": "Trimite un cadou acum",
   "Chart Information": "Informații despre grafice",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "Datele despre preț afișate sunt furnizate doar ca referință și este posibil să nu reflecte prețurile exacte de tranzacționare.",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "Acest grafic afișează date agregate despre prețuri din mai multe surse. Sumele de ieșire reale pentru o solicitare de schimbare sau prețurile dintr-un anumit portofoliu PancakeSwap pot diferi.",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "Recompensele pot fi acum câștigate atât pe Incentra, cât și pe Farms în același timp.",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "Stachează-ți token-ul LP în Farm și acumulează recompense atât de la Incentra, cât și de la Farm.",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "Revendică-ți recompensele de la Farm pe PancakeSwap și recompensele tale de la Incentra pe",
-  "Incentra's website": "site-ul Incentra"
+  "Incentra's website": "site-ul Incentra",
+  "CAKE Burn Dashboard": "Tablou de Bord Arderea CAKE",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Atenție: <0>%token%</0> este momentan neverificat. Confirmați întotdeauna adresa și efectuați-vă propriile cercetări înainte de a tranzacționa sau interacționa cu acest pool.",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Tranzacționează Tokenuri Binance Alpha pentru a câștiga $250.000.",
+  "Trade with Social Login to Win $15,000": "Tranzacționează cu Conectare Socială pentru a câștiga $15.000",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "Transformă LP în Putere de Împrumut. Obține lisUSD Instant!",
+  "Borrow Here": "Împrumută Aici"
 }

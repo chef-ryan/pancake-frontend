@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "投票权根据区块中固定期限 CAKE 质押持仓的质押金额和剩余质押时长计算得出。",
   "CAKE locked:": "已锁仓 CAKE:",
   "Go to Pools": "前往糖浆池",
-  "CAKE Emission Projection": "CAKE 产出量预测",
   "Boosted by vCAKE": "由 vCAKE 助推",
   "Boosting Expired": "助推已过期",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "快照区块当时您的 vCAKE 加权已结束。请更新您的锁仓质押仓位，您将享有投票权加权并在未来的投票提案中使用。",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "创建礼物时出错 ${reason}",
   "Create Gift Successfully": "成功创建礼物",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "刚刚向您发送了 %totalUsd%！🎉 点按此链接来领取：👉 %claimLink%\n\n请关联您的钱包来领取！\n\n或者，您也可以在 PancakeSwap 钱包上手动输入代码 %code% 来领取。",
-  "Introducing Pancake Gifts.": "隆重推出 Pancake 礼物。",
-  "Gift Now": "立即赠送礼物",
   "Chart Information": "图表信息",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "显示的价格数据仅供参考，可能无法反映确切的交易价格。",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "此图表显示多个来源的汇总价格数据。兑换请求的实际输出金额或特定 PancakeSwap 糖浆池中的价格可能有所不同。",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "您现在可以同时在 Incentra 和 Farms 赚取奖励。",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "在 Farm 中质押您的 LP 代币，即可同时获得 Incentra 和 Farm 奖励。",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "在 PancakeSwap 领取您的 Farm 奖励，Incentra 奖励请前往",
-  "Incentra's website": "Incentra 的网站领取。"
+  "Incentra's website": "Incentra 的网站领取。",
+  "CAKE Burn Dashboard": "CAKE 销毁仪表盘",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "注意：<0>%token%</0> 目前未经审核。在交易或与此资金池交互前，请务必确认地址并进行您的尽职调查。",
+  "Trade Binance Alpha Tokens to Win $250,000.": "交易 Binance Alpha 代币，赢取 $250,000。",
+  "Trade with Social Login to Win $15,000": "通过社交登录进行交易，赢取 $15,000",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "将 LP 转化为借贷能力。即刻获取 lisUSD！",
+  "Borrow Here": "在此借款"
 }

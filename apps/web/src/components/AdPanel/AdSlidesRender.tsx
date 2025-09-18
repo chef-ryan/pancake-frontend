@@ -3,7 +3,7 @@ import { cloneElement, RefObject, useCallback, useEffect, useRef } from 'react'
 import { Autoplay, EffectFade, Pagination } from 'swiper/modules'
 import { SwiperRef, SwiperSlide } from 'swiper/react'
 import { StyledSwiper } from './CarrouselWithSlider'
-import { AdSlide } from './types'
+import { AdSlide } from './ads.types'
 import { useIsSlideExpanded } from './useIsSlideExpanded'
 
 export const AdSlidesRender = ({

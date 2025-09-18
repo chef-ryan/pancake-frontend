@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "區塊中的投票權將取決於定期 CAKE 質押部位的質押數量和剩餘時間。",
   "CAKE locked:": "已鎖倉 CAKE:",
   "Go to Pools": "前往糖漿池",
-  "CAKE Emission Projection": "CAKE 產出量預測",
   "Boosted by vCAKE": "已由 vCAKE 助推",
   "Boosting Expired": "助推已到期",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "在快照區塊當下時您的 vCAKE 加權到期結束。請更新您的鎖倉倉位，以在未來投票時享有經過加權倍增的投票權。",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "建立禮物錯誤 ${reason}",
   "Create Gift Successfully": "成功建立禮物",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "剛剛傳送了 %totalUsd% 給您！🎉 點選以下連結領取 👉 %claimLink%\n\n請連結您的錢包以領取！\n\n您也可以在 PancakeSwap 錢包中手動輸入代碼 %code% 進行領取。",
-  "Introducing Pancake Gifts.": "Pancake 禮物功能登場。",
-  "Gift Now": "立即贈禮",
   "Chart Information": "圖表資訊",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "顯示的價格資料僅供參考，可能與實際成交價格有所出入。",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "本圖表顯示來自多個來源的彙整價格資料。實際交換請求的結果或特定 PancakeSwap 流動性池的價格可能有所不同。",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "現在可以同時在 Incentra 和 Farms 賺取獎勵。",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "將您的 LP 代幣質押在 Farm 中，即可同時獲得 Incentra 和 Farm 兩者的獎勵。",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "在 PancakeSwap 上領取您的 Farm 獎勵，以及在",
-  "Incentra's website": "Incentra 的網站"
+  "Incentra's website": "Incentra 的網站",
+  "CAKE Burn Dashboard": "CAKE 銷毀儀表板",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "注意：<0>%token%</0> 目前尚未驗證。在進行交易或與此資金池互動之前，請務必確認地址並自行研究。",
+  "Trade Binance Alpha Tokens to Win $250,000.": "交易 Binance Alpha 代幣，贏取 $250,000。",
+  "Trade with Social Login to Win $15,000": "使用社群登入交易，贏取 $15,000",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "將 LP 轉換為借貸能力。立即獲取 lisUSD！",
+  "Borrow Here": "立即借貸"
 }

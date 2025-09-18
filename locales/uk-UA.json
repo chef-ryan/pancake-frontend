@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "Вплив на голосування розраховується за сумою стейкінгу й залишковою тривалістю позиції стейкінгу CAKE з фіксованим терміном у блоці.",
   "CAKE locked:": "Заблоковано CAKE:",
   "Go to Pools": "Перейти до пулів",
-  "CAKE Emission Projection": "Прогноз емісії CAKE",
   "Boosted by vCAKE": "Застосовано буст через vCAKE",
   "Boosting Expired": "Термін дії бусту завершився",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "Термін дії бусту vCAKE у блоці знімка завершився. Щоб активувати буст для майбутніх пропозицій щодо голосування, поновіть позицію стейкінгу з фіксованим терміном.",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "Помилка створення подарунка: ${reason}",
   "Create Gift Successfully": "Подарунок успішно створено",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "Я щойно надіслав(-ла) тобі %totalUsd%! 🎉 Натисни на це посилання, щоб отримати подарунок: 👉 %claimLink%\n\nПід'єднай свій гаманець, щоб завершити отримання!\n\nАбо введи вручну код %code% у гаманці PancakeSwap.",
-  "Introducing Pancake Gifts.": "Представляємо Pancake Gifts.",
-  "Gift Now": "Подарувати зараз",
   "Chart Information": "Дані графіка",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "Показані цінові дані наведено лише для ознайомлення і вони можуть не відображати точні ціни торгів.",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "На цьому графіку показано зведені дані про ціну з різних джерел. Фактична сума за запитом на обмін або ціни в конкретному пулі PancakeSwap можуть бути іншими.",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "Винагороди тепер можна отримувати ОДНОЧАСНО як на Incentra, так і на Фермах.",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "Стейкайте свій LP токен на Фермі та отримуйте як винагороди Incentra, так і винагороди Ферми.",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "Заклейміть свої винагороди Ферми на PancakeSwap, а винагороди Incentra – на",
-  "Incentra's website": "вебсайті Incentra"
+  "Incentra's website": "вебсайті Incentra",
+  "CAKE Burn Dashboard": "Дашборд спалювання CAKE",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Увага: <0>%token%</0> наразі не верифікований. Завжди перевіряйте адресу та проводьте власне дослідження перед торгівлею або взаємодією з цим пулом.",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Торгуйте токенами Binance Alpha, щоб виграти $250 000.",
+  "Trade with Social Login to Win $15,000": "Торгуйте за допомогою соціального входу, щоб виграти $15 000",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "Перетворіть LP на позикову потужність. Отримайте lisUSD миттєво!",
+  "Borrow Here": "Позичити тут"
 }

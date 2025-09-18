@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "Äänestysvalta lasketaan käyttämällä panostussummaa ja kiinteän CAKE-panostusposition jäljellä olevaa kestoa lohkossa.",
   "CAKE locked:": "CAKE lukittu:",
   "Go to Pools": "Siirry Pooleihin",
-  "CAKE Emission Projection": "CAKE-päästöennuste",
   "Boosted by vCAKE": "vCAKEn tehostama",
   "Boosting Expired": "Tehostus päättynyt",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "vCAKE-tehostuksesi päättyi tilannekuvalohkossa. Uudista kiinteä panostuspositiosi tehostuksen aktivoimiseksi tulevissa äänestysehdotuksissa.",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "Virhe lahjan luomisessa ${reason}",
   "Create Gift Successfully": "Lahja luotiin",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "Lähetti sinulle juuri %totalUsd%! 🎉 Lunasta se napauttamalla tätä linkkiä: 👉 %claimLink%\n\nYhdistä lompakkosi sen lunastamiseksi!\n\nVaihtoehtoisesti voit lunastaa sen syöttämällä koodin %code% manuaalisesti PancakeSwap-lompakossa.",
-  "Introducing Pancake Gifts.": "Esittelyssä PancakeSwap-lahjat.",
-  "Gift Now": "Anna lahja nyt",
   "Chart Information": "Kaaviotiedot",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "Näytetyt hintatiedot ovat vain viitteellisiä eivätkä välttämättä vastaa kaupankäyntihintoja.",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "Tämä kaavio näyttää kootut hintatiedot useista lähteistä. Todelliset lähtösummat vaihtopyynnöissä tai hinnat tietystä PancakeSwap-poolista voivat poiketa.",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "Kannustimia voi nyt ansaita sekä Incentrasta että Farmeilta samanaikaisesti.",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "Steikkaa LP-tokenisi Farmiin ja kerrytä sekä Incentra- että Farm-palkintoja.",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "Lunasta Farm-palkintosi PancakeSwapissa ja Incentra-palkintosi osoitteessa",
-  "Incentra's website": "Incentran verkkosivusto"
+  "Incentra's website": "Incentran verkkosivusto",
+  "CAKE Burn Dashboard": "CAKE Polttokoontinäyttö",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Varoitus: <0>%token%</0> on tällä hetkellä vahvistamaton. Varmista aina osoite ja tee oma tutkimuksesi ennen kuin käyt kauppaa tai olet vuorovaikutuksessa tämän poolin kanssa.",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Käy kauppaa Binance Alpha Tokensilla ja voita 250 000 $.",
+  "Trade with Social Login to Win $15,000": "Käy kauppaa sosiaalisella kirjautumisella ja voita 15 000 $",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "Muuta LP lainavoimaksi. Hanki lisUSD välittömästi!",
+  "Borrow Here": "Lainaa täältä"
 }

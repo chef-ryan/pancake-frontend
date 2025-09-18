@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "आपकी वोटिंग पावर स्टेकिंग राशि और ब्लॉक पर निश्चित अवधि की CAKE स्टेकिंग पोजीशन पर बची हुई स्टेकिंग अवधि से निर्धारित होती है।",
   "CAKE locked:": "CAKE लॉक किया गया:",
   "Go to Pools": "पूल पर जाएं",
-  "CAKE Emission Projection": "CAKE एमिशन प्रोजेक्शन",
   "Boosted by vCAKE": "vCAKE द्वारा बूस्ट किया गया",
   "Boosting Expired": "बूस्ट करने का समय समाप्त हुआ",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "स्नैपशॉट ब्लॉक पर आपकी vCAKE बूस्टिंग का समय समाप्त हुआ। भविष्य के वोटिंग प्रस्तावों के लिए बूस्ट को सक्रिय करने के लिए अपनी निश्चित अवधि की स्टेकिंग पोजीशन को नवीनीकृत करें।",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "उपहार बनाने में त्रुटि ${reason}",
   "Create Gift Successfully": "उपहार बनाना सफल रहा",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "अभी आपको %totalUsd% भेजा है! 🎉 इस लिंक पर टैप करें और इसे क्लेम करें: 👉 %claimLink%\n\nइसे क्लेम करने के लिए कृपया अपना वॉलेट कनेक्ट करें!\n\nइसके अलावा, आप क्लेम करने के लिए PancakeSwap वॉलेट पर मैन्युअल रूप से कोड %code% भी डाल सकते हैं।",
-  "Introducing Pancake Gifts.": "Pancake उपहार पेश किए जा रहे हैं।",
-  "Gift Now": "अभी उपहार दें",
   "Chart Information": "चार्ट की जानकारी",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "प्रदर्शित कीमत डेटा केवल संदर्भ के लिए है और हो सकता है कि यह सटीक ट्रेडिंग कीमतों को न दर्शाएं।",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "यह चार्ट कई स्रोतों से एकत्रित कीमत डेटा दिखाता है। किसी स्वैप अनुरोध की वास्तविक आउटपुट राशियां या किसी खास PancakeSwap पूल की कीमतें अलग हो सकती हैं।",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "अब Incentra और Farms दोनों पर एक ही साथ इन्सेंटिव्स कमाए जा सकते हैं।",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "अपने LP टोकन को Farm में स्टेक करें और Incentra तथा Farm दोनों रिवॉर्ड्स प्राप्त करें।",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "अपने Farm रिवॉर्ड्स PancakeSwap पर क्लेम करें और अपने Incentra रिवॉर्ड्स",
-  "Incentra's website": "Incentra की वेबसाइट पर"
+  "Incentra's website": "Incentra की वेबसाइट पर",
+  "CAKE Burn Dashboard": "CAKE बर्न डैशबोर्ड",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "सावधान: <0>%token%</0> वर्तमान में असत्यापित है। इस पूल के साथ ट्रेड या इंटरैक्ट करने से पहले पते की हमेशा पुष्टि करें और अपना स्वयं का शोध करें।",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Binance अल्फा टोकन ट्रेड करें और $250,000 जीतें।",
+  "Trade with Social Login to Win $15,000": "सोशल लॉगिन के साथ ट्रेड करें और $15,000 जीतें",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "LP को बरो पावर में बदलें। तत्काल lisUSD प्राप्त करें!",
+  "Borrow Here": "यहां उधार लें"
 }

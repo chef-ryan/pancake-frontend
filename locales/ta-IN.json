@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "ப்ளாக்கில் நிலையான-கால CAKE ஸ்டேக்கிங் பொசிஷனின் ஸ்டேக்கிங் தொகையையும், மீதமுள்ள ஸ்டேக்கிங் காலத்தையும் பயன்படுத்தி வாக்களிப்புத் திறன் கணக்கிடப்படுகிறது.",
   "CAKE locked:": "CAKE பூட்டியது:",
   "Go to Pools": "பூல்களுக்குச் செல்க",
-  "CAKE Emission Projection": "CAKE எமிஷன் திட்டம்",
   "Boosted by vCAKE": "vCAKE ஆல் பூஸ்ட் செய்யப்பட்டது",
   "Boosting Expired": "பூஸ்டிங் காலாவதியானது",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "உங்கள் vCAKE பூஸ்டிங், ஸ்னாப்ஷாட் ப்ளாக்கில் காலாவதியானது. எதிர்கால வாக்களிப்பு முன்மொழிவுகளுக்கான பூஸ்டைச் செயல்படுத்த உங்கள் நிலையான-கால ஸ்டேக்கிங் பொசிஷனைப் புதுப்பிக்கவும்.",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "பரிசு உருவாக்கல் பிழை ${reason}",
   "Create Gift Successfully": "பரிசு வெற்றிகரமாக உருவாக்கப்பட்டது",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "இப்போது உங்களுக்கு அனுப்பியது %totalUsd%! 🎉 இந்த இணைப்பைத் தட்டி அதைக் கிளைம் செய்க: 👉 %claimLink%\n\nஉங்கள் வாலெட்டை இணைத்து அதைக் கிளைம் செய்திடுங்கள்!\n\nமாற்றாக, நீங்கள் PancakeSwap வாலெட்டில் %code% என்ற குறியீட்டைக் கைமுறையாக உள்ளிட்டு கிளைம் செய்யலாம்.",
-  "Introducing Pancake Gifts.": "Pancake பரிசுகளை அறிமுகப்படுத்துகிறோம்.",
-  "Gift Now": "இப்போதே பரிசளி",
   "Chart Information": "விளக்கப்படத் தகவல்",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "காட்டப்படும் விலைத் தரவு குறிப்புக்காக மட்டுமே மற்றும் சரியான டிரேடிங் விலைகளைப் பிரதிபலிக்காமல் போகக்கூடும்.",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "இந்த விளக்கப்படம் பல மூலங்களிலிருந்து திரட்டப்பட்ட விலைத் தரவைக் காட்டுகிறது. ஒரு குறிப்பிட்ட PancakeSwap பூலிலிருந்து ஒரு ஸ்வாப் கோரிக்கை அல்லது விலைகளுக்கான உண்மையான வெளியீட்டுத் தொகைகள் வேறுபடலாம்.",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "ஊக்கத்தொகைகளை இப்போது Incentra மற்றும் Farms இரண்டிலும் ஒரே நேரத்தில் ஈட்டலாம்.",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "உங்கள் LP டோக்கனை Farm-இல் ஸ்டேக் செய்து, Incentra மற்றும் Farm வெகுமதிகள் இரண்டையும் ஈட்டலாம்.",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "உங்கள் Farm வெகுமதிகளை PancakeSwap-இல் கிளைம் செய்யுங்கள், மேலும் உங்கள் Incentra வெகுமதிகளை",
-  "Incentra's website": "Incentra-வின் இணையதளத்தில்"
+  "Incentra's website": "Incentra-வின் இணையதளத்தில்",
+  "CAKE Burn Dashboard": "CAKE எரிப்பு டாஷ்போர்டு",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "கவனத்திற்கு: <0>%token%</0> தற்போது சரிபார்க்கப்படாதது. இந்த பூலுடன் வர்த்தகம் செய்வதற்கு அல்லது தொடர்பு கொள்வதற்கு முன் முகவரியை எப்போதும் உறுதிப்படுத்தவும் மற்றும் உங்கள் சொந்த ஆராய்ச்சியைச் செய்யவும்.",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Binance Alpha Tokens வர்த்தகம் செய்து $250,000 வெல்லுங்கள்.",
+  "Trade with Social Login to Win $15,000": "சமூக உள்நுழைவு மூலம் வர்த்தகம் செய்து $15,000 வெல்லுங்கள்",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "LP-ஐ கடன் பெறும் சக்தியாக மாற்றுங்கள். lisUSD-ஐ உடனடியாகப் பெறுங்கள்!",
+  "Borrow Here": "இங்கு கடன் பெறுங்கள்"
 }

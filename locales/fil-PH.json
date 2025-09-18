@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "Kinakalkula ang kakayahan sa pagboto gamit ang halaga ng pag-stake at ang natitirang tagal ng pag-stake ng fixed-term na posisyon sa pag-stake ng CAKE sa block.",
   "CAKE locked:": "Naka-lock na CAKE:",
   "Go to Pools": "Pumunta sa Mga Pool",
-  "CAKE Emission Projection": "Hula sa CAKE Emission",
   "Boosted by vCAKE": "Na-boost ng vCAKE",
   "Boosting Expired": "Nag-expire na ang Pag-boost",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "Nag-expire ang pag-boost ng vCAKE mo sa snapshot block. I-renew ang iyong fixed-term na posisyon sa pag-stake para i-activate ang pag-boost para sa mga mungkahi sa pagboto sa hinaharap.",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "Error sa Paggawa ng Regalo ${reason}",
   "Create Gift Successfully": "Nagawa ang Regalo",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "Pinadalhan ka ng %totalUsd%! 🎉 I-tap ang link na ito para i-claim ito: 👉 %claimLink%\n\nPakikonekta ang wallet mo para i-claim ito!\n\nO kaya, puwede mo ring manual na ilagay ang code %code% sa PancakeSwap wallet para i-claim.",
-  "Introducing Pancake Gifts.": "Ipinakikilala ang Mga Regalo ng Pancake.",
-  "Gift Now": "Magregalo Ngayon",
   "Chart Information": "Impormasyon ng Chart",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "Reperensya lang ang data ng presyo na ipinapakita at posibleng hindi ipinapakita ang eksaktong mga presyo ng pag-trade.",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "Ipinapakita ng chart na ito ang naka-aggregate na data ng presyo mula sa maraming pinagmulan. Posibleng mag-iba ang aktwal na output na mga halaga para sa isang request ng swap o mga presyo mula sa isang partikular na PancakeSwap pool.",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "Maaari nang kumita ng Incentives sa Incentra AT sa Farms nang sabay.",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "I-stake ang iyong LP token sa Farm para makakuha ng Incentra at Farm rewards.",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "I-claim ang iyong Farm rewards sa PancakeSwap at ang iyong Incentra rewards sa",
-  "Incentra's website": "website ng Incentra"
+  "Incentra's website": "website ng Incentra",
+  "CAKE Burn Dashboard": "Dashboard ng CAKE Burn",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Babala: Ang <0>%token%</0> ay hindi pa nabe-verify. Palaging kumpirmahin ang address at gawin ang iyong sariling pananaliksik bago mag-trade o makipag-ugnayan sa pool na ito.",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Mag-trade ng Binance Alpha Tokens para manalo ng $250,000.",
+  "Trade with Social Login to Win $15,000": "Mag-trade gamit ang Social Login para manalo ng $15,000",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "Gawing Borrow Power ang LP. Kumuha ng lisUSD Agad-agad!",
+  "Borrow Here": "Humiram Dito"
 }

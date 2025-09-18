@@ -2,7 +2,7 @@ import { ContextApi, useTranslation } from '@pancakeswap/localization'
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import { useMemo } from 'react'
-import { AdsCampaignConfig, Priority } from '../types'
+import { AdsCampaignConfig, Priority } from '../ads.types'
 import { getImageUrl } from '../utils'
 
 export enum AdsIds {
@@ -68,27 +68,6 @@ const getAdsConfigs = (t: ContextApi['t'], isMobile: boolean): AdsCampaignConfig
       },
       end: 1759795140000,
     },
-    // {
-    //   id: AdsIds.PANCAKE_GIFT,
-    //   priority: Priority.HIGH,
-    //   ad: {
-    //     img: getImageUrl(isMobile ? 'pancake-gift-mobile' : 'pancake-gift'),
-    //     texts: [
-    //       {
-    //         text: t('Introducing Pancake Gifts.'),
-    //       },
-    //       {
-    //         text: t('Gift Now'),
-    //         link: 'https://pancakeswap.finance/swap?utm_source=website&utm_medium=Homepage&utm_campaign=banner&utm_id=PancakeGifts',
-    //       },
-    //     ],
-    //     btn: {
-    //       text: t('Learn More'),
-    //       link: 'https://blog.pancakeswap.finance/articles/Pancake-Gifts?utm_source=website&utm_medium=Homepage&utm_campaign=banner&utm_id=PancakeGifts',
-    //       mt: !isMobile ? '8px' : undefined,
-    //     },
-    //   },
-    // },
     {
       id: AdsIds.TRADE_SOCIAL,
       priority: Priority.MEDIUM,

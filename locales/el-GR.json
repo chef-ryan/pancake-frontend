@@ -1600,7 +1600,6 @@
   "Voting power is calculated using the staking amount and remaining staking duration of the fixed-term CAKE staking position at the block.": "Η δύναμη της ψήφου υπολογίζεται με βάση το ποσό και την εναπομένουσα διάρκεια του staking CAKE καθορισμένης διάρκειας στο μπλοκ.",
   "CAKE locked:": "Κλειδωμένο Cake:",
   "Go to Pools": "Μετάβαση στις δεξαμενές",
-  "CAKE Emission Projection": "Πρόβλεψη εκπομπών CAKE",
   "Boosted by vCAKE": "Ενισχυμένη από vCAKE",
   "Boosting Expired": "Η ενίσχυση έχει λήξει",
   "Your vCAKE boosting was expired at the snapshot block. Renew your fixed-term staking position to activate the boost for future voting proposals.": "Η ενίσχυση vCAKE έληξε στο στιγμιότυπο του μπλοκ. Ανανεώστε τη θέση σας staking καθορισμένης διάρκειας για να ενεργοποιήσετε την ενίσχυση για μελλοντικές προτάσεις ψηφοφορίας.",
@@ -3839,8 +3838,6 @@
   "Create Gift Error ${reason}": "Σφάλμα δημιουργίας δώρου ${reason}",
   "Create Gift Successfully": "Η δημιουργία του δώρου ολοκληρώθηκε με επιτυχία",
   "Just sent you %totalUsd%! 🎉 Tap this link and to claim it: 👉 %claimLink%\n\nPlease connect your wallet to claim it!\n\nAlternatively, you can manually enter the code %code% on PancakeSwap wallet to claim.": "Μόλις σας έστειλε %totalUsd%! 🎉 Πατήστε αυτόν τον σύνδεσμο για να τα διεκδικήσετε: 👉 %claimLink%\n\nΣυνδέστε το πορτοφόλι σας για να το διεκδικήσετε!\n\nΕναλλακτικά, μπορείτε να εισαγάγετε χειροκίνητα τον κωδικό %code% στο πορτοφόλι PancakeSwap για να τα διεκδικήσετε.",
-  "Introducing Pancake Gifts.": "Σας παρουσιάζουμε τα δώρα Pancake.",
-  "Gift Now": "Δώρο τώρα",
   "Chart Information": "Πληροφορίες γραφήματος",
   "The price data displayed is for reference only and may not reflect exact trading prices.": "Τα δεδομένα τιμών που εμφανίζονται είναι μόνο για αναφορά και ενδέχεται να μην αντιστοιχούν στις ακριβείς τιμές συναλλαγών.",
   "This chart shows aggregated price data from multiple sources. Actual output amounts for a swap request or prices from a specific PancakeSwap pool may differ.": "Αυτό το διάγραμμα εμφανίζει συγκεντρωτικά δεδομένα τιμών από πολλαπλές πηγές. Τα πραγματικά ποσά εξόδου για ένα αίτημα ανταλλαγής ή οι τιμές από μια συγκεκριμένη δεξαμενή PancakeSwap ενδέχεται να διαφέρουν.",
@@ -4194,5 +4191,11 @@
   "Incentives can now be earned on BOTH Incentra and Farms at the same time.": "Κίνητρα μπορούν πλέον να κερδηθούν ταυτόχρονα ΚΑΙ στην Incentra ΚΑΙ στα Farms.",
   "Stake your LP token in the Farm and accrue both Incentra and Farm rewards.": "Κάντε stake το LP token σας στο Farm και αποκομίστε τόσο ανταμοιβές Incentra όσο και Farm.",
   "Claim your Farm rewards on PancakeSwap and your Incentra rewards on": "Διεκδικήστε τις ανταμοιβές Farm σας στο PancakeSwap και τις ανταμοιβές Incentra σας στην",
-  "Incentra's website": "ιστοσελίδα της Incentra."
+  "Incentra's website": "ιστοσελίδα της Incentra.",
+  "CAKE Burn Dashboard": "CAKE Ταμπλό Καύσης",
+  "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Προσοχή: <0>%token%</0> είναι επί του παρόντος ανεπιβεβαίωτο. Να επιβεβαιώνετε πάντα τη διεύθυνση και να κάνετε τη δική σας έρευνα πριν από την ανταλλαγή ή την αλληλεπίδραση με αυτό το pool.",
+  "Trade Binance Alpha Tokens to Win $250,000.": "Κάντε συναλλαγές με Binance Alpha Tokens για να κερδίσετε $250.000.",
+  "Trade with Social Login to Win $15,000": "Κάντε συναλλαγές με Κοινωνική Σύνδεση για να κερδίσετε $15.000",
+  "Turn LP into Borrow Power. Get lisUSD Instantly!": "Μετατρέψτε το LP σε Δύναμη Δανεισμού. Αποκτήστε lisUSD Άμεσα!",
+  "Borrow Here": "Δανειστείτε Εδώ"
 }
