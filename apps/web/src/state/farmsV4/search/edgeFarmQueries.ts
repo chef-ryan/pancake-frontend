@@ -7,7 +7,7 @@ import {
   UniversalFarmConfig,
 } from '@pancakeswap/farms'
 import { getCurrencyAddress, Pair } from '@pancakeswap/sdk'
-import { InfinityRouter, SmartRouter } from '@pancakeswap/smart-router'
+import { InfinityRouter } from '@pancakeswap/smart-router'
 
 import { SORT_ORDER } from '@pancakeswap/uikit'
 import uniqBy from '@pancakeswap/utils/uniqBy'
@@ -18,7 +18,7 @@ import { PoolInfo } from 'state/farmsV4/state/type'
 import { explorerApiClient } from 'state/info/api/client'
 import { Address } from 'viem/accounts'
 import chunk from '@pancakeswap/utils/chunk'
-import { normalizeAddress, safeGetAddress, SerializedFarmInfo } from './farm.util'
+import { FarmInfo, normalizeAddress, safeGetAddress } from './farm.util'
 
 const DEFAULT_PROTOCOLS: Protocol[] = Object.values(Protocol)
 export interface FarmQuery {
@@ -28,6 +28,7 @@ export interface FarmQuery {
   sortBy: keyof PoolInfo | null
   sortOrder: SORT_ORDER
   activeChainId?: ChainId
+  symbols?: string[]
 }
 
 function getPoolId(farm: UniversalFarmConfig) {
@@ -121,9 +122,10 @@ async function fetchFarms(query: {
   protocols: Protocol[]
   chains: FarmV4SupportedChainId[]
   tokens?: string[]
+  symbols?: string[]
 }) {
   // const protocols = DEFAULT_PROTOCOLS
-  const { extend, protocols: _protocols, tokens, chains } = query
+  const { extend, protocols: _protocols, tokens, symbols, chains } = query
   const protocols = _protocols.length > 0 ? _protocols : DEFAULT_PROTOCOLS
   const chainIds = chains.length > 0 ? chains : supportedChainIdV4
   if (!extend) {
@@ -133,18 +135,13 @@ async function fetchFarms(query: {
     ])
   }
   if (tokens && tokens.length > 0) {
-    return mergePromiseList([
-      fetchAllExplorerPoolsByAddress(
-        Array.from(chainIds),
-        tokens,
-        protocols.filter((x) => x.match(/infinity/)),
-      ),
-      fetchAllExplorerPoolsByAddress(
-        Array.from(chainIds),
-        tokens,
-        protocols.filter((x) => !x.match(/infinity/)),
-      ),
-    ])
+    const byTokenAddress = fetchAllExplorerPoolsByAddress(Array.from(chainIds), tokens, protocols, true)
+    const byPoolAddress = fetchAllExplorerPoolsByAddress(Array.from(chainIds), tokens, protocols)
+    return mergePromiseList([byTokenAddress, byPoolAddress])
+  }
+
+  if (symbols && symbols.length > 0) {
+    return fetchAllExplorerPoolsBySymbols(Array.from(chainIds), symbols, protocols)
   }
   return fetchAllExplorerPools(protocols, Array.from(chainIds))
 }
@@ -154,6 +151,7 @@ async function queryFarms(query: {
   protocols: Protocol[]
   chains: FarmV4SupportedChainId[]
   tokens?: string[]
+  symbols?: string[]
 }) {
   try {
     const { extend } = query
@@ -177,21 +175,16 @@ async function queryFarms(query: {
 
     const allPools = uniqBy(all, (p) => `${p.chainId}:${p.id}`)
       .map((pool) => {
-        const remotePool = InfinityRouter.parseRemotePool(pool as InfinityRouter.RemotePool)
-        if (!remotePool) {
+        const parsedPool = InfinityRouter.parseRemotePool(pool as InfinityRouter.RemotePool)
+        if (!parsedPool) {
           return null
-        }
-        // @ts-ignore
-        if (typeof remotePool.tvlUSD !== 'undefined') {
-          // @ts-ignore
-          remotePool.tvlUSD = remotePool.tvlUSD.toString()
         }
 
         const farmInfo = farmMaps[`${pool.chainId}:${pool.id}`]
         const pid = farmInfo ? farmInfo.pid : undefined
         const lpAddress = farmInfo ? farmInfo.lpAddress : undefined
         return {
-          pool: SmartRouter.Transformer.serializePool(remotePool),
+          pool: parsedPool,
           id: pool.id,
           chainId: pool.chainId,
           protocol: pool.protocol,
@@ -202,9 +195,9 @@ async function queryFarms(query: {
           isDynamicFee: pool.isDynamicFee,
           feeTier: pool.feeTier,
           lpAddress: lpAddress || pool.id,
-        } as SerializedFarmInfo
+        } as FarmInfo
       })
-      .filter((x) => x) as SerializedFarmInfo[]
+      .filter((x) => x) as FarmInfo[]
     return allPools
   } catch (ex) {
     console.warn('Error fetching farms:', ex)
@@ -226,27 +219,59 @@ async function fetchAllExplorerPools(protocols: Protocol[], chains: FarmV4Suppor
 
 async function fetchAllExplorerPoolsByAddress(
   chains: FarmV4SupportedChainId[],
-  tokens: string[],
+  addresses: string[],
   protocols: Protocol[],
+  isPool: boolean = false,
 ) {
   if (!protocols.length) return []
   const baseUrl = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`
   const chainNames = chains.filter((id) => isEvm(id)).map((chain) => getEdgeChainName(chain as ChainId))
 
-  if (!tokens.length) return []
+  if (!addresses.length) return []
 
-  const chunks = chunk(tokens, 20)
+  const chunks = chunk(addresses, 20)
   const allPools = await mergePromiseList(
-    chunks.map((tokenChunk) => {
+    chunks.map((addrChunk) => {
       return edgeQueries.fetchAllPools({
         baseUrl,
         protocols,
         chains: chainNames,
-        tokens: tokenChunk,
+        pools: isPool ? addrChunk : undefined,
+        tokens: !isPool ? addrChunk : undefined,
         maxPages: 1,
       })
     }),
   )
+  return allPools
+    .flat()
+    .map(normalizeAddress)
+    .filter((x) => x) as InfinityRouter.RemotePoolBase[]
+}
+
+async function fetchAllExplorerPoolsBySymbols(
+  chains: FarmV4SupportedChainId[],
+  symbols: string[],
+  protocols: Protocol[],
+) {
+  if (!protocols.length) return []
+  if (!symbols.length) return []
+
+  const baseUrl = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`
+  const chainNames = chains.map((chain) => getEdgeChainName(chain))
+
+  const chunks = chunk(symbols, 20)
+  const allPools = await mergePromiseList(
+    chunks.map((symbolChunk) => {
+      return edgeQueries.fetchAllPools({
+        baseUrl,
+        protocols,
+        chains: chainNames,
+        symbols: symbolChunk,
+        maxPages: 1,
+      })
+    }),
+  )
+
   return allPools
     .flat()
     .map(normalizeAddress)

@@ -1,78 +1,38 @@
 import { ChainId } from '@pancakeswap/chains'
 import { FarmV4SupportedChainId, Protocol, supportedChainIdV4 } from '@pancakeswap/farms'
-import { Native, ZERO_ADDRESS } from '@pancakeswap/sdk'
 
-import { TokenInfo } from '@pancakeswap/token-lists'
+const IS_ADDRESS_REG = /^0x[a-fA-F0-9]{40,64}$/
 
 export interface ExtendSearchParam {
   protocols: Protocol[]
   chains: FarmV4SupportedChainId[]
   tokens?: string[]
+  symbols?: string[]
 }
 
-function parseTokenExtendSearch(
-  keywords: string,
-  protocols: Protocol[],
-  chains: ChainId[],
-  symbolsMap: Record<string, TokenInfo[]>,
-): ExtendSearchParam[] {
-  const prts = keywords
+function parseTokenExtendSearch(keywords: string, protocols: Protocol[], chains: ChainId[]): ExtendSearchParam[] {
+  const symbols = keywords
     .trim()
     .split(/(\s+|,|-|\/)/)
     .map((x) => x.trim())
-    .filter((x) => x)
+    .filter((x) => x && !IS_ADDRESS_REG.test(x))
     .slice(0, 3)
-
-  // tokens find by user's search
-  const candidateTokens = prts
-    .map((prt) => symbolsMap[prt.toLowerCase()])
-    .filter((x) => x)
-    .flat()
-    .filter((x) => supportedChainIdV4.includes(x.chainId))
-    .map((token) => {
-      return {
-        address: token.address,
-        chainId: token.chainId,
-      }
-    })
-
-  // extended wrapped tokens
-  const extendedWrapTokens = candidateTokens
-    .filter((x) => x.address === ZERO_ADDRESS)
-    .map((x) => {
-      const { wrapped } = Native.onChain(x.chainId)
-      return {
-        address: wrapped.address,
-        chainId: x.chainId,
-      }
-    })
-
-  // Token for search
-  const tokens = [
-    ...new Set(
-      [...candidateTokens, ...extendedWrapTokens].map((x) => {
-        return `${x.chainId}:${x.address}`
-      }),
-    ),
-  ]
 
   return [
     {
       protocols,
       chains: chains as FarmV4SupportedChainId[],
-      tokens,
+      symbols,
     },
-  ].filter((x) => x.tokens && x.tokens.length > 0)
+  ].filter((x) => x.symbols && x.symbols.length > 0)
 }
-
-const IS_ADDRESS_REG = /^0x[a-fA-F0-9]{40,64}$/
 
 const parseFarmSearchAddress = (keywords: string, protocols: Protocol[], chains: ChainId[]): ExtendSearchParam[] => {
   if (IS_ADDRESS_REG.test(keywords.trim())) {
     return [
       {
         protocols,
-        tokens: supportedChainIdV4.map((chain) => `${chain}:${keywords.trim()}`),
+        tokens: chains.map((chain) => `${chain}:${keywords.trim()}`),
         chains: chains as FarmV4SupportedChainId[],
       },
     ].filter((x) => x.tokens && x.tokens.length > 0)
@@ -92,18 +52,13 @@ const parseQueryChain = (chains: ChainId[], protocols: Protocol[]): ExtendSearch
   ]
 }
 
-export const parseExtendSearchParams = (
-  keywords: string,
-  protocols: Protocol[],
-  chains: ChainId[],
-  symbolsMap: Record<string, TokenInfo[]>,
-) => {
+export const parseExtendSearchParams = (keywords: string, protocols: Protocol[], chains: ChainId[]) => {
   if (!keywords || keywords.trim().length === 0) {
     return []
   }
 
   const addressParams = parseFarmSearchAddress(keywords, protocols, chains)
-  const tokenParams = parseTokenExtendSearch(keywords, protocols, chains, symbolsMap)
+  const tokenParams = parseTokenExtendSearch(keywords, protocols, chains)
   const chainParams = parseQueryChain(chains, protocols)
 
   return [...chainParams, ...addressParams, ...tokenParams]

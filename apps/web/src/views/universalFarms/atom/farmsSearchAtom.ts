@@ -1,5 +1,4 @@
 import { isTestnetChainId } from '@pancakeswap/chains'
-import { SmartRouter } from '@pancakeswap/smart-router'
 import { Loadable } from '@pancakeswap/utils/Loadable'
 import uniqBy from '@pancakeswap/utils/uniqBy'
 import { atom } from 'jotai'
@@ -15,11 +14,12 @@ import {
   fillOnchainPoolData,
 } from 'state/farmsV4/search/batchFarmDataFiller'
 import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
-import { FarmInfo, farmToPoolInfo, getFarmKey, SerializedFarmInfo } from 'state/farmsV4/search/farm.util'
+import { FarmInfo, farmToPoolInfo, getFarmKey } from 'state/farmsV4/search/farm.util'
 import { farmFilters } from 'state/farmsV4/search/filters'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { userShowTestnetAtom } from 'state/user/hooks/useUserShowTestnet'
 import { FarmV4SupportedChainId } from '@pancakeswap/farms'
+import { TokenInfo } from '@pancakeswap/token-lists'
 import { tokensMapAtom } from './tokensMapAtom'
 import { baseFarmListAtom, extendFarmListAtom } from './farmSearch.fetch'
 import { filterTokens, isInWhitelist } from './farmSearch.filter'
@@ -33,7 +33,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
   return atom((get) => {
     const { protocols, chains: _chains, sortBy, activeChainId, keywords } = query
     const useShowTestnet = get(userShowTestnetAtom)
-    const { tokensMap, symbolsMap } = get(tokensMapAtom)
+    const { tokensMap } = get(tokensMapAtom)
     const queryChains = _chains.filter((chain) => {
       if (isTestnetChainId(chain) && !useShowTestnet) {
         return false
@@ -44,7 +44,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
       queryChains.push(activeChainId)
     }
 
-    const extendSearchList = parseExtendSearchParams(keywords, protocols, queryChains, symbolsMap)
+    const extendSearchList = parseExtendSearchParams(keywords, protocols, queryChains)
 
     const baseList = get(
       baseFarmListAtom({
@@ -56,7 +56,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
     const extendList = extendSearchList.map((params) => get(extendFarmListAtom(params)))
     const lists = [baseList, ...extendList]
 
-    function buildFarmList(list: SerializedFarmInfo[]) {
+    function buildFarmList(list: FarmInfo[]) {
       return list.map((farm) => {
         const { pool, chainId, vol24hUsd, ...rest } = farm
         const farmInfo = {
@@ -65,7 +65,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
           ...rest,
           feeTierBase: 1e6,
           vol24hUsd: farm.vol24hUsd,
-          pool: SmartRouter.Transformer.parsePool(farm.chainId, farm.pool),
+          pool,
         } as FarmInfo
 
         return farmInfo
@@ -83,10 +83,12 @@ const searchAtom = atomFamily((query: FarmQuery) => {
 
     const fullList = uniqBy([...baseResults, ...extendResults], (x) => `${x.chainId}-${x.id}`)
 
-    const filtered = farmFilters.search(
-      fullList.filter(farmFilters.chainFilter(queryChains)).filter(farmFilters.protocolFilter(protocols)),
-      query.keywords,
-    )
+    const filtered = farmFilters
+      .search(
+        fullList.filter(farmFilters.chainFilter(queryChains)).filter(farmFilters.protocolFilter(protocols)),
+        query.keywords,
+      )
+      .map(markWithWhiteList(tokensMap))
     const sorted = farmFilters.sortFunction(filtered, sortBy, activeChainId)
 
     const hasPending = lists.some((x) => x.isPending())
@@ -97,6 +99,15 @@ const searchAtom = atomFamily((query: FarmQuery) => {
     return Loadable.Just(sorted)
   })
 }, isEqual)
+
+const markWithWhiteList = (tokensMap: Record<string, TokenInfo>) => {
+  const checkWhitelist = isInWhitelist(tokensMap)
+  return (farm: FarmInfo) => {
+    // eslint-disable-next-line no-param-reassign
+    farm.inWhitelist = checkWhitelist(farm)
+    return farm
+  }
+}
 
 const farmsWithPagingAtom = atomFamily((query) => {
   return atomWithLoadable(async (get) => {
@@ -173,20 +184,12 @@ export const farmsSearchV2Atom = atomFamily((query) => {
   return atom((get) => {
     const sliced = get(farmsWithPagingAtom(query))
     const withFilledData = get(farmsWithFilledDataAtom(query))
-    const checkWhitelist = isInWhitelist(get(tokensMapAtom).tokensMap)
 
     const anyPending = withFilledData.isPending()
     const resultList = withFilledData.isPending() ? sliced : withFilledData
 
     return {
-      list: resultList.map((list) => {
-        for (const pool of list) {
-          if (pool.farm) {
-            pool.farm.inWhitelist = checkWhitelist(pool.farm)
-          }
-        }
-        return list
-      }),
+      list: resultList,
       isLoading: anyPending,
     }
   })

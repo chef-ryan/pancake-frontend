@@ -1,4 +1,4 @@
-import { useTranslation } from '@pancakeswap/localization'
+import { useTranslation, Trans } from '@pancakeswap/localization'
 import { getCurrencyAddress, Percent } from '@pancakeswap/swap-sdk-core'
 import {
   Box,
@@ -197,12 +197,13 @@ export const PoolTokenOverview = <T extends PoolInfo = PoolInfo>({ data }: { dat
   const showRisk = Boolean(riskToken)
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
-    <Text>
-      {t(
-        'Caution: %token% is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.',
-        { token: riskToken?.symbol },
-      )}
-    </Text>,
+    <Trans
+      components={[<strong />]}
+      values={{
+        token: riskToken?.symbol,
+      }}
+      i18nTemplate="Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool."
+    />,
     { placement: 'top' },
   )
 

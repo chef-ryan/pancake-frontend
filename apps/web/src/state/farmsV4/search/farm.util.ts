@@ -67,22 +67,10 @@ export type FarmProps = {
   inWhitelist?: boolean
 }
 
-export type SerializedFarmInfo = FarmProps & {
-  pool: SmartRouter.Transformer.SerializedPool
-} & {
-  cakeApr: CakeAprItem
-}
-
 export const getFarmTokens = (farm: FarmInfo): Currency[] => {
   const { pool } = farm
   const currencies = SmartRouter.getCurrenciesOfPool(pool)
   return currencies
-}
-
-export const getSerializedFarmTokens = (farm: SerializedFarmInfo) => {
-  const { pool: spool } = farm
-  const pool = SmartRouter.Transformer.parsePool(farm.chainId, spool)
-  return SmartRouter.getCurrenciesOfPool(pool)
 }
 
 export const isDynamic = (pool?: InfinityClPool | InfinityBinPool) => {

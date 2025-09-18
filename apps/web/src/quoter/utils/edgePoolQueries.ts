@@ -357,6 +357,7 @@ type FetchAllPoolsParams = {
   >
   pools?: string[]
   tokens?: string[]
+  symbols?: string[]
   pageSize?: number
   maxPages?: number // Optional safety limit for maximum pages to fetch
 }
@@ -373,6 +374,7 @@ async function fetchAllPools({
   chains,
   pools = [],
   tokens = [],
+  symbols = [],
   pageSize = 100,
   maxPages = Infinity,
 }: FetchAllPoolsParams): Promise<RemotePoolBase[]> {
@@ -406,6 +408,10 @@ async function fetchAllPools({
     // Add tokens if specified
     tokens.forEach((token) => {
       params.append('tokens', token)
+    })
+
+    symbols.forEach((symbol) => {
+      params.append('tokenSymbols', symbol)
     })
 
     // Add pagination parameters
