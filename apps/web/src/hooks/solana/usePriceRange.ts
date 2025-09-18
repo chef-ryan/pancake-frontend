@@ -52,7 +52,7 @@ export const usePriceRange = ({ tickLower, tickUpper, baseIn, poolInfo }: PriceR
   }, [poolInfo, tickUpper, tickLower, currency0, currency1, baseIn, tickAtLimit])
 
   const priceUpperDiffPercent = useMemo(() => {
-    if (!priceUpper || !currentPrice) {
+    if (!priceUpper || !currentPrice || currentPrice.equalTo(0)) {
       return undefined
     }
     const upperAtLimit = baseIn ? tickAtLimit[Bound.UPPER] : tickAtLimit[Bound.LOWER]

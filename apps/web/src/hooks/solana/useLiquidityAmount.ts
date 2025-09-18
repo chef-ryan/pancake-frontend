@@ -57,10 +57,10 @@ export const useLiquidityDepositRatio = ({ poolInfo, tickLower, tickUpper, liqui
     const value1 = new BigNumber(amount1?.toExact() ?? 0).multipliedBy(price1 ?? 0)
     const totalValue = value0.plus(value1)
     const [ratio0Numerator, ratio0Denominator] = new BigNumber(value0.toNumber() ?? 0)
-      .dividedBy(totalValue.toNumber() ?? 0)
+      .dividedBy(totalValue.toNumber() ?? 1)
       .toFraction()
     const [ratio1Numerator, ratio1Denominator] = new BigNumber(value1.toNumber() ?? 0)
-      .dividedBy(totalValue.toNumber() ?? 0)
+      .dividedBy(totalValue.toNumber() ?? 1)
       .toFraction()
     return {
       ratio0: new Percent(ratio0Numerator.toString(), ratio0Denominator.toString()),
