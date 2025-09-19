@@ -186,9 +186,19 @@ export const PriceRangeDisplay: React.FC<PriceRangeDisplayProps> = ({
 
   // Calculate display values and positions
   const displayMinPrice =
-    minPrice !== '0' ? formatNumber(minPrice, { maxDecimalDisplayDigits: minPriceNum < 1 ? 6 : 4 }) : '0'
+    minPrice !== '0'
+      ? formatNumber(
+          minPrice,
+          Number(minPrice) < 1 ? { maximumDecimalTrailingZeroes: 4 } : { maxDecimalDisplayDigits: 4 },
+        )
+      : '0'
   const displayMaxPrice =
-    maxPrice !== '∞' ? formatNumber(maxPrice, { maxDecimalDisplayDigits: maxPriceNum < 1 ? 6 : 4 }) : '∞'
+    maxPrice !== '∞'
+      ? formatNumber(
+          maxPrice,
+          Number(maxPrice) < 1 ? { maximumDecimalTrailingZeroes: 4 } : { maxDecimalDisplayDigits: 4 },
+        )
+      : '∞'
 
   let currentPriceLinePosition = rangePosition
   let percentageLeftPosition = 0

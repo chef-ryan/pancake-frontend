@@ -360,7 +360,13 @@ const PriceRangeCard: React.FC<{
               {t('Current Price')}:
             </Text>
             <FlexGap gap="8px" alignItems="center">
-              <Text fontSize="14px">{currentPrice ? formatNumber(currentPrice.toSignificant(6)) : '-'} </Text>
+              <Text fontSize="14px">
+                {currentPrice
+                  ? formatNumber(currentPrice.toSignificant(18), {
+                      maximumDecimalTrailingZeroes: 4,
+                    })
+                  : '-'}{' '}
+              </Text>
               <Text fontSize="14px" color="textSubtle">
                 <Flex alignItems="center">
                   {t('of %quote% per %base%', {
