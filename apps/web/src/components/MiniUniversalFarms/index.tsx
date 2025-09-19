@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { searchQueryAtom, updateFilterAtom } from 'views/universalFarms/atom/searchQueryAtom'
 import { PoolsFilterPanel } from 'views/universalFarms/components/PoolsFilterPanel'
 import { getIndexByProtocols } from 'views/universalFarms/utils/queryParser'
+import { isEvm, NonEVMChainId } from '@pancakeswap/chains'
 import { PoolsTable } from './components/PoolsTable'
 
 const Container = styled(Box)`
@@ -39,9 +40,11 @@ export const MiniUniversalFarms: React.FC<MiniUniversalFarmsProps> = ({ onPoolCl
 
   return (
     <Container>
-      <Box mb="24px">
-        <PoolsFilterPanel includeSolana value={poolsFilter} onChange={updateFilter} showNetworkFilter={false} />
-      </Box>
+      {isEvm(chainId) && (
+        <Box mb="24px">
+          <PoolsFilterPanel includeSolana value={poolsFilter} onChange={updateFilter} showNetworkFilter={false} />
+        </Box>
+      )}
 
       <PoolsTable onPoolClick={onPoolClick} />
     </Container>

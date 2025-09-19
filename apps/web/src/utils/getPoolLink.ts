@@ -6,6 +6,7 @@ import { getAddInfinityLiquidityURL } from 'config/constants/liquidity'
 import type { InfinityPoolInfo, PoolInfo } from 'state/farmsV4/state/type'
 import { multiChainPaths } from 'state/info/constant'
 import type { Address } from 'viem'
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { addQueryToPath } from './addQueryToPath'
 import { isAddressEqual } from './safeGetAddress'
 import { currencyId } from './currencyId'
@@ -28,7 +29,6 @@ export function getPoolAddLiquidityLink(pool: PoolInfo): string {
   if (protocol === Protocol.STABLE) {
     return addQueryToPath(`/stable/add/${tokenPath}`, { chain: CHAIN_QUERY_NAME[chainId], [PERSIST_CHAIN_KEY]: '1' })
   }
-
   return addQueryToPath(`/add/${tokenPath}/${feeTier}`, { chain: CHAIN_QUERY_NAME[chainId], [PERSIST_CHAIN_KEY]: '1' })
 }
 
@@ -47,6 +47,9 @@ export async function getLinkForPool(pool: PoolInfo, type: 'detail' | 'info'): P
       if (ssPair) {
         return `${linkPrefix}/${ssPair.stableSwapAddress}`
       }
+    }
+    if (chainId === NonEVMChainId.SOLANA) {
+      return `/liquidity/pool/solana/${lpAddress}`
     }
     return `${linkPrefix}/${lpAddress}`
   }
