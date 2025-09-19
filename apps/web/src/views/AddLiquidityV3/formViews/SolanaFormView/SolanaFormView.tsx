@@ -77,10 +77,11 @@ import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import { useSolanaDerivedInfo } from 'hooks/solana/useSolanaDerivedInfo'
 import { useSolanaPoolByMint } from 'hooks/solana/useSolanaPoolsByMint'
 import { FieldFeeLevel } from 'views/CreateLiquidityPool/components/V3/FieldFeeLevel'
+import { useRangeHopCallbacks } from 'views/CreateLiquidityPool/hooks/useRangeHopCallbacks'
 import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
 import { TxVersion } from '@pancakeswap/solana-core-sdk'
 import { useRaydium } from 'hooks/solana/useRaydium'
-import { useRangeHopCallbacks } from 'views/CreateLiquidityPool/hooks/useRangeHopCallbacks'
+import { usePreviousValue } from '@pancakeswap/hooks'
 
 import LockedDeposit from '../V3FormView/components/LockedDeposit'
 import { RangeSelector } from './RangeSelector'
@@ -146,6 +147,7 @@ export function SolanaFormView({
     currentLanguage: { locale },
   } = useTranslation()
   const expertMode = useIsExpertMode()
+  const previousFeeAmount = usePreviousValue(feeAmount)
 
   const { data: solPoolInfo } = useSolanaPoolByMint(
     baseCurrency?.wrapped?.address,
@@ -224,7 +226,7 @@ export function SolanaFormView({
   }, [baseCurrency, quoteCurrency, feeAmount])
 
   useEffect(() => {
-    if (feeAmount) {
+    if (feeAmount && previousFeeAmount !== feeAmount) {
       setActiveQuickAction(undefined)
       onBothRangeInput({
         leftTypedValue: undefined,

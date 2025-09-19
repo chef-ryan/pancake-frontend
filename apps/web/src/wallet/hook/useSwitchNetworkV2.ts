@@ -202,9 +202,7 @@ const useProcessSwitchChainRequest = () => {
           ...prev,
           chainId: requestChainId,
         }))
-        if (router.isReady) {
-          router.replace({ query: { ...router.query, chain: 'solana' } }, undefined, { shallow: true })
-        }
+        router.replace({ query: { ...router.query, chain: 'solana' } }, undefined, { shallow: true })
         return true
       } catch (error) {
         console.log(`[chain]`, 'switch error', error)
