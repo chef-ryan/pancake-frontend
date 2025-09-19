@@ -1,3 +1,4 @@
+import Decimal from 'decimal.js'
 import BN from 'bn.js'
 import { Protocol } from '@pancakeswap/farms'
 import { useTranslation } from '@pancakeswap/localization'
@@ -84,6 +85,7 @@ import { TxVersion } from '@pancakeswap/solana-core-sdk'
 import { useRaydium } from 'hooks/solana/useRaydium'
 import { usePreviousValue } from '@pancakeswap/hooks'
 import { useCreateClmmPool } from 'hooks/solana/useCreateClmmPool'
+import { useUnifiedTokenUsdPrice } from 'hooks/useUnifiedTokenUsdPrice'
 
 import LockedDeposit from '../V3FormView/components/LockedDeposit'
 import { RangeSelector } from './RangeSelector'
@@ -124,8 +126,8 @@ const CurrentPriceButton = styled(Button).attrs({ scale: 'xs', variant: 'text' }
 `
 
 interface SolanaFormViewPropsType {
-  baseCurrency?: UnifiedCurrency | null
-  quoteCurrency?: UnifiedCurrency | null
+  baseCurrency?: UnifiedCurrency
+  quoteCurrency?: UnifiedCurrency
   currencyIdA?: string
   currencyIdB?: string
   feeAmount?: number
@@ -183,14 +185,7 @@ export function SolanaFormView({
     invertPrice,
     ticksAtLimit,
     tickSpaceLimits,
-  } = useSolanaDerivedInfo(
-    baseCurrency ?? undefined,
-    quoteCurrency ?? undefined,
-    feeAmount,
-    baseCurrency ?? undefined,
-    undefined,
-    formState,
-  )
+  } = useSolanaDerivedInfo(baseCurrency, quoteCurrency, feeAmount, baseCurrency, undefined, formState)
   const { onFieldAInput, onFieldBInput, onLeftRangeInput, onRightRangeInput, onStartPriceInput, onBothRangeInput } =
     useV3MintActionHandlers(noLiquidity)
 
@@ -316,7 +311,7 @@ export function SolanaFormView({
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
 
   const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
-    useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, feeAmount, tickLower, tickUpper, pool)
+    useRangeHopCallbacks(baseCurrency, quoteCurrency, feeAmount, tickLower, tickUpper, pool)
   // we need an existence check on parsed amounts for single-asset deposits
   const translationData = useMemo(() => {
     if (depositADisabled) {
@@ -608,7 +603,16 @@ export function SolanaFormView({
     if (!pool) return undefined
     return new Price(pool.token0 as any, pool.token1 as any, 2n ** 192n, pool.sqrtRatioX96 * pool.sqrtRatioX96)
   }, [pool])
-  const [, marketPriceSlippage] = usePoolMarketPriceSlippage(pool?.token0, pool?.token1, poolCurrentPrice)
+
+  // Current token prices
+  const { data: baseCurrencyCurrentPrice } = useUnifiedTokenUsdPrice(baseCurrency)
+  const { data: quoteCurrencyCurrentPrice } = useUnifiedTokenUsdPrice(quoteCurrency)
+  const currentPrice = useMemo(() => {
+    if (!baseCurrencyCurrentPrice || !quoteCurrencyCurrentPrice) return undefined
+    return new Decimal(baseCurrencyCurrentPrice).dividedBy(quoteCurrencyCurrentPrice)
+  }, [baseCurrencyCurrentPrice, quoteCurrencyCurrentPrice])
+
+  const [, marketPriceSlippage] = usePoolMarketPriceSlippage(baseCurrency, quoteCurrency, poolCurrentPrice)
   const displayMarketPriceSlippageWarning = useMemo(() => {
     if (marketPriceSlippage === undefined) return false
     const slippage = new BigNumber(marketPriceSlippage.toFixed(0)).abs()
@@ -769,8 +773,8 @@ export function SolanaFormView({
   })
 
   const handleUseCurrentPrice = useCallback(() => {
-    onStartPriceInput(price?.toSignificant(18) ?? '')
-  }, [price, onStartPriceInput])
+    onStartPriceInput(currentPrice?.toSignificantDigits(18).toString() ?? '')
+  }, [currentPrice, onStartPriceInput])
 
   const {
     tooltip: currentPriceTooltip,
@@ -792,7 +796,7 @@ export function SolanaFormView({
                   <FlexGap gap="8px" justifyContent="space-between" alignItems="center" flexWrap="wrap">
                     <PreTitle mb="8px">{t('Set Starting Price')}</PreTitle>
 
-                    {price ? (
+                    {currentPrice ? (
                       <FlexGap mb="8px" justifyContent="space-between" alignItems="center" flexWrap="wrap">
                         <div />
                         <FlexGap gap="4px" alignItems="center" flexWrap="wrap">
@@ -804,7 +808,7 @@ export function SolanaFormView({
                             {currentPriceTooltipVisible && currentPriceTooltip}
                           </div>
                           <Text color="textSubtle" small>
-                            {price.toSignificant(8)} {quoteCurrency?.symbol} per {baseCurrency?.symbol}
+                            {currentPrice.toNumber()} {quoteCurrency?.symbol} per {baseCurrency?.symbol}
                           </Text>
                           <SwapHorizIcon
                             role="button"

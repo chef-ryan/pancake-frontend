@@ -241,7 +241,7 @@ export function useIsUserAddedToken(currency: UnifiedCurrency | undefined | null
   return !!userAddedTokens.find((token) => currency?.equals(token))
 }
 
-export function useUnifiedToken(tokenAddress?: string, chainId?: number): UnifiedToken | undefined | null {
+export function useUnifiedToken(tokenAddress?: string, chainId?: number): UnifiedToken | undefined {
   const { chainId: activeChainId } = useAccountActiveChain()
   const chainIdToUse = chainId ?? activeChainId
   const spl = useSolanaToken(tokenAddress)
@@ -249,7 +249,7 @@ export function useUnifiedToken(tokenAddress?: string, chainId?: number): Unifie
   if (chainIdToUse === NonEVMChainId.SOLANA) {
     return spl
   }
-  return ercToken
+  return ercToken ?? undefined
 }
 
 export function useToken(tokenAddress?: string, chainId?: number): ERC20Token | undefined | null {
@@ -440,10 +440,7 @@ export function useOnRampToken(currencyId?: string): Currency | undefined {
   }, [token, chainId, currencyId])
 }
 
-export function useUnifiedCurrency(
-  currencyId: string | undefined,
-  chainId?: number,
-): UnifiedCurrency | null | undefined {
+export function useUnifiedCurrency(currencyId: string | undefined, chainId?: number): UnifiedCurrency | undefined {
   const native: UnifiedNativeCurrency = useUnifiedNativeCurrency(chainId)
 
   const isNative =

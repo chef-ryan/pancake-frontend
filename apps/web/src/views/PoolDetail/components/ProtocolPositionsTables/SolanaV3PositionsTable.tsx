@@ -367,9 +367,6 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
       totalApr={computed.totalApr}
       totalEarnings={formatPoolDetailFiatNumber(computed.totalEarn)}
       data={computed.rows.map((r) => r.tableRow)}
-      onRowClick={() => {
-        window.open('https://solana.pancakeswap.finance/positions', '_blank')
-      }}
     />
   )
 }

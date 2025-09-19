@@ -8,7 +8,7 @@ import {
   TickMath,
 } from '@pancakeswap/v3-sdk'
 
-export function tryParsePrice(baseToken?: UnifiedCurrency | null, quoteToken?: UnifiedCurrency | null, value?: string) {
+export function tryParsePrice(baseToken?: UnifiedCurrency, quoteToken?: UnifiedCurrency, value?: string) {
   if (!baseToken || !quoteToken || !value) {
     return undefined
   }

@@ -6,8 +6,8 @@ import { tryParsePrice } from './v3/utils'
 import { useUnifiedTokenUsdPrice } from './useUnifiedTokenUsdPrice'
 
 export const usePoolMarketPriceSlippage = (
-  currency0?: Currency,
-  currency1?: Currency,
+  currency0?: UnifiedCurrency,
+  currency1?: UnifiedCurrency,
   poolCurrencyPrice?: Price<Currency, Currency>,
 ) => {
   const { data: currency0marketPrice } = useUnifiedTokenUsdPrice(currency0, Boolean(currency0))
