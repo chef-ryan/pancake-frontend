@@ -79,11 +79,10 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
   const maxCurrency1 = useMemo(() => maxUnifiedAmountSpend(currency1Balance), [currency1Balance])
   const [insufficientBalance0, insufficientBalance1] = useMemo(() => {
     if (!solanaAccount) return [false, false]
-    const [field0, field1] = fields
-    const input0Insufficient = field0 ? maxCurrency0.toExact() < field0 : false
-    const input1Insufficient = field1 ? maxCurrency1.toExact() < field1 : false
+    const input0Insufficient = fields[0] ? Number(maxCurrency0.toExact()) < Number(fields[0]) : false
+    const input1Insufficient = fields[1] ? Number(maxCurrency1.toExact()) < Number(fields[1]) : false
     return [input0Insufficient, input1Insufficient]
-  }, [fields, solanaAccount, maxCurrency0, maxCurrency1])
+  }, [fields[0], fields[1], solanaAccount, maxCurrency0, maxCurrency1])
 
   const { amount0, amount1 } = useLiquidityAmount({
     poolInfo,
