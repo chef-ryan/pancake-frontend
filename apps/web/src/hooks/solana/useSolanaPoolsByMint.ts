@@ -26,15 +26,20 @@ export const useSolanaPoolsByMint = (token0?: string, token1?: string, enabled: 
 }
 
 export const useSolanaPoolByMint = (token0?: string, token1?: string, feeAmount?: number) => {
-  const { data: poolsByMint } = useSolanaPoolsByMint(token0, token1)
+  const { data: poolsByMint, isLoading, error, status } = useSolanaPoolsByMint(token0, token1)
   return useMemo(() => {
     const pool = poolsByMint?.find((p) => p.config.tradeFeeRate === feeAmount)
-    return pool
-      ? normalizeSolanaPoolInfo({
-          ...pool,
-          pooltype: [] as PoolTypeItem[],
-          config: { ...pool.config, description: '' },
-        })
-      : undefined
+    return {
+      status,
+      isLoading,
+      error,
+      data: pool
+        ? normalizeSolanaPoolInfo({
+            ...pool,
+            pooltype: [] as PoolTypeItem[],
+            config: { ...pool.config, description: '' },
+          })
+        : undefined,
+    }
   }, [poolsByMint, feeAmount])
 }

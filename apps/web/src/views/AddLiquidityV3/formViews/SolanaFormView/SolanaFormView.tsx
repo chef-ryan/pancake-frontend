@@ -3,11 +3,11 @@ import { Protocol } from '@pancakeswap/farms'
 import { useTranslation } from '@pancakeswap/localization'
 import {
   Price,
-  Currency,
   UnifiedCurrency,
   UnifiedCurrencyAmount,
   Percent,
   isUnifedCurrencySorted,
+  Token,
 } from '@pancakeswap/swap-sdk-core'
 import { isSolWSol } from '@pancakeswap/sdk'
 import { useUnifiedUSDPriceAmount } from 'hooks/useStablecoinPrice'
@@ -86,6 +86,7 @@ import LockedDeposit from '../V3FormView/components/LockedDeposit'
 import { RangeSelector } from './RangeSelector'
 import { useV3MintActionHandlers } from '../V3FormView/form/hooks/useV3MintActionHandlers'
 import { useV3FormAddLiquidityCallback, useV3FormState } from '../V3FormView/form/reducer'
+import { useInitialRange } from '../V3FormView/form/hooks/useInitialRange'
 
 const StyledInput = styled(NumericalInput)`
   background-color: ${({ theme }) => theme.colors.input};
@@ -146,10 +147,13 @@ export function SolanaFormView({
   } = useTranslation()
   const expertMode = useIsExpertMode()
 
-  const solPoolInfo = useSolanaPoolByMint(baseCurrency?.wrapped?.address, quoteCurrency?.wrapped?.address, feeAmount)
+  const { data: solPoolInfo } = useSolanaPoolByMint(
+    baseCurrency?.wrapped?.address,
+    quoteCurrency?.wrapped?.address,
+    feeAmount,
+  )
 
   const { solanaAccount: account, isWrongNetwork } = useAccountActiveChain()
-
   const [pricePeriod, setPricePeriod] = useState<Liquidity.PresetRangeItem>(Liquidity.PRESET_RANGE_ITEMS[0])
   const axisTicks = useMemo(() => getAxisTicks(pricePeriod.value, isMobile), [pricePeriod.value, isMobile])
 
@@ -231,6 +235,9 @@ export function SolanaFormView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feeAmount])
 
+  // todo:@eric
+  useInitialRange(baseCurrency?.wrapped as Token, quoteCurrency?.wrapped as Token)
+
   const onAddLiquidityCallback = useV3FormAddLiquidityCallback()
 
   const [txHash, setTxHash] = useState<string>('')
@@ -271,7 +278,7 @@ export function SolanaFormView({
 
   const handleFeePoolSelect = useCallback(
     (_idx: number, newFeeAmount: number) => {
-      if (!newFeeAmount) {
+      if (!newFeeAmount || !router.isReady) {
         return
       }
       router.replace(

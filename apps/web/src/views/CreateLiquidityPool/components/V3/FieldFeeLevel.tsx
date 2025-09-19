@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { usePreviousValue, useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import {
@@ -16,7 +17,7 @@ import {
   ArrowDropDownIcon,
 } from '@pancakeswap/uikit'
 import MenuItem from '@pancakeswap/uikit/components/MenuItem/MenuItem'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useFeeLevelQueryState } from 'state/infinity/create'
 import { useActiveChainId } from 'hooks/useAccountActiveChain'
 import { isSolana, NonEVMChainId } from '@pancakeswap/chains'
@@ -54,6 +55,7 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({
   const { chainId } = useActiveChainId()
   const isSolanaChain = isSolana(chainId)
   const solanaFeeTiers = useSolanaClmmFeeTiers()
+  const router = useRouter()
 
   // Fetch existing Solana pools for the selected pair to disable used fee tiers
   const existingSolanaFeeTiers = useSolanaExistingFeeTiers(
@@ -119,6 +121,17 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({
   }, [feeLevel, options])
 
   const prevFeeLevel = usePreviousValue(feeLevel)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>()
+
+  const updateFee = useCallback(() => {
+    const firstAvailable = options[0]
+    if (firstAvailable !== undefined) {
+      setFeeLevel(firstAvailable)
+      setInputValue(firstAvailable.toString())
+      onSelect?.(0, firstAvailable)
+    }
+    timeoutRef.current = undefined
+  }, [router.isReady, onSelect, options, setFeeLevel])
 
   useEffect(() => {
     if (inputValue === null && feeLevel !== null) {
@@ -135,13 +148,22 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({
   // Auto-select a default Solana fee tier when none selected
   useEffect(() => {
     if (!isSolanaChain || feeLevel || !options.length) return
-    const firstAvailable = options[0]
-    if (firstAvailable !== undefined) {
-      setFeeLevel(firstAvailable)
-      setInputValue(firstAvailable.toString())
-      onSelect?.(0, firstAvailable)
+    if (!router.isReady) {
+      if (!timeoutRef.current) {
+        timeoutRef.current = setTimeout(updateFee, 100)
+      }
+      return
     }
-  }, [onSelect, isSolanaChain, options, existingSolanaFeeTiers, feeLevel, setFeeLevel])
+    updateFee()
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+        timeoutRef.current = undefined
+      }
+    }
+  }, [router.isReady, updateFee, isSolanaChain, feeLevel, options.length])
 
   useEffect(() => {
     if (feeAmount && feeAmount !== feeLevel) {

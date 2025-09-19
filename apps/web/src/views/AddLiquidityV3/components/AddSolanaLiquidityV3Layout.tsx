@@ -29,7 +29,11 @@ export function AddSolanaLiquidityV3Layout({ children }: { children: React.React
 
   const baseCurrency = useUnifiedCurrency(currencyIdA)
   const quoteCurrency = useUnifiedCurrency(currencyIdB)
-  const poolInfo = useSolanaPoolByMint(baseCurrency?.wrapped.address, quoteCurrency?.wrapped.address, feeAmount)
+  const { data: poolInfo } = useSolanaPoolByMint(
+    baseCurrency?.wrapped.address,
+    quoteCurrency?.wrapped.address,
+    feeAmount,
+  )
 
   const inverted = useMemo(
     () =>

@@ -8,7 +8,6 @@ import { useSolanaOnchainClmmPool } from 'hooks/solana/useSolanaOnchainPool'
 import useAllTicksQuery from 'hooks/useAllTicksQuery'
 import { Protocol } from '@pancakeswap/farms'
 import { useActiveLiquidityByPool } from 'hooks/v3/usePoolTickData'
-import { Currency } from '@pancakeswap/solana-core-sdk'
 
 export function useSolanaDensityChartData({
   currencyA,
@@ -23,7 +22,7 @@ export function useSolanaDensityChartData({
 
   const token0 = currencyA?.wrapped?.address
   const token1 = currencyB?.wrapped?.address
-  const solPool = useSolanaPoolByMint(token0, token1, feeAmount)
+  const { data: solPool } = useSolanaPoolByMint(token0, token1, feeAmount)
 
   const { data: pool, isLoading, error } = useSolanaOnchainClmmPool(solPool?.poolId)
 

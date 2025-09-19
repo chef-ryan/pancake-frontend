@@ -104,7 +104,11 @@ export const useSolanaDerivedInfo = (
     return cfg?.tickSpacing
   }, [ammConfigs, feeAmount])
 
-  const poolInfo = useSolanaPoolByMint(token0?.address, token1?.address, feeAmount)
+  const {
+    data: poolInfo,
+    isLoading: isPoolLoading,
+    status,
+  } = useSolanaPoolByMint(token0?.address, token1?.address, feeAmount)
   const { data: PoolOnchain } = useSolanaOnchainClmmPool(poolInfo?.poolId)
 
   const invertPrice = Boolean(baseToken && token0 && !baseToken.equals(token0))
@@ -149,13 +153,14 @@ export const useSolanaDerivedInfo = (
     }
   }, [feeAmount, invalidPrice, price, token0, token1])
 
-  const { poolState, noLiquidity } = useMemo(
-    () => ({
-      poolState: poolInfo ? PoolState.EXISTS : PoolState.NOT_EXISTS,
-      noLiquidity: !poolInfo,
-    }),
-    [poolInfo],
-  )
+  const { poolState, noLiquidity } = useMemo(() => {
+    const poolState =
+      status === 'pending' || isPoolLoading ? PoolState.LOADING : poolInfo ? PoolState.EXISTS : PoolState.NOT_EXISTS
+    return {
+      poolState,
+      noLiquidity: poolState === PoolState.NOT_EXISTS,
+    }
+  }, [poolInfo, isPoolLoading, status])
 
   const poolForPosition: Pool | undefined = mockPool
 
