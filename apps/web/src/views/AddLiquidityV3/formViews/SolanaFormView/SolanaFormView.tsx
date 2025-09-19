@@ -8,6 +8,7 @@ import {
   Percent,
   isUnifedCurrencySorted,
   Token,
+  SPLToken,
 } from '@pancakeswap/swap-sdk-core'
 import { isSolWSol } from '@pancakeswap/sdk'
 import { useUnifiedUSDPriceAmount } from 'hooks/useStablecoinPrice'
@@ -82,6 +83,7 @@ import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
 import { TxVersion } from '@pancakeswap/solana-core-sdk'
 import { useRaydium } from 'hooks/solana/useRaydium'
 import { usePreviousValue } from '@pancakeswap/hooks'
+import { useCreateClmmPool } from 'hooks/solana/useCreateClmmPool'
 
 import LockedDeposit from '../V3FormView/components/LockedDeposit'
 import { RangeSelector } from './RangeSelector'
@@ -301,57 +303,6 @@ export function SolanaFormView({
 
   const raydium = useRaydium()
 
-  const onAdd = useCallback(async () => {
-    logGTMClickAddLiquidityConfirmEvent()
-    try {
-      if (!baseCurrency || !quoteCurrency) return
-      if (!raydium) return
-      const poolInfo = solPoolInfo?.rawPool as any
-      if (!poolInfo || !ticks?.[Bound.LOWER] || !ticks?.[Bound.UPPER]) return
-
-      setAttemptingTxn(true)
-
-      // Map parsed amounts to pool mintA/mintB order
-      const currencyA = currencies[Field.CURRENCY_A]
-      const mintAAddr = (solPoolInfo?.token0 as any)?.address
-      const baseIsMintA = currencyA?.wrapped?.address === mintAAddr
-      const amountAQuot = parsedAmounts[Field.CURRENCY_A]?.quotient
-      const amountBQuot = parsedAmounts[Field.CURRENCY_B]?.quotient
-      const mintAAmount = new BN((baseIsMintA ? amountAQuot : amountBQuot)?.toString() ?? '0')
-      const mintBAmount = new BN((baseIsMintA ? amountBQuot : amountAQuot)?.toString() ?? '0')
-
-      if (mintAAmount.isZero() && mintBAmount.isZero()) {
-        setTxnErrorMessage(t('Enter an amount'))
-        return
-      }
-      const base: 'MintA' | 'MintB' = baseIsMintA ? 'MintA' : 'MintB'
-      const baseAmount = baseIsMintA ? mintAAmount : mintBAmount
-      const otherAmountMax = baseIsMintA ? mintBAmount : mintAAmount
-
-      const build = await raydium.clmm.openPositionFromBase({
-        poolInfo,
-        ownerInfo: {
-          useSOLBalance: isSolWSol(poolInfo.mintA) || isSolWSol(poolInfo.mintB),
-        },
-        tickLower: ticks[Bound.LOWER] as number,
-        tickUpper: ticks[Bound.UPPER] as number,
-        base,
-        baseAmount,
-        otherAmountMax,
-        txVersion: TxVersion.V0,
-        nft2022: true,
-      })
-
-      const { txId } = await build.execute()
-      setAttemptingTxn(false)
-      setTxHash(txId)
-      onAddLiquidityCallback(txId)
-    } catch (e: any) {
-      setAttemptingTxn(false)
-      setTxnErrorMessage(e?.message ?? 'Failed to add liquidity')
-    }
-  }, [baseCurrency, quoteCurrency, currencies, parsedAmounts, ticks, solPoolInfo, onAddLiquidityCallback, raydium, t])
-
   const handleDismissConfirmation = useCallback(() => {
     // if there was a tx hash, we want to clear the input
     if (txHash) {
@@ -415,6 +366,101 @@ export function SolanaFormView({
   const isQuickButtonUsed = useRef(false)
   const [quickAction, setQuickAction] = useState<number | null>(null)
   const [customZoomLevel, setCustomZoomLevel] = useState<ZoomLevels | undefined>(undefined)
+
+  const createClmm = useCreateClmmPool()
+  const addLiquidity = useCallback(async () => {
+    const poolInfo = solPoolInfo?.rawPool as any
+    const currencyA = currencies[Field.CURRENCY_A]
+    const mintAAddr = (solPoolInfo?.token0 as any)?.address
+    const baseIsMintA = currencyA?.wrapped?.address === mintAAddr
+    const amountAQuot = parsedAmounts[Field.CURRENCY_A]?.quotient
+    const amountBQuot = parsedAmounts[Field.CURRENCY_B]?.quotient
+    const mintAAmount = new BN((baseIsMintA ? amountAQuot : amountBQuot)?.toString() ?? '0')
+    const mintBAmount = new BN((baseIsMintA ? amountBQuot : amountAQuot)?.toString() ?? '0')
+
+    if (mintAAmount.isZero() && mintBAmount.isZero()) {
+      setTxnErrorMessage(t('Enter an amount'))
+      return { txId: '' }
+    }
+    const base: 'MintA' | 'MintB' = baseIsMintA ? 'MintA' : 'MintB'
+    const baseAmount = baseIsMintA ? mintAAmount : mintBAmount
+    const otherAmountMax = baseIsMintA ? mintBAmount : mintAAmount
+
+    const build = await raydium?.clmm.openPositionFromBase({
+      poolInfo,
+      ownerInfo: {
+        useSOLBalance: isSolWSol(poolInfo.mintA) || isSolWSol(poolInfo.mintB),
+      },
+      tickLower: ticks[Bound.LOWER] as number,
+      tickUpper: ticks[Bound.UPPER] as number,
+      base,
+      baseAmount,
+      otherAmountMax,
+      txVersion: TxVersion.V0,
+      nft2022: true,
+    })
+
+    if (!build) {
+      return { txId: '' }
+    }
+    return build?.execute()
+  }, [currencies, parsedAmounts, raydium?.clmm, solPoolInfo?.rawPool, solPoolInfo?.token0, t, ticks])
+
+  const onAdd = useCallback(async () => {
+    logGTMClickAddLiquidityConfirmEvent()
+    try {
+      if (!baseCurrency || !quoteCurrency) return
+      if (!raydium) return
+      if (!ticks?.[Bound.LOWER] || !ticks?.[Bound.UPPER]) return
+
+      setAttemptingTxn(true)
+
+      let hash = ''
+      if (noLiquidity && feeAmount && price) {
+        const { txId, openPositionTxId } = await createClmm({
+          mintA: baseCurrency.wrapped as SPLToken,
+          mintB: quoteCurrency.wrapped as SPLToken,
+          tradeFeeRate: feeAmount,
+          initialPrice: parseFloat(price.toSignificant(18)),
+          position:
+            typeof tickLower === 'number' && typeof tickUpper === 'number'
+              ? {
+                  tickLower,
+                  tickUpper,
+                  amountA: parsedAmounts[isSorted ? Field.CURRENCY_A : Field.CURRENCY_B] as any,
+                  amountB: parsedAmounts[isSorted ? Field.CURRENCY_B : Field.CURRENCY_A] as any,
+                }
+              : undefined,
+        })
+        hash = txId ?? openPositionTxId
+      } else {
+        const { txId } = await addLiquidity()
+        hash = txId
+      }
+
+      setAttemptingTxn(false)
+      setTxHash(hash)
+      onAddLiquidityCallback(hash)
+    } catch (e: any) {
+      setAttemptingTxn(false)
+      setTxnErrorMessage(e?.message ?? 'Failed to add liquidity')
+    }
+  }, [
+    addLiquidity,
+    createClmm,
+    feeAmount,
+    isSorted,
+    noLiquidity,
+    price,
+    tickLower,
+    tickUpper,
+    baseCurrency,
+    quoteCurrency,
+    parsedAmounts,
+    ticks,
+    onAddLiquidityCallback,
+    raydium,
+  ])
 
   const confirmationContent = useCallback(() => {
     const currencyA = currencies[Field.CURRENCY_A]
