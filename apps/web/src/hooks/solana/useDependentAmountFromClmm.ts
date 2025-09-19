@@ -65,13 +65,13 @@ export function useDependentAmountFromClmm({
       const inputA = wrappedIndependentAmount?.currency?.equals?.(token0)
       const amountBN = new BN(independentAmount.quotient.toString())
 
-      const res = await PoolUtils.getLiquidityAmountOutFromAmountIn({
+      const res = PoolUtils.getLiquidityAmountOutFromAmountIn({
         poolInfo,
-        inputA: Boolean(inputA),
+        inputA,
         tickLower: Math.min(tickLower, tickUpper),
         tickUpper: Math.max(tickLower, tickUpper),
         amount: amountBN,
-        slippage: slippagePercent,
+        slippage: 0,
         add: true,
         epochInfo,
         amountHasFee: true,
@@ -81,7 +81,7 @@ export function useDependentAmountFromClmm({
       setDependentAmount(
         tryParseAmount(
           new Decimal(rawOut.toString())
-            .mul(1 + slippagePercent)
+            .mul(1 + (inputA ? 1 : -1) * slippagePercent)
             .div(10 ** dependentCurrency.decimals)
             .toString(),
           dependentCurrency,
