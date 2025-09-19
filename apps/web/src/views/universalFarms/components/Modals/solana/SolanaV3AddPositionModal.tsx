@@ -344,7 +344,6 @@ const PriceRangeCard: React.FC<{
           <Flex alignItems="center" justifyContent="center">
             <PriceRangeDisplay
               outOfRange={position.status === POSITION_STATUS.INACTIVE}
-              removed={position.liquidity.isZero()}
               currentPrice={priceRangeData.currentPrice}
               minPrice={priceRangeData.minPriceFormatted}
               maxPrice={priceRangeData.maxPriceFormatted}
