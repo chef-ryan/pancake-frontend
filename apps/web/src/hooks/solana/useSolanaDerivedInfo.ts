@@ -8,6 +8,7 @@ import {
   UnifiedCurrencyAmount,
 } from '@pancakeswap/swap-sdk-core'
 import { FeeAmount, Pool, Position, TickMath, encodeSqrtRatioX96, priceToClosestTick } from '@pancakeswap/v3-sdk'
+import { MAX_TICK, MIN_TICK, TickUtils } from '@pancakeswap/solana-core-sdk'
 import { Bound } from 'config/constants/types'
 import { ReactNode, useMemo } from 'react'
 import tryParseAmount from '@pancakeswap/utils/tryParseAmount'
@@ -32,7 +33,7 @@ export enum PoolState {
   INVALID,
 }
 
-const checkAndParseMaxTick = (tick: number) => (tick === TickMath.MAX_TICK ? TickMath.MAX_TICK - 1 : tick)
+const checkAndParseMaxTick = (tick: number) => (tick === MAX_TICK ? MAX_TICK - 1 : tick)
 
 export const useSolanaDerivedInfo = (
   currencyA?: UnifiedCurrency,
@@ -164,18 +165,15 @@ export const useSolanaDerivedInfo = (
 
   const poolForPosition: Pool | undefined = mockPool
 
-  // Solana CLMM full range bounds are limited to ±443636 ticks (Raydium convention)
-  // todo:@eric
-  const tickSpaceLimits: { [bound in Bound]: number | undefined } = useMemo(() => {
-    if (tickSpacing === undefined) return { [Bound.LOWER]: undefined, [Bound.UPPER]: undefined }
-    const SOLANA_TICK_LIMIT = 443636
-    const lower = Math.floor(-SOLANA_TICK_LIMIT / tickSpacing) * tickSpacing
-    const upper = Math.floor(SOLANA_TICK_LIMIT / tickSpacing) * tickSpacing
-    return {
-      [Bound.LOWER]: lower,
-      [Bound.UPPER]: upper,
-    }
-  }, [tickSpacing])
+  const tickSpaceLimits: {
+    [bound in Bound]: number | undefined
+  } = useMemo(
+    () => ({
+      [Bound.LOWER]: tickSpacing ? TickUtils.nearestUsableTick(MIN_TICK, tickSpacing) : undefined,
+      [Bound.UPPER]: tickSpacing ? TickUtils.nearestUsableTick(MAX_TICK, tickSpacing) : undefined,
+    }),
+    [tickSpacing],
+  )
 
   const ticks: { [key: string]: number | undefined } = useMemo(() => {
     return {

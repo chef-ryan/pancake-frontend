@@ -196,6 +196,7 @@ interface CurrencyInputPanelProps {
   modalTitle?: React.ReactNode
   showSearchHeader?: boolean
   wrapperProps?: AtomBoxProps
+  maxDecimals?: number
 }
 const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   defaultValue,
@@ -230,6 +231,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   showSearchHeader,
   wrapperProps,
   customChainId,
+  maxDecimals,
 }: CurrencyInputPanelProps) {
   const { account: evmAccount, solanaAccount, unifiedAccount, chainId } = useAccountActiveChain()
   const account = useMemo(() => {
@@ -358,6 +360,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
       inputRef={inputRef}
       wrapperRef={wrapperRef}
       wrapperProps={wrapperProps}
+      maxDecimals={maxDecimals}
       top={
         topOptions.show ? (
           <Flex justifyContent="space-between" alignItems="center" width="100%" position="relative">

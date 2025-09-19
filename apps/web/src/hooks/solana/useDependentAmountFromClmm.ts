@@ -83,7 +83,7 @@ export function useDependentAmountFromClmm({
           new Decimal(rawOut.toString())
             .mul(1 + (inputA ? 1 : -1) * slippagePercent)
             .div(10 ** dependentCurrency.decimals)
-            .toString(),
+            .toFixed(),
           dependentCurrency,
         ),
       )

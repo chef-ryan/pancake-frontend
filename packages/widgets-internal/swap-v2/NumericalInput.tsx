@@ -18,6 +18,7 @@ export type NumericalInputProps = {
   fontSize?: string;
   inputRef?: React.RefObject<HTMLInputElement>;
   padding?: string;
+  maxDecimals?: number;
   onUserInput: (input: string) => void;
 } & SwapCSS.InputVariants &
   Omit<React.HTMLProps<HTMLInputElement>, "ref" | "onChange" | "as">;
@@ -33,17 +34,21 @@ export const NumericalInput = memo(function InnerInput({
   fontSize,
   inputRef,
   padding,
+  maxDecimals,
   ...rest
 }: NumericalInputProps) {
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === "" || inputRegex.test(escapeRegExp(nextUserInput))) {
-      onUserInput(truncateDecimals(nextUserInput));
+      onUserInput(truncateDecimals(nextUserInput, maxDecimals));
     }
   };
 
   const { t } = useTranslation();
 
-  const truncatedValue = useMemo(() => (typeof value === "string" ? truncateDecimals(value) : value), [value]);
+  const truncatedValue = useMemo(
+    () => (typeof value === "string" ? truncateDecimals(value, maxDecimals) : value),
+    [value, maxDecimals]
+  );
 
   return (
     <StyledInput

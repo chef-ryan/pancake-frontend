@@ -86,6 +86,7 @@ import { useRaydium } from 'hooks/solana/useRaydium'
 import { usePreviousValue } from '@pancakeswap/hooks'
 import { useCreateClmmPool } from 'hooks/solana/useCreateClmmPool'
 import { useUnifiedTokenUsdPrice } from 'hooks/useUnifiedTokenUsdPrice'
+import { useQuickActionConfigs } from 'views/AddLiquidityV3/hooks/useQuickActionConfigs'
 
 import LockedDeposit from '../V3FormView/components/LockedDeposit'
 import { RangeSelector } from './RangeSelector'
@@ -785,6 +786,11 @@ export function SolanaFormView({
     avoidToStopPropagation: true,
   })
 
+  const quickActionConfigs = useQuickActionConfigs({
+    defaultRangePoints: solPoolInfo?.rawPool?.config?.defaultRangePoint,
+    feeAmount,
+  })
+
   return (
     <>
       <LeftContainer>
@@ -886,10 +892,7 @@ export function SolanaFormView({
                         isLoading={isChartDataLoading}
                         key={baseCurrency?.wrapped.address}
                         zoomLevel={
-                          customZoomLevel ||
-                          (activeQuickAction && feeAmount
-                            ? QUICK_ACTION_CONFIGS?.[feeAmount]?.[activeQuickAction]
-                            : undefined)
+                          customZoomLevel || (activeQuickAction ? quickActionConfigs?.[activeQuickAction] : undefined)
                         }
                         baseCurrency={baseCurrency as any}
                         quoteCurrency={quoteCurrency as any}
@@ -1007,6 +1010,7 @@ export function SolanaFormView({
               <Box mb="8px">
                 <CurrencyInputPanelSimplify
                   showUSDPrice
+                  maxDecimals={currencies[Field.CURRENCY_A]?.decimals}
                   maxAmount={maxAmounts[Field.CURRENCY_A]}
                   onMax={() => onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')}
                   onPercentInput={(percent) =>
@@ -1027,6 +1031,7 @@ export function SolanaFormView({
             <LockedDeposit locked={depositBDisabled}>
               <CurrencyInputPanelSimplify
                 showUSDPrice
+                maxDecimals={currencies[Field.CURRENCY_B]?.decimals}
                 maxAmount={maxAmounts[Field.CURRENCY_B]}
                 onMax={() => onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')}
                 onPercentInput={(percent) =>

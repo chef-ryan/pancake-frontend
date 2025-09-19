@@ -14,6 +14,7 @@ interface CurrencyInputPanelProps extends Omit<NumericalInputProps, "onBlur" | "
   wrapperRef?: React.RefObject<HTMLDivElement>;
   inputRef?: React.RefObject<HTMLInputElement>;
   wrapperProps?: AtomBoxProps;
+  maxDecimals?: number;
 }
 export function CurrencyInputPanelSimplify({
   value,
@@ -32,6 +33,7 @@ export function CurrencyInputPanelSimplify({
   wrapperRef,
   wrapperProps,
   inputRef,
+  maxDecimals,
 }: CurrencyInputPanelProps) {
   return (
     <AtomBox position="relative" id={id} display="grid" gap="4px" width="100%">
@@ -83,6 +85,7 @@ export function CurrencyInputPanelSimplify({
               }}
               fontSize={inputFontSize}
               padding={bottom ? "0 0 16px" : undefined}
+              maxDecimals={maxDecimals}
             />
             {inputLeft}
           </AtomBox>
