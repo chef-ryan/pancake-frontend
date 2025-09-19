@@ -24,43 +24,54 @@ export const SolanaV3Earnings = ({
   })
   const { isMobile } = useMatchBreakpoints()
   const maxColumn = Math.max(breakdownRewardInfo.rewards.length, 2)
+
+  const haveFarmRewards =
+    breakdownRewardInfo.rewards.length > 0 && breakdownRewardInfo.rewards.some((r) => Number(r.amount) > 0)
+  const haveLpFees = Number(breakdownRewardInfo.fee.A?.amount) > 0 || Number(breakdownRewardInfo.fee.B?.amount) > 0
+
+  if (!haveFarmRewards && !haveLpFees) return null
+
   return (
     <>
-      <Grid gridGap="8px" alignItems="flex-start" gridTemplateColumns={isMobile ? '1fr' : '80px 1fr'}>
-        <DetailInfoLabel>{t('Farm Rewards')}:</DetailInfoLabel>
-        <Grid gridTemplateColumns={isMobile ? '1fr 1fr' : `repeat(${maxColumn}, minmax(120px, 1fr))`} gridGap="8px">
-          {breakdownRewardInfo.rewards.map((r, index) => (
-            <EarningsWithToken
-              key={index}
-              currency={convertRawTokenInfoIntoSPLToken(r.mint as TokenInfo)}
-              earningsAmount={Number(r.amount)}
-              earningsUsd={Number(r.amountUSD)}
-              rowProps={{ justifyContent: isMobile ? 'space-between' : 'flex-end' }}
-            />
-          ))}
+      {haveFarmRewards && (
+        <Grid gridGap="8px" alignItems="flex-start" gridTemplateColumns={isMobile ? '1fr' : '80px 1fr'}>
+          <DetailInfoLabel>{t('Farm Rewards')}:</DetailInfoLabel>
+          <Grid gridTemplateColumns={isMobile ? '1fr 1fr' : `repeat(${maxColumn}, minmax(120px, 1fr))`} gridGap="8px">
+            {breakdownRewardInfo.rewards.map((r, index) => (
+              <EarningsWithToken
+                key={index}
+                currency={convertRawTokenInfoIntoSPLToken(r.mint as TokenInfo)}
+                earningsAmount={Number(r.amount)}
+                earningsUsd={Number(r.amountUSD)}
+                rowProps={{ justifyContent: isMobile ? 'space-between' : 'flex-end' }}
+              />
+            ))}
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid gridGap="8px" alignItems="flex-start" gridTemplateColumns={isMobile ? '1fr' : '90px 1fr'}>
-        <DetailInfoLabel>{t('LP Fees')}: </DetailInfoLabel>
-        <Grid gridTemplateColumns={isMobile ? '1fr 1fr' : `repeat(${maxColumn}, minmax(120px, 1fr))`} gridGap="8px">
-          {breakdownRewardInfo.fee.A?.mint ? (
-            <EarningsWithToken
-              currency={convertRawTokenInfoIntoSPLToken(breakdownRewardInfo.fee.A?.mint as TokenInfo)}
-              earningsAmount={Number(breakdownRewardInfo.fee.A?.amount)}
-              earningsUsd={Number(breakdownRewardInfo.fee.A?.amountUSD)}
-              rowProps={{ justifyContent: isMobile ? 'space-between' : 'flex-end' }}
-            />
-          ) : null}
-          {breakdownRewardInfo.fee.B?.mint ? (
-            <EarningsWithToken
-              currency={convertRawTokenInfoIntoSPLToken(breakdownRewardInfo.fee.B?.mint as TokenInfo)}
-              earningsAmount={Number(breakdownRewardInfo.fee.B?.amount)}
-              earningsUsd={Number(breakdownRewardInfo.fee.B?.amountUSD)}
-              rowProps={{ justifyContent: isMobile ? 'space-between' : 'flex-end' }}
-            />
-          ) : null}
+      )}
+      {haveLpFees && (
+        <Grid gridGap="8px" alignItems="flex-start" gridTemplateColumns={isMobile ? '1fr' : '90px 1fr'}>
+          <DetailInfoLabel>{t('LP Fees')}: </DetailInfoLabel>
+          <Grid gridTemplateColumns={isMobile ? '1fr 1fr' : `repeat(${maxColumn}, minmax(120px, 1fr))`} gridGap="8px">
+            {breakdownRewardInfo.fee.A?.mint ? (
+              <EarningsWithToken
+                currency={convertRawTokenInfoIntoSPLToken(breakdownRewardInfo.fee.A?.mint as TokenInfo)}
+                earningsAmount={Number(breakdownRewardInfo.fee.A?.amount)}
+                earningsUsd={Number(breakdownRewardInfo.fee.A?.amountUSD)}
+                rowProps={{ justifyContent: isMobile ? 'space-between' : 'flex-end' }}
+              />
+            ) : null}
+            {breakdownRewardInfo.fee.B?.mint ? (
+              <EarningsWithToken
+                currency={convertRawTokenInfoIntoSPLToken(breakdownRewardInfo.fee.B?.mint as TokenInfo)}
+                earningsAmount={Number(breakdownRewardInfo.fee.B?.amount)}
+                earningsUsd={Number(breakdownRewardInfo.fee.B?.amountUSD)}
+                rowProps={{ justifyContent: isMobile ? 'space-between' : 'flex-end' }}
+              />
+            ) : null}
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </>
   )
 }
