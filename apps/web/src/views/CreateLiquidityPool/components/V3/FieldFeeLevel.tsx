@@ -131,7 +131,7 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({
       onSelect?.(0, firstAvailable)
     }
     timeoutRef.current = undefined
-  }, [router.isReady, onSelect, options, setFeeLevel])
+  }, [onSelect, options, setFeeLevel])
 
   useEffect(() => {
     if (inputValue === null && feeLevel !== null) {
@@ -147,7 +147,7 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({
 
   // Auto-select a default Solana fee tier when none selected
   useEffect(() => {
-    if (!isSolanaChain || feeLevel || !options.length) return
+    if (!isSolanaChain || feeLevel || feeAmount || !options.length) return
     if (!router.isReady) {
       if (!timeoutRef.current) {
         timeoutRef.current = setTimeout(updateFee, 100)
@@ -163,7 +163,7 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({
         timeoutRef.current = undefined
       }
     }
-  }, [router.isReady, updateFee, isSolanaChain, feeLevel, options.length])
+  }, [feeAmount, router.isReady, updateFee, isSolanaChain, feeLevel, options.length])
 
   useEffect(() => {
     if (feeAmount && feeAmount !== feeLevel) {
