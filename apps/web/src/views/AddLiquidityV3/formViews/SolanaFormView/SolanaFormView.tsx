@@ -366,21 +366,6 @@ export function SolanaFormView({
   const createClmm = useCreateClmmPool()
   const addLiquidity = useCallback(async () => {
     const poolInfo = solPoolInfo?.rawPool as any
-    const currencyA = currencies[Field.CURRENCY_A]
-    const mintAAddr = (solPoolInfo?.token0 as any)?.address
-    const baseIsMintA = currencyA?.wrapped?.address === mintAAddr
-    const amountAQuot = parsedAmounts[Field.CURRENCY_A]?.quotient
-    const amountBQuot = parsedAmounts[Field.CURRENCY_B]?.quotient
-    const mintAAmount = new BN((baseIsMintA ? amountAQuot : amountBQuot)?.toString() ?? '0')
-    const mintBAmount = new BN((baseIsMintA ? amountBQuot : amountAQuot)?.toString() ?? '0')
-
-    if (mintAAmount.isZero() && mintBAmount.isZero()) {
-      setTxnErrorMessage(t('Enter an amount'))
-      return { txId: '' }
-    }
-    const base: 'MintA' | 'MintB' = baseIsMintA ? 'MintA' : 'MintB'
-    const baseAmount = baseIsMintA ? mintAAmount : mintBAmount
-    const otherAmountMax = baseIsMintA ? mintBAmount : mintAAmount
 
     const build = await raydium?.clmm.openPositionFromBase({
       poolInfo,
@@ -389,9 +374,9 @@ export function SolanaFormView({
       },
       tickLower: ticks[Bound.LOWER] as number,
       tickUpper: ticks[Bound.UPPER] as number,
-      base,
-      baseAmount,
-      otherAmountMax,
+      base: independentField === Field.CURRENCY_A ? 'MintA' : 'MintB',
+      baseAmount: new BN(parsedAmounts[independentField]?.quotient),
+      otherAmountMax: new BN(parsedAmounts[dependentField]?.quotient),
       txVersion: TxVersion.V0,
       nft2022: true,
     })
@@ -399,8 +384,9 @@ export function SolanaFormView({
     if (!build) {
       return { txId: '' }
     }
-    return build?.execute()
-  }, [currencies, parsedAmounts, raydium?.clmm, solPoolInfo?.rawPool, solPoolInfo?.token0, t, ticks])
+    build.simulate()
+    return build.execute()
+  }, [dependentField, parsedAmounts, independentField, raydium?.clmm, solPoolInfo?.rawPool, ticks])
 
   const onAdd = useCallback(async () => {
     logGTMClickAddLiquidityConfirmEvent()
@@ -786,8 +772,12 @@ export function SolanaFormView({
     avoidToStopPropagation: true,
   })
 
+  const defaultRangePoints = useMemo(
+    () => solPoolInfo?.rawPool?.config?.defaultRangePoint.map((p) => Number(p) * 100),
+    [solPoolInfo?.rawPool?.config?.defaultRangePoint],
+  )
   const quickActionConfigs = useQuickActionConfigs({
-    defaultRangePoints: solPoolInfo?.rawPool?.config?.defaultRangePoint,
+    defaultRangePoints,
     feeAmount,
   })
 
@@ -932,7 +922,7 @@ export function SolanaFormView({
                     tickSpaceLimits={tickSpaceLimits}
                     quickAction={quickAction}
                     handleQuickAction={handleQuickAction}
-                    defaultRangePoints={solPoolInfo?.rawPool?.config?.defaultRangePoint}
+                    defaultRangePoints={defaultRangePoints}
                   />
                 )}
 
