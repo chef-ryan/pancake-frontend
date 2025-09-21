@@ -58,10 +58,7 @@ export const FieldStartingPrice: React.FC<FieldStartingPriceProps> = ({
   const { switchCurrencies: switchCurrenciesDefault } = useSelectIdRouteParams()
   const switchCurrencies = switchCurrenciesProp || switchCurrenciesDefault
 
-  // todo:@eric
-  const b = currency0 ? (currency0 as unknown as Currency) : undefined
-  const q = currency1 ? (currency1 as unknown as Currency) : undefined
-  const [, , marketPrice] = usePoolMarketPrice(b, q)
+  const [, , marketPrice] = usePoolMarketPrice(currency0, currency1)
 
   const updatePrice = useCallback(
     (input: string | null) => {
