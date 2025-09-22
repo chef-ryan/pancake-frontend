@@ -1,4 +1,4 @@
-import { useMemo, ReactElement, FC } from 'react'
+import { useMemo, ReactElement, FC, useCallback, useState, useEffect } from 'react'
 import { NonEVMChainId } from '@pancakeswap/chains'
 import { Box, Text } from '@pancakeswap/uikit'
 import { PublicKey, Connection } from '@solana/web3.js'
@@ -22,8 +22,9 @@ import { useBirdeyeTokenPrice } from 'hooks/solana/useBirdeyeTokenPrice'
 import { formatAmount } from '@pancakeswap/utils/formatInfoNumbers'
 import { formatPercentage, formatPoolDetailFiatNumber } from 'views/PoolDetail/utils'
 import truncateHash from '@pancakeswap/utils/truncateHash'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { displayApr } from '@pancakeswap/utils/displayApr'
+import { useTranslation } from '@pancakeswap/localization'
 import { useChainIdByQuery } from 'state/info/hooks'
 import { Tooltips } from 'components/Tooltips'
 import { AprTooltipContent } from 'views/universalFarms/components/PoolAprButtonV3/AprTooltipContent'
@@ -31,10 +32,14 @@ import { AprKey, getAprForPriceRange } from 'hooks/solana/useClmmApr'
 import { useSolanaOnchainClmmPool } from 'hooks/solana/useSolanaOnchainPool'
 import { SolanaV3PositionActions } from 'views/universalFarms/components/PositionActions/SolanaV3PositionActions'
 import { POSITION_STATUS } from 'state/farmsV4/state/accountPositions/type'
+import { useRaydium } from 'hooks/solana/useRaydium'
+import { useSolanaPriorityFee } from 'components/WalletModalV2/hooks/useSolanaPriorityFee'
 
+import { useSolanaV3RewardInfoFromSimulation } from 'views/universalFarms/hooks/useSolanaV3RewardInfoFromSimulation'
 import { PositionsTable } from './PositionsTable'
 import { EmptyPositionCard, LoadingCard } from './UtilityCards'
 import { PriceRangeDisplay } from './PriceRangeDisplay'
+import { PrimaryOutlineButton } from '../styles'
 
 interface V3PositionsTableProps {
   poolInfo: SolanaV3PoolInfo
@@ -166,6 +171,7 @@ const fetchSolanaPositions = async ({
 }
 
 export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) => {
+  const { t } = useTranslation()
   const { solanaAccount } = useAccountActiveChain()
   const endpoint = useAtomValue(rpcUrlAtom)
   const chainId = useChainIdByQuery()
@@ -184,6 +190,11 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         poolId: solPoolId!,
       }),
   })
+
+  const raydium = useRaydium()
+  const { computeBudgetConfig } = useSolanaPriorityFee()
+  const [sending, setSending] = useState(false)
+  const queryClient = useQueryClient()
 
   const rowsDisplay: SolanaPositionRow[] = useMemo(() => {
     return (
@@ -289,6 +300,12 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
     )
   }, [poolInfo, data?.tableBase, data?.computePoolInfo])
 
+  // Simulation-based pending yield per position (follow solana app logic)
+  const [earningsUsdMap, setEarningsUsdMap] = useState<Record<string, number>>({})
+  const handleEarningsReady = useCallback((tokenId: string, usd: number) => {
+    setEarningsUsdMap((prev) => (prev[tokenId] === usd ? prev : { ...prev, [tokenId]: usd }))
+  }, [])
+
   const tokenMints = useMemo(() => {
     const solData = poolInfo?.rawPool
     const mintA = solData?.mintA?.address
@@ -317,7 +334,8 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
       if (!b) return row
       const liqUSD = b.amountADec * priceA + b.amountBDec * priceB
       totalLiq += liqUSD
-      const earnUSD = b.feeADec * priceA + b.feeBDec * priceB
+      // Use simulation result for more accurate pending yield
+      const earnUSD = earningsUsdMap[row.tokenId] ?? 0
       totalEarn += earnUSD
 
       let aprValue = 0
@@ -365,18 +383,92 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
     })
     const totalApr = totalLiq > 0 ? aprWeightedSum / totalLiq : 0
     return { rows, totalLiq, totalEarn, totalApr }
-  }, [poolOnchain?.computePoolInfo?.liquidity, data, priceMap, poolInfo, rowsDisplay])
+  }, [poolOnchain?.computePoolInfo?.liquidity, data, priceMap, poolInfo, rowsDisplay, earningsUsdMap])
 
   if (isLoading) return <LoadingCard />
   if (!computed.rows.length) return <EmptyPositionCard />
 
   return (
-    <PositionsTable
-      poolInfo={poolInfo as PoolInfo}
-      totalLiquidityUSD={computed.totalLiq}
-      totalApr={computed.totalApr}
-      totalEarnings={formatPoolDetailFiatNumber(computed.totalEarn)}
-      data={computed.rows.map((r) => r.tableRow)}
-    />
+    <>
+      {/* hidden probes to compute earnings via simulation per position */}
+      {data?.tableBase?.map((tb) => (
+        <SolanaV3EarningsProbe
+          key={tb.tokenId}
+          tokenId={tb.tokenId}
+          poolInfo={poolInfo}
+          position={tb.data as any}
+          onReady={handleEarningsReady}
+        />
+      ))}
+
+      <PositionsTable
+        poolInfo={poolInfo as PoolInfo}
+        totalLiquidityUSD={computed.totalLiq}
+        totalApr={computed.totalApr}
+        totalEarnings={formatPoolDetailFiatNumber(computed.totalEarn)}
+        data={computed.rows.map((r) => r.tableRow)}
+        harvestAllButton={
+          <PrimaryOutlineButton
+            onClick={async () => {
+              if (sending || !raydium || !data || !poolInfo?.poolId) return
+              try {
+                setSending(true)
+                const { poolId } = poolInfo
+                const positions = (data.tableBase || []).filter((b) => !b.raw.liquidity.isZero()).map((b) => b.data)
+
+                if (!positions.length) {
+                  setSending(false)
+                  return
+                }
+
+                const allPoolInfo = { [poolId]: poolInfo.rawPool }
+                const allPositions = { [poolId]: positions as any[] }
+
+                const buildData = await raydium.clmm.harvestAllRewards({
+                  allPoolInfo,
+                  allPositions,
+                  ownerInfo: { useSOLBalance: true },
+                  programId: PancakeClmmProgramId['mainnet-beta'],
+                  computeBudgetConfig,
+                })
+
+                await buildData.execute({ sequentially: true })
+                // Refresh position and simulation queries, then reset local earnings cache
+                await Promise.all([
+                  queryClient.invalidateQueries({ queryKey: ['solana-v3-positions'], exact: false }),
+                  queryClient.invalidateQueries({
+                    queryKey: ['solana-v3-reward-info-from-simulation', poolInfo.poolId],
+                    exact: false,
+                  }),
+                ])
+                setEarningsUsdMap({})
+              } catch (e) {
+                console.error(e)
+              } finally {
+                setSending(false)
+              }
+            }}
+            disabled={sending || !computed.totalEarn}
+          >
+            {sending ? t('Harvesting...') : t('Harvest All')}
+          </PrimaryOutlineButton>
+        }
+      />
+    </>
   )
+}
+
+// Helper component: uses simulation to compute pending yield and feeds back to parent
+const SolanaV3EarningsProbe: FC<{
+  tokenId: string
+  poolInfo: SolanaV3PoolInfo
+  position: any
+  onReady: (tokenId: string, usd: number) => void
+}> = ({ tokenId, poolInfo, position, onReady }) => {
+  const { totalPendingYield } = useSolanaV3RewardInfoFromSimulation({ poolInfo, position })
+  useEffect(() => {
+    const v = Number(totalPendingYield?.toString?.() ?? 0)
+    if (Number.isFinite(v)) onReady(tokenId, v)
+  }, [tokenId, totalPendingYield, onReady])
+  return null
 }
