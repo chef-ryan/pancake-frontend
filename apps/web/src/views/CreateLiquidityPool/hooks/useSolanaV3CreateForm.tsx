@@ -41,6 +41,7 @@ import { QUICK_ACTION_CONFIGS } from 'views/AddLiquidityV3/types'
 import { useGetPriceAndTick } from 'hooks/solana/useGetPriceAndTick'
 import { ToastDescriptionWithTx } from 'components/Toast'
 import { useCreateClmmPool } from 'hooks/solana/useCreateClmmPool'
+import { useCreatePosition } from 'hooks/solana/useCreatePosition'
 import { useCurrencies } from './useCurrencies'
 import { useRangeHopCallbacks } from './useRangeHopCallbacks'
 
@@ -307,6 +308,7 @@ export const useSolanaV3CreateForm = () => {
   )
 
   const createClmm = useCreateClmmPool()
+  const addLiquidity = useCreatePosition()
   const onAdd = useCallback(async () => {
     logGTMClickAddLiquidityConfirmEvent()
     if (!baseCurrency || !quoteCurrency || !price || !feeAmount) {
@@ -317,7 +319,7 @@ export const useSolanaV3CreateForm = () => {
       setAttemptingTxn(true)
       const token0 = isSorted ? baseCurrency.wrapped : quoteCurrency.wrapped
       const token1 = isSorted ? quoteCurrency.wrapped : baseCurrency.wrapped
-      const { txId, openPositionTxId } = await createClmm({
+      const { buildData: createBuildData } = await createClmm({
         mintA: token0 as SPLToken,
         mintB: token1 as SPLToken,
         tradeFeeRate: feeAmount,
@@ -332,9 +334,18 @@ export const useSolanaV3CreateForm = () => {
               }
             : undefined,
       })
+
+      const res = await addLiquidity({
+        createBuildData,
+        independentField,
+        dependentField,
+        parsedAmounts,
+        ticks,
+        poolInfo: createBuildData?.extInfo.mockPoolInfo,
+      })
       setAttemptingTxn(false)
-      setTxHash(txId)
-      const hash = (openPositionTxId || txId) as any
+      const hash = 'txId' in res ? res.txId : 'txIds' in res ? res.txIds[0] : ''
+      setTxHash(hash)
       if (hash) toastSuccess(t('Transactions Submitted'), <ToastDescriptionWithTx txHash={hash} />)
       router.push('/liquidity/pools')
     } catch (e: any) {
@@ -342,6 +353,10 @@ export const useSolanaV3CreateForm = () => {
       setTxnErrorMessage(e?.message || String(e))
     }
   }, [
+    addLiquidity,
+    dependentField,
+    independentField,
+    ticks,
     isSorted,
     baseCurrency,
     quoteCurrency,

@@ -1,5 +1,4 @@
 import Decimal from 'decimal.js'
-import BN from 'bn.js'
 import { Protocol } from '@pancakeswap/farms'
 import { useTranslation } from '@pancakeswap/localization'
 import {
@@ -11,7 +10,7 @@ import {
   Token,
   SPLToken,
 } from '@pancakeswap/swap-sdk-core'
-import { isSolWSol } from '@pancakeswap/sdk'
+//
 import { useUnifiedUSDPriceAmount } from 'hooks/useStablecoinPrice'
 import {
   AutoColumn,
@@ -81,10 +80,11 @@ import { useSolanaPoolByMint } from 'hooks/solana/useSolanaPoolsByMint'
 import { FieldFeeLevel } from 'views/CreateLiquidityPool/components/V3/FieldFeeLevel'
 import { useRangeHopCallbacks } from 'views/CreateLiquidityPool/hooks/useRangeHopCallbacks'
 import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
-import { TxVersion } from '@pancakeswap/solana-core-sdk'
+//
 import { useRaydium } from 'hooks/solana/useRaydium'
+import { useCreatePosition } from 'hooks/solana/useCreatePosition'
 import { usePreviousValue } from '@pancakeswap/hooks'
-import { useCreateClmmPool } from 'hooks/solana/useCreateClmmPool'
+import { CreatePoolBuildData, useCreateClmmPool } from 'hooks/solana/useCreateClmmPool'
 import { useUnifiedTokenUsdPrice } from 'hooks/useUnifiedTokenUsdPrice'
 import { useQuickActionConfigs } from 'views/AddLiquidityV3/hooks/useQuickActionConfigs'
 
@@ -364,29 +364,7 @@ export function SolanaFormView({
   const [customZoomLevel, setCustomZoomLevel] = useState<ZoomLevels | undefined>(undefined)
 
   const createClmm = useCreateClmmPool()
-  const addLiquidity = useCallback(async () => {
-    const poolInfo = solPoolInfo?.rawPool as any
-
-    const build = await raydium?.clmm.openPositionFromBase({
-      poolInfo,
-      ownerInfo: {
-        useSOLBalance: isSolWSol(poolInfo.mintA) || isSolWSol(poolInfo.mintB),
-      },
-      tickLower: ticks[Bound.LOWER] as number,
-      tickUpper: ticks[Bound.UPPER] as number,
-      base: independentField === Field.CURRENCY_A ? 'MintA' : 'MintB',
-      baseAmount: new BN(parsedAmounts[independentField]?.quotient),
-      otherAmountMax: new BN(parsedAmounts[dependentField]?.quotient),
-      txVersion: TxVersion.V0,
-      nft2022: true,
-    })
-
-    if (!build) {
-      return { txId: '' }
-    }
-    build.simulate()
-    return build.execute()
-  }, [dependentField, parsedAmounts, independentField, raydium?.clmm, solPoolInfo?.rawPool, ticks])
+  const addLiquidity = useCreatePosition()
 
   const onAdd = useCallback(async () => {
     logGTMClickAddLiquidityConfirmEvent()
@@ -397,9 +375,9 @@ export function SolanaFormView({
 
       setAttemptingTxn(true)
 
-      let hash = ''
+      let createBuildData: CreatePoolBuildData | undefined
       if (noLiquidity && feeAmount && price) {
-        const { txId, openPositionTxId } = await createClmm({
+        const { buildData } = await createClmm({
           mintA: baseCurrency.wrapped as SPLToken,
           mintB: quoteCurrency.wrapped as SPLToken,
           tradeFeeRate: feeAmount,
@@ -414,13 +392,18 @@ export function SolanaFormView({
                 }
               : undefined,
         })
-        hash = txId ?? openPositionTxId
-      } else {
-        const { txId } = await addLiquidity()
-        hash = txId
+        createBuildData = buildData
       }
-
+      const res = await addLiquidity({
+        createBuildData,
+        independentField,
+        dependentField,
+        parsedAmounts,
+        ticks,
+        poolInfo: solPoolInfo?.rawPool ?? createBuildData?.extInfo.mockPoolInfo,
+      })
       setAttemptingTxn(false)
+      const hash = 'txId' in res ? res.txId : 'txIds' in res ? res.txIds[0] : ''
       setTxHash(hash)
       onAddLiquidityCallback(hash)
     } catch (e: any) {
@@ -428,6 +411,9 @@ export function SolanaFormView({
       setTxnErrorMessage(e?.message ?? 'Failed to add liquidity')
     }
   }, [
+    dependentField,
+    independentField,
+    solPoolInfo?.rawPool,
     addLiquidity,
     createClmm,
     feeAmount,
