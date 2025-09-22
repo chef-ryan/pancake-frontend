@@ -648,40 +648,6 @@ export function SolanaFormView({
     [price, feeAmount, invertPrice, onBothRangeInput, baseCurrency, quoteCurrency],
   )
 
-  const handleQuickAction = useCallback(
-    (value: number | null, zoomLevel: ZoomLevels) => {
-      setQuickAction(value)
-      if (value !== null) {
-        // Check if it's a full range action (100)
-        if (value === 100) {
-          setCustomZoomLevel(undefined)
-          setShowCapitalEfficiencyWarning(true)
-          setActiveQuickAction(100)
-          isQuickButtonUsed.current = true
-        } else {
-          const isPredefinedAction = feeAmount && QUICK_ACTION_CONFIGS[feeAmount]?.[value]
-
-          if (isPredefinedAction) {
-            setCustomZoomLevel(undefined)
-            // if (value === activeQuickAction) {
-            //   handleRefresh(ZOOM_LEVELS[feeAmount])
-            // } else
-
-            handleRefresh(QUICK_ACTION_CONFIGS[feeAmount][value])
-            setActiveQuickAction(value)
-            isQuickButtonUsed.current = true
-          } else {
-            setCustomZoomLevel(zoomLevel)
-            handleRefresh(zoomLevel)
-            setActiveQuickAction(value)
-            isQuickButtonUsed.current = true
-          }
-        }
-      }
-    },
-    [feeAmount, handleRefresh, setShowCapitalEfficiencyWarning],
-  )
-
   const invertRange = useCallback(() => {
     if (!ticksAtLimit[Bound.LOWER] && !ticksAtLimit[Bound.UPPER]) {
       onLeftRangeInput((invertPrice ? priceLower : priceUpper?.invert()) ?? undefined)
@@ -766,6 +732,36 @@ export function SolanaFormView({
     defaultRangePoints,
     feeAmount,
   })
+
+  const handleQuickAction = useCallback(
+    (value: number | null, zoomLevel: ZoomLevels) => {
+      setQuickAction(value)
+      if (value !== null) {
+        // Check if it's a full range action (100)
+        if (value === 100) {
+          setCustomZoomLevel(undefined)
+          setShowCapitalEfficiencyWarning(true)
+          setActiveQuickAction(100)
+          isQuickButtonUsed.current = true
+        } else {
+          const isPredefinedAction = quickActionConfigs?.[value]
+
+          if (isPredefinedAction) {
+            setCustomZoomLevel(undefined)
+            handleRefresh(isPredefinedAction)
+            setActiveQuickAction(value)
+            isQuickButtonUsed.current = true
+          } else {
+            setCustomZoomLevel(zoomLevel)
+            handleRefresh(zoomLevel)
+            setActiveQuickAction(value)
+            isQuickButtonUsed.current = true
+          }
+        }
+      }
+    },
+    [quickActionConfigs, handleRefresh, setShowCapitalEfficiencyWarning],
+  )
 
   return (
     <>
