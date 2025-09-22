@@ -84,7 +84,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
     return [input0Insufficient, input1Insufficient]
   }, [fields[0], fields[1], solanaAccount, maxCurrency0, maxCurrency1])
 
-  const { amount0, amount1 } = useLiquidityAmount({
+  const { amount0, amount1, amount0Disabled, amount1Disabled } = useLiquidityAmount({
     poolInfo,
     tickLower: position.tickLower,
     tickUpper: position.tickUpper,
@@ -184,11 +184,8 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
       >
         <AutoColumn gap="16px">
           <SolanaV3PoolInfoHeader poolInfo={poolInfo} currency0={currency0} currency1={currency1} position={position} />
-
           <PriceRangeCard poolInfo={poolInfo} position={position} />
-
           <PreTitle textTransform="uppercase">{t('Amount of liquidity to add')}</PreTitle>
-
           <Flex justifyContent="space-between" alignItems="center">
             <Text>{t('Slippage Tolerance')}</Text>
             <SolanaLiquiditySlippageButton />
@@ -203,7 +200,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               id="add-liquidity-input-tokena"
               showMaxButton
               error={insufficientBalance0}
-              disabled={position.liquidity.isZero() ? amount0Add?.equalTo(0) : amount0?.equalTo(0)}
+              disabled={amount0Disabled}
               disableCurrencySelect
               defaultValue={!position.liquidity.isZero() && amount0?.equalTo(0) ? '' : fields[0] ?? '0'}
               onUserInput={handleFieldAInput}
@@ -234,7 +231,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               id="add-liquidity-input-tokenb"
               showMaxButton
               error={insufficientBalance1}
-              disabled={position.liquidity.isZero() ? amount1Add?.equalTo(0) : amount1?.equalTo(0)}
+              disabled={amount1Disabled}
               disableCurrencySelect
               defaultValue={!position.liquidity.isZero() && amount1?.equalTo(0) ? '' : fields[1] ?? '0'}
               onUserInput={handleFieldBInput}
@@ -256,7 +253,6 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               }}
             />
           </StyledInputCard>
-
           <PositionChanges
             poolInfo={poolInfo}
             position={position}
@@ -264,10 +260,9 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
             amount0Add={focusSide === 0 ? amount0Add : amount0AddWithSlippage}
             amount1Add={focusSide === 1 ? amount1Add : amount1AddWithSlippage}
           />
-
           <Button
             width="100%"
-            disabled={!liquidityAdd || insufficientBalance0 || insufficientBalance1}
+            disabled={!liquidityAdd || liquidityAdd.isZero() || insufficientBalance0 || insufficientBalance1}
             isLoading={sending}
             onClick={handleConfirm}
           >

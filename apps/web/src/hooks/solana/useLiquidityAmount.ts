@@ -38,9 +38,23 @@ export const useLiquidityAmount = ({ poolInfo, tickLower, tickUpper, liquidity }
     ]
   }, [poolInfo, liquidity, tickLower, tickUpper, currency0, currency1, epochInfo])
 
+  const [amount0Disabled, amount1Disabled] = useMemo(() => {
+    if (
+      !poolInfo ||
+      typeof tickLower !== 'number' ||
+      typeof tickUpper !== 'number' ||
+      typeof poolInfo.tickCurrent !== 'number'
+    )
+      return [false, false]
+
+    return [poolInfo.tickCurrent > tickUpper, poolInfo.tickCurrent < tickLower]
+  }, [tickLower, tickUpper, poolInfo])
+
   return {
     amount0,
     amount1,
+    amount0Disabled,
+    amount1Disabled,
   }
 }
 
