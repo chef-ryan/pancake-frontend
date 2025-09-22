@@ -196,6 +196,45 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
   const [sending, setSending] = useState(false)
   const queryClient = useQueryClient()
 
+  const handleHarvestAll = useCallback(async () => {
+    if (sending || !raydium || !data || !poolInfo?.poolId) return
+    try {
+      setSending(true)
+      const { poolId } = poolInfo
+      const positions = (data.tableBase || []).filter((b) => !b.raw.liquidity.isZero()).map((b) => b.data)
+
+      if (!positions.length) {
+        setSending(false)
+        return
+      }
+
+      const allPoolInfo = { [poolId]: poolInfo.rawPool }
+      const allPositions = { [poolId]: positions as any[] }
+
+      const buildData = await raydium.clmm.harvestAllRewards({
+        allPoolInfo,
+        allPositions,
+        ownerInfo: { useSOLBalance: true },
+        programId: PancakeClmmProgramId['mainnet-beta'],
+        computeBudgetConfig,
+      })
+
+      await buildData.execute({ sequentially: true })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['solana-v3-positions'], exact: false }),
+        queryClient.invalidateQueries({
+          queryKey: ['solana-v3-reward-info-from-simulation', poolInfo.poolId],
+          exact: false,
+        }),
+      ])
+      setEarningsUsdMap({})
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setSending(false)
+    }
+  }, [sending, raydium, data, poolInfo?.poolId, poolInfo?.rawPool, computeBudgetConfig, queryClient])
+
   const rowsDisplay: SolanaPositionRow[] = useMemo(() => {
     return (
       data?.tableBase?.map((base) => {
@@ -408,48 +447,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         totalEarnings={formatPoolDetailFiatNumber(computed.totalEarn)}
         data={computed.rows.map((r) => r.tableRow)}
         harvestAllButton={
-          <PrimaryOutlineButton
-            onClick={async () => {
-              if (sending || !raydium || !data || !poolInfo?.poolId) return
-              try {
-                setSending(true)
-                const { poolId } = poolInfo
-                const positions = (data.tableBase || []).filter((b) => !b.raw.liquidity.isZero()).map((b) => b.data)
-
-                if (!positions.length) {
-                  setSending(false)
-                  return
-                }
-
-                const allPoolInfo = { [poolId]: poolInfo.rawPool }
-                const allPositions = { [poolId]: positions as any[] }
-
-                const buildData = await raydium.clmm.harvestAllRewards({
-                  allPoolInfo,
-                  allPositions,
-                  ownerInfo: { useSOLBalance: true },
-                  programId: PancakeClmmProgramId['mainnet-beta'],
-                  computeBudgetConfig,
-                })
-
-                await buildData.execute({ sequentially: true })
-                // Refresh position and simulation queries, then reset local earnings cache
-                await Promise.all([
-                  queryClient.invalidateQueries({ queryKey: ['solana-v3-positions'], exact: false }),
-                  queryClient.invalidateQueries({
-                    queryKey: ['solana-v3-reward-info-from-simulation', poolInfo.poolId],
-                    exact: false,
-                  }),
-                ])
-                setEarningsUsdMap({})
-              } catch (e) {
-                console.error(e)
-              } finally {
-                setSending(false)
-              }
-            }}
-            disabled={sending || !computed.totalEarn}
-          >
+          <PrimaryOutlineButton onClick={handleHarvestAll} disabled={sending || !computed.totalEarn}>
             {sending ? t('Harvesting...') : t('Harvest All')}
           </PrimaryOutlineButton>
         }
