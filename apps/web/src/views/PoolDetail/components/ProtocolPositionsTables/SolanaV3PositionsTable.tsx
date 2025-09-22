@@ -1,5 +1,4 @@
 import { useMemo, ReactElement, FC } from 'react'
-import { useTranslation } from '@pancakeswap/localization'
 import { NonEVMChainId } from '@pancakeswap/chains'
 import { Box, Text } from '@pancakeswap/uikit'
 import { PublicKey, Connection } from '@solana/web3.js'
@@ -30,6 +29,8 @@ import { Tooltips } from 'components/Tooltips'
 import { AprTooltipContent } from 'views/universalFarms/components/PoolAprButtonV3/AprTooltipContent'
 import { AprKey, getAprForPriceRange } from 'hooks/solana/useClmmApr'
 import { useSolanaOnchainClmmPool } from 'hooks/solana/useSolanaOnchainPool'
+import { SolanaV3PositionActions } from 'views/universalFarms/components/PositionActions/SolanaV3PositionActions'
+import { POSITION_STATUS } from 'state/farmsV4/state/accountPositions/type'
 
 import { PositionsTable } from './PositionsTable'
 import { EmptyPositionCard, LoadingCard } from './UtilityCards'
@@ -263,6 +264,22 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
                 showPercentages={Boolean(showPercentages)}
               />
             ),
+            actions: (
+              <SolanaV3PositionActions
+                removed={base.raw.liquidity.isZero()}
+                outOfRange={outOfRange}
+                chainId={NonEVMChainId.SOLANA}
+                poolInfo={poolInfo}
+                position={{
+                  ...base.data,
+                  token0: poolInfo.token0,
+                  token1: poolInfo.token1,
+                  protocol: poolInfo.protocol,
+                  chainId: poolInfo.chainId,
+                  status: POSITION_STATUS.ALL,
+                }}
+              />
+            ),
             tokenId: base.tokenId,
           },
         }
@@ -270,14 +287,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         return display
       }) ?? []
     )
-  }, [
-    data?.tableBase,
-    data?.computePoolInfo,
-    poolInfo.token0.decimals,
-    poolInfo.token0.symbol,
-    poolInfo.token1.decimals,
-    poolInfo.token1.symbol,
-  ])
+  }, [poolInfo, data?.tableBase, data?.computePoolInfo])
 
   const tokenMints = useMemo(() => {
     const solData = poolInfo?.rawPool
