@@ -7,6 +7,7 @@ import { removeLiquidity } from 'state/pools/solana/actions'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
 import { useSolanaTokenPrices } from 'hooks/solana/useSolanaTokenPrice'
+import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import BigNumber from 'bignumber.js'
 import PQueue from 'p-queue'
 import { useRaydium } from 'hooks/solana/useRaydium'
@@ -62,8 +63,14 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
     })
     return result
   }, [connection, poolInfo, position, raydium])
+  const [latestTxReceipt] = useLatestTxReceipt()
   const { data } = useQuery({
-    queryKey: ['solana-v3-reward-info-from-simulation', poolInfo?.poolId, position.nftMint.toBase58()],
+    queryKey: [
+      'solana-v3-reward-info-from-simulation',
+      poolInfo?.poolId,
+      position.nftMint.toBase58(),
+      latestTxReceipt?.blockHash,
+    ],
     queryFn: simulation,
     enabled: Boolean(poolInfo && position && raydium),
     ...QUERY_SETTINGS_IMMUTABLE,
