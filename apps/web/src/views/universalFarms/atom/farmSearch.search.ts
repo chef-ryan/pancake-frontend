@@ -8,17 +8,16 @@ import { atomWithLoadable } from 'quoter/atom/atomWithLoadable'
 import { fillOnchainPoolData } from 'state/farmsV4/search/batchFarmDataFiller'
 import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
 import { FarmInfo, farmToPoolInfo, getFarmKey } from 'state/farmsV4/search/farm.util'
-import { farmFilters } from 'state/farmsV4/search/filters'
 import { userShowTestnetAtom } from 'state/user/hooks/useUserShowTestnet'
 import { FarmV4SupportedChainId } from '@pancakeswap/farms'
 import { tokensMapAtom } from './tokensMapAtom'
 import { baseFarmListAtom, extendFarmListAtom } from './farmSearch.fetch'
-import { filterTokens, isInWhitelist } from './farmSearch.filter'
+import { farmFilters, filterTokens } from './farmSearch.filter'
 import { parseExtendSearchParams } from './farmSearch.parser'
 
 const searchAtom = atomFamily((query: FarmQuery) => {
   return atom((get) => {
-    const { protocols, chains: _chains, sortBy, activeChainId, keywords } = query
+    const { protocols, chains: _chains, sortBy, sortOrder, activeChainId, keywords } = query
     const useShowTestnet = get(userShowTestnetAtom)
     const { tokensMap } = get(tokensMapAtom)
     const queryChains = _chains.filter((chain) => {
@@ -74,7 +73,7 @@ const searchAtom = atomFamily((query: FarmQuery) => {
       fullList.filter(farmFilters.chainFilter(queryChains)).filter(farmFilters.protocolFilter(protocols)),
       query.keywords,
     )
-    const sorted = farmFilters.sortFunction(filtered, sortBy, activeChainId)
+    const sorted = farmFilters.sortFunction(filtered, sortBy, activeChainId, sortOrder)
 
     const hasPending = lists.some((x) => x.isPending())
 

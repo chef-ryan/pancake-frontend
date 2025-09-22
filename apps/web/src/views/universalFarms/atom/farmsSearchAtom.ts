@@ -7,7 +7,7 @@ import { getFarmKey } from 'state/farmsV4/search/farm.util'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
 import { tokensMapAtom } from './tokensMapAtom'
-import { isInWhitelist } from './farmSearch.filter'
+import { farmFilters, isInWhitelist } from './farmSearch.filter'
 import { farmsWithPagingAtom } from './farmSearch.search'
 import { farmsAprMapsAtom } from './farmSearch.enrichment'
 
@@ -25,7 +25,7 @@ const farmsWithFilledDataAtom = atomFamily((query: FarmQuery) => {
 
       return sliced.mapAsync(async (poolInfos) => {
         const { aggCakeAprs, aggLpAprs, aggMerklAprs, aggIncentraAprs } = enrichment
-        return poolInfos.map((poolInfo) => {
+        const pools = poolInfos.map((poolInfo) => {
           const { farm, ...others } = poolInfo
           const id = getFarmKey(farm!)
           const cakeApr = aggCakeAprs[id]?.value || '0'
@@ -45,6 +45,7 @@ const farmsWithFilledDataAtom = atomFamily((query: FarmQuery) => {
             lpApr,
           } as PoolInfo
         })
+        return farmFilters.sortFunction(pools, query.sortBy, query.activeChainId, query.sortOrder)
       })
     },
     {

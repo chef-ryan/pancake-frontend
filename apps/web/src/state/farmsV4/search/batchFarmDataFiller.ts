@@ -70,8 +70,8 @@ const fetchSolanaPoolApr = memoizeAsync(
       const data = (await response.json()) as SolanaAprResponse
       const aprMap = (data.data ?? []).reduce<Record<string, SolanaAprSummary>>((acc, pool) => {
         const rewards = pool.day?.rewardApr ?? []
-        const farmApr = rewards.reduce((sum, apr) => sum + (apr ?? 0), 0)
-        const lpApr = pool.day?.apr ?? 0
+        const farmApr = rewards.reduce((sum, apr) => sum + (apr ?? 0), 0) / 100
+        const lpApr = (pool.day?.feeApr ?? 0) / 100
         acc[pool.id] = {
           farmApr,
           lpApr,
