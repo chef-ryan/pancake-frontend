@@ -12,6 +12,24 @@ const DEFAULT_FORMAT_CONFIG = {
   suffix: '',
 }
 
+const subscriptNumbers: string[] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉']
+
+function toSubscript(number: number): string {
+  return number
+    .toString()
+    .split('')
+    .map((digit) => subscriptNumbers[parseInt(digit, 10)])
+    .join('')
+}
+
+function decimalTrailingZeroesToExponent(formattedNumber: string, maximumDecimalTrailingZeroes: number): string {
+  const decimalTrailingZeroesPattern = new RegExp(`(\\.|,)(0{${maximumDecimalTrailingZeroes + 1},})(?=[1-9]?)`)
+  return formattedNumber.replace(
+    decimalTrailingZeroesPattern,
+    (_match, separator, decimalTrailingZeroes) => `${separator}0${toSubscript(decimalTrailingZeroes.length)}`,
+  )
+}
+
 function getIntegerDigits(value: BigNumber) {
   return value.integerValue(BigNumber.ROUND_DOWN).sd(true)
 }
@@ -29,11 +47,26 @@ type Options = {
   maximumSignificantDigits?: number
   roundingMode?: BigNumber.RoundingMode
   maxDecimalDisplayDigits?: number
+  maximumDecimalTrailingZeroes?: number
 }
 
+/**
+ * Format a number with configurable precision and optional subscript notation for trailing zeros
+ *
+ * @example
+ * formatNumber(0.00003615) // '0.00003615'
+ * formatNumber(0.00003615, { maximumDecimalTrailingZeroes: 3 }) // '0.0₄3615'
+ * formatNumber(0.00000000089912, { maximumDecimalTrailingZeroes: 5 }) // '0.0₉8991'
+ * formatNumber(1234.567, { maxDecimalDisplayDigits: 2 }) // '1,234.57'
+ */
 export function formatNumber(
   value: string | number | BigNumber,
-  { maximumSignificantDigits = 12, roundingMode = BigNumber.ROUND_DOWN, maxDecimalDisplayDigits }: Options = {},
+  {
+    maximumSignificantDigits = 12,
+    roundingMode = BigNumber.ROUND_DOWN,
+    maxDecimalDisplayDigits,
+    maximumDecimalTrailingZeroes,
+  }: Options = {},
 ) {
   const valueInBN = new BigNumber(value)
   if (valueInBN.eq(BIG_ZERO)) {
@@ -53,7 +86,14 @@ export function formatNumber(
   const decimalPlaces = digitsAvailable < 0 ? 0 : digitsAvailable
   const valueToDisplay = bnToDisplay.toFormat(decimalPlaces, roundingMode, DEFAULT_FORMAT_CONFIG)
   const limitIndicator = isGreaterThanMax ? '>' : isLessThanMin ? '<' : ''
-  return `${limitIndicator}${valueToDisplay}`
+  let result = `${limitIndicator}${valueToDisplay}`
+
+  // Apply subscript formatting for trailing zeros if maximumDecimalTrailingZeroes is specified
+  if (typeof maximumDecimalTrailingZeroes !== 'undefined') {
+    result = decimalTrailingZeroesToExponent(result, maximumDecimalTrailingZeroes)
+  }
+
+  return result
 }
 
 export function formatNumberWithFullDigits(

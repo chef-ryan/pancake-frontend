@@ -38,9 +38,23 @@ export const useLiquidityAmount = ({ poolInfo, tickLower, tickUpper, liquidity }
     ]
   }, [poolInfo, liquidity, tickLower, tickUpper, currency0, currency1, epochInfo])
 
+  const [amount0Disabled, amount1Disabled] = useMemo(() => {
+    if (
+      !poolInfo ||
+      typeof tickLower !== 'number' ||
+      typeof tickUpper !== 'number' ||
+      typeof poolInfo.tickCurrent !== 'number'
+    )
+      return [false, false]
+
+    return [poolInfo.tickCurrent > tickUpper, poolInfo.tickCurrent < tickLower]
+  }, [tickLower, tickUpper, poolInfo])
+
   return {
     amount0,
     amount1,
+    amount0Disabled,
+    amount1Disabled,
   }
 }
 
@@ -57,10 +71,10 @@ export const useLiquidityDepositRatio = ({ poolInfo, tickLower, tickUpper, liqui
     const value1 = new BigNumber(amount1?.toExact() ?? 0).multipliedBy(price1 ?? 0)
     const totalValue = value0.plus(value1)
     const [ratio0Numerator, ratio0Denominator] = new BigNumber(value0.toNumber() ?? 0)
-      .dividedBy(totalValue.toNumber() ?? 0)
+      .dividedBy(totalValue.toNumber() || 1)
       .toFraction()
     const [ratio1Numerator, ratio1Denominator] = new BigNumber(value1.toNumber() ?? 0)
-      .dividedBy(totalValue.toNumber() ?? 0)
+      .dividedBy(totalValue.toNumber() || 1)
       .toFraction()
     return {
       ratio0: new Percent(ratio0Numerator.toString(), ratio0Denominator.toString()),

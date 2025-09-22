@@ -119,7 +119,7 @@ export const useSolanaV3PositionItems = ({
       const matchesStatus = positionStatus === POSITION_STATUS.ALL || pos.status === positionStatus
 
       // Farms only filter
-      const matchesFarms = farmsOnly ? pool.isFarming && positionStatus === POSITION_STATUS.ACTIVE : true
+      const matchesFarms = farmsOnly ? pool.isFarming && pos.status === POSITION_STATUS.ACTIVE : true
 
       return matchesNetwork && matchesTokens && matchesStatus && matchesFarms
     })

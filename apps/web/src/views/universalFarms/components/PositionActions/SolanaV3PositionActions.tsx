@@ -3,8 +3,9 @@ import { AddIcon, Button, Flex, IconButton, MinusIcon, useModalV2 } from '@panca
 import { useTranslation } from '@pancakeswap/localization'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useHarvestRewardCallback } from 'hooks/solana/useHarvestRewardCallback'
+import { useSolanaV3RewardInfoFromSimulation } from 'views/universalFarms/hooks/useSolanaV3RewardInfoFromSimulation'
 import SolanaV3RemovePositionModal from '../Modals/solana/SolanaV3RemovePositionModal'
 import { StopPropagation } from '../StopPropagation'
 import { SolanaV3AddPositionModal } from '../Modals/solana/SolanaV3AddPositionModal'
@@ -38,6 +39,25 @@ export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, p
     })
   }, [harvestReward, poolInfo, position])
 
+  const { breakdownRewardInfo } = useSolanaV3RewardInfoFromSimulation({
+    poolInfo,
+    position,
+  })
+
+  const hasRewards = useMemo(() => {
+    if (!breakdownRewardInfo) return false
+
+    const hasFarmRewards = breakdownRewardInfo.rewards.some((r) => Number(r.amount) > 0 || Number(r.amountUSD) > 0)
+
+    const hasLpFees =
+      (breakdownRewardInfo.fee.A &&
+        (Number(breakdownRewardInfo.fee.A.amount) > 0 || Number(breakdownRewardInfo.fee.A.amountUSD) > 0)) ||
+      (breakdownRewardInfo.fee.B &&
+        (Number(breakdownRewardInfo.fee.B.amount) > 0 || Number(breakdownRewardInfo.fee.B.amountUSD) > 0))
+
+    return hasFarmRewards || hasLpFees
+  }, [breakdownRewardInfo])
+
   return (
     <StopPropagation>
       <ActionPanelContainer>
@@ -69,9 +89,11 @@ export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, p
             />
           )}
         </>
-        <Button variant="primary" isLoading={sending} onClick={handleHarvest}>
-          {t('Harvest')}
-        </Button>
+        {hasRewards && (
+          <Button variant="primary" isLoading={sending} onClick={handleHarvest}>
+            {t('Harvest')}
+          </Button>
+        )}
       </ActionPanelContainer>
     </StopPropagation>
   )

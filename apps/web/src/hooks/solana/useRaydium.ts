@@ -40,7 +40,6 @@ export const useRaydium = () => {
           disableFeatureCheck: true,
           loopMultiTxStatus: true,
           blockhashCommitment: 'finalized',
-          disableLoadToken: true,
         })
 
         if (signAllTransactions) {

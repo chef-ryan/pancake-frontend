@@ -1,14 +1,13 @@
 import { useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { TokenInfo, wSolToSolToken } from '@pancakeswap/solana-core-sdk'
-import { Percent, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { Percent, UnifiedCurrency, UnifiedCurrencyAmount, Price } from '@pancakeswap/swap-sdk-core'
 import {
   ArrowForwardIcon,
   AutoColumn,
   Button,
   Card,
   CardBody,
-  Column,
   Flex,
   FlexGap,
   IconButton,
@@ -23,8 +22,8 @@ import {
 } from '@pancakeswap/uikit'
 import { formatPercent } from '@pancakeswap/utils/formatFractions'
 import { formatNumber } from '@pancakeswap/utils/formatNumber'
-import { Bound } from '@pancakeswap/widgets-internal'
 import BN from 'bn.js'
+import BigNumber from 'bignumber.js'
 import CurrencyInputPanelSimplify from 'components/CurrencyInputPanelSimplify'
 import { getCurrencyLogoSrcs } from 'components/TokenImage'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
@@ -32,21 +31,19 @@ import { useAddLiquidityAmount } from 'hooks/solana/useAddLiquidityAmount'
 import { useAddLiquidityCallback } from 'hooks/solana/useAddLiquidityCallback'
 import { useLiquidityAmount, useLiquidityDepositRatio } from 'hooks/solana/useLiquidityAmount'
 import { useLiquidityUsdValue } from 'hooks/solana/useLiquidityUsdValue'
-import { usePriceRange } from 'hooks/solana/usePriceRange'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useUnifiedCurrencyBalance } from 'hooks/useUnifiedCurrencyBalance'
-import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
+import { usePriceRangeData } from 'hooks/solana/usePriceRange'
+import { POSITION_STATUS, SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { SolanaV3Pool } from 'state/pools/solana'
 import styled from 'styled-components'
 import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
-import { calculateSolanaTickLimits, getTickAtLimitStatus } from 'views/PoolDetail/utils'
 import { SolanaLiquiditySlippageButton } from 'views/Swap/components/SlippageButton'
 import { NonEVMChainId } from '@pancakeswap/chains'
+import { PriceRangeDisplay } from 'views/PoolDetail/components/ProtocolPositionsTables'
 import { SolanaV3PoolInfoHeader } from './PooInfoHeader'
-import { PriceRangeBar } from './PriceRangeBar'
 
 export type SolanaV3AddPositionModalProps = {
   isOpen: boolean
@@ -82,13 +79,12 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
   const maxCurrency1 = useMemo(() => maxUnifiedAmountSpend(currency1Balance), [currency1Balance])
   const [insufficientBalance0, insufficientBalance1] = useMemo(() => {
     if (!solanaAccount) return [false, false]
-    const [field0, field1] = fields
-    const input0Insufficient = field0 ? maxCurrency0.toExact() < field0 : false
-    const input1Insufficient = field1 ? maxCurrency1.toExact() < field1 : false
+    const input0Insufficient = fields[0] ? Number(maxCurrency0.toExact()) < Number(fields[0]) : false
+    const input1Insufficient = fields[1] ? Number(maxCurrency1.toExact()) < Number(fields[1]) : false
     return [input0Insufficient, input1Insufficient]
-  }, [fields, solanaAccount, maxCurrency0, maxCurrency1])
+  }, [fields[0], fields[1], solanaAccount, maxCurrency0, maxCurrency1])
 
-  const { amount0, amount1 } = useLiquidityAmount({
+  const { amount0, amount1, amount0Disabled, amount1Disabled } = useLiquidityAmount({
     poolInfo,
     tickLower: position.tickLower,
     tickUpper: position.tickUpper,
@@ -188,11 +184,8 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
       >
         <AutoColumn gap="16px">
           <SolanaV3PoolInfoHeader poolInfo={poolInfo} currency0={currency0} currency1={currency1} position={position} />
-
           <PriceRangeCard poolInfo={poolInfo} position={position} />
-
           <PreTitle textTransform="uppercase">{t('Amount of liquidity to add')}</PreTitle>
-
           <Flex justifyContent="space-between" alignItems="center">
             <Text>{t('Slippage Tolerance')}</Text>
             <SolanaLiquiditySlippageButton />
@@ -207,9 +200,9 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               id="add-liquidity-input-tokena"
               showMaxButton
               error={insufficientBalance0}
-              disabled={position.liquidity.isZero() ? amount0Add?.equalTo(0) : amount0?.equalTo(0)}
+              disabled={amount0Disabled}
               disableCurrencySelect
-              defaultValue={amount0?.equalTo(0) ? '' : fields[0] ?? '0'}
+              defaultValue={!position.liquidity.isZero() && amount0?.equalTo(0) ? '' : fields[0] ?? '0'}
               onUserInput={handleFieldAInput}
               onPercentInput={(percent) => {
                 setFocusSide(0)
@@ -238,9 +231,9 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               id="add-liquidity-input-tokenb"
               showMaxButton
               error={insufficientBalance1}
-              disabled={position.liquidity.isZero() ? amount1Add?.equalTo(0) : amount1?.equalTo(0)}
+              disabled={amount1Disabled}
               disableCurrencySelect
-              defaultValue={amount1?.equalTo(0) ? '' : fields[1] ?? '0'}
+              defaultValue={!position.liquidity.isZero() && amount1?.equalTo(0) ? '' : fields[1] ?? '0'}
               onUserInput={handleFieldBInput}
               onPercentInput={(percent) => {
                 setFocusSide(1)
@@ -260,18 +253,16 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
               }}
             />
           </StyledInputCard>
-
           <PositionChanges
             poolInfo={poolInfo}
             position={position}
             liquidityAdd={liquidityAdd}
-            amount0Add={amount0Add}
-            amount1Add={amount1Add}
+            amount0Add={focusSide === 0 ? amount0Add : amount0AddWithSlippage}
+            amount1Add={focusSide === 1 ? amount1Add : amount1AddWithSlippage}
           />
-
           <Button
             width="100%"
-            disabled={!liquidityAdd || insufficientBalance0 || insufficientBalance1}
+            disabled={!liquidityAdd || liquidityAdd.isZero() || insufficientBalance0 || insufficientBalance1}
             isLoading={sending}
             onClick={handleConfirm}
           >
@@ -314,12 +305,17 @@ const PriceRangeCard: React.FC<{
     currentLanguage: { locale },
   } = useTranslation()
   const [baseIn, setBaseIn] = useState(true)
-  const { priceLower, priceUpper, priceLowerDiffPercent, priceUpperDiffPercent, currentPrice } = usePriceRange({
-    poolInfo,
-    tickLower: position.tickLower,
-    tickUpper: position.tickUpper,
-    baseIn,
-  })
+
+  const currency0 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo?.mintA as TokenInfo), [poolInfo?.mintA])
+  const currency1 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo?.mintB as TokenInfo), [poolInfo?.mintB])
+
+  const currentPrice = useMemo(() => {
+    if (!currency0 || !currency1 || !poolInfo) {
+      return undefined
+    }
+    const price = Price.fromDecimal(currency0, currency1, new BigNumber(poolInfo.price.toString()).toFixed())
+    return baseIn ? price : price?.invert()
+  }, [currency0, currency1, poolInfo, baseIn])
 
   const { ratio0, ratio1 } = useLiquidityDepositRatio({
     poolInfo,
@@ -328,46 +324,43 @@ const PriceRangeCard: React.FC<{
     liquidity: position.liquidity,
   })
 
-  const tickAtLimit = useMemo(() => {
-    const tickLimits = calculateSolanaTickLimits(poolInfo?.config.tickSpacing)
-    return getTickAtLimitStatus(position.tickLower, position.tickUpper, tickLimits)
-  }, [poolInfo?.config.tickSpacing, position.tickLower, position.tickUpper])
+  const priceRangeData = usePriceRangeData({
+    poolInfo,
+    tickLower: position.tickLower,
+    tickUpper: position.tickUpper,
+    baseIn,
+  })
 
   return (
     <Card background={theme.colors.cardSecondary}>
       <CardBody>
         <AutoColumn gap="8px">
           <PreTitle textTransform="uppercase">{`${t('price range')} (${t('Min')}-${t('Max')})`}</PreTitle>
-          {priceLower && priceUpper && (
-            <RowBetween>
-              <Column>
-                <Text fontSize="12px" bold>
-                  {formatTickPrice(priceLower, tickAtLimit, Bound.LOWER, locale)}
-                </Text>
-                <Text fontSize="10px" color="textSubtle">
-                  {formatPercent(priceLowerDiffPercent, 2)}%
-                </Text>
-              </Column>
-              <Text fontSize="12px" color="textSubtle">
-                -
-              </Text>
-              <Column justifyContent="flex-end">
-                <Text fontSize="12px" bold>
-                  {formatTickPrice(priceUpper, tickAtLimit, Bound.UPPER, locale)}
-                </Text>
-                <Text fontSize="10px" color="textSubtle">
-                  {formatPercent(priceUpperDiffPercent, 2)}%
-                </Text>
-              </Column>
-            </RowBetween>
-          )}
-          <PriceRangeBar priceLowerDiffPercent={priceLowerDiffPercent} priceUpperDiffPercent={priceUpperDiffPercent} />
+          <Flex alignItems="center" justifyContent="center">
+            <PriceRangeDisplay
+              outOfRange={position.status === POSITION_STATUS.INACTIVE}
+              currentPrice={priceRangeData.currentPrice}
+              minPrice={priceRangeData.minPriceFormatted}
+              maxPrice={priceRangeData.maxPriceFormatted}
+              minPercentage={priceRangeData.minPercentage}
+              maxPercentage={priceRangeData.maxPercentage}
+              rangePosition={priceRangeData.rangePosition}
+              showPercentages={priceRangeData.showPercentages}
+              maxWidth={position.status === POSITION_STATUS.INACTIVE ? '80%' : '100%'}
+            />
+          </Flex>
           <RowBetween>
             <Text fontSize="14px" color="textSubtle">
               {t('Current Price')}:
             </Text>
             <FlexGap gap="8px" alignItems="center">
-              <Text fontSize="14px">{currentPrice ? formatNumber(currentPrice.toSignificant(6)) : '-'} </Text>
+              <Text fontSize="14px">
+                {currentPrice
+                  ? formatNumber(currentPrice.toSignificant(18), {
+                      maximumDecimalTrailingZeroes: 4,
+                    })
+                  : '-'}{' '}
+              </Text>
               <Text fontSize="14px" color="textSubtle">
                 <Flex alignItems="center">
                   {t('of %quote% per %base%', {

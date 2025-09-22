@@ -31,7 +31,7 @@ import {
   finalizeTransaction,
 } from './actions'
 import { fetchCelerApi } from './fetchCelerApi'
-import { useAllChainTransactions, useSolanaTransactions } from './hooks'
+import { getReadableTransactionType, useAllChainTransactions, useSolanaTransactions } from './hooks'
 import { TransactionDetails } from './reducer'
 
 export function shouldCheck(
@@ -231,6 +231,7 @@ export const Updater: React.FC<{ chainId: number }> = ({ chainId }) => {
 }
 
 export const SolanaTransactionUpdater = () => {
+  const { t } = useTranslation()
   const { toastError, toastSuccess } = useToast()
   const { solanaAccount } = useAccountActiveChain()
   const transactions = useSolanaTransactions()
@@ -254,10 +255,13 @@ export const SolanaTransactionUpdater = () => {
                 hash: txId,
               })
             }
+            const title = transaction.type
+              ? `${getReadableTransactionType(t, transaction.type)}`
+              : `${t('Transaction')}!`
             if (tx.value?.err) {
-              toastError('Transaction failed', <SolanaDescriptionWithTx txHash={txId} />)
+              toastError(`${title} ${t('Failed!')}`, <SolanaDescriptionWithTx txHash={txId} />)
             } else {
-              toastSuccess('Transaction confirmed', <SolanaDescriptionWithTx txHash={txId} />)
+              toastSuccess(`${title} ${t('Successfully!')}`, <SolanaDescriptionWithTx txHash={txId} />)
             }
 
             const txInfo = await connection.getTransaction(txId, {
@@ -304,7 +308,7 @@ export const SolanaTransactionUpdater = () => {
         })
       },
     )
-  }, [solanaAccount, connection, transactions, dispatch, toastError, toastSuccess, setLatestTxReceipt])
+  }, [solanaAccount, connection, transactions, dispatch, toastError, toastSuccess, setLatestTxReceipt, t])
 
   return null
 }

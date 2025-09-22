@@ -210,7 +210,7 @@ async function fetchAllExplorerPools(protocols: Protocol[], chains: FarmV4Suppor
   const poolQuery = {
     baseUrl: `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`,
     protocols,
-    chains: chains.map((chain) => getEdgeChainName(chain)),
+    chains: chains.filter((id) => isEvm(id)).map((chain) => getEdgeChainName(chain as ChainId)),
     maxPages: 2,
     orderBy: 'volumeUSD24h' as const,
   }
@@ -226,7 +226,7 @@ async function fetchAllExplorerPoolsByAddress(
 ) {
   if (!protocols.length) return []
   const baseUrl = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`
-  const chainNames = chains.map((chain) => getEdgeChainName(chain))
+  const chainNames = chains.filter((id) => isEvm(id)).map((chain) => getEdgeChainName(chain as ChainId))
 
   if (!addresses.length) return []
 
@@ -258,7 +258,7 @@ async function fetchAllExplorerPoolsBySymbols(
   if (!symbols.length) return []
 
   const baseUrl = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`
-  const chainNames = chains.map((chain) => getEdgeChainName(chain))
+  const chainNames = chains.filter((id) => isEvm(id)).map((chain) => getEdgeChainName(chain as ChainId))
 
   const chunks = chunk(symbols, 20)
   const allPools = await mergePromiseList(

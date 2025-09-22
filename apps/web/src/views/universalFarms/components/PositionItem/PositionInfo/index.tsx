@@ -262,7 +262,7 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
       <DetailInfoDesc>
         {desc}
         <Row gap="sm">
-          {!amount0 || !amount1 ? (
+          {!removed && (!amount0 || !amount1) ? (
             <Skeleton width={80} />
           ) : (
             <>

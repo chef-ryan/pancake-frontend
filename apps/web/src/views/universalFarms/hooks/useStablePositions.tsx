@@ -31,7 +31,7 @@ export const useStablePositions = ({
                 token === toTokenValueByCurrency(pos.pair.token0) || token === toTokenValueByCurrency(pos.pair.token1),
             )) &&
           [POSITION_STATUS.ALL, POSITION_STATUS.ACTIVE].includes(positionStatus) &&
-          (!farmsOnly || pos.isStaked),
+          (!farmsOnly || (pos.isStaked && pos.farmingBalance.greaterThan(0))),
       ),
     [farmsOnly, selectedNetwork, selectedTokens, stablePositions, positionStatus],
   )

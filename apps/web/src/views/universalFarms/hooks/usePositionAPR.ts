@@ -63,7 +63,7 @@ import { useSolanaTokenPrices } from 'hooks/solana/useSolanaTokenPrice'
 import uniq from 'lodash/uniq'
 import { getActiveLiquidityFromShape } from '../utils/getActiveLiquidityFromShape'
 import { useBinAmountsFromUsdValue } from './useBinAmountsFromUsdValue'
-import { getPositionAprCore } from '../utils/getSolanaV3PositionAprCode'
+import { getPositionAprCore } from '../utils/getSolanaV3PositionAprCore'
 
 const V3_LP_FEE_RATE = {
   [FeeAmount.LOWEST]: 0.67,

@@ -56,7 +56,7 @@ export const useRemoveLiquidityCallback = () => {
         ),
       ]
 
-      const closePosition = _closePosition || position.liquidity.eq(liquidity)
+      const closePosition = typeof _closePosition === 'boolean' ? _closePosition : position.liquidity.eq(liquidity)
       const { fee: feeA = new BN(0) } = getTransferAmountFeeV2(
         _amountMinA,
         poolInfo.mintA.extensions?.feeConfig,

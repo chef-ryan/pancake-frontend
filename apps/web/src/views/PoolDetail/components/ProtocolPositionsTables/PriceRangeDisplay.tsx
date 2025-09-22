@@ -2,9 +2,9 @@ import { Flex, FlexGap, Text } from '@pancakeswap/uikit'
 import { formatNumber } from '@pancakeswap/utils/formatNumber'
 import styled from 'styled-components'
 
-const PriceRangeContainer = styled.div`
+const PriceRangeContainer = styled.div<{ $maxWidth?: string }>`
   position: relative;
-  width: 180px;
+  width: ${({ $maxWidth }) => $maxWidth ?? '180px'};
   height: 20px;
   display: flex;
   align-items: center;
@@ -96,12 +96,18 @@ const PercentageText = styled(Text)<{ isNegative?: boolean }>`
   font-weight: 400;
 `
 
-const PercentageContainer = styled.div<{ leftPosition: number; rightPosition: number }>`
+const PercentageContainer = styled.div<{
+  leftPosition: number
+  rightPosition: number
+  $maxWidth?: string
+}>`
   position: relative;
   width: 100%;
-  max-width: 190px;
+  max-width: ${({ $maxWidth }) => $maxWidth};
   height: 16px;
   margin-bottom: 4px;
+  margin-left: auto;
+  margin-right: auto;
 
   .left-percentage {
     position: absolute;
@@ -116,12 +122,14 @@ const PercentageContainer = styled.div<{ leftPosition: number; rightPosition: nu
   }
 `
 
-const PriceContainer = styled.div<{ leftPosition: number; rightPosition: number }>`
+const PriceContainer = styled.div<{ leftPosition: number; rightPosition: number; $maxWidth?: string }>`
   position: relative;
   width: 100%;
-  max-width: 190px;
+  max-width: ${({ $maxWidth }) => $maxWidth};
   height: 24px;
   margin-bottom: 2px;
+  margin-left: auto;
+  margin-right: auto;
 
   .left-price {
     position: absolute;
@@ -146,6 +154,7 @@ interface PriceRangeDisplayProps {
   outOfRange?: boolean
   removed?: boolean
   showPercentages?: boolean
+  maxWidth?: string
 }
 
 export const PriceRangeDisplay: React.FC<PriceRangeDisplayProps> = ({
@@ -158,6 +167,7 @@ export const PriceRangeDisplay: React.FC<PriceRangeDisplayProps> = ({
   outOfRange = false,
   removed = false,
   showPercentages = true,
+  maxWidth = '190px',
 }) => {
   // Convert prices to numbers for comparison
   const currentPriceNum = currentPrice ? parseFloat(currentPrice) : null
@@ -176,9 +186,19 @@ export const PriceRangeDisplay: React.FC<PriceRangeDisplayProps> = ({
 
   // Calculate display values and positions
   const displayMinPrice =
-    minPrice !== '0' ? formatNumber(minPrice, { maxDecimalDisplayDigits: minPriceNum < 1 ? 6 : 4 }) : '0'
+    minPrice !== '0'
+      ? formatNumber(
+          minPrice,
+          Number(minPrice) < 1 ? { maximumDecimalTrailingZeroes: 4 } : { maxDecimalDisplayDigits: 4 },
+        )
+      : '0'
   const displayMaxPrice =
-    maxPrice !== '∞' ? formatNumber(maxPrice, { maxDecimalDisplayDigits: maxPriceNum < 1 ? 6 : 4 }) : '∞'
+    maxPrice !== '∞'
+      ? formatNumber(
+          maxPrice,
+          Number(maxPrice) < 1 ? { maximumDecimalTrailingZeroes: 4 } : { maxDecimalDisplayDigits: 4 },
+        )
+      : '∞'
 
   let currentPriceLinePosition = rangePosition
   let percentageLeftPosition = 0
@@ -334,7 +354,7 @@ export const PriceRangeDisplay: React.FC<PriceRangeDisplayProps> = ({
     if (!hasOverflow) {
       // Original behavior - percentages at the edges
       return (
-        <FlexGap alignItems="center" justifyContent="space-between" width="100%" maxWidth="190px" mb="4px">
+        <FlexGap alignItems="center" justifyContent="space-between" width="100%" maxWidth={maxWidth} mb="4px">
           <PercentageText>{minPercentage}</PercentageText>
           <PercentageText>{maxPercentage}</PercentageText>
         </FlexGap>
@@ -343,7 +363,11 @@ export const PriceRangeDisplay: React.FC<PriceRangeDisplayProps> = ({
 
     // For overflow cases, position percentages under the actual position range
     return (
-      <PercentageContainer leftPosition={percentageLeftPosition} rightPosition={percentageRightPosition}>
+      <PercentageContainer
+        leftPosition={percentageLeftPosition}
+        rightPosition={percentageRightPosition}
+        $maxWidth={maxWidth}
+      >
         <div className="left-percentage">
           <PercentageText>{minPercentage}</PercentageText>
         </div>
@@ -358,7 +382,7 @@ export const PriceRangeDisplay: React.FC<PriceRangeDisplayProps> = ({
     if (!hasOverflow) {
       // Original behavior - prices at the edges with dash
       return (
-        <FlexGap alignItems="center" gap="8px" mb="2px" width="100%" maxWidth="190px">
+        <FlexGap alignItems="center" gap="8px" mb="2px" width="100%" maxWidth={maxWidth}>
           <Flex alignItems="center" justifyContent="space-between" width="100%">
             <Text fontSize="16px" bold>
               {displayMinPrice}
@@ -376,7 +400,11 @@ export const PriceRangeDisplay: React.FC<PriceRangeDisplayProps> = ({
 
     // For overflow cases, position prices at the actual position range
     return (
-      <PriceContainer leftPosition={percentageLeftPosition} rightPosition={percentageRightPosition}>
+      <PriceContainer
+        leftPosition={percentageLeftPosition}
+        rightPosition={percentageRightPosition}
+        $maxWidth={maxWidth}
+      >
         <div className="left-price">
           <Text fontSize="16px" bold>
             {displayMinPrice}
@@ -398,8 +426,8 @@ export const PriceRangeDisplay: React.FC<PriceRangeDisplayProps> = ({
 
       {/* Price range bar */}
       {showPercentages && (
-        <Flex width="100%" maxWidth="190px" justifyContent="center" mb="4px">
-          <PriceRangeContainer>{renderBar()}</PriceRangeContainer>
+        <Flex width="100%" maxWidth={maxWidth} justifyContent="center" mb="4px" ml="auto" mr="auto">
+          <PriceRangeContainer $maxWidth={maxWidth}>{renderBar()}</PriceRangeContainer>
         </Flex>
       )}
 

@@ -7,6 +7,7 @@ import { removeLiquidity } from 'state/pools/solana/actions'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
 import { useSolanaTokenPrices } from 'hooks/solana/useSolanaTokenPrice'
+import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import BigNumber from 'bignumber.js'
 import PQueue from 'p-queue'
 import { useRaydium } from 'hooks/solana/useRaydium'
@@ -18,7 +19,7 @@ const simulationQueue = new PQueue({
 })
 
 export type SolanaV3RewardInfoFromSimulationProps = {
-  poolInfo: SolanaV3PoolInfo
+  poolInfo: SolanaV3PoolInfo | undefined
   position: SolanaV3PositionDetail
 }
 
@@ -41,7 +42,7 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
   const raydium = useRaydium()
   const simulation = useCallback(async () => {
     const result = await simulationQueue.add(async () => {
-      if (!raydium) return DEFAULT_SIMULATION_RESULT
+      if (!raydium || !poolInfo) return DEFAULT_SIMULATION_RESULT
 
       try {
         const simulationResult = await removeLiquidity({
@@ -61,11 +62,17 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
       }
     })
     return result
-  }, [connection, poolInfo, position])
+  }, [connection, poolInfo, position, raydium])
+  const [latestTxReceipt] = useLatestTxReceipt()
   const { data } = useQuery({
-    queryKey: ['solana-v3-reward-info-from-simulation', poolInfo.poolId, position.nftMint.toBase58()],
+    queryKey: [
+      'solana-v3-reward-info-from-simulation',
+      poolInfo?.poolId,
+      position.nftMint.toBase58(),
+      latestTxReceipt?.blockHash,
+    ],
     queryFn: simulation,
-    enabled: Boolean(poolInfo && position),
+    enabled: Boolean(poolInfo && position && raydium),
     ...QUERY_SETTINGS_IMMUTABLE,
   })
 
@@ -80,9 +87,9 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
 
   const mints = useMemo(() => {
     return uniq([
-      poolInfo.rawPool.mintA.address,
-      poolInfo.rawPool.mintB.address,
-      ...poolInfo.rawPool.rewardDefaultInfos.map((r) => r.mint.address),
+      poolInfo?.rawPool.mintA.address,
+      poolInfo?.rawPool.mintB.address,
+      ...(poolInfo?.rawPool?.rewardDefaultInfos?.map((r) => r.mint.address) || []),
     ])
   }, [poolInfo])
 

@@ -1,3 +1,5 @@
+import { isEvm } from '@pancakeswap/chains'
+import { useActiveChainId } from 'hooks/useAccountActiveChain'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
@@ -9,6 +11,7 @@ import { PageWithoutFAQ } from 'views/Page'
 const PoolPage = () => {
   const router = useRouter()
   const { tokenId } = router.query
+  const { chainId } = useActiveChainId()
 
   useEffect(() => {
     const isNumberReg = /^\d+$/
@@ -17,7 +20,8 @@ const PoolPage = () => {
       router.replace('/add')
     }
   }, [tokenId, router])
-  if (!tokenId) {
+
+  if (!tokenId || !chainId || !isEvm(chainId)) {
     return null
   }
 
