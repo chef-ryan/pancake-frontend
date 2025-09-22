@@ -83,13 +83,13 @@ const MobileModal: React.FC<React.PropsWithChildren<MobileModalProps>> = ({
             <>
               <Flex mb="24px" justifyContent="space-between">
                 <Text fontSize="14px" color="textSubtle">
-                  {t('From')}
+                  {t('From.sender')}
                 </Text>
                 <Text>{activity.seller ? sellerSidName || truncateHash(activity.seller) : '-'}</Text>
               </Flex>
               <Flex mb="24px" justifyContent="space-between">
                 <Text fontSize="14px" color="textSubtle">
-                  {t('To')}
+                  {t('To.recipient')}
                 </Text>
                 <Text>{activity.buyer ? buyerSidName || truncateHash(activity.buyer) : '-'}</Text>
               </Flex>

@@ -13,6 +13,7 @@ export enum PatternType {
   BRIDGE_TO_SWAP = 'BRIDGE_TO_SWAP',
   SWAP_TO_BRIDGE = 'SWAP_TO_BRIDGE',
   SWAP_TO_BRIDGE_TO_SWAP = 'SWAP_TO_BRIDGE_TO_SWAP',
+  BRIDGE_SOLANA_EVM = 'BRIDGE_SOLANA_EVM',
 }
 
 export interface QuoteContext {

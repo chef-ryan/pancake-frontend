@@ -67,7 +67,7 @@ export const MevToggle: React.FC<{ size?: 'sm' | 'md' }> = ({ size = 'md' }) => 
       <ToggleWrapper size={size}>
         <FlexGap gap="4px" alignItems="center">
           <ShieldIcon width="24px" />
-          <Text fontSize={isSmall ? '14px' : undefined}>{t('Enable')}</Text>
+          <Text fontSize={isSmall ? '14px' : undefined}>{t('Enable.Feature')}</Text>
           <Text
             ref={targetRef}
             bold

@@ -20,6 +20,8 @@ import styled from 'styled-components'
 import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { RouterPoolBox, RouterTypeText } from 'views/Swap/components/RouterViewer'
 import { useHookDiscount } from 'views/SwapSimplify/hooks/useHookDiscount'
+import { isSolanaBridge } from 'views/Swap/utils'
+import { isSolana } from '@pancakeswap/chains'
 import { Pair, RouteDisplayEssentials } from './types'
 import { EVMPairNodes } from './pairNode'
 
@@ -207,10 +209,31 @@ export const BridgeRoutesDisplay = ({ routes }: BridgeRoutesDisplayProps) => {
             {t('Bridge')}
           </Text>
           <FlexGap mt="2px" gap="2px" alignItems="center" justifyContent="center">
-            <StyledBridgeLogo src={`${ASSET_CDN}/web/bridges/across.png`} alt="Across Bridge" width={16} height={16} />
-            <Text textAlign="center" fontSize="12px">
-              Across
-            </Text>
+            {isSolana(inputCurrency.chainId) || isSolana(outputCurrency.chainId) ? (
+              <>
+                <StyledBridgeLogo
+                  src={`${ASSET_CDN}/web/bridges/relay.jpg`}
+                  alt="Relay Bridge"
+                  width={16}
+                  height={16}
+                />
+                <Text textAlign="center" fontSize="12px">
+                  Relay
+                </Text>
+              </>
+            ) : (
+              <>
+                <StyledBridgeLogo
+                  src={`${ASSET_CDN}/web/bridges/across.png`}
+                  alt="Across Bridge"
+                  width={16}
+                  height={16}
+                />
+                <Text textAlign="center" fontSize="12px">
+                  Across
+                </Text>
+              </>
+            )}
           </FlexGap>
         </PrimaryCard>
         {destinationChainRoutes.length > 0 && <BridgeChainRoutes routes={destinationChainRoutes} />}

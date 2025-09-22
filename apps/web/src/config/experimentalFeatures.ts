@@ -4,6 +4,7 @@ export enum EXPERIMENTAL_FEATURES {
   PriceAPI = 'price-api',
   PCSX = 'pcsx',
   OPTIMIZED_AMM_TRADE = 'optimized-amm-trade',
+  BRIDGE_V2 = 'bridge-v2',
 }
 
 export const getCookieKey = (key: EXPERIMENTAL_FEATURES) => `p_exp_${key.toLowerCase()}`
@@ -41,6 +42,11 @@ export const EXPERIMENTAL_FEATURE_CONFIGS: ExperimentalFeatureConfigs = [
   {
     feature: EXPERIMENTAL_FEATURES.OPTIMIZED_AMM_TRADE,
     percentage: 0.01,
+    whitelist: [],
+  },
+  {
+    feature: EXPERIMENTAL_FEATURES.BRIDGE_V2,
+    percentage: 0,
     whitelist: [],
   },
 ]

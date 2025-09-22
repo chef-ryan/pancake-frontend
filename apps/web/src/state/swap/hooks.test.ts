@@ -3,8 +3,9 @@
 import { parse } from 'querystring'
 import { Mock, vi } from 'vitest'
 import { NonEVMChainId } from '@pancakeswap/chains'
+import { UnifiedNativeCurrency } from '@pancakeswap/swap-sdk-core'
 import { Field } from './actions'
-import { queryParametersToSwapState } from './hooks'
+import { queryParametersToSwapState, normalizeCurrencySelectionForChain } from './hooks'
 
 describe('hooks', () => {
   describe('#queryParametersToSwapState', () => {
@@ -93,7 +94,7 @@ describe('hooks', () => {
 
     test('handle Solana chain with token address', () => {
       const outputCurrency = '4qQeZ5LwSz6HuupUu8jCtgXyW1mYQcNbFAW1sWZp89HL'
-      expect(queryParametersToSwapState(parse(`chain=solana&outputCurrency=${outputCurrency}`))).toEqual({
+      expect(queryParametersToSwapState(parse(`chain=sol&outputCurrency=${outputCurrency}`))).toEqual({
         [Field.INPUT]: { currencyId: 'SOL', chainId: NonEVMChainId.SOLANA },
         [Field.OUTPUT]: { currencyId: outputCurrency, chainId: NonEVMChainId.SOLANA },
         typedValue: '',
@@ -101,6 +102,234 @@ describe('hooks', () => {
         pairDataById: {},
         derivedPairDataById: {},
         recipient: null,
+      })
+    })
+  })
+
+  describe('#normalizeCurrencySelectionForChain', () => {
+    const mockNative = { symbol: 'BNB' } as UnifiedNativeCurrency
+    const defaultParams = {
+      native: mockNative,
+      pathname: '/swap',
+      chainId: 56, // BSC
+      defaultOutputCurrency: '0x55d398326f99059fF775485246999027B3197955', // USDT
+    }
+
+    test('should return unchanged currencies when input chain matches current chain', () => {
+      const result = normalizeCurrencySelectionForChain({
+        inputCurrencyId: 'BNB',
+        inputChainId: 56,
+        outputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        outputChainId: 56,
+        supportedBridgeChains: [],
+        ...defaultParams,
+      })
+
+      expect(result).toEqual({
+        finalInputCurrencyId: 'BNB',
+        finalOutputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        finalInputChainId: 56,
+        finalOutputChainId: 56,
+      })
+    })
+
+    test('should reset input currency to native when input chain differs from current chain', () => {
+      const result = normalizeCurrencySelectionForChain({
+        inputCurrencyId: '0x1234567890123456789012345678901234567890',
+        inputChainId: 1, // Ethereum
+        outputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        outputChainId: 56,
+        supportedBridgeChains: [56],
+        ...defaultParams,
+      })
+
+      expect(result).toEqual({
+        finalInputCurrencyId: 'BNB',
+        finalOutputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        finalInputChainId: 56,
+        finalOutputChainId: 56,
+      })
+    })
+
+    test('should reset output currency when bridge is not supported', () => {
+      const result = normalizeCurrencySelectionForChain({
+        inputCurrencyId: 'BNB',
+        inputChainId: 1, // Ethereum
+        outputCurrencyId: '0x1111111111111111111111111111111111111111',
+        outputChainId: 137, // Polygon
+        supportedBridgeChains: [], // No bridge support
+        ...defaultParams,
+      })
+
+      expect(result).toEqual({
+        finalInputCurrencyId: 'BNB',
+        finalOutputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        finalInputChainId: 56,
+        finalOutputChainId: 56,
+      })
+    })
+
+    test('should handle Solana input chain correctly', () => {
+      const result = normalizeCurrencySelectionForChain({
+        inputCurrencyId: 'SOL',
+        inputChainId: NonEVMChainId.SOLANA,
+        outputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        outputChainId: 56,
+        supportedBridgeChains: [],
+        ...defaultParams,
+      })
+
+      expect(result).toEqual({
+        finalInputCurrencyId: 'BNB',
+        finalOutputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        finalInputChainId: 56,
+        finalOutputChainId: 56,
+      })
+    })
+
+    test('should handle Solana output chain correctly', () => {
+      const result = normalizeCurrencySelectionForChain({
+        inputCurrencyId: 'BNB',
+        inputChainId: 56,
+        outputCurrencyId: 'SOL',
+        outputChainId: NonEVMChainId.SOLANA,
+        supportedBridgeChains: [NonEVMChainId.SOLANA, 56],
+        ...defaultParams,
+      })
+
+      expect(result).toEqual({
+        finalInputCurrencyId: 'BNB',
+        finalOutputCurrencyId: 'SOL',
+        finalInputChainId: 56,
+        finalOutputChainId: NonEVMChainId.SOLANA,
+      })
+    })
+
+    test('should maintain cross-chain when bridge is supported', () => {
+      const result = normalizeCurrencySelectionForChain({
+        inputCurrencyId: 'BNB',
+        inputChainId: 1, // Ethereum
+        outputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        outputChainId: 56, // BSC
+        supportedBridgeChains: [56],
+        ...defaultParams,
+      })
+
+      expect(result).toEqual({
+        finalInputCurrencyId: 'BNB',
+        finalOutputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        finalInputChainId: 56,
+        finalOutputChainId: 56,
+      })
+    })
+
+    test('should resolve duplicate currencies on same chain - switch output to native', () => {
+      const result = normalizeCurrencySelectionForChain({
+        inputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        inputChainId: 56,
+        outputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        outputChainId: 56,
+        supportedBridgeChains: [],
+        ...defaultParams,
+      })
+
+      expect(result).toEqual({
+        finalInputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        finalOutputCurrencyId: 'BNB',
+        finalInputChainId: 56,
+        finalOutputChainId: 56,
+      })
+    })
+
+    test('should resolve duplicate native currencies - switch output to default', () => {
+      const result = normalizeCurrencySelectionForChain({
+        inputCurrencyId: 'BNB',
+        inputChainId: 56,
+        outputCurrencyId: 'BNB',
+        outputChainId: 56,
+        supportedBridgeChains: [],
+        ...defaultParams,
+      })
+
+      expect(result).toEqual({
+        finalInputCurrencyId: 'BNB',
+        finalOutputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        finalInputChainId: 56,
+        finalOutputChainId: 56,
+      })
+    })
+
+    test('should not modify output chain when bridge is supported for cross-chain', () => {
+      const result = normalizeCurrencySelectionForChain({
+        inputCurrencyId: 'BNB',
+        inputChainId: 56,
+        outputCurrencyId: '0x1111111111111111111111111111111111111111',
+        outputChainId: 1, // Ethereum
+        supportedBridgeChains: [56, 1],
+        ...defaultParams,
+      })
+
+      expect(result).toEqual({
+        finalInputCurrencyId: 'BNB',
+        finalOutputCurrencyId: '0x1111111111111111111111111111111111111111',
+        finalInputChainId: 56,
+        finalOutputChainId: 1,
+      })
+    })
+
+    test('should handle TWAP path correctly (no bridge validation)', () => {
+      const result = normalizeCurrencySelectionForChain({
+        inputCurrencyId: 'BNB',
+        inputChainId: 1, // Different chain
+        outputCurrencyId: '0x1111111111111111111111111111111111111111',
+        outputChainId: 137, // Polygon
+        supportedBridgeChains: [], // No bridge support
+        ...defaultParams,
+        pathname: '/twap', // TWAP path should skip bridge validation
+      })
+
+      expect(result).toEqual({
+        finalInputCurrencyId: 'BNB',
+        finalOutputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        finalInputChainId: 56,
+        finalOutputChainId: 56,
+      })
+    })
+
+    test('should handle limit path correctly (no bridge validation)', () => {
+      const result = normalizeCurrencySelectionForChain({
+        inputCurrencyId: 'BNB',
+        inputChainId: 1, // Different chain
+        outputCurrencyId: '0x1111111111111111111111111111111111111111',
+        outputChainId: 137, // Polygon
+        supportedBridgeChains: [], // No bridge support
+        ...defaultParams,
+        pathname: '/limit', // Limit path should skip bridge validation
+      })
+
+      expect(result).toEqual({
+        finalInputCurrencyId: 'BNB',
+        finalOutputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        finalInputChainId: 56,
+        finalOutputChainId: 56,
+      })
+    })
+
+    test('should handle complex scenario with chain switching and currency conflicts', () => {
+      const result = normalizeCurrencySelectionForChain({
+        inputCurrencyId: '0x1234567890123456789012345678901234567890',
+        inputChainId: 1, // Ethereum
+        outputCurrencyId: 'BNB', // Same as native after input reset
+        outputChainId: 137, // Polygon (unsupported)
+        supportedBridgeChains: [], // No bridge support
+        ...defaultParams,
+      })
+
+      expect(result).toEqual({
+        finalInputCurrencyId: 'BNB',
+        finalOutputCurrencyId: '0x55d398326f99059fF775485246999027B3197955',
+        finalInputChainId: 56,
+        finalOutputChainId: 56,
       })
     })
   })

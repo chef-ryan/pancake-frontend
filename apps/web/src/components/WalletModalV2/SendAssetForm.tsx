@@ -858,7 +858,7 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewState
           isLoading={attemptingTxn}
           endIcon={attemptingTxn ? <AutoRenewIcon spin color="currentColor" /> : undefined}
         >
-          {attemptingTxn ? t('Confirming') : t('Next')}
+          {attemptingTxn ? t('Confirming') : t('Next.step')}
         </Button>
       </FlexGap>
 

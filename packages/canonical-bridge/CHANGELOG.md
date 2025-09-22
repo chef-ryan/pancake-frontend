@@ -1,5 +1,13 @@
 # @pancakeswap/canonical-bridge
 
+## 4.0.0
+
+### Patch Changes
+
+- Updated dependencies [d6de8ef]
+  - @pancakeswap/chains@0.7.0
+  - @pancakeswap/uikit@0.69.3
+
 ## 3.0.0
 
 ### Patch Changes

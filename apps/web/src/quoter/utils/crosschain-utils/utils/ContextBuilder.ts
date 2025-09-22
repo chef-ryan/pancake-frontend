@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, isSolana } from '@pancakeswap/chains'
 import { TokenAddressMap } from '@pancakeswap/token-lists'
 import { Loadable } from '@pancakeswap/utils/Loadable'
 import { userSlippageAtomWithLocalStorage } from '@pancakeswap/utils/user/slippage'
@@ -7,7 +7,8 @@ import { createQuoteQuery } from 'quoter/utils/createQuoteQuery'
 import { combinedTokenMapFromActiveUrlsAtom } from 'state/lists/hooks'
 import { swapReducerAtom } from 'state/swap/reducer'
 import { type Route } from 'views/Swap/Bridge/api'
-import { accountActiveChainAtom } from 'wallet/atoms/accountStateAtoms'
+import { accountActiveChainAtom, AccountChainState } from 'wallet/atoms/accountStateAtoms'
+import { solanaBridgeQuoteAtom } from 'quoter/atom/solanaBridgeQuoteAtom'
 import { availableBridgeRoutesAtom } from '../../../atom/availableBridgeRoutesAtom'
 import { bestSameChainWithoutPlaceHolderAtom } from '../../../atom/bestSameChainAtom'
 import { bridgeOnlyQuoteAtom } from '../../../atom/bridgeOnlyQuoteAtom'
@@ -45,8 +46,11 @@ export class ContextBuilder {
     const { destinationBlockNumber, gasLimitDestinationChain, infinitySwap, ..._option } = option
 
     const swapState = get(swapReducerAtom) as SwapReducerState
-    const accountState = get(accountActiveChainAtom) as AccountActiveChainState
-    const recipientOnDestChain = swapState.recipient === null ? accountState.account : swapState.recipient
+    const { account: evmAccount, solanaAccount } = get(accountActiveChainAtom) as AccountChainState
+
+    const account = isSolana(_option.currency?.chainId) ? solanaAccount : evmAccount
+
+    const recipientOnDestChain = (swapState.recipient === null ? account : swapState.recipient) || undefined
 
     if (!_option.amount || !_option.currency) {
       throw new Error('Missing required amount or currency in option')
@@ -67,13 +71,21 @@ export class ContextBuilder {
       atomGetters: {
         getBridgeQuote: (params: BridgeQuoteParams) =>
           get(
-            bridgeOnlyQuoteAtom({
-              inputAmount: params.inputAmount,
-              outputCurrency: params.outputCurrency,
-              nonce: _option.nonce,
-              commands: params.commands,
-              recipientOnDestChain,
-            }),
+            isSolana(params.inputAmount.currency.chainId) || isSolana(params.outputCurrency.chainId)
+              ? solanaBridgeQuoteAtom({
+                  inputAmount: params.inputAmount,
+                  outputCurrency: params.outputCurrency,
+                  nonce: _option.nonce,
+                  commands: params.commands,
+                  recipientOnDestChain,
+                })
+              : bridgeOnlyQuoteAtom({
+                  inputAmount: params.inputAmount,
+                  outputCurrency: params.outputCurrency,
+                  nonce: _option.nonce,
+                  commands: params.commands,
+                  recipientOnDestChain,
+                }),
           ),
         getSwapQuote: (swapOption: Partial<QuoteQuery>) => {
           const isDestinationSwap = quoteCurrency.chainId === swapOption.baseCurrency?.chainId

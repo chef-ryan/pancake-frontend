@@ -132,6 +132,7 @@ const usePoolRateData = ({ chainId, poolId, protocol, period }: IRateDataProps) 
       if (!chainName || !protocol || !poolId) {
         return undefined
       }
+
       return explorerApiClient.GET('/cached/pools/chart/{protocol}/{chainName}/{address}/rate', {
         signal,
         params: {

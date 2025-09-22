@@ -109,7 +109,7 @@ export const AIMultiplierArrow: React.FC<React.PropsWithChildren<AIMultiplierArr
               })}
             </Text>
             <Text bold fontSize="14px" lineHeight="14px" color={downColor} textTransform="uppercase">
-              {t('Down')}
+              {t('Prediction.Position.Down')}
             </Text>
             {!isDisabled && hasEntered && multiplierText}
           </Content>

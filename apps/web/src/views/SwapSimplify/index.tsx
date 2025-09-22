@@ -7,7 +7,7 @@ import { MobileCard } from 'components/AdPanel/MobileCard'
 import { useCurrency } from 'hooks/Tokens'
 import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import { isEvm, NonEVMChainId } from '@pancakeswap/chains'
+import { isEvm, isSolana, NonEVMChainId } from '@pancakeswap/chains'
 import { AutoSlippageProvider } from 'hooks/useAutoSlippageWithFallback'
 import { useSwapHotTokenDisplay } from 'hooks/useSwapHotTokenDisplay'
 import dynamic from 'next/dynamic'
@@ -49,7 +49,7 @@ const InfinitySwapInner = () => {
   const outputCurrency = useCurrency(outputCurrencyId, outputChainId)
 
   // Prefetch Solana tokens when user switches to Solana
-  useSolanaTokenList(chainId === NonEVMChainId.SOLANA)
+  useSolanaTokenList(isSolana(chainId) || isSolana(inputChainId) || isSolana(outputChainId))
 
   useEffect(() => {
     if (firstTime && query.showTradingReward) {
@@ -62,6 +62,8 @@ const InfinitySwapInner = () => {
     }
   }, [firstTime, isChartDisplayed, isSwapHotTokenDisplay, query, setIsSwapHotTokenDisplay, setIsChartDisplayed])
 
+  const isEvmSwap = isEvm(inputChainId) && isEvm(outputChainId)
+
   return (
     <Page removePadding hideFooterOnDesktop={isChartExpanded || false} showExternalLink={false} showHelpLink={false}>
       <Flex
@@ -72,7 +74,7 @@ const InfinitySwapInner = () => {
         mt={isChartExpanded ? undefined : isMobile ? '18px' : '42px'}
         p={isChartExpanded ? undefined : isMobile ? '16px' : '24px'}
       >
-        {isDesktop && isChartDisplayed && isEvm(chainId) && (
+        {isDesktop && isChartDisplayed && isEvmSwap && (
           <Flex width={isChartExpanded ? '100%' : '50%'} maxWidth="928px" flexDirection="column" style={{ gap: 20 }}>
             <ChartWithPriceHeader
               currency0={inputCurrency || undefined}
@@ -83,7 +85,7 @@ const InfinitySwapInner = () => {
           </Flex>
         )}
 
-        {!isDesktop && isEvm(chainId) && (
+        {!isDesktop && isEvmSwap && (
           <BottomDrawer
             content={
               <ChartWithPriceHeader

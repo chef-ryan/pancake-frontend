@@ -89,7 +89,7 @@ const ApproveConfirmButtons: React.FC<React.PropsWithChildren<ApproveConfirmButt
             isLoading={isApproving}
             useMinWidth={useMinWidth}
           >
-            {isApproving ? t('Enabling') : t('Enable')}
+            {isApproving ? t('Enabling') : t('Enable.Approval')}
           </Button>
         </Box>
         <Flex justifyContent="center">
@@ -130,7 +130,7 @@ const ApproveConfirmButtons: React.FC<React.PropsWithChildren<ApproveConfirmButt
         ) : (
           <Box>
             <Button onClick={onApprove} endIcon={isApproving ? spinnerIcon : undefined} isLoading={isApproving}>
-              {isApproving ? t('Enabling') : t('Enable')}
+              {isApproving ? t('Enabling') : t('Enable.Approval')}
             </Button>
           </Box>
         )}

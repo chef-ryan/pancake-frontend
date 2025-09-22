@@ -22,6 +22,7 @@ import { useUnifiedCurrency } from 'hooks/Tokens'
 import { TertiaryButton } from 'views/Swap/components/SlippageButton'
 import { useTheme } from '@pancakeswap/hooks'
 
+import { isSolana } from '@pancakeswap/chains'
 import { BridgeRoutesDisplay } from './RouteDisplay/BridgeRoutesDisplay'
 import { EVMPairNodes } from './RouteDisplay/pairNode'
 import { JupPairNodes } from './RouteDisplay/JupPairNodes'
@@ -75,7 +76,10 @@ const RoutesDisplayView = ({
       {isBridgeRouting ? (
         <>
           <BridgeRoutesDisplay routes={routes} />
-          <RoutingSettingsButtonView onClick={onRoutingSettingsModalOpen} />
+          {isSolana(routes[0]?.inputAmount?.currency?.chainId) ||
+          isSolana(routes[0]?.outputAmount?.currency?.chainId) ? null : (
+            <RoutingSettingsButtonView onClick={onRoutingSettingsModalOpen} />
+          )}
         </>
       ) : (
         <AutoColumn gap="56px" height="100%" pb="16px">

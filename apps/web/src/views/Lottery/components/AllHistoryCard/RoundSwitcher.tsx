@@ -55,7 +55,7 @@ const RoundSwitcher: React.FC<React.PropsWithChildren<RoundSwitcherProps>> = ({
   return (
     <Flex alignItems="center" justifyContent="space-between">
       <Flex alignItems="center">
-        <Heading mr="8px">{t('Round')}</Heading>
+        <Heading mr="8px">{t('Round.lottery')}</Heading>
         <StyledInput
           pattern="^[0-9]+$"
           inputMode="numeric"

@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { CurrencyAmount } from '@pancakeswap/sdk'
+import { CurrencyAmount, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import {
   AutoColumn,
   Box,
@@ -68,7 +68,12 @@ export const OrderDetailsPanel = ({ overrideActiveOrderMetadata }: OrderDetailsP
   const originTxHash = bridgeMetadata?.txHash
   const metadata = bridgeMetadata?.metadata
 
-  const { data: bridgeStatus } = useBridgeStatus(originChainId, originTxHash, metadata)
+  const { data: bridgeStatus } = useBridgeStatus(
+    originChainId,
+    originTxHash,
+    metadata,
+    bridgeMetadata?.destinationChainId,
+  )
 
   const timelineItems = useTimelineItems({ bridgeStatus, order })
 
@@ -91,7 +96,7 @@ export const OrderDetailsPanel = ({ overrideActiveOrderMetadata }: OrderDetailsP
     if (slippageAdjustedAmount) return slippageAdjustedAmount
 
     if (!bridgeStatus?.outputCurrencyAmount?.currency || !bridgeStatus.minOutputAmount) return undefined
-    return CurrencyAmount.fromRawAmount(
+    return UnifiedCurrencyAmount.fromRawAmount(
       bridgeStatus?.outputCurrencyAmount?.currency,
       formatScientificToDecimal(bridgeStatus?.minOutputAmount),
     ).toSignificant(DISPLAY_PRECISION)

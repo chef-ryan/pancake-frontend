@@ -160,7 +160,7 @@ const StakeButton: React.FC<React.PropsWithChildren<StakeButtonProps>> = ({
           onClick={approveCallback}
           disabled={approvalState === ApprovalState.PENDING || isDataLoading}
         >
-          {approvalState === ApprovalState.PENDING ? t('Enabling...') : t('Enable')}
+          {approvalState === ApprovalState.PENDING ? t('Enabling...') : t('Enable.Approval')}
         </Button>
       ) : (
         <Button width="138px" marginLeft="auto" disabled={!isNeedStake} onClick={handleStake}>

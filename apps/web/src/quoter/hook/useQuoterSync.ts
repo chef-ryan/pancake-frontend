@@ -103,6 +103,7 @@ export const useQuoterSync = () => {
 
   useEffect(() => {
     clear()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quoteQuery.placeholderHash])
 
   useEffect(() => {

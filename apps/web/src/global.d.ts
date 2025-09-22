@@ -26,6 +26,9 @@ declare global {
     okxwallet?: WindowProvider
     coin98?: true
     mercuryoWidget?: any
+    binancew3w?: {
+      pcs?: any
+    }
     ethereum?: ExtendEthereum
     isBinance?: boolean
     binancew3w?: {

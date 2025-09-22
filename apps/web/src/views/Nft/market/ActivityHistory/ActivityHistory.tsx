@@ -171,8 +171,8 @@ const ActivityHistory: React.FC<React.PropsWithChildren<ActivityHistoryProps>> =
                   {isXs || isSm ? null : (
                     <>
                       <Th textAlign="right"> {t('Price')}</Th>
-                      <Th textAlign="center"> {t('From')}</Th>
-                      <Th textAlign="center"> {t('To')}</Th>
+                      <Th textAlign="center"> {t('From.sender')}</Th>
+                      <Th textAlign="center"> {t('To.recipient')}</Th>
                     </>
                   )}
                   <Th textAlign="center"> {t('Date')}</Th>

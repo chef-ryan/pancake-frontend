@@ -1,6 +1,6 @@
 import { OrderType } from '@pancakeswap/price-api-sdk'
 import { RouteType } from '@pancakeswap/smart-router'
-import { CurrencyAmount, TradeType } from '@pancakeswap/swap-sdk-core'
+import { CurrencyAmount, Currency, TradeType, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { atomFamily } from 'jotai/utils'
 import { BridgeTradeError } from 'quoter/quoter.types'
 import { getTokenAddress, postMetadata } from 'views/Swap/Bridge/api'
@@ -10,7 +10,7 @@ import { atomWithLoadable } from './atomWithLoadable'
 
 export const bridgeOnlyQuoteAtom = atomFamily(
   (params: BridgeMetadataParams) =>
-    atomWithLoadable(async () => {
+    atomWithLoadable(async (get) => {
       const { inputAmount, outputCurrency } = params
 
       // by default, recipientOnDestChain will be account address
@@ -29,18 +29,24 @@ export const bridgeOnlyQuoteAtom = atomFamily(
         outputToken: getTokenAddress(outputCurrency),
         destinationChainId: outputCurrency.chainId,
         amount: inputAmount.quotient.toString(),
-        ...postBridgeSwapParams,
+        commands: postBridgeSwapParams.commands,
+        recipientOnDestChain: postBridgeSwapParams.recipientOnDestChain,
       })
 
       if (!metadata.supported) {
         throw new BridgeTradeError(metadata?.reason || metadata?.error?.message || 'Unknown error')
       }
 
-      const outputAmount = CurrencyAmount.fromRawAmount(outputCurrency, metadata.bridgeTransactionData.outputAmount)
+      const outputAmount = UnifiedCurrencyAmount.fromRawAmount(
+        outputCurrency,
+        metadata.bridgeTransactionData.outputAmount,
+      ) as CurrencyAmount<Currency>
+
+      const bridgeFee = CurrencyAmount.fromRawAmount(inputAmount.currency, metadata.bridgeTransactionData.totalRelayFee)
 
       const bridgeQuote: InterfaceOrder = {
         bridgeTransactionData: metadata.bridgeTransactionData,
-        bridgeFee: CurrencyAmount.fromRawAmount(inputAmount.currency, metadata.bridgeTransactionData.totalRelayFee),
+        bridgeFee,
         expectedFillTimeSec: metadata.expectedFillTimeSec ? Number.parseInt(metadata.expectedFillTimeSec) : 0,
         type: OrderType.PCS_BRIDGE,
         trade: {

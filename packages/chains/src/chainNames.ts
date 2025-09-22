@@ -22,7 +22,7 @@ export const chainNames: Record<UnifiedChainId, string> = {
   [ChainId.ARBITRUM_SEPOLIA]: 'arbSepolia',
   [ChainId.BASE_SEPOLIA]: 'baseSepolia',
   [ChainId.MONAD_TESTNET]: 'monadTestnet',
-  [NonEVMChainId.SOLANA]: 'solana',
+  [NonEVMChainId.SOLANA]: 'sol',
   [NonEVMChainId.APTOS]: 'aptos',
 }
 

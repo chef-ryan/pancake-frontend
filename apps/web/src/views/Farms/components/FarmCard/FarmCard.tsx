@@ -177,7 +177,7 @@ const FarmCard: React.FC<React.PropsWithChildren<FarmCardProps>> = ({
           </Flex>
         )}
         <Flex justifyContent="space-between">
-          <Text>{t('Earn')}:</Text>
+          <Text>{t('Earn.verb')}:</Text>
           <Text>{earnLabel}</Text>
         </Flex>
         <Flex justifyContent="space-between">

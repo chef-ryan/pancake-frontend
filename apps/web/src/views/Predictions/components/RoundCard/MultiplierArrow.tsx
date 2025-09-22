@@ -102,7 +102,7 @@ const MultiplierArrow: React.FC<React.PropsWithChildren<MultiplierArrowProps>> =
           <Content>
             {!isDisabled && multiplierText}
             <Text bold fontSize="20px" mb="8px" color={downColor} textTransform="uppercase">
-              {t('Down')}
+              {t('Prediction.Position.Down')}
             </Text>
           </Content>
         </ArrowWrapper>

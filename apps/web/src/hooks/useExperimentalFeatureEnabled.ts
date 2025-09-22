@@ -20,6 +20,7 @@ export function useSetExperimentalFeatures() {
 
 export function useExperimentalFeature(featureFlag: EXPERIMENTAL_FEATURES) {
   const [features, setFeatures] = useAtom(experimentalFeaturesAtom)
+
   const setEnabled = useCallback(
     (enabled?: boolean) => {
       setFeatures((prev) => ({
@@ -53,6 +54,7 @@ export function useLoadExperimentalFeatures() {
       const hasFeatureFlag = hasFeatureFlagsInCookies(feature)
       featureFlags[feature] = hasFeatureFlag
     }
+
     setExperimentalFeatures((prev) => ({ ...prev, ...featureFlags }))
   }, [setExperimentalFeatures])
 

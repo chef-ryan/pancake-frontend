@@ -223,7 +223,7 @@ export async function getWalletType(connector?: Connector, mevParam?: string | n
 
 export function useWalletType() {
   const searchParams = useSearchParams()
-  const mevParam = searchParams.get('mev')
+  const mevParam = searchParams ? searchParams.get('mev') : null
 
   const { connector } = useAccount()
   const { data, isLoading } = useQuery({

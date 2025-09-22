@@ -117,7 +117,7 @@ const UnstakeButton: React.FC<React.PropsWithChildren<UnstakeButtonProps>> = ({ 
 
       if (resp?.status === 'success') {
         toastSuccess(
-          `${t('Unstaked')}!`,
+          `${t('Unstaked.status')}!`,
           <ToastDescriptionWithTx txHash={resp.transactionHash}>
             {t('Your earnings have also been harvested to your wallet')}
           </ToastDescriptionWithTx>,
@@ -141,7 +141,7 @@ const UnstakeButton: React.FC<React.PropsWithChildren<UnstakeButtonProps>> = ({ 
 
       if (receipt?.status) {
         toastSuccess(
-          `${t('Unstaked')}!`,
+          `${t('Unstaked.status')}!`,
           <ToastDescriptionWithTx txHash={receipt.transactionHash}>
             {t('Your earnings have also been harvested to your wallet')}
           </ToastDescriptionWithTx>,
@@ -174,7 +174,7 @@ const UnstakeButton: React.FC<React.PropsWithChildren<UnstakeButtonProps>> = ({ 
           disabled={!isNeedUnstake || pendingFarm.length > 0}
           onClick={handleUnstake}
         >
-          {isNeedUnstake ? t('Unstake All') : t('Unstaked')}
+          {isNeedUnstake ? t('Unstake All') : t('Unstaked.status')}
         </Button>
       )}
     </>

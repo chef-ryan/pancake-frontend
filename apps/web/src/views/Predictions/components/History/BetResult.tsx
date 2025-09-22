@@ -75,7 +75,7 @@ const BetResult: React.FC<React.PropsWithChildren<BetResultProps>> = ({ bet, res
   const headerText = useMemo(() => {
     switch (result) {
       case Result.WIN:
-        return t('Win')
+        return t('Win.result')
       case Result.LOSE:
         return t('Lose')
       case Result.CANCELED:
@@ -150,7 +150,7 @@ const BetResult: React.FC<React.PropsWithChildren<BetResultProps>> = ({ bet, res
         <Flex alignItems="center" justifyContent="space-between" mb="16px">
           <Text>{t('Your direction')}:</Text>
           <PositionTag betPosition={bet.position}>
-            {bet.position === BetPosition.BULL ? t('Up') : t('Down')}
+            {bet.position === BetPosition.BULL ? t('Up') : t('Prediction.Position.Down')}
           </PositionTag>
         </Flex>
         <Flex alignItems="center" justifyContent="space-between" mb="16px">

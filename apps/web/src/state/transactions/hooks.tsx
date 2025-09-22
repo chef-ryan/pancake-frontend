@@ -147,6 +147,23 @@ export function useAllTransactions(): { [chainId: number]: { [txHash: string]: T
   }, [unifiedAccount, state])
 }
 
+// returns all transactions excluding bridge transactions (for AMM transaction list)
+export function useAMMTransactions(): { [chainId: number]: { [txHash: string]: TransactionDetails } } {
+  const allTransactions = useAllTransactions()
+
+  return useMemo(() => {
+    const filtered: { [chainId: number]: { [txHash: string]: TransactionDetails } } = {}
+
+    Object.entries(allTransactions).forEach(([chainId, transactions]) => {
+      filtered[Number(chainId)] = Object.fromEntries(
+        Object.entries(transactions).filter(([, tx]) => tx.type !== 'bridge'),
+      )
+    })
+
+    return filtered
+  }, [allTransactions])
+}
+
 export function useAllSortedRecentTransactions(): { [chainId: number]: { [txHash: string]: TransactionDetails } } {
   const allTransactions = useAllTransactions()
   return useMemo(() => {
@@ -164,6 +181,26 @@ export function useAllSortedRecentTransactions(): { [chainId: number]: { [txHash
       isEmpty,
     )
   }, [allTransactions])
+}
+
+// returns all sorted recent transactions excluding bridge transactions (for AMM transaction list)
+export function useAMMSortedRecentTransactions(): { [chainId: number]: { [txHash: string]: TransactionDetails } } {
+  const ammTransactions = useAMMTransactions()
+  return useMemo(() => {
+    return omitBy(
+      mapValues(ammTransactions, (transactions) =>
+        keyBy(
+          orderBy(
+            pickBy(transactions, (trxDetails) => isTransactionRecent(trxDetails)),
+            ['addedTime'],
+            'desc',
+          ),
+          'hash',
+        ),
+      ),
+      isEmpty,
+    )
+  }, [ammTransactions])
 }
 
 // returns all the transactions for the current chain

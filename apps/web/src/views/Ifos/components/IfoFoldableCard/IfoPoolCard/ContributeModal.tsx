@@ -165,7 +165,7 @@ const ContributeModal: React.FC<React.PropsWithChildren<Props>> = ({
             </Text>
           </Flex>
           <Flex justifyContent="space-between" mb="8px">
-            <Text>{t('Commit')}:</Text>
+            <Text>{t('Commit.ifo')}:</Text>
             <Flex flexGrow={1} justifyContent="flex-end">
               <Image
                 src={

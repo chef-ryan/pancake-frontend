@@ -28,7 +28,7 @@ import InternalLink from 'components/Links'
 import { useDomainNameForAddress } from 'hooks/useDomain'
 import { useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import { getBlockExploreLink, getBlockExploreName } from 'utils'
+import { useBlockExploreLink, useBlockExploreName } from 'utils'
 import { Address } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
 import { useActiveChainId } from 'hooks/useActiveChainId'
@@ -49,6 +49,9 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowNativeBalance, onDismiss 
   const { chainId } = useActiveChainId()
   const { address: account, chain } = useAccount()
   const { domainName } = useDomainNameForAddress(account ?? '')
+  const blockExplorerName = useBlockExploreName(chainId)
+  const bscBlockExplorerName = useBlockExploreName(ChainId.BSC)
+  const getBlockExploreLink = useBlockExploreLink()
   const isBSC = chainId === ChainId.BSC
   const bnbBalance = useBalance({ address: account ?? undefined, chainId: ChainId.BSC })
   const nativeBalance = useBalance({ address: account ?? undefined, query: { enabled: !isBSC } })
@@ -131,9 +134,7 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowNativeBalance, onDismiss 
                 {chain.name}
               </Text>
             </Flex>
-            <LinkExternal href={getBlockExploreLink(account, 'address', chainId)}>
-              {getBlockExploreName(chainId)}
-            </LinkExternal>
+            <LinkExternal href={getBlockExploreLink(account, 'address', chainId)}>{blockExplorerName}</LinkExternal>
           </Flex>
           <Flex alignItems="center" justifyContent="space-between">
             <Text color="textSubtle">
@@ -189,7 +190,7 @@ const WalletInfo: React.FC<WalletInfoProps> = ({ hasLowNativeBalance, onDismiss 
             </Text>
           </Flex>
           <ScanLink useBscCoinFallback href={getBlockExploreLink(account, 'address', ChainId.BSC)}>
-            {getBlockExploreName(ChainId.BSC)}
+            {bscBlockExplorerName}
           </ScanLink>
         </Flex>
         {chainId === 56 ? (

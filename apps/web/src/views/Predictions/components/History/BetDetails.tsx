@@ -39,7 +39,7 @@ const BetDetails: React.FC<React.PropsWithChildren<BetDetailsProps>> = ({ bet, r
       {bet.round ? (
         <RoundResultHistory round={bet.round} mb="24px">
           <PayoutRow positionLabel={t('Up')} multiplier={bullMultiplier} amount={bullAmount} />
-          <PayoutRow positionLabel={t('Down')} multiplier={bearMultiplier} amount={bearAmount} />
+          <PayoutRow positionLabel={t('Prediction.Position.Down')} multiplier={bearMultiplier} amount={bearAmount} />
         </RoundResultHistory>
       ) : null}
       {bet.round?.lockBlock && (

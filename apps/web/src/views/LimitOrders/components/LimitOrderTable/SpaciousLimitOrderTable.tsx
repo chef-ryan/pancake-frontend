@@ -13,12 +13,12 @@ const SpaciousLimitOrderTable = ({ orders }) => {
           <tr>
             <Th>
               <Text fontSize="12px" bold textTransform="uppercase" color="textSubtle" textAlign="left">
-                {t('From')}
+                {t('From.sender')}
               </Text>
             </Th>
             <Th>
               <Text fontSize="12px" bold textTransform="uppercase" color="textSubtle" textAlign="left">
-                {t('To')}
+                {t('To.recipient')}
               </Text>
             </Th>
             <Th>

@@ -10,6 +10,7 @@ export const chainNameConverter = (name: string) => {
     case bscTestnet.name:
       return 'BNB Chain Testnet'
     case 'solana':
+    case 'sol':
       return 'Solana'
     default:
       return name

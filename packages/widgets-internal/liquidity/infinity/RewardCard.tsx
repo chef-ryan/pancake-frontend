@@ -90,8 +90,8 @@ export const RewardCard = ({ rewards }: IRewardCardProps) => {
             ) : null}
             <Text fontSize="12px" color="textSubtle">
               {Array.isArray(item.currency)
-                ? `${t("Earn")} ${item.currency[0]?.symbol} + ${item.currency[1]?.symbol}`
-                : `${t("Earn")} ${item.currency?.symbol}`}
+                ? `${t("Earn.verb")} ${item.currency[0]?.symbol} + ${item.currency[1]?.symbol}`
+                : `${t("Earn.verb")} ${item.currency?.symbol}`}
             </Text>
           </FlexGap>
         ),

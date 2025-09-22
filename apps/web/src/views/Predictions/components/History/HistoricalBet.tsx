@@ -211,7 +211,7 @@ const HistoricalBet: React.FC<React.PropsWithChildren<BetProps>> = ({ bet }) => 
         <Box width="48px">
           <Text textAlign="center">
             <Text fontSize="12px" color="textSubtle">
-              {t('Round')}
+              {t('Round.predictions')}
             </Text>
             <Text bold lineHeight={1}>
               {round?.epoch}

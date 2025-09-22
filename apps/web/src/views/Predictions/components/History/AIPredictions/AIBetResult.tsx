@@ -87,7 +87,7 @@ export const AIBetResult: React.FC<React.PropsWithChildren<AIBetResultProps>> = 
   const headerText = useMemo(() => {
     switch (result) {
       case Result.WIN:
-        return t('Win')
+        return t('Win.result')
       case Result.LOSE:
         return t('Lose')
       case Result.CANCELED:

@@ -1,5 +1,5 @@
 import { IPendingCakeByTokenId, PositionDetails } from '@pancakeswap/farms'
-import { useTranslation } from '@pancakeswap/localization'
+import { Trans, useTranslation } from '@pancakeswap/localization'
 import { Token } from '@pancakeswap/swap-sdk-core'
 import {
   AtomBox,
@@ -217,11 +217,11 @@ const SingleFarmV3Card: React.FunctionComponent<
                       }}
                     >
                       {outOfRangeUnstaked ? (
-                        <>
-                          {t('Inactive positions will')}
-                          <b> {t('NOT')} </b>
-                          {t('earn CAKE rewards from farm.')}
-                        </>
+                        <Trans
+                          i18nKey="inactive-position-notice"
+                          components={[<b />]}
+                          i18nTemplate="Inactive positions will <0>NOT</0> earn CAKE rewards from farm."
+                        />
                       ) : (
                         t('You may add or remove liquidity on the position detail page without unstake')
                       )}

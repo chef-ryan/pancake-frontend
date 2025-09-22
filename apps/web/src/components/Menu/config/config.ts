@@ -90,7 +90,7 @@ const config: (
       showItemsOnMobile: false,
     },
     {
-      label: t('Earn'),
+      label: t('Earn.verb'),
       href: '/liquidity/pools',
       icon: EarnIcon,
       fillIcon: EarnFillIcon,
@@ -185,7 +185,7 @@ const config: (
       hideSubNav: true,
       items: [
         {
-          label: t('Info'),
+          label: t('Info.section_title'),
           href: '/info/v3',
         },
         {

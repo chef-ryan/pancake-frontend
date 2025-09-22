@@ -10,7 +10,7 @@ export const footerLinks: (t: ContextApi['t']) => FooterLinkType[] = (t) => [
         href: '/swap',
       },
       {
-        label: t('Earn'),
+        label: t('Earn.verb'),
         href: '/farms',
       },
       {

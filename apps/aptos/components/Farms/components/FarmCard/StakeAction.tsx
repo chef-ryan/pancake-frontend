@@ -80,7 +80,7 @@ const StakeAction: React.FC<React.PropsWithChildren<FarmCardActionsProps>> = ({
     const receipt = await fetchWithCatchTxError(() => onUnstake(amount))
     if (receipt?.status) {
       toastSuccess(
-        `${t('Unstaked')}!`,
+        `${t('Unstaked.status')}!`,
         <ToastDescriptionWithTx txHash={receipt.transactionHash}>
           {t('Your earnings have also been harvested to your wallet')}
         </ToastDescriptionWithTx>,

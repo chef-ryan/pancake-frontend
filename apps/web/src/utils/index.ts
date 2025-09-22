@@ -7,6 +7,7 @@ import { SOLANA_CHAIN } from 'config/chains'
 import { chains as evmChains } from './wagmi'
 
 export * from './safeGetAddress'
+export { useBlockExploreName, useBlockExploreLink } from '../hooks/useBlockExploreName'
 
 // Extend chain metadata with Solana descriptor from config
 const UNIFIED_CHAINS = [...evmChains, SOLANA_CHAIN as any]

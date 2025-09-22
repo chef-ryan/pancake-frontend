@@ -12,13 +12,9 @@ import { GreyCard } from 'components/Card'
 import { CommitButton } from 'components/CommitButton'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AutoRow } from 'components/Layout/Row'
-import {
-  RoutingSettingsButton,
-  RoutingSettingsModalContent,
-  withCustomOnDismiss,
-} from 'components/Menu/GlobalSettings/SettingsModalV2'
+import { RoutingSettingsButton, RoutingSettingsModalContent } from 'components/Menu/GlobalSettings/SettingsModalV2'
 import { BIG_INT_ZERO } from 'config/constants/exchange'
-import { useCurrency } from 'hooks/Tokens'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { useUnifiedCurrencyBalances } from 'hooks/useUnifiedCurrencyBalance'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
@@ -39,10 +35,9 @@ import { useBridgeCheckApproval } from 'views/Swap/Bridge/hooks/useBridgeCheckAp
 import { getBridgeOrderPriceImpact } from 'views/Swap/Bridge/utils'
 import { ConfirmSwapModalV2 } from 'views/Swap/V3Swap/containers/ConfirmSwapModalV2'
 import { EVMInterfaceOrder, isBridgeOrder, isClassicOrder, isSVMOrder, isXOrder } from 'views/Swap/utils'
-import { useAccount } from 'wagmi'
+import { useBridgeTradeErrorHandler } from 'views/Swap/Bridge/CrossChainConfirmSwapModal/hooks/useBridgeErrorMessages'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { isEvm, NonEVMChainId } from '@pancakeswap/chains'
-import SolanaConnectButton from 'wallet/components/SolanaConnectButton'
+import { isEvm, isSolana, NonEVMChainId } from '@pancakeswap/chains'
 
 import { ConfirmSwapModalV3 } from '../../Swap/Bridge/CrossChainConfirmSwapModal/ConfirmSwapModalV3'
 import { useParsedAmounts, useSlippageAdjustedAmounts, useSwapInputError } from '../../Swap/V3Swap/hooks'
@@ -65,9 +60,33 @@ const useSwapCurrencies = () => {
     [Field.INPUT]: { currencyId: inputCurrencyId, chainId: inputChainId },
     [Field.OUTPUT]: { currencyId: outputCurrencyId, chainId: outputChainId },
   } = useSwapState()
-  const inputCurrency = useCurrency(inputCurrencyId, inputChainId) as Currency
-  const outputCurrency = useCurrency(outputCurrencyId, outputChainId) as Currency
-  return { inputCurrency, outputCurrency }
+  const inputCurrency = useUnifiedCurrency(inputCurrencyId, inputChainId) as Currency
+  const outputCurrency = useUnifiedCurrency(outputCurrencyId, outputChainId) as Currency
+  return useMemo(() => ({ inputCurrency, outputCurrency }), [inputCurrency, outputCurrency])
+}
+
+function useCheckConnectSolanaForSolanaBridge() {
+  const { account, solanaAccount } = useAccountActiveChain()
+
+  const { outputCurrency, inputCurrency } = useSwapCurrencies()
+
+  if (!outputCurrency || !inputCurrency) return false
+
+  const isSolanaBridge =
+    inputCurrency.chainId !== outputCurrency.chainId &&
+    (isSolana(outputCurrency.chainId) || isSolana(inputCurrency.chainId))
+
+  if (!isSolanaBridge) return false
+
+  if (isSolana(outputCurrency.chainId) && account && !solanaAccount) {
+    return true
+  }
+
+  if (isEvm(outputCurrency.chainId) && solanaAccount && !account) {
+    return true
+  }
+
+  return false
 }
 
 const WrapCommitButtonReplace: React.FC<React.PropsWithChildren> = ({ children }) => {
@@ -101,9 +120,12 @@ const ConnectButtonReplace = ({ children }) => {
     return (chainId === NonEVMChainId.SOLANA && !solanaAccount) || (chainId !== NonEVMChainId.SOLANA && !account)
   }, [chainId, solanaAccount, account])
 
-  if (noAccount) {
+  const needConnectSolanaForBridgeFromEVMToSolana = useCheckConnectSolanaForSolanaBridge()
+
+  if (noAccount || needConnectSolanaForBridgeFromEVMToSolana) {
     return <ConnectWalletButton width="100%" withIcon />
   }
+
   return children
 }
 
@@ -147,9 +169,11 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   beforeCommit,
   afterCommit,
 }: SwapCommitButtonPropsType & CommitButtonProps) {
-  const { address: account } = useAccount()
+  const { account, solanaAccount } = useAccountActiveChain()
+
   const { t } = useTranslation()
   const { chainId } = useAccountActiveChain()
+  const handleBridgeTradeErrorMessage = useBridgeTradeErrorHandler()
   // form data
   const { independentField, typedValue } = useSwapState()
   const [inputCurrency, outputCurrency] = useSwapCurrency()
@@ -169,7 +193,11 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
       : undefined,
   )
 
-  const relevantTokenBalances = useUnifiedCurrencyBalances([inputCurrency ?? undefined, outputCurrency ?? undefined])
+  const pairCurrencies = useMemo(() => {
+    return [inputCurrency ?? undefined, outputCurrency ?? undefined]
+  }, [inputCurrency, outputCurrency])
+
+  const relevantTokenBalances = useUnifiedCurrencyBalances(pairCurrencies)
   const currencyBalances = useMemo(
     () => ({
       [Field.INPUT]: relevantTokenBalances[0],
@@ -179,7 +207,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   )
   const parsedAmounts = useParsedAmounts(order?.trade, currencyBalances, false)
   const parsedIndependentFieldAmount = parsedAmounts[independentField]
-  const swapInputError = useSwapInputError(order, currencyBalances)
+  const swapInputError = useSwapInputError(order, currencyBalances, pairCurrencies)
   const [tradeToConfirm, setTradeToConfirm] = useState<PriceOrder | undefined>(undefined)
   const [indirectlyOpenConfirmModalState, setIndirectlyOpenConfirmModalState] = useState(false)
 
@@ -259,7 +287,9 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   )
 
   // Get the refresh function from useAddressBalance to update balances after swap
-  const { refresh: refreshBalances } = useAddressBalance(account, chainId, { enabled: false })
+  const { refresh: refreshBalances } = useAddressBalance(isSolana(chainId) ? solanaAccount : account, chainId, {
+    enabled: false,
+  })
 
   const onConfirm = useCallback(() => {
     beforeCommit?.()
@@ -275,10 +305,6 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
     callToAction()
   }, [beforeCommit, callToAction, priceImpactSeverity, order])
 
-  // modals
-  const onSettingModalDismiss = useCallback(() => {
-    setIndirectlyOpenConfirmModalState(true)
-  }, [])
   const [openConfirmSwapModal] = useModal(
     isBridgeOrder(order) ? (
       <ConfirmSwapModalV3
@@ -392,21 +418,18 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
   })
 
   const buttonText = useMemo(() => {
-    // NOTE: use if statement for readability
+    // Priority order for button text
 
     if (isRecipientEmpty) return t('Enter a recipient')
     if (isRecipientError) return t('Invalid recipient')
+
+    // Handle bridge trade errors
     if (tradeError instanceof BridgeTradeError) {
-      if (tradeError.message.includes("doesn't have enough funds to support this deposit")) {
-        return t('Retry with lower input amount!')
-      }
+      const errorMessage = handleBridgeTradeErrorMessage(tradeError)
 
-      if (tradeError.message.includes('too low relative to fees')) {
-        return t('Retry with higher input amount!')
-      }
-
-      return tradeError.message
+      if (errorMessage) return errorMessage
     }
+
     if (swapInputError) return swapInputError
 
     if (tradeLoading) return <Dots>{t('Searching For The Best Price')}</Dots>
@@ -428,6 +451,7 @@ const SwapCommitButtonInner = memo(function SwapCommitButtonInner({
     tradeLoading,
     tradeError,
     isBridgeCheckApprovalLoading,
+    handleBridgeTradeErrorMessage,
   ])
 
   if (noRoute && userHasSpecifiedInputOutput && tradeError instanceof TimeoutError) {

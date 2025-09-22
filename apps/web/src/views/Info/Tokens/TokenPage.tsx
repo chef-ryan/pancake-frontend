@@ -109,7 +109,7 @@ const TokenPage: React.FC<React.PropsWithChildren<{ routeAddress: string }>> = (
         <Flex justifyContent="space-between" mb="24px" flexDirection={['column', 'column', 'row']}>
           <Breadcrumbs mb="32px">
             <NextLinkFromReactRouter to={`/info${chainPath}${infoTypeParam}`}>
-              <Text color="primary">{t('Info')}</Text>
+              <Text color="primary">{t('Info.section_title')}</Text>
             </NextLinkFromReactRouter>
             <NextLinkFromReactRouter to={`/info${chainPath}/tokens${infoTypeParam}`}>
               <Text color="primary">{t('Tokens')}</Text>

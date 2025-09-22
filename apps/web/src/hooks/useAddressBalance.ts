@@ -64,7 +64,11 @@ const useIsListedToken = () => {
 /**
  * Hook to fetch and manage token balances for a specific address using React Query
  */
-export const useAddressBalance = (address?: string, chainId?: number, options: UseAddressBalanceOptions = {}) => {
+export const useAddressBalance = (
+  address?: string | null,
+  chainId?: number,
+  options: UseAddressBalanceOptions = {},
+) => {
   // const { chainId } = useActiveChainId()
   const { includeSpam = false, onlyWithPrice = false, filterByChainId, enabled = true } = options
   const list = useCombinedActiveList()

@@ -172,7 +172,7 @@ const TokenPage: React.FC<{ address: string; chain?: string }> = ({ address, cha
           <Flex justifyContent="space-between" mb="24px" flexDirection={['column', 'column', 'row']}>
             <Breadcrumbs mb="32px">
               <NextLinkFromReactRouter to={`/${v3InfoPath}${chainPath}${infoTypeParam}`}>
-                <Text color="primary">{t('Info')}</Text>
+                <Text color="primary">{t('Info.section_title')}</Text>
               </NextLinkFromReactRouter>
               <NextLinkFromReactRouter to={`/${v3InfoPath}${chainPath}/tokens${infoTypeParam}`}>
                 <Text color="primary">{t('Tokens')}</Text>

@@ -17,7 +17,7 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useAutoSlippageWithFallback } from 'hooks/useAutoSlippageWithFallback'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
-import { getBlockExploreLink, getBlockExploreName } from 'utils'
+import { useBlockExploreLink, useBlockExploreName } from 'utils'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
 import ConfirmSwapModalContainer from 'views/Swap/components/ConfirmSwapModalContainer'
 import { SwapTransactionErrorContent } from 'views/Swap/components/SwapTransactionErrorContent'
@@ -82,6 +82,8 @@ export const ConfirmSwapModalV2: React.FC<ConfirmSwapModalV2Props> = ({
   const { chainId } = useActiveChainId()
   // @ts-ignore
   const { slippageTolerance: allowedSlippage } = useAutoSlippageWithFallback()
+  const blockExplorerName = useBlockExploreName(chainId)
+  const getBlockExploreLink = useBlockExploreLink()
 
   const slippageAdjustedAmounts = useSlippageAdjustedAmounts(originalOrder)
   const { recipient } = useSwapState()
@@ -239,7 +241,7 @@ export const ConfirmSwapModalV2: React.FC<ConfirmSwapModalV2Props> = ({
           explorerLink={
             chainId ? (
               <Link external small href={getBlockExploreLink(txHash, 'transaction', chainId)}>
-                {t('View on %site%', { site: getBlockExploreName(chainId) })}: {truncateHash(txHash, 8, 0)}
+                {t('View on %site%', { site: blockExplorerName })}: {truncateHash(txHash, 8, 0)}
                 {chainId === ChainId.BSC && <BscScanIcon color="primary" ml="4px" />}
               </Link>
             ) : (

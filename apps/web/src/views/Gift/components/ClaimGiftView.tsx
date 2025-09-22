@@ -40,7 +40,7 @@ export const AuthRequiredClaimGiftView = ({ setViewState }: { setViewState: (vie
       return t('Checking...')
     }
 
-    return t('Next')
+    return t('Next.step')
   }, [isLoading, code, t])
 
   return (

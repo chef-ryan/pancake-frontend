@@ -30,7 +30,7 @@ const TopTradersCard: React.FC<React.PropsWithChildren<TeamRanksProps & { subgra
   const [isExpanded, setIsExpanded] = useState(false)
   const [topTradersGridData, setTopTradersGridData] = useState<LeaderboardDataItem[] | null | undefined>(null)
   const handleItemClick = (index: number) => setActiveTab(index)
-  const tabs = [t('Total'), 'Storm', 'Flippers', 'Cakers']
+  const tabs = [t('Total.tabOverall'), 'Storm', 'Flippers', 'Cakers']
 
   useEffect(() => {
     const getData = () => {

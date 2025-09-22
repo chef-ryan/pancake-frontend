@@ -35,7 +35,7 @@ const PercentageSelector: React.FC<PercentageSelectorProps> = ({
             border="2px solid"
             style={{ textTransform: 'uppercase', fontSize: '14px', fontWeight: 600, flex: 1 }}
           >
-            {percent === 100 ? t('Max') : `${percent}%`}
+            {percent === 100 ? t('Max.fill-max') : `${percent}%`}
           </Button>
         )
       })}

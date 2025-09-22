@@ -38,7 +38,7 @@ const EnableStakeAction: React.FunctionComponent<React.PropsWithChildren<EnableS
       )}
       <ActionContent style={bCakeInfoSlot ? { flexGrow: 1, width: isMobile ? "100%" : "30%" } : undefined}>
         <Button width="100%" disabled={pendingTx} onClick={handleApprove} variant="secondary">
-          {t("Enable")}
+          {t("Enable.Approval")}
         </Button>
       </ActionContent>
       {bCakeInfoSlot}

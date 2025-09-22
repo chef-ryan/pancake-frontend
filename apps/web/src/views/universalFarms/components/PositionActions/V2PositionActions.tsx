@@ -208,7 +208,7 @@ const useWithdrawModal = (
       if (receipt?.status) {
         setLatestTxReceipt(receipt)
         toastSuccess(
-          `${t('Unstaked')}!`,
+          `${t('Unstaked.status')}!`,
           <ToastDescriptionWithTx txHash={receipt.transactionHash}>
             {t('Your earnings have also been harvested to your wallet')}
           </ToastDescriptionWithTx>,

@@ -1,4 +1,4 @@
-import { ChainId as EvmChainId } from '@pancakeswap/chains'
+import { ChainId as EvmChainId, isSolana, UnifiedChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency, Percent, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { Box, FlexGap, Image, Skeleton, Text } from '@pancakeswap/uikit'
@@ -23,8 +23,8 @@ import { SwitchChainOption } from 'wallet/hook/useSwitchNetworkV2'
 import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
 import currencyId from 'utils/currencyId'
 import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
-import { useBridgeAvailableRoutes } from 'views/Swap/Bridge/hooks/useBridgeAvailableRoutes'
 import { getDefaultToken } from 'views/Swap/utils'
+import { useBridgeAvailableChains } from 'views/Swap/Bridge/hooks'
 import useWarningImport from '../../Swap/hooks/useWarningImport'
 import { useIsWrapping } from '../../Swap/V3Swap/hooks'
 import { AssignRecipientButton, FlipButton } from './FlipButton'
@@ -46,7 +46,7 @@ interface HandleCurrencySelectDeps {
   canSwitchToChain: (chainId: number) => boolean
   switchNetwork: (chainId: number, options?: SwitchChainOption) => void
   outputChainId: number | undefined
-  supportedBridgeChains: { data?: { originChainId: number; destinationChainId: number }[] }
+  supportedBridgeChains?: UnifiedChainId[]
   inputChainId: number | undefined
   inputCurrencyId: string | undefined
   outputCurrencyId: string | undefined
@@ -115,9 +115,8 @@ export const handleCurrencySelectFn = async ({
   if (isInput && newCurrency.chainId !== outputChainId) {
     const isOutputChainSupported =
       outputChainId &&
-      supportedBridgeChains.data?.some(
-        (route) => route.originChainId === newCurrency.chainId && route.destinationChainId === outputChainId,
-      )
+      supportedBridgeChains?.includes(newCurrency.chainId) &&
+      supportedBridgeChains.includes(outputChainId)
 
     if (!isOutputChainSupported) {
       // if output chain is not supported, reset output currency
@@ -145,8 +144,7 @@ export const handleCurrencySelectFn = async ({
 export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsufficientBalance }: Props) {
   const { t } = useTranslation()
   const warningSwapHandler = useWarningImport()
-  const { unifiedAccount } = useAccountActiveChain()
-  const walletIcon = useCurrentWalletIcon()
+  const { solanaAccount, account } = useAccountActiveChain()
 
   const {
     independentField,
@@ -156,6 +154,12 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
     recipient,
   } = useSwapState()
   const { onCurrencySelection, onUserInput } = useSwapActionHandlers()
+
+  const fromAccount = isSolana(inputChainId) ? solanaAccount : account
+  const toAccount = isSolana(outputChainId) ? solanaAccount : account
+
+  const walletIconFrom = useCurrentWalletIcon(inputChainId)
+  const walletIconTo = useCurrentWalletIcon(outputChainId)
 
   const isWrapping = useIsWrapping()
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -187,7 +191,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
 
   const { canSwitchToChain, switchNetwork } = useSwitchNetwork()
 
-  const supportedBridgeChains = useBridgeAvailableRoutes()
+  const { chains: supportedBridgeChains } = useBridgeAvailableChains()
 
   const router = useRouter()
 
@@ -271,15 +275,15 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
               <Text color="textSubtle" fontSize={12} bold>
                 {t('From')}:
               </Text>
-              {unifiedAccount && (
+              {fromAccount && (
                 <FlexGap gap="4px" alignItems="center">
-                  {walletIcon && (
+                  {walletIconFrom && (
                     <Box width={24} height={24}>
-                      <WalletIcon src={walletIcon} width={24} height={24} alt="Wallet Icon" />
+                      <WalletIcon src={walletIconFrom} width={24} height={24} alt="Wallet Icon" />
                     </Box>
                   )}
                   <Text fontSize="12px" color="textSubtle" fontWeight="600">
-                    {truncateHash(unifiedAccount, 6, 4)}
+                    {truncateHash(fromAccount, 6, 4)}
                   </Text>
                 </FlexGap>
               )}
@@ -312,15 +316,15 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
               <Text color="textSubtle" fontSize={12} bold>
                 {t('To')}:
               </Text>
-              {(unifiedAccount || recipient) && (
+              {(toAccount || recipient) && (
                 <FlexGap gap="4px" alignItems="center">
-                  {walletIcon && !recipient && (
+                  {walletIconTo && !recipient && (
                     <Box width={24} height={24}>
-                      <WalletIcon src={walletIcon} width={24} height={24} alt="Wallet Icon" />
+                      <WalletIcon src={walletIconTo} width={24} height={24} alt="Wallet Icon" />
                     </Box>
                   )}
                   <Text fontSize="12px" color="textSubtle" fontWeight="600">
-                    {recipient ? truncateHash(recipient, 6, 4) : truncateHash(unifiedAccount ?? '', 6, 4)}
+                    {recipient ? truncateHash(recipient, 6, 4) : truncateHash(toAccount ?? '', 6, 4)}
                   </Text>
                 </FlexGap>
               )}

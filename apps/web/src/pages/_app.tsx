@@ -32,14 +32,12 @@ import { useEmbeddedSmartAccountConnectorV2 } from 'wallet/Privy/hooks/usePrivyS
 import { useDataDogRUM } from 'hooks/useDataDogRUM'
 import { useLoadExperimentalFeatures } from 'hooks/useExperimentalFeatureEnabled'
 import useInitNotificationsClient from 'hooks/useInitNotificationsClient'
-import { useVercelFeatureFlagOverrides } from 'hooks/useVercelToolbar'
 import { useWalletConnectRouterSync } from 'hooks/useWalletConnectRouterSync'
 import { useWeb3WalletView } from 'hooks/useWeb3WalletView'
 import { useInitGlobalWorker } from 'hooks/useWorker'
 import { useSecurityBlocking } from 'hooks/useSecurityBlocking'
 import { persistor, useStore } from 'state'
 import { usePollBlockNumber } from 'state/block/hooks'
-import { useAccountActiveChain } from 'hooks/useAccountActiveChain'
 import WalletModalManager from 'components/WalletModalManager'
 import { useAtom } from 'jotai'
 import { walletModalVisibleAtom } from 'state/wallet/atom'
@@ -70,7 +68,6 @@ function GlobalHooks() {
   useDataDogRUM()
   useWeb3WalletView()
   useLoadExperimentalFeatures()
-  useVercelFeatureFlagOverrides()
   usePollBlockNumber()
   useEagerConnect()
   useUserAgent()
@@ -157,7 +154,6 @@ const ProductionErrorBoundary = process.env.NODE_ENV === 'production' ? SentryEr
 
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const blocking = useSecurityBlocking()
-  const { chainId } = useAccountActiveChain()
   const [isOpen, setIsOpen] = useAtom(walletModalVisibleAtom)
 
   if (blocking) {

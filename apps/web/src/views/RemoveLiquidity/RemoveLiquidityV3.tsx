@@ -436,7 +436,7 @@ function Remove({ tokenId }: { tokenId?: bigint }) {
                 75%
               </Button>
               <Button variant="tertiary" scale="sm" onClick={() => onPercentSelect(100)}>
-                {t('Max')}
+                {t('Max.fill-max')}
               </Button>
             </Flex>
           </BorderCard>

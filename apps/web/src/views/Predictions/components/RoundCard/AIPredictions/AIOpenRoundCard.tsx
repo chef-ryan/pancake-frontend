@@ -210,7 +210,7 @@ export const AIOpenRoundCard: React.FC<React.PropsWithChildren<AIOpenRoundCardPr
           status="next"
           epoch={round.epoch}
           icon={<PlayCircleOutlineIcon color="white" mr="4px" width="21px" />}
-          title={t('Next')}
+          title={t('Next.round')}
         />
         <StyledCardBody>
           {(!positionEnteredText || (liveAIPosition === 'DOWN' && userPosition === 'DOWN')) && (

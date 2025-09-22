@@ -1,4 +1,4 @@
-import { ChainId, UnifiedChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 
 /**
  * This config is used to manage the supported chains for crosschain swap:
@@ -15,6 +15,7 @@ export const CROSSCHAIN_SUPPORTED_CHAINS: UnifiedChainId[] = [
   ChainId.ETHEREUM,
   ChainId.LINEA,
   ChainId.ZKSYNC,
+  NonEVMChainId.SOLANA,
 ]
 
 export const CROSSCHAIN_INFINITY_SWAP_SUPPORTED_CHAINS = [ChainId.BSC]

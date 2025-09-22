@@ -106,7 +106,7 @@ const BuyTicketsButtons: React.FC<React.PropsWithChildren<BuyTicketsProps>> = ({
 
   const [onPresentEnableModal, onDismissEnableModal] = useModal(
     <ConfirmModal
-      title={t('Enable')}
+      title={t('Enable.Approval')}
       isLoading={isApproving}
       headerBackground={theme.colors.gradientCardHeader}
       txHash={txHashEnablingResult ?? undefined}
@@ -179,7 +179,7 @@ const BuyTicketsButtons: React.FC<React.PropsWithChildren<BuyTicketsProps>> = ({
     <>
       {buyButton === BuyButtonsEnum.ENABLE && (
         <Button width="100%" onClick={handleEnableClick}>
-          {t('Enable')}
+          {t('Enable.Approval')}
         </Button>
       )}
       {buyButton === BuyButtonsEnum.READY && (

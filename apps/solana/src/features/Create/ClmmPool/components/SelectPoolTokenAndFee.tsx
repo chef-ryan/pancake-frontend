@@ -178,7 +178,7 @@ export default function SelectPoolTokenAndFee({ completed, initState, show, isLo
               {tokens.token1?.symbol} / {tokens.token2?.symbol}
             </Text>
             <Tag size="sm" variant="rounded" bg={colors.primary10} color={colors.primary60} border={`1px solid ${colors.primary20}`}>
-              {t('Fee')} {percentFormatter.format((currentConfig?.tradeFeeRate || 0) / 1000000)}
+              {t('Fee.rate')} {percentFormatter.format((currentConfig?.tradeFeeRate || 0) / 1000000)}
             </Tag>
           </Flex>
           <EditIcon cursor="pointer" onClick={() => onEdit(0)} />

@@ -1,9 +1,9 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { PriceOrder, SVMTrade } from '@pancakeswap/price-api-sdk'
+import { BridgeOrder, PriceOrder, SVMTrade } from '@pancakeswap/price-api-sdk'
 import { FlexGap, SkeletonV2, Text } from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { memo, useMemo } from 'react'
-import { isSVMOrder, isXOrder } from 'views/Swap/utils'
+import { isSVMOrder, isSolanaBridge, isXOrder } from 'views/Swap/utils'
 import { SPLToken, TradeType } from '@pancakeswap/sdk'
 
 import BigNumber from 'bignumber.js'
@@ -12,6 +12,7 @@ import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
 import { TOKEN_WSOL } from '@pancakeswap/solana-core-sdk'
 import { formatNumber } from '@pancakeswap/utils/formatNumber'
 import { SOLANA_NATIVE_TOKEN_ADDRESS } from 'quoter/consts'
+import { SolanaBridgeTradingFee } from 'views/SwapSimplify/InfinitySwap/SolanaBridgeTradingFee'
 
 import { useIsWrapping, useSlippageAdjustedAmounts } from '../../Swap/V3Swap/hooks'
 import { useHasDynamicHook } from '../hooks/useHasDynamicHook'
@@ -164,23 +165,34 @@ export const TradingFee: React.FC<TradingFeeProps> = memo(({ order, loaded }) =>
 
   const { inputAmount } = order.trade
 
+  // No need to show trading fee for solana bridge, similar to evm bridge
+  if (isSolanaBridge(order)) return null
+
+  let feeText: React.ReactNode
+
+  if (isSVMOrder(order) && inputAmount?.currency?.symbol) {
+    feeText = <SVMTradingFee routes={order.trade.routes} inputCurrencySymbol={inputAmount.currency.symbol} />
+  } else if (isXOrder(order)) {
+    feeText = (
+      <Text color="primary" fontSize="14px">
+        0 {inputAmount?.currency?.symbol}
+      </Text>
+    )
+  } else {
+    feeText = (
+      <Text color="textSubtle" fontSize="14px">{`${hasDynamicHooks ? '~' : ''}${formatAmount(lpFeeAmount, 4)} ${
+        inputAmount?.currency?.symbol
+      }`}</Text>
+    )
+  }
+
   return (
     <FlexGap gap="8px" alignItems="center">
       <Text color="textSubtle" fontSize="14px">
-        {t('Fee')}
+        {t('Fee.rate')}
       </Text>
       <SkeletonV2 width="108px" height="16px" borderRadius="8px" minHeight="auto" isDataReady={loaded}>
-        {isSVMOrder(order) && inputAmount?.currency?.symbol ? (
-          <SVMTradingFee routes={order.trade.routes} inputCurrencySymbol={inputAmount.currency.symbol} />
-        ) : isXOrder(order) ? (
-          <Text color="primary" fontSize="14px">
-            0 {inputAmount?.currency?.symbol}
-          </Text>
-        ) : (
-          <Text color="textSubtle" fontSize="14px">{`${hasDynamicHooks ? '~' : ''}${formatAmount(lpFeeAmount, 4)} ${
-            inputAmount?.currency?.symbol
-          }`}</Text>
-        )}
+        {feeText}
       </SkeletonV2>
     </FlexGap>
   )

@@ -24,7 +24,7 @@ import useNativeCurrency from 'hooks/useNativeCurrency'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { useCallback, useMemo } from 'react'
 import { styled } from 'styled-components'
-import { getBlockExploreLink, getBlockExploreName } from 'utils'
+import { useBlockExploreLink, useBlockExploreName } from 'utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEnhancedTokenLogo } from './hooks/useEnhancedTokenLogo'
 
@@ -187,7 +187,7 @@ export function ConfirmTransactionContent({
           </>
 
           <Flex justifyContent="space-between" width="100%" mb="8px" alignItems="flex-start">
-            <Text color="textSubtle">{t('To')}</Text>
+            <Text color="textSubtle">{t('To.recipient')}</Text>
             <Box maxWidth="70%" style={{ wordBreak: 'break-all', textAlign: 'right' }}>
               <Text>{recipient}</Text>
             </Box>
@@ -257,21 +257,20 @@ export function TransactionSubmittedContent({
   chainId?: UnifiedChainId
 }) {
   const { t } = useTranslation()
+  const blockExplorerName = useBlockExploreName(chainId as ChainId)
+  const getBlockExploreLink = useBlockExploreLink()
 
   const getExplorerLink = () => {
     if (!chainId || !hash) return undefined
 
-    if (chainId === NonEVMChainId.SOLANA) {
-      return `https://explorer.solana.com/tx/${hash}`
-    }
-    return getBlockExploreLink(hash, 'transaction', chainId as ChainId)
+    return getBlockExploreLink(hash, 'transaction', chainId)
   }
 
   const getExplorerName = () => {
     if (chainId === NonEVMChainId.SOLANA) {
-      return 'Solana Explorer'
+      return blockExplorerName
     }
-    return getBlockExploreName(chainId as ChainId)
+    return blockExplorerName
   }
 
   return (
@@ -317,21 +316,20 @@ export function TransactionCompletedContent({
   recipient: string
 }) {
   const { t } = useTranslation()
+  const blockExplorerName = useBlockExploreName(chainId as ChainId)
+  const getBlockExploreLink = useBlockExploreLink()
 
   const getExplorerLink = () => {
     if (!chainId || !hash) return undefined
 
-    if (chainId === NonEVMChainId.SOLANA) {
-      return `https://explorer.solana.com/tx/${hash}`
-    }
-    return getBlockExploreLink(hash, 'transaction', chainId as ChainId)
+    return getBlockExploreLink(hash, 'transaction', chainId)
   }
 
   const getExplorerName = () => {
     if (chainId === NonEVMChainId.SOLANA) {
-      return 'Solana Explorer'
+      return blockExplorerName
     }
-    return getBlockExploreName(chainId as ChainId)
+    return blockExplorerName
   }
 
   return (

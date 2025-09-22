@@ -55,7 +55,7 @@ export default function RangeInput({ priceRange, priceError, onPriceChange, onBl
 
       <InputGroup>
         <InputLeftElement whiteSpace="nowrap" left="2" color={colors.textSecondary} pointerEvents="none">
-          {t('Max')}
+          {t('Max.upper-bound')}
         </InputLeftElement>
         <NumberInput
           value={priceRange[1]}

@@ -1,8 +1,10 @@
+import { isSolana } from '@pancakeswap/chains'
 import { Currency, SPLToken } from '@pancakeswap/sdk'
 import { RouteType } from '@pancakeswap/smart-router'
 import { ChevronRightIcon, Flex, Text } from '@pancakeswap/uikit'
 import { SHORT_SYMBOL } from 'components/NetworkSwitcher'
 import { useUnifiedCurrency } from 'hooks/Tokens'
+import upperCase from 'lodash/upperCase'
 import { memo } from 'react'
 import { unwrappedToken } from 'utils/wrappedCurrency'
 
@@ -11,7 +13,7 @@ function RouteView({ symbol, chainId, isLastItem }: { symbol: string; chainId?: 
     <>
       <Flex alignItems="end">
         <Text fontSize="14px" ml="0.125rem" mr="0.125rem">
-          {symbol} {chainId ? `(${SHORT_SYMBOL[chainId]})` : ''}
+          {symbol} {chainId ? `(${upperCase(SHORT_SYMBOL[chainId])})` : ''}
         </Text>
       </Flex>
       {!isLastItem && <ChevronRightIcon color="textSubtle" width="20px" />}
@@ -60,7 +62,7 @@ export default memo(function SwapRoute({ path, type }: { path?: Currency[]; type
           )
         }
 
-        const currency = (token.isToken && unwrappedToken(token)) || token
+        const currency = (!isSolana(token.chainId) && token.isToken && unwrappedToken(token)) || token
 
         return (
           <RouteView

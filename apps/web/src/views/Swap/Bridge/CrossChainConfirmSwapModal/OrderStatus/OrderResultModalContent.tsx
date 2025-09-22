@@ -15,18 +15,20 @@ import { DualCurrencyDisplay } from '@pancakeswap/widgets-internal'
 import { useAtomValue } from 'jotai'
 
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, CurrencyAmount } from '@pancakeswap/sdk'
+import { UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/sdk'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { formatScientificToDecimal } from '@pancakeswap/utils/formatNumber'
-import { useCurrencyByChainId } from 'hooks/Tokens'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { ReactNode, useMemo } from 'react'
 import { swapReducerAtom } from 'state/swap/reducer'
 import styled from 'styled-components'
 import { accountActiveChainAtom } from 'wallet/atoms/accountStateAtoms'
 import { getFullChainNameById } from 'utils/getFullChainNameById'
-import { shortenAddress } from 'views/V3Info/utils'
+import { isSolana } from '@pancakeswap/chains'
+import { Field } from 'state/swap/actions'
+import truncateHash from '@pancakeswap/utils/truncateHash'
 import { useBridgeStatus } from '../../hooks/useBridgeStatus'
-import { ActiveBridgeOrderMetadata, BridgeResponseStatusData, BridgeStatus, Command } from '../../types'
+import { ActiveBridgeOrderMetadata, BridgeResponseStatusData, BridgeStatus, Command, RelayStatus } from '../../types'
 import { customBridgeStatus } from '../../utils/customBridgeStatus'
 import { useOrderStatusTrackingStateMachine } from '../hooks/useOrderStatusTrackingStateMachine'
 import { activeBridgeOrderMetadataAtom } from '../state/orderDataState'
@@ -46,7 +48,7 @@ function Description({
   description,
 }: {
   showAmounts: boolean
-  currencyAmount: CurrencyAmount<Currency>
+  currencyAmount: UnifiedCurrencyAmount<UnifiedCurrency>
   description: ReactNode
 }) {
   return (
@@ -79,9 +81,20 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
   const activeBridgeOrderMetadata = useAtomValue(activeBridgeOrderMetadataAtom)
   const bridgeMetadata = overrideActiveOrderMetadata || activeBridgeOrderMetadata
   const swapState = useAtomValue(swapReducerAtom)
-  const accountState = useAtomValue(accountActiveChainAtom)
+  const { account: evmAccount, solanaAccount } = useAtomValue(accountActiveChainAtom)
 
-  const recipientOnDestChain = swapState.recipient === null ? accountState.account : swapState.recipient
+  const sendAccount = isSolana(swapState[Field.INPUT].chainId) ? solanaAccount : evmAccount
+  const receiveAccount = isSolana(swapState[Field.OUTPUT].chainId) ? solanaAccount : evmAccount
+
+  let recipientOnDestChain: string | undefined
+
+  // If overrideActiveOrderMetadata is provided, it will use in Transaction History
+  if (overrideActiveOrderMetadata) {
+    // expect /orders return recipientOnDestinationChain, otherwise it will be empty to identify error
+    recipientOnDestChain = overrideActiveOrderMetadata.metadata?.recipientOnDestinationChain
+  } else {
+    recipientOnDestChain = (swapState.recipient === null ? receiveAccount : swapState.recipient) || undefined
+  }
 
   const txHash = bridgeMetadata?.txHash
   const originChainId = bridgeMetadata?.originChainId
@@ -91,7 +104,7 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
   const orderInputCurrency = order?.trade.inputAmount.currency
   const orderOutputCurrency = order?.trade.outputAmount.currency
 
-  const { data: bridgeStatus } = useBridgeStatus(originChainId, txHash, metadata)
+  const { data: bridgeStatus } = useBridgeStatus(originChainId, txHash, metadata, bridgeMetadata?.destinationChainId)
 
   const resultTokenData = useMemo(() => {
     // Derive result token and amount information from last command (swap or bridge)
@@ -143,21 +156,22 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
           break
         }
         case Command.BRIDGE: {
-          if (
-            lastExecutedCommand.status.code === BridgeStatus.PARTIAL_SUCCESS ||
-            lastExecutedCommand.status.code === BridgeStatus.FAILED
-          ) {
+          if (lastExecutedCommand.status.code === BridgeStatus.PARTIAL_SUCCESS) {
             resultTokenAddress = lastExecutedCommand.metadata.inputToken
             resultTokenChainId = lastExecutedCommand.metadata.originChainId
             resultAmount = lastExecutedCommand.metadata.inputAmount
           } else {
             resultTokenChainId = lastExecutedCommand.metadata.destinationChainId
 
-            // If last command is bridge, safely using bridgeStatus.outputToken
-            // instead of lastExecutedCommand.metadata.outputToken
-            // because in native bridge case, lastExecutedCommand.metadata.outputToken will be WETH
-            // while bridgeStatus.outputToken will be the native token
-            resultTokenAddress = bridgeStatus.outputToken
+            resultTokenAddress =
+              lastExecutedCommand.metadata.bridgeStatus === RelayStatus.REFUND
+                ? // If refund case by Relay, lastExecutedCommand.metadata.outputToken
+                  lastExecutedCommand.metadata.outputToken
+                : // If last command is bridge, safely using bridgeStatus.outputToken
+                  // instead of lastExecutedCommand.metadata.outputToken
+                  // because in native bridge case, lastExecutedCommand.metadata.outputToken will be WETH
+                  // while bridgeStatus.outputToken will be the native token
+                  bridgeStatus.outputToken
             resultAmount = lastExecutedCommand.metadata.outputAmount
           }
 
@@ -176,11 +190,11 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
   }, [bridgeStatus])
 
   // Result currency
-  const resultCurrency = useCurrencyByChainId(resultTokenData.resultTokenAddress, resultTokenData.resultTokenChainId)
+  const resultCurrency = useUnifiedCurrency(resultTokenData.resultTokenAddress, resultTokenData.resultTokenChainId)
 
   const resultCurrencyAmount = useMemo(() => {
     if (!resultCurrency || !resultTokenData.resultAmount) return undefined
-    return CurrencyAmount.fromRawAmount(resultCurrency, formatScientificToDecimal(resultTokenData.resultAmount))
+    return UnifiedCurrencyAmount.fromRawAmount(resultCurrency, formatScientificToDecimal(resultTokenData.resultAmount))
   }, [resultCurrency, resultTokenData.resultAmount])
 
   const outputAmount = useMemo(() => {
@@ -191,7 +205,7 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
     const minOutputAmount =
       bridgeStatus?.outputCurrencyAmount?.currency &&
       bridgeStatus?.minOutputAmount &&
-      CurrencyAmount.fromRawAmount(
+      UnifiedCurrencyAmount.fromRawAmount(
         bridgeStatus.outputCurrencyAmount?.currency,
         formatScientificToDecimal(bridgeStatus.minOutputAmount),
       )
@@ -232,7 +246,7 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
     }
   }, [status])
 
-  const isRefundCase = status === BridgeStatus.PARTIAL_SUCCESS
+  const isRefundCase = status === BridgeStatus.PARTIAL_SUCCESS || bridgeStatus?.bridgeStatus === RelayStatus.REFUND
 
   return (
     <Box {...props}>
@@ -249,27 +263,19 @@ export const OrderResultModalContent = ({ overrideActiveOrderMetadata, ...props 
         {status &&
           [BridgeStatus.SUCCESS, BridgeStatus.PARTIAL_SUCCESS, BridgeStatus.FAILED].includes(status) &&
           resultCurrencyAmount && (
-            <Message
-              variant={
-                status === BridgeStatus.SUCCESS
-                  ? 'success'
-                  : status === BridgeStatus.PARTIAL_SUCCESS
-                  ? 'secondary'
-                  : 'danger'
-              }
-            >
+            <Message variant={status === BridgeStatus.SUCCESS ? 'success' : isRefundCase ? 'secondary' : 'danger'}>
               <Description
-                showAmounts={status !== BridgeStatus.FAILED}
+                showAmounts={status !== BridgeStatus.FAILED || bridgeStatus?.bridgeStatus === RelayStatus.REFUND}
                 currencyAmount={resultCurrencyAmount}
                 description={
                   isRefundCase
                     ? t(' is being refunded to %address% on ', {
-                        address: shortenAddress(recipientOnDestChain || ''),
+                        address: truncateHash(sendAccount || ''),
                       })
                     : status === BridgeStatus.FAILED
                     ? t('Your bridge transaction failed. You will be refunded shortly.')
                     : t(' has been sent to %address% on ', {
-                        address: shortenAddress(recipientOnDestChain || ''),
+                        address: truncateHash(recipientOnDestChain || ''),
                       })
                 }
               />

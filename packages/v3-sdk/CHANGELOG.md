@@ -1,5 +1,13 @@
 # @pancakeswap/v3-sdk
 
+## 3.9.6
+
+### Patch Changes
+
+- Updated dependencies [d6de8ef]
+  - @pancakeswap/chains@0.7.0
+  - @pancakeswap/sdk@5.8.17
+
 ## 3.9.5
 
 ### Patch Changes

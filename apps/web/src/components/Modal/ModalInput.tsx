@@ -89,7 +89,7 @@ const ModalInput: React.FC<React.PropsWithChildren<ModalInputProps>> = ({
             value={value}
           />
           <Button scale="sm" onClick={onSelectMax} mr="8px">
-            {t('Max')}
+            {t('Max.fill-max')}
           </Button>
           <Text fontSize="16px">{symbol}</Text>
         </Flex>

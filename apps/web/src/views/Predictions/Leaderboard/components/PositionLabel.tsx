@@ -39,7 +39,7 @@ const PositionLabel: React.FC<React.PropsWithChildren<PositionLabelProps>> = ({ 
   return (
     <StyledPositionLabel bgColor={bgColor}>
       {icon}
-      <Label>{isBull ? t('Up') : t('Down')}</Label>
+      <Label>{isBull ? t('Up') : t('Prediction.Position.Down')}</Label>
     </StyledPositionLabel>
   )
 }

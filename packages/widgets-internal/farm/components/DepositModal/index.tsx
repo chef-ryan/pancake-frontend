@@ -274,7 +274,7 @@ const DepositModal: React.FC<React.PropsWithChildren<DepositModalProps>> = ({
               endIcon={enablePendingTx ? <AutoRenewIcon spin color="currentColor" /> : null}
               onClick={handleApprove}
             >
-              {t("Enable")}
+              {t("Enable.Approval")}
             </Button>
           ) : pendingTx ? (
             <Button width="100%" isLoading={pendingTx} endIcon={<AutoRenewIcon spin color="currentColor" />}>

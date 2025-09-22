@@ -19,7 +19,6 @@ describe('handleCurrencySelect', () => {
       canSwitchToChain: (chainId: number) => true,
       switchNetwork,
       outputChainId: ChainId.BSC,
-      supportedBridgeChains: { data: [] },
       inputChainId: ChainId.BSC,
       inputCurrencyId: bscTokens.cake.address,
       outputCurrencyId: bscTokens.usdt.address,

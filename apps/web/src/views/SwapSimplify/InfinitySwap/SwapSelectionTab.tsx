@@ -73,10 +73,12 @@ export const SwapSelection = ({
   swapType,
   withToolkit = false,
   style,
+  outputChainId,
 }: {
   swapType: SwapType
   withToolkit?: boolean
   style?: React.CSSProperties
+  outputChainId?: number
 }) => {
   const { t } = useTranslation()
   const router = useRouter()
@@ -117,6 +119,8 @@ export const SwapSelection = ({
   )
 
   const [isChartDisplayed, setIsChartDisplayed] = useAtom(chartDisplayAtom)
+
+  const isEvmSwap = isEvm(chainId) && isEvm(outputChainId)
 
   const toggleChartDisplayed = () => {
     setIsChartDisplayed((currentIsChartDisplayed) => !currentIsChartDisplayed)
@@ -172,7 +176,7 @@ export const SwapSelection = ({
         <StyledButtonMenuItem {...limitProps}>{t('Limit')}</StyledButtonMenuItem>
       </ButtonMenu>
       {/* NOTE: Commented out until charts are supported again */}
-      {withToolkit && isEvm(chainId) && (
+      {withToolkit && isEvmSwap && (
         <ColoredIconButton
           onClick={() => {
             toggleChartDisplayed()

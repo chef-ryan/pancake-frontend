@@ -205,7 +205,7 @@ export const CurrencyInputPanel = ({
                     variant={isAtPercentMax ? 'primary' : 'secondary'}
                     style={{ textTransform: 'uppercase' }}
                   >
-                    {t('Max')}
+                    {t('Max.fill-max')}
                   </Button>
                 )}
               </>

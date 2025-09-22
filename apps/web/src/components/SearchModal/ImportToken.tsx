@@ -27,7 +27,7 @@ import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useState } from 'react'
 import { useCombinedInactiveList } from 'state/lists/hooks'
 import { useAddUserToken } from 'state/user/hooks'
-import { getBlockExploreLink, getBlockExploreName } from 'utils'
+import { useBlockExploreLink, useBlockExploreName } from 'utils'
 import { chains } from 'utils/wagmi'
 
 interface ImportProps {
@@ -58,6 +58,8 @@ export function WarningMessage({ chainName }: { chainName: string }) {
 function ImportToken({ tokens, handleCurrencySelect, chainId: chainIdProp }: ImportProps) {
   const { chainId: activeChainId } = useActiveChainId()
   const chainId = chainIdProp || activeChainId
+  const blockExplorerName = useBlockExploreName(chainId)
+  const getBlockExploreLink = useBlockExploreLink()
 
   const { t } = useTranslation()
 
@@ -125,7 +127,7 @@ function ImportToken({ tokens, handleCurrencySelect, chainId: chainIdProp }: Imp
                   <Link href={getBlockExploreLink(token.address, 'address', token.chainId)} external>
                     (
                     {t('View on %site%', {
-                      site: getBlockExploreName(token.chainId),
+                      site: blockExplorerName,
                     })}
                     {token.chainId === ChainId.BSC && <BscScanIcon color="primary" ml="4px" />})
                   </Link>

@@ -1,3 +1,4 @@
+import { isSolana } from '@pancakeswap/chains'
 import { HOOK_CATEGORY, findHook } from '@pancakeswap/infinity-sdk'
 import { OrderType } from '@pancakeswap/price-api-sdk'
 import {
@@ -24,7 +25,7 @@ import { isAddressEqual } from 'utils'
 import { basisPointsToPercent } from 'utils/exchange'
 import { zeroAddress } from 'viem'
 import { BridgeOrderFee } from 'views/Swap/Bridge/utils'
-import { BridgeOrderWithCommands, InterfaceOrder, isBridgeOrder } from 'views/Swap/utils'
+import { BridgeOrderWithCommands, InterfaceOrder, isBridgeOrder, isSolanaBridge } from 'views/Swap/utils'
 
 export type SlippageAdjustedAmounts = {
   [field in Field]?: UnifiedCurrencyAmount<UnifiedCurrency> | null
@@ -55,6 +56,16 @@ export function computeSlippageAdjustedAmounts(
 
   const bridgeOrder = order as BridgeOrderWithCommands
   const length = bridgeOrder?.commands?.length
+
+  if (isSolanaBridge(order)) {
+    return {
+      [Field.INPUT]: trade.inputAmount,
+      [Field.OUTPUT]: CurrencyAmount.fromRawAmount(
+        trade.outputAmount.currency,
+        BigInt(order.bridgeTransactionData.minimumOutputAmount ?? '0'),
+      ),
+    }
+  }
 
   if (isBridgeOrder(order) && bridgeOrder.commands && length) {
     const isBridgeOnly = length === 1

@@ -431,7 +431,7 @@ export default function SetPriceAndRange({
           />
           <PriceRangeInputBox
             side={Side.Right}
-            topLabel={t('Max')}
+            topLabel={t('Max.upper-bound')}
             currentPriceRangeValue={priceRange[1]}
             decimals={Math.max(8, decimals)}
             base={tokenBase}

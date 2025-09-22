@@ -1,5 +1,15 @@
 # @pancakeswap/prediction
 
+## 1.1.19
+
+### Patch Changes
+
+- Updated dependencies [d6de8ef]
+  - @pancakeswap/chains@0.7.0
+  - @pancakeswap/pools@5.1.47
+  - @pancakeswap/sdk@5.8.17
+  - @pancakeswap/tokens@0.7.9
+
 ## 1.1.18
 
 ### Patch Changes

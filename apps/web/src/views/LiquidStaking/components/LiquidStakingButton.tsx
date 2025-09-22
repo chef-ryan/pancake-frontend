@@ -138,7 +138,7 @@ const LiquidStakingButton: React.FC<LiquidStakingButtonProps> = ({
         }}
         width="100%"
       >
-        {isPending ? t('Enabling') : t('Enable')}
+        {isPending ? t('Enabling') : t('Enable.Approval')}
       </Button>
     )
   }

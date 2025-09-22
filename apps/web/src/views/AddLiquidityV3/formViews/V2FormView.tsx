@@ -222,7 +222,7 @@ export default function V2FormView({
                 </RowBetween>
               )}
               <RowBetween>
-                <Text color="textSubtle">{t('Total')}</Text>
+                <Text color="textSubtle">{t('Total.amount')}</Text>
                 <Text>~{formatDollarAmount(totalUsdValue, 2, false)}</Text>
               </RowBetween>
               <RowBetween>

@@ -505,7 +505,7 @@ export default function RemoveLiquidity({ currencyA, currencyB, currencyIdA, cur
                 75%
               </Button>
               <Button variant="tertiary" scale="sm" onClick={() => onUserInput(Field.LIQUIDITY_PERCENT, '100')}>
-                {t('Max')}
+                {t('Max.fill-max')}
               </Button>
             </Flex>
           </BorderCard>
@@ -696,7 +696,7 @@ export default function RemoveLiquidity({ currencyA, currencyB, currencyIdA, cur
               ) : approvalState === ApprovalState.APPROVED || signatureData !== null ? (
                 t('Enabled')
               ) : (
-                t('Enable')
+                t('Enable.Approval')
               )}
             </Button>
             <Button

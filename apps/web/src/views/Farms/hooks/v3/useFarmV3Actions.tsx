@@ -85,7 +85,7 @@ const useFarmV3Actions = ({
     if (resp?.status) {
       onDone?.(resp)
       toastSuccess(
-        `${t('Unstaked')}!`,
+        `${t('Unstaked.status')}!`,
         <ToastDescriptionWithTx txHash={resp.transactionHash}>
           {t('Your earnings have also been harvested to your wallet')}
         </ToastDescriptionWithTx>,

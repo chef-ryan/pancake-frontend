@@ -29,7 +29,7 @@ const ApprovalAction: React.FC<React.PropsWithChildren<ApprovalActionProps>> = (
           onClick={handleApprove}
           width="100%"
         >
-          {t('Enable')}
+          {t('Enable.Approval')}
         </Button>
       )}
     </>

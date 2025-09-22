@@ -9,7 +9,7 @@ export const NextButton: React.FC<ButtonProps> = (props) => {
   return (
     <>
       <Button width="50%" onClick={() => setIsOpen(true)} {...props}>
-        {t('Next')}
+        {t('Next.step')}
       </Button>
       <SwitchToBnbChainModal
         isOpen={isOpen}

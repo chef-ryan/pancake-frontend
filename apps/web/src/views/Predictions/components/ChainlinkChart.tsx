@@ -169,7 +169,7 @@ const HoverData = ({ rounds }: { rounds: { [key: string]: NodeRound } }) => {
           </Text>
           {rounds[hoverData.roundId] && (
             <Text fontSize="20px" color="secondary" bold lineHeight={1.1}>
-              {t('Round')}: #{rounds[hoverData.roundId].epoch}
+              {t('Round.predictions')}: #{rounds[hoverData.roundId].epoch}
             </Text>
           )}
         </FlexGap>

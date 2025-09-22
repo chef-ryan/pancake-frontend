@@ -68,11 +68,11 @@ const OpenRoundCard: React.FC<React.PropsWithChildren<OpenRoundCardProps>> = ({
   const { isSettingPosition, position } = state
   const [isBufferPhase, setIsBufferPhase] = useState(false)
   const positionDisplay = useMemo(
-    () => (position === BetPosition.BULL ? t('Up').toUpperCase() : t('Down').toUpperCase()),
+    () => (position === BetPosition.BULL ? t('Up').toUpperCase() : t('Prediction.Position.Down').toUpperCase()),
     [t, position],
   )
   const positionEnteredText = useMemo(
-    () => (hasEnteredUp ? t('Up').toUpperCase() : hasEnteredDown ? t('Down').toUpperCase() : null),
+    () => (hasEnteredUp ? t('Up').toUpperCase() : hasEnteredDown ? t('Prediction.Position.Down').toUpperCase() : null),
     [t, hasEnteredUp, hasEnteredDown],
   )
   const positionEnteredIcon = useMemo(
@@ -179,7 +179,7 @@ const OpenRoundCard: React.FC<React.PropsWithChildren<OpenRoundCardProps>> = ({
           status="next"
           epoch={round.epoch}
           icon={<PlayCircleOutlineIcon color="white" mr="4px" width="21px" />}
-          title={t('Next')}
+          title={t('Next.round')}
         />
         <CardBody p="16px">
           <MultiplierArrow betAmount={betAmount} multiplier={bullMultiplier} hasEntered={hasEnteredUp} />

@@ -23,6 +23,7 @@ export type TransactionType =
   | 'cross-chain-farm'
   | 'migrate-v3'
   | 'bridge-icake'
+  | 'bridge'
   | 'claim-liquid-staking'
 
 export interface SerializableTransactionReceipt {

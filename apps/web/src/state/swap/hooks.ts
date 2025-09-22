@@ -1,4 +1,4 @@
-import { Currency, Native, SOL, Trade, TradeType } from '@pancakeswap/sdk'
+import { Currency, Native, SOL, Trade, TradeType, UnifiedNativeCurrency } from '@pancakeswap/sdk'
 import { CAKE, STABLE_COIN, USDC, USDT } from '@pancakeswap/tokens'
 import { PairDataTimeWindowEnum } from '@pancakeswap/uikit'
 import { useQuery } from '@tanstack/react-query'
@@ -15,7 +15,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { ChartPeriod, chainIdToExplorerInfoChainName, explorerApiClient } from 'state/info/api/client'
 import { isAddressEqual, safeGetAddress, safeGetUnifiedAddress } from 'utils'
 import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
-import { useBridgeAvailableRoutes } from 'views/Swap/Bridge/hooks'
+import { useBridgeAvailableChains } from 'views/Swap/Bridge/hooks'
 import { Field, replaceSwapState } from './actions'
 import { SwapState, swapReducerAtom } from './reducer'
 
@@ -124,6 +124,88 @@ export function queryParametersToSwapState(
   }
 }
 
+export function normalizeCurrencySelectionForChain({
+  inputCurrencyId,
+  inputChainId,
+  outputCurrencyId,
+  outputChainId,
+  native,
+  pathname,
+  supportedBridgeChains,
+  chainId,
+  defaultOutputCurrency,
+}: {
+  inputCurrencyId?: string
+  inputChainId?: number
+  outputCurrencyId?: string
+  outputChainId?: number
+  native: UnifiedNativeCurrency
+  pathname: string
+  supportedBridgeChains: UnifiedChainId[]
+  chainId: number
+  defaultOutputCurrency: string
+}) {
+  let finalInputCurrencyId = inputCurrencyId
+  let finalInputChainId = inputChainId
+  let finalOutputCurrencyId = outputCurrencyId
+  let finalOutputChainId = outputChainId
+
+  // not support pages bridge
+  const isNotTwapOrLimitPath = !['twap', 'limit'].some((p) => pathname.includes(p))
+
+  // Set input currency to default (native currency) if chain is changed by user
+  // and input currency is on different chain
+  if (finalInputChainId && finalInputChainId !== chainId) {
+    finalInputCurrencyId = native.symbol
+    finalInputChainId = chainId
+
+    const isOutputChainSupported =
+      finalOutputChainId &&
+      isNotTwapOrLimitPath &&
+      supportedBridgeChains.includes(finalInputChainId) &&
+      supportedBridgeChains.includes(finalOutputChainId)
+
+    // If now input and output currencies are the same,
+    // OR if output chain is NOT supported by the bridge,
+    // set output currency to the default value
+    if (
+      !isOutputChainSupported ||
+      (finalOutputCurrencyId === finalInputCurrencyId && finalOutputChainId === finalInputChainId)
+    ) {
+      finalOutputCurrencyId = defaultOutputCurrency
+      finalOutputChainId = chainId
+    }
+  }
+
+  if (finalOutputChainId && finalOutputChainId !== chainId) {
+    const isOutputChainSupported =
+      isNotTwapOrLimitPath &&
+      supportedBridgeChains?.find((id) => id === finalInputChainId || id === chainId) &&
+      supportedBridgeChains?.includes(finalOutputChainId)
+
+    if (!isOutputChainSupported) {
+      finalOutputCurrencyId = defaultOutputCurrency
+      finalOutputChainId = chainId
+    }
+  }
+
+  // If input and output currencies are the same, set output currency to native currency (other default currency)
+  if (finalInputCurrencyId === finalOutputCurrencyId && finalOutputChainId === finalInputChainId) {
+    if (finalOutputCurrencyId !== native.symbol) {
+      finalOutputCurrencyId = native.symbol
+    } else {
+      finalOutputCurrencyId = defaultOutputCurrency
+    }
+  }
+
+  return {
+    finalInputCurrencyId,
+    finalOutputCurrencyId,
+    finalInputChainId,
+    finalOutputChainId,
+  }
+}
+
 // updates the swap state to use the defaults for a given network
 export function useDefaultsFromURLSearch():
   | { inputCurrencyId: string | undefined; outputCurrencyId: string | undefined }
@@ -142,7 +224,9 @@ export function useDefaultsFromURLSearch():
     | undefined
   >()
 
-  const { data: supportedBridgeChains, isPending: isSupportedBridgePending } = useBridgeAvailableRoutes()
+  const { chains: supportedBridgeChains, loading: isSupportedBridgePending } = useBridgeAvailableChains({
+    originChainId: chainId,
+  })
 
   useEffect(() => {
     if (!chainId || !native || !isReady) return
@@ -152,65 +236,22 @@ export function useDefaultsFromURLSearch():
 
     const parsed = queryParametersToSwapState(query, native.symbol, defaultOutputCurrency)
 
-    let finalInputCurrencyId = parsed[Field.INPUT].currencyId
-    let finalOutputCurrencyId = parsed[Field.OUTPUT].currencyId
-
-    let finalInputChainId = parsed[Field.INPUT].chainId
-    let finalOutputChainId = parsed[Field.OUTPUT].chainId
-
-    if (isSupportedBridgePending && finalInputChainId !== finalOutputChainId) {
+    if (isSupportedBridgePending && parsed[Field.INPUT].chainId !== parsed[Field.OUTPUT].chainId) {
       return
     }
 
-    const isNotTwapOrLimitPath = !['twap', 'limit'].some((p) => pathname.includes(p))
-
-    // Set input currency to default (native currency) if chain is changed by user
-    // and input currency is on different chain
-    if (finalInputChainId && finalInputChainId !== chainId) {
-      finalInputCurrencyId = native.symbol
-      finalInputChainId = chainId
-
-      const isOutputChainSupported =
-        finalOutputChainId &&
-        isNotTwapOrLimitPath &&
-        supportedBridgeChains?.some(
-          (route) => route.originChainId === finalInputChainId && route.destinationChainId === finalOutputChainId,
-        )
-
-      // If now input and output currencies are the same,
-      // OR if output chain is NOT supported by the bridge,
-      // set output currency to the default value
-      if (
-        !isOutputChainSupported ||
-        (finalOutputCurrencyId === finalInputCurrencyId && finalOutputChainId === finalInputChainId)
-      ) {
-        finalOutputCurrencyId = defaultOutputCurrency
-        finalOutputChainId = chainId
-      }
-    }
-
-    if (finalOutputChainId && finalOutputChainId !== chainId) {
-      const isOutputChainSupported =
-        isNotTwapOrLimitPath &&
-        supportedBridgeChains?.some(
-          (route) =>
-            route.originChainId === (finalInputChainId || chainId) && route.destinationChainId === finalOutputChainId,
-        )
-
-      if (!isOutputChainSupported) {
-        finalOutputCurrencyId = defaultOutputCurrency
-        finalOutputChainId = chainId
-      }
-    }
-
-    // If input and output currencies are the same, set output currency to native currency (other default currency)
-    if (finalInputCurrencyId === finalOutputCurrencyId && finalOutputChainId === finalInputChainId) {
-      if (finalOutputCurrencyId !== native.symbol) {
-        finalOutputCurrencyId = native.symbol
-      } else {
-        finalOutputCurrencyId = defaultOutputCurrency
-      }
-    }
+    const { finalInputCurrencyId, finalOutputCurrencyId, finalInputChainId, finalOutputChainId } =
+      normalizeCurrencySelectionForChain({
+        inputCurrencyId: parsed[Field.INPUT].currencyId,
+        inputChainId: parsed[Field.INPUT].chainId,
+        outputCurrencyId: parsed[Field.OUTPUT].currencyId,
+        outputChainId: parsed[Field.OUTPUT].chainId,
+        native,
+        pathname,
+        supportedBridgeChains,
+        chainId,
+        defaultOutputCurrency,
+      })
 
     dispatch(
       replaceSwapState({

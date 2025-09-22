@@ -25,22 +25,10 @@ import { CheckIcon, CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { NonEVMChainId } from '@pancakeswap/chains'
 import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
 
+import { isValidSolanaAddress } from 'utils/isValidSolanaAddress'
 import { Footer, Wrapper } from './ManageTokens'
 
 import { CurrencyModalView } from './types'
-
-// Solana address validation helper
-const isValidSolanaAddress = (address: string): boolean => {
-  try {
-    const key = new PublicKey(address)
-
-    // eslint-disable-next-line no-console
-    console.info('isValidSolanaAddress', key.toBase58())
-    return true
-  } catch {
-    return false
-  }
-}
 
 function useGetTokenInfo(address?: string) {
   const connection = useSolanaConnectionWithRpcAtom()

@@ -380,7 +380,7 @@ export default function MigrateFromStandardDialog({
                     px={2}
                     fontWeight={500}
                   >
-                    {t('Fee')}{' '}
+                    {t('Fee.amount')}{' '}
                     {formatToRawLocaleStr(toPercentString((clmmPoolInfo?.config.tradeFeeRate ?? 0) / 10000, { alreadyPercented: true }))}
                   </Box>
                 </HStack>

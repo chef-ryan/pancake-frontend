@@ -1,13 +1,20 @@
 import { BridgeTransactionData, PriceOrder, SVMOrder } from '@pancakeswap/price-api-sdk'
-import { Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { Currency, CurrencyAmount, UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { Address } from 'viem/accounts'
 import { CrossChainAPIErrorCode } from '../CrossChainConfirmSwapModal/hooks/useBridgeErrorMessages'
 
+export enum BridgeType {
+  NON_EVM = 'NON-EVM',
+  EVM = 'EVM',
+}
+
+export type BridgeCallData = {
+  router: Address
+  calldata: `0x${string}`
+}
+
 export type GetBridgeCalldataResponse = {
-  transactionData: {
-    router: Address
-    calldata: `0x${string}`
-  }
+  transactionData: BridgeCallData
   gasFee: string
 }
 
@@ -55,14 +62,18 @@ export interface Permit2Schema {
 }
 
 export interface CalldataRequestSchema {
-  inputToken: Address
-  outputToken: Address
+  requestId?: string
+  inputToken: string
+  outputToken: string
   inputAmount: string
   originChainId: number
   destinationChainId: number
-  recipientOnDestChain: Address
-  commands: (BridgeDataSchema | SwapDataSchema)[]
+  recipientOnDestChain: string
+  commands?: (BridgeDataSchema | SwapDataSchema)[]
   permit2?: Permit2Schema
+  type: BridgeType
+  user?: string
+  slippageTolerance?: number
 }
 
 export enum BridgeStatus {
@@ -105,25 +116,34 @@ export type BridgeResponseStatusData =
       metadata?: StatusMetadataSwap
     }
 
+export enum RelayStatus {
+  REFUND = 'refund',
+  DELAYED = 'delayed',
+  WAITING = 'waiting',
+  FAILURE = 'failure',
+  PENDING = 'pending',
+  SUCCESS = 'success',
+}
+
 interface StatusMetadataBridge {
   originChainId: number
   destinationChainId: number
   depositId: number
-  bridgeStatus: string
+  bridgeStatus: RelayStatus | string
   fillTx: string
   depositTxHash: string
   depositRefundTxHash: string
   inputAmount: string
   outputAmount: string
   fee: string
-  inputToken: Address
-  outputToken: Address
+  inputToken: string
+  outputToken: string
 }
 
 export interface StatusMetadataSwap {
   chainId: number
-  inputToken: Address
-  outputToken: Address
+  inputToken: string
+  outputToken: string
   inputAmount: string
   outputAmount: string
   tx: string
@@ -131,19 +151,21 @@ export interface StatusMetadataSwap {
 }
 
 export interface BridgeStatusData extends BridgeStatusResponse {
-  inputCurrencyAmount?: CurrencyAmount<Currency> | null
-  outputCurrencyAmount?: CurrencyAmount<Currency> | null
+  inputCurrencyAmount?: UnifiedCurrencyAmount<UnifiedCurrency> | null
+  outputCurrencyAmount?: UnifiedCurrencyAmount<UnifiedCurrency> | null
   feesBreakdown?: {
     totalFeesUSD: number
     // in case of having swap in the bridge order, swapFeesUSD is null if swap fee is not loaded yet or returned as 0
     swapFeesUSD: number | null
     bridgeFeesUSD: number
   }
+  bridgeStatus?: RelayStatus | string
 }
 
 export interface ActiveBridgeOrderMetadata {
   originChainId: number
   txHash: string
+  destinationChainId: number
 
   order: Exclude<PriceOrder, SVMOrder> | null | undefined
 
@@ -157,6 +179,7 @@ export interface ActiveBridgeOrderMetadata {
     minOutputAmount: string
     originChainId: number
     destinationChainId: number
+    recipientOnDestinationChain: string
   }
 }
 
@@ -181,6 +204,7 @@ export interface UserBridgeOrder {
   fillTransactionHash: string
   command: string
   timestamp: string
+  recipientOnDestinationChain: string
 }
 
 export type BridgeMetadataParams = {
@@ -189,4 +213,9 @@ export type BridgeMetadataParams = {
   nonce?: number
   commands?: (BridgeDataSchema | SwapDataSchema)[]
   recipientOnDestChain?: string
+}
+
+export enum RELAY_STEP_ID {
+  DEPOSIT = 'deposit',
+  APPROVE = 'approve',
 }

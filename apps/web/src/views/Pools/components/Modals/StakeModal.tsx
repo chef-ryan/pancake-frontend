@@ -90,7 +90,7 @@ const StakeModalContainer = ({
       if (receipt?.status) {
         if (isRemovingStake) {
           toastSuccess(
-            `${t('Unstaked')}!`,
+            `${t('Unstaked.status')}!`,
             <ToastDescriptionWithTx txHash={receipt.transactionHash}>
               {t('Your %symbol% earnings have also been harvested to your wallet!', {
                 symbol: earningToken.symbol,

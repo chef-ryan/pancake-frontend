@@ -236,7 +236,7 @@ export const AddLiquiditySelector = () => {
 
           <NextLink href={nextStep}>
             <Button px="100px" width="100%" disabled={disabled}>
-              {t('Next')}
+              {t('Next.step')}
             </Button>
           </NextLink>
         </FlexGap>

@@ -68,7 +68,7 @@ export const SupplyPieChart = (props: CardProps) => {
   return (
     <StatsCard {...props}>
       <FlexGap alignItems="center" gap="4px">
-        <StatsCardHeader>{t('Supply')}</StatsCardHeader>
+        <StatsCardHeader>{t('Total Supply')}</StatsCardHeader>
         <QuestionHelperV2 text={t('Peak Supply: Highest CAKE supply of 397,036,557 on Sep 25, 2023')} placement="top">
           <InfoIcon color="textSubtle" />
         </QuestionHelperV2>

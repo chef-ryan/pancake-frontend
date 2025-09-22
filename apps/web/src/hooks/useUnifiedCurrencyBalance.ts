@@ -35,39 +35,43 @@ export function useUnifiedCurrencyBalances(
 ): (UnifiedBalance | undefined)[] {
   const { account: evmAccount, solanaAccount } = useAccountActiveChain()
 
-  const solanaCurrencies: SPLToken[] = useMemo(() => {
-    if (!currencies) return []
-
-    return currencies.filter((currency) => currency && SPLToken.isSPLToken(currency)) as SPLToken[]
+  // Separate Solana and EVM currencies while keeping track of their original positions
+  const solanaCurrencies = useMemo(() => {
+    return currencies?.filter((currency) => currency && SPLToken.isSPLToken(currency)) as SPLToken[]
   }, [currencies])
 
-  const isSolana = solanaCurrencies?.length > 0
+  const evmCurrencies = useMemo(() => {
+    return currencies?.filter((currency) => currency && !SPLToken.isSPLToken(currency)) as Currency[]
+  }, [currencies])
 
+  // Get addresses for Solana tokens
   const solanaCurrenciesAddresses = useMemo(() => {
-    return solanaCurrencies.map((currency) => currency.address)
+    return solanaCurrencies?.map((currency) => currency.address) || []
   }, [solanaCurrencies])
 
-  const solanaBalances = useSolanaTokenBalances(solanaAccount, isSolana ? solanaCurrenciesAddresses : undefined)
-  const evmBalances = useCurrencyBalances(evmAccount, currencies as Currency[])
+  // Fetch balances for each currency type
+  const solanaBalances = useSolanaTokenBalances(
+    solanaAccount,
+    solanaCurrencies?.length > 0 ? solanaCurrenciesAddresses : undefined,
+  )
+  const evmBalances = useCurrencyBalances(evmAccount, evmCurrencies?.length > 0 ? evmCurrencies : undefined)
 
+  // Map each currency to its balance, preserving original order
   return useMemo(() => {
-    if (!currencies) {
-      return []
-    }
+    if (!currencies) return []
 
-    if (isSolana && solanaBalances) {
-      return currencies.map((currency) => {
-        if (currency && SPLToken.isSPLToken(currency)) {
-          const balance = solanaBalances.balances.get((currency as SPLToken | SPLNativeCurrency).address)
+    return currencies.map((currency) => {
+      if (!currency) return undefined
 
-          if (balance) {
-            return UnifiedCurrencyAmount.fromRawAmount(currency, balance.toString())
-          }
-        }
-        return undefined
-      })
-    }
+      // Handle Solana currencies
+      if (SPLToken.isSPLToken(currency)) {
+        const balance = solanaBalances?.balances.get((currency as SPLToken)?.address || '')
+        return balance ? UnifiedCurrencyAmount.fromRawAmount(currency, balance.toString()) : undefined
+      }
 
-    return evmBalances
-  }, [currencies, isSolana, solanaBalances, evmBalances])
+      // Handle EVM currencies
+      const evmIndex = evmCurrencies?.findIndex((evmCurrency) => evmCurrency === currency)
+      return evmIndex !== undefined && evmIndex >= 0 ? evmBalances?.[evmIndex] : undefined
+    })
+  }, [currencies, solanaBalances, evmBalances, evmCurrencies])
 }

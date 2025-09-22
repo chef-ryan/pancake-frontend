@@ -38,7 +38,7 @@ export default function PositionBalance({ myPosition = '345.02', staked = '256.4
       </Flex>
       <Flex justify="space-between" align="center" mt={2}>
         <Text color={colors.textSecondary} fontSize="sm" opacity={0.5}>
-          {t('Unstaked')}
+          {t('Unstaked.status')}
         </Text>
         <Text color={colors.textSecondary} fontSize="sm" fontWeight="medium">
           {formatToRawLocaleStr(unstaked)}

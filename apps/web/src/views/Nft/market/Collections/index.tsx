@@ -103,7 +103,7 @@ const Collectible = () => {
         value: SORT_FIELD.items,
       },
       {
-        label: t('Supply'),
+        label: t('Total Supply'),
         value: SORT_FIELD.supply,
       },
       {
@@ -269,7 +269,7 @@ const Collectible = () => {
                         {arrow(SORT_FIELD.items)}
                       </Th>
                       <Th textAlign="left" style={{ cursor: 'pointer' }} onClick={() => handleSort(SORT_FIELD.supply)}>
-                        {t('Supply')}
+                        {t('Total Supply')}
                         {arrow(SORT_FIELD.supply)}
                       </Th>
                     </tr>

@@ -37,7 +37,7 @@ export default function RangeInput(props: Props) {
       />
       <PriceRangeInputBox
         side={Side.Right}
-        topLabel={t('Max')}
+        topLabel={t('Max.upper-bound')}
         disabled={disabled}
         currentPriceRangeValue={priceRange[1]}
         decimals={Math.max(8, decimals)}

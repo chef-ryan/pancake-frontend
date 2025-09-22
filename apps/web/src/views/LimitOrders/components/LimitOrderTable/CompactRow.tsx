@@ -27,13 +27,13 @@ const CompactRow: React.FC<React.PropsWithChildren<CompactRowProps>> = ({ order 
         </Flex>
         <Flex justifyContent="space-between">
           <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
-            {t('From')}
+            {t('From.sender')}
           </Text>
           <Text small textTransform="uppercase">{`${inputAmount} ${inputToken?.symbol}`}</Text>
         </Flex>
         <Flex justifyContent="space-between">
           <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
-            {t('To')}
+            {t('To.recipient')}
           </Text>
           <Text small textTransform="uppercase">{`${outputAmount} ${outputToken?.symbol}`}</Text>
         </Flex>

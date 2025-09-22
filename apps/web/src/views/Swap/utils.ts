@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, isSolana } from '@pancakeswap/chains'
 import {
   OrderType,
   type BridgeOrder,
@@ -17,6 +17,10 @@ export const TWAP_SUPPORTED_CHAINS = [ChainId.BSC, ChainId.ARBITRUM_ONE, ChainId
 export const isTwapSupported = (chainId?: ChainId) => {
   return !chainId ? false : TWAP_SUPPORTED_CHAINS.includes(chainId)
 }
+
+export const isSolanaBridge = (order: InterfaceOrder | undefined | null): order is BridgeOrder =>
+  order?.type === OrderType.PCS_BRIDGE &&
+  (isSolana(order.trade.inputAmount.currency.chainId) || isSolana(order.trade.outputAmount.currency.chainId))
 
 export const isXOrder = (order: InterfaceOrder | undefined | null): order is XOrder =>
   order?.type === OrderType.DUTCH_LIMIT

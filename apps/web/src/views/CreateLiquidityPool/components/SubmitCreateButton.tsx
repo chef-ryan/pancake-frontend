@@ -427,7 +427,7 @@ export const SubmitCreateButton: React.FC<SubmitCreateButtonProps> = ({ ...boxPr
         onConfirm={onSubmit}
         details={{
           poolType: poolType === 'Bin' ? t('LBAMM') : t('CLAMM'),
-          feeTierSetting: feeTierSetting === 'dynamic' ? t('Dynamic') : `${t('Static')} ${feeLevel}%`,
+          feeTierSetting: feeTierSetting === 'dynamic' ? t('Dynamic') : t('Static %fee%%', { fee: feeLevel || '' }),
           hookAddress: hookEnabled ? hookAddress : undefined,
           startPrice:
             startPriceAsFraction && startPriceAsFraction.denominator !== 0n && startPriceAsFraction.numerator !== 0n

@@ -4,7 +4,7 @@ import { BscScanIcon, BscTraceIcon, Link, Text } from '@pancakeswap/uikit'
 import truncateHash from '@pancakeswap/utils/truncateHash'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useMemo } from 'react'
-import { getBlockExploreLink, getBlockExploreName } from 'utils'
+import { useBlockExploreLink, useBlockExploreName } from 'utils'
 
 interface DescriptionWithTxProps {
   description?: string
@@ -21,10 +21,12 @@ const DescriptionWithTx: React.FC<React.PropsWithChildren<DescriptionWithTxProps
 }) => {
   const { chainId } = useActiveChainId()
   const { t } = useTranslation()
+  const blockExplorerName = useBlockExploreName(txChainId || chainId)
+  const getBlockExploreLink = useBlockExploreLink()
   const explorerName = useMemo(() => {
-    if (!bscTrace) return getBlockExploreName(txChainId || chainId)
+    if (!bscTrace) return blockExplorerName
     return 'BscTrace'
-  }, [bscTrace, chainId, txChainId])
+  }, [bscTrace, blockExplorerName])
   const explorerLink = useMemo(() => {
     const link = getBlockExploreLink(txHash, 'transaction', txChainId || chainId)
     if (bscTrace) {

@@ -27,7 +27,7 @@ export function FixedStakingCardFooter({ children }: { children: ReactNode }) {
     <Flex flexDirection="column" alignItems="center">
       <ExpandableButtonWrapper>
         <ExpandableLabel expanded={isExpanded} onClick={() => setIsExpanded(!isExpanded)}>
-          {isExpanded ? t('Hide') : t('Info')}
+          {isExpanded ? t('Hide') : t('Info.detail')}
         </ExpandableLabel>
       </ExpandableButtonWrapper>
       {isExpanded && <ExpandedWrapper flexDirection="column">{children}</ExpandedWrapper>}

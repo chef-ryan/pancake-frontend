@@ -57,7 +57,7 @@ const ApproveCakePage: React.FC<React.PropsWithChildren<ApproveCakePageProps>> =
         mb="8px"
         onClick={handleApprove}
       >
-        {t('Enable')}
+        {t('Enable.Approval')}
       </Button>
       <Button variant="text" width="100%" onClick={onDismiss} disabled={isApproving}>
         {t('Close Window')}

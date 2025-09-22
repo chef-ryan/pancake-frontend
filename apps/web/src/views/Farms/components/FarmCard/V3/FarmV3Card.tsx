@@ -137,7 +137,7 @@ export const FarmV3Card: React.FC<React.PropsWithChildren<FarmCardProps>> = ({ f
           </Flex>
         )}
         <Flex justifyContent="space-between">
-          <Text>{t('Earn')}:</Text>
+          <Text>{t('Earn.verb')}:</Text>
           <Text>{t('CAKE + Fees')}</Text>
         </Flex>
         <CardActionsContainer farm={farm} lpLabel={lpLabel} account={account} />

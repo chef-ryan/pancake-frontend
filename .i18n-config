@@ -14,7 +14,7 @@
     "packages/ui-wallets/src",
     "packages/widgets-internal"
   ],
-  "model": "gemini-2.5-flash",
+  "model": "gemini-2.5-pro",
   "extendedTranslationFiles": [
     "packages/localization/src/config/translation.extend.json"
   ],

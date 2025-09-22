@@ -39,7 +39,7 @@ const NameCell: React.FC<React.PropsWithChildren<NameCellProps>> = ({ pool, tool
   const stakedBalance = userData?.stakedBalance ? new BigNumber(userData.stakedBalance) : BIG_ZERO
   const showStakedTag = stakedBalance.gt(0)
 
-  const title: React.ReactNode = `${t('Earn')} ${earningTokenSymbol}`
+  const title: React.ReactNode = `${t('Earn.verb')} ${earningTokenSymbol}`
   const subtitle: React.ReactNode = `${t('Stake')} ${stakingTokenSymbol}`
   const showSubtitle = sousId !== 0 || (sousId === 0 && !isMobile)
 

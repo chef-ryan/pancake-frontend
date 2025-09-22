@@ -5,13 +5,10 @@ import { Currency, CurrencyAmount, TradeType, UnifiedCurrency } from '@pancakesw
 import {
   AutoColumn,
   Button,
-  domAnimation,
-  LazyAnimatePresence,
   ReactMarkdown,
   Skeleton,
   Text,
   useMatchBreakpoints,
-  useModal,
   useToast,
   useTooltip,
 } from '@pancakeswap/uikit'
@@ -20,7 +17,6 @@ import replaceBrowserHistoryMultiple from '@pancakeswap/utils/replaceBrowserHist
 import { CurrencyLogo, NumericalInput, SwapUIV2 } from '@pancakeswap/widgets-internal'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AutoRow } from 'components/Layout/Row'
-import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { CommonBasesType } from 'components/SearchModal/types'
 import { useAllTokens, useCurrency } from 'hooks/Tokens'
 import { useActiveChainId } from 'hooks/useActiveChainId'
@@ -41,7 +37,6 @@ import { useDefaultsFromURLSearch, useSwapState } from 'state/swap/hooks'
 import { useSwapActionHandlers } from 'state/swap/useSwapActionHandlers'
 import { useCurrencyBalances } from 'state/wallet/hooks'
 import { keyframes, styled } from 'styled-components'
-import currencyId from 'utils/currencyId'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { useAccount } from 'wagmi'
 import { useTranslation } from '@pancakeswap/localization'
@@ -56,7 +51,6 @@ import ArrowLight from '../../../../public/images/swap/arrow_light.json' assert 
 import { Wrapper } from '../components/styleds'
 import { SwapTransactionErrorContent } from '../components/SwapTransactionErrorContent'
 
-import { useBridgeAvailableRoutes } from '../Bridge/hooks'
 import { handleCurrencySelectFn } from '../../SwapSimplify/InfinitySwap/FormMainInfinity'
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false })
@@ -244,7 +238,6 @@ const useCurrencySelect = () => {
   const { onCurrencySelection } = useSwapActionHandlers()
   const warningSwapHandler = useWarningImport()
   const { canSwitchToChain, switchNetwork } = useSwitchNetwork()
-  const supportedBridgeChains = useBridgeAvailableRoutes()
   const router = useRouter()
 
   const {
@@ -260,7 +253,6 @@ const useCurrencySelect = () => {
         canSwitchToChain,
         switchNetwork,
         outputChainId,
-        supportedBridgeChains,
         inputChainId,
         inputCurrencyId,
         outputCurrencyId,
@@ -276,7 +268,6 @@ const useCurrencySelect = () => {
       canSwitchToChain,
       switchNetwork,
       outputChainId,
-      supportedBridgeChains,
       inputChainId,
       inputCurrencyId,
       outputCurrencyId,

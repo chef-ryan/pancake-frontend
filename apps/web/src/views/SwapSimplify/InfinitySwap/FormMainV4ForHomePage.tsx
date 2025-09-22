@@ -18,11 +18,10 @@ import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { useAtom } from 'jotai'
 import { useRouter } from 'next/router'
 import { swapReducerAtom } from 'state/swap/reducer'
-import { useBridgeAvailableRoutes } from 'views/Swap/Bridge/hooks/useBridgeAvailableRoutes'
+import { useBridgeAvailableChains } from 'views/Swap/Bridge/hooks/useBridgeAvailableRoutes'
 import { getDefaultToken } from 'views/Swap/utils'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { useSolanaTokenList } from 'hooks/solana/useSolanaTokenList'
-import { NonEVMChainId } from '@pancakeswap/chains'
+import { isSolana } from '@pancakeswap/chains'
 
 import { useIsWrapping } from '../../Swap/V3Swap/hooks'
 import useWarningImport from '../../Swap/hooks/useWarningImport'
@@ -41,7 +40,6 @@ export function FormMainForHomePage({ inputAmount, outputAmount, tradeLoading }:
   const { t } = useTranslation()
   const warningSwapHandler = useWarningImport()
   const { isMobile } = useMatchBreakpoints()
-  const { chainId } = useAccountActiveChain()
 
   const {
     independentField,
@@ -59,7 +57,7 @@ export function FormMainForHomePage({ inputAmount, outputAmount, tradeLoading }:
   const handleTypeInput = useCallback((value: string) => onUserInput(Field.INPUT, value), [onUserInput])
   const handleTypeOutput = useCallback((value: string) => onUserInput(Field.OUTPUT, value), [onUserInput])
 
-  const supportedBridgeChains = useBridgeAvailableRoutes()
+  const { chains: supportedBridgeChains } = useBridgeAvailableChains()
 
   const { canSwitch, switchNetwork } = useSwitchNetwork()
 
@@ -69,10 +67,11 @@ export function FormMainForHomePage({ inputAmount, outputAmount, tradeLoading }:
 
       if (isInput) {
         const isOutputChainSupported =
-          outputChainId &&
-          supportedBridgeChains.data?.some(
-            (route) => route.originChainId === newCurrency.chainId && route.destinationChainId === outputChainId,
-          )
+          isSolana(newCurrency.chainId) ||
+          isSolana(outputChainId) ||
+          (outputChainId &&
+            supportedBridgeChains?.includes(newCurrency.chainId) &&
+            supportedBridgeChains.includes(outputChainId))
 
         if (!isOutputChainSupported) {
           // if output chain is not supported, reset output currency
@@ -90,7 +89,7 @@ export function FormMainForHomePage({ inputAmount, outputAmount, tradeLoading }:
       onCurrencySelection(field, newCurrency)
       warningSwapHandler(newCurrency)
     },
-    [onCurrencySelection, warningSwapHandler, outputChainId, supportedBridgeChains.data, canSwitch, switchNetwork],
+    [onCurrencySelection, warningSwapHandler, outputChainId, supportedBridgeChains, canSwitch, switchNetwork],
   )
   const handleInputSelect = useCallback(
     (newCurrency: UnifiedCurrency) => handleCurrencySelect(newCurrency, Field.INPUT),

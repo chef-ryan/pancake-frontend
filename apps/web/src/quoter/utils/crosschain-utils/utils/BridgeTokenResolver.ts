@@ -1,6 +1,7 @@
 import { type Currency } from '@pancakeswap/swap-sdk-core'
 import { BridgeTradeError } from 'quoter/quoter.types'
 import { type Route } from 'views/Swap/Bridge/api'
+import { isSolana } from '@pancakeswap/chains'
 import { PatternType } from '../types'
 
 export class BridgeTokenResolver {
@@ -25,6 +26,11 @@ export class BridgeTokenResolver {
   }
 
   static determinePattern(routes: Route[], baseCurrency: Currency, quoteCurrency: Currency): PatternType {
+    // if origin chain or destination chain is solana, return BRIDGE_SOLANA_EVM
+    if (isSolana(baseCurrency.chainId) || isSolana(quoteCurrency.chainId)) {
+      return PatternType.BRIDGE_SOLANA_EVM
+    }
+
     const { isOriginTokenSupported, isDestinationTokenSupported } = this.classifyTokenSupport(
       routes,
       baseCurrency,

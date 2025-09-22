@@ -6,20 +6,31 @@ import { useMemo } from 'react'
 import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useSubmitPermit2 } from 'hooks/usePermit2'
 import { Address } from 'viem'
-import { InterfaceOrder, isBridgeOrder } from 'views/Swap/utils'
+import { BridgeOrderWithCommands, InterfaceOrder, isBridgeOrder } from 'views/Swap/utils'
+import { isSolana } from '@pancakeswap/chains'
 import { postBridgeCheckApproval } from '../api'
+import { useEVMToSolanaBridgeCalldata } from './useEVMToSolanaBridgeCalldata'
+import { RELAY_STEP_ID } from '../types'
 
 export const useBridgeCheckApproval = (order?: InterfaceOrder) => {
   const { account } = useAccountActiveChain()
   const { chainId: activeChainId } = useActiveChainId()
 
   const currencyAmountIn = useMemo(() => {
-    return isBridgeOrder(order) && activeChainId
+    // NOTE: this is only for Across bridge, not for Solana bridge
+    return isBridgeOrder(order) && !isSolana(activeChainId)
       ? order?.trade?.routes?.find((r) => r.inputAmount.currency.chainId === activeChainId)?.inputAmount
       : undefined
   }, [order, activeChainId])
 
   const isNativeCurrency = currencyAmountIn?.currency?.isNative
+
+  const isSolanaBridge = isBridgeOrder(order) && isSolana(order?.trade?.outputAmount?.currency?.chainId)
+
+  const bridgeSolanaApproveCalldata = useEVMToSolanaBridgeCalldata({
+    order: order as BridgeOrderWithCommands,
+    stepType: RELAY_STEP_ID.APPROVE,
+  })
 
   const {
     data: approvalData,
@@ -35,11 +46,7 @@ export const useBridgeCheckApproval = (order?: InterfaceOrder) => {
       currencyAmountIn?.quotient.toString(),
     ],
     queryFn: async () => {
-      if (!currencyAmountIn || !account) return Promise.resolve(undefined)
-
-      if (isNativeCurrency) {
-        return undefined
-      }
+      if (!currencyAmountIn || !account || !isBridgeOrder(order) || isNativeCurrency) return undefined
 
       try {
         const response = await postBridgeCheckApproval({
@@ -53,7 +60,7 @@ export const useBridgeCheckApproval = (order?: InterfaceOrder) => {
         throw err
       }
     },
-    enabled: !!currencyAmountIn && !!account,
+    enabled: !!currencyAmountIn && !!account && !isSolanaBridge,
     retry: 3,
   })
 
@@ -86,19 +93,42 @@ export const useBridgeCheckApproval = (order?: InterfaceOrder) => {
   })
 
   return useMemo(
-    () => ({
-      approvalData,
+    () =>
+      isSolanaBridge
+        ? {
+            approvalData: {
+              isApprovalRequired: Boolean(bridgeSolanaApproveCalldata),
+              tokenAddress: bridgeSolanaApproveCalldata?.transactionData?.address,
+              data: bridgeSolanaApproveCalldata?.transactionData?.calldata,
+              spender: undefined,
+              permit2Details: undefined,
+              isPermit2Required: false,
+              error: undefined,
+            },
+            requiresApproval: Boolean(bridgeSolanaApproveCalldata),
+          }
+        : {
+            approvalData,
+            requiresApproval,
+            isLoading,
+            refetch,
+            signPermit2,
+            error: error
+              ? {
+                  code: '500',
+                  message: `Bridge approval check failed: ${error.message}`,
+                }
+              : undefined,
+          },
+    [
       requiresApproval,
       isLoading,
-      refetch,
       signPermit2,
-      error: error
-        ? {
-            code: '500',
-            message: `Bridge approval check failed: ${error.message}`,
-          }
-        : undefined,
-    }),
-    [requiresApproval, isLoading, signPermit2, refetch, approvalData, error],
+      refetch,
+      approvalData,
+      error,
+      bridgeSolanaApproveCalldata,
+      isSolanaBridge,
+    ],
   )
 }

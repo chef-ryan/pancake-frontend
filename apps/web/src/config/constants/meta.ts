@@ -43,27 +43,27 @@ const getPathList = memoize((t: ContextApi['t']): PathList => {
       '/voting/proposal/create': { title: t('Make a Proposal'), image: `${ASSET_CDN}/web/og/voting.jpg` },
       '/info': {
         basePath: true,
-        title: `${t('Overview')} - ${t('Info')}`,
+        title: `${t('Overview')} - ${t('Info.section_title')}`,
         description: 'View statistics for Pancakeswap exchanges.',
         image: `${ASSET_CDN}/web/og/info.jpg`,
       },
       '/info/pairs': {
-        title: `${t('Pairs')} - ${t('Info')}`,
+        title: `${t('Pairs')} - ${t('Info.section_title')}`,
         description: 'View statistics for Pancakeswap exchanges.',
         image: `${ASSET_CDN}/web/og/info.jpg`,
       },
       '/info/tokens': {
-        title: `${t('Tokens')} - ${t('Info')}`,
+        title: `${t('Tokens')} - ${t('Info.section_title')}`,
         description: 'View statistics for Pancakeswap exchanges.',
         image: `${ASSET_CDN}/web/og/info.jpg`,
       },
       '/info/v3/pairs': {
-        title: `${t('Pairs')} - ${t('Info')}`,
+        title: `${t('Pairs')} - ${t('Info.section_title')}`,
         description: 'View statistics for Pancakeswap exchanges.',
         image: `${ASSET_CDN}/web/og/info.jpg`,
       },
       '/info/v3/tokens': {
-        title: `${t('Tokens')} - ${t('Info')}`,
+        title: `${t('Tokens')} - ${t('Info.section_title')}`,
         description: 'View statistics for Pancakeswap exchanges.',
         image: `${ASSET_CDN}/web/og/info.jpg`,
       },

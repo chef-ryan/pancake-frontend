@@ -269,7 +269,7 @@ export const StakeModal: React.FC<React.PropsWithChildren<StakeModalProps>> = ({
           <PercentageButton onClick={() => handleChangePercent(25)}>25%</PercentageButton>
           <PercentageButton onClick={() => handleChangePercent(50)}>50%</PercentageButton>
           <PercentageButton onClick={() => handleChangePercent(75)}>75%</PercentageButton>
-          <PercentageButton onClick={() => handleChangePercent(100)}>{t("Max")}</PercentageButton>
+          <PercentageButton onClick={() => handleChangePercent(100)}>{t("Max.fill-max")}</PercentageButton>
         </Flex>
         {warning}
         {!isRemovingStake && (
@@ -312,7 +312,7 @@ export const StakeModal: React.FC<React.PropsWithChildren<StakeModalProps>> = ({
             mt="24px"
             minHeight={48}
           >
-            {t("Enable")}
+            {t("Enable.Approval")}
           </Button>
         ) : (
           <Button

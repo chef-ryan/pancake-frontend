@@ -216,14 +216,14 @@ const SetPositionCard: React.FC<React.PropsWithChildren<SetPositionCardProps>> =
             <Heading scale="md">{t('Set Position')}</Heading>
           </FlexRow>
           <PositionTag betPosition={position} onClick={togglePosition}>
-            {position === BetPosition.BULL ? t('Up') : t('Down')}
+            {position === BetPosition.BULL ? t('Up') : t('Prediction.Position.Down')}
           </PositionTag>
         </Flex>
       </CardHeader>
       <CardBody py="16px">
         <Flex alignItems="center" justifyContent="space-between" mb="8px">
           <Text textAlign="right" color="textSubtle">
-            {t('Commit')}:
+            {t('Commit.prediction')}:
           </Text>
           <Flex alignItems="center">
             <Box mr="4px" width={20} height={20}>
@@ -295,7 +295,7 @@ const SetPositionCard: React.FC<React.PropsWithChildren<SetPositionCardProps>> =
             disabled={!account || isTxPending}
             className={!account || isTxPending ? '' : 'swiper-no-swiping'}
           >
-            {t('Max')}
+            {t('Max.fill-max')}
           </Button>
         </Flex>
         <Box mb="8px">
@@ -319,7 +319,7 @@ const SetPositionCard: React.FC<React.PropsWithChildren<SetPositionCardProps>> =
                 isLoading={pendingTx}
                 endIcon={pendingTx ? <AutoRenewIcon color="currentColor" spin /> : null}
               >
-                {t('Enable')}
+                {t('Enable.Approval')}
               </Button>
             )
           ) : (

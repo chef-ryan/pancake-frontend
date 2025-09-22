@@ -4,7 +4,7 @@ import { getHashKey } from 'utils/hash'
 import { Connector } from 'wagmi'
 import { getQueryChainId } from 'wallet/util/getQueryChainId'
 
-interface AccountChainState {
+export interface AccountChainState {
   account?: `0x${string}`
   solanaAccount?: string | null
   chainId: number

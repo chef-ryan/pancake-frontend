@@ -1,5 +1,11 @@
 # @pancakeswap/chains
 
+## 0.7.0
+
+### Minor Changes
+
+- d6de8ef: minor update
+
 ## 0.6.0
 
 ### Minor Changes

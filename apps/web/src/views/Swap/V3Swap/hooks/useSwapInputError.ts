@@ -34,12 +34,19 @@ const BAD_RECIPIENT_ADDRESSES: string[] = [
   '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', // v2 router 02
 ]
 
-export function useSwapInputError(order: PriceOrder | undefined, currencyBalances: Balances): string | undefined {
+export function useSwapInputError(
+  order: PriceOrder | undefined,
+  currencyBalances: Balances,
+  pairCurrencies: (UnifiedCurrency | undefined)[],
+): string | undefined {
   const { t } = useTranslation()
   const { unifiedAccount, chainId } = useAccountActiveChain()
   const { independentField, typedValue } = useSwapState()
-  const inputCurrency = currencyBalances[Field.INPUT]?.currency
-  const outputCurrency = currencyBalances[Field.OUTPUT]?.currency
+
+  // Use pairCurrencies instead of currencyBalances
+  // to avoid UI show "Select a token" although user already selected a token but currencyBalances throw error
+  // balance error issue: can be rpc or chain down.
+  const [inputCurrency, outputCurrency] = pairCurrencies
 
   const to: string | null = unifiedAccount || null
 

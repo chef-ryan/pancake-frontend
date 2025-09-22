@@ -21,19 +21,20 @@ import {
 
 import styled from 'styled-components'
 
-import { CurrencyAmount } from '@pancakeswap/swap-sdk-core'
+import { UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { formatScientificToDecimal } from '@pancakeswap/utils/formatNumber'
 import { useQuery } from '@tanstack/react-query'
 import { ViewOnExplorerButton } from 'components/ViewOnExplorerButton'
 import { DISPLAY_PRECISION } from 'config/constants/formatting'
-import { useCurrencyByChainId } from 'hooks/Tokens'
-import { multiChainName, multiChainShortName } from 'state/info/constant'
+import { useUnifiedCurrency } from 'hooks/Tokens'
 import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { OrderResultModalContent } from 'views/Swap/Bridge/CrossChainConfirmSwapModal/OrderStatus/OrderResultModalContent'
 import { bridgeStatusQueryKey } from 'views/Swap/Bridge/hooks/useBridgeStatus'
 import { ActiveBridgeOrderMetadata, BridgeStatus, UserBridgeOrder } from 'views/Swap/Bridge/types'
 import { getBridgeTitle } from 'views/Swap/Bridge/utils/bridgeTitle'
 import { customBridgeStatus } from 'views/Swap/Bridge/utils/customBridgeStatus'
+import { chainNames, isSolana } from '@pancakeswap/chains'
+import upperCase from 'lodash/upperCase'
 
 const StyledChainLogo = styled(ChainLogo)`
   > img {
@@ -43,6 +44,22 @@ const StyledChainLogo = styled(ChainLogo)`
     border: 1px solid ${({ theme }) => theme.colors.invertedContrast};
   }
 `
+
+function getProperChainIdBasedOnTransactionHash({
+  fillTransactionHash,
+  originChainId,
+  destinationChainId,
+}: {
+  fillTransactionHash: string
+  originChainId: number
+  destinationChainId: number
+}) {
+  // if solana bridge, check if fillTransactionHash is evm transaction hash either return destinationChainId or originChainId based on fillTransactionHash
+  if (isSolana(destinationChainId) || isSolana(originChainId)) {
+    return fillTransactionHash.startsWith('0x') === isSolana(destinationChainId) ? originChainId : destinationChainId
+  }
+  return fillTransactionHash ? destinationChainId : originChainId
+}
 
 export function CrossChainTransaction({ order }: { order: UserBridgeOrder }) {
   const { t } = useTranslation()
@@ -68,15 +85,15 @@ export function CrossChainTransaction({ order }: { order: UserBridgeOrder }) {
   const inputChainName = getFullChainNameById(inputChainId)
   const outputChainName = getFullChainNameById(outputChainId)
 
-  const inputToken = useCurrencyByChainId(order.inputToken, inputChainId)
-  const outputToken = useCurrencyByChainId(order.outputToken, outputChainId)
+  const inputToken = useUnifiedCurrency(order.inputToken, inputChainId)
+  const outputToken = useUnifiedCurrency(order.outputToken, outputChainId)
 
   const inputAmount =
-    inputToken && CurrencyAmount.fromRawAmount(inputToken, formatScientificToDecimal(order.inputAmount))
+    inputToken && UnifiedCurrencyAmount.fromRawAmount(inputToken, formatScientificToDecimal(order.inputAmount))
 
   const outputAmount =
     outputToken &&
-    CurrencyAmount.fromRawAmount(
+    UnifiedCurrencyAmount.fromRawAmount(
       outputToken,
       formatScientificToDecimal(order.status === BridgeStatus.SUCCESS ? order.outputAmount : order.minOutputAmount),
     )
@@ -90,6 +107,7 @@ export function CrossChainTransaction({ order }: { order: UserBridgeOrder }) {
     minOutputAmount: order.minOutputAmount,
     originChainId: order.originChainId,
     destinationChainId: order.destinationChainId,
+    recipientOnDestinationChain: order.recipientOnDestinationChain,
   }
 
   const { data: bridgeStatusData, isFetching } = useQuery({
@@ -133,7 +151,11 @@ export function CrossChainTransaction({ order }: { order: UserBridgeOrder }) {
           <FlexGap gap="0.25rem" justifyContent="flex-end">
             {order.transactionHash ? (
               <ViewOnExplorerButton
-                chainId={order.fillTransactionHash ? order.destinationChainId : order.originChainId}
+                chainId={getProperChainIdBasedOnTransactionHash({
+                  fillTransactionHash: order.fillTransactionHash,
+                  originChainId: order.originChainId,
+                  destinationChainId: order.destinationChainId,
+                })}
                 address={order.fillTransactionHash || order.transactionHash}
                 type="transaction"
                 color="primary60"
@@ -165,16 +187,14 @@ export function CrossChainTransaction({ order }: { order: UserBridgeOrder }) {
               {inputAmount?.toSignificant(DISPLAY_PRECISION)}&nbsp;
               {inputToken?.symbol}
             </Text>
-            &nbsp; (
-            {t('on %chainSymbol%', { chainSymbol: multiChainShortName[inputChainId] ?? multiChainName[inputChainId] })}){' '}
-            {t('for')}&nbsp;
+            &nbsp; ({t('on %chainSymbol%', { chainSymbol: upperCase(chainNames[inputChainId]) })}) {t('for')}&nbsp;
             <Text as="span" bold small>
               {outputAmount?.toSignificant(DISPLAY_PRECISION)}&nbsp;
               {outputToken?.symbol}
             </Text>
             &nbsp; (
             {t('on %chainSymbol%', {
-              chainSymbol: multiChainShortName[outputChainId] ?? multiChainName[outputChainId],
+              chainSymbol: upperCase(chainNames[outputChainId]),
             })}
             )
           </Text>
@@ -205,6 +225,7 @@ export function CrossChainTransaction({ order }: { order: UserBridgeOrder }) {
             overrideActiveOrderMetadata={{
               txHash: order.transactionHash,
               originChainId: order.originChainId,
+              destinationChainId: order.destinationChainId,
               order: null,
               metadata,
             }}

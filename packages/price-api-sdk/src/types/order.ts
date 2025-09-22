@@ -74,6 +74,12 @@ export type BridgeTransactionData = {
   quoteTimestamp: number
   relayerFeePct: string
   totalRelayFee: string
+  totalImpactPct?: string
+  steps?: any[]
+  addressLookupTableAddresses?: string[]
+  minimumOutputAmount?: string
+  totalFee?: string
+  requestId?: string
 }
 
 export type BridgeOrder<tradeType extends TradeType = TradeType> = {

@@ -8,7 +8,10 @@ import { useGetENSAddressByName } from 'hooks/useGetENSAddressByName'
 import { useCallback } from 'react'
 import { styled } from 'styled-components'
 import { safeGetAddress } from 'utils'
-import { getBlockExploreLink, getBlockExploreName } from '../../../utils'
+import { Field } from 'state/swap/actions'
+import { useSwapState } from 'state/swap/hooks'
+import { useBlockExploreLink, useBlockExploreName } from '../../../utils'
+import { useIsRecipientError } from '../hooks/useIsRecipientError'
 
 const Divider = styled.div`
   width: 1px;
@@ -86,13 +89,16 @@ export default function AddressInputPanel({
   // triggers whenever the typed value changes
   onChange: (value: string | null) => void
 }) {
-  const { chainId } = useActiveChainId()
+  const {
+    [Field.OUTPUT]: { chainId: outputChainId },
+  } = useSwapState()
+
+  const blockExplorerName = useBlockExploreName(outputChainId)
+  const getBlockExploreLink = useBlockExploreLink()
 
   const { t } = useTranslation()
-  const debounceEnsName = useDebounce(value, 500)
-  const recipientENSAddress = useGetENSAddressByName(debounceEnsName)
 
-  const address = safeGetAddress(value) ? value : safeGetAddress(recipientENSAddress)
+  const { resolvedAddress: address, isRecipientError: error } = useIsRecipientError()
 
   const handleInput = useCallback(
     (event) => {
@@ -103,8 +109,6 @@ export default function AddressInputPanel({
     [onChange],
   )
 
-  const error = Boolean(value.length > 0 && !address)
-
   return (
     <InputPanel id={id}>
       <InputContainer>
@@ -114,13 +118,13 @@ export default function AddressInputPanel({
               <Text bold color="textSubtle">
                 {t('Recipient')}
               </Text>
-              {address && chainId && (
-                <Link external small href={getBlockExploreLink(address, 'address', chainId)}>
+              {address && outputChainId && (
+                <Link external small href={getBlockExploreLink(address, 'address', outputChainId)}>
                   (
                   {t('View on %site%', {
-                    site: getBlockExploreName(chainId),
+                    site: blockExplorerName,
                   })}
-                  {chainId === ChainId.BSC && <BscScanIcon color="primary" ml="4px" />})
+                  {outputChainId === ChainId.BSC && <BscScanIcon color="primary" ml="4px" />})
                 </Link>
               )}
             </FlexGap>

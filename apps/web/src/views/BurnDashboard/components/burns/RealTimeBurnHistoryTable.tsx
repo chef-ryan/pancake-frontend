@@ -153,8 +153,8 @@ export const RealTimeBurnHistoryTable = (props: BoxProps) => {
               <th>{t('Tx Hash')}</th>
               <th>{t('Amount')}</th>
               <th>{t('Timestamp')}</th>
-              <th>{t('From')}</th>
-              <th>{t('To')}</th>
+              <th>{t('From.sender')}</th>
+              <th>{t('To.recipient')}</th>
               <th>{t('Type')}</th>
             </tr>
           </thead>

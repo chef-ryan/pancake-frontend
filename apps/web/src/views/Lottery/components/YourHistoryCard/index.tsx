@@ -88,7 +88,7 @@ const YourHistoryCard: React.FC<React.PropsWithChildren<YourHistoryCardProps>> =
           <ArrowBackIcon cursor="pointer" onClick={clearState} mr="20px" />
           <Flex flexDirection="column" alignItems="flex-start" justifyContent="center">
             <Heading scale="md" mb="4px">
-              {t('Round')} {selectedLotteryId || ''}
+              {t('Round.lottery')} {selectedLotteryId || ''}
             </Heading>
             {selectedLotteryNodeData?.endTime ? (
               <Text fontSize="14px">

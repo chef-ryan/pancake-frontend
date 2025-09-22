@@ -62,7 +62,7 @@ export const FieldAddDepositAmount: React.FC<FieldDepositAmountProps> = ({
 
       <Column mt="16px" gap="16px">
         <RowBetween>
-          <Text color="textSubtle">{t('Total')}</Text>
+          <Text color="textSubtle">{t('Total.amount')}</Text>
           <Text>
             ~
             {formatDollarAmount(

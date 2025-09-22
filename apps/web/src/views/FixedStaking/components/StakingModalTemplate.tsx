@@ -384,7 +384,7 @@ export function StakingModalTemplate({
           75%
         </StyledButton>
         <StyledButton scale="xs" width="100%" mx="2px" variant="tertiary" onClick={() => handleChangePercent(100)}>
-          {t('Max')}
+          {t('Max.fill-max')}
         </StyledButton>
       </Flex>
 
@@ -446,7 +446,7 @@ export function StakingModalTemplate({
               }}
               onClick={approveCallback}
             >
-              {approvalState === ApprovalState.PENDING ? t('Enabling') : t('Enable')}
+              {approvalState === ApprovalState.PENDING ? t('Enabling') : t('Enable.Approval')}
             </Button>
           )}
 

@@ -71,7 +71,7 @@ export const MinMaxFilter: React.FC<React.PropsWithChildren<MinMaxFilterProps>> 
         <Box px="24px" py="16px">
           <Grid gridGap="16px" gridTemplateColumns="repeat(2, 1fr)">
             <TextField label={t('Min')} value={currentMin} onUserInput={handleMinChange} isWarning={isError} />
-            <TextField label={t('Max')} value={currentMax} onUserInput={handleMaxChange} isWarning={isError} />
+            <TextField label={t('Max.fill-max')} value={currentMax} onUserInput={handleMaxChange} isWarning={isError} />
           </Grid>
         </Box>
         <FilterFooter>

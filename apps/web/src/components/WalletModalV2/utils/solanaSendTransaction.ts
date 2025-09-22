@@ -8,6 +8,7 @@ import {
   SystemProgram,
   ComputeBudgetProgram,
   LAMPORTS_PER_SOL,
+  AddressLookupTableAccount,
 } from '@solana/web3.js'
 import {
   createTransferInstruction,
@@ -123,11 +124,12 @@ function createNativeTransferInstruction(
 /**
  * Builds the final transaction with the appropriate version
  */
-async function buildTransaction(
+export async function buildTransaction(
   instructions: TransactionInstruction[],
   connection: Connection,
   fromPubkey: PublicKey,
   walletSupportsV0: boolean,
+  addressLookupTableAddresses?: AddressLookupTableAccount[],
 ): Promise<Transaction | VersionedTransaction> {
   // Get latest blockhash
   const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash()
@@ -141,7 +143,7 @@ async function buildTransaction(
       payerKey: fromPubkey,
       recentBlockhash: blockhash,
       instructions,
-    }).compileToV0Message()
+    }).compileToV0Message(addressLookupTableAddresses)
 
     return new VersionedTransaction(messageV0)
   }
@@ -228,7 +230,8 @@ export function detectWalletTransactionSupport(wallet: any): boolean {
   // More strict check - only use v0 if explicitly supported
   const supportsV0 =
     wallet?.features?.['solana:signAndSendTransaction']?.supportedTransactionVersions?.has?.('v0') ||
-    wallet?.features?.['solana:signTransaction']?.supportedTransactionVersions?.has?.('v0')
+    wallet?.features?.['solana:signTransaction']?.supportedTransactionVersions?.has?.('v0') ||
+    wallet?.wallet?.adapter?.supportedTransactionVersions?.has?.(0)
 
   // eslint-disable-next-line no-console
   console.log('🔍 Wallet transaction support detection:', {

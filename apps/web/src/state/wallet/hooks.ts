@@ -1,6 +1,6 @@
 import { ChainId, Currency, CurrencyAmount, Native, Token, UnifiedCurrency, ZERO_ADDRESS } from '@pancakeswap/sdk'
 import { useQuery } from '@tanstack/react-query'
-import { NonEVMChainId } from '@pancakeswap/chains'
+import { isSolana, NonEVMChainId } from '@pancakeswap/chains'
 import { selectedEvmWalletAtom, selectedSolanaWalletAtom } from '@pancakeswap/ui-wallets/src/state/atom'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useLocalStorage, useWallet } from '@solana/wallet-adapter-react'
@@ -148,18 +148,24 @@ export function useCurrencyBalance(
 }
 
 // get all token balances for the current account by using api
-export function useAllTokenBalances(selectedChainId?: number): {
+export function useAllTokenBalances(overrideChainId?: number): {
   balances: { [tokenAddress: string]: CurrencyAmount<Token> | undefined }
   isLoading: boolean
 } {
-  const { address: account } = useAccount()
+  const { account, solanaAccount } = useAccountActiveChain()
   const { chainId } = useActiveChainId()
 
+  const usedChainId = overrideChainId || chainId
+
   // Fetch balances using the hook we created
-  const { balances: apiBalances, isLoading: isLoadingBalance } = useAddressBalance(account, chainId, {
-    includeSpam: false,
-    onlyWithPrice: false,
-  })
+  const { balances: apiBalances, isLoading: isLoadingBalance } = useAddressBalance(
+    isSolana(usedChainId) ? solanaAccount : account,
+    usedChainId,
+    {
+      includeSpam: false,
+      onlyWithPrice: false,
+    },
+  )
 
   return useMemo(() => {
     /// [tokenAddress: string]: CurrencyAmount<Token> | undefined
@@ -341,8 +347,9 @@ export function useCurrencyBalanceWithChain(
   )[0]
 }
 
-export const useCurrentWalletIcon = () => {
-  const { chainId, account: evmAccount, solanaAccount } = useAccountActiveChain()
+export const useCurrentWalletIcon = (overrideChainId?: number) => {
+  const { chainId: activeChainId, account: evmAccount, solanaAccount } = useAccountActiveChain()
+  const chainId = overrideChainId || activeChainId
   const { connector } = useAccount()
   const { wallets } = useWallet()
   const [solanaWalletName] = useLocalStorage(SolanaProviderLocalStorageKey, '')

@@ -197,7 +197,7 @@ const ClaimInnerContainer: React.FC<React.PropsWithChildren<ClaimInnerProps>> = 
 
       <Flex alignItems="center" justifyContent="center">
         <Text mt="8px" fontSize="12px" color="textSubtle">
-          {t('Round')} #{activeClaimData.roundId}
+          {t('Round.lottery')} #{activeClaimData.roundId}
         </Text>
       </Flex>
       <Flex alignItems="center" justifyContent="center">

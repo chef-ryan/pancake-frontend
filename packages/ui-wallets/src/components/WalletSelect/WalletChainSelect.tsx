@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from '@pancakeswap/localization'
 import {
   InfoIcon,
@@ -20,12 +20,14 @@ import {
   useMatchBreakpoints,
   Message,
   Checkbox,
+  MessageText,
 } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { ChainId } from '@pancakeswap/chains'
 import { useTheme } from '@pancakeswap/hooks'
 import { WalletConfigV3, WalletAdaptedNetwork } from '../../types'
 import { ASSET_CDN } from '../../config/url'
+import { useMetamaskVersionWarning } from '../../hooks/useMetamaskVersionWarning'
 
 export type WalletChainSelectProps = {
   wallet: WalletConfigV3<any> | null
@@ -80,6 +82,8 @@ export const WalletChainSelect: React.FC<WalletChainSelectProps> = ({
       trigger: 'hover',
     },
   )
+
+  const shouldShowMetamaskVersionWarning = useMetamaskVersionWarning()
 
   if (!wallet || wallet.networks.length <= 1) return null
 
@@ -152,29 +156,38 @@ export const WalletChainSelect: React.FC<WalletChainSelectProps> = ({
               )}
 
               {supportsSolana && (
-                <RowBetween flexWrap="nowrap">
-                  <Row gap="8px" alignItems="center">
-                    <SquareNetworkIcon>
-                      <img
-                        src={`${ASSET_CDN}/web/wallet-ui/network-tag-solana.png`}
-                        width={32}
-                        height={32}
-                        alt="Solana"
-                      />
-                    </SquareNetworkIcon>
+                <>
+                  <RowBetween flexWrap="nowrap">
+                    <Row gap="8px" alignItems="center">
+                      <SquareNetworkIcon>
+                        <img
+                          src={`${ASSET_CDN}/web/wallet-ui/network-tag-solana.png`}
+                          width={32}
+                          height={32}
+                          alt="Solana"
+                        />
+                      </SquareNetworkIcon>
 
-                    <Text fontSize="16px" fontWeight="600" color="text">
-                      Solana
-                    </Text>
-                  </Row>
-                  {solanaAddress ? (
-                    <Checkbox checked disabled scale="sm" />
-                  ) : (
-                    <Button variant="primary" onClick={onConnectSolana} scale={isMobile ? 'sm' : 'md'}>
-                      {t('Connect')}
-                    </Button>
+                      <Text fontSize="16px" fontWeight="600" color="text">
+                        Solana
+                      </Text>
+                    </Row>
+                    {solanaAddress ? (
+                      <Checkbox checked disabled scale="sm" />
+                    ) : (
+                      <Button variant="primary" onClick={onConnectSolana} scale={isMobile ? 'sm' : 'md'}>
+                        {t('Connect')}
+                      </Button>
+                    )}
+                  </RowBetween>
+                  {shouldShowMetamaskVersionWarning && (
+                    <Message variant="warning">
+                      <MessageText>
+                        {t(`If you're having trouble connecting with MetaMask, try updating to the latest version.`)}
+                      </MessageText>
+                    </Message>
                   )}
-                </RowBetween>
+                </>
               )}
             </Column>
           </Column>

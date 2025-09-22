@@ -222,7 +222,7 @@ export const AISetPositionCard: React.FC<React.PropsWithChildren<AISetPositionCa
       <CardBody py="16px">
         <Flex alignItems="center" justifyContent="space-between" mb="8px">
           <Text textAlign="right" color="textSubtle">
-            {t('Commit')}:
+            {t('Commit.prediction')}:
           </Text>
           <Flex alignItems="center">
             <Box mr="4px" width={20} height={20}>
@@ -294,7 +294,7 @@ export const AISetPositionCard: React.FC<React.PropsWithChildren<AISetPositionCa
             disabled={!account || isTxPending}
             className={!account || isTxPending ? '' : 'swiper-no-swiping'}
           >
-            {t('Max')}
+            {t('Max.fill-max')}
           </Button>
         </Flex>
         <Box mb="8px">
@@ -318,7 +318,7 @@ export const AISetPositionCard: React.FC<React.PropsWithChildren<AISetPositionCa
                 isLoading={pendingTx}
                 endIcon={pendingTx ? <AutoRenewIcon color="currentColor" spin /> : null}
               >
-                {t('Enable')}
+                {t('Enable.Approval')}
               </Button>
             )
           ) : (

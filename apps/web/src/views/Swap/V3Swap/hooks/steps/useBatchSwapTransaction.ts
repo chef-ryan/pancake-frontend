@@ -9,7 +9,11 @@ import { ConfirmModalState } from '@pancakeswap/widgets-internal'
 import { RetryableError, retry } from 'state/multicall/retry'
 import { useActiveChainId } from 'hooks/useAccountActiveChain'
 import { ChainId as EvmChainId } from '@pancakeswap/chains'
-import { InterfaceOrder } from 'views/Swap/utils'
+import { InterfaceOrder, isBridgeOrder } from 'views/Swap/utils'
+import { activeBridgeOrderMetadataAtom } from 'views/Swap/Bridge/CrossChainConfirmSwapModal/state/orderDataState'
+import { useSetAtom } from 'jotai'
+
+import { useTransactionAdder } from 'state/transactions/hooks'
 import { BatchCall, getBatchedTransaction as getBatchedTransactionHelper } from '../batchHelper'
 import { eip5792UserRejectUpgradeError, userRejectedError } from '../useSendSwapTransaction'
 import useSwapRecordTransaction from '../useSwapRecordTransaction'
@@ -35,8 +39,10 @@ export const useBatchSwapTransaction = ({
   const eip5792Status = useEIP5792Status()
   const { toastError } = useToast()
   const { t } = useTranslation()
+  const setActiveBridgeOrderMetadata = useSetAtom(activeBridgeOrderMetadataAtom)
 
   const addSwapTransaction = useSwapRecordTransaction(chainId, account)
+  const addTransaction = useTransactionAdder()
 
   const performEip5792Lock = useRef(false)
 
@@ -110,9 +116,11 @@ export const useBatchSwapTransaction = ({
         return false
       }
       const calls = getBatchedTransaction(steps)
+
       if (!calls || calls.length < steps.length) {
         return false
       }
+
       return true
     },
     [eip5792Status, getBatchedTransaction, walletClient?.transport, spender, chainId],
@@ -123,6 +131,7 @@ export const useBatchSwapTransaction = ({
       setTxHash(undefined)
       setConfirmState(ConfirmModalState.PENDING_CONFIRMATION)
       const calls = getBatchedTransaction(steps)
+
       if (!calls) {
         resetState()
         return
@@ -132,9 +141,11 @@ export const useBatchSwapTransaction = ({
         if (!result?.id || !result.client) {
           return
         }
+
         const { promise: statusPromise } = retry(
           async () => {
             const status = await result.client.getCallsStatus({ id: result.id })
+
             if (status.status === 'failure') {
               throw new Error('Transaction failed')
             }
@@ -143,17 +154,43 @@ export const useBatchSwapTransaction = ({
             }
             return status
           },
-          { n: 3, minWait: 2000, maxWait: 3500 },
+          { n: 10, minWait: 2000, maxWait: 3500 },
         )
 
         const status = await statusPromise
+
         if (status.status === 'success') {
           const hash = status.receipts?.[0]?.transactionHash
           if (hash) {
             setTxHash(hash)
-            addSwapTransaction({ order: order as InterfaceOrder, hash: hash as Address, type: 'V3SmartSwap' })
+
+            if (isBridgeOrder(order)) {
+              // Add bridge transaction with bridge type for pending/toast tracking
+              addTransaction(
+                { hash },
+                {
+                  summary: `Bridge ${order.trade.inputAmount.toSignificant(3)} ${
+                    order.trade.inputAmount.currency.symbol
+                  } to ${order.trade.outputAmount.currency.symbol}`,
+                  type: 'bridge',
+                },
+              )
+            } else {
+              addSwapTransaction({ order: order as InterfaceOrder, hash: hash as Address, type: 'V3SmartSwap' })
+            }
           }
-          setConfirmState(ConfirmModalState.COMPLETED)
+
+          if (isBridgeOrder(order) && hash) {
+            setConfirmState(ConfirmModalState.ORDER_SUBMITTED)
+            setActiveBridgeOrderMetadata({
+              order,
+              txHash: hash,
+              originChainId: order.trade.inputAmount.currency.chainId,
+              destinationChainId: order.trade.outputAmount.currency.chainId,
+            })
+          } else {
+            setConfirmState(ConfirmModalState.COMPLETED)
+          }
         }
       } catch (error) {
         console.warn('[5792] Failed to call batched action:', error)

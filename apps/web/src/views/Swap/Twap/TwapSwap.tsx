@@ -10,10 +10,8 @@ import { useContext, useEffect, useState } from 'react'
 import { Field } from 'state/swap/actions'
 import { useDefaultsFromURLSearch, useSwapState } from 'state/swap/hooks'
 import { styled } from 'styled-components'
-// import { SwapSelection } from '../components/SwapSelection'
 
 import { QuoteProvider } from 'quoter/QuoteProvider'
-import { useSingleTokenSwapInfo } from 'quoter/hook/useSingleTokenSwapInfo'
 import { SwapSelection } from '../../SwapSimplify/InfinitySwap/SwapSelectionTab'
 import { SwapFeaturesContext } from '../SwapFeaturesContext'
 import { SwapType } from '../types'
@@ -106,6 +104,7 @@ const TwapAndLimitSwapInner = ({ limit }: { limit?: boolean }) => {
                 swapType={limit ? SwapType.LIMIT : SwapType.TWAP}
                 style={{ marginBottom: 16 }}
                 withToolkit
+                outputChainId={outputChainId}
               />
               <TWAPPanel limit={limit} />
               <Flex flexDirection={!isDesktop ? 'column-reverse' : 'column'}>

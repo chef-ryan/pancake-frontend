@@ -97,7 +97,7 @@ const FarmCard: React.FC<React.PropsWithChildren<FarmCardProps>> = ({
           quoteToken={farm.quoteToken}
         />
         <Flex justifyContent="space-between">
-          <Text>{t('Earn')}:</Text>
+          <Text>{t('Earn.verb')}:</Text>
           <EarnedUsdPrice isCardView {...farm} />
         </Flex>
         {!removed && (

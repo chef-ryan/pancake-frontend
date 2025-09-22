@@ -164,7 +164,7 @@ const ModalInput: React.FC<React.PropsWithChildren<ModalInputProps>> = ({
                 variant={isAtPercentMax ? "primary" : "secondary"}
                 style={{ textTransform: "uppercase" }}
               >
-                {t("Max")}
+                {t("Max.fill-max")}
               </Button>
             </>
           )}

@@ -348,7 +348,7 @@ export const IdoDepositButton: React.FC<{
                         variant={isAtCurrentPercent ? 'primary' : 'secondary'}
                         style={{ textTransform: 'uppercase' }}
                       >
-                        {percent === 100 ? t('Max') : `${percent}%`}
+                        {percent === 100 ? t('Max.fill-max') : `${percent}%`}
                       </Button>
                     )
                   })}

@@ -60,7 +60,7 @@ const indicator = (t: TranslateFunction, chainName: string, customDescriptions?:
       description: customDescriptions?.healthy ?? t('No issues with the subgraph.'),
     },
     down: {
-      label: t('Down'),
+      label: t('HealthIndicator.Down'),
       color: 'failure',
       description:
         customDescriptions?.down ??

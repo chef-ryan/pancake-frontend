@@ -1,5 +1,14 @@
 # @pancakeswap/infinity-sdk
 
+## 1.0.6
+
+### Patch Changes
+
+- Updated dependencies [d6de8ef]
+  - @pancakeswap/chains@0.7.0
+  - @pancakeswap/permit2-sdk@1.1.6
+  - @pancakeswap/v3-sdk@3.9.6
+
 ## 1.0.5
 
 ### Patch Changes

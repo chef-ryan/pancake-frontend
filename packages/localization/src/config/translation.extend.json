@@ -649,5 +649,113 @@
   },
   "solana.position_locked": {
     "value": "Position %position% locked"
+  },
+  "Fee.amount": {
+    "value": "Fee",
+    "hint": "Refers to the actual fee amount charged (an absolute value, usually shown with a token or currency), e.g. \"Fee: 0.01 BNB\". Use a translation that indicates a monetary fee/amount."
+  },
+  "Fee.rate": {
+    "value": "Fee",
+    "hint": "Refers to the fee as a rate or tier (usually a percentage, e.g. 0.25%) or a selectable fee level for pools/trades. Use a translation that conveys a rate/percentage or fee tier."
+  },
+  "Max.fill-max": {
+    "value": "Max",
+    "hint": "Used on a button or quick-fill control to fill an input with the maximum available amount (use the user's full balance / select 100%)."
+  },
+  "Max.upper-bound": {
+    "value": "Max",
+    "hint": "Label for the upper bound / maximum value in a range (for example the maximum price or upper limit in a Min/Max pair)."
+  },
+  "Unstaked.status": {
+    "value": "Unstaked",
+    "hint": "Use where 'Unstaked' is a status/label indicating assets are not staked (e.g. next to amounts or as a table cell). This should read as the current state, not an action/result."
+  },
+  "Unstaked.toast": {
+    "value": "Unstaked",
+    "hint": "Use when 'Unstaked' is used as an action/result message (e.g. toast title 'Unstaked!' or confirmation after unstaking). Prefer wording that communicates the action completed successfully."
+  },
+  "From.sender": {
+    "value": "From",
+    "hint": "Column/header label representing the sender/origin address or party in activity/transaction lists (who initiated/paid the transaction)."
+  },
+  "To.recipient": {
+    "value": "To",
+    "hint": "Column/header or label representing the recipient/target address or party in activity/transaction lists (who receives the transaction)."
+  },
+  "Earn.verb": {
+    "value": "Earn",
+    "hint": "Used as a short verb/label before a token name or as a menu/button label (e.g. 'Earn CAKE', 'Earn BNB + BUSD', or a menu item 'Earn' leading to farms). Translate as an action: 'to earn / obtain rewards'. Keep it short so it can prefix token symbols."
+  },
+  "Earn.label": {
+    "value": "Earn",
+    "hint": "Used as a descriptive label followed by a value (e.g. 'Earn: CAKE + Fees' or 'Earn: 0.123 CAKE'). This is a label for a field showing what you will earn — translate as a noun/label with a trailing colon if your language requires one."
+  },
+  "Total Supply": {
+    "value": "Supply",
+    "hint": "Noun referring to an amount/metric (total supply of tokens or items)."
+  },
+  "Commit.ifo": {
+    "value": "Commit",
+    "hint": "This is an imperative/action (button) to perform the contribution/commit transaction in an IFO. Use a verb appropriate for contributing/buying in an IFO (e.g. '认购' or '提交')."
+  },
+  "Commit.prediction": {
+    "value": "Commit",
+    "hint": "This is a UI label (noun) shown before an amount that indicates the amount being committed/placed (e.g. a 'Committed' or 'Amount to commit' label). Translate as a noun/label, not an imperative."
+  },
+  "Enable.Approval": {
+    "value": "Enable",
+    "hint": "Use when the button/label means granting an on‑chain approval/allowance (authorizing a contract to spend tokens). This is NOT a generic feature toggle. Keep phrasing short and action‑oriented for a CTA."
+  },
+  "Enable.Feature": {
+    "value": "Enable",
+    "hint": "Use when the button/label enables a feature, permission, or toggle (e.g., enable MEV support, allow camera access). This is not an on‑chain token approval."
+  },
+  "Next.step": {
+    "value": "Next",
+    "hint": "Used as a button or control label to proceed to the next step in a multi-step flow (e.g. forms, wizards). Translate as an action: 'go to the next step'."
+  },
+  "Next.round": {
+    "value": "Next",
+    "hint": "Used as a title/label for the upcoming round/period (e.g. 'Next' round). Translate as a noun indicating the following round/period."
+  },
+  "Info.section_title": {
+    "value": "Info",
+    "hint": "Used as the name of the Info section/page (menu item and page title). This is the product/section name — translate as the Info section label."
+  },
+  "Info.detail": {
+    "value": "Info",
+    "hint": "Short UI label for a toggle/expandable that shows details (e.g. 'Show Info' / 'Hide'). Prefer a concise word meaning 'details' rather than the product/section name."
+  },
+  "Prediction.Position.Down": {
+    "value": "Down",
+    "hint": "Label for the prediction/bet position meaning the market will go down (bear position). Used as a short position/tag/arrow label in Predictions UI."
+  },
+  "HealthIndicator.Down": {
+    "value": "Down",
+    "hint": "Indicates a service/subgraph is down or unavailable (system health status)."
+  },
+  "Win.action": {
+    "value": "Win",
+    "hint": "Call-to-action link text that invites the user to go to the Predictions page to try to win with their earned CAKE. Imperative/verb sense (do this action)."
+  },
+  "Win.result": {
+    "value": "Win",
+    "hint": "Label/tag indicating the outcome that the user has won (a result state). Noun/adjective sense (won/winner)."
+  },
+  "Total.amount": {
+    "value": "Total",
+    "hint": "Label for a numeric total/sum (e.g. total USD value, table column total, summary amounts). Use the word meaning the summed amount."
+  },
+  "Total.tabOverall": {
+    "value": "Total",
+    "hint": "Tab name indicating the overall / aggregate category (e.g. the 'Total' leaderboard or overall view). Translate as a label for the overall/all category."
+  },
+  "Round.lottery": {
+    "value": "Round",
+    "hint": "Used in lottery UI to indicate a lottery 'round' or 'issue'. Translate as the lottery period (often shown as “第{round}期”)."
+  },
+  "Round.predictions": {
+    "value": "Round",
+    "hint": "Used in predictions/betting contexts to indicate a betting round/iteration. Translate as a round/iteration term (e.g., “第{round}轮” or “轮次”)."
   }
 }

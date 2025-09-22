@@ -57,7 +57,7 @@ const SummaryRow: React.FC<React.PropsWithChildren<SummaryRowProps>> = ({ type, 
             {rounds} {t('Rounds')}
           </Text>
           <Text fontSize="12px" color="textSubtle" textTransform="lowercase">
-            {type === 'entered' ? t('Total') : roundsInPercentsDisplay}
+            {type === 'entered' ? t('Total.amount') : roundsInPercentsDisplay}
           </Text>
         </Flex>
         <Flex flex="3" flexDirection="column">

@@ -60,7 +60,7 @@ const PreviousBetsTable: React.FC<React.PropsWithChildren<PreviousBetsTableProps
     <Table>
       <thead>
         <tr>
-          <Th>{t('Round')}</Th>
+          <Th>{t('Round.predictions')}</Th>
           <Th>{t('Direction')}</Th>
           <Th textAlign="right">{t('Winnings (%symbol%)', { symbol: token?.symbol })}</Th>
         </tr>

@@ -74,7 +74,7 @@ export const DepositUsdAmountInput = memo(function DepositUsdAmountInput({
         </Flex>
         <Flex flex="4">
           <StyledButton variant={value === max ? "primary" : "tertiary"} scale="xs" mr="0.25em" onClick={onMax}>
-            {maxLabel || t("Max")}
+            {maxLabel || t("Max.fill-max")}
           </StyledButton>
           <QuestionHelper
             text={t("Automatically fill in the maximum token amount according to your balance and position settings.")}

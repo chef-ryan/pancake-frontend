@@ -371,7 +371,7 @@ const BuyTicketsModal: React.FC<React.PropsWithChildren<BuyTicketsModalProps>> =
           {oneHundredPercentOfBalance >= 1 && (
             <NumTicketsToBuyButton onClick={() => handleNumberButtonClick(oneHundredPercentOfBalance)}>
               <Text small color="currentColor" textTransform="uppercase">
-                {t('Max')}
+                {t('Max.fill-max')}
               </Text>
             </NumTicketsToBuyButton>
           )}

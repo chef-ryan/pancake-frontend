@@ -201,7 +201,7 @@ const TokenInfo: React.FC<{ address: string }> = ({ address }) => {
               <Flex justifyContent="space-between" mb="24px" flexDirection={['column', 'column', 'row']}>
                 <Breadcrumbs mb="32px">
                   <NextLinkFromReactRouter to={`/${infinityInfoPath}${chainPath}${infoTypeParam}`}>
-                    <Text color="primary">{t('Info')}</Text>
+                    <Text color="primary">{t('Info.detail')}</Text>
                   </NextLinkFromReactRouter>
                   <NextLinkFromReactRouter to={`/${infinityInfoPath}${chainPath}/tokens${infoTypeParam}`}>
                     <Text color="primary">{t('Tokens')}</Text>

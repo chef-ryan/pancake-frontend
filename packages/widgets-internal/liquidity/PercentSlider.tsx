@@ -49,7 +49,7 @@ export function PercentSlider({ onValueChanged, currentValue }: PercentSliderPro
           75%
         </Button>
         <Button variant="tertiary" scale="sm" onClick={() => onValueChanged("100")}>
-          {t("Max")}
+          {t("Max.fill-max")}
         </Button>
       </AtomBox>
     </>

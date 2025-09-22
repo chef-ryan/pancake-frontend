@@ -1,7 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, Button } from '@pancakeswap/uikit'
 import { useActiveChainId } from 'hooks/useActiveChainId'
-import { getBlockExploreLink } from 'utils'
+import { useBlockExploreLink } from 'utils'
 import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 import { LottieComponentProps } from 'lottie-react'
@@ -16,6 +16,7 @@ const IfoSubmittedCard: React.FC<IfoSubmittedCardProps> = ({ txHash }) => {
   const { t } = useTranslation()
   const { chainId } = useActiveChainId()
   const [animationData, setAnimationData] = useState<any>()
+  const getBlockExploreLink = useBlockExploreLink()
 
   useEffect(() => {
     fetch('https://assets.pancakeswap.finance/web/ifos/submitted.json')

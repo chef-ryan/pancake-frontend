@@ -300,7 +300,7 @@ const CurrencyInputPanelV2 = memo(function CurrencyInputPanelV2({
                     variant={isAtPercentMax ? 'primary' : 'secondary'}
                     style={{ textTransform: 'uppercase' }}
                   >
-                    {t('Max')}
+                    {t('Max.fill-max')}
                   </Button>
                 )}
               </Flex>

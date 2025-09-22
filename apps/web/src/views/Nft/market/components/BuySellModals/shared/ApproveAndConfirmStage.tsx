@@ -36,7 +36,7 @@ const ApproveAndConfirmStage: React.FC<React.PropsWithChildren<ApproveAndConfirm
               </Text>
             </StepIndicator>
             <Text fontSize="20px" color={isApproved ? 'success' : 'secondary'} bold>
-              {isApproved ? t('Enabled') : t('Enable')}
+              {isApproved ? t('Enabled') : t('Enable.Approval')}
             </Text>
           </Flex>
           {!isApproved && (
@@ -53,7 +53,7 @@ const ApproveAndConfirmStage: React.FC<React.PropsWithChildren<ApproveAndConfirm
       </Flex>
       {!isApproved && (
         <Button variant="secondary" disabled={isApproving} onClick={handleApprove}>
-          {isApproving ? `${t('Enabling')}...` : t('Enable')}
+          {isApproving ? `${t('Enabling')}...` : t('Enable.Approval')}
         </Button>
       )}
       <Flex alignItems="center" mt="8px">
