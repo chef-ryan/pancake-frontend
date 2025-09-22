@@ -286,6 +286,7 @@ export const TransactionsTable: React.FC<TransactionTableProps> = ({ transaction
               variant="subtle"
               onClick={() => handleSort(SortField.Timestamp)}
               className={fieldSortDirection[SortField.Timestamp]}
+              $direction={fieldSortDirection[SortField.Timestamp]}
             >
               <SortArrowIcon />
             </SortButton>
