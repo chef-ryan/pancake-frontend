@@ -30,9 +30,7 @@ type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
 type ArrayItemType<T> = T extends Array<infer U> ? U : T
 
 export async function fetchFarmData(showTestnet: boolean) {
-  const chainId = showTestnet
-    ? DEFAULT_CHAINS
-    : DEFAULT_CHAINS.filter((c) => isEvm(c) && !isTestnetChainId(c as ChainId))
+  const chainId = showTestnet ? DEFAULT_CHAINS : DEFAULT_CHAINS.filter((c) => !isTestnetChainId(c))
 
   const [pools, farmConfig] = await Promise.all([
     fetchFarmPools({ chainId, protocols: DEFAULT_PROTOCOLS }),

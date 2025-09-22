@@ -45,7 +45,7 @@ export const fetchExplorerFarmPools = async (
     params: {
       query: {
         protocols: args.protocols ?? DEFAULT_PROTOCOLS,
-        chains: chains.filter(isEvm).reduce((acc, cur) => {
+        chains: chains.reduce((acc, cur) => {
           if (cur) {
             acc.push(getChainNameInKebabCase(cur as ChainId))
           }
