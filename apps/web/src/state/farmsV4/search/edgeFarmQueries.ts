@@ -257,7 +257,7 @@ async function fetchAllExplorerPoolsBySymbols(
   if (!symbols.length) return []
 
   const baseUrl = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`
-  const chainNames = chains.map((chain) => getEdgeChainName(chain))
+  const chainNames = chains.filter((id) => isEvm(id)).map((chain) => getEdgeChainName(chain as ChainId))
 
   const chunks = chunk(symbols, 20)
   const allPools = await mergePromiseList(
