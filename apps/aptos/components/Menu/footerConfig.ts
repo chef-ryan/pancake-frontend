@@ -70,7 +70,7 @@ export const footerLinks: (t: ContextApi['t']) => FooterLinkType[] = (t) => [
     items: [
       {
         label: t('Get Help'),
-        href: 'https://docs.pancakeswap.finance/contact-us/customer-support',
+        href: 'https://docs.pancakeswap.finance/welcome-to-pancakeswap/contact-us/faq/help',
       },
       {
         label: t('Troubleshooting'),

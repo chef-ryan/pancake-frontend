@@ -46,7 +46,7 @@ export const EXPERIMENTAL_FEATURE_CONFIGS: ExperimentalFeatureConfigs = [
   },
   {
     feature: EXPERIMENTAL_FEATURES.BRIDGE_V2,
-    percentage: 0,
+    percentage: 1,
     whitelist: [],
   },
 ]

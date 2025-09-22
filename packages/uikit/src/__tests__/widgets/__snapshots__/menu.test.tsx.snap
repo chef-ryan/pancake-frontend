@@ -2411,7 +2411,7 @@ exports[`renders correctly 1`] = `
             <a
               class="c12 c13"
               data-theme="dark"
-              href="Support https://docs.pancakeswap.finance/contact-us/customer-support"
+              href="Support https://docs.pancakeswap.finance/welcome-to-pancakeswap/contact-us/faq/help"
               rel="noreferrer noopener"
               style="text-transform: none;"
               target="_blank"
