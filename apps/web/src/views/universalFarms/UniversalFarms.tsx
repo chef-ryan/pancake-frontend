@@ -5,8 +5,6 @@ import Page_ from 'components/Layout/Page'
 import { useRouter } from 'next/router'
 import { PropsWithChildren, useMemo } from 'react'
 import styled from 'styled-components'
-import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { isSolana } from '@pancakeswap/chains'
 import { PoolsBanner } from './components'
 import { AddLiquidityButton } from './components/AddLiquidityButton'
 import { PoolsPage } from './PoolsPage'
@@ -92,7 +90,6 @@ export const UniversalFarms: React.FC<PropsWithChildren> = () => {
   const { t } = useTranslation()
   const { tabIdx } = usePageInfo()
   const { isMobile, isMd } = useMatchBreakpoints()
-  const { chainId } = useAccountActiveChain()
 
   const tabsConfig = useMemo(() => {
     return {
@@ -126,10 +123,7 @@ export const UniversalFarms: React.FC<PropsWithChildren> = () => {
           {!isMobile && !isMd && (
             <ButtonContainer mb="12px">
               <CreatePoolButton scale="md" />
-              <AddLiquidityButton
-                scale="md"
-                to={isSolana(chainId) ? 'https://solana.pancakeswap.finance/positions/' : '/liquidity/select'}
-              />
+              <AddLiquidityButton scale="md" />
             </ButtonContainer>
           )}
         </FlexGap>

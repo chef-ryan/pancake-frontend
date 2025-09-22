@@ -11,11 +11,7 @@ export const AddLiquidityButton: React.FC<ButtonProps & { wrapperProps?: BoxProp
   const { t } = useTranslation()
   const router = useRouter()
   const handleClick = useCallback(() => {
-    if (to.startsWith('http')) {
-      window.open(to, '_blank')
-    } else {
-      router.push(to)
-    }
+    router.push(to)
   }, [router, to])
   return (
     <Box width="100%" minWidth="max-content" {...wrapperProps}>
