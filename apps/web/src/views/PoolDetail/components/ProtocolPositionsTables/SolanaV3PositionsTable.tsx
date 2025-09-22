@@ -446,6 +446,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         totalApr={computed.totalApr}
         totalEarnings={formatPoolDetailFiatNumber(computed.totalEarn)}
         data={computed.rows.map((r) => r.tableRow)}
+        onlyFarmHarvest={false}
         harvestAllButton={
           <PrimaryOutlineButton onClick={handleHarvestAll} disabled={sending || !computed.totalEarn}>
             {sending ? t('Harvesting...') : t('Harvest All')}
@@ -457,6 +458,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
 }
 
 // Helper component: uses simulation to compute pending yield and feeds back to parent
+// todo:@eric
 const SolanaV3EarningsProbe: FC<{
   tokenId: string
   poolInfo: SolanaV3PoolInfo

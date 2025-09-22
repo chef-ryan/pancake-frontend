@@ -3,7 +3,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { AutoColumn, Box, CardBody, FlexGap, TableView, Text, Toggle, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { displayApr } from '@pancakeswap/utils/displayApr'
 import { LightCard, LightGreyCard } from '@pancakeswap/widgets-internal'
-import { PoolInfo } from 'state/farmsV4/state/type'
+import { UnifedPoolInfo } from 'state/farmsV4/state/type'
 import styled from 'styled-components'
 import { isInfinityProtocol } from 'utils/protocols'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
@@ -31,7 +31,7 @@ const StyledPositionCard = styled(Box)`
 
 interface PositionsTableProps {
   data: any[]
-  poolInfo?: PoolInfo | null
+  poolInfo?: UnifedPoolInfo | null
   totalLiquidityUSD: number
   totalApr: number
   showInactiveOnly?: boolean
@@ -39,6 +39,7 @@ interface PositionsTableProps {
   harvestAllButton?: React.ReactNode
   totalEarnings?: string
   onRowClick?: (record: any) => void
+  onlyFarmHarvest?: boolean
 }
 
 export const PositionsTable: React.FC<PositionsTableProps> = ({
@@ -51,6 +52,7 @@ export const PositionsTable: React.FC<PositionsTableProps> = ({
   totalEarnings,
   data,
   onRowClick,
+  onlyFarmHarvest = true,
 }) => {
   const { t } = useTranslation()
 
@@ -83,7 +85,7 @@ export const PositionsTable: React.FC<PositionsTableProps> = ({
           <LightGreyCard padding="8px 16px" width={isSmallScreen ? '100%' : 'max-content'} borderRadius="24px">
             <FlexGap gap="16px" alignItems="center" justifyContent="space-between">
               <Box>
-                <Text color="textSubtle">{t('Total Farm Earnings')}</Text>
+                <Text color="textSubtle">{onlyFarmHarvest ? t('Total Farm Earnings') : t('Total Earnings')}</Text>
                 <Text fontSize="24px" bold>
                   {totalEarnings || '-'}
                 </Text>
