@@ -249,6 +249,11 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
 
   const { data: priceMap } = useBirdeyeTokenPrice({ mintList: tokenMints, enabled: chainId === NonEVMChainId.SOLANA })
 
+  const poolForAction = useMemo(
+    () => ({ ...poolInfo, rawPool: { ...poolInfo.rawPool, price: 1 / poolInfo.rawPool.price } }),
+    [poolInfo],
+  )
+
   const rowsDisplay: SolanaPositionRow[] = useMemo(() => {
     return (
       data?.tableBase?.map((base) => {
@@ -381,7 +386,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
                 removed={base.raw.liquidity.isZero()}
                 outOfRange={outOfRange}
                 chainId={NonEVMChainId.SOLANA}
-                poolInfo={poolInfo}
+                poolInfo={poolForAction}
                 position={position}
               />
             ),
@@ -392,7 +397,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         return display
       }) ?? []
     )
-  }, [priceMap, poolInfo, data?.tableBase, data?.computePoolInfo])
+  }, [poolForAction, poolOnchain, priceMap, poolInfo, data?.tableBase, data?.computePoolInfo])
 
   // Simulation-based pending yield per position (follow solana app logic)
   const [earningsUsdMap, setEarningsUsdMap] = useState<Record<string, number>>({})
