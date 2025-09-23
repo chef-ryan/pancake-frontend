@@ -1,6 +1,7 @@
 import { isTestnetChainId } from '@pancakeswap/chains'
 import { Currency, getCurrencyAddress, UnifiedCurrency } from '@pancakeswap/sdk'
 import { useQuery } from '@tanstack/react-query'
+import { CHAIN_QUERY_NAME } from 'config/chains'
 
 import { SLOW_INTERVAL } from 'config/constants'
 import { atom } from 'jotai'
@@ -18,7 +19,7 @@ export function useCurrencyUsdPrice(currency: UnifiedCurrency | undefined | null
       if (!currency) {
         throw new Error('No currency provided')
       }
-      return usdPriceBatcher.fetch(currency)
+      return usdPriceBatcher.fetch({ ...currency, chainName: CHAIN_QUERY_NAME[currency.chainId] })
     },
     staleTime: SLOW_INTERVAL,
     refetchInterval: SLOW_INTERVAL,

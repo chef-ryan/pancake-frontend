@@ -5,6 +5,7 @@ import { TxVersion } from '@pancakeswap/solana-core-sdk'
 import { UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { Bound } from 'config/constants/types'
 import { CurrencyField as Field } from 'utils/types'
+import { SolanaV3Pool } from 'state/pools/solana'
 
 import { useRaydium } from './useRaydium'
 import type { CreatePoolBuildData } from './useCreateClmmPool'
@@ -14,7 +15,7 @@ type Ticks = { [Bound.LOWER]?: number; [Bound.UPPER]?: number }
 type AmountMap = { [key in Field]?: UnifiedCurrencyAmount<UnifiedCurrency> }
 
 type Params = {
-  poolInfo?: any
+  poolInfo?: SolanaV3Pool
   ticks: Ticks
   independentField: Field
   dependentField: Field
@@ -33,15 +34,16 @@ export function useCreatePosition() {
       if (!tickLower || !tickUpper) {
         return { txId: '' }
       }
+      const isSorted = parsedAmounts[Field.CURRENCY_A]?.currency.wrapped.address === poolInfo.mintA.address
       const buildData = await raydium.clmm.openPositionFromBase({
         poolInfo,
         poolKeys: createBuildData?.extInfo.address,
         ownerInfo: {
-          useSOLBalance: isSolWSol(poolInfo.mintA) || isSolWSol(poolInfo.mintB),
+          useSOLBalance: isSolWSol(poolInfo.mintA as UnifiedCurrency) || isSolWSol(poolInfo.mintB as UnifiedCurrency),
         },
         tickLower: Math.min(tickLower, tickUpper),
         tickUpper: Math.max(tickLower, tickUpper),
-        base: independentField === Field.CURRENCY_A ? 'MintA' : 'MintB',
+        base: independentField === Field.CURRENCY_A ? (isSorted ? 'MintA' : 'MintB') : isSorted ? 'MintB' : 'MintA',
         baseAmount: new BN(parsedAmounts[independentField]?.quotient ?? 0),
         otherAmountMax: new BN(parsedAmounts[dependentField]?.quotient ?? 0),
         txVersion: TxVersion.V0,
