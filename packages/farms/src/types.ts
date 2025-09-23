@@ -318,12 +318,20 @@ export interface FarmV3DataWithPriceAndUserInfo extends FarmV3DataWithPriceTVL {
 export enum Protocol {
   V2 = 'v2',
   V3 = 'v3',
+  SolanaV3 = 'solanaV3',
   STABLE = 'stable',
   InfinityBIN = 'infinityBin',
   InfinityCLAMM = 'infinityCl',
 }
 
-export const ALL_PROTOCOLS = [Protocol.V2, Protocol.V3, Protocol.STABLE, Protocol.InfinityBIN, Protocol.InfinityCLAMM]
+export const ALL_PROTOCOLS = [
+  Protocol.V2,
+  Protocol.V3,
+  Protocol.SolanaV3,
+  Protocol.STABLE,
+  Protocol.InfinityBIN,
+  Protocol.InfinityCLAMM,
+]
 
 export type FarmBaseConfig = {
   // @deprecated
