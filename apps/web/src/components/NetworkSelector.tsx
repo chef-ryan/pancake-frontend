@@ -43,7 +43,7 @@ export const NetworkSelector = ({
   return (
     <Select
       options={chainList.map((chain) => ({
-        label: chain.name,
+        label: chain.fullName,
         value: chain,
         imageUrl: `${ASSET_CDN}/web/chains/${chain.id}.png`,
       }))}
