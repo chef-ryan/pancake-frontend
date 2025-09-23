@@ -40,6 +40,7 @@ export const CreateSolanaLiquidityV3Form = () => {
   const [feeLevel] = useFeeLevelQueryState()
   const poolExists = useMemo(() => noLiquidity === false && !!feeLevel, [feeLevel, noLiquidity])
   const currenciesExist = currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B]
+  const { [Field.CURRENCY_A]: currency0, [Field.CURRENCY_B]: currency1 } = currencies
 
   return (
     <Box maxWidth={[null, null, null, '560px']} mx="auto">
@@ -49,7 +50,7 @@ export const CreateSolanaLiquidityV3Form = () => {
             <FieldSelectCurrencies />
 
             <DynamicSection disabled={!currenciesExist}>
-              <FieldFeeLevel />
+              <FieldFeeLevel baseCurrency={currency0} quoteCurrency={currency1} feeAmount={feeLevel ?? undefined} />
             </DynamicSection>
 
             {poolExists && currenciesExist && <MessagePoolInitialized protocol={Protocol.V3} />}
