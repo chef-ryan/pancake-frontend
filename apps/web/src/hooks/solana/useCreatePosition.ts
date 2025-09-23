@@ -61,7 +61,8 @@ export function useCreatePosition() {
         const { execute } = await createBuildData.builder.sizeCheckBuildV0()
         return execute({ sequentially: true })
       }
-      buildData.simulate()
+      const res = await buildData.simulate()
+      console.log('simulation result: ', res, buildData)
       return buildData.execute()
     },
     [raydium?.clmm],
