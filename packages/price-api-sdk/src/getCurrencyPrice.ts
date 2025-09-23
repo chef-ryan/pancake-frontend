@@ -26,7 +26,7 @@ export type CurrencyParams =
       isNative: true
     }
 
-export type CurrencyKey = `${number}:${string}` | string
+export type CurrencyKey = `${number}:${string}`
 
 export type CurrencyUsdResult = Record<CurrencyKey, number>
 
@@ -40,7 +40,7 @@ export function getCurrencyKey(currencyParams?: CurrencyParams): CurrencyKey | u
     return `${currencyParams.chainId}:${zeroAddress}`
   }
   const { chainId, address } = currencyParams
-  return CHAINS_FOR_NEW_WALLET_API.includes(chainId) ? address : `${chainId}:${address.toLowerCase()}`
+  return CHAINS_FOR_NEW_WALLET_API.includes(chainId) ? (address as CurrencyKey) : `${chainId}:${address.toLowerCase()}`
 }
 
 export function getCurrencyListKey(currencyListParams?: CurrencyParams[]): string | undefined {
