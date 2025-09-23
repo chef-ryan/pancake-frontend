@@ -4,10 +4,10 @@ import { wSolToSol } from '@pancakeswap/sdk'
 import { CHAIN_QUERY_NAME } from 'config/chains'
 import { PERSIST_CHAIN_KEY } from 'config/constants'
 import { getAddInfinityLiquidityURL } from 'config/constants/liquidity'
-import type { InfinityPoolInfo, PoolInfo } from 'state/farmsV4/state/type'
+import type { InfinityPoolInfo, PoolInfo, UnifedPoolInfo } from 'state/farmsV4/state/type'
 import { multiChainPaths } from 'state/info/constant'
-import type { Address } from 'viem'
 import { NonEVMChainId } from '@pancakeswap/chains'
+
 import { addQueryToPath } from './addQueryToPath'
 import { isAddressEqual } from './safeGetAddress'
 import { currencyId } from './currencyId'
@@ -33,9 +33,8 @@ export function getPoolAddLiquidityLink(pool: PoolInfo): string {
   return addQueryToPath(`/add/${tokenPath}/${feeTier}`, { chain: CHAIN_QUERY_NAME[chainId], [PERSIST_CHAIN_KEY]: '1' })
 }
 
-export async function getLinkForPool(pool: PoolInfo, type: 'detail' | 'info'): Promise<string> {
-  const { chainId, protocol, lpAddress, stableSwapAddress, feeTier } = pool
-  const { poolId } = pool as Partial<InfinityPoolInfo>
+export async function getLinkForPool(pool: UnifedPoolInfo, type: 'detail' | 'info'): Promise<string> {
+  const { chainId, protocol, lpAddress, stableSwapAddress } = pool
 
   if (type === 'detail') {
     const linkPrefix = `/liquidity/pool${multiChainPaths[chainId] || '/bsc'}`
@@ -56,8 +55,7 @@ export async function getLinkForPool(pool: PoolInfo, type: 'detail' | 'info'): P
   }
 
   // info page
-  const toLink = (addr: Address, p: string, q: string = '') =>
-    `/info/${p}${multiChainPaths[chainId]}/pairs/${addr}?${q}`
+  const toLink = (addr: string, p: string, q: string = '') => `/info/${p}${multiChainPaths[chainId]}/pairs/${addr}?${q}`
   if (protocol === Protocol.STABLE) {
     const pairs = await LegacyRouter.getStableSwapPairs(chainId)
     const ssPair = pairs?.find((pair) => isAddressEqual(pair.lpAddress, lpAddress))
@@ -68,5 +66,5 @@ export async function getLinkForPool(pool: PoolInfo, type: 'detail' | 'info'): P
   return toLink(lpAddress!, protocol)
 }
 
-export const getPoolDetailPageLink = (pool: PoolInfo) => getLinkForPool(pool, 'detail')
+export const getPoolDetailPageLink = (pool: UnifedPoolInfo) => getLinkForPool(pool, 'detail')
 export const getPoolInfoPageLink = (pool: PoolInfo) => getLinkForPool(pool, 'info')

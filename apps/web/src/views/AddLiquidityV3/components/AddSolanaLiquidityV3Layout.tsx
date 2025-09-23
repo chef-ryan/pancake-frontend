@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import styled from 'styled-components'
 import { Box, Breadcrumbs, Container, FlexGap, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
@@ -8,6 +9,7 @@ import { useActiveChainId } from 'hooks/useAccountActiveChain'
 import { useSolanaPoolByMint } from 'hooks/solana/useSolanaPoolsByMint'
 import { PoolInfoHeader } from 'components/PoolInfoHeader'
 import { SolanaPoolDerivedAprText } from 'views/universalFarms/components/SolanaPoolDerivedAprButton'
+import { getPoolDetailPageLink } from 'utils/getPoolLink'
 
 import { useCurrencyParams } from '../hooks/useCurrencyParams'
 import { useHeaderInvertCurrencies } from '../hooks/useHeaderInvertCurrencies'
@@ -51,6 +53,17 @@ export function AddSolanaLiquidityV3Layout({ children }: { children: React.React
   const currencyA = poolInfo?.token0 ?? baseCurrency ?? undefined
   const currencyB = poolInfo?.token1 ?? quoteCurrency ?? undefined
 
+  const { data: detailPageLink } = useQuery({
+    queryKey: ['poolDetailLink', chainId, poolInfo],
+    queryFn: () => {
+      if (chainId && poolInfo) {
+        return getPoolDetailPageLink(poolInfo)
+      }
+      return null
+    },
+    enabled: !!chainId && !!poolInfo,
+  })
+
   return (
     <Container mx="auto" my="24px" maxWidth="1200px">
       <Box mb="24px">
@@ -58,8 +71,8 @@ export function AddSolanaLiquidityV3Layout({ children }: { children: React.React
           <NextLinkFromReactRouter to="/liquidity/pools">
             <LinkText>{t('Farms')}</LinkText>
           </NextLinkFromReactRouter>
-          {chainId && poolInfo && (
-            <NextLinkFromReactRouter to="">
+          {chainId && poolInfo && detailPageLink && (
+            <NextLinkFromReactRouter to={detailPageLink}>
               <LinkText>{t('Pool Detail')}</LinkText>
             </NextLinkFromReactRouter>
           )}
