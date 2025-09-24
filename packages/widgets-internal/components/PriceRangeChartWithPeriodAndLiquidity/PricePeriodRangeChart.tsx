@@ -1,5 +1,5 @@
 import { useTranslation } from "@pancakeswap/localization";
-import { Currency, Price, isCurrencySorted } from "@pancakeswap/swap-sdk-core";
+import { Currency, Price, isUnifedCurrencySorted } from "@pancakeswap/swap-sdk-core";
 import { AutoColumn, BunnyKnownPlaceholder, ChartDisableIcon, LineGraphIcon } from "@pancakeswap/uikit";
 import * as Sentry from "@sentry/nextjs";
 import { format } from "d3";
@@ -64,7 +64,7 @@ export function PricePeriodRangeChart({
   const theme = useTheme();
 
   const isSorted = useMemo(
-    () => baseCurrency && quoteCurrency && isCurrencySorted(baseCurrency, quoteCurrency),
+    () => baseCurrency && quoteCurrency && isUnifedCurrencySorted(baseCurrency, quoteCurrency),
     [baseCurrency, quoteCurrency]
   );
 
