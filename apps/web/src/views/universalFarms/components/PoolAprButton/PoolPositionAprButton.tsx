@@ -35,7 +35,6 @@ import {
 import { CakeApr } from 'state/farmsV4/atom'
 import { APRBreakdownModal } from './AprBreakdownModal'
 import { PoolAprButton } from './PoolAprButton'
-import { SimpleDebugView } from '../PositionItem/PositionDebugView'
 
 type PoolPositionAprButtonProps<TPosition, TPoolInfo = PoolInfo> = {
   pool: TPoolInfo
