@@ -24,6 +24,10 @@ const ARBITRUM_NODES = [
   'https://arbitrum.llamarpc.com',
 ].filter(Boolean)
 
+const MONAD_RPC_URLS = [process.env.NEXT_PUBLIC_MONAD_RPC || 'https://rpc.monad.xyz', 'https://rpc1.monad.xyz'].filter(
+  Boolean,
+)
+
 export const SERVER_NODES = {
   [ChainId.BSC]: [
     getNodeRealUrl(ChainId.BSC, process.env.SERVER_NODE_REAL_API_ETH) || '',
@@ -78,6 +82,7 @@ export const SERVER_NODES = {
   [ChainId.SEPOLIA]: sepolia.rpcUrls.default.http,
   [ChainId.ARBITRUM_SEPOLIA]: arbitrumSepolia.rpcUrls.default.http,
   [ChainId.BASE_SEPOLIA]: baseSepolia.rpcUrls.default.http,
+  [ChainId.MONAD_MAINNET]: MONAD_RPC_URLS,
   [ChainId.MONAD_TESTNET]: [
     'https://testnet-rpc2.monad.xyz/52227f026fa8fac9e2014c58fbf5643369b3bfc6',
     ...monadTestnet.rpcUrls.default.http,
@@ -153,6 +158,7 @@ export const PUBLIC_NODES: Record<ChainId, string[] | readonly string[]> = {
   [ChainId.SEPOLIA]: sepolia.rpcUrls.default.http,
   [ChainId.ARBITRUM_SEPOLIA]: arbitrumSepolia.rpcUrls.default.http,
   [ChainId.BASE_SEPOLIA]: baseSepolia.rpcUrls.default.http,
+  [ChainId.MONAD_MAINNET]: MONAD_RPC_URLS,
   [ChainId.MONAD_TESTNET]: [
     'https://testnet-rpc2.monad.xyz/52227f026fa8fac9e2014c58fbf5643369b3bfc6',
     ...monadTestnet.rpcUrls.default.http,

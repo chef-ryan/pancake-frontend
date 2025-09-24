@@ -19,6 +19,7 @@ export function getStableSwapSubgraphs({ theGraphApiKey }: Pick<SubgraphParams, 
   return {
     [ChainId.BSC]: `https://gateway-arbitrum.network.thegraph.com/api/${theGraphApiKey}/subgraphs/id/C5EuiZwWkCge7edveeMcvDmdr7jjc1zG4vgn8uucLdfz`,
     [ChainId.ARBITRUM_ONE]: `https://gateway-arbitrum.network.thegraph.com/api/${theGraphApiKey}/subgraphs/id/y7G5NUSq5ngsLH2jBGQajjxuLgW1bcqWiBqKmBk3MWM`,
+    [ChainId.MONAD_MAINNET]: null,
   } as const
 }
 
@@ -43,6 +44,7 @@ export function getV3Subgraphs({ noderealApiKey, theGraphApiKey }: SubgraphParam
     [ChainId.SEPOLIA]: null,
     [ChainId.ARBITRUM_SEPOLIA]: null,
     [ChainId.BASE_SEPOLIA]: null,
+    [ChainId.MONAD_MAINNET]: null,
     [ChainId.MONAD_TESTNET]: null,
   } as const satisfies Record<ChainId, string | null>
 }
@@ -58,6 +60,7 @@ export function getV2Subgraphs({ noderealApiKey, theGraphApiKey }: SubgraphParam
     [ChainId.LINEA]: `https://gateway-arbitrum.network.thegraph.com/api/${theGraphApiKey}/subgraphs/id/Eti2Z5zVEdARnuUzjCbv4qcimTLysAizsqH3s6cBfPjB`,
     [ChainId.BASE]: `https://gateway-arbitrum.network.thegraph.com/api/${theGraphApiKey}/subgraphs/id/2NjL7L4CmQaGJSacM43ofmH6ARf6gJoBeBaJtz9eWAQ9`,
     [ChainId.OPBNB]: `https://open-platform-ap.nodereal.io/${noderealApiKey}/opbnb-mainnet-graph-query/subgraphs/name/pancakeswap/exchange-v2`,
+    [ChainId.MONAD_MAINNET]: null,
   }
 }
 
@@ -70,5 +73,6 @@ export function getBlocksSubgraphs({ noderealApiKey }: SubgraphParams) {
     [ChainId.LINEA]: 'https://api.studio.thegraph.com/query/45376/blocks-linea/version/latest',
     [ChainId.BASE]: 'https://api.studio.thegraph.com/query/48211/base-blocks/version/latest',
     [ChainId.OPBNB]: `https://open-platform-ap.nodereal.io/${noderealApiKey}/opbnb-mainnet-graph-query/subgraphs/name/pancakeswap/blocks`,
+    [ChainId.MONAD_MAINNET]: null,
   } as const
 }
