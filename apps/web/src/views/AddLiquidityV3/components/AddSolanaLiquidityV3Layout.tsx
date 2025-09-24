@@ -43,7 +43,8 @@ export function AddSolanaLiquidityV3Layout({ children }: { children: React.React
         poolInfo?.token0 &&
           poolInfo?.token1 &&
           poolInfo?.token0.wrapped.address !== poolInfo?.token1.wrapped.address &&
-          poolInfo?.token0.wrapped.address !== baseCurrency?.wrapped.address,
+          baseCurrency &&
+          !poolInfo.token0.wrapped.equals(baseCurrency),
       ),
     [poolInfo, baseCurrency],
   )

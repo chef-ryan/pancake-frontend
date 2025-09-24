@@ -70,7 +70,6 @@ import {
   useCurrencyInversionEvent,
   useHeaderInvertCurrencies,
 } from 'views/AddLiquidityV3/hooks/useHeaderInvertCurrencies'
-import { QUICK_ACTION_CONFIGS } from 'views/AddLiquidityV3/types'
 import { MarketPriceSlippageWarning } from 'views/CreateLiquidityPool/components/SubmitCreateButton'
 import { Dot } from 'views/Notifications/styles'
 import { LiquiditySlippageButton } from 'views/Swap/components/SlippageButton'
@@ -349,14 +348,6 @@ export function SolanaFormView({
     [baseCurrency, quoteCurrency],
   )
   const displayedPrice = useMemo(() => (isSorted ? price : price?.invert()), [isSorted, price])
-  const minPrice = useMemo(
-    () => (isSorted ? pricesAtTicks[Bound.LOWER] : pricesAtTicks[Bound.UPPER]?.invert()),
-    [isSorted, pricesAtTicks],
-  )
-  const maxPrice = useMemo(
-    () => (isSorted ? pricesAtTicks[Bound.UPPER] : pricesAtTicks[Bound.LOWER]?.invert()),
-    [isSorted, pricesAtTicks],
-  )
 
   const [activeQuickAction, setActiveQuickAction] = useState<number>()
   const isQuickButtonUsed = useRef(false)
@@ -403,7 +394,7 @@ export function SolanaFormView({
         poolInfo: solPoolInfo?.rawPool ?? createBuildData?.extInfo.mockPoolInfo,
       })
       setAttemptingTxn(false)
-      const hash = 'txId' in res ? res.txId : 'txIds' in res ? res.txIds[0] : ''
+      const hash = res ? ('txId' in res ? res.txId : 'txIds' in res ? res.txIds[0] : '') : ''
       setTxHash(hash)
       onAddLiquidityCallback(hash)
     } catch (e: any) {
@@ -431,18 +422,16 @@ export function SolanaFormView({
   ])
 
   const confirmationContent = useCallback(() => {
-    const currencyA = currencies[Field.CURRENCY_A]
-    const currencyB = currencies[Field.CURRENCY_B]
-
+    const [currency0, currency1] = [solPoolInfo?.token0, solPoolInfo?.token1]
     return (
       <ConfirmationModalContent
         topContent={() => (
           <AutoColumn gap="md" style={{ marginTop: '0.5rem' }}>
             <RowBetween style={{ marginBottom: '0.5rem' }}>
               <FlexGap gap="8px" alignItems="center">
-                <DoubleCurrencyLogo currency0={currencyA} currency1={currencyB} size={24} />
+                <DoubleCurrencyLogo currency0={currency0} currency1={currency1} size={24} />
                 <Text bold>
-                  {currencyA?.symbol}-{currencyB?.symbol}
+                  {currency0?.symbol}-{currency1?.symbol}
                 </Text>
               </FlexGap>
               <RangeTag removed={false} outOfRange={Boolean(outOfRange)} />
@@ -452,32 +441,36 @@ export function SolanaFormView({
               <AutoColumn gap="sm">
                 <RowBetween>
                   <FlexGap gap="4px" alignItems="center">
-                    <CurrencyLogo currency={currencyA} />
-                    <Text>{currencyA?.symbol}</Text>
+                    <CurrencyLogo currency={currency0} />
+                    <Text>{currency0?.symbol}</Text>
                   </FlexGap>
                   <Box>
-                    <Text>{parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) || '-'}</Text>
+                    <Text>
+                      {parsedAmounts[isSorted ? Field.CURRENCY_A : Field.CURRENCY_B]?.toSignificant(6) || '-'}
+                    </Text>
                     <Text fontSize="10px" color="textSubtle" textAlign="right">
-                      ~{formatDollarAmount(usdA)}
+                      ~{formatDollarAmount(isSorted ? usdA : usdB)}
                     </Text>
                   </Box>
                 </RowBetween>
                 <RowBetween>
                   <FlexGap gap="4px" alignItems="center">
-                    <CurrencyLogo currency={currencyB} />
-                    <Text>{currencyB?.symbol}</Text>
+                    <CurrencyLogo currency={currency1} />
+                    <Text>{currency1?.symbol}</Text>
                   </FlexGap>
                   <Box>
-                    <Text>{parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) || '-'}</Text>
+                    <Text>
+                      {parsedAmounts[isSorted ? Field.CURRENCY_B : Field.CURRENCY_A]?.toSignificant(6) || '-'}
+                    </Text>
                     <Text fontSize="10px" color="textSubtle" textAlign="right">
-                      ~{formatDollarAmount(usdB)}
+                      ~{formatDollarAmount(isSorted ? usdB : usdA)}
                     </Text>
                   </Box>
                 </RowBetween>
                 <Divider />
                 <RowBetween>
                   <Text color="textSubtle">{t('Fee Tier')}</Text>
-                  <Text>{((feeAmount ?? (pool as any)?.fee ?? 0) / 10000).toString()}%</Text>
+                  <Text>{((feeAmount ?? solPoolInfo?.feeTier ?? 0) / 10000).toString()}%</Text>
                 </RowBetween>
               </AutoColumn>
             </LightGreyCard>
@@ -491,22 +484,22 @@ export function SolanaFormView({
                 <RangePriceSection
                   width="48%"
                   title={t('Min Price')}
-                  currency0={(isSorted ? quoteCurrency : baseCurrency) ?? undefined}
-                  currency1={(isSorted ? baseCurrency : quoteCurrency) ?? undefined}
-                  price={formatTickPrice(minPrice, ticksAtLimit, Bound.LOWER, locale)}
+                  currency0={quoteCurrency}
+                  currency1={baseCurrency}
+                  price={formatTickPrice(pricesAtTicks[Bound.LOWER], ticksAtLimit, Bound.LOWER, locale)}
                 />
                 <RangePriceSection
                   width="48%"
                   title={t('Max Price')}
-                  currency0={(isSorted ? quoteCurrency : baseCurrency) ?? undefined}
-                  currency1={(isSorted ? baseCurrency : quoteCurrency) ?? undefined}
-                  price={formatTickPrice(maxPrice, ticksAtLimit, Bound.UPPER, locale)}
+                  currency0={quoteCurrency}
+                  currency1={baseCurrency}
+                  price={formatTickPrice(pricesAtTicks[Bound.UPPER], ticksAtLimit, Bound.UPPER, locale)}
                 />
               </RowBetween>
               <RangePriceSection
                 title={t('Current Price')}
-                currency0={(isSorted ? quoteCurrency : baseCurrency) ?? undefined}
-                currency1={(isSorted ? baseCurrency : quoteCurrency) ?? undefined}
+                currency0={quoteCurrency}
+                currency1={baseCurrency}
                 price={formatPrice(displayedPrice, 6, locale)}
               />
             </AutoColumn>
@@ -528,23 +521,23 @@ export function SolanaFormView({
     )
   }, [
     baseCurrency,
-    currencies,
     displayedPrice,
     feeAmount,
     isSorted,
     locale,
-    maxPrice,
-    minPrice,
     onAdd,
     outOfRange,
     parsedAmounts,
-    pool,
     quoteCurrency,
     t,
     ticksAtLimit,
     totalUsdValue,
     usdA,
     usdB,
+    pricesAtTicks,
+    solPoolInfo?.feeTier,
+    solPoolInfo?.token0,
+    solPoolInfo?.token1,
   ])
 
   const [onPresentAddLiquidityModal] = useModal(
