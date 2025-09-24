@@ -8,6 +8,7 @@ import { PoolInfo } from 'state/farmsV4/state/type'
 import { useFeeLevelQueryState } from 'state/infinity/create'
 import { getPoolAddLiquidityLink } from 'utils/getPoolLink'
 import { useCurrencies } from 'views/CreateLiquidityPool/hooks/useCurrencies'
+import { isSolana } from '@pancakeswap/chains'
 
 export const MessagePoolInitialized = ({ protocol }: { protocol?: Protocol }) => {
   const { t } = useTranslation()
@@ -26,6 +27,15 @@ export const MessagePoolInitialized = ({ protocol }: { protocol?: Protocol }) =>
         protocol: Protocol.V2,
         token0: baseCurrency,
         token1: quoteCurrency,
+      } as PoolInfo)
+    }
+    if (isSolana(chainId)) {
+      return getPoolAddLiquidityLink({
+        chainId,
+        protocol: Protocol.V3,
+        token0: baseCurrency,
+        token1: quoteCurrency,
+        feeTier: feeLevel ?? undefined,
       } as PoolInfo)
     }
     return getPoolAddLiquidityLink({

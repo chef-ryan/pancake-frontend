@@ -38,7 +38,7 @@ const checkAndParseMaxTick = (tick: number) => (tick === MAX_TICK ? MAX_TICK - 1
 export const useSolanaDerivedInfo = (
   currencyA?: UnifiedCurrency,
   currencyB?: UnifiedCurrency,
-  feeAmount?: FeeAmount,
+  feeAmount?: number,
   baseCurrency?: UnifiedCurrency,
   existingPosition?: Position,
   formState?: MintState,

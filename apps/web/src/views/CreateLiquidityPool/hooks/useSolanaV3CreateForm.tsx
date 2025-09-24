@@ -95,7 +95,7 @@ export const useSolanaV3CreateForm = () => {
   } = useSolanaDerivedInfo(
     baseCurrency ?? undefined,
     quoteCurrency ?? undefined,
-    feeAmount as any,
+    feeAmount ?? undefined,
     baseCurrency ?? undefined,
     undefined,
     formState,
