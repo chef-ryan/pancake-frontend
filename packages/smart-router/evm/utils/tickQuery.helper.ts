@@ -71,7 +71,7 @@ type WithClientProvider = {
   clientProvider?: OnChainProvider
 }
 
-function getCallData(pool: V3Pool | InfinityClPool, len: bigint) {
+export function getCallData(pool: V3Pool | InfinityClPool, len: bigint) {
   switch (pool.type) {
     case PoolType.V3:
       return encodeFunctionData({
@@ -90,7 +90,7 @@ function getCallData(pool: V3Pool | InfinityClPool, len: bigint) {
   }
 }
 
-function decodeResult(result: Hex, pool: V3Pool | InfinityClPool) {
+export function decodeResult(result: Hex, pool: V3Pool | InfinityClPool) {
   const rawTicks = decodeFunctionResult({
     abi: queryDataAbi,
     functionName:
@@ -100,7 +100,7 @@ function decodeResult(result: Hex, pool: V3Pool | InfinityClPool) {
   return decodeTicksFromBytes(rawTicks)
 }
 
-function getTickSpacing(pool: V3Pool | InfinityClPool): number {
+export function getTickSpacing(pool: V3Pool | InfinityClPool): number {
   if (pool.type === PoolType.V3) {
     return TICK_SPACINGS[Number(pool.fee) as FeeAmount]
   }

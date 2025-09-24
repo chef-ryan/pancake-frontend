@@ -37,6 +37,7 @@ test('exports', () => {
       "MIXED_ROUTE_QUOTER_ADDRESSES",
       "V3_QUOTER_ADDRESSES",
       "V3_TICK_LENS_ADDRESSES",
+      "TICK_QUERY_HELPER_ADDRESSES",
       "feeOnTransferDetectorAddresses",
       "fetchTokenFeeOnTransfer",
       "fetchTokenFeeOnTransferBatch",
