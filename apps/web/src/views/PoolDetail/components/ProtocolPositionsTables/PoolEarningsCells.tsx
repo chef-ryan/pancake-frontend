@@ -20,6 +20,11 @@ import { Tooltips } from 'components/Tooltips'
 import { useV3CakeEarning } from 'views/universalFarms/hooks/useCakeEarning'
 import { usePositionEarningAmount } from 'views/universalFarms/hooks/usePositionEarningAmount'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
+import { useSolanaV3RewardInfoFromSimulation } from 'views/universalFarms/hooks/useSolanaV3RewardInfoFromSimulation'
+import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
+import { SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
+import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
+import { TokenInfo } from '@pancakeswap/solana-core-sdk'
 
 // Helper function to standardize number conversion
 const safeParseFloat = (value: string | number | undefined): number => {
@@ -145,6 +150,128 @@ export const V3EarningsCell = ({
       }
     >
       <EarningsUSD earningsBusd={totalEarnings} />
+    </Tooltips>
+  )
+}
+
+export const SolanaV3EarningsCell = ({
+  poolInfo,
+  position,
+  positionClosed = false,
+  tokenId,
+  onReady,
+}: {
+  poolInfo: SolanaV3PoolInfo
+  position: SolanaV3PositionDetail
+  positionClosed?: boolean
+  tokenId?: string
+  onReady?: (tokenId: string, usd: number) => void
+}) => {
+  const { breakdownRewardInfo, totalPendingYield } = useSolanaV3RewardInfoFromSimulation({ poolInfo, position })
+
+  const totalUSD = Number(totalPendingYield?.toString?.() ?? 0)
+
+  useEffect(() => {
+    if (onReady && tokenId) {
+      onReady(tokenId, totalUSD)
+    }
+  }, [onReady, tokenId, totalUSD])
+
+  if (positionClosed) {
+    return <EarningsUSD earningsBusd={totalUSD} />
+  }
+
+  const feeA = breakdownRewardInfo.fee.A
+  const feeB = breakdownRewardInfo.fee.B
+  const { rewards } = breakdownRewardInfo
+
+  return (
+    <Tooltips
+      content={
+        <FlexGap flexDirection="column" alignItems="flex-start" gap="8px">
+          {/* LP Fees */}
+          {(Number(feeA?.amount || 0) > 0 || Number(feeB?.amount || 0) > 0) && (
+            <>
+              {feeA?.mint && (
+                <FlexGap flexDirection="column" alignItems="flex-start" gap="2px" width="100%">
+                  <FlexGap alignItems="center" justifyContent="space-between" width="100%" gap="16px">
+                    <FlexGap alignItems="center" gap="8px">
+                      <CurrencyLogo
+                        currency={convertRawTokenInfoIntoSPLToken(feeA.mint as TokenInfo)}
+                        size="16px"
+                        mb="-3px"
+                      />
+                      <Text fontSize="14px" bold>
+                        {convertRawTokenInfoIntoSPLToken(feeA.mint as TokenInfo)?.symbol}
+                      </Text>
+                    </FlexGap>
+                    <Text fontSize="14px" bold>
+                      {formatAmount(Number(feeA.amount) || 0)}
+                    </Text>
+                  </FlexGap>
+                  <Text color="textSubtle" fontSize="12px" textAlign="right" width="100%">
+                    {formatDollarAmount(Number(feeA.amountUSD) || 0)}
+                  </Text>
+                </FlexGap>
+              )}
+              {feeB?.mint && (
+                <FlexGap flexDirection="column" alignItems="flex-start" gap="2px" width="100%">
+                  <FlexGap alignItems="center" justifyContent="space-between" width="100%" gap="16px">
+                    <FlexGap alignItems="center" gap="8px">
+                      <CurrencyLogo
+                        currency={convertRawTokenInfoIntoSPLToken(feeB.mint as TokenInfo)}
+                        size="16px"
+                        mb="-3px"
+                      />
+                      <Text fontSize="14px" bold>
+                        {convertRawTokenInfoIntoSPLToken(feeB.mint as TokenInfo)?.symbol}
+                      </Text>
+                    </FlexGap>
+                    <Text fontSize="14px" bold>
+                      {formatAmount(Number(feeB.amount) || 0)}
+                    </Text>
+                  </FlexGap>
+                  <Text color="textSubtle" fontSize="12px" textAlign="right" width="100%">
+                    {formatDollarAmount(Number(feeB.amountUSD) || 0)}
+                  </Text>
+                </FlexGap>
+              )}
+            </>
+          )}
+
+          {/* Farm Rewards */}
+          {rewards && rewards.length > 0 && (
+            <>
+              {rewards.map((r, idx) =>
+                r.mint ? (
+                  <FlexGap key={idx} flexDirection="column" alignItems="flex-start" gap="2px" width="100%">
+                    <FlexGap alignItems="center" justifyContent="space-between" width="100%" gap="16px">
+                      <FlexGap alignItems="center" gap="8px">
+                        <CurrencyLogo
+                          currency={convertRawTokenInfoIntoSPLToken(r.mint as TokenInfo)}
+                          size="16px"
+                          mb="-3px"
+                        />
+                        <Text fontSize="14px" bold>
+                          {convertRawTokenInfoIntoSPLToken(r.mint as TokenInfo)?.symbol}
+                        </Text>
+                      </FlexGap>
+                      <Text fontSize="14px" bold>
+                        {formatAmount(Number(r.amount) || 0)}
+                      </Text>
+                    </FlexGap>
+                    <Text color="textSubtle" fontSize="12px" textAlign="right" width="100%">
+                      {formatDollarAmount(Number(r.amountUSD) || 0)}
+                    </Text>
+                  </FlexGap>
+                ) : null,
+              )}
+            </>
+          )}
+        </FlexGap>
+      }
+    >
+      <EarningsUSD earningsBusd={totalUSD} />
     </Tooltips>
   )
 }
