@@ -9,6 +9,7 @@ import {
   isUnifedCurrencySorted,
   Token,
   SPLToken,
+  sortUnifiedCurrencies,
 } from '@pancakeswap/swap-sdk-core'
 //
 import { useUnifiedUSDPriceAmount } from 'hooks/useStablecoinPrice'
@@ -422,7 +423,11 @@ export function SolanaFormView({
   ])
 
   const confirmationContent = useCallback(() => {
-    const [currency0, currency1] = [solPoolInfo?.token0, solPoolInfo?.token1]
+    const [currency0, currency1] = solPoolInfo
+      ? [solPoolInfo?.token0, solPoolInfo?.token1]
+      : baseCurrency && quoteCurrency
+      ? sortUnifiedCurrencies([baseCurrency, quoteCurrency])
+      : []
     return (
       <ConfirmationModalContent
         topContent={() => (
