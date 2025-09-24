@@ -15,6 +15,11 @@ const INFI_BIN_POOL_FETCH_CONFIG: V3PoolFetchConfig = {
   retryGasMultiplier: 2,
 }
 
+const TICK_QUERY_FETCH_CONFIG: V3PoolFetchConfig = {
+  gasLimit: 6_000_000n,
+  retryGasMultiplier: 2,
+}
+
 const V3_POOL_FETCH_CONFIG: { [key in ChainId]?: V3PoolFetchConfig } = {}
 const INFI_POOL_FETCH_CONFIG: { [key in ChainId]?: V3PoolFetchConfig } = {}
 
@@ -24,4 +29,8 @@ export function getV3PoolFetchConfig(chainId: ChainId) {
 
 export function getInfinityPoolFetchConfig(chainId: ChainId) {
   return INFI_POOL_FETCH_CONFIG[chainId] || INFI_BIN_POOL_FETCH_CONFIG
+}
+
+export function getTickQueryFetchConfig() {
+  return TICK_QUERY_FETCH_CONFIG
 }
