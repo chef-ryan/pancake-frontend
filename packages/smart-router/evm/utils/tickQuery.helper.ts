@@ -21,6 +21,11 @@ const LIQUIDITY_NET_MASK = (1n << 128n) - 1n
  * @returns len for queryCompactTicks
  */
 export function decideCompactTickLen(priceRangeBps: number, tickSpacing: number, maxLen: bigint = 200n): bigint {
+  console.log({
+    priceRangeBps,
+    tickSpacing,
+    maxLen,
+  })
   // how many ticks for desired price coverage
   const targetTicks = Math.log(1 + priceRangeBps / 10000) / Math.log(1.0001)
 
@@ -78,7 +83,7 @@ function getCallData(pool: V3Pool | InfinityClPool, len: bigint) {
       return encodeFunctionData({
         abi: queryDataAbi,
         args: [pool.id, len],
-        functionName: 'queryUniv3TicksSuperCompact',
+        functionName: 'queryPancakeInfinityTicksSuperCompact',
       })
     default:
       throw new Error('Unsupported pool type for tick query')
@@ -93,6 +98,13 @@ function decodeResult(result: Hex, pool: V3Pool | InfinityClPool) {
     data: result as Hex,
   }) as Hex
   return decodeTicksFromBytes(rawTicks)
+}
+
+function getTickSpacing(pool: V3Pool | InfinityClPool): number {
+  if (pool.type === PoolType.V3) {
+    return TICK_SPACINGS[Number(pool.fee) as FeeAmount]
+  }
+  return pool.tickSpacing
 }
 
 export async function fetchPoolsTicks({
@@ -115,7 +127,7 @@ export async function fetchPoolsTicks({
 
   const { gasLimit: gasLimitPerCall, retryGasMultiplier } = getTickQueryFetchConfig()
 
-  const len = decideCompactTickLen(1000, TICK_SPACINGS[Number(pools[0].fee) as FeeAmount])
+  const len = decideCompactTickLen(1000, getTickSpacing(pools[0]))
 
   const res = await multicallByGasLimit(
     pools.map((pool) => ({
