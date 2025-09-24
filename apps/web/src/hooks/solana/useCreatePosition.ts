@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import BN from 'bn.js'
-import { isSolWSol } from '@pancakeswap/sdk'
+import { isSolWSolToken } from '@pancakeswap/sdk'
 import { TxVersion } from '@pancakeswap/solana-core-sdk'
 import { UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import { Bound } from 'config/constants/types'
@@ -54,7 +54,8 @@ export function useCreatePosition() {
         poolInfo,
         poolKeys: createBuildData?.extInfo.address,
         ownerInfo: {
-          useSOLBalance: isSolWSol(poolInfo.mintA as UnifiedCurrency) || isSolWSol(poolInfo.mintB as UnifiedCurrency),
+          useSOLBalance:
+            isSolWSolToken(poolInfo.mintA as UnifiedCurrency) || isSolWSolToken(poolInfo.mintB as UnifiedCurrency),
         },
         tickLower: Math.min(tickLower, tickUpper),
         tickUpper: Math.max(tickLower, tickUpper),

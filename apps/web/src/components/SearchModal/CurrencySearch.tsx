@@ -20,7 +20,7 @@ import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useDebounce, useSortedTokensByQuery } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 /* eslint-disable no-restricted-syntax */
-import { getTokenComparator, isSolWSol, Token, UnifiedCurrency } from '@pancakeswap/sdk'
+import { getTokenComparator, isSolWSolToken, Token, UnifiedCurrency } from '@pancakeswap/sdk'
 import { createFilterToken, WrappedTokenInfo } from '@pancakeswap/token-lists'
 import {
   AutoColumn,
@@ -192,13 +192,13 @@ function CurrencySearch({
     if (isSolana) {
       // Simple search for Solana tokens
       const s = debouncedQuery.toLowerCase().trim()
-      const otherIsSol = isSolWSol(otherSelectedCurrency)
+      const otherIsSol = isSolWSolToken(otherSelectedCurrency)
       return solanaTokens.filter(
         (token) =>
           (token.symbol.toLowerCase().includes(s) ||
             token.name?.toLowerCase().includes(s) ||
             token.address.toLowerCase() === s) &&
-          !(otherIsSol && isSolWSol(token)),
+          !(otherIsSol && isSolWSolToken(token)),
       )
     }
     const filterToken = createFilterToken(debouncedQuery, (address) => isAddress(address))
@@ -408,7 +408,7 @@ function CurrencySearch({
             onSelect={handleCurrencySelect}
             selectedCurrency={selectedCurrency}
             commonBasesType={commonBasesType}
-            disabledCurrencies={isSolWSol(otherSelectedCurrency?.wrapped) ? [native] : undefined}
+            disabledCurrencies={isSolWSolToken(otherSelectedCurrency?.wrapped) ? [native] : undefined}
           />
         )}
       </AutoColumn>

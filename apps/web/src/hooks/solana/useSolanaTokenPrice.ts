@@ -31,7 +31,7 @@ const solanaTokenPriceAtom = atomFamily((params: SolanaTokenPriceParams) => {
     const resp: PriceReturnType = await response.json()
     const result = Object.entries(resp).reduce((acc, [key, val]) => {
       // eslint-disable-next-line no-param-reassign
-      acc[key.split('-')[1] ?? key] = val
+      acc[key] = val
       return acc
     }, {} as PriceReturnType)
     return result

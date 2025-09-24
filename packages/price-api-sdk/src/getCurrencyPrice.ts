@@ -3,7 +3,7 @@ import { ChainId, isTestnetChainId, NonEVMChainId, UnifiedChainId } from '@panca
 import { Address } from './types/common'
 
 const WALLET_API = 'https://wallet-api.pancakeswap.com/v1/prices/list/'
-const getWalletPriceUrl = (chainName: string) => `https://wallet-api.pancakeswap.com/${chainName}/v1/prices/list`
+const getWalletPriceUrl = (chainName: string) => `https://wallet-api.pancakeswap.com/${chainName}/v1/prices/list/`
 
 export const zeroAddress = '0x0000000000000000000000000000000000000000' as const
 
@@ -31,16 +31,26 @@ export type CurrencyKey = `${number}:${string}`
 export type CurrencyUsdResult = Record<CurrencyKey, number>
 
 const CHAINS_FOR_NEW_WALLET_API: UnifiedChainId[] = [NonEVMChainId.SOLANA]
+const NATIVE_ADDRESSES: { [key in UnifiedChainId]?: string } = {
+  [NonEVMChainId.SOLANA]: 'So11111111111111111111111111111111111111112',
+}
 export function getCurrencyKey(currencyParams?: CurrencyParams): CurrencyKey | undefined {
   if (!currencyParams) {
     return undefined
+  }
+
+  if (CHAINS_FOR_NEW_WALLET_API.includes(currencyParams.chainId)) {
+    if ('isNative' in currencyParams && currencyParams.isNative === true) {
+      return NATIVE_ADDRESSES[currencyParams.chainId] as CurrencyKey
+    }
+    return currencyParams.address as CurrencyKey
   }
 
   if ('isNative' in currencyParams && currencyParams.isNative === true) {
     return `${currencyParams.chainId}:${zeroAddress}`
   }
   const { chainId, address } = currencyParams
-  return CHAINS_FOR_NEW_WALLET_API.includes(chainId) ? (address as CurrencyKey) : `${chainId}:${address.toLowerCase()}`
+  return `${chainId}:${address.toLowerCase()}`
 }
 
 export function getCurrencyListKey(currencyListParams?: CurrencyParams[]): string | undefined {

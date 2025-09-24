@@ -40,7 +40,7 @@ export function validateAndParsePublicKey({
   throw new Error('invalid public key')
 }
 
-export const isSolWSol = (token?: UnifiedCurrency | null) => {
+export const isSolWSolToken = (token?: UnifiedCurrency | null) => {
   if (!token) return false
   if (token.chainId !== NonEVMChainId.SOLANA && token.chainId !== 101) return false
   if (token.isNative) return true
@@ -48,5 +48,7 @@ export const isSolWSol = (token?: UnifiedCurrency | null) => {
 }
 export const isSol = (mint: string) => mint === SOLMint.toBase58()
 export const isWSol = (mint: string) => mint === WSOLMint.toBase58()
+export const isSolWSol = (mint: string) => isSol(mint) || isWSol(mint)
+
 export const solToWSol = (key: string): string => (key === SOLMint.toBase58() ? WSOLMint.toBase58() : key)
 export const wSolToSol = (key: string): string => (key === WSOLMint.toBase58() ? SOLMint.toBase58() : key)

@@ -10,7 +10,7 @@ export const usdPriceBatcher = create<CurrencyUsdResult, CurrencyParams, number>
   resolver(items, query) {
     const key = getCurrencyKey(query)
     if (!key) return 0
-    return items[key] ?? 0
+    return items[key.toLowerCase()] ?? 0
   },
   // this will batch all calls to users.fetch that are made within 60 milliseconds.
   scheduler: windowedFiniteBatchScheduler({

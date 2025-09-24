@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useClmmAmmConfigs } from './useClmmAmmConfigs'
 
-// Returns unique trade fee tiers as percent numbers (e.g. 0.25 for 0.25%)
 export const useSolanaClmmFeeTiers = () => {
   const configs = useClmmAmmConfigs()
   return useMemo<number[]>(() => {
