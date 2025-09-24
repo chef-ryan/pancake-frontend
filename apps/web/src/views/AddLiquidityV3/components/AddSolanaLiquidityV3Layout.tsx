@@ -11,6 +11,7 @@ import { PoolInfoHeader } from 'components/PoolInfoHeader'
 import { SolanaPoolDerivedAprText } from 'views/universalFarms/components/SolanaPoolDerivedAprButton'
 import { getPoolDetailPageLink } from 'utils/getPoolLink'
 
+import { useSolanaOnchainClmmPool } from 'hooks/solana/useSolanaOnchainPool'
 import { useCurrencyParams } from '../hooks/useCurrencyParams'
 import { useHeaderInvertCurrencies } from '../hooks/useHeaderInvertCurrencies'
 
@@ -36,6 +37,7 @@ export function AddSolanaLiquidityV3Layout({ children }: { children: React.React
     quoteCurrency?.wrapped.address,
     feeAmount,
   )
+  const { data: poolOnChain } = useSolanaOnchainClmmPool(poolInfo?.poolId)
 
   const inverted = useMemo(
     () =>
@@ -91,6 +93,7 @@ export function AddSolanaLiquidityV3Layout({ children }: { children: React.React
         isInverted={inverted}
         onInvertPrices={handleInvertCurrencies}
         poolId={poolInfo?.poolId}
+        price={poolOnChain?.computePoolInfo.currentPrice}
         overrideAprDisplay={{
           aprDisplay: poolInfo ? (
             <SolanaPoolDerivedAprText pool={poolInfo as any} fontSize={isMobile ? '20px' : '24px'} />

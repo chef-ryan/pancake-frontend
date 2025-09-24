@@ -1,3 +1,4 @@
+import Decimal from 'decimal.js'
 import { Protocol } from '@pancakeswap/farms'
 import { HookData } from '@pancakeswap/infinity-sdk'
 import { useTranslation } from '@pancakeswap/localization'
@@ -49,6 +50,7 @@ interface PoolInfoHeaderProps {
   symbol0?: string
   /** Optional override for currency1.symbol */
   symbol1?: string
+  price?: Decimal
 }
 export const PoolInfoHeader = ({
   poolInfo,
@@ -63,6 +65,7 @@ export const PoolInfoHeader = ({
   onInvertPrices,
   overrideAprDisplay,
   linkType,
+  price,
 }: PoolInfoHeaderProps) => {
   const { t } = useTranslation()
 
@@ -281,7 +284,14 @@ export const PoolInfoHeader = ({
                   <SwapHorizIcon color="primary60" onClick={onInvertPrices} style={{ cursor: 'pointer' }} />
                 </FlexGap>
                 <FlexGap gap="8px" alignItems="center" width="100%">
-                  {poolInfo && poolInfo.token0Price && poolInfo.token1Price ? (
+                  {price ? (
+                    <Text fontSize={isMobile ? 20 : 24} bold width="max-content">
+                      {formatNumber((isInverted ? new Decimal(1).div(price) : price).toNumber(), {
+                        maximumSignificantDigits: 6,
+                        maxDecimalDisplayDigits: 6,
+                      })}
+                    </Text>
+                  ) : poolInfo && poolInfo.token0Price && poolInfo.token1Price ? (
                     <Text fontSize={isMobile ? 20 : 24} bold width="max-content">
                       {formatNumber(Number(isInverted ? poolInfo.token0Price : poolInfo.token1Price), {
                         maximumSignificantDigits: 6,
