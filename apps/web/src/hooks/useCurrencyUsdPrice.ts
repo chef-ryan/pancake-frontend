@@ -1,5 +1,5 @@
 import { isTestnetChainId } from '@pancakeswap/chains'
-import { Currency, getCurrencyAddress, UnifiedCurrency } from '@pancakeswap/sdk'
+import { isSolWSolToken, Currency, getCurrencyAddress, UnifiedCurrency, WSOL } from '@pancakeswap/sdk'
 import { useQuery } from '@tanstack/react-query'
 import { CHAIN_QUERY_NAME } from 'config/chains'
 
@@ -19,7 +19,10 @@ export function useCurrencyUsdPrice(currency: UnifiedCurrency | undefined | null
       if (!currency) {
         throw new Error('No currency provided')
       }
-      return usdPriceBatcher.fetch({ ...currency, chainName: CHAIN_QUERY_NAME[currency.chainId] })
+      return usdPriceBatcher.fetch({
+        ...(isSolWSolToken(currency) ? WSOL : currency),
+        chainName: CHAIN_QUERY_NAME[currency.chainId],
+      })
     },
     staleTime: SLOW_INTERVAL,
     refetchInterval: SLOW_INTERVAL,
