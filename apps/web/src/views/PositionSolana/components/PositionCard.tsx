@@ -216,7 +216,6 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position, poolInfo }
               </Text>
               <Text fontSize="14px">
                 {formatPercent(ratio0, 2)}% {currency0?.symbol} / {formatPercent(ratio1, 2)}% {currency1?.symbol}
-                {currency1?.symbol}
               </Text>
             </RowBetween>
           </div>
