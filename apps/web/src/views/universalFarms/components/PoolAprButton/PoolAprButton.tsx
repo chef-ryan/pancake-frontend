@@ -1,5 +1,5 @@
 import { Protocol } from '@pancakeswap/farms'
-import { useModalV2, useTooltip } from '@pancakeswap/uikit'
+import { TextProps, useModalV2, useTooltip } from '@pancakeswap/uikit'
 import { useMemo } from 'react'
 import { CakeApr } from 'state/farmsV4/atom'
 import {
@@ -33,7 +33,7 @@ type PoolGlobalAprButtonProps = {
   onAPRTextClick?: () => void
   showApyButton?: boolean
   loading?: boolean
-  fontSize?: string
+  textProps?: TextProps
 }
 
 export const PoolAprButton: React.FC<PoolGlobalAprButtonProps> = ({
@@ -45,7 +45,7 @@ export const PoolAprButton: React.FC<PoolGlobalAprButtonProps> = ({
   userPosition,
   onAPRTextClick,
   showApyButton,
-  fontSize,
+  textProps,
   loading = false,
 }) => {
   const baseApr = useMemo(() => {
@@ -91,7 +91,7 @@ export const PoolAprButton: React.FC<PoolGlobalAprButtonProps> = ({
         onClick={modal.onOpen}
         onAPRTextClick={onAPRTextClick ?? modal.onOpen}
         showApyButton={showApyButton}
-        fontSize={fontSize}
+        textProps={textProps}
       />
       {tooltipVisible && tooltip}
       {modal.isOpen && (

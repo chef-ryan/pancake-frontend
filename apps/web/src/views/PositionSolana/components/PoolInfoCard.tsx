@@ -238,7 +238,15 @@ export const PoolInfoCard = () => {
                   </Text>
                 </FlexGap>
                 {pool && position ? (
-                  <SolanaV3PoolPositionAprButton pool={pool} userPosition={position} fontSize="24px" />
+                  <SolanaV3PoolPositionAprButton
+                    pool={pool}
+                    userPosition={position}
+                    textProps={{
+                      fontSize: '32px',
+                      fontWeight: 600,
+                      color: 'secondary',
+                    }}
+                  />
                 ) : null}
               </AutoColumn>
             </LightGreyCard>
