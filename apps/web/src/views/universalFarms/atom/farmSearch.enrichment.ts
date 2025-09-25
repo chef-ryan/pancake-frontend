@@ -9,10 +9,7 @@ import {
   batchGetMerklAprData,
 } from 'state/farmsV4/search/batchFarmDataFiller'
 import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
-import { getHashKey } from 'utils/hash'
 import { CakeAprValue } from 'state/farmsV4/atom'
-import { atomWithLoadable } from 'quoter/atom/atomWithLoadable'
-import { Loadable } from '@pancakeswap/utils/Loadable'
 import { farmsWithPagingAtom } from './farmSearch.search'
 
 interface AprMaps {
@@ -22,8 +19,8 @@ interface AprMaps {
   aggIncentraAprs: Record<string, { id: string; value: number }>
 }
 
-const _farmsAprMapsAtom = atomFamily((_query: FarmQuery) => {
-  return atomWithLoadable(async (get) => {
+export const farmsAprMapsAtom = atomFamily((_query: FarmQuery) => {
+  return atom(async (get) => {
     const poolInfos = get(farmsWithPagingAtom(_query as any)).unwrapOr([])
     const [cakeAprs, lpAprs, merklAprs, incentraAprs] = await Promise.allSettled([
       batchGetCakeApr(poolInfos),
@@ -42,25 +39,25 @@ const _farmsAprMapsAtom = atomFamily((_query: FarmQuery) => {
   })
 }, isEqual)
 
-const cache = new Map<string, Loadable<AprMaps>>()
-export const farmsAprMapsAtom = atomFamily((_query: FarmQuery) => {
-  const phKey = getHashKey({ ..._query, page: 0 })
-  return atom((get) => {
-    const r = get(_farmsAprMapsAtom(_query))
-    if (r.isPending()) {
-      const ph = cache.get(phKey)
-      if (ph) {
-        return ph.unwrap()
-      }
-    }
-    if (r.isJust() && Object.keys(r.unwrap().aggLpAprs).length > 0) {
-      cache.set(phKey, r)
-    }
-    return r.unwrapOr({
-      aggCakeAprs: {},
-      aggLpAprs: {},
-      aggMerklAprs: {},
-      aggIncentraAprs: {},
-    } as AprMaps)
-  })
-}, isEqual)
+// const cache = new Map<string, Loadable<AprMaps>>()
+// export const farmsAprMapsAtom = atomFamily((_query: FarmQuery) => {
+//   const phKey = getHashKey({ ..._query, page: 0 })
+//   return atom((get) => {
+//     const r = get(_farmsAprMapsAtom(_query))
+//     if (r.isPending()) {
+//       const ph = cache.get(phKey)
+//       if (ph) {
+//         return ph.unwrap()
+//       }
+//     }
+//     if (r.isJust() && Object.keys(r.unwrap().aggLpAprs).length > 0) {
+//       cache.set(phKey, r)
+//     }
+//     return r.unwrapOr({
+//       aggCakeAprs: {},
+//       aggLpAprs: {},
+//       aggMerklAprs: {},
+//       aggIncentraAprs: {},
+//     } as AprMaps)
+//   })
+// }, isEqual)

@@ -7,6 +7,7 @@ import { getFarmKey } from 'state/farmsV4/search/farm.util'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
 import { getHashKey } from 'utils/hash'
+import { Loadable } from '@pancakeswap/utils/Loadable'
 import { tokensMapAtom } from './tokensMapAtom'
 import { farmFilters, isInWhitelist } from './farmSearch.filter'
 import { farmsWithPagingAtom } from './farmSearch.search'
@@ -17,7 +18,7 @@ const farmsWithFilledDataAtom = atomFamily((query: FarmQuery) => {
     async (get) => {
       const { page } = query
       const sliced = get(farmsWithPagingAtom(query))
-      const enrichment = get(
+      const enrichment = await get(
         farmsAprMapsAtom({
           ...query,
           page,
@@ -55,13 +56,18 @@ const farmsWithFilledDataAtom = atomFamily((query: FarmQuery) => {
   )
 }, isEqual)
 
+type FarmQueryResult = {
+  list: Loadable<PoolInfo[]>
+  isLoading: boolean
+}
+
 const _farmsSearchV2Atom = atomFamily((query: FarmQuery) => {
   return atom((get) => {
     const withFilledData = get(farmsWithFilledDataAtom(query))
     const checkWhitelist = isInWhitelist(get(tokensMapAtom).tokensMap)
 
     const anyPending = withFilledData.isPending()
-    const resultList = withFilledData
+    const resultList: Loadable<PoolInfo[]> = withFilledData
 
     return {
       list: resultList.map((list) => {
@@ -73,18 +79,22 @@ const _farmsSearchV2Atom = atomFamily((query: FarmQuery) => {
         return list
       }),
       isLoading: anyPending,
-    }
+    } as FarmQueryResult
   })
 }, isEqual)
 
-const cache = new Map<string, ReturnType<typeof farmsSearchV2Atom>>()
+const cache = new Map<string, FarmQueryResult>()
 export const farmsSearchV2Atom = atomFamily((query: FarmQuery) => {
   const phKey = getHashKey({ ...query, page: 0 })
   return atom((get) => {
     const r = get(_farmsSearchV2Atom(query))
     if (r.list.isPending()) {
       if (cache.has(phKey)) {
-        return cache.get(phKey)
+        const val = cache.get(phKey)!
+        return {
+          ...val,
+          isLoading: true,
+        }
       }
     }
     if (r.list.isJust() && r.list.unwrap().length > 0) {

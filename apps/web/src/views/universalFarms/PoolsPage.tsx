@@ -144,10 +144,10 @@ const List = () => {
   const listPrepared = useTokenListPrepared(DEFAULT_ACTIVE_LIST_URLS)
 
   const list = _list.unwrapOr([])
-  const pending = listPrepared.isPending() && isLoadingFarmList
+  const pending = listPrepared.isPending() || isLoadingFarmList
   const isExtending = _list.isPending() && list.length > 0
   const { t } = useTranslation()
-  const noResults = list.length === 0 && !pending && !isExtending && !_list.isPending()
+  const noResults = list.length === 0 && !pending && !isExtending
   console.log(`[farm] list render, length: ${list.length}, page: ${page}`, `loading: ${_list.isPending()}`) // --- IGNORE ---
 
   return (
