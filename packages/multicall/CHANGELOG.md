@@ -1,5 +1,11 @@
 # @pancakeswap/multicall
 
+## 3.7.4
+
+### Patch Changes
+
+- @pancakeswap/sdk@5.8.18
+
 ## 3.7.3
 
 ### Patch Changes

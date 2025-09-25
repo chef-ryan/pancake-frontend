@@ -32,6 +32,7 @@ test('exports', () => {
       "supportedChainIdV2",
       "supportedChainIdV3",
       "supportedChainIdV4",
+      "merklSupportedChainId",
       "createFarmFetcher",
       "createFarmFetcherV3",
       "fetchCommonTokenUSDValue",

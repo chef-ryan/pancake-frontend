@@ -1,5 +1,12 @@
 # @pancakeswap/solana-router-sdk
 
+## 1.4.9
+
+### Patch Changes
+
+- @pancakeswap/sdk@5.8.18
+- @pancakeswap/utils@8.0.1
+
 ## 1.4.8
 
 ### Patch Changes

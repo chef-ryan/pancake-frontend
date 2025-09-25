@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "CAKE Égetési Irányítópult",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Figyelem: A(z) <0>%token%</0> jelenleg nem ellenőrzött. Mindig erősítse meg a címet, és végezzen saját kutatást, mielőtt kereskedne vagy interakcióba lépne ezzel a poollal.",
   "Trade Binance Alpha Tokens to Win $250,000.": "Kereskedj Binance Alpha Tokenekkel és nyerj 250 000 $-t.",
-  "Trade with Social Login to Win $15,000": "Kereskedj közösségi bejelentkezéssel, és nyerj 15 000 $-t.",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "Alakítsd át LP-det Kölcsönzési Erővé. Szerezz lisUSD-t azonnal!",
   "Borrow Here": "Kölcsönözz itt",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "%currencyA% (%chainNameA%) cseréje %currencyB%-re (%chainName%)",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "Elkötelezés",
   "Total.tabOverall": "Összes",
   "Unstaked.toast": "Feloldva",
-  "Earn.label": "Jutalmak"
+  "Earn.label": "Jutalmak",
+  "Failed!": "Sikertelen!",
+  "Successfully!": "Sikeresen!",
+  "Amount of liquidity to add": "Hozzáadandó likviditás összege",
+  "Max": "Max",
+  "New Balance": "Új egyenleg",
+  "total position value (USD)": "pozíció teljes értéke (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Eltávolíthatod az összes tokenedet, de a pozíciód nyitva hagyhatod, hogy legközelebb zökkenőmentesen tudj hozzáadni.",
+  "LP Fees": "LP díjak",
+  "Become the Top Predictor, Win $2,500": "Légy a legjobb jós, és nyerj 2500 dollárt",
+  "One-click Solana Crosschain Swaps": "Egykattintásos Solana keresztlánc swapok",
+  "Solana Crosschain": "Solana Keresztlánc"
 }

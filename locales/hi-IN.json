@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "CAKE बर्न डैशबोर्ड",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "सावधान: <0>%token%</0> वर्तमान में असत्यापित है। इस पूल के साथ ट्रेड या इंटरैक्ट करने से पहले पते की हमेशा पुष्टि करें और अपना स्वयं का शोध करें।",
   "Trade Binance Alpha Tokens to Win $250,000.": "Binance अल्फा टोकन ट्रेड करें और $250,000 जीतें।",
-  "Trade with Social Login to Win $15,000": "सोशल लॉगिन के साथ ट्रेड करें और $15,000 जीतें",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "LP को बरो पावर में बदलें। तत्काल lisUSD प्राप्त करें!",
   "Borrow Here": "यहां उधार लें",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "%currencyA% (%chainNameA%) को %currencyB% (%chainName%) में स्वैप करें",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "कमिट",
   "Total.tabOverall": "कुल",
   "Unstaked.toast": "अनस्टेक किया गया",
-  "Earn.label": "कमाई"
+  "Earn.label": "कमाई",
+  "Failed!": "असफल!",
+  "Successfully!": "सफलतापूर्वक!",
+  "Amount of liquidity to add": "जोड़ने के लिए लिक्विडिटी की मात्रा",
+  "Max": "अधिकतम",
+  "New Balance": "नया बैलेंस",
+  "total position value (USD)": "कुल पोजीशन मूल्य (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "आप अपने सभी टोकन हटा सकते हैं और अगली बार आसानी से पोजीशन जोड़ने के लिए अपनी पोजीशन खुली रख सकते हैं।",
+  "LP Fees": "LP फीस",
+  "Become the Top Predictor, Win $2,500": "टॉप प्रेडिक्टर बनें, $2,500 जीतें",
+  "One-click Solana Crosschain Swaps": "एक-क्लिक Solana क्रॉसचेन स्वैप",
+  "Solana Crosschain": "Solana क्रॉसचेन"
 }

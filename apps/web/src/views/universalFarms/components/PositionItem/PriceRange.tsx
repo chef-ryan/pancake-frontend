@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Price, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
+import { Price, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { Flex, FlexGap, IconButton, SwapHorizIcon, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { Bound } from '@pancakeswap/widgets-internal'
 import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'

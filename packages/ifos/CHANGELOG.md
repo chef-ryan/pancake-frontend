@@ -1,5 +1,13 @@
 # @pancakeswap/ifos
 
+## 7.0.3
+
+### Patch Changes
+
+- @pancakeswap/sdk@5.8.18
+- @pancakeswap/utils@8.0.1
+- @pancakeswap/tokens@0.7.10
+
 ## 7.0.2
 
 ### Patch Changes

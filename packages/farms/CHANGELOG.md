@@ -1,5 +1,23 @@
 # @pancakeswap/farms
 
+## 1.3.0
+
+### Minor Changes
+
+- edc65d4: Added Solana chain as farm support chain
+
+### Patch Changes
+
+- Updated dependencies [edc65d4]
+  - @pancakeswap/swap-sdk-core@1.5.1
+  - @pancakeswap/v3-sdk@3.9.7
+  - @pancakeswap/price-api-sdk@11.1.1
+  - @pancakeswap/stable-swap-sdk@2.0.11
+  - @pancakeswap/sdk@5.8.18
+  - @pancakeswap/token-lists@0.0.17
+  - @pancakeswap/utils@8.0.1
+  - @pancakeswap/tokens@0.7.10
+
 ## 1.2.13
 
 ### Patch Changes

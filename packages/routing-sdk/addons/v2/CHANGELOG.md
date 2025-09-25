@@ -1,5 +1,14 @@
 # @pancakeswap/routing-sdk-addon-v2
 
+## 5.0.4
+
+### Patch Changes
+
+- Updated dependencies [edc65d4]
+  - @pancakeswap/swap-sdk-core@1.5.1
+  - @pancakeswap/routing-sdk@0.5.4
+  - @pancakeswap/v2-sdk@1.1.7
+
 ## 5.0.3
 
 ### Patch Changes

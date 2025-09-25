@@ -163,7 +163,7 @@ export default function SolanaV3RemovePositionModal({
       console.error(e)
       setIsSending(false)
     }
-  }, [onClose, percent, poolInfo, position, removeLiquidity, amount0, amount1])
+  }, [onClose, percent, poolInfo, position, removeLiquidity, amount0, amount1, closePosition])
 
   return (
     <ModalV2 isOpen={isOpen} onDismiss={onClose} closeOnOverlayClick>
@@ -269,7 +269,7 @@ const RemovedAmountInfo: React.FC<{
           </Text>
         </Flex>
         <Flex>
-          <FormattedCurrencyAmount currencyAmount={amount0} />
+          <FormattedCurrencyAmount currencyAmount={amount0} significantDigits={8} />
         </Flex>
       </Flex>
       <Flex justifyContent="flex-end" mb="8px">
@@ -285,7 +285,7 @@ const RemovedAmountInfo: React.FC<{
           </Text>
         </Flex>
         <Flex>
-          <FormattedCurrencyAmount currencyAmount={amount1} />
+          <FormattedCurrencyAmount currencyAmount={amount1} significantDigits={8} />
         </Flex>
       </Flex>
       <Flex justifyContent="flex-end" mb="8px">

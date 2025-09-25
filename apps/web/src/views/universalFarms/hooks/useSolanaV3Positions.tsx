@@ -75,14 +75,14 @@ export const useSolanaV3PositionItems = ({
   farmsOnly: boolean
 }) => {
   const { publicKey } = useWallet()
-  const walletAddress = publicKey?.toBase58()
+  const walletAddress = useMemo(() => publicKey?.toBase58(), [publicKey])
 
   const { data: positionInfos, isLoading: solanaLoading } = useSolanaPositionsInfoByAccount(walletAddress)
 
   const poolIds = useMemo(() => positionInfos?.map((pos) => pos.poolId.toBase58()) || [], [positionInfos])
 
   const pools = useSolanaV3Pools(poolIds)
-  const { loading: poolsLoading } = useSolanaV3PoolsUpdater(pools.filter((pool) => !!pool))
+  const { loading: poolsLoading } = useSolanaV3PoolsUpdater(useMemo(() => pools.filter((pool) => !!pool), [pools]))
 
   const poolsMap = useMemo(() => new Map(pools.filter((pool) => !!pool).map((pool) => [pool.id, pool])), [pools])
 
@@ -123,17 +123,17 @@ export const useSolanaV3PositionItems = ({
 
       return matchesNetwork && matchesTokens && matchesStatus && matchesFarms
     })
-  }, [v3PositionsWithStatus, selectedNetwork, selectedTokens, positionStatus, farmsOnly])
+  }, [v3PositionsWithStatus, selectedNetwork, selectedTokens, positionStatus, farmsOnly, poolsMap])
 
   // Sort positions by status
   const sortedSolanaPositions = useMemo(
-    () => filteredSolanaPositions?.sort((a, b) => a.status - b.status),
+    () => filteredSolanaPositions?.sort((a, b) => a.status - b.status) || [],
     [filteredSolanaPositions],
   )
 
   return {
     solanaLoading: solanaLoading || poolsLoading,
-    solanaPositions: sortedSolanaPositions || [],
+    solanaPositions: sortedSolanaPositions,
     poolsLength: poolsMap.size,
   }
 }

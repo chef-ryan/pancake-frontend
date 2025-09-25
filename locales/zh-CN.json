@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "CAKE 销毁仪表盘",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "注意：<0>%token%</0> 目前未经审核。在交易或与此资金池交互前，请务必确认地址并进行您的尽职调查。",
   "Trade Binance Alpha Tokens to Win $250,000.": "交易 Binance Alpha 代币，赢取 $250,000。",
-  "Trade with Social Login to Win $15,000": "通过社交登录进行交易，赢取 $15,000",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "将 LP 转化为借贷能力。即刻获取 lisUSD！",
   "Borrow Here": "在此借款",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "将 %currencyA% (%chainNameA%) 兑换为 %currencyB% (%chainName%)",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "投入",
   "Total.tabOverall": "总览",
   "Unstaked.toast": "解押成功",
-  "Earn.label": "收益"
+  "Earn.label": "收益",
+  "Failed!": "失败！",
+  "Successfully!": "成功！",
+  "Amount of liquidity to add": "要添加的流动性数量",
+  "Max": "最大",
+  "New Balance": "新余额",
+  "total position value (USD)": "仓位总价值 (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "您可以提取所有代币，但仍保持仓位开启，以便下次可以无缝地再次添加流动性。",
+  "LP Fees": "LP 手续费",
+  "Become the Top Predictor, Win $2,500": "成为顶级预测者，赢取 $2,500",
+  "One-click Solana Crosschain Swaps": "一键 Solana 跨链兑换",
+  "Solana Crosschain": "Solana 跨链"
 }

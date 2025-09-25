@@ -15,7 +15,7 @@ import { isAddress, zeroAddress } from 'viem'
 import { Address } from 'viem/accounts'
 
 import { Campaign } from '@pancakeswap/achievements'
-import { fetchCampaignsByPoolIds } from 'hooks/infinity/useCampaigns'
+import { fetchCampaigns } from 'hooks/infinity/useCampaigns'
 import mapValues from 'lodash/mapValues'
 import { InfinityPoolInfo, PoolInfo, StablePoolInfo, V2PoolInfo } from '../type'
 import {
@@ -89,7 +89,7 @@ async function fetchMultiChainPoolsFarmingStatus(
 
   const campaignsByChains = await Promise.allSettled(
     Object.entries(chainIdToPoolIdsMap).map(([chainId, poolIds]) =>
-      fetchCampaignsByPoolIds({ chainId: Number(chainId), poolIds, fetchAll: true, includeInactive: false }),
+      fetchCampaigns({ chainId: Number(chainId), poolIds, fetchAll: true, includeInactive: false }),
     ),
   )
 
@@ -299,62 +299,4 @@ async function fetchMultiChainPoolsTimeFrame(pools: UniversalFarmConfig[]): Prom
       [poolsEntries[idx][0]]: keyBy(result, () => poolsEntries[idx][1][dataIdx++].lpAddress),
     })
   }, {} as IPoolsTimeFrameType)
-}
-
-export const useMultiChainPoolsTimeFrame = (pools: UniversalFarmConfig[]) => {
-  const v2Pools = useMemo(
-    () =>
-      pools.filter((p) => p.protocol === Protocol.V2 || p.protocol === Protocol.STABLE) as Array<
-        V2PoolInfo | StablePoolInfo
-      >,
-    [pools],
-  )
-  const poolsGroupByChains = useMemo(() => groupBy(v2Pools, 'chainId'), [v2Pools])
-  const poolsEntries = useMemo(() => Object.entries(poolsGroupByChains), [poolsGroupByChains])
-
-  const chainIds = useMemo(() => poolsEntries.map(([chainId]) => chainId).join(','), [poolsEntries])
-  const lpAddresses = useMemo(
-    () => poolsEntries.flatMap(([, poolList]) => poolList.map((p) => p.lpAddress)).join(','),
-    [poolsEntries],
-  )
-
-  const { data, isPending } = useQuery<IPoolsTimeFrameType, Error>({
-    queryKey: ['useMultiChainPoolTimeFrame', chainIds, lpAddresses],
-    queryFn: async () => {
-      const results = await Promise.all(
-        poolsEntries.map(async ([chainId_, poolList]) => {
-          const chainId = Number(chainId_)
-          const bCakeAddresses = poolList.map(({ bCakeWrapperAddress }) => bCakeWrapperAddress ?? zeroAddress)
-          if (bCakeAddresses.length === 0) return { [chainId]: {} }
-          try {
-            const timeFrameData = await fetchPoolsTimeFrame(bCakeAddresses, chainId)
-            return timeFrameData ?? []
-          } catch (error) {
-            console.error(`Error fetching time frame data for chainId ${chainId}:`, error)
-            return []
-          }
-        }),
-      )
-      return results.reduce((acc, result, idx) => {
-        let dataIdx = 0
-        return Object.assign(acc, {
-          [poolsEntries[idx][0]]: keyBy(result, () => poolsEntries[idx][1][dataIdx++].lpAddress),
-        })
-      }, {} as IPoolsTimeFrameType)
-    },
-    enabled: poolsEntries.length > 0,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchInterval: SLOW_INTERVAL,
-    staleTime: SLOW_INTERVAL,
-  })
-
-  return useMemo(
-    () => ({
-      data: data ?? {},
-      pending: isPending,
-    }),
-    [data, isPending],
-  )
 }

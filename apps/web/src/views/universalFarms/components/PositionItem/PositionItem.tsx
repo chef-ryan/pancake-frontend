@@ -1,4 +1,4 @@
-import { Box, Column, Flex, useMatchBreakpoints, useTooltip, TokenImage, TokenLogo } from '@pancakeswap/uikit'
+import { Box, Column, Flex, useMatchBreakpoints, useTooltip, TokenLogo } from '@pancakeswap/uikit'
 import { getCurrencyLogoSrcs, TokenPairLogo } from 'components/TokenImage'
 import { CHAIN_QUERY_NAME } from 'config/chains'
 import { PERSIST_CHAIN_KEY } from 'config/constants'
@@ -76,7 +76,7 @@ export const PositionItem: React.FC<PropsWithChildren<PositionItemProps>> = (pro
   const router = useRouter()
   const linkWithChain = useMemo(
     () =>
-      link
+      link && (!link.startsWith('http') || !link.startsWith('//'))
         ? addQueryToPath(link, {
             chain: CHAIN_QUERY_NAME[chainId],
             [PERSIST_CHAIN_KEY]: '1',
@@ -86,6 +86,10 @@ export const PositionItem: React.FC<PropsWithChildren<PositionItemProps>> = (pro
   )
   const handleItemClick = useCallback(() => {
     if (!linkWithChain) {
+      return
+    }
+    if (linkWithChain.startsWith('http') || linkWithChain.startsWith('//')) {
+      window.open(linkWithChain, '_blank', 'noreferrer')
       return
     }
     router.push(linkWithChain)

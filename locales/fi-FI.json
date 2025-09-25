@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "CAKE Polttokoontinäyttö",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Varoitus: <0>%token%</0> on tällä hetkellä vahvistamaton. Varmista aina osoite ja tee oma tutkimuksesi ennen kuin käyt kauppaa tai olet vuorovaikutuksessa tämän poolin kanssa.",
   "Trade Binance Alpha Tokens to Win $250,000.": "Käy kauppaa Binance Alpha Tokensilla ja voita 250 000 $.",
-  "Trade with Social Login to Win $15,000": "Käy kauppaa sosiaalisella kirjautumisella ja voita 15 000 $",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "Muuta LP lainavoimaksi. Hanki lisUSD välittömästi!",
   "Borrow Here": "Lainaa täältä",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "Vaihda %currencyA% (%chainNameA%) kohteeseen %currencyB% (%chainName%)",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "Panostus",
   "Total.tabOverall": "Yhteensä",
   "Unstaked.toast": "Lunastettu",
-  "Earn.label": "Tuotto"
+  "Earn.label": "Tuotto",
+  "Failed!": "Epäonnistui!",
+  "Successfully!": "Onnistui!",
+  "Amount of liquidity to add": "Lisättävän likviditeetin määrä",
+  "Max": "Maksimi",
+  "New Balance": "Uusi saldo",
+  "total position value (USD)": "Position kokonaisarvo (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Voit poistaa kaikki tokenisi ja silti pitää positiosi avoinna, jotta voit lisätä positioon saumattomasti seuraavalla kerralla.",
+  "LP Fees": "LP-palkkiot",
+  "Become the Top Predictor, Win $2,500": "Tule parhaaksi ennustajaksi ja voita 2 500 $",
+  "One-click Solana Crosschain Swaps": "Yhden napsautuksen Solana-crosschain-vaihdot",
+  "Solana Crosschain": "Solana Crosschain"
 }

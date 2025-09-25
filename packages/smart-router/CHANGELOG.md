@@ -1,5 +1,20 @@
 # @pancakeswap/smart-router
 
+## 7.5.4
+
+### Patch Changes
+
+- edc65d4: patches price usage to fit UnifiedCurrency
+- Updated dependencies [edc65d4]
+  - @pancakeswap/swap-sdk-core@1.5.1
+  - @pancakeswap/v3-sdk@3.9.7
+  - @pancakeswap/infinity-sdk@1.0.7
+  - @pancakeswap/stable-swap-sdk@2.0.11
+  - @pancakeswap/sdk@5.8.18
+  - @pancakeswap/token-lists@0.0.17
+  - @pancakeswap/multicall@3.7.4
+  - @pancakeswap/tokens@0.7.10
+
 ## 7.5.3
 
 ### Patch Changes

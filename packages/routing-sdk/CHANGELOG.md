@@ -1,5 +1,14 @@
 # @pancakeswap/routing-sdk
 
+## 0.5.4
+
+### Patch Changes
+
+- edc65d4: patches price usage to fit UnifiedCurrency
+- Updated dependencies [edc65d4]
+  - @pancakeswap/swap-sdk-core@1.5.1
+  - @pancakeswap/swap-sdk-evm@1.1.7
+
 ## 0.5.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @pancakeswap/swap-sdk-core
 
+## 1.5.1
+
+### Patch Changes
+
+- edc65d4: patches price usage to fit UnifiedCurrency
+
 ## 1.5.0
 
 ### Minor Changes

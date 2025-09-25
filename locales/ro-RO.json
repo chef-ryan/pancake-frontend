@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "Tablou de Bord Arderea CAKE",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Atenție: <0>%token%</0> este momentan neverificat. Confirmați întotdeauna adresa și efectuați-vă propriile cercetări înainte de a tranzacționa sau interacționa cu acest pool.",
   "Trade Binance Alpha Tokens to Win $250,000.": "Tranzacționează Tokenuri Binance Alpha pentru a câștiga $250.000.",
-  "Trade with Social Login to Win $15,000": "Tranzacționează cu Conectare Socială pentru a câștiga $15.000",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "Transformă LP în Putere de Împrumut. Obține lisUSD Instant!",
   "Borrow Here": "Împrumută Aici",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "Schimbă %currencyA% (%chainNameA%) cu %currencyB% (%chainName%)",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "Angajament",
   "Total.tabOverall": "Total",
   "Unstaked.toast": "Deblocat",
-  "Earn.label": "Câștiguri"
+  "Earn.label": "Câștiguri",
+  "Failed!": "Eșuat!",
+  "Successfully!": "Cu succes!",
+  "Amount of liquidity to add": "Cantitatea de lichiditate de adăugat",
+  "Max": "Max",
+  "New Balance": "Sold nou",
+  "total position value (USD)": "valoarea totală a poziției (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Poți elimina toate jetoanele tale și totuși să păstrezi poziția deschisă, pentru a adăuga la poziție fără probleme data viitoare.",
+  "LP Fees": "Comisioane LP",
+  "Become the Top Predictor, Win $2,500": "Devino predictorul de top și câștigă 2.500 $",
+  "One-click Solana Crosschain Swaps": "Swapuri Crosschain Solana dintr-un singur clic",
+  "Solana Crosschain": "Solana Crosschain"
 }

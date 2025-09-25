@@ -1,7 +1,7 @@
 import { CSSProperties } from 'react'
 
 export enum Priority {
-  FIRST_AD = 6,
+  FIRST_AD = 100,
   VERY_HIGH = 5,
   HIGH = 4,
   MEDIUM = 3,
@@ -119,4 +119,6 @@ export interface RemoteAds {
     external?: boolean
     style?: CSSProperties
   }>
+  startTime?: string
+  endTime?: string
 }

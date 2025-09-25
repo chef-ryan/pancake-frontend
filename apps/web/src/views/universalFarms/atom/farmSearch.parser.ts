@@ -1,4 +1,4 @@
-import { FarmV4SupportedChainId, Protocol, supportedChainIdV4 } from '@pancakeswap/farms'
+import { FarmV4SupportedChainId, Protocol } from '@pancakeswap/farms'
 
 const HEX_ADDRESS_REG = /^0x[a-fA-F0-9]{40,64}$/
 const SOL_ADDRESS_REG = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/

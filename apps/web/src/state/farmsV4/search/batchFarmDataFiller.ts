@@ -110,6 +110,7 @@ const fetchAllCampaigns = memoizeAsync(
       chains.map((chainId) => {
         return fetchAllCampaignsByChainId({
           chainId: Number(chainId),
+          includeInactive: false,
         })
       }),
     )

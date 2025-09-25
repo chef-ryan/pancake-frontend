@@ -1,13 +1,15 @@
 import { ChainId } from '@pancakeswap/chains'
+import { memoizeAsync } from '@pancakeswap/utils/memoize'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
 import groupBy from 'lodash/groupBy'
 import { useMemo } from 'react'
 import { rewardApiClient } from 'state/farmsV4/api/client'
 import { operations } from 'state/farmsV4/api/schema'
+import { getHashKey } from 'utils/hash'
 import { Address } from 'viem'
 
-interface CampaignsByPoolIdProps {
+interface FetchCampaignsProps {
   chainId?: number
   poolIds?: string[]
   includeInactive?: boolean
@@ -16,100 +18,64 @@ interface CampaignsByPoolIdProps {
   result?: operations['getCampaignsByPoolId']['responses']['200']['content']['application/json']['campaigns']
 }
 
-export const fetchCampaignsByPoolIds = async ({
-  chainId,
-  poolIds,
-  includeInactive = true,
-  page = 1,
-  fetchAll = false,
-  result = [],
-}: CampaignsByPoolIdProps) => {
+export const fetchCampaigns = memoizeAsync(
+  async ({
+    chainId,
+    includeInactive = true,
+    poolIds,
+    page = 1,
+    fetchAll = false,
+    result = [],
+  }: FetchCampaignsProps) => {
+    if (!chainId) {
+      return []
+    }
+
+    const { data } = await rewardApiClient.GET('/farms/campaigns/{chainId}/{includeInactive}', {
+      baseUrl:
+        chainId === ChainId.BSC_TESTNET ? 'https://test.v4.pancakeswap.com/' : 'https://infinity.pancakeswap.com/',
+      params: {
+        path: { chainId, includeInactive },
+        query: {
+          poolIds: poolIds ?? [], // API will just ignore if not relevant
+          limit: 100,
+          page,
+        },
+      },
+    })
+
+    if (data?.campaigns) {
+      result.push(...data.campaigns)
+    }
+
+    if (fetchAll && data && data.totalRecords > result.length) {
+      return fetchCampaigns({
+        chainId,
+        includeInactive,
+        poolIds,
+        page: page + 1,
+        fetchAll,
+        result,
+      })
+    }
+
+    return result
+  },
+  {
+    resolver: (args: FetchCampaignsProps) => {
+      return getHashKey(args)
+    },
+  },
+)
+
+export const fetchAllCampaignsByChainId = async ({ chainId, includeInactive = true }: FetchCampaignsProps) => {
   if (!chainId) {
     return []
   }
-  const { data } = await rewardApiClient.GET('/farms/campaigns/{chainId}/{includeInactive}', {
-    // @todo @ChefJerry remove this after the backend is ready
-    baseUrl: chainId === ChainId.BSC_TESTNET ? 'https://test.v4.pancakeswap.com/' : 'https://infinity.pancakeswap.com/',
-    params: {
-      path: {
-        chainId,
-        includeInactive,
-      },
-      query: {
-        poolIds: poolIds ?? [],
-        limit: 100,
-        page,
-      },
-    },
-  })
-
-  if (data?.campaigns) {
-    result.push(...data?.campaigns)
-  }
-  if (fetchAll && data && data.totalRecords > result.length) {
-    await fetchCampaignsByPoolIds({
-      chainId,
-      includeInactive,
-      page: page + 1,
-      fetchAll,
-      result,
-    })
-  }
-  return result
+  return fetchCampaigns({ chainId, includeInactive, page: 1, fetchAll: true })
 }
 
-const fetchCampaignsByPageNo = async ({
-  chainId,
-  includeInactive,
-  page,
-  fetchAll = false,
-  result = [],
-}: {
-  chainId: number
-  includeInactive: boolean
-  page: number
-  fetchAll?: boolean
-  result?: operations['getCampaignsByChainId']['responses']['200']['content']['application/json']['campaigns']
-}) => {
-  const { data } = await rewardApiClient.GET('/farms/campaigns/{chainId}/{includeInactive}', {
-    // @todo @ChefJerry remove this after the backend is ready
-    baseUrl: chainId === ChainId.BSC_TESTNET ? 'https://test.v4.pancakeswap.com/' : 'https://infinity.pancakeswap.com/',
-    params: {
-      path: {
-        chainId,
-        includeInactive,
-      },
-      query: {
-        limit: 100,
-        page,
-      },
-    },
-  })
-  if (data?.campaigns) {
-    result.push(...data?.campaigns)
-  }
-  if (fetchAll && data && data.totalRecords > result.length) {
-    await fetchCampaignsByPageNo({
-      chainId,
-      includeInactive,
-      page: page + 1,
-      fetchAll,
-      result,
-    })
-  }
-  return result
-}
-
-type CampaignsByChanIdProps = Omit<CampaignsByPoolIdProps, 'poolIds' | 'page' | 'fetchAll'>
-
-export const fetchAllCampaignsByChainId = async ({ chainId, includeInactive = true }: CampaignsByChanIdProps) => {
-  if (!chainId) {
-    return []
-  }
-  return fetchCampaignsByPageNo({ chainId, includeInactive, page: 1, fetchAll: true })
-}
-
-export const useCampaignsByChainId = ({ chainId, includeInactive = false }: CampaignsByChanIdProps) => {
+export const useCampaignsByChainId = ({ chainId, includeInactive = false }: FetchCampaignsProps) => {
   const { data } = useQuery({
     queryKey: ['campaignsByChainId', chainId, includeInactive],
     queryFn: () => fetchAllCampaignsByChainId({ chainId, includeInactive }),
@@ -121,20 +87,22 @@ export const useCampaignsByChainId = ({ chainId, includeInactive = false }: Camp
   return data
 }
 
-type CampaignsByChainIdsProps = Omit<CampaignsByPoolIdProps, 'chainId'> & {
-  chainIds: number[]
-}
-
 type CampaignsAccumulator = {
-  [chainId: number]: Record<Address, Awaited<ReturnType<typeof fetchCampaignsByPoolIds>>>
+  [chainId: number]: Record<Address, Awaited<ReturnType<typeof fetchCampaigns>>>
 }
 
-export const useCampaignsByChainIds = ({ chainIds, includeInactive = false }: CampaignsByChainIdsProps) => {
+export const useCampaignsByChainIds = ({
+  chainIds,
+  includeInactive = false,
+}: {
+  chainIds: number[]
+  includeInactive?: boolean
+}) => {
   const queries = useMemo(
     () =>
       chainIds.map((chainId) => ({
         queryKey: ['campaignsByChainId', chainId, includeInactive],
-        queryFn: () => fetchAllCampaignsByChainId({ chainId, includeInactive }),
+        queryFn: () => fetchCampaigns({ chainId, includeInactive }),
         enabled: !!chainId,
         retry: false,
         ...QUERY_SETTINGS_IMMUTABLE,

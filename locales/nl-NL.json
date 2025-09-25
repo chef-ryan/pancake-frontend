@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "CAKE Burn Dashboard",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Let op: <0>%token%</0> is momenteel niet geverifieerd. Bevestig altijd het adres en doe je eigen onderzoek voordat je handelt of interacteert met deze pool.",
   "Trade Binance Alpha Tokens to Win $250,000.": "Verhandel Binance Alpha Tokens om $250.000 te winnen.",
-  "Trade with Social Login to Win $15,000": "Handel met Sociale Login en win $15.000",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "Zet LP om in Leenkracht. Ontvang lisUSD Direct!",
   "Borrow Here": "Leen Hier",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "Ruil %currencyA% (%chainNameA%) naar %currencyB% (%chainName%)",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "Inzet",
   "Total.tabOverall": "Totaal",
   "Unstaked.toast": "Ontstaked",
-  "Earn.label": "Opbrengst"
+  "Earn.label": "Opbrengst",
+  "Failed!": "Mislukt!",
+  "Successfully!": "Geslaagd!",
+  "Amount of liquidity to add": "Hoeveelheid liquiditeit om toe te voegen",
+  "Max": "Max",
+  "New Balance": "Nieuw Saldo",
+  "total position value (USD)": "totale positiewaarde (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Je kunt al je tokens verwijderen en je positie open houden, zodat je de volgende keer naadloos liquiditeit kunt toevoegen.",
+  "LP Fees": "LP-vergoedingen",
+  "Become the Top Predictor, Win $2,500": "Word de Topvoorspeller, Win $2.500",
+  "One-click Solana Crosschain Swaps": "Eén-klik Solana Crosschain Swaps",
+  "Solana Crosschain": "Solana Crosschain"
 }

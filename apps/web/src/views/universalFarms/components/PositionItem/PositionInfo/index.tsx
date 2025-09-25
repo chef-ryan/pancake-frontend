@@ -2,7 +2,7 @@ import { Protocol } from '@pancakeswap/farms'
 import { useTheme } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { UnifiedCurrency, UnifiedCurrencyAmount } from '@pancakeswap/swap-sdk-core'
-import { AutoColumn, FeeTier, FlexGap, Row, Skeleton, Tag, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { FeeTier, FlexGap, Row, Skeleton, Tag, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { formatNumber as formatBalance } from '@pancakeswap/utils/formatBalance'
 import { formatNumber } from '@pancakeswap/utils/formatNumber'
 import { DoubleCurrencyLogo, FiatNumberDisplay } from '@pancakeswap/widgets-internal'
@@ -29,7 +29,6 @@ import {
   PoolInfo,
   SolanaV3PoolInfo,
 } from 'state/farmsV4/state/type'
-import styled from 'styled-components'
 import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem'
 import { useV2CakeEarning, useV3CakeEarning } from 'views/universalFarms/hooks/useCakeEarning'
@@ -37,7 +36,6 @@ import { usePositionEarningAmount } from 'views/universalFarms/hooks/usePosition
 import { useAccount } from 'wagmi'
 import { IncentraTag } from 'components/Incentra/IncentraTag'
 import { isEvm, isSolana, NonEVMChainId } from '@pancakeswap/chains'
-import { getCurrencyLogoSrcs } from 'components/TokenImage'
 import { PositionDebugView } from '../PositionDebugView'
 import {
   InfinityBinPoolPositionAprButton,
@@ -48,7 +46,6 @@ import {
   V3PoolPositionAprButton,
 } from '../../PoolAprButton'
 import { DetailInfoTitle, DetailInfoDesc, DetailInfoLabel, TagCell } from './styled'
-import { EarningsWithToken } from './EarningsWithToken'
 import { SolanaV3Earnings } from './SolanaV3Earnings'
 
 export const formatPositionAmount = (amount?: UnifiedCurrencyAmount<UnifiedCurrency>) => {
@@ -131,7 +128,7 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
         <IncentraTag poolAddress={pool?.lpAddress} />
       </>
     )
-  }, [t, protocol, isStaked, outOfRange, removed, pool?.lpAddress])
+  }, [t, chainId, protocol, isStaked, outOfRange, removed, pool?.lpAddress])
 
   const title = useMemo(
     () =>
@@ -254,7 +251,7 @@ export const PositionInfo = memo((props: PositionInfoProps) => {
     return (
       <V2PoolPositionAprButton pool={pool as PoolInfo} userPosition={userPosition as V2LPDetail | StableLPDetail} />
     )
-  }, [detailMode, pool, userPosition])
+  }, [chainId, detailMode, pool, userPosition])
 
   return (
     <>

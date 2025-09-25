@@ -1,4 +1,4 @@
-import { Protocol, supportedChainIdV4 } from '@pancakeswap/farms'
+import { Protocol, supportedChainIdV4, merklSupportedChainId } from '@pancakeswap/farms'
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { masterChefV3ABI, pancakeV3PoolABI } from '@pancakeswap/v3-sdk'
 import { create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
@@ -148,9 +148,9 @@ export const getMerklApr = async (result: any, chainId: number) => {
 }
 
 export const getAllNetworkMerklApr = async (signal?: AbortSignal) => {
-  const evmChains = supportedChainIdV4.filter((chainId) => isEvm(chainId)) as ChainId[]
+  const chainIds = supportedChainIdV4.filter((chainId) => merklSupportedChainId.includes(chainId))
   const resp = await fetch(
-    `https://api.merkl.xyz/v4/opportunities/?chainId=${evmChains.join(
+    `https://api.merkl.xyz/v4/opportunities/?chainId=${chainIds.join(
       ',',
     )}&test=false&mainProtocolId=pancake-swap&action=POOL,HOLD&status=LIVE`,
     { signal },
@@ -163,7 +163,7 @@ export const getAllNetworkMerklApr = async (signal?: AbortSignal) => {
         opportunity?.protocol?.id?.toLowerCase().startsWith('pancake-swap') ||
         opportunity?.protocol?.id?.toLowerCase().startsWith('pancakeswap'),
     )
-    const aprs = await Promise.all(evmChains.map((chainId) => getMerklApr(pancakeResult, chainId)))
+    const aprs = await Promise.all(chainIds.map((chainId) => getMerklApr(pancakeResult, chainId)))
     return aprs.reduce((acc, apr) => Object.assign(acc, apr), {})
   }
   throw resp

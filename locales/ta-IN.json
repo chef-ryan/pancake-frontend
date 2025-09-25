@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "CAKE எரிப்பு டாஷ்போர்டு",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "கவனத்திற்கு: <0>%token%</0> தற்போது சரிபார்க்கப்படாதது. இந்த பூலுடன் வர்த்தகம் செய்வதற்கு அல்லது தொடர்பு கொள்வதற்கு முன் முகவரியை எப்போதும் உறுதிப்படுத்தவும் மற்றும் உங்கள் சொந்த ஆராய்ச்சியைச் செய்யவும்.",
   "Trade Binance Alpha Tokens to Win $250,000.": "Binance Alpha Tokens வர்த்தகம் செய்து $250,000 வெல்லுங்கள்.",
-  "Trade with Social Login to Win $15,000": "சமூக உள்நுழைவு மூலம் வர்த்தகம் செய்து $15,000 வெல்லுங்கள்",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "LP-ஐ கடன் பெறும் சக்தியாக மாற்றுங்கள். lisUSD-ஐ உடனடியாகப் பெறுங்கள்!",
   "Borrow Here": "இங்கு கடன் பெறுங்கள்",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "%currencyA% (%chainNameA%) ஐ %currencyB% (%chainName%) க்குப் பரிமாற்று",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "உறுதிப்படுத்தப்பட்ட",
   "Total.tabOverall": "மொத்தம்",
   "Unstaked.toast": "ஸ்டேக்கிங் நீக்கப்பட்டது",
-  "Earn.label": "சம்பாதிப்பு"
+  "Earn.label": "சம்பாதிப்பு",
+  "Failed!": "தோல்வியடைந்தது!",
+  "Successfully!": "வெற்றிகரமாக!",
+  "Amount of liquidity to add": "சேர்க்க வேண்டிய லிக்விடிட்டியின் அளவு",
+  "Max": "அதிகபட்சம்",
+  "New Balance": "புதிய இருப்பு",
+  "total position value (USD)": "மொத்த நிலை மதிப்பு (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "அடுத்த முறை தடையின்றி நிலையைச் சேர்க்க, உங்கள் டோக்கன்கள் அனைத்தையும் அகற்றிவிட்டு, உங்கள் நிலையைத் திறந்து வைத்திருக்கலாம்.",
+  "LP Fees": "LP கட்டணங்கள்",
+  "Become the Top Predictor, Win $2,500": "முன்னணி கணிப்பாளராகி, $2,500 வெல்லுங்கள்",
+  "One-click Solana Crosschain Swaps": "ஒரே கிளிக்கில் Solana Crosschain பரிமாற்றங்கள்",
+  "Solana Crosschain": "Solana Crosschain"
 }

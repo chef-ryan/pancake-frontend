@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "CAKEバーンダッシュボード",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "注意：<0>%token%</0> は現在未認証です。取引またはこのプールとやり取りする前に、必ずアドレスを確認し、ご自身で調査を行ってください。",
   "Trade Binance Alpha Tokens to Win $250,000.": "Binance Alphaトークンをトレードして$250,000を獲得しましょう。",
-  "Trade with Social Login to Win $15,000": "ソーシャルログインでトレードして$15,000を獲得しましょう",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "LPを担保に借入力を強化。lisUSDを即座に獲得！",
   "Borrow Here": "こちらで借りる",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "「%currencyA% (%chainNameA%)」を「%currencyB% (%chainName%)」にスワップ",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "コミット額",
   "Total.tabOverall": "合計",
   "Unstaked.toast": "アンステーク済み",
-  "Earn.label": "獲得"
+  "Earn.label": "獲得",
+  "Failed!": "失敗！",
+  "Successfully!": "成功！",
+  "Amount of liquidity to add": "追加する流動性の額",
+  "Max": "最大",
+  "New Balance": "新しい残高",
+  "total position value (USD)": "合計ポジション価値 (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "すべてのトークンを引き出しても、ポジションをオープン状態に保つことができます。これにより、次回はシームレスにポジションを追加できます。",
+  "LP Fees": "LP手数料",
+  "Become the Top Predictor, Win $2,500": "トップ予測者になって、$2,500を獲得しよう",
+  "One-click Solana Crosschain Swaps": "ワンクリックでSolanaクロスチェーンスワップ",
+  "Solana Crosschain": "Solanaクロスチェーン"
 }

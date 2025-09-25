@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "CAKE Ταμπλό Καύσης",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Προσοχή: <0>%token%</0> είναι επί του παρόντος ανεπιβεβαίωτο. Να επιβεβαιώνετε πάντα τη διεύθυνση και να κάνετε τη δική σας έρευνα πριν από την ανταλλαγή ή την αλληλεπίδραση με αυτό το pool.",
   "Trade Binance Alpha Tokens to Win $250,000.": "Κάντε συναλλαγές με Binance Alpha Tokens για να κερδίσετε $250.000.",
-  "Trade with Social Login to Win $15,000": "Κάντε συναλλαγές με Κοινωνική Σύνδεση για να κερδίσετε $15.000",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "Μετατρέψτε το LP σε Δύναμη Δανεισμού. Αποκτήστε lisUSD Άμεσα!",
   "Borrow Here": "Δανειστείτε Εδώ",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "Ανταλλαγή %currencyA% (%chainNameA%) σε %currencyB% (%chainName%)",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "Δέσμευση",
   "Total.tabOverall": "Σύνολο",
   "Unstaked.toast": "Αποδεσμεύτηκε",
-  "Earn.label": "Κέρδη"
+  "Earn.label": "Κέρδη",
+  "Failed!": "Αποτυχία!",
+  "Successfully!": "Επιτυχία!",
+  "Amount of liquidity to add": "Ποσό ρευστότητας προς προσθήκη",
+  "Max": "Μέγιστο",
+  "New Balance": "Νέο Υπόλοιπο",
+  "total position value (USD)": "συνολική αξία θέσης (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Μπορείτε να αφαιρέσετε όλα τα token σας και να διατηρήσετε τη θέση σας ανοιχτή για να προσθέσετε ρευστότητα απρόσκοπτα την επόμενη φορά.",
+  "LP Fees": "Προμήθειες LP",
+  "Become the Top Predictor, Win $2,500": "Γίνε ο Κορυφαίος Προβλέπων, Κέρδισε $2,500",
+  "One-click Solana Crosschain Swaps": "Solana Crosschain Swaps με ένα κλικ",
+  "Solana Crosschain": "Solana Crosschain"
 }

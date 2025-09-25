@@ -1,15 +1,14 @@
-import { memo, useMemo, useState } from 'react'
-import { PositionInfoLayout, PositionUtils, TickUtils, TokenInfo } from '@pancakeswap/solana-core-sdk'
+import { memo, useMemo } from 'react'
+import { TokenInfo } from '@pancakeswap/solana-core-sdk'
 import { NonEVMChainId } from '@pancakeswap/chains'
-import BigNumber from 'bignumber.js'
-import { Price, UnifiedCurrencyAmount, ZERO_ADDRESS } from '@pancakeswap/swap-sdk-core'
+import { ZERO_ADDRESS } from '@pancakeswap/swap-sdk-core'
 import { Protocol } from '@pancakeswap/farms'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { POSITION_STATUS, SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
-import { SolanaV3Pool, useSolanaV3Pool } from 'state/pools/solana'
+import { useSolanaV3Pool } from 'state/pools/solana'
 import { useSolanaTokenPrice } from 'hooks/solana/useSolanaTokenPrice'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
-import { calculateSolanaTickLimits, calculateTickLimits, getTickAtLimitStatus } from 'views/PoolDetail/utils'
+import { calculateSolanaTickLimits, getTickAtLimitStatus } from 'views/PoolDetail/utils'
 import { usePriceRange } from 'hooks/solana/usePriceRange'
 import { useLiquidityAmount } from 'hooks/solana/useLiquidityAmount'
 import { PriceRange } from './PriceRange'
@@ -66,7 +65,7 @@ export const SolanaV3PositionItem = memo(({ position, detailMode }: SolanaV3Posi
       tvlUsd: poolInfo.tvl.toString() as `${number}`,
       rawPool: poolInfo,
     } satisfies SolanaV3PoolInfo
-  }, [currency0, currency1, poolInfo, position.liquidity, position.poolId])
+  }, [currency0, currency1, poolInfo, position.liquidity, position.poolId, position.nftMint])
 
   const { data: currency0Price } = useSolanaTokenPrice({
     mint: currency0?.wrapped.address,
@@ -98,6 +97,7 @@ export const SolanaV3PositionItem = memo(({ position, detailMode }: SolanaV3Posi
 
   return (
     <PositionItem
+      link="//solana.pancakeswap.finance/positions/"
       chainId={NonEVMChainId.SOLANA}
       pool={pool}
       totalPriceUSD={totalPriceUSD}

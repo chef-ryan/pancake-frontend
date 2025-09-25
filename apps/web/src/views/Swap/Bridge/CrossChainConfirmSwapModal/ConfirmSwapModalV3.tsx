@@ -40,7 +40,6 @@ import ConfirmSwapModalV3Container from './ConfirmSwapModalV3Container'
 import { OrderResultModalContent } from './OrderStatus/OrderResultModalContent'
 import { TransactionConfirmSwapContentV3 } from './TransactionConfirmSwapContentV3'
 import { activeBridgeOrderMetadataAtom } from './state/orderDataState'
-import { BridgeType } from '../types'
 
 export const useApprovalPhaseStepTitles: ({ trade }: { trade: InterfaceOrder['trade'] | undefined }) => {
   [step in AllowedAllowanceState]: string

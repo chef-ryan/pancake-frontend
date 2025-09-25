@@ -17,11 +17,29 @@ export const useJsonAdsConfig = (url: string): AdSlide[] => {
   const loadable = useAtomValue(jsonAdsConfigAtom(url))
   const jsonAds = loadable.unwrapOr([])
 
-  return jsonAds.map((config) => ({
-    id: config.id,
-    component: <JsonAds ad={config} />,
-    priority: config.priority,
-  }))
+  const now = Date.now()
+
+  return jsonAds
+    .filter((config) => {
+      if (config.startTime && config.endTime) {
+        const start = Date.parse(config.startTime)
+        const end = Date.parse(config.endTime)
+
+        if (!Number.isNaN(start)) {
+          if (now < start) return false
+        }
+        if (!Number.isNaN(end)) {
+          if (now > end) return false
+        }
+      }
+
+      return true
+    })
+    .map((config) => ({
+      id: config.id,
+      component: <JsonAds ad={config} />,
+      priority: config.priority,
+    }))
 }
 
 export default useJsonAdsConfig

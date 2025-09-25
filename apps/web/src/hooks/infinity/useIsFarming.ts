@@ -11,7 +11,7 @@ import { useUserShowTestnet } from 'state/user/hooks/useUserShowTestnet'
 import { isInfinityProtocol } from 'utils/protocols'
 import { Address } from 'viem'
 
-import { fetchCampaignsByPoolIds } from './useCampaigns'
+import { fetchCampaigns } from './useCampaigns'
 
 export const useMultiChainPoolsFarmingStatus = (pools: UniversalFarmConfig[]) => {
   const [isShowTestnet] = useUserShowTestnet()
@@ -33,7 +33,7 @@ export const useMultiChainPoolsFarmingStatus = (pools: UniversalFarmConfig[]) =>
     queryFn: async () =>
       Promise.allSettled(
         Object.entries(chainIdToPoolIdsMap).map(([chainId, poolIds]) =>
-          fetchCampaignsByPoolIds({ chainId: Number(chainId), poolIds, fetchAll: true, includeInactive: false }),
+          fetchCampaigns({ chainId: Number(chainId), poolIds, fetchAll: true, includeInactive: false }),
         ),
       ),
     enabled: !!infinityPools.length,
@@ -65,7 +65,7 @@ export const usePositionIsFarming = ({ chainId, poolId }: { chainId?: number; po
   const { data: campaignsByPoolId } = useQuery({
     queryKey: ['CampaignsByPoolId', poolId, chainId],
     queryFn: async () =>
-      fetchCampaignsByPoolIds({ chainId: Number(chainId), poolIds: [poolId!], fetchAll: true, includeInactive: false }),
+      fetchCampaigns({ chainId: Number(chainId), poolIds: [poolId!], fetchAll: true, includeInactive: false }),
     enabled: !!poolId,
     retry: false,
   })

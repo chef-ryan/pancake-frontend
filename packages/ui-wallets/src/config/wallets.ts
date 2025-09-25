@@ -350,8 +350,8 @@ export const getWalletsConfig = ({
 }
 
 export const TOP_WALLETS_ID_CONFIG = {
-  MultiChain: [WalletIds.Metamask, WalletIds.BinanceW3W, WalletIds.Okx],
-  Evm: [WalletIds.Metamask, WalletIds.BinanceW3W, WalletIds.Okx],
+  MultiChain: [WalletIds.Metamask, WalletIds.Trust, WalletIds.BinanceW3W, WalletIds.Okx],
+  Evm: [WalletIds.Metamask, WalletIds.Trust, WalletIds.BinanceW3W, WalletIds.Okx],
   Solana: [WalletIds.Phantom, WalletIds.BinanceW3W, WalletIds.Solflare, WalletIds.Backpack],
 }
 

@@ -1,5 +1,13 @@
 # @pancakeswap/v2-sdk
 
+## 1.1.7
+
+### Patch Changes
+
+- Updated dependencies [edc65d4]
+  - @pancakeswap/swap-sdk-core@1.5.1
+  - @pancakeswap/swap-sdk-evm@1.1.7
+
 ## 1.1.6
 
 ### Patch Changes

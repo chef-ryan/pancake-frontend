@@ -1,5 +1,14 @@
 # @pancakeswap/v3-sdk
 
+## 3.9.7
+
+### Patch Changes
+
+- edc65d4: patches price usage to fit UnifiedCurrency
+- Updated dependencies [edc65d4]
+  - @pancakeswap/swap-sdk-core@1.5.1
+  - @pancakeswap/sdk@5.8.18
+
 ## 3.9.6
 
 ### Patch Changes

@@ -1,4 +1,4 @@
-import { ChainId, getChainNameInKebabCase, isEvm } from '@pancakeswap/chains'
+import { ChainId, getChainNameInKebabCase } from '@pancakeswap/chains'
 import {
   FarmV4SupportedChainId,
   Protocol,

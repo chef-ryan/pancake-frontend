@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "Dashboard ng CAKE Burn",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Babala: Ang <0>%token%</0> ay hindi pa nabe-verify. Palaging kumpirmahin ang address at gawin ang iyong sariling pananaliksik bago mag-trade o makipag-ugnayan sa pool na ito.",
   "Trade Binance Alpha Tokens to Win $250,000.": "Mag-trade ng Binance Alpha Tokens para manalo ng $250,000.",
-  "Trade with Social Login to Win $15,000": "Mag-trade gamit ang Social Login para manalo ng $15,000",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "Gawing Borrow Power ang LP. Kumuha ng lisUSD Agad-agad!",
   "Borrow Here": "Humiram Dito",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "Mag-swap ng %currencyA% (%chainNameA%) sa %currencyB% (%chainName%)",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "Nakatuon",
   "Total.tabOverall": "Kabuuan",
   "Unstaked.toast": "Na-unstake",
-  "Earn.label": "Kita"
+  "Earn.label": "Kita",
+  "Failed!": "Nabigo!",
+  "Successfully!": "Matagumpay!",
+  "Amount of liquidity to add": "Halaga ng liquidity na idadagdag",
+  "Max": "Max",
+  "New Balance": "Bagong Balanse",
+  "total position value (USD)": "kabuuang halaga ng posisyon (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Maaari mong alisin ang lahat ng iyong token at panatilihing bukas ang iyong posisyon para makapagdagdag nang maayos sa susunod.",
+  "LP Fees": "LP Fees",
+  "Become the Top Predictor, Win $2,500": "Maging ang Top Predictor, Manalo ng $2,500",
+  "One-click Solana Crosschain Swaps": "One-click Solana Crosschain Swaps",
+  "Solana Crosschain": "Solana Crosschain"
 }

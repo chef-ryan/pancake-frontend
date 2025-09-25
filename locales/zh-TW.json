@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "CAKE 銷毀儀表板",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "注意：<0>%token%</0> 目前尚未驗證。在進行交易或與此資金池互動之前，請務必確認地址並自行研究。",
   "Trade Binance Alpha Tokens to Win $250,000.": "交易 Binance Alpha 代幣，贏取 $250,000。",
-  "Trade with Social Login to Win $15,000": "使用社群登入交易，贏取 $15,000",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "將 LP 轉換為借貸能力。立即獲取 lisUSD！",
   "Borrow Here": "立即借貸",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "兌換 %currencyA% (%chainNameA%) 至 %currencyB% (%chainName%)",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "投入",
   "Total.tabOverall": "總計",
   "Unstaked.toast": "已解除質押",
-  "Earn.label": "收益"
+  "Earn.label": "收益",
+  "Failed!": "失敗！",
+  "Successfully!": "成功！",
+  "Amount of liquidity to add": "要新增的流動性數量",
+  "Max": "最大",
+  "New Balance": "新餘額",
+  "total position value (USD)": "總倉位價值 (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "您可以移除所有代幣，您的倉位仍會保持開啟，以便下次能無縫地再次新增倉位。",
+  "LP Fees": "LP 手續費",
+  "Become the Top Predictor, Win $2,500": "成為頂級預測員，贏取 $2,500",
+  "One-click Solana Crosschain Swaps": "一鍵 Solana 跨鏈兌換",
+  "Solana Crosschain": "Solana 跨鏈"
 }

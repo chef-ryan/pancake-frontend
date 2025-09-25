@@ -1,5 +1,14 @@
 # solana-frontend
 
+## 0.0.9
+
+### Patch Changes
+
+- @pancakeswap/hooks@0.0.46
+- @pancakeswap/utils@8.0.1
+- @pancakeswap/widgets-internal@0.5.1
+- @pancakeswap/uikit@0.69.4
+
 ## 0.0.8
 
 ### Patch Changes

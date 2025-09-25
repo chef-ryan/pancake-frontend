@@ -1,4 +1,4 @@
-import { ChainId, ERC20Token, Native, SPLToken, UnifiedCurrency } from '@pancakeswap/sdk'
+import { ChainId, ERC20Token, SPLToken } from '@pancakeswap/sdk'
 import { isEvm, NonEVMChainId } from '@pancakeswap/chains'
 import type { TokenInfo } from '@pancakeswap/token-lists'
 import {

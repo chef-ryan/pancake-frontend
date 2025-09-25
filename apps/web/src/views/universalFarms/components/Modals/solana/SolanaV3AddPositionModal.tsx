@@ -31,10 +31,10 @@ import { useAddLiquidityAmount } from 'hooks/solana/useAddLiquidityAmount'
 import { useAddLiquidityCallback } from 'hooks/solana/useAddLiquidityCallback'
 import { useLiquidityAmount, useLiquidityDepositRatio } from 'hooks/solana/useLiquidityAmount'
 import { useLiquidityUsdValue } from 'hooks/solana/useLiquidityUsdValue'
+import { usePriceRangeData } from 'hooks/solana/usePriceRange'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useUnifiedCurrencyBalance } from 'hooks/useUnifiedCurrencyBalance'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { usePriceRangeData } from 'hooks/solana/usePriceRange'
 import { POSITION_STATUS, SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { SolanaV3Pool } from 'state/pools/solana'
@@ -121,7 +121,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
     if (focusSide === 0 && amount1AddWithSlippage?.toExact() !== field1) {
       setFields((prev) => [prev[0], amount1AddWithSlippage?.toExact() ?? ''])
     }
-  }, [amount0AddWithSlippage, amount1AddWithSlippage, fields[0], fields[1]])
+  }, [amount0AddWithSlippage, amount1AddWithSlippage, fields[0], fields[1], focusSide])
 
   const handleConfirm = useCallback(async () => {
     if (!liquidityAdd || !amount0AddWithSlippage || !amount1AddWithSlippage) return
@@ -153,7 +153,7 @@ export const SolanaV3AddPositionModal: React.FC<SolanaV3AddPositionModalProps> =
       console.error(e)
       setIsSending(false)
     }
-  }, [addLiquidity, poolInfo, position, liquidityAdd, amount0Add, amount1Add, onClose])
+  }, [addLiquidity, poolInfo, position, liquidityAdd, amount0AddWithSlippage, amount1AddWithSlippage, onClose])
 
   const handleFieldAInput = useCallback(
     (value: string) => {
@@ -300,10 +300,7 @@ const PriceRangeCard: React.FC<{
   position: SolanaV3PositionDetail
 }> = ({ poolInfo, position }) => {
   const { theme } = useTheme()
-  const {
-    t,
-    currentLanguage: { locale },
-  } = useTranslation()
+  const { t } = useTranslation()
   const [baseIn, setBaseIn] = useState(true)
 
   const currency0 = useMemo(() => convertRawTokenInfoIntoSPLToken(poolInfo?.mintA as TokenInfo), [poolInfo?.mintA])
@@ -321,7 +318,7 @@ const PriceRangeCard: React.FC<{
     poolInfo,
     tickLower: position.tickLower,
     tickUpper: position.tickUpper,
-    liquidity: position.liquidity,
+    liquidity: new BN(10000),
   })
 
   const priceRangeData = usePriceRangeData({
@@ -441,6 +438,7 @@ const PositionChanges: React.FC<{
     tickUpper: position.tickUpper,
     liquidity: liquidityAdd,
   })
+
   return (
     <Card background={theme.colors.cardSecondary}>
       <CardBody>

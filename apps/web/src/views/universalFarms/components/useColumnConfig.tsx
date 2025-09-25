@@ -184,7 +184,6 @@ export const usePoolFeatureConfig = (showPoolType = true) => {
 }
 
 export const PoolTokenOverview = <T extends PoolInfo = PoolInfo>({ data }: { data: T }) => {
-  const { t } = useTranslation()
   const token0 = useTokenByChainId(getCurrencyAddress(data.token0), data.chainId) || data.token0
   const token1 = useTokenByChainId(getCurrencyAddress(data.token1), data.chainId) || data.token1
 

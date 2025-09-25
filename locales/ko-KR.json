@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "CAKE 소각 대시보드",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "주의: <0>%token%</0>은(는) 현재 미인증 상태입니다. 항상 주소를 확인하고 직접 조사하여 해당 풀에서 거래하거나 상호작용하세요.",
   "Trade Binance Alpha Tokens to Win $250,000.": "Binance Alpha Tokens 거래하고 $250,000를 획득하세요.",
-  "Trade with Social Login to Win $15,000": "소셜 로그인을 통해 거래하고 $15,000를 획득하세요.",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "LP를 대출 파워로 전환하고 즉시 lisUSD를 획득하세요!",
   "Borrow Here": "여기서 대출하기",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "%currencyA% (%chainNameA%)를 %currencyB% (%chainName%)로 스왑",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "약정",
   "Total.tabOverall": "전체",
   "Unstaked.toast": "언스테이킹 완료",
-  "Earn.label": "수익"
+  "Earn.label": "수익",
+  "Failed!": "실패!",
+  "Successfully!": "성공!",
+  "Amount of liquidity to add": "추가할 유동성 금액",
+  "Max": "최대",
+  "New Balance": "새 잔액",
+  "total position value (USD)": "총 포지션 가치 (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "모든 토큰을 제거해도 포지션을 유지하여 다음에 원활하게 포지션을 추가할 수 있습니다.",
+  "LP Fees": "LP 수수료",
+  "Become the Top Predictor, Win $2,500": "최고의 예측가가 되어 $2,500 상금을 획득하세요",
+  "One-click Solana Crosschain Swaps": "원클릭 Solana 크로스체인 스왑",
+  "Solana Crosschain": "Solana 크로스체인"
 }

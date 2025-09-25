@@ -1,17 +1,12 @@
 import { useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useTradingCompetitionAds } from 'components/AdPanel/Ads/AdTradingCompetition'
 import { useMemo } from 'react'
-import { AdCrossChain } from './Ads/AdCrossChain'
-import { AdIfo } from './Ads/AdIfo'
-import { AdPCSX } from './Ads/AdPCSX'
-import { AdSolana } from './Ads/AdSolana'
-import { AdSpringboard } from './Ads/AdSpringboard'
 import { ExpandableAd } from './Expandable/ExpandableAd'
 import { AdSlide, Priority } from './ads.types'
 import { useShouldRenderAdIfo } from './useShouldRenderAdIfo'
 import { useJsonAdsConfig } from './hooks/useJsonAdsConfig'
 
-const JSON_ADS_URL = 'https://proofs.pancakeswap.com/cms-config/ads-config.json'
+const JSON_ADS_URL = process.env.NEXT_PUBLIC_JSON_ADS_URL || 'https://proofs.pancakeswap.com/cms-config/ads-config.json'
 
 export const useAdConfig = () => {
   const { isDesktop } = useMatchBreakpoints()
@@ -28,29 +23,6 @@ export const useAdConfig = () => {
         priority: Priority.FIRST_AD,
       },
       ...jsonAdsList,
-      {
-        id: 'ad-cross-chain',
-        component: <AdCrossChain />,
-        priority: Priority.HIGH,
-      },
-      {
-        id: 'ad-solana',
-        component: <AdSolana />,
-      },
-      {
-        id: 'ad-springboard',
-        component: <AdSpringboard />,
-      },
-      ...tradingCompetitionAds,
-      {
-        id: 'ad-ifo',
-        component: <AdIfo />,
-        shouldRender: [shouldRenderAdIfo],
-      },
-      {
-        id: 'pcsx',
-        component: <AdPCSX />,
-      },
     ],
     [shouldRenderAdIfo, tradingCompetitionAds, jsonAdsList],
   )

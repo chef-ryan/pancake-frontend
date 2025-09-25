@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "Панель сжигания CAKE",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Внимание: <0>%token%</0> в настоящее время не верифицирован. Всегда подтверждайте адрес и проводите собственное исследование перед торговлей или взаимодействием с этим пулом.",
   "Trade Binance Alpha Tokens to Win $250,000.": "Торгуйте токенами Binance Alpha, чтобы выиграть $250 000.",
-  "Trade with Social Login to Win $15,000": "Торгуйте с помощью социального входа и выиграйте $15 000",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "Превратите LP в залоговую мощность. Получите lisUSD мгновенно!",
   "Borrow Here": "Занять здесь",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "Своп %currencyA% (%chainNameA%) на %currencyB% (%chainName%)",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "Размещение",
   "Total.tabOverall": "Всего",
   "Unstaked.toast": "Выведено из стейкинга",
-  "Earn.label": "Доход"
+  "Earn.label": "Доход",
+  "Failed!": "Не удалось!",
+  "Successfully!": "Успешно!",
+  "Amount of liquidity to add": "Количество ликвидности для добавления",
+  "Max": "Макс.",
+  "New Balance": "Новый баланс",
+  "total position value (USD)": "общая стоимость позиции (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Вы можете вывести все свои токены, оставив позицию открытой, чтобы в следующий раз легко ее пополнить.",
+  "LP Fees": "Комиссии LP",
+  "Become the Top Predictor, Win $2,500": "Станьте лучшим прогнозистом и выиграйте $2,500",
+  "One-click Solana Crosschain Swaps": "Кроссчейн-свопы Solana в один клик",
+  "Solana Crosschain": "Кроссчейн Solana"
 }

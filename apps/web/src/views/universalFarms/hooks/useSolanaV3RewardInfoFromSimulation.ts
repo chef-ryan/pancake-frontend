@@ -1,4 +1,4 @@
-import { TokenInfo, ZERO } from '@pancakeswap/solana-core-sdk'
+import { TokenInfo } from '@pancakeswap/solana-core-sdk'
 import { useCallback, useMemo } from 'react'
 import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
 import { SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
@@ -76,14 +76,18 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
     ...QUERY_SETTINGS_IMMUTABLE,
   })
 
-  const tokenFees = data
-    ? {
-        tokenFeeAmountA: data?.feeAmount0,
-        tokenFeeAmountB: data?.feeAmount1,
-      }
-    : {}
+  const tokenFees = useMemo(
+    () =>
+      data
+        ? {
+            tokenFeeAmountA: data?.feeAmount0,
+            tokenFeeAmountB: data?.feeAmount1,
+          }
+        : {},
+    [data],
+  )
 
-  const rewards = data?.rewardAmounts ?? []
+  const rewards = useMemo(() => data?.rewardAmounts ?? [], [data])
 
   const mints = useMemo(() => {
     return uniq([
@@ -123,7 +127,7 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
           .multipliedBy(tokenPrices[poolInfo.rawPool.mintB.address.toLowerCase()] || 0),
       )
       .plus(totalRewards)
-  }, [poolInfo, tokenPrices, totalRewards])
+  }, [poolInfo, tokenPrices, totalRewards, tokenFees.tokenFeeAmountA, tokenFees.tokenFeeAmountB])
 
   const breakdownRewardInfo = useMemo(() => {
     if (!poolInfo || !tokenPrices)
@@ -172,7 +176,7 @@ export const useSolanaV3RewardInfoFromSimulation = ({ poolInfo, position }: Sola
         })
         .filter((r) => !!r.mint),
     }
-  }, [rewards, tokenFees])
+  }, [rewards, tokenFees, poolInfo, tokenPrices])
 
   return {
     breakdownRewardInfo,

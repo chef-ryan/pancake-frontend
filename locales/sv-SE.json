@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "CAKE Burn-översikt",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Varning: <0>%token%</0> är för närvarande overifierad. Bekräfta alltid adressen och gör din egen efterforskning innan du handlar eller interagerar med denna pool.",
   "Trade Binance Alpha Tokens to Win $250,000.": "Handla Binance Alpha Tokens för att vinna $250 000.",
-  "Trade with Social Login to Win $15,000": "Handla med Social Login för att vinna $15 000.",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "Omvandla LP till Lånekraft. Få lisUSD Omedelbart!",
   "Borrow Here": "Låna här",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "Byt %currencyA% (%chainNameA%) mot %currencyB% (%chainName%)",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "Insats",
   "Total.tabOverall": "Totalt",
   "Unstaked.toast": "Uttaget",
-  "Earn.label": "Förtjänst"
+  "Earn.label": "Förtjänst",
+  "Failed!": "Misslyckades!",
+  "Successfully!": "Lyckades!",
+  "Amount of liquidity to add": "Mängd likviditet att lägga till",
+  "Max": "Max",
+  "New Balance": "Nytt saldo",
+  "total position value (USD)": "totalt positionsvärde (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Du kan ta ut alla dina tokens och ändå behålla din position öppen för att smidigt kunna lägga till likviditet nästa gång.",
+  "LP Fees": "LP-avgifter",
+  "Become the Top Predictor, Win $2,500": "Bli topptipparen och vinn 2 500 $",
+  "One-click Solana Crosschain Swaps": "Ettklicks Solana crosschain-byten",
+  "Solana Crosschain": "Solana Crosschain"
 }

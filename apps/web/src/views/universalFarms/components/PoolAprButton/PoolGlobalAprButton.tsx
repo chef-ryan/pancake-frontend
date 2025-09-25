@@ -19,10 +19,17 @@ type PoolGlobalAprButtonProps = {
 }
 
 export const PoolGlobalAprButton: React.FC<PoolGlobalAprButtonProps> = ({ pool, detailMode, aprInfo }) => {
-  const key = useMemo(() => `${pool.chainId}:${pool.lpAddress}` as const, [pool.chainId, pool.lpAddress])
+  if (aprInfo) {
+    return <PoolGlobalAprButtonDisplay pool={pool} aprInfo={aprInfo} detailMode={detailMode} />
+  }
+  return <PoolGlobalAprButtonWithLoadApr pool={pool} detailMode={detailMode} />
+}
 
-  const hookAprInfo = usePoolApr(key, pool, !pool.stableSwapAddress && !aprInfo, !aprInfo)
-  const { lpApr, cakeApr, merklApr, incentraApr } = aprInfo ?? hookAprInfo
+const PoolGlobalAprButtonWithLoadApr: React.FC<PoolGlobalAprButtonProps> = ({ pool, detailMode }) => {
+  const key = useMemo(() => `${pool.chainId}:${pool.lpAddress}` as const, [pool.chainId, pool.lpAddress])
+  const hookAprInfo = usePoolApr(key, pool, !pool.stableSwapAddress)
+  const { totalApr, updateTotalApr } = useMyPositions()
+  const { lpApr, cakeApr, merklApr, incentraApr } = hookAprInfo
 
   const numerator = useMemo(() => {
     const lpAprNumerator = new BigNumber(lpApr).times(cakeApr?.userTvlUsd ?? BIG_ZERO)
@@ -31,12 +38,6 @@ export const PoolGlobalAprButton: React.FC<PoolGlobalAprButtonProps> = ({ pool, 
   const denominator = useMemo(() => {
     return cakeApr?.userTvlUsd ?? BIG_ZERO
   }, [cakeApr?.userTvlUsd])
-
-  const { chainId, token0, token1 } = pool
-  const currency0 = useCurrencyByChainId(getCurrencyAddress(token0), chainId)
-  const currency1 = useCurrencyByChainId(getCurrencyAddress(token1), chainId)
-
-  const { totalApr, updateTotalApr } = useMyPositions()
 
   useEffect(() => {
     if (
@@ -59,6 +60,15 @@ export const PoolGlobalAprButton: React.FC<PoolGlobalAprButtonProps> = ({ pool, 
     updateTotalApr,
     totalApr,
   ])
+  return <PoolGlobalAprButtonDisplay pool={pool} aprInfo={hookAprInfo} detailMode={detailMode} />
+}
+
+const PoolGlobalAprButtonDisplay: React.FC<PoolGlobalAprButtonProps> = ({ pool, aprInfo }) => {
+  const { lpApr, cakeApr, merklApr, incentraApr } = aprInfo!
+
+  const { chainId, token0, token1 } = pool
+  const currency0 = useCurrencyByChainId(getCurrencyAddress(token0), chainId)
+  const currency1 = useCurrencyByChainId(getCurrencyAddress(token1), chainId)
 
   const APRBreakdownModalState = useModalV2()
 

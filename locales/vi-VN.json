@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "Bảng điều khiển đốt CAKE",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Cảnh báo: <0>%token%</0> hiện chưa được xác minh. Luôn xác nhận địa chỉ và tự nghiên cứu trước khi giao dịch hoặc tương tác với pool này.",
   "Trade Binance Alpha Tokens to Win $250,000.": "Giao dịch Binance Alpha Token để giành chiến thắng $250,000.",
-  "Trade with Social Login to Win $15,000": "Giao dịch bằng đăng nhập xã hội để giành chiến thắng $15,000",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "Biến LP thành sức mạnh vay. Nhận lisUSD ngay lập tức!",
   "Borrow Here": "Vay tại đây",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "Hoán đổi %currencyA% (%chainNameA%) sang %currencyB% (%chainName%)",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "Cam kết",
   "Total.tabOverall": "Tổng quan",
   "Unstaked.toast": "Đã hủy stake",
-  "Earn.label": "Kiếm được"
+  "Earn.label": "Kiếm được",
+  "Failed!": "Thất bại!",
+  "Successfully!": "Thành công!",
+  "Amount of liquidity to add": "Số lượng thanh khoản cần thêm",
+  "Max": "Tối đa",
+  "New Balance": "Số dư mới",
+  "total position value (USD)": "tổng giá trị vị thế (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Bạn có thể rút toàn bộ token mà vẫn giữ vị thế mở để dễ dàng thêm thanh khoản trong lần tiếp theo.",
+  "LP Fees": "Phí LP",
+  "Become the Top Predictor, Win $2,500": "Trở thành Nhà Dự Đoán Hàng Đầu, Thắng $2,500",
+  "One-click Solana Crosschain Swaps": "Hoán đổi Cross-chain Solana chỉ với một cú nhấp chuột",
+  "Solana Crosschain": "Solana Crosschain"
 }

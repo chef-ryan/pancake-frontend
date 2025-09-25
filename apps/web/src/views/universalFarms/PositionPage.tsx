@@ -310,6 +310,8 @@ export const PositionPage = () => {
     v3PoolsLength,
     v2PoolsLength,
     allInfinityPositions,
+    solanaAccount,
+    solanaLoading,
   ])
 
   useEffect(() => {

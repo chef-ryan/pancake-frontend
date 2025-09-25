@@ -37,15 +37,17 @@ export const SolanaV3Earnings = ({
         <Grid gridGap="8px" alignItems="flex-start" gridTemplateColumns={isMobile ? '1fr' : '80px 1fr'}>
           <DetailInfoLabel>{t('Farm Rewards')}:</DetailInfoLabel>
           <Grid gridTemplateColumns={isMobile ? '1fr 1fr' : `repeat(${maxColumn}, minmax(120px, 1fr))`} gridGap="8px">
-            {breakdownRewardInfo.rewards.map((r, index) => (
-              <EarningsWithToken
-                key={index}
-                currency={convertRawTokenInfoIntoSPLToken(r.mint as TokenInfo)}
-                earningsAmount={Number(r.amount)}
-                earningsUsd={Number(r.amountUSD)}
-                rowProps={{ justifyContent: isMobile ? 'space-between' : 'flex-end' }}
-              />
-            ))}
+            {breakdownRewardInfo.rewards
+              .filter((r) => Number(r.amount) > 0)
+              .map((r, index) => (
+                <EarningsWithToken
+                  key={index}
+                  currency={convertRawTokenInfoIntoSPLToken(r.mint as TokenInfo)}
+                  earningsAmount={Number(r.amount)}
+                  earningsUsd={Number(r.amountUSD)}
+                  rowProps={{ justifyContent: isMobile ? 'space-between' : 'flex-end' }}
+                />
+              ))}
           </Grid>
         </Grid>
       )}
@@ -53,7 +55,7 @@ export const SolanaV3Earnings = ({
         <Grid gridGap="8px" alignItems="flex-start" gridTemplateColumns={isMobile ? '1fr' : '90px 1fr'}>
           <DetailInfoLabel>{t('LP Fees')}: </DetailInfoLabel>
           <Grid gridTemplateColumns={isMobile ? '1fr 1fr' : `repeat(${maxColumn}, minmax(120px, 1fr))`} gridGap="8px">
-            {breakdownRewardInfo.fee.A?.mint ? (
+            {breakdownRewardInfo.fee.A?.mint && Number(breakdownRewardInfo.fee.A?.amount) > 0 ? (
               <EarningsWithToken
                 currency={convertRawTokenInfoIntoSPLToken(breakdownRewardInfo.fee.A?.mint as TokenInfo)}
                 earningsAmount={Number(breakdownRewardInfo.fee.A?.amount)}
@@ -61,7 +63,7 @@ export const SolanaV3Earnings = ({
                 rowProps={{ justifyContent: isMobile ? 'space-between' : 'flex-end' }}
               />
             ) : null}
-            {breakdownRewardInfo.fee.B?.mint ? (
+            {breakdownRewardInfo.fee.B?.mint && Number(breakdownRewardInfo.fee.B?.amount) > 0 ? (
               <EarningsWithToken
                 currency={convertRawTokenInfoIntoSPLToken(breakdownRewardInfo.fee.B?.mint as TokenInfo)}
                 earningsAmount={Number(breakdownRewardInfo.fee.B?.amount)}

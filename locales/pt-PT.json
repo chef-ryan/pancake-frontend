@@ -4180,7 +4180,6 @@
   "CAKE Burn Dashboard": "Dashboard de Queima de CAKE",
   "Caution: <0>%token%</0> is currently unverified. Always confirm the address and do your own research before trading or interacting with this pool.": "Atenção: <0>%token%</0> encontra-se atualmente não verificado(a). Confirme sempre o endereço e faça a sua própria pesquisa antes de negociar ou interagir com este pool.",
   "Trade Binance Alpha Tokens to Win $250,000.": "Negocie Binance Alpha Tokens para Ganhar $250.000.",
-  "Trade with Social Login to Win $15,000": "Negocie com Login Social para Ganhar $15.000",
   "Turn LP into Borrow Power. Get lisUSD Instantly!": "Transforme LP em Poder de Empréstimo. Obtenha lisUSD Instantaneamente!",
   "Borrow Here": "Peça Empréstimo Aqui",
   "Swap %currencyA% (%chainNameA%) to %currencyB% (%chainName%)": "Trocar %currencyA% (%chainNameA%) para %currencyB% (%chainName%)",
@@ -4233,5 +4232,16 @@
   "Commit.prediction": "Compromisso",
   "Total.tabOverall": "Total",
   "Unstaked.toast": "Desaplicado",
-  "Earn.label": "Ganhos"
+  "Earn.label": "Ganhos",
+  "Failed!": "Falhou!",
+  "Successfully!": "Com sucesso!",
+  "Amount of liquidity to add": "Montante de liquidez a adicionar",
+  "Max": "Máx.",
+  "New Balance": "Novo Saldo",
+  "total position value (USD)": "valor total da posição (USD)",
+  "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Pode remover todos os seus tokens e manter a posição aberta para adicionar liquidez facilmente da próxima vez.",
+  "LP Fees": "Taxas de LP",
+  "Become the Top Predictor, Win $2,500": "Torna-te o Melhor Previsor, Ganha $2.500",
+  "One-click Solana Crosschain Swaps": "Trocas Crosschain Solana com um Clique",
+  "Solana Crosschain": "Solana Crosschain"
 }

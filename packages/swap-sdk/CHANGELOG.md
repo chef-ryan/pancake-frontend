@@ -1,5 +1,15 @@
 # @pancakeswap/sdk
 
+## 5.8.18
+
+### Patch Changes
+
+- Updated dependencies [edc65d4]
+  - @pancakeswap/swap-sdk-core@1.5.1
+  - @pancakeswap/swap-sdk-evm@1.1.7
+  - @pancakeswap/swap-sdk-solana@1.1.6
+  - @pancakeswap/v2-sdk@1.1.7
+
 ## 5.8.17
 
 ### Patch Changes

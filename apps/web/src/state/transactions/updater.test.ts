@@ -4,17 +4,17 @@ import { shouldCheck } from './updater'
 
 describe('transactions updater', () => {
   const trxDetailInFetchedTransactions: TransactionDetails = {
-    hash: 'Ox34567' as `0x${string}`,
+    hash: '0x34567' as `0x${string}`,
     addedTime: 5,
     from: '0x787213',
   }
   const trxDetailNotInFetchedTransactions: TransactionDetails = {
-    hash: 'Ox78903' as `0x${string}`,
+    hash: '0x78903' as `0x${string}`,
     addedTime: 6,
     from: '0x787213',
   }
   const trxDetailWithReceipt: TransactionDetails = {
-    hash: 'Ox78903' as `0x${string}`,
+    hash: '0x78903' as `0x${string}`,
     addedTime: 6,
     from: '0x787213',
     receipt: {

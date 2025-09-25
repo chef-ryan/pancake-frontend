@@ -4,6 +4,8 @@ import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { BridgeOrderWithCommands, isBridgeOrder } from 'views/Swap/utils'
 import { Calldata } from 'hooks/usePermit2'
 import { isEvm, isSolana } from '@pancakeswap/chains'
+import { useSwapState } from 'state/swap/hooks'
+import { isValidSolanaAddress } from 'utils/isValidSolanaAddress'
 import { getSolanaBridgeCalldata } from '../api'
 import { RELAY_STEP_ID } from '../types'
 
@@ -23,6 +25,7 @@ export const useEVMToSolanaBridgeCalldata = ({
   | undefined => {
   const { account, solanaAccount } = useAccountActiveChain()
   const [allowedSlippage] = useUserSlippage()
+  const { recipient: recipientAddress } = useSwapState()
 
   const isEvmToSolanaBridge =
     isBridgeOrder(order) &&
@@ -40,23 +43,32 @@ export const useEVMToSolanaBridgeCalldata = ({
   >({
     queryKey: [
       'evm-to-solana-bridge-calldata',
+      order?.bridgeTransactionData?.requestId,
       order?.trade?.inputAmount?.currency?.symbol,
       order?.trade?.inputAmount?.currency?.chainId,
       order?.trade?.outputAmount?.currency?.symbol,
       order?.trade?.outputAmount?.currency?.chainId,
       order?.trade?.inputAmount?.quotient?.toString(),
+      order?.trade?.outputAmount?.quotient?.toString(),
       solanaAccount,
       account,
       allowedSlippage,
+      recipientAddress,
     ],
     queryFn: async () => {
       if (!order || !solanaAccount || !account) {
         return undefined
       }
 
+      if (recipientAddress && !isValidSolanaAddress(recipientAddress)) {
+        return undefined
+      }
+
+      const recipient = recipientAddress || solanaAccount
+
       const calldataResponse = await getSolanaBridgeCalldata({
         order,
-        recipient: solanaAccount,
+        recipient,
         user: account,
         allowedSlippage,
       })
