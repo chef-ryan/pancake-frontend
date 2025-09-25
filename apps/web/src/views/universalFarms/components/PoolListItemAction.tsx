@@ -76,26 +76,12 @@ export const ActionItems = ({ pool, icon }: { pool: PoolInfo; icon?: React.React
 
   return (
     <Flex flexDirection="column" onClick={stopBubble}>
-      <NextLinkFromReactRouter to={detailLink}>
-        <StyledButton scale="sm" variant="text">
-          {t('View Pool Details')}
-          {icon}
-        </StyledButton>
-      </NextLinkFromReactRouter>
       {!account ? (
         <StyledConnectWalletButton scale="sm" variant="text" />
       ) : (
         <NextLinkFromReactRouter to={addLiquidityLink}>
           <StyledButton scale="sm" variant="text">
             {t('Add Liquidity')}
-            {icon}
-          </StyledButton>
-        </NextLinkFromReactRouter>
-      )}
-      {[Protocol.InfinityBIN, Protocol.InfinityCLAMM].includes(pool.protocol) ? null : (
-        <NextLinkFromReactRouter to={infoLink}>
-          <StyledButton scale="sm" variant="text">
-            {t('View Info Page')}
             {icon}
           </StyledButton>
         </NextLinkFromReactRouter>
