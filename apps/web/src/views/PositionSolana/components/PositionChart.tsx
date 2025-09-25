@@ -27,6 +27,8 @@ interface PositionChartProps {
   onPriceRangeChange?: (lower: number, upper: number) => void
 }
 
+const maxRenderCount = 50
+
 export const PositionChart = ({
   baseIn = true,
   position,
@@ -67,7 +69,7 @@ export const PositionChart = ({
 
     let filteredData = chartData
 
-    if (scale && lower && upper) {
+    if (scale && lower && upper && chartData.length > maxRenderCount) {
       const lowerPrice = Number(lower.toFixed(18))
       const upperPrice = Number(upper.toFixed(18))
       const range = upperPrice - lowerPrice
@@ -132,8 +134,7 @@ export const PositionChart = ({
           lower={xLower}
           upper={xUpper}
           current={xCurrent}
-          min={formattedData[0].price0}
-          max={formattedData[formattedData.length - 1].price0}
+          formattedData={formattedData}
           position={position}
           poolInfo={poolInfo}
           baseIn={baseIn}
@@ -174,7 +175,7 @@ export const PositionChart = ({
               )}
               {xLower && xUpper && <ReferenceArea x1={xLower} x2={xUpper} fill={rangeColor} fillOpacity={0.1} />}
               {xLower && (
-                <ReferenceLine x={xLower} stroke={rangeColor} strokeWidth={2}>
+                <ReferenceLine position="start" x={xLower} stroke={rangeColor} strokeWidth={2}>
                   {/* <Label
                     value={formatAmount(xLower, { precision: 2 }) ?? ''}
                     position="top"
@@ -183,7 +184,7 @@ export const PositionChart = ({
                 </ReferenceLine>
               )}
               {xUpper && (
-                <ReferenceLine x={xUpper} stroke={rangeColor} strokeWidth={2}>
+                <ReferenceLine position="end" x={xUpper} stroke={rangeColor} strokeWidth={2}>
                   {/* <Label
                     value={formatAmount(xUpper, { precision: 2 }) ?? ''}
                     position="top"
@@ -232,16 +233,33 @@ export const PositionChart = ({
   )
 }
 
-const RangeBar = ({ lower, upper, current, min, max, position, poolInfo, baseIn }) => {
+const RangeBar = ({ lower, upper, current, formattedData, position, poolInfo, baseIn }) => {
+  const min = formattedData[0].price0
+  const max = formattedData[formattedData.length - 1].price0
+  const scaled = formattedData.length > maxRenderCount
+  const [xLower, xCurrent, xUpper] = useMemo(() => {
+    const { tickSpacing } = poolInfo.config
+    return [
+      formattedData.findIndex((item) => item.tick === TickUtils.nearestUsableTick(position.tickLower, tickSpacing)),
+      formattedData.findIndex(
+        (item) => item.tick === TickUtils.nearestUsableTick(poolInfo.tickCurrent ?? 0, tickSpacing),
+      ),
+      formattedData.findIndex((item) => item.tick === TickUtils.nearestUsableTick(position.tickUpper, tickSpacing)),
+    ]
+  }, [formattedData, poolInfo.tickCurrent, poolInfo.config.tickSpacing])
+
   const currentLeft = useMemo(() => {
-    return ((current - min) / (max - min)) * 100
-  }, [current, min, max])
+    if (scaled) return ((current - min) / (max - min)) * 100
+    return (xCurrent / formattedData.length) * 100
+  }, [current, min, max, scaled, xCurrent])
   const lowerLeft = useMemo(() => {
-    return ((lower - min) / (max - min)) * 100
-  }, [lower, min, max])
+    if (scaled) return ((lower - min) / (max - min)) * 100
+    return (Math.max(0, xLower) / formattedData.length) * 100
+  }, [lower, min, max, scaled, xLower])
   const upperRight = useMemo(() => {
-    return ((upper - min) / (max - min)) * 100
-  }, [upper, min, max])
+    if (scaled) return ((upper - min) / (max - min)) * 100
+    return (Math.min(formattedData.length, xUpper + 1) / formattedData.length) * 100
+  }, [upper, min, max, scaled, xUpper])
   const {
     minPriceFormatted: minPrice,
     minPercentage,
@@ -267,10 +285,14 @@ const RangeBar = ({ lower, upper, current, min, max, position, poolInfo, baseIn 
           Number(maxPrice) < 1 ? { maximumDecimalTrailingZeroes: 4 } : { maxDecimalDisplayDigits: 4 },
         )
       : '∞'
+  const isSmallRange = upperRight - lowerLeft < 20
   return (
     <AutoColumn width="100%" py="8px" gap="4px">
       <Box width="100%" position="relative" height="30px">
-        <PriceRangeContainer left={lowerLeft} right={upperRight}>
+        <PriceRangeContainer
+          left={isSmallRange ? Math.max(0, lowerLeft - 10) : lowerLeft}
+          right={isSmallRange ? Math.min(100, upperRight + 10) : upperRight}
+        >
           <AutoRow justifyContent="space-between">
             <AutoColumn alignItems="flex-start">
               <Text fontSize="12px" lineHeight={1.5} fontWeight={600}>
