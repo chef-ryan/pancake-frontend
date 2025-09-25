@@ -26,7 +26,7 @@ export const BreadcrumbNav: React.FC = () => {
 
         <Button variant="secondary">
           <CopyButton
-            text={window.location.href}
+            text={typeof window !== 'undefined' ? window.location.href : ''}
             tooltipMessage={t('Link copied!')}
             width="16px"
             ml="8px"

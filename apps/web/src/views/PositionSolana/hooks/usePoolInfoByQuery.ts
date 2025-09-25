@@ -25,7 +25,7 @@ export const usePoolInfoByQuery = (): SolanaV3PoolInfo | undefined | null => {
     [poolInfo?.mintB],
   )
 
-  useSolanaV3PoolsUpdater(poolInfo ? [poolInfo] : undefined)
+  useSolanaV3PoolsUpdater(useMemo(() => (poolInfo ? [poolInfo] : undefined), [poolInfo]))
 
   return useMemo(() => {
     if (!currency0 || !currency1 || !poolInfo || !position) {

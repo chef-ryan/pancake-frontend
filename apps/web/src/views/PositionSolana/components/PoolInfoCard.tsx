@@ -119,7 +119,7 @@ export const PoolInfoCard = () => {
                             <OpenNewIcon width={16} height={16} color="primary60" />
                           </Link>
                           <CopyButton
-                            text={currency0?.wrapped?.address ?? ''}
+                            text={position?.nftMint.toBase58() ?? ''}
                             tooltipMessage={t('NFT mint copied')}
                             width="16px"
                             height="16px"
