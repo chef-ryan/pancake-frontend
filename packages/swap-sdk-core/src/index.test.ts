@@ -42,7 +42,7 @@ test('exports', () => {
       "isCurrencySorted",
       "isUnifedCurrencySorted",
       "getCurrencyAddress",
-      "getUnifedCurrencyAddress",
+      "getUnifiedCurrencyAddress",
       "getMatchedCurrency",
     ]
   `)

@@ -1,5 +1,5 @@
 import { getChainName as defaultGetChainName } from "@pancakeswap/chains";
-import { Currency } from "@pancakeswap/sdk";
+import { Currency, UnifiedCurrency } from "@pancakeswap/sdk";
 import { Flex, Skeleton, Text } from "@pancakeswap/uikit";
 import { styled } from "styled-components";
 import { ChainLogo, DoubleCurrencyLogo } from "../CurrencyLogo";
@@ -11,11 +11,11 @@ export interface ITokenInfoProps {
   desc?: React.ReactNode;
   icon?: React.ReactNode;
   customContent?: React.ReactNode;
-  token: Currency;
-  quoteToken: Currency;
+  token: UnifiedCurrency;
+  quoteToken: UnifiedCurrency;
   iconWidth?: string;
   getChainName?: (chainId: number) => string | undefined;
-  getCurrencySymbol?: (token: Currency) => string | undefined;
+  getCurrencySymbol?: (token: UnifiedCurrency) => string | undefined;
 }
 
 const Container = styled.div`
