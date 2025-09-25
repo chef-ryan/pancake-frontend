@@ -1,4 +1,4 @@
-import { Protocol } from '@pancakeswap/farms'
+import { NonEvmProtocol, Protocol } from '@pancakeswap/farms'
 import {
   PositionIdRoute,
   zInfinityBinPositionIdObject,
@@ -122,7 +122,7 @@ export const useSolanaV3PositionIdRouteParams = () => {
   const router = useRouter()
   const params = useMemo(() => {
     if (!routeParams || !routeParams.positionId) return null
-    if (routeParams.positionId[0] !== Protocol.SolanaV3) return null
+    if (routeParams.positionId[0] !== NonEvmProtocol.SolanaV3) return null
     const [protocol, poolId, mintId] = routeParams.positionId as z.infer<typeof zSolanaV3PositionIdTuple>
 
     return { protocol, poolId, mintId }

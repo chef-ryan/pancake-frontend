@@ -1,5 +1,5 @@
 import { ChainId, chainNames } from '@pancakeswap/chains'
-import { Protocol } from '@pancakeswap/farms'
+import { NonEvmProtocol, Protocol } from '@pancakeswap/farms'
 import { getChainId } from 'config/chains'
 import { DynamicRoute } from 'next-typesafe-url'
 import { Address, Hex } from 'viem'
@@ -102,9 +102,9 @@ export const zInfinityClammPositionIdObject = z.object({
   tokenId: zTokenId,
   action: zPositionAction.optional(),
 })
-export const zSolanaV3PositionIdTuple = z.tuple([z.literal(Protocol.SolanaV3), zMintId, zMintId])
+export const zSolanaV3PositionIdTuple = z.tuple([z.literal(NonEvmProtocol.SolanaV3), zMintId, zMintId])
 export const zSolanaV3PositionIdObject = z.object({
-  protocol: z.literal(Protocol.SolanaV3),
+  protocol: z.literal(NonEvmProtocol.SolanaV3),
   poolId: zMintId,
   mintId: zMintId,
 })
