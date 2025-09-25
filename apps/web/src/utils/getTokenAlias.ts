@@ -1,4 +1,4 @@
-import { Currency, getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
+import { Currency, getUnifiedCurrencyAddress, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import { subgraphTokenName, subgraphTokenSymbol } from 'state/info/constant'
 import { safeGetAddress } from 'utils'
 
@@ -26,8 +26,8 @@ export const getTokenNameAlias = (
   return subgraphTokenName[chainId]?.[addr] ?? defaultName
 }
 
-export const getCurrencySymbol = (currency: Currency) => {
-  const address = getCurrencyAddress(currency)
+export const getCurrencySymbol = (currency: UnifiedCurrency) => {
+  const address = getUnifiedCurrencyAddress(currency)
   const alias = getTokenSymbolAlias(address, currency.chainId, currency.symbol)
   if (alias) {
     return alias

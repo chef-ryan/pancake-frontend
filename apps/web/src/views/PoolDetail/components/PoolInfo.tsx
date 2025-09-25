@@ -1,6 +1,6 @@
 import { Protocol } from '@pancakeswap/farms'
 import { useTranslation } from '@pancakeswap/localization'
-import { Percent, getUnifedCurrencyAddress } from '@pancakeswap/swap-sdk-core'
+import { Percent, getUnifiedCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import {
   AutoColumn,
   Box,
@@ -92,11 +92,11 @@ export const PoolInfo = () => {
   const [tab, setTab] = useState(PoolDetailTab.MyPositions)
 
   const currency0 =
-    useUnifiedCurrency(poolInfo?.token0 ? getUnifedCurrencyAddress(poolInfo.token0) : undefined, chainId) ??
+    useUnifiedCurrency(poolInfo?.token0 ? getUnifiedCurrencyAddress(poolInfo.token0) : undefined, chainId) ??
     poolInfo?.token0 ??
     undefined
   const currency1 =
-    useUnifiedCurrency(poolInfo?.token1 ? getUnifedCurrencyAddress(poolInfo.token1) : undefined, chainId) ??
+    useUnifiedCurrency(poolInfo?.token1 ? getUnifiedCurrencyAddress(poolInfo.token1) : undefined, chainId) ??
     poolInfo?.token1 ??
     undefined
 

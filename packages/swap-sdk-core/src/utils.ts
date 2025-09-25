@@ -170,7 +170,7 @@ export function getCurrencyAddress(currency: Currency) {
   return currency.address
 }
 
-export function getUnifedCurrencyAddress(currency: UnifiedCurrency) {
+export function getUnifiedCurrencyAddress(currency: UnifiedCurrency) {
   if (currency.isNative) {
     return currency instanceof SPLNativeCurrency ? currency.address : ZERO_ADDRESS
   }
