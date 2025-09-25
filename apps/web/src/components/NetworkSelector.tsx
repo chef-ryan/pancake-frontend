@@ -1,13 +1,13 @@
-import { Chains } from '@pancakeswap/chains'
+import { Chain, Chains } from '@pancakeswap/chains'
 import { INFINITY_SUPPORTED_CHAINS } from '@pancakeswap/infinity-sdk'
 import { Select } from '@pancakeswap/uikit'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import { DISABLED_ADD_LIQUIDITY_CHAINS } from 'config/constants/liquidity'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useUserShowTestnet } from 'state/user/hooks/useUserShowTestnet'
 import { LiquidityType } from 'utils/types'
 import { useProtocolSupported } from 'views/CreateLiquidityPool/hooks/useProtocolSupported'
-import { Chain, monadTestnet } from 'wagmi/chains'
+import { monadTestnet } from 'wagmi/chains'
 
 interface NetworkSelectorProps {
   chainId?: number
@@ -40,6 +40,18 @@ export const NetworkSelector = ({
     [version, chainId, showTestnet, isInfinitySupported, isStableSwapSupported, isV2Supported, isV3Supported],
   )
 
+  const defaultOptionIndex = useMemo(
+    () => chainList.findIndex((chain) => chain.id === chainId) + 1,
+    [chainList, chainId],
+  )
+
+  useEffect(() => {
+    const chainInList = chainList.find((chain) => chain.id === chainId)
+    if (!chainInList) {
+      onChange?.(chainList[defaultOptionIndex])
+    }
+  }, [chainList, defaultOptionIndex, chainId, onChange])
+
   return (
     <Select
       options={chainList.map((chain) => ({
@@ -51,7 +63,7 @@ export const NetworkSelector = ({
       defaultOptionIndex={
         // Note: index needs to be plus one because of this:
         // packages/uikit/src/components/Select/Select.tsx:129
-        chainList.findIndex((chain) => chain.id === chainId) + 1
+        defaultOptionIndex
       }
       style={{
         zIndex: 30,
