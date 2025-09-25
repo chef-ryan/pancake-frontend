@@ -15,6 +15,7 @@ import { SolanaV3Pool } from 'state/pools/solana'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import styled from 'styled-components'
 import Divider from 'components/Divider'
+import { formatFiatNumber } from '@pancakeswap/utils/formatFiatNumber'
 
 export interface PositionCardProps {
   position: SolanaV3PositionDetail
@@ -103,27 +104,15 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position, poolInfo }
   })
 
   const totalValueDisplay = useMemo(() => {
-    if (!totalUsdValue) return '$0.00'
+    if (!totalUsdValue) return '$0.0000'
     const value = totalUsdValue.toNumber()
-    if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(3)}M`
-    }
-    if (value >= 1000) {
-      return `$${(value / 1000).toFixed(3)}K`
-    }
-    return `$${value.toFixed(2)}`
+    return formatFiatNumber(value)
   }, [totalUsdValue])
 
   const totalEarningsDisplay = useMemo(() => {
-    if (!totalPendingYield) return '$0.00'
+    if (!totalPendingYield) return '$0.0000'
     const value = totalPendingYield.toNumber()
-    if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(3)}M`
-    }
-    if (value >= 1000) {
-      return `$${(value / 1000).toFixed(3)}K`
-    }
-    return `$${value.toFixed(2)}`
+    return formatFiatNumber(value)
   }, [totalPendingYield])
 
   const ratio0Display = useMemo(() => {
@@ -241,65 +230,69 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position, poolInfo }
               {totalEarningsDisplay}
             </Text>
 
-            <div>
-              <Text fontSize="16px" bold mb="8px">
-                {t('LP Fees')}
-              </Text>
-              <EarningsTokenList>
-                {lpFeesData.map((item, index) => (
-                  <EarningsTokenItem key={`lp-fee-${index}`}>
-                    <FlexGap alignItems="center" gap="8px">
-                      <TokenLogo
-                        srcs={getCurrencyLogoSrcs(item.token)}
-                        sizes="xs"
-                        width={24}
-                        height={24}
-                        style={{ borderRadius: '50%' }}
-                      />
-                      <Text fontSize="14px" color="textSubtle">
-                        {item.token?.symbol}
-                      </Text>
-                    </FlexGap>
-                    <div>
-                      <Text fontSize="16px">{item.amount}</Text>
-                      <Text fontSize="12px" color="textSubtle">
-                        {item.usdValue}
-                      </Text>
-                    </div>
-                  </EarningsTokenItem>
-                ))}
-              </EarningsTokenList>
-            </div>
+            {lpFeesData.length > 0 && (
+              <div>
+                <Text fontSize="16px" bold mb="8px">
+                  {t('LP Fees')}
+                </Text>
+                <EarningsTokenList>
+                  {lpFeesData.map((item, index) => (
+                    <EarningsTokenItem key={`lp-fee-${index}`}>
+                      <FlexGap alignItems="center" gap="8px">
+                        <TokenLogo
+                          srcs={getCurrencyLogoSrcs(item.token)}
+                          sizes="xs"
+                          width={24}
+                          height={24}
+                          style={{ borderRadius: '50%' }}
+                        />
+                        <Text fontSize="14px" color="textSubtle">
+                          {item.token?.symbol}
+                        </Text>
+                      </FlexGap>
+                      <div>
+                        <Text fontSize="16px">{item.amount}</Text>
+                        <Text fontSize="12px" color="textSubtle">
+                          {item.usdValue}
+                        </Text>
+                      </div>
+                    </EarningsTokenItem>
+                  ))}
+                </EarningsTokenList>
+              </div>
+            )}
 
-            <div style={{ marginTop: '16px' }}>
-              <Text fontSize="16px" bold mb="8px">
-                {t('Farm Rewards')}
-              </Text>
-              <EarningsTokenList>
-                {farmRewardsData.map((item, index) => (
-                  <EarningsTokenItem key={`farm-reward-${index}`}>
-                    <FlexGap alignItems="center" gap="8px">
-                      <TokenLogo
-                        srcs={getCurrencyLogoSrcs(item.token)}
-                        sizes="xs"
-                        width={24}
-                        height={24}
-                        style={{ borderRadius: '50%' }}
-                      />
-                      <Text fontSize="14px" color="textSubtle">
-                        {item.token?.symbol}
-                      </Text>
-                    </FlexGap>
-                    <div>
-                      <Text fontSize="16px">{item.amount}</Text>
-                      <Text fontSize="12px" color="textSubtle">
-                        {item.usdValue}
-                      </Text>
-                    </div>
-                  </EarningsTokenItem>
-                ))}
-              </EarningsTokenList>
-            </div>
+            {farmRewardsData.length > 0 && (
+              <div style={{ marginTop: '16px' }}>
+                <Text fontSize="16px" bold mb="8px">
+                  {t('Farm Rewards')}
+                </Text>
+                <EarningsTokenList>
+                  {farmRewardsData.map((item, index) => (
+                    <EarningsTokenItem key={`farm-reward-${index}`}>
+                      <FlexGap alignItems="center" gap="8px">
+                        <TokenLogo
+                          srcs={getCurrencyLogoSrcs(item.token)}
+                          sizes="xs"
+                          width={24}
+                          height={24}
+                          style={{ borderRadius: '50%' }}
+                        />
+                        <Text fontSize="14px" color="textSubtle">
+                          {item.token?.symbol}
+                        </Text>
+                      </FlexGap>
+                      <div>
+                        <Text fontSize="16px">{item.amount}</Text>
+                        <Text fontSize="12px" color="textSubtle">
+                          {item.usdValue}
+                        </Text>
+                      </div>
+                    </EarningsTokenItem>
+                  ))}
+                </EarningsTokenList>
+              </div>
+            )}
           </EarningsSection>
         </AutoColumn>
       </CardBody>
