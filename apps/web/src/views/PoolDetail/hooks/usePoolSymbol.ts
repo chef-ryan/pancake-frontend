@@ -1,6 +1,7 @@
 import { getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import { useUnifiedCurrency } from 'hooks/Tokens'
 import { useMemo } from 'react'
+import { isSolana } from '@pancakeswap/chains'
 import { useChainIdByQuery } from 'state/info/hooks'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
 import { usePoolInfoByQuery } from './usePoolInfo'
@@ -22,7 +23,10 @@ export const usePoolSymbol = () => {
     const s0 = currency0?.isNative
       ? currency0?.symbol
       : getTokenSymbolAlias(currency0?.wrapped.address, chainId, currency0?.wrapped.symbol) ?? ''
-    const s1 = getTokenSymbolAlias(currency1?.wrapped.address, chainId, currency1?.wrapped.symbol) ?? ''
+    const s1 =
+      isSolana(chainId) && currency1?.isNative
+        ? currency1.symbol
+        : getTokenSymbolAlias(currency1?.wrapped.address, chainId, currency1?.wrapped.symbol) ?? ''
     return [`${s0} / ${s1}`, s0, s1]
   }, [
     currency0?.isNative,
@@ -30,6 +34,8 @@ export const usePoolSymbol = () => {
     currency0?.wrapped.address,
     currency0?.wrapped.symbol,
     chainId,
+    currency1?.isNative,
+    currency1?.symbol,
     currency1?.wrapped.address,
     currency1?.wrapped.symbol,
   ])
