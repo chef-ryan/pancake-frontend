@@ -12,14 +12,14 @@ import { SolanaV3AddPositionModal } from '../Modals/solana/SolanaV3AddPositionMo
 
 type ActionPanelProps = {
   removed: boolean
-  outOfRange: boolean
-  chainId: number
+  outOfRange?: boolean
+  chainId?: number
   detailMode?: boolean
   poolInfo: SolanaV3PoolInfo | undefined
   position: SolanaV3PositionDetail
 }
 
-export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, poolInfo, position }) => {
+export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, poolInfo, position, detailMode }) => {
   const { t } = useTranslation()
 
   const removePositionModal = useModalV2()
@@ -58,12 +58,35 @@ export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, p
     return hasFarmRewards || hasLpFees
   }, [breakdownRewardInfo])
 
+  if (detailMode && poolInfo && removed)
+    return (
+      <StopPropagation>
+        <ActionPanelContainer>
+          <Button variant="primary" onClick={addPositionModal.onOpen}>
+            {t('Add')}
+          </Button>
+        </ActionPanelContainer>
+        {hasRewards && (
+          <Button variant="primary" id="sol-v3-harvest-btn" isLoading={sending} onClick={handleHarvest}>
+            {t('Harvest')}
+          </Button>
+        )}
+
+        <SolanaV3AddPositionModal
+          isOpen={addPositionModal.isOpen}
+          onClose={addPositionModal.onDismiss}
+          pool={poolInfo}
+          position={position}
+        />
+      </StopPropagation>
+    )
+
   return (
     <StopPropagation>
-      <ActionPanelContainer>
+      <ActionPanelContainer $detailMode={detailMode}>
         {!removed && poolInfo?.rawPool && position ? (
           <>
-            <IconButton variant="secondary" onClick={handleRemovePositionClick}>
+            <IconButton id="sol-v3-remove-btn" variant="secondary" onClick={handleRemovePositionClick}>
               <MinusIcon color="primary" width="24px" />
             </IconButton>
             {removePositionModal.isOpen && (
@@ -77,7 +100,7 @@ export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, p
           </>
         ) : null}
         <>
-          <IconButton variant="secondary" onClick={addPositionModal.onOpen}>
+          <IconButton id="sol-v3-add-btn" variant="secondary" onClick={addPositionModal.onOpen}>
             <AddIcon color="primary" width="24px" />
           </IconButton>
           {poolInfo && (
@@ -90,7 +113,7 @@ export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, p
           )}
         </>
         {hasRewards && (
-          <Button variant="primary" isLoading={sending} onClick={handleHarvest}>
+          <Button variant="primary" id="sol-v3-harvest-btn" isLoading={sending} onClick={handleHarvest}>
             {t('Harvest')}
           </Button>
         )}
@@ -99,7 +122,7 @@ export const SolanaV3PositionActions: React.FC<ActionPanelProps> = ({ removed, p
   )
 }
 
-const ActionPanelContainer = styled(Flex)`
+const ActionPanelContainer = styled(Flex)<{ $detailMode?: boolean }>`
   flex-direction: row;
   gap: 8px;
   height: 48px;
@@ -107,4 +130,14 @@ const ActionPanelContainer = styled(Flex)`
   & button {
     flex: 1;
   }
+
+  ${({ $detailMode }) =>
+    $detailMode &&
+    `
+      #sol-v3-remove-btn, #sol-v3-add-btn {
+        width: 48px;
+        height: 48px;
+        flex: none;
+      }
+  `}
 `

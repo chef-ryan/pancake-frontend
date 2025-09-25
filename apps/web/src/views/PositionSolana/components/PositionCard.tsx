@@ -16,6 +16,7 @@ import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import styled from 'styled-components'
 import Divider from 'components/Divider'
 import { formatFiatNumber } from '@pancakeswap/utils/formatFiatNumber'
+import { SolanaV3PositionActions } from 'views/universalFarms/components/PositionActions/SolanaV3PositionActions'
 
 export interface PositionCardProps {
   position: SolanaV3PositionDetail
@@ -294,6 +295,12 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position, poolInfo }
               </div>
             )}
           </EarningsSection>
+          <SolanaV3PositionActions
+            detailMode
+            removed={position.liquidity.isZero()}
+            poolInfo={poolInfo}
+            position={position}
+          />
         </AutoColumn>
       </CardBody>
     </Card>
