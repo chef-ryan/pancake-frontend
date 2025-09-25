@@ -17,10 +17,10 @@ const LIQUIDITY_NET_MASK = (1n << 128n) - 1n
  *
  * @param priceRangeBps Desired price coverage in basis points (default: 500 bps = ±5%)
  * @param tickSpacing The pool’s tickSpacing
- * @param maxLen Hard cap to avoid blowing gas (default: 200)
+ * @param maxLen Hard cap to avoid blowing gas (default: 1000)
  * @returns len for queryCompactTicks
  */
-export function decideCompactTickLen(priceRangeBps: number, tickSpacing: number, maxLen: bigint = 200n): bigint {
+export function decideCompactTickLen(priceRangeBps: number, tickSpacing: number, maxLen: bigint = 1000n): bigint {
   console.log({
     priceRangeBps,
     tickSpacing,
