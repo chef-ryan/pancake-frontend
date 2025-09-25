@@ -7,6 +7,8 @@ import { BreadcrumbNav } from './components/BreadcrumbNav'
 import { PoolInfoCard } from './components/PoolInfoCard'
 import { PositionChart } from './components/PositionChart'
 import { useSolanaV3Position } from './hooks/useSolanaV3Position'
+import { PositionCard } from './components/PositionCard'
+import { usePoolInfoByQuery } from './hooks/usePoolInfoByQuery'
 
 const StyledPage = styled(Page)`
   @media screen and (min-width: 370px) {
@@ -21,7 +23,7 @@ const StyledPage = styled(Page)`
 export const SolanaV3Position = () => {
   const { poolId, mintId } = useSolanaV3PositionIdRouteParams()
   const position = useSolanaV3Position(mintId)
-  const poolInfo = useSolanaV3Pool(poolId)
+  const poolInfo = usePoolInfoByQuery()
   return (
     <StyledPage>
       <AutoColumn gap={['16px', null, null, '32px']}>
@@ -31,9 +33,9 @@ export const SolanaV3Position = () => {
           {/* <PoolTvlWarning poolInfo={poolInfo} /> */}
           <Grid gridGap="24px" gridTemplateColumns={['1fr', '1fr', '1fr', '2fr 1fr']}>
             {position && poolInfo && poolId && (
-              <PositionChart poolId={poolId} position={position} poolInfo={poolInfo} />
+              <PositionChart poolId={poolId} position={position} poolInfo={poolInfo.rawPool} />
             )}
-            {/* <PoolStatus poolInfo={poolInfo} style={{ order: isSmallScreen ? -1 : undefined }} /> */}
+            {position && poolInfo && poolId && <PositionCard position={position} poolInfo={poolInfo} />}
           </Grid>
         </AutoColumn>
       </AutoColumn>
