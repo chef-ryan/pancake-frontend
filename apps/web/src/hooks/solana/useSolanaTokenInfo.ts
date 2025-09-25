@@ -19,11 +19,16 @@ const isValidAddress = (address?: string) => {
   }
 }
 
-export function useSolanaTokenInfo(address?: string): SPLToken | undefined | null {
+export function useSolanaTokenInfo(
+  address?: string,
+  opts?: {
+    enabled?: boolean
+  },
+): SPLToken | undefined | null {
   const { tokenList } = useSolanaTokenList()
   const token = useMemo(() => tokenList.find((t) => t.address === address), [tokenList, address])
 
-  const enabled = !token && isValidAddress(address)
+  const enabled = (opts?.enabled ?? true) && !token && isValidAddress(address)
 
   const { data, isLoading } = useQuery({
     queryKey: ['solana-token-info', address],

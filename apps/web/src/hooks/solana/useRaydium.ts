@@ -38,6 +38,7 @@ export const useRaydium = () => {
           jupTokenType: JupTokenType.Strict,
           logRequests: !isDev,
           disableFeatureCheck: true,
+          disableLoadToken: true,
           loopMultiTxStatus: true,
           blockhashCommitment: 'finalized',
         })
