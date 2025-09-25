@@ -1,7 +1,18 @@
-import { AutoColumn, AutoRow, Box, Card, CardBody, Flex, FlexGap, Spinner, Text } from '@pancakeswap/uikit'
+import {
+  AutoColumn,
+  AutoRow,
+  Box,
+  Card,
+  CardBody,
+  Flex,
+  FlexGap,
+  Spinner,
+  Text,
+  useMatchBreakpoints,
+} from '@pancakeswap/uikit'
 import styled, { useTheme } from 'styled-components'
 import { formatAmount } from '@pancakeswap/utils/formatInfoNumbers'
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Bar, BarChart, ResponsiveContainer, XAxis, ReferenceLine, ReferenceArea, Label } from 'recharts'
 import { useSolanaV3PositionIdRouteParams } from 'hooks/dynamicRoute/usePositionIdRoute'
 import { formatNumber } from '@pancakeswap/utils/formatNumber'
@@ -260,6 +271,7 @@ const RangeBar = ({ lower, upper, current, formattedData, position, poolInfo, ba
     if (scaled) return ((upper - min) / (max - min)) * 100
     return (Math.min(formattedData.length, xUpper + 1) / formattedData.length) * 100
   }, [upper, min, max, scaled, xUpper])
+
   const {
     minPriceFormatted: minPrice,
     minPercentage,
@@ -285,15 +297,13 @@ const RangeBar = ({ lower, upper, current, formattedData, position, poolInfo, ba
           Number(maxPrice) < 1 ? { maximumDecimalTrailingZeroes: 4 } : { maxDecimalDisplayDigits: 4 },
         )
       : '∞'
-  const isSmallRange = upperRight - lowerLeft < 20
+  const { isMobile } = useMatchBreakpoints()
+
   return (
     <AutoColumn width="100%" py="8px" gap="4px">
       <Box width="100%" position="relative" height="30px">
-        <PriceRangeContainer
-          left={isSmallRange ? Math.max(0, lowerLeft - 10) : lowerLeft}
-          right={isSmallRange ? Math.min(100, upperRight + 10) : upperRight}
-        >
-          <AutoRow justifyContent="space-between">
+        <PriceRangeContainer left={lowerLeft} right={upperRight} expanded={isMobile}>
+          <AutoRow justifyContent="space-between" flexWrap="nowrap">
             <AutoColumn alignItems="flex-start">
               <Text fontSize="12px" lineHeight={1.5} fontWeight={600}>
                 {displayMinPrice}
@@ -365,10 +375,19 @@ const PriceRangeBar = styled.div<{ left: number; right: number; inRange: boolean
   border-radius: 8px;
   background: ${({ theme, inRange }) => (inRange ? theme.colors.success : theme.colors.failure)};
 `
-const PriceRangeContainer = styled.div<{ left: number; right: number }>`
+const PriceRangeContainer = styled.div<{ left: number; right: number; expanded: boolean }>`
+  ${({ expanded, left, right }) =>
+    expanded
+      ? `
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  `
+      : `
   position: absolute;
   height: 30px;
   top: 0;
-  left: ${({ left }) => left + 1}%;
-  width: ${({ right, left }) => right - left}%;
+  left: ${left + 1}%;
+  width: ${right - left}%;
+  `}
 `

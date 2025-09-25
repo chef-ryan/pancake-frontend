@@ -75,7 +75,7 @@ export const PoolInfoCard = () => {
           <FlexGap
             gap="16px"
             justifyContent={isSmallScreen ? 'space-between' : 'flex-start'}
-            flexDirection={isSmallScreen ? 'row-reverse' : 'row'}
+            flexDirection="row"
             width="100%"
           >
             <FlexGap flexDirection="column" gap="16px">
