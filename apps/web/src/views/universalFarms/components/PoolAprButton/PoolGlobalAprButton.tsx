@@ -1,3 +1,4 @@
+import { isSolana } from '@pancakeswap/chains'
 import { getCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import { useModalV2 } from '@pancakeswap/uikit'
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
@@ -73,6 +74,7 @@ const PoolGlobalAprButtonDisplay: React.FC<PoolGlobalAprButtonProps> = ({ pool, 
   const APRBreakdownModalState = useModalV2()
 
   const poolWithFarming = useMemo(() => ({ ...pool, isFarming: Number(cakeApr?.value) > 0 }), [pool, cakeApr])
+  const isSolanaChain = isSolana(chainId)
 
   if (!isInfinityProtocol(pool.protocol)) {
     return (
@@ -82,6 +84,7 @@ const PoolGlobalAprButtonDisplay: React.FC<PoolGlobalAprButtonProps> = ({ pool, 
         cakeApr={cakeApr}
         merklApr={parseFloat(merklApr) ?? 0}
         incentraApr={parseFloat(incentraApr) ?? 0}
+        showApyButton={!isSolanaChain}
       />
     )
   }
