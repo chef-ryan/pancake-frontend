@@ -22,8 +22,6 @@ export function tryParsePrice(baseToken?: UnifiedCurrency, quoteToken?: UnifiedC
   const decimals = fraction?.length ?? 0
   const withoutDecimals = BigInt((whole ?? '') + (fraction ?? ''))
 
-  // SPLToken is not a subtype of Currency at the type level; cast to Currency for construction.
-  // todo:@eric
   return new Price(
     baseToken as unknown as Currency,
     quoteToken as unknown as Currency,

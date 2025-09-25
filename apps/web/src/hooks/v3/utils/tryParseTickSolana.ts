@@ -22,9 +22,13 @@ export const tryParseTickSolana = ({
       mintA: { decimals: token0Decimal },
       mintB: { decimals: token1Decimal },
     }
-    const pDec = new Decimal(price.toSignificant(18))
-    const res = TickUtils.getPriceAndTick({ poolInfo, price: pDec, baseIn })
-    return res?.tick
+    const pDec = new Decimal((price.numerator / BigInt(10 ** price.quoteCurrency.decimals)).toString()).div(
+      new Decimal((price.denominator / BigInt(10 ** price.baseCurrency.decimals)).toString()),
+    )
+    const { tick } = TickUtils.getPriceAndTick({ poolInfo, price: pDec, baseIn })
+    const { price: currentPrice, tick: currentTick } = TickUtils.getTickPrice({ poolInfo, tick, baseIn })
+    const { price: nextPrice, tick: nextTick } = TickUtils.getTickPrice({ poolInfo, tick: tick + tickSpacing, baseIn })
+    return currentPrice.minus(pDec).abs().lt(nextPrice.minus(pDec).abs()) ? currentTick : nextTick
   } catch {
     return undefined
   }

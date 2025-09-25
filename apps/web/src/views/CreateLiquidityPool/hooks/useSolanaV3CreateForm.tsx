@@ -235,34 +235,16 @@ export const useSolanaV3CreateForm = () => {
 
   const onLeftRangePriceInput = useCallback(
     (leftRangeValue: string) => {
-      const r = getPriceAndTick(leftRangeValue)
-      if (r) {
-        onLeftRangeInput(r.price)
-        if (typeof ticks[Bound.UPPER] === 'number' && r.tick === ticks[Bound.UPPER]) {
-          const incUpper = getIncrementUpper()
-          if (incUpper) onRightRangeInput(incUpper)
-        }
-        return
-      }
       onLeftRangeInput(tryParsePrice(baseCurrency?.wrapped, quoteCurrency?.wrapped, leftRangeValue))
     },
-    [getPriceAndTick, onLeftRangeInput, ticks, getIncrementUpper, onRightRangeInput, baseCurrency, quoteCurrency],
+    [onLeftRangeInput, baseCurrency, quoteCurrency],
   )
 
   const onRightRangePriceInput = useCallback(
     (rightRangeValue: string) => {
-      const r = getPriceAndTick(rightRangeValue)
-      if (r) {
-        onRightRangeInput(r.price)
-        if (typeof ticks[Bound.LOWER] === 'number' && r.tick === ticks[Bound.LOWER]) {
-          const decLower = getDecrementLower()
-          if (decLower) onLeftRangeInput(decLower)
-        }
-        return
-      }
       onRightRangeInput(tryParsePrice(baseCurrency?.wrapped, quoteCurrency?.wrapped, rightRangeValue))
     },
-    [getPriceAndTick, onRightRangeInput, ticks, getDecrementLower, onLeftRangeInput, baseCurrency, quoteCurrency],
+    [onRightRangeInput, baseCurrency, quoteCurrency],
   )
 
   // Range refresh function to set ranges based on zoom levels
@@ -431,31 +413,6 @@ export const useSolanaV3CreateForm = () => {
     />
   )
 
-  // Wrap range input handlers to ensure Solana snapping is applied for manual inputs
-  const handleLeftRangeInputProxied = useCallback(
-    (p?: any) => {
-      if (p) {
-        const text = p?.toSignificant ? p.toSignificant(18) : String(p)
-        onLeftRangePriceInput(text)
-        return
-      }
-      onLeftRangeInput(undefined)
-    },
-    [onLeftRangePriceInput, onLeftRangeInput],
-  )
-
-  const handleRightRangeInputProxied = useCallback(
-    (p?: any) => {
-      if (p) {
-        const text = p?.toSignificant ? p.toSignificant(18) : String(p)
-        onRightRangePriceInput(text)
-        return
-      }
-      onRightRangeInput(undefined)
-    },
-    [onRightRangePriceInput, onRightRangeInput],
-  )
-
   const rangeSelector = (
     <AutoColumn gap="8px">
       <PreTitle>{t('Set Price Range')}</PreTitle>
@@ -468,8 +425,8 @@ export const useSolanaV3CreateForm = () => {
           getIncrementLower={getIncrementLower}
           getDecrementUpper={getDecrementUpper}
           getIncrementUpper={getIncrementUpper}
-          onLeftRangeInput={handleLeftRangeInputProxied}
-          onRightRangeInput={handleRightRangeInputProxied}
+          onLeftRangeInput={onLeftRangeInput}
+          onRightRangeInput={onRightRangeInput}
           currencyA={baseCurrency}
           currencyB={quoteCurrency}
           feeAmount={feeAmount ?? undefined}
