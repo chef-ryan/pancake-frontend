@@ -1,7 +1,6 @@
 import { NonEVMChainId } from '@pancakeswap/chains'
 import { Protocol } from '@pancakeswap/farms'
-import { isSolWSol, SOL } from '@pancakeswap/sdk'
-import { ApiV3PoolInfoConcentratedItem } from '@pancakeswap/solana-core-sdk'
+import { ApiV3PoolInfoConcentratedItem, wSolToSolToken } from '@pancakeswap/solana-core-sdk'
 import { SPLToken } from '@pancakeswap/swap-sdk-core'
 import { PublicKey } from '@solana/web3.js'
 import type { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
@@ -11,12 +10,8 @@ export const normalizeSolanaPoolInfo = (
   solanaPoolInfo?: Omit<ApiV3PoolInfoConcentratedItem, 'type'> & { type: string },
 ): SolanaV3PoolInfo | null => {
   if (!solanaPoolInfo) return null
-  const token0 = isSolWSol(solanaPoolInfo.mintA.address)
-    ? SOL
-    : new SPLToken({ ...solanaPoolInfo.mintA, chainId: NonEVMChainId.SOLANA })
-  const token1 = isSolWSol(solanaPoolInfo.mintB.address)
-    ? SOL
-    : new SPLToken({ ...solanaPoolInfo.mintB, chainId: NonEVMChainId.SOLANA })
+  const token0 = new SPLToken({ ...wSolToSolToken(solanaPoolInfo.mintA), chainId: NonEVMChainId.SOLANA })
+  const token1 = new SPLToken({ ...wSolToSolToken(solanaPoolInfo.mintB), chainId: NonEVMChainId.SOLANA })
 
   return {
     chainId: NonEVMChainId.SOLANA,
