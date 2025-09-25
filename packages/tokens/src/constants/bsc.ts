@@ -3373,4 +3373,5 @@ export const bscTokens = {
   brm: new ERC20Token(ChainId.BSC, '0x483d83A361A3cCE99f88BC05fB44C27B6cE0633b', 18, 'BRM', ''),
   susdx: new ERC20Token(ChainId.BSC, '0x7788A3538C5fc7F9c7C8A74EAC4c898fC8d87d92', 18, 'sUSDX', 'Staked USDX', ''),
   usdx: new ERC20Token(ChainId.BSC, '0xf3527ef8dE265eAa3716FB312c12847bFBA66Cef', 18, 'USDX', 'USDX', ''),
+  gain: new ERC20Token(ChainId.BSC, '0xAcf5A368eC5bb9e804C8AC0b508dAA5A21C92e13', 18, 'GAIN', 'GriffinAI', ''),
 }
