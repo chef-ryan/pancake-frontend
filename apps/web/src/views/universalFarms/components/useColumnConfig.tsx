@@ -193,6 +193,7 @@ export const PoolTokenOverview = <T extends PoolInfo = PoolInfo>({ data }: { dat
   const { tokensMap } = useAtomValue(tokensMapAtom)
   const riskToken = getUnwhitelistedToken(data.farm!, tokensMap)
   const showRisk = Boolean(riskToken)
+  const { t } = useTranslation()
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <Text>
