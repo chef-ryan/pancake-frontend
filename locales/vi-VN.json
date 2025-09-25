@@ -4243,5 +4243,7 @@
   "LP Fees": "Phí LP",
   "Become the Top Predictor, Win $2,500": "Trở thành Nhà Dự Đoán Hàng Đầu, Thắng $2,500",
   "One-click Solana Crosschain Swaps": "Hoán đổi Cross-chain Solana chỉ với một cú nhấp chuột",
-  "Solana Crosschain": "Solana Crosschain"
+  "Solana Crosschain": "Solana Crosschain",
+  "Caution - GAIN Token": "Cảnh báo - Token GAIN",
+  "Please exercise due caution when trading / providing liquidity for the GAIN token. The protocol recently encountered a <0>security compromise.</0> For more information, please refer to <1>GriffinAI X</1>": "Vui lòng hết sức thận trọng khi giao dịch / cung cấp thanh khoản cho token GAIN. Giao thức gần đây đã gặp phải một <0>sự cố bảo mật.</0> Để biết thêm thông tin, vui lòng tham khảo <1>GriffinAI X</1>"
 }

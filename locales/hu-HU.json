@@ -4243,5 +4243,7 @@
   "LP Fees": "LP díjak",
   "Become the Top Predictor, Win $2,500": "Légy a legjobb jós, és nyerj 2500 dollárt",
   "One-click Solana Crosschain Swaps": "Egykattintásos Solana keresztlánc swapok",
-  "Solana Crosschain": "Solana Keresztlánc"
+  "Solana Crosschain": "Solana Keresztlánc",
+  "Caution - GAIN Token": "Vigyázat – GAIN Token",
+  "Please exercise due caution when trading / providing liquidity for the GAIN token. The protocol recently encountered a <0>security compromise.</0> For more information, please refer to <1>GriffinAI X</1>": "Kérjük, járjon el kellő óvatossággal a GAIN token kereskedése / likviditás biztosítása során. A protokollt a közelmúltban <0>biztonsági incidens</0> érte. További információkért tekintse meg a <1>GriffinAI X</1> bejegyzést."
 }

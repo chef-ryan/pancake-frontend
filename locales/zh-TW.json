@@ -4243,5 +4243,7 @@
   "LP Fees": "LP 手續費",
   "Become the Top Predictor, Win $2,500": "成為頂級預測員，贏取 $2,500",
   "One-click Solana Crosschain Swaps": "一鍵 Solana 跨鏈兌換",
-  "Solana Crosschain": "Solana 跨鏈"
+  "Solana Crosschain": "Solana 跨鏈",
+  "Caution - GAIN Token": "注意 - GAIN 代幣",
+  "Please exercise due caution when trading / providing liquidity for the GAIN token. The protocol recently encountered a <0>security compromise.</0> For more information, please refer to <1>GriffinAI X</1>": "交易或為 GAIN 代幣提供流動性時請格外謹慎。該協議近期遭遇<0>安全漏洞</0>。更多資訊請參閱 <1>GriffinAI X</1>。"
 }
