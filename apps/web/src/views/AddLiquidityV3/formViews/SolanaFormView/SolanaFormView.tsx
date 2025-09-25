@@ -78,7 +78,7 @@ import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import { useSolanaDerivedInfo } from 'hooks/solana/useSolanaDerivedInfo'
 import { useSolanaPoolByMint } from 'hooks/solana/useSolanaPoolsByMint'
 import { FieldFeeLevel } from 'views/CreateLiquidityPool/components/V3/FieldFeeLevel'
-import { useRangeHopCallbacks } from 'views/CreateLiquidityPool/hooks/useRangeHopCallbacks'
+import { useSolanaRangeHopCallbacks } from 'views/CreateLiquidityPool/hooks/useRangeHopCallbacks'
 import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
 //
 import { useRaydium } from 'hooks/solana/useRaydium'
@@ -312,7 +312,7 @@ export function SolanaFormView({
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
 
   const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
-    useRangeHopCallbacks(baseCurrency, quoteCurrency, feeAmount, tickLower, tickUpper, pool)
+    useSolanaRangeHopCallbacks(baseCurrency, quoteCurrency, feeAmount, tickLower, tickUpper, pool)
   // we need an existence check on parsed amounts for single-asset deposits
   const translationData = useMemo(() => {
     if (depositADisabled) {

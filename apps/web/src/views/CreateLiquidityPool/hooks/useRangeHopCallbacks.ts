@@ -1,11 +1,12 @@
 import { UnifiedCurrency } from '@pancakeswap/sdk'
+import { TickUtils } from '@pancakeswap/solana-core-sdk'
 import { useClmmAmmConfigs } from 'hooks/solana/useClmmAmmConfigs'
 import { tryParsePriceSolana } from 'hooks/v3/utils/tryParsePriceSolana'
 import { useCallback, useMemo } from 'react'
 import { setFullRange } from 'views/AddLiquidityV3/formViews/V3FormView/form/actions'
 import { useV3FormDispatch } from 'views/AddLiquidityV3/formViews/V3FormView/form/reducer'
 
-export function useRangeHopCallbacks(
+export function useSolanaRangeHopCallbacks(
   baseCurrency: UnifiedCurrency | undefined,
   quoteCurrency: UnifiedCurrency | undefined,
   feeAmount: number | undefined | null,
@@ -27,7 +28,7 @@ export function useRangeHopCallbacks(
     if (baseToken && quoteToken && typeof tickLower === 'number' && effectiveTickSpacing !== undefined) {
       return tryParsePriceSolana({
         tickSpacing: effectiveTickSpacing,
-        tick: tickLower - effectiveTickSpacing,
+        tick: TickUtils.nearestUsableTick(tickLower - effectiveTickSpacing, effectiveTickSpacing),
         token0: baseToken,
         token1: quoteToken,
         baseIn: true,
@@ -37,7 +38,7 @@ export function useRangeHopCallbacks(
     if (!(typeof tickLower === 'number') && baseToken && quoteToken && effectiveTickSpacing !== undefined && pool) {
       return tryParsePriceSolana({
         tickSpacing: effectiveTickSpacing,
-        tick: pool.tickCurrent - effectiveTickSpacing,
+        tick: TickUtils.nearestUsableTick(pool.tickCurrent - effectiveTickSpacing, effectiveTickSpacing),
         token0: baseToken,
         token1: quoteToken,
         baseIn: true,
@@ -50,7 +51,7 @@ export function useRangeHopCallbacks(
     if (baseToken && quoteToken && typeof tickLower === 'number' && effectiveTickSpacing !== undefined) {
       return tryParsePriceSolana({
         tickSpacing: effectiveTickSpacing,
-        tick: tickLower + effectiveTickSpacing,
+        tick: TickUtils.nearestUsableTick(tickLower + effectiveTickSpacing, effectiveTickSpacing),
         token0: baseToken,
         token1: quoteToken,
         baseIn: true,
@@ -60,7 +61,7 @@ export function useRangeHopCallbacks(
     if (!(typeof tickLower === 'number') && baseToken && quoteToken && effectiveTickSpacing !== undefined && pool) {
       return tryParsePriceSolana({
         tickSpacing: effectiveTickSpacing,
-        tick: pool.tickCurrent + effectiveTickSpacing,
+        tick: TickUtils.nearestUsableTick(pool.tickCurrent + effectiveTickSpacing, effectiveTickSpacing),
         token0: baseToken,
         token1: quoteToken,
         baseIn: true,
@@ -73,7 +74,7 @@ export function useRangeHopCallbacks(
     if (baseToken && quoteToken && typeof tickUpper === 'number' && effectiveTickSpacing !== undefined) {
       return tryParsePriceSolana({
         tickSpacing: effectiveTickSpacing,
-        tick: tickUpper - effectiveTickSpacing,
+        tick: TickUtils.nearestUsableTick(tickUpper - effectiveTickSpacing, effectiveTickSpacing),
         token0: baseToken,
         token1: quoteToken,
         baseIn: true,
@@ -83,7 +84,7 @@ export function useRangeHopCallbacks(
     if (!(typeof tickUpper === 'number') && baseToken && quoteToken && effectiveTickSpacing !== undefined && pool) {
       return tryParsePriceSolana({
         tickSpacing: effectiveTickSpacing,
-        tick: pool.tickCurrent - effectiveTickSpacing,
+        tick: TickUtils.nearestUsableTick(pool.tickCurrent - effectiveTickSpacing, effectiveTickSpacing),
         token0: baseToken,
         token1: quoteToken,
         baseIn: true,
@@ -96,7 +97,7 @@ export function useRangeHopCallbacks(
     if (baseToken && quoteToken && typeof tickUpper === 'number' && effectiveTickSpacing !== undefined) {
       return tryParsePriceSolana({
         tickSpacing: effectiveTickSpacing,
-        tick: tickUpper + effectiveTickSpacing,
+        tick: TickUtils.nearestUsableTick(tickUpper + effectiveTickSpacing, effectiveTickSpacing),
         token0: baseToken,
         token1: quoteToken,
         baseIn: true,
@@ -106,7 +107,7 @@ export function useRangeHopCallbacks(
     if (!(typeof tickUpper === 'number') && baseToken && quoteToken && effectiveTickSpacing !== undefined && pool) {
       return tryParsePriceSolana({
         tickSpacing: effectiveTickSpacing,
-        tick: pool.tickCurrent + effectiveTickSpacing,
+        tick: TickUtils.nearestUsableTick(pool.tickCurrent + effectiveTickSpacing, effectiveTickSpacing),
         token0: baseToken,
         token1: quoteToken,
         baseIn: true,

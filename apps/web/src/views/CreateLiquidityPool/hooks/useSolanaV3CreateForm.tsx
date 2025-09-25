@@ -43,7 +43,7 @@ import { ToastDescriptionWithTx } from 'components/Toast'
 import { useCreateClmmPool } from 'hooks/solana/useCreateClmmPool'
 import { useCreatePosition } from 'hooks/solana/useCreatePosition'
 import { useCurrencies } from './useCurrencies'
-import { useRangeHopCallbacks } from './useRangeHopCallbacks'
+import { useSolanaRangeHopCallbacks } from './useRangeHopCallbacks'
 
 export const useSolanaV3CreateForm = () => {
   const { t } = useTranslation()
@@ -214,7 +214,14 @@ export const useSolanaV3CreateForm = () => {
   ])
 
   const { getDecrementLower, getIncrementLower, getDecrementUpper, getIncrementUpper, getSetFullRange } =
-    useRangeHopCallbacks(baseCurrency ?? undefined, quoteCurrency ?? undefined, feeAmount, tickLower, tickUpper, pool)
+    useSolanaRangeHopCallbacks(
+      baseCurrency ?? undefined,
+      quoteCurrency ?? undefined,
+      feeAmount,
+      tickLower,
+      tickUpper,
+      pool,
+    )
 
   const onBothRangePriceInput = useCallback(
     (leftRangeValue: string, rightRangeValue: string) => {
