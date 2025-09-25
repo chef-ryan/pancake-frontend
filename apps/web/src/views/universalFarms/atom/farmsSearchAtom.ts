@@ -6,6 +6,7 @@ import { atomWithLoadable } from 'quoter/atom/atomWithLoadable'
 import { getFarmKey } from 'state/farmsV4/search/farm.util'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import { FarmQuery } from 'state/farmsV4/search/edgeFarmQueries'
+import { getHashKey } from 'utils/hash'
 import { tokensMapAtom } from './tokensMapAtom'
 import { farmFilters, isInWhitelist } from './farmSearch.filter'
 import { farmsWithPagingAtom } from './farmSearch.search'
@@ -54,7 +55,7 @@ const farmsWithFilledDataAtom = atomFamily((query: FarmQuery) => {
   )
 }, isEqual)
 
-export const farmsSearchV2Atom = atomFamily((query: FarmQuery) => {
+const _farmsSearchV2Atom = atomFamily((query: FarmQuery) => {
   return atom((get) => {
     const withFilledData = get(farmsWithFilledDataAtom(query))
     const checkWhitelist = isInWhitelist(get(tokensMapAtom).tokensMap)
@@ -73,5 +74,22 @@ export const farmsSearchV2Atom = atomFamily((query: FarmQuery) => {
       }),
       isLoading: anyPending,
     }
+  })
+}, isEqual)
+
+const cache = new Map<string, ReturnType<typeof farmsSearchV2Atom>>()
+export const farmsSearchV2Atom = atomFamily((query: FarmQuery) => {
+  const phKey = getHashKey({ ...query, page: 0 })
+  return atom((get) => {
+    const r = get(_farmsSearchV2Atom(query))
+    if (r.list.isPending()) {
+      if (cache.has(phKey)) {
+        return cache.get(phKey)
+      }
+    }
+    if (r.list.isJust() && r.list.unwrap().length > 0) {
+      cache.set(phKey, r)
+    }
+    return r
   })
 }, isEqual)

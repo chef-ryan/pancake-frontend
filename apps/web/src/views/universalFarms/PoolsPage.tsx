@@ -147,7 +147,8 @@ const List = () => {
   const pending = listPrepared.isPending() && isLoadingFarmList
   const isExtending = _list.isPending() && list.length > 0
   const { t } = useTranslation()
-  const noResults = list.length === 0 && !pending && !isExtending
+  const noResults = list.length === 0 && !pending && !isExtending && !_list.isPending()
+  console.log(`[farm] list render, length: ${list.length}, page: ${page}`, `loading: ${_list.isPending()}`) // --- IGNORE ---
 
   return (
     <>
@@ -155,7 +156,7 @@ const List = () => {
         justifyContent="center"
         alignItems="center"
         width="100%"
-        style={{ height: '40px', display: noResults ? 'block' : 'none' }}
+        style={{ height: '40px', display: noResults ? 'block' : 'none', textAlign: 'center' }}
       >
         {t('No results found')}
       </Flex>
