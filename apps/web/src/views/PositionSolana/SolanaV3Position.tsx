@@ -33,7 +33,9 @@ export const SolanaV3Position = () => {
           {/* <PoolTvlWarning poolInfo={poolInfo} /> */}
           <Grid gridGap="24px" gridTemplateColumns={['1fr', '1fr', '1fr', '2fr 1fr']}>
             {position && poolInfo && poolId && (
-              <PositionChart poolId={poolId} position={position} poolInfo={poolInfo.rawPool} />
+              <div style={{ alignSelf: 'start' }}>
+                <PositionChart poolId={poolId} position={position} poolInfo={poolInfo.rawPool} />
+              </div>
             )}
             {position && poolInfo && poolId && <PositionCard position={position} poolInfo={poolInfo} />}
           </Grid>
