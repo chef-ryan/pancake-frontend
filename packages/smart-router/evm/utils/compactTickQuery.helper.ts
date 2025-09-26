@@ -66,7 +66,7 @@ type WithClientProvider = {
   clientProvider?: OnChainProvider
 }
 
-export function getCallData(pool: V3Pool | InfinityClPool, len: bigint) {
+export function getCompactTickQueryCalldata(pool: V3Pool | InfinityClPool, len: bigint) {
   switch (pool.type) {
     case PoolType.V3:
       return encodeFunctionData({
@@ -85,7 +85,7 @@ export function getCallData(pool: V3Pool | InfinityClPool, len: bigint) {
   }
 }
 
-export function decodeResult(result: Hex, pool: V3Pool | InfinityClPool) {
+export function decodeCompactTickResult(result: Hex, pool: V3Pool | InfinityClPool) {
   const rawTicks = decodeFunctionResult({
     abi: queryDataAbi,
     functionName:
@@ -102,7 +102,7 @@ export function getTickSpacing(pool: V3Pool | InfinityClPool): number {
   return pool.tickSpacing
 }
 
-export async function fetchPoolsTicks({
+export async function fetchCompactPoolsTick({
   pools,
   clientProvider,
   gasLimit,
@@ -128,7 +128,7 @@ export async function fetchPoolsTicks({
 
   const multiCallArgs = pools.map((pool) => ({
     target: queryHelperAddress as Address,
-    callData: getCallData(pool, decideCompactTickLen(1000, getTickSpacing(pool), maxLen)),
+    callData: getCompactTickQueryCalldata(pool, decideCompactTickLen(1000, getTickSpacing(pool), maxLen)),
     gasLimit: gasLimitPerCall,
   }))
   const res = await multicallByGasLimit(multiCallArgs, {
@@ -143,14 +143,14 @@ export async function fetchPoolsTicks({
   for (const [i, result] of res.results.entries()) {
     if (!result.success) {
       console.error(
-        `[fetchPoolsTicks] failed to fetch ticks for pool ${
+        `[fetchCompactPoolsTick] failed to fetch ticks for pool ${
           pools[i].type === PoolType.V3 ? pools[i].address : pools[i].id
         } on chain ${chainId}`,
         multiCallArgs[i],
       )
     }
     if (!result.success || !result.result) continue
-    const decoded = decodeResult(result.result as Hex, pools[i])
+    const decoded = decodeCompactTickResult(result.result as Hex, pools[i])
     if (decoded.length) {
       if (pools[i].type === PoolType.InfinityCL) {
         ticksByPool[pools[i].id.toLocaleLowerCase()] = decoded
@@ -159,7 +159,7 @@ export async function fetchPoolsTicks({
       }
     }
   }
-  console.info(`[fetchPoolsTicks] ${PoolType[pools[0].type]} Multicall request summary`, {
+  console.info(`[fetchCompactPoolsTick] ${PoolType[pools[0].type]} Multicall request summary`, {
     maxLen,
     chainId,
     calls: pools.length,

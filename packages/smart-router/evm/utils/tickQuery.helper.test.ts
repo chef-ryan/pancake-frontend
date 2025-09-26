@@ -4,7 +4,12 @@ import { Address, Hex, decodeFunctionResult, encodeFunctionData } from 'viem'
 import { queryDataAbi } from '../abis/QueryData'
 import { InfinityClPool, PoolType, V3Pool } from '../v3-router/types'
 
-import { decodeResult, decodeTicksFromBytes, getCallData, getTickSpacing } from './tickQuery.helper'
+import {
+  decodeCompactTickResult,
+  decodeTicksFromBytes,
+  getCompactTickQueryCalldata,
+  getTickSpacing,
+} from './compactTickQuery.helper'
 
 vi.mock('viem', async () => {
   const actual = await vi.importActual<typeof import('viem')>('viem')
@@ -52,7 +57,7 @@ beforeEach(() => {
   vi.clearAllMocks()
 })
 
-describe('getCallData', () => {
+describe('getCompactTickQueryCalldata', () => {
   it('encodes V3 pool call data with pool address and length', () => {
     const len = 256n
     const expected = encodeFunctionData({
@@ -61,7 +66,7 @@ describe('getCallData', () => {
       functionName: 'queryUniv3TicksSuperCompact',
     })
 
-    expect(getCallData(v3Pool, len)).toEqual(expected)
+    expect(getCompactTickQueryCalldata(v3Pool, len)).toEqual(expected)
   })
 
   it('encodes Infinity pool call data with pool id and length', () => {
@@ -72,17 +77,17 @@ describe('getCallData', () => {
       functionName: 'queryPancakeInfinityTicksSuperCompact',
     })
 
-    expect(getCallData(infinityPool, len)).toEqual(expected)
+    expect(getCompactTickQueryCalldata(infinityPool, len)).toEqual(expected)
   })
 })
 
-describe('decodeResult', () => {
+describe('decodeCompactTickResult', () => {
   it('decodes V3 pool tick data using the Uniswap query function', () => {
     const rawTicks = buildRawTicksHex([{ index: 15, liquidityNet: 9n }])
     decodeFunctionResultMock.mockReturnValueOnce(rawTicks)
     const encodedResult = '0xabc123' as Hex
 
-    const decoded = decodeResult(encodedResult, v3Pool)
+    const decoded = decodeCompactTickResult(encodedResult, v3Pool)
 
     expect(decodeFunctionResultMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -107,7 +112,7 @@ describe('decodeResult', () => {
     decodeFunctionResultMock.mockReturnValueOnce(rawTicks)
     const encodedResult = '0xdef456' as Hex
 
-    const decoded = decodeResult(encodedResult, infinityPool)
+    const decoded = decodeCompactTickResult(encodedResult, infinityPool)
 
     expect(decodeFunctionResultMock).toHaveBeenCalledWith(
       expect.objectContaining({
