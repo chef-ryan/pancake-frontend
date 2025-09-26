@@ -9,8 +9,8 @@ import { SolanaV3Pool } from 'state/pools/solana'
 export const normalizeSolanaPoolInfo = (
   solanaPoolInfo?: Omit<ApiV3PoolInfoConcentratedItem, 'type'> & {
     type: string
-    volumeUSD48h: string
-    tvlUSD24h: string
+    volumeUSD48h?: string
+    tvlUSD24h?: string
   },
 ): SolanaV3PoolInfo | null => {
   if (!solanaPoolInfo) return null
@@ -29,9 +29,9 @@ export const normalizeSolanaPoolInfo = (
     tvlToken0: String(solanaPoolInfo.mintAmountA) as `${number}`,
     tvlToken1: String(solanaPoolInfo.mintAmountB) as `${number}`,
     tvlUsd: String(solanaPoolInfo.tvl) as `${number}`,
-    tvlUsd24h: String(solanaPoolInfo.tvlUSD24h) as `${number}`,
+    tvlUsd24h: String(solanaPoolInfo.tvlUSD24h ?? 0) as `${number}`,
     vol24hUsd: String(solanaPoolInfo.day.volume) as `${number}`,
-    vol48hUsd: String(solanaPoolInfo.volumeUSD48h) as `${number}`, // Approximate
+    vol48hUsd: String(solanaPoolInfo.volumeUSD48h ?? 0) as `${number}`, // Approximate
     vol7dUsd: String(solanaPoolInfo.week.volume) as `${number}`,
     fee24hUsd: String(solanaPoolInfo.day.volumeFee) as `${number}`,
     lpFee24hUsd: String(solanaPoolInfo.day.volumeFee) as `${number}`,

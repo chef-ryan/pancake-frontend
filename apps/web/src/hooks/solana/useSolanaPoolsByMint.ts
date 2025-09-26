@@ -41,5 +41,5 @@ export const useSolanaPoolByMint = (token0?: string, token1?: string, feeAmount?
           })
         : undefined,
     }
-  }, [poolsByMint, feeAmount])
+  }, [poolsByMint, feeAmount, error, isLoading, status])
 }
