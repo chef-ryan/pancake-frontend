@@ -59,7 +59,11 @@ import { tryParsePrice } from 'hooks/v3/utils'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { styled } from 'styled-components'
-import { logGTMClickAddLiquidityConfirmEvent, logGTMClickAddLiquidityEvent } from 'utils/customGTMEventTracking'
+import {
+  logGTMAddLiquidityTxSentEvent,
+  logGTMClickAddLiquidityConfirmEvent,
+  logGTMClickAddLiquidityEvent,
+} from 'utils/customGTMEventTracking'
 import { formatPrice } from 'utils/formatCurrencyAmount'
 import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
 import { CurrencyField as Field } from 'utils/types'
@@ -87,6 +91,7 @@ import { usePreviousValue } from '@pancakeswap/hooks'
 import { CreatePoolBuildData, useCreateClmmPool } from 'hooks/solana/useCreateClmmPool'
 import { useUnifiedTokenUsdPrice } from 'hooks/useUnifiedTokenUsdPrice'
 import { useQuickActionConfigs } from 'views/AddLiquidityV3/hooks/useQuickActionConfigs'
+import { useTransactionAdder } from 'state/transactions/hooks'
 
 import LockedDeposit from '../V3FormView/components/LockedDeposit'
 import { RangeSelector } from './RangeSelector'
@@ -354,6 +359,7 @@ export function SolanaFormView({
   const isQuickButtonUsed = useRef(false)
   const [quickAction, setQuickAction] = useState<number | null>(null)
   const [customZoomLevel, setCustomZoomLevel] = useState<ZoomLevels | undefined>(undefined)
+  const addTransaction = useTransactionAdder()
 
   const createClmm = useCreateClmmPool()
   const addLiquidity = useCreatePosition()
@@ -395,14 +401,25 @@ export function SolanaFormView({
         poolInfo: solPoolInfo?.rawPool ?? createBuildData?.extInfo.mockPoolInfo,
       })
       setAttemptingTxn(false)
+      logGTMAddLiquidityTxSentEvent()
       const hash = res ? ('txId' in res ? res.txId : 'txIds' in res ? res.txIds[0] : '') : ''
       setTxHash(hash)
+      addTransaction(
+        { hash },
+        {
+          type: 'add-liquidity-v3',
+          summary: `Add ${parsedAmounts[independentField]?.toExact()} ${
+            parsedAmounts[independentField]?.currency?.symbol
+          } and ${parsedAmounts[dependentField]?.toExact()} ${parsedAmounts[dependentField]?.currency?.symbol}`,
+        },
+      )
       onAddLiquidityCallback(hash)
     } catch (e: any) {
       setAttemptingTxn(false)
       setTxnErrorMessage(e?.message ?? 'Failed to add liquidity')
     }
   }, [
+    addTransaction,
     dependentField,
     independentField,
     solPoolInfo?.rawPool,
@@ -525,6 +542,7 @@ export function SolanaFormView({
       />
     )
   }, [
+    solPoolInfo,
     baseCurrency,
     displayedPrice,
     feeAmount,
@@ -540,9 +558,6 @@ export function SolanaFormView({
     usdA,
     usdB,
     pricesAtTicks,
-    solPoolInfo?.feeTier,
-    solPoolInfo?.token0,
-    solPoolInfo?.token1,
   ])
 
   const [onPresentAddLiquidityModal] = useModal(

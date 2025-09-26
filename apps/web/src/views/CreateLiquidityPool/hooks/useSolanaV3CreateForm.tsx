@@ -12,8 +12,12 @@ import { useSelectIdRouteParams } from 'hooks/dynamicRoute/useSelectIdRoute'
 import { CurrencyField as Field } from 'utils/types'
 import { maxUnifiedAmountSpend } from 'utils/maxAmountSpend'
 import { useRouter } from 'next/router'
-import { logGTMClickAddLiquidityConfirmEvent, logGTMClickAddLiquidityEvent } from 'utils/customGTMEventTracking'
-import { useIsExpertMode, useUserSlippage } from '@pancakeswap/utils/user'
+import {
+  logGTMAddLiquidityTxSentEvent,
+  logGTMClickAddLiquidityConfirmEvent,
+  logGTMClickAddLiquidityEvent,
+} from 'utils/customGTMEventTracking'
+import { useIsExpertMode } from '@pancakeswap/utils/user'
 
 import { RangeSelector as V3RangeSelector } from 'views/AddLiquidityV3/formViews/SolanaFormView/RangeSelector'
 import { Bound, ZoomLevels } from '@pancakeswap/widgets-internal'
@@ -30,7 +34,6 @@ import {
   SwapHorizIcon,
   Text,
   useModalV2,
-  useToast,
 } from '@pancakeswap/uikit'
 
 import { priceToClosestTick } from '@pancakeswap/v3-sdk'
@@ -38,8 +41,8 @@ import { priceToClosestTick } from '@pancakeswap/v3-sdk'
 import { formatPreviewPrice } from 'views/CreateLiquidityPool/utils'
 import { PreviewModal } from 'views/CreateLiquidityPool/components/PreviewModal'
 import { QUICK_ACTION_CONFIGS } from 'views/AddLiquidityV3/types'
-import { useGetPriceAndTick } from 'hooks/solana/useGetPriceAndTick'
-import { ToastDescriptionWithTx } from 'components/Toast'
+import { formatRawAmount } from 'utils/formatCurrencyAmount'
+import { useTransactionAdder } from 'state/transactions/hooks'
 import { useCreateClmmPool } from 'hooks/solana/useCreateClmmPool'
 import { useCreatePosition } from 'hooks/solana/useCreatePosition'
 import { useCurrencies } from './useCurrencies'
@@ -50,7 +53,6 @@ export const useSolanaV3CreateForm = () => {
   const router = useRouter()
   const { solanaAccount: account, isWrongNetwork } = useAccountActiveChain()
   const { onOpen: onOpenPreviewModal, isOpen: isPreviewModalOpen, onDismiss: onDismissPreviewModal } = useModalV2()
-  const { toastError, toastSuccess } = useToast()
 
   // User Settings
   const expertMode = useIsExpertMode()
@@ -101,8 +103,7 @@ export const useSolanaV3CreateForm = () => {
     formState,
   )
 
-  // const ammConfigs = useClmmAmmConfigs()
-  const getPriceAndTick = useGetPriceAndTick(baseCurrency, quoteCurrency, feeAmount)
+  const addTransaction = useTransactionAdder()
 
   // Currency validation
   const addIsWarning = false
@@ -298,6 +299,31 @@ export const useSolanaV3CreateForm = () => {
 
   const createClmm = useCreateClmmPool()
   const addLiquidity = useCreatePosition()
+
+  const addedCallback = useCallback(
+    (hash: string) => {
+      setAttemptingTxn(false)
+      logGTMAddLiquidityTxSentEvent()
+      setTxHash(hash)
+      const baseAmount = baseCurrency
+        ? formatRawAmount(parsedAmounts[Field.CURRENCY_A]?.quotient?.toString() ?? '0', baseCurrency.decimals, 4)
+        : 0
+      const quoteAmount = quoteCurrency
+        ? formatRawAmount(parsedAmounts[Field.CURRENCY_B]?.quotient?.toString() ?? '0', quoteCurrency?.decimals, 4)
+        : 0
+
+      addTransaction(
+        { hash },
+        {
+          type: 'add-liquidity-v3',
+          summary: `Add ${baseAmount} ${baseCurrency?.symbol} and ${quoteAmount} ${quoteCurrency?.symbol}`,
+        },
+      )
+      router.push('/liquidity/pools')
+    },
+    [addTransaction, baseCurrency, quoteCurrency, parsedAmounts, router],
+  )
+
   const onAdd = useCallback(async () => {
     logGTMClickAddLiquidityConfirmEvent()
     if (!baseCurrency || !quoteCurrency || !price || !feeAmount) {
@@ -332,16 +358,14 @@ export const useSolanaV3CreateForm = () => {
         ticks,
         poolInfo: createBuildData?.extInfo.mockPoolInfo,
       })
-      setAttemptingTxn(false)
       const hash = 'txId' in res ? res.txId : 'txIds' in res ? res.txIds[0] : ''
-      setTxHash(hash)
-      if (hash) toastSuccess(t('Transactions Submitted'), <ToastDescriptionWithTx txHash={hash} />)
-      router.push('/liquidity/pools')
+      addedCallback(hash)
     } catch (e: any) {
       setAttemptingTxn(false)
       setTxnErrorMessage(e?.message || String(e))
     }
   }, [
+    addedCallback,
     addLiquidity,
     dependentField,
     independentField,
@@ -352,12 +376,10 @@ export const useSolanaV3CreateForm = () => {
     price,
     feeAmount,
     t,
-    router,
     createClmm,
     parsedAmounts,
     tickLower,
     tickUpper,
-    toastSuccess,
   ])
 
   // Button Submit, with handle expert mode
