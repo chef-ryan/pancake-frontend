@@ -16,7 +16,6 @@ import { useAtom } from 'jotai'
 import flatMap from 'lodash/flatMap'
 import { useMemo } from 'react'
 import { selectorByUrlsAtom } from 'state/lists/hooks'
-import { useOrderChainIds } from './useMultiChains'
 
 const BSC_URLS = [PANCAKE_EXTENDED]
 const ETH_URLS = [PANCAKE_ETH_DEFAULT]

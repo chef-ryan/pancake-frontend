@@ -14,8 +14,9 @@ import PUNDIAIWarning from './PUNDIAIWarning'
 import RugPullWarning from './RugPullWarning'
 import SafemoonWarning from './SafemoonWarning'
 import XCADWarning from './XCADWarning'
+import GAINWarning from './GAINWarning'
 
-const { safemoon, bondly, itam, ccar, bttold, pokemoney, free, gala, abnbc, xcad, metis, lusd, nfp, pundiai } =
+const { safemoon, bondly, itam, ccar, bttold, pokemoney, free, gala, abnbc, xcad, metis, lusd, nfp, pundiai, gain } =
   SwapWarningTokensConfig[ChainId.BSC]
 
 const BSC_WARNING_LIST = {
@@ -74,6 +75,10 @@ const BSC_WARNING_LIST = {
   [pundiai.address]: {
     symbol: pundiai.symbol,
     component: <PUNDIAIWarning />,
+  },
+  [gain.address]: {
+    symbol: gain.symbol,
+    component: <GAINWarning />,
   },
 }
 

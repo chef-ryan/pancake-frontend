@@ -5,6 +5,8 @@ import {
   zInfinityBinPositionIdTuple,
   zInfinityClammPositionIdObject,
   zInfinityClammPositionIdTuple,
+  zSolanaV3PositionIdObject,
+  zSolanaV3PositionIdTuple,
 } from 'dynamicRoute'
 import { $path } from 'next-typesafe-url'
 import { useRouteParams } from 'next-typesafe-url/pages'
@@ -97,6 +99,43 @@ export const useInfinityClammPositionIdRouteParams = () => {
           positionId: params.action
             ? [p.protocol ?? params.protocol, p.tokenId ?? params.tokenId, params.action]
             : [p.protocol ?? params.protocol, p.tokenId ?? params.tokenId],
+        },
+      })
+
+      router.replace(
+        {
+          pathname: path,
+          query: router.query,
+        },
+        undefined,
+        { shallow: true },
+      )
+    },
+    [params, router],
+  )
+
+  return { ...params, updateParams }
+}
+
+export const useSolanaV3PositionIdRouteParams = () => {
+  const { routeParams } = usePositionIdRoute()
+  const router = useRouter()
+  const params = useMemo(() => {
+    if (!routeParams || !routeParams.positionId) return null
+    if (routeParams.positionId[0] !== Protocol.V3 || routeParams.positionId[1] !== 'solana') return null
+    const [protocol, , poolId, mintId] = routeParams.positionId as z.infer<typeof zSolanaV3PositionIdTuple>
+
+    return { protocol, poolId, mintId }
+  }, [routeParams])
+
+  const updateParams = useCallback(
+    (p: Partial<z.infer<typeof zSolanaV3PositionIdObject>>) => {
+      if (!params || !Object.values(params).every((v) => v !== undefined)) return
+
+      const path = $path({
+        route: router.route as RouteWithPositionId,
+        routeParams: {
+          positionId: [p.protocol ?? params.protocol, 'solana', p.poolId ?? params.poolId, p.mintId ?? params.mintId],
         },
       })
 

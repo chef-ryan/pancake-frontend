@@ -27,15 +27,23 @@ export const NavBreadcrumbs: React.FC<React.PropsWithChildren<NavBreadcrumbsProp
   const ref = useRef<HTMLUListElement>(null)
 
   const prevUrlPath = useMemo(() => {
-    if (!routeParams || !routeParams.positionId) return ''
+    if (
+      !routeParams ||
+      !routeParams.positionId ||
+      !protocol ||
+      ![Protocol.InfinityBIN, Protocol.InfinityCLAMM].includes(protocol)
+    )
+      return ''
+
+    const p = protocol as Protocol.InfinityBIN | Protocol.InfinityCLAMM
 
     return $path({
       route: router.route as RouteWithPositionId,
       routeParams: {
         positionId:
-          protocol === Protocol.InfinityBIN
-            ? [protocol, routeParams?.positionId[1] as string]
-            : [protocol!, routeParams?.positionId[1] as number],
+          p === Protocol.InfinityBIN
+            ? [p, routeParams?.positionId[1] as string]
+            : [p, routeParams?.positionId[1] as number],
       },
     })
   }, [protocol, routeParams, router.route])

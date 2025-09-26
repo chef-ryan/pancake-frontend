@@ -49,6 +49,10 @@ const solanaBuilder = (baseUrl: string, data: string | number, type: ExplorerTyp
   }
 }
 
+export const getSolExplorerLink = (data: string | number, type: ExplorerType, explorerHost = 'https://solscan.io') => {
+  return solanaBuilder(explorerHost, data, type)
+}
+
 const EXPLORER_BUILDERS: Partial<
   Record<number, (baseUrl: string, data: string | number, type: ExplorerType) => string>
 > = {

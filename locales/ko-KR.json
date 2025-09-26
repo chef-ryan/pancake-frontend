@@ -4243,5 +4243,7 @@
   "LP Fees": "LP 수수료",
   "Become the Top Predictor, Win $2,500": "최고의 예측가가 되어 $2,500 상금을 획득하세요",
   "One-click Solana Crosschain Swaps": "원클릭 Solana 크로스체인 스왑",
-  "Solana Crosschain": "Solana 크로스체인"
+  "Solana Crosschain": "Solana 크로스체인",
+  "Caution - GAIN Token": "주의 - GAIN 토큰",
+  "Please exercise due caution when trading / providing liquidity for the GAIN token. The protocol recently encountered a <0>security compromise.</0> For more information, please refer to <1>GriffinAI X</1>": "GAIN 토큰 거래 및 유동성 제공 시 각별한 주의가 필요합니다. 최근 해당 프로토콜에서 <0>보안 침해</0>가 발생했습니다. 자세한 정보는 <1>GriffinAI X</1>를 참고해 주시기 바랍니다."
 }

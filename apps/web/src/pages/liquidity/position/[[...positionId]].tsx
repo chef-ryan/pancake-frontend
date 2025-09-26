@@ -11,6 +11,7 @@ import { IncreaseLiquidity } from 'views/IncreaseLiquidity'
 import { InfinityBinPosition } from 'views/PositionInfinity/InfinityBinPosition'
 import { InfinityCLPosition } from 'views/PositionInfinity/InfinityCLPosition'
 import { RemoveBinPosition, RemoveClPosition } from 'views/RemoveLiquidityInfinity'
+import { SolanaV3Position } from 'views/PositionSolana/SolanaV3Position'
 
 export type RouteType = typeof PositionIdRoute
 
@@ -48,7 +49,15 @@ const LiquidityPage = () => {
     return <InfinityCLPosition />
   }
 
-  return <InfinityBinPosition />
+  if (protocol === Protocol.InfinityBIN) {
+    return <InfinityBinPosition />
+  }
+
+  if (protocol === Protocol.V3 && routeParams.positionId[1] === 'solana') {
+    return <SolanaV3Position />
+  }
+
+  return null
 }
 
 const Page = dynamic(() => Promise.resolve(LiquidityPage), {

@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { AtomBoxProps, Box, Grid, Row, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { AtomBoxProps, Grid, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { SolanaV3PoolInfo } from 'state/farmsV4/state/type'
 import { SolanaV3PositionDetail } from 'state/farmsV4/state/accountPositions/type'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'

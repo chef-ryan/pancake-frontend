@@ -29,9 +29,15 @@ export const zNetwork = zChainId.or(zChainName).transform((val) => {
 
 export const zProtocolInfinity = z.literal('infinity')
 export const zProtocolV3 = z.literal('v3')
+export const zProtocolSolanaV3 = z.literal('v3')
 export const zProtocolV2 = z.literal('v2')
 export const zProtocolStable = z.literal('stableSwap')
-export const zProtocol = zProtocolInfinity.or(zProtocolV3).or(zProtocolV2).or(zProtocolStable).optional()
+export const zProtocol = zProtocolInfinity
+  .or(zProtocolV3)
+  .or(zProtocolSolanaV3)
+  .or(zProtocolV2)
+  .or(zProtocolStable)
+  .optional()
 
 export const zCurrencyId = z.string()
 export const zAddress = z
@@ -75,6 +81,7 @@ export const PoolIdRoute = {
 } satisfies DynamicRoute
 
 export const zTokenId = z.number().int().positive()
+export const zMintId = z.string().regex(/^[1-9A-HJ-NP-Za-km-z]{32,44}$/)
 export const zPositionProtocol = z.enum([Protocol.InfinityCLAMM, Protocol.InfinityBIN])
 export const zPositionAction = z.enum(['increase', 'decrease'])
 export const zProtocolInfinityBin = z.literal(Protocol.InfinityBIN)
@@ -95,8 +102,15 @@ export const zInfinityClammPositionIdObject = z.object({
   tokenId: zTokenId,
   action: zPositionAction.optional(),
 })
+export const zSolanaV3PositionIdTuple = z.tuple([z.literal(Protocol.V3), z.literal('solana'), zMintId, zMintId])
+export const zSolanaV3PositionIdObject = z.object({
+  protocol: z.literal(Protocol.V3),
+  type: z.literal('solana'),
+  poolId: zMintId,
+  mintId: zMintId,
+})
 export const PositionIdRoute = {
   routeParams: z.object({
-    positionId: zInfinityBinPositionIdTuple.or(zInfinityClammPositionIdTuple), // only Infinity bin and clamm support now, can add v2/v3/stable later
+    positionId: zInfinityBinPositionIdTuple.or(zInfinityClammPositionIdTuple).or(zSolanaV3PositionIdTuple), // only Infinity bin, Infi clamm, Solana v3 support now, can add v2/v3/stable later
   }),
 } satisfies DynamicRoute
