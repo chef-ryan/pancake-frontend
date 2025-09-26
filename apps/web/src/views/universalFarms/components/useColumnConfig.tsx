@@ -25,6 +25,7 @@ import { useTokenByChainId, useUnifiedToken } from 'hooks/Tokens'
 import { getFarmAprInfo, getFarmHookData } from 'state/farmsV4/search/farm.util'
 import { getCurrencySymbol } from 'utils/getTokenAlias'
 import { useAtomValue } from 'jotai'
+import { isWSol } from '@pancakeswap/sdk'
 import { getChainFullName } from '../utils'
 import { RewardStatusDisplay } from './FarmStatusDisplay'
 import { getRewardProvider, getRewardMultiplier } from './FarmStatusDisplay/hooks'
@@ -184,8 +185,14 @@ export const usePoolFeatureConfig = (showPoolType = true) => {
 }
 
 export const PoolTokenOverview = <T extends PoolInfo = PoolInfo>({ data }: { data: T }) => {
-  const token0 = useUnifiedToken(getCurrencyAddress(data.token0), data.chainId) || data.token0
-  const token1 = useUnifiedToken(getCurrencyAddress(data.token1), data.chainId) || data.token1
+  const token0 =
+    useUnifiedToken(getCurrencyAddress(data.token0), data.chainId, {
+      unwrapWSol: true,
+    }) || data.token0
+  const token1 =
+    useUnifiedToken(getCurrencyAddress(data.token1), data.chainId, {
+      unwrapWSol: true,
+    }) || data.token1
 
   const provider = getRewardProvider(data.chainId, data.lpAddress)
   const multiplier = getRewardMultiplier(data.chainId, data.lpAddress)

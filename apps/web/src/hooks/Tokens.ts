@@ -3,8 +3,11 @@ import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 import {
   Currency,
   ERC20Token,
+  isWSol,
   Native,
   NativeCurrency,
+  SOL,
+  SPLToken,
   Token,
   UnifiedCurrency,
   UnifiedNativeCurrency,
@@ -241,12 +244,21 @@ export function useIsUserAddedToken(currency: UnifiedCurrency | undefined | null
   return !!userAddedTokens.find((token) => currency?.equals(token))
 }
 
-export function useUnifiedToken(tokenAddress?: string, chainId?: number): UnifiedToken | undefined {
+export function useUnifiedToken(
+  tokenAddress?: string,
+  chainId?: number,
+  options?: {
+    unwrapWSol: boolean
+  },
+): UnifiedToken | undefined {
   const { chainId: activeChainId } = useAccountActiveChain()
   const chainIdToUse = chainId ?? activeChainId
   const spl = useSolanaToken(tokenAddress)
   const ercToken = useTokenByChainId(tokenAddress, chainIdToUse)
   if (chainIdToUse === NonEVMChainId.SOLANA) {
+    if (options?.unwrapWSol && spl && isWSol(spl.address)) {
+      return SOL as unknown as SPLToken
+    }
     return spl
   }
   return ercToken ?? undefined
