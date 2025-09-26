@@ -648,15 +648,21 @@ export function SolanaFormView({
 
   const invertRange = useCallback(() => {
     if (!ticksAtLimit[Bound.LOWER] && !ticksAtLimit[Bound.UPPER]) {
-      onLeftRangeInput((invertPrice ? priceLower : priceUpper?.invert()) ?? undefined)
-      onRightRangeInput((invertPrice ? priceUpper : priceLower?.invert()) ?? undefined)
-      onFieldAInput(formattedAmounts[Field.CURRENCY_B] ?? '')
+      onBothRangeInput({
+        leftTypedValue: priceUpper?.invert() ?? undefined,
+        rightTypedValue: priceLower?.invert() ?? undefined,
+      })
+      if (invertPrice) {
+        onFieldAInput(formattedAmounts[Field.CURRENCY_B] ?? '')
+      } else {
+        onFieldBInput(formattedAmounts[Field.CURRENCY_A] ?? '')
+      }
     }
   }, [
+    onBothRangeInput,
     ticksAtLimit,
-    onLeftRangeInput,
-    onRightRangeInput,
     onFieldAInput,
+    onFieldBInput,
     invertPrice,
     priceLower,
     priceUpper,
@@ -674,10 +680,7 @@ export function SolanaFormView({
 
   useEffect(() => {
     if (inversionEvent) {
-      const { currencyIdA: newCurrencyIdA, currencyIdB: newCurrencyIdB } = inversionEvent
-      if (newCurrencyIdA && newCurrencyIdB && newCurrencyIdA !== currencyIdA && newCurrencyIdB !== currencyIdB) {
-        invertRange()
-      }
+      invertRange()
     }
   }, [inversionEvent])
 

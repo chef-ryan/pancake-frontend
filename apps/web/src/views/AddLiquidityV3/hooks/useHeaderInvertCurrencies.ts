@@ -19,17 +19,25 @@ export const useHeaderInvertCurrencies = ({ currencyIdA, currencyIdB, feeAmount 
 
   const setInversionEvent = useSetAtom(currencyInversionEventAtom)
 
-  const handleInvertCurrencies = useCallback(() => {
+  const triggerInversionEvent = useCallback(() => {
     if (currencyIdA && currencyIdB) {
       setInversionEvent({ currencyIdA: currencyIdB, currencyIdB: currencyIdA })
+    }
+    router.events.off('routeChangeComplete', triggerInversionEvent)
+  }, [router.events, setInversionEvent, currencyIdB, currencyIdA])
+
+  const handleInvertCurrencies = useCallback(() => {
+    if (currencyIdA && currencyIdB) {
       router.push({
         pathname: router.pathname,
         query: {
+          ...router.query,
           currency: feeAmount ? [currencyIdB!, currencyIdA!, feeAmount?.toString()] : [currencyIdB!, currencyIdA!],
         },
       })
+      router.events.on('routeChangeComplete', triggerInversionEvent)
     }
-  }, [currencyIdA, currencyIdB, feeAmount, router])
+  }, [triggerInversionEvent, currencyIdA, currencyIdB, feeAmount, router])
 
   return { handleInvertCurrencies }
 }
