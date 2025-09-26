@@ -20,12 +20,7 @@ const LIQUIDITY_NET_MASK = (1n << 128n) - 1n
  * @param maxLen Hard cap to avoid blowing gas (default: 1000)
  * @returns len for queryCompactTicks
  */
-export function decideCompactTickLen(priceRangeBps: number, tickSpacing: number, maxLen: bigint = 1000n): bigint {
-  console.log({
-    priceRangeBps,
-    tickSpacing,
-    maxLen,
-  })
+export function decideCompactTickLen(priceRangeBps: number, tickSpacing: number, maxLen: bigint = 100n): bigint {
   // how many ticks for desired price coverage
   const targetTicks = Math.log(1 + priceRangeBps / 10000) / Math.log(1.0001)
 
@@ -125,27 +120,35 @@ export async function fetchPoolsTicks({
   const queryHelperAddress = TICK_QUERY_HELPER_ADDRESSES[chainId as ChainId]
   if (!queryHelperAddress) throw new Error('No tick query helper available.')
 
-  const { gasLimit: gasLimitPerCall, retryGasMultiplier } = getTickQueryFetchConfig()
+  const { retryGasMultiplier } = getTickQueryFetchConfig()
 
-  const len = decideCompactTickLen(1000, getTickSpacing(pools[0]))
+  // const len = decideCompactTickLen(1000, getTickSpacing(pools[0]))
+  const gasLimitPerCall = 25_000_000n
+  const maxLen = 500n
 
-  const res = await multicallByGasLimit(
-    pools.map((pool) => ({
-      target: queryHelperAddress as Address,
-      callData: getCallData(pool, len),
-      gasLimit: gasLimitPerCall,
-    })),
-    {
-      chainId,
-      client,
-      gasLimit,
-      retryFailedCallsWithGreaterLimit: { gasLimitMultiplier: retryGasMultiplier },
-    },
-  )
+  const multiCallArgs = pools.map((pool) => ({
+    target: queryHelperAddress as Address,
+    callData: getCallData(pool, decideCompactTickLen(1000, getTickSpacing(pool), maxLen)),
+    gasLimit: gasLimitPerCall,
+  }))
+  const res = await multicallByGasLimit(multiCallArgs, {
+    chainId,
+    client,
+    gasLimit,
+    retryFailedCallsWithGreaterLimit: { gasLimitMultiplier: retryGasMultiplier },
+  })
 
   const ticksByPool: Record<string, Tick[]> = {}
 
   for (const [i, result] of res.results.entries()) {
+    if (!result.success) {
+      console.error(
+        `[fetchPoolsTicks] failed to fetch ticks for pool ${
+          pools[i].type === PoolType.V3 ? pools[i].address : pools[i].id
+        } on chain ${chainId}`,
+        multiCallArgs[i],
+      )
+    }
     if (!result.success || !result.result) continue
     const decoded = decodeResult(result.result as Hex, pools[i])
     if (decoded.length) {
@@ -156,6 +159,27 @@ export async function fetchPoolsTicks({
       }
     }
   }
+  console.info(`[fetchPoolsTicks] ${PoolType[pools[0].type]} Multicall request summary`, {
+    maxLen,
+    chainId,
+    calls: pools.length,
+    chunkCount: res.chunkCount,
+    avgCallPerChunk: BigInt(pools.length) / BigInt(res.chunkCount),
+    gasPerCall: fg(gasLimitPerCall),
+    maxSingleCallGasUsage: fg(res.maxSingleCallGasUsage),
+    avgGasUsagePerCall: fg(res.avgGasUsagePerCall),
+    gasLimitPerChunk: fg(res.gasLimit),
+  })
 
   return ticksByPool
+}
+
+function fg(gas: bigint) {
+  if (gas > 1_000_000n) {
+    return `${(Number(gas) / 1_000_000).toFixed(2)}M`
+  }
+  if (gas > 1_000n) {
+    return `${(Number(gas) / 1_000).toFixed(2)}K`
+  }
+  return gas.toString()
 }

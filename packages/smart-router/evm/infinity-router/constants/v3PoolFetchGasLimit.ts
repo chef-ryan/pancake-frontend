@@ -6,17 +6,17 @@ type V3PoolFetchConfig = {
 }
 
 const DEFAULT_FETCH_CONFIG: V3PoolFetchConfig = {
-  gasLimit: 3000000n,
+  gasLimit: 3_000_000n,
   retryGasMultiplier: 2,
 }
 
 const INFI_BIN_POOL_FETCH_CONFIG: V3PoolFetchConfig = {
-  gasLimit: 300000n,
+  gasLimit: 300_000n,
   retryGasMultiplier: 2,
 }
 
 const TICK_QUERY_FETCH_CONFIG: V3PoolFetchConfig = {
-  gasLimit: 6_000_000n,
+  gasLimit: 10_000_000n,
   retryGasMultiplier: 2,
 }
 

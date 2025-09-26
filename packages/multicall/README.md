@@ -31,7 +31,7 @@ const calls: MulticallRequestWithGas[] = [
   },
 ]
 
-const { results, blockNumber } = await multicallByGasLimit(calls, {
+const { results, blockNumber, chunkCount, chunkSizes } = await multicallByGasLimit(calls, {
   chainId: ChainId.BSC,
 
   // Rpc client. Please refer to `PublicClient` from viem
@@ -44,6 +44,8 @@ for (const { success, result, gasUsed } of results) {
     decodeResult(result)
   }
 }
+
+console.log('Chunks used', { chunkCount, chunkSizes })
 ```
 
 ### Advanced usage

@@ -26,6 +26,16 @@ export type CallByGasLimitParams = AbortControl &
       | undefined
   }
 
+export type MulticallByGasLimitResult = CallResult & {
+  chunkCount: number
+  chunkSizes: number[]
+  totalGasUsed: bigint
+  gasLimit: bigint
+  maxSingleCallGasUsage: bigint
+  minSingleCallGasUsage: bigint
+  avgGasUsagePerCall: bigint
+}
+
 export async function multicallByGasLimit(
   calls: MulticallRequestWithGas[],
   {
@@ -39,14 +49,17 @@ export async function multicallByGasLimit(
     blockConflictTolerance,
     ...rest
   }: CallByGasLimitParams,
-) {
+): Promise<MulticallByGasLimitResult> {
   const gasLimit = await getGasLimit({
     chainId,
     gasBuffer,
     client,
     ...rest,
   })
-  const callResult = await callByChunks(splitCallsIntoChunks(calls, gasLimit), {
+  const chunks = splitCallsIntoChunks(calls, gasLimit)
+  const chunkSizes = chunks.map((chunk) => chunk.length)
+
+  const callResult = await callByChunks(chunks, {
     gasBuffer,
     client,
     chainId,
@@ -55,8 +68,24 @@ export async function multicallByGasLimit(
     account,
     blockConflictTolerance,
   })
+  const resultWithChunks = (result: CallResult): MulticallByGasLimitResult => ({
+    ...result,
+    chunkCount: chunkSizes.length,
+    chunkSizes,
+    totalGasUsed: result.results.reduce((acc, { gasUsed }) => acc + gasUsed, 0n),
+    maxSingleCallGasUsage: result.results.reduce((max, { gasUsed }) => (gasUsed > max ? gasUsed : max), 0n),
+    minSingleCallGasUsage: result.results.reduce(
+      (min, { gasUsed }) => (gasUsed < min ? gasUsed : min),
+      BigInt(Number.MAX_SAFE_INTEGER),
+    ),
+    avgGasUsagePerCall: result.results.length
+      ? result.results.reduce((acc, { gasUsed }) => acc + gasUsed, 0n) / BigInt(result.results.length)
+      : 0n,
+    gasLimit,
+  })
+
   if (!retryFailedCallsWithGreaterLimit) {
-    return callResult
+    return resultWithChunks(callResult)
   }
 
   const { gasLimitMultiplier: retryGasLimitMultiplier, maxRetry = 2 } = retryFailedCallsWithGreaterLimit
@@ -104,7 +133,8 @@ export async function multicallByGasLimit(
     })
   }
 
-  return retryFailedCalls(callResult)
+  const finalResult = await retryFailedCalls(callResult)
+  return resultWithChunks(finalResult)
 }
 
 type CallParams = Pick<

@@ -57,11 +57,14 @@ async function fillPoolsWithTicks({
   gasLimit,
   disableFilterNoTicks,
 }: FillPoolsWithTicksParams): Promise<V3Pool[]> {
+  console.log(`[pools]`, pools.length)
   const ticksByPool = await fetchPoolsTicks({ pools, clientProvider, gasLimit })
+  console.log(`[ticks]`, Object.keys(ticksByPool).length)
   const poolsWithTicks = pools.map((p) => ({
     ...p,
     ticks: ticksByPool[p.address.toLowerCase()] ?? [],
   }))
+  console.log(`[poolsWithTicks]`, poolsWithTicks.length)
 
   return disableFilterNoTicks ? poolsWithTicks : poolsWithTicks.filter((p) => p.ticks.length)
 }
