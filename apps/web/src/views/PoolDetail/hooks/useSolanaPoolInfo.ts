@@ -64,8 +64,10 @@ export const useSolanaPoolInfo = (
         return null
       }
       return Object.assign(pool, {
-        volumeUSD48h: extraInfo?.volumeUSD48h,
-        tvlUSD24h: extraInfo?.tvlUSD24h,
+        volumeUSD24h: extraInfo.volumeUSD,
+        volumeUSD48h: extraInfo.volumeUSD48h,
+        tvlUSD: extraInfo.tvlUSD,
+        tvlUSD24h: extraInfo.tvlUSD24h,
       })
     },
     enabled: Boolean(poolId && isSolana && chainId),
