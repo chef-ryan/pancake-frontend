@@ -244,13 +244,13 @@ export interface PoolDataForView {
 
   // volume
   volumeUSD: number
-  volumeUSD48h: string
+  volumeUSD48h?: string
   volumeUSDChange: number
   volumeUSDWeek: number
 
   // liquidity
   tvlUSD: number
-  tvlUSD24h: string
+  tvlUSD24h?: string
   tvlUSDChange: number
 
   // prices
