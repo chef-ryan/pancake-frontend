@@ -51,14 +51,11 @@ const bsc = {
   },
 } satisfies Chain
 
-const MONAD_RPC_URLS = [process.env.NEXT_PUBLIC_MONAD_RPC || 'https://rpc.monad.xyz', 'https://rpc1.monad.xyz'].filter(
-  Boolean,
-) as [string, ...string[]]
+const MONAD_RPC_URLS = [process.env.NEXT_PUBLIC_MONAD_RPC].filter(Boolean) as [string, ...string[]]
 
 const monad: Chain = {
   id: ChainId.MONAD_MAINNET,
   name: 'Monad',
-  network: 'monad',
   nativeCurrency: { name: 'Monad', symbol: 'MON', decimals: 18 },
   rpcUrls: {
     default: { http: MONAD_RPC_URLS },
@@ -68,6 +65,11 @@ const monad: Chain = {
     default: {
       name: 'MonadScan',
       url: 'https://monadscan.io',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0x8553AA1615549A86882151784b329B017aA7c832',
     },
   },
   testnet: false,

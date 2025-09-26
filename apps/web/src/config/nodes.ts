@@ -24,9 +24,7 @@ const ARBITRUM_NODES = [
   'https://arbitrum.llamarpc.com',
 ].filter(Boolean)
 
-const MONAD_RPC_URLS = [process.env.NEXT_PUBLIC_MONAD_RPC || 'https://rpc.monad.xyz', 'https://rpc1.monad.xyz'].filter(
-  Boolean,
-)
+const MONAD_RPC_URLS = [process.env.NEXT_PUBLIC_MONAD_RPC].filter(Boolean)
 
 export const SERVER_NODES = {
   [ChainId.BSC]: [
