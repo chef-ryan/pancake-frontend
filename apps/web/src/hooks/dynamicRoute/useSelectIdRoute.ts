@@ -40,7 +40,6 @@ export const useSelectIdRoute = () => {
     if (!activeChainId || !router.isReady) return
 
     const chainName = getChainName(activeChainId)
-    console.debug('debug chainName', { chainName, activeChainId })
 
     const currencyA = native.symbol
     const currencyB: string = CAKE[activeChainId]?.address ?? USDC[activeChainId]?.address ?? ''

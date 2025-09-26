@@ -1,4 +1,4 @@
-import { NonEvmProtocol, Protocol } from '@pancakeswap/farms'
+import { Protocol } from '@pancakeswap/farms'
 import { Box } from '@pancakeswap/uikit'
 import PageLoader from 'components/Loader/PageLoader'
 import { PositionIdRoute } from 'dynamicRoute'
@@ -53,7 +53,7 @@ const LiquidityPage = () => {
     return <InfinityBinPosition />
   }
 
-  if (protocol === NonEvmProtocol.SolanaV3) {
+  if (protocol === Protocol.V3 && routeParams.positionId[1] === 'solana') {
     return <SolanaV3Position />
   }
 

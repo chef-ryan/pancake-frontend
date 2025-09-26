@@ -97,7 +97,7 @@ export const SolanaV3PositionItem = memo(({ position, detailMode }: SolanaV3Posi
 
   return (
     <PositionItem
-      link={`/liquidity/position/solanaV3/${pool?.poolId}/${position.nftMint.toBase58()}`}
+      link={`/liquidity/position/v3/solana/${pool?.poolId}/${position.nftMint.toBase58()}`}
       chainId={NonEVMChainId.SOLANA}
       pool={pool}
       totalPriceUSD={totalPriceUSD}

@@ -323,18 +323,7 @@ export enum Protocol {
   InfinityCLAMM = 'infinityCl',
 }
 
-export enum NonEvmProtocol {
-  SolanaV3 = 'solanaV3',
-}
-
-export const ALL_PROTOCOLS = [
-  Protocol.V2,
-  Protocol.V3,
-  NonEvmProtocol.SolanaV3,
-  Protocol.STABLE,
-  Protocol.InfinityBIN,
-  Protocol.InfinityCLAMM,
-]
+export const ALL_PROTOCOLS = [Protocol.V2, Protocol.V3, Protocol.STABLE, Protocol.InfinityBIN, Protocol.InfinityCLAMM]
 
 export type FarmBaseConfig = {
   // @deprecated

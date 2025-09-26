@@ -1,5 +1,5 @@
 import { ChainId, chainNames } from '@pancakeswap/chains'
-import { NonEvmProtocol, Protocol } from '@pancakeswap/farms'
+import { Protocol } from '@pancakeswap/farms'
 import { getChainId } from 'config/chains'
 import { DynamicRoute } from 'next-typesafe-url'
 import { Address, Hex } from 'viem'
@@ -29,7 +29,7 @@ export const zNetwork = zChainId.or(zChainName).transform((val) => {
 
 export const zProtocolInfinity = z.literal('infinity')
 export const zProtocolV3 = z.literal('v3')
-export const zProtocolSolanaV3 = z.literal('solanaV3')
+export const zProtocolSolanaV3 = z.literal('v3')
 export const zProtocolV2 = z.literal('v2')
 export const zProtocolStable = z.literal('stableSwap')
 export const zProtocol = zProtocolInfinity
@@ -102,9 +102,10 @@ export const zInfinityClammPositionIdObject = z.object({
   tokenId: zTokenId,
   action: zPositionAction.optional(),
 })
-export const zSolanaV3PositionIdTuple = z.tuple([z.literal(NonEvmProtocol.SolanaV3), zMintId, zMintId])
+export const zSolanaV3PositionIdTuple = z.tuple([z.literal(Protocol.V3), z.literal('solana'), zMintId, zMintId])
 export const zSolanaV3PositionIdObject = z.object({
-  protocol: z.literal(NonEvmProtocol.SolanaV3),
+  protocol: z.literal(Protocol.V3),
+  type: z.literal('solana'),
   poolId: zMintId,
   mintId: zMintId,
 })

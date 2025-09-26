@@ -11,6 +11,7 @@ import {
   PreTitle,
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
+import { Protocol } from '@pancakeswap/farms'
 import { PoolTypeFilter, getCurrencyAddress } from '@pancakeswap/widgets-internal'
 import { NetworkSelector } from 'components/NetworkSelector'
 import { CommonBasesType } from 'components/SearchModal/types'
