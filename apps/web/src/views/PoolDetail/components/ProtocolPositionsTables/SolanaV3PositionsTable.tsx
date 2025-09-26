@@ -1,6 +1,6 @@
 import { useMemo, ReactElement, FC, useCallback, useState, useEffect } from 'react'
 import { NonEVMChainId } from '@pancakeswap/chains'
-import { Box, Text } from '@pancakeswap/uikit'
+import { Box, Text, Tag, FlexGap } from '@pancakeswap/uikit'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import BN from 'bn.js'
 import {
@@ -258,14 +258,21 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
       }
 
       const tokenInfo = (
-        <Box>
-          <Text bold fontSize="16px">
-            {poolInfo.token0.symbol} / {poolInfo.token1.symbol}{' '}
-            <Text as="span" color="textSubtle">
-              #{truncateHash(nft)}
+        <FlexGap flexDirection="column" gap="4px">
+          <FlexGap alignItems="center" gap="8px">
+            <Text bold fontSize="16px">
+              {poolInfo.token0.symbol} / {poolInfo.token1.symbol}{' '}
+              <Text as="span" color="textSubtle">
+                #{truncateHash(nft)}
+              </Text>
             </Text>
-          </Text>
-        </Box>
+            {(p.liquidity as BN).isZero() && (
+              <Tag variant="tertiary" scale="sm" px="6px">
+                {t('Closed')}
+              </Tag>
+            )}
+          </FlexGap>
+        </FlexGap>
       )
 
       const mintPrices: Record<string, { value: number }> = {}
@@ -353,6 +360,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
               maxPercentage={maxPct}
               rangePosition={rangePosition}
               outOfRange={outOfRange}
+              removed={(p.liquidity as BN).isZero()}
               showPercentages={Boolean(showPercentages)}
             />
           ),
