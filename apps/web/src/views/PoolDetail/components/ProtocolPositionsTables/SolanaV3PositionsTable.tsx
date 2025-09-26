@@ -31,6 +31,11 @@ import { getPositionAprCore } from 'views/universalFarms/utils/getSolanaV3Positi
 import { useSolanaV3PositionItems } from 'views/universalFarms/hooks/useSolanaV3Positions'
 import { useFlipCurrentPrice } from 'views/PoolDetail/state/flipCurrentPrice'
 
+import router from 'next/router'
+import { $path } from 'next-typesafe-url'
+import { CHAIN_QUERY_NAME } from 'config/chains'
+import { PERSIST_CHAIN_KEY } from 'config/constants'
+import { Protocol } from '@pancakeswap/farms'
 import { PositionsTable } from './PositionsTable'
 import { EmptyPositionCard, LoadingCard } from './UtilityCards'
 import { PriceRangeDisplay } from './PriceRangeDisplay'
@@ -414,6 +419,21 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
             {sending ? t('Harvesting...') : t('Harvest All')}
           </PrimaryOutlineButton>
         }
+        onRowClick={(row) => {
+          router.push(
+            $path({
+              route: '/liquidity/position/[[...positionId]]',
+              routeParams: {
+                positionId: [Protocol.V3, 'solana', poolInfo.lpAddress, row.tokenId],
+              },
+              // @ts-ignore
+              searchParams: {
+                chain: CHAIN_QUERY_NAME[poolInfo.chainId],
+                [PERSIST_CHAIN_KEY]: '1',
+              },
+            }),
+          )
+        }}
       />
     </>
   )

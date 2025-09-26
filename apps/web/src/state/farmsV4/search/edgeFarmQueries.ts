@@ -229,7 +229,7 @@ async function fetchAllExplorerPools(
   const poolQuery = {
     baseUrl: `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`,
     protocols,
-    chains: chains.filter((id) => isEvm(id)).map((chain) => getEdgeChainName(chain as ChainId)),
+    chains: chains.map((chain) => getEdgeChainName(chain as ChainId)),
     maxPages: 2,
     orderBy: getOrder(sortBy),
   }
