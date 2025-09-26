@@ -798,15 +798,11 @@ export function SolanaFormView({
                   </FlexGap>
                   <Message variant="warning" my="8px">
                     <MessageText>
+                      {t('This pool needs to be initialized before you can add liquidity.')}
+                      <br />
                       {t(
-                        'This pool must be initialized before you can add liquidity. To initialize, select a starting price for the pool. Then, enter your liquidity price range and deposit amount. Gas fees will be higher than usual due to the initialization transaction.',
+                        'First, set the pool’s starting price. Then, choose your liquidity price range and enter the amount you want to deposit. Please note that creating a pool has higher fees compared to normal SOL transactions, since ticks must be initialized during setup.',
                       )}
-                      <br />
-                      <br />
-
-                      <span style={{ fontWeight: 600 }}>
-                        {t('Fee-on transfer tokens and rebasing tokens are NOT compatible with V3.')}
-                      </span>
                     </MessageText>
                   </Message>
                   <FlexGap gap="8px" alignItems="baseline" justifyContent="space-between">
