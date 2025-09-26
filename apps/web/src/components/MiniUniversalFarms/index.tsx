@@ -40,12 +40,9 @@ export const MiniUniversalFarms: React.FC<MiniUniversalFarmsProps> = ({ onPoolCl
 
   return (
     <Container>
-      {isEvm(chainId) && (
-        <Box mb="24px">
-          <PoolsFilterPanel includeSolana value={poolsFilter} onChange={updateFilter} showNetworkFilter={false} />
-        </Box>
-      )}
-
+      <Box mb="24px">
+        <PoolsFilterPanel includeSolana value={poolsFilter} onChange={updateFilter} showNetworkFilter={false} />
+      </Box>
       <PoolsTable onPoolClick={onPoolClick} />
     </Container>
   )

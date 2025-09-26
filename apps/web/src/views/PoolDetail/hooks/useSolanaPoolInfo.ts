@@ -64,9 +64,9 @@ export const useSolanaPoolInfo = (
         return null
       }
       return Object.assign(pool, {
-        volumeUSD24h: extraInfo.volumeUSD,
+        volumeUSD24h: extraInfo.volumeUSD.toString(),
         volumeUSD48h: extraInfo.volumeUSD48h,
-        tvlUSD: extraInfo.tvlUSD,
+        tvlUSD: extraInfo.tvlUSD.toString(),
         tvlUSD24h: extraInfo.tvlUSD24h,
       })
     },
