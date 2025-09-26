@@ -13,8 +13,12 @@ export const raydiumAtom = atom<Raydium | undefined>(undefined)
 export const useRaydium = () => {
   const [raydium, setRaydium] = useAtom(raydiumAtom)
   const connection = useSolanaConnectionWithRpcAtom()
-  const { publicKey, signAllTransactions, wallet, connected } = useWallet()
+  const { publicKey: _publicKey, signAllTransactions, wallet, connected } = useWallet()
   const walletRef = useRef(wallet)
+
+  const publicKey = useMemo(() => {
+    return _publicKey
+  }, [_publicKey])
 
   const initRaydium = useCallback(
     async ({
