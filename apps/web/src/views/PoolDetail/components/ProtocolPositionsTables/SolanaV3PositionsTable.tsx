@@ -207,6 +207,8 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         // keep defaults
       }
 
+      const outOfRange = currentPriceNum < Number(minPriceStr) || currentPriceNum > Number(maxPriceStr)
+
       // If flipping, invert min/max prices when both are finite
       if (flipCurrentPrice) {
         const minFinite = minPriceStr !== '0'
@@ -242,11 +244,9 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
       let minPct = ''
       let maxPct = ''
       let rangePosition = 50
-      let outOfRange = false
       if (showPercentages) {
         const minNum = Number(minPriceStr)
         const maxNum = Number(maxPriceStr)
-        outOfRange = currentPriceNum! < minNum || currentPriceNum! > maxNum
         minPct = formatPercentage(((minNum - currentPriceNum!) / currentPriceNum!) * 100)
         maxPct = formatPercentage(((maxNum - currentPriceNum!) / currentPriceNum!) * 100)
         rangePosition = Math.max(0, Math.min(100, ((currentPriceNum! - minNum) / (maxNum - minNum)) * 100))
@@ -280,7 +280,11 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         token1: poolInfo.token1,
         protocol: poolInfo.protocol,
         chainId: poolInfo.chainId,
-        status: POSITION_STATUS.ALL,
+        status: outOfRange
+          ? POSITION_STATUS.INACTIVE
+          : p.liquidity.isZero()
+          ? POSITION_STATUS.CLOSED
+          : POSITION_STATUS.ACTIVE,
       }
 
       const aprRes = getPositionAprCore({
