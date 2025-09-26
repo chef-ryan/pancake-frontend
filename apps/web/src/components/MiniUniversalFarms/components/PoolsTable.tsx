@@ -11,6 +11,8 @@ import { isInfinityProtocol } from 'utils/protocols'
 import { searchQueryAtom } from 'views/universalFarms/atom/searchQueryAtom'
 import { PoolGlobalAprButton } from 'views/universalFarms/components/PoolAprButton'
 import { FeeTierComponent } from 'views/universalFarms/components/useColumnConfig'
+import { useUnifiedToken } from 'hooks/Tokens'
+import { getCurrencyAddress, getUnifiedCurrencyAddress } from '@pancakeswap/swap-sdk-core'
 import { useMiniPoolsData } from '../hooks'
 
 const PoolPairCell = styled(Flex)`
@@ -121,8 +123,16 @@ const prepareTokenForLogo = (token: any, poolChainId: number) => {
 
 // Pool Token Overview Component (similar to universal farms)
 const PoolTokenOverview = ({ data }: { data: PoolInfo }) => {
-  const token0 = useMemo(() => prepareTokenForLogo(data.token0, data.chainId), [data.token0, data.chainId])
-  const token1 = useMemo(() => prepareTokenForLogo(data.token1, data.chainId), [data.token1, data.chainId])
+  const _token0 =
+    useUnifiedToken(getUnifiedCurrencyAddress(data.token0), data.chainId, {
+      unwrapWSol: true,
+    }) || data.token0
+  const _token1 =
+    useUnifiedToken(getCurrencyAddress(data.token1), data.chainId, {
+      unwrapWSol: true,
+    }) || data.token1
+  const token0 = useMemo(() => prepareTokenForLogo(_token0, data.chainId), [_token0, data.chainId])
+  const token1 = useMemo(() => prepareTokenForLogo(_token1, data.chainId), [_token1, data.chainId])
 
   if (!token0 || !token1) {
     return null
@@ -164,8 +174,16 @@ const PoolFeatures = ({ data }: { data: PoolInfo }) => {
 // Mobile Pool Item Component
 const ListItem = ({ pool, onPoolClick }: { pool: PoolInfo; onPoolClick?: (pool: PoolInfo) => void }) => {
   const { t } = useTranslation()
-  const token0 = prepareTokenForLogo(pool.token0, pool.chainId)
-  const token1 = prepareTokenForLogo(pool.token1, pool.chainId)
+  const _token0 =
+    useUnifiedToken(getUnifiedCurrencyAddress(pool.token0), pool.chainId, {
+      unwrapWSol: true,
+    }) || pool.token0
+  const _token1 =
+    useUnifiedToken(getCurrencyAddress(pool.token1), pool.chainId, {
+      unwrapWSol: true,
+    }) || pool.token1
+  const token0 = useMemo(() => prepareTokenForLogo(_token0, pool.chainId), [_token0, pool.chainId])
+  const token1 = useMemo(() => prepareTokenForLogo(_token1, pool.chainId), [_token1, pool.chainId])
 
   const hookData = useHookByPoolId(
     pool.chainId,
