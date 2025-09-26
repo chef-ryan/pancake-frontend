@@ -1,7 +1,7 @@
 import { useIntersectionObserver } from '@pancakeswap/hooks'
 import { Flex, Loading, Spinner, TableView, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useRouter } from 'next/router'
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import isEqual from 'lodash/isEqual'
 
@@ -32,7 +32,7 @@ const PoolsContent = styled.div`
   min-height: calc(100vh - 64px - 56px);
 `
 
-export const PoolsPage = () => {
+export const PoolsPage = memo(() => {
   const { query: nextQuery, replace, pathname } = useRouter()
   const { isMobile, isMd } = useMatchBreakpoints()
 
@@ -44,10 +44,16 @@ export const PoolsPage = () => {
     if (isEqual(params, nextQuery)) {
       return
     }
-    replace({
-      pathname,
-      query: params,
-    })
+    replace(
+      {
+        pathname,
+        query: params,
+      },
+      undefined,
+      {
+        shallow: true,
+      },
+    )
   }, [query, nextQuery, replace, pathname])
 
   const handleFilterChange: IPoolsFilterPanelProps['onChange'] = useCallback(
@@ -80,17 +86,15 @@ export const PoolsPage = () => {
           </PoolsFilterPanel>
         </CardHeader>
         <CardBody>
-          <Suspense fallback={null}>
-            <List />
-          </Suspense>
+          <List />
         </CardBody>
       </Card>
     </FarmSearchContextProvider>
   )
-}
+})
 
 const List = () => {
-  const { query: nextQuery, replace, pathname, push } = useRouter()
+  const { push } = useRouter()
   const { isMobile } = useMatchBreakpoints()
 
   const columns = useColumnConfig()
@@ -98,18 +102,9 @@ const List = () => {
   const query = useAtomValue(searchQueryAtom)
   const [page, setPage] = useState(0)
   const updateSort = useSetAtom(updateSortAtom)
-  const { observerRef, isIntersecting } = useIntersectionObserver()
-
-  useEffect(() => {
-    const params = farmQueryToUrlParams(query)
-    if (isEqual(params, nextQuery)) {
-      return
-    }
-    replace({
-      pathname,
-      query: params,
-    })
-  }, [query, nextQuery, pathname, replace])
+  const { observerRef, isIntersecting } = useIntersectionObserver({
+    threshold: 0.2,
+  })
 
   const handleRowClick = useCallback(
     async (pool: PoolInfo) => {
@@ -149,49 +144,50 @@ const List = () => {
   const listPrepared = useTokenListPrepared(DEFAULT_ACTIVE_LIST_URLS)
 
   const list = _list.unwrapOr([])
-  const pending = listPrepared.isPending() && isLoadingFarmList
+  const pending = listPrepared.isPending() || isLoadingFarmList
   const isExtending = _list.isPending() && list.length > 0
   const { t } = useTranslation()
   const noResults = list.length === 0 && !pending && !isExtending
+  console.log(`[farm] list render, length: ${list.length}, page: ${page}`, `loading: ${_list.isPending()}`) // --- IGNORE ---
 
   return (
     <>
-      {noResults && (
-        <Flex justifyContent="center" alignItems="center" width="100%" style={{ height: '40px' }}>
-          {t('No results found')}
-        </Flex>
-      )}
+      <Flex
+        justifyContent="center"
+        alignItems="center"
+        width="100%"
+        style={{ height: '40px', display: noResults ? 'block' : 'none', textAlign: 'center' }}
+      >
+        {t('No results found')}
+      </Flex>
       <PoolsContent>
-        {isExtending && (
-          <Flex
-            justifyContent="center"
-            alignItems="center"
-            width="100%"
-            style={{
-              height: '40px',
-            }}
-          >
-            {t('Expanding Search..')}
-            <Loading ml="8px" />
-          </Flex>
-        )}
-        {!pending && (
-          <>
-            {isMobile ? (
-              <ListView data={list} onRowClick={handleRowClick} />
-            ) : (
-              <TableView
-                getRowKey={getRowKey}
-                columns={columns}
-                data={list}
-                onSort={handleSort}
-                sortOrder={query.sortOrder}
-                sortField={query.sortBy}
-                onRowClick={handleRowClick}
-              />
-            )}
-          </>
-        )}
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          width="100%"
+          style={{
+            height: isExtending ? '40px' : '0px',
+            visibility: isExtending ? 'visible' : 'hidden',
+          }}
+        >
+          {t('Expanding Search..')}
+          <Loading ml="8px" />
+        </Flex>
+        <>
+          {isMobile ? (
+            <ListView data={list} onRowClick={handleRowClick} />
+          ) : (
+            <TableView
+              getRowKey={getRowKey}
+              columns={columns}
+              data={list}
+              onSort={handleSort}
+              sortOrder={query.sortOrder}
+              sortField={query.sortBy}
+              onRowClick={handleRowClick}
+            />
+          )}
+        </>
         {pending && (
           <StyledLoadingTable justifyContent="center" alignItems="center">
             <Spinner />
@@ -199,7 +195,7 @@ const List = () => {
         )}
       </PoolsContent>
 
-      {list.length > 0 && <div ref={observerRef} />}
+      {!pending && list.length > 0 && <div ref={observerRef} />}
     </>
   )
 }

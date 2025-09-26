@@ -127,27 +127,28 @@ async function fetchFarms(query: {
   chains: FarmV4SupportedChainId[]
   tokens?: string[]
   symbols?: string[]
+  sortBy?: FarmQuery['sortBy']
 }) {
   // const protocols = DEFAULT_PROTOCOLS
-  const { extend, protocols: _protocols, tokens, symbols, chains } = query
+  const { extend, protocols: _protocols, tokens, symbols, chains, sortBy } = query
   const protocols = _protocols.length > 0 ? _protocols : DEFAULT_PROTOCOLS
   const chainIds = chains.length > 0 ? chains : supportedChainIdV4
   if (!extend) {
     return mergePromiseList([
       fetchExplorerFarmPools(protocols, Array.from(chainIds)),
-      fetchAllExplorerPools(protocols, Array.from(chainIds)),
+      fetchAllExplorerPools(protocols, Array.from(chainIds), sortBy),
     ])
   }
   if (tokens && tokens.length > 0) {
-    const byTokenAddress = fetchAllExplorerPoolsByAddress(Array.from(chainIds), tokens, protocols, true)
-    const byPoolAddress = fetchAllExplorerPoolsByAddress(Array.from(chainIds), tokens, protocols)
+    const byTokenAddress = fetchAllExplorerPoolsByAddress(Array.from(chainIds), tokens, protocols, sortBy, true)
+    const byPoolAddress = fetchAllExplorerPoolsByAddress(Array.from(chainIds), tokens, protocols, sortBy)
     return mergePromiseList([byTokenAddress, byPoolAddress])
   }
 
   if (symbols && symbols.length > 0) {
-    return fetchAllExplorerPoolsBySymbols(Array.from(chainIds), symbols, protocols)
+    return fetchAllExplorerPoolsBySymbols(Array.from(chainIds), symbols, protocols, sortBy)
   }
-  return fetchAllExplorerPools(protocols, Array.from(chainIds))
+  return fetchAllExplorerPools(protocols, Array.from(chainIds), sortBy)
 }
 
 async function queryFarms(query: {
@@ -156,6 +157,7 @@ async function queryFarms(query: {
   chains: FarmV4SupportedChainId[]
   tokens?: string[]
   symbols?: string[]
+  sortBy?: FarmQuery['sortBy']
 }) {
   try {
     const { extend } = query
@@ -209,13 +211,27 @@ async function queryFarms(query: {
   }
 }
 
-async function fetchAllExplorerPools(protocols: Protocol[], chains: FarmV4SupportedChainId[]) {
+function getOrder(sortBy?: FarmQuery['sortBy']): 'tvlUSD' | 'volumeUSD24h' {
+  if (sortBy === 'tvlUsd') {
+    return 'tvlUSD'
+  }
+  if (sortBy === 'vol24hUsd') {
+    return 'volumeUSD24h'
+  }
+  return 'volumeUSD24h'
+}
+
+async function fetchAllExplorerPools(
+  protocols: Protocol[],
+  chains: FarmV4SupportedChainId[],
+  sortBy?: FarmQuery['sortBy'],
+) {
   const poolQuery = {
     baseUrl: `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`,
     protocols,
     chains: chains.map((chain) => getEdgeChainName(chain)),
     maxPages: 2,
-    orderBy: 'volumeUSD24h' as const,
+    orderBy: getOrder(sortBy),
   }
   const pools = await edgeQueries.fetchAllPools(poolQuery)
   return pools.map(normalizeAddress).filter((x) => x) as InfinityRouter.RemotePoolBase[]
@@ -225,6 +241,7 @@ async function fetchAllExplorerPoolsByAddress(
   chains: FarmV4SupportedChainId[],
   addresses: string[],
   protocols: Protocol[],
+  sortBy?: FarmQuery['sortBy'],
   isPool: boolean = false,
 ) {
   if (!protocols.length) return []
@@ -243,6 +260,7 @@ async function fetchAllExplorerPoolsByAddress(
         pools: isPool ? addrChunk : undefined,
         tokens: !isPool ? addrChunk : undefined,
         maxPages: 1,
+        orderBy: getOrder(sortBy),
       })
     }),
   )
@@ -256,6 +274,7 @@ async function fetchAllExplorerPoolsBySymbols(
   chains: FarmV4SupportedChainId[],
   symbols: string[],
   protocols: Protocol[],
+  sortBy?: FarmQuery['sortBy'],
 ) {
   if (!protocols.length) return []
   if (!symbols.length) return []
@@ -272,6 +291,7 @@ async function fetchAllExplorerPoolsBySymbols(
         chains: chainNames,
         symbols: symbolChunk,
         maxPages: 1,
+        orderBy: getOrder(sortBy),
       })
     }),
   )

@@ -17,7 +17,7 @@ import { parseExtendSearchParams } from './farmSearch.parser'
 
 const searchAtom = atomFamily((query: FarmQuery) => {
   return atom((get) => {
-    const { protocols, chains: _chains, sortBy, sortOrder, activeChainId, keywords } = query
+    const { protocols, chains: _chains, sortBy, activeChainId, keywords } = query
     const useShowTestnet = get(userShowTestnetAtom)
     const { tokensMap } = get(tokensMapAtom)
     const queryChains = _chains.filter((chain) => {
@@ -30,12 +30,13 @@ const searchAtom = atomFamily((query: FarmQuery) => {
       queryChains.push(activeChainId as FarmV4SupportedChainId)
     }
 
-    const extendSearchList = parseExtendSearchParams(keywords, protocols, queryChains)
+    const extendSearchList = parseExtendSearchParams(keywords, protocols, queryChains, sortBy)
 
     const baseList = get(
       baseFarmListAtom({
         protocols,
         chains: queryChains,
+        sortBy,
       }),
     )
 
@@ -73,14 +74,14 @@ const searchAtom = atomFamily((query: FarmQuery) => {
       fullList.filter(farmFilters.chainFilter(queryChains)).filter(farmFilters.protocolFilter(protocols)),
       query.keywords,
     )
-    const sorted = farmFilters.sortFunction(filtered, sortBy, activeChainId, sortOrder)
+    // const sorted = farmFilters.sortFunction(filtered, sortBy, activeChainId, sortOrder)
 
     const hasPending = lists.some((x) => x.isPending())
 
     if (hasPending) {
-      return Loadable.Pending(sorted)
+      return Loadable.Pending(filtered)
     }
-    return Loadable.Just(sorted)
+    return Loadable.Just(filtered)
   })
 }, isEqual)
 

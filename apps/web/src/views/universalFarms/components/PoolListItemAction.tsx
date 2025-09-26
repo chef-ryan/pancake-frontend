@@ -9,6 +9,8 @@ import type { PoolInfo } from 'state/farmsV4/state/type'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 import { getPoolAddLiquidityLink, getPoolDetailPageLink, getPoolInfoPageLink } from 'utils/getPoolLink'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { isEvm } from '@pancakeswap/chains'
 
 const BaseButtonStyle = css`
   color: ${({ theme }) => theme.colors.text};
@@ -48,54 +50,24 @@ export const PoolListItemAction = memo(({ pool }: { pool: PoolInfo }) => {
 
 export const ActionItems = ({ pool, icon }: { pool: PoolInfo; icon?: React.ReactNode }) => {
   const { t } = useTranslation()
-  const { address: account } = useAccount()
-
-  // Define state variables for the async links
-  const [infoLink, setInfoLink] = useState('')
-  const [detailLink, setDetailLink] = useState('')
+  const { account, solanaAccount } = useAccountActiveChain()
 
   const addLiquidityLink = useMemo(() => getPoolAddLiquidityLink(pool), [pool])
-
-  // Fetch the infoLink and detailLink asynchronously
-  useEffect(() => {
-    const fetchLinks = async () => {
-      const [infoLinkResult, detailLinkResult] = await Promise.all([
-        getPoolInfoPageLink(pool),
-        getPoolDetailPageLink(pool),
-      ])
-      setInfoLink(infoLinkResult)
-      setDetailLink(detailLinkResult)
-    }
-
-    fetchLinks()
-  }, [pool])
 
   const stopBubble = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
   }, [])
 
+  const connected = Boolean(isEvm(pool.chainId) ? account : solanaAccount)
+
   return (
     <Flex flexDirection="column" onClick={stopBubble}>
-      <NextLinkFromReactRouter to={detailLink}>
-        <StyledButton scale="sm" variant="text">
-          {t('View Pool Details')}
-          {icon}
-        </StyledButton>
-      </NextLinkFromReactRouter>
-      {!account ? (
+      {!connected ? (
         <StyledConnectWalletButton scale="sm" variant="text" />
       ) : (
         <NextLinkFromReactRouter to={addLiquidityLink}>
           <StyledButton scale="sm" variant="text">
             {t('Add Liquidity')}
-            {icon}
-          </StyledButton>
-        </NextLinkFromReactRouter>
-      )}
-      {[Protocol.InfinityBIN, Protocol.InfinityCLAMM].includes(pool.protocol) ? null : (
-        <NextLinkFromReactRouter to={infoLink}>
-          <StyledButton scale="sm" variant="text">
-            {t('View Info Page')}
             {icon}
           </StyledButton>
         </NextLinkFromReactRouter>

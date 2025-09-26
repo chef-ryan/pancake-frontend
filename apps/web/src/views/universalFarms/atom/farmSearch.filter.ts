@@ -39,7 +39,10 @@ type SortMetrics = {
 const extractSortMetrics = (farm: SortableFarm): SortMetrics => {
   if (isPoolInfo(farm)) {
     const underlying = farm.farm
-    const aprSource = farm.lpApr ?? underlying?.lpApr ?? underlying?.apr24h
+    const lpApr = Number(farm.lpApr ?? underlying?.lpApr ?? underlying?.apr24h ?? 0)
+    const cakeApr = Number(underlying?.cakeApr.value ?? 0)
+    const totalApr = lpApr + cakeApr
+    const aprSource = totalApr
     const tvlSource = farm.tvlUsd ?? underlying?.tvlUSD
     const volSource = farm.vol24hUsd ?? underlying?.vol24hUsd
 
