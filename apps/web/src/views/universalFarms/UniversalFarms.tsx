@@ -126,10 +126,7 @@ export const UniversalFarms: React.FC<PropsWithChildren> = () => {
           {!isMobile && !isMd && (
             <ButtonContainer mb="12px">
               <CreatePoolButton scale="md" />
-              <AddLiquidityButton
-                scale="md"
-                to={isSolana(chainId) ? 'https://solana.pancakeswap.finance/positions/' : '/liquidity/select'}
-              />
+              <AddLiquidityButton scale="md" />
             </ButtonContainer>
           )}
         </FlexGap>

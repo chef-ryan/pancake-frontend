@@ -421,17 +421,9 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         }
         onRowClick={(row) => {
           router.push(
-            $path({
-              route: '/liquidity/position/[[...positionId]]',
-              routeParams: {
-                positionId: [Protocol.V3, 'solana', poolInfo.lpAddress, row.tokenId],
-              },
-              // @ts-ignore
-              searchParams: {
-                chain: CHAIN_QUERY_NAME[poolInfo.chainId],
-                [PERSIST_CHAIN_KEY]: '1',
-              },
-            }),
+            `/liquidity/position/${Protocol.V3}/solana/${poolInfo.lpAddress}/${row.tokenId}?chain=${
+              CHAIN_QUERY_NAME[poolInfo.chainId]
+            }&${PERSIST_CHAIN_KEY}=1`,
           )
         }}
       />
