@@ -115,9 +115,11 @@ export const PoolInfoCard = () => {
                         </FlexGap>
 
                         <FlexGap gap="4px">
-                          <Link target="_blank" href={getSolExplorerLink(mintId, 'account', currentExplorer.host)}>
-                            <OpenNewIcon width={16} height={16} color="primary60" />
-                          </Link>
+                          {mintId ? (
+                            <Link target="_blank" href={getSolExplorerLink(mintId, 'address', currentExplorer.host)}>
+                              <OpenNewIcon width={16} height={16} color="primary60" />
+                            </Link>
+                          ) : null}
                           <CopyButton
                             text={position?.nftMint.toBase58() ?? ''}
                             tooltipMessage={t('NFT mint copied')}
@@ -135,7 +137,7 @@ export const PoolInfoCard = () => {
                           <FlexGap gap="4px">
                             <Link
                               target="_blank"
-                              href={getSolExplorerLink(currency0?.wrapped?.address, 'account', currentExplorer.host)}
+                              href={getSolExplorerLink(currency0?.wrapped?.address, 'address', currentExplorer.host)}
                             >
                               <OpenNewIcon width={16} height={16} color="primary60" />
                             </Link>
@@ -157,7 +159,7 @@ export const PoolInfoCard = () => {
                           <FlexGap gap="4px">
                             <Link
                               target="_blank"
-                              href={getSolExplorerLink(currency1?.wrapped?.address, 'account', currentExplorer.host)}
+                              href={getSolExplorerLink(currency1?.wrapped?.address, 'address', currentExplorer.host)}
                             >
                               <OpenNewIcon width={16} height={16} color="primary60" />
                             </Link>
