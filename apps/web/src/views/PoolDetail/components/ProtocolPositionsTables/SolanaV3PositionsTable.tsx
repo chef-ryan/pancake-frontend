@@ -29,6 +29,7 @@ import { useRaydium } from 'hooks/solana/useRaydium'
 import { useSolanaPriorityFee } from 'components/WalletModalV2/hooks/useSolanaPriorityFee'
 import { getPositionAprCore } from 'views/universalFarms/utils/getSolanaV3PositionAprCore'
 import { useSolanaV3PositionItems } from 'views/universalFarms/hooks/useSolanaV3Positions'
+import { useFlipCurrentPrice } from 'views/PoolDetail/state/flipCurrentPrice'
 
 import { PositionsTable } from './PositionsTable'
 import { EmptyPositionCard, LoadingCard } from './UtilityCards'
@@ -65,6 +66,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
 
   const solPoolId = poolInfo?.poolId
   const { data: poolOnchain } = useSolanaOnchainClmmPool(poolInfo?.poolId)
+  const [flipCurrentPrice] = useFlipCurrentPrice()
 
   // Reuse shared hook to get positions, then filter by this pool
   const { solanaPositions, solanaLoading } = useSolanaV3PositionItems({
@@ -157,7 +159,11 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
     if (!positionsInThisPool?.length || !poolOnchain?.computePoolInfo) return []
 
     const sqrtCurrent = poolOnchain.computePoolInfo.sqrtPriceX64 as BN
-    const currentPriceNum = poolOnchain?.computePoolInfo?.currentPrice?.toNumber?.() ?? undefined
+    const currentPriceRaw = poolOnchain?.computePoolInfo?.currentPrice?.toNumber?.() ?? undefined
+    const currentPriceNum =
+      flipCurrentPrice && currentPriceRaw && Number.isFinite(currentPriceRaw) && currentPriceRaw > 0
+        ? 1 / currentPriceRaw
+        : currentPriceRaw
 
     return positionsInThisPool.map((p: any) => {
       const nft = p.nftMint.toBase58()
@@ -199,6 +205,36 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         }
       } catch (e) {
         // keep defaults
+      }
+
+      // If flipping, invert min/max prices when both are finite
+      if (flipCurrentPrice) {
+        const minFinite = minPriceStr !== '0'
+        const maxFinite = maxPriceStr !== '∞'
+        if (minFinite && maxFinite) {
+          const minNum = Number(minPriceStr)
+          const maxNum = Number(maxPriceStr)
+          if (Number.isFinite(minNum) && Number.isFinite(maxNum) && minNum > 0 && maxNum > 0) {
+            const flippedMin = 1 / maxNum
+            const flippedMax = 1 / minNum
+            minPriceStr = String(flippedMin)
+            maxPriceStr = String(flippedMax)
+          }
+        } else if (!minFinite && maxFinite) {
+          // original min was 0, after flip max becomes ∞ and min becomes 1/max
+          const maxNum = Number(maxPriceStr)
+          if (Number.isFinite(maxNum) && maxNum > 0) {
+            minPriceStr = String(1 / maxNum)
+            maxPriceStr = '∞'
+          }
+        } else if (minFinite && !maxFinite) {
+          // original max was ∞, after flip min becomes 0 and max becomes 1/min
+          const minNum = Number(minPriceStr)
+          if (Number.isFinite(minNum) && minNum > 0) {
+            minPriceStr = '0'
+            maxPriceStr = String(1 / minNum)
+          }
+        }
       }
 
       const showPercentages =
@@ -325,7 +361,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
       }
       return display
     })
-  }, [positionsInThisPool, poolOnchain, priceMap, poolInfo, poolForAction])
+  }, [positionsInThisPool, poolOnchain, priceMap, poolInfo, poolForAction, flipCurrentPrice])
 
   const computed = useMemo(() => {
     if (!rowsDisplay.length) return { rows: [], totalLiq: 0, totalEarn: 0, totalApr: 0 }
