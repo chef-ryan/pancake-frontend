@@ -10,10 +10,11 @@ type ApyButtonProps = {
   hasFarm?: boolean
   onAPRTextClick?: () => void
   baseApr?: number
+  fontSize?: string
 }
 
 export const AprButton = forwardRef<HTMLElement, ApyButtonProps>(
-  ({ showApyButton = true, loading, onClick, onAPRTextClick, baseApr, hasFarm }, ref) => {
+  ({ showApyButton = true, loading, onClick, onAPRTextClick, baseApr, hasFarm, fontSize }, ref) => {
     const handleClick = useCallback(
       (e: MouseEvent) => {
         e.preventDefault()
@@ -32,50 +33,52 @@ export const AprButton = forwardRef<HTMLElement, ApyButtonProps>(
     return (
       <FlexGap alignItems="center">
         {showApyButton && <FarmWidget.FarmApyButton variant="text-and-button" handleClickButton={handleClick} />}
-        <AprButtonText hasFarm={hasFarm} baseApr={baseApr} ref={ref} onClick={onAPRTextClick} />
+        <AprButtonText hasFarm={hasFarm} baseApr={baseApr} ref={ref} onClick={onAPRTextClick} fontSize={fontSize} />
       </FlexGap>
     )
   },
 )
 
-type AprButtonTextProps = Pick<ApyButtonProps, 'baseApr' | 'hasFarm'> & {
+type AprButtonTextProps = Pick<ApyButtonProps, 'baseApr' | 'hasFarm' | 'fontSize'> & {
   onClick?: () => void
 }
 
-const AprButtonText = forwardRef<HTMLElement, AprButtonTextProps>(({ baseApr, hasFarm, onClick }, ref) => {
-  const isZeroApr = baseApr === 0
+const AprButtonText = forwardRef<HTMLElement, AprButtonTextProps>(
+  ({ baseApr, hasFarm, onClick, fontSize = '16px' }, ref) => {
+    const isZeroApr = baseApr === 0
 
-  const ZeroApr = useMemo(
-    () => (
-      <TooltipText ml="4px" fontSize="16px" color="destructive" bold>
-        0%
-      </TooltipText>
-    ),
-    [],
-  )
-
-  const commonApr = useMemo(
-    () => (
-      <FlexGap>
-        {hasFarm ? (
-          <Text fontSize="16px" color="v2Primary50" bold>
-            🌿
-          </Text>
-        ) : null}
-        <TooltipText ml="4px" fontSize="16px" color="text">
-          {baseApr ? displayApr(baseApr) : null}
+    const ZeroApr = useMemo(
+      () => (
+        <TooltipText ml="4px" fontSize={fontSize} color="destructive" bold>
+          0%
         </TooltipText>
-      </FlexGap>
-    ),
-    [baseApr, hasFarm],
-  )
+      ),
+      [],
+    )
 
-  if (typeof baseApr === 'undefined') {
-    return null
-  }
-  return (
-    <span ref={ref} onClick={onClick} aria-hidden>
-      {isZeroApr ? ZeroApr : commonApr}
-    </span>
-  )
-})
+    const commonApr = useMemo(
+      () => (
+        <FlexGap>
+          {hasFarm ? (
+            <Text fontSize={fontSize} color="v2Primary50" bold>
+              🌿
+            </Text>
+          ) : null}
+          <TooltipText ml="4px" fontSize={fontSize} color="text">
+            {baseApr ? displayApr(baseApr) : null}
+          </TooltipText>
+        </FlexGap>
+      ),
+      [baseApr, hasFarm],
+    )
+
+    if (typeof baseApr === 'undefined') {
+      return null
+    }
+    return (
+      <span ref={ref} onClick={onClick} aria-hidden>
+        {isZeroApr ? ZeroApr : commonApr}
+      </span>
+    )
+  },
+)

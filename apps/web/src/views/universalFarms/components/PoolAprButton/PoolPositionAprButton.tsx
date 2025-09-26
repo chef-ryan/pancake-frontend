@@ -40,6 +40,7 @@ type PoolPositionAprButtonProps<TPosition, TPoolInfo = PoolInfo> = {
   pool: TPoolInfo
   userPosition: TPosition
   inverted?: boolean
+  fontSize?: string
 }
 
 export const V2PoolPositionAprButton: React.FC<PoolPositionAprButtonProps<StableLPDetail | V2LPDetail>> = ({
@@ -83,7 +84,7 @@ export const V3PoolPositionAprButton: React.FC<PoolPositionAprButtonProps<Positi
 
 export const SolanaV3PoolPositionAprButton: React.FC<
   PoolPositionAprButtonProps<SolanaV3PositionDetail, SolanaV3PoolInfo>
-> = ({ pool, userPosition }) => {
+> = ({ pool, userPosition, fontSize }) => {
   const { apr: solanaApr, isLoading } = useSolanaV3PositionApr(pool, userPosition)
   const { fee, rewards, apr } = solanaApr ?? {}
   const farmApr = rewards?.reduce((acc, reward) => acc + reward.apr, 0)
@@ -97,6 +98,7 @@ export const SolanaV3PoolPositionAprButton: React.FC<
       solanaRewardsApr={farmApr}
       userPosition={userPosition}
       showApyButton={false}
+      fontSize={fontSize}
     />
   )
 }

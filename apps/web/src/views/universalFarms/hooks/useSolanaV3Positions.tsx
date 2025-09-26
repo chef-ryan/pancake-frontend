@@ -11,7 +11,7 @@ import { useSolanaV3PoolsUpdater } from 'hooks/solana/useSolanaV3PoolsUpdater'
 import { Protocol } from '@pancakeswap/farms'
 import { convertRawTokenInfoIntoSPLToken } from 'config/solana-list'
 
-const getSolanaPoolStatus = (pos: ClmmPositionLayout, pool: SolanaV3Pool | undefined) => {
+export const getSolanaPoolStatus = (pos: ClmmPositionLayout, pool: SolanaV3Pool | undefined) => {
   if (pos.liquidity.isZero()) {
     return POSITION_STATUS.CLOSED
   }
