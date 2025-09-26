@@ -98,7 +98,7 @@ export const useTokenRateData = ({
   )
   const parsePrice = useCallback(
     (priceValue?: number) => {
-      const basePrice = tryParsePrice(baseCurrency as Currency, quoteCurrency as Currency, priceValue?.toString())
+      const basePrice = tryParsePrice(baseCurrency as Currency, quoteCurrency as Currency, priceValue?.toFixed(18))
       const price = isSorted ? basePrice?.invert() : basePrice
       return price && price?.denominator !== 0n ? parseFloat(price.toFixed(18)) : 0
     },
