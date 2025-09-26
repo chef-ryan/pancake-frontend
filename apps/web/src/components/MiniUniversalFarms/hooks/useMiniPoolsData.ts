@@ -22,7 +22,7 @@ export const useMiniPoolsData = (): UseMiniPoolsDataReturn => {
 
   // Use existing Universal Farms atoms
   const [page, setPage] = useState(0)
-  const farmSearchResult = useAtomValue(farmsSearchV2Atom(query))
+  const farmSearchResult = useAtomValue(farmsSearchV2Atom({ ...query, page }))
 
   const pools = useMemo(() => farmSearchResult.list.unwrapOr([]), [farmSearchResult])
 
