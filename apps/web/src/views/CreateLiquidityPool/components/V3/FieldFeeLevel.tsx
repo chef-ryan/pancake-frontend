@@ -16,6 +16,7 @@ import {
   Flex,
   ArrowDropDownIcon,
 } from '@pancakeswap/uikit'
+import styled from 'styled-components'
 import MenuItem from '@pancakeswap/uikit/components/MenuItem/MenuItem'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useFeeLevelQueryState } from 'state/infinity/create'
@@ -39,6 +40,13 @@ const parseFeeAsReadable = (fee: number) => {
 }
 
 const decimals = 4
+
+const ScrollableDropdown = styled(DropdownMenu)`
+  & > div[data-popper-placement] {
+    max-height: 320px;
+    overflow-y: auto;
+  }
+`
 
 export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({
   baseCurrency,
@@ -176,7 +184,7 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({
       <Card>
         <Flex p="16px" flexDirection="row" justifyContent="space-between" alignItems="center">
           <Text>{t('Pick a fee tier')}</Text>
-          <DropdownMenu trigger="click" items={renderItems}>
+          <ScrollableDropdown trigger="click" items={renderItems}>
             <MenuItem hoverColor="white">
               <Flex
                 flexDirection="row"
@@ -191,7 +199,7 @@ export const FieldFeeLevel: React.FC<FieldFeeLevelProps> = ({
                 <ArrowDropDownIcon color="text" />
               </Flex>
             </MenuItem>
-          </DropdownMenu>
+          </ScrollableDropdown>
         </Flex>
       </Card>
     )
