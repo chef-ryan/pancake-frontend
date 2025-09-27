@@ -32,7 +32,6 @@ import { useSolanaV3PositionItems } from 'views/universalFarms/hooks/useSolanaV3
 import { useFlipCurrentPrice } from 'views/PoolDetail/state/flipCurrentPrice'
 
 import router from 'next/router'
-import { $path } from 'next-typesafe-url'
 import { CHAIN_QUERY_NAME } from 'config/chains'
 import { PERSIST_CHAIN_KEY } from 'config/constants'
 import { Protocol } from '@pancakeswap/farms'
@@ -41,6 +40,7 @@ import { EmptyPositionCard, LoadingCard } from './UtilityCards'
 import { PriceRangeDisplay } from './PriceRangeDisplay'
 import { PrimaryOutlineButton } from '../styles'
 import { SolanaV3EarningsCell } from './PoolEarningsCells'
+import { PositionFilter } from './types'
 
 interface V3PositionsTableProps {
   poolInfo: SolanaV3PoolInfo
@@ -68,6 +68,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
   const { t } = useTranslation()
   const { solanaAccount } = useAccountActiveChain()
   const chainId = useChainIdByQuery()
+  const [filter, setFilter] = useState<PositionFilter>(PositionFilter.All)
 
   const solPoolId = poolInfo?.poolId
   const { data: poolOnchain } = useSolanaOnchainClmmPool(poolInfo?.poolId)
@@ -381,7 +382,8 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
   }, [positionsInThisPool, poolOnchain, priceMap, poolInfo, poolForAction, flipCurrentPrice])
 
   const computed = useMemo(() => {
-    if (!rowsDisplay.length) return { rows: [], totalLiq: 0, totalEarn: 0, totalApr: 0 }
+    if (!rowsDisplay.length)
+      return { rows: [] as (SolanaPositionRow & { liquidityUSD: number })[], totalLiq: 0, totalEarn: 0, totalApr: 0 }
     const solData = poolInfo.rawPool
     const mintA = solData?.mintA?.address
     const mintB = solData?.mintB?.address
@@ -400,6 +402,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
       aprWeightedSum += row.tableRow.aprValue.apr * liqUSD
       return {
         ...row,
+        liquidityUSD: liqUSD,
         tableRow: {
           ...row.tableRow,
           liquidity: <Text bold>{formatPoolDetailFiatNumber(liqUSD)}</Text>,
@@ -410,6 +413,17 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
     return { rows, totalLiq, totalEarn, totalApr }
   }, [priceMap, poolInfo, rowsDisplay, earningsUsdMap])
 
+  // Filter rows based on inactive toggle, following V3PositionsTable logic
+  const filteredRows = useMemo(() => {
+    const hasLiquidity = (r: { liquidityUSD: number }) => r.liquidityUSD > 0
+    switch (filter) {
+      case PositionFilter.Inactive:
+        return computed.rows.filter((r) => hasLiquidity(r) && r.tableRow.aprValue.apr === 0)
+      default:
+        return computed.rows
+    }
+  }, [computed.rows, filter])
+
   if (solanaLoading) return <LoadingCard />
   if (!computed.rows.length) return <EmptyPositionCard />
 
@@ -417,10 +431,14 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
     <>
       <PositionsTable
         poolInfo={poolInfo as PoolInfo}
-        totalLiquidityUSD={computed.totalLiq}
+        totalLiquidityUSD={filteredRows.reduce((sum, r) => sum + r.liquidityUSD, 0)}
         totalApr={computed.totalApr}
         totalEarnings={formatPoolDetailFiatNumber(computed.totalEarn)}
-        data={computed.rows.map((r) => r.tableRow)}
+        data={filteredRows.map((r) => r.tableRow)}
+        showInactiveOnly={filter === PositionFilter.Inactive}
+        toggleInactiveOnly={() =>
+          setFilter(filter === PositionFilter.Inactive ? PositionFilter.All : PositionFilter.Inactive)
+        }
         onlyFarmHarvest={false}
         harvestAllButton={
           <PrimaryOutlineButton onClick={handleHarvestAll} disabled={sending || !computed.totalEarn}>
