@@ -190,8 +190,9 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
       // Price range from ticks
       let minPriceStr = '0'
       let maxPriceStr = '∞'
+      const isFullRange = p.tickLower <= MIN_TICK && p.tickUpper >= MAX_TICK
       try {
-        if (p.tickLower > MIN_TICK) {
+        if (!isFullRange && p.tickLower > MIN_TICK) {
           const sqrtLower2 = SolSqrtPriceMath.getSqrtPriceX64FromTick(p.tickLower)
           const minPrice = SolSqrtPriceMath.sqrtPriceX64ToPrice(
             sqrtLower2,
@@ -200,7 +201,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
           )
           minPriceStr = minPrice.toString()
         }
-        if (p.tickUpper < MAX_TICK) {
+        if (!isFullRange && p.tickUpper < MAX_TICK) {
           const sqrtUpper2 = SolSqrtPriceMath.getSqrtPriceX64FromTick(p.tickUpper)
           const maxPrice = SolSqrtPriceMath.sqrtPriceX64ToPrice(
             sqrtUpper2,
@@ -251,8 +252,15 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         }
       }
 
-      const showPercentages =
+      // When full range, force 0 - ∞ and hide percentages
+      if (isFullRange) {
+        minPriceStr = '0'
+        maxPriceStr = '∞'
+      }
+
+      const showPercentagesBase =
         currentPriceNum && Number.isFinite(currentPriceNum) && minPriceStr !== '0' && maxPriceStr !== '∞'
+      const showPercentages = Boolean(showPercentagesBase && !isFullRange)
       let minPct = ''
       let maxPct = ''
       let rangePosition = 50
@@ -368,7 +376,7 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
               rangePosition={rangePosition}
               outOfRange={outOfRange}
               removed={(p.liquidity as BN).isZero()}
-              showPercentages={Boolean(showPercentages)}
+              showPercentages={showPercentages}
             />
           ),
           actions: (
