@@ -213,7 +213,13 @@ export const SolanaV3PositionsTable: FC<V3PositionsTableProps> = ({ poolInfo }) 
         // keep defaults
       }
 
-      const outOfRange = currentPriceNum < Number(minPriceStr) || currentPriceNum > Number(maxPriceStr)
+      // Determine out-of-range using tick comparison to avoid flip-induced errors
+      const tickCurrent = poolOnchain?.computePoolInfo?.tickCurrent
+      const outOfRange =
+        typeof tickCurrent === 'number'
+          ? tickCurrent < p.tickLower || tickCurrent >= p.tickUpper
+          : currentPriceRaw !== undefined &&
+            (currentPriceRaw < Number(minPriceStr) || currentPriceRaw > Number(maxPriceStr))
 
       // If flipping, invert min/max prices when both are finite
       if (flipCurrentPrice) {
