@@ -1,4 +1,4 @@
-import { ChainId, chainNamesInKebabCase, isEvm } from '@pancakeswap/chains'
+import { ChainId, chainNamesInKebabCase } from '@pancakeswap/chains'
 import {
   FarmV4SupportedChainId,
   fetchAllUniversalFarms,
@@ -59,10 +59,7 @@ function getPoolId(farm: UniversalFarmConfig) {
 export type ChainNameKebab = (typeof chainNamesInKebabCase)[keyof typeof chainNamesInKebabCase]
 
 async function fetchExplorerFarmPools(protocols: Protocol[], chainIds: FarmV4SupportedChainId[]) {
-  const chains = chainIds
-    .filter((x) => isEvm(x))
-    .map((chainId) => getEdgeChainName(chainId))
-    .filter((x) => x !== 'sol')
+  const chains = chainIds.map((chainId) => getEdgeChainName(chainId)).filter((x) => x !== 'sol')
   const resp = await explorerApiClient.GET('/cached/pools/farming', {
     params: {
       query: {
@@ -246,7 +243,7 @@ async function fetchAllExplorerPoolsByAddress(
 ) {
   if (!protocols.length) return []
   const baseUrl = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`
-  const chainNames = chains.filter((id) => isEvm(id)).map((chain) => getEdgeChainName(chain as ChainId))
+  const chainNames = chains.map((chain) => getEdgeChainName(chain as ChainId))
 
   if (!addresses.length) return []
 
@@ -280,7 +277,7 @@ async function fetchAllExplorerPoolsBySymbols(
   if (!symbols.length) return []
 
   const baseUrl = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/list`
-  const chainNames = chains.filter((id) => isEvm(id)).map((chain) => getEdgeChainName(chain as ChainId))
+  const chainNames = chains.map((chain) => getEdgeChainName(chain as ChainId))
 
   const chunks = chunk(symbols, 20)
   const allPools = await mergePromiseList(
