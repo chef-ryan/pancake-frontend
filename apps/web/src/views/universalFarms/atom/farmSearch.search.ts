@@ -91,6 +91,7 @@ export const farmsWithPagingAtom = atomFamily((query: FarmQuery) => {
     const sorted = get(searchAtom(query))
     const r = await sorted.mapAsync(async (farms) => {
       const sliced = farms.slice(0, 20 * (page + 1))
+      console.log(`[farm]`, 'sliced', sliced.length)
 
       const filled = await Promise.all(sliced.map(fillOnchainPoolData))
       return filled.map((x) => {

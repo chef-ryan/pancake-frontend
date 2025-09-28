@@ -287,7 +287,7 @@ async function fetchAllExplorerPoolsBySymbols(
         protocols,
         chains: chainNames,
         symbols: symbolChunk,
-        maxPages: 1,
+        maxPages: 3,
         orderBy: getOrder(sortBy),
       })
     }),

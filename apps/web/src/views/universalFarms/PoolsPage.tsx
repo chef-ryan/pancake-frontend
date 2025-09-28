@@ -148,8 +148,7 @@ const List = () => {
   const isExtending = _list.isPending() && list.length > 0
   const { t } = useTranslation()
   const noResults = list.length === 0 && !pending && !isExtending
-  console.log(`[farm] list render, length: ${list.length}, page: ${page}`, `loading: ${_list.isPending()}`) // --- IGNORE ---
-
+  console.log(`[farm] pending`, pending, isLoadingFarmList, listPrepared.isPending())
   return (
     <>
       <Flex
