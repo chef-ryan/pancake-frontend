@@ -9,6 +9,7 @@ const CHAIN_TO_QUERY = {
   [ChainId.LINEA]: 'linea',
   [ChainId.BASE]: 'base',
   [ChainId.OPBNB]: 'opbnb',
+  [ChainId.MONAD_MAINNET]: 'monad',
 } as const
 
 const requireCheck = [EXPLORER_API_KEY]

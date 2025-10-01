@@ -19,5 +19,6 @@ export const AVERAGE_CHAIN_BLOCK_TIMES: Record<ChainId, number> = {
   [ChainId.ARBITRUM_SEPOLIA]: 0,
   [ChainId.BASE_SEPOLIA]: 0,
   [ChainId.SEPOLIA]: 0,
+  [ChainId.MONAD_MAINNET]: 1,
   [ChainId.MONAD_TESTNET]: 1,
 }

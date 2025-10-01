@@ -13,6 +13,7 @@ const mapping: { [key: number]: string } = {
   [ChainId.BASE]: "base",
   [ChainId.LINEA]: "linea",
   [ChainId.OPBNB]: "opbnb",
+  [ChainId.MONAD_MAINNET]: "monad",
 };
 
 export const getTokenLogoURL = memoize(
@@ -47,6 +48,7 @@ export const chainName: { [key: number]: string } = {
   [ChainId.LINEA]: "linea",
   [ChainId.BASE]: "base",
   [ChainId.OPBNB]: "opbnb",
+  [ChainId.MONAD_MAINNET]: "monad",
   [ChainId.MONAD_TESTNET]: "monad-testnet",
 };
 

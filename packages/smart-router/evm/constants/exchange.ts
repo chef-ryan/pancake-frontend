@@ -16,6 +16,7 @@ import {
   ethereumTokens,
   lineaTestnetTokens,
   lineaTokens,
+  monadTokens,
   monadTestnetTokens,
   opBnbTestnetTokens,
   opBnbTokens,
@@ -46,6 +47,7 @@ export const SMART_ROUTER_ADDRESSES = {
   [ChainId.SEPOLIA]: '0x678Aa4bF4E210cf2166753e054d5b7c31cc7fa86',
   [ChainId.ARBITRUM_SEPOLIA]: '0x678Aa4bF4E210cf2166753e054d5b7c31cc7fa86',
   [ChainId.BASE_SEPOLIA]: '0x678Aa4bF4E210cf2166753e054d5b7c31cc7fa86',
+  [ChainId.MONAD_MAINNET]: '0x13f4EA83D0bd40E75C8222255bc855a974568Dd4',
   [ChainId.MONAD_TESTNET]: '0xe27dC57FcE896350a38D8d8aDcEefBfb5649D9De',
 } as const satisfies Record<ChainId, string>
 
@@ -68,6 +70,7 @@ export const V2_ROUTER_ADDRESS: ChainMap<string> = {
   [ChainId.SEPOLIA]: '0x8cFe327CEc66d1C090Dd72bd0FF11d690C33a2Eb',
   [ChainId.ARBITRUM_SEPOLIA]: '0x8cFe327CEc66d1C090Dd72bd0FF11d690C33a2Eb',
   [ChainId.BASE_SEPOLIA]: '0x8cFe327CEc66d1C090Dd72bd0FF11d690C33a2Eb',
+  [ChainId.MONAD_MAINNET]: '0x8cFe327CEc66d1C090Dd72bd0FF11d690C33a2Eb',
   [ChainId.MONAD_TESTNET]: '0x3a3eBAe0Eec80852FBC7B9E824C6756969cc8dc1',
 }
 
@@ -91,6 +94,7 @@ export const STABLE_SWAP_INFO_ADDRESS: ChainMap<string> = {
   [ChainId.ARBITRUM_SEPOLIA]: '',
   [ChainId.BASE_SEPOLIA]: '',
   [ChainId.MONAD_TESTNET]: '',
+  [ChainId.MONAD_MAINNET]: '',
 }
 
 // used to construct intermediary pairs for trading
@@ -121,6 +125,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   [ChainId.SEPOLIA]: [sepoliaTokens.usdc, sepoliaTokens.weth],
   [ChainId.ARBITRUM_SEPOLIA]: [arbSepoliaTokens.usdc, arbSepoliaTokens.weth],
   [ChainId.BASE_SEPOLIA]: [baseSepoliaTokens.usdc, baseSepoliaTokens.weth],
+  [ChainId.MONAD_MAINNET]: [monadTokens.weth, monadTokens.usdc, monadTokens.busd],
   [ChainId.MONAD_TESTNET]: [monadTestnetTokens.weth, monadTestnetTokens.usdc, monadTestnetTokens.busd],
 }
 
