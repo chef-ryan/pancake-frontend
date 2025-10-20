@@ -11,23 +11,31 @@ import { erc20Abi, WriteContractReturnType, zeroAddress } from 'viem'
 import { userRejectedError } from 'views/Swap/V3Swap/hooks/useSendSwapTransaction'
 import { useAccount, useWriteContract } from 'wagmi'
 import { useSetAtom } from 'jotai'
+import { useApproveCallback } from 'hooks/useApproveCallback'
+import { publicClient } from 'utils/viem'
 import useIfo from '../useIfo'
 import { useIFOPoolInfo } from './useIFOPoolInfo'
 import { useIFOUserInfo } from './useIFOUserInfo'
 import { updateIfoVer } from '../../atom/ifoVersionAtom'
 
 export const useIFODepositCallback = () => {
-  const { ifoContract } = useIfo()
   const { t } = useTranslation()
   const { address: account } = useAccount()
   const { toastSuccess, toastWarning } = useToast()
-  const [, setLatestTxReceipt] = useLatestTxReceipt()
+
+  // IFO Contract
+  const { ifoContract } = useIfo()
   const pools = useIFOPoolInfo()
+
+  // Txn states
+  const updateVersion = useSetAtom(updateIfoVer)
+  const [, setLatestTxReceipt] = useLatestTxReceipt()
   const { fetchWithCatchTxError, loading: isPending } = useCatchTxError({ throwUserRejectError: true })
-  const { writeContractAsync } = useWriteContract()
   const [status, setStatus] = useState<'IDLE' | 'PENDING' | 'CONFIRMING' | 'CONFIRMED'>('IDLE')
   const [txHash, setTxHash] = useState<string>('')
-  const updateVersion = useSetAtom(updateIfoVer)
+
+  // Approval State
+  const { writeContractAsync } = useWriteContract()
 
   const deposit = useCallback(
     async (
@@ -51,12 +59,21 @@ export const useIFODepositCallback = () => {
       try {
         const receipt = await fetchWithCatchTxError(async () => {
           if (amount.currency.isToken) {
-            await writeContractAsync({
+            const allowance = await publicClient({ chainId: amount.currency.chainId }).readContract({
               address: amount.currency.address,
               abi: erc20Abi,
-              functionName: 'approve',
-              args: [ifoContract.address, amount.quotient],
+              functionName: 'allowance',
+              args: [account, ifoContract.address],
             })
+
+            if (allowance < amountPool) {
+              await writeContractAsync({
+                address: amount.currency.address,
+                abi: erc20Abi,
+                functionName: 'approve',
+                args: [ifoContract.address, amountPool],
+              })
+            }
           }
           const tx = await writeContractAsync({
             address: ifoContract.address,

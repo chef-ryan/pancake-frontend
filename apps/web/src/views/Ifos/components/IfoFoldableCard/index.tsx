@@ -159,10 +159,12 @@ const IfoFoldableCard = ({
   ifo,
   publicIfoData,
   walletIfoData,
+  isHistory = false,
 }: {
   ifo: Ifo
   publicIfoData: PublicIfoData
   walletIfoData: WalletIfoData
+  isHistory?: boolean
 }) => {
   const { asPath } = useRouter()
   const [isExpanded, setIsExpanded] = useState(false)
@@ -185,7 +187,7 @@ const IfoFoldableCard = ({
           </Header>
           {isExpanded && (
             <>
-              <IfoRibbon ifoId={ifo.id} publicIfoData={publicIfoData} ifoChainId={ifo.chainId} />
+              <IfoRibbon ifoId={ifo.id} publicIfoData={publicIfoData} ifoChainId={ifo.chainId} isHistory={isHistory} />
             </>
           )}
         </Box>

@@ -1,5 +1,6 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, Button, Text, FlexGap } from '@pancakeswap/uikit'
+import { NumberDisplay } from '@pancakeswap/widgets-internal'
 import AddToWalletButton from 'components/AddToWallet/AddToWalletButton'
 
 interface IfoAllocationCardProps {
@@ -24,9 +25,9 @@ export const IfoAllocationDisplay: React.FC<IfoAllocationCardProps> = ({
       <Text textTransform="uppercase" color="textSubtle" bold small>
         {t('%symbol% allocated', { symbol })}
       </Text>
-      <Text fontSize="22px" bold>
-        {amount}
-      </Text>
+
+      <NumberDisplay value={amount} suffix={` ${symbol}`} fontSize="22px" bold />
+
       <FlexGap mt="16px" width="100%" gap="8px">
         <AddToWalletButton
           variant="primary60Outline"

@@ -51,7 +51,9 @@ const IfoSaleInfoCard = () => {
               value={totalSalesAmount}
               suffix={` ${offeringCurrency?.symbol}`}
             />
-            <Text color="textSubtle">{`${preSaleDurationText} ${t('Event Duration')}`}</Text>
+            {preSaleDurationText && (
+              <Text color="textSubtle">{`${t(preSaleDurationText.i18nText)} ${t('Event Duration')}`}</Text>
+            )}
           </FlexGap>
         </FlexGap>
         <SubscribeInfo stakeCurrency0={stakeCurrency0} stakeCurrency1={stakeCurrency1} />

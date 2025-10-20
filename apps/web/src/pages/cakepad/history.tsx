@@ -5,8 +5,11 @@ import dynamic from 'next/dynamic'
 import { NextPageWithLayout } from 'utils/page.types'
 import PastIfo from 'views/Ifos/PastIfo'
 import { PageMeta } from 'components/Layout/Page'
+import { useIfoConfigs } from 'views/Cakepad/hooks/useIfoConfigs'
 
 const View = () => {
+  useIfoConfigs()
+
   return (
     <>
       <PageMeta />

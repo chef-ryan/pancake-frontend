@@ -5,6 +5,22 @@ import type { ReactNode } from 'react'
 import type { Address } from 'viem'
 import type { getIFOContract } from './hooks/ifo/useIFOContract'
 
+/**
+ * i18n text format for JSON configs
+ */
+export type I18nText = { i18nText: string }
+
+/**
+ * Currency config from JSON that needs to be converted to Token
+ */
+export type CurrencyConfig = {
+  chainId?: number
+  address: string
+  decimals: number
+  symbol: string
+  name: string
+}
+
 export interface PoolInfo {
   pid: number
   /**
@@ -79,12 +95,12 @@ export type IFOConfig = {
   tgLink?: string
   chainId: ChainId
   bannerUrl: string
-  tgeTitle: ReactNode
-  description: ReactNode
-  ineligibleContent?: ReactNode
+  tgeTitle: I18nText
+  description: I18nText
+  ineligibleContent?: I18nText
   contractAddress: Address
+  tokenAddress?: Address
   faqs?: IFOFAQs
-  howTo?: HowTo[]
 
   /**
    * Preset data to show until we get the production contract address
@@ -96,7 +112,7 @@ export type IFOConfig = {
     totalSalesAmount: number
     stakeCurrency0?: Currency
     stakeCurrency1?: Currency
-    preSaleDurationText: string
+    preSaleDurationText: I18nText
     pools: {
       pid: number
       stakeCurrency: Currency
@@ -106,9 +122,7 @@ export type IFOConfig = {
   }
 }
 
-export type IFOFAQs = Array<{ title: ReactNode; description: ReactNode }>
-
-export type HowTo = { title: string; content: ReactNode }
+export type IFOFAQs = Array<{ title: I18nText; description: I18nText }>
 
 export interface VestingInfo {
   startTime: number

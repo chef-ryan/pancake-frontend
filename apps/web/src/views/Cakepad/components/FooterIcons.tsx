@@ -8,7 +8,6 @@ import {
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import useTheme from 'hooks/useTheme'
-import { isAddress } from 'viem/utils'
 import { safeGetAddress } from 'utils'
 import useIfo from '../hooks/useIfo'
 
@@ -17,13 +16,15 @@ const FooterIcons: React.FC = () => {
   const { ifoContract, config } = useIfo()
   const { isMobile } = useMatchBreakpoints()
 
+  const bscScanAddress = safeGetAddress(config?.tokenAddress) || safeGetAddress(ifoContract?.address)
+
   return (
     <FlexGap gap="12px" justifyContent={isMobile ? 'center' : 'flex-end'}>
       <Link href={config?.projectUrl} target="_blank" rel="noopener noreferrer">
         <LanguageIcon width="24px" color={theme.colors.textSubtle} />
       </Link>
-      {ifoContract?.address && safeGetAddress(ifoContract?.address) && (
-        <Link href={`https://bscscan.com/address/${ifoContract?.address}`} target="_blank" rel="noopener noreferrer">
+      {bscScanAddress && (
+        <Link href={`https://bscscan.com/address/${bscScanAddress}`} target="_blank" rel="noopener noreferrer">
           <BscScanIcon width="24px" color={theme.colors.textSubtle} />
         </Link>
       )}

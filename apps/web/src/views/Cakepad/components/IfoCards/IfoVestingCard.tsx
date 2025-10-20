@@ -31,7 +31,7 @@ export const IfoVestingCard: React.FC = () => {
   const { t } = useTranslation()
   const { theme, isDark } = useTheme()
   const { config, info, pools, users } = useIfo()
-  const name = config.tgeTitle
+  const name = t(config.tgeTitle.i18nText)
   const id = config?.id
   const [userStatus0, userStatus1] = users
   const { claim, isPending } = useIFOClaimCallback()

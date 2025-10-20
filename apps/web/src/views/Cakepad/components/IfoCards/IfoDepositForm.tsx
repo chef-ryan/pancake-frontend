@@ -5,7 +5,7 @@ import { Box, Button, FlexGap, Loading, Text } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
-import { SwapUIV2 } from '@pancakeswap/widgets-internal'
+import { NumberDisplay, SwapUIV2 } from '@pancakeswap/widgets-internal'
 import { BigNumber } from 'bignumber.js'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -249,7 +249,12 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ pid, onDismiss }
           <FlexGap justifyContent="space-between">
             <StyledText color="textSubtle">{t('Max Deposit')}</StyledText>
             <StyledText color="text">
-              {maxStakePerUser?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
+              <NumberDisplay
+                value={maxStakePerUser.toExact()}
+                suffix={` ${stakeCurrency?.symbol ?? ''}`}
+                fontSize="14px"
+                lineHeight="150%"
+              />
             </StyledText>
           </FlexGap>
         )}
@@ -257,7 +262,12 @@ export const IfoDepositForm: React.FC<IfoDepositFormProps> = ({ pid, onDismiss }
           <FlexGap justifyContent="space-between">
             <StyledText color="textSubtle">{t('Subscribed')}</StyledText>
             <StyledText color="text">
-              {userStatus?.stakedAmount?.toSignificant(6)} {stakeCurrency?.symbol ?? ''}
+              <NumberDisplay
+                value={userStatus?.stakedAmount?.toExact()}
+                suffix={` ${stakeCurrency?.symbol ?? ''}`}
+                fontSize="14px"
+                lineHeight="150%"
+              />
             </StyledText>
           </FlexGap>
         ) : null}

@@ -7,6 +7,8 @@ import { useAtomValue } from 'jotai'
 import { LottieComponentProps } from 'lottie-react'
 import { useTheme } from 'styled-components'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
+import { NumberDisplay } from '@pancakeswap/widgets-internal'
+import { formatNumber } from '@pancakeswap/utils/formatNumber'
 import { ifoLoadingAnimationAtom } from '../atoms'
 
 const Lottie = dynamic<LottieComponentProps>(() => import('lottie-react'), { ssr: false })
@@ -42,10 +44,10 @@ const DepositDisplay: React.FC<DepositDisplayProps> = ({ deposit, usdValue }) =>
           {t('Deposit Amount')}
         </Text>
         <Text>
-          {deposit.toSignificant(6)} {deposit.currency.symbol}
+          <NumberDisplay value={deposit.toExact()} suffix={` ${deposit.currency.symbol}`} />
         </Text>
         <Text fontSize="14px" color="textSubtle">
-          ~{usdValue} USD
+          ~{formatNumber(usdValue, { maxDecimalDisplayDigits: 6 })} USD
         </Text>
       </Box>
     </Box>
@@ -70,7 +72,7 @@ const IfoSubmittingCard: React.FC<IfoSubmittingCardProps> = ({ deposit }) => {
   return (
     <Box>
       <Box p="24px" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {animationData && <Lottie animationData={animationData} loop style={{ width: 200 }} />}
+        {animationData && <Lottie animationData={animationData} loop style={{ width: 100 }} />}
       </Box>
       <DepositDisplay deposit={deposit} usdValue={formattedUsd} />
     </Box>

@@ -1,12 +1,14 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AddIcon, Button, FlexGap, Text } from '@pancakeswap/uikit'
-import { CurrencyLogo } from '@pancakeswap/widgets-internal'
+import { CurrencyLogo, NumberDisplay } from '@pancakeswap/widgets-internal'
 import { useAccount } from 'wagmi'
 import { useRouter } from 'next/router'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import { logGTMIfoConnectWalletEvent } from 'utils/customGTMEventTracking'
 import { CAKEPAD_DEPOSIT_URL } from 'views/Cakepad/config/routes'
+import { formatAmount } from '@pancakeswap/utils/formatFractions'
+import { BigNumber as BN } from 'bignumber.js'
 import type { IFOStatus } from '../../hooks/ifo/useIFOStatus'
 import useIfo from '../../hooks/useIfo'
 import IfoPoolInfoDisplay from './IfoPoolInfoDisplay'
@@ -41,15 +43,17 @@ const PoolAction: React.FC<{ pid: number }> = ({ pid }) => {
   const ifoId = config?.id
   const userHasStaked = stakedAmount?.greaterThan(0)
   const { address: account } = useAccount()
+
+  const stakedAmountBN = BN(stakedAmount?.quotient.toString() ?? '')
+
   const amountInDollar = useStablecoinPriceAmount(
     stakeCurrency ?? undefined,
-    stakedAmount !== undefined && Number.isFinite(+stakedAmount.toSignificant(6))
-      ? +stakedAmount.toSignificant(6)
-      : undefined,
+    stakedAmount !== undefined && stakedAmountBN.isFinite() ? Number(formatAmount(stakedAmount, 6)) : undefined,
     {
-      enabled: Boolean(stakedAmount !== undefined && Number.isFinite(+stakedAmount.toSignificant(6))),
+      enabled: Boolean(stakedAmount !== undefined && stakedAmountBN.isFinite()),
     },
   )
+
   if (isComingSoon) {
     return null
   }
@@ -79,7 +83,7 @@ const PoolAction: React.FC<{ pid: number }> = ({ pid }) => {
             </Text>
           </FlexGap>
           <Text fontSize="20px" bold lineHeight="30px">
-            {stakedAmount?.toSignificant(6)}
+            <NumberDisplay value={stakedAmount?.toExact()} fontSize="20px" lineHeight="30px" bold />
           </Text>
           {Number.isFinite(amountInDollar) && (
             <Text fontSize="14px" color="textSubtle">

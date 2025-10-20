@@ -5,13 +5,14 @@ import IfoFoldableCard from './IfoFoldableCard'
 
 interface Props {
   ifo: Ifo
+  isHistory?: boolean
 }
 
-const IfoCardV2Data: React.FC<React.PropsWithChildren<Props>> = ({ ifo }) => {
+const IfoCardV2Data: React.FC<React.PropsWithChildren<Props>> = ({ ifo, isHistory }) => {
   const publicIfoData = useGetPublicIfoV2Data(ifo)
   const walletIfoData = useGetWalletIfoV2Data(ifo)
 
-  return <IfoFoldableCard ifo={ifo} publicIfoData={publicIfoData} walletIfoData={walletIfoData} />
+  return <IfoFoldableCard ifo={ifo} publicIfoData={publicIfoData} walletIfoData={walletIfoData} isHistory={isHistory} />
 }
 
 export default IfoCardV2Data

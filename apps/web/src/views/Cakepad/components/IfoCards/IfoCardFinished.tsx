@@ -1,5 +1,6 @@
 import { Card, CardBody, FlexGap, useMatchBreakpoints } from '@pancakeswap/uikit'
 import useTheme from 'hooks/useTheme'
+import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { IfoAllocationCard } from '../IfoAllocationCard'
 import useIfo from '../../hooks/useIfo'
 import { getAllocationCurrencyAmount } from '../../helpers'
@@ -12,6 +13,7 @@ export const IfoCardFinished: React.FC<{ ifoStatus0: IFOStatus; ifoStatus1: IFOS
   ifoStatus0,
   ifoStatus1,
 }) => {
+  const { account } = useAccountActiveChain()
   const { isDesktop } = useMatchBreakpoints()
   const { info, pools, users } = useIfo()
   const pool0Info = pools[0]
@@ -25,14 +27,14 @@ export const IfoCardFinished: React.FC<{ ifoStatus0: IFOStatus; ifoStatus1: IFOS
 
   const allocationCurrencyAmount = getAllocationCurrencyAmount(users)
 
-  const allocatedAmount = allocationCurrencyAmount?.toSignificant(6)
+  const allocatedAmount = allocationCurrencyAmount?.toExact()
 
   const userHasStaked0 = userStatus0?.stakedAmount?.greaterThan(0)
   const userHasStaked1 = userStatus1?.stakedAmount?.greaterThan(0)
   const userClaimed0 = userStatus0?.claimed
   const userClaimed1 = userStatus1?.claimed
 
-  const showAllocationCard = !!(userClaimed0 || userClaimed1 || (!userHasStaked0 && !userHasStaked1))
+  const showAllocationCard = !!account && !!(userClaimed0 || userClaimed1 || (!userHasStaked0 && !userHasStaked1))
 
   const saleInfo = <IfoSaleInfoCard />
 

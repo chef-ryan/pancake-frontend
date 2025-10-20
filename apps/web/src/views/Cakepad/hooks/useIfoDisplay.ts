@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { useIFODuration } from './ifo/useIFODuration'
 import { useIfoTimeDisplay } from './ifo/useIfoTimeDisplay'
 import useIfo from './useIfo'
@@ -21,7 +22,7 @@ export const useIfoDisplay = (): IfoDisplay => {
           pool.raisingAmountPool > 0n
             ? ((Number(pool.totalAmountPool) / Number(pool.raisingAmountPool)) * 100).toFixed(2)
             : '0.00',
-        raiseAmountText: pool.raise ? `${pool.raise.toSignificant(6)} ${pool.raise.currency.symbol}` : '',
+        raiseAmountText: pool.raise ? `${formatAmount(pool.raise, 6)} ${pool.raise.currency.symbol}` : '',
       })),
     [pools],
   )

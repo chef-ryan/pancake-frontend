@@ -3,6 +3,8 @@ import { Button, Card, CardBody, FlexGap, Text } from '@pancakeswap/uikit'
 import { useStablecoinPriceAmount } from 'hooks/useStablecoinPrice'
 import useTheme from 'hooks/useTheme'
 import { useChainId } from 'wagmi'
+import { formatAmount } from '@pancakeswap/utils/formatFractions'
+import { NumberDisplay } from '@pancakeswap/widgets-internal'
 import useIfo from '../../hooks/useIfo'
 import { formatDollarAmount } from './IfoDepositForm'
 
@@ -27,7 +29,7 @@ export const ClaimedCard: React.FC<{ pid: number }> = ({ pid }) => {
   const claimed = userStatus?.claimed
   const chainId = useChainId()
   const userHasStaked = userStatus?.stakedAmount?.greaterThan(0)
-  const claimableAmount = userStatus?.claimableAmount?.toSignificant(6)
+  const claimableAmount = formatAmount(userStatus?.claimableAmount, 6)
   const offeringCurrency = info?.offeringCurrency
   const amountInDollar = useStablecoinPriceAmount(
     offeringCurrency ?? undefined,
@@ -74,11 +76,17 @@ export const ClaimedCard: React.FC<{ pid: number }> = ({ pid }) => {
         <FlexGap flexDirection="column" gap="8px">
           <FlexGap flexDirection="column" mt="8px">
             <Text textTransform="uppercase" color="secondary" fontSize="12px" bold>
-              {offeringCurrency?.symbol} {t('allocated')}
+              {t('%symbol% allocated', { symbol: offeringCurrency?.symbol })}
             </Text>
-            <Text fontSize="20px" bold lineHeight="30px">
-              {claimableAmount}
-            </Text>
+
+            <NumberDisplay
+              value={userStatus?.claimableAmount?.toExact()}
+              suffix={` ${offeringCurrency?.symbol}`}
+              fontSize="20px"
+              bold
+              lineHeight="30px"
+            />
+
             <FlexGap>
               {Number.isFinite(amountInDollar) ? (
                 <>

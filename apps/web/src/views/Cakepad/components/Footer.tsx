@@ -1,8 +1,10 @@
+import { useTranslation } from '@pancakeswap/localization'
 import { CardBody, FlexGap, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import useIfo from '../hooks/useIfo'
 import FooterIcons from './FooterIcons'
 
 export const Footer: React.FC = () => {
+  const { t } = useTranslation()
   const { config: currentIfoConfig } = useIfo()
   const { isMobile } = useMatchBreakpoints()
   return (
@@ -15,7 +17,7 @@ export const Footer: React.FC = () => {
           lineHeight="16.8px"
           textAlign={isMobile ? 'center' : 'left'}
         >
-          {currentIfoConfig?.description}
+          {t(currentIfoConfig?.description.i18nText)}
         </Text>
         <FooterIcons />
       </FlexGap>

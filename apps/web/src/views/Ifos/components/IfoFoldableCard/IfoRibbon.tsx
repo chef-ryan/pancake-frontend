@@ -73,10 +73,12 @@ export const IfoRibbon = ({
   ifoId,
   ifoChainId,
   publicIfoData,
+  isHistory = false,
 }: {
   ifoChainId?: ChainId
   publicIfoData: PublicIfoData
   ifoId?: string
+  isHistory?: boolean
 }) => {
   const { status } = publicIfoData
   const bannerUrl = useMemo(() => ifoId && getBannerUrl(ifoId), [ifoId])
@@ -124,7 +126,7 @@ export const IfoRibbon = ({
         {ribbon}
       </Flex>
       <ChainBoardContainer zIndex={2}>
-        <IfoChainBoard chainId={ifoChainId} />
+        <IfoChainBoard chainId={ifoChainId} isHistory={isHistory} />
       </ChainBoardContainer>
     </Container>
   )

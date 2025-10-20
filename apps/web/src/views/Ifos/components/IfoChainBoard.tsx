@@ -19,13 +19,21 @@ const Container = styled(Box)`
   width: 100%;
 `
 
-const Tag = styled(Box)`
+const Tag = styled(Box)<{ $isHistory?: boolean }>`
   position: absolute;
   top: 0;
   transform: translate(-50%, -50%);
   white-space: nowrap;
   padding: 0.25rem 0.75rem;
   border-radius: 2.75rem;
+
+  z-index: 2;
+
+  ${({ $isHistory }) =>
+    $isHistory &&
+    `
+    transform: translate(-50%, 170%);
+  `}
 
   ${({ theme }) => theme.mediaQueries.sm} {
     top: 2rem;
@@ -36,9 +44,10 @@ const Tag = styled(Box)`
 
 type Props = {
   chainId?: ChainId
+  isHistory?: boolean
 }
 
-export const IfoChainBoard = memo(function IfoChainBoard({ chainId }: Props) {
+export const IfoChainBoard = memo(function IfoChainBoard({ chainId, isHistory = false }: Props) {
   const { isMobile } = useMatchBreakpoints()
   const { t } = useTranslation()
   const boardImageUrl = useMemo(() => getChainBasedImageUrl({ chainId, name: 'chain-board' }), [chainId])
@@ -51,7 +60,7 @@ export const IfoChainBoard = memo(function IfoChainBoard({ chainId }: Props) {
   return (
     <Container>
       {!isMobile && <img alt={`chain-${chainId}`} src={boardImageUrl} width={100} height={85} />}
-      <Tag background={BACKGROUND[chainId]}>
+      <Tag background={BACKGROUND[chainId]} $isHistory={isHistory}>
         <Text fontSize="0.875rem" bold color="white">
           {t('On %chainName%', { chainName })}
         </Text>

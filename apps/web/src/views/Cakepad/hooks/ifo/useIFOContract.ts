@@ -3,8 +3,8 @@
 import { getContract } from 'utils/contractHelpers'
 import { Address, createPublicClient, custom, http, isAddress, type WalletClient } from 'viem'
 import { bsc } from 'viem/chains'
-import { ifoConfigs } from 'views/Cakepad/config'
 import { getViemClients } from 'utils/viem'
+import { IFOConfig } from 'views/Cakepad/ifov2.types'
 import { ifoV10Abi as ifoABI } from '../../abi/ifoV10Abi'
 
 function getIfoAddressFromUrl(): `0x${string}` | null {
@@ -18,7 +18,7 @@ function getIfoAddressFromUrl(): `0x${string}` | null {
   return process.env.NEXT_PUBLIC_BSC_TESTNET_IFO_ADDRESS as `0x${string}` | null
 }
 
-function getIFOAddress(ifoId: string): `0x${string}` {
+function getIFOAddress(ifoId: string, ifoConfigs: IFOConfig[]): `0x${string}` {
   const contractAddressFromQuery = getIfoAddressFromUrl()
   if (contractAddressFromQuery && isAddress(contractAddressFromQuery)) {
     return contractAddressFromQuery
@@ -27,8 +27,14 @@ function getIFOAddress(ifoId: string): `0x${string}` {
   return ifoConfig!.contractAddress
 }
 
-export function getIFOContract(ifoId: string, signer?: WalletClient, chainId?: number, ca?: Address) {
-  const ifoAddress = getIFOAddress(ifoId)
+export function getIFOContract(
+  ifoId: string,
+  ifoConfigs: IFOConfig[],
+  signer?: WalletClient,
+  chainId?: number,
+  ca?: Address,
+) {
+  const ifoAddress = getIFOAddress(ifoId, ifoConfigs)
   const publicClient = getViemClients({ chainId })
   return getContract({
     address: ca || ifoAddress,

@@ -40,7 +40,10 @@ const IfoHistoryCard: React.FC = () => {
   const tokenAddress = info?.offeringCurrency?.wrapped.address ?? ''
   const tokenDecimals = info?.offeringCurrency?.decimals ?? 18
   const allocationCurrencyAmount = getAllocationCurrencyAmount(users)
-  const allocatedAmount = allocationCurrencyAmount?.toSignificant(6)
+  const allocatedAmount = allocationCurrencyAmount?.toExact()
+
+  const userHasClaimed = users[0]?.claimed
+
   if (info?.status !== 'finished') {
     return null
   }
@@ -51,18 +54,21 @@ const IfoHistoryCard: React.FC = () => {
         <Header $bannerUrl={config?.bannerUrl || ''}>
           <ExpandableButton expanded={expanded} onClick={() => setExpanded((prev) => !prev)} />
         </Header>
-        {expanded && <IfoRibbon />}
+        {expanded && <IfoRibbon isHistory />}
       </Box>
       {expanded && (
         <CardBody p="24px">
           <FlexGap flexDirection="column" gap="16px">
             <IfoSaleInfoDisplay />
-            <IfoAllocationDisplay
-              symbol={symbol}
-              tokenAddress={tokenAddress}
-              tokenDecimals={tokenDecimals}
-              allocatedAmount={allocatedAmount}
-            />
+
+            {userHasClaimed && (
+              <IfoAllocationDisplay
+                symbol={symbol}
+                tokenAddress={tokenAddress}
+                tokenDecimals={tokenDecimals}
+                allocatedAmount={allocatedAmount}
+              />
+            )}
             <ClaimDisplay pid={0} />
             <IfoPoolInfoDisplay pid={0} ifoStatus={ifoStatus0} variant="history" />
           </FlexGap>

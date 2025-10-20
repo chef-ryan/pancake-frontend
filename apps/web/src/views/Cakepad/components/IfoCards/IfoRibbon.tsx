@@ -16,6 +16,7 @@ const StyledProgress = styled(Progress)`
 
 const Container = styled(Box)`
   position: relative;
+  overflow: visible;
 `
 
 const BigCurve = styled.div<{ $status?: IfoStatus; $dark?: boolean }>`
@@ -71,7 +72,7 @@ const ChainBoardContainer = styled(Box)`
   }
 `
 
-export const IfoRibbon: React.FC = () => {
+export const IfoRibbon: React.FC<{ isHistory?: boolean }> = ({ isHistory = false }) => {
   const { isDark } = useTheme()
   const { info, users } = useIfo()
   const ifoStatus = info?.status
@@ -135,11 +136,7 @@ export const IfoRibbon: React.FC = () => {
   }
 
   return (
-    <Container
-      style={{
-        overflow: 'visible',
-      }}
-    >
+    <Container>
       {ifoStatus === 'live' && (
         <StyledProgress variant="flat">
           <ProgressBar
@@ -163,7 +160,7 @@ export const IfoRibbon: React.FC = () => {
         {ribbon}
       </Flex>
       <ChainBoardContainer zIndex={2}>
-        <IfoChainBoard chainId={ChainId.BSC} />
+        <IfoChainBoard chainId={ChainId.BSC} isHistory={isHistory} />
       </ChainBoardContainer>
     </Container>
   )

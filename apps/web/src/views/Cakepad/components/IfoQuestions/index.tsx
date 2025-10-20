@@ -31,9 +31,9 @@ const IfoQuestions: React.FC<{ faqs: IFOFAQs }> = ({ faqs }) => {
         <CardBody>
           {faqs.map(({ title, description }, i, { length }) => {
             return (
-              <FoldableText key={i} mb={i + 1 === length ? '' : '24px'} title={title}>
+              <FoldableText key={i} mb={i + 1 === length ? '' : '24px'} title={t(title.i18nText)}>
                 <Text color="textSubtle" as="p">
-                  {description}
+                  {t(description.i18nText)}
                 </Text>
               </FoldableText>
             )

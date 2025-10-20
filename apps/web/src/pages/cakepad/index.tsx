@@ -7,10 +7,13 @@ import Hero from 'views/Cakepad/components/Hero'
 import dynamic from 'next/dynamic'
 import IFO from 'views/Cakepad/ifo'
 import { PageMeta } from 'components/Layout/Page'
+import { useIfoConfigs } from 'views/Cakepad/hooks/useIfoConfigs'
 
 const IFO_SUPPORT_CHAINS = [ChainId.BSC, ChainId.BSC_TESTNET]
 
 const View = () => {
+  useIfoConfigs()
+
   return (
     <>
       <PageMeta />
