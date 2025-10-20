@@ -31,7 +31,7 @@ export const useIFOInfoCtx = () => {
   const { ifoContract } = useIfoV2Context()
   const version = useAtomValue(ifoVersionAtom)
   const { data: timestamps } = useQuery({
-    queryKey: ['ifoTimestamps', chainId, version],
+    queryKey: ['ifoTimestamps', chainId, version, ifoContract.address],
     queryFn: async (): Promise<{ startTimestamp: number; endTimestamp: number }> => {
       const publicClient = getViemClients({ chainId })
       if (!ifoContract || !publicClient) throw new Error('IFO contract not found')
