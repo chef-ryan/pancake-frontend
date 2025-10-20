@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "Existem taxas de participação?",
   "How many tokens will I get?": "Quantos tokens irei receber?",
   "Are there token vesting schedules?": "Existem cronogramas de vesting de tokens?",
-  "Link your wallet on BNB Chain to get started.": "Conecte sua carteira na BNB Chain para começar.",
-  "During the sale period, commit BNB to buy the offering tokens.": "Durante o período de venda, faça commit de BNB para comprar os tokens em oferta.",
-  "After the IFO ends, return to claim your purchased USDT.": "Após o término do IFO, retorne para reivindicar seu USDT comprado.",
   "Manage and store your private keys and assets securely.": "Gerencie e armazene suas chaves privadas e ativos com segurança.",
   "How to connect": "Como conectar",
   "Please install the wallet to continue.": "Por favor, instale a carteira para continuar.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Início do marketing e do onboarding da comunidade.",
   "Launch CAKE.PAD Event": "Lançamento do Evento CAKE.PAD",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "Para mais informações: <0>Termos do Parceiro CAKE.PAD</0> | <1>FAQ do Parceiro</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "A Whitebridge Network é uma camada de inteligência descentralizada de dados de pessoas que transforma registros públicos dispersos e sinais online em insights confiáveis e prontos para uso.",
   "Your Tax": "Sua Taxa",
   "Total CAKE to burn": "Total de CAKE a ser queimado",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "As taxas se aplicam somente se o evento CAKE.PAD tiver excesso de subscrição. A taxa é deduzida unicamente dos seus fundos comprometidos em excesso (com base no nível da taxa).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Taxa em Níveis com base na % de Subscrição: As taxas diminuem à medida que o excesso de subscrição aumenta. <ul> <li>≤100% Sub → Taxa de 0%</li> <li>>100% Sub → Taxa de 1%</li> <li>≥5.000% Sub → Taxa de 0,8%</li> <li>≥10.000% Sub → Taxa de 0,6%</li> <li>≥15.000% Sub → Taxa de 0,5%</li> <li>≥20.000% Sub → Taxa de 0,4%</li> <li>≥25.000% Sub → Taxa de 0,3%</li> <li>≥30.000% Sub → Taxa de 0,25%</li> <li>≥40.000% Sub → Taxa de 0,20%</li> <li>≥50.000% Sub → Taxa de 0,15%</li> <li>≥65.000% Sub → Taxa de 0,12%</li> <li>≥80.000% Sub → Taxa de 0,10%</li> <li>>150.000% Sub → Taxa de 0,05%</li> </ul> (Todas as taxas do CAKE.PAD coletadas serão usadas na queima de CAKE)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Qualquer um pode criar tokens com qualquer nome, incluindo versões falsas ou enganosas de projetos existentes.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Comprar esses tokens fraudulentos pode levar à perda permanente de fundos."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Comprar esses tokens fraudulentos pode levar à perda permanente de fundos.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Taxa escalonada com base na % de subscrição: As taxas diminuem à medida que a sobressubscrição aumenta.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Todas as taxas do CAKE.PAD coletadas serão usadas na queima de CAKE."
 }

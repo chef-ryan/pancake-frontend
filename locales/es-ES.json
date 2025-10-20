@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "¿Hay tarifas de participación?",
   "How many tokens will I get?": "¿Cuántos tokens recibiré?",
   "Are there token vesting schedules?": "¿Hay calendarios de adquisición de tokens?",
-  "Link your wallet on BNB Chain to get started.": "Conecta tu wallet en BNB Chain para empezar.",
-  "During the sale period, commit BNB to buy the offering tokens.": "Durante el período de venta, compromete BNB para comprar los tokens ofrecidos.",
-  "After the IFO ends, return to claim your purchased USDT.": "Una vez finalizada la IFO, vuelve para reclamar tus USDT comprados.",
   "Manage and store your private keys and assets securely.": "Gestiona y almacena tus claves privadas y activos de forma segura.",
   "How to connect": "Cómo conectar",
   "Please install the wallet to continue.": "Instala la billetera para continuar.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Comienza el marketing y la incorporación de la comunidad.",
   "Launch CAKE.PAD Event": "Lanzamiento del evento CAKE.PAD",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "Para más información: <0>Términos para Socios de CAKE.PAD</0> | <1>Preguntas Frecuentes para Socios</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network es una capa de inteligencia de datos de personas descentralizada que convierte registros públicos dispersos y señales en línea en información fiable y lista para usar.",
   "Your Tax": "Tu Tasa",
   "Total CAKE to burn": "CAKE total a quemar",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "Las tasas se aplican solo si el evento CAKE.PAD tiene un exceso de suscripción. La tasa se deduce únicamente de tus fondos comprometidos en exceso (según el nivel de la tasa).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Tasa por niveles basada en el % de suscripción: Las tasas disminuyen a medida que aumenta la sobresuscripción. <ul> <li>≤100% Susc. → 0% Tasa</li> <li>>100% Susc. → 1% Tasa</li> <li>≥5,000% Susc. → 0.8% Tasa</li> <li>≥10,000% Susc. → 0.6% Tasa</li> <li>≥15,000% Susc. → 0.5% Tasa</li> <li>≥20,000% Susc. → 0.4% Tasa</li> <li>≥25,000% Susc. → 0.3% Tasa</li> <li>≥30,000% Susc. → 0.25% Tasa</li> <li>≥40,000% Susc. → 0.20% Tasa</li> <li>≥50,000% Susc. → 0.15% Tasa</li> <li>≥65,000% Susc. → 0.12% Tasa</li> <li>≥80,000% Susc. → 0.10% Tasa</li> <li>>150,000% Susc. → 0.05% Tasa</li> </ul> (Todas las tasas de CAKE.PAD recaudadas se utilizarán en la quema de CAKE)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Cualquiera puede crear tokens con cualquier nombre, incluyendo versiones falsas o engañosas de proyectos existentes.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Comprar dichos tokens fraudulentos puede llevar a una pérdida permanente de fondos."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Comprar dichos tokens fraudulentos puede llevar a una pérdida permanente de fondos.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Tasa por niveles basada en el % de suscripción: Las comisiones disminuyen a medida que aumenta la sobresuscripción.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Todas las comisiones de CAKE.PAD recaudadas se utilizarán para la quema de CAKE."
 }

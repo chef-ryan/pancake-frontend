@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "Có phí tham gia không?",
   "How many tokens will I get?": "Tôi sẽ nhận được bao nhiêu token?",
   "Are there token vesting schedules?": "Có lịch trình vesting token không?",
-  "Link your wallet on BNB Chain to get started.": "Liên kết ví của bạn trên BNB Chain để bắt đầu.",
-  "During the sale period, commit BNB to buy the offering tokens.": "Trong thời gian bán, cam kết BNB để mua các token chào bán.",
-  "After the IFO ends, return to claim your purchased USDT.": "Sau khi IFO kết thúc, quay lại để nhận USDT bạn đã mua.",
   "Manage and store your private keys and assets securely.": "Quản lý và lưu trữ khóa riêng cùng tài sản của bạn một cách an toàn.",
   "How to connect": "Cách kết nối",
   "Please install the wallet to continue.": "Vui lòng cài đặt ví để tiếp tục.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Bắt đầu triển khai marketing và kết nối cộng đồng.",
   "Launch CAKE.PAD Event": "Khởi chạy Sự kiện CAKE.PAD",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "Để biết thêm thông tin: <0>Điều khoản đối tác CAKE.PAD</0> | <1>Hỏi đáp cho đối tác</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network là một lớp trí tuệ dữ liệu con người phi tập trung, giúp biến các hồ sơ công khai và tín hiệu trực tuyến rải rác thành những thông tin chi tiết đáng tin cậy và sẵn sàng để sử dụng.",
   "Your Tax": "Thuế của bạn",
   "Total CAKE to burn": "Tổng CAKE sẽ đốt",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "Thuế chỉ áp dụng nếu sự kiện CAKE.PAD được đăng ký quá mức. Thuế sẽ chỉ được khấu trừ từ khoản tiền cam kết vượt mức của bạn (dựa trên bậc phí).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Thuế theo bậc dựa trên % đăng ký: Phí giảm khi lượng đăng ký quá mức tăng lên. <ul> <li>≤100% Đăng ký → 0% Phí</li> <li>>100% Đăng ký → 1% Phí</li> <li>≥5.000% Đăng ký → 0.8% Phí</li> <li>≥10.000% Đăng ký → 0.6% Phí</li> <li>≥15.000% Đăng ký → 0.5% Phí</li> <li>≥20.000% Đăng ký → 0.4% Phí</li> <li>≥25.000% Đăng ký → 0.3% Phí</li> <li>≥30.000% Đăng ký → 0.25% Phí</li> <li>≥40.000% Đăng ký → 0.20% Phí</li> <li>≥50.000% Đăng ký → 0.15% Phí</li> <li>≥65.000% Đăng ký → 0.12% Phí</li> <li>≥80.000% Đăng ký → 0.10% Phí</li> <li>>150.000% Đăng ký → 0.05% Phí</li> </ul> (Tất cả phí CAKE.PAD thu được sẽ được dùng để đốt CAKE)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Bất kỳ ai cũng có thể tạo token với bất kỳ tên nào, bao gồm cả các phiên bản giả mạo hoặc gây hiểu lầm của các dự án hiện có.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Việc mua các token lừa đảo như vậy có thể dẫn đến mất tiền vĩnh viễn."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Việc mua các token lừa đảo như vậy có thể dẫn đến mất tiền vĩnh viễn.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Thuế theo bậc dựa trên % đăng ký mua: Phí giảm khi lượng đăng ký mua vượt mức tăng lên.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Tất cả phí CAKE.PAD thu được sẽ được dùng để đốt CAKE."
 }

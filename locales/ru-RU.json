@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "Есть ли комиссии за участие?",
   "How many tokens will I get?": "Сколько токенов я получу?",
   "Are there token vesting schedules?": "Есть ли графики вестинга токенов?",
-  "Link your wallet on BNB Chain to get started.": "Подключите ваш кошелек к BNB Chain, чтобы начать.",
-  "During the sale period, commit BNB to buy the offering tokens.": "В период распродажи внесите BNB для покупки предлагаемых токенов.",
-  "After the IFO ends, return to claim your purchased USDT.": "После завершения IFO вернитесь, чтобы забрать приобретенные вами USDT.",
   "Manage and store your private keys and assets securely.": "Надежно управляйте и храните ваши приватные ключи и активы.",
   "How to connect": "Как подключиться",
   "Please install the wallet to continue.": "Пожалуйста, установите кошелек, чтобы продолжить.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Начало маркетинга и привлечение сообщества.",
   "Launch CAKE.PAD Event": "Запуск события CAKE.PAD",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "Дополнительная информация: <0>Условия для партнеров CAKE.PAD</0> | <1>FAQ для партнеров</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network — это децентрализованный уровень аналитики данных о людях, который превращает разрозненные общедоступные записи и онлайн-сигналы в надежную, готовую к использованию аналитику.",
   "Your Tax": "Ваша комиссия",
   "Total CAKE to burn": "Всего CAKE для сжигания",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "Комиссия взимается только в случае переподписки на событие CAKE.PAD. Комиссия вычитается исключительно из ваших избыточных зафиксированных средств (в зависимости от уровня комиссии).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Многоуровневая комиссия в зависимости от % подписки: комиссии уменьшаются по мере увеличения переподписки. <ul> <li>≤100% подписка → 0% комиссия</li> <li>>100% подписка → 1% комиссия</li> <li>≥5,000% подписка → 0.8% комиссия</li> <li>≥10,000% подписка → 0.6% комиссия</li> <li>≥15,000% подписка → 0.5% комиссия</li> <li>≥20,000% подписка → 0.4% комиссия</li> <li>≥25,000% подписка → 0.3% комиссия</li> <li>≥30,000% подписка → 0.25% комиссия</li> <li>≥40,000% подписка → 0.20% комиссия</li> <li>≥50,000% подписка → 0.15% комиссия</li> <li>≥65,000% подписка → 0.12% комиссия</li> <li>≥80,000% подписка → 0.10% комиссия</li> <li>>150,000% подписка → 0.05% комиссия</li> </ul> (Все собранные комиссии CAKE.PAD будут использованы для сжигания CAKE)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Любой может создавать токены с любым названием, включая поддельные или вводящие в заблуждение версии существующих проектов.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Покупка таких мошеннических токенов может привести к полной потере средств."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Покупка таких мошеннических токенов может привести к полной потере средств.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Многоуровневый сбор в зависимости от % подписки: сборы снижаются по мере увеличения переподписки.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Все сборы, собранные на CAKE.PAD, будут направлены на сжигание CAKE."
 }

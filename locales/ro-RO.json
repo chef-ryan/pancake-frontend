@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "Există taxe de participare?",
   "How many tokens will I get?": "Câte tokenuri voi primi?",
   "Are there token vesting schedules?": "Există programe de vesting pentru tokenuri?",
-  "Link your wallet on BNB Chain to get started.": "Conectează-ți portofelul la BNB Chain pentru a începe.",
-  "During the sale period, commit BNB to buy the offering tokens.": "În perioada de vânzare, alocă BNB pentru a cumpăra tokenurile oferite.",
-  "After the IFO ends, return to claim your purchased USDT.": "După încheierea IFO, revino pentru a-ți revendica USDT-ul achiziționat.",
   "Manage and store your private keys and assets securely.": "Gestionează și stochează-ți cheile private și activele în siguranță.",
   "How to connect": "Cum să te conectezi",
   "Please install the wallet to continue.": "Te rugăm să instalezi portofelul pentru a continua.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Începe marketingul și integrarea comunității.",
   "Launch CAKE.PAD Event": "Lansarea evenimentului CAKE.PAD",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "Pentru mai multe informații: <0>Termenii partenerilor CAKE.PAD</0> | <1>Întrebări frecvente pentru parteneri</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network este un strat descentralizat de informații despre datele oamenilor care transformă înregistrările publice dispersate și semnalele online în perspective fiabile, gata de utilizat.",
   "Your Tax": "Taxa ta",
   "Total CAKE to burn": "Total CAKE de ars",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "Taxele se aplică doar dacă evenimentul CAKE.PAD este suprasubscris. Taxa se deduce exclusiv din fondurile tale excedentare depuse (în funcție de nivelul taxei).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Taxă pe niveluri în funcție de % subscrierii: taxele scad pe măsură ce suprasubscrierea crește. <ul> <li>≤100% Sub → 0% taxă</li> <li>>100% Sub → 1% taxă</li> <li>≥5.000% Sub → 0.8% taxă</li> <li>≥10.000% Sub → 0.6% taxă</li> <li>≥15.000% Sub → 0.5% taxă</li> <li>≥20.000% Sub → 0.4% taxă</li> <li>≥25.000% Sub → 0.3% taxă</li> <li>≥30.000% Sub → 0.25% taxă</li> <li>≥40.000% Sub → 0.20% taxă</li> <li>≥50.000% Sub → 0.15% taxă</li> <li>≥65.000% Sub → 0.12% taxă</li> <li>≥80.000% Sub → 0.10% taxă</li> <li>>150.000% Sub → 0.05% taxă</li> </ul> (Toate taxele CAKE.PAD colectate vor fi utilizate pentru arderea de CAKE)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Oricine poate crea tokenuri cu orice nume, inclusiv versiuni false sau înșelătoare ale proiectelor existente.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Cumpărarea unor astfel de tokenuri frauduloase poate duce la pierderea permanentă a fondurilor."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Cumpărarea unor astfel de tokenuri frauduloase poate duce la pierderea permanentă a fondurilor.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Taxă pe niveluri în funcție de % subscrierii: Comisioanele scad pe măsură ce suprasubscrierea crește.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Toate comisioanele CAKE.PAD colectate vor fi folosite pentru arderea de CAKE."
 }

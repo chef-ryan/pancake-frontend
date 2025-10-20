@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "Zijn er deelnamekosten?",
   "How many tokens will I get?": "Hoeveel tokens krijg ik?",
   "Are there token vesting schedules?": "Zijn er token vesting schema's?",
-  "Link your wallet on BNB Chain to get started.": "Koppel je wallet op BNB Chain om te beginnen.",
-  "During the sale period, commit BNB to buy the offering tokens.": "Tijdens de verkoopperiode, commit BNB om de aangeboden tokens te kopen.",
-  "After the IFO ends, return to claim your purchased USDT.": "Nadat de IFO is afgelopen, keer terug om je gekochte USDT te claimen.",
   "Manage and store your private keys and assets securely.": "Beheer en bewaar je private keys en activa veilig.",
   "How to connect": "Hoe te verbinden",
   "Please install the wallet to continue.": "Installeer de wallet om verder te gaan.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Marketing en de onboarding van de community begint.",
   "Launch CAKE.PAD Event": "Lancering CAKE.PAD Event",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "Voor meer info: <0>CAKE.PAD Partnervoorwaarden</0> | <1>Partner FAQ</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network is een gedecentraliseerde data-intelligentielaag voor persoonsgegevens die verspreide openbare gegevens en online signalen omzet in betrouwbare, kant-en-klare inzichten.",
   "Your Tax": "Uw Belasting",
   "Total CAKE to burn": "Totaal te burnen CAKE",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "Belastingen zijn alleen van toepassing als het CAKE.PAD-evenement overingeschreven is. De belasting wordt uitsluitend afgetrokken van uw overtollige ingelegde fondsen (gebaseerd op het kostenniveau).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Gestaffelde belasting op basis van inschrijvings-% : Kosten dalen naarmate de overinschrijving toeneemt. <ul> <li>≤100% Inschr. → 0% Kosten</li> <li>>100% Inschr. → 1% Kosten</li> <li>≥5.000% Inschr. → 0,8% Kosten</li> <li>≥10.000% Inschr. → 0,6% Kosten</li> <li>≥15.000% Inschr. → 0,5% Kosten</li> <li>≥20.000% Inschr. → 0,4% Kosten</li> <li>≥25.000% Inschr. → 0,3% Kosten</li> <li>≥30.000% Inschr. → 0,25% Kosten</li> <li>≥40.000% Inschr. → 0,20% Kosten</li> <li>≥50.000% Inschr. → 0,15% Kosten</li> <li>≥65.000% Inschr. → 0,12% Kosten</li> <li>≥80.000% Inschr. → 0,10% Kosten</li> <li>>150.000% Inschr. → 0,05% Kosten</li> </ul> (Alle geïnde CAKE.PAD-kosten worden gebruikt voor de CAKE burn)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Iedereen kan tokens aanmaken met elke naam, inclusief namaak of misleidende versies van bestaande projecten.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Het kopen van dergelijke frauduleuze tokens kan leiden tot permanent verlies van tegoeden."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Het kopen van dergelijke frauduleuze tokens kan leiden tot permanent verlies van tegoeden.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Gedifferentieerde belasting op basis van inschrijvingspercentage %: kosten dalen naarmate de overinschrijving toeneemt.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Alle geïnde CAKE.PAD-kosten worden gebruikt om CAKE te burnen."
 }

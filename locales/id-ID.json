@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "Apakah ada biaya partisipasi?",
   "How many tokens will I get?": "Berapa banyak token yang akan saya dapatkan?",
   "Are there token vesting schedules?": "Apakah ada jadwal vesting token?",
-  "Link your wallet on BNB Chain to get started.": "Hubungkan dompet Anda di BNB Chain untuk memulai.",
-  "During the sale period, commit BNB to buy the offering tokens.": "Selama periode penjualan, komit BNB untuk membeli token yang ditawarkan.",
-  "After the IFO ends, return to claim your purchased USDT.": "Setelah IFO berakhir, kembali untuk mengklaim USDT yang Anda beli.",
   "Manage and store your private keys and assets securely.": "Kelola dan simpan kunci privat serta aset Anda dengan aman.",
   "How to connect": "Cara menghubungkan",
   "Please install the wallet to continue.": "Harap instal dompet untuk melanjutkan.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Pemasaran dan onboarding komunitas dimulai.",
   "Launch CAKE.PAD Event": "Peluncuran Acara CAKE.PAD",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "Untuk info lebih lanjut: <0>Ketentuan Mitra CAKE.PAD</0> | <1>FAQ Mitra</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network adalah lapisan intelijen data-orang terdesentralisasi yang mengubah catatan publik yang tersebar dan sinyal online menjadi wawasan tepercaya yang siap pakai.",
   "Your Tax": "Pajak Anda",
   "Total CAKE to burn": "Total CAKE untuk di-burn",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "Pajak hanya berlaku jika acara CAKE.PAD mengalami kelebihan permintaan (oversubscribed). Pajak hanya dipotong dari dana komitmen berlebih Anda (berdasarkan tingkatan biaya).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Pajak Bertingkat berdasarkan % langganan: Biaya menurun seiring meningkatnya kelebihan permintaan (oversubscription). <ul> <li>≤100% Langganan → 0% Biaya</li> <li>>100% Langganan → 1% Biaya</li> <li>≥5.000% Langganan → 0.8% Biaya</li> <li>≥10.000% Langganan → 0.6% Biaya</li> <li>≥15.000% Langganan → 0.5% Biaya</li> <li>≥20.000% Langganan → 0.4% Biaya</li> <li>≥25.000% Langganan → 0.3% Biaya</li> <li>≥30.000% Langganan → 0.25% Biaya</li> <li>≥40.000% Langganan → 0.20% Biaya</li> <li>≥50.000% Langganan → 0.15% Biaya</li> <li>≥65.000% Langganan → 0.12% Biaya</li> <li>≥80.000% Langganan → 0.10% Biaya</li> <li>>150.000% Langganan → 0.05% Biaya</li> </ul> (Semua biaya CAKE.PAD yang terkumpul akan digunakan untuk burn CAKE)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Siapa pun dapat membuat token dengan nama apa pun, termasuk versi palsu atau menyesatkan dari proyek yang sudah ada.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Membeli token penipuan semacam itu dapat menyebabkan kehilangan dana permanen."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Membeli token penipuan semacam itu dapat menyebabkan kehilangan dana permanen.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Pajak Bertingkat berdasarkan % langganan : Biaya menurun seiring meningkatnya kelebihan langganan.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Semua biaya CAKE.PAD yang terkumpul akan digunakan untuk pembakaran CAKE."
 }

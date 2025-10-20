@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "是否有参与费用？",
   "How many tokens will I get?": "我会获得多少代币？",
   "Are there token vesting schedules?": "是否有代币归属时间表？",
-  "Link your wallet on BNB Chain to get started.": "连接您在 BNB Chain 上的钱包以开始。",
-  "During the sale period, commit BNB to buy the offering tokens.": "在认购期内，投入 BNB 购买发售代币。",
-  "After the IFO ends, return to claim your purchased USDT.": "IFO 结束后，返回领取您购买的 USDT。",
   "Manage and store your private keys and assets securely.": "安全地管理和存储您的私钥和资产。",
   "How to connect": "如何连接",
   "Please install the wallet to continue.": "请安装钱包以继续。",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "市场营销和社区建设开始。",
   "Launch CAKE.PAD Event": "启动 CAKE.PAD 活动",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "更多信息：<0>CAKE.PAD 合作伙伴条款</0> | <1>合作伙伴常见问题解答</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network 是一个去中心化的人物数据智能层，可将分散的公共记录和在线信号转化为可信、即用的见解。",
   "Your Tax": "您的费用",
   "Total CAKE to burn": "待销毁的 CAKE 总量",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "仅当 CAKE.PAD 活动超额认购时，才会收取费用。费用将仅从您超额投入的资金中扣除（基于费用等级）。",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "基于认购百分比的分级费用：超额认购倍数越高，费用越低。<ul> <li>≤100% 认购 → 0% 费用</li> <li>>100% 认购 → 1% 费用</li> <li>≥5,000% 认购 → 0.8% 费用</li> <li>≥10,000% 认购 → 0.6% 费用</li> <li>≥15,000% 认购 → 0.5% 费用</li> <li>≥20,000% 认购 → 0.4% 费用</li> <li>≥25,000% 认购 → 0.3% 费用</li> <li>≥30,000% 认购 → 0.25% 费用</li> <li>≥40,000% 认购 → 0.20% 费用</li> <li>≥50,000% 认购 → 0.15% 费用</li> <li>≥65,000% 认购 → 0.12% 费用</li> <li>≥80,000% 认购 → 0.10% 费用</li> <li>>150,000% 认购 → 0.05% 费用</li> </ul>（所有收取的 CAKE.PAD 费用都将用于 CAKE 销毁）",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "任何人都可以创建任意名称的代币，包括现有项目的伪造或误导性版本。",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "购买此类欺诈性代币可能导致永久性的资金损失。"
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "购买此类欺诈性代币可能导致永久性的资金损失。",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "基于认购百分比 % 的阶梯式收费：超额认购越多，费用越低。",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "所有收取的 CAKE.PAD 费用都将用于 CAKE 销毁。"
 }

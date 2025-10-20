@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "Υπάρχουν τέλη συμμετοχής;",
   "How many tokens will I get?": "Πόσα tokens θα λάβω;",
   "Are there token vesting schedules?": "Υπάρχουν προγράμματα εκχώρησης tokens;",
-  "Link your wallet on BNB Chain to get started.": "Συνδέστε το πορτοφόλι σας στο BNB Chain για να ξεκινήσετε.",
-  "During the sale period, commit BNB to buy the offering tokens.": "Κατά τη διάρκεια της περιόδου πώλησης, δεσμεύστε BNB για να αγοράσετε τα προσφερόμενα tokens.",
-  "After the IFO ends, return to claim your purchased USDT.": "Μετά το τέλος του IFO, επιστρέψτε για να διεκδικήσετε τα αγορασμένα σας USDT.",
   "Manage and store your private keys and assets securely.": "Διαχειριστείτε και αποθηκεύστε τα ιδιωτικά σας κλειδιά και περιουσιακά στοιχεία με ασφάλεια.",
   "How to connect": "Πώς να συνδεθείτε",
   "Please install the wallet to continue.": "Παρακαλώ εγκαταστήστε το πορτοφόλι για να συνεχίσετε.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Έναρξη μάρκετινγκ και ενσωμάτωσης της κοινότητας.",
   "Launch CAKE.PAD Event": "Έναρξη Εκδήλωσης CAKE.PAD",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "Για περισσότερες πληροφορίες: <0>Όροι Συνεργατών CAKE.PAD</0> | <1>Συχνές Ερωτήσεις Συνεργατών</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Το Whitebridge Network είναι ένα αποκεντρωμένο επίπεδο πληροφοριών δεδομένων ανθρώπων που μετατρέπει διάσπαρτα δημόσια αρχεία και διαδικτυακά σήματα σε αξιόπιστες, έτοιμες προς χρήση πληροφορίες.",
   "Your Tax": "Ο φόρος σας",
   "Total CAKE to burn": "Σύνολο CAKE προς κάψιμο",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "Οι φόροι ισχύουν μόνο εάν υπάρχει υπερεγγραφή στο συμβάν CAKE.PAD. Ο φόρος αφαιρείται αποκλειστικά από τα πλεονάζοντα δεσμευμένα κεφάλαιά σας (με βάση τη βαθμίδα προμήθειας).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Κλιμακωτός φόρος βάσει του % εγγραφής: Οι προμήθειες μειώνονται καθώς αυξάνεται η υπερεγγραφή. <ul> <li>≤100% Εγγραφή → 0% Προμήθεια</li> <li>>100% Εγγραφή → 1% Προμήθεια</li> <li>≥5.000% Εγγραφή → 0,8% Προμήθεια</li> <li>≥10.000% Εγγραφή → 0,6% Προμήθεια</li> <li>≥15.000% Εγγραφή → 0,5% Προμήθεια</li> <li>≥20.000% Εγγραφή → 0,4% Προμήθεια</li> <li>≥25.000% Εγγραφή → 0,3% Προμήθεια</li> <li>≥30.000% Εγγραφή → 0,25% Προμήθεια</li> <li>≥40.000% Εγγραφή → 0,20% Προμήθεια</li> <li>≥50.000% Εγγραφή → 0,15% Προμήθεια</li> <li>≥65.000% Εγγραφή → 0,12% Προμήθεια</li> <li>≥80.000% Εγγραφή → 0,10% Προμήθεια</li> <li>>150.000% Εγγραφή → 0,05% Προμήθεια</li> </ul> (Όλες οι προμήθειες του CAKE.PAD που θα συλλεχθούν θα χρησιμοποιηθούν για την κάψιμο CAKE)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Οποιοσδήποτε μπορεί να δημιουργήσει tokens με οποιοδήποτε όνομα, συμπεριλαμβανομένων ψεύτικων ή παραπλανητικών εκδόσεων υπαρχόντων έργων.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Η αγορά τέτοιων απατηλών tokens μπορεί να οδηγήσει σε μόνιμη απώλεια κεφαλαίων."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Η αγορά τέτοιων απατηλών tokens μπορεί να οδηγήσει σε μόνιμη απώλεια κεφαλαίων.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Κλιμακωτός φόρος βάσει του % εγγραφής: Τα τέλη μειώνονται καθώς αυξάνεται η υπερεγγραφή.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Όλα τα τέλη που συλλέγονται από το CAKE.PAD θα χρησιμοποιηθούν για την καύση CAKE."
 }

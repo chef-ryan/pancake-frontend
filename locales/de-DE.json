@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "Gibt es Teilnahmegebühren?",
   "How many tokens will I get?": "Wie viele Tokens werde ich erhalten?",
   "Are there token vesting schedules?": "Gibt es Token-Vesting-Zeitpläne?",
-  "Link your wallet on BNB Chain to get started.": "Verbinden Sie Ihr Wallet mit der BNB Chain, um zu beginnen.",
-  "During the sale period, commit BNB to buy the offering tokens.": "Während des Verkaufszeitraums können Sie BNB einsetzen, um die angebotenen Tokens zu kaufen.",
-  "After the IFO ends, return to claim your purchased USDT.": "Nach dem Ende des IFO kehren Sie zurück, um Ihre gekauften USDT zu beanspruchen.",
   "Manage and store your private keys and assets securely.": "Verwalten und speichern Sie Ihre privaten Schlüssel und Assets sicher.",
   "How to connect": "Wie man sich verbindet",
   "Please install the wallet to continue.": "Bitte installieren Sie das Wallet, um fortzufahren.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Marketing und das Community-Onboarding beginnen.",
   "Launch CAKE.PAD Event": "Start des CAKE.PAD-Events",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "Weitere Informationen: <0>CAKE.PAD-Partnerbedingungen</0> | <1>Partner-FAQ</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network ist eine dezentralisierte People-Data-Intelligence-Schicht, die verstreute öffentliche Aufzeichnungen und Online-Signale in vertrauenswürdige, sofort einsatzbereite Erkenntnisse umwandelt.",
   "Your Tax": "Deine Gebühr",
   "Total CAKE to burn": "Gesamte CAKE zum Burnen",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "Gebühren fallen nur an, wenn das CAKE.PAD-Event überzeichnet ist. Die Gebühr wird ausschließlich von deinen überschüssigen, zugesagten Mitteln abgezogen (basierend auf der Gebührenstufe).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Gestaffelte Gebühr basierend auf der Zeichnungs-%: Die Gebühren sinken mit steigender Überzeichnung. <ul> <li>≤100 % Zeichnung → 0 % Gebühr</li> <li>>100 % Zeichnung → 1 % Gebühr</li> <li>≥5.000 % Zeichnung → 0,8 % Gebühr</li> <li>≥10.000 % Zeichnung → 0,6 % Gebühr</li> <li>≥15.000 % Zeichnung → 0,5 % Gebühr</li> <li>≥20.000 % Zeichnung → 0,4 % Gebühr</li> <li>≥25.000 % Zeichnung → 0,3 % Gebühr</li> <li>≥30.000 % Zeichnung → 0,25 % Gebühr</li> <li>≥40.000 % Zeichnung → 0,20 % Gebühr</li> <li>≥50.000 % Zeichnung → 0,15 % Gebühr</li> <li>≥65.000 % Zeichnung → 0,12 % Gebühr</li> <li>≥80.000 % Zeichnung → 0,10 % Gebühr</li> <li>>150.000 % Zeichnung → 0,05 % Gebühr</li> </ul> (Alle eingezogenen CAKE.PAD-Gebühren werden für den CAKE-Burn verwendet)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Jeder kann Tokens mit beliebigem Namen erstellen, einschließlich gefälschter oder irreführender Versionen bestehender Projekte.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Der Kauf solcher betrügerischer Tokens kann zu einem dauerhaften Verlust von Mitteln führen."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Der Kauf solcher betrügerischer Tokens kann zu einem dauerhaften Verlust von Mitteln führen.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Gestaffelte Gebühr basierend auf dem Zeichnungsgrad (%): Gebühren sinken mit zunehmender Überzeichnung.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Alle gesammelten CAKE.PAD-Gebühren werden für den CAKE-Burn verwendet."
 }

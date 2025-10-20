@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "பங்கேற்பு கட்டணங்கள் உள்ளனவா?",
   "How many tokens will I get?": "எனக்கு எத்தனை டோக்கன்கள் கிடைக்கும்?",
   "Are there token vesting schedules?": "டோக்கன் வெஸ்டிங் அட்டவணைகள் உள்ளனவா?",
-  "Link your wallet on BNB Chain to get started.": "தொடங்குவதற்கு உங்கள் வாலட்டை BNB Chain உடன் இணைக்கவும்.",
-  "During the sale period, commit BNB to buy the offering tokens.": "விற்பனை காலத்தில், வழங்கப்பட்ட டோக்கன்களை வாங்க BNB ஐ உறுதிப்படுத்தவும்.",
-  "After the IFO ends, return to claim your purchased USDT.": "IFO முடிந்த பிறகு, நீங்கள் வாங்கிய USDT ஐப் பெறத் திரும்பவும்.",
   "Manage and store your private keys and assets securely.": "உங்கள் தனிப்பட்ட சாவிகள் மற்றும் சொத்துக்களைப் பாதுகாப்பாக நிர்வகிக்கவும் சேமிக்கவும்.",
   "How to connect": "எவ்வாறு இணைப்பது",
   "Please install the wallet to continue.": "தொடர வாலட்டை நிறுவவும்.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "சந்தைப்படுத்துதல் மற்றும் சமூகச் சேர்ப்பு தொடங்குகிறது.",
   "Launch CAKE.PAD Event": "CAKE.PAD நிகழ்வைத் தொடங்கவும்",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "மேலும் தகவலுக்கு: <0>CAKE.PAD கூட்டாளர் விதிமுறைகள்</0> | <1>கூட்டாளர் FAQ</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network என்பது சிதறிய பொது பதிவுகளையும் ஆன்லைன் சிக்னல்களையும் நம்பகமான, பயன்படுத்தத் தயாராக உள்ள நுண்ணறிவுகளாக மாற்றும் ஒரு பரவலாக்கப்பட்ட மக்கள்-தரவு நுண்ணறிவு அடுக்கு ஆகும்.",
   "Your Tax": "உங்கள் வரி",
   "Total CAKE to burn": "பர்ன் செய்ய வேண்டிய மொத்த CAKE",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "CAKE.PAD நிகழ்வு ஓவர்சப்ஸ்கிரைப் செய்யப்பட்டால் மட்டுமே வரிகள் பொருந்தும். உங்கள் அதிகப்படியான கமிட்டட் ஃபண்டுகளிலிருந்து (கட்டண அடுக்கின் அடிப்படையில்) மட்டுமே வரி கழிக்கப்படும்.",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "சப்ஸ்கிரிப்ஷன் % அடிப்படையிலான அடுக்கப்பட்ட வரி: ஓவர்சப்ஸ்கிரிப்ஷன் அதிகரிக்கும்போது கட்டணங்கள் குறைகின்றன. <ul> <li>≤100% சப் → 0% கட்டணம்</li> <li>>100% சப் → 1% கட்டணம்</li> <li>≥5,000% சப் → 0.8% கட்டணம்</li> <li>≥10,000% சப் → 0.6% கட்டணம்</li> <li>≥15,000% சப் → 0.5% கட்டணம்</li> <li>≥20,000% சப் → 0.4% கட்டணம்</li> <li>≥25,000% சப் → 0.3% கட்டணம்</li> <li>≥30,000% சப் → 0.25% கட்டணம்</li> <li>≥40,000% சப் → 0.20% கட்டணம்</li> <li>≥50,000% சப் → 0.15% கட்டணம்</li> <li>≥65,000% சப் → 0.12% கட்டணம்</li> <li>≥80,000% சப் → 0.10% கட்டணம்</li> <li>>150,000% சப் → 0.05% கட்டணம்</li> </ul> (சேகரிக்கப்பட்ட அனைத்து CAKE.PAD கட்டணங்களும் CAKE பர்ன்-இல் பயன்படுத்தப்படும்)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "ஏற்கனவே உள்ள திட்டங்களின் போலியான அல்லது தவறாக வழிநடத்தும் பதிப்புகள் உட்பட, யார் வேண்டுமானாலும் எந்தப் பெயரிலும் டோக்கன்களை உருவாக்கலாம்.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "இதுபோன்ற மோசடியான டோக்கன்களை வாங்குவது, நிதியை நிரந்தரமாக இழக்க வழிவகுக்கும்."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "இதுபோன்ற மோசடியான டோக்கன்களை வாங்குவது, நிதியை நிரந்தரமாக இழக்க வழிவகுக்கும்.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "சந்தா % அடிப்படையில் அடுக்கு வரி: ஓவர்சப்ஸ்கிரிப்ஷன் அதிகரிக்கும் போது கட்டணங்கள் குறையும்.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "சேகரிக்கப்பட்ட அனைத்து CAKE.PAD கட்டணங்களும் CAKE பர்னுக்குப் பயன்படுத்தப்படும்."
 }

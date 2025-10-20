@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "Finns det deltagaravgifter?",
   "How many tokens will I get?": "Hur många tokens får jag?",
   "Are there token vesting schedules?": "Finns det scheman för token-vesting?",
-  "Link your wallet on BNB Chain to get started.": "Länka din plånbok på BNB Chain för att komma igång.",
-  "During the sale period, commit BNB to buy the offering tokens.": "Under försäljningsperioden, allokera BNB för att köpa de erbjudna token.",
-  "After the IFO ends, return to claim your purchased USDT.": "När IFO:n är slut, återvänd för att hämta dina köpta USDT.",
   "Manage and store your private keys and assets securely.": "Hantera och lagra dina privata nycklar och tillgångar säkert.",
   "How to connect": "Hur man ansluter",
   "Please install the wallet to continue.": "Installera plånboken för att fortsätta.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Marknadsföring och community-onboarding påbörjas.",
   "Launch CAKE.PAD Event": "Lansera CAKE.PAD-event",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "För mer info: <0>CAKE.PAD Partnervillkor</0> | <1>Partner FAQ</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network är ett decentraliserat lager för persondataintelligens som omvandlar spridda offentliga register och onlinesignaler till pålitliga, färdiga insikter.",
   "Your Tax": "Din skatt",
   "Total CAKE to burn": "Total CAKE att bränna",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "Skatter tillämpas endast om CAKE.PAD-evenemanget är övertecknat. Skatten dras endast från dina överskjutande bundna medel (baserat på avgiftsnivå).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Nivåindelad skatt baserad på teckning i %: Avgifterna minskar när överteckningen ökar. <ul> <li>≤100% Teck. → 0% Avgift</li> <li>>100% Teck. → 1% Avgift</li> <li>≥5,000% Teck. → 0.8% Avgift</li> <li>≥10,000% Teck. → 0.6% Avgift</li> <li>≥15,000% Teck. → 0.5% Avgift</li> <li>≥20,000% Teck. → 0.4% Avgift</li> <li>≥25,000% Teck. → 0.3% Avgift</li> <li>≥30,000% Teck. → 0.25% Avgift</li> <li>≥40,000% Teck. → 0.20% Avgift</li> <li>≥50,000% Teck. → 0.15% Avgift</li> <li>≥65,000% Teck. → 0.12% Avgift</li> <li>≥80,000% Teck. → 0.10% Avgift</li> <li>>150,000% Teck. → 0.05% Avgift</li> </ul> (Alla insamlade CAKE.PAD-avgifter kommer att användas för att bränna CAKE)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Vem som helst kan skapa tokens med vilket namn som helst, inklusive falska eller vilseledande versioner av befintliga projekt.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Att köpa sådana bedrägliga tokens kan leda till permanent förlust av medel."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Att köpa sådana bedrägliga tokens kan leda till permanent förlust av medel.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Nivåindelad skatt baserad på teckningsgrad %: Avgifterna minskar när överteckningen ökar.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Alla insamlade CAKE.PAD-avgifter kommer att användas för CAKE-bränning."
 }

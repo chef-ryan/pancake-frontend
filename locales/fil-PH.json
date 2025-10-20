@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "Mayroon bang bayad sa paglahok?",
   "How many tokens will I get?": "Ilang token ang matatanggap ko?",
   "Are there token vesting schedules?": "Mayroon bang iskedyul ng vesting ng token?",
-  "Link your wallet on BNB Chain to get started.": "Ikonekta ang iyong wallet sa BNB Chain para makapagsimula.",
-  "During the sale period, commit BNB to buy the offering tokens.": "Sa panahon ng benta, mag-commit ng BNB para bilhin ang mga offering tokens.",
-  "After the IFO ends, return to claim your purchased USDT.": "Pagkatapos ng IFO, bumalik para i-claim ang iyong biniling USDT.",
   "Manage and store your private keys and assets securely.": "Pamahalaan at iimbak nang secure ang iyong mga pribadong key at asset.",
   "How to connect": "Paano kumonekta",
   "Please install the wallet to continue.": "Paki-install ang wallet upang magpatuloy.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Magsisimula ang marketing at community onboarding.",
   "Launch CAKE.PAD Event": "Ilunsad ang CAKE.PAD Event",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "Para sa karagdagang impormasyon: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Ang Whitebridge Network ay isang decentralised people-data intelligence layer na ginagawang mga insight na mapagkakatiwalaan at handang gamitin ang mga kalat-kalat na public record at online signal.",
   "Your Tax": "Iyong Tax",
   "Total CAKE to burn": "Kabuuang CAKE na ibu-burn",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "Ang mga tax ay ipapataw lang kapag oversubscribed ang CAKE.PAD event. Ang tax ay ibabawas lang mula sa iyong sobrang committed funds (batay sa fee tier).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Tiered Tax batay sa subscription % : Bumababa ang mga fee habang tumataas ang oversubscription. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (Lahat ng makokolektang CAKE.PAD fees ay gagamitin sa CAKE burn)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Kahit sino ay maaaring gumawa ng mga token na may anumang pangalan, kabilang ang mga peke o mapanlinlang na bersyon ng mga umiiral na proyekto.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Ang pagbili ng mga ganitong mapanlinlang na token ay maaaring magdulot ng permanenteng pagkawala ng pondo."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Ang pagbili ng mga ganitong mapanlinlang na token ay maaaring magdulot ng permanenteng pagkawala ng pondo.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Naka-tier na Buwis batay sa % ng subscription: Bumababa ang mga bayarin habang tumataas ang oversubscription.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Lahat ng bayaring nakolekta sa CAKE.PAD ay gagamitin sa pag-burn ng CAKE."
 }

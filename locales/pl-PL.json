@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "Czy są opłaty za uczestnictwo?",
   "How many tokens will I get?": "Ile tokenów otrzymam?",
   "Are there token vesting schedules?": "Czy istnieją harmonogramy vesting tokenów?",
-  "Link your wallet on BNB Chain to get started.": "Podłącz swój portfel do BNB Chain, aby rozpocząć.",
-  "During the sale period, commit BNB to buy the offering tokens.": "W okresie sprzedaży zainwestuj BNB, aby kupić tokeny z oferty.",
-  "After the IFO ends, return to claim your purchased USDT.": "Po zakończeniu IFO wróć, aby odebrać zakupione USDT.",
   "Manage and store your private keys and assets securely.": "Bezpiecznie zarządzaj i przechowuj swoje klucze prywatne oraz aktywa.",
   "How to connect": "Jak się połączyć",
   "Please install the wallet to continue.": "Zainstaluj portfel, aby kontynuować.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Rozpoczyna się marketing i onboarding społeczności.",
   "Launch CAKE.PAD Event": "Uruchomienie wydarzenia CAKE.PAD",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "Więcej informacji: <0>Warunki partnerskie CAKE.PAD</0> | <1>FAQ dla partnerów</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network to zdecentralizowana warstwa analityczna danych o ludziach, która przekształca rozproszone publiczne rejestry i sygnały online w wiarygodne, gotowe do użycia analizy.",
   "Your Tax": "Twój podatek",
   "Total CAKE to burn": "Całkowita ilość CAKE do spalenia",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "Podatki mają zastosowanie tylko w przypadku nadsubskrypcji wydarzenia CAKE.PAD. Podatek jest potrącany wyłącznie z Twojej nadwyżki zadeklarowanych środków (zgodnie z progiem opłat).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Podatek progowy w zależności od % subskrypcji: opłaty maleją wraz ze wzrostem nadsubskrypcji. <ul> <li>≤100% Sub. → 0% opłaty</li> <li>>100% Sub. → 1% opłaty</li> <li>≥5,000% Sub. → 0,8% opłaty</li> <li>≥10,000% Sub. → 0,6% opłaty</li> <li>≥15,000% Sub. → 0,5% opłaty</li> <li>≥20,000% Sub. → 0,4% opłaty</li> <li>≥25,000% Sub. → 0,3% opłaty</li> <li>≥30,000% Sub. → 0,25% opłaty</li> <li>≥40,000% Sub. → 0,20% opłaty</li> <li>≥50,000% Sub. → 0,15% opłaty</li> <li>≥65,000% Sub. → 0,12% opłaty</li> <li>≥80,000% Sub. → 0,10% opłaty</li> <li>>150,000% Sub. → 0,05% opłaty</li> </ul> (Wszystkie zebrane opłaty CAKE.PAD zostaną przeznaczone na spalenie CAKE)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Każdy może tworzyć tokeny o dowolnej nazwie, w tym fałszywe lub wprowadzające w błąd wersje istniejących projektów.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Kupowanie takich fałszywych tokenów może prowadzić do trwałej utraty środków."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Kupowanie takich fałszywych tokenów może prowadzić do trwałej utraty środków.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Podatek warstwowy oparty na % subskrypcji: Opłaty maleją wraz ze wzrostem nadsubskrypcji.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Wszystkie opłaty zebrane z CAKE.PAD zostaną przeznaczone na spalenie CAKE."
 }

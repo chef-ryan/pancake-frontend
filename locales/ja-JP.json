@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "参加手数料はかかりますか？",
   "How many tokens will I get?": "いくつのトークンを受け取れますか？",
   "Are there token vesting schedules?": "トークンのVestingスケジュールはありますか？",
-  "Link your wallet on BNB Chain to get started.": "BNB Chain上でウォレットを接続して開始してください。",
-  "During the sale period, commit BNB to buy the offering tokens.": "セール期間中にBNBをコミットして、提供されるトークンを購入してください。",
-  "After the IFO ends, return to claim your purchased USDT.": "IFO終了後、購入したUSDTを請求するために戻ってください。",
   "Manage and store your private keys and assets securely.": "秘密鍵と資産を安全に管理・保管してください。",
   "How to connect": "接続方法",
   "Please install the wallet to continue.": "続行するにはウォレットをインストールしてください。",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "マーケティングとコミュニティのオンボーディングを開始します。",
   "Launch CAKE.PAD Event": "CAKE.PAD イベントのローンチ",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "詳細はこちら：<0>CAKE.PAD パートナー規約</0>｜<1>パートナーFAQ</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Networkは、散在する公開記録やオンラインシグナルを、信頼性が高くすぐに利用できるインサイトに変換する、分散型のピープルデータ・インテリジェンス・レイヤーです。",
   "Your Tax": "あなたの税金",
   "Total CAKE to burn": "バーンされるCAKE合計",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "税金は、CAKE.PADイベントが応募超過となった場合にのみ適用されます。税金は手数料ティアに基づき、あなたの余剰コミット資金からのみ差し引かれます。",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "応募率(%)に応じた段階的税金：応募超過率が高くなるほど手数料は低くなります。<ul> <li>応募 ≤100% → 手数料0%</li> <li>応募 >100% → 手数料1%</li> <li>応募 ≥5,000% → 手数料0.8%</li> <li>応募 ≥10,000% → 手数料0.6%</li> <li>応募 ≥15,000% → 手数料0.5%</li> <li>応募 ≥20,000% → 手数料0.4%</li> <li>応募 ≥25,000% → 手数料0.3%</li> <li>応募 ≥30,000% → 手数料0.25%</li> <li>応募 ≥40,000% → 手数料0.20%</li> <li>応募 ≥50,000% → 手数料0.15%</li> <li>応募 ≥65,000% → 手数料0.12%</li> <li>応募 ≥80,000% → 手数料0.10%</li> <li>応募 >150,000% → 手数料0.05%</li> </ul> （徴収されたすべてのCAKE.PAD手数料はCAKEのバーンに使用されます）",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "誰でも、既存のプロジェクトの偽物や誤解を招くようなバージョンを含め、あらゆる名前のトークンを作成することができます。",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "このような詐欺的なトークンを購入すると、資金が永久に失われる可能性があります。"
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "このような詐欺的なトークンを購入すると、資金が永久に失われる可能性があります。",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "応募率に基づく段階制手数料：超過応募が増えるにつれて手数料は減少します。",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "徴収されたCAKE.PAD手数料はすべて、CAKEのバーンに使用されます。"
 }

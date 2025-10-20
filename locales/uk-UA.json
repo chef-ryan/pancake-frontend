@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "Чи є комісії за участь?",
   "How many tokens will I get?": "Скільки токенів я отримаю?",
   "Are there token vesting schedules?": "Чи є графіки вестингу токенів?",
-  "Link your wallet on BNB Chain to get started.": "Підключіть свій гаманець у мережі BNB Chain, щоб розпочати.",
-  "During the sale period, commit BNB to buy the offering tokens.": "Протягом періоду продажу вкладіть BNB, щоб купити токени пропозиції.",
-  "After the IFO ends, return to claim your purchased USDT.": "Після закінчення IFO поверніться, щоб забрати придбані USDT.",
   "Manage and store your private keys and assets securely.": "Керуйте та надійно зберігайте свої приватні ключі та активи.",
   "How to connect": "Як підключитися",
   "Please install the wallet to continue.": "Будь ласка, встановіть гаманець, щоб продовжити.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "Початок маркетингу та залучення спільноти.",
   "Launch CAKE.PAD Event": "Запуск події CAKE.PAD",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "Більше інформації: <0>Партнерські умови CAKE.PAD</0> | <1>FAQ для партнерів</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network — це децентралізований рівень аналітики даних про людей, який перетворює розрізнені публічні записи та онлайн-сигнали в надійну, готову до використання аналітику.",
   "Your Tax": "Ваш податок",
   "Total CAKE to burn": "Загальна кількість CAKE для спалювання",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "Податки застосовуються лише в тому випадку, якщо подія CAKE.PAD буде перепідписана. Податок стягується виключно з ваших надлишкових внесених коштів (на основі рівня комісії).",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "Багаторівневий податок на основі % підписки: Комісії зменшуються зі збільшенням перепідписки. <ul> <li>≤100% підписки → 0% комісія</li> <li>>100% підписки → 1% комісія</li> <li>≥5,000% підписки → 0.8% комісія</li> <li>≥10,000% підписки → 0.6% комісія</li> <li>≥15,000% підписки → 0.5% комісія</li> <li>≥20,000% підписки → 0.4% комісія</li> <li>≥25,000% підписки → 0.3% комісія</li> <li>≥30,000% підписки → 0.25% комісія</li> <li>≥40,000% підписки → 0.20% комісія</li> <li>≥50,000% підписки → 0.15% комісія</li> <li>≥65,000% підписки → 0.12% комісія</li> <li>≥80,000% підписки → 0.10% комісія</li> <li>>150,000% підписки → 0.05% комісія</li> </ul> (Усі зібрані комісії CAKE.PAD будуть використані для спалювання CAKE)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "Будь-хто може створювати токени з будь-якою назвою, включаючи підроблені або оманливі версії існуючих проєктів.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Купівля таких шахрайських токенів може призвести до повної втрати коштів."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "Купівля таких шахрайських токенів може призвести до повної втрати коштів.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "Багаторівневий податок на основі % підписки: комісії зменшуються зі збільшенням надлишкової підписки.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "Всі зібрані комісії CAKE.PAD будуть використані для спалювання CAKE."
 }

@@ -4065,9 +4065,6 @@
   "Are there participation fees?": "참여 수수료가 있나요?",
   "How many tokens will I get?": "얼마나 많은 토큰을 받을 수 있나요?",
   "Are there token vesting schedules?": "토큰 베스팅 일정이 있나요?",
-  "Link your wallet on BNB Chain to get started.": "시작하려면 BNB Chain에서 지갑을 연결하세요.",
-  "During the sale period, commit BNB to buy the offering tokens.": "판매 기간 동안, 제공되는 토큰을 구매하기 위해 BNB를 커밋하세요.",
-  "After the IFO ends, return to claim your purchased USDT.": "IFO가 종료된 후, 구매한 USDT를 수령하세요.",
   "Manage and store your private keys and assets securely.": "비공개 키와 자산을 안전하게 관리하고 보관하세요.",
   "How to connect": "연결 방법",
   "Please install the wallet to continue.": "계속하려면 지갑을 설치해주세요.",
@@ -4280,12 +4277,11 @@
   "Marketing and community onboarding begins.": "마케팅 및 커뮤니티 온보딩이 시작됩니다.",
   "Launch CAKE.PAD Event": "CAKE.PAD 이벤트 런칭",
   "For more info: <0>CAKE.PAD Partner Terms</0> | <1>Partner FAQ</1>": "더 자세한 정보: <0>CAKE.PAD 파트너 약관</0> | <1>파트너 FAQ</1>",
-  "Whitebridge Network": "Whitebridge Network",
-  "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network는 흩어져 있는 공공 기록과 온라인 신호를 신뢰할 수 있고 즉시 사용 가능한 인사이트로 전환하는 분산형 인물 데이터 인텔리전스 레이어입니다.",
   "Your Tax": "세금",
   "Total CAKE to burn": "소각될 CAKE 총량",
   "Taxes apply only if the CAKE.PAD event is oversubscribed. Tax is deducted solely from your excess committed funds (based on fee tier).": "세금은 CAKE.PAD 이벤트가 초과 청약된 경우에만 적용됩니다. 세금은 수수료 등급에 따라 초과 예치된 자금에서만 공제됩니다.",
-  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases. <ul> <li>≤100% Sub → 0% Fee</li> <li>>100% Sub → 1% Fee</li> <li>≥5,000% Sub → 0.8% Fee</li> <li>≥10,000% Sub → 0.6% Fee</li> <li>≥15,000% Sub → 0.5% Fee</li> <li>≥20,000% Sub → 0.4% Fee</li> <li>≥25,000% Sub → 0.3% Fee</li> <li>≥30,000% Sub → 0.25% Fee</li> <li>≥40,000% Sub → 0.20% Fee</li> <li>≥50,000% Sub → 0.15% Fee</li> <li>≥65,000% Sub → 0.12% Fee</li> <li>≥80,000% Sub → 0.10% Fee</li> <li>>150,000% Sub → 0.05% Fee</li> </ul> (All CAKE.PAD fees collected will be used in CAKE burn)": "초과 청약률(%)에 따른 단계별 수수료: 초과 청약률이 높을수록 수수료는 낮아집니다. <ul> <li>≤100% 청약률 → 0% 수수료</li> <li>>100% 청약률 → 1% 수수료</li> <li>≥5,000% 청약률 → 0.8% 수수료</li> <li>≥10,000% 청약률 → 0.6% 수수료</li> <li>≥15,000% 청약률 → 0.5% 수수료</li> <li>≥20,000% 청약률 → 0.4% 수수료</li> <li>≥25,000% 청약률 → 0.3% 수수료</li> <li>≥30,000% 청약률 → 0.25% 수수료</li> <li>≥40,000% 청약률 → 0.20% 수수료</li> <li>≥50,000% 청약률 → 0.15% 수수료</li> <li>≥65,000% 청약률 → 0.12% 수수료</li> <li>≥80,000% 청약률 → 0.10% 수수료</li> <li>>150,000% 청약률 → 0.05% 수수료</li> </ul> (모든 CAKE.PAD 수수료는 CAKE 소각에 사용됩니다)",
   "Anyone can create tokens with any name, including fake or misleading versions of existing projects.": "누구나 기존 프로젝트의 가짜 또는 오해의 소지가 있는 버전을 포함하여 어떤 이름으로든 토큰을 생성할 수 있습니다.",
-  "Buying such fraudulent tokens can lead to permanent loss of funds.": "이러한 사기성 토큰을 구매하면 자금의 영구적인 손실로 이어질 수 있습니다."
+  "Buying such fraudulent tokens can lead to permanent loss of funds.": "이러한 사기성 토큰을 구매하면 자금의 영구적인 손실로 이어질 수 있습니다.",
+  "Tiered Tax based on subscription % : Fees decrease as oversubscription increases.": "청약률(%)에 따른 차등 수수료: 초과 청약률이 높을수록 수수료는 감소합니다.",
+  "All CAKE.PAD fees collected will be used in CAKE burn": "모든 CAKE.PAD 수수료는 CAKE 소각에 사용됩니다."
 }
