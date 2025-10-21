@@ -17,7 +17,7 @@ export const useIFOUserInfo = () => {
   const version = useAtomValue(ifoVersionAtom)
 
   return useQuery({
-    queryKey: ['ifoUserInfo', account, chainId, latestTxReceipt, version],
+    queryKey: ['ifoUserInfo', account, chainId, latestTxReceipt, version, ifoContract?.address],
     queryFn: async (): Promise<[IFOUserInfo, IFOUserInfo]> => {
       if (!account || !ifoContract) throw new Error('IFO contract not found')
 

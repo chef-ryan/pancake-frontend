@@ -9,7 +9,7 @@ export const useVestingInfo = (): VestingInfo | undefined => {
   const { ifoContract } = useIfoV2Context()
 
   const { data } = useQuery({
-    queryKey: ['ifoVestingInfo', chainId],
+    queryKey: ['ifoVestingInfo', chainId, ifoContract?.address],
     queryFn: async (): Promise<VestingInfo | undefined> => {
       if (!ifoContract) return undefined
       const publicClient = getViemClients({ chainId })

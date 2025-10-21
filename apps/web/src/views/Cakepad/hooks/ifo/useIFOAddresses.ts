@@ -18,7 +18,7 @@ export const useIFOAddresses = () => {
   const { ifoContract } = useIfoV2Context()
 
   return useQuery({
-    queryKey: ['ifoAddresses', chainId],
+    queryKey: ['ifoAddresses', chainId, ifoContract?.address],
     queryFn: async (): Promise<IFOAddresses> => {
       const publicClient = getViemClients({ chainId })
       if (!ifoContract || !publicClient) throw new Error('IFO contract not found')

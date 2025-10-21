@@ -35,7 +35,7 @@ export const useIFOPoolInfoCtx = (): PoolInfo[] => {
   const version = useAtomValue(ifoVersionAtom)
 
   const { data } = useQuery({
-    queryKey: ['ifoPoolInfo', chainId, addresses, latestTxReceipt, version],
+    queryKey: ['ifoPoolInfo', chainId, addresses, latestTxReceipt, version, ifoContract?.address],
     queryFn: async (): Promise<{ raw: RawPoolInfo; taxRateRaw: bigint }[]> => {
       const publicClient = getViemClients({ chainId })
       if (!ifoContract || !publicClient || !addresses) throw new Error('IFO contract not found')
