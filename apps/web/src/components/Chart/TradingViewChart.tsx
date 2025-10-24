@@ -1,24 +1,17 @@
 import { useDebounce } from '@pancakeswap/hooks'
 import { UnifiedCurrency } from '@pancakeswap/sdk'
 import { tokens } from '@pancakeswap/uikit'
-import { useActiveChainId } from 'hooks/useActiveChainId'
 import useTheme from 'hooks/useTheme'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { styled } from 'styled-components'
 import type { TradingViewWidget, TradingViewWidgetOptions } from './lib/pancakeswap-charting-library.d.ts'
 import { createTradingViewWidget, loadTradingViewLibrary } from './lib/pancakeswap-charting-library.es.js'
 import { AggregatePricingModal } from './AggregatePricingModal'
 
 interface TradingViewChartProps {
-  symbol?: string
-  interval?: string
-  theme?: 'Light' | 'Dark'
-  height?: string
-  width?: string
   currency0?: UnifiedCurrency
   currency1?: UnifiedCurrency
   on24HPriceDataChange: (low24h: number, high24h: number, priceChangePercent: number, price: number) => void
-  onLiveDataChanges: (price: number) => void
 }
 
 const ChartContainer = styled.div`
@@ -63,7 +56,6 @@ const setSymbolInfo = (
   currency0: UnifiedCurrency,
   currency1: UnifiedCurrency,
   on24HPriceDataChange: (low24h: number, high24h: number, priceChangePercent: number, price: number) => void,
-  onLiveDataChanges: (price: number) => void,
 ) => {
   // Clear any existing data to prevent caching issues and ensure clean state
   window.pcsExtraData = window.pcsExtraData || {}
@@ -74,12 +66,7 @@ const setSymbolInfo = (
   update24HPriceData(on24HPriceDataChange)
 }
 
-const TradingViewChart: React.FC<TradingViewChartProps> = ({
-  currency0,
-  currency1,
-  on24HPriceDataChange,
-  onLiveDataChanges: _onLiveDataChanges,
-}) => {
+const TradingViewChart: React.FC<TradingViewChartProps> = ({ currency0, currency1, on24HPriceDataChange }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const widgetRef = useRef<TradingViewWidget | null>(null)
   const isInitialized = useRef(false)
@@ -101,7 +88,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
     debouncedCurrency0 && debouncedCurrency1 ? `${debouncedCurrency0?.symbol}/${debouncedCurrency1?.symbol}` : ''
 
   // Function to create custom button in TradingView toolbar
-  const createCustomButton = () => {
+  const createCustomButton = useCallback(() => {
     if (!widgetRef.current || !isWidgetReady.current) return
 
     try {
@@ -124,7 +111,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
     } catch (error) {
       console.error('Error creating custom button:', error)
     }
-  }
+  }, [theme?.colors?.text])
 
   useEffect(() => {
     const symbolChanged = symbol !== currentSymbol.current
@@ -165,7 +152,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
 
       // Only try to update existing widget if we have one and it's ready
       if (widgetRef.current && isInitialized.current && isWidgetReady.current) {
-        setSymbolInfo(debouncedCurrency0, debouncedCurrency1, on24HPriceDataChange, _onLiveDataChanges)
+        setSymbolInfo(debouncedCurrency0, debouncedCurrency1, on24HPriceDataChange)
 
         try {
           // Check if widget has activeChart method
@@ -180,7 +167,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
         }
       }
     }
-  }, [debouncedCurrency0, debouncedCurrency1, symbol])
+  }, [debouncedCurrency0, debouncedCurrency1, symbol, on24HPriceDataChange])
 
   useEffect(() => {
     async function initChart() {
@@ -341,7 +328,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
                 { text: '1d', resolution: '1D' },
               ],
             }
-            setSymbolInfo(debouncedCurrency0, debouncedCurrency1, on24HPriceDataChange, _onLiveDataChanges)
+            setSymbolInfo(debouncedCurrency0, debouncedCurrency1, on24HPriceDataChange)
 
             widgetRef.current = createTradingViewWidget(containerRef.current, options)
 
@@ -381,7 +368,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
     }
 
     initChart()
-  }, [symbol, isDark, theme, debouncedCurrency0, debouncedCurrency1])
+  }, [symbol, isDark, theme, debouncedCurrency0, debouncedCurrency1, on24HPriceDataChange, createCustomButton])
 
   useEffect(() => {
     async function changeTheme() {

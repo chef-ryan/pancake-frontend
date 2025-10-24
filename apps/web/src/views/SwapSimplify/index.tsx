@@ -77,7 +77,6 @@ const InfinitySwapInner = () => {
               currency0={inputCurrency || undefined}
               currency1={outputCurrency || undefined}
               symbol={`${inputCurrency?.symbol}/${outputCurrency?.symbol}`}
-              theme="Dark"
             />
           </Flex>
         )}
@@ -89,7 +88,6 @@ const InfinitySwapInner = () => {
                 currency0={inputCurrency || undefined}
                 currency1={outputCurrency || undefined}
                 symbol={`${inputCurrency?.symbol}/${outputCurrency?.symbol}`}
-                theme="Dark"
               />
             }
             isOpen={isChartDisplayed}
