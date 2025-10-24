@@ -4287,5 +4287,9 @@
   "Sigma.Money is a DeFi platform where users can trade assets like BNB with up to 7x leverage without paying funding fees. It's powered by bnbUSD, a stablecoin that can be minted with BNB.": "Sigma.Money — это DeFi-платформа, на которой пользователи могут торговать такими активами, как BNB, с кредитным плечом до 7x без уплаты комиссий за финансирование. Она работает на базе bnbUSD — стейблкоина, который можно минтить с помощью BNB.",
   "Whitebridge Network": "Whitebridge Network",
   "Whitebridge Network is a decentralised people-data intelligence layer that turns scattered public records and online signals into trustable, ready-to-use insights.": "Whitebridge Network — это децентрализованный уровень аналитики данных о людях, который превращает разрозненные публичные записи и онлайн-сигналы в достоверную и готовую к использованию аналитику.",
-  "1 Day": "1 день"
+  "1 Day": "1 день",
+  "Market is closed.": "Рынок закрыт.",
+  "Market is temporarily paused.": "Рынок временно приостановлен.",
+  "Specific asset is paused.": "Торговля этим активом приостановлена.",
+  "Market is temporarily unavailable.": "Рынок временно недоступен."
 }
