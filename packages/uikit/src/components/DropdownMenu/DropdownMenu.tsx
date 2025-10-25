@@ -43,7 +43,16 @@ const MenuItem: React.FC<{
 }> = ({ item, isChildItems, isDisabled, linkComponent, activeItem, activeSubItemChildItem, setIsOpen }) => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(true);
   const { isMobile, isMd } = useMatchBreakpoints();
-  const { type = DropdownMenuItemType.INTERNAL_LINK, label, href = "/", status, disabled, items, ...itemProps } = item;
+  const {
+    type = DropdownMenuItemType.INTERNAL_LINK,
+    label,
+    href = "/",
+    status,
+    disabled,
+    items,
+    onClick,
+    ...itemProps
+  } = item;
   const hasChildItems = useMemo(() => Boolean(items && items.length > 0), [items]);
 
   const isActive = useMemo(() => {
@@ -76,24 +85,30 @@ const MenuItem: React.FC<{
         handleToggleSubMenu(e);
       } else {
         setIsOpen(false);
-        itemProps?.onClick?.(e);
+        onClick?.(e);
       }
     },
-    [hasChildItems, handleToggleSubMenu, setIsOpen, itemProps?.onClick]
+    [hasChildItems, handleToggleSubMenu, setIsOpen, onClick]
   );
 
   const handleExternalClick = useCallback(
     (e: any) => {
       setIsOpen(false);
-      itemProps?.onClick?.(e);
+      onClick?.(e);
     },
-    [setIsOpen, itemProps?.onClick]
+    [setIsOpen, onClick]
   );
 
   return (
     <StyledDropdownMenuItemContainer>
       {type === DropdownMenuItemType.BUTTON && (
-        <DropdownMenuItem $isActive={isActive} disabled={disabled || isDisabled} type="button" {...itemProps}>
+        <DropdownMenuItem
+          $isActive={isActive}
+          disabled={disabled || isDisabled}
+          type="button"
+          onClick={onClick}
+          {...itemProps}
+        >
           {MenuItemContent}
         </DropdownMenuItem>
       )}
@@ -102,9 +117,9 @@ const MenuItem: React.FC<{
           disabled={disabled || isDisabled}
           as={linkComponent}
           href={href}
-          {...itemProps}
           $isActive={isActive}
           onClick={handleClick}
+          {...itemProps}
         >
           {MenuItemContent}
           {hasChildItems && (

@@ -30,7 +30,7 @@ export const SimpleConnectButton: React.FC<ConnectButtonProps> = ({
         onClickAccount={onClickAccount}
         avatarSrc={avatarSrc}
         address={account}
-        variant="default"
+        variant={variant}
         avatarClassName={avatarClassName}
         disabled={disabled}
         {...props}

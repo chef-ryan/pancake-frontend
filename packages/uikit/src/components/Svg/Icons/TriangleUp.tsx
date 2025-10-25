@@ -1,7 +1,7 @@
 import React from "react";
 import { SvgProps } from "../types";
 
-const Icon: React.FC<React.PropsWithChildren<SvgProps>> = (props) => (
+const Icon: React.FC<React.PropsWithChildren<SvgProps>> = () => (
   <svg viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask id="mask0_758_4878" maskUnits="userSpaceOnUse" x="0" y="0" width="12" height="13">
       <rect y="0.5" width="12" height="12" fill="#D9D9D9" />

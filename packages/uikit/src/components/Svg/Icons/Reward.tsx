@@ -1,10 +1,7 @@
-import uniqueId from "lodash/uniqueId";
 import React from "react";
 import { SvgProps } from "../types";
 
-const Icon: React.FC<React.PropsWithChildren<SvgProps>> = (props) => {
-  const id = uniqueId("svg");
-
+const Icon: React.FC<React.PropsWithChildren<SvgProps>> = () => {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
