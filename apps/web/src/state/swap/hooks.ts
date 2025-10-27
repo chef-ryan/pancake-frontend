@@ -1,6 +1,7 @@
 import { Currency, Native, SOL, Trade, TradeType, UnifiedNativeCurrency } from '@pancakeswap/sdk'
 import { CAKE, STABLE_COIN, USDC, USDT } from '@pancakeswap/tokens'
 import { PairDataTimeWindowEnum } from '@pancakeswap/uikit'
+import { isAptos, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useQuery } from '@tanstack/react-query'
 import { getChainId } from 'config/chains'
 import { DEFAULT_INPUT_CURRENCY } from 'config/constants/exchange'
@@ -14,7 +15,6 @@ import { ParsedUrlQuery } from 'querystring'
 import { useCallback, useEffect, useState } from 'react'
 import { ChartPeriod, chainIdToExplorerInfoChainName, explorerApiClient } from 'state/info/api/client'
 import { isAddressEqual, safeGetAddress, safeGetUnifiedAddress } from 'utils'
-import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useBridgeAvailableChains } from 'views/Swap/Bridge/hooks'
 import { Field, replaceSwapState } from './actions'
 import { SwapState, swapReducerAtom } from './reducer'
@@ -82,8 +82,10 @@ export function queryParametersToSwapState(
   // NOTE: if chainOut is not provided, means user want to swap on the same chain
   const outputChain = parsedQs.chainOut || inputChain
 
-  const inputChainId = typeof inputChain === 'string' ? getChainId(inputChain) : undefined
-  const outputChainId = typeof outputChain === 'string' ? getChainId(outputChain) : undefined
+  const inputChainId =
+    typeof inputChain === 'string' && !isAptos(getChainId(inputChain)) ? getChainId(inputChain) : undefined
+  const outputChainId =
+    typeof outputChain === 'string' && !isAptos(getChainId(outputChain)) ? getChainId(outputChain) : undefined
 
   const recipient = validatedRecipient(parsedQs.recipient)
 
