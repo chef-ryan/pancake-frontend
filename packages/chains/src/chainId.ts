@@ -25,6 +25,11 @@ export enum NonEVMChainId {
   APTOS = 8000002000,
 }
 
+export enum SunsetChainId {
+  POLYGON_ZKEVM = 1101,
+  POLYGON_ZKEVM_TESTNET = 1442,
+}
+
 export type UnifiedChainId = ChainId | NonEVMChainId
 
 export const testnetChainIds = [

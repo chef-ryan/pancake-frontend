@@ -101,7 +101,7 @@ export default function useSolanaTxError() {
         setLoading(false)
       }
     },
-    [t, toastSuccess, handleSolanaError],
+    [t, toastSuccess, handleSolanaError, addTransaction],
   )
 
   return {
