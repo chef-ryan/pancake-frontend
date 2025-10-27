@@ -66,7 +66,6 @@ import { useV3PositionFromTokenId, useV3TokenIdsByAccount } from 'hooks/v3/useV3
 import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
 import { NextSeo } from 'next-seo'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 import { useRouter } from 'next/router'
 import { ReactNode, memo, useCallback, useMemo, useState } from 'react'
 import { usePoolInfo } from 'state/farmsV4/state/extendPools/hooks'
@@ -211,13 +210,7 @@ export const LiquidityView = () => {
 
   const { tokenId: tokenIdFromUrl } = router.query
 
-  if (tokenIdFromUrl === 'pools') {
-    redirect('/liquidity/pools')
-  } else if (tokenIdFromUrl === 'positions') {
-    redirect('/liquidity/positions')
-  }
-
-  const parsedTokenId = tokenIdFromUrl ? BigInt(tokenIdFromUrl as string) : undefined
+  const parsedTokenId = Number.isFinite(Number(tokenIdFromUrl)) ? BigInt(tokenIdFromUrl as string) : undefined
 
   const { loading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId)
 
@@ -552,6 +545,16 @@ export const LiquidityView = () => {
         </Box>
       </Message>
     ) : null
+
+  if (tokenIdFromUrl === 'pools') {
+    router.replace('/liquidity/pools')
+  } else {
+    router.replace('/liquidity/positions')
+  }
+
+  if (!parsedTokenId) {
+    return null
+  }
 
   return (
     <Box mb="40px">
