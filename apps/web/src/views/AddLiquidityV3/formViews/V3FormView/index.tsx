@@ -290,10 +290,13 @@ export default function V3FormView({
   const [txHash, setTxHash] = useState<string>('')
 
   // get formatted amounts
-  const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
-  }
+  const formattedAmounts = useMemo(
+    () => ({
+      [independentField]: typedValue,
+      [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+    }),
+    [dependentField, independentField, typedValue, parsedAmounts],
+  )
 
   // Get Total USD Value of input amounts
   const { totalUsdValue } = useTotalUsdValue({

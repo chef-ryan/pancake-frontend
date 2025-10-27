@@ -1,7 +1,7 @@
 import { Box } from '@pancakeswap/uikit'
 import { FeeAmount } from '@pancakeswap/v3-sdk'
 import { useEffect, useMemo } from 'react'
-import { atom, useAtom } from 'jotai'
+import { useAtom } from 'jotai'
 import { styled } from 'styled-components'
 import { usePreviousValue } from '@pancakeswap/hooks'
 import { useUnifiedCurrency } from 'hooks/Tokens'

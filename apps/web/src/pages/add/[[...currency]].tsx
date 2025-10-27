@@ -57,6 +57,11 @@ const AddLiquidityPage = () => {
       : undefined
   }, [farmsV2Public, farmV3Public?.farmsWithPrice, currencyA, currencyB, router])
 
+  if (router.isReady && currencyA?.wrapped && currencyB?.wrapped && currencyA.wrapped.equals(currencyB.wrapped)) {
+    router.replace('/liquidity/select')
+    return null
+  }
+
   return (
     <AddLiquidityV2FormProvider>
       <LiquidityFormProvider>
