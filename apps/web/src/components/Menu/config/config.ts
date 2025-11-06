@@ -3,7 +3,6 @@ import { ContextApi } from '@pancakeswap/localization'
 import { SUPPORTED_CHAIN_IDS as POOL_SUPPORTED_CHAINS } from '@pancakeswap/pools'
 import { SUPPORTED_CHAIN_IDS as PREDICTION_SUPPORTED_CHAINS } from '@pancakeswap/prediction'
 import {
-  BridgeIcon,
   DropdownMenuItems,
   DropdownMenuItemType,
   EarnFillIcon,
@@ -11,6 +10,7 @@ import {
   GameIcon,
   MenuItemsType,
   MoreIcon,
+  RocketIcon,
   SwapFillIcon,
   SwapIcon,
   TradeFilledIcon,
@@ -40,7 +40,7 @@ export const addMenuItemSupported = (item, chainId: number | undefined) => {
   if (item.supportChainIds?.includes(chainId)) {
     return item
   }
-  // if unsupport chain, redirect to bsc
+  // if unsupported chain, redirect to bsc
   if (item?.href) {
     return {
       ...item,
@@ -138,12 +138,20 @@ const config: (
       ].map((item) => addMenuItemSupported(item, chainId)),
     },
     {
-      label: t('Bridge'),
-      href: '/bridge',
-      icon: BridgeIcon,
-      type: DropdownMenuItemType.EXTERNAL_LINK,
-      image: '/images/decorations/pe2.png',
-      showItemsOnMobile: false,
+      label: t('CAKE.PAD'),
+      icon: RocketIcon,
+      href: '/cakepad',
+      image: '/images/ifos/ifo-bunny.png',
+      overrideSubNavItems: [
+        {
+          label: t('Latest'),
+          href: '/cakepad',
+        },
+        {
+          label: t('Finished'),
+          href: '/cakepad/history',
+        },
+      ],
     },
     {
       label: t('Play'),
@@ -191,21 +199,6 @@ const config: (
         {
           label: t('Burn Dashboard'),
           href: '/burn-dashboard',
-        },
-        {
-          label: t('CAKE.PAD'),
-          href: '/cakepad',
-          image: '/images/ifos/ifo-bunny.png',
-          overrideSubNavItems: [
-            {
-              label: t('Latest'),
-              href: '/cakepad',
-            },
-            {
-              label: t('Finished'),
-              href: '/cakepad/history',
-            },
-          ],
         },
         {
           label: t('Voting'),
