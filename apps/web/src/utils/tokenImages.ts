@@ -44,19 +44,17 @@ export const getImageUrlsFromToken = (token?: UnifiedCurrency & { logoURI?: stri
 
 const _getCurrencyLogoSrcs = (currency: UnifiedCurrency & { logoURI?: string | undefined }) => {
   const allUrls = () => {
-    const uriLocations = currency instanceof WrappedTokenInfo && currency.logoURI ? uriToHttp(currency.logoURI) : []
-    const imageUrls = getImageUrlsFromToken(currency)
-    const basicTokenImage = getBasicTokensImage(currency)
-
     if (currency?.isNative) return [getImageUrlFromToken(currency)]
     if (currency?.isToken) {
+      const uriLocations =
+        currency && typeof currency === 'object' && 'logoURI' in currency && currency.logoURI
+          ? uriToHttp(currency.logoURI)
+          : []
+      const imageUrls = getImageUrlsFromToken(currency)
+      const basicTokenImage = getBasicTokensImage(currency)
       const tokenLogoURL = getTokenLogoURL(currency as Token)
-      if (currency instanceof WrappedTokenInfo) {
-        if (!tokenLogoURL) return [...imageUrls, ...uriLocations, basicTokenImage]
-        return [...imageUrls, ...uriLocations, tokenLogoURL, basicTokenImage]
-      }
-      if (!tokenLogoURL) return [...imageUrls, basicTokenImage]
-      return [...imageUrls, tokenLogoURL, basicTokenImage]
+      if (!tokenLogoURL) return [...imageUrls, ...uriLocations, basicTokenImage]
+      return [...imageUrls, ...uriLocations, tokenLogoURL, basicTokenImage]
     }
     return []
   }
