@@ -262,4 +262,5 @@ export const bscDynamicHooks: Record<PoolType, HookData | undefined> = {
 export const bscWhitelistLabeledHooks: Address[] = [
   '0x9a9B5331ce8d74b2B721291D57DE696E878353fd', // IDO TGE
   '0x72e09eBd9b24F47730b651889a4eD984CBa53d90',
+  '0x44428C6ce391915D51F963C0Dd395Cd0f95fdFD2',
 ]
