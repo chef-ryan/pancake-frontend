@@ -38,6 +38,7 @@ export const StyledSecondaryLogo = styled(TokenLogo)<StyledImageProps>`
   position: absolute;
   border-radius: 50%;
   width: 50%;
+  max-height: 50%;
 
   ${StyledSystemVariant({
     variants: {
