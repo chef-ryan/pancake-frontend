@@ -94,6 +94,6 @@ const transformPoolData = (
     tvlToken1: Number.parseFloat(item.tvlToken1),
     volumeUSDChange: 0,
     tvlUSDChange: 0,
-    protocolFee: Number.parseInt(item.protocolFee ?? '0'),
+    protocolFee: Number.parseInt(String(item.protocolFee ?? '0')),
   }
 }

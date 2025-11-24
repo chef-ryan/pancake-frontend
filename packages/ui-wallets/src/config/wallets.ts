@@ -1,6 +1,7 @@
 import { Wallet as SolanaWalletAdapter } from '@solana/wallet-adapter-react'
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
 import safeGetWindow from '@pancakeswap/utils/safeGetWindow'
+import { ChainId } from '@pancakeswap/chains'
 import { WalletAdaptedNetwork, WalletConfigV3 } from '../types'
 import { WalletIds } from './walletIds'
 import { EvmConnectorNames, SolanaWalletNames, SolanaConnectorNames } from './connectorNames'
@@ -353,7 +354,23 @@ export const TOP_WALLETS_ID_CONFIG = {
   Solana: [WalletIds.Phantom, WalletIds.BinanceW3W, WalletIds.Solflare, WalletIds.Backpack],
 }
 
-export const getTopWalletsConfig = (wallets: WalletConfigV3[], walletFilter: WalletFilterValue): WalletConfigV3[] => {
+// Chain-specific top wallets configuration
+export const CHAIN_TOP_WALLETS_CONFIG: { [chainId: number]: WalletIds[] } = {
+  [ChainId.MONAD_MAINNET]: [WalletIds.Metamask, WalletIds.Okx, WalletIds.Walletconnect],
+}
+
+export const getTopWalletsConfig = (
+  wallets: WalletConfigV3[],
+  walletFilter: WalletFilterValue,
+  chainId?: number,
+): WalletConfigV3[] => {
+  // Check for chain-specific config first
+  if (chainId && CHAIN_TOP_WALLETS_CONFIG[chainId]) {
+    return CHAIN_TOP_WALLETS_CONFIG[chainId]
+      .map((id) => wallets.find((wallet) => wallet.id === id))
+      .filter(Boolean) as WalletConfigV3[]
+  }
+
   if (walletFilter === WalletFilterValue.SolanaOnly) {
     return TOP_WALLETS_ID_CONFIG.Solana.map((id) => wallets.find((wallet) => wallet.id === id)).filter(
       Boolean,

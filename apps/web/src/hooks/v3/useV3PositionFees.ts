@@ -15,7 +15,7 @@ export function useV3PositionFees(
   asWNATIVE = false,
   enable = true,
 ): [CurrencyAmount<Currency>, CurrencyAmount<Currency>] | [undefined, undefined] {
-  const positionManager = useV3NFTPositionManagerContract()
+  const positionManager = useV3NFTPositionManagerContract({ chainId: pool?.chainId ?? pool?.token0.chainId })
   const owner = useSingleCallResult({
     contract: tokenId ? positionManager : null,
     functionName: 'ownerOf',

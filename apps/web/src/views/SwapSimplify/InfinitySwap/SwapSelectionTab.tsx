@@ -18,6 +18,7 @@ import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { styled } from 'styled-components'
 import { isEvm } from '@pancakeswap/chains'
+import { SWAP_CHART_UNSUPPORTED_CHAINS } from 'config/constants/supportChains'
 import { chartDisplayAtom } from './atoms'
 
 import { SwapType } from '../../Swap/types'
@@ -173,7 +174,8 @@ export const SwapSelection = ({
 
         <StyledButtonMenuItem {...limitProps}>{t('Limit')}</StyledButtonMenuItem>
       </ButtonMenu>
-      {withToolkit && (
+
+      {withToolkit && !SWAP_CHART_UNSUPPORTED_CHAINS.includes(chainId) && (
         <ColoredIconButton
           onClick={() => {
             toggleChartDisplayed()

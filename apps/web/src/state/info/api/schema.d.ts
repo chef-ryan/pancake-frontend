@@ -41,6 +41,57 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/cached/tx/v2/{chainName}/swaps': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get v2 swaps by page */
+    get: operations['getCachedTxV2ByChainNameSwaps']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/cached/tx/infinityBin/{chainName}/swaps': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get infinityBin swaps by page */
+    get: operations['getCachedTxInfinityBinByChainNameSwaps']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/cached/tx/infinityCl/{chainName}/swaps': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get infinityCl swaps by page */
+    get: operations['getCachedTxInfinityClByChainNameSwaps']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/cached/tx/infinity/{chainName}/recent': {
     parameters: {
       query?: never
@@ -809,6 +860,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/cached/pools/candidates/infinity/{chainName}/{currencyA}/{currencyB}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get infinity candidate pools for routing */
+    get: operations['getCachedPoolsCandidatesInfinityByChainNameByCurrencyAByCurrencyB']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/cached/pools/list': {
     parameters: {
       query?: never
@@ -818,6 +886,23 @@ export interface paths {
     }
     /** Get pools list */
     get: operations['getCachedPoolsList']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/cached/pools/tvl-refs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get pools tvl ref list */
+    get: operations['getCachedPoolsTvl-refs']
     put?: never
     post?: never
     delete?: never
@@ -1282,17 +1367,80 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/limit-order/history/{chainName}/{user}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get user order history */
+    get: operations['getLimit-orderHistoryByChainNameByUser']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/limit-order/history/{chainName}/{user}/{status}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get user order history */
+    get: operations['getLimit-orderHistoryByChainNameByUserByStatus']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/healthz': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['getHealthz']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
 }
 export type webhooks = Record<string, never>
 export interface components {
   schemas: {
     /**
      * @description Chain name
+     * @default bsc
      * @enum {string}
      */
-    ChainName: 'bsc' | 'bsc-testnet' | 'ethereum' | 'base' | 'opbnb' | 'zksync' | 'polygon-zkevm' | 'linea' | 'arbitrum'
+    ChainName:
+      | 'bsc'
+      | 'bsc-testnet'
+      | 'ethereum'
+      | 'base'
+      | 'opbnb'
+      | 'zksync'
+      | 'polygon-zkevm'
+      | 'linea'
+      | 'arbitrum'
+      | 'sol'
+      | 'monad'
     /**
      * @description Protocol version
+     * @default v2
      * @enum {string}
      */
     Protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
@@ -1315,12 +1463,16 @@ export interface components {
       amount0: string
       amount1: string
       amountUSD: string
+      amountFeeUSD?: string
       origin: string | null
       recipient: string | null
       timestamp: Record<string, never> | string
     }[]
     transactionsWithType: {
-      /** @enum {string} */
+      /**
+       * @default mint
+       * @enum {string}
+       */
       type: 'mint' | 'burn' | 'swap'
       id: string
       transactionHash: string
@@ -1340,6 +1492,7 @@ export interface components {
       amount0: string
       amount1: string
       amountUSD: string
+      amountFeeUSD?: string
       origin: string | null
       recipient: string | null
       timestamp: Record<string, never> | string
@@ -1409,6 +1562,7 @@ export interface components {
       priceUSD: string
       /**
        * @description Protocol version
+       * @default v2
        * @enum {string}
        */
       protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
@@ -1447,8 +1601,8 @@ export interface components {
         /** @description Position id */
         id: string
         liquidity: string
-        /** @description Ethereum address */
-        owner: string
+        /** @description EVM (0x…) or Solana base-58 address */
+        owner?: string
         /** @description Lower tick index */
         lowerTickIdx: number
         /** @description Upper tick index */
@@ -1468,7 +1622,7 @@ export interface components {
         id: string
         binId: number
         liquidity: string
-        /** @description Ethereum address */
+        /** @description EVM (0x…) or Solana base-58 address */
         owner: string
         /** @description Infinity pool ID */
         pool: string
@@ -1524,6 +1678,7 @@ export interface components {
     }
     /**
      * @description Chart period
+     * @default 1H
      * @enum {string}
      */
     ChartPeriod: '1H' | '1D' | '1W' | '1M' | '1Y'
@@ -1535,9 +1690,20 @@ export interface components {
           volumeUSD7d: string
         }
       | Record<string, never>
+    InfinityBinAprSchema:
+      | {
+          apr24h: string
+          apr7d: string
+          volumeUSD24h: string
+          volumeUSD7d: string
+          feeUSD24h: string
+          tvlUSD: string
+        }
+      | Record<string, never>
     ProtocolQuery: {
       /**
        * @description Chart group by
+       * @default 1D
        * @enum {string}
        */
       groupBy: '1D' | '1W' | '1M'
@@ -1602,6 +1768,7 @@ export interface operations {
         token?: string
         /** @description Filter by pool address */
         pool?: string
+        txHash?: string
         /** @description Cursor for pagination before */
         before?: string
         /** @description Cursor for pagination after */
@@ -1620,6 +1787,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -1658,6 +1827,7 @@ export interface operations {
               amount0: string
               amount1: string
               amountUSD: string
+              amountFeeUSD?: string
               origin: string | null
               recipient: string | null
               timestamp: Record<string, never> | string
@@ -1691,6 +1861,7 @@ export interface operations {
               amount0: string
               amount1: string
               amountUSD: string
+              amountFeeUSD?: string
               origin: string | null
               recipient: string | null
               timestamp: Record<string, never> | string
@@ -1724,6 +1895,439 @@ export interface operations {
               amount0: string
               amount1: string
               amountUSD: string
+              amountFeeUSD?: string
+              origin: string | null
+              recipient: string | null
+              timestamp: Record<string, never> | string
+            }[]
+          }
+        }
+      }
+    }
+  }
+  getCachedTxV2ByChainNameSwaps: {
+    parameters: {
+      query?: {
+        /** @description Filter by token address */
+        token?: string
+        /** @description Filter by pool address */
+        pool?: string
+        txHash?: string
+        /** @description Cursor for pagination before */
+        before?: string
+        /** @description Cursor for pagination after */
+        after?: string
+      }
+      header?: never
+      path: {
+        /** @description Chain name */
+        chainName:
+          | 'bsc'
+          | 'bsc-testnet'
+          | 'ethereum'
+          | 'base'
+          | 'opbnb'
+          | 'zksync'
+          | 'polygon-zkevm'
+          | 'linea'
+          | 'arbitrum'
+          | 'sol'
+          | 'monad'
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': {
+            /** @description Cursor for pagination start */
+            startCursor?: string
+            /** @description Cursor for pagination end */
+            endCursor?: string
+            /** @description Has next page */
+            hasNextPage?: boolean
+            /** @description Has previous page */
+            hasPrevPage?: boolean
+            rows: {
+              id: string
+              transactionHash: string
+              poolId: string
+              token0: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              token1: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              amount0: string
+              amount1: string
+              amountUSD: string
+              amountFeeUSD?: string
+              origin: string | null
+              recipient: string | null
+              timestamp: Record<string, never> | string
+            }[]
+          }
+          'multipart/form-data': {
+            /** @description Cursor for pagination start */
+            startCursor?: string
+            /** @description Cursor for pagination end */
+            endCursor?: string
+            /** @description Has next page */
+            hasNextPage?: boolean
+            /** @description Has previous page */
+            hasPrevPage?: boolean
+            rows: {
+              id: string
+              transactionHash: string
+              poolId: string
+              token0: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              token1: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              amount0: string
+              amount1: string
+              amountUSD: string
+              amountFeeUSD?: string
+              origin: string | null
+              recipient: string | null
+              timestamp: Record<string, never> | string
+            }[]
+          }
+          'text/plain': {
+            /** @description Cursor for pagination start */
+            startCursor?: string
+            /** @description Cursor for pagination end */
+            endCursor?: string
+            /** @description Has next page */
+            hasNextPage?: boolean
+            /** @description Has previous page */
+            hasPrevPage?: boolean
+            rows: {
+              id: string
+              transactionHash: string
+              poolId: string
+              token0: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              token1: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              amount0: string
+              amount1: string
+              amountUSD: string
+              amountFeeUSD?: string
+              origin: string | null
+              recipient: string | null
+              timestamp: Record<string, never> | string
+            }[]
+          }
+        }
+      }
+    }
+  }
+  getCachedTxInfinityBinByChainNameSwaps: {
+    parameters: {
+      query?: {
+        /** @description Filter by token address */
+        token?: string
+        /** @description Filter by pool address */
+        pool?: string
+        txHash?: string
+        /** @description Cursor for pagination before */
+        before?: string
+        /** @description Cursor for pagination after */
+        after?: string
+      }
+      header?: never
+      path: {
+        /** @description Chain name */
+        chainName:
+          | 'bsc'
+          | 'bsc-testnet'
+          | 'ethereum'
+          | 'base'
+          | 'opbnb'
+          | 'zksync'
+          | 'polygon-zkevm'
+          | 'linea'
+          | 'arbitrum'
+          | 'sol'
+          | 'monad'
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': {
+            /** @description Cursor for pagination start */
+            startCursor?: string
+            /** @description Cursor for pagination end */
+            endCursor?: string
+            /** @description Has next page */
+            hasNextPage?: boolean
+            /** @description Has previous page */
+            hasPrevPage?: boolean
+            rows: {
+              id: string
+              transactionHash: string
+              poolId: string
+              token0: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              token1: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              amount0: string
+              amount1: string
+              amountUSD: string
+              amountFeeUSD?: string
+              origin: string | null
+              recipient: string | null
+              timestamp: Record<string, never> | string
+            }[]
+          }
+          'multipart/form-data': {
+            /** @description Cursor for pagination start */
+            startCursor?: string
+            /** @description Cursor for pagination end */
+            endCursor?: string
+            /** @description Has next page */
+            hasNextPage?: boolean
+            /** @description Has previous page */
+            hasPrevPage?: boolean
+            rows: {
+              id: string
+              transactionHash: string
+              poolId: string
+              token0: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              token1: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              amount0: string
+              amount1: string
+              amountUSD: string
+              amountFeeUSD?: string
+              origin: string | null
+              recipient: string | null
+              timestamp: Record<string, never> | string
+            }[]
+          }
+          'text/plain': {
+            /** @description Cursor for pagination start */
+            startCursor?: string
+            /** @description Cursor for pagination end */
+            endCursor?: string
+            /** @description Has next page */
+            hasNextPage?: boolean
+            /** @description Has previous page */
+            hasPrevPage?: boolean
+            rows: {
+              id: string
+              transactionHash: string
+              poolId: string
+              token0: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              token1: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              amount0: string
+              amount1: string
+              amountUSD: string
+              amountFeeUSD?: string
+              origin: string | null
+              recipient: string | null
+              timestamp: Record<string, never> | string
+            }[]
+          }
+        }
+      }
+    }
+  }
+  getCachedTxInfinityClByChainNameSwaps: {
+    parameters: {
+      query?: {
+        /** @description Filter by token address */
+        token?: string
+        /** @description Filter by pool address */
+        pool?: string
+        txHash?: string
+        /** @description Cursor for pagination before */
+        before?: string
+        /** @description Cursor for pagination after */
+        after?: string
+      }
+      header?: never
+      path: {
+        /** @description Chain name */
+        chainName:
+          | 'bsc'
+          | 'bsc-testnet'
+          | 'ethereum'
+          | 'base'
+          | 'opbnb'
+          | 'zksync'
+          | 'polygon-zkevm'
+          | 'linea'
+          | 'arbitrum'
+          | 'sol'
+          | 'monad'
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': {
+            /** @description Cursor for pagination start */
+            startCursor?: string
+            /** @description Cursor for pagination end */
+            endCursor?: string
+            /** @description Has next page */
+            hasNextPage?: boolean
+            /** @description Has previous page */
+            hasPrevPage?: boolean
+            rows: {
+              id: string
+              transactionHash: string
+              poolId: string
+              token0: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              token1: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              amount0: string
+              amount1: string
+              amountUSD: string
+              amountFeeUSD?: string
+              origin: string | null
+              recipient: string | null
+              timestamp: Record<string, never> | string
+            }[]
+          }
+          'multipart/form-data': {
+            /** @description Cursor for pagination start */
+            startCursor?: string
+            /** @description Cursor for pagination end */
+            endCursor?: string
+            /** @description Has next page */
+            hasNextPage?: boolean
+            /** @description Has previous page */
+            hasPrevPage?: boolean
+            rows: {
+              id: string
+              transactionHash: string
+              poolId: string
+              token0: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              token1: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              amount0: string
+              amount1: string
+              amountUSD: string
+              amountFeeUSD?: string
+              origin: string | null
+              recipient: string | null
+              timestamp: Record<string, never> | string
+            }[]
+          }
+          'text/plain': {
+            /** @description Cursor for pagination start */
+            startCursor?: string
+            /** @description Cursor for pagination end */
+            endCursor?: string
+            /** @description Has next page */
+            hasNextPage?: boolean
+            /** @description Has previous page */
+            hasPrevPage?: boolean
+            rows: {
+              id: string
+              transactionHash: string
+              poolId: string
+              token0: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              token1: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              amount0: string
+              amount1: string
+              amountUSD: string
+              amountFeeUSD?: string
               origin: string | null
               recipient: string | null
               timestamp: Record<string, never> | string
@@ -1754,6 +2358,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -1792,6 +2398,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -1830,6 +2438,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -1854,6 +2464,7 @@ export interface operations {
         token?: string
         /** @description Filter by pool address */
         pool?: string
+        txHash?: string
       }
       header?: never
       path: {
@@ -1868,6 +2479,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -1906,6 +2519,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -1956,9 +2571,9 @@ export interface operations {
       query: {
         /** @description Chart period */
         period: '1H' | '1D' | '1W' | '1M' | '1Y'
-        /** @description Ethereum address */
+        /** @description EVM (0x…) or Solana base-58 address */
         tokenA: string
-        /** @description Ethereum address */
+        /** @description EVM (0x…) or Solana base-58 address */
         tokenB: string
       }
       header?: never
@@ -1974,6 +2589,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -2014,9 +2631,11 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
-        /** @description Ethereum address */
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -2058,7 +2677,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -2100,9 +2721,11 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
-        /** @description Ethereum address */
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -2141,9 +2764,11 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
-        /** @description Ethereum address */
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -2182,7 +2807,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -2246,7 +2873,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -2287,7 +2916,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -2320,7 +2951,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -2353,7 +2986,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -2386,7 +3021,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -2409,7 +3046,7 @@ export interface operations {
       header?: never
       path: {
         chainName: 'bsc' | 'ethereum' | 'arbitrum'
-        /** @description Ethereum address */
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -2442,6 +3079,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -2504,6 +3143,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -2566,6 +3207,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -2628,6 +3271,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -2690,6 +3335,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -2803,6 +3450,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Pool address */
         pool: string
       }
@@ -2827,7 +3476,7 @@ export interface operations {
         before?: string
         /** @description Cursor for pagination after */
         after?: string
-        /** @description Ethereum address */
+        /** @description EVM (0x…) or Solana base-58 address */
         owner?: string
         tick?: string | number
       }
@@ -2844,6 +3493,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Pool address */
         pool: string
       }
@@ -2863,7 +3514,12 @@ export interface operations {
   }
   getCachedPoolsPositionsInfinityBinByChainNameByPoolByOwner: {
     parameters: {
-      query?: never
+      query?: {
+        /** @description Cursor for pagination before */
+        before?: string
+        /** @description Cursor for pagination after */
+        after?: string
+      }
       header?: never
       path: {
         /** @description Chain name */
@@ -2877,9 +3533,11 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Infinity pool ID */
         pool: string
-        /** @description Ethereum address */
+        /** @description EVM (0x…) or Solana base-58 address */
         owner: string
       }
       cookie?: never
@@ -2917,6 +3575,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Infinity pool ID */
         pool: string
       }
@@ -2955,7 +3615,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         owner: string
       }
       cookie?: never
@@ -2993,7 +3655,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         owner: string
       }
       cookie?: never
@@ -3032,7 +3696,8 @@ export interface operations {
           | 'linea'
           | 'arbitrum'
           | 'sol'
-        /** @description Pool ID */
+          | 'monad'
+        /** @description Pool ID (EVM 0x… or Solana base58) */
         address: string
       }
       cookie?: never
@@ -3073,7 +3738,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Pool ID */
+          | 'sol'
+          | 'monad'
+        /** @description Pool ID (EVM 0x… or Solana base58) */
         address: string
       }
       cookie?: never
@@ -3111,6 +3778,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Infinity pool ID */
         address: string
       }
@@ -3153,9 +3822,10 @@ export interface operations {
           | 'linea'
           | 'arbitrum'
           | 'sol'
+          | 'monad'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
-        /** @description Pool ID */
+        /** @description Pool ID (EVM 0x… or Solana base58) */
         address: string
       }
       cookie?: never
@@ -3195,9 +3865,10 @@ export interface operations {
           | 'linea'
           | 'arbitrum'
           | 'sol'
+          | 'monad'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
-        /** @description Pool ID */
+        /** @description Pool ID (EVM 0x… or Solana base58) */
         address: string
       }
       cookie?: never
@@ -3222,7 +3893,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        chainName: 'bsc-testnet'
+        chainName: 'bsc-testnet' | 'bsc' | 'base'
         /** @description Infinity pool ID */
         id: string
       }
@@ -3235,9 +3906,9 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['AprSchema']
-          'multipart/form-data': components['schemas']['AprSchema']
-          'text/plain': components['schemas']['AprSchema']
+          'application/json': components['schemas']['InfinityBinAprSchema']
+          'multipart/form-data': components['schemas']['InfinityBinAprSchema']
+          'text/plain': components['schemas']['InfinityBinAprSchema']
         }
       }
     }
@@ -3247,7 +3918,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        chainName: 'bsc-testnet'
+        chainName: 'bsc-testnet' | 'bsc' | 'base'
         /** @description Infinity pool ID */
         id: string
       }
@@ -3283,7 +3954,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -3316,7 +3989,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -3339,7 +4014,7 @@ export interface operations {
       header?: never
       path: {
         chainName: 'bsc' | 'ethereum' | 'arbitrum'
-        /** @description Ethereum address */
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -3353,7 +4028,6 @@ export interface operations {
         content: {
           'application/json': {
             apr7d: string
-            apr24h?: string
             poolId: string
             virtualPrice: string
             virtualPrice7d: string
@@ -3379,6 +4053,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -3410,6 +4086,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -3441,6 +4119,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -3472,6 +4152,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Pool ID */
         id: string
       }
@@ -3593,6 +4275,7 @@ export interface operations {
                 /** @description Pool created at timestamp */
                 createdAtTimestamp: Record<string, never> | string
                 feeTier?: number
+                protocolFee?: number
                 binStep?: number
                 activeId?: number
                 liquidity?: string
@@ -3670,6 +4353,7 @@ export interface operations {
                 /** @description Pool created at timestamp */
                 createdAtTimestamp: Record<string, never> | string
                 feeTier?: number
+                protocolFee?: number
                 binStep?: number
                 activeId?: number
                 liquidity?: string
@@ -3905,6 +4589,7 @@ export interface operations {
                 /** @description Pool created at timestamp */
                 createdAtTimestamp: Record<string, never> | string
                 feeTier?: number
+                protocolFee?: number
                 binStep?: number
                 activeId?: number
                 liquidity?: string
@@ -3982,6 +4667,7 @@ export interface operations {
                 /** @description Pool created at timestamp */
                 createdAtTimestamp: Record<string, never> | string
                 feeTier?: number
+                protocolFee?: number
                 binStep?: number
                 activeId?: number
                 liquidity?: string
@@ -4217,6 +4903,7 @@ export interface operations {
                 /** @description Pool created at timestamp */
                 createdAtTimestamp: Record<string, never> | string
                 feeTier?: number
+                protocolFee?: number
                 binStep?: number
                 activeId?: number
                 liquidity?: string
@@ -4294,6 +4981,7 @@ export interface operations {
                 /** @description Pool created at timestamp */
                 createdAtTimestamp: Record<string, never> | string
                 feeTier?: number
+                protocolFee?: number
                 binStep?: number
                 activeId?: number
                 liquidity?: string
@@ -4424,6 +5112,130 @@ export interface operations {
       }
     }
   }
+  getCachedPoolsCandidatesInfinityByChainNameByCurrencyAByCurrencyB: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        /** @description Chain name */
+        chainName:
+          | 'bsc'
+          | 'bsc-testnet'
+          | 'ethereum'
+          | 'base'
+          | 'opbnb'
+          | 'zksync'
+          | 'polygon-zkevm'
+          | 'linea'
+          | 'arbitrum'
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
+        currencyA: string
+        /** @description EVM (0x…) or Solana base-58 address */
+        currencyB: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': (
+            | {
+                /** @constant */
+                protocol: 'v3'
+                /** @description Pool id */
+                id: string
+                token0: {
+                  id: string
+                  symbol: string
+                  name: string
+                  decimals: number
+                }
+                token1: {
+                  id: string
+                  symbol: string
+                  name: string
+                  decimals: number
+                }
+                feeTier: number
+                protocolFee: number
+                /** @description Total volume in USD */
+                totalVolumeUSD: string
+                /** @description Total value locked in USD */
+                tvlUSD: string
+                liquidity: string
+                sqrtPrice: string
+                tick: number | null
+                tickSpacing: number | null
+              }
+            | {
+                /** @constant */
+                protocol: 'infinityBin'
+                /** @description Pool id */
+                id: string
+                token0: {
+                  id: string
+                  symbol: string
+                  name: string
+                  decimals: number
+                }
+                token1: {
+                  id: string
+                  symbol: string
+                  name: string
+                  decimals: number
+                }
+                feeTier: number
+                protocolFee: number
+                /** @description Total volume in USD */
+                totalVolumeUSD: string
+                /** @description Total value locked in USD */
+                tvlUSD: string
+                binStep: number
+                activeId: number
+                isDynamicFee: boolean
+                hookAddress: string | null
+              }
+            | {
+                /** @constant */
+                protocol: 'infinityCl'
+                /** @description Pool id */
+                id: string
+                token0: {
+                  id: string
+                  symbol: string
+                  name: string
+                  decimals: number
+                }
+                token1: {
+                  id: string
+                  symbol: string
+                  name: string
+                  decimals: number
+                }
+                feeTier: number
+                protocolFee: number
+                /** @description Total volume in USD */
+                totalVolumeUSD: string
+                /** @description Total value locked in USD */
+                tvlUSD: string
+                hookAddress: string | null
+                isDynamicFee: boolean
+                liquidity: string
+                sqrtPrice: string
+                tick: number | null
+                tickSpacing: number | null
+              }
+          )[]
+        }
+      }
+    }
+  }
   getCachedPoolsList: {
     parameters: {
       query: {
@@ -4434,7 +5246,6 @@ export interface operations {
           | ('v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable')[]
         /** @description Array of chain names */
         chains:
-          | ('bsc' | 'bsc-testnet' | 'ethereum' | 'base' | 'opbnb' | 'zksync' | 'polygon-zkevm' | 'linea' | 'arbitrum')
           | (
               | 'bsc'
               | 'bsc-testnet'
@@ -4445,11 +5256,127 @@ export interface operations {
               | 'polygon-zkevm'
               | 'linea'
               | 'arbitrum'
+              | 'sol'
+              | 'monad'
+            )
+          | (
+              | 'bsc'
+              | 'bsc-testnet'
+              | 'ethereum'
+              | 'base'
+              | 'opbnb'
+              | 'zksync'
+              | 'polygon-zkevm'
+              | 'linea'
+              | 'arbitrum'
+              | 'sol'
+              | 'monad'
             )[]
         /** @description Filter by pool id with chain id prefix */
         pools?: string | string[]
         /** @description Filter by tokens with chain id prefix, has higher priority than chains */
         tokens?: string | string[]
+        /** @description Cursor for pagination before */
+        before?: string
+        /** @description Cursor for pagination after */
+        after?: string
+        tokenSymbols?: string | string[]
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': {
+            /** @description Cursor for pagination start */
+            startCursor?: string
+            /** @description Cursor for pagination end */
+            endCursor?: string
+            /** @description Has next page */
+            hasNextPage?: boolean
+            /** @description Has previous page */
+            hasPrevPage?: boolean
+            rows: {
+              /** @description Pool id */
+              id: string
+              chainId: number
+              token0Price: string
+              token1Price: string
+              tvlToken0: string
+              tvlToken1: string
+              tvlUSD: string
+              volumeUSD24h: string
+              apr24h: string
+              /**
+               * @description Protocol version
+               * @default v2
+               * @enum {string}
+               */
+              protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
+              feeTier: number
+              token0: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              token1: {
+                id: string
+                symbol: string
+                name: string
+                decimals: number
+              }
+              isDynamicFee?: boolean
+              hookAddress?: string | null
+            }[]
+          }
+        }
+      }
+    }
+  }
+  'getCachedPoolsTvl-refs': {
+    parameters: {
+      query: {
+        /** @description Array of protocol versions */
+        protocols:
+          | ('v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable')
+          | ('v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable')[]
+        /** @description Array of chain names */
+        chains:
+          | (
+              | 'bsc'
+              | 'bsc-testnet'
+              | 'ethereum'
+              | 'base'
+              | 'opbnb'
+              | 'zksync'
+              | 'polygon-zkevm'
+              | 'linea'
+              | 'arbitrum'
+              | 'sol'
+              | 'monad'
+            )
+          | (
+              | 'bsc'
+              | 'bsc-testnet'
+              | 'ethereum'
+              | 'base'
+              | 'opbnb'
+              | 'zksync'
+              | 'polygon-zkevm'
+              | 'linea'
+              | 'arbitrum'
+              | 'sol'
+              | 'monad'
+            )[]
+        pageSize?: number
+        minTvl?: number
         /** @description Cursor for pagination before */
         before?: string
         /** @description Cursor for pagination after */
@@ -4488,6 +5415,7 @@ export interface operations {
               apr24h: string
               /**
                * @description Protocol version
+               * @default v2
                * @enum {string}
                */
               protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
@@ -4532,6 +5460,7 @@ export interface operations {
               | 'linea'
               | 'arbitrum'
               | 'sol'
+              | 'monad'
             )
           | (
               | 'bsc'
@@ -4544,6 +5473,7 @@ export interface operations {
               | 'linea'
               | 'arbitrum'
               | 'sol'
+              | 'monad'
             )[]
       }
       header?: never
@@ -4570,6 +5500,7 @@ export interface operations {
             apr24h: string
             /**
              * @description Protocol version
+             * @default v2
              * @enum {string}
              */
             protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
@@ -4609,6 +5540,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Infinity pool ID */
         address: string
       }
@@ -4663,6 +5596,7 @@ export interface operations {
             /** @description Pool created at timestamp */
             createdAtTimestamp: Record<string, never> | string
             feeTier?: number
+            protocolFee?: number
             binStep?: number
             activeId?: number
             liquidity?: string
@@ -4716,6 +5650,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Infinity pool ID */
         address: string
       }
@@ -4770,6 +5706,7 @@ export interface operations {
             /** @description Pool created at timestamp */
             createdAtTimestamp: Record<string, never> | string
             feeTier?: number
+            protocolFee?: number
             binStep?: number
             activeId?: number
             liquidity?: string
@@ -4824,7 +5761,8 @@ export interface operations {
           | 'linea'
           | 'arbitrum'
           | 'sol'
-        /** @description Ethereum address */
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -4918,7 +5856,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -4982,7 +5922,7 @@ export interface operations {
       header?: never
       path: {
         chainName: 'bsc' | 'ethereum' | 'arbitrum'
-        /** @description Ethereum address */
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -5070,6 +6010,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -5139,6 +6081,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -5208,6 +6152,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -5271,6 +6217,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -5323,6 +6271,7 @@ export interface operations {
             /** @description Pool created at timestamp */
             createdAtTimestamp: Record<string, never> | string
             feeTier?: number
+            protocolFee?: number
             binStep?: number
             activeId?: number
             liquidity?: string
@@ -5379,6 +6328,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -5431,6 +6382,7 @@ export interface operations {
             /** @description Pool created at timestamp */
             createdAtTimestamp: Record<string, never> | string
             feeTier?: number
+            protocolFee?: number
             binStep?: number
             activeId?: number
             liquidity?: string
@@ -5463,8 +6415,6 @@ export interface operations {
             lpFeeUSD48h?: string
             /** @description lp fee in USD in 7d */
             lpFeeUSD7d?: string
-            /** @description protocol fee for infinity pools */
-            protocolFee?: string
           }[]
         }
       }
@@ -5486,7 +6436,9 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
-        /** @description Ethereum address */
+          | 'sol'
+          | 'monad'
+        /** @description EVM (0x…) or Solana base-58 address */
         address: string
       }
       cookie?: never
@@ -5525,6 +6477,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Pool ID */
         pool: string
       }
@@ -5570,6 +6524,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -5622,6 +6578,7 @@ export interface operations {
             /** @description Pool created at timestamp */
             createdAtTimestamp: Record<string, never> | string
             feeTier?: number
+            protocolFee?: number
             binStep?: number
             activeId?: number
             liquidity?: string
@@ -5664,6 +6621,7 @@ export interface operations {
       query?: {
         /** @description Filter by Token address */
         token?: string
+        minTxCount24h?: number
       }
       header?: never
       path: {
@@ -5678,6 +6636,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -5773,6 +6733,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
       }
       cookie?: never
     }
@@ -5973,6 +6935,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
       }
@@ -6012,6 +6976,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
       }
@@ -6050,6 +7016,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
       }
@@ -6115,6 +7083,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
       }
@@ -6186,6 +7156,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
       }
@@ -6230,6 +7202,8 @@ export interface operations {
           | 'polygon-zkevm'
           | 'linea'
           | 'arbitrum'
+          | 'sol'
+          | 'monad'
         /** @description Protocol version */
         protocol: 'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'
       }
@@ -6256,6 +7230,141 @@ export interface operations {
     }
   }
   'postWebhooksWeb-deployed': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  'getLimit-orderHistoryByChainNameByUser': {
+    parameters: {
+      query?: {
+        /** @description Cursor for pagination before */
+        before?: string
+        /** @description Cursor for pagination after */
+        after?: string
+      }
+      header?: never
+      path: {
+        /** @description Supported chain names for limit order */
+        chainName: 'bsc'
+        /** @description EVM (0x…) or Solana base-58 address */
+        user: string
+        status: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': {
+            /** @description Cursor for pagination start */
+            startCursor?: string
+            /** @description Cursor for pagination end */
+            endCursor?: string
+            /** @description Has next page */
+            hasNextPage?: boolean
+            /** @description Has previous page */
+            hasPrevPage?: boolean
+            rows: {
+              /** @description Order id */
+              order_id: string
+              /** @description User address */
+              owner: string
+              /** @description Liquidity amount */
+              liquidity: string
+              /** @description Order status */
+              status: string
+              /** @description Last update timestamp */
+              updated_at: Record<string, never> | string
+              /** @description Trade direction flag */
+              zero_for_one: boolean
+              /** @description Lower tick */
+              tick_lower: number
+              /** @description Pool id */
+              pool_id: string
+              /** @description Transaction hash */
+              transaction_hash: string
+            }[]
+          }
+        }
+      }
+    }
+  }
+  'getLimit-orderHistoryByChainNameByUserByStatus': {
+    parameters: {
+      query?: {
+        /** @description Cursor for pagination before */
+        before?: string
+        /** @description Cursor for pagination after */
+        after?: string
+      }
+      header?: never
+      path: {
+        /** @description Supported chain names for limit order */
+        chainName: 'bsc'
+        /** @description EVM (0x…) or Solana base-58 address */
+        user: string
+        status: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': {
+            /** @description Cursor for pagination start */
+            startCursor?: string
+            /** @description Cursor for pagination end */
+            endCursor?: string
+            /** @description Has next page */
+            hasNextPage?: boolean
+            /** @description Has previous page */
+            hasPrevPage?: boolean
+            rows: {
+              /** @description Order id */
+              order_id: string
+              /** @description User address */
+              owner: string
+              /** @description Liquidity amount */
+              liquidity: string
+              /** @description Order status */
+              status: string
+              /** @description Last update timestamp */
+              updated_at: Record<string, never> | string
+              /** @description Trade direction flag */
+              zero_for_one: boolean
+              /** @description Lower tick */
+              tick_lower: number
+              /** @description Pool id */
+              pool_id: string
+              /** @description Transaction hash */
+              transaction_hash: string
+            }[]
+          }
+        }
+      }
+    }
+  }
+  getHealthz: {
     parameters: {
       query?: never
       header?: never

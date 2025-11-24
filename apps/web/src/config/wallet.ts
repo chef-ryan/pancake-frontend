@@ -102,6 +102,7 @@ export const TOP_WALLET_MAP: { [chainId: number]: LegacyWalletIds[] } = {
   [ChainId.ZKSYNC]: [LegacyWalletIds.Metamask, LegacyWalletIds.Trust, LegacyWalletIds.Okx],
   [ChainId.LINEA]: [LegacyWalletIds.Metamask, LegacyWalletIds.Trust, LegacyWalletIds.Okx],
   [ChainId.OPBNB]: [LegacyWalletIds.Metamask, LegacyWalletIds.Trust, LegacyWalletIds.Okx, LegacyWalletIds.BinanceW3W],
+  [ChainId.MONAD_MAINNET]: [LegacyWalletIds.Metamask, LegacyWalletIds.Okx, LegacyWalletIds.Walletconnect],
 }
 
 export const walletsConfig = <config extends Config = Config, context = unknown>({

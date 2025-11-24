@@ -72,7 +72,7 @@ export const getLpApr = async (
   }
 
   if (apr24h) {
-    return resp.data.apr24h ? parseFloat(resp.data.apr24h) : 0
+    return 'apr24h' in resp.data && resp.data.apr24h ? parseFloat(resp.data.apr24h) : 0
   }
   return resp.data.apr7d ? parseFloat(resp.data.apr7d) : 0
 }

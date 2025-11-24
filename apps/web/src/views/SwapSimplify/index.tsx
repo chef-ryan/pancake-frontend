@@ -15,6 +15,7 @@ import { QuoteProvider } from 'quoter/QuoteProvider'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { styled } from 'styled-components'
+import { SWAP_CHART_UNSUPPORTED_CHAINS } from 'config/constants/supportChains'
 import Page from '../Page'
 import { StyledSwapContainer } from '../Swap/styles'
 import { SwapFeaturesContext } from '../Swap/SwapFeaturesContext'
@@ -71,7 +72,7 @@ const InfinitySwapInner = () => {
         mt={isChartExpanded ? undefined : isMobile ? '18px' : '42px'}
         p={isChartExpanded ? undefined : isMobile ? '16px' : '24px'}
       >
-        {isDesktop && isChartDisplayed && (
+        {isDesktop && isChartDisplayed && !SWAP_CHART_UNSUPPORTED_CHAINS.includes(chainId) && (
           <Flex width={isChartExpanded ? '100%' : '50%'} maxWidth="928px" flexDirection="column" style={{ gap: 20 }}>
             <ChartWithPriceHeader
               currency0={inputCurrency || undefined}
@@ -81,7 +82,7 @@ const InfinitySwapInner = () => {
           </Flex>
         )}
 
-        {!isDesktop && (
+        {!isDesktop && !SWAP_CHART_UNSUPPORTED_CHAINS.includes(chainId) && (
           <BottomDrawer
             content={
               <ChartWithPriceHeader

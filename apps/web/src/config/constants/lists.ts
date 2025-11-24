@@ -7,6 +7,7 @@ const COINGECKO_ARB = 'https://tokens.coingecko.com/arbitrum-one/all.json'
 const COINGECKO_BASE = 'https://tokens.coingecko.com/base/all.json'
 const COINGECKO_LINEA = 'https://tokens.coingecko.com/linea/all.json'
 const PANCAKE_ONDO_RWA_LIST = 'https://tokens.pancakeswap.finance/ondo-rwa-tokens.json'
+export const RWA_URLS = [PANCAKE_ONDO_RWA_LIST]
 
 export const PANCAKE_ETH_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-eth-default.json'
 export const PANCAKE_ZKSYNC_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-zksync-default.json'
@@ -15,8 +16,7 @@ export const PANCAKE_LINEA_DEFAULT = 'https://tokens.pancakeswap.finance/pancake
 export const PANCAKE_BASE_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-base-default.json'
 export const PANCAKE_OPBNB_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-opbnb-default.json'
 export const PANCAKE_SOLANA_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-solana-default.json'
-export const RWA_URLS = [PANCAKE_ONDO_RWA_LIST]
-
+export const PANCAKE_MONAD_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-monad-default.json'
 export const PANCAKE_MONAD_TESTNET_DEFAULT = 'https://tokens.pancakeswap.finance/pancakeswap-monad-testnet-default.json'
 
 const COINGECKO_ETH = 'https://tokens.coingecko.com/uniswap/all.json'
@@ -34,6 +34,7 @@ const OP_SUPER_CHAIN_URL =
   'https://raw.githubusercontent.com/ethereum-optimism/ethereum-optimism.github.io/master/optimism.tokenlist.json'
 const BASE_URLS = [PANCAKE_BASE_DEFAULT, OP_SUPER_CHAIN_URL, COINGECKO_BASE]
 const OPBNB_URLS = [PANCAKE_OPBNB_DEFAULT]
+const MONAD_URLS = [PANCAKE_MONAD_DEFAULT]
 const MONAD_TESTNET_URLS = [PANCAKE_MONAD_TESTNET_DEFAULT]
 
 // List of official tokens list
@@ -45,6 +46,7 @@ export const OFFICIAL_LISTS = [
   PANCAKE_LINEA_DEFAULT,
   PANCAKE_BASE_DEFAULT,
   PANCAKE_OPBNB_DEFAULT,
+  PANCAKE_MONAD_DEFAULT,
 ]
 
 export const UNSUPPORTED_LIST_URLS: string[] = []
@@ -62,6 +64,7 @@ export const DEFAULT_LIST_OF_LISTS: string[] = [
   ...UNSUPPORTED_LIST_URLS, // need to load unsupported tokens as well
   ...WARNING_LIST_URLS,
   ...OPBNB_URLS,
+  ...MONAD_URLS,
   ...MONAD_TESTNET_URLS,
   ...RWA_URLS,
 ]
@@ -80,6 +83,7 @@ export const DEFAULT_ACTIVE_LIST_URLS: string[] = [
   COINGECKO_ETH,
   COINGECKO_ARB,
   COINGECKO_BASE,
+  PANCAKE_MONAD_DEFAULT,
   PANCAKE_MONAD_TESTNET_DEFAULT,
   COINGECKO_LINEA,
   ...RWA_URLS,
@@ -93,5 +97,6 @@ export const MULTI_CHAIN_LIST_URLS: { [chainId: number]: string[] } = {
   [ChainId.LINEA]: LINEA_URLS,
   [ChainId.BASE]: BASE_URLS,
   [ChainId.OPBNB]: OPBNB_URLS,
+  [ChainId.MONAD_MAINNET]: MONAD_URLS,
   [ChainId.MONAD_TESTNET]: MONAD_TESTNET_URLS,
 }

@@ -10,6 +10,8 @@ import { useCallback, useMemo } from 'react'
 import { logGTMWalletConnectedEvent } from 'utils/customGTMEventTracking'
 import { useConnect } from 'wagmi'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useWalletFilterEffect } from '@pancakeswap/ui-wallets/src/state/hooks'
 
 const WalletModalManager: React.FC<{ isOpen: boolean; onDismiss?: () => void }> = ({ isOpen, onDismiss }) => {
   const { login } = useAuth()
@@ -36,10 +38,13 @@ const WalletModalManager: React.FC<{ isOpen: boolean; onDismiss?: () => void }> 
     return createQrCode(chainId || ChainId.BSC, connectAsync)
   }, [chainId, connectAsync])
 
+  useWalletFilterEffect({ evmAddress: evmAccount ?? undefined, solanaAddress: solanaAccount ?? undefined })
+
   return (
     <MultichainWalletModal
       evmAddress={evmAccount}
       solanaAddress={solanaAccount ?? undefined}
+      chainId={chainId}
       docText={t('Learn How to Connect')}
       docLink={docLink}
       isOpen={isOpen}

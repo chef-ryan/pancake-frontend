@@ -1,8 +1,7 @@
 import { Protocol } from '@pancakeswap/farms'
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency, CurrencyAmount, Percent } from '@pancakeswap/sdk'
-import { useStablecoinPrice } from 'hooks/useStablecoinPrice'
-import { Price } from '@pancakeswap/swap-sdk-core'
+import { Price, UnifiedCurrency } from '@pancakeswap/swap-sdk-core'
 import {
   AutoColumn,
   Box,
@@ -24,6 +23,7 @@ import {
   useModal,
   useTooltip,
 } from '@pancakeswap/uikit'
+import { formatPrice } from '@pancakeswap/utils/formatFractions'
 import { useIsExpertMode, useUserSlippage } from '@pancakeswap/utils/user'
 import { FeeAmount, NonfungiblePositionManager, Pool } from '@pancakeswap/v3-sdk'
 import {
@@ -45,7 +45,7 @@ import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { useV3NFTPositionManagerContract } from 'hooks/useContract'
 import useNativeCurrency from 'hooks/useNativeCurrency'
-import { usePoolMarketPriceSlippage } from 'hooks/usePoolMarketPriceSlippage'
+import { usePoolMarketPrice, usePoolMarketPriceSlippage } from 'hooks/usePoolMarketPriceSlippage'
 import { useTransactionDeadline } from 'hooks/useTransactionDeadline'
 import useV3DerivedInfo from 'hooks/v3/useV3DerivedInfo'
 import { tryParsePrice } from 'hooks/v3/utils'
@@ -270,20 +270,11 @@ export default function V3FormView({
 
   const onAddLiquidityCallback = useV3FormAddLiquidityCallback()
 
-  // Current token prices
-  const baseCurrencyCurrentPrice = useStablecoinPrice(baseCurrency)
-  const quoteCurrencyCurrentPrice = useStablecoinPrice(quoteCurrency)
-  const currentPrice = useMemo(() => {
-    if (
-      !baseCurrencyCurrentPrice ||
-      !quoteCurrencyCurrentPrice ||
-      !baseCurrency ||
-      !quoteCurrency ||
-      quoteCurrencyCurrentPrice.numerator === 0n
-    )
-      return undefined
-    return baseCurrencyCurrentPrice.divide(quoteCurrencyCurrentPrice)
-  }, [baseCurrency, quoteCurrency, baseCurrencyCurrentPrice, quoteCurrencyCurrentPrice])
+  // Current token prices - using market price from USD prices
+  const [, , currentPrice] = usePoolMarketPrice(
+    (baseCurrency as UnifiedCurrency | null) ?? undefined,
+    (quoteCurrency as UnifiedCurrency | null) ?? undefined,
+  )
 
   // txn values
   const [deadline] = useTransactionDeadline() // custom from users settings
@@ -553,7 +544,7 @@ export default function V3FormView({
     if (!pool) return undefined
     return new Price(pool.token0, pool.token1, 2n ** 192n, pool.sqrtRatioX96 * pool.sqrtRatioX96)
   }, [pool])
-  const [marketPrice, marketPriceSlippage] = usePoolMarketPriceSlippage(pool?.token0, pool?.token1, poolCurrentPrice)
+  const [, marketPriceSlippage] = usePoolMarketPriceSlippage(pool?.token0, pool?.token1, poolCurrentPrice)
   const displayMarketPriceSlippageWarning = useMemo(() => {
     if (marketPriceSlippage === undefined) return false
     const slippage = new BigNumber(marketPriceSlippage.toFixed(0)).abs()
@@ -726,7 +717,11 @@ export default function V3FormView({
   })
 
   const handleUseCurrentPrice = useCallback(() => {
-    onStartPriceInput(currentPrice?.toSignificant(18) ?? '')
+    if (currentPrice) {
+      const formattedPrice = formatPrice(currentPrice)
+      if (!formattedPrice) return
+      onStartPriceInput(formattedPrice)
+    }
   }, [currentPrice, onStartPriceInput])
 
   const {
@@ -734,7 +729,6 @@ export default function V3FormView({
     tooltipVisible: currentPriceTooltipVisible,
     targetRef: currentPriceTargetRef,
   } = useTooltip(t('The price is an estimation of the current market price. Please verify before using it.'), {
-    placement: 'bottom',
     avoidToStopPropagation: true,
   })
 

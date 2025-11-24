@@ -1,4 +1,5 @@
 import { useCurrencyUsdPrice } from 'hooks/useCurrencyUsdPrice'
+import { useStablecoinPrice } from 'hooks/useStablecoinPrice'
 import { useMemo } from 'react'
 import { PoolInfo } from 'state/farmsV4/state/type'
 import styled from 'styled-components'
@@ -29,8 +30,11 @@ interface PoolTokensBarProps {
 export const PoolTokensBar: React.FC<PoolTokensBarProps> = ({ poolInfo }) => {
   const { token0, token1 } = poolInfo ?? {}
 
-  const { data: token0UsdPrice, isLoading: token0UsdPriceLoading } = useCurrencyUsdPrice(token0)
-  const { data: token1UsdPrice, isLoading: token1UsdPriceLoading } = useCurrencyUsdPrice(token1)
+  const price0 = useStablecoinPrice(token0)
+  const price1 = useStablecoinPrice(token1)
+
+  const token0UsdPrice = price0 ? Number(price0.toSignificant()) : 0
+  const token1UsdPrice = price1 ? Number(price1.toSignificant()) : 0
 
   const token0UsdValue = useMemo(() => {
     if (!token0UsdPrice || !poolInfo) return 0
@@ -42,7 +46,7 @@ export const PoolTokensBar: React.FC<PoolTokensBarProps> = ({ poolInfo }) => {
     return token1UsdPrice * Number(poolInfo.tvlToken1)
   }, [token1UsdPrice, poolInfo])
 
-  if (!poolInfo || token0UsdPriceLoading || token1UsdPriceLoading || token0UsdValue === 0 || token1UsdValue === 0) {
+  if (!poolInfo || token0UsdValue === 0 || token1UsdValue === 0) {
     return null
   }
 

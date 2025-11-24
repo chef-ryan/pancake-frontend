@@ -131,6 +131,14 @@ export const BUSD = {
     'Binance USD',
     'https://www.paxos.com/busd/',
   ),
+  [ChainId.MONAD_MAINNET]: new ERC20Token(
+    ChainId.MONAD_MAINNET,
+    '0xcf27F781841484d5CF7e155b44954D7224caF1dD',
+    18,
+    'BUSD',
+    'Binance USD',
+    'https://www.paxos.com/busd/',
+  ),
   [ChainId.MONAD_TESTNET]: new ERC20Token(
     ChainId.MONAD_TESTNET,
     '0xcf27F781841484d5CF7e155b44954D7224caF1dD',
@@ -208,6 +216,7 @@ export const CAKE = {
     'PancakeSwap Token',
     'https://pancakeswap.finance/',
   ),
+  [ChainId.MONAD_MAINNET]: undefined as unknown as ERC20Token,
   [ChainId.BASE_TESTNET]: new ERC20Token(
     ChainId.BASE_TESTNET,
     '0x052a99849Ef2e13a5CB28275862991671D4b6fF5',
@@ -352,6 +361,14 @@ export const USDC = {
     'USD Coin',
     'https://www.centre.io/usdc',
   ),
+  [ChainId.MONAD_MAINNET]: new ERC20Token(
+    ChainId.MONAD_MAINNET,
+    '0x754704Bc059F8C67012fEd69BC8A327a5aafb603',
+    6,
+    'USDC',
+    'USDC',
+    'https://www.centre.io/usdc',
+  ),
   [ChainId.MONAD_TESTNET]: new ERC20Token(
     ChainId.MONAD_TESTNET,
     '0xf817257fed379853cDe0fa4F97AB987181B1E5Ea',
@@ -413,6 +430,14 @@ export const USDT = {
     'USDT',
     'Tether USDT',
     'https://tether.to/',
+  ),
+  [ChainId.MONAD_MAINNET]: new ERC20Token(
+    ChainId.MONAD_MAINNET,
+    '0xe7cd86e13AC4309349F30B3435a9d337750fC82D',
+    6,
+    'USDT0',
+    'USDT0',
+    'https://usdt0.to/',
   ),
   [ChainId.MONAD_TESTNET]: new ERC20Token(
     ChainId.MONAD_TESTNET,
@@ -537,5 +562,6 @@ export const STABLE_COIN = {
   [ChainId.SEPOLIA]: USDC[ChainId.SEPOLIA],
   [ChainId.ARBITRUM_SEPOLIA]: USDC[ChainId.ARBITRUM_SEPOLIA],
   [ChainId.BASE_SEPOLIA]: USDC[ChainId.BASE_SEPOLIA],
+  [ChainId.MONAD_MAINNET]: USDC[ChainId.MONAD_MAINNET],
   [ChainId.MONAD_TESTNET]: USDC[ChainId.MONAD_TESTNET],
 } satisfies Record<ChainId, ERC20Token>

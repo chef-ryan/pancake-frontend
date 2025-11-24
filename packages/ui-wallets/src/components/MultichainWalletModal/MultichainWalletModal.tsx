@@ -33,6 +33,7 @@ export const MultichainWalletModal: React.FC<MultichainWalletModalProps> = (prop
     solanaAddress,
     wallets,
     topWallets,
+    chainId,
     evmLogin,
     createEvmQrCode,
     onWalletConnectCallBack,
@@ -62,8 +63,8 @@ export const MultichainWalletModal: React.FC<MultichainWalletModalProps> = (prop
     [wallets, walletFilter, createEvmQrCode, solanaWallets],
   )
   const topWallets_ = useMemo(
-    () => topWallets ?? getTopWalletsConfig(wallets_, walletFilter),
-    [topWallets, wallets_, walletFilter],
+    () => topWallets ?? getTopWalletsConfig(wallets_, walletFilter, chainId),
+    [topWallets, wallets_, walletFilter, chainId],
   )
 
   const handleDismiss = useCallback(() => {

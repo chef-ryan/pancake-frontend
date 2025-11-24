@@ -50,6 +50,7 @@ import { useV3CakeEarningsByPool } from 'views/universalFarms/hooks/useCakeEarni
 import { useV3PositionApr } from 'views/universalFarms/hooks/usePositionAPR'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
 import { useAccount } from 'wagmi'
+import { getMasterChefV3Address } from 'utils/addressHelpers'
 import { ActionButton, PrimaryOutlineButton } from '../styles'
 import { V3EarningsCell } from './PoolEarningsCells'
 import { PositionsTable } from './PositionsTable'
@@ -148,9 +149,11 @@ const V3Actions = ({
 
           <ActionButton
             as="a"
-            href={`/add/${currencyId(poolInfo.token0.wrapped)}/${currencyId(
+            href={`/increase/${currencyId(poolInfo.token0.wrapped)}/${currencyId(
               poolInfo.token1.wrapped,
-            )}/${poolInfo.feeTier.toString()}?chain=${CHAIN_QUERY_NAME[poolInfo.chainId]}&${[PERSIST_CHAIN_KEY]}=1`}
+            )}/${poolInfo.feeTier.toString()}/${position.tokenId.toString()}?chain=${
+              CHAIN_QUERY_NAME[poolInfo.chainId]
+            }&${[PERSIST_CHAIN_KEY]}=1`}
             disabled={removed}
             isIcon
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
@@ -532,6 +535,10 @@ export const V3PositionsTable: React.FC<V3PositionsTableProps> = ({ poolInfo }) 
   const { address: account } = useAccount()
   const chainId = useChainIdByQuery()
 
+  // check if masterchef v3 is deployed on this chain
+  const masterchefV3Address = getMasterChefV3Address(chainId)
+  const isMasterChefV3Available = masterchefV3Address && masterchefV3Address !== '0x'
+
   const [flipCurrentPrice] = useFlipCurrentPrice()
 
   const [, pool] = usePoolByChainId(poolInfo.token0.wrapped, poolInfo.token1.wrapped, poolInfo.feeTier)
@@ -732,7 +739,10 @@ export const V3PositionsTable: React.FC<V3PositionsTableProps> = ({ poolInfo }) 
           setFilter(filter === PositionFilter.Inactive ? PositionFilter.All : PositionFilter.Inactive)
         }
         harvestAllButton={
-          <PrimaryOutlineButton onClick={handleHarvestAll} disabled={loading || isSwitchingNetwork}>
+          <PrimaryOutlineButton
+            onClick={handleHarvestAll}
+            disabled={loading || isSwitchingNetwork || !isMasterChefV3Available}
+          >
             {loading ? t('Harvesting...') : t('Harvest All')}
           </PrimaryOutlineButton>
         }

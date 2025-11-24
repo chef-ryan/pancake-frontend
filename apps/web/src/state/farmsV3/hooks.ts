@@ -315,8 +315,12 @@ const usePositionsByUserFarms = (
   const { address: account } = useAccount()
   const positionManager = useV3NFTPositionManagerContract()
   const masterchefV3 = useMasterchefV3()
+  const isMasterChefV3Available = Boolean(masterchefV3?.address && masterchefV3?.address !== '0x')
 
-  const { tokenIds: stakedTokenIds } = useV3TokenIdsByAccount(masterchefV3?.address, account)
+  const { tokenIds: stakedTokenIds } = useV3TokenIdsByAccount(
+    isMasterChefV3Available ? masterchefV3?.address : undefined,
+    account,
+  )
 
   const stakedIds = useMemo(() => stakedTokenIds || [], [stakedTokenIds])
 

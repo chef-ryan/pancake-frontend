@@ -1,7 +1,7 @@
 import { ChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { useMemo } from 'react'
-import { calculateGasMargin } from 'utils'
+import { calculateGasMargin, getGasMarginByChain } from 'utils'
 import { isUserRejected } from 'utils/sentry'
 import { transactionErrorToUserReadableMessage } from 'utils/transactionErrorToUserReadableMessage'
 import {
@@ -136,7 +136,7 @@ export default function useSendSwapTransaction(
         } else {
           call.gas =
             'gasEstimate' in bestCallOption && bestCallOption.gasEstimate
-              ? calculateGasMargin(bestCallOption.gasEstimate, 2000n)
+              ? calculateGasMargin(bestCallOption.gasEstimate, getGasMarginByChain(chainId))
               : undefined
         }
 

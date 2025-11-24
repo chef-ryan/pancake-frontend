@@ -7,7 +7,17 @@ import { mapValues } from '@pancakeswap/utils/fns'
 import { BSC_TOKEN_WHITELIST, ETH_TOKEN_BLACKLIST, ETH_TOKEN_WHITELIST, TOKEN_BLACKLIST } from 'config/constants/info'
 import { arbitrum, base, bsc, bscTestnet, linea, mainnet, opBNB, zkSync } from 'wagmi/chains'
 
-export type MultiChainName = 'BSC_TESTNET' | 'BSC' | 'ETH' | 'ZKSYNC' | 'ARB' | 'LINEA' | 'BASE' | 'OPBNB' | 'SOLANA'
+export type MultiChainName =
+  | 'BSC_TESTNET'
+  | 'BSC'
+  | 'ETH'
+  | 'ZKSYNC'
+  | 'ARB'
+  | 'LINEA'
+  | 'BASE'
+  | 'OPBNB'
+  | 'SOLANA'
+  | 'MONAD'
 export type MultiChainNameExtend = MultiChainName | 'BSC_TESTNET' | 'ZKSYNC_TESTNET'
 
 export const multiChainName: Record<number | string, MultiChainNameExtend> = {
@@ -19,6 +29,7 @@ export const multiChainName: Record<number | string, MultiChainNameExtend> = {
   [ChainId.BASE]: 'BASE',
   [ChainId.OPBNB]: 'OPBNB',
   [ChainId.ARBITRUM_ONE]: 'ARB',
+  [ChainId.MONAD_MAINNET]: 'MONAD',
 }
 
 export const multiChainShortName: Record<number, string> = {}
@@ -33,6 +44,7 @@ export const multiChainQueryMainToken: Record<MultiChainName, string> = {
   BASE: 'ETH',
   OPBNB: 'ETH',
   SOLANA: 'SOL',
+  MONAD: 'MON',
 }
 
 export const multiChainId: Record<MultiChainNameExtend, UnifiedChainId> = {
@@ -46,6 +58,7 @@ export const multiChainId: Record<MultiChainNameExtend, UnifiedChainId> = {
   SOLANA: NonEVMChainId.SOLANA,
   BSC_TESTNET: ChainId.BSC_TESTNET,
   ZKSYNC_TESTNET: ChainId.ZKSYNC_TESTNET,
+  MONAD: ChainId.MONAD_MAINNET,
 }
 
 export const multiChainPaths = {
@@ -57,6 +70,7 @@ export const multiChainPaths = {
   [ChainId.LINEA]: '/linea',
   [ChainId.BASE]: '/base',
   [ChainId.OPBNB]: '/opbnb',
+  [ChainId.MONAD_MAINNET]: '/monad',
 }
 
 export const multiChainQueryStableClient = STABLE_SUPPORTED_CHAIN_IDS.reduce((acc, chainId) => {
@@ -75,6 +89,7 @@ export const infoChainNameToExplorerChainName = {
   LINEA: 'linea',
   BASE: 'base',
   OPBNB: 'opbnb',
+  MONAD: 'monad',
 } as const
 
 export const STABLESWAP_SUBGRAPHS_START_BLOCK = {
@@ -91,6 +106,7 @@ export const multiChainScan: Record<MultiChainName, string> = {
   BASE: base.blockExplorers.default.name,
   OPBNB: opBNB.blockExplorers.default.name,
   SOLANA: 'Solscan',
+  MONAD: 'MonVision',
 }
 
 /** Override Explorer Names if default for chain is "Etherscan" */
@@ -112,6 +128,7 @@ export const multiChainTokenBlackList: Record<MultiChainName, string[]> = mapVal
     OPBNB: ['0x'],
     BSC_TESTNET: ['0x'],
     SOLANA: [],
+    MONAD: ['0x'],
   },
   (val) => val.map((address) => address.toLowerCase()),
 )
@@ -127,6 +144,7 @@ export const multiChainTokenWhiteList: Record<MultiChainName, string[]> = mapVal
     OPBNB: [],
     BSC_TESTNET: [],
     SOLANA: [],
+    MONAD: [],
   },
   (val) => val.map((address) => address.toLowerCase()),
 )

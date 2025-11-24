@@ -26,6 +26,12 @@ export const Chains: Chain[] = [
   },
   { id: ChainId.BASE, name: chainNames[ChainId.BASE], fullName: chainFullNames[ChainId.BASE], isEVM: true },
   {
+    id: ChainId.MONAD_MAINNET,
+    name: chainNames[ChainId.MONAD_MAINNET],
+    fullName: chainFullNames[ChainId.MONAD_MAINNET],
+    isEVM: true,
+  },
+  {
     id: ChainId.ARBITRUM_ONE,
     name: chainNames[ChainId.ARBITRUM_ONE],
     fullName: chainFullNames[ChainId.ARBITRUM_ONE],

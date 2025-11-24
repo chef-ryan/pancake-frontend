@@ -332,8 +332,9 @@ export const LiquidityView = () => {
 
   const positionManager = useV3NFTPositionManagerContract()
   const masterchefV3 = useMasterchefV3()
+  const isMasterChefV3Available = Boolean(masterchefV3?.address && masterchefV3?.address !== '0x')
   const { tokenIds: stakedTokenIds, loading: tokenIdsInMCv3Loading } = useV3TokenIdsByAccount(
-    masterchefV3?.address,
+    isMasterChefV3Available ? masterchefV3?.address : undefined,
     account,
   )
 
@@ -347,8 +348,12 @@ export const LiquidityView = () => {
   }, [])
 
   const collect = useCallback(() => {
+    // Skip MasterChef V3 loading check if MasterChef V3 is not deployed on this chain
+    const masterChefV3Address = masterchefV3?.address
+    const isMasterChefV3Available = masterChefV3Address && masterChefV3Address !== '0x'
+
     if (
-      tokenIdsInMCv3Loading ||
+      (isMasterChefV3Available && tokenIdsInMCv3Loading) ||
       !currency0ForFeeCollectionPurposes ||
       !currency1ForFeeCollectionPurposes ||
       !chainId ||
@@ -413,6 +418,7 @@ export const LiquidityView = () => {
         console.error(error)
       })
   }, [
+    masterchefV3,
     tokenIdsInMCv3Loading,
     currency0ForFeeCollectionPurposes,
     currency1ForFeeCollectionPurposes,
