@@ -439,9 +439,7 @@ const Input = ({
       loading={loading}
       className="token-amount-input"
       value={value}
-      onUserInput={(val) => {
-        onChange(val)
-      }}
+      onUserInput={onChange}
     />
   )
 }

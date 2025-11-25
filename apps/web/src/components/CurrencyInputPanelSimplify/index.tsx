@@ -200,6 +200,11 @@ interface CurrencyInputPanelProps {
   showNative?: boolean
   maxDecimals?: number
 }
+
+/**
+ * `onUserInput` should be memoized (e.g., with `useCallback`) to avoid
+ * unnecessary re-renders and ensure consistent input behavior.
+ */
 const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   defaultValue,
   onUserInput,

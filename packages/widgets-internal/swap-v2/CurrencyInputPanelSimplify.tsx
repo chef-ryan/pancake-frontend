@@ -80,9 +80,7 @@ export function CurrencyInputPanelSimplify({
               value={value}
               onBlur={onInputBlur}
               onFocus={onInputFocus}
-              onUserInput={(val) => {
-                onUserInput(val);
-              }}
+              onUserInput={onUserInput}
               fontSize={inputFontSize}
               padding={bottom ? "0 0 16px" : undefined}
               maxDecimals={maxDecimals}
