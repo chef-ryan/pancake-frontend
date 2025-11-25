@@ -92,7 +92,7 @@ export const useBatchSwapTransaction = ({
       } catch (error) {
         console.warn('Error sending batched transaction:', error)
         if (userRejectedError(error)) {
-          showError('Transaction rejected')
+          showError(t('Transaction rejected'))
         } else if (!eip5792UserRejectUpgradeError(error)) {
           const errorMsg = typeof error === 'string' ? error : (error as any)?.message
           showError(errorMsg)

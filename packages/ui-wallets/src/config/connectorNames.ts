@@ -8,8 +8,8 @@ import {
   PhantomWalletName,
   SafePalWalletName,
   SolflareWalletName,
-  TokenPocketWalletName,
   TrustWalletName,
+  TokenPocketWalletName,
   WalletConnectWalletName,
 } from '@solana/wallet-adapter-wallets'
 

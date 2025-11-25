@@ -97,9 +97,6 @@ export const InfinitySwapForm = memo(() => {
           tradeLoading={!tradeLoaded}
           inputAmount={bestOrder?.trade?.inputAmount}
           outputAmount={bestOrder?.trade?.outputAmount}
-          swapCommitButton={
-            <CommitButton order={bestOrder} tradeLoaded={tradeLoaded} tradeError={tradeError} {...commitHooks} />
-          }
           isUserInsufficientBalance={isUserInsufficientBalance}
         />
       </SwapUIV2.SwapTabAndInputPanelWrapper>

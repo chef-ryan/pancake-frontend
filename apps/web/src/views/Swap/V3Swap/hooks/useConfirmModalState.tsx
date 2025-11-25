@@ -345,7 +345,7 @@ const useConfirmActions = (
           setConfirmState(nextState ?? ConfirmModalState.PENDING_CONFIRMATION)
         } catch (error) {
           if (userRejectedError(error)) {
-            showError('Transaction rejected')
+            showError(t('Transaction rejected'))
           } else {
             showError(typeof error === 'string' ? error : (error as any)?.message)
           }
@@ -362,6 +362,7 @@ const useConfirmActions = (
     signPermit2,
     setPermit2Signature,
     order,
+    t,
     getPermitCalldata,
   ])
 
@@ -386,7 +387,7 @@ const useConfirmActions = (
         } catch (error) {
           console.error('wrap error', error)
           if (userRejectedError(error)) {
-            showError('Transaction rejected')
+            showError(t('Transaction rejected'))
           } else {
             showError(typeof error === 'string' ? error : (error as any)?.message)
           }
@@ -394,7 +395,7 @@ const useConfirmActions = (
       },
       showIndicator: true,
     }
-  }, [amountToApprove, nativeWrap, retryWaitForTransaction, showError, txHash, wrappedBalance?.quotient])
+  }, [amountToApprove, nativeWrap, retryWaitForTransaction, showError, t, txHash, wrappedBalance?.quotient])
 
   const approveStep = useMemo(() => {
     return {
@@ -799,7 +800,7 @@ const useConfirmActions = (
         } catch (error: any) {
           console.error('swap error', error)
           if (userRejectedError(error)) {
-            showError('Transaction rejected')
+            showError(t('Transaction rejected'))
           } else {
             showError(typeof error === 'string' ? error : (error as any)?.message)
           }
@@ -808,7 +809,7 @@ const useConfirmActions = (
       showIndicator: false,
       getCalldata: () => swapCalls,
     }
-  }, [swapCalls, resetState, retryWaitForTransaction, safeTxHashTransformer, showError, swap, swapError])
+  }, [swapCalls, resetState, retryWaitForTransaction, safeTxHashTransformer, t, showError, swap, swapError])
 
   const xSwapStep = useMemo(() => {
     return {
@@ -886,7 +887,7 @@ const useConfirmActions = (
         } catch (error: any) {
           console.error('swap error', error)
           if (userRejectedError(error)) {
-            showError('Transaction rejected')
+            showError(t('Transaction rejected'))
           } else {
             const errorMsg = typeof error === 'string' ? error : (error as any)?.message
             showError(errorMsg)

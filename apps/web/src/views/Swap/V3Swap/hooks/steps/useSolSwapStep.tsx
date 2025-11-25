@@ -58,9 +58,12 @@ export const useSolSwapStep = (context: ConfirmStepContext) => {
         // Get the transaction from the order data
         const { transaction, requestId } = order.trade
         if (!transaction) {
-          showError('No transaction data found for Solana swap')
+          showError(t('No transaction data found for Solana swap'))
           return
         }
+
+        setTxHash(undefined)
+        setConfirmState(ConfirmModalState.PENDING_CONFIRMATION)
 
         try {
           const based64tx = Buffer.from(transaction, 'base64')
@@ -73,7 +76,7 @@ export const useSolSwapStep = (context: ConfirmStepContext) => {
 
           if (response.status === 'Failed') {
             const error = new UltraSwapError(response.error, UltraSwapErrorType.FAILED, response.signature)
-            showError(error.message || response.error || 'Solana swap failed')
+            showError(error.message || response.error || t('Solana swap failed'))
             return
           }
 
@@ -104,13 +107,13 @@ export const useSolSwapStep = (context: ConfirmStepContext) => {
         } catch (error: any) {
           console.error('Solana swap error', error)
           if (error?.message?.includes('rejected')) {
-            showError('Transaction rejected by user')
+            showError(t('Transaction rejected by user'))
           } else if (error?.message?.includes('insufficient')) {
-            showError('Insufficient balance for transaction')
+            showError(t('Insufficient balance for transaction'))
           } else if (error?.message?.includes('wallet')) {
-            showError('Please connect your Solana wallet first')
+            showError(t('Please connect your Solana wallet first'))
           } else {
-            showError(typeof error === 'string' ? error : error?.message || 'Solana swap failed')
+            showError(typeof error === 'string' ? error : error?.message || t('Solana swap failed'))
           }
         }
       },

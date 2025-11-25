@@ -14,7 +14,7 @@ import { useUnifiedCurrencyBalance } from 'hooks/useUnifiedCurrencyBalance'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
-import { ReactNode, Suspense, useCallback, useMemo } from 'react'
+import { Suspense, useCallback, useMemo } from 'react'
 import { useAtomValue } from 'jotai'
 import styled from 'styled-components'
 import { Field } from 'state/swap/actions'
@@ -38,8 +38,6 @@ interface Props {
   inputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
   outputAmount?: UnifiedCurrencyAmount<UnifiedCurrency>
   tradeLoading?: boolean
-  pricingAndSlippage?: ReactNode
-  swapCommitButton?: ReactNode
   isUserInsufficientBalance?: boolean
 }
 
