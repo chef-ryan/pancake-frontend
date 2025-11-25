@@ -1,7 +1,7 @@
-import { ChainId, isSolana, NonEVMChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId } from '@pancakeswap/chains'
 import { Token } from '@pancakeswap/sdk'
 import memoize from 'lodash/memoize'
-import { safeGetAddress } from 'utils'
+import { safeGetUnifiedAddress } from 'utils'
 
 const mapping = {
   [ChainId.BSC]: 'smartchain',
@@ -16,7 +16,7 @@ const mapping = {
 const buildTrustWalletLogoURL = (address?: string, chainId?: number): string | null => {
   if (!address || !chainId || !mapping[chainId]) return null
 
-  const formattedAddress = isSolana(chainId) ? address : safeGetAddress(address)
+  const formattedAddress = safeGetUnifiedAddress(chainId, address)
 
   if (!formattedAddress) return null
 

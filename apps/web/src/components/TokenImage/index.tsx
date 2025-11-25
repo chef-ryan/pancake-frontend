@@ -1,4 +1,4 @@
-import { Currency, Token, UnifiedCurrency, UnifiedToken } from '@pancakeswap/sdk'
+import { Currency, UnifiedCurrency } from '@pancakeswap/sdk'
 import {
   ImageProps,
   TokenImage as UIKitTokenImage,
@@ -8,12 +8,7 @@ import {
 } from '@pancakeswap/uikit'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import { useMemo, forwardRef } from 'react'
-import {
-  getCurrencyLogoSrcs,
-  getImageUrlFromToken,
-  getImageUrlsFromToken,
-  tokenImageChainNameMapping,
-} from 'utils/tokenImages'
+import { getCurrencyLogoSrcs, tokenImageChainNameMapping } from 'utils/tokenImages'
 
 interface TokenPairImageProps extends Omit<UIKitTokenPairImageProps, 'primarySrc' | 'secondarySrc'> {
   primaryToken: UnifiedCurrency
@@ -32,8 +27,8 @@ export const TokenPairImage: React.FC<React.PropsWithChildren<TokenPairImageProp
   const chainLogo = withChainLogo ? getChainLogoUrlFromChainId(primaryToken.chainId) : undefined
   return (
     <UIKitTokenPairImage
-      primarySrc={getImageUrlFromToken(primaryToken)}
-      secondarySrc={getImageUrlFromToken(secondaryToken)}
+      primarySrc={getCurrencyLogoSrcs(primaryToken)[0]}
+      secondarySrc={getCurrencyLogoSrcs(secondaryToken)[0]}
       chainLogoSrc={chainLogo}
       {...props}
     />
@@ -46,8 +41,8 @@ export const TokenPairLogo = forwardRef<HTMLDivElement, React.PropsWithChildren<
       () => (withChainLogo ? [getChainLogoUrlFromChainId(primaryToken.chainId)] : []),
       [withChainLogo, primaryToken.chainId],
     )
-    const primarySrcs = getCurrencyLogoSrcs(primaryToken as Currency & { logoURI?: string | undefined })
-    const secondarySrcs = getCurrencyLogoSrcs(secondaryToken as Currency & { logoURI?: string | undefined })
+    const primarySrcs = getCurrencyLogoSrcs(primaryToken)
+    const secondarySrcs = getCurrencyLogoSrcs(secondaryToken)
     return (
       <UIKitTokenPairLogo
         ref={ref}
@@ -67,7 +62,7 @@ interface TokenImageProps extends ImageProps {
 }
 
 export const TokenImage: React.FC<React.PropsWithChildren<TokenImageProps>> = ({ token, ...props }) => {
-  return <UIKitTokenImage src={getImageUrlFromToken(token)} {...props} />
+  return <UIKitTokenImage src={getCurrencyLogoSrcs(token)[0]} {...props} />
 }
 
-export { getCurrencyLogoSrcs, getImageUrlFromToken, getImageUrlsFromToken, tokenImageChainNameMapping }
+export { getCurrencyLogoSrcs, tokenImageChainNameMapping }

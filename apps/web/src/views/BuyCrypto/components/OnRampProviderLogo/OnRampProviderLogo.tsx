@@ -1,7 +1,7 @@
 import type { Token } from '@pancakeswap/swap-sdk-core'
 import { Box, Image, Skeleton, TokenPairImage } from '@pancakeswap/uikit'
 import { FiatLogo } from 'components/Logo/CurrencyLogo'
-import { getImageUrlFromToken } from 'components/TokenImage'
+import { getCurrencyLogoSrcs } from 'components/TokenImage'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import { ONRAMP_PROVIDERS, PROVIDER_ICONS, isNativeBtc } from 'views/BuyCrypto/constants'
 import { OnRampIconCircleWrapper, OnRampIconContainer } from 'views/BuyCrypto/styles'
@@ -39,7 +39,7 @@ export const EvmLogo = ({ mode, currency, size = 24 }: { mode: string; currency:
           <TokenPairImage
             width={size}
             height={size}
-            primarySrc={getImageUrlFromToken(currency)}
+            primarySrc={getCurrencyLogoSrcs(currency)[0]}
             secondarySrc={currency ? `${ASSET_CDN}/web/chains/${currency.chainId}.png` : ''}
           />
         </Box>

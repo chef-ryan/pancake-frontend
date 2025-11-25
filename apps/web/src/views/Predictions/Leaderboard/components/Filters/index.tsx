@@ -3,7 +3,7 @@ import { useTranslation } from '@pancakeswap/localization'
 import { PredictionConfig, PredictionSupportedSymbol, targetChains } from '@pancakeswap/prediction'
 import { Box, Flex, OptionProps, Select, Text } from '@pancakeswap/uikit'
 import Container from 'components/Layout/Container'
-import { getImageUrlFromToken } from 'components/TokenImage'
+import { getCurrencyLogoSrcs } from 'components/TokenImage'
 import { ASSET_CDN } from 'config/constants/endpoints'
 import useLocalDispatch from 'contexts/LocalRedux/useLocalDispatch'
 import { useRouter } from 'next/router'
@@ -99,7 +99,7 @@ const Filters: React.FC<React.PropsWithChildren<FiltersProps>> = ({
       ? Object.values(predictionConfigs)?.map((i) => ({
           label: i?.predictionCurrency.symbol ?? '',
           value: i?.predictionCurrency.symbol ?? '',
-          imageUrl: getImageUrlFromToken(i?.predictionCurrency),
+          imageUrl: getCurrencyLogoSrcs(i?.predictionCurrency)[0] ?? '',
         }))
       : []
   }, [predictionConfigs])
