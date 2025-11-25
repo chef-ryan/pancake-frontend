@@ -53,29 +53,31 @@ export const useInfinityPositions = ({
     [positionEarningAmount],
   )
 
-  const filteredPositions = useMemo(
+  const sortedPositions = useMemo(
     () =>
-      allPositions.filter(
-        (pos) =>
-          infinityTypes.includes(pos.protocol) &&
-          selectedNetwork.includes(pos.chainId) &&
-          (!selectedTokens?.length ||
-            selectedTokens.some(
-              (token) =>
-                (pos.poolKey?.currency0 &&
-                  token === toTokenValue({ chainId: pos.chainId, address: pos.poolKey.currency0 })) ||
-                (pos.poolKey?.currency1 &&
-                  token === toTokenValue({ chainId: pos.chainId, address: pos.poolKey.currency1 })),
-            )) &&
-          (positionStatus === POSITION_STATUS.ALL || pos.status === positionStatus) &&
-          (!farmsOnly || pos.isStaked) &&
-          (isSelectAllFeatures ||
-            !features.length ||
-            (isInfinityProtocol(pos.protocol) &&
-              pos.poolKey?.hooks &&
-              intersection(features, getHookByAddress(pos.chainId, pos.poolKey.hooks)?.category).length)) &&
-          !isExhausted(pos),
-      ),
+      allPositions
+        .filter(
+          (pos) =>
+            infinityTypes.includes(pos.protocol) &&
+            selectedNetwork.includes(pos.chainId) &&
+            (!selectedTokens?.length ||
+              selectedTokens.some(
+                (token) =>
+                  (pos.poolKey?.currency0 &&
+                    token === toTokenValue({ chainId: pos.chainId, address: pos.poolKey.currency0 })) ||
+                  (pos.poolKey?.currency1 &&
+                    token === toTokenValue({ chainId: pos.chainId, address: pos.poolKey.currency1 })),
+              )) &&
+            (positionStatus === POSITION_STATUS.ALL || pos.status === positionStatus) &&
+            (!farmsOnly || pos.isStaked) &&
+            (isSelectAllFeatures ||
+              !features.length ||
+              (isInfinityProtocol(pos.protocol) &&
+                pos.poolKey?.hooks &&
+                intersection(features, getHookByAddress(pos.chainId, pos.poolKey.hooks)?.category).length)) &&
+            !isExhausted(pos),
+        )
+        .sort((a, b) => a.status - b.status),
     [
       allPositions,
       infinityTypes,
@@ -88,8 +90,6 @@ export const useInfinityPositions = ({
       isExhausted,
     ],
   )
-
-  const sortedPositions = useMemo(() => filteredPositions.sort((a, b) => a.status - b.status), [filteredPositions])
 
   return {
     infinityLoading: isLoading,

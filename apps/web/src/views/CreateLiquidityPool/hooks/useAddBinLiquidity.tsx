@@ -22,9 +22,9 @@ import { formatRawAmount } from 'utils/formatCurrencyAmount'
 import { isUserRejected } from 'utils/sentry'
 import { transactionErrorToUserReadableMessage } from 'utils/transactionErrorToUserReadableMessage'
 import { getViemClients } from 'utils/viem'
-import { type Address, Hash, type Hex, PublicClient, stringify } from 'viem'
+import { type Address, Hash, type Hex, stringify } from 'viem'
 import { ErrorModal } from 'views/AddLiquidityInfinity/components/ErrorModal'
-import { type UseSendTransactionReturnType, usePublicClient, useSendTransaction } from 'wagmi'
+import { type UseSendTransactionReturnType, useSendTransaction } from 'wagmi'
 
 export type AddBinLiquidityParams = {
   poolKey: PoolKey<'Bin'>
@@ -56,7 +56,6 @@ export const addBinLiquidity = async (
   onDone?: (response: Hash) => void,
   onError?: (error: any) => void,
   setAttemptingTx?: (attemptingTx: boolean) => void,
-  publicClient?: PublicClient,
 ) => {
   let isInitialized = true
   const viemPublicClient = getViemClients({ chainId })
@@ -148,7 +147,6 @@ export const useAddBinLiquidity = (
   onError?: (error: any) => void,
 ) => {
   const addTransaction = useTransactionAdder()
-  const publicClient = usePublicClient({ chainId })
   const [txHash, setTxHash] = useState<Address | null>(null)
   const [attemptingTx, setAttemptingTx] = useState<boolean>(false)
   const [txnErrorMessage, setTxnErrorMessage] = useState<string | undefined>()
@@ -219,7 +217,6 @@ export const useAddBinLiquidity = (
         onTxDone,
         onTxError,
         setAttemptingTx,
-        publicClient,
       )
     },
     [
@@ -238,7 +235,6 @@ export const useAddBinLiquidity = (
       waitForTransaction,
       addTransaction,
       onError,
-      publicClient,
     ],
   )
   return { addBinLiquidity: addLiquidity, txHash, attemptingTx, txnErrorMessage }

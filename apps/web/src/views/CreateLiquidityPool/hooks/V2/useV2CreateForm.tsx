@@ -9,7 +9,7 @@ import { usePairAdder } from 'state/user/hooks'
 import { useAddLiquidityV2FormState } from 'state/mint/reducer'
 import { useDerivedMintInfo, useMintActionHandlers } from 'state/mint/hooks'
 import { ReactNode, useCallback, useMemo, useState } from 'react'
-import { Currency, CurrencyAmount, isCurrencySorted, Pair, Price, Token } from '@pancakeswap/sdk'
+import { Currency, CurrencyAmount, Pair, Price, Token } from '@pancakeswap/sdk'
 import { isSolana } from '@pancakeswap/chains'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { CurrencyField as Field } from 'utils/types'
@@ -156,7 +156,7 @@ export const useV2CreateForm = () => {
       return undefined
     }
     return undefined
-  }, [noLiquidity, otherTypedValue, currencies, dependentField, independentAmount, baseCurrency, quoteCurrency, pair])
+  }, [dependentField, independentAmount, pair, evmBase, evmQuote])
 
   const parsedAmounts: { [field in Field]: CurrencyAmount<Currency> | undefined } = useMemo(
     () => ({
@@ -238,7 +238,7 @@ export const useV2CreateForm = () => {
       [independentField]: typedValue,
       [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
     }),
-    [dependentField, independentField, noLiquidity, otherTypedValue, parsedAmounts, typedValue],
+    [dependentField, independentField, , parsedAmounts, typedValue],
   )
 
   const pendingText = useMemo(
@@ -386,7 +386,26 @@ export const useV2CreateForm = () => {
           txHash: undefined,
         })
       })
-  }, [account, baseCurrency, chainId, deadline, expertMode, noLiquidity, onFieldAInput, onFieldBInput, parsedAmounts])
+  }, [
+    account,
+    baseCurrency,
+    chainId,
+    deadline,
+    noLiquidity,
+    parsedAmounts,
+    addPair,
+    addTransaction,
+    allowedSlippage,
+    currencies,
+    gasPrice,
+    pair,
+    quoteCurrency,
+    router,
+    routerContract,
+    t,
+    toastError,
+    walletClient,
+  ])
 
   // Buttons
   const buttons: ReactNode = useMemo(() => {
@@ -472,15 +491,17 @@ export const useV2CreateForm = () => {
     expertMode,
     isOneWeiAttack,
     isWrongNetwork,
-    noLiquidity,
     onAdd,
-    onFieldAInput,
-    onFieldBInput,
-    pair,
     revokeACallback,
     revokeBCallback,
     shouldShowApprovalGroup,
     t,
+    buttonDisabled,
+    errorText,
+    onOpenPreviewModal,
+    pairExplorerLink,
+    showFieldAApproval,
+    showFieldBApproval,
   ])
 
   const previewModal = useMemo(() => {
@@ -515,7 +536,6 @@ export const useV2CreateForm = () => {
     price,
     baseCurrency,
     quoteCurrency,
-    isCurrencySorted,
     t,
   ])
 

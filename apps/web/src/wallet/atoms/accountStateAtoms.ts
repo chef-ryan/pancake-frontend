@@ -1,4 +1,4 @@
-import { ChainId } from '@pancakeswap/chains'
+import { ChainId, isEvm } from '@pancakeswap/chains'
 import { atom } from 'jotai'
 import { getHashKey } from 'utils/hash'
 import { Connector } from 'wagmi'
@@ -7,6 +7,7 @@ import { getQueryChainId } from 'wallet/util/getQueryChainId'
 export interface AccountChainState {
   account?: `0x${string}`
   solanaAccount?: string | null
+  unifiedAccount?: string | null
   chainId: number
   isWrongNetwork: boolean
   isNotMatched: boolean
@@ -20,6 +21,7 @@ const _accountActiveChainAtom = atom<AccountChainState>({
   isWrongNetwork: false,
   status: null,
   solanaAccount: null,
+  unifiedAccount: null,
   isNotMatched: false,
 })
 
@@ -27,7 +29,10 @@ type Updater = AccountChainState | ((prev: AccountChainState) => AccountChainSta
 
 export const accountActiveChainAtom = atom(
   (get) => {
-    return get(_accountActiveChainAtom)
+    const state = get(_accountActiveChainAtom)
+    const { chainId, account, solanaAccount } = state
+    const unifiedAccount = isEvm(chainId) ? account : solanaAccount
+    return { ...state, unifiedAccount }
   },
   (_get, set, updater: Updater) => {
     const prev = _get(_accountActiveChainAtom)

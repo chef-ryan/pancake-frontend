@@ -46,36 +46,29 @@ export const useV3Positions = ({
     [v3Positions],
   )
   const pools = usePoolsWithMultiChains(v3PoolKeys)
-  const v3PositionsWithStatus = useMemo(
-    () =>
-      v3Positions.map((pos, idx) =>
-        Object.assign(pos, {
-          status: getPoolStatus(pos, pools[idx][1]),
-        }),
-      ),
-    [v3Positions, pools],
-  )
-
-  const filteredV3Positions = useMemo(
-    () =>
-      v3PositionsWithStatus.filter(
-        (pos) =>
-          selectedNetwork.includes(pos.chainId) &&
-          (!selectedTokens?.length ||
-            selectedTokens.some(
-              (token) =>
-                token === toTokenValue({ chainId: pos.chainId, address: pos.token0 }) ||
-                token === toTokenValue({ chainId: pos.chainId, address: pos.token1 }),
-            )) &&
-          (positionStatus === POSITION_STATUS.ALL || pos.status === positionStatus) &&
-          (!farmsOnly || pos.isStaked),
-      ),
-    [selectedNetwork, selectedTokens, v3PositionsWithStatus, positionStatus, farmsOnly],
-  )
 
   const sortedV3Positions = useMemo(
-    () => filteredV3Positions.sort((a, b) => a.status - b.status),
-    [filteredV3Positions],
+    () =>
+      v3Positions
+        .map((pos, idx) =>
+          Object.assign(pos, {
+            status: getPoolStatus(pos, pools[idx][1]),
+          }),
+        )
+        .filter(
+          (pos) =>
+            selectedNetwork.includes(pos.chainId) &&
+            (!selectedTokens?.length ||
+              selectedTokens.some(
+                (token) =>
+                  token === toTokenValue({ chainId: pos.chainId, address: pos.token0 }) ||
+                  token === toTokenValue({ chainId: pos.chainId, address: pos.token1 }),
+              )) &&
+            (positionStatus === POSITION_STATUS.ALL || pos.status === positionStatus) &&
+            (!farmsOnly || pos.isStaked),
+        )
+        .sort((a, b) => a.status - b.status),
+    [selectedNetwork, selectedTokens, v3Positions, pools, positionStatus, farmsOnly],
   )
 
   const { data: poolsLength } = useV3PoolsLength(allChainIds)

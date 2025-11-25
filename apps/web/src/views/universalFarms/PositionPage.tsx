@@ -238,12 +238,10 @@ export const PositionPage = () => {
       ...v2Positions,
       ...stablePositions,
     ] as UnifiedPositionDetail[]
-    return unifiedList
-      .filter((item) => {
-        const { protocol } = item
-        return selectedPoolTypes.includes(protocol)
-      })
-      .filter((item) => matchPositionSearch(item, search))
+    return unifiedList.filter((item) => {
+      const { protocol } = item
+      return selectedPoolTypes.includes(protocol) && matchPositionSearch(item, search)
+    })
   }, [infinityPositions, v3Positions, solanaPositions, v2Positions, stablePositions, selectedPoolTypes, search])
 
   const visibleList = useMemo(() => {
