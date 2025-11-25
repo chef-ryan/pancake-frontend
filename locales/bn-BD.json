@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "আমি কিভাবে SnBNB-কে BNB-এ রূপান্তর করব?",
   "Please visit": "অনুগ্রহ করে ভিজিট করুন",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "আপনার SnBNB আনস্টেক করতে। SnBNB-কে নির্বিঘ্নে BNB-এ রূপান্তর করার সুবিধার্থে PancakeSwap আমাদের লিকুইড স্টেকিং পৃষ্ঠায় একটি রূপান্তর চুক্তিকে সহায়তা করার জন্যও কাজ করছে।",
-  "Merchandise": "মার্চেন্ডাইস",
   "Invalid Pair": "অবৈধ পেয়ার",
   "Learn more how to fix": "কিভাবে ঠিক করবেন সে সম্পর্কে আরও জানুন ",
   "View pool on explorer": "এক্সপ্লোরারে পুল দেখুন",
@@ -2427,7 +2426,6 @@
   "Done": "সম্পন্ন",
   "My veCAKE": "আমার veCAKE",
   "Exact number: %numberWithFullDigits%": "সঠিক সংখ্যা: %numberWithFullDigits%",
-  "Fee saved": "ফি সাশ্রয় করা হয়েছে",
   "OK": "ঠিক আছে",
   "Select token for gas": "গ্যাস-এর জন্য টোকেন নির্বাচন করুন",
   "Select any ERC20 token to pay for the gas fee.": "গ্যাস ফি প্রদানের লক্ষ্যে যেকোনো ERC20 টোকেন নির্বাচন করুন।",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": "%address%-এ পাঠানো হয়েছে",
   "Couldn't retrieve token info. Please try again!": "টোকেন সম্পর্কিত তথ্য পুনরুদ্ধার করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন!",
   "Amount you are guaranteed to receive.": "আপনি নিশ্চিতভাবে যে পরিমাণ অর্থ পাবেন।",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "প্রধান প্রধান DEX ইন্টারফেস-এর ফি চার্জ করার তুলনায় PancakeSwap-এ ফি সাশ্রয় করা হয়েছে।",
   "The change in pool price caused by your swap.": "আপনার সোয়্যাপের কারণে পুল প্রাইসের পরিবর্তন।",
   "Estimated time to complete this transaction.": "এই লেনদেন সম্পন্ন করতে আনুমানিক সময়।",
   "Retry with lower input amount!": "কম পরিমাণ ইনপুট দিয়ে আবার চেষ্টা করুন!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "মোট পজিশনের মূল্য (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "পরবর্তীতে সহজে পজিশন যোগ করার জন্য, আপনি আপনার সমস্ত টোকেন সরিয়ে ফেলার পরেও আপনার পজিশনটি খোলা রাখতে পারেন।",
   "LP Fees": "LP ফি",
-  "Become the Top Predictor, Win $2,500": "শীর্ষ ভবিষ্যদ্বক্তা হন, $2,500 জিতুন",
   "One-click Solana Crosschain Swaps": "এক-ক্লিকে Solana ক্রসচেইন সোয়াপ",
   "Solana Crosschain": "Solana ক্রসচেইন",
   "Caution - GAIN Token": "সতর্কতা - GAIN টোকেন",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "মার্কেট বন্ধ।",
   "Market is temporarily paused.": "মার্কেট সাময়িকভাবে স্থগিত আছে।",
   "Specific asset is paused.": "নির্দিষ্ট অ্যাসেটটি স্থগিত আছে।",
-  "Market is temporarily unavailable.": "মার্কেট সাময়িকভাবে অনুপলব্ধ।"
+  "Market is temporarily unavailable.": "মার্কেট সাময়িকভাবে অনুপলব্ধ।",
+  "to automatically balance and provide Infinity liquidity in one click.": "এক ক্লিকে স্বয়ংক্রিয়ভাবে ব্যালেন্স করতে এবং Infinity লিকুইডিটি প্রদান করতে।",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "সতর্কতা: এই পুল একটি যাচাইবিহীন হুক ব্যবহার করে। এর সাথে ইন্টারঅ্যাক্ট করার আগে অনুগ্রহ করে আপনার নিজের গবেষণা পরিচালনা করুন, কারণ এমনটি করলে আপনার তহবিল হারিয়ে যেতে পারে যা পুনরুদ্ধার করা যাবে না।",
+  "Monad Now Live on PancakeSwap": "Monad এখন PancakeSwap-এ লাইভ",
+  "Trade Tokenized Assets with Zero Fees": "শূন্য ফিতে টোকেনাইজড অ্যাসেট ট্রেড করুন"
 }

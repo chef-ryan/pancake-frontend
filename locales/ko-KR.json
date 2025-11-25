@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "SnBNB를 ​​BNB로 어떻게 다시 전환하나요?",
   "Please visit": "방문하세요:",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "- SnBNB를 언스테이킹하세요. PancakeSwap은 SnBNB를 BNB로 원활하게 다시 전환하도록 리퀴드 스테이킹 페이지에서 전환 계약을 지원하기 위해 노력하고 있습니다.",
-  "Merchandise": "상품",
   "Invalid Pair": "유효하지 않은 쌍",
   "Learn more how to fix": "해결 방법에 대해 자세히 알아보기",
   "View pool on explorer": "탐색기에서 풀 보기",
@@ -2427,7 +2426,6 @@
   "Done": "완료",
   "My veCAKE": "내 veCAKE",
   "Exact number: %numberWithFullDigits%": "정확한 번호: %numberWithFullDigits%",
-  "Fee saved": "수수료 절감",
   "OK": "확인",
   "Select token for gas": "가스용 토큰 선택",
   "Select any ERC20 token to pay for the gas fee.": "가스 요금을 지불하려면 ERC20 토큰을 선택하세요.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " - %address%에 전송되었습니다: ",
   "Couldn't retrieve token info. Please try again!": "토큰 정보를 가져올 수 없습니다. 다시 시도해 주세요.",
   "Amount you are guaranteed to receive.": "수령 보장 금액입니다.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "주요 DEX에서 부과하는 인터페이스 수수료 대비 PancakeSwap에서 절감된 수수료.",
   "The change in pool price caused by your swap.": "스왑으로 인해 발생하는 풀 가격의 변화입니다.",
   "Estimated time to complete this transaction.": "이 트랜잭션을 완료하기까지 예상 시간입니다.",
   "Retry with lower input amount!": "입력 금액을 낮추고 다시 시도하세요!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "총 포지션 가치 (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "모든 토큰을 제거해도 포지션을 유지하여 다음에 원활하게 포지션을 추가할 수 있습니다.",
   "LP Fees": "LP 수수료",
-  "Become the Top Predictor, Win $2,500": "최고의 예측가가 되어 $2,500 상금을 획득하세요",
   "One-click Solana Crosschain Swaps": "원클릭 Solana 크로스체인 스왑",
   "Solana Crosschain": "Solana 크로스체인",
   "Caution - GAIN Token": "주의 - GAIN 토큰",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "시장이 마감되었습니다.",
   "Market is temporarily paused.": "시장이 일시적으로 중단되었습니다.",
   "Specific asset is paused.": "특정 자산의 거래가 일시 중단되었습니다.",
-  "Market is temporarily unavailable.": "시장을 일시적으로 이용할 수 없습니다."
+  "Market is temporarily unavailable.": "시장을 일시적으로 이용할 수 없습니다.",
+  "to automatically balance and provide Infinity liquidity in one click.": "클릭 한 번으로 자동으로 밸런스를 맞추고 Infinity 유동성을 제공합니다.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "주의: 이 풀은 검증되지 않은 훅을 사용합니다. 이 풀과 상호작용하기 전에 직접 조사하시기 바랍니다. 그렇지 않으면 복구할 수 없는 자금 손실이 발생할 수 있습니다.",
+  "Monad Now Live on PancakeSwap": "Monad가 PancakeSwap에 출시되었습니다",
+  "Trade Tokenized Assets with Zero Fees": "수수료 없이 토큰화된 자산을 거래하세요"
 }

@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "Como converto SnBNB de volta para BNB?",
   "Please visit": "Visite",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "para remover seu SnBNB de stake. PancakeSwap está trabalhando para dar suporte a um contrato de conversão em nossa página de staking líquido para converter SnBNB de volta para BNB sem problemas.",
-  "Merchandise": "Mercadoria",
   "Invalid Pair": "Par inválido",
   "Learn more how to fix": "Saiba mais sobre como corrigir",
   "View pool on explorer": "Visualizar pool no explorer",
@@ -2427,7 +2426,6 @@
   "Done": "Concluído",
   "My veCAKE": "Meu veCAKE",
   "Exact number: %numberWithFullDigits%": "Número exato: %numberWithFullDigits%",
-  "Fee saved": "Taxa economizada",
   "OK": "OK",
   "Select token for gas": "Selecione o token para obter gás",
   "Select any ERC20 token to pay for the gas fee.": "Selecione qualquer token ERC20 para pagar a taxa de gás.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " foi enviado para %address% em ",
   "Couldn't retrieve token info. Please try again!": "Não foi possível recuperar as informações do token. Tente novamente!",
   "Amount you are guaranteed to receive.": "Valor garantido que você vai receber.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "Economia no PancakeSwap em comparação com os principais DEXs que cobram taxas de interface.",
   "The change in pool price caused by your swap.": "A alteração no preço do pool causada pelo seu swap.",
   "Estimated time to complete this transaction.": "Tempo estimado para concluir esta transação.",
   "Retry with lower input amount!": "Tente novamente com um valor menor!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "valor total da posição (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Você pode remover todos os seus tokens e ainda manter sua posição aberta para adicionar à posição de forma integrada da próxima vez.",
   "LP Fees": "Taxas de LP",
-  "Become the Top Predictor, Win $2,500": "Torne-se o Melhor Previsor, Ganhe US$2.500",
   "One-click Solana Crosschain Swaps": "Swaps Crosschain na Solana em um clique",
   "Solana Crosschain": "Solana Crosschain",
   "Caution - GAIN Token": "Atenção - Token GAIN",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "O mercado está fechado.",
   "Market is temporarily paused.": "O mercado está temporariamente pausado.",
   "Specific asset is paused.": "O ativo específico está pausado.",
-  "Market is temporarily unavailable.": "O mercado está temporariamente indisponível."
+  "Market is temporarily unavailable.": "O mercado está temporariamente indisponível.",
+  "to automatically balance and provide Infinity liquidity in one click.": "para balancear automaticamente e fornecer liquidez Infinity com um clique.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "Atenção: este pool usa um hook não verificado. Por favor, faça sua própria pesquisa antes de interagir com ele, pois isso pode resultar em perda de fundos que não pode ser recuperada.",
+  "Monad Now Live on PancakeSwap": "Monad agora na PancakeSwap",
+  "Trade Tokenized Assets with Zero Fees": "Negocie Ativos Tokenizados com Taxa Zero"
 }

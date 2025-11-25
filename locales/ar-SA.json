@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "كيف يمكنني تحويل SnBNB مرة أخرى إلى BNB؟",
   "Please visit": "الرجاء الانتظار",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "لإلغاء رهن SnBNB الخاص بك. يعمل PancakeSwap أيضًا على دعم عقد تحويل على صفحة الرهن السائل لتحويل SnBNB مرة أخرى إلى BNB بسلاسة.",
-  "Merchandise": "السلع",
   "Invalid Pair": "زوج غير صالح",
   "Learn more how to fix": "تعلم المزيد حول كيفية الإصلاح",
   "View pool on explorer": "عرض التجمع في المتصفح",
@@ -2427,7 +2426,6 @@
   "Done": "تم",
   "My veCAKE": "veCAKE الخاصة بي",
   "Exact number: %numberWithFullDigits%": "الرقم الفعلي: %numberWithFullDigits%",
-  "Fee saved": "الرسوم المحفوظة",
   "OK": "موافق",
   "Select token for gas": "تحديد رمز مميز للوقود",
   "Select any ERC20 token to pay for the gas fee.": "حدد أيًا من رموز ERC20 المميزة لدفع رسوم الوقود.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " تم إرساله إلى %address% في ",
   "Couldn't retrieve token info. Please try again!": "تعذر استرداد معلومات الرمز المميز. برجاء إعادة المحاولة!",
   "Amount you are guaranteed to receive.": "المبلغ الذي ستحصل عليه بشكل مضمون.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "الرسوم المحفوظة على PancakeSwap مقارنة برسوم واجهة شحن DEXs الرئيسية.",
   "The change in pool price caused by your swap.": "التغيير في سعر المجمع الناتج عن المبادلة التي أجريتها.",
   "Estimated time to complete this transaction.": "الوقت المقدر لإكمال هذه المعاملة.",
   "Retry with lower input amount!": "أعد المحاولة بمبلغ إدخال منخفض!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "إجمالي قيمة المركز (بالدولار الأمريكي)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "يمكنك إزالة جميع رموزك مع الإبقاء على مركزك مفتوحًا لتتمكن من إضافة السيولة بسلاسة في المرة القادمة.",
   "LP Fees": "رسوم LP",
-  "Become the Top Predictor, Win $2,500": "كن المتنبئ الأفضل واربح 2,500$",
   "One-click Solana Crosschain Swaps": "مبادلات Solana عبر السلاسل بنقرة واحدة",
   "Solana Crosschain": "Solana عبر السلاسل",
   "Caution - GAIN Token": "تحذير - GAIN Token",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "السوق مغلق.",
   "Market is temporarily paused.": "تم إيقاف السوق مؤقتًا.",
   "Specific asset is paused.": "تم إيقاف أصل محدد مؤقتًا.",
-  "Market is temporarily unavailable.": "السوق غير متاح مؤقتًا."
+  "Market is temporarily unavailable.": "السوق غير متاح مؤقتًا.",
+  "to automatically balance and provide Infinity liquidity in one click.": "لتحقيق التوازن التلقائي وتوفير سيولة Infinity بنقرة واحدة.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "تحذير: يستخدم هذا المجمع خطافًا غير متحقق منه. يرجى إجراء بحثك الخاص قبل التفاعل معه، حيث أن القيام بذلك قد يؤدي إلى خسارة أموال لا يمكن استردادها.",
+  "Monad Now Live on PancakeSwap": "Monad متاح الآن على PancakeSwap",
+  "Trade Tokenized Assets with Zero Fees": "تداول الأصول المرمزة برسوم صفرية"
 }

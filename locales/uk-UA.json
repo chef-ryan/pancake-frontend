@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "Як конвертувати SnBNB назад в BNB?",
   "Please visit": "Відвідайте",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": ", щоб вивести зі стейкінгу ваші snBNB. PancakeSwap працює над підтримкою контракту на конверсію на нашій сторінці стейкінгу ліквідності, що забезпечить зручну конвертацію snBNB назад у BNB.",
-  "Merchandise": "Товари",
   "Invalid Pair": "Недійсна пара",
   "Learn more how to fix": "Дізнайтеся більше про те, як це виправити",
   "View pool on explorer": "Переглянути пул у провіднику",
@@ -2427,7 +2426,6 @@
   "Done": "Готово",
   "My veCAKE": "Мої veCAKE",
   "Exact number: %numberWithFullDigits%": "Точне число: %numberWithFullDigits%",
-  "Fee saved": "Комісія збережена",
   "OK": "OK",
   "Select token for gas": "Виберіть токен для газу",
   "Select any ERC20 token to pay for the gas fee.": "Виберіть будь-який токен ERC20 для сплати за газ.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " було надіслано на адресу %address% у мережі ",
   "Couldn't retrieve token info. Please try again!": "Не вдалося отримати інформацію про токен. Спробуйте ще раз!",
   "Amount you are guaranteed to receive.": "Сума, яку ви гарантовано отримаєте.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "Заощаджені комісії на PancakeSwap у порівнянні з провідними DEX, які стягують інтерфейсні комісії.",
   "The change in pool price caused by your swap.": "Зміна ціни в пулі, спричинена вашим обміном.",
   "Estimated time to complete this transaction.": "Орієнтовний час завершення цієї транзакції.",
   "Retry with lower input amount!": "Спробуйте ввести меншу суму!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "загальна вартість позиції (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Ви можете вилучити всі свої токени й при цьому зберегти позицію відкритою, щоб наступного разу безперешкодно додати ліквідність.",
   "LP Fees": "Комісії LP",
-  "Become the Top Predictor, Win $2,500": "Станьте найкращим прогнозистом і виграйте $2,500",
   "One-click Solana Crosschain Swaps": "Кросчейн-свопи Solana в один клік",
   "Solana Crosschain": "Кросчейн Solana",
   "Caution - GAIN Token": "Обережно - токен GAIN",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "Ринок зачинено.",
   "Market is temporarily paused.": "Ринок тимчасово призупинено.",
   "Specific asset is paused.": "Операції з певним активом призупинено.",
-  "Market is temporarily unavailable.": "Ринок тимчасово недоступний."
+  "Market is temporarily unavailable.": "Ринок тимчасово недоступний.",
+  "to automatically balance and provide Infinity liquidity in one click.": "щоб автоматично збалансувати та надати ліквідність Infinity в один клік.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "Обережно: Цей пул використовує неперевірений хук. Будь ласка, проведіть власне дослідження, перш ніж взаємодіяти з ним, оскільки це може призвести до втрати коштів, які неможливо буде повернути.",
+  "Monad Now Live on PancakeSwap": "Monad тепер на PancakeSwap",
+  "Trade Tokenized Assets with Zero Fees": "Торгуйте токенізованими активами без комісій"
 }

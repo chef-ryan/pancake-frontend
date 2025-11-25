@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "Cum convertesc SnBNB înapoi în BNB?",
   "Please visit": "Te rugăm să vizitezi",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "pentru a renunța la staking SnBNB. PancakeSwap face eforturi pentru a susține un contract de conversie pe pagina noastră de staking de lichiditate pentru a converti SnBNB înapoi în BNB fără probleme.",
-  "Merchandise": "Marfă",
   "Invalid Pair": "Pereche nevalidă",
   "Learn more how to fix": "Află mai multe despre cum poți corecta",
   "View pool on explorer": "Vizualizează portofoliul în explorer",
@@ -2427,7 +2426,6 @@
   "Done": "Gata",
   "My veCAKE": "veCAKE-urile mele",
   "Exact number: %numberWithFullDigits%": "Număr exact: %numberWithFullDigits%",
-  "Fee saved": "Taxă economisită",
   "OK": "OK",
   "Select token for gas": "Selectează jeton pentru cheltuieli",
   "Select any ERC20 token to pay for the gas fee.": "Selectează orice jeton ERC20 pentru a plăti taxa de cheltuieli.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " a fost trimis la %address% pe ",
   "Couldn't retrieve token info. Please try again!": "Nu s-au putut recupera informații despre jeton. Încearcă din nou!",
   "Amount you are guaranteed to receive.": "Suma pe care o vei primi în mod garantat.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "Taxele economisite pe PancakeSwap comparativ DEX-urile majore care percep taxe de interfață.",
   "The change in pool price caused by your swap.": "Modificarea prețului din pool cauzată de swap-ul dvs.",
   "Estimated time to complete this transaction.": "Durată estimată pentru finalizarea acestei tranzacții.",
   "Retry with lower input amount!": "Încearcă din nou cu o sumă introdusă mai mică!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "valoarea totală a poziției (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Poți elimina toate jetoanele tale și totuși să păstrezi poziția deschisă, pentru a adăuga la poziție fără probleme data viitoare.",
   "LP Fees": "Comisioane LP",
-  "Become the Top Predictor, Win $2,500": "Devino predictorul de top și câștigă 2.500 $",
   "One-click Solana Crosschain Swaps": "Swapuri Crosschain Solana dintr-un singur clic",
   "Solana Crosschain": "Solana Crosschain",
   "Caution - GAIN Token": "Atenție - tokenul GAIN",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "Piața este închisă.",
   "Market is temporarily paused.": "Piața este suspendată temporar.",
   "Specific asset is paused.": "Activul specific este suspendat.",
-  "Market is temporarily unavailable.": "Piața este temporar indisponibilă."
+  "Market is temporarily unavailable.": "Piața este temporar indisponibilă.",
+  "to automatically balance and provide Infinity liquidity in one click.": "pentru a echilibra automat și a furniza lichiditate Infinity cu un singur clic.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "Atenție: Acest pool folosește un hook neverificat. Vă rugăm să efectuați propria cercetare înainte de a interacționa cu acesta, deoarece acest lucru poate duce la o pierdere de fonduri care nu poate fi recuperată.",
+  "Monad Now Live on PancakeSwap": "Monad acum live pe PancakeSwap",
+  "Trade Tokenized Assets with Zero Fees": "Tranzacționați active tokenizate cu zero comisioane"
 }

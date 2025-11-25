@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "Hoe kan ik SnBNB weer omzetten naar BNB?",
   "Please visit": "Ga naar",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "om je SnBNB te unstaken. PancakeSwap werkt ook aan de ondersteuning van een omzettingscontract op onze pagina voor liquide staking om SnBNB naadloos weer om te zetten naar BNB.",
-  "Merchandise": "Merchandise",
   "Invalid Pair": "Ongeldig paar",
   "Learn more how to fix": "Meer informatie over mogelijke oplossingen",
   "View pool on explorer": "Pool bekijken in verkenner",
@@ -2427,7 +2426,6 @@
   "Done": "Klaar",
   "My veCAKE": "Mijn veCAKE",
   "Exact number: %numberWithFullDigits%": "Exact getal: %numberWithFullDigits%",
-  "Fee saved": "Bespaarde vergoeding",
   "OK": "OK",
   "Select token for gas": "Selecteer het token voor gas",
   "Select any ERC20 token to pay for the gas fee.": "Selecteer een willekeurig ERC20-token om de gasvergoeding te betalen.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " is verzonden naar %address% op ",
   "Couldn't retrieve token info. Please try again!": "Kan tokeninformatie niet ophalen. Probeer het opnieuw!",
   "Amount you are guaranteed to receive.": "Het bedrag dat je gegarandeerd ontvangt.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "Vergoedingen bespaard op PancakeSwap vergeleken met de interfacevergoedingen die grote DEX'en in rekening brengen.",
   "The change in pool price caused by your swap.": "De verandering in de poolprijs, veroorzaakt door je swap.",
   "Estimated time to complete this transaction.": "Geschatte duur om deze transactie te voltooien.",
   "Retry with lower input amount!": "Probeer opnieuw met een lager inputbedrag!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "totale positiewaarde (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Je kunt al je tokens verwijderen en je positie open houden, zodat je de volgende keer naadloos liquiditeit kunt toevoegen.",
   "LP Fees": "LP-vergoedingen",
-  "Become the Top Predictor, Win $2,500": "Word de Topvoorspeller, Win $2.500",
   "One-click Solana Crosschain Swaps": "Eén-klik Solana Crosschain Swaps",
   "Solana Crosschain": "Solana Crosschain",
   "Caution - GAIN Token": "Let op - GAIN-token",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "De markt is gesloten.",
   "Market is temporarily paused.": "De markt is tijdelijk gepauzeerd.",
   "Specific asset is paused.": "Specifiek asset is gepauzeerd.",
-  "Market is temporarily unavailable.": "De markt is tijdelijk onbeschikbaar."
+  "Market is temporarily unavailable.": "De markt is tijdelijk onbeschikbaar.",
+  "to automatically balance and provide Infinity liquidity in one click.": "om met één klik automatisch te herbalanceren en Infinity liquiditeit te verschaffen.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "Waarschuwing: Deze pool gebruikt een niet-geverifieerde hook. Doe je eigen onderzoek voordat je er interactie mee aangaat, aangezien dit kan leiden tot een onherstelbaar verlies van tegoeden.",
+  "Monad Now Live on PancakeSwap": "Monad nu live op PancakeSwap",
+  "Trade Tokenized Assets with Zero Fees": "Verhandel getokeniseerde activa zonder transactiekosten"
 }

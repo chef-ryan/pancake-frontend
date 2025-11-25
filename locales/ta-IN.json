@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "SnBNBஐ எப்படி மீண்டும் BNBக்கு உருமாற்றுவது?",
   "Please visit": "பாருங்கள்:",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "உங்கள் SnBNB-ஐ அன்ஸ்டேக் செய்வதற்கு. SnBNBஐ BNBக்குத் தடையின்றி உருமாற்ற, எங்கள் லிக்விட் ஸ்டேக்கிங் பக்கத்தில் ஓர் உருமாற்றல் ஒப்பந்தத்தை ஆதரிப்பதற்கு PancakeSwap செயல்படுகிறது.",
-  "Merchandise": "வணிகப் பொருட்கள்",
   "Invalid Pair": "செல்லுபடியற்ற ஜோடி",
   "Learn more how to fix": "எப்படி சரிசெய்வது என்பதை மேலும் அறிக",
   "View pool on explorer": "எக்ஸ்ப்ளோரரில் பூலைப் பார்க்கவும்",
@@ -2427,7 +2426,6 @@
   "Done": "முடிந்தது",
   "My veCAKE": "எனது veCAKE",
   "Exact number: %numberWithFullDigits%": "துல்லியமான எண்: %numberWithFullDigits%",
-  "Fee saved": "கட்டணம் சேமித்தது",
   "OK": "சரி",
   "Select token for gas": "கேஸிற்கான டோக்கனைத் தேர்ந்தெடுக்கவும்",
   "Select any ERC20 token to pay for the gas fee.": "கேஸ் கட்டணத்தைச் செலுத்த ஏதேனும் ERC20 டோக்கனைத் தேர்ந்தெடுக்கவும்.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " %address% -க்கு இதில் அனுப்பப்பட்டுள்ளது: ",
   "Couldn't retrieve token info. Please try again!": "டோக்கன் தகவலை மீட்டெடுக்க முடியவில்லை. மீண்டும் முயற்சித்திடுங்கள்!",
   "Amount you are guaranteed to receive.": "நீங்கள் பெற உறுதியளிக்கப்பட்ட தொகை.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "இடைமுகக் கட்டணம் விதிக்கும் பிரதான DEXகளுடன் ஒப்பிடும்போது PancakeSwapல் கட்டணம் சேமிக்கப்படுகிறது.",
   "The change in pool price caused by your swap.": "உங்கள் ஸ்வாப்பால் ஏற்படும் பூல் விலையில் மாற்றம்.",
   "Estimated time to complete this transaction.": "இந்தப் பரிவர்த்தனையை முடிக்க மதிப்பிடப்பட்ட நேரம்.",
   "Retry with lower input amount!": "குறைந்த உள்ளீட்டுத் தொகையுடன் மீண்டும் முயற்சிக்கவும்!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "மொத்த நிலை மதிப்பு (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "அடுத்த முறை தடையின்றி நிலையைச் சேர்க்க, உங்கள் டோக்கன்கள் அனைத்தையும் அகற்றிவிட்டு, உங்கள் நிலையைத் திறந்து வைத்திருக்கலாம்.",
   "LP Fees": "LP கட்டணங்கள்",
-  "Become the Top Predictor, Win $2,500": "முன்னணி கணிப்பாளராகி, $2,500 வெல்லுங்கள்",
   "One-click Solana Crosschain Swaps": "ஒரே கிளிக்கில் Solana Crosschain பரிமாற்றங்கள்",
   "Solana Crosschain": "Solana Crosschain",
   "Caution - GAIN Token": "எச்சரிக்கை - GAIN டோக்கன்",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "சந்தை மூடப்பட்டுள்ளது.",
   "Market is temporarily paused.": "சந்தை தற்காலிகமாக இடைநிறுத்தப்பட்டுள்ளது.",
   "Specific asset is paused.": "குறிப்பிட்ட சொத்து இடைநிறுத்தப்பட்டுள்ளது.",
-  "Market is temporarily unavailable.": "சந்தை தற்காலிகமாக கிடைக்கவில்லை."
+  "Market is temporarily unavailable.": "சந்தை தற்காலிகமாக கிடைக்கவில்லை.",
+  "to automatically balance and provide Infinity liquidity in one click.": "ஒரே கிளிக்கில் தானாகவே சமநிலைப்படுத்தி Infinity liquidity வழங்க.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "எச்சரிக்கை: இந்தப் பூல் சரிபார்க்கப்படாத ஹூக்கைப் பயன்படுத்துகிறது. அதனுடன் தொடர்புகொள்வதற்கு முன், தயவுசெய்து உங்கள் சொந்த ஆராய்ச்சியை மேற்கொள்ளுங்கள், அவ்வாறு செய்வதால் மீட்க முடியாத நிதி இழப்பு ஏற்படலாம்.",
+  "Monad Now Live on PancakeSwap": "Monad இப்போது PancakeSwap-இல் நேரலையில்",
+  "Trade Tokenized Assets with Zero Fees": "டோக்கனைஸ்டு சொத்துக்களை பூஜ்ஜியக் கட்டணத்தில் வர்த்தகம் செய்யுங்கள்"
 }

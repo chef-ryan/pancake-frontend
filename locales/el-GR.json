@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "Πώς μπορώ να μετατρέψω SnBNB πίσω σε ETH;",
   "Please visit": "Μεταβείτε στο",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "για να καταργήσετε το staking του SnBNB σας. Το PancakeSwap εργάζεται για την υποστήριξη ενός συμβολαίου μετατροπής στη σελίδα μας staking ρευστότητας για την απρόσκοπτη μετατροπή του SnBNB σε BNB.",
-  "Merchandise": "Εμπορεύματα",
   "Invalid Pair": "Μη έγκυρο ζευγάρι",
   "Learn more how to fix": "Μάθετε περισσότερα για το πώς να το διορθώσετε",
   "View pool on explorer": "Προβολή δεξαμενής στον explorer",
@@ -2427,7 +2426,6 @@
   "Done": "Τέλος",
   "My veCAKE": "Το veCAKE μου",
   "Exact number: %numberWithFullDigits%": "Ακριβές νούμερο: %numberWithFullDigits%",
-  "Fee saved": "Εξοικονόμηση προμηθειών",
   "OK": "OK",
   "Select token for gas": "Επιλέξτε νόμισμα για βενζίνη",
   "Select any ERC20 token to pay for the gas fee.": "Επιλέξτε οποιοδήποτε νόμισμα ERC20 για να πληρώσετε το τέλος βενζίνης.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " έχει σταλεί στη διεύθυνση %address% στο ",
   "Couldn't retrieve token info. Please try again!": "Δεν ήταν δυνατή η ανάκτηση πληροφοριών νομίσματος. Δοκιμάστε ξανά!",
   "Amount you are guaranteed to receive.": "Ποσό που είναι εγγυημένο ότι θα λάβετε.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "Εξοικονόμηση προμηθειών στο PancakeSwap σε σύγκριση με τα ποσοστά που χρεώνονται από μεγαλύτερα ανταλλακτήρια.",
   "The change in pool price caused by your swap.": "Η αλλαγή στην τιμή του pool που προκαλείται από την ανταλλαγή σας.",
   "Estimated time to complete this transaction.": "Εκτιμώμενος χρόνος για την ολοκλήρωση αυτής της συναλλαγής.",
   "Retry with lower input amount!": "Δοκιμάστε ξανά με μικρότερο ποσό!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "συνολική αξία θέσης (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Μπορείτε να αφαιρέσετε όλα τα token σας και να διατηρήσετε τη θέση σας ανοιχτή για να προσθέσετε ρευστότητα απρόσκοπτα την επόμενη φορά.",
   "LP Fees": "Προμήθειες LP",
-  "Become the Top Predictor, Win $2,500": "Γίνε ο Κορυφαίος Προβλέπων, Κέρδισε $2,500",
   "One-click Solana Crosschain Swaps": "Solana Crosschain Swaps με ένα κλικ",
   "Solana Crosschain": "Solana Crosschain",
   "Caution - GAIN Token": "Προσοχή - GAIN Token",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "Η αγορά είναι κλειστή.",
   "Market is temporarily paused.": "Η αγορά έχει ανασταλεί προσωρινά.",
   "Specific asset is paused.": "Το συγκεκριμένο περιουσιακό στοιχείο έχει τεθεί σε παύση.",
-  "Market is temporarily unavailable.": "Η αγορά είναι προσωρινά μη διαθέσιμη."
+  "Market is temporarily unavailable.": "Η αγορά είναι προσωρινά μη διαθέσιμη.",
+  "to automatically balance and provide Infinity liquidity in one click.": "για αυτόματη εξισορρόπηση και παροχή ρευστότητας Infinity με ένα κλικ.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "Προσοχή: Αυτό το pool χρησιμοποιεί ένα μη επαληθευμένο hook. Παρακαλούμε, διεξάγετε τη δική σας έρευνα πριν αλληλεπιδράσετε με αυτό, καθώς μπορεί να οδηγήσει σε απώλεια κεφαλαίων που δεν μπορεί να ανακτηθεί.",
+  "Monad Now Live on PancakeSwap": "Το Monad τώρα διαθέσιμο στο PancakeSwap",
+  "Trade Tokenized Assets with Zero Fees": "Κάντε συναλλαγές σε Tokenized Assets με Μηδενικές Χρεώσεις"
 }

@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "Hur konverterar jag SnBNB tillbaka till BNB?",
   "Please visit": "Besök",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "för att ta bort din SnBNB. PancakeSwap arbetar för att stödja ett konverteringskontrakt på vår flytande insatssida för att sömlöst konvertera SnBNB tillbaka till BNB.",
-  "Merchandise": "Varor och tjänster",
   "Invalid Pair": "Ogiltigt par",
   "Learn more how to fix": "Läs mer om hur du åtgärdar",
   "View pool on explorer": "Visa pool i utforskaren",
@@ -2427,7 +2426,6 @@
   "Done": "Klart",
   "My veCAKE": "Min veCAKE",
   "Exact number: %numberWithFullDigits%": "Exakt nummer: %numberWithFullDigits%",
-  "Fee saved": "Sparad avgift",
   "OK": "OK",
   "Select token for gas": "Välj token för gas",
   "Select any ERC20 token to pay for the gas fee.": "Välj valfri ERC20-token för att betala gasavgiften.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " har skickats till %address% den ",
   "Couldn't retrieve token info. Please try again!": "Kunde inte hämta token-info. Försök igen!",
   "Amount you are guaranteed to receive.": "Belopp som du är garanterad att få.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "Avgifter som sparas på PancakeSwap jämfört med större DEX som tar ut gränssnittsavgifter.",
   "The change in pool price caused by your swap.": "Förändringen i poolpriset orsakad av ditt byte.",
   "Estimated time to complete this transaction.": "Beräknad tid för att genomföra överföringen.",
   "Retry with lower input amount!": "Försök igen med lägre inmatningsbelopp!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "totalt positionsvärde (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Du kan ta ut alla dina tokens och ändå behålla din position öppen för att smidigt kunna lägga till likviditet nästa gång.",
   "LP Fees": "LP-avgifter",
-  "Become the Top Predictor, Win $2,500": "Bli topptipparen och vinn 2 500 $",
   "One-click Solana Crosschain Swaps": "Ettklicks Solana crosschain-byten",
   "Solana Crosschain": "Solana Crosschain",
   "Caution - GAIN Token": "Varning - GAIN Token",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "Marknaden är stängd.",
   "Market is temporarily paused.": "Marknaden är tillfälligt pausad.",
   "Specific asset is paused.": "Den specifika tillgången är pausad.",
-  "Market is temporarily unavailable.": "Marknaden är tillfälligt otillgänglig."
+  "Market is temporarily unavailable.": "Marknaden är tillfälligt otillgänglig.",
+  "to automatically balance and provide Infinity liquidity in one click.": "för att automatiskt balansera och tillhandahålla Infinity-likviditet med ett klick.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "Varning: Denna pool använder en overifierad hook. Vänligen gör din egen research innan du interagerar med den, eftersom det kan leda till en förlust av medel som inte kan återfås.",
+  "Monad Now Live on PancakeSwap": "Monad är nu live på PancakeSwap",
+  "Trade Tokenized Assets with Zero Fees": "Handla tokeniserade tillgångar med noll avgifter"
 }

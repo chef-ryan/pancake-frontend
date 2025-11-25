@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "SnBNBをBNBに変換し直すには？",
   "Please visit": "これには",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "にアクセスしてSnBNBをステーキング解除してください。PancakeSwapでは、リキッドステーキングページでSnBNBからBNBにシームレスに変換できるように、変換コントラクトのサポートに取り組んでいます。",
-  "Merchandise": "グッズ",
   "Invalid Pair": "無効なペア",
   "Learn more how to fix": "修正方法の詳細を見る",
   "View pool on explorer": "エクスプローラーでプールを見る",
@@ -2427,7 +2426,6 @@
   "Done": "完了",
   "My veCAKE": "自分のveCAKE",
   "Exact number: %numberWithFullDigits%": "正確な数値：%numberWithFullDigits%",
-  "Fee saved": "手数料を節約",
   "OK": "OK",
   "Select token for gas": "ガスのためのトークンを選択します",
   "Select any ERC20 token to pay for the gas fee.": "任意の ERC20 トークンを選択してガスの手数料を支払います。",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": "を送信しました：%address%、",
   "Couldn't retrieve token info. Please try again!": "トークン情報を取得できませんでした。もう一度お試しください。",
   "Amount you are guaranteed to receive.": "受け取り保証額です。",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "インターフェース手数料が発生する主要なDEXに比べて、PancakeSwapでは手数料がお得です。",
   "The change in pool price caused by your swap.": "あなたのスワップによって引き起こされるプール価格の変動。",
   "Estimated time to complete this transaction.": "トランザクション完了までの予想時間です。",
   "Retry with lower input amount!": "入力額を下げて再試行してください！",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "合計ポジション価値 (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "すべてのトークンを引き出しても、ポジションをオープン状態に保つことができます。これにより、次回はシームレスにポジションを追加できます。",
   "LP Fees": "LP手数料",
-  "Become the Top Predictor, Win $2,500": "トップ予測者になって、$2,500を獲得しよう",
   "One-click Solana Crosschain Swaps": "ワンクリックでSolanaクロスチェーンスワップ",
   "Solana Crosschain": "Solanaクロスチェーン",
   "Caution - GAIN Token": "ご注意 - GAINトークン",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "マーケットは現在閉鎖しています。",
   "Market is temporarily paused.": "マーケットは一時的に停止しています。",
   "Specific asset is paused.": "特定の資産は一時停止されています。",
-  "Market is temporarily unavailable.": "マーケットは一時的に利用できません。"
+  "Market is temporarily unavailable.": "マーケットは一時的に利用できません。",
+  "to automatically balance and provide Infinity liquidity in one click.": "ワンクリックで自動的にバランスを調整し、Infinity流動性を提供します。",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "注意：このプールは未検証のフックを使用しています。操作する前にご自身で調査を行ってください。操作した場合、回復不可能な資金の損失を被る可能性があります。",
+  "Monad Now Live on PancakeSwap": "MonadがPancakeSwapに登場",
+  "Trade Tokenized Assets with Zero Fees": "トークン化資産を手数料ゼロで取引"
 }

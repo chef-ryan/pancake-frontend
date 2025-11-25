@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "Miten muunnan SnBNB:n takaisin BNB:ksi?",
   "Please visit": "Vieraile kohteessa",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "SnBNB:si panostuksen perumiseksi. PancakeSwap pyrkii tukemaan muuntosopimusta likvidipanostussivullamme SnBNB:n muuntamiseksi takaisin BNB:ksi saumattomasti.",
-  "Merchandise": "Tuotteet",
   "Invalid Pair": "Virheellinen pari",
   "Learn more how to fix": "Lue lisätietoja korjaamisesta",
   "View pool on explorer": "Katso pooli selaimessa",
@@ -2427,7 +2426,6 @@
   "Done": "Valmista",
   "My veCAKE": "Oma veCAKE",
   "Exact number: %numberWithFullDigits%": "Tarkka luku: %numberWithFullDigits%",
-  "Fee saved": "Säästetty maksu",
   "OK": "OK",
   "Select token for gas": "Valitse poletti käyttövoimalle",
   "Select any ERC20 token to pay for the gas fee.": "Valitse mikä tahansa ERC20-poletti käyttövoimamaksun maksamiseksi.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " on lähetetty osoitteeseen %address% ",
   "Couldn't retrieve token info. Please try again!": "Poletin tietojen noutaminen ei onnistunut. Yritä uudelleen!",
   "Amount you are guaranteed to receive.": "Summa, joka sinun taataan saavan.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "PancakeSwapissa säästetyt maksut verrattuna merkittäviin DEX:ihin, jotka veloittavat käyttöliittymämaksuja.",
   "The change in pool price caused by your swap.": "Vaihtosi aiheuttama muutos poolin hintaan.",
   "Estimated time to complete this transaction.": "Arvioitu aika tämän transaktion suorittamiseen.",
   "Retry with lower input amount!": "Yritä uudelleen pienemmällä syötesummalla!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "Position kokonaisarvo (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Voit poistaa kaikki tokenisi ja silti pitää positiosi avoinna, jotta voit lisätä positioon saumattomasti seuraavalla kerralla.",
   "LP Fees": "LP-palkkiot",
-  "Become the Top Predictor, Win $2,500": "Tule parhaaksi ennustajaksi ja voita 2 500 $",
   "One-click Solana Crosschain Swaps": "Yhden napsautuksen Solana-crosschain-vaihdot",
   "Solana Crosschain": "Solana Crosschain",
   "Caution - GAIN Token": "Varoitus - GAIN Token",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "Markkina on suljettu.",
   "Market is temporarily paused.": "Markkina on väliaikaisesti keskeytetty.",
   "Specific asset is paused.": "Tietyn omaisuuserän kaupankäynti on keskeytetty.",
-  "Market is temporarily unavailable.": "Markkina on väliaikaisesti pois käytöstä."
+  "Market is temporarily unavailable.": "Markkina on väliaikaisesti pois käytöstä.",
+  "to automatically balance and provide Infinity liquidity in one click.": "Tasapainottaa ja tarjoaa Infinity-likviditeettiä automaattisesti yhdellä klikkauksella.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "Varoitus: Tämä pooli käyttää vahvistamatonta hookia. Tee oma tutkimuksesi ennen kuin olet vuorovaikutuksessa sen kanssa, koska se voi johtaa peruuttamattomaan varojen menetykseen.",
+  "Monad Now Live on PancakeSwap": "Monad nyt livenä PancakeSwapissa",
+  "Trade Tokenized Assets with Zero Fees": "Treidaa tokenisoituja omaisuuseriä nollapalkkioilla"
 }

@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "Làm thế nào tôi có thể chuyển đổi SnBNB về lại BNB?",
   "Please visit": "Vui lòng truy cập",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "để hủy cọc SnBNB của bạn. PancakeSwap đang nỗ lực làm việc để hỗ trợ một hợp đồng chuyển đổi trên trang đặt cọc thanh khoản của chúng tôi để chuyển đổi SnBNB về lại BNB một cách liền mạch.",
-  "Merchandise": "Vật phẩm lưu niệm",
   "Invalid Pair": "Cặp không hợp lệ",
   "Learn more how to fix": "Tìm hiểu thêm về cách để khắc phục",
   "View pool on explorer": "Xem quỹ trên trình duyệt",
@@ -2427,7 +2426,6 @@
   "Done": "Xong",
   "My veCAKE": "veCAKE của tôi",
   "Exact number: %numberWithFullDigits%": "Số chính xác: %numberWithFullDigits%",
-  "Fee saved": "Phí tiết kiệm được",
   "OK": "OK",
   "Select token for gas": "Chọn token cho phí năng lượng",
   "Select any ERC20 token to pay for the gas fee.": "Chọn bất kỳ token ERC20 nào để thanh toán phí năng lượng.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " đã được gửi đến %address% trên ",
   "Couldn't retrieve token info. Please try again!": "Không thể truy xuất thông tin token. Vui lòng thử lại!",
   "Amount you are guaranteed to receive.": "Số tiền bạn chắc chắn sẽ nhận.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "Phí tiết kiệm được trên PancakeSwap so với các DEX phổ biến tính phí giao diện.",
   "The change in pool price caused by your swap.": "Sự thay đổi về giá của pool do giao dịch hoán đổi của bạn gây ra.",
   "Estimated time to complete this transaction.": "Thời gian ước tính để hoàn thành giao dịch này.",
   "Retry with lower input amount!": "Thử lại với số lượng đầu vào thấp hơn!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "tổng giá trị vị thế (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Bạn có thể rút toàn bộ token mà vẫn giữ vị thế mở để dễ dàng thêm thanh khoản trong lần tiếp theo.",
   "LP Fees": "Phí LP",
-  "Become the Top Predictor, Win $2,500": "Trở thành Nhà Dự Đoán Hàng Đầu, Thắng $2,500",
   "One-click Solana Crosschain Swaps": "Hoán đổi Cross-chain Solana chỉ với một cú nhấp chuột",
   "Solana Crosschain": "Solana Crosschain",
   "Caution - GAIN Token": "Cảnh báo - Token GAIN",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "Thị trường đã đóng cửa.",
   "Market is temporarily paused.": "Thị trường tạm thời tạm dừng.",
   "Specific asset is paused.": "Tài sản cụ thể đã bị tạm dừng.",
-  "Market is temporarily unavailable.": "Thị trường tạm thời không khả dụng."
+  "Market is temporarily unavailable.": "Thị trường tạm thời không khả dụng.",
+  "to automatically balance and provide Infinity liquidity in one click.": "để tự động cân bằng và cung cấp thanh khoản vô cực chỉ với một cú nhấp.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "Thận trọng: Pool này sử dụng một hook chưa được xác minh. Vui lòng tự nghiên cứu trước khi tương tác với nó, vì việc này có thể dẫn đến tổn thất tài sản không thể phục hồi.",
+  "Monad Now Live on PancakeSwap": "Monad đã ra mắt trên PancakeSwap",
+  "Trade Tokenized Assets with Zero Fees": "Giao dịch Tài sản Token hoá Miễn phí"
 }

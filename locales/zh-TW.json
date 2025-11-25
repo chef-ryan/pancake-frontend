@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "如何將 SnBNB 轉換回 BNB？",
   "Please visit": "請前往頁面",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "PancakeSwap 正致力於在我們的流動權益質押頁面上支援轉換合約，以期未來能協助持有者將 SnBNB 無縫轉換回 BNB。",
-  "Merchandise": "線上商店",
   "Invalid Pair": "無效幣對",
   "Learn more how to fix": "瞭解如何修復流動性",
   "View pool on explorer": "在公鏈瀏覽器上查看資金池內容",
@@ -2427,7 +2426,6 @@
   "Done": "完成",
   "My veCAKE": "我的 veCAKE",
   "Exact number: %numberWithFullDigits%": "確切數字：%numberWithFullDigits%",
-  "Fee saved": "已節省手續費",
   "OK": "確定",
   "Select token for gas": "選擇代幣以支付 gas 費用",
   "Select any ERC20 token to pay for the gas fee.": "選擇任意 ERC20 代幣來支付 gas 費用。",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " 已傳送至 %address% (位於 ",
   "Couldn't retrieve token info. Please try again!": "無法擷取代幣資訊。請再試一次！",
   "Amount you are guaranteed to receive.": "保證可領到的金額。",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "與其他會收取介面費用的主要 DEX 相比，PancakeSwap 所能節省的手續費。",
   "The change in pool price caused by your swap.": "您的兌換所造成的池子價格變動。",
   "Estimated time to complete this transaction.": "完成此交易的預估時間。",
   "Retry with lower input amount!": "請再試一次，並降低輸入金額！",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "總倉位價值 (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "您可以移除所有代幣，您的倉位仍會保持開啟，以便下次能無縫地再次新增倉位。",
   "LP Fees": "LP 手續費",
-  "Become the Top Predictor, Win $2,500": "成為頂級預測員，贏取 $2,500",
   "One-click Solana Crosschain Swaps": "一鍵 Solana 跨鏈兌換",
   "Solana Crosschain": "Solana 跨鏈",
   "Caution - GAIN Token": "注意 - GAIN 代幣",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "市場已關閉。",
   "Market is temporarily paused.": "市場已暫時停止。",
   "Specific asset is paused.": "特定資產已暫停。",
-  "Market is temporarily unavailable.": "市場暫時無法使用。"
+  "Market is temporarily unavailable.": "市場暫時無法使用。",
+  "to automatically balance and provide Infinity liquidity in one click.": "一鍵自動平衡並提供 Infinity 流動性。",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "注意：此流動性池使用未經驗證的 hook。在與其互動前，請自行研究，否則可能導致無法挽回的資金損失。",
+  "Monad Now Live on PancakeSwap": "Monad 現已在 PancakeSwap 上線",
+  "Trade Tokenized Assets with Zero Fees": "零手續費交易代幣化資產"
 }

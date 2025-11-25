@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "Hogyan konvertálhatom vissza az SnBNB-t BNB-re?",
   "Please visit": "Kérjük látogass el ide",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "hogy felszabadítsd a saját SnBNB-det. A PancakeSwap azon dolgozik, hogy támogassa a likvid tétes oldalunkon a konverziós szerződést, hogy az SnBNB-t zökkenőmentesen vissza lehessen konvertálni BNB-re.",
-  "Merchandise": "Kereskedelmi cikkek",
   "Invalid Pair": "Érvénytelen pár",
   "Learn more how to fix": "Tudjon meg többet a korrekcióról",
   "View pool on explorer": "Tekintse meg az összevont alapot az explorerben",
@@ -2427,7 +2426,6 @@
   "Done": "Kész",
   "My veCAKE": "Az én veCake-em",
   "Exact number: %numberWithFullDigits%": "Pontos szám: %numberWithFullDigits%",
-  "Fee saved": "Megtakarított díj",
   "OK": "OK",
   "Select token for gas": "Válassza ki a zsetont a gázhoz",
   "Select any ERC20 token to pay for the gas fee.": "Válassza ki bármelyik ERC20 zsetont a gázdíj kifizetéséhez.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": "elküldve ide: %address%, ekkor: ",
   "Couldn't retrieve token info. Please try again!": "Nem sikerült a zsetoninformáció visszakeresése. Próbáld újra!",
   "Amount you are guaranteed to receive.": "Összeg, amelyet garantáltan megkapsz.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "A PancakeSwap-on megtakarított díjak a főbb DEX-ekhez képest, amelyek interfészdíjat számítanak fel.",
   "The change in pool price caused by your swap.": "A swapod által okozott változás a pool árában.",
   "Estimated time to complete this transaction.": "Az ügylet teljesítésének becsült időpontja.",
   "Retry with lower input amount!": "Próbáld újra alacsonyabb inputösszeggel!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "pozíció teljes értéke (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Eltávolíthatod az összes tokenedet, de a pozíciód nyitva hagyhatod, hogy legközelebb zökkenőmentesen tudj hozzáadni.",
   "LP Fees": "LP díjak",
-  "Become the Top Predictor, Win $2,500": "Légy a legjobb jós, és nyerj 2500 dollárt",
   "One-click Solana Crosschain Swaps": "Egykattintásos Solana keresztlánc swapok",
   "Solana Crosschain": "Solana Keresztlánc",
   "Caution - GAIN Token": "Vigyázat – GAIN Token",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "A piac zárva van.",
   "Market is temporarily paused.": "A piac átmenetileg szünetel.",
   "Specific asset is paused.": "A megadott eszköz kereskedése szünetel.",
-  "Market is temporarily unavailable.": "A piac átmenetileg nem elérhető."
+  "Market is temporarily unavailable.": "A piac átmenetileg nem elérhető.",
+  "to automatically balance and provide Infinity liquidity in one click.": "Automatikus kiegyensúlyozás és Infinity likviditás biztosítása egyetlen kattintással.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "Figyelem: Ez a pool egy nem ellenőrzött hookot használ. Kérjük, végezzen saját kutatást, mielőtt interakcióba lépne vele, mivel ez olyan pénzeszközök elvesztését eredményezheti, amelyek nem szerezhetők vissza.",
+  "Monad Now Live on PancakeSwap": "A Monad már elérhető a PancakeSwapen",
+  "Trade Tokenized Assets with Zero Fees": "Kereskedj tokenizált eszközökkel díjmentesen"
 }

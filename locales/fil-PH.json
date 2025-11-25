@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "Paano ko iko-convert ang SnBNB pabalik sa BNB?",
   "Please visit": "Bisitahin",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "para i-unstake ang iyong SnBNB. Nagsisikap ang PancakeSwap na suportahan ang isang kontrata ng conversion sa aming page ng liquid staking para i-convert ang SnBNB pabalik sa BNB nang maayos.",
-  "Merchandise": "Merchandise",
   "Invalid Pair": "Invalid na Pair",
   "Learn more how to fix": "Alamin ang higit pa kung paano ito aayusin",
   "View pool on explorer": "Tingnan ang pool sa explorer",
@@ -2427,7 +2426,6 @@
   "Done": "Tapos na",
   "My veCAKE": "Aking veCAKE",
   "Exact number: %numberWithFullDigits%": "Eksaktong numero: %numberWithFullDigits%",
-  "Fee saved": "Natipid na fee",
   "OK": "OK",
   "Select token for gas": "Pumili ng token para sa gas",
   "Select any ERC20 token to pay for the gas fee.": "Pumili ng kahit anong ERC20 token para bayaran ang gas fee.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " ay ipinadala sa %address% sa ",
   "Couldn't retrieve token info. Please try again!": "Hindi ma-retrieve ang impormasyon ng token. Pakisubukan ulit!",
   "Amount you are guaranteed to receive.": "Halagang garantisadong matatanggap mo.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "Mga fee na natipid sa PancakeSwap kumpara sa mga pangunahing DEX na sumisingil ng mga interface fee.",
   "The change in pool price caused by your swap.": "Ang pagbabago sa presyo ng pool na sanhi ng iyong swap.",
   "Estimated time to complete this transaction.": "Tinantyang oras para makumpleto ang transaksyong ito.",
   "Retry with lower input amount!": "Subukan ulit gamit ang mas mababang input amount!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "kabuuang halaga ng posisyon (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Maaari mong alisin ang lahat ng iyong token at panatilihing bukas ang iyong posisyon para makapagdagdag nang maayos sa susunod.",
   "LP Fees": "LP Fees",
-  "Become the Top Predictor, Win $2,500": "Maging ang Top Predictor, Manalo ng $2,500",
   "One-click Solana Crosschain Swaps": "One-click Solana Crosschain Swaps",
   "Solana Crosschain": "Solana Crosschain",
   "Caution - GAIN Token": "Pag-iingat - GAIN Token",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "Sarado ang market.",
   "Market is temporarily paused.": "Pansamantalang naka-pause ang market.",
   "Specific asset is paused.": "Naka-pause ang partikular na asset.",
-  "Market is temporarily unavailable.": "Pansamantalang hindi available ang market."
+  "Market is temporarily unavailable.": "Pansamantalang hindi available ang market.",
+  "to automatically balance and provide Infinity liquidity in one click.": "upang awtomatikong i-balance at magbigay ng Infinity liquidity sa isang click lang.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "Babala: Ang pool na ito ay gumagamit ng unverified hook. Mangyaring magsagawa ng sariling pananaliksik bago makipag-ugnayan dito, dahil maaaring magresulta ito sa pagkawala ng pondo na hindi na mababawi.",
+  "Monad Now Live on PancakeSwap": "Live na ang Monad sa PancakeSwap",
+  "Trade Tokenized Assets with Zero Fees": "Mag-trade ng Tokenized Assets nang Walang Fees."
 }

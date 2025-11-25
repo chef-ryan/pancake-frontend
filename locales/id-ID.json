@@ -2124,7 +2124,6 @@
   "How do I convert SnBNB back to BNB?": "Bagaimana cara mengonversi SnBNB kembali ke BNB?",
   "Please visit": "Silakan kunjungi",
   "to unstake your SnBNB. PancakeSwap is working to support a conversion contract on our liquid staking page to convert SnBNB back to BNB seamlessly.": "untuk membongkar tumpukan SnBNB Anda. PancakeSwap bekerja untuk mendukung kontrak konversi pada halaman penumpukan cair kami untuk mengonversi SnBNB kembali ke BNB dengan mulus.",
-  "Merchandise": "Produk Niaga",
   "Invalid Pair": "Pasangan Tidak Valid",
   "Learn more how to fix": "Pelajari lebih lanjut cara memperbaiki",
   "View pool on explorer": "Lihat pool di explorer",
@@ -2427,7 +2426,6 @@
   "Done": "Selesai",
   "My veCAKE": "veCAKE Saya",
   "Exact number: %numberWithFullDigits%": "Angka persis: %numberWithFullDigits%",
-  "Fee saved": "Biaya yang dihemat",
   "OK": "Oke",
   "Select token for gas": "Pilih token untuk biaya bahan bakar",
   "Select any ERC20 token to pay for the gas fee.": "Pilih token ERC20 apa saja untuk membayar biaya bahan bakar.",
@@ -3688,7 +3686,6 @@
   " has been sent to %address% on ": " telah dikembalikan ke %address% pada ",
   "Couldn't retrieve token info. Please try again!": "Gagal mengambil info token. Silakan coba lagi!",
   "Amount you are guaranteed to receive.": "Jumlah yang dijamin akan Anda terima.",
-  "Fees saved on PancakeSwap compared to major DEXs charging interface fees.": "Biaya yang dihemat di PancakeSwap dibandingkan dengan berbagai DEX besar yang membebankan biaya antarmuka.",
   "The change in pool price caused by your swap.": "Perubahan harga pool yang disebabkan oleh swap Anda.",
   "Estimated time to complete this transaction.": "Estimasi waktu untuk menyelesaikan transaksi ini.",
   "Retry with lower input amount!": "Coba lagi dengan jumlah input yang lebih rendah!",
@@ -4185,7 +4182,6 @@
   "total position value (USD)": "total nilai posisi (USD)",
   "You can remove all your tokens and still keep your position open in order to add position seamless next time.": "Anda dapat menarik semua token Anda dan tetap membuka posisi agar dapat menambahkan posisi dengan lancar di lain waktu.",
   "LP Fees": "Biaya LP",
-  "Become the Top Predictor, Win $2,500": "Jadilah Prediktor Teratas, Menangkan $2.500",
   "One-click Solana Crosschain Swaps": "Swap Crosschain Solana Satu-klik",
   "Solana Crosschain": "Solana Crosschain",
   "Caution - GAIN Token": "Waspada - Token GAIN",
@@ -4291,5 +4287,9 @@
   "Market is closed.": "Pasar ditutup.",
   "Market is temporarily paused.": "Pasar dihentikan sementara.",
   "Specific asset is paused.": "Aset tertentu dihentikan sementara.",
-  "Market is temporarily unavailable.": "Pasar untuk sementara tidak tersedia."
+  "Market is temporarily unavailable.": "Pasar untuk sementara tidak tersedia.",
+  "to automatically balance and provide Infinity liquidity in one click.": "untuk menyeimbangkan secara otomatis dan menyediakan likuiditas Infinity dalam satu klik.",
+  "Caution: This pool uses an unverified hook. Please conduct your own research before interacting with it, as doing so may result in a loss of funds that cannot be recovered.": "Perhatian: Pool ini menggunakan hook yang belum diverifikasi. Harap lakukan riset Anda sendiri sebelum berinteraksi dengannya, karena hal itu dapat mengakibatkan hilangnya dana yang tidak dapat dipulihkan.",
+  "Monad Now Live on PancakeSwap": "Monad Kini Hadir di PancakeSwap",
+  "Trade Tokenized Assets with Zero Fees": "Perdagangkan Aset Tokenisasi Tanpa Biaya"
 }
