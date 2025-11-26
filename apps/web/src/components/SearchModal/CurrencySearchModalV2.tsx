@@ -142,7 +142,7 @@ export default function CurrencySearchModalV2({
 
   useEffect(() => {
     if (!wrapperRef.current) return
-    setHeight(wrapperRef.current.offsetHeight - 330)
+    setHeight(wrapperRef.current.offsetHeight - 300)
   }, [])
 
   const [selectedChainId, setSelectedChainId] = useState<UnifiedChainId | undefined>(selectedCurrency?.chainId)

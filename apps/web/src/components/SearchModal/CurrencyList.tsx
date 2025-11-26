@@ -207,7 +207,7 @@ function CurrencyRow({
       <MenuItemInner
         disabled={isSelected}
         selected={otherSelected}
-        onClick={() => (isSelected ? null : onSelect())}
+        onClick={isSelected ? undefined : onSelect}
         onMouseEnter={setIsHoveredCallback}
         onMouseLeave={setIsHoveredLeaveCallback}
       >
