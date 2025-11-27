@@ -12,7 +12,7 @@ import {
   mainnet,
   monadTestnet,
   scrollSepolia as scrollSepolia_,
-  zkSync,
+  zksync,
   zksyncSepoliaTestnet,
 } from 'viem/chains'
 
@@ -113,7 +113,7 @@ export const CHAINS = [
   mainnet,
   bscTestnet,
   goerli,
-  zkSync,
+  zksync,
   zksyncSepoliaTestnet,
   arbitrum,
   arbitrumGoerli,

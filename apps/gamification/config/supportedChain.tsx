@@ -6,7 +6,7 @@ import {
   mainnet as ethereum,
   // linea,
   // opBNB,
-  zkSync,
+  zksync,
 } from 'wagmi/chains'
 
 export const SUPPORT_ONLY_BSC = [ChainId.BSC]
@@ -14,7 +14,7 @@ export const SUPPORT_ONLY_BSC = [ChainId.BSC]
 export const targetChains = [
   ethereum,
   bsc,
-  zkSync,
+  zksync,
   arbitrum,
   base,
   // linea,

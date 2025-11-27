@@ -14,7 +14,7 @@ import {
   opBNBTestnet,
   scrollSepolia,
   sepolia,
-  zkSync,
+  zksync,
   zksyncSepoliaTestnet,
 } from 'wagmi/chains'
 
@@ -62,7 +62,7 @@ export const SERVER_NODES = {
   [ChainId.ARBITRUM_ONE]: ARBITRUM_NODES,
   [ChainId.ARBITRUM_GOERLI]: arbitrumGoerli.rpcUrls.default.http,
   [ChainId.ZKSYNC]: [
-    ...zkSync.rpcUrls.default.http,
+    ...zksync.rpcUrls.default.http,
     getNodeRealUrl(ChainId.ZKSYNC, process.env.SERVER_NODE_REAL_API_ETH) || '',
   ].filter(Boolean),
   [ChainId.ZKSYNC_TESTNET]: zksyncSepoliaTestnet.rpcUrls.default.http,
@@ -133,7 +133,7 @@ export const PUBLIC_NODES: Partial<Record<ChainId, readonly string[]>> = {
   ].filter(Boolean) as readonly string[],
   [ChainId.ARBITRUM_GOERLI]: arbitrumGoerli.rpcUrls.default.http,
   [ChainId.ZKSYNC]: [
-    ...zkSync.rpcUrls.default.http,
+    ...zksync.rpcUrls.default.http,
     getNodeRealUrl(ChainId.ZKSYNC, process.env.NEXT_PUBLIC_NODE_REAL_API_ETH) || '',
   ].filter(Boolean) as readonly string[],
   [ChainId.ZKSYNC_TESTNET]: zksyncSepoliaTestnet.rpcUrls.default.http,
