@@ -22,6 +22,11 @@ export const SolanaWalletStateUpdater = () => {
     const trustWallet = window?.trustwallet?.solana
     if (!trustWallet) return undefined
 
+    if (typeof trustWallet.on !== 'function' || typeof trustWallet.off !== 'function') {
+      console.warn('[TW] Provider does not support .on/.off — skipping listener binding')
+      return undefined
+    }
+
     let listenersAttached = false
 
     const handleAccountChange = async (newAccount: any) => {
