@@ -13,20 +13,23 @@ import {
   Text,
   useMatchBreakpoints,
   ArrowBackIcon,
+  Message,
+  MessageText,
 } from '@pancakeswap/uikit'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
+import { chainFullNames, ChainId } from '@pancakeswap/chains'
 import { ASSET_CDN } from '../config/url'
 
 interface SocialLoginProps {
+  chainId?: ChainId
   onGoogleLogin?: () => void
   onXLogin?: () => void
   onTelegramLogin?: () => void
   onDiscordLogin?: () => void
-
   onDismiss?: () => void
 }
 
-const SocialLoginButton = styled(Button)`
+const SocialLoginButton = styled(Button)<{ disabled?: boolean }>`
   width: 100%;
   display: flex;
   align-items: center;
@@ -38,6 +41,15 @@ const SocialLoginButton = styled(Button)`
   box-shadow: 0px 2px 0px 0px ${({ theme }) => theme.colors.cardBorder};
   gap: 4px;
   height: 56px;
+
+  ${({ disabled, theme }) =>
+    disabled &&
+    `
+      opacity: 0.5;
+      cursor: not-allowed;
+      background-color: ${theme.colors.backgroundDisabled};
+      box-shadow: none;
+    `}
 `
 
 const SocialLoginButtonVertical = styled(SocialLoginButton)`
@@ -75,7 +87,19 @@ const NoticeCard = styled.div`
   width: 100%;
 `
 
+const SOCIAL_LOGIN_ALLOWED_CHAINS: ChainId[] = [
+  ChainId.BSC,
+  ChainId.ETHEREUM,
+  ChainId.BASE,
+  ChainId.ARBITRUM_ONE,
+  ChainId.LINEA,
+  ChainId.OPBNB,
+]
+
+const allowedChainNames = SOCIAL_LOGIN_ALLOWED_CHAINS.map((id) => chainFullNames[id]).join(', ')
+
 const SocialLogin: React.FC<SocialLoginProps> = ({
+  chainId,
   onGoogleLogin,
   onXLogin,
   onTelegramLogin,
@@ -84,22 +108,9 @@ const SocialLogin: React.FC<SocialLoginProps> = ({
 }) => {
   const { t } = useTranslation()
   const { isMobile } = useMatchBreakpoints()
+  const { isDark } = useTheme()
 
-  const handleGoogleLogin = () => {
-    onGoogleLogin?.()
-  }
-
-  const handleXLogin = () => {
-    onXLogin?.()
-  }
-
-  const handleTelegramLogin = () => {
-    onTelegramLogin?.()
-  }
-
-  const handleDiscordLogin = () => {
-    onDiscordLogin?.()
-  }
+  const isChainAllowed = chainId && SOCIAL_LOGIN_ALLOWED_CHAINS.includes(chainId)
 
   return (
     <>
@@ -114,7 +125,7 @@ const SocialLogin: React.FC<SocialLoginProps> = ({
         </RowBetween>
       ) : null}
       <Column gap="12px">
-        <SocialLoginButton onClick={handleGoogleLogin}>
+        <SocialLoginButton onClick={onGoogleLogin} disabled={!isChainAllowed}>
           <img
             src={`${ASSET_CDN}/web/wallets/social-login/google.jpg`}
             width="32"
@@ -126,27 +137,34 @@ const SocialLogin: React.FC<SocialLoginProps> = ({
         </SocialLoginButton>
 
         <FlexGap gap="8px" width="100%">
-          <SocialLoginButtonVertical onClick={handleXLogin}>
+          <SocialLoginButtonVertical onClick={onXLogin} disabled={!isChainAllowed}>
             <IconWrapper>
               <SocialLoginXIcon />
             </IconWrapper>
             <Text style={{ whiteSpace: 'nowrap' }}>{t('X Login')}</Text>
           </SocialLoginButtonVertical>
 
-          <SocialLoginButtonVertical onClick={handleTelegramLogin}>
+          <SocialLoginButtonVertical onClick={onTelegramLogin} disabled={!isChainAllowed}>
             <IconWrapper>
               <SocialLoginTelegramIcon />
             </IconWrapper>
             <Text>{t('Telegram')}</Text>
           </SocialLoginButtonVertical>
 
-          <SocialLoginButtonVertical onClick={handleDiscordLogin}>
+          <SocialLoginButtonVertical onClick={onDiscordLogin} disabled={!isChainAllowed}>
             <IconWrapper>
               <SocialLoginDiscordIcon />
             </IconWrapper>
             <Text>{t('Discord')}</Text>
           </SocialLoginButtonVertical>
         </FlexGap>
+        <Message variant={isDark ? 'primary' : 'primary60'}>
+          <MessageText>
+            {t('Social login works only on %chains%. Sending funds on other networks may cause permanent loss.', {
+              chains: allowedChainNames,
+            })}
+          </MessageText>
+        </Message>
       </Column>
       {isMobile ? (
         <>

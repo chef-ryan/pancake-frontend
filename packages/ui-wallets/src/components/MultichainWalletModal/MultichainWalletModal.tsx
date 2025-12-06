@@ -68,9 +68,9 @@ export const MultichainWalletModal: React.FC<MultichainWalletModalProps> = (prop
   )
 
   const handleDismiss = useCallback(() => {
-    props.onDismiss?.()
+    onDismiss?.()
     setPreviewStatus(PreviewStatus.Intro)
-  }, [props.onDismiss])
+  }, [onDismiss])
 
   const setEvmSelectedWallet = useSetAtom(setSelectedEvmWalletAtom)
   const [, setSolanaError] = useAtom(errorSolanaAtom)
@@ -197,13 +197,13 @@ export const MultichainWalletModal: React.FC<MultichainWalletModalProps> = (prop
     (originalCallback?: () => void) => {
       return () => {
         // Close modal when social login is initiated
-        props.onDismiss?.()
+        onDismiss?.()
 
         // Execute the original callback
         originalCallback?.()
       }
     },
-    [props.onDismiss],
+    [onDismiss],
   )
 
   const { isMobile } = useMatchBreakpoints()
@@ -225,6 +225,11 @@ export const MultichainWalletModal: React.FC<MultichainWalletModalProps> = (prop
           }
         : {},
     [isMobile, theme.colors.background, theme.colors.gradientCardHeader, previewStatus],
+  )
+
+  const previouslyUsedWallets = useMemo<[WalletConfigV3<EvmConnectorNames>[], WalletConfigV3<SolanaConnectorNames>[]]>(
+    () => [previouslyUsedEvmWallets, previouslyUsedSolanaWallets],
+    [previouslyUsedEvmWallets, previouslyUsedSolanaWallets],
   )
 
   return (
@@ -255,22 +260,23 @@ export const MultichainWalletModal: React.FC<MultichainWalletModalProps> = (prop
             width="100%"
           >
             <ModalContent
+              chainId={chainId}
               evmAddress={evmAddress}
               solanaAddress={solanaAddress}
               onDismiss={handleDismiss}
               wallets={wallets_}
               topWallets={topWallets_}
-              previouslyUsedWallets={[previouslyUsedEvmWallets, previouslyUsedSolanaWallets]}
+              previouslyUsedWallets={previouslyUsedWallets}
               connectWallet={connectWallet}
               onWalletConnected={handleWalletConnected}
               displaySocialLogin={displaySocialLogin}
               previewStatus={previewStatus}
               setPreviewStatus={setPreviewStatus}
               docLink={docLink}
-              onGoogleLogin={handleSocialLoginWithCleanup(props.onGoogleLogin)}
-              onXLogin={handleSocialLoginWithCleanup(props.onXLogin)}
-              onTelegramLogin={handleSocialLoginWithCleanup(props.onTelegramLogin)}
-              onDiscordLogin={handleSocialLoginWithCleanup(props.onDiscordLogin)}
+              onGoogleLogin={handleSocialLoginWithCleanup(onGoogleLogin)}
+              onXLogin={handleSocialLoginWithCleanup(onXLogin)}
+              onTelegramLogin={handleSocialLoginWithCleanup(onTelegramLogin)}
+              onDiscordLogin={handleSocialLoginWithCleanup(onDiscordLogin)}
             />
           </AtomBox>
         </AtomBox>

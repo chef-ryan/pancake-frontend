@@ -36,18 +36,18 @@ interface SocialLoginButtonProps {
   style?: React.CSSProperties
 }
 
+// Fixed 4 social icons
+const socialIcons = ['google-colors.svg', 'x-colors.svg', 'telegram-colors.png', 'discord-colors.svg']
+
 const SocialLoginButton: React.FC<SocialLoginButtonProps> = ({ onClick, assetCdn, style }) => {
   const { t } = useTranslation()
-
-  // Fixed 4 social icons
-  const socialIcons = ['google-colors.svg', 'x-colors.svg', 'telegram-colors.png', 'discord-colors.svg']
 
   return (
     <StyledButton variant="text" onClick={onClick} width="100%" style={style} padding="0px">
       <Flex justifyContent="space-between" width="100%" alignItems="center">
         <FlexGap gap="8px" alignItems="center">
-          {socialIcons.map((icon, index) => (
-            <SocialLoginIconBox key={index} $bg={`${assetCdn}/web/wallets/social-login/${icon}`} />
+          {socialIcons.map((icon) => (
+            <SocialLoginIconBox key={icon} $bg={`${assetCdn}/web/wallets/social-login/${icon}`} />
           ))}
         </FlexGap>
         <AutoRow width="fit-content" gap="8px" alignItems="center">

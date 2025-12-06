@@ -21,6 +21,31 @@ import {
 import { ASSET_CDN } from './url'
 import { WalletFilterValue } from '../state/hooks'
 
+// Wrapper that keeps getter but makes it safe
+export function wrapInstalledSafe<T extends { id: any; installed?: boolean }>(walletConfig: T): T {
+  if (!walletConfig) return walletConfig
+  const descriptor = Object.getOwnPropertyDescriptor(walletConfig, 'installed')
+
+  if (descriptor && typeof descriptor.get === 'function') {
+    const originalInstalledGetter = descriptor.get
+
+    Object.defineProperty(walletConfig, 'installed', {
+      get() {
+        try {
+          return originalInstalledGetter.call(this)
+        } catch (error) {
+          console.error(`Error in installed getter for wallet ${walletConfig.id || 'unknown'}:`, error)
+          return false
+        }
+      },
+      configurable: descriptor.configurable,
+      enumerable: descriptor.enumerable,
+    })
+  }
+
+  return walletConfig
+}
+
 function getBinanceConnectorId() {
   const globalWindow = safeGetWindow()
 
@@ -331,7 +356,7 @@ export const getWalletsConfig = ({
       },
       downloadLink: 'https://backpack.app/',
     },
-  ] as WalletConfigV3[]
+  ].map(wrapInstalledSafe) as WalletConfigV3[]
 
   if (walletFilter === WalletFilterValue.SolanaOnly) {
     return wallets.filter((wallet) =>

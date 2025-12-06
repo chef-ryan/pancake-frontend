@@ -1,6 +1,7 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { AtomBox, CloseIcon, Grid, Heading, IconButton, RowBetween, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useCallback, useMemo, useState } from 'react'
+import { ChainId } from '@pancakeswap/chains'
 import { useSelectedWallet, useWalletFilter } from '../../state/hooks'
 import { ASSET_CDN } from '../../config/url'
 import { ConnectData, WalletAdaptedNetwork, WalletConfigV3, WalletIds } from '../../types'
@@ -18,6 +19,7 @@ export type ModalContentProps = Pick<
   MultichainWalletModalProps,
   'wallets' | 'topWallets' | 'docLink' | 'solanaAddress' | 'evmAddress'
 > & {
+  chainId?: ChainId
   onDismiss: () => void
 
   previouslyUsedWallets: [WalletConfigV3[], WalletConfigV3[]]
@@ -35,6 +37,7 @@ export type ModalContentProps = Pick<
 }
 
 export const ModalContent: React.FC<ModalContentProps> = ({
+  chainId,
   onDismiss,
   docLink,
   solanaAddress,
@@ -238,6 +241,7 @@ export const ModalContent: React.FC<ModalContentProps> = ({
       )}
       {previewStatus === PreviewStatus.SocialLogin && (
         <SocialLogin
+          chainId={chainId}
           onDismiss={() => setPreviewStatus(PreviewStatus.Intro)}
           onGoogleLogin={onGoogleLogin}
           onXLogin={onXLogin}
