@@ -29,7 +29,12 @@ const LayerZero = ({ isCake }: { isCake?: boolean }) => {
   const [show, setShow] = useState(false)
 
   useEffect(() => {
+    let currencyInterval: any = null
+    let cancelled = false
+
     customElements.whenDefined('lz-bridge').then((Bridge: any) => {
+      if (cancelled) return
+
       const { createBasicTheme, bootstrap, uiStore } = Bridge
 
       if (!Bridge.initialized) {
@@ -51,32 +56,44 @@ const LayerZero = ({ isCake }: { isCake?: boolean }) => {
       }
 
       if (isCake) {
-        setTimeout(async () => {
+        currencyInterval = setInterval(async () => {
           try {
             await customElements.whenDefined('lz-bridge')
             const app: any = customElements.get('lz-bridge')
-            const length = app?.bridgeStore?.currencies?.length
 
-            if (length !== null || length !== undefined) {
-              const currencies = app?.bridgeStore?.currencies?.slice()
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              app!.bridgeStore!.currencies.length = 0
+            const rawCurrencies = app?.bridgeStore?.currencies
+            const length = rawCurrencies?.length
 
-              const list = currencies?.filter((i: any) => i.symbol.toLowerCase() === 'cake' && i.chainId !== 158)
-              app?.bridgeStore?.addCurrencies(list)
-              const srcCake = app?.bridgeStore?.currencies?.find(
-                (i: any) => i?.symbol?.toUpperCase() === 'CAKE' && i?.chainId === 102,
-              )
-              app?.bridgeStore?.setSrcCurrency(srcCake)
+            if (!Array.isArray(rawCurrencies) || length === 0) {
+              return
             }
+
+            clearInterval(currencyInterval)
+
+            const currencies = rawCurrencies.slice()
+            app.bridgeStore.currencies.length = 0
+
+            const list = currencies.filter((i: any) => i?.symbol?.toUpperCase() === 'CAKE' && i?.chainId !== 158)
+            app.bridgeStore.addCurrencies(list)
+
+            const srcCake = app.bridgeStore.currencies.find(
+              (i: any) => i?.symbol?.toUpperCase() === 'CAKE' && i?.chainId === 102,
+            )
+            app.bridgeStore.setSrcCurrency(srcCake)
           } catch (error) {
             console.error('Failed to load lz-bridge', error)
+            clearInterval(currencyInterval)
           }
-        }, 800)
+        }, 150)
       }
 
       setShow(true)
     })
+
+    return () => {
+      cancelled = true
+      if (currencyInterval) clearInterval(currencyInterval)
+    }
   }, [isCake])
 
   return (
