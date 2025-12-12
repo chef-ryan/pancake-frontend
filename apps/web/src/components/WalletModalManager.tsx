@@ -10,7 +10,6 @@ import { useCallback, useMemo } from 'react'
 import { logGTMWalletConnectedEvent } from 'utils/customGTMEventTracking'
 import { useConnect } from 'wagmi'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { useWalletFilterEffect } from '@pancakeswap/ui-wallets/src/state/hooks'
 
 const WalletModalManager: React.FC<{ isOpen: boolean; onDismiss?: () => void }> = ({ isOpen, onDismiss }) => {

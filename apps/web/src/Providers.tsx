@@ -35,21 +35,21 @@ const Providers: React.FC<
     <FirebaseAuthProvider>
       <Provider store={store}>
         <LanguageProvider>
-          <PrivyProvider>
-            <QueryClientProvider client={queryClient}>
-              <WalletProvider>
-                <HydrationBoundary state={dehydratedState}>
-                  <NextThemeProvider>
-                    <StyledUIKitProvider>
+          <QueryClientProvider client={queryClient}>
+            <HydrationBoundary state={dehydratedState}>
+              <NextThemeProvider>
+                <StyledUIKitProvider>
+                  <PrivyProvider>
+                    <WalletProvider>
                       <HistoryManagerProvider>
                         <ModalProvider portalProvider={DialogProvider}>{children}</ModalProvider>
                       </HistoryManagerProvider>
-                    </StyledUIKitProvider>
-                  </NextThemeProvider>
-                </HydrationBoundary>
-              </WalletProvider>
-            </QueryClientProvider>
-          </PrivyProvider>
+                    </WalletProvider>
+                  </PrivyProvider>
+                </StyledUIKitProvider>
+              </NextThemeProvider>
+            </HydrationBoundary>
+          </QueryClientProvider>
         </LanguageProvider>
       </Provider>
     </FirebaseAuthProvider>

@@ -5,6 +5,7 @@ import { getAddress, hexToBigInt } from 'viem'
 import { useChainId, useConfig, useConnectors, useReconnect } from 'wagmi'
 import { injected } from 'wagmi/connectors'
 import { useSmartWallets } from '@privy-io/react-auth/smart-wallets'
+import { PrivySwitchChainError } from 'wallet/util/PrivySwitchChainError'
 
 /**
  * Registers a smart account connector in wagmi for the Privy embedded smart wallet.
@@ -215,19 +216,36 @@ class SmartWalletEIP1193Provider extends EventEmitter {
       case 'eth_signTransaction':
         throw new Error('eth_signTransaction is not supported. Use eth_sendTransaction instead.')
       case 'wallet_switchEthereumChain': {
-        const [{ chainId }] = params as [{ chainId: string }]
-        if (!this.smartWalletClient?.account) {
-          throw new Error('account not connected!')
+        try {
+          const chainId = params?.[0]?.chainId as string | undefined
+          if (!chainId) {
+            throw new PrivySwitchChainError(undefined, 'Invalid or missing chainId')
+          }
+          const numericChainId = parseInt(chainId, 16)
+          if (!this.smartWalletClient?.account) {
+            throw new PrivySwitchChainError(numericChainId, 'Account not connected!')
+          }
+
+          const newClient = await this.getClientForChain({ id: numericChainId })
+
+          if (!newClient) {
+            throw new PrivySwitchChainError(
+              numericChainId,
+              `No smart wallet client found for chain ID ${numericChainId}`,
+            )
+          }
+
+          this.smartWalletClient = newClient
+          this.emit('chainChanged', chainId)
+          return null
+        } catch (err: any) {
+          if (err instanceof PrivySwitchChainError) {
+            throw new Error(err.message)
+          }
+          const chainId = params?.[0]?.chainId as string
+          const numericChainId = parseInt(chainId, 16)
+          throw new PrivySwitchChainError(numericChainId, err?.message ?? 'Failed to switch chain')
         }
-        const newClient = await this.getClientForChain({
-          id: parseInt(chainId, 16),
-        })
-        if (!newClient) {
-          throw new Error(`No smart wallet client found for chain ID ${chainId}`)
-        }
-        this.smartWalletClient = newClient
-        this.emit('chainChanged', chainId)
-        return null
       }
       default:
         return this.smartWalletClient?.transport.request({ method, params } as any)
