@@ -8,7 +8,7 @@ import {
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import useTheme from 'hooks/useTheme'
-import { safeGetAddress } from 'utils'
+import { getBlockExploreLink, safeGetAddress } from 'utils'
 import useIfo from '../hooks/useIfo'
 
 const FooterIcons: React.FC = () => {
@@ -24,7 +24,11 @@ const FooterIcons: React.FC = () => {
         <LanguageIcon width="24px" color={theme.colors.textSubtle} />
       </Link>
       {bscScanAddress && (
-        <Link href={`https://bscscan.com/address/${bscScanAddress}`} target="_blank" rel="noopener noreferrer">
+        <Link
+          href={getBlockExploreLink(bscScanAddress, 'address', config.chainId)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <BscScanIcon width="24px" color={theme.colors.textSubtle} />
         </Link>
       )}

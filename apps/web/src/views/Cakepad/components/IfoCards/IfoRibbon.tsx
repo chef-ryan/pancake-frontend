@@ -4,7 +4,6 @@ import { ReactNode, useMemo, useState, useEffect } from 'react'
 import { styled } from 'styled-components'
 
 import { IfoStatus } from '@pancakeswap/ifos'
-import { ChainId } from '@pancakeswap/chains'
 import useTheme from 'hooks/useTheme'
 import { IfoChainBoard } from 'views/Ifos/components/IfoChainBoard'
 import LiveTimer, { SoonTimer } from './Timer'
@@ -74,7 +73,7 @@ const ChainBoardContainer = styled(Box)`
 
 export const IfoRibbon: React.FC<{ isHistory?: boolean }> = ({ isHistory = false }) => {
   const { isDark } = useTheme()
-  const { info, users } = useIfo()
+  const { info, users, chainId } = useIfo()
   const ifoStatus = info?.status
   const startTimestamp = info?.startTimestamp
   const endTimestamp = info?.endTimestamp
@@ -160,7 +159,7 @@ export const IfoRibbon: React.FC<{ isHistory?: boolean }> = ({ isHistory = false
         {ribbon}
       </Flex>
       <ChainBoardContainer zIndex={2}>
-        <IfoChainBoard chainId={ChainId.BSC} isHistory={isHistory} />
+        <IfoChainBoard chainId={chainId} isHistory={isHistory} />
       </ChainBoardContainer>
     </Container>
   )

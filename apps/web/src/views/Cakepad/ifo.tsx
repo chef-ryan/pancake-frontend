@@ -1,11 +1,12 @@
 import { safeGetAddress } from 'utils'
-import { IfoV2Provider } from './contexts/IfoV2Provider'
+import { useCheckAndSwitchChain } from 'hooks/useCheckAndSwitchChain'
 import CurrentIfo from './CurrentIfo'
 import useIfo from './hooks/useIfo'
 import { IfoPresetPage } from './components/IfoCards/IfoPresetCard/IfoPresetCard'
 
 const DisplayIfo = () => {
   const { config } = useIfo()
+  useCheckAndSwitchChain(config?.chainId)
 
   // If no contract address, use preset data
   if ((!config.contractAddress || !safeGetAddress(config.contractAddress)) && config.presetData) {
@@ -16,13 +17,7 @@ const DisplayIfo = () => {
 }
 
 const Ifo = () => {
-  return (
-    <>
-      <IfoV2Provider>
-        <DisplayIfo />
-      </IfoV2Provider>
-    </>
-  )
+  return <DisplayIfo />
 }
 
 export default Ifo

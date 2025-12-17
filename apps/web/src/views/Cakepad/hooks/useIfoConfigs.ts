@@ -42,7 +42,10 @@ export const useIfoConfigs = () => {
   return useQuery<IFOConfig[]>({
     queryKey: ['cakepad-ifo-configs'],
     queryFn: async () => {
-      const response = await fetch(CAKEPAD_CONFIGS_URL)
+      const timestampedUrl = CAKEPAD_CONFIGS_URL
+        ? `${CAKEPAD_CONFIGS_URL}${CAKEPAD_CONFIGS_URL.includes('?') ? '&' : '?'}t=${Date.now()}`
+        : ''
+      const response = await fetch(timestampedUrl)
       if (!response.ok) {
         throw new Error(`Failed to fetch IFO config: ${response.status}`)
       }

@@ -1,13 +1,39 @@
-import { Container } from '@pancakeswap/uikit'
+import { Ifo } from '@pancakeswap/ifos'
+import { Box, Card, CardHeader, Container } from '@pancakeswap/uikit'
 
 import { useInActiveIfoConfigs } from 'hooks/useIfoConfig'
 
 import HistoryIfos from 'views/Cakepad/HistoryIfos'
-import IfoCardV1Data from './components/IfoCardV1Data'
-import IfoCardV2Data from './components/IfoCardV2Data'
-import IfoCardV3Data from './components/IfoCardV3Data'
-import { IfoCardV7Data } from './components/IfoCardV7Data'
-import { IfoCardV8Data } from './components/IfoCardV8Data'
+import { styled } from 'styled-components'
+import { getBannerUrl } from './helpers'
+
+const StyledCard = styled(Card)`
+  width: 100%;
+  margin: auto;
+  border-radius: 32px;
+`
+
+const Header = styled(CardHeader)<{ ifoId: string }>`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 112px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  border-top-left-radius: 32px;
+  border-top-right-radius: 32px;
+  background-color: ${({ theme }) => theme.colors.dropdown};
+  background-image: ${({ ifoId }) => `url('${getBannerUrl(ifoId)}')`};
+`
+
+const PastIfoCard = ({ ifo }: { ifo: Ifo }) => (
+  <Box id={ifo.id} position="relative" mb="10px">
+    <StyledCard>
+      <Header ifoId={ifo.id} />
+    </StyledCard>
+  </Box>
+)
 
 const PastIfo = ({ isV2 }: { isV2?: boolean }) => {
   const inactiveIfo = useInActiveIfoConfigs()
@@ -15,24 +41,9 @@ const PastIfo = ({ isV2 }: { isV2?: boolean }) => {
   return (
     <Container id="past-ifos" py={['24px', '24px', '40px']} maxWidth="736px" m="auto" width="100%">
       {isV2 && <HistoryIfos />}
-      {inactiveIfo?.map((ifo) => {
-        switch (ifo.version) {
-          case 1:
-            return <IfoCardV1Data key={ifo.id} ifo={ifo} isHistory />
-          case 2:
-            return <IfoCardV2Data key={ifo.id} ifo={ifo} isHistory />
-          case 3:
-          case 3.1:
-          case 3.2:
-            return <IfoCardV3Data key={ifo.id} ifo={ifo} isHistory />
-          case 7:
-            return <IfoCardV7Data key={ifo.id} ifo={ifo} isHistory />
-          case 8:
-            return <IfoCardV8Data key={ifo.id} ifo={ifo} isHistory />
-          default:
-            return null
-        }
-      })}
+      {inactiveIfo?.map((ifo) => (
+        <PastIfoCard key={ifo.id} ifo={ifo} />
+      ))}
     </Container>
   )
 }

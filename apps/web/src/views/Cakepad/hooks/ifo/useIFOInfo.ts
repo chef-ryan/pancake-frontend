@@ -2,11 +2,10 @@ import { type Currency, CurrencyAmount } from '@pancakeswap/swap-sdk-core'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useActiveChainId } from 'hooks/useActiveChainId'
 import { getViemClients } from 'utils/viem'
 import { useCurrency } from 'hooks/Tokens'
 import { useAtomValue } from 'jotai'
-import { ifoInfoAtom, ifoPoolsAtom } from 'views/Cakepad/atom/ifo.atoms'
+import { ifoInfoAtom } from 'views/Cakepad/atom/ifo.atoms'
 import { useIfoV2Context } from 'views/Cakepad/contexts/useIfoV2Context'
 import { ifoVersionAtom } from 'views/Cakepad/atom/ifoVersionAtom'
 import { getStatusByTimestamp } from '../helpers'
@@ -21,14 +20,14 @@ export const useIFOInfo = () => {
 }
 
 export const useIFOInfoCtx = () => {
+  const { config, ifoContract } = useIfoV2Context()
   const pools = useIFOPoolInfo()
   const pool0Info = pools[0]
   const pool1Info = pools[1]
   const { data: addresses } = useIFOAddresses()
-  const offeringCurrency = useCurrency(addresses?.offeringToken)
-  const { chainId } = useActiveChainId()
+  const offeringCurrency = useCurrency(addresses?.offeringToken, config.chainId)
   const vestingInfo = useVestingInfo()
-  const { ifoContract } = useIfoV2Context()
+  const { chainId } = config
   const version = useAtomValue(ifoVersionAtom)
   const { data: timestamps } = useQuery({
     queryKey: ['ifoTimestamps', chainId, version, ifoContract.address],

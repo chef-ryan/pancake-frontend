@@ -1,15 +1,13 @@
-import { isIfoSupported } from '@pancakeswap/ifos'
 import { useTranslation } from '@pancakeswap/localization'
 import { ChainId } from '@pancakeswap/sdk'
 import { Box, Button, Container, Flex, Heading, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
-import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { styled } from 'styled-components'
 
 import { ASSET_CDN } from 'config/constants/endpoints'
 import { getChainName } from '@pancakeswap/chains'
-import { getChainBasedImageUrl } from '../helpers'
+import useIfo from '../hooks/useIfo'
 
 const StyledHero = styled(Box)`
   position: relative;
@@ -126,7 +124,15 @@ const Hero = () => {
   )
 }
 
-function getHeadBunny(isMobile: boolean) {
+function getHeadBunny(isMobile: boolean, chainId?: ChainId) {
+  if (chainId) {
+    const chainName = getChainName(chainId)
+    if (isMobile) {
+      return `${ASSET_CDN}/web/ifos/v2/bunny/${chainName}/bunny-mobile.png`
+    }
+    return `${ASSET_CDN}/web/ifos/v2/bunny/${chainName}/bunny.png`
+  }
+  // Fallback to default bunny images
   if (isMobile) {
     return `${ASSET_CDN}/web/ifos/v2/bunny-mobile.png`
   }
@@ -134,11 +140,12 @@ function getHeadBunny(isMobile: boolean) {
 }
 
 function HeaderBunny() {
-  const { chainId: currentChainId } = useActiveChainId()
+  const { chainId: ifoChainId } = useIfo()
   const { isDesktop, isMobile } = useMatchBreakpoints()
+
   const bunnyImageUrl = useMemo(() => {
-    return getHeadBunny(isMobile)
-  }, [currentChainId])
+    return getHeadBunny(isMobile, ifoChainId)
+  }, [ifoChainId, isMobile])
 
   return (
     <BunnyContainer>
@@ -148,6 +155,14 @@ function HeaderBunny() {
         style={{
           width: isDesktop ? 393 : 207,
           height: isDesktop ? 197 : 192,
+        }}
+        onError={(e) => {
+          const target = e.currentTarget
+          if (isMobile) {
+            target.src = `${ASSET_CDN}/web/ifos/v2/bunny-mobile.png`
+          } else {
+            target.src = `${ASSET_CDN}/web/ifos/v2/bunny.png`
+          }
         }}
       />
     </BunnyContainer>

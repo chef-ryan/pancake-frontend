@@ -4,7 +4,7 @@ import { Box, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import { useTranslation } from '@pancakeswap/localization'
 
-import { useChainName } from '../hooks/useChainNames'
+import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { getChainBasedImageUrl } from '../helpers'
 
 const BACKGROUND = {
@@ -13,6 +13,7 @@ const BACKGROUND = {
   [ChainId.ETHEREUM]: '#627AD8',
   [ChainId.GOERLI]: '#627AD8',
   [ChainId.ARBITRUM_ONE]: '#2D364D',
+  [ChainId.MONAD_MAINNET]: '#6954F6',
 }
 
 const Container = styled(Box)`
@@ -51,7 +52,8 @@ export const IfoChainBoard = memo(function IfoChainBoard({ chainId, isHistory = 
   const { isMobile } = useMatchBreakpoints()
   const { t } = useTranslation()
   const boardImageUrl = useMemo(() => getChainBasedImageUrl({ chainId, name: 'chain-board' }), [chainId])
-  const chainName = useChainName(chainId, { shortName: true })
+
+  const chainName = getFullChainNameById(chainId)
 
   if (!chainId) {
     return null
@@ -60,11 +62,13 @@ export const IfoChainBoard = memo(function IfoChainBoard({ chainId, isHistory = 
   return (
     <Container>
       {!isMobile && <img alt={`chain-${chainId}`} src={boardImageUrl} width={100} height={85} />}
-      <Tag background={BACKGROUND[chainId]} $isHistory={isHistory}>
-        <Text fontSize="0.875rem" bold color="white">
-          {t('On %chainName%', { chainName })}
-        </Text>
-      </Tag>
+      {!isMobile && chainId !== ChainId.MONAD_MAINNET && (
+        <Tag background={BACKGROUND[chainId]} $isHistory={isHistory}>
+          <Text fontSize="0.875rem" bold color="white">
+            {t('On %chainName%', { chainName })}
+          </Text>
+        </Tag>
+      )}
     </Container>
   )
 })

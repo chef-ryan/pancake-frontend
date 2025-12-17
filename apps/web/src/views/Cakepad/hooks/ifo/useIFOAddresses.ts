@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_SETTINGS_IMMUTABLE } from 'config/constants'
-import { useActiveChainId } from 'hooks/useActiveChainId'
 import { getViemClients } from 'utils/viem'
 import { zeroAddress } from 'viem'
 import { isAddressEqual } from 'utils'
@@ -15,8 +14,8 @@ export type IFOAddresses = {
 }
 
 export const useIFOAddresses = () => {
-  const { chainId } = useActiveChainId()
-  const { ifoContract } = useIfoV2Context()
+  const { config, ifoContract } = useIfoV2Context()
+  const { chainId } = config
 
   return useQuery({
     queryKey: ['ifoAddresses', chainId, ifoContract?.address],

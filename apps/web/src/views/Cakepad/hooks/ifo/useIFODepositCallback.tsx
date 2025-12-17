@@ -67,14 +67,21 @@ export const useIFODepositCallback = () => {
             })
 
             if (allowance < amountPool) {
-              await writeContractAsync({
+              const approveTxHash = await writeContractAsync({
                 address: amount.currency.address,
                 abi: erc20Abi,
                 functionName: 'approve',
                 args: [ifoContract.address, amountPool],
               })
+
+              if (approveTxHash) {
+                await publicClient({ chainId: amount.currency.chainId }).waitForTransactionReceipt({
+                  hash: approveTxHash,
+                })
+              }
             }
           }
+
           const tx = await writeContractAsync({
             address: ifoContract.address,
             abi: ifoContract.abi as any,

@@ -2,7 +2,6 @@ import { Box, Flex } from '@pancakeswap/uikit'
 import { styled } from 'styled-components'
 
 import { IfoStatus } from '@pancakeswap/ifos'
-import { ChainId } from '@pancakeswap/chains'
 import useTheme from 'hooks/useTheme'
 import { IfoChainBoard } from 'views/Ifos/components/IfoChainBoard'
 import useIfo from 'views/Cakepad/hooks/useIfo'
@@ -59,7 +58,7 @@ const ChainBoardContainer = styled(Box)`
 
 export const IfoPresetRibbon: React.FC = () => {
   const { isDark } = useTheme()
-  const { config } = useIfo()
+  const { config, chainId } = useIfo()
 
   const ifoStatus = 'coming_soon'
   const startTimestamp = config?.presetData?.startTimestamp
@@ -89,7 +88,7 @@ export const IfoPresetRibbon: React.FC = () => {
         />
       </Flex>
       <ChainBoardContainer zIndex={2}>
-        <IfoChainBoard chainId={ChainId.BSC} />
+        <IfoChainBoard chainId={chainId} />
       </ChainBoardContainer>
     </Container>
   )

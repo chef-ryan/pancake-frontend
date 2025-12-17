@@ -24,9 +24,9 @@ const DescriptionWithTx: React.FC<React.PropsWithChildren<DescriptionWithTxProps
   const blockExplorerName = useBlockExploreName(txChainId || chainId)
   const getBlockExploreLink = useBlockExploreLink()
   const explorerName = useMemo(() => {
-    if (!bscTrace) return blockExplorerName
-    return 'BscTrace'
-  }, [bscTrace, blockExplorerName])
+    if (bscTrace && txChainId === ChainId.BSC) return 'BscTrace'
+    return blockExplorerName
+  }, [bscTrace, blockExplorerName, txChainId])
   const explorerLink = useMemo(() => {
     const link = getBlockExploreLink(txHash, 'transaction', txChainId || chainId)
     if (bscTrace) {

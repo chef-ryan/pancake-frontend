@@ -31,6 +31,7 @@ export const SyncIfoContext = ({ id, children }: { id: string; children: React.R
     updateUsers(users)
   }, [users])
 
+  console.log('[ifo] SyncIfoContext rendered', { infoValue, poolsValue, isLoading })
   if (!infoValue || !poolsValue || !infoValue.offeringCurrency || isLoading) {
     return (
       <Flex width="100%" minHeight="600px" display="flex" alignItems="center" justifyContent="center">

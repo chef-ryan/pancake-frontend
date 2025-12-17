@@ -1,7 +1,12 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Card, CardBody, Button, Text, FlexGap } from '@pancakeswap/uikit'
 import { NumberDisplay } from '@pancakeswap/widgets-internal'
+import { Native } from '@pancakeswap/sdk'
+import { CHAIN_QUERY_NAME } from 'config/chains'
+import { useMemo } from 'react'
 import AddToWalletButton from 'components/AddToWallet/AddToWalletButton'
+import { formatNumber } from '@pancakeswap/utils/formatBalance'
+import useIfo from '../hooks/useIfo'
 
 interface IfoAllocationCardProps {
   symbol: string
@@ -17,8 +22,16 @@ export const IfoAllocationDisplay: React.FC<IfoAllocationCardProps> = ({
   allocatedAmount,
 }) => {
   const { t } = useTranslation()
-  const amount = allocatedAmount ?? '0'
-  const swapUrl = `https://pancakeswap.finance/swap?chain=bsc&inputCurrency=${tokenAddress}&outputCurrency=BNB`
+  const { chainId } = useIfo()
+
+  const amount = formatNumber(Number(allocatedAmount ?? '0'), 0, 2)
+
+  const swapUrl = useMemo(() => {
+    const chainQueryName = chainId ? CHAIN_QUERY_NAME[chainId] : 'bsc'
+    const nativeCurrency = chainId ? Native.onChain(chainId) : Native.onChain(56) // Default to BSC if no chainId
+    const nativeSymbol = nativeCurrency.symbol
+    return `https://pancakeswap.finance/swap?chain=${chainQueryName}&inputCurrency=${tokenAddress}&outputCurrency=${nativeSymbol}`
+  }, [chainId, tokenAddress])
 
   return (
     <FlexGap flexDirection="column">

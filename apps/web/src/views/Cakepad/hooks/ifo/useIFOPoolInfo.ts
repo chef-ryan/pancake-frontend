@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useActiveChainId } from 'hooks/useActiveChainId'
 import { useLatestTxReceipt } from 'state/farmsV4/state/accountPositions/hooks/useLatestTxReceipt'
 import { getViemClients } from 'utils/viem'
 import { zeroAddress, isAddressEqual, type Address } from 'viem'
@@ -24,8 +23,8 @@ export const useIFOPoolInfo = () => {
 }
 
 export const useIFOPoolInfoCtx = (): PoolInfo[] => {
-  const { chainId } = useActiveChainId()
-  const { ifoContract } = useIfoV2Context()
+  const { config, ifoContract } = useIfoV2Context()
+  const { chainId } = config
   const latestTxReceipt = useLatestTxReceipt()
   const { data: addresses } = useIFOAddresses()
   const stakeCurrency0 = useCurrency(addresses?.lpToken0)

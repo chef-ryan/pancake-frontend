@@ -1,4 +1,3 @@
-import { ChainId } from '@pancakeswap/chains'
 import { useRouter } from 'next/router'
 import { NextPageWithLayout } from 'utils/page.types'
 import IfoLayout from 'views/Cakepad/components/IfoLayout'
@@ -7,6 +6,7 @@ import Hero from 'views/Cakepad/components/Hero'
 import IfoContainer from 'views/Cakepad/components/IfoContainer'
 import useIfo from 'views/Cakepad/hooks/useIfo'
 import { IfoDeposit } from 'views/Cakepad/components/IfoDeposit'
+import { IFO_SUPPORT_CHAINS } from 'config/cakepad.config'
 
 const IfoDepositPageContent: React.FC<{ pid: number }> = ({ pid }) => {
   const { config } = useIfo()
@@ -35,7 +35,7 @@ const IfoDepositPage: NextPageWithLayout = () => {
   )
 }
 
-IfoDepositPage.chains = [ChainId.BSC, ChainId.BSC_TESTNET]
+IfoDepositPage.chains = IFO_SUPPORT_CHAINS
 IfoDepositPage.Layout = IfoLayout
 
 export default IfoDepositPage
