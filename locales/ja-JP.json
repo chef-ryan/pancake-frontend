@@ -4133,5 +4133,16 @@
   "Please connect your Solana wallet first": "まずSolanaウォレットを接続してください",
   "Social login with %chainName% is not supported.": "%chainName%でのソーシャルログインはサポートされていません。",
   "An unexpected error occurred while switching chains. Please try again.": "チェーンの切り替え中に予期せぬエラーが発生しました。もう一度お試しください。",
-  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "ソーシャルログインは%chains%でのみ利用可能です。他のネットワークに資金を送金すると、永久に失われる可能性があります。"
+  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "ソーシャルログインは%chains%でのみ利用可能です。他のネットワークに資金を送金すると、永久に失われる可能性があります。",
+  "Prob": "Prob",
+  "Switch network to claim": "請求するにはネットワークを切り替えてください",
+  "Place Your Zero-Fee Predictions on": "手数料ゼロで予測をしよう",
+  "probable.markets!": "probable.markets!",
+  "Start now": "今すぐ始める",
+  "LeverUp IFO": "LeverUp IFO",
+  "LeverUp is a next-generation perpetual trading platform built on Monad — a fully LP-free perps DEX offering up to 1001x leverage, zero fees on losses, and 100% of protocol fees returned to stakeholders.": "LeverUpは、Monad上に構築された次世代の無期限取引プラットフォームです。完全にLPフリーのパーペチュアルDEXで、最大1001倍のレバレッジ、損失に対する手数料ゼロ、プロトコル手数料の100%をステークホルダーに還元します。",
+  "Users from restricted jurisdictions or wallets flagged by risk checks may not be eligible to participate.": "制限された法域のユーザー、またはリスクチェックでフラグが立てられたウォレットは、参加資格がない場合があります。",
+  "How to bridge cake?": "CAKEのブリッジ方法",
+  "You can use this link to bridge CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE": "こちらのリンクからCAKEをブリッジできます：https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE",
+  "24 hours": "24時間"
 }

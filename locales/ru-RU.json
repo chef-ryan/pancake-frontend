@@ -4133,5 +4133,16 @@
   "Please connect your Solana wallet first": "Пожалуйста, сначала подключите ваш кошелек Solana.",
   "Social login with %chainName% is not supported.": "Вход через соцсети в сети %chainName% не поддерживается.",
   "An unexpected error occurred while switching chains. Please try again.": "Произошла непредвиденная ошибка при переключении сетей. Пожалуйста, попробуйте еще раз.",
-  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "Вход через соцсети работает только в сетях %chains%. Отправка средств в других сетях может привести к их безвозвратной потере."
+  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "Вход через соцсети работает только в сетях %chains%. Отправка средств в других сетях может привести к их безвозвратной потере.",
+  "Prob": "Прогнозы",
+  "Switch network to claim": "Переключите сеть для клейма",
+  "Place Your Zero-Fee Predictions on": "Размещайте прогнозы с нулевой комиссией на",
+  "probable.markets!": "probable.markets!",
+  "Start now": "Начать",
+  "LeverUp IFO": "IFO LeverUp",
+  "LeverUp is a next-generation perpetual trading platform built on Monad — a fully LP-free perps DEX offering up to 1001x leverage, zero fees on losses, and 100% of protocol fees returned to stakeholders.": "LeverUp — это платформа для торговли бессрочными контрактами нового поколения, построенная на Monad — DEX для перпсов без LP, предлагающая кредитное плечо до 1001x, нулевые комиссии при убытках и 100% комиссий протокола, возвращаемых стейкхолдерам.",
+  "Users from restricted jurisdictions or wallets flagged by risk checks may not be eligible to participate.": "Пользователи из юрисдикций с ограничениями или владельцы кошельков, помеченных в ходе проверки на риски, могут быть не допущены к участию.",
+  "How to bridge cake?": "Как перевести CAKE через мост?",
+  "You can use this link to bridge CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE": "Вы можете использовать эту ссылку, чтобы перевести CAKE через мост: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE",
+  "24 hours": "24 часа"
 }

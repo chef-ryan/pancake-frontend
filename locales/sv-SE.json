@@ -4133,5 +4133,16 @@
   "Please connect your Solana wallet first": "Vänligen anslut din Solana-plånbok först",
   "Social login with %chainName% is not supported.": "Social inloggning med %chainName% stöds inte.",
   "An unexpected error occurred while switching chains. Please try again.": "Ett oväntat fel inträffade vid byte av nätverk. Vänligen försök igen.",
-  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "Social inloggning fungerar endast på %chains%. Att skicka medel på andra nätverk kan orsaka permanent förlust."
+  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "Social inloggning fungerar endast på %chains%. Att skicka medel på andra nätverk kan orsaka permanent förlust.",
+  "Prob": "Prob",
+  "Switch network to claim": "Byt nätverk för att hämta",
+  "Place Your Zero-Fee Predictions on": "Placera dina avgiftsfria förutsägelser på",
+  "probable.markets!": "probable.markets!",
+  "Start now": "Börja nu",
+  "LeverUp IFO": "LeverUp IFO",
+  "LeverUp is a next-generation perpetual trading platform built on Monad — a fully LP-free perps DEX offering up to 1001x leverage, zero fees on losses, and 100% of protocol fees returned to stakeholders.": "LeverUp är nästa generations eviga handelsplattform byggd på Monad — en helt LP-fri perps DEX som erbjuder upp till 1001x hävstång, noll avgifter på förluster och 100 % av protokollavgifterna som returneras till intressenter.",
+  "Users from restricted jurisdictions or wallets flagged by risk checks may not be eligible to participate.": "Användare från begränsade jurisdiktioner eller plånböcker som flaggats av riskkontroller är kanske inte berättigade att delta.",
+  "How to bridge cake?": "Hur bryggar man CAKE?",
+  "You can use this link to bridge CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE": "Du kan använda den här länken för att brygga CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE",
+  "24 hours": "24 timmar"
 }

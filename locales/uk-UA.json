@@ -4133,5 +4133,16 @@
   "Please connect your Solana wallet first": "Будь ласка, спочатку підключіть свій гаманець Solana",
   "Social login with %chainName% is not supported.": "Вхід через соціальні мережі в мережі %chainName% не підтримується.",
   "An unexpected error occurred while switching chains. Please try again.": "Під час перемикання мереж сталася неочікувана помилка. Будь ласка, спробуйте ще раз.",
-  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "Вхід через соціальні мережі працює лише в мережах %chains%. Надсилання коштів в інших мережах може призвести до їх безповоротної втрати."
+  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "Вхід через соціальні мережі працює лише в мережах %chains%. Надсилання коштів в інших мережах може призвести до їх безповоротної втрати.",
+  "Prob": "Prob",
+  "Switch network to claim": "Переключіть мережу, щоб отримати",
+  "Place Your Zero-Fee Predictions on": "Робіть свої прогнози з нульовою комісією на",
+  "probable.markets!": "probable.markets!",
+  "Start now": "Почніть зараз",
+  "LeverUp IFO": "LeverUp IFO",
+  "LeverUp is a next-generation perpetual trading platform built on Monad — a fully LP-free perps DEX offering up to 1001x leverage, zero fees on losses, and 100% of protocol fees returned to stakeholders.": "LeverUp — це платформа для торгівлі безстроковими контрактами нового покоління, створена на Monad — повністю безпулова DEX для безстрокових контрактів, що пропонує кредитне плече до 1001x, нульові комісії за збитки та повернення 100% комісій протоколу стейкхолдерам.",
+  "Users from restricted jurisdictions or wallets flagged by risk checks may not be eligible to participate.": "Користувачі з обмежених юрисдикцій або гаманці, позначені під час перевірки ризиків, можуть не мати права на участь.",
+  "How to bridge cake?": "Як здійснити бридж CAKE?",
+  "You can use this link to bridge CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE": "Ви можете використати це посилання, щоб здійснити бридж CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE",
+  "24 hours": "24 години"
 }

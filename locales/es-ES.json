@@ -4133,5 +4133,16 @@
   "Please connect your Solana wallet first": "Por favor, conecta primero tu wallet de Solana",
   "Social login with %chainName% is not supported.": "El inicio de sesión social con %chainName% no es compatible.",
   "An unexpected error occurred while switching chains. Please try again.": "Ocurrió un error inesperado al cambiar de red. Por favor, inténtalo de nuevo.",
-  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "El inicio de sesión social solo funciona en %chains%. Enviar fondos en otras redes puede provocar su pérdida permanente."
+  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "El inicio de sesión social solo funciona en %chains%. Enviar fondos en otras redes puede provocar su pérdida permanente.",
+  "Prob": "Prob",
+  "Switch network to claim": "Cambia de red para reclamar",
+  "Place Your Zero-Fee Predictions on": "Haz tus predicciones sin comisiones en",
+  "probable.markets!": "probable.markets!",
+  "Start now": "Empieza ahora",
+  "LeverUp IFO": "LeverUp IFO",
+  "LeverUp is a next-generation perpetual trading platform built on Monad — a fully LP-free perps DEX offering up to 1001x leverage, zero fees on losses, and 100% of protocol fees returned to stakeholders.": "LeverUp es una plataforma de trading de perpetuos de nueva generación construida sobre Monad — un DEX de perpetuos totalmente sin LP que ofrece un apalancamiento de hasta 1001x, cero comisiones en las pérdidas y el 100% de las comisiones del protocolo devueltas a los stakeholders.",
+  "Users from restricted jurisdictions or wallets flagged by risk checks may not be eligible to participate.": "Los usuarios de jurisdicciones restringidas o las wallets marcadas por comprobaciones de riesgo podrían no ser elegibles para participar.",
+  "How to bridge cake?": "¿Cómo hacer bridge de cake?",
+  "You can use this link to bridge CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE": "Puedes usar este enlace para hacer bridge de CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE",
+  "24 hours": "24 horas"
 }

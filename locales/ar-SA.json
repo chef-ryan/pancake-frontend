@@ -4133,5 +4133,16 @@
   "Please connect your Solana wallet first": "يرجى ربط محفظة Solana الخاصة بك أولاً",
   "Social login with %chainName% is not supported.": "تسجيل الدخول الاجتماعي باستخدام %chainName% غير مدعوم.",
   "An unexpected error occurred while switching chains. Please try again.": "حدث خطأ غير متوقع أثناء تبديل الشبكات. يرجى المحاولة مرة أخرى.",
-  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "يعمل تسجيل الدخول الاجتماعي فقط على %chains%. قد يؤدي إرسال الأموال على شبكات أخرى إلى خسارة دائمة."
+  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "يعمل تسجيل الدخول الاجتماعي فقط على %chains%. قد يؤدي إرسال الأموال على شبكات أخرى إلى خسارة دائمة.",
+  "Prob": "Prob",
+  "Switch network to claim": "بدّل الشبكة للمطالبة",
+  "Place Your Zero-Fee Predictions on": "ضع توقعاتك بدون رسوم على",
+  "probable.markets!": "probable.markets!",
+  "Start now": "ابدأ الآن",
+  "LeverUp IFO": "LeverUp IFO",
+  "LeverUp is a next-generation perpetual trading platform built on Monad — a fully LP-free perps DEX offering up to 1001x leverage, zero fees on losses, and 100% of protocol fees returned to stakeholders.": "LeverUp هي منصة تداول عقود دائمة من الجيل الجديد مبنية على Monad — وهي منصة تداول لامركزية (DEX) للعقود الدائمة لا تتطلب مزودي سيولة (fully LP-free)، وتقدم رافعة مالية تصل إلى 1001x، ورسوم صفرية على الخسائر، وتُعيد 100% من رسوم البروتوكول إلى أصحاب المصلحة.",
+  "Users from restricted jurisdictions or wallets flagged by risk checks may not be eligible to participate.": "قد لا يكون المستخدمون من المناطق القضائية المحظورة أو المحافظ التي تم تحديدها بواسطة أنظمة فحص المخاطر مؤهلين للمشاركة.",
+  "How to bridge cake?": "كيفية تجسير CAKE؟",
+  "You can use this link to bridge CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE": "يمكنك استخدام هذا الرابط لتجسير CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE",
+  "24 hours": "24 ساعة"
 }

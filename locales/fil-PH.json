@@ -4133,5 +4133,16 @@
   "Please connect your Solana wallet first": "Paki-konekta muna ang iyong Solana wallet",
   "Social login with %chainName% is not supported.": "Ang social login gamit ang %chainName% ay hindi suportado.",
   "An unexpected error occurred while switching chains. Please try again.": "Isang hindi inaasahang error ang naganap habang nagpapalit ng chain. Pakisubukang muli.",
-  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "Gumagana lang ang social login sa %chains%. Ang pagpapadala ng pondo sa ibang network ay maaaring magdulot ng permanenteng pagkawala."
+  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "Gumagana lang ang social login sa %chains%. Ang pagpapadala ng pondo sa ibang network ay maaaring magdulot ng permanenteng pagkawala.",
+  "Prob": "Prob",
+  "Switch network to claim": "Lumipat ng network para i-claim",
+  "Place Your Zero-Fee Predictions on": "Ilagay ang Iyong mga Zero-Fee Prediction sa",
+  "probable.markets!": "probable.markets!",
+  "Start now": "Simulan na ngayon",
+  "LeverUp IFO": "LeverUp IFO",
+  "LeverUp is a next-generation perpetual trading platform built on Monad — a fully LP-free perps DEX offering up to 1001x leverage, zero fees on losses, and 100% of protocol fees returned to stakeholders.": "Ang LeverUp ay isang next-generation na perpetual trading platform na binuo sa Monad — isang ganap na LP-free na perps DEX na nag-aalok ng hanggang 1001x leverage, zero fees sa mga pagkalugi, at 100% ng mga protocol fee na ibinabalik sa mga stakeholder.",
+  "Users from restricted jurisdictions or wallets flagged by risk checks may not be eligible to participate.": "Ang mga user mula sa mga restricted na hurisdiksyon o mga wallet na na-flag ng mga risk check ay maaaring hindi kwalipikadong lumahok.",
+  "How to bridge cake?": "Paano i-bridge ang CAKE?",
+  "You can use this link to bridge CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE": "Maaari mong gamitin ang link na ito para i-bridge ang CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE",
+  "24 hours": "24 oras"
 }

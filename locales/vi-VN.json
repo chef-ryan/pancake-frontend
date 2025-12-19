@@ -4133,5 +4133,16 @@
   "Please connect your Solana wallet first": "Vui lòng kết nối ví Solana của bạn trước",
   "Social login with %chainName% is not supported.": "Đăng nhập xã hội với %chainName% không được hỗ trợ.",
   "An unexpected error occurred while switching chains. Please try again.": "Đã xảy ra lỗi không mong muốn khi chuyển mạng. Vui lòng thử lại.",
-  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "Đăng nhập xã hội chỉ hoạt động trên %chains%. Gửi tiền trên các mạng khác có thể gây mất mát vĩnh viễn."
+  "Social login works only on %chains%. Sending funds on other networks may cause permanent loss.": "Đăng nhập xã hội chỉ hoạt động trên %chains%. Gửi tiền trên các mạng khác có thể gây mất mát vĩnh viễn.",
+  "Prob": "Prob",
+  "Switch network to claim": "Chuyển mạng để nhận",
+  "Place Your Zero-Fee Predictions on": "Đặt Dự đoán Miễn phí của Bạn trên",
+  "probable.markets!": "probable.markets!",
+  "Start now": "Bắt đầu ngay",
+  "LeverUp IFO": "LeverUp IFO",
+  "LeverUp is a next-generation perpetual trading platform built on Monad — a fully LP-free perps DEX offering up to 1001x leverage, zero fees on losses, and 100% of protocol fees returned to stakeholders.": "LeverUp là nền tảng giao dịch hợp đồng vĩnh cửu thế hệ mới được xây dựng trên Monad — một sàn DEX hợp đồng vĩnh cửu hoàn toàn không cần LP, cung cấp đòn bẩy lên đến 1001x, miễn phí khi thua lỗ và 100% phí giao thức được trả lại cho các bên liên quan.",
+  "Users from restricted jurisdictions or wallets flagged by risk checks may not be eligible to participate.": "Người dùng từ các khu vực pháp lý bị hạn chế hoặc các ví bị gắn cờ do kiểm tra rủi ro có thể không đủ điều kiện tham gia.",
+  "How to bridge cake?": "Làm cách nào để bridge CAKE?",
+  "You can use this link to bridge CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE": "Bạn có thể sử dụng liên kết này để bridge CAKE: https://monadbridge.com/?fromChain=Bsc&fromToken=CAKE&toChain=Monad&toToken=CAKE",
+  "24 hours": "24 giờ"
 }
