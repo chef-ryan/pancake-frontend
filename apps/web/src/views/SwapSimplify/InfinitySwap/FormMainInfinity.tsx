@@ -14,7 +14,7 @@ import { useUnifiedCurrencyBalance } from 'hooks/useUnifiedCurrencyBalance'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
-import { Suspense, useCallback, useMemo } from 'react'
+import { Suspense, useCallback, useMemo, useState } from 'react'
 import { useAtomValue } from 'jotai'
 import styled from 'styled-components'
 import { Field } from 'state/swap/actions'
@@ -156,6 +156,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
     recipient,
   } = useSwapState()
   const { onCurrencySelection, onUserInput } = useSwapActionHandlers()
+  const [inputValueMode, setInputValueMode] = useState<'token' | 'usd'>('token')
 
   const fromAccount = isSolana(inputChainId) ? solanaAccount : account
   const toAccount = isSolana(outputChainId) ? solanaAccount : account
@@ -265,6 +266,10 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
         <CurrencyInputPanelSimplify
           id="swap-currency-input"
           showUSDPrice
+          valueDisplayMode={inputValueMode}
+          onToggleValueDisplayMode={() =>
+            setInputValueMode((previousMode) => (previousMode === 'token' ? 'usd' : 'token'))
+          }
           showMaxButton
           showCommonBases={inputRwaConfig.showCommonBases}
           supportCrossChain={inputRwaConfig.supportCrossChain}
