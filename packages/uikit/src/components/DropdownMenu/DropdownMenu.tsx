@@ -203,7 +203,6 @@ const DropdownMenu: React.FC<React.PropsWithChildren<DropdownMenuProps>> = ({
   const isMenuShow = isOpen && ((isBottomNav && showItemsOnMobile) || !isBottomNav);
 
   useEffect(() => {
-    if (isBottomNav && !hasItems) return undefined;
     if (trigger !== "hover") return undefined;
     const showDropdownMenu = () => {
       setIsOpen(true);
@@ -245,9 +244,9 @@ const DropdownMenu: React.FC<React.PropsWithChildren<DropdownMenuProps>> = ({
   );
 
   const handlePointerDown = useCallback(() => {
-    if (isBottomNav && !hasItems) return;
+    if (!hasItems) return;
     setIsOpen((s) => !s);
-  }, [isBottomNav, hasItems]);
+  }, [hasItems]);
 
   return (
     <Box ref={setTargetRef} {...props}>
