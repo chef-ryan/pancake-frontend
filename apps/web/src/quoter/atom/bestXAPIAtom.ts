@@ -20,7 +20,7 @@ const PCSX_AUTO_SLIPPAGE_BPS = 10 // 0.1%
 export const bestXApiAtom = atomFamily((option: QuoteQuery) => {
   return atomWithLoadable(async (get) => {
     const { xEnabled, enabled, slippage, address, isAutoSlippage } = option
-    if (!xEnabled || !enabled) {
+    if (!enabled) {
       return undefined
     }
 
@@ -52,6 +52,13 @@ export const bestXApiAtom = atomFamily((option: QuoteQuery) => {
     if (upcomingStatus) {
       throw new XTradeError('RWA token is paused', upcomingStatus.code)
     }
+    if (!xEnabled) {
+      const hasAnyRwaTokenStatus = statuses.some((s) => Boolean(s))
+      if (!hasAnyRwaTokenStatus) {
+        return undefined
+      }
+      throw new Error('X is needed for RWA token trade')
+    }
     const controller = new AbortController()
     const perf = get(quoteTraceAtom(option))
     perf.tracker.track('start')
@@ -79,6 +86,7 @@ export const bestXApiAtom = atomFamily((option: QuoteQuery) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(body),
+          signal: controller.signal,
         })
         const serializedRes = await serverRes.json()
 
@@ -106,7 +114,6 @@ export const bestXApiAtom = atomFamily((option: QuoteQuery) => {
       return await query()
     } catch (ex) {
       perf.tracker.fail(ex)
-      controller.abort()
       throw ex
     } finally {
       perf.tracker.report()

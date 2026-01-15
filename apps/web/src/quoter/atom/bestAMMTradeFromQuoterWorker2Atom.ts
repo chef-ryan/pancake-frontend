@@ -55,6 +55,7 @@ export const bestAMMTradeFromQuoterWorker2Atom = atomFamily((option: QuoteQuery)
             amount: amount as any,
             slippageBps: 50, // Default 0.5% slippage
             account,
+            signal: controller.signal,
           })
 
           return result

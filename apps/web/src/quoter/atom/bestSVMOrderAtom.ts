@@ -42,6 +42,7 @@ export const bestSVMOrderAtom = atomFamily((_option: SVMQuoteQuery) => {
             slippageBps: userSlippageTolerance,
             account: address,
             priorityFeeLamports,
+            signal: controller.signal,
           })
 
           //   perf.tracker.success(svmOrder)
