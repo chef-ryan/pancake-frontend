@@ -13,6 +13,7 @@ import {
   Text,
   useMatchBreakpoints,
   useModal,
+  useTooltip,
 } from '@pancakeswap/uikit'
 import { formatNumber } from '@pancakeswap/utils/formatBalance'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
@@ -25,7 +26,7 @@ import { useUnifiedUSDPriceAmount } from 'hooks/useStablecoinPrice'
 import { useUnifiedTokenUsdPrice } from 'hooks/useUnifiedTokenUsdPrice'
 import { useUnifiedCurrencyBalance } from 'hooks/useUnifiedCurrencyBalance'
 import BigNumber from 'bignumber.js'
-import { memo, useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react'
 import { styled } from 'styled-components'
 import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
@@ -51,6 +52,25 @@ export const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scal
 const SymbolText = styled(Text)`
   font-size: ${FONT_SIZE.LARGE}px;
   line-height: 1.1;
+`
+
+const ValueDisplayButton = styled(Flex)<{ $interactive: boolean }>`
+  border-radius: 8px;
+  padding: 2px 6px;
+  transition: background-color 0.2s ease;
+
+  ${({ $interactive, theme }) =>
+    $interactive
+      ? `
+    cursor: pointer;
+
+    &:hover {
+      background-color: ${theme.colors.input};
+    }
+  `
+      : `
+    cursor: default;
+  `}
 `
 
 const formatDollarAmount = (amount: number) => {
@@ -158,6 +178,102 @@ const useSizeAdaption = (value: string, currencySymbol?: string, otherCurrencySy
   return { shortedSymbol, inputRef, symbolRef, wrapperRef, tokenImageRef }
 }
 
+const useCurrencyInputDisplayValue = ({
+  defaultValue,
+  onUserInput,
+  valueDisplayMode,
+  showUSDPrice,
+  currency,
+  maxDecimals,
+  isInputFocus,
+}: {
+  defaultValue: string | undefined
+  onUserInput: (value: string) => void
+  valueDisplayMode: 'token' | 'usd'
+  showUSDPrice?: boolean
+  currency?: UnifiedCurrency | null
+  maxDecimals?: number
+  isInputFocus: boolean
+}) => {
+  const [value, setValue] = useState<string | undefined>(defaultValue)
+  const lastDisplayModeRef = useRef<'token' | 'usd'>(valueDisplayMode)
+  const suspendInputSyncRef = useRef(false)
+  const isUsdMode = valueDisplayMode === 'usd'
+  const displayValueNumber = value !== undefined && Number.isFinite(+value) ? +value : undefined
+  const tokenDecimals = maxDecimals ?? currency?.decimals ?? 18
+  const amountInDollar = useUnifiedUSDPriceAmount(
+    showUSDPrice && !isUsdMode ? currency ?? undefined : undefined,
+    !isUsdMode && displayValueNumber !== undefined ? displayValueNumber : undefined,
+  )
+  const { data: usdPrice } = useUnifiedTokenUsdPrice(
+    showUSDPrice && isUsdMode ? currency ?? undefined : undefined,
+    Boolean(showUSDPrice && isUsdMode),
+  )
+  const tokenAmountFromUsd = useMemo(() => {
+    if (!isUsdMode || displayValueNumber === undefined || !usdPrice) {
+      return undefined
+    }
+    const tokenAmount = new BigNumber(displayValueNumber).div(usdPrice)
+    if (!tokenAmount.isFinite()) {
+      return undefined
+    }
+    return tokenAmount.decimalPlaces(tokenDecimals, BigNumber.ROUND_DOWN).toString()
+  }, [displayValueNumber, isUsdMode, tokenDecimals, usdPrice])
+  const usdDisplayValueFromToken = useMemo(() => {
+    if (!isUsdMode || !showUSDPrice || !defaultValue || !Number.isFinite(+defaultValue) || !usdPrice) {
+      return undefined
+    }
+    return formatNumber(new BigNumber(defaultValue).times(usdPrice).toNumber())
+  }, [defaultValue, isUsdMode, showUSDPrice, usdPrice])
+
+  useEffect(() => {
+    const displayModeChanged = lastDisplayModeRef.current !== valueDisplayMode
+    lastDisplayModeRef.current = valueDisplayMode
+
+    if (isInputFocus && !displayModeChanged) {
+      return
+    }
+
+    if (displayModeChanged && isInputFocus) {
+      suspendInputSyncRef.current = true
+    }
+
+    if (isUsdMode) {
+      setValue(usdDisplayValueFromToken ?? '')
+      return
+    }
+    setValue(defaultValue)
+  }, [defaultValue, isInputFocus, isUsdMode, usdDisplayValueFromToken, valueDisplayMode])
+
+  useEffect(() => {
+    if (isInputFocus) {
+      if (suspendInputSyncRef.current) {
+        return
+      }
+      const nextValue = isUsdMode ? tokenAmountFromUsd ?? '' : value ?? ''
+      onUserInput(nextValue)
+    }
+  }, [value, isInputFocus, isUsdMode, onUserInput, tokenAmountFromUsd])
+
+  const handleUserInput = useCallback((val: string) => {
+    suspendInputSyncRef.current = false
+    setValue(val)
+  }, [])
+
+  const clearSuspendInputSync = useCallback(() => {
+    suspendInputSyncRef.current = false
+  }, [])
+
+  return {
+    value,
+    isUsdMode,
+    amountInDollar,
+    tokenAmountFromUsd,
+    handleUserInput,
+    clearSuspendInputSync,
+  }
+}
+
 interface CurrencyInputPanelProps {
   defaultValue: string | undefined
   customChainId?: number
@@ -253,7 +369,6 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
     if (!customChainId) return unifiedAccount
     return isSolana(customChainId) ? solanaAccount : evmAccount
   }, [customChainId, evmAccount, solanaAccount, unifiedAccount])
-  const [value, setValue] = useState<string | undefined>(defaultValue)
 
   const selectedCurrencyBalance = useUnifiedCurrencyBalance(currency ?? undefined)
 
@@ -264,33 +379,17 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   const [isInputFocus, setIsInputFocus] = useState(false)
   const inputBlurTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  const isUsdMode = valueDisplayMode === 'usd'
-  const displayValueNumber = value !== undefined && Number.isFinite(+value) ? +value : undefined
-  const tokenDecimals = maxDecimals ?? currency?.decimals ?? 18
-  const amountInDollar = useUnifiedUSDPriceAmount(
-    showUSDPrice && !isUsdMode ? currency ?? undefined : undefined,
-    !isUsdMode && displayValueNumber !== undefined ? displayValueNumber : undefined,
-  )
-  const { data: usdPrice } = useUnifiedTokenUsdPrice(
-    showUSDPrice && isUsdMode ? currency ?? undefined : undefined,
-    Boolean(showUSDPrice && isUsdMode),
-  )
-  const tokenAmountFromUsd = useMemo(() => {
-    if (!isUsdMode || displayValueNumber === undefined || !usdPrice) {
-      return undefined
-    }
-    const tokenAmount = new BigNumber(displayValueNumber).div(usdPrice)
-    if (!tokenAmount.isFinite()) {
-      return undefined
-    }
-    return tokenAmount.decimalPlaces(tokenDecimals, BigNumber.ROUND_DOWN).toString()
-  }, [displayValueNumber, isUsdMode, tokenDecimals, usdPrice])
-  const usdDisplayValueFromToken = useMemo(() => {
-    if (!isUsdMode || !showUSDPrice || !defaultValue || !Number.isFinite(+defaultValue) || !usdPrice) {
-      return undefined
-    }
-    return formatNumber(new BigNumber(defaultValue).times(usdPrice).toNumber())
-  }, [defaultValue, isUsdMode, showUSDPrice, usdPrice])
+  const { isDesktop } = useMatchBreakpoints()
+  const { value, isUsdMode, amountInDollar, tokenAmountFromUsd, handleUserInput, clearSuspendInputSync } =
+    useCurrencyInputDisplayValue({
+      defaultValue,
+      onUserInput,
+      valueDisplayMode,
+      showUSDPrice,
+      currency,
+      maxDecimals,
+      isInputFocus,
+    })
 
   const [onPresentCurrencyModal] = useModal(
     <CurrencySearchModal
@@ -316,24 +415,6 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   )
 
   useEffect(() => {
-    if (isInputFocus) {
-      return
-    }
-    if (isUsdMode) {
-      setValue(usdDisplayValueFromToken ?? '')
-      return
-    }
-    setValue(defaultValue)
-  }, [defaultValue, isInputFocus, isUsdMode, usdDisplayValueFromToken])
-
-  useEffect(() => {
-    if (isInputFocus) {
-      const nextValue = isUsdMode ? tokenAmountFromUsd ?? '' : value ?? ''
-      onUserInput(nextValue)
-    }
-  }, [value, isInputFocus, isUsdMode, onUserInput, tokenAmountFromUsd])
-
-  useEffect(() => {
     return () => {
       if (inputBlurTimeoutRef.current) {
         clearTimeout(inputBlurTimeoutRef.current)
@@ -351,9 +432,6 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
     [onPercentInput],
   )
 
-  const handleUserInput = useCallback((val: string) => {
-    setValue(val)
-  }, [])
   const handleUserInputBlur = useCallback(() => {
     onInputBlur?.()
 
@@ -362,9 +440,10 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
     }
     inputBlurTimeoutRef.current = setTimeout(() => {
       setIsInputFocus(false)
+      clearSuspendInputSync()
       inputBlurTimeoutRef.current = null
     }, 300)
-  }, [onInputBlur])
+  }, [clearSuspendInputSync, onInputBlur])
 
   const handleUserInputFocus = useCallback(() => {
     if (inputBlurTimeoutRef.current) {
@@ -373,9 +452,16 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
     }
     setIsInputFocus(true)
   }, [])
-  const handleToggleValueDisplayMode = useCallback(() => {
-    onToggleValueDisplayMode?.()
-  }, [onToggleValueDisplayMode])
+  const handleToggleValueDisplayMode = useCallback(
+    (event?: MouseEvent | KeyboardEvent) => {
+      event?.stopPropagation()
+      onToggleValueDisplayMode?.()
+    },
+    [onToggleValueDisplayMode],
+  )
+  const handleToggleMouseDown = useCallback((event: MouseEvent) => {
+    event.preventDefault()
+  }, [])
   const handleToggleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (!onToggleValueDisplayMode) {
@@ -383,11 +469,18 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
       }
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault()
-        onToggleValueDisplayMode()
+        handleToggleValueDisplayMode(event)
       }
     },
-    [onToggleValueDisplayMode],
+    [handleToggleValueDisplayMode, onToggleValueDisplayMode],
   )
+  const toggleTooltipLabel = useMemo(() => (isUsdMode ? t('View in Token') : t('View in USD')), [isUsdMode, t])
+  const {
+    tooltip: toggleTooltip,
+    tooltipVisible: toggleTooltipVisible,
+    targetRef: toggleTooltipRef,
+  } = useTooltip(toggleTooltipLabel, { placement: 'top', trigger: 'hover' })
+  const shouldShowToggleTooltip = Boolean(onToggleValueDisplayMode && isDesktop)
 
   const onCurrencySelectClick = useCallback(() => {
     if (!disableCurrencySelect) {
@@ -527,13 +620,15 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
                 {inputLoading ? (
                   <Loading width="14px" height="14px" />
                 ) : showUSDPrice && Number.isFinite(amountInDollar) && !isUsdMode ? (
-                  <Flex
+                  <ValueDisplayButton
                     alignItems="center"
+                    onMouseDown={handleToggleMouseDown}
                     onClick={handleToggleValueDisplayMode}
                     onKeyDown={handleToggleKeyDown}
                     role={onToggleValueDisplayMode ? 'button' : undefined}
                     tabIndex={onToggleValueDisplayMode ? 0 : undefined}
-                    style={{ cursor: onToggleValueDisplayMode ? 'pointer' : 'default' }}
+                    $interactive={Boolean(onToggleValueDisplayMode)}
+                    ref={shouldShowToggleTooltip ? toggleTooltipRef : undefined}
                   >
                     <Text fontSize="14px" color="textSubtle" ellipsis>
                       {`~${amountInDollar ? formatDollarAmount(amountInDollar) : 0}`}
@@ -541,15 +636,17 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
                     <Text ml="4px" fontSize="14px" color="textSubtle">
                       USD
                     </Text>
-                  </Flex>
+                  </ValueDisplayButton>
                 ) : showUSDPrice && isUsdMode && tokenAmountFromUsd !== undefined ? (
-                  <Flex
+                  <ValueDisplayButton
                     alignItems="center"
+                    onMouseDown={handleToggleMouseDown}
                     onClick={handleToggleValueDisplayMode}
                     onKeyDown={handleToggleKeyDown}
                     role={onToggleValueDisplayMode ? 'button' : undefined}
                     tabIndex={onToggleValueDisplayMode ? 0 : undefined}
-                    style={{ cursor: onToggleValueDisplayMode ? 'pointer' : 'default' }}
+                    $interactive={Boolean(onToggleValueDisplayMode)}
+                    ref={shouldShowToggleTooltip ? toggleTooltipRef : undefined}
                   >
                     <Text fontSize="14px" color="textSubtle" ellipsis>
                       {`~${formatNumber(Number(tokenAmountFromUsd))}`}
@@ -559,10 +656,11 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
                         {currency.symbol}
                       </Text>
                     ) : null}
-                  </Flex>
+                  </ValueDisplayButton>
                 ) : null}
               </Flex>
             </Flex>
+            {shouldShowToggleTooltip && toggleTooltipVisible && toggleTooltip}
           </Box>
         ) : null
       }

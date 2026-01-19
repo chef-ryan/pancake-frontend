@@ -157,6 +157,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
   } = useSwapState()
   const { onCurrencySelection, onUserInput } = useSwapActionHandlers()
   const [inputValueMode, setInputValueMode] = useState<'token' | 'usd'>('token')
+  const [outputValueMode, setOutputValueMode] = useState<'token' | 'usd'>('token')
 
   const fromAccount = isSolana(inputChainId) ? solanaAccount : account
   const toAccount = isSolana(outputChainId) ? solanaAccount : account
@@ -317,6 +318,10 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
           disabled={isBridge}
           id="swap-currency-output"
           showUSDPrice
+          valueDisplayMode={outputValueMode}
+          onToggleValueDisplayMode={() =>
+            setOutputValueMode((previousMode) => (previousMode === 'token' ? 'usd' : 'token'))
+          }
           showCommonBases={outputRwaConfig.showCommonBases}
           supportCrossChain={outputRwaConfig.supportCrossChain}
           tokensToShow={outputRwaConfig.tokensToShow}
