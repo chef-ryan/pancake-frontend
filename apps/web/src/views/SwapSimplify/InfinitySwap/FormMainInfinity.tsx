@@ -155,9 +155,14 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
     [Field.OUTPUT]: { currencyId: outputCurrencyId, chainId: outputChainId },
     recipient,
   } = useSwapState()
+
   const { onCurrencySelection, onUserInput } = useSwapActionHandlers()
-  const [inputValueMode, setInputValueMode] = useState<'token' | 'usd'>('token')
-  const [outputValueMode, setOutputValueMode] = useState<'token' | 'usd'>('token')
+  const [usdMode, setUsdMode] = useState(false)
+
+  const isInputIndependent = independentField === Field.INPUT
+  const isOutputIndependent = independentField === Field.OUTPUT
+  const inputValueMode: 'token' | 'usd' = isInputIndependent && usdMode ? 'usd' : 'token'
+  const outputValueMode: 'token' | 'usd' = isOutputIndependent && usdMode ? 'usd' : 'token'
 
   const fromAccount = isSolana(inputChainId) ? solanaAccount : account
   const toAccount = isSolana(outputChainId) ? solanaAccount : account
@@ -268,9 +273,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
           id="swap-currency-input"
           showUSDPrice
           valueDisplayMode={inputValueMode}
-          onToggleValueDisplayMode={() =>
-            setInputValueMode((previousMode) => (previousMode === 'token' ? 'usd' : 'token'))
-          }
+          onToggleValueDisplayMode={isInputIndependent ? () => setUsdMode((prev) => !prev) : undefined}
           showMaxButton
           showCommonBases={inputRwaConfig.showCommonBases}
           supportCrossChain={inputRwaConfig.supportCrossChain}
@@ -319,9 +322,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
           id="swap-currency-output"
           showUSDPrice
           valueDisplayMode={outputValueMode}
-          onToggleValueDisplayMode={() =>
-            setOutputValueMode((previousMode) => (previousMode === 'token' ? 'usd' : 'token'))
-          }
+          onToggleValueDisplayMode={isOutputIndependent ? () => setUsdMode((prev) => !prev) : undefined}
           showCommonBases={outputRwaConfig.showCommonBases}
           supportCrossChain={outputRwaConfig.supportCrossChain}
           tokensToShow={outputRwaConfig.tokensToShow}

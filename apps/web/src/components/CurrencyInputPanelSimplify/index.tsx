@@ -201,14 +201,24 @@ const useCurrencyInputDisplayValue = ({
   const isUsdMode = valueDisplayMode === 'usd'
   const displayValueNumber = value !== undefined && Number.isFinite(+value) ? +value : undefined
   const tokenDecimals = maxDecimals ?? currency?.decimals ?? 18
-  const amountInDollar = useUnifiedUSDPriceAmount(
+  const amountInDollarFromToken = useUnifiedUSDPriceAmount(
     showUSDPrice && !isUsdMode ? currency ?? undefined : undefined,
     !isUsdMode && displayValueNumber !== undefined ? displayValueNumber : undefined,
   )
+  const amountInDollar = useMemo(() => {
+    if (!showUSDPrice) {
+      return undefined
+    }
+    if (isUsdMode) {
+      return displayValueNumber
+    }
+    return amountInDollarFromToken
+  }, [amountInDollarFromToken, displayValueNumber, isUsdMode, showUSDPrice])
   const { data: usdPrice } = useUnifiedTokenUsdPrice(
-    showUSDPrice && isUsdMode ? currency ?? undefined : undefined,
-    Boolean(showUSDPrice && isUsdMode),
+    showUSDPrice ? currency ?? undefined : undefined,
+    Boolean(showUSDPrice),
   )
+
   const tokenAmountFromUsd = useMemo(() => {
     if (!isUsdMode || displayValueNumber === undefined || !usdPrice) {
       return undefined
