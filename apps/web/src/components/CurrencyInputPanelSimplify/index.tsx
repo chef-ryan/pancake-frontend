@@ -186,6 +186,7 @@ const useCurrencyInputDisplayValue = ({
   currency,
   maxDecimals,
   isInputFocus,
+  usdPriceOverride,
 }: {
   defaultValue: string | undefined
   onUserInput: (value: string) => void
@@ -194,10 +195,12 @@ const useCurrencyInputDisplayValue = ({
   currency?: UnifiedCurrency | null
   maxDecimals?: number
   isInputFocus: boolean
+  usdPriceOverride?: number
 }) => {
   const [value, setValue] = useState<string | undefined>(defaultValue)
   const lastDisplayModeRef = useRef<'token' | 'usd'>(valueDisplayMode)
   const suspendInputSyncRef = useRef(false)
+  const pendingUsdDisplaySyncRef = useRef(false)
   const isUsdMode = valueDisplayMode === 'usd'
   const displayValueNumber = value !== undefined && Number.isFinite(+value) ? +value : undefined
   const tokenDecimals = maxDecimals ?? currency?.decimals ?? 18
@@ -214,13 +217,15 @@ const useCurrencyInputDisplayValue = ({
     }
     return amountInDollarFromToken
   }, [amountInDollarFromToken, displayValueNumber, isUsdMode, showUSDPrice])
-  const { data: usdPrice } = useUnifiedTokenUsdPrice(
-    showUSDPrice ? currency ?? undefined : undefined,
-    Boolean(showUSDPrice),
+  const shouldLoadUsdPrice = Boolean(showUSDPrice && usdPriceOverride === undefined)
+  const { data: usdPriceFromHook } = useUnifiedTokenUsdPrice(
+    shouldLoadUsdPrice ? currency ?? undefined : undefined,
+    shouldLoadUsdPrice,
   )
+  const usdPrice = usdPriceOverride ?? usdPriceFromHook
 
   const tokenAmountFromUsd = useMemo(() => {
-    if (!isUsdMode || displayValueNumber === undefined || !usdPrice) {
+    if (!isUsdMode || displayValueNumber === undefined || usdPrice === undefined || usdPrice <= 0) {
       return undefined
     }
     const tokenAmount = new BigNumber(displayValueNumber).div(usdPrice)
@@ -230,7 +235,14 @@ const useCurrencyInputDisplayValue = ({
     return tokenAmount.decimalPlaces(tokenDecimals, BigNumber.ROUND_DOWN).toString()
   }, [displayValueNumber, isUsdMode, tokenDecimals, usdPrice])
   const usdDisplayValueFromToken = useMemo(() => {
-    if (!isUsdMode || !showUSDPrice || !defaultValue || !Number.isFinite(+defaultValue) || !usdPrice) {
+    if (
+      !isUsdMode ||
+      !showUSDPrice ||
+      !defaultValue ||
+      !Number.isFinite(+defaultValue) ||
+      usdPrice === undefined ||
+      usdPrice <= 0
+    ) {
       return undefined
     }
     return formatNumber(new BigNumber(defaultValue).times(usdPrice).toNumber())
@@ -249,11 +261,25 @@ const useCurrencyInputDisplayValue = ({
     }
 
     if (isUsdMode) {
-      setValue(usdDisplayValueFromToken ?? '')
+      if (usdDisplayValueFromToken === undefined) {
+        pendingUsdDisplaySyncRef.current = true
+        return
+      }
+      pendingUsdDisplaySyncRef.current = false
+      setValue(usdDisplayValueFromToken)
       return
     }
+    pendingUsdDisplaySyncRef.current = false
     setValue(defaultValue)
   }, [defaultValue, isInputFocus, isUsdMode, usdDisplayValueFromToken, valueDisplayMode])
+
+  useEffect(() => {
+    if (!isUsdMode || !pendingUsdDisplaySyncRef.current || usdDisplayValueFromToken === undefined) {
+      return
+    }
+    pendingUsdDisplaySyncRef.current = false
+    setValue(usdDisplayValueFromToken)
+  }, [isUsdMode, usdDisplayValueFromToken])
 
   useEffect(() => {
     if (isInputFocus) {
@@ -267,11 +293,13 @@ const useCurrencyInputDisplayValue = ({
 
   const handleUserInput = useCallback((val: string) => {
     suspendInputSyncRef.current = false
+    pendingUsdDisplaySyncRef.current = false
     setValue(val)
   }, [])
 
   const clearSuspendInputSync = useCallback(() => {
     suspendInputSyncRef.current = false
+    pendingUsdDisplaySyncRef.current = false
   }, [])
 
   return {
@@ -329,6 +357,7 @@ interface CurrencyInputPanelProps {
   maxDecimals?: number
   valueDisplayMode?: 'token' | 'usd'
   onToggleValueDisplayMode?: () => void
+  usdPrice?: number
 }
 
 /**
@@ -373,6 +402,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
   maxDecimals,
   valueDisplayMode = 'token',
   onToggleValueDisplayMode,
+  usdPrice,
 }: CurrencyInputPanelProps) {
   const { account: evmAccount, solanaAccount, unifiedAccount, chainId } = useAccountActiveChain()
   const account = useMemo(() => {
@@ -399,6 +429,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
       currency,
       maxDecimals,
       isInputFocus,
+      usdPriceOverride: usdPrice,
     })
 
   const [onPresentCurrencyModal] = useModal(

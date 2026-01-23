@@ -6,8 +6,9 @@ const isProxyEnabled = () => process.env.VERCEL_ENV === 'preview' || process.env
 
 const buildTargetUrl = (req: NextApiRequest) => {
   const pathParam = req.query.path
-  const path = Array.isArray(pathParam) ? pathParam.join('/') : pathParam ?? ''
-  const url = new URL(`${WALLET_API_BASE}/${path}`)
+  const pathSegments = Array.isArray(pathParam) ? pathParam : typeof pathParam === 'string' ? pathParam.split('/') : []
+  const encodedPath = pathSegments.map((segment) => encodeURIComponent(segment)).join('/')
+  const url = new URL(`${WALLET_API_BASE}/${encodedPath}`)
 
   const searchParams = new URLSearchParams()
   Object.entries(req.query).forEach(([key, value]) => {
