@@ -15,7 +15,7 @@ import { useUnifiedCurrencyBalance } from 'hooks/useUnifiedCurrencyBalance'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
-import { Suspense, useCallback, useMemo, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useAtomValue } from 'jotai'
 import styled from 'styled-components'
 import { Field } from 'state/swap/actions'
@@ -177,6 +177,9 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
       return false
     }
     if (inputUsdPriceLoading || outputUsdPriceLoading) {
+      return false
+    }
+    if (inputUsdPrice === undefined || outputUsdPrice === undefined) {
       return false
     }
     return inputUsdPrice > 0 && outputUsdPrice > 0
