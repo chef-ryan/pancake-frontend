@@ -209,7 +209,9 @@ const useCurrencyInputDisplayValue = ({
   const suspendInputSyncRef = useRef(false)
   const pendingUsdDisplaySyncRef = useRef(false)
   const isUsdMode = valueDisplayMode === 'usd'
-  const displayValueNumber = value !== undefined && Number.isFinite(+value) ? +value : undefined
+  const normalizedValue = value?.replace(/,/g, '')
+  const displayValueNumber =
+    normalizedValue !== undefined && Number.isFinite(+normalizedValue) ? +normalizedValue : undefined
   const tokenDecimals = maxDecimals ?? currency?.decimals ?? 18
   const amountInDollarFromToken = useUnifiedUSDPriceAmount(
     showUSDPrice && !isUsdMode ? currency ?? undefined : undefined,
