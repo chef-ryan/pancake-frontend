@@ -77,7 +77,14 @@ const formatDollarAmount = (amount: number) => {
   if (amount > 0 && amount < 0.01) {
     return '<0.01'
   }
-  return formatNumber(amount)
+  return formatNumber(amount, 2, 2)
+}
+
+const formatTokenAmount = (amount: number) => {
+  if (amount > 0 && amount < 0.000001) {
+    return '<0.000001'
+  }
+  return formatNumber(amount, 2, 6)
 }
 
 const useSizeAdaption = (value: string, currencySymbol?: string, otherCurrencySymbol?: string) => {
@@ -515,7 +522,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
     },
     [handleToggleValueDisplayMode, onToggleValueDisplayMode],
   )
-  const toggleTooltipLabel = useMemo(() => (isUsdMode ? t('View in Token') : t('View in USD')), [isUsdMode, t])
+  const toggleTooltipLabel = useMemo(() => (isUsdMode ? t('Enter in Token') : t('Enter in USD')), [isUsdMode, t])
   const {
     tooltip: toggleTooltip,
     tooltipVisible: toggleTooltipVisible,
@@ -690,7 +697,7 @@ const CurrencyInputPanelSimplify = memo(function CurrencyInputPanel({
                     ref={shouldShowToggleTooltip ? toggleTooltipRef : undefined}
                   >
                     <Text fontSize="14px" color="textSubtle" ellipsis>
-                      {`~${formatNumber(Number(tokenAmountFromUsd))}`}
+                      {`~${formatTokenAmount(Number(tokenAmountFromUsd))}`}
                     </Text>
                     {currency?.symbol ? (
                       <Text ml="4px" fontSize="14px" color="textSubtle">

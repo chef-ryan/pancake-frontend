@@ -302,7 +302,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
           id="swap-currency-input"
           showUSDPrice
           valueDisplayMode={inputValueMode}
-          onToggleValueDisplayMode={isInputIndependent && canUseUsdMode ? () => setUsdMode((prev) => !prev) : undefined}
+          onToggleValueDisplayMode={canUseUsdMode ? () => setUsdMode((prev) => !prev) : undefined}
           showMaxButton
           showCommonBases={inputRwaConfig.showCommonBases}
           supportCrossChain={inputRwaConfig.supportCrossChain}
@@ -351,9 +351,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
           id="swap-currency-output"
           showUSDPrice
           valueDisplayMode={outputValueMode}
-          onToggleValueDisplayMode={
-            isOutputIndependent && canUseUsdMode ? () => setUsdMode((prev) => !prev) : undefined
-          }
+          onToggleValueDisplayMode={canUseUsdMode ? () => setUsdMode((prev) => !prev) : undefined}
           showCommonBases={outputRwaConfig.showCommonBases}
           supportCrossChain={outputRwaConfig.supportCrossChain}
           tokensToShow={outputRwaConfig.tokensToShow}
