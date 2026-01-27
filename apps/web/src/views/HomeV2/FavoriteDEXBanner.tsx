@@ -66,6 +66,7 @@ export const FavoriteDEXBanner: React.FC<FavoriteDEXBannerProps> = ({ chains }) 
     >
       <TitleText as={isMobile ? 'span' : 'h2'} isMobile={isMobile} isTablet={isTablet}>
         {t("Everyone's")}
+        {isMobile && ' '}
       </TitleText>
       <HighlightedText as={isMobile ? 'span' : 'h2'} isMobile={isMobile} isTablet={isTablet}>
         {t('Favorite DEX')}
