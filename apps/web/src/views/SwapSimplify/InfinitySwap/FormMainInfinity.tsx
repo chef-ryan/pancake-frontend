@@ -172,18 +172,38 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
     Boolean(outputCurrency),
   )
 
+  const canUseInputUsdMode = useMemo(() => {
+    if (!inputCurrency) {
+      return false
+    }
+    if (inputUsdPriceLoading) {
+      return false
+    }
+    if (inputUsdPrice === undefined) {
+      return false
+    }
+    return inputUsdPrice > 0
+  }, [inputCurrency, inputUsdPrice, inputUsdPriceLoading])
+
+  const canUseOutputUsdMode = useMemo(() => {
+    if (!outputCurrency) {
+      return false
+    }
+    if (outputUsdPriceLoading) {
+      return false
+    }
+    if (outputUsdPrice === undefined) {
+      return false
+    }
+    return outputUsdPrice > 0
+  }, [outputCurrency, outputUsdPrice, outputUsdPriceLoading])
+
   const canUseUsdMode = useMemo(() => {
-    if (!inputCurrency || !outputCurrency) {
-      return false
+    if (independentField === Field.OUTPUT) {
+      return canUseOutputUsdMode
     }
-    if (inputUsdPriceLoading || outputUsdPriceLoading) {
-      return false
-    }
-    if (inputUsdPrice === undefined || outputUsdPrice === undefined) {
-      return false
-    }
-    return inputUsdPrice > 0 && outputUsdPrice > 0
-  }, [inputCurrency, outputCurrency, inputUsdPrice, inputUsdPriceLoading, outputUsdPrice, outputUsdPriceLoading])
+    return canUseInputUsdMode
+  }, [canUseInputUsdMode, canUseOutputUsdMode, independentField])
 
   useEffect(() => {
     console.group('usd-mode debug')
@@ -327,6 +347,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
           showUSDPrice
           valueDisplayMode={inputValueMode}
           onToggleValueDisplayMode={canUseUsdMode ? () => setUsdMode((prev) => !prev) : undefined}
+          usdPrice={inputUsdPrice}
           showMaxButton
           showCommonBases={inputRwaConfig.showCommonBases}
           supportCrossChain={inputRwaConfig.supportCrossChain}
@@ -376,6 +397,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
           showUSDPrice
           valueDisplayMode={outputValueMode}
           onToggleValueDisplayMode={canUseUsdMode ? () => setUsdMode((prev) => !prev) : undefined}
+          usdPrice={outputUsdPrice}
           showCommonBases={outputRwaConfig.showCommonBases}
           supportCrossChain={outputRwaConfig.supportCrossChain}
           tokensToShow={outputRwaConfig.tokensToShow}
