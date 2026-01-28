@@ -6,6 +6,7 @@ import { Address } from './types/common'
 const API_ENDPOINT = process.env.NEXT_PUBLIC_WALLET_API || 'https://wallet-api.pancakeswap.com'
 const WALLET_API = `${API_ENDPOINT}/v1/prices/list/`
 const getWalletPriceUrl = (chainName: string) => `${API_ENDPOINT}/${chainName}/v1/prices/list/`
+const isNonProduction = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview'
 
 export const zeroAddress = '0x0000000000000000000000000000000000000000' as const
 
@@ -81,9 +82,16 @@ function getRequestUrl(params?: CurrencyParams | CurrencyParams[]): string | und
     return undefined
   }
   const encodedKey = encodeURIComponent(key)
-  return CHAINS_FOR_NEW_WALLET_API.includes(infoList[0].chainId) && infoList[0].chainName
-    ? `${getWalletPriceUrl(infoList[0].chainName)}${encodedKey}`
-    : `${WALLET_API}${encodedKey}`
+  const baseUrl =
+    CHAINS_FOR_NEW_WALLET_API.includes(infoList[0].chainId) && infoList[0].chainName
+      ? `${getWalletPriceUrl(infoList[0].chainName)}${encodedKey}`
+      : `${WALLET_API}${encodedKey}`
+  if (!isNonProduction) {
+    return baseUrl
+  }
+  const url = new URL(baseUrl)
+  url.searchParams.set('preview', '1')
+  return url.toString()
 }
 
 async function fetchCurrencyListUsdPrice(
