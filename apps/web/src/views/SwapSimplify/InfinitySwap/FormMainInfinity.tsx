@@ -396,7 +396,7 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
           id="swap-currency-output"
           showUSDPrice
           valueDisplayMode={outputValueMode}
-          onToggleValueDisplayMode={canUseUsdMode ? () => setUsdMode((prev) => !prev) : undefined}
+          onToggleValueDisplayMode={!isBridge && canUseUsdMode ? () => setUsdMode((prev) => !prev) : undefined}
           usdPrice={outputUsdPrice}
           showCommonBases={outputRwaConfig.showCommonBases}
           supportCrossChain={outputRwaConfig.supportCrossChain}
