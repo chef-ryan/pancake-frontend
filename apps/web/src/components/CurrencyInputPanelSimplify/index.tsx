@@ -30,6 +30,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState, type KeyboardE
 import { styled } from 'styled-components'
 import { getFullChainNameById } from 'utils/getFullChainNameById'
 import { getTokenSymbolAlias } from 'utils/getTokenAlias'
+import { parseLocaleNumber } from 'utils/parseLocaleNumber'
 import { StablePair } from 'views/AddLiquidity/AddStableLiquidity/hooks/useStableLPDerivedMintInfo'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { isSolana } from '@pancakeswap/chains'
@@ -209,9 +210,7 @@ const useCurrencyInputDisplayValue = ({
   const suspendInputSyncRef = useRef(false)
   const pendingUsdDisplaySyncRef = useRef(false)
   const isUsdMode = valueDisplayMode === 'usd'
-  const normalizedValue = value?.replace(/,/g, '')
-  const displayValueNumber =
-    normalizedValue !== undefined && Number.isFinite(+normalizedValue) ? +normalizedValue : undefined
+  const displayValueNumber = useMemo(() => (value ? parseLocaleNumber(value) : undefined), [value])
   const tokenDecimals = maxDecimals ?? currency?.decimals ?? 18
   const amountInDollarFromToken = useUnifiedUSDPriceAmount(
     showUSDPrice && !isUsdMode ? currency ?? undefined : undefined,

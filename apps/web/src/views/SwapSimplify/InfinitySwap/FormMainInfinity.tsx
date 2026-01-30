@@ -206,30 +206,6 @@ export function FormMain({ inputAmount, outputAmount, tradeLoading, isUserInsuff
   }, [canUseInputUsdMode, canUseOutputUsdMode, independentField])
 
   useEffect(() => {
-    console.group('usd-mode debug')
-    console.log({
-      inputCurrency: inputCurrency?.symbol,
-      outputCurrency: outputCurrency?.symbol,
-      inputUsdPrice,
-      outputUsdPrice,
-      inputUsdPriceLoading,
-      outputUsdPriceLoading,
-      canUseUsdMode,
-      usdMode,
-    })
-    console.groupEnd()
-  }, [
-    inputCurrency?.symbol,
-    outputCurrency?.symbol,
-    inputUsdPrice,
-    outputUsdPrice,
-    inputUsdPriceLoading,
-    outputUsdPriceLoading,
-    canUseUsdMode,
-    usdMode,
-  ])
-
-  useEffect(() => {
     if (usdMode && !canUseUsdMode) {
       setUsdMode(false)
     }
