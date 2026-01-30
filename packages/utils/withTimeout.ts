@@ -21,9 +21,11 @@ export function withTimeout<Args extends any[], Return>(
       if (process.env.NODE_ENV !== 'production') {
         console.warn('Error in withTimeout:', ex)
       }
+      if (ex instanceof TimeoutError) {
+        abort?.()
+      }
       throw ex
     } finally {
-      abort?.()
       clearTimeout(timer!)
     }
   }

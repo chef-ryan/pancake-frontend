@@ -18,10 +18,11 @@ import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 import { styled } from 'styled-components'
 import { isEvm } from '@pancakeswap/chains'
+import { SWAP_CHART_UNSUPPORTED_CHAINS } from 'config/constants/supportChains'
 import { chartDisplayAtom } from './atoms'
 
 import { SwapType } from '../../Swap/types'
-import { isTwapSupported } from '../../Swap/utils'
+import { isTwapSupported, isLimitSupported } from '../../Swap/utils'
 
 const ColoredIconButton = styled(IconButton)`
   color: ${({ theme }) => theme.colors.textSubtle};
@@ -120,8 +121,6 @@ export const SwapSelection = ({
 
   const [isChartDisplayed, setIsChartDisplayed] = useAtom(chartDisplayAtom)
 
-  const isEvmSwap = isEvm(chainId) && isEvm(outputChainId)
-
   const toggleChartDisplayed = () => {
     setIsChartDisplayed((currentIsChartDisplayed) => !currentIsChartDisplayed)
   }
@@ -141,19 +140,17 @@ export const SwapSelection = ({
   }, [chainId, theme.colors.textDisabled, isSmartAccount])
 
   const limitProps = useMemo(() => {
-    // const isLimitSupported = !isSmartAccount && isEvm(chainId)
-    const isLimitSupported = isEvm(chainId)
+    const isLimitSwapSupported = isLimitSupported(chainId)
     return {
-      disabled: !isLimitSupported,
+      disabled: !isLimitSwapSupported,
       style: {
-        cursor: isLimitSupported ? 'pointer' : 'not-allowed',
-        pointerEvents: isLimitSupported ? 'auto' : 'none',
-        color: !isLimitSupported ? theme.colors.textDisabled : undefined,
+        cursor: isLimitSwapSupported ? 'pointer' : 'not-allowed',
+        pointerEvents: isLimitSwapSupported ? 'auto' : 'none',
+        color: !isLimitSwapSupported ? theme.colors.textDisabled : undefined,
         userSelect: 'none',
       } as React.CSSProperties,
     }
   }, [theme.colors.textDisabled, chainId])
-  // }, [theme.colors.textDisabled, isSmartAccount, chainId])
 
   return (
     <SwapSelectionWrapper style={style}>
@@ -177,8 +174,8 @@ export const SwapSelection = ({
 
         <StyledButtonMenuItem {...limitProps}>{t('Limit')}</StyledButtonMenuItem>
       </ButtonMenu>
-      {/* NOTE: Commented out until charts are supported again */}
-      {withToolkit && isEvmSwap && (
+
+      {withToolkit && !SWAP_CHART_UNSUPPORTED_CHAINS.includes(chainId) && (
         <ColoredIconButton
           onClick={() => {
             toggleChartDisplayed()

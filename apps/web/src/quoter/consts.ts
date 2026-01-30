@@ -29,6 +29,7 @@ export const QUOTE_TIMEOUT = {
   [ChainId.SCROLL_SEPOLIA]: 9_000,
 
   // Misc
+  [ChainId.MONAD_MAINNET]: 8_000,
   [ChainId.MONAD_TESTNET]: 8_000,
 
   [NonEVMChainId.SOLANA]: 5_000,
@@ -37,7 +38,7 @@ export const QUOTE_TIMEOUT = {
 
 export const SOLANA_NATIVE_TOKEN_ADDRESS = '11111111111111111111111111111111'
 
-export const POOL_EDGE_API_FETCH_TIMEOUT = 5_000
+export const POOL_EDGE_API_FETCH_TIMEOUT = 6_000
 
 // Revalidate interval after a successful quote in seconds
 export const QUOTE_SUCC_REVALIDATE = {
@@ -70,6 +71,7 @@ export const QUOTE_SUCC_REVALIDATE = {
   [ChainId.SCROLL_SEPOLIA]: 12,
 
   // Misc
+  [ChainId.MONAD_MAINNET]: 10,
   [ChainId.MONAD_TESTNET]: 10,
 
   // Solana
@@ -108,6 +110,7 @@ export const QUOTE_FAIL_REVALIDATE = {
   [ChainId.SCROLL_SEPOLIA]: 5,
 
   // Misc
+  [ChainId.MONAD_MAINNET]: 5,
   [ChainId.MONAD_TESTNET]: 5,
   [NonEVMChainId.SOLANA]: 5,
   [NonEVMChainId.APTOS]: 5,

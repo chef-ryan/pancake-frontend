@@ -249,9 +249,13 @@ export const OrdersTable = () => {
         <Pagination borderTop="1px solid" borderBottom="1px solid" borderColor="cardBorder" />
 
         <ScrollableContainer>
-          {data?.map((order) => (
-            <MobileOrder key={order.order_id} order={order} />
-          ))}
+          {data.length === 0 ? (
+            <FlexGap py="24px" alignItems="center" justifyContent="center">
+              <Text color="textSubtle">{t('No orders found')}</Text>
+            </FlexGap>
+          ) : (
+            data.map((order) => <MobileOrder key={order.order_id} order={order} />)
+          )}
         </ScrollableContainer>
       </Box>
     )
@@ -284,9 +288,19 @@ export const OrdersTable = () => {
           </tr>
         </Thead>
         <tbody>
-          {isLoading
-            ? Array.from({ length: 4 }).map((_, index) => <LoadingRow key={index} />)
-            : data?.map((order) => <OrderTableRow key={order.order_id} order={order} />)}
+          {isLoading ? (
+            Array.from({ length: 4 }).map((_, index) => <LoadingRow key={index} />)
+          ) : data.length === 0 ? (
+            <Tr>
+              <Td colSpan={7}>
+                <FlexGap alignItems="center" justifyContent="center">
+                  <Text color="textSubtle">{t('No orders found')}</Text>
+                </FlexGap>
+              </Td>
+            </Tr>
+          ) : (
+            data?.map((order) => <OrderTableRow key={order.order_id} order={order} />)
+          )}
         </tbody>
       </Table>
 

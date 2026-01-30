@@ -1,4 +1,4 @@
-import { isChainSupported, ChainId, getChainIdByChainName } from '@pancakeswap/chains'
+import { isAptos, ChainId, getChainIdByChainName } from '@pancakeswap/chains'
 import safeGetWindow from '@pancakeswap/utils/safeGetWindow'
 
 export function getQueryChainId() {
@@ -8,7 +8,8 @@ export function getQueryChainId() {
   }
   const params = new URL(window.location.href).searchParams
   const chainId = getChainIdByChainName(params.get('chain') || '')
-  if (!chainId) {
+  // Aptos not supported in web
+  if (!chainId || isAptos(chainId)) {
     return undefined
   }
   return chainId

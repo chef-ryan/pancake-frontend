@@ -5,11 +5,6 @@ import { BigNumber as BN } from 'bignumber.js'
 import { nearestUsableTick } from '@pancakeswap/v3-sdk'
 import { bigNumberToPrice } from './price'
 
-// TODO: Check if needed anymore
-export function invertTickForLimitOrder(tick: number, currentTick: number) {
-  return 2 * currentTick - tick
-}
-
 /**
  * Get price adjusted to the nearest tick
  * @param price - Price to adjust, in string format
@@ -103,16 +98,8 @@ export function getSqrtPriceFromMarketPrice(
   const parsedPrice = tryParsePrice(baseCurrency, quoteCurrency, marketPrice)
   if (!parsedPrice) return undefined
 
-  console.log('%c [getSqrtPriceFromMarketPrice] parsedPrice', 'color: orange; font-weight: bold;', {
-    parsedPrice: parsedPrice.toFixed(18),
-  })
-
   let targetTick = tryParseTick(parsedPrice, tickSpacing)
   if (!targetTick) return undefined
-
-  console.log('%c [getSqrtPriceFromMarketPrice] targetTick', 'color: orange; font-weight: bold;', {
-    targetTick,
-  })
 
   // If current tick is between targetTick and its next tick, adjust it depending on direction
 
@@ -138,19 +125,10 @@ export function getSqrtPriceFromMarketPrice(
   const priceLower = tickToPrice(baseCurrency, quoteCurrency, tickLower)
   const priceUpper = tickToPrice(baseCurrency, quoteCurrency, tickUpper)
 
-  console.log('%c [getSqrtPriceFromMarketPrice] priceLower & priceUpper', 'color: orange; font-weight: bold;', {
-    priceLower,
-    priceUpper,
-  })
-
   // Sqrt price = sqrt(priceLower * priceUpper)
   const sqrtPrice = BN(priceLower.toFixed(18))
     .multipliedBy(BN(priceUpper.toFixed(18)))
     .sqrt()
-
-  console.log('%c [getSqrtPriceFromMarketPrice] sqrtPrice', 'color: orange; font-weight: bold;', {
-    sqrtPrice,
-  })
 
   return { sqrtPrice, isSellingOrBuyingAtWorsePrice, tickLower, tickUpper, targetTick, priceLower, priceUpper }
 }

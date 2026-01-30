@@ -6,7 +6,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { SLOW_INTERVAL } from 'config/constants'
 import { LIMIT_ORDERS_HOOKS_SUPPORTED_CHAINS } from 'config/constants/supportChains'
 import { PCS_LIMIT_ORDER_HISTORY_URL, ORDERS_PER_PAGE, MAX_PENDING_ORDERS } from '../constants'
-import { OrderHistoryResponse, PaginationParams, OrderStatus } from '../types/orders.types'
+import { OrderHistoryResponse, PaginationParams, OrderStatus, ResponseOrder } from '../types/orders.types'
 import {
   currentCursorAtom,
   pageCursorsAtom,
@@ -16,7 +16,6 @@ import {
   canGoBackAtom,
   resetPaginationAtom,
   toggleOpenFilterAtom,
-  PageCursor,
 } from '../state/pagination/paginationAtoms'
 
 async function getUserLimitOrders(
@@ -57,14 +56,32 @@ export const useUserOpenLimitOrders = () => {
   return useQuery({
     queryKey: ['userOpenLimitOrders', chainId, account],
     queryFn: async () => {
-      if (!account || !chainId) return []
+      if (!account || !chainId) return { openOrders: [], totalOrders: [] }
 
-      const data = await getUserLimitOrders(chainName, account, OrderStatus.Open, undefined, MAX_PENDING_ORDERS)
-      return data.rows
+      // Need totalOrders to decide whether to show OrdersSummaryCard in case of no open orders
+      let totalOrders: ResponseOrder[] = []
+
+      const openData = await getUserLimitOrders(chainName, account, OrderStatus.Open, undefined, MAX_PENDING_ORDERS)
+      const openOrders = openData.rows
+      totalOrders = openOrders
+
+      if (totalOrders.length === 0) {
+        const totalData = await getUserLimitOrders(chainName, account, undefined, undefined, MAX_PENDING_ORDERS)
+        totalOrders = totalData.rows
+      }
+
+      return {
+        openOrders,
+        totalOrders,
+      }
+    },
+    initialData: {
+      openOrders: [],
+      totalOrders: [],
     },
     enabled: !!account && !!chainId && LIMIT_ORDERS_HOOKS_SUPPORTED_CHAINS.includes(chainId),
     refetchInterval: SLOW_INTERVAL,
-    staleTime: 100, // 100ms
+    staleTime: 0,
   })
 }
 
@@ -95,8 +112,6 @@ export const useUserLimitOrders = () => {
 
       const data = await getUserLimitOrders(chainName, account, filterOrderStatus, paginationParams)
       const { rows } = data
-
-      console.log('%c [Order History Data]', 'background: green;color: white', rows)
 
       // Store cursors for the current page for consistent navigation
       setPageCursors((prev) => {

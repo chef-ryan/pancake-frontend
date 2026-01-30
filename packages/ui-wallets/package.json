@@ -6,6 +6,13 @@
     "*.css.ts"
   ],
   "private": true,
+  "scripts": {
+    "test": "vitest --run",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "format:check": "prettier --check --loglevel error 'src/**/*.{js,jsx,ts,tsx}'",
+    "format:write": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
   "dependencies": {
     "@pancakeswap/hooks": "workspace:*",
     "@pancakeswap/localization": "workspace:*",

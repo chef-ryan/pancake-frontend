@@ -1,4 +1,3 @@
-import { ChainId, getChainName } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { Box, FlexGap, Skeleton, Text } from '@pancakeswap/uikit'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
@@ -10,6 +9,7 @@ import styled from 'styled-components'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import { safeGetAddress } from 'utils/safeGetAddress'
 import { useEnhancedTokenLogo } from './hooks/useEnhancedTokenLogo'
+import { getChainDisplayName } from './utils/getChainDisplayName'
 
 const SCROLLBAR_SHIFT_PX = 8
 
@@ -83,7 +83,7 @@ export const AssetsList: React.FC<AssetsListProps> = ({ assets, isLoading, onRow
             name: asset.token.name,
             logoURI: enhancedLogoURI,
           }
-          const chainName = asset.chainId === ChainId.BSC ? 'BNB' : getChainName(asset.chainId)
+          const chainName = getChainDisplayName(asset.chainId)
           return (
             <AssetItem key={asset.id} onClick={onRowClick ? () => onRowClick(asset) : undefined}>
               <FlexGap alignItems="center">

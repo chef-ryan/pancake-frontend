@@ -7,8 +7,9 @@ import BigNumber from 'bignumber.js'
 
 import { PublicKey } from '@solana/web3.js'
 import { TOKEN_WSOL } from '@pancakeswap/solana-core-sdk'
+import { WALLET_API } from 'config/constants/endpoints'
 
-const WALLET_PRICE_URL = 'https://wallet-api.pancakeswap.com/sol/v1/prices/list'
+const WALLET_PRICE_URL = `${WALLET_API}/sol/v1/prices/list`
 
 type PriceReturnType = { [key: string]: number }
 

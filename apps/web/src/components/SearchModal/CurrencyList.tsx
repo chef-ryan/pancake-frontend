@@ -14,13 +14,23 @@ import { wrappedCurrency } from 'utils/wrappedCurrency'
 import { useTranslation } from '@pancakeswap/localization'
 import { ChainId, Currency, UnifiedCurrency, UnifiedCurrencyAmount, UnifiedToken } from '@pancakeswap/sdk'
 import { WrappedTokenInfo } from '@pancakeswap/token-lists'
-import { ArrowForwardIcon, AutoColumn, Column, CopyButton, FlexGap, QuestionHelper, Text } from '@pancakeswap/uikit'
+import {
+  useMatchBreakpoints,
+  ArrowForwardIcon,
+  AutoColumn,
+  Column,
+  CopyButton,
+  FlexGap,
+  QuestionHelper,
+  Text,
+} from '@pancakeswap/uikit'
 import { formatAmount } from '@pancakeswap/utils/formatFractions'
 import { CurrencyLogo } from '@pancakeswap/widgets-internal'
 import { useUnifiedTokenUsdPrice } from 'hooks/useUnifiedTokenUsdPrice'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { isSolana, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 
+import truncateHash from '@pancakeswap/utils/truncateHash'
 import { useIsUserAddedToken } from '../../hooks/Tokens'
 import { useCombinedActiveList } from '../../state/lists/hooks'
 import { isTokenOnList } from '../../utils'
@@ -87,6 +97,7 @@ function ComplementSection({
   showActions: boolean
 }) {
   const { t } = useTranslation()
+  const { isMobile } = useMatchBreakpoints()
 
   if (selectedCurrency.isNative) {
     return null
@@ -94,45 +105,51 @@ function ComplementSection({
 
   return (
     <FlexGap ml="8px" alignItems="center">
-      {showActions ? (
-        <>
-          <CopyButton
-            data-dd-action-name="Copy token address"
-            width="13px"
-            buttonColor="textSubtle"
-            text={selectedCurrency.wrapped.address}
-            tooltipMessage={t('Token address copied')}
-            defaultTooltipMessage={t('Copy token address')}
-            tooltipPlacement="top"
-          />
-          <ViewOnExplorerButton
-            address={selectedCurrency.wrapped.address}
-            chainId={selectedCurrency.chainId}
-            type="token"
-            color="textSubtle"
-            width="15px"
-            ml="8px"
-            tooltipPlacement="top"
-          />
-          {selectedCurrency.chainId === NonEVMChainId.SOLANA ? null : (
-            <AddToWalletButton
-              data-dd-action-name="Add to wallet"
-              variant="text"
-              p="0"
-              ml="12px"
-              height="auto"
-              width="fit-content"
-              tokenAddress={selectedCurrency.wrapped.address}
-              tokenSymbol={selectedCurrency.symbol}
-              tokenDecimals={selectedCurrency.decimals}
-              tokenLogo={
-                selectedCurrency.wrapped instanceof WrappedTokenInfo ? selectedCurrency.wrapped.logoURI : undefined
-              }
+      {isMobile ? (
+        <Text color="textSubtle" fontSize="12px">
+          {truncateHash(selectedCurrency.wrapped.address)}
+        </Text>
+      ) : (
+        showActions && (
+          <>
+            <CopyButton
+              data-dd-action-name="Copy token address"
+              width="13px"
+              buttonColor="textSubtle"
+              text={selectedCurrency.wrapped.address}
+              tooltipMessage={t('Token address copied')}
+              defaultTooltipMessage={t('Copy token address')}
               tooltipPlacement="top"
             />
-          )}
-        </>
-      ) : null}
+            <ViewOnExplorerButton
+              address={selectedCurrency.wrapped.address}
+              chainId={selectedCurrency.chainId}
+              type="token"
+              color="textSubtle"
+              width="15px"
+              ml="8px"
+              tooltipPlacement="top"
+            />
+            {selectedCurrency.chainId === NonEVMChainId.SOLANA ? null : (
+              <AddToWalletButton
+                data-dd-action-name="Add to wallet"
+                variant="text"
+                p="0"
+                ml="12px"
+                height="auto"
+                width="fit-content"
+                tokenAddress={selectedCurrency.wrapped.address}
+                tokenSymbol={selectedCurrency.symbol}
+                tokenDecimals={selectedCurrency.decimals}
+                tokenLogo={
+                  selectedCurrency.wrapped instanceof WrappedTokenInfo ? selectedCurrency.wrapped.logoURI : undefined
+                }
+                tooltipPlacement="top"
+              />
+            )}
+          </>
+        )
+      )}
     </FlexGap>
   )
 }
@@ -190,7 +207,7 @@ function CurrencyRow({
       <MenuItemInner
         disabled={isSelected}
         selected={otherSelected}
-        onClick={() => (isSelected ? null : onSelect())}
+        onClick={isSelected ? undefined : onSelect}
         onMouseEnter={setIsHoveredCallback}
         onMouseLeave={setIsHoveredLeaveCallback}
       >

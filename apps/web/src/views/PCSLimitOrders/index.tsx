@@ -4,11 +4,13 @@ import { SwapType } from 'views/Swap/types'
 import { SwapSelection } from 'views/SwapSimplify/InfinitySwap/SwapSelectionTab'
 import { PanelWrapper } from 'views/SwapSimplify/InfinitySwap/ButtonAndDetailsPanel'
 import { FormContainer } from 'views/SwapSimplify/InfinitySwap/FormContainer'
-import { Box, Link } from '@pancakeswap/uikit'
+import { BottomDrawer, Box, FlexGap, Link, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useTranslation } from '@pancakeswap/localization'
 import { Suspense } from 'react'
 import styled from 'styled-components'
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
+import { chartDisplayAtom } from 'views/SwapSimplify/InfinitySwap/atoms'
+import ChartWithPriceHeader from 'components/Chart/ChartWithPriceHeader'
 import { LimitOrderForm } from './components/LimitOrderForm'
 import { CommitButton } from './components/CommitButton'
 import { MarketPriceInput } from './components/MarketPriceInput'
@@ -35,54 +37,106 @@ const LimitOrderFormWrapper = styled.div`
   margin: 0 auto 32px;
 `
 
+const ChartAndFormGrid = styled(Box)<{ $isChartDisplayed: boolean }>`
+  ${({ theme }) => theme.mediaQueries.lg} {
+    ${({ $isChartDisplayed }) =>
+      $isChartDisplayed &&
+      `
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+  `}
+  }
+`
+
 export const PCSLimitOrdersView = () => {
   const { t } = useTranslation()
 
+  const { isDesktop, isMobile } = useMatchBreakpoints()
+
   const inputCurrency = useAtomValue(inputCurrencyAtom)
   const outputCurrency = useAtomValue(outputCurrencyAtom)
+  const [isChartDisplayed_, setIsChartDisplayed] = useAtom(chartDisplayAtom)
+  const isChartDisplayed = isChartDisplayed_ && Boolean(inputCurrency) && Boolean(outputCurrency)
 
   return (
     <>
       <Page style={{ paddingTop: 0, paddingLeft: 0, paddingRight: 0 }}>
-        <LimitOrderFormWrapper>
-          <SwapUIV2.SwapTabAndInputPanelWrapper>
-            <SwapSelection swapType={SwapType.LIMIT} withToolkit />
-            <Suspense fallback={<CardFallback height="332px" />}>
-              <LimitOrderForm />
-            </Suspense>
+        <ChartAndFormGrid
+          p={isMobile ? '16px' : '24px'}
+          mt={isMobile ? '18px' : '42px'}
+          $isChartDisplayed={isChartDisplayed}
+        >
+          {isDesktop && isChartDisplayed && (
+            <FlexGap width="100%" maxWidth="928px" flexDirection="column" style={{ gap: 20 }}>
+              <ChartWithPriceHeader
+                currency0={inputCurrency || undefined}
+                currency1={outputCurrency || undefined}
+                symbol={`${inputCurrency?.symbol}/${outputCurrency?.symbol}`}
+              />
+            </FlexGap>
+          )}
 
-            {inputCurrency && outputCurrency && (
-              <FormContainer>
-                <Suspense fallback={<CardFallback height="100px" />}>
-                  <MarketPriceInput />
+          <Box width="100%">
+            <LimitOrderFormWrapper>
+              <SwapUIV2.SwapTabAndInputPanelWrapper>
+                <SwapSelection swapType={SwapType.LIMIT} withToolkit outputChainId={outputCurrency?.chainId} />
+                <Suspense fallback={<CardFallback height="332px" />}>
+                  <LimitOrderForm />
                 </Suspense>
-                <Suspense fallback={<CardFallback height="46px" />}>
-                  <QuickActionButtons />
+
+                {inputCurrency && outputCurrency && (
+                  <FormContainer>
+                    <Suspense fallback={<CardFallback height="100px" />}>
+                      <MarketPriceInput />
+                    </Suspense>
+                    <Suspense fallback={<CardFallback height="46px" />}>
+                      <QuickActionButtons />
+                    </Suspense>
+                  </FormContainer>
+                )}
+              </SwapUIV2.SwapTabAndInputPanelWrapper>
+
+              <PanelWrapper>
+                <Suspense fallback={<CardFallback height="48px" />}>
+                  <CommitButton />
                 </Suspense>
-              </FormContainer>
-            )}
-          </SwapUIV2.SwapTabAndInputPanelWrapper>
+                <Suspense fallback={<CardFallback height="50px" />}>
+                  <TradeDetails mt="2px" />
+                </Suspense>
+              </PanelWrapper>
 
-          <PanelWrapper>
-            <Suspense fallback={<CardFallback height="48px" />}>
-              <CommitButton />
-            </Suspense>
-            <Suspense fallback={<CardFallback height="50px" />}>
-              <TradeDetails mt="2px" />
-            </Suspense>
-          </PanelWrapper>
+              <Suspense>
+                <OrdersSummaryCard />
+              </Suspense>
+            </LimitOrderFormWrapper>
 
-          <Suspense>
-            <OrdersSummaryCard />
-          </Suspense>
-        </LimitOrderFormWrapper>
+            <Link href="/swap/limit-v1" color="primary60" textAlign="center" mx="auto">
+              {t('Manage old Limit Orders (Deprecated)')} &raquo;
+            </Link>
 
-        <Link href="/swap/limit-v1" color="primary60" textAlign="center" mx="auto">
-          {t('Manage old Limit Orders (Deprecated)')} &raquo;
-        </Link>
-
-        {/* TODO: add ad panel here */}
+            {/* TODO: add ad panel here */}
+          </Box>
+        </ChartAndFormGrid>
       </Page>
+
+      {/* Mobile Chart */}
+      {!isDesktop && (
+        <BottomDrawer
+          content={
+            <ChartWithPriceHeader
+              currency0={inputCurrency || undefined}
+              currency1={outputCurrency || undefined}
+              symbol={`${inputCurrency?.symbol}/${outputCurrency?.symbol}`}
+            />
+          }
+          isOpen={isChartDisplayed}
+          setIsOpen={(isOpen) => setIsChartDisplayed(isOpen)}
+          hideCloseButton
+        />
+      )}
     </>
   )
 }

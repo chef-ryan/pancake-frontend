@@ -1,5 +1,4 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency } from '@pancakeswap/sdk'
 import { AutoRow, BottomDrawer, Box, Flex, StyledLink, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useCurrency } from 'hooks/Tokens'
 import { useSwapHotTokenDisplay } from 'hooks/useSwapHotTokenDisplay'
@@ -76,7 +75,6 @@ const TwapAndLimitSwapInner = ({ limit }: { limit?: boolean }) => {
                 currency0={inputCurrency || undefined}
                 currency1={outputCurrency || undefined}
                 symbol={`${inputCurrency?.symbol}/${outputCurrency?.symbol}`}
-                theme="Dark"
               />
             )}
             <OrderHistory />
@@ -89,7 +87,6 @@ const TwapAndLimitSwapInner = ({ limit }: { limit?: boolean }) => {
                 currency0={inputCurrency || undefined}
                 currency1={outputCurrency || undefined}
                 symbol={`${inputCurrency?.symbol}/${outputCurrency?.symbol}`}
-                theme="Dark"
               />
             }
             isOpen={isChartDisplayed}

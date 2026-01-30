@@ -12,6 +12,7 @@ import { ethereumTokens } from './constants/eth'
 import { goerliTestnetTokens } from './constants/goerli'
 import { lineaTokens } from './constants/linea'
 import { lineaTestnetTokens } from './constants/lineaTestnet'
+import { monadTokens } from './constants/monad'
 import { monadTestnetTokens } from './constants/monadTestnet'
 import { opBnbTokens } from './constants/opBNB'
 import { opBnbTestnetTokens } from './constants/opBnbTestnet'
@@ -39,5 +40,6 @@ export const allTokens = {
   [ChainId.SEPOLIA]: sepoliaTokens,
   [ChainId.ARBITRUM_SEPOLIA]: arbSepoliaTokens,
   [ChainId.BASE_SEPOLIA]: baseSepoliaTokens,
+  [ChainId.MONAD_MAINNET]: monadTokens,
   [ChainId.MONAD_TESTNET]: monadTestnetTokens,
 }

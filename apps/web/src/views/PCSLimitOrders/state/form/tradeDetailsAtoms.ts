@@ -62,11 +62,6 @@ export const amountReceivedAtom = atom((get) => {
 
   const { feesEarned } = feesEarnedData
 
-  console.log('amountReceivedAtom', {
-    outputReceived: outputReceived.toString(),
-    feesEarned: feesEarned.toString(),
-  })
-
   const amountReceived = outputReceived.plus(feesEarned)
 
   return amountReceived

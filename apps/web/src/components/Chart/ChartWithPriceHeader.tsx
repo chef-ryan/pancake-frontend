@@ -1,4 +1,4 @@
-import { Currency } from '@pancakeswap/sdk'
+import { UnifiedCurrency } from '@pancakeswap/sdk'
 import { Box } from '@pancakeswap/uikit'
 import { useSetAtom } from 'jotai'
 import React, { useCallback, useState } from 'react'
@@ -9,9 +9,8 @@ import TradingViewChart from './TradingViewChart'
 
 interface ChartWithPriceHeaderProps {
   symbol?: string
-  currency0?: Currency
-  currency1?: Currency
-  theme?: 'Light' | 'Dark'
+  currency0?: UnifiedCurrency
+  currency1?: UnifiedCurrency
 }
 
 const Container = styled(Box)`
@@ -29,12 +28,7 @@ const Container = styled(Box)`
   }
 `
 
-const ChartWithPriceHeader: React.FC<ChartWithPriceHeaderProps> = ({
-  symbol = 'CAKE/BNB',
-  currency0,
-  currency1,
-  theme = 'Dark',
-}) => {
+const ChartWithPriceHeader: React.FC<ChartWithPriceHeaderProps> = ({ symbol = 'BNB/CAKE', currency0, currency1 }) => {
   const [isReversed, setIsReversed] = useState(false)
   const setPriceData = useSetAtom(chartPriceDataAtom)
 
@@ -49,9 +43,6 @@ const ChartWithPriceHeader: React.FC<ChartWithPriceHeaderProps> = ({
     },
     [setPriceData],
   )
-  const onLiveDataChanges = useCallback((c: number) => {
-    console.log('c', c)
-  }, [])
 
   return (
     <Container>
@@ -63,12 +54,9 @@ const ChartWithPriceHeader: React.FC<ChartWithPriceHeaderProps> = ({
         setIsReversed={setIsReversed}
       />
       <TradingViewChart
-        theme={theme}
         currency0={isReversed ? currency1 : currency0}
         currency1={isReversed ? currency0 : currency1}
         on24HPriceDataChange={on24HPriceDataChange}
-        // @ts-ignore
-        onLiveDataChanges={onLiveDataChanges}
       />
     </Container>
   )

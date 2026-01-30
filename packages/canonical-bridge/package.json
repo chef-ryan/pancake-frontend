@@ -55,6 +55,9 @@
     "vite-plugin-node-polyfills": "~0.24.0",
     "wagmi": "catalog:"
   },
+  "overrides": {
+    "@wagmi/core": "catalog:"
+  },
   "exports": {
     "./package.json": "./package.json",
     ".": {

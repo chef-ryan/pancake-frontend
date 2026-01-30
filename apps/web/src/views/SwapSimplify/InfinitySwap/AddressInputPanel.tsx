@@ -1,13 +1,9 @@
 import { ChainId } from '@pancakeswap/chains'
-import { useDebounce } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { AutoColumn, BscScanIcon, FlexGap, Link, SwapCSS, Text } from '@pancakeswap/uikit'
 
-import { useActiveChainId } from 'hooks/useActiveChainId'
-import { useGetENSAddressByName } from 'hooks/useGetENSAddressByName'
 import { useCallback } from 'react'
 import { styled } from 'styled-components'
-import { safeGetAddress } from 'utils'
 import { Field } from 'state/swap/actions'
 import { useSwapState } from 'state/swap/hooks'
 import { useBlockExploreLink, useBlockExploreName } from '../../../utils'

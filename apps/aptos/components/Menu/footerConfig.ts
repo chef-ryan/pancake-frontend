@@ -21,10 +21,6 @@ export const footerLinks: (t: ContextApi['t']) => FooterLinkType[] = (t) => [
         label: t('Play'),
         href: 'https://pancakeswap.finance/prediction',
       },
-      {
-        label: t('Merchandise'),
-        href: 'https://merch.pancakeswap.finance/',
-      },
     ],
   },
   {

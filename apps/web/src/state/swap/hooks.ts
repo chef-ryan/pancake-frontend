@@ -1,6 +1,7 @@
 import { Currency, Native, SOL, Trade, TradeType, UnifiedNativeCurrency } from '@pancakeswap/sdk'
 import { CAKE, STABLE_COIN, USDC, USDT } from '@pancakeswap/tokens'
 import { PairDataTimeWindowEnum } from '@pancakeswap/uikit'
+import { isAptos, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useQuery } from '@tanstack/react-query'
 import { getChainId } from 'config/chains'
 import { DEFAULT_INPUT_CURRENCY } from 'config/constants/exchange'
@@ -14,32 +15,12 @@ import { ParsedUrlQuery } from 'querystring'
 import { useCallback, useEffect, useState } from 'react'
 import { ChartPeriod, chainIdToExplorerInfoChainName, explorerApiClient } from 'state/info/api/client'
 import { isAddressEqual, safeGetAddress, safeGetUnifiedAddress } from 'utils'
-import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useBridgeAvailableChains } from 'views/Swap/Bridge/hooks'
 import { Field, replaceSwapState } from './actions'
 import { SwapState, swapReducerAtom } from './reducer'
 
 export function useSwapState() {
   return useAtomValue(swapReducerAtom)
-}
-
-// TODO: update
-const BAD_RECIPIENT_ADDRESSES: string[] = [
-  '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f', // v2 factory
-  '0xf164fC0Ec4E93095b804a4795bBe1e041497b92a', // v2 router 01
-  '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', // v2 router 02
-]
-
-/**
- * Returns true if any of the pairs or tokens in a trade have the given checksummed address
- * @param trade to check for the given address
- * @param checksummedAddress address to check in the pairs and tokens
- */
-function involvesAddress(trade: Trade<Currency, Currency, TradeType>, checksummedAddress: string): boolean {
-  return (
-    trade.route.path.some((token) => isAddressEqual(token.address, checksummedAddress)) ||
-    trade.route.pairs.some((pair) => isAddressEqual(pair.liquidityToken.address, checksummedAddress))
-  )
 }
 
 function parseTokenAmountURLParameter(urlParam: any): string {
@@ -82,8 +63,10 @@ export function queryParametersToSwapState(
   // NOTE: if chainOut is not provided, means user want to swap on the same chain
   const outputChain = parsedQs.chainOut || inputChain
 
-  const inputChainId = typeof inputChain === 'string' ? getChainId(inputChain) : undefined
-  const outputChainId = typeof outputChain === 'string' ? getChainId(outputChain) : undefined
+  const inputChainId =
+    typeof inputChain === 'string' && !isAptos(getChainId(inputChain)) ? getChainId(inputChain) : undefined
+  const outputChainId =
+    typeof outputChain === 'string' && !isAptos(getChainId(outputChain)) ? getChainId(outputChain) : undefined
 
   const recipient = validatedRecipient(parsedQs.recipient)
 
@@ -119,8 +102,6 @@ export function queryParametersToSwapState(
     typedValue: parseTokenAmountURLParameter(parsedQs.exactAmount),
     independentField: parseIndependentFieldURLParameter(parsedQs.exactField),
     recipient,
-    pairDataById: {},
-    derivedPairDataById: {},
   }
 }
 

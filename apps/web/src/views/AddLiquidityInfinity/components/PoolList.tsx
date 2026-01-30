@@ -331,6 +331,7 @@ export const PoolList = () => {
                 showCommonBases
                 commonBasesType={CommonBasesType.LIQUIDITY}
                 hideBalance
+                showNative
               />
               <AddIcon color="textSubtle" />
               <CurrencySelectV2
@@ -341,6 +342,7 @@ export const PoolList = () => {
                 showCommonBases
                 commonBasesType={CommonBasesType.LIQUIDITY}
                 hideBalance
+                showNative
               />
             </TokenFilterContainer>
             <PoolTypeFilter data={poolTypeData} value={poolType} onChange={(e) => setPoolType(e.value)} />

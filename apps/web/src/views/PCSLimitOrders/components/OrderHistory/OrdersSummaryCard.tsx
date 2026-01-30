@@ -24,11 +24,14 @@ export const OrdersSummaryCard = () => {
   const { isOpen, onOpen, onDismiss } = useModalV2()
   const { chainId } = useAccountActiveChain()
 
-  const { data: openOrders, isLoading } = useUserOpenLimitOrders()
+  const {
+    data: { openOrders, totalOrders },
+    isLoading,
+  } = useUserOpenLimitOrders()
 
   const isWrongNetwork = !LIMIT_ORDERS_HOOKS_SUPPORTED_CHAINS.includes(chainId)
 
-  if (isWrongNetwork || (!openOrders && !isLoading)) return null
+  if (isWrongNetwork || (!totalOrders.length && !isLoading)) return null
 
   return (
     <>
@@ -37,7 +40,7 @@ export const OrdersSummaryCard = () => {
           <FlexGap gap="8px">
             <WaitIcon color="textSubtle" />
             <Text color="textSubtle" small bold>
-              {t('%number% Open Limit Orders', { number: openOrders?.length || 0 })}
+              {t('%number% Open Limit Orders', { number: openOrders.length || 0 })}
             </Text>
           </FlexGap>
 

@@ -9,8 +9,15 @@ export const useWagmiConfig = () => {
   const [wagmiConfig, setWagmiConfig] = useAtom(wagmiConfigAtom)
 
   useEffect(() => {
-    window.addEventListener('eip6963:announceProvider', (event: any) => {
+    if (typeof window === 'undefined') return undefined
+
+    const handleAnnounceProvider = (event: any) => {
+      if (!event?.detail || typeof event.detail !== 'object') {
+        console.warn("[wallet] Ignored 'eip6963:announceProvider' event: invalid detail: ", event?.detail)
+        return
+      }
       const { provider, info } = event.detail
+      if (!provider || !info?.uuid) return
       const exists = eip6963Providers.some((p) => p.info.uuid === info.uuid)
       if (exists) {
         return
@@ -19,12 +26,19 @@ export const useWagmiConfig = () => {
         provider,
         info,
       })
-    })
+    }
+    window.addEventListener('eip6963:announceProvider', handleAnnounceProvider)
     window.dispatchEvent(new Event('eip6963:requestProvider'))
-    setTimeout(() => {
+
+    const timer = setTimeout(() => {
       console.log(`[wallet] init wagmi config`)
       setWagmiConfig(typeof window !== 'undefined' && isInBinance() ? createW3WWagmiConfig() : createWagmiConfig())
     })
+
+    return () => {
+      window.removeEventListener('eip6963:announceProvider', handleAnnounceProvider)
+      clearTimeout(timer)
+    }
   }, [setWagmiConfig])
 
   return wagmiConfig

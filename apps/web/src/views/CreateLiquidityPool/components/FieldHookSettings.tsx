@@ -6,7 +6,6 @@ import { useCallback, useEffect } from 'react'
 import { useFeeTierSettingQueryState, usePoolTypeQueryState } from 'state/infinity/create'
 import { HookSettings } from 'views/HookSettings/HookSettings'
 import { useHookReset } from 'views/HookSettings/hooks/useHookReset'
-import { useManualHook } from 'views/HookSettings/hooks/useManualHook'
 import { useHookEnabledQueryState, useHookSelectTypeQueryState } from 'views/HookSettings/hooks/useQueriesState'
 import { useSelectHookFromList } from 'views/HookSettings/hooks/useSelectHookFromList'
 
@@ -15,7 +14,6 @@ type FieldHookSettingsProps = BoxProps
 export const FieldHookSettings: React.FC<FieldHookSettingsProps> = ({ ...boxProps }) => {
   const [feeTierSetting, setFeeTierSetting] = useFeeTierSettingQueryState()
   const [hook, setHook] = useSelectHookFromList()
-  const { setManualHook } = useManualHook()
   const [, setHookEnabled] = useHookEnabledQueryState()
   const [hookSelectType, setHookSelectType] = useHookSelectTypeQueryState()
   const { chainId } = useSelectIdRouteParams()

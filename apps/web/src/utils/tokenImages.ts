@@ -1,6 +1,5 @@
 import { ChainId, isSolana, NonEVMChainId } from '@pancakeswap/chains'
-import { Currency, getCurrencyAddress, Token, UnifiedCurrency, WBNB } from '@pancakeswap/sdk'
-import { WrappedTokenInfo } from '@pancakeswap/token-lists'
+import { getUnifiedCurrencyAddress, Token, UnifiedCurrency, WBNB } from '@pancakeswap/sdk'
 import uriToHttp from '@pancakeswap/utils/uriToHttp'
 import makeBlockiesUrl from 'blockies-react-svg/dist/es/makeBlockiesUrl.mjs'
 import { getBasicTokensImage } from 'components/Logo/CurrencyLogo'
@@ -21,7 +20,7 @@ export const tokenImageChainNameMapping = {
   [NonEVMChainId.SOLANA]: 'solana/',
 }
 
-export const getImageUrlFromToken = (token?: UnifiedCurrency) => {
+const getImageUrlFromToken = (token?: UnifiedCurrency) => {
   let address = token?.isNative ? token.wrapped.address : token?.address
   if (token && token.chainId === ChainId.BSC && !token.isNative && isAddressEqual(token.address, zeroAddress)) {
     address = WBNB[ChainId.BSC].wrapped.address
@@ -36,38 +35,33 @@ export const getImageUrlFromToken = (token?: UnifiedCurrency) => {
     : ''
 }
 
-export const getImageUrlsFromToken = (token?: UnifiedCurrency & { logoURI?: string | undefined }) => {
-  const uriLocations = token?.logoURI ? uriToHttp(token?.logoURI) : []
-  const imageUri = getImageUrlFromToken(token)
-  return [...uriLocations, imageUri]
-}
-
-const _getCurrencyLogoSrcs = (currency: UnifiedCurrency & { logoURI?: string | undefined }) => {
+const _getCurrencyLogoSrcs = (currency?: UnifiedCurrency & { logoURI?: string | undefined }) => {
   const allUrls = () => {
-    const uriLocations = currency instanceof WrappedTokenInfo && currency.logoURI ? uriToHttp(currency.logoURI) : []
-    const imageUrls = getImageUrlsFromToken(currency)
-    const basicTokenImage = getBasicTokensImage(currency)
-
     if (currency?.isNative) return [getImageUrlFromToken(currency)]
     if (currency?.isToken) {
+      const uriLocations =
+        typeof currency === 'object' && 'logoURI' in currency && currency.logoURI ? uriToHttp(currency.logoURI) : []
+      const imageUri = getImageUrlFromToken(currency)
+      const basicTokenImage = getBasicTokensImage(currency)
       const tokenLogoURL = getTokenLogoURL(currency as Token)
-      if (currency instanceof WrappedTokenInfo) {
-        if (!tokenLogoURL) return [...imageUrls, ...uriLocations, basicTokenImage]
-        return [...imageUrls, ...uriLocations, tokenLogoURL, basicTokenImage]
-      }
-      if (!tokenLogoURL) return [...imageUrls, basicTokenImage]
-      return [...imageUrls, tokenLogoURL, basicTokenImage]
+      return [...uriLocations, imageUri, tokenLogoURL, basicTokenImage]
     }
     return []
   }
-  const addr = getCurrencyAddress(currency as Currency)
-  const pxImage = makeBlockiesUrl(addr)
-  const list = allUrls()?.filter((x) => x)
+  const addr = currency ? getUnifiedCurrencyAddress(currency) : undefined
+  const pxImage = addr ? makeBlockiesUrl(addr) : undefined
+  const list = allUrls()?.filter((x): x is string => Boolean(x))
   list.push(pxImage)
   return list
 }
 
-export const getCurrencyLogoSrcs = memoize(
-  _getCurrencyLogoSrcs,
-  (currency) => `${currency.chainId}-${getCurrencyAddress(currency as Currency)}`,
-)
+export const getCurrencyLogoSrcs = memoize(_getCurrencyLogoSrcs, (currency) => {
+  const chainId = currency?.chainId ?? undefined
+  const address = currency ? getUnifiedCurrencyAddress(currency) : undefined
+  const logoURI =
+    typeof currency === 'object' && currency !== null && 'logoURI' in currency && currency.logoURI
+      ? currency.logoURI
+      : ''
+
+  return `${chainId}-${address}-${logoURI}`
+})

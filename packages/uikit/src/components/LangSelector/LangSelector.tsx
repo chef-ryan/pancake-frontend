@@ -7,7 +7,7 @@ import MenuButton from "./MenuButton";
 import { Colors } from "../../theme";
 import { Language } from "./types";
 import { Position } from "../Dropdown/types";
-import { ButtonProps, Scale } from "../Button/types";
+import { Scale } from "../Button/types";
 
 interface Props {
   currentLang: string;

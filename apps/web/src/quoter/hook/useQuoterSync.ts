@@ -112,6 +112,18 @@ export const useQuoterSync = () => {
 
   const quoteResult = useAtomValue(bestCrossChainQuoteAtom(quoteQuery))
 
+  const refresh = useCallback(() => {
+    setNonce((v) => v + 1)
+  }, [setNonce])
+
+  const pauseQuoting = useCallback(() => {
+    pauseQuote(true)
+  }, [pauseQuote])
+
+  const resumeQuoting = useCallback(() => {
+    pauseQuote(false)
+  }, [pauseQuote])
+
   useEffect(() => {
     if (t > 0 && !paused) {
       if (quoteResult.isJust() && !quoteResult.hasFlag('placeholder')) {
@@ -127,7 +139,7 @@ export const useQuoterSync = () => {
         })
       }
     }
-  }, [t, quoteResult, paused, schedule, successRevalidate, failRevalidate])
+  }, [t, quoteResult, paused, schedule, successRevalidate, failRevalidate, setNonce])
 
   useEffect(() => {
     const quoteResultToSetPlaceholder =
@@ -153,18 +165,10 @@ export const useQuoterSync = () => {
       tradeLoaded: !quoteResult.isPending(),
       tradeError: quoteResult.error,
       refreshDisabled: false,
-      refreshOrder: () => {
-        setNonce((v) => v + 1)
-      },
-      refreshTrade: () => {
-        setNonce((v) => v + 1)
-      },
-      pauseQuoting: () => {
-        pauseQuote(true)
-      },
-      resumeQuoting: () => {
-        pauseQuote(false)
-      },
+      refreshOrder: refresh,
+      refreshTrade: refresh,
+      pauseQuoting,
+      resumeQuoting,
     })
     setTyping(false)
   }, [
@@ -178,6 +182,9 @@ export const useQuoterSync = () => {
     paused,
     setPlaceholder,
     quoteResult,
+    refresh,
+    pauseQuoting,
+    resumeQuoting,
   ])
 }
 

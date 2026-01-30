@@ -195,7 +195,10 @@ export const useV3CreateForm = () => {
   const isSorted = Boolean(
     baseCurrency &&
       quoteCurrency &&
-      isUnifiedCurrencySorted(baseCurrency as unknown as UnifiedCurrency, quoteCurrency as unknown as UnifiedCurrency),
+      isUnifiedCurrencySorted(
+        baseCurrency.wrapped as unknown as UnifiedCurrency,
+        quoteCurrency.wrapped as unknown as UnifiedCurrency,
+      ),
   )
 
   const rangeLeftPrice = isSorted ? priceLower : priceUpper?.invert()
@@ -269,7 +272,6 @@ export const useV3CreateForm = () => {
     rightRangeTypedValue,
     onBothRangeInput,
     parsedAmounts,
-    dependentField,
     onFieldAInput,
     onFieldBInput,
   ])
@@ -355,7 +357,7 @@ export const useV3CreateForm = () => {
         }
       }
     },
-    [activeQuickAction, feeAmount, handleRefresh, setShowCapitalEfficiencyWarning],
+    [feeAmount, handleRefresh, setShowCapitalEfficiencyWarning],
   )
 
   // CREATE POOL ACTIONS
@@ -467,6 +469,8 @@ export const useV3CreateForm = () => {
     sendTransactionAsync,
     signer,
     t,
+    router,
+    toastError,
   ])
 
   // Button Submit, with handle expert mode
@@ -647,11 +651,13 @@ export const useV3CreateForm = () => {
     onDismissPreviewModal,
     feeAmount,
     price,
-    priceLower,
-    priceUpper,
     baseCurrency,
     quoteCurrency,
     t,
+    invertPrice,
+    rangeLeftValue,
+    rangeRightValue,
+    switchCurrencies,
   ])
 
   return {

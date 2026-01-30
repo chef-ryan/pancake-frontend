@@ -3,21 +3,17 @@ import { useTranslation } from '@pancakeswap/localization'
 import { useToast } from '@pancakeswap/uikit'
 import { ToastDescriptionWithTx } from 'components/Toast'
 import useCatchTxError from 'hooks/useCatchTxError'
-import { useInfinityBinPositionManagerContract } from 'hooks/useContract'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { useCallback } from 'react'
 import { Address, Hex } from 'viem'
 
-import { useAccount, useConfig } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 export const useCreateInfinityBinPosition = (targetChainId: ChainId, onDone?: () => void) => {
   const { t } = useTranslation()
   const { address: account, chainId } = useAccount()
   const { toastSuccess } = useToast()
-  const infinityBinPositionManagerContract = useInfinityBinPositionManagerContract(targetChainId)
   const { fetchWithCatchTxError, loading: pendingTx } = useCatchTxError()
-  const chainConfig = useConfig()
-  const chain = chainConfig.chains[targetChainId]
   const { switchNetwork } = useSwitchNetwork()
 
   const createCLPosition = useCallback(

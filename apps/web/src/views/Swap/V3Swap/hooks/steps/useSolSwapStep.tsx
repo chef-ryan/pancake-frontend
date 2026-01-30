@@ -13,6 +13,8 @@ import { confirmTransaction } from '@pancakeswap/solana-core-sdk'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useRefreshSolanaTokenBalances } from 'state/token/solanaTokenBalances'
 import { useSolanaConnectionWithRpcAtom } from 'hooks/solana/useSolanaConnectionWithRpcAtom'
+import MultisigToastDescription from 'components/Toast/MultisigToastDescription'
+import { isMultisigWallet } from 'utils/solana/isMultisigWallet'
 import useSwapRecordTransaction from '../useSwapRecordTransaction'
 import { ConfirmStepContext } from './step.type'
 
@@ -58,9 +60,12 @@ export const useSolSwapStep = (context: ConfirmStepContext) => {
         // Get the transaction from the order data
         const { transaction, requestId } = order.trade
         if (!transaction) {
-          showError('No transaction data found for Solana swap')
+          showError(t('No transaction data found for Solana swap'))
           return
         }
+
+        setTxHash(undefined)
+        setConfirmState(ConfirmModalState.PENDING_CONFIRMATION)
 
         try {
           const based64tx = Buffer.from(transaction, 'base64')
@@ -73,12 +78,14 @@ export const useSolSwapStep = (context: ConfirmStepContext) => {
 
           if (response.status === 'Failed') {
             const error = new UltraSwapError(response.error, UltraSwapErrorType.FAILED, response.signature)
-            showError(error.message || response.error || 'Solana swap failed')
+            showError(error.message || response.error || t('Solana swap failed'))
             return
           }
 
           const { signature } = response
           setTxHash(signature)
+
+          const isMultisig = isMultisigWallet(solanaWallet)
 
           try {
             addSwapTransaction({
@@ -86,31 +93,42 @@ export const useSolSwapStep = (context: ConfirmStepContext) => {
               hash: signature as any,
               type: 'SolanaSwap',
               receipt: {} as any,
+              isMultisig,
             })
           } catch (error) {
             console.error('Failed to add transaction', error)
           }
 
           toastSuccess(
-            t('Success!'),
-            <SolanaDescriptionWithTx txHash={signature}>{t('Solana swap submitted')}</SolanaDescriptionWithTx>,
+            isMultisig ? t('Multisig transaction submitted') : t('Success!'),
+            isMultisig ? (
+              <MultisigToastDescription />
+            ) : (
+              <SolanaDescriptionWithTx txHash={signature}>{t('Solana swap submitted')}</SolanaDescriptionWithTx>
+            ),
           )
 
-          setConfirmState(ConfirmModalState.COMPLETED)
-
-          // Wait for transaction confirmation then refresh balances
-          await retryWaitForSolanaTransaction(signature)
-          refreshSolanaBalances()
+          if (!isMultisig) {
+            // Wait for transaction confirmation then refresh balances
+            await retryWaitForSolanaTransaction(signature)
+            refreshSolanaBalances()
+            setConfirmState(ConfirmModalState.COMPLETED)
+          } else {
+            setConfirmState(ConfirmModalState.MULTISIG_SUBMITTED)
+            console.warn(
+              'Transaction submitted to SquadsX multisig. Pending approvals. Balances may not be updated yet.',
+            )
+          }
         } catch (error: any) {
           console.error('Solana swap error', error)
           if (error?.message?.includes('rejected')) {
-            showError('Transaction rejected by user')
+            showError(t('Transaction rejected by user'))
           } else if (error?.message?.includes('insufficient')) {
-            showError('Insufficient balance for transaction')
+            showError(t('Insufficient balance for transaction'))
           } else if (error?.message?.includes('wallet')) {
-            showError('Please connect your Solana wallet first')
+            showError(t('Please connect your Solana wallet first'))
           } else {
-            showError(typeof error === 'string' ? error : error?.message || 'Solana swap failed')
+            showError(typeof error === 'string' ? error : error?.message || t('Solana swap failed'))
           }
         }
       },
@@ -127,7 +145,10 @@ export const useSolSwapStep = (context: ConfirmStepContext) => {
     signTransaction,
     retryWaitForSolanaTransaction,
     refreshSolanaBalances,
-    solanaWallet?.adapter.publicKey,
+    solanaWallet,
+    addSwapTransaction,
+    setConfirmState,
+    setTxHash,
   ])
 
   return solanaSwapStep

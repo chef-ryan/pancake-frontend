@@ -7,6 +7,7 @@ import {
   bscTokens,
   ethereumTokens,
   lineaTokens,
+  monadTokens,
   opBnbTokens,
   zkSyncTestnetTokens,
   zksyncTokens,
@@ -58,6 +59,9 @@ export const priceHelperTokens = {
   [ChainId.OPBNB]: {
     list: [opBnbTokens.wbnb, opBnbTokens.usdt],
   },
+  [ChainId.MONAD_MAINNET]: {
+    list: [monadTokens.wmon, monadTokens.usdc, monadTokens.usdt, monadTokens.busd],
+  },
 } satisfies Record<number, PriceHelper>
 
 // for testing purposes
@@ -79,5 +83,6 @@ export const DEFAULT_COMMON_PRICE: Record<FarmV3SupportedChainId, CommonPrice> =
   [ChainId.BASE]: {},
   [ChainId.OPBNB_TESTNET]: {},
   [ChainId.OPBNB]: {},
+  [ChainId.MONAD_MAINNET]: {},
   [ChainId.MONAD_TESTNET]: {},
 }

@@ -29,13 +29,6 @@ export const selectedPoolAtom = atomWithQuery((get) => {
           ((pool.currency0 === idA && pool.currency1 === idB) || (pool.currency0 === idB && pool.currency1 === idA)),
       )
 
-      console.log('SelectedPoolAtom: Found basic pool', {
-        idA,
-        idB,
-        basicPool,
-        pools,
-      })
-
       if (!basicPool || !isPoolId(basicPool.poolId)) return null
 
       const { poolId, chainId } = basicPool
@@ -66,15 +59,6 @@ export const selectedPoolAtom = atomWithQuery((get) => {
         tickSpacing: parameters.tickSpacing,
       })
       pool.feeProtocol = protocolFee
-
-      console.log('SelectedPoolAtom: Constructed pool', {
-        poolId,
-        pool,
-        poolInfo,
-        zeroForOne,
-        currencyA,
-        currencyB,
-      })
 
       return { poolId, pool, poolInfo, zeroForOne, currencyA, currencyB }
     },

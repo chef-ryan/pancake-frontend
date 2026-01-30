@@ -60,6 +60,8 @@ import { useAllTypeBestTrade } from 'quoter/hook/useAllTypeBestTrade'
 import { useEVMToSolanaBridgeCalldata } from 'views/Swap/Bridge/hooks/useEVMToSolanaBridgeCalldata'
 import { calculateGasMargin } from 'utils'
 import { viemClients } from 'utils/viem'
+import MultisigToastDescription from 'components/Toast/MultisigToastDescription'
+import { isMultisigWallet } from 'utils/solana/isMultisigWallet'
 import { ConfirmStepContext, ConfirmAction } from './steps/step.type'
 import { useBatchSwapTransaction } from './steps/useBatchSwapTransaction'
 import { useSolSwapStep } from './steps/useSolSwapStep'
@@ -210,14 +212,12 @@ const useConfirmActions = (
     setErrorMessage(undefined)
     setPermit2Signature(undefined)
     resumeQuoting()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [resumeQuoting])
 
   const showError = useCallback((error: string) => {
     setErrorMessage(error)
     setTxHash(undefined)
     setPermit2Signature(undefined)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const retryWaitForTransaction = useCallback(
@@ -347,7 +347,7 @@ const useConfirmActions = (
           setConfirmState(nextState ?? ConfirmModalState.PENDING_CONFIRMATION)
         } catch (error) {
           if (userRejectedError(error)) {
-            showError('Transaction rejected')
+            showError(t('Transaction rejected'))
           } else {
             showError(typeof error === 'string' ? error : (error as any)?.message)
           }
@@ -364,6 +364,7 @@ const useConfirmActions = (
     signPermit2,
     setPermit2Signature,
     order,
+    t,
     getPermitCalldata,
   ])
 
@@ -388,7 +389,7 @@ const useConfirmActions = (
         } catch (error) {
           console.error('wrap error', error)
           if (userRejectedError(error)) {
-            showError('Transaction rejected')
+            showError(t('Transaction rejected'))
           } else {
             showError(typeof error === 'string' ? error : (error as any)?.message)
           }
@@ -396,7 +397,7 @@ const useConfirmActions = (
       },
       showIndicator: true,
     }
-  }, [amountToApprove, nativeWrap, retryWaitForTransaction, showError, txHash, wrappedBalance?.quotient])
+  }, [amountToApprove, nativeWrap, retryWaitForTransaction, showError, t, txHash, wrappedBalance?.quotient])
 
   const approveStep = useMemo(() => {
     return {
@@ -528,10 +529,10 @@ const useConfirmActions = (
     safeTxHashTransformer,
     sendTransactionAsync,
     showError,
-    t,
     error?.code,
     error?.message,
     refetch,
+    resetState,
   ])
 
   const recipient = recipientAddress === null ? (isOutputSolana ? solanaAccount : account) : recipientAddress
@@ -593,23 +594,36 @@ const useConfirmActions = (
           // Send transaction safely
           const signature = await sendTransactionSafely(transaction, solanaConnection, solanaWalletContext)
 
+          const isMultisig = isMultisigWallet(solanaWalletContext?.wallet)
+
           if (signature) {
             setTxHash(signature)
-            setConfirmState(ConfirmModalState.ORDER_SUBMITTED)
             // Set bridge order metadata for tracking
             setActiveBridgeOrderMetadata({
               order,
               txHash: signature,
               originChainId: order.trade.inputAmount.currency.chainId,
               destinationChainId: order.trade.outputAmount.currency.chainId,
+              isMultisig,
             })
-            // Wait for confirmation
-            await confirmTransaction(solanaConnection, signature)
+
+            if (!isMultisig) {
+              setConfirmState(ConfirmModalState.ORDER_SUBMITTED)
+              await confirmTransaction(solanaConnection, signature)
+            } else {
+              setConfirmState(ConfirmModalState.MULTISIG_SUBMITTED)
+              console.warn('Bridge transaction submitted to SquadsX multisig. Pending approvals.')
+            }
+
             toastSuccess(
-              t('Success!'),
-              <ToastDescriptionWithTx txHash={signature} txChainId={order.trade.inputAmount.currency.chainId}>
-                {t('Bridge transaction submitted')}
-              </ToastDescriptionWithTx>,
+              isMultisig ? t('Multisig transaction submitted') : t('Success!'),
+              isMultisig ? (
+                <MultisigToastDescription />
+              ) : (
+                <ToastDescriptionWithTx txHash={signature} txChainId={order.trade.inputAmount.currency.chainId}>
+                  {t('Bridge transaction submitted')}
+                </ToastDescriptionWithTx>
+              ),
             )
           }
         } catch (error: any) {
@@ -717,6 +731,7 @@ const useConfirmActions = (
                 txHash: hash,
                 originChainId: order.trade.inputAmount.currency.chainId,
                 destinationChainId: order.trade.outputAmount.currency.chainId,
+                isMultisig: false,
               })
 
               await retryWaitForTransaction({
@@ -753,7 +768,6 @@ const useConfirmActions = (
           : undefined,
     }
   }, [
-    solanaAccount,
     account,
     order,
     retryWaitForTransaction,
@@ -768,6 +782,8 @@ const useConfirmActions = (
     permit2Signature,
     allowedSlippage,
     bridgeSolanaSwapCalldata,
+    refreshOrder,
+    resetState,
   ])
 
   const swapStep = useMemo(() => {
@@ -800,7 +816,7 @@ const useConfirmActions = (
         } catch (error: any) {
           console.error('swap error', error)
           if (userRejectedError(error)) {
-            showError('Transaction rejected')
+            showError(t('Transaction rejected'))
           } else {
             showError(typeof error === 'string' ? error : (error as any)?.message)
           }
@@ -809,7 +825,7 @@ const useConfirmActions = (
       showIndicator: false,
       getCalldata: () => swapCalls,
     }
-  }, [swapCalls, resetState, retryWaitForTransaction, safeTxHashTransformer, showError, swap, swapError])
+  }, [swapCalls, resetState, retryWaitForTransaction, safeTxHashTransformer, t, showError, swap, swapError])
 
   const xSwapStep = useMemo(() => {
     return {
@@ -887,7 +903,7 @@ const useConfirmActions = (
         } catch (error: any) {
           console.error('swap error', error)
           if (userRejectedError(error)) {
-            showError('Transaction rejected')
+            showError(t('Transaction rejected'))
           } else {
             const errorMsg = typeof error === 'string' ? error : (error as any)?.message
             showError(errorMsg)

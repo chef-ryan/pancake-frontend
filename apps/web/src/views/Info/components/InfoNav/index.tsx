@@ -97,7 +97,7 @@ const InfoNav: React.FC<{ isStableSwap: boolean }> = ({ isStableSwap }) => {
   )
 }
 
-const targetChains = [mainnet, bsc, zkSync, arbitrum, linea, base, opBNB]
+const targetChains = [mainnet, bsc, zkSync, arbitrum, linea, base, opBNB, { id: ChainId.MONAD_MAINNET, name: 'Monad' }]
 
 export const NetworkSwitcher: React.FC<{ activeIndex: number }> = ({ activeIndex }) => {
   const { t } = useTranslation()

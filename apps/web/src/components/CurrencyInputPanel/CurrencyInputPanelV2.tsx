@@ -62,6 +62,7 @@ interface CurrencyInputPanelV2Props {
   title?: React.ReactNode
   hideBalanceComp?: boolean
   chainId?: number
+  showNative?: boolean
 }
 
 /**
@@ -98,6 +99,7 @@ const CurrencyInputPanelV2 = memo(function CurrencyInputPanelV2({
   title,
   hideBalanceComp,
   chainId,
+  showNative,
 }: CurrencyInputPanelV2Props) {
   const { t } = useTranslation()
   const { address: account } = useAccount()
@@ -124,6 +126,7 @@ const CurrencyInputPanelV2 = memo(function CurrencyInputPanelV2({
       tokensToShow={tokensToShow}
       mode={mode}
       chainId={chainId}
+      showNative={showNative}
     />,
   )
 

@@ -8,15 +8,14 @@ import { useSolanaTokenInfo } from 'hooks/solana/useSolanaTokenInfo'
 import { useSolanaTokenBalances } from 'state/token/solanaTokenBalances'
 import { useSolanaTokenPrices } from 'hooks/solana/useSolanaTokenPrice'
 import { FixedSizeList } from 'react-window'
-import { useAllLists, useInactiveListUrls } from 'state/lists/hooks'
+import { sanitizeTokenInfos, useAllLists, useInactiveListUrls } from 'state/lists/hooks'
 import { UpdaterByChainId } from 'state/lists/updater'
 import { useAllTokenBalances } from 'state/wallet/hooks'
 import { safeGetAddress } from 'utils'
 import { getTokenAddressFromSymbolAlias } from 'utils/getTokenAlias'
 import { isAddress } from 'viem'
-import { useAccount } from 'wagmi'
 
-import { NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useDebounce, useSortedTokensByQuery } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 /* eslint-disable no-restricted-syntax */
@@ -31,7 +30,6 @@ import {
   IconButton,
   ModalCloseButton,
   ModalTitle,
-  Spinner,
   Text,
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
@@ -39,6 +37,7 @@ import { useAudioPlay } from '@pancakeswap/utils/user'
 import { SPLToken, UnifiedToken } from '@pancakeswap/swap-sdk-core'
 
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
+import { getSearchTopTokensByChain } from '@pancakeswap/tokens'
 import { useAllTokens, useIsUserAddedToken, useToken } from '../../hooks/Tokens'
 import Row from '../Layout/Row'
 import CommonBases, { BaseWrapper } from './CommonBases'
@@ -91,7 +90,8 @@ function useSearchInactiveTokenLists(search: string | undefined, minResults = 10
       const list = lists[url]?.current
       // eslint-disable-next-line no-continue
       if (!list) continue
-      for (const tokenInfo of list.tokens) {
+      const sanitizedTokens = sanitizeTokenInfos(list)
+      for (const tokenInfo of sanitizedTokens) {
         if (
           tokenInfo.chainId === chainId &&
           !(tokenInfo.address in activeTokens) &&
@@ -141,7 +141,6 @@ function CurrencySearch({
   onSettingsClick,
 }: CurrencySearchProps) {
   const { t } = useTranslation()
-  const account = useAccount()
   const [searchQuery, setSearchQuery] = useState<string>('')
   const debouncedQuery = useDebounce(getTokenAddressFromSymbolAlias(searchQuery, selectedChainId, searchQuery), 200)
   // refs for fixed size lists
@@ -207,11 +206,11 @@ function CurrencySearch({
     const filterToken = createFilterToken(debouncedQuery, (address) => isAddress(address))
     // Only EVM tokens here
     return Object.values(tokensToShow || allTokens).filter(filterToken) as Token[]
-  }, [tokensToShow, allTokens, debouncedQuery, isSolana, solanaTokens, otherSelectedCurrency, showNative, native])
+  }, [tokensToShow, allTokens, debouncedQuery, isSolana, solanaTokens, otherSelectedCurrency])
 
   const queryTokens = useSortedTokensByQuery(filteredTokens as Token[], debouncedQuery)
 
-  const { balances, isLoading: isLoadingBalances } = useAllTokenBalances(selectedChainId)
+  const { balances } = useAllTokenBalances(selectedChainId)
 
   const filteredSortedTokens: UnifiedCurrency[] = useMemo(() => {
     if (isSolana) {
@@ -239,8 +238,60 @@ function CurrencySearch({
       })
     }
     const tokenComparator = getTokenComparator(balances ?? {})
+    const hasSearchQuery = debouncedQuery && debouncedQuery.trim().length > 0
+
+    // Only apply high-rank token sorting when there's a search query
+    if (hasSearchQuery) {
+      const tokenBalances = balances ?? {}
+      const highRankTokens = getSearchTopTokensByChain(selectedChainId as ChainId)
+      // Create a set of high-rank token addresses for quick lookup
+      const highRankTokenAddresses = new Set(highRankTokens.map((token) => token.address.toLowerCase()))
+      // Create custom comparator: prioritize balance rules, high-rank tokens come first when balance is equal
+      const enhancedComparator = (tokenA: Token, tokenB: Token): number => {
+        // First sort by balance (replicate getTokenComparator logic)
+        const balanceA = tokenBalances[tokenA.address]
+        const balanceB = tokenBalances[tokenB.address]
+
+        // Balance comparison logic
+        let balanceComp = 0
+        if (balanceA && balanceB) {
+          balanceComp = balanceA.greaterThan(balanceB) ? -1 : balanceA.equalTo(balanceB) ? 0 : 1
+        } else if (balanceA && balanceA.greaterThan('0')) {
+          balanceComp = -1
+        } else if (balanceB && balanceB.greaterThan('0')) {
+          balanceComp = 1
+        }
+
+        // If balance differs, return balance comparison result directly
+        if (balanceComp !== 0) return balanceComp
+
+        // When balance is equal, high-rank tokens come first
+        const isHighRankA = highRankTokenAddresses.has(tokenA.address.toLowerCase())
+        const isHighRankB = highRankTokenAddresses.has(tokenB.address.toLowerCase())
+        if (isHighRankA && !isHighRankB) return -1
+        if (!isHighRankA && isHighRankB) return 1
+
+        // If both are high-rank or neither is high-rank, sort by symbol
+        if (tokenA.symbol && tokenB.symbol) {
+          return tokenA.symbol.toLowerCase() < tokenB.symbol.toLowerCase() ? -1 : 1
+        }
+        return tokenA.symbol ? -1 : tokenB.symbol ? -1 : 0
+      }
+      return [...(queryTokens as Token[])].sort(enhancedComparator)
+    }
+
+    // No search query, use default token comparator
     return [...(queryTokens as Token[])].sort(tokenComparator)
-  }, [filteredTokens, queryTokens, balances, isSolana, solanaBalances.balances, solanaPrices])
+  }, [
+    filteredTokens,
+    queryTokens,
+    balances,
+    isSolana,
+    solanaBalances.balances,
+    solanaPrices,
+    selectedChainId,
+    debouncedQuery,
+  ])
 
   const handleCurrencySelect = useCallback(
     (currency: UnifiedCurrency) => {

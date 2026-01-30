@@ -402,8 +402,8 @@ export const useStableSwapNativeHelperContract = () => {
   return useMemo(() => getStableSwapNativeHelperContract(signer ?? undefined, chainId), [signer, chainId])
 }
 
-export function useV3NFTPositionManagerContract() {
-  return useContract(addresses.nftPositionManager, nonfungiblePositionManagerABI)
+export function useV3NFTPositionManagerContract(options?: UseContractOptions) {
+  return useContract(addresses.nftPositionManager, nonfungiblePositionManagerABI, options)
 }
 
 export function useMasterchefV3() {

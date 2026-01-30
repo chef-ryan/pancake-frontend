@@ -52,8 +52,9 @@ import { useRemoveLiquidityV2FormState } from 'state/burn/reducer'
 import { useGasPrice } from 'state/user/hooks'
 import { logGTMClickRemoveLiquidityEvent } from 'utils/customGTMEventTracking'
 import { isUserRejected, logError } from 'utils/sentry'
-import { LiquiditySlippageButton, SlippageButton } from 'views/Swap/components/SlippageButton'
+import { LiquiditySlippageButton } from 'views/Swap/components/SlippageButton'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
+import { safeGetTokenPairPrice } from 'utils/safeGetTokenPairPrice'
 import { AppBody, AppHeader } from '../../components/App'
 import ConnectWalletButton from '../../components/ConnectWalletButton'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
@@ -63,7 +64,7 @@ import { CurrencyLogo } from '../../components/Logo'
 import { useTransactionDeadline } from '../../hooks/useTransactionDeadline'
 import { formatAmount } from '../../utils/formatInfoNumbers'
 import Page from '../Page'
-import ConfirmLiquidityModal from '../Swap/components/ConfirmRemoveLiquidityModal'
+import ConfirmLiquidityModal from '../../components/Liquidity/ConfirmRemoveLiquidityModal'
 
 const BorderCard = styled.div`
   border: solid 1px ${({ theme }) => theme.colors.cardBorder};
@@ -646,7 +647,7 @@ export default function RemoveLiquidity({ currencyA, currencyB, currencyIdA, cur
                 1 {currencyA?.symbol} =
               </Text>
               <Text small>
-                {tokenA ? pair.priceOf(tokenA).toSignificant(6) : '-'} {currencyB?.symbol}
+                {safeGetTokenPairPrice(pair, tokenA)} {currencyB?.symbol}
               </Text>
             </Flex>
             <Flex justifyContent="space-between">
@@ -654,7 +655,7 @@ export default function RemoveLiquidity({ currencyA, currencyB, currencyIdA, cur
                 1 {currencyB?.symbol} =
               </Text>
               <Text small>
-                {tokenB ? pair.priceOf(tokenB).toSignificant(6) : '-'} {currencyA?.symbol}
+                {safeGetTokenPairPrice(pair, tokenB)} {currencyA?.symbol}
               </Text>
             </Flex>
           </LightGreyCard>

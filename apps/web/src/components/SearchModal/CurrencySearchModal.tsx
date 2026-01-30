@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import AddToWalletButton from 'components/AddToWallet/AddToWalletButton'
 import { ViewOnExplorerButton } from 'components/ViewOnExplorerButton'
@@ -49,11 +49,11 @@ const StyledModalHeader = styled(ModalHeader)`
   border: none;
 `
 
-const StyledModalBody = styled(ModalBody)`
+const StyledModalBody = styled(ModalBody)<{ $allowScroll?: boolean }>`
   padding: 4px 24px 24px;
   max-height: calc(90vh);
 
-  overflow-y: hidden;
+  overflow-y: ${({ $allowScroll }) => ($allowScroll ? 'auto' : 'hidden')};
   -ms-overflow-style: none;
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -91,7 +91,7 @@ export default function CurrencySearchModal({
   showCurrencyInHeader = false,
   showSearchHeader,
   mode,
-  showNative,
+  showNative = true,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.search)
   const [selectedChainId, setSelectedChainId] = useState<UnifiedChainId | undefined>(selectedCurrency?.chainId)
@@ -138,23 +138,35 @@ export default function CurrencySearchModal({
       })
   }, [adding, dispatch, fetchList, listURL])
 
-  const config = {
-    [CurrencyModalView.search]: { title: t('Select a Token'), onBack: undefined },
-    [CurrencyModalView.manage]: { title: t('Manage Tokens'), onBack: () => setModalView(CurrencyModalView.search) },
-    [CurrencyModalView.importToken]: {
-      title: t('Import Tokens'),
-      onBack: () =>
-        setModalView(prevView && prevView !== CurrencyModalView.importToken ? prevView : CurrencyModalView.search),
-    },
-    [CurrencyModalView.importList]: { title: t('Import List'), onBack: () => setModalView(CurrencyModalView.search) },
-  }
+  const config = useMemo(
+    () => ({
+      [CurrencyModalView.search]: {
+        title: t('Select a Token'),
+        onBack: undefined,
+      },
+      [CurrencyModalView.manage]: {
+        title: t('Manage Tokens'),
+        onBack: () => setModalView(CurrencyModalView.search),
+      },
+      [CurrencyModalView.importToken]: {
+        title: t('Import Tokens'),
+        onBack: () =>
+          setModalView(prevView && prevView !== CurrencyModalView.importToken ? prevView : CurrencyModalView.search),
+      },
+      [CurrencyModalView.importList]: {
+        title: t('Import List'),
+        onBack: () => setModalView(CurrencyModalView.search),
+      },
+    }),
+    [t, prevView],
+  )
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [height, setHeight] = useState<number | undefined>(undefined)
 
   useEffect(() => {
     if (!wrapperRef.current) return
 
-    setHeight(wrapperRef.current.offsetHeight)
+    setHeight(wrapperRef.current.offsetHeight - 300)
   }, [])
 
   return (
@@ -237,7 +249,7 @@ export default function CurrencySearchModal({
           <ModalCloseButton onDismiss={onDismiss} />
         </StyledModalHeader>
       )}
-      <StyledModalBody>
+      <StyledModalBody $allowScroll={modalView === CurrencyModalView.importToken}>
         {modalView === CurrencyModalView.search ? (
           <CurrencySearch
             onSettingsClick={() => setModalView(CurrencyModalView.manage)}

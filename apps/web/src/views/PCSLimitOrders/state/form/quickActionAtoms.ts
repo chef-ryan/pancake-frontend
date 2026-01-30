@@ -2,6 +2,7 @@ import { atom } from 'jotai'
 import { BigNumber as BN } from 'bignumber.js'
 import { DEFAULT_PERCENTAGE_MAP } from 'views/PCSLimitOrders/constants'
 import { getSqrtPriceFromMarketPrice } from 'views/PCSLimitOrders/utils/ticks'
+import { getSymbolDecimals } from 'views/PCSLimitOrders/constants/decimalConfig'
 import { inputCurrencyAtom, outputCurrencyAtom } from '../currency/currencyAtoms'
 import { selectedPoolAtom } from '../pools/selectedPoolAtom'
 import { customMarketPriceAtom } from './customMarketPriceAtom'
@@ -61,7 +62,7 @@ export const setPercentDifferenceAtom = atom(null, async (get, set, percent: num
 
   if (!sqrtPrice.isFinite() || sqrtPrice.isZero()) return
 
-  set(customMarketPriceAtom, sqrtPrice.toFixed(6))
+  set(customMarketPriceAtom, sqrtPrice.toFixed(getSymbolDecimals(outputCurrency.symbol)))
 })
 
 // Preset percentage values
@@ -105,7 +106,7 @@ export const presetPercentMapAtom = atom((get) => {
 
     if (!sqrtPrice.isFinite() || sqrtPrice.isZero()) return
 
-    const difference = sqrtPrice.minus(BN(currentMarketPrice))
+    const difference = BN(sqrtPrice.toFixed(getSymbolDecimals(outputCurrency.symbol))).minus(BN(currentMarketPrice))
     const newPercentage = BN(difference).dividedBy(currentMarketPrice).multipliedBy(100)
 
     percentMap[percent] = newPercentage.toFormat(2)

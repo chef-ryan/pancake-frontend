@@ -20,7 +20,7 @@ import { useIsTransactionUnsupported, useIsTransactionWarning } from 'hooks/Trad
 import { useMasterchefV3, useV3NFTPositionManagerContract } from 'hooks/useContract'
 import { useRouter } from 'next/router'
 import { useTransactionAdder } from 'state/transactions/hooks'
-import { calculateGasMargin } from 'utils'
+import { calculateGasMargin, isAddressEqual } from 'utils'
 import Page from 'views/Page'
 import { useSendTransaction } from 'wagmi'
 
@@ -35,7 +35,7 @@ import { getViemClients } from 'utils/viem'
 import { hexToBigInt } from 'viem'
 
 import { ZapLiquidityWidget } from 'components/ZapLiquidityWidget'
-import { ZAP_V3_POOL_ADDRESSES } from 'config/constants/zapV3'
+import { ZAP_V3_POOL_ADDRESSES } from 'config/constants/zap'
 import { useSingleCallResult } from 'state/multicall/hooks'
 import { transactionErrorToUserReadableMessage } from 'utils/transactionErrorToUserReadableMessage'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
@@ -68,8 +68,16 @@ export default function IncreaseLiquidityV3({ currencyA: baseCurrency, currencyB
   const { account, chainId, isWrongNetwork } = useAccountActiveChain()
 
   const masterchefV3 = useMasterchefV3()
+
+  // Inline availability check to avoid duplicating logic elsewhere
+  const isMasterChefV3Available = useMemo(
+    () => Boolean(masterchefV3?.address && masterchefV3?.address !== '0x'),
+    [masterchefV3],
+  )
+
+  // Only fetch staked token IDs if MasterChef V3 is available on this chain
   const { tokenIds: stakedTokenIds, loading: tokenIdsInMCv3Loading } = useV3TokenIdsByAccount(
-    masterchefV3?.address,
+    isMasterChefV3Available ? masterchefV3?.address : undefined,
     account,
   )
 
@@ -166,11 +174,14 @@ export default function IncreaseLiquidityV3({ currencyA: baseCurrency, currencyB
   const [allowedSlippage] = useUserSlippage() // custom from users
 
   const isStakedInMCv3 = useMemo(() => {
+    if (!isMasterChefV3Available) {
+      return 'false'
+    }
     if (tokenIdsInMCv3Loading) {
       return 'loading'
     }
     return tokenId && stakedTokenIds.find((id) => id === BigInt(tokenId)) ? 'true' : 'false'
-  }, [tokenIdsInMCv3Loading, tokenId, stakedTokenIds])
+  }, [isMasterChefV3Available, tokenIdsInMCv3Loading, tokenId, stakedTokenIds])
 
   const manager =
     isStakedInMCv3 !== 'loading' ? (isStakedInMCv3 === 'true' ? masterchefV3 : positionManager) : undefined
@@ -187,7 +198,8 @@ export default function IncreaseLiquidityV3({ currencyA: baseCurrency, currencyB
     args: useMemo(() => [tokenIdBigInt], [tokenIdBigInt]),
   }).result
 
-  const ownsNFT = owner === account || positionDetails?.operator === account || isStakedInMCv3 === 'true'
+  const ownsNFT =
+    isAddressEqual(owner, account) || isAddressEqual(positionDetails?.operator, account) || isStakedInMCv3 === 'true'
 
   const isValid = !errorMessage && !invalidRange && !tokenIdsInMCv3Loading && ownsNFT
 
@@ -209,8 +221,12 @@ export default function IncreaseLiquidityV3({ currencyA: baseCurrency, currencyB
   const showApprovalB = approvalB !== ApprovalState.APPROVED && !!parsedAmounts[Field.CURRENCY_B]
 
   const onIncrease = useCallback(async () => {
+    // Skip MasterChef V3 loading check if MasterChef V3 is not deployed on this chain
+    const masterChefV3Address = masterchefV3?.address
+    const isMasterChefV3Available = masterChefV3Address && masterChefV3Address !== '0x'
+
     if (
-      tokenIdsInMCv3Loading ||
+      (isMasterChefV3Available && tokenIdsInMCv3Loading) ||
       !chainId ||
       !sendTransactionAsync ||
       !account ||
@@ -297,6 +313,7 @@ export default function IncreaseLiquidityV3({ currencyA: baseCurrency, currencyB
     chainId,
     deadline,
     hasExistingPosition,
+    masterchefV3,
     interfaceManager,
     manager,
     noLiquidity,

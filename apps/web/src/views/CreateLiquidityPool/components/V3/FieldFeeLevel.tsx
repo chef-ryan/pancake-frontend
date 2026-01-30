@@ -18,7 +18,7 @@ import {
 } from '@pancakeswap/uikit'
 import styled from 'styled-components'
 import MenuItem from '@pancakeswap/uikit/components/MenuItem/MenuItem'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFeeLevelQueryState } from 'state/infinity/create'
 import { useActiveChainId } from 'hooks/useAccountActiveChain'
 import { isSolana, NonEVMChainId } from '@pancakeswap/chains'

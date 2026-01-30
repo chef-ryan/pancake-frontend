@@ -39,6 +39,7 @@ export const CurrencySelectV2 = ({
   hideBalance,
   chainId,
   tokensToShow,
+  showNative,
   ...props
 }: CurrencySelectV2Props) => {
   const { address: account } = useAccount()
@@ -58,6 +59,7 @@ export const CurrencySelectV2 = ({
       showCommonBases={showCommonBases}
       commonBasesType={commonBasesType}
       chainId={chainId}
+      showNative={showNative}
     />,
   )
 

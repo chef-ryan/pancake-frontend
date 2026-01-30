@@ -48,6 +48,7 @@ const BottomNav: React.FC<React.PropsWithChildren<BottomNavProps>> = ({
                   setMenuOpenByIndex={setMenuOpenByIndex}
                   index={index}
                   isDisabled={disabled}
+                  trigger="click"
                 >
                   <Box>
                     <NotificationDot show={!!statusColor} color={statusColor}>

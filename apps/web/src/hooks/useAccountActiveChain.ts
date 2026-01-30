@@ -1,15 +1,17 @@
-import { isEvm } from '@pancakeswap/chains'
 import { useAtomValue } from 'jotai'
 import { useEffect, useRef } from 'react'
 
 import { accountActiveChainAtom } from 'wallet/atoms/accountStateAtoms'
 
 export const useActiveChainId = (checkChainId?: number) => {
-  const { isNotMatched, isWrongNetwork, chainId } = useAccountActiveChain()
+  const result = useAtomValue(accountActiveChainAtom)
+
+  if (!checkChainId) return result
+
+  const { chainId, isWrongNetwork } = result
   return {
-    chainId,
-    isNotMatched,
-    isWrongNetwork: checkChainId ? isWrongNetwork && checkChainId !== chainId : isWrongNetwork,
+    ...result,
+    isWrongNetwork: isWrongNetwork && checkChainId !== chainId,
   }
 }
 
@@ -24,10 +26,7 @@ export const useActiveChainIdRef = () => {
 }
 
 export const useAccountActiveChain = () => {
-  const result = useAtomValue(accountActiveChainAtom)
-  const { chainId, account, solanaAccount } = result
-  const unifiedAccount = isEvm(chainId) ? account : solanaAccount
-  return { ...result, unifiedAccount }
+  return useAtomValue(accountActiveChainAtom)
 }
 
 export default useAccountActiveChain

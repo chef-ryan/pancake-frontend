@@ -11,7 +11,7 @@ import groupBy from 'lodash/groupBy'
 import set from 'lodash/set'
 import { chainIdToExplorerInfoChainName, explorerApiClient } from 'state/info/api/client'
 import { safeGetAddress } from 'utils/safeGetAddress'
-import { usdPriceBatcher } from 'utils/batcher'
+import { getCurrencyUsdPrice } from '@pancakeswap/price-api-sdk'
 import { getMasterChefV3Contract } from 'utils/contractHelpers'
 import { isInfinityProtocol } from 'utils/protocols'
 import { publicClient } from 'utils/wagmi'
@@ -72,7 +72,7 @@ export const getLpApr = async (
   }
 
   if (apr24h) {
-    return resp.data.apr24h ? parseFloat(resp.data.apr24h) : 0
+    return 'apr24h' in resp.data && resp.data.apr24h ? parseFloat(resp.data.apr24h) : 0
   }
   return resp.data.apr7d ? parseFloat(resp.data.apr7d) : 0
 }
@@ -152,7 +152,7 @@ export const getAllNetworkMerklApr = async (signal?: AbortSignal) => {
   const resp = await fetch(
     `https://api.merkl.xyz/v4/opportunities/?chainId=${chainIds.join(
       ',',
-    )}&test=false&mainProtocolId=pancake-swap&action=POOL,HOLD&status=LIVE`,
+    )}&test=false&mainProtocolId=pancake-swap&action=POOL,HOLD&status=LIVE&items=100`,
     { signal },
   )
   if (resp.ok) {
@@ -406,7 +406,7 @@ const getV2PoolsCakeAprByChainId = async (
   })
 
   const priceCalls = validPools.map(async (pool) => {
-    return Promise.all([usdPriceBatcher.fetch(pool.token0), usdPriceBatcher.fetch(pool.token1)])
+    return Promise.all([getCurrencyUsdPrice(pool.token0), getCurrencyUsdPrice(pool.token1)])
   })
 
   const [rewardPerSecondResults, totalBoostedShareResults, totalSupplies, reserve0s, reserve1s, endTimestamps, prices] =

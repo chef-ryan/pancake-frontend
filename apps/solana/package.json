@@ -76,7 +76,7 @@
     "@tanstack/react-query": "^5.52.1",
     "@tiplink/wallet-adapter": "^2.1.19",
     "@vanilla-extract/css": "^1.13.0",
-    "@wagmi/core": "^2.11.6",
+    "@wagmi/core": "catalog:",
     "@walletconnect/solana-adapter": "^0.0.7",
     "@wormhole-foundation/wormhole-connect": "^0.3.21",
     "ag-grid-community": "^33.3.0",

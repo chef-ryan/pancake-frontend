@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 // Priority Fee level definitions (based on Raydium)
 export enum PriorityLevel {

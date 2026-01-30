@@ -92,7 +92,7 @@ export const useBatchSwapTransaction = ({
       } catch (error) {
         console.warn('Error sending batched transaction:', error)
         if (userRejectedError(error)) {
-          showError('Transaction rejected')
+          showError(t('Transaction rejected'))
         } else if (!eip5792UserRejectUpgradeError(error)) {
           const errorMsg = typeof error === 'string' ? error : (error as any)?.message
           showError(errorMsg)
@@ -187,6 +187,7 @@ export const useBatchSwapTransaction = ({
               txHash: hash,
               originChainId: order.trade.inputAmount.currency.chainId,
               destinationChainId: order.trade.outputAmount.currency.chainId,
+              isMultisig: false,
             })
           } else {
             setConfirmState(ConfirmModalState.COMPLETED)
@@ -199,7 +200,17 @@ export const useBatchSwapTransaction = ({
         }
       }
     },
-    [setConfirmState, resetState, setTxHash, getBatchedTransaction, sendBatchedTransaction, addSwapTransaction, order],
+    [
+      setConfirmState,
+      resetState,
+      setTxHash,
+      getBatchedTransaction,
+      sendBatchedTransaction,
+      addSwapTransaction,
+      order,
+      setActiveBridgeOrderMetadata,
+      addTransaction,
+    ],
   )
 
   return { canCallActionBatched, callSwapBatched, performEip5792Lock }

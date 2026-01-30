@@ -40,7 +40,7 @@ export const FieldBinStep: React.FC<FieldBinStepProps> = ({ ...boxProps }) => {
         setActiveId(newActiveId)
       }
     },
-    [activeId, currency0, currency1, inverted, setActiveId, setBinStep, startPrice],
+    [activeId, currency0, currency1, inverted, setActiveId, setBinStep, startPrice, c0, c1],
   )
 
   const [hasInitialized, setHasInitialized] = useState(false)

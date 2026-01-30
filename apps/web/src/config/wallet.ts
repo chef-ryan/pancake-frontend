@@ -66,8 +66,14 @@ const isMetamaskInstalled = () => {
       return !window.ethereum?.isBinance
     }
 
-    if (window.ethereum?.providers?.some((p) => p.isMetaMask)) {
-      return true
+    if (Array.isArray(window.ethereum?.providers)) {
+      return window.ethereum?.providers.some((provider) => {
+        try {
+          return Boolean(provider.isMetaMask)
+        } catch (e) {
+          return false
+        }
+      })
     }
   } catch (e) {
     return false
@@ -96,6 +102,7 @@ export const TOP_WALLET_MAP: { [chainId: number]: LegacyWalletIds[] } = {
   [ChainId.ZKSYNC]: [LegacyWalletIds.Metamask, LegacyWalletIds.Trust, LegacyWalletIds.Okx],
   [ChainId.LINEA]: [LegacyWalletIds.Metamask, LegacyWalletIds.Trust, LegacyWalletIds.Okx],
   [ChainId.OPBNB]: [LegacyWalletIds.Metamask, LegacyWalletIds.Trust, LegacyWalletIds.Okx, LegacyWalletIds.BinanceW3W],
+  [ChainId.MONAD_MAINNET]: [LegacyWalletIds.Metamask, LegacyWalletIds.Okx, LegacyWalletIds.Walletconnect],
 }
 
 export const walletsConfig = <config extends Config = Config, context = unknown>({

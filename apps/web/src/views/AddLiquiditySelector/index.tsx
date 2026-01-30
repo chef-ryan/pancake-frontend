@@ -11,7 +11,6 @@ import {
   PreTitle,
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
-import { Protocol } from '@pancakeswap/farms'
 import { PoolTypeFilter, getCurrencyAddress } from '@pancakeswap/widgets-internal'
 import { NetworkSelector } from 'components/NetworkSelector'
 import { CommonBasesType } from 'components/SearchModal/types'
@@ -213,6 +212,7 @@ export const AddLiquiditySelector = () => {
                 commonBasesType={CommonBasesType.LIQUIDITY}
                 tokensToShow={baseTokensToSelect}
                 hideBalance
+                showNative={protocol !== 'stableSwap'}
               />
               <AddIcon color="textSubtle" />
               <CurrencySelectV2
@@ -224,6 +224,7 @@ export const AddLiquiditySelector = () => {
                 showCommonBases={protocol !== 'stableSwap'}
                 commonBasesType={CommonBasesType.LIQUIDITY}
                 hideBalance
+                showNative={protocol !== 'stableSwap'}
               />
             </TokenFilterContainer>
           </FlexGap>

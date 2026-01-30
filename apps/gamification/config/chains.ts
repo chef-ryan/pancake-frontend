@@ -17,7 +17,7 @@ import {
   // lineaTestnet,
   // opBNB,
   // opBNBTestnet,
-  zkSync,
+  zksync,
 } from 'wagmi/chains'
 
 export const CHAIN_QUERY_NAME = chainNames
@@ -74,7 +74,7 @@ export const CHAINS: [Chain, ...Chain[]] = [
   mainnet,
   goerli,
   sepolia,
-  zkSync,
+  zksync,
   arbitrum,
   arbitrumGoerli,
   arbitrumSepolia,

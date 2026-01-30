@@ -11,16 +11,33 @@ import { ChartByLabel } from './Chart/ChartbyLabel'
  * When the script tag is injected the TradingView object is not immediately
  * available on the window. So we listen for when it gets set
  */
-const tradingViewListener = async () =>
-  new Promise<void>((resolve) =>
-    Object.defineProperty(window, 'TradingView', {
-      configurable: true,
-      set(value) {
-        this.tv = value
-        resolve(value)
-      },
-    }),
-  )
+const tradingViewListener = async () => {
+  if (typeof window === 'undefined') {
+    console.warn('[TradingViewListener] window is not available')
+    return null
+  }
+
+  return new Promise((resolve) => {
+    const intervalMs = 500
+    const timeoutMs = 10000
+    let elapsed = 0
+
+    const interval = setInterval(() => {
+      if (typeof window !== 'undefined' && window.TradingView) {
+        clearInterval(interval)
+        resolve(window.TradingView)
+        return
+      }
+
+      elapsed += intervalMs
+      if (elapsed >= timeoutMs) {
+        clearInterval(interval)
+        console.warn('[TradingViewListener] TradingView not found within timeout')
+        resolve(null)
+      }
+    }, intervalMs)
+  })
+}
 
 const initializeTradingView = (TradingViewObj: any, theme: DefaultTheme, localeCode: string, opts: any) => {
   let timezone = 'Etc/UTC'

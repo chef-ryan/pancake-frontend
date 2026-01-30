@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { Button, Flex, FlexGap, InfoIcon, Text, useToast } from '@pancakeswap/uikit'
+import { Button, FlexGap, InfoIcon, Text, useToast } from '@pancakeswap/uikit'
 import { useTranslation } from '@pancakeswap/localization'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { createCloseAccountInstruction } from '@solana/spl-token-0.4'

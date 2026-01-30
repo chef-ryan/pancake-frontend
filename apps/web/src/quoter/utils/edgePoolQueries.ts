@@ -1,7 +1,6 @@
 import { ChainId, getChainName } from '@pancakeswap/chains'
-import { findHook, findHookByAddress, type HookData, hooksList } from '@pancakeswap/infinity-sdk'
+import { findHookByAddress, type HookData, hooksList } from '@pancakeswap/infinity-sdk'
 import {
-  getPoolAddress,
   InfinityBinPool,
   InfinityClPool,
   InfinityPoolWithTvl,
@@ -13,7 +12,6 @@ import {
   V2PoolWithTvl,
   V3Pool,
   V3PoolWithTvl,
-  WithTvl,
 } from '@pancakeswap/smart-router'
 
 import {
@@ -29,33 +27,33 @@ import { Address } from 'viem/accounts'
 import { APIChain, getProvider, Protocol } from './edgeQueries.util'
 
 async function getHooksMap(type: 'light' | 'full', poolWithHooks: (RemotePoolCL | RemotePoolBIN)[], chainId: ChainId) {
-  const hooks =
-    type === 'light'
-      ? await Promise.all(
-          poolWithHooks.map(async (pool) => {
-            const { hookAddress } = pool
+  const hooks = await Promise.all(
+    poolWithHooks.map(async (pool) => {
+      const { hookAddress } = pool
+      if (!hookAddress) {
+        return { hook: null, hookAddress }
+      }
 
-            try {
-              const hook = await findHookByAddress({
-                poolId: pool.id,
-                publicClient: viemServerClients[chainId],
-                chainId: chainId as keyof typeof hooksList,
-                poolType: pool.protocol === 'infinityBin' ? 'Bin' : 'CL',
-                hookAddress: pool.hookAddress || undefined,
-              })
-              return { hook, hookAddress }
-            } catch (ex) {
-              const reason = ex instanceof Error ? ex.message : String(ex)
-              console.error(`[Hook Fetch Error]`, reason)
+      try {
+        const hook = await findHookByAddress({
+          poolId: pool.id,
+          publicClient: viemServerClients[chainId],
+          chainId: chainId as keyof typeof hooksList,
+          poolType: pool.protocol === 'infinityBin' ? 'Bin' : 'CL',
+          hookAddress: pool.hookAddress || undefined,
+        })
+        return { hook, hookAddress }
+      } catch (ex) {
+        const reason = ex instanceof Error ? ex.message : String(ex)
+        console.error(`[Hook Fetch Error]`, reason)
 
-              return {
-                hook: null,
-                hookAddress,
-              }
-            }
-          }),
-        )
-      : []
+        return {
+          hook: null,
+          hookAddress,
+        }
+      }
+    }),
+  )
   const hooksMap = hooks
     .filter((x) => x && x.hookAddress && x.hook)
     .reduce((acc, { hook, hookAddress }) => {
@@ -73,7 +71,7 @@ async function getInfinityPoolsFromApi(addressA: Address, addressB: Address, cha
   const url = `${process.env.NEXT_PUBLIC_EXPLORE_API_ENDPOINT}/cached/pools/candidates/infinity/${chain}/${addressA}/${addressB}`
   const response = await fetch(url)
   if (!response.ok) {
-    throw new Error(`Error fetching infinity pools: ${response.statusText}`)
+    throw new Error(`Error fetching infinity pools: ${url} ${response.statusText}`)
   }
   const data = (await response.json()) as (RemotePoolCL | RemotePoolBIN)[]
   const hooksMap = await getHooksMap(type, data, chainId)
@@ -116,7 +114,7 @@ const fetchInfinityPoolsLight = async (
 ) => {
   const call = createAsyncCallWithFallbacks(getInfinityPoolsFromApi, {
     fallbacks: [getInfinityPoolsOnChain],
-    fallbackTimeout: 3_000,
+    fallbackTimeout: 5_000,
   })
   return call(addressA, addressB, chainId, type)
 }
@@ -300,18 +298,6 @@ const fetchAllCandidatePoolsLite = async (
   })
 }
 
-function fillTvl(tvlMap: Record<`0x${string}`, string>, pools: Pool[]) {
-  return pools.map((pool) => {
-    const id = getPoolAddress(pool)
-    const tvlUSD: string = tvlMap[id] || '0'
-    const bigIntTvlUSD = BigInt(Math.floor(Number(tvlUSD)))
-    if ('tvlUSD' in pool) {
-      return { ...pool, tvlUSD: bigIntTvlUSD }
-    }
-    return pool as Pool & WithTvl
-  })
-}
-
 export const poolTvlMap = async (protocols: Protocol[], chain: APIChain) => {
   try {
     const remotePools = await fetchAllPools({
@@ -341,19 +327,22 @@ type PaginatedResponse = {
   rows: RemotePoolBase[]
 }
 
-type Token = {
-  id: string
-  symbol: string
-  name: string
-  decimals: number
-}
-
 type FetchAllPoolsParams = {
   baseUrl: string
   orderBy?: 'tvlUSD' | 'volumeUSD24h' | 'apr24h'
   protocols: Array<'v2' | 'v3' | 'infinityBin' | 'infinityCl' | 'stable'>
   chains: Array<
-    'bsc' | 'bsc-testnet' | 'ethereum' | 'base' | 'opbnb' | 'zksync' | 'polygon-zkevm' | 'linea' | 'arbitrum' | 'sol'
+    | 'bsc'
+    | 'bsc-testnet'
+    | 'ethereum'
+    | 'base'
+    | 'opbnb'
+    | 'zksync'
+    | 'polygon-zkevm'
+    | 'linea'
+    | 'arbitrum'
+    | 'sol'
+    | 'monad'
   >
   pools?: string[]
   tokens?: string[]
@@ -427,7 +416,6 @@ async function fetchAllPools({
 
   while (hasNextPage && pageCount < maxPages) {
     const url = `${baseUrl}?${buildUrlParams(cursor || undefined)}`
-    console.log(url)
 
     try {
       // eslint-disable-next-line no-await-in-loop
@@ -450,8 +438,9 @@ async function fetchAllPools({
       allResults.push(...data.rows)
 
       // Update for next iteration
-      hasNextPage = data.hasNextPage
-      cursor = data.endCursor || null
+      const { hasNextPage: hasNext, endCursor } = data
+      hasNextPage = hasNext
+      cursor = endCursor || null
       pageCount++
     } catch (error) {
       console.error('Error fetching data:', error)

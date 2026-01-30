@@ -153,13 +153,19 @@ export function computeTradePriceBreakdown(trade?: TradeEssentialForPriceBreakdo
       routeFeePercent.multiply(Percent.toPercent(parseNumberToFraction(percent / 100) || new Fraction(0))),
     )
 
-    const midPrice = SmartRouter.getMidPrice(route)
-    outputAmountWithoutPriceImpact = outputAmountWithoutPriceImpact.add(
-      CurrencyAmount.fromRawAmount(
-        trade.outputAmount.currency,
-        midPrice.wrapped.quote(routeInputAmount.wrapped).quotient,
-      ),
-    )
+    try {
+      const midPrice = SmartRouter.getMidPrice(route)
+      outputAmountWithoutPriceImpact = outputAmountWithoutPriceImpact.add(
+        CurrencyAmount.fromRawAmount(
+          trade.outputAmount.currency,
+          midPrice.wrapped.quote(routeInputAmount.wrapped).quotient,
+        ),
+      )
+    } catch (error) {
+      console.error('Error calculating output amount:', error)
+      outputAmountWithoutPriceImpact = CurrencyAmount.fromRawAmount(trade.outputAmount.currency, 0)
+      break
+    }
   }
 
   if (outputAmountWithoutPriceImpact.quotient === ZERO) {

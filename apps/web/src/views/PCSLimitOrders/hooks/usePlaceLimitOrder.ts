@@ -91,7 +91,7 @@ export const usePlaceLimitOrder = ({ onError, onSuccess }: UsePlaceLimitOrder = 
       true, // useFullPrecision
     )
 
-    console.log('placeOrder', {
+    console.debug('placeOrder', {
       poolKey,
       parsedAmountA,
       targetTick,
@@ -128,19 +128,26 @@ export const usePlaceLimitOrder = ({ onError, onSuccess }: UsePlaceLimitOrder = 
         value,
       })
 
-      const receipt = await fetchWithCatchTxError(async () => {
-        return contract.write.placeOrder([encodedPoolKey, targetTick, zeroForOne, liquidity], {
-          account,
-          chain: contract.chain,
-          value,
-          gas: calculateGasMargin(estimatedGas),
-        })
-      })
+      const receipt = await fetchWithCatchTxError(
+        async () => {
+          return contract.write.placeOrder([encodedPoolKey, targetTick, zeroForOne, liquidity], {
+            account,
+            chain: contract.chain,
+            value,
+            gas: calculateGasMargin(estimatedGas),
+          })
+        },
+        {
+          toastSuccess: {
+            title: `${t('Order Placed')}!`,
+          },
+        },
+      )
 
       setIsPlacingOrder(false)
 
       if (receipt?.status) {
-        console.log('placeOrder: Transaction successful', receipt.transactionHash)
+        console.debug('placeOrder: Transaction successful', receipt.transactionHash)
         onSuccess?.(receipt.transactionHash)
 
         const formattedPrice = BN(customMarketPrice || currentMarketPrice || 0).toPrecision(6)
@@ -173,7 +180,10 @@ export const usePlaceLimitOrder = ({ onError, onSuccess }: UsePlaceLimitOrder = 
       }
     } catch (error: any) {
       console.error('placeOrder: Unable to place limit order', error)
-      toastError(t('Failed'), error.message || error.details || error)
+      toastError(
+        t('Unsuccessful'),
+        t('Order submission unsuccessful due to price movement. Please try again with an updated limit price!'),
+      )
       onError?.(error)
       setIsPlacingOrder(false)
     }

@@ -34,7 +34,7 @@ export function blocto({ appId }: BloctoParameters = {}) {
     id: 'blocto',
     name: 'Blocto',
     type: blocto.type,
-    async connect({ chainId } = {}) {
+    async connect({ chainId, withCapabilities } = {}) {
       try {
         const provider = await this.getProvider({ chainId })
 
@@ -47,7 +47,12 @@ export function blocto({ appId }: BloctoParameters = {}) {
         const accounts = await this.getAccounts()
         const _chainId = await this.getChainId()
 
-        return { accounts, chainId: _chainId }
+        return {
+          accounts: accounts.map((account) => {
+            return withCapabilities ? { address: account, capabilities: {} } : account
+          }) as never,
+          chainId: _chainId,
+        }
       } catch (error: unknown) {
         handleConnectReset()
         throw error

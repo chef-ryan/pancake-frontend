@@ -34,6 +34,7 @@ export type MulticallByGasLimitResult = CallResult & {
   maxSingleCallGasUsage: bigint
   minSingleCallGasUsage: bigint
   avgGasUsagePerCall: bigint
+  timeUsage: number
 }
 
 export async function multicallByGasLimit(
@@ -50,6 +51,8 @@ export async function multicallByGasLimit(
     ...rest
   }: CallByGasLimitParams,
 ): Promise<MulticallByGasLimitResult> {
+  const startTime = performance.now()
+
   const gasLimit = await getGasLimit({
     chainId,
     gasBuffer,
@@ -68,21 +71,25 @@ export async function multicallByGasLimit(
     account,
     blockConflictTolerance,
   })
-  const resultWithChunks = (result: CallResult): MulticallByGasLimitResult => ({
-    ...result,
-    chunkCount: chunkSizes.length,
-    chunkSizes,
-    totalGasUsed: result.results.reduce((acc, { gasUsed }) => acc + gasUsed, 0n),
-    maxSingleCallGasUsage: result.results.reduce((max, { gasUsed }) => (gasUsed > max ? gasUsed : max), 0n),
-    minSingleCallGasUsage: result.results.reduce(
-      (min, { gasUsed }) => (gasUsed < min ? gasUsed : min),
-      BigInt(Number.MAX_SAFE_INTEGER),
-    ),
-    avgGasUsagePerCall: result.results.length
-      ? result.results.reduce((acc, { gasUsed }) => acc + gasUsed, 0n) / BigInt(result.results.length)
-      : 0n,
-    gasLimit,
-  })
+  const resultWithChunks = (result: CallResult): MulticallByGasLimitResult => {
+    const endTime = performance.now()
+    return {
+      ...result,
+      chunkCount: chunkSizes.length,
+      chunkSizes,
+      totalGasUsed: result.results.reduce((acc, { gasUsed }) => acc + gasUsed, 0n),
+      maxSingleCallGasUsage: result.results.reduce((max, { gasUsed }) => (gasUsed > max ? gasUsed : max), 0n),
+      minSingleCallGasUsage: result.results.reduce(
+        (min, { gasUsed }) => (gasUsed < min ? gasUsed : min),
+        BigInt(Number.MAX_SAFE_INTEGER),
+      ),
+      avgGasUsagePerCall: result.results.length
+        ? result.results.reduce((acc, { gasUsed }) => acc + gasUsed, 0n) / BigInt(result.results.length)
+        : 0n,
+      gasLimit,
+      timeUsage: endTime - startTime,
+    }
+  }
 
   if (!retryFailedCallsWithGreaterLimit) {
     return resultWithChunks(callResult)

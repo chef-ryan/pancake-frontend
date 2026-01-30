@@ -22,7 +22,17 @@ export const StyledMenuItemContainer = styled.div<StyledMenuItemProps>`
 
 const StyledMenuItem = styled.a.withConfig({
   shouldForwardProp: (props) =>
-    !["$isActive", "$isDisabled", "$variant", "$statusColor", "supportChainIds", "$hoverColor"].includes(props),
+    ![
+      "$isActive",
+      "$isDisabled",
+      "$variant",
+      "$statusColor",
+      "supportChainIds",
+      "$hoverColor",
+      "confirmModalId",
+      "image",
+      "overrideSubNavItems",
+    ].includes(props),
 })<StyledMenuItemProps>`
   position: relative;
   display: flex;

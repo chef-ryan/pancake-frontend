@@ -58,9 +58,7 @@ export function CurrencyInputPanel({
               className="token-amount-input"
               value={value}
               onBlur={onInputBlur}
-              onUserInput={(val) => {
-                onUserInput(val);
-              }}
+              onUserInput={onUserInput}
             />
           </AtomBox>
           {bottom}

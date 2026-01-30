@@ -201,9 +201,12 @@ export const useClDepositAmounts = () => {
     upperTick,
   ])
 
-  const handleDepositAmountChange = (amount: string, currency: 0 | 1) => {
-    setLastEdit({ lastEditAmount: amount, lastEditCurrency: currency })
-  }
+  const handleDepositAmountChange = useCallback(
+    (amount: string, currency: 0 | 1) => {
+      setLastEdit({ lastEditAmount: amount, lastEditCurrency: currency })
+    },
+    [setLastEdit],
+  )
 
   const resetAmounts = useCallback(() => {
     setLastEdit({ lastEditAmount: '', lastEditCurrency: 0 })
@@ -251,19 +254,19 @@ export const useBinDepositAmounts = () => {
 
       if (currency === 0) {
         setInputValue0(amount)
-        setDepositCurrencyAmounts({
-          ...depositCurrencyAmounts,
+        setDepositCurrencyAmounts((prev) => ({
+          ...prev,
           depositCurrencyAmount0: amount === '' ? null : CurrencyAmount.fromRawAmount(c0, parsedAmount),
-        })
+        }))
       } else {
         setInputValue1(amount)
-        setDepositCurrencyAmounts({
-          ...depositCurrencyAmounts,
+        setDepositCurrencyAmounts((prev) => ({
+          ...prev,
           depositCurrencyAmount1: amount === '' ? null : CurrencyAmount.fromRawAmount(c1, parsedAmount),
-        })
+        }))
       }
     },
-    [currency0, currency1, depositCurrencyAmounts, setDepositCurrencyAmounts],
+    [currency0, currency1, setDepositCurrencyAmounts],
   )
 
   const resetAmounts = useCallback(() => {

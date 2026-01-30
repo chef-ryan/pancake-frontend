@@ -25,6 +25,9 @@ declare module "@@@next-typesafe-url" {
     "/burn-dashboard": StaticRoute;
     "/buy-crypto": StaticRoute;
     "/cake-staking/redeem": StaticRoute;
+    "/cakepad/deposit/[ifoId]/[poolIndex]": StaticRoute;
+    "/cakepad/history": StaticRoute;
+    "/cakepad": StaticRoute;
     "/competition/finished/[competition]": StaticRoute;
     "/competition/finished": StaticRoute;
     "/competition": StaticRoute;
@@ -33,14 +36,6 @@ declare module "@@@next-typesafe-url" {
     "/farms": StaticRoute;
     "/find": StaticRoute;
     "/home": StaticRoute;
-    "/ido/[ido]": StaticRoute;
-    "/ido": StaticRoute;
-    "/ido/w3w": StaticRoute;
-    "/ifo/deposit/[ifoId]/[poolIndex]": StaticRoute;
-    "/ifo/history": StaticRoute;
-    "/ifo": StaticRoute;
-    "/ifo/v2/history": StaticRoute;
-    "/ifo/v2": StaticRoute;
     "/increase/[[...currency]]": StaticRoute;
     "/": StaticRoute;
     "/info/[chainName]": StaticRoute;

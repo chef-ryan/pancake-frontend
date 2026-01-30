@@ -178,7 +178,7 @@ export const NetworkFilter: React.FC<INetworkProps> = ({ data, value, onChange, 
         panelStyle={{
           backgroundColor: "var(--colors-input)",
         }}
-        scrollHeight="322px"
+        scrollHeight="370px"
         options={data}
         isShowSelectAll
         selectAllLabel="All networks"

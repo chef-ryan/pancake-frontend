@@ -1,4 +1,4 @@
-import { ChainId, NonEVMChainId, UnifiedChainId, getChainName } from '@pancakeswap/chains'
+import { ChainId, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import { Currency, Token, Native } from '@pancakeswap/sdk'
 import {
@@ -27,6 +27,7 @@ import { styled } from 'styled-components'
 import { useBlockExploreLink, useBlockExploreName } from 'utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEnhancedTokenLogo } from './hooks/useEnhancedTokenLogo'
+import { getChainDisplayName } from './utils/getChainDisplayName'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -82,7 +83,7 @@ export function ConfirmTransactionContent({
     if (asset.chainId === NonEVMChainId.SOLANA) {
       return 'SOLANA'
     }
-    return (asset.chainId === ChainId.BSC ? 'BNB' : getChainName(asset.chainId)).toUpperCase()
+    return getChainDisplayName(asset.chainId).toUpperCase()
   }, [asset.chainId])
 
   const { chainId } = useActiveChainId()

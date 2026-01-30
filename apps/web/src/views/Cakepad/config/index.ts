@@ -1,0 +1,2 @@
+export const CAKEPAD_CONFIGS_URL = process.env.NEXT_PUBLIC_CAKEPAD_CONFIGS_URL || ''
+export const DEFAULT_CAKEPAD_IFO_ID = process.env.NEXT_PUBLIC_CAKEPAD_DEFAULT_IFO_ID || ''

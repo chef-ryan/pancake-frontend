@@ -194,7 +194,7 @@ export const useOrder = (order: ResponseOrder) => {
 
       if (receipt?.status) {
         if (receipt.status === 'success') {
-          console.log(
+          console.debug(
             `%c [Order ${order.order_id}][Cancel Order Transaction successful]`,
             'background:lightgreen;color: white',
             receipt.transactionHash,
@@ -222,7 +222,7 @@ export const useOrder = (order: ResponseOrder) => {
       })
       if (receipt?.status) {
         if (receipt.status === 'success') {
-          console.log(
+          console.debug(
             `%c [Order ${order.order_id}][Withdraw Order Transaction successful]`,
             'background:lightgreen;color: white',
             receipt.transactionHash,

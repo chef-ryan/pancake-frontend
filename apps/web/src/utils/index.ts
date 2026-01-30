@@ -4,6 +4,7 @@ import { TokenAddressMap } from '@pancakeswap/token-lists'
 import { multiChainScanName } from 'state/info/constant'
 import { bsc } from 'wagmi/chains'
 import { CHAINS, SOLANA_CHAIN } from 'config/chains'
+import { GAS_MARGIN_BY_CHAIN } from 'config/constants/exchange'
 
 export * from './safeGetAddress'
 export { useBlockExploreName, useBlockExploreLink } from '../hooks/useBlockExploreName'
@@ -86,6 +87,11 @@ export function getBscScanLinkForNft(collectionAddress: string | undefined, toke
 // add 10%
 export function calculateGasMargin(value: bigint, margin = 1000n): bigint {
   return (value * (10000n + margin)) / 10000n
+}
+
+// Gas buffer for swap if override by chain
+export function getGasMarginByChain(chainId: ChainId): bigint {
+  return GAS_MARGIN_BY_CHAIN[chainId] ?? 2000n
 }
 
 export function escapeRegExp(string: string): string {

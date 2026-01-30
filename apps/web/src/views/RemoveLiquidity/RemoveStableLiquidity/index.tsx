@@ -48,14 +48,15 @@ import { logGTMClickRemoveLiquidityEvent } from 'utils/customGTMEventTracking'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import { isUserRejected, logError } from 'utils/sentry'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
-import { LiquiditySlippageButton, SlippageButton } from 'views/Swap/components/SlippageButton'
+import { LiquiditySlippageButton } from 'views/Swap/components/SlippageButton'
+import { safeGetTokenPairPrice } from 'utils/safeGetTokenPairPrice'
 import { RemoveLiquidityLayout } from '..'
 import ConnectWalletButton from '../../../components/ConnectWalletButton'
 import CurrencyInputPanel from '../../../components/CurrencyInputPanel'
 import StyledInternalLink from '../../../components/Links'
 import Dots from '../../../components/Loader/Dots'
 import { CurrencyLogo } from '../../../components/Logo'
-import ConfirmLiquidityModal from '../../Swap/components/ConfirmRemoveLiquidityModal'
+import ConfirmLiquidityModal from '../../../components/Liquidity/ConfirmRemoveLiquidityModal'
 import { useStableDerivedBurnInfo } from './hooks/useStableDerivedBurnInfo'
 
 const BorderCard = styled.div`
@@ -518,7 +519,7 @@ export default function RemoveStableLiquidity({ currencyA, currencyB, currencyId
                   1 {currencyA?.symbol} =
                 </Text>
                 <Text small>
-                  {tokenA ? pair.priceOf(tokenA).toSignificant(6) : '-'} {currencyB?.symbol}
+                  {safeGetTokenPairPrice(pair, tokenA)} {currencyB?.symbol}
                 </Text>
               </Flex>
               <Flex justifyContent="space-between">
@@ -526,7 +527,7 @@ export default function RemoveStableLiquidity({ currencyA, currencyB, currencyId
                   1 {currencyB?.symbol} =
                 </Text>
                 <Text small>
-                  {tokenB ? pair.priceOf(tokenB).toSignificant(6) : '-'} {currencyA?.symbol}
+                  {safeGetTokenPairPrice(pair, tokenB)} {currencyA?.symbol}
                 </Text>
               </Flex>
             </LightGreyCard>

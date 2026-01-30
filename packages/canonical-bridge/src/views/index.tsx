@@ -29,6 +29,7 @@ import GlobalStyle from './GlobalStyle'
 import { useDisableToChains } from '../hooks/useDisableToChains'
 import { useChainFromWidget } from '../hooks/useChainFromWidget'
 import { SmartWalletWarning } from '../components/SmartWalletWarning'
+import { useInputDecimalValidation } from '../hooks/useInputDecimalValidation'
 
 export interface CanonicalBridgeProps {
   connectWalletButtons: {
@@ -47,6 +48,7 @@ const gtmListener = createGTMEventListener()
 export const CanonicalBridge = (props: CanonicalBridgeProps) => {
   const { connectWalletButtons, supportedChainIds, disabledToChains, rpcConfig, deBridgeAccessToken } = props
   useDisableToChains(disabledToChains)
+  useInputDecimalValidation()
 
   const { currentLanguage, t } = useTranslation()
   const fromChain = useChainFromWidget('from')

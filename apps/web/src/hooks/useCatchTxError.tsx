@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react'
 import { getViemErrorMessage, parseViemError } from 'utils/errors'
 import { isUserRejected, logError } from 'utils/sentry'
 import { Address, Hash } from 'viem'
+import { ToastData } from '@pancakeswap/uikit/components/Toast'
 import { usePublicNodeWaitForTransaction } from './usePublicNodeWaitForTransaction'
 
 const notPreview = process.env.NEXT_PUBLIC_VERCEL_ENV !== 'preview'
@@ -72,7 +73,14 @@ export default function useCatchTxError(params?: Params) {
   )
 
   const fetchWithCatchTxError = useCallback(
-    async (callTx: () => Promise<{ hash: Address } | Hash | undefined>) => {
+    async (
+      callTx: () => Promise<{ hash: Address } | Hash | undefined>,
+      options: { toastSuccess: { title: ToastData['title'] } } = {
+        toastSuccess: {
+          title: `${t('Transaction Submitted')}!`,
+        },
+      },
+    ) => {
       let tx: { hash: Address } | Hash | null | undefined = null
 
       try {
@@ -83,7 +91,10 @@ export default function useCatchTxError(params?: Params) {
           return null
         }
         const hash = typeof tx === 'string' ? tx : tx.hash
-        toastSuccess(`${t('Transaction Submitted')}!`, <ToastDescriptionWithTx txHash={hash} />)
+        toastSuccess(
+          options.toastSuccess.title || `${t('Transaction Submitted')}!`,
+          <ToastDescriptionWithTx txHash={hash} />,
+        )
 
         const receipt = await waitForTransaction({
           hash,

@@ -38,6 +38,10 @@ export const LimitOrderForm = () => {
     [formattedAmounts, setInput],
   )
 
+  const handleInputUserInput = useCallback((value: string) => handleInput(Field.CURRENCY_A, value), [handleInput])
+
+  const handleOutputUserInput = useCallback((value: string) => handleInput(Field.CURRENCY_B, value), [handleInput])
+
   return (
     <>
       <FormContainer>
@@ -54,7 +58,7 @@ export const LimitOrderForm = () => {
               </Text>
             }
             defaultValue={formattedAmounts[Field.CURRENCY_A]}
-            onUserInput={(value) => handleInput(Field.CURRENCY_A, value)}
+            onUserInput={handleInputUserInput}
             onCurrencySelect={(c) => setCurrency({ field: Field.CURRENCY_A, newCurrency: c as Currency })}
             showCommonBases={false}
             supportCrossChain={false}
@@ -94,7 +98,7 @@ export const LimitOrderForm = () => {
               </Text>
             }
             defaultValue={formattedAmounts[Field.CURRENCY_B]}
-            onUserInput={(value) => handleInput(Field.CURRENCY_B, value)}
+            onUserInput={handleOutputUserInput}
             onCurrencySelect={(c) => setCurrency({ field: Field.CURRENCY_B, newCurrency: c as Currency })}
             showCommonBases={false}
             supportCrossChain={false}

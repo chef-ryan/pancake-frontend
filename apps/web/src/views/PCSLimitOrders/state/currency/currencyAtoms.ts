@@ -5,45 +5,83 @@ import { atomFamily, unwrap } from 'jotai/utils'
 import { accountActiveChainAtom } from 'wallet/atoms/accountStateAtoms'
 import isEqual from 'lodash/isEqual'
 import { currencyAtom } from 'hooks/Tokens'
-import { createLoadableAtom } from 'views/PCSLimitOrders/utils/createLoadableAtom'
+import { LIMIT_ORDERS_HOOKS_SUPPORTED_CHAINS } from 'config/constants/supportChains'
 
 // TODO: Sync with Query State (inputCurrency & outputCurrency, like swap). Idea: Create -> locationAtom and atomWithUrlQuery
-const inputCurrencyFamily = atomFamily((chainId: number) => atom(Native.onChain(chainId).symbol), isEqual)
-const outputCurrencyFamily = atomFamily((chainId: number) => atom(CAKE[chainId].address), isEqual)
+const inputCurrencyFamily = atomFamily(
+  (chainId: number) =>
+    atom(chainId && LIMIT_ORDERS_HOOKS_SUPPORTED_CHAINS.includes(chainId) ? Native.onChain(chainId).symbol : ''),
+  isEqual,
+)
+const outputCurrencyFamily = atomFamily(
+  (chainId: number) =>
+    atom(chainId && LIMIT_ORDERS_HOOKS_SUPPORTED_CHAINS.includes(chainId) ? CAKE[chainId].address : ''),
+  isEqual,
+)
 
 // Currency Id atoms
 export const inputCurrencyIdAtom = atom(
   (get) => {
     const { chainId } = get(accountActiveChainAtom)
-    return get(inputCurrencyFamily(chainId ?? 56))
+    // Don't try to resolve currency for unsupported chains
+    if (!chainId || !LIMIT_ORDERS_HOOKS_SUPPORTED_CHAINS.includes(chainId)) {
+      return undefined
+    }
+    return get(inputCurrencyFamily(chainId))
   },
-  (get, set, newValue: string) => {
-    const { chainId } = get(accountActiveChainAtom)
-    set(inputCurrencyFamily(chainId ?? 56), newValue)
+  (get, set, newValue: string | undefined) => {
+    if (newValue !== undefined) {
+      const { chainId } = get(accountActiveChainAtom)
+
+      // Do nothing for unsupported chains
+      if (!chainId || !LIMIT_ORDERS_HOOKS_SUPPORTED_CHAINS.includes(chainId)) return
+
+      set(inputCurrencyFamily(chainId), newValue)
+    }
   },
 )
 
 export const outputCurrencyIdAtom = atom(
   (get) => {
     const { chainId } = get(accountActiveChainAtom)
-    return get(outputCurrencyFamily(chainId ?? 56))
+    // Don't try to resolve currency for unsupported chains
+    if (!chainId || !LIMIT_ORDERS_HOOKS_SUPPORTED_CHAINS.includes(chainId)) {
+      return undefined
+    }
+    return get(outputCurrencyFamily(chainId))
   },
-  (get, set, newValue: string) => {
-    const { chainId } = get(accountActiveChainAtom)
-    set(outputCurrencyFamily(chainId ?? 56), newValue)
+  (get, set, newValue: string | undefined) => {
+    if (newValue !== undefined) {
+      const { chainId } = get(accountActiveChainAtom)
+
+      // Do nothing for unsupported chains
+      if (!chainId || !LIMIT_ORDERS_HOOKS_SUPPORTED_CHAINS.includes(chainId)) return
+
+      set(outputCurrencyFamily(chainId), newValue)
+    }
   },
 )
 
 // Currency Atoms
 export const inputCurrencyAtom = unwrap(
-  atom((get) => get(currencyAtom(get(inputCurrencyIdAtom)))),
+  atom((get) => {
+    const currencyId = get(inputCurrencyIdAtom)
+    // Don't try to resolve currency for unsupported chains
+    if (!currencyId) {
+      return undefined
+    }
+    return get(currencyAtom(currencyId))
+  }),
   (prev) => prev,
 )
 export const outputCurrencyAtom = unwrap(
-  atom((get) => get(currencyAtom(get(outputCurrencyIdAtom)))),
+  atom((get) => {
+    const currencyId = get(outputCurrencyIdAtom)
+    // Don't try to resolve currency for unsupported chains
+    if (!currencyId) {
+      return undefined
+    }
+    return get(currencyAtom(currencyId))
+  }),
   (prev) => prev,
 )
-
-// Loadable versions of currency atoms
-export const inputCurrencyLoadableAtom = createLoadableAtom(inputCurrencyAtom)
-export const outputCurrencyLoadableAtom = createLoadableAtom(outputCurrencyAtom)

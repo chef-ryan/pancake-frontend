@@ -97,8 +97,9 @@ function Remove({ tokenId }: { tokenId?: bigint }) {
   const { data: walletClient } = useWalletClient()
 
   const masterchefV3 = useMasterchefV3()
+  const isMasterChefV3Available = Boolean(masterchefV3?.address && masterchefV3?.address !== '0x')
   const { tokenIds: stakedTokenIds, loading: tokenIdsInMCv3Loading } = useV3TokenIdsByAccount(
-    masterchefV3?.address,
+    isMasterChefV3Available ? masterchefV3?.address : undefined,
     account,
   )
 
@@ -146,8 +147,12 @@ function Remove({ tokenId }: { tokenId?: bigint }) {
   const interfaceManager = isStakedInMCv3 ? MasterChefV3 : NonfungiblePositionManager
 
   const onRemove = useCallback(async () => {
+    // Skip MasterChef V3 loading check if MasterChef V3 is not deployed on this chain
+    const masterChefV3Address = masterchefV3?.address
+    const isMasterChefV3Available = masterChefV3Address && masterChefV3Address !== '0x'
+
     if (
-      tokenIdsInMCv3Loading ||
+      (isMasterChefV3Available && tokenIdsInMCv3Loading) ||
       !interfaceManager ||
       !manager ||
       !liquidityValue0 ||
@@ -160,6 +165,7 @@ function Remove({ tokenId }: { tokenId?: bigint }) {
       !tokenId ||
       !walletClient
     ) {
+      console.warn('onRemove early return - one or more preconditions failed')
       return
     }
 
@@ -219,6 +225,7 @@ function Remove({ tokenId }: { tokenId?: bigint }) {
         })
     })
   }, [
+    masterchefV3,
     tokenIdsInMCv3Loading,
     interfaceManager,
     manager,

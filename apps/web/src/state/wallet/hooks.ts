@@ -4,7 +4,7 @@ import { isSolana, NonEVMChainId } from '@pancakeswap/chains'
 import { selectedEvmWalletAtom, selectedSolanaWalletAtom } from '@pancakeswap/ui-wallets/src/state/atom'
 import useAccountActiveChain from 'hooks/useAccountActiveChain'
 import { useLocalStorage, useWallet } from '@solana/wallet-adapter-react'
-import { EvmConnectorNames, SolanaProviderLocalStorageKey, WalletAdaptedNetwork } from '@pancakeswap/ui-wallets'
+import { SolanaProviderLocalStorageKey, WalletAdaptedNetwork } from '@pancakeswap/ui-wallets'
 import { WalletName } from '@solana/wallet-adapter-base'
 import { multicallABI } from 'config/abi/Multicall'
 import { FAST_INTERVAL } from 'config/constants'
@@ -20,7 +20,6 @@ import { publicClient } from 'utils/viem'
 import { Address, erc20Abi, getAddress, isAddress } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
 import { useAtomValue } from 'jotai'
-import { useSelectedWallet } from '@pancakeswap/ui-wallets/src/state/hooks'
 import { useMultipleContractSingleDataWagmi } from '../multicall/hooks'
 
 /**
@@ -104,6 +103,9 @@ export function useTokenBalance(account?: string, token?: Token): CurrencyAmount
   return tokenBalances[`${token.chainId}-${token.address}`]
 }
 
+/**
+ * Note: `currencies` should be memoized to prevent unnecessary recomputation and rerenders.
+ */
 export function useCurrencyBalances(
   account?: string,
   currencies?: (UnifiedCurrency | undefined | null)[],
@@ -299,6 +301,9 @@ export function useNativeBalancesWithChain(
   )
 }
 
+/**
+ * Note: `currencies` should be memoized to prevent unnecessary recomputation and rerenders.
+ */
 export function useCurrencyBalancesWithChain(
   account?: string,
   currencies?: (Currency | undefined | null)[],
@@ -309,15 +314,13 @@ export function useCurrencyBalancesWithChain(
 
   const tokens = useMemo(
     () => currencies?.filter((currency): currency is Token => Boolean(currency?.isToken)) ?? [],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [...(currencies ?? [])],
+    [currencies],
   )
 
   const tokenBalances = useTokenBalancesWithChain(account, tokens, chainId)
   const containsNative: boolean = useMemo(
     () => currencies?.some((currency) => currency?.isNative) ?? false,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [...(currencies ?? [])],
+    [currencies],
   )
   const uncheckedAddresses = useMemo(() => (containsNative ? [account] : []), [containsNative, account])
   const nativeBalance = useNativeBalancesWithChain(uncheckedAddresses, chainId)
@@ -330,8 +333,7 @@ export function useCurrencyBalancesWithChain(
         if (currency?.isNative) return nativeBalance[account] || nativeBalance[getAddress(account)]
         return undefined
       }) ?? [],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [account, ...(currencies ?? []), nativeBalance, tokenBalances],
+    [account, currencies, nativeBalance, tokenBalances],
   )
 }
 

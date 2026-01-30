@@ -27,7 +27,7 @@ const usePicksData = (poolId: `0x{string}`, chain: string) => {
     return pool ? `${pool.chainId}:${pool.lpAddress}` : null
   }, [pool])
 
-  const { lpApr, cakeApr, merklApr } = usePoolApr(key, pool, true)
+  const { lpApr, cakeApr, merklApr, incentraApr } = usePoolApr(key, pool, true)
 
   const numerator = useMemo(() => {
     if (!pool || !cakeApr) return BIG_ZERO // Default value if pool or cakeApr is missing
@@ -50,7 +50,7 @@ const usePicksData = (poolId: `0x{string}`, chain: string) => {
     return null
   }
 
-  const total = sumApr(lpApr, cakeApr.value)
+  const total = sumApr(lpApr, cakeApr.value, merklApr, incentraApr)
   const fee = pool.feeTier
   const tvl = pool.tvlUsd
   return {
@@ -69,6 +69,7 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
   const data = usePicksData(poolId, chain)
   const { tooltip, targetRef, tooltipVisible } = useTooltip(<AdPicksTooltip />)
   const chainId = getChainId(chain)
+
   if (!data) {
     return null
   }
@@ -76,6 +77,7 @@ export const AdPicks = ({ config, index }: { config: PickConfig; index: number }
   const { pickData } = data
   const { fee, apr, tvl } = pickData
   const tvlAmt = formatAmount(Number(tvl || '0'))
+
   return (
     <div
       style={{

@@ -43,17 +43,15 @@ const StyledBreadcrumbs = styled.ul`
 
 const insertSeparators = (items: ReactNode[], separator: BreadcrumbsProps["separator"]) =>
   items.reduce((accum: ReactNode[], item, index) => {
-    if (index === 0) {
-      return [...accum, item];
+    if (index > 0) {
+      accum.push(
+        <Separator aria-hidden key={`separator-${index}`}>
+          {separator}
+        </Separator>
+      );
     }
-
-    return [
-      ...accum,
-      <Separator aria-hidden key={`separator-${index}`}>
-        {separator}
-      </Separator>,
-      item,
-    ];
+    accum.push(item);
+    return accum;
   }, []);
 
 const DefaultSeparator = <ChevronRightIcon color="currentColor" width="24px" />;

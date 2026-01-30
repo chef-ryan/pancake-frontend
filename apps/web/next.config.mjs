@@ -124,6 +124,10 @@ const config = {
           destination: '/api/vercel/flags',
         },
         {
+          source: '/perp/v2/:symbol.rsc',
+          destination: 'https://perp.pancakeswap.finance/perp/v2/:symbol',
+        },
+        {
           source: '/perp/:path*',
           destination: 'https://perp.pancakeswap.finance/perp/:path*',
         },
@@ -250,6 +254,11 @@ const config = {
         source: '/images/tokens/:address',
         destination: 'https://tokens.pancakeswap.finance/images/:address',
         permanent: false,
+      },
+      {
+        source: '/ifo',
+        destination: '/cakepad',
+        permanent: true,
       }
     ]
   },

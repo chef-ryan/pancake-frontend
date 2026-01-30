@@ -1,6 +1,6 @@
 import { usePreviousValue } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
-import { Currency, Token, UnifiedCurrency, UnifiedToken } from '@pancakeswap/sdk'
+import { Token, UnifiedCurrency, UnifiedToken } from '@pancakeswap/sdk'
 import { TokenList } from '@pancakeswap/token-lists'
 import { enableList, removeList, useFetchListCallback } from '@pancakeswap/token-lists/react'
 import {
@@ -62,6 +62,7 @@ export interface CurrencySearchModalV2Props extends InjectedModalProps {
   showSearchInput?: boolean
   tokensToShow?: Token[]
   chainId?: number
+  showNative?: boolean
 }
 
 /**
@@ -77,6 +78,7 @@ export default function CurrencySearchModalV2({
   showSearchInput,
   tokensToShow,
   chainId,
+  showNative = true,
 }: CurrencySearchModalV2Props) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.search)
 
@@ -140,7 +142,7 @@ export default function CurrencySearchModalV2({
 
   useEffect(() => {
     if (!wrapperRef.current) return
-    setHeight(wrapperRef.current.offsetHeight - 330)
+    setHeight(wrapperRef.current.offsetHeight - 300)
   }, [])
 
   const [selectedChainId, setSelectedChainId] = useState<UnifiedChainId | undefined>(selectedCurrency?.chainId)
@@ -182,6 +184,7 @@ export default function CurrencySearchModalV2({
             setImportToken={setImportToken}
             height={height}
             tokensToShow={tokensToShow}
+            showNative={showNative}
           />
         ) : modalView === CurrencyModalView.importToken && importToken ? (
           <ImportToken tokens={[importToken as Token]} handleCurrencySelect={handleCurrencySelect} chainId={chainId} />

@@ -1,14 +1,21 @@
-import { CanonicalBridge } from '@pancakeswap/canonical-bridge'
 import { ChainId, chainNames, NonEVMChainId } from '@pancakeswap/chains'
 import { Flex, useMatchBreakpoints } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { PUBLIC_NODES } from 'config/nodes'
+import dynamic from 'next/dynamic'
 import { Suspense, useEffect, useMemo } from 'react'
 import { CHAIN_IDS } from 'utils/wagmi'
 import Page from 'views/Page'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 
 const DISABLED_TO_CHAINS: ChainId[] = []
+// Dynamic import to avoid import trace warnings
+const CanonicalBridge = dynamic(
+  () => import('@pancakeswap/canonical-bridge').then((mod) => ({ default: mod.CanonicalBridge })),
+  {
+    ssr: false,
+  },
+)
 
 // Fix portal conflicts between Privy and Chakra portals
 function usePortalConflictFix() {
@@ -106,7 +113,7 @@ export const BridgeView = () => {
               [],
             )}
             supportedChainIds={[...CHAIN_IDS, 7565164]}
-            rpcConfig={PUBLIC_NODES}
+            rpcConfig={PUBLIC_NODES as Record<number, readonly string[]>}
             disabledToChains={DISABLED_TO_CHAINS}
             deBridgeAccessToken={process.env.NEXT_PUBLIC_DEBRIDGE_ACCESS_TOKEN}
           />

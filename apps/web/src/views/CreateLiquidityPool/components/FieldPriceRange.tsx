@@ -19,7 +19,7 @@ export type FieldPriceRangeProps = BoxProps
 
 export const FieldPriceRange: React.FC<FieldPriceRangeProps> = ({ ...boxProps }) => {
   const { t } = useTranslation()
-  const { baseCurrency, quoteCurrency, currency0, currency1 } = useCurrencies()
+  const { baseCurrency, quoteCurrency } = useCurrencies()
   const { switchCurrencies } = useSelectIdRouteParams()
   const { poolType } = useInfinityCreateFormQueryState()
   const [activeId] = useActiveIdQueryState()

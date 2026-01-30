@@ -27,7 +27,7 @@ import useTheme from 'hooks/useTheme'
 import dynamic from 'next/dynamic'
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
-import { getBlockExploreLink, safeGetAddress } from 'utils'
+import { getBlockExploreLink, safeGetAddress, isAddressEqual } from 'utils'
 import { formatAmount } from 'utils/formatInfoNumbers'
 
 import { CAKE, USDT } from '@pancakeswap/tokens'
@@ -45,7 +45,6 @@ import {
 import { styled } from 'styled-components'
 import { getTokenNameAlias, getTokenSymbolAlias } from 'utils/getTokenAlias'
 import { isAddress, zeroAddress } from 'viem'
-import { isAddressEqual } from 'viem/utils'
 import { CurrencyLogo } from 'views/Info/components/CurrencyLogo'
 import useCMCLink from 'views/Info/hooks/useCMCLink'
 // import BarChart from '../components/BarChart/alt'
@@ -58,6 +57,7 @@ import TransactionTable from 'views/V3Info/components/TransactionsTable'
 import { MonoSpace, StyledCMCLink } from 'views/V3Info/components/shared'
 import { unixToDate } from 'views/V3Info/utils/date'
 import { formatDollarAmount } from 'views/V3Info/utils/numbers'
+import { PERSIST_CHAIN_KEY } from 'config/constants'
 import { infinityInfoPath } from '../../constants'
 import { usePoolsDataForToken } from './hooks/usePoolsDataForToken'
 import { useTokenChartData } from './hooks/useTokenChartData'
@@ -266,7 +266,9 @@ const TokenInfo: React.FC<{ address: string }> = ({ address }) => {
                     </NextLinkFromReactRouter>
                   ) : null}
                   <NextLinkFromReactRouter
-                    to={`/swap?outputCurrency=${swapOutputCurrency}&chain=${CHAIN_QUERY_NAME[multiChainId[chainName]]}`}
+                    to={`/swap?outputCurrency=${swapOutputCurrency}&chain=${
+                      CHAIN_QUERY_NAME[multiChainId[chainName]]
+                    }&${PERSIST_CHAIN_KEY}=1`}
                   >
                     <Button>{t('Trade')}</Button>
                   </NextLinkFromReactRouter>

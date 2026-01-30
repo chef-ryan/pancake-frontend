@@ -19,7 +19,7 @@ import type { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import Script from 'next/script'
-import { Fragment, Suspense } from 'react'
+import { Fragment, Suspense, useCallback } from 'react'
 import { PersistGate } from 'redux-persist/integration/react'
 
 import { DesktopCard } from 'components/AdPanel/DesktopCard'
@@ -52,6 +52,7 @@ import { NextPageWithLayout } from '../utils/page.types'
 import 'core-js/features/array/to-sorted'
 import 'core-js/features/array/to-reversed'
 import 'core-js/features/array/find-last'
+import 'core-js/features/array/to-spliced'
 import 'core-js/features/string/replace-all'
 import 'utils/abortcontroller-polyfill'
 
@@ -158,6 +159,10 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const blocking = useSecurityBlocking()
   const [isOpen, setIsOpen] = useAtom(walletModalVisibleAtom)
 
+  const handleDismiss = useCallback(() => {
+    setIsOpen(false)
+  }, [])
+
   if (blocking) {
     return null
   }
@@ -184,7 +189,10 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
       <EasterEgg iterations={2} />
       <ToastListener />
       <FixedSubgraphHealthIndicator />
-      <NetworkModal pageSupportedChains={Component.chains} />
+      <NetworkModal
+        pageSupportedChains={Component.chains}
+        forceMultipleNetworkModal={Component.forceMultipleNetworkModal}
+      />
       <TransactionsDetailModal />
       {isShowScrollToTopButton && <ScrollToTopButtonV2 />}
       {shouldScreenWallet && <Blocklist />}
@@ -192,8 +200,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
       <SimpleStakingSunsetModal />
       <VercelToolbar />
       <Cb1Membership />
-      {/* {(chainId === NonEVMChainId.SOLANA || isBridge) && <SolanaWalletModal />} */}
-      <WalletModalManager isOpen={isOpen} onDismiss={() => setIsOpen(false)} />
+      <WalletModalManager isOpen={isOpen} onDismiss={handleDismiss} />
     </Suspense>
   )
 }

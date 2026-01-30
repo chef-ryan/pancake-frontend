@@ -37,28 +37,44 @@ const StyledOverlay = styled(Box)<{ isUnmounting?: boolean }>`
     `}
 `;
 
+const bodyLockState: {
+  lockCount: number;
+  originalOverflow: string;
+  originalPaddingRight: string;
+} = {
+  lockCount: 0,
+  originalOverflow: "",
+  originalPaddingRight: "",
+};
+
 const BodyLock = () => {
   useEffect(() => {
-    if (document?.body?.style) {
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-      const previousOverflow = document.body.style.overflow;
-      const previousPaddingRight = document.body.style.paddingRight;
+    if (typeof window === "undefined" || !document?.body?.style || !document?.documentElement) return undefined;
 
+    if (bodyLockState.lockCount === 0) {
+      bodyLockState.originalOverflow = document.body.style.overflow;
+      bodyLockState.originalPaddingRight = document.body.style.paddingRight;
+
+      const scrollbarWidth: number = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
+
       if (scrollbarWidth > 0) {
         document.body.style.paddingRight = `${scrollbarWidth}px`;
       }
-
-      return () => {
-        document.body.style.overflow = previousOverflow || "visible";
-        document.body.style.paddingRight = previousPaddingRight;
-        if (!previousOverflow) {
-          document.body.style.overflow = "overlay";
-        }
-      };
     }
+    bodyLockState.lockCount++;
 
-    return undefined;
+    return () => {
+      if (typeof window === "undefined" || !document?.body?.style) return;
+
+      bodyLockState.lockCount--;
+
+      if (bodyLockState.lockCount <= 0) {
+        document.body.style.overflow = bodyLockState.originalOverflow;
+        document.body.style.paddingRight = bodyLockState.originalPaddingRight;
+        bodyLockState.lockCount = 0;
+      }
+    };
   }, []);
 
   return null;

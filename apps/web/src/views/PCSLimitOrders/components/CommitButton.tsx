@@ -40,6 +40,7 @@ import { useLimitOrderApproval } from '../hooks/useLimitOrderApproval'
 import { selectedPoolAtom } from '../state/pools/selectedPoolAtom'
 import { useLimitOrderUserBalance } from '../hooks/useLimitOrderUserBalance'
 import { ticksAtom } from '../state/form/ticksAtom'
+import { getSymbolDecimals } from '../constants/decimalConfig'
 
 export const CommitButton = () => {
   const { t } = useTranslation()
@@ -149,8 +150,12 @@ const ConfirmOrderContent = ({ onDismiss }: { onDismiss: () => void }) => {
 
   // Display accurate price from ticks data
   const ticksData = useAtomValue(ticksAtom)
-  const currentMarketPrice = ticksData ? ticksData.sqrtPrice.toFixed(6) : currentMarketPrice_
-  const customMarketPrice = ticksData ? ticksData.sqrtPrice.toFixed(6) : customMarketPrice_
+  const currentMarketPrice = ticksData
+    ? ticksData.sqrtPrice.toFixed(getSymbolDecimals(outputCurrency?.symbol))
+    : currentMarketPrice_
+  const customMarketPrice = ticksData
+    ? ticksData.sqrtPrice.toFixed(getSymbolDecimals(outputCurrency?.symbol))
+    : customMarketPrice_
 
   const feesEarnedData = useAtomValue(feesEarnedUSDAtom)
   const feesEarnedUSD = feesEarnedData?.feesEarnedUSD
@@ -167,10 +172,10 @@ const ConfirmOrderContent = ({ onDismiss }: { onDismiss: () => void }) => {
     if (!price || priceBN.isZero()) return undefined
 
     if (isInverted) {
-      return BN(1).dividedBy(priceBN).toFixed(6)
+      return BN(1).dividedBy(priceBN).toFixed(getSymbolDecimals(outputCurrency?.symbol))
     }
-    return priceBN.toFixed(6)
-  }, [customMarketPrice, currentMarketPrice, isInverted])
+    return priceBN.toFixed(getSymbolDecimals(outputCurrency?.symbol))
+  }, [customMarketPrice, currentMarketPrice, isInverted, outputCurrency])
 
   return (
     <Box mt="4px">
@@ -221,9 +226,10 @@ const ConfirmOrderContent = ({ onDismiss }: { onDismiss: () => void }) => {
             </Text>
             <Text small>
               {amountReceived
-                ? `${formatNumber(amountReceived, { maxDecimalDisplayDigits: 6, maximumSignificantDigits: 8 })} ${
-                    outputCurrency?.symbol
-                  }`
+                ? `${formatNumber(amountReceived, {
+                    maxDecimalDisplayDigits: getSymbolDecimals(outputCurrency?.symbol),
+                    maximumSignificantDigits: 8,
+                  })} ${outputCurrency?.symbol}`
                 : '-'}
             </Text>
           </RowBetween>

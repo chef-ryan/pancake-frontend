@@ -40,6 +40,7 @@ import ConfirmSwapModalV3Container from './ConfirmSwapModalV3Container'
 import { OrderResultModalContent } from './OrderStatus/OrderResultModalContent'
 import { TransactionConfirmSwapContentV3 } from './TransactionConfirmSwapContentV3'
 import { activeBridgeOrderMetadataAtom } from './state/orderDataState'
+import { BridgeStatus } from '../types'
 
 export const useApprovalPhaseStepTitles: ({ trade }: { trade: InterfaceOrder['trade'] | undefined }) => {
   [step in AllowedAllowanceState]: string
@@ -102,6 +103,7 @@ export const ConfirmSwapModalV3: React.FC<ConfirmSwapModalV3Props> = ({
     activeBridgeOrderMetadata?.txHash,
     activeBridgeOrderMetadata?.metadata,
     activeBridgeOrderMetadata?.destinationChainId,
+    activeBridgeOrderMetadata?.isMultisig,
   )
 
   const slippageAdjustedAmounts = useSlippageAdjustedAmounts(originalOrder)
@@ -138,7 +140,7 @@ export const ConfirmSwapModalV3: React.FC<ConfirmSwapModalV3Props> = ({
     }
 
     onDismiss?.()
-  }, [customOnDismiss, onDismiss])
+  }, [customOnDismiss, setActiveBridgeOrderMetadata, onDismiss])
 
   const modalTitle = useMemo(() => {
     switch (confirmModalState) {
@@ -152,6 +154,8 @@ export const ConfirmSwapModalV3: React.FC<ConfirmSwapModalV3Props> = ({
         return hasError ? '' : t('Confirm Swap')
       case ConfirmModalState.ORDER_SUBMITTED:
         return getBridgeTitle(t, customBridgeStatus(bridgeStatus))
+      case ConfirmModalState.MULTISIG_SUBMITTED:
+        return getBridgeTitle(t, BridgeStatus.MULTISIG_SUBMITTED)
       default:
         return ''
     }
@@ -162,15 +166,23 @@ export const ConfirmSwapModalV3: React.FC<ConfirmSwapModalV3Props> = ({
     confirmModalState,
     currencyBalances?.INPUT?.currency.symbol,
     originalOrder?.trade?.inputAmount?.currency.symbol,
-    bridgeStatus?.status,
+    bridgeStatus,
   ])
 
   const modalContent = useMemo(() => {
     const isExactIn = originalOrder?.trade.tradeType === TradeType.EXACT_INPUT
     const currencyA = currencyBalances?.INPUT?.currency ?? originalOrder?.trade?.inputAmount?.currency
     const currencyB = currencyBalances?.OUTPUT?.currency ?? originalOrder?.trade?.outputAmount?.currency
-    const amountAWithSlippage = formatAmount(slippageAdjustedAmounts[Field.INPUT], DISPLAY_PRECISION) ?? ''
-    const amountBWithSlippage = formatAmount(slippageAdjustedAmounts[Field.OUTPUT], DISPLAY_PRECISION) ?? ''
+    const amountAWithSlippage =
+      formatAmount(
+        isExactIn ? originalOrder?.trade?.inputAmount : slippageAdjustedAmounts[Field.INPUT],
+        DISPLAY_PRECISION,
+      ) ?? ''
+    const amountBWithSlippage =
+      formatAmount(
+        isExactIn ? slippageAdjustedAmounts[Field.OUTPUT] : originalOrder?.trade?.outputAmount,
+        DISPLAY_PRECISION,
+      ) ?? ''
     const amountA = isExactIn ? amountAWithSlippage : `Max ${amountAWithSlippage}`
     const amountB = isExactIn ? `Min ${amountBWithSlippage}` : amountBWithSlippage
 
@@ -323,7 +335,12 @@ export const ConfirmSwapModalV3: React.FC<ConfirmSwapModalV3Props> = ({
       return <OrderResultModalContent />
     }
 
-    if (confirmModalState === ConfirmModalState.COMPLETED && txHash) {
+    if (
+      (confirmModalState === ConfirmModalState.COMPLETED ||
+        confirmModalState === ConfirmModalState.MULTISIG_SUBMITTED) &&
+      txHash
+    ) {
+      const isMultisig = confirmModalState === ConfirmModalState.MULTISIG_SUBMITTED
       return (
         <SwapTransactionReceiptModalContent
           explorerLink={
@@ -336,8 +353,9 @@ export const ConfirmSwapModalV3: React.FC<ConfirmSwapModalV3Props> = ({
               <></>
             )
           }
+          isMultisig
         >
-          {showAddToWalletButton && (
+          {!isMultisig && showAddToWalletButton && (
             <AddToWalletButton
               mt="39px"
               height="auto"
@@ -349,7 +367,7 @@ export const ConfirmSwapModalV3: React.FC<ConfirmSwapModalV3Props> = ({
               tokenAddress={token?.address}
               tokenSymbol={currencyB?.symbol}
               tokenDecimals={token?.decimals}
-              tokenLogo={token instanceof WrappedTokenInfo ? (token as WrappedTokenInfo)?.logoURI : undefined}
+              tokenLogo={token instanceof WrappedTokenInfo ? token.logoURI : undefined}
             />
           )}
         </SwapTransactionReceiptModalContent>
@@ -388,6 +406,8 @@ export const ConfirmSwapModalV3: React.FC<ConfirmSwapModalV3Props> = ({
     showAddToWalletButton,
     orderHash,
     token,
+    blockExplorerName,
+    getBlockExploreLink,
   ])
 
   if (!chainId) return null

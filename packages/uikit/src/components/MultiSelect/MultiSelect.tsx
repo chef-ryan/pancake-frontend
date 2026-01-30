@@ -343,7 +343,7 @@ export const MultiSelect = <T extends string | number>(props: IMultiSelectProps<
     [selectedItems, onChange]
   );
 
-  const handleClearSeachBox = useCallback(
+  const handleClearSearchBox = useCallback(
     (e: React.MouseEvent<HTMLOrSVGElement>) => {
       if (selectedItems?.length) {
         if (onChange) {
@@ -371,7 +371,7 @@ export const MultiSelect = <T extends string | number>(props: IMultiSelectProps<
             selectedItems={selectedOptions}
             ref={searchInputRef}
             onFilter={handleFilter}
-            onClear={handleClearSeachBox}
+            onClear={handleClearSearchBox}
             onLabelDelete={handleLabelDelete}
           />
         )}
@@ -395,7 +395,7 @@ export const MultiSelect = <T extends string | number>(props: IMultiSelectProps<
       </>
     ),
     [
-      handleClearSeachBox,
+      handleClearSearchBox,
       handleSelectAll,
       indeterminate,
       selectAll,

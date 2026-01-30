@@ -6,7 +6,10 @@ import Page from './Layout/Page'
 
 export function SentryErrorBoundary({ children }: PropsWithChildren) {
   const { t } = useTranslation()
-  const handleOnClick = useCallback(() => window.location.reload(), [])
+  const handleOnClick = useCallback(() => {
+    const { origin } = window.location
+    window.location.href = origin
+  }, [])
   return (
     <SErrorBoundary
       beforeCapture={(scope) => {

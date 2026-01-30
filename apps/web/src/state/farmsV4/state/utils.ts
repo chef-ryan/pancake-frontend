@@ -10,6 +10,7 @@ import { safeGetAddress } from 'utils'
 import { getPoolManagerAddress } from 'utils/addressHelpers'
 import { getViemClients } from 'utils/viem'
 import { Address } from 'viem'
+import { isEvm } from '@pancakeswap/chains'
 import { PoolInfo } from './type'
 
 export const parseFarmPools = async (
@@ -23,6 +24,11 @@ export const parseFarmPools = async (
 
   const result = await Promise.all(
     data.map(async (pool) => {
+      // TODO: disable non evm pool now, need to remove this filter with proper fix
+      if (!isEvm(pool.chainId)) {
+        return undefined
+      }
+
       let stableSwapAddress: string | undefined
       let lpAddress = safeGetAddress(pool.id) ?? pool.id
       let feeTier = Number(pool.feeTier ?? 2500)
@@ -116,7 +122,7 @@ export const parseFarmPools = async (
     }),
   )
 
-  return result
+  return result.filter((x) => x) as PoolInfo[]
 }
 
 export const getPoolMultiplier = (allocPoint: bigint) => {

@@ -3,7 +3,6 @@ import { BaseCurrency, Price } from '@pancakeswap/swap-sdk-core'
 import { AddCircleIcon, AutoColumn, AutoRow, IconButton, RemoveIcon, Text } from '@pancakeswap/uikit'
 import { FeeAmount } from '@pancakeswap/v3-sdk'
 import { LightSecondaryCard, NumericalInput } from '@pancakeswap/widgets-internal'
-import { LightGreyCard } from 'components/Card'
 import { tryParsePrice } from 'hooks/v3/utils'
 import { ReactNode, useCallback, useEffect, useState } from 'react'
 

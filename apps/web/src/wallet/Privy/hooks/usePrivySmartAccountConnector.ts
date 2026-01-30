@@ -5,6 +5,7 @@ import { getAddress, hexToBigInt } from 'viem'
 import { useChainId, useConfig, useConnectors, useReconnect } from 'wagmi'
 import { injected } from 'wagmi/connectors'
 import { useSmartWallets } from '@privy-io/react-auth/smart-wallets'
+import { PrivySwitchChainError } from 'wallet/util/PrivySwitchChainError'
 
 /**
  * Registers a smart account connector in wagmi for the Privy embedded smart wallet.
@@ -59,6 +60,8 @@ export const useEmbeddedSmartAccountConnectorV2 = () => {
       if (!shouldUseAAWallet) {
         setIsSmartWalletReady(true)
         setIsSettingUp(false)
+        setHasSetupFailed(false)
+        setSetupStartTime(null)
         return
       }
 
@@ -84,6 +87,7 @@ export const useEmbeddedSmartAccountConnectorV2 = () => {
         setIsSmartWalletReady(true)
         setIsSettingUp(false)
         setHasSetupFailed(false) // Clear failed state if successful
+        setSetupStartTime(null)
         return
       }
 
@@ -91,6 +95,8 @@ export const useEmbeddedSmartAccountConnectorV2 = () => {
       if (!isReady) {
         setIsSmartWalletReady(true)
         setIsSettingUp(false)
+        setHasSetupFailed(false)
+        setSetupStartTime(null)
         return
       }
 
@@ -102,7 +108,6 @@ export const useEmbeddedSmartAccountConnectorV2 = () => {
         console.error(`[PrivySmartAccount] ⏱️ Setup timeout after 3 seconds (attempt ${retryCount + 1}/3)`)
         setRetryCount((prev) => prev + 1)
         setIsSmartWalletReady(false)
-        setIsSettingUp(false)
       }, 3000) // 3 seconds timeout per attempt
 
       try {
@@ -139,7 +144,6 @@ export const useEmbeddedSmartAccountConnectorV2 = () => {
         await config.storage?.setItem('recentConnectorId', smartAccountConnector.id)
 
         // After setup is complete, mark as ready and reconnect
-        const totalDuration = setupStartTime ? ((Date.now() - setupStartTime) / 1000).toFixed(2) : '0'
         clearTimeout(setupTimeout)
         setIsSmartWalletReady(true)
         setIsSettingUp(false)
@@ -159,7 +163,6 @@ export const useEmbeddedSmartAccountConnectorV2 = () => {
         // Increment retry count and try again
         setRetryCount((prev) => prev + 1)
         setIsSmartWalletReady(false)
-        setIsSettingUp(false)
       }
     }
 
@@ -213,19 +216,36 @@ class SmartWalletEIP1193Provider extends EventEmitter {
       case 'eth_signTransaction':
         throw new Error('eth_signTransaction is not supported. Use eth_sendTransaction instead.')
       case 'wallet_switchEthereumChain': {
-        const [{ chainId }] = params as [{ chainId: string }]
-        if (!this.smartWalletClient?.account) {
-          throw new Error('account not connected!')
+        try {
+          const chainId = params?.[0]?.chainId as string | undefined
+          if (!chainId) {
+            throw new PrivySwitchChainError(undefined, 'Invalid or missing chainId')
+          }
+          const numericChainId = parseInt(chainId, 16)
+          if (!this.smartWalletClient?.account) {
+            throw new PrivySwitchChainError(numericChainId, 'Account not connected!')
+          }
+
+          const newClient = await this.getClientForChain({ id: numericChainId })
+
+          if (!newClient) {
+            throw new PrivySwitchChainError(
+              numericChainId,
+              `No smart wallet client found for chain ID ${numericChainId}`,
+            )
+          }
+
+          this.smartWalletClient = newClient
+          this.emit('chainChanged', chainId)
+          return null
+        } catch (err: any) {
+          if (err instanceof PrivySwitchChainError) {
+            throw new Error(err.message)
+          }
+          const chainId = params?.[0]?.chainId as string
+          const numericChainId = parseInt(chainId, 16)
+          throw new PrivySwitchChainError(numericChainId, err?.message ?? 'Failed to switch chain')
         }
-        const newClient = await this.getClientForChain({
-          id: parseInt(chainId, 16),
-        })
-        if (!newClient) {
-          throw new Error(`No smart wallet client found for chain ID ${chainId}`)
-        }
-        this.smartWalletClient = newClient
-        this.emit('chainChanged', chainId)
-        return null
       }
       default:
         return this.smartWalletClient?.transport.request({ method, params } as any)

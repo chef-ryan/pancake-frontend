@@ -67,7 +67,11 @@ export function UpdatePositionsReminder_() {
   const { chainId } = useActiveChainId()
 
   const masterchefV3 = useMasterchefV3()
-  const { tokenIds: stakedTokenIds, loading } = useV3TokenIdsByAccount(masterchefV3?.address, account)
+  const isMasterChefV3Available = Boolean(masterchefV3?.address && masterchefV3?.address !== '0x')
+  const { tokenIds: stakedTokenIds, loading } = useV3TokenIdsByAccount(
+    isMasterChefV3Available ? masterchefV3?.address : undefined,
+    account,
+  )
 
   const stakedUserInfos = useReadContracts({
     contracts: useMemo(

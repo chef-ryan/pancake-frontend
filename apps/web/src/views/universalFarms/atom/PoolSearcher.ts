@@ -39,7 +39,7 @@ function buildFarmList(list: FarmInfo[]) {
     const { pool, chainId, ...rest } = farm
     const farmInfo = {
       chainId,
-      tvlUsd: 0,
+      tvlUsd: Number(farm.tvlUSD) || 0,
       ...rest,
       feeTierBase: 1e6,
       vol24hUsd: farm.vol24hUsd,

@@ -103,5 +103,6 @@ export const chainIdToExplorerInfoChainName = {
   [ChainId.LINEA]: 'linea',
   [ChainId.BASE]: 'base',
   [ChainId.OPBNB]: 'opbnb',
+  [ChainId.MONAD_MAINNET]: 'monad',
   [NonEVMChainId.SOLANA]: 'sol',
 } as const

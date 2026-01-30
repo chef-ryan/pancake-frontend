@@ -1,14 +1,19 @@
-import { getChainName, isEvm } from '@pancakeswap/chains'
+import { chainFullNames, getChainName, isEvm } from '@pancakeswap/chains'
+import { useTranslation } from '@pancakeswap/localization'
+import { useToast } from '@pancakeswap/uikit'
 import { CHAIN_QUERY_NAME } from 'config/chains'
 import { useActiveChainIdRef } from 'hooks/useAccountActiveChain'
 import useAuth from 'hooks/useAuth'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { safeGetAddress } from 'utils'
 import { Connector, useAccount, useSwitchChain } from 'wagmi'
 import { accountActiveChainAtom } from 'wallet/atoms/accountStateAtoms'
 import { SwitchChainRequest, switchChainUpdatingAtom } from 'wallet/atoms/switchChainRequestAtom'
 import { SOLANA_SUPPORTED_PATH } from 'wallet/network.switch.config'
+import { normalizeChainId } from 'wallet/util/normalizeChainId'
+import { PrivySwitchChainError } from 'wallet/util/PrivySwitchChainError'
 
 type SwitchFrom = 'wagmi' | 'url' | 'switch' | 'connect'
 export interface SwitchChainOption {
@@ -97,12 +102,17 @@ const requireLogout = async (connector: Connector, chainId: number, address: `0x
 
     const provider = (await connector.getProvider()) as any
 
+    const checksummedAddress = safeGetAddress(address)
+
     return Boolean(
-      provider &&
-        Array.isArray(provider.session?.namespaces?.eip155?.accounts) &&
-        !provider.session.namespaces.eip155.accounts.some((account: string) =>
-          account?.includes(`${chainId}:${address}`),
-        ),
+      !checksummedAddress ||
+        (provider &&
+          Array.isArray(provider.session?.namespaces?.eip155?.accounts) &&
+          !provider.session.namespaces.eip155.accounts.some(
+            (account: string) =>
+              account?.includes(`${chainId}:${checksummedAddress}`) ||
+              account?.includes(`${chainId}:${checksummedAddress.toLowerCase()}`),
+          )),
     )
   } catch (error) {
     console.error(error, 'Error detecting provider')
@@ -112,12 +122,15 @@ const requireLogout = async (connector: Connector, chainId: number, address: `0x
 
 const useProcessSwitchChainRequest = () => {
   const { switchChainAsync: switchNetworkWagmiAsync } = useSwitchChain()
+  const { connector } = useAccount()
   const { logout } = useAuth()
   const updateAccountState = useSetAtom(accountActiveChainAtom)
   const setSwitching = useSetAtom(switchChainUpdatingAtom)
   const lock = useRef(false)
   const router = useRouter()
   const replaceGuardRef = useRef<ReplaceGuardState>({ cancelled: false, requestId: 0 })
+  const { toastError } = useToast()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const handleRouteChangeStart = () => {
@@ -156,9 +169,26 @@ const useProcessSwitchChainRequest = () => {
       try {
         setSwitching(true)
         if (isEvm(requestChainId)) {
+          // from = wagmi -> no need call switch again
           if (from !== 'wagmi') {
-            // from = wagmi -> no need call switch again
-            await switchNetworkWagmiAsync({ chainId: requestChainId })
+            let shouldSwitch = true
+
+            if (connector && typeof connector.getChainId === 'function') {
+              try {
+                const connectorChainId = normalizeChainId(await connector.getChainId())
+                // Only switch if chain IDs differ
+                shouldSwitch = connectorChainId !== requestChainId
+              } catch (error) {
+                console.warn('Error getting connector chain ID, switching anyway:', error)
+                shouldSwitch = true
+              }
+            }
+
+            if (shouldSwitch) {
+              await switchNetworkWagmiAsync({ chainId: requestChainId })
+            } else {
+              console.info('Chain IDs match — no switch needed.')
+            }
           }
           const isWrongNetwork = Boolean(
             !requestChainId ||
@@ -206,6 +236,13 @@ const useProcessSwitchChainRequest = () => {
         return true
       } catch (error) {
         console.log(`[chain]`, 'switch error', error)
+        if (error instanceof PrivySwitchChainError) {
+          const chainName = error.chainId ? chainFullNames[error.chainId] ?? '' : ''
+
+          toastError(t('Error'), t('Social login with %chainName% is not supported.', { chainName }))
+        } else {
+          toastError(t('Error'), t('An unexpected error occurred while switching chains. Please try again.'))
+        }
         return false
       } finally {
         setSwitching(false)
@@ -214,7 +251,7 @@ const useProcessSwitchChainRequest = () => {
         }, 60)
       }
     },
-    [router, switchNetworkWagmiAsync, setSwitching, updateAccountState, logout],
+    [router, switchNetworkWagmiAsync, setSwitching, updateAccountState, logout, connector],
   )
 
   const handleRequestChainIdChange = useCallback(
@@ -228,7 +265,7 @@ const useProcessSwitchChainRequest = () => {
 
       return processSwitching(request)
     },
-    [router, activeChainIdRef, processSwitching],
+    [activeChainIdRef, processSwitching],
   )
 
   return handleRequestChainIdChange

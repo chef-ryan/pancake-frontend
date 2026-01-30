@@ -1,4 +1,4 @@
-import { ChainId, chainNamesInKebabCase, isEvm } from '@pancakeswap/chains'
+import { ChainId, chainNamesInKebabCase } from '@pancakeswap/chains'
 import {
   FarmV4SupportedChainId,
   fetchAllUniversalFarms,

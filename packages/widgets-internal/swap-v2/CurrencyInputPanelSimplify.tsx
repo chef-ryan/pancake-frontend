@@ -9,6 +9,7 @@ interface CurrencyInputPanelProps extends Omit<NumericalInputProps, "onBlur" | "
   top?: React.ReactNode;
   bottom?: React.ReactNode;
   inputLeft?: React.ReactNode;
+  inputPrefix?: string;
   showBridgeWarning?: boolean;
   inputFontSize?: string;
   wrapperRef?: React.RefObject<HTMLDivElement>;
@@ -29,6 +30,7 @@ export function CurrencyInputPanelSimplify({
   loading,
   showBridgeWarning,
   inputLeft,
+  inputPrefix,
   inputFontSize,
   wrapperRef,
   wrapperProps,
@@ -80,10 +82,9 @@ export function CurrencyInputPanelSimplify({
               value={value}
               onBlur={onInputBlur}
               onFocus={onInputFocus}
-              onUserInput={(val) => {
-                onUserInput(val);
-              }}
+              onUserInput={onUserInput}
               fontSize={inputFontSize}
+              prefix={inputPrefix}
               padding={bottom ? "0 0 16px" : undefined}
               maxDecimals={maxDecimals}
             />

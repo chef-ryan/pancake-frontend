@@ -1,4 +1,4 @@
-import { ChainId, Chains, NonEVMChainId, UnifiedChainId, isEvm, isSolana } from '@pancakeswap/chains'
+import { ChainId, Chains, NonEVMChainId, UnifiedChainId } from '@pancakeswap/chains'
 import { useTranslation } from '@pancakeswap/localization'
 import {
   appearAnimation,
@@ -21,7 +21,7 @@ import { useRouter } from 'next/router'
 import { chainNameConverter } from 'utils/chainNameConverter'
 import { useBridgeAvailableChains } from 'views/Swap/Bridge/hooks'
 import { chains as evmChains } from 'utils/wagmi'
-import { TWAP_SUPPORTED_CHAINS } from 'views/Swap/utils'
+import { TWAP_LIMIT_SUPPORTED_CHAINS } from 'views/Swap/utils'
 
 import { BaseWrapper, ButtonWrapper, RowWrapper } from './CommonBases'
 
@@ -62,12 +62,12 @@ const useIsTwap = () => {
 
 const useCustomChains = () => {
   const isTWAP = useIsTwap()
-  return useMemo(() => {
-    if (isTWAP) {
-      return TWAP_SUPPORTED_CHAINS
-    }
-    return undefined
-  }, [isTWAP])
+
+  if (isTWAP) {
+    return TWAP_LIMIT_SUPPORTED_CHAINS
+  }
+
+  return undefined
 }
 
 export default function SwapNetworkSelection({
@@ -104,7 +104,7 @@ export default function SwapNetworkSelection({
     }
 
     return Chains.filter((chain) => {
-      // NOTE: because APtos is using different domain, we cannot show it in the network selector in Search Modal
+      // NOTE: because Aptos is using different domain, we cannot show it in the network selector in Search Modal
       if (chain.id === NonEVMChainId.APTOS) {
         return false
       }
@@ -122,7 +122,7 @@ export default function SwapNetworkSelection({
 
       return true
     })
-  }, [supportedBridgeChains, usedChainId, activeChainId, isDependent, customChains, showOnlySelectedChain])
+  }, [supportedBridgeChains, usedChainId, isDependent, customChains, showOnlySelectedChain])
 
   const selectedChain = useMemo(
     () => supportedChains.find((chain) => chain.id === usedChainId),

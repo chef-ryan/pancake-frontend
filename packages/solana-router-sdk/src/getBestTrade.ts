@@ -28,6 +28,7 @@ interface BestSolanaTradeParams {
   excludeRouters?: string
   excludeDexes?: string
   priorityFeeLamports?: number
+  signal?: AbortSignal
 }
 
 export interface RouterPlan {
@@ -38,8 +39,8 @@ export interface RouterPlan {
     outAmount: string
     ammKey: PublicKey
     label: string
-    feeAmount: string
-    feeMint: PublicKey
+    feeAmount?: string
+    feeMint?: PublicKey
   }
   // 10000 = 0.01%, 15000 = 0.15%
   bps?: number
@@ -66,6 +67,7 @@ export const getBestSolanaTrade = async ({
   account,
   slippageBps = 50,
   priorityFeeLamports,
+  signal,
 }: BestSolanaTradeParams): Promise<SolRouterTrade> => {
   const inputMint = solToWSol(inputCurrency.address)
   const outputMint = solToWSol(outputCurrency.address)
@@ -82,7 +84,7 @@ export const getBestSolanaTrade = async ({
     useWsol: isWSol(inputCurrency.address) || isWSol(outputCurrency.address),
   }
 
-  const response = await ultraSwapService.getQuote(requestBody)
+  const response = await ultraSwapService.getQuote(requestBody, signal)
   const quoteResponse = create(response, FormattedUltraQuoteResponse, 'conver FormattedUltraQuoteResponse Error')
 
   // Convert Solana quote format to SmartRouter trade format

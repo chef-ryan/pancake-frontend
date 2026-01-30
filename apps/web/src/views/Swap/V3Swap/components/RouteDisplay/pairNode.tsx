@@ -120,7 +120,7 @@ export function EVMPairNodes({
         if (pairNode) {
           return (
             <Fragment key={key}>
-              {pairNode({
+              {React.createElement(pairNode, {
                 pair: p,
                 text,
                 className: isInfinityPool || isV3Pool ? 'highlight' : '',

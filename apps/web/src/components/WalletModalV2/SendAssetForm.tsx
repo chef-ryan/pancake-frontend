@@ -1,4 +1,4 @@
-import { ChainId, NonEVMChainId, getChainName } from '@pancakeswap/chains'
+import { NonEVMChainId } from '@pancakeswap/chains'
 import { useDebounce } from '@pancakeswap/hooks'
 import { useTranslation } from '@pancakeswap/localization'
 import { Percent } from '@pancakeswap/sdk'
@@ -69,6 +69,7 @@ import { useSolanaPriorityFee } from './hooks/useSolanaPriorityFee'
 import { SolanaPriorityFeeModal } from './SolanaPriorityFeeModal'
 import { createSolanaSendTransaction, detectWalletTransactionSupport } from './utils/solanaSendTransaction'
 import { sendTransactionSafely } from './utils/solanaSafeTransaction'
+import { getChainDisplayName } from './utils/getChainDisplayName'
 
 const FormContainer = styled(Box)`
   display: flex;
@@ -543,7 +544,7 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewState
       }
       return sendEVMAsset()
     },
-    [isSolanaChain, sendSolanaAsset, sendEVMAsset],
+    [sendSolanaAsset, sendEVMAsset],
   )
 
   const isLikelyWalletAddress = (input: string) => {
@@ -645,7 +646,7 @@ export const SendAssetForm: React.FC<SendAssetFormProps> = ({ asset, onViewState
 
   const isInsufficientBalance = useUserInsufficientBalanceLight(currency, tokenBalance, amount)
 
-  const chainName = asset.chainId === ChainId.BSC ? 'BNB' : getChainName(asset.chainId)
+  const chainName = getChainDisplayName(asset.chainId)
   const price = asset.price?.usd ?? 0
   const tokenAmount = tryParseAmount(amount, currency)
 

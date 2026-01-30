@@ -1,13 +1,5 @@
 import { atom } from 'jotai'
-import { tickToPrice } from 'hooks/infinity/utils'
-import {
-  getSqrtPriceFromCurrentTick,
-  getSqrtPriceFromMarketPrice,
-  getTickAdjustedPrice,
-  invertTickForLimitOrder,
-} from 'views/PCSLimitOrders/utils/ticks'
-import { nearestUsableTick } from '@pancakeswap/v3-sdk'
-import { BigNumber as BN } from 'bignumber.js'
+import { getSqrtPriceFromCurrentTick, getSqrtPriceFromMarketPrice } from 'views/PCSLimitOrders/utils/ticks'
 import { selectedPoolAtom } from '../pools/selectedPoolAtom'
 import { customMarketPriceAtom } from './customMarketPriceAtom'
 import { inputCurrencyAtom, outputCurrencyAtom } from '../currency/currencyAtoms'

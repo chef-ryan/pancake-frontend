@@ -55,6 +55,7 @@ vite.config.ts.timestamp-*.mjs
 
 # store for local dev scripts
 scripts/dev/**
+apps/web/src/pcs-cli
 
 # typescript
 *.tsbuildinfo
@@ -62,4 +63,7 @@ scripts/dev/**
 # cursor
 .cursor/rules/personal/**
 
+.envrc
+
 AGENTS.md
+.codex

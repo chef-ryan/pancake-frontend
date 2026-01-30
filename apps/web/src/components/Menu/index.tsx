@@ -1,5 +1,5 @@
 import { useTranslation } from '@pancakeswap/localization'
-import { Menu as UikitMenu, footerLinks, useModal } from '@pancakeswap/uikit'
+import { DropdownMenuItemType, Menu as UikitMenu, footerLinks, useModal } from '@pancakeswap/uikit'
 import { BIG_ZERO } from '@pancakeswap/utils/bigNumber'
 import { NextLinkFromReactRouter } from '@pancakeswap/widgets-internal'
 import USCitizenConfirmModal from 'components/Modal/USCitizenConfirmModal'
@@ -21,8 +21,19 @@ import { getActiveMenuItem, getActiveSubMenuChildItem, getActiveSubMenuItem } fr
 const Notifications = lazy(() => import('views/Notifications'))
 
 const LinkComponent = (linkProps) => {
-  return <NextLinkFromReactRouter to={linkProps.href} {...linkProps} prefetch={false} />
+  const { href, type, ...props } = linkProps
+  // Check if it's an external link by type property first, then fallback to URL pattern
+  const isExternalLink =
+    type === DropdownMenuItemType.EXTERNAL_LINK || href?.startsWith('http://') || href?.startsWith('https://')
+
+  if (isExternalLink) {
+    return <NextLinkFromReactRouter to={href} target="_blank" rel="noreferrer noopener" {...props} />
+  }
+
+  return <NextLinkFromReactRouter to={href} {...props} prefetch={false} />
 }
+
+const EMPTY_ARRAY = []
 
 const Menu = (props) => {
   const { enabled } = useWebNotifications()
@@ -73,6 +84,8 @@ const Menu = (props) => {
     return footerLinks(t)
   }, [t])
 
+  const filteredLinks = useMemo(() => filterItemsProps(menuItems), [menuItems])
+
   return (
     <UikitMenu
       linkComponent={LinkComponent}
@@ -94,12 +107,12 @@ const Menu = (props) => {
       toggleTheme={toggleTheme}
       showLangSelector={false}
       cakePriceUsd={cakePrice.eq(BIG_ZERO) ? undefined : cakePrice}
-      links={filterItemsProps(menuItems)}
+      links={filteredLinks}
       subLinks={
         activeSubMenuItem?.overrideSubNavItems ??
         activeMenuItem?.overrideSubNavItems ??
         (activeMenuItem?.hideSubNav || activeSubMenuItem?.hideSubNav
-          ? []
+          ? EMPTY_ARRAY
           : activeSubMenuItem?.items ?? activeMenuItem?.items)
       }
       footerLinks={getFooterLinks}

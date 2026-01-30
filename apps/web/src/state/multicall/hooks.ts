@@ -41,20 +41,23 @@ function useCallsData(calls: (Call | undefined)[], options?: ListenerOptions, ov
   const serializedCallKeys: string = useMemo(
     () =>
       JSON.stringify(
-        calls
-          ?.filter((c): c is Call => Boolean(c))
-          ?.map(toCallKey)
-          ?.sort() ?? [],
+        Array.isArray(calls)
+          ? calls
+              .filter((c): c is Call => Boolean(c))
+              .map(toCallKey)
+              .sort()
+          : [],
       ),
     [calls],
   )
 
-  const serializedOptions: string = useMemo(() => JSON.stringify(options ?? {}), [options])
+  const serializedOptions: string = useMemo(() => (options ? JSON.stringify(options) : '{}'), [options])
 
   // update listeners when there is an actual change that persists for at least 100ms
   useEffect(() => {
+    if (!chainId) return undefined
     const callKeys: string[] = JSON.parse(serializedCallKeys)
-    if (!chainId || callKeys.length === 0) return undefined
+    if (!Array.isArray(callKeys) || callKeys.length === 0) return undefined
     const objectOptions: ListenerOptions = JSON.parse(serializedOptions)
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const calls = callKeys.map((key) => parseCallKey(key))

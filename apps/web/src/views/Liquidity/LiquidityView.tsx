@@ -66,7 +66,6 @@ import { useV3PositionFromTokenId, useV3TokenIdsByAccount } from 'hooks/v3/useV3
 import { formatTickPrice } from 'hooks/v3/utils/formatTickPrice'
 import { NextSeo } from 'next-seo'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 import { useRouter } from 'next/router'
 import { ReactNode, memo, useCallback, useMemo, useState } from 'react'
 import { usePoolInfo } from 'state/farmsV4/state/extendPools/hooks'
@@ -74,7 +73,7 @@ import { ChainLinkSupportChains } from 'state/info/constant'
 import { useSingleCallResult } from 'state/multicall/hooks'
 import { useIsTransactionPending, useTransactionAdder } from 'state/transactions/hooks'
 import { styled } from 'styled-components'
-import { calculateGasMargin, getBlockExploreLink } from 'utils'
+import { calculateGasMargin, getBlockExploreLink, isAddressEqual } from 'utils'
 import currencyId from 'utils/currencyId'
 import { formatCurrencyAmount, formatPrice } from 'utils/formatCurrencyAmount'
 import { v3Clients } from 'utils/graphql'
@@ -88,6 +87,8 @@ import RateToggle from 'views/AddLiquidityV3/formViews/V3FormView/components/Rat
 import { useSendTransaction, useWalletClient } from 'wagmi'
 import { DISABLED_ADD_LIQUIDITY_CHAINS } from 'config/constants/liquidity'
 import { IncentraTag } from 'components/Incentra/IncentraTag'
+import { PERSIST_CHAIN_KEY } from 'config/constants'
+import { CHAIN_QUERY_NAME } from 'config/chains'
 
 export const BodyWrapper = styled(Card)`
   border-radius: 24px;
@@ -211,15 +212,9 @@ export const LiquidityView = () => {
 
   const { tokenId: tokenIdFromUrl } = router.query
 
-  if (tokenIdFromUrl === 'pools') {
-    redirect('/liquidity/pools')
-  } else if (tokenIdFromUrl === 'positions') {
-    redirect('/liquidity/positions')
-  }
+  const parsedTokenId = Number.isInteger(Number(tokenIdFromUrl)) ? BigInt(tokenIdFromUrl as string) : undefined
 
-  const parsedTokenId = tokenIdFromUrl ? BigInt(tokenIdFromUrl as string) : undefined
-
-  const { loading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId)
+  const { loading: positionDetailsLoading, position: positionDetails } = useV3PositionFromTokenId(parsedTokenId)
 
   const {
     token0: token0Address,
@@ -339,8 +334,9 @@ export const LiquidityView = () => {
 
   const positionManager = useV3NFTPositionManagerContract()
   const masterchefV3 = useMasterchefV3()
+  const isMasterChefV3Available = Boolean(masterchefV3?.address && masterchefV3?.address !== '0x')
   const { tokenIds: stakedTokenIds, loading: tokenIdsInMCv3Loading } = useV3TokenIdsByAccount(
-    masterchefV3?.address,
+    isMasterChefV3Available ? masterchefV3?.address : undefined,
     account,
   )
 
@@ -354,8 +350,12 @@ export const LiquidityView = () => {
   }, [])
 
   const collect = useCallback(() => {
+    // Skip MasterChef V3 loading check if MasterChef V3 is not deployed on this chain
+    const masterChefV3Address = masterchefV3?.address
+    const isMasterChefV3Available = masterChefV3Address && masterChefV3Address !== '0x'
+
     if (
-      tokenIdsInMCv3Loading ||
+      (isMasterChefV3Available && tokenIdsInMCv3Loading) ||
       !currency0ForFeeCollectionPurposes ||
       !currency1ForFeeCollectionPurposes ||
       !chainId ||
@@ -420,6 +420,7 @@ export const LiquidityView = () => {
         console.error(error)
       })
   }, [
+    masterchefV3,
     tokenIdsInMCv3Loading,
     currency0ForFeeCollectionPurposes,
     currency1ForFeeCollectionPurposes,
@@ -441,7 +442,7 @@ export const LiquidityView = () => {
     functionName: 'ownerOf',
     args: useMemo(() => [tokenId] as [bigint], [tokenId]),
   }).result
-  const ownsNFT = owner === account || positionDetails?.operator === account
+  const ownsNFT = isAddressEqual(owner, account) || isAddressEqual(positionDetails?.operator, account)
 
   const feeValueUpper = inverted ? feeValue0 : feeValue1
   const feeValueLower = inverted ? feeValue1 : feeValue0
@@ -518,7 +519,8 @@ export const LiquidityView = () => {
     'TransactionConfirmationModalCollectFees',
   )
 
-  const isLoading = loading || poolState === PoolState.LOADING || poolState === PoolState.INVALID || !feeAmount
+  const isPositionDetailsLoading = positionDetailsLoading || (positionDetails && !feeAmount)
+  const isLoading = isPositionDetailsLoading || poolState === PoolState.LOADING || poolState === PoolState.INVALID
 
   const { isMobile } = useMatchBreakpoints()
 
@@ -526,7 +528,7 @@ export const LiquidityView = () => {
 
   const { hasMerkl } = useMerklInfo(poolAddress)
 
-  if (!isLoading && poolState === PoolState.NOT_EXISTS) {
+  if ((!isPositionDetailsLoading && !positionDetails) || poolState === PoolState.NOT_EXISTS) {
     return (
       <NotFound LinkComp={Link}>
         <NextSeo title="404" />
@@ -552,6 +554,15 @@ export const LiquidityView = () => {
         </Box>
       </Message>
     ) : null
+
+  if (tokenIdFromUrl === 'pools') {
+    router.replace('/liquidity/pools')
+    return null
+  }
+  if (!parsedTokenId) {
+    router.replace('/liquidity/positions')
+    return null
+  }
 
   return (
     <Box mb="40px">
@@ -608,7 +619,9 @@ export const LiquidityView = () => {
                 currencyBase && (
                   <>
                     <NextLinkFromReactRouter
-                      to={`/increase/${currencyId(currencyBase)}/${currencyId(currencyQuote)}/${feeAmount}/${tokenId}`}
+                      to={`/increase/${currencyId(currencyBase)}/${currencyId(currencyQuote)}/${feeAmount}/${tokenId}${
+                        poolInfo?.chainId ? `?chain=${CHAIN_QUERY_NAME[poolInfo.chainId]}&${PERSIST_CHAIN_KEY}=1` : ''
+                      }`}
                     >
                       <Button
                         disabled={
@@ -620,7 +633,11 @@ export const LiquidityView = () => {
                       </Button>
                     </NextLinkFromReactRouter>
                     {!removed && (
-                      <NextLinkFromReactRouter to={`/remove/${tokenId}`}>
+                      <NextLinkFromReactRouter
+                        to={`/remove/${tokenId}${
+                          poolInfo?.chainId ? `?chain=${CHAIN_QUERY_NAME[poolInfo.chainId]}&${PERSIST_CHAIN_KEY}=1` : ''
+                        }`}
+                      >
                         <Button disabled={!isOwnNFT} ml="4px" variant="secondary" width="100%">
                           {t('Remove')}
                         </Button>
@@ -634,7 +651,9 @@ export const LiquidityView = () => {
               {isMobile && currencyQuote && currencyBase && (
                 <>
                   <NextLinkFromReactRouter
-                    to={`/increase/${currencyId(currencyBase)}/${currencyId(currencyQuote)}/${feeAmount}/${tokenId}`}
+                    to={`/increase/${currencyId(currencyBase)}/${currencyId(currencyQuote)}/${feeAmount}/${tokenId}${
+                      poolInfo?.chainId ? `?chain=${CHAIN_QUERY_NAME[poolInfo.chainId]}&${PERSIST_CHAIN_KEY}=1` : ''
+                    }`}
                   >
                     <Button
                       disabled={
@@ -647,7 +666,11 @@ export const LiquidityView = () => {
                     </Button>
                   </NextLinkFromReactRouter>
                   {!removed && (
-                    <NextLinkFromReactRouter to={`/remove/${tokenId}`}>
+                    <NextLinkFromReactRouter
+                      to={`/remove/${tokenId}${
+                        poolInfo?.chainId ? `?chain=${CHAIN_QUERY_NAME[poolInfo.chainId]}&${PERSIST_CHAIN_KEY}=1` : ''
+                      }`}
+                    >
                       <Button disabled={!isOwnNFT} variant="secondary" width="100%" mb="8px">
                         {t('Remove')}
                       </Button>

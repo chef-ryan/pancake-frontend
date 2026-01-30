@@ -1,6 +1,5 @@
 import { isInBinance } from '@binance/w3w-utils'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
 import { useAtom, useAtomValue } from 'jotai'
 import { usePrivy } from '@privy-io/react-auth'
 import { atomWithStorage } from 'jotai/utils'
@@ -34,7 +33,7 @@ const walletRecoveryRecordsAtom = atomWithStorage<Record<string, number>>('pcs:s
 const SolanaProviders = dynamic(() => import('@pancakeswap/ui-wallets').then((m) => m.SolanaProvider), { ssr: false })
 
 const usePrivyProvider = () => {
-  const { authenticated, ready, user, createWallet, setWalletRecovery, logout: privyLogout, login } = usePrivy()
+  const { authenticated, ready, user, createWallet, setWalletRecovery } = usePrivy()
   const [recoveryRecords, setRecoveryRecords] = useAtom(walletRecoveryRecordsAtom)
   const attemptedWalletCreation = useRef(false)
 
@@ -58,13 +57,13 @@ const usePrivyProvider = () => {
         }))
       }
     }
-  }, [ready, user, authenticated, recoveryRecords])
+  }, [ready, user, authenticated, recoveryRecords, setRecoveryRecords, setWalletRecovery])
 
   useEffect(() => {
     if (ready && authenticated && user?.wallet?.address && user?.smartWallet?.address) {
       handleWalletRecovery()
     }
-  }, [ready, authenticated, user?.wallet])
+  }, [ready, authenticated, user?.wallet?.address, user?.smartWallet?.address, handleWalletRecovery])
 
   useEffect(() => {
     const createWalletWithUserManagedRecovery = async () => {
@@ -102,7 +101,6 @@ const usePrivyProvider = () => {
 
 export const WalletProvider = (props: WalletProviderProps) => {
   const { children } = props
-  const router = useRouter()
   const endpoint = useAtomValue(rpcUrlAtom)
   usePrivyProvider()
 

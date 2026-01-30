@@ -83,35 +83,56 @@ export const PoolsFilterPanel: React.FC<React.PropsWithChildren<IPoolsFilterPane
   const { t } = useTranslation()
   const allChainsOpts = useAllChainsOpts({ includeSolana })
 
-  const handleProtocolIndexChange: IProtocolMenuProps['onChange'] = (index) => {
-    onChange({ selectedProtocolIndex: index })
-  }
+  const handleProtocolIndexChange: IProtocolMenuProps['onChange'] = useCallback(
+    (index) => {
+      onChange({ selectedProtocolIndex: index })
+    },
+    [onChange],
+  )
 
-  const handleNetworkChange: INetworkProps['onChange'] = (network, e) => {
-    if (isEmpty(e.value)) {
-      e.preventDefault()
-      onChange({ selectedNetwork: [activeChainId] })
-    } else {
-      onChange({ selectedNetwork: network })
-    }
-  }
+  const handleNetworkChange: INetworkProps['onChange'] = useCallback(
+    (network, e) => {
+      if (isEmpty(e.value)) {
+        e.preventDefault()
+        onChange({ selectedNetwork: [activeChainId] })
+      } else {
+        onChange({ selectedNetwork: network })
+      }
+    },
+    [onChange, activeChainId],
+  )
 
   const [searchText, setSearchText] = useState(value.search ?? '')
   const focusRef = useRef<boolean>(false)
-  const debouncedOnChange = useMemo(() => debounce((val: string) => onChange({ search: val }), 1000), [onChange])
-  const handleSearchChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      focusRef.current = true
-      setSearchText(e.target.value)
-      debouncedOnChange(e.target.value)
-    },
-    [debouncedOnChange],
+
+  const onChangeRef = useRef(onChange)
+
+  const debouncedOnChange = useRef(
+    debounce((val: string) => {
+      onChangeRef.current({ search: val })
+    }, 1000),
   )
+
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    focusRef.current = true
+    setSearchText(e.target.value)
+    debouncedOnChange.current(e.target.value)
+  }, [])
 
   useEffect(() => {
     if (value.search === searchText || focusRef.current) return
     setSearchText(value.search ?? '')
   }, [value.search, searchText])
+
+  useEffect(() => {
+    const debounced = debouncedOnChange.current
+    debounced.cancel()
+    onChangeRef.current = onChange
+
+    return () => {
+      debounced.cancel()
+    }
+  }, [onChange])
 
   const protocols = usePoolProtocols()
   const childrenCount = useMemo(() => 2 + React.Children.count(children), [children])

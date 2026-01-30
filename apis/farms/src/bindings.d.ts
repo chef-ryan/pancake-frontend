@@ -14,6 +14,8 @@ declare global {
   const BASE_NODE: string
   const OPBNB_NODE: string
   const OPBNB_TESTNET_NODE: string
+  const MONAD_MAINNET_NODE: string
+  const MONAD_TESTNET_NODE: string
   const EXPLORER_URL: string
   const EXPLORER_API_KEY: string
 }

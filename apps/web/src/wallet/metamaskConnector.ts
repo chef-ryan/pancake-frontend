@@ -2,6 +2,8 @@ import safeGetWindow from '@pancakeswap/utils/safeGetWindow'
 import { chains } from 'utils/wagmi'
 import { createConnector } from 'wagmi'
 import { eip6963Providers } from './WalletProvider'
+import { normalizeAccounts } from './util/normalizeAccounts'
+import { normalizeChainId } from './util/normalizeChainId'
 
 function getMMProvider() {
   const window = safeGetWindow()
@@ -20,16 +22,20 @@ export const customMetaMaskConnector = createConnector(() => ({
   name: 'metaMask',
   type: 'metaMask',
 
-  async connect({ chainId } = {}) {
+  async connect({ chainId, withCapabilities } = {}) {
     const provider = getMMProvider()
     if (!provider) throw new Error('MetaMask not found')
 
-    const accounts = await provider.request({ method: 'eth_requestAccounts' })
-    const currentChainId = await provider.request({ method: 'eth_chainId' })
+    const [accounts, currentChainId] = await Promise.all([
+      provider.request({ method: 'eth_requestAccounts' }),
+      provider.request({ method: 'eth_chainId' }),
+    ])
 
     return {
-      accounts: accounts as readonly `0x${string}`[],
-      chainId: chainId ?? parseInt(currentChainId, 16),
+      accounts: normalizeAccounts(accounts).map((account) =>
+        withCapabilities ? { address: account, capabilities: {} } : account,
+      ) as never,
+      chainId: chainId ?? normalizeChainId(currentChainId),
     }
   },
 
@@ -45,21 +51,21 @@ export const customMetaMaskConnector = createConnector(() => ({
     const provider = getMMProvider()
     if (!provider) return false
     const accounts = await provider.request({ method: 'eth_accounts' })
-    return accounts.length > 0
+    return normalizeAccounts(accounts).length > 0
   },
 
   async getAccounts() {
     const provider = getMMProvider()
     if (!provider) return []
     const accounts = await provider.request({ method: 'eth_accounts' })
-    return accounts as readonly `0x${string}`[]
+    return normalizeAccounts(accounts) as readonly `0x${string}`[]
   },
 
   async getChainId() {
     const provider = getMMProvider()
     if (!provider) throw new Error('MetaMask not found')
     const chainId = await provider.request({ method: 'eth_chainId' })
-    return parseInt(chainId, 16)
+    return normalizeChainId(chainId)
   },
 
   onAccountsChanged(callback) {

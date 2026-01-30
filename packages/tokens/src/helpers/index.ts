@@ -4,6 +4,7 @@ import { enumValues } from '@pancakeswap/utils/enumValues'
 import { TokenAddressMap } from '@pancakeswap/token-lists'
 
 export * from './getTokensByChain'
+export * from './getSearchTopTokensByChain'
 
 const createEmptyList = () => {
   const list = {} as Record<ChainId, TokenAddressMap<ChainId>[ChainId]>

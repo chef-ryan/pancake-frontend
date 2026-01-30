@@ -17,7 +17,6 @@ export const setCurrencyAtom = atom(
 
     const otherCurrency = field === Field.CURRENCY_A ? await get(outputCurrencyAtom) : await get(inputCurrencyAtom)
 
-    // TODO: Check if any other validation needed
     if (otherCurrency && newCurrency.equals(otherCurrency)) {
       // Flip Currencies
       set(flipCurrenciesAtom)

@@ -17,12 +17,18 @@ export enum ChainId {
   BASE_TESTNET = 84531,
   BASE_SEPOLIA = 84532,
   SEPOLIA = 11155111,
+  MONAD_MAINNET = 143,
   MONAD_TESTNET = 10143,
 }
 
 export enum NonEVMChainId {
   SOLANA = 8000001001,
   APTOS = 8000002000,
+}
+
+export enum SunsetChainId {
+  POLYGON_ZKEVM = 1101,
+  POLYGON_ZKEVM_TESTNET = 1442,
 }
 
 export type UnifiedChainId = ChainId | NonEVMChainId
